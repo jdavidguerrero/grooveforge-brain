@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-teensy:
+    name: Build & Test Teensy 4.1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-teensy-${{ hashFiles('apps/firmware-teensy/platformio.ini') }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build Teensy firmware
+        run: cd apps/firmware-teensy && pio run -e teensy41
+
+      - name: Run native tests (Teensy)
+        run: cd apps/firmware-teensy && pio test -e native
+
+  build-esp32:
+    name: Build & Test ESP32-S3
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio/.cache
+          key: ${{ runner.os }}-pio-esp32-${{ hashFiles('apps/firmware-esp32/platformio.ini') }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build ESP32-S3 firmware
+        run: cd apps/firmware-esp32 && pio run -e esp32s3
+
+      - name: Run native tests (ESP32)
+        run: cd apps/firmware-esp32 && pio test -e native
+
+  test-ml:
+    name: ML Model Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install Python dependencies
+        run: cd apps/training && uv sync
+
+      - name: Run ML tests
+        run: cd apps/training && uv run pytest --tb=short

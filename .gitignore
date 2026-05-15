@@ -1,0 +1,80 @@
+# PlatformIO
+.pio/
+.pioenvs/
+.piolibdeps/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.uv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+*.tflite
+# (keep .h exports — those go in src/ml/)
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# KiCad
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.kicad_pro-bak
+*-backups/
+_autosave-*
+*.lck
+fp-info-cache
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+dist/
+*.tsbuildinfo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json
+# (keep .vscode/extensions.json — útil para sugerir extensiones al team)
+
+# Logs
+*.log
+serial-log-*.txt
+
+# Build artifacts
+*.o
+*.d
+*.map
+*.elf
+*.bin
+*.hex
+
+# Sensitive
+.env
+.env.local
+secrets.json
+credentials.json
+
+# Temp
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~

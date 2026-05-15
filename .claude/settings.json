@@ -1,0 +1,21 @@
+{
+  "model": "claude-sonnet-4-6",
+  "permissions": {
+    "allow": [
+      "Bash(pio:*)",
+      "Bash(uv:*)",
+      "Bash(pnpm:*)",
+      "Bash(git:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(cp:*)",
+      "Bash(xxd:*)"
+    ]
+  }
+}

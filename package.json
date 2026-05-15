@@ -1,0 +1,26 @@
+{
+  "name": "grooveforge-brain",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "description": "GrooveForge Brain — boutique hybrid AI synthesizer monorepo",
+  "scripts": {
+    "build:teensy": "cd apps/firmware-teensy && pio run -e teensy41",
+    "build:esp32": "cd apps/firmware-esp32 && pio run -e esp32s3",
+    "build": "pnpm build:teensy && pnpm build:esp32",
+    "upload:teensy": "cd apps/firmware-teensy && pio run -e teensy41 -t upload",
+    "upload:esp32": "cd apps/firmware-esp32 && pio run -e esp32s3 -t upload",
+    "monitor:teensy": "cd apps/firmware-teensy && pio device monitor -b 115200",
+    "monitor:esp32": "cd apps/firmware-esp32 && pio device monitor -b 115200",
+    "test:native": "cd apps/firmware-teensy && pio test -e native",
+    "test:native:esp32": "cd apps/firmware-esp32 && pio test -e native",
+    "test:ml": "cd apps/training && uv run pytest",
+    "test": "pnpm test:native && pnpm test:native:esp32 && pnpm test:ml",
+    "clean:teensy": "cd apps/firmware-teensy && pio run -t clean",
+    "clean:esp32": "cd apps/firmware-esp32 && pio run -t clean"
+  },
+  "devDependencies": {
+    "nx": "^19.0.0",
+    "typescript": "^5.4.0"
+  }
+}
