@@ -26,7 +26,7 @@ jobs:
         run: pip install platformio
 
       - name: Build Teensy firmware
-        run: cd apps/firmware-teensy && pio run -e teensy41
+        run: cd apps/firmware-teensy && pio run -e sketch
 
       - name: Run native tests (Teensy)
         run: cd apps/firmware-teensy && pio test -e native

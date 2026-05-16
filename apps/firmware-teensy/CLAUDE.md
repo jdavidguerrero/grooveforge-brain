@@ -20,11 +20,17 @@ FX, filter control, UI, Bridge Protocol master y USB composite.
 
 ## Build & upload
 
+Durante Fase 1 (sprints de sketches, sin `src/main.cpp` de producción aún):
+
 ```bash
 cd apps/firmware-teensy
-pio run -e teensy41             # build only
-pio run -e teensy41 -t upload   # build + flash
+pio run -e sketch               # build del sketch activo
+pio run -e sketch -t upload     # build + flash
 ```
+
+El env `sketch` selecciona el sketch del sprint vía `build_src_filter` en
+`platformio.ini`. `pio run -e teensy41` queda reservado para el firmware de
+producción (cuando exista `src/main.cpp`).
 
 ## Monitor
 

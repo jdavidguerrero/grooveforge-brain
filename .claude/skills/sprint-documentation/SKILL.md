@@ -85,6 +85,37 @@ Siempre después de la intuición, nunca antes.]
 
 ---
 
+## Wiring (Cableado)
+
+> Etapa previa al código. Documenta el montaje y la verificación del hardware
+> **antes** de flashear. Si el sprint no toca hardware nuevo: marcar
+> `N/A — sprint solo software` y explicar por qué.
+
+### Hardware del sprint
+
+[Tabla: Componente | Cantidad | Notas — el BOM mínimo de este sprint.]
+
+### Tabla de conexiones
+
+[Tabla: Pad/pin del módulo | Teensy pin | Señal | Requerido en este sprint.
+Citar el pin mapping de `01-architecture.md` §3.3.]
+
+### Diagrama
+
+[Diagrama ASCII de las conexiones físicas entre módulos.]
+
+### Montaje paso a paso
+
+[Pasos numerados de armado en protoboard. Regla: empezar sin energía,
+GND primero, alimentación después, señales al final.]
+
+### Verificación pre-flash
+
+[Checklist de continuidad/voltaje ANTES de energizar: GND común,
+sin shorts 3.3V↔GND, cada señal a su pin correcto.]
+
+---
+
 ## Implementation
 
 ### Archivos creados / modificados
@@ -206,6 +237,7 @@ Antes de marcar un sprint como 🟢 Done:
 - [ ] **Theory escrito antes del código** (si no, retroactivamente documentar)
 - [ ] Todas las referencias citadas con capítulo/sección específica
 - [ ] Sección "Por qué lo hacemos así" tiene alternativas consideradas
+- [ ] Sección Wiring completa (o marcada `N/A — sprint solo software`, justificada)
 - [ ] Demo reproducible con comandos exactos
 - [ ] Evidencia capturada (audio grabado o foto/video)
 - [ ] Tests escritos y pasando

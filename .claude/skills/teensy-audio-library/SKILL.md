@@ -54,8 +54,8 @@ proyecto GrooveForge Brain. Cross-ref: `apps/docs/05-fx-architecture.md`.
 
 | Objeto | Uso | Notas |
 |---|---|---|
-| `AudioOutputI2S` | Output principal → SGTL5000 DAC | Pin 22 (TX), 20 (LRCLK), 21 (BCLK) |
-| `AudioInputI2S` | Input → SGTL5000 ADC (filter return) | Pin 13 (RX) |
+| `AudioOutputI2S` | Output principal → SGTL5000 DAC | Pin 7 (TX), 20 (LRCLK), 21 (BCLK), 23 (MCLK) |
+| `AudioInputI2S` | Input → SGTL5000 ADC (filter return) | Pin 8 (RX) |
 | `AudioOutputUSB` | USB Audio out (composite device) | Requiere `USB_MIDI_AUDIO_SERIAL` |
 | `AudioInputUSB` | USB Audio in desde DAW | Para DAW Bridge Layer 3 |
 | `AudioControlSGTL5000` | Control del codec (volume, enable) | Via I2C1 pins 18/19 |

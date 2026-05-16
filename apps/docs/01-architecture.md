@@ -246,15 +246,15 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | Pin | Function | Conexión |
 |---|---|---|
 | 23 | MCLK out | SGTL5000 master clock (nativo desde Teensy I2S1_MCLK) |
-| 22 | I2S1_TX_DATA0 | SGTL5000 DAC input |
-| 13 | I2S1_RX_DATA0 | SGTL5000 ADC output |
+| 7 | I2S1_TX_DATA0 (OUT1A) | SGTL5000 DAC input |
+| 8 | I2S1_RX_DATA0 (IN1) | SGTL5000 ADC output |
 | 20 | I2S1_LRCLK | SGTL5000 LRCLK |
 | 21 | I2S1_BCLK | SGTL5000 BCLK |
 | 18 | I2C1 SDA | SGTL5000 control |
 | 19 | I2C1 SCL | SGTL5000 control |
 | 0 | UART RX | ← ESP32-S3 TX |
 | 1 | UART TX | → ESP32-S3 RX |
-| 2-7 | GPIO | 6 Kailh switches (pulled-up) |
+| 2-6, 9 | GPIO | 6 Kailh switches (pulled-up) |
 | 14-17 | GPIO | 2 encoders A/B/SW (rotary) |
 | 26 | GPIO | Action button input |
 | 25 | GPIO | Filter bypass control (CD4066 enable) |
@@ -265,6 +265,10 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | 36 | GPIO | Pogo INT in (slave interrupt) |
 | 37/38 | I2C2 SDA/SCL | Pogo bus master (slaves) |
 | 39 | GPIO | USB host mode select |
+
+> **Nota I2S (Teensy 4.x):** los pines de datos I2S son 7 (`SAI1 OUT1A`, TX → DAC)
+> y 8 (`SAI1 IN1`, RX ← ADC) — los del Audio Shield Rev D2. La Rev C / Teensy 3.x
+> usaba 22/13; con este mapping los pines 13 y 22 quedan libres.
 
 **ESP32-S3 (Waveshare ESP32-S3-Touch-LCD-1.28):**
 

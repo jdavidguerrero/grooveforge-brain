@@ -273,7 +273,7 @@ Lo que corre automáticamente en cada PR:
 
 | Check | Comando |
 |---|---|
-| Build Teensy (sin flash) | `pio run -e teensy41` |
+| Build Teensy (sin flash) | `pio run -e sketch` |
 | Build ESP32 (sin flash) | `pio run -e esp32s3` |
 | Tests nativos Teensy | `pio test -e native` (desde `firmware-teensy/`) |
 | Tests nativos ESP32 | `pio test -e native` (desde `firmware-esp32/`) |
