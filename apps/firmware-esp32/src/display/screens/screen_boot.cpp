@@ -22,6 +22,7 @@
 #include "screen_boot.h"
 #include "../ui_theme.h"
 #include <lvgl.h>
+#include <Arduino.h>
 
 /* ── Duraciones de la secuencia (ms) ─────────────────────────────────────── */
 
@@ -34,20 +35,19 @@ static constexpr uint32_t DOT_FADE_DELAY_MS        = 1600;
 static constexpr uint32_t DOT_FADE_DURATION_MS     = 300;
 static constexpr uint32_t BOOT_TOTAL_MS            = 2200;
 
-/* Angulos del arc — 270 = 12 o'clock, sweep clockwise 360 grados */
-static constexpr int32_t ARC_START_ANGLE = 270;
-static constexpr int32_t ARC_END_START   = 270;     /* inicio animacion: arc vacio */
-static constexpr int32_t ARC_END_TARGET  = 270 + 360; /* fin animacion: arc completo */
-
-/* ── Callbacks de animacion ──────────────────────────────────────────────── */
-
-/**
- * exec_cb para animar el angulo final del arc.
- * LVGL llama esta funcion con v interpolado entre ARC_END_START y ARC_END_TARGET.
+/*
+ * Animacion del arc — sweep 360 grados desde 12 o'clock clockwise.
+ *
+ * Enfoque correcto en LVGL 8: usar lv_arc_set_value() con rango [0, 360]
+ * en lugar de lv_arc_set_end_angle() con angulos > 360.
+ * lv_arc_set_end_angle() con valores > 360 puede crashear en la draw pipeline
+ * de LVGL 8 (el draw_arc espera angulos en [0, 360] y los pasa directo a
+ * _lv_trigo_sin() que tiene tabla solo para [-360, 360]).
+ *
+ * Con lv_arc_set_rotation(arc, 270): el range [0,360] empieza en 12 o'clock.
+ * lv_arc_set_value(arc, 0)   → arc vacio.
+ * lv_arc_set_value(arc, 360) → arc completo (circulo entero).
  */
-static void arc_angle_anim_cb(void* obj, int32_t v) {
-    lv_arc_set_end_angle(static_cast<lv_obj_t*>(obj), static_cast<uint16_t>(v));
-}
 
 /**
  * exec_cb para animar la opacidad de un objeto (fade-in).
@@ -55,6 +55,14 @@ static void arc_angle_anim_cb(void* obj, int32_t v) {
  */
 static void opa_anim_cb(void* obj, int32_t v) {
     lv_obj_set_style_opa(static_cast<lv_obj_t*>(obj), static_cast<lv_opa_t>(v), 0);
+}
+
+/**
+ * exec_cb para animar el valor del arc (0=vacio, 360=completo).
+ * Cast explicito a lv_arc_set_value signature: (lv_obj_t*, int32_t).
+ */
+static void arc_value_anim_cb(void* obj, int32_t v) {
+    lv_arc_set_value(static_cast<lv_obj_t*>(obj), v);
 }
 
 /* ── Helpers de animacion ────────────────────────────────────────────────── */
@@ -83,7 +91,9 @@ static void start_fade_in(lv_obj_t* obj, uint32_t delay, uint32_t duration) {
 /* ── Implementacion publica ──────────────────────────────────────────────── */
 
 void screen_boot_create(void) {
+    Serial.println("[boot] screen_boot_create — lv_scr_act()");
     lv_obj_t* scr = lv_scr_act();
+    Serial.printf("[boot] scr ptr = %p\n", scr);
 
     /* Fondo near-black — sin esto el fondo es blanco por defecto del theme */
     lv_obj_set_style_bg_color(scr, BRAIN_COLOR_BG, 0);
@@ -95,12 +105,14 @@ void screen_boot_create(void) {
     lv_obj_set_size(arc, BRAIN_RING_OBJ_SIZE, BRAIN_RING_OBJ_SIZE);
     lv_obj_center(arc);
 
-    /* bg_angles: circulo completo visible como "pista" gris oscura */
-    lv_arc_set_bg_angles(arc, 0, 360);
+    /* Rango 0-360: valor 0 = arc vacio, valor 360 = circulo completo.
+     * rotation=270 hace que el range empiece en 12 o'clock (arriba). */
+    lv_arc_set_range(arc, 0, 360);
+    lv_arc_set_rotation(arc, 270);
+    lv_arc_set_value(arc, 0);          /* empieza vacio */
 
-    /* arc activo: empieza desde 270 (12 o'clock), end = start = vacio */
-    lv_arc_set_rotation(arc, 0);
-    lv_arc_set_angles(arc, ARC_START_ANGLE, ARC_START_ANGLE);
+    /* bg_angles: pista de fondo, circulo completo visible */
+    lv_arc_set_bg_angles(arc, 0, 360);
 
     /* Colores: pista = gris oscuro, indicador (parte activa) = purple */
     lv_obj_set_style_arc_color(arc, BRAIN_COLOR_GRAY_DIM, LV_PART_MAIN);
@@ -116,12 +128,14 @@ void screen_boot_create(void) {
     /* Deshabilitar interaccion — es decorativo, no interactivo */
     lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);
 
-    /* Animacion del arc: sweep de 270 a 630 (270+360) en 800ms con ease_out */
+    /* Animacion del arc: valor 0 → 360 en 800ms con ease_out.
+     * lv_arc_set_value() maneja el mapping [0,360] → angulos internamente,
+     * sin riesgo de angulos > 360 que causarian UB en _lv_trigo_sin(). */
     lv_anim_t a_arc;
     lv_anim_init(&a_arc);
     lv_anim_set_var(&a_arc, arc);
-    lv_anim_set_exec_cb(&a_arc, arc_angle_anim_cb);
-    lv_anim_set_values(&a_arc, ARC_END_START, ARC_END_TARGET);
+    lv_anim_set_exec_cb(&a_arc, arc_value_anim_cb);
+    lv_anim_set_values(&a_arc, 0, 360);
     lv_anim_set_time(&a_arc, ARC_ANIM_DURATION_MS);
     lv_anim_set_path_cb(&a_arc, lv_anim_path_ease_out);
     lv_anim_start(&a_arc);

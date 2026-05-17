@@ -30,9 +30,11 @@ static bool s_main_created = false;
 
 void setup() {
     Serial.begin(115200);
-    delay(100); /* tiempo para que el CDC enumere en el host USB */
+    /* 2s de espera para que USB CDC enumere en el host antes de cualquier print.
+     * Sin esto los primeros prints se pierden si el monitor no esta listo. */
+    delay(2000);
 
-    Serial.println("=== GrooveForge Brain — ESP32-S3 Boot ===");
+    Serial.println("=== GrooveForge Brain — ESP32-S3 Boot ==="); Serial.flush();
     Serial.printf("Sprint 3.1 | Display: GC9A01 240x240 | LVGL 8.x\n");
 
     /* Inicializar LVGL + driver GC9A01 + buffers de rendering */
