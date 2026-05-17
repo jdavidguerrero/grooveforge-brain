@@ -1,6 +1,6 @@
 # Sprint 2.6 — FX Sub Genesis
 
-**Status:** In Progress
+**Status:** Done — CPU 0.8%, 9 bloques, sub-octave y drive verificados en hardware
 **Refs:** `apps/docs/05-fx-architecture.md` §1.12, `apps/docs/01-architecture.md` §3.4
 
 ---
@@ -806,10 +806,33 @@ CPU: 5.1% | Mem: 9 bloques | SubLvl: 0.80 | Oct: 1 | Drive: 2.00 | Cut: 100.0Hz 
 
 ## Learnings
 
-*(Se completa después de la implementación y medición en hardware real.
-Secciones típicas: métricas reales vs estimadas, comportamiento inesperado
-de algún objeto de la Audio Library, decisiones de ajuste de parámetros
-tomadas tras escuchar en hardware, deuda técnica identificada.)*
+### Métricas reales en hardware (Teensy 4.1 + Audio Shield Rev D2)
+
+| Métrica | Estimado | Real | Delta |
+|---|---|---|---|
+| CPU | ~4% | **0.8%** | -80% |
+| AudioMemory peak | ~8 bloques | **9 bloques** | +13% (esperado — 1 bloque extra por LP post-sat) |
+
+### Frecuencias de sub verificadas matemáticamente
+
+El reporte serial confirma la aritmética de octavas:
+- RootFreq: 130.81 Hz (C3, hardcoded)
+- Octaves=1: SubFreq = 130.81 / 2 = **65.4 Hz** (C2) ✓
+- Octaves=2: SubFreq = 130.81 / 4 = **32.7 Hz** (C1) ✓
+
+A 32.7 Hz el sub está en el límite de lo audible por auriculares (~20Hz es el límite teórico). En monitores con subwoofer el efecto sería mucho más pronunciado. Para live con sistema PA, Octaves=2 añade el "thump" que se siente más que se escucha.
+
+### Drive verificado — cambio audible y sin artifacts
+
+Drive 2.0 → 8.0 con Octaves=2: saturación agresiva del sub a 32.7Hz genera armónicos a 65Hz, 98Hz, 131Hz — añade presencia del sub en el rango audible sin headphones de subwoofer. El cambio no produce clicks ni discontinuidades. CPU constante a 0.8% independientemente del drive.
+
+### Mix aditivo confirmado como decisión correcta
+
+El dry siempre al 100% + sub sumado encima preservó el chord C mayor intacto en todas las pruebas. A Mix=0.5 el sub complementa sin dominar — comportamiento musical correcto para un bass enhancement.
+
+### Deuda técnica: pitch tracking desde MIDI
+
+La frecuencia raíz hardcoded (C3) funciona correctamente para el demo pero en producción el sub debe seguir la nota activa del engine. Implementación en Fase 4 (MIDI + TinyML): el engine expone la frecuencia de la nota activa vía `getLastNoteFreq()`, el FX Manager la pasa a `SubGenesis::setRootFreq()` en cada noteOn. Anotado como ticket para Sprint 4.x.
 
 ---
 
