@@ -2,14 +2,14 @@
 
 /**
  * @file lv_port_disp.h
- * @brief LVGL display port — GC9A01 240x240 via LovyanGFX
+ * @brief LVGL display port — GC9A01 240x240 via TFT_eSPI
  *
  * Inicializa el pipeline de rendering:
- *   LovyanGFX (driver SPI del GC9A01) → LVGL draw buffer → flush callback
+ *   TFT_eSPI (driver SPI del GC9A01) → LVGL draw buffer → flush callback
  *
- * LovyanGFX reemplaza TFT_eSPI por compatibilidad con Arduino ESP32 v3.x (IDF 5.x).
- * TFT_eSPI 2.5.x crashea en IDF5 porque spiStartBus() retorna un spi_t* con
- * spi->dev == NULL → StoreProhibited al escribir al offset 0x10.
+ * Requiere -DUSER_SETUP_LOADED=1 + -DGC9A01_DRIVER=1 + -DUSE_HSPI_PORT=1 en
+ * build_flags. Sin estos flags TFT_eSPI crashea (StoreProhibited @ 0x10) porque
+ * spiStartBus() en IDF5 recibe un bus_num invalido y deja spi->dev == NULL.
  *
  * Llamar una sola vez desde setup() antes de crear cualquier pantalla LVGL.
  * No thread-safe — LVGL en ESP32 corre en un solo core (core 1, Arduino task).
