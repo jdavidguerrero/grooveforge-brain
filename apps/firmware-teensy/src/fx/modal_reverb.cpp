@@ -153,6 +153,10 @@ void ModalReverb::_applyMaterial() {
     }
 
     for (int i = 0; i < 6; i++) {
+        // Resetear level al cambiar material/size/decay — el input sostenido
+        // repone la energía de cada modo inmediatamente.
+        _modeLevel[i] = 1.0f;
+
         float freq = table[i].freqRatio * BASE_FREQ;
         float t60  = table[i].t60Base * sizeMult * _decayMult;
 
@@ -252,27 +256,16 @@ void ModalReverb::update() {
     if (_bypass) return;
 
     uint32_t now = millis();
-    uint32_t dt  = now - _lastUpdateMs;
     _lastUpdateMs = now;
 
-    // Omitir si el loop corre demasiado lento (>100ms entre updates) o en la
-    // primera iteración donde dt podría ser grande e incorrecto.
-    if (dt == 0 || dt > 100) return;
-
-    // Aplicar decay exponencial a cada modo activo.
-    // factor^dt_ms aproxima la integral continua para dt pequeño (1-10 ms).
-    // Para v1.0 con chord sostenido, _modeLevel permanece cercano a 1.0 mientras
-    // el input alimenta energía a los filtros BP. El efecto audible del decay
-    // se escucha cuando el input se silencia entre acordes.
+    // v1.0 simplificación: chord sostenido → input siempre activo → los filtros BP
+    // se alimentan continuamente → los mode levels se mantienen en 1.0.
+    // El decay exponencial (infraestructura completa en _modeDecayFactor[]) se activará
+    // en v2.0 cuando exista onset detection (AudioAnalyzeRMS o note-off MIDI) para
+    // detectar el silencio del input y aplicar el T60 real del material.
+    // Ref: apps/docs/sprints/12-modal-reverb.md §"Simplificación para v1.0"
     for (int i = 0; i < 6; i++) {
-        // Aplicar factor dt veces (aproximación para dt > 1ms)
-        // pow(factor, dt) evita el loop — expf es más eficiente.
-        // factor = exp(-6.908 / (T60_ms)) → factor^dt = exp(-6.908 × dt / T60_ms)
-        if (_modeDecayFactor[i] > 0.0f) {
-            // Usar powf(factor, dt) equivale a aplicar el factor dt veces
-            _modeLevel[i] *= powf(_modeDecayFactor[i], (float)dt);
-            if (_modeLevel[i] < 1e-6f) _modeLevel[i] = 0.0f;   // floor para evitar denormals
-        }
+        _modeLevel[i] = 1.0f;
     }
 
     _updateMixerGains();
