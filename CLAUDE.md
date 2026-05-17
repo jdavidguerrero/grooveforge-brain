@@ -113,7 +113,8 @@ No proponer arquitectura alternativa sin revisar `01-architecture.md` §2.
 - Cutoff: 20Hz–20kHz, 24dB/oct — `03-filter-design.md` §2.1
 - Resonancia: 0 a auto-oscilación (threshold 80% pot) — `03-filter-design.md` §2.1
 - V/oct tracking target: **±10 cents** / 5 octavas — `03-filter-design.md` §2.1
-- GPIO Teensy: bypass CD4066 → **pin 25**, TPDT state → **pin 27** — `01-architecture.md` §3.3
+- GPIO Teensy: bypass CD4066 → **pin 25** (GUI vía Bridge Protocol) — `01-architecture.md` §3.3
+- Pin 27 libre — TPDT eliminado del diseño
 
 ### Bridge Protocol frame
 

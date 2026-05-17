@@ -97,8 +97,8 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 │  ┌────────────────┐  ANALOG LADDER FILTER                         │
 │  │  2N3904 Ladder │  - 4-pole discrete transistor ladder           │
 │  │  + TL072 x2    │  - Moog Minimoog 1970 design                   │
-│  │  + CD4066      │  - SW bypass + HW bypass toggle TPDT           │
-│  │  + bypass TPDT │  - 8 matched 2N3904 pairs                      │
+│  │  + CD4066      │  - SW bypass via GUI (CD4066, pin 25)           │
+│  │                │  - 8 matched 2N3904 pairs                      │
 │  └────────┬───────┘                                                │
 │           ▼                                                        │
 │  ┌────────────────┐  AUDIO OUTPUTS                                │
@@ -177,7 +177,7 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 | **2N3904 NPN x12 (matched pairs)** | **$0.60** | 8 ladder + 4 spare/exp converter |
 | **TL072 dual opamp x2** | **$0.80** | Input/output buffers + CV converter |
 | **CD4066 quad analog switch** | **$0.30** | Software bypass control |
-| **Toggle switch TPDT panel-mount** | **$0.50** | Hardware bypass master override |
+| ~~Toggle switch TPDT panel-mount~~ | ~~$0.50~~ | ~~Eliminado — bypass 100% software vía CD4066~~ |
 | **Capacitors 1nF polystyrene x4 + passives** | **$1.30** | Filter timing caps + trimmers + resistors |
 | **Resonance pot 10kΩ log** | **$0.80** | Panel control resonance |
 | **Filter PCB sub-block 30x40mm** | **$0.50** | 2-layer |
@@ -257,11 +257,11 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | 2-6, 9 | GPIO | 6 Kailh switches (pulled-up) |
 | 14-17 | GPIO | 2 encoders A/B/SW (rotary) |
 | 26 | GPIO | Action button input |
-| 25 | GPIO | Filter bypass control (CD4066 enable) |
-| 27 | GPIO | Filter TPDT toggle state read |
+| 25 | GPIO | Filter bypass control (CD4066 enable — GUI via Bridge Protocol) |
+| 27 | GPIO | **Libre** — TPDT eliminado (bypass 100% software) |
 | 28 | PWM | LED ring 16-LED (WS2812B chain) |
 | 29 | WS2812B DOUT | 6 keycap LEDs daisy-chain |
-| A0 (24) | ADC | Volume pot read |
+| A0 (14) | ADC | Volume pot read |
 | 36 | GPIO | Pogo INT in (slave interrupt) |
 | 37/38 | I2C2 SDA/SCL | Pogo bus master (slaves) |
 | 39 | GPIO | USB host mode select |
@@ -292,7 +292,7 @@ Ver doc separado: **🎚️ Filter Design Spec v0.1** para detalles completos.
 - Cutoff range: 20Hz - 20kHz (5+ decades)
 - Resonance: 0 (flat) to self-oscillation
 - V/oct tracking: ±10 cents over 5 octaves (post-calibration)
-- Bypass: TPDT toggle (true bypass) + CD4066 software bypass
+- Bypass: CD4066 software bypass controlado por GUI (Bridge Protocol → Teensy pin 25)
 - Input impedance: 100kΩ
 - Output level: matched a SGTL5000 ADC input range (~1Vrms line level)
 - THD @ 1kHz, 0dBu: <0.5% (low resonance), <2% (high resonance, intentional)
@@ -395,8 +395,7 @@ Teensy es el master del Bridge Protocol. ESP32 actúa como proxy network layer.
 - [ ] Pogo connector multimetro: continuidad 6 pines, no shorts
 - [ ] **Filter: cutoff sweep audible 20Hz-20kHz**
 - [ ] **Filter: self-oscillates con resonance al 80% pot**
-- [ ] **Filter: hardware bypass TPDT attenuation <0.5dB diferencia**
-- [ ] **Filter: software bypass CD4066 sin clicks audibles al switch**
+- [ ] **Filter: software bypass CD4066 sin clicks audibles al switch (GUI → pin 25)**
 - [ ] **Filter: V/oct tracking ±20 cents over 5 octaves (post-calibration)**
 
 ### 5.2 Software acceptance (per release)

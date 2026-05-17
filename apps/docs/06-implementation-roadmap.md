@@ -125,7 +125,12 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 
 **Demo visible:** batch de pairs etiquetados con valores Vbe.
 
-### Sprint 1.4 — Filter Discreto Ladder Protoboard (2-3 sesiones hardware)
+### Sprint 1.4 — Filter Discreto Ladder Protoboard (2-3 sesiones hardware) ⏸ DEFERRED
+
+> **Technical debt:** componentes TL072CP y CD4066 pendientes de conseguir.
+> Re-medición de transistores con protocolo térmico correcto pendiente (ver Sprint 1.3 learnings).
+> Se retoma después de Sprint 1.5+. No bloquea el avance — el engine Moog Model D
+> funciona sin el filter físico; se agrega el routing analógico cuando esté disponible.
 
 **Theory:**
 - Topología transistor ladder Moog 1970
