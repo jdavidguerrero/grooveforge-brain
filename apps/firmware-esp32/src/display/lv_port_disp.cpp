@@ -36,6 +36,7 @@
 #include "lv_port_disp.h"
 #include "ui_theme.h"
 #include <TFT_eSPI.h>
+#include <SPI.h>
 #include <lvgl.h>
 
 /* ── Constantes de configuracion ─────────────────────────────────────────── */
@@ -92,18 +93,36 @@ static void disp_flush(lv_disp_drv_t* drv, const lv_area_t* area, lv_color_t* co
 /* ── Implementacion publica ──────────────────────────────────────────────── */
 
 void lv_port_disp_init(void) {
-    /* 1. Construir TFT_eSPI aqui (no como global estatico) y arrancar el GC9A01.
-     *    El constructor de TFT_eSPI puede tocar el bus SPI; hacerlo dentro de
-     *    setup() garantiza que el hardware SPI esta inicializado por Arduino core.
-     *    TFT_BL=40 / TFT_BACKLIGHT_ON=1 en build_flags: tft->begin() ya enciende BL. */
+    /* 1. Pre-inicializar el bus HSPI con los pines correctos ANTES de TFT_eSPI.
+     *
+     * En ESP32-S3, HSPI no tiene "default pins" definidos. Si TFT_eSPI llama
+     * spiStartBus() sin que el bus este pre-inicializado, recibe un spi_t* con
+     * spi->dev == NULL → StoreProhibited @ 0x10.
+     *
+     * SPI.begin(SCLK, MISO=-1, MOSI, SS=-1) fuerza la asignacion de pines al
+     * bus HSPI antes de que TFT_eSPI lo toque. Patron de groove_drum (mismo HW). */
+    Serial.println("[disp] SPI.begin (pre-init HSPI pins)"); Serial.flush();
+    SPI.begin(TFT_SCLK, -1, TFT_MOSI, -1);
+
+    /* 2. Construir TFT_eSPI y arrancar el GC9A01.
+     *    Lazy init via new() garantiza construccion dentro de setup(). */
     Serial.println("[disp] new TFT_eSPI"); Serial.flush();
     tft = new TFT_eSPI();
 
-    Serial.println("[disp] tft->begin()"); Serial.flush();
-    tft->begin();
+    Serial.println("[disp] tft->init()"); Serial.flush();
+    tft->init();
+
+    /* setSwapBytes(true): TFT_eSPI en ESP32-S3 necesita swap de bytes RGB565
+     * para que los colores sean correctos. Sin esto los canales R/B se invierten. */
+    tft->setSwapBytes(true);
 
     Serial.println("[disp] setRotation"); Serial.flush();
-    tft->setRotation(0);        /* portrait 0deg */
+    tft->setRotation(0); /* portrait 0deg */
+
+    /* Backlight: TFT_BL=40, TFT_BACKLIGHT_ON=1 en build_flags activa en init().
+     * Forzamos explicitamente por si el modulo necesita el GPIO ya en HIGH. */
+    pinMode(TFT_BL, OUTPUT);
+    digitalWrite(TFT_BL, HIGH);
 
     Serial.println("[disp] fillScreen"); Serial.flush();
     tft->fillScreen(TFT_BLACK); /* negro antes de que LVGL tome control */
