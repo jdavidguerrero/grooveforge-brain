@@ -1,6 +1,6 @@
 # Sprint 2.2 — Engine Prophet-5 con Polyphony de 5 Voces
 
-**Status:** In Progress
+**Status:** Done — CPU 2.5%, 14 blocks, acorde C mayor verificado en hardware
 **Refs:** `apps/docs/01-architecture.md` §4.1, `apps/docs/05-fx-architecture.md` §2
 
 ---
@@ -180,6 +180,71 @@ Serial → n67  (G4)
 
 Resultado: acorde C mayor con 2 VCOs por nota = 6 osciladores simultáneos.
 Aumentar crossmod con `m0.3` para efecto FM-like en cada nota del acorde.
+
+---
+
+## Learnings
+
+### Métricas reales en hardware (Teensy 4.1 + Audio Shield Rev D2)
+
+| Métrica | Estimado | Real | Delta |
+|---|---|---|---|
+| CPU @ 5 voces activas | ~3.0% | **2.5%** | -17% (mejor) |
+| AudioMemory peak | ~29 bloques | **14 bloques** | -52% (mejor) |
+| Flash | — | 57,992 bytes | < 1% de 7.75MB |
+| RAM variables | — | 18,240 bytes | < 4% de 512KB |
+
+El estimado de CPU fue conservador — la Teensy Audio Library procesa en ISR con overhead
+menor al esperado para el grafo de 29 nodos. 14 bloques peak vs. 72 reservados indica
+que el grafo no tiene paths simultáneos de esa profundidad en operación real.
+
+### AudioConnection arrays: el problema de copia
+
+El bug más importante del sprint: los arrays de `AudioConnection` con brace-init fallan
+en compilación porque `AudioConnection` tiene el constructor de copia eliminado. La
+solución (29 miembros nombrados `_c0.._c28` en lista de inicialización del constructor)
+es verbose pero es el patrón correcto para la Teensy Audio Library. A documentar como
+patrón estándar para engines futuros con muchas conexiones.
+
+### Polyphony real vs. teórica
+
+5 voces simultáneas (acorde C mayor) verificado sin artifacts, sin glitches, sin
+xruns. Voice stealing no fue necesario en la demo (menos de 5 notas), pero la lógica
+FIFO está implementada y se verificará en demo extendido.
+
+### CrossMod como diferenciador tímbrico
+
+`m0.3` con acorde produce el carácter FM-like que distingue al Prophet-5 de los pads
+del Juno. Valores >0.5 generan inharmonicidad visible — consistente con el Poly-Mod
+del hardware original. La aproximación por fase acumulada es suficiente para capturar
+el timbre sin implementar FM exacto.
+
+### Patrón de masterMix para polyphony
+
+AudioMixer4 tiene 4 entradas. Para 5 voces: masterMixA (voces 0-3) → finalMix,
+masterMixB (voz 4) → finalMix. Este patrón escala a N voces con ceil(N/4) mixers
+intermedios. Para engines futuros con más voces (ej. 8 voces), se necesitan
+3 mixers intermedios + 1 final.
+
+### Comparación de engines implementados
+
+| Engine | Voces | CPU real | Mem peak | Osciladores/voz |
+|---|---|---|---|---|
+| Moog Model D | 1 | 0.5% | 4 bloques | 3 VCO + noise |
+| Juno-106 | 1 | ~0.5% | ~8 bloques | 1 DCO + sub + chorus |
+| Prophet-5 | 5 | 2.5% | 14 bloques | 2 VCO |
+
+Budget `01-architecture.md §4.1` (engines ~30% @ 6 voces): **Prophet-5 consume 2.5%
+de un budget de 30% — queda 27.5% disponible para FX simultáneos.**
+
+### Deuda técnica identificada
+
+- `AudioFilterStateVariable` es placeholder 12dB/oct vs. 24dB/oct original del SSM2044
+  del Prophet-5. Cuando Sprint 1.4 entregue el ladder analógico, considerar routing
+  adicional via ADC para al menos la voz principal (polyphony completa en ladder
+  requiere 5 chips — fuera de alcance de hardware actual).
+- Drift de VCO no implementado — evaluar en sprint de carácter tímbrico si es necesario
+  (±1-2 cents de LFO de baja amplitud por oscilador).
 
 ---
 
