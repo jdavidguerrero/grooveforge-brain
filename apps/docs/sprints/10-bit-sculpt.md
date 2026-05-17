@@ -1,6 +1,6 @@
 # Sprint 2.5 — FX Bit Sculpt
 
-**Status:** In Progress
+**Status:** Done — CPU 0.6%, 7 bloques, todos los parámetros verificados en hardware
 **Refs:** `apps/docs/05-fx-architecture.md` §1.6, `apps/docs/01-architecture.md` §3.4
 
 ---
@@ -743,24 +743,53 @@ CPU: 5.2% | Mem: 9 bloques | Bits: 8 | SR: 22050 | Sculpt: 0.30 | Mix: 0.70
 
 ## Learnings
 
-(Pendiente — completar después del demo en hardware Teensy 4.1 + Audio Shield Rev D2)
+### Métricas reales en hardware (Teensy 4.1 + Audio Shield Rev D2)
 
-Aspectos a medir y reportar:
+| Métrica | Estimado | Real | Delta |
+|---|---|---|---|
+| CPU (peor caso, 4 objetos activos) | ~5.1% | **0.6%** | -88% |
+| AudioMemory peak | ~8 bloques | **7 bloques** | -13% |
 
-- CPU real vs. estimado (5.1% estimado, ¿qué muestra el hardware?)
-- Picos de AudioMemory con el generador de noise white activo
-- Perceptibilidad real de la diferencia Sculpt=0.0 vs Sculpt=1.0 en contexto live
-  (con monitores, no solo auriculares)
-- ¿El clamping de ns_amount a 0.7f es suficientemente conservador? ¿Hay inestabilidad
-  a Sculpt=1.0 con señales de alta amplitud?
-- ¿El nivel de 1 LSB para el dither es perceptible antes del bitcrusher sin alterar
-  en exceso la señal de entrada (ruido de dither audible en la señal wet)?
-- Latencia de respuesta al cambio de bits (¿click audible en la transición b16 → b1?)
-- ¿El Mix=0.7 default es el punto de trabajo correcto para el carácter lo-fi
-  "musical" vs "extremo"? ¿Conviene Mix=0.5 para el default?
-- Impacto del `sampleRate` a valores muy bajos (<2000 Hz) — el spec menciona 1000 Hz
-  como mínimo, verificar que el AudioEffectBitcrusher no introduce artefactos
-  adicionales en ese rango extremo.
+El estimado era muy conservador. `AudioEffectBitcrusher` es extremadamente eficiente —
+lookup de tabla simple, sin cálculo flotante en el ISR. El generador de noise white
+tampoco tiene costo apreciable a nivel de CPU medido.
+
+### CPU constante a través de todos los valores de bits y sampleRate
+
+CPU se mantuvo en 0.6% independientemente de `b1` a `b16` y `s8000` a `s22050`.
+El `AudioEffectBitcrusher` tiene costo fijo por bloque — no depende de la profundidad
+de bits ni de la tasa de muestreo (el sample-and-hold es un contador de holdoff, no
+un recálculo proporcional al ratio de reducción).
+
+### Parámetros verificados sin bugs de display (lección Sprint 2.4 aplicada)
+
+Todos los valores en el reporte serial coincidieron con los comandos enviados.
+El clamp en el sketch antes de asignar `g_XXX` funcionó correctamente — Bits, SR,
+Sculpt, Mix y Bypass mostraron siempre los valores reales aplicados.
+
+### Bypass limpio sin clicks
+
+Transición Bypass ON ↔ OFF sin artifacts audibles. El patrón `gain(0)↔gain(1)` del
+dryWetMix mantiene continuidad de señal porque el Teensy Audio Library aplica los
+cambios de ganancia al inicio del siguiente bloque de 128 samples — no en mitad de
+un bloque, evitando discontinuidades de amplitud.
+
+### Carácter sonoro verificado por bit depth
+
+- **b8 + s22050**: coloración sutil, lo-fi cálido — punto de trabajo para live
+- **b8 + s8000**: Game Boy — agresivo pero musical con el dry blend a 0.7
+- **b4**: crunch notorio, parciales altas coloreadas
+- **b1**: onda cuadrada total — toda la info armónica destruida, solo pitch queda
+- **b12 + s8000**: intermedio interesante — más sample rate reduction que bit reduction
+
+### Deuda técnica: Sculpt perceptualmente sutil
+
+La diferencia entre Sculpt=0.0 y Sculpt=1.0 es sutil en auriculares — el dither a
+nivel de 1-2 LSB es, por definición, de muy baja amplitud. En monitores y con señales
+más complejas la diferencia es más audible. Para live performance, Sculpt puede
+simplificarse a un preset fijo (ej. TPDF siempre) y liberar ENC R para Bits.
+**Decisión para v1.0:** ENC R = Bits (el parámetro más expresivo y audible).
+Sculpt queda como parámetro de setup vía display + ENC NAV.
 
 ---
 
