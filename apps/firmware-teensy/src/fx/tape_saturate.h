@@ -145,7 +145,7 @@ private:
     // AudioFilterStateVariable: out0=lowpass, out1=bandpass, out2=highpass
     AudioConnection _cWaveLp;     // waveshaper      → _lpFilter (in0)
     AudioConnection _cLpHp;       // _lpFilter(out0) → _hpFilter (in0)
-    AudioConnection _cHpWet;      // _hpFilter(out0) → _dryWetMix (ch1, wet)
+    AudioConnection _cHpWet;      // _hpFilter(out2=highpass) → _dryWetMix (ch1, wet)
     AudioConnection _cMixL;       // _dryWetMix      → _out (ch0, L)
     AudioConnection _cMixR;       // _dryWetMix      → _out (ch1, R)
 

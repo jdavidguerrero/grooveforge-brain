@@ -14,7 +14,7 @@
 TapeSaturate::TapeSaturate()
     : _cWaveLp(_waveshaper,  0, _lpFilter,  0)   // waveshaper out → lpFilter in
     , _cLpHp  (_lpFilter,    0, _hpFilter,  0)   // lpFilter lowpass(out0) → hpFilter in
-    , _cHpWet (_hpFilter,    0, _dryWetMix, 1)   // hpFilter lowpass(out0) → wet channel
+    , _cHpWet (_hpFilter,    2, _dryWetMix, 1)   // hpFilter highpass(out2) → wet channel
     , _cMixL  (_dryWetMix,   0, _out,       0)   // mix → I2S Left
     , _cMixR  (_dryWetMix,   0, _out,       1)   // mix → I2S Right
 {}
@@ -132,10 +132,10 @@ void TapeSaturate::update(float dt_ms) {
                       + 0.3f * sinf(2.0f * PI * _flutterPhase2);
 
     // Escala cents → factor multiplicativo de frecuencia
-    // wow depth=1.0 → ±5 cents; flutter depth=1.0 → ±3 cents
-    // Ref: 08-tape-saturate.md §"Wow y Flutter — implementación"
-    float cents = (_wowDepth    * 5.0f * wow_lfo)
-                + (_flutterDepth * 3.0f * flutter_lfo);
+    // wow depth=1.0 → ±15 cents; flutter depth=1.0 → ±8 cents
+    // Rango spec: apps/docs/05-fx-architecture.md §1.5 "LFO drift modulando pitch ±2-15 cents"
+    float cents = (_wowDepth    * 15.0f * wow_lfo)
+                + (_flutterDepth * 8.0f  * flutter_lfo);
 
     // 2^(cents/1200) convierte cents a ratio de frecuencia (escala igual-temperada)
     _currentMod = powf(2.0f, cents / 1200.0f) - 1.0f;
