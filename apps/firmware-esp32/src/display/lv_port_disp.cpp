@@ -119,10 +119,11 @@ void lv_port_disp_init(void) {
     Serial.println("[disp] setRotation"); Serial.flush();
     tft->setRotation(0); /* portrait 0deg */
 
-    /* Backlight: TFT_BL=40, TFT_BACKLIGHT_ON=1 en build_flags activa en init().
-     * Forzamos explicitamente por si el modulo necesita el GPIO ya en HIGH. */
-    pinMode(TFT_BL, OUTPUT);
-    digitalWrite(TFT_BL, HIGH);
+    /* Backlight: activamos GPIO2 y GPIO40 — ambos candidatos segun el hardware.
+     * groove_drum (mismo panel) usaba GPIO2; schematic Waveshare 1.28 dice GPIO40.
+     * Activar ambos es inocuo: el pin incorrecto simplemente no hace nada. */
+    pinMode(2,  OUTPUT); digitalWrite(2,  HIGH);
+    pinMode(40, OUTPUT); digitalWrite(40, HIGH);
 
     Serial.println("[disp] fillScreen"); Serial.flush();
     tft->fillScreen(TFT_BLACK); /* negro antes de que LVGL tome control */
