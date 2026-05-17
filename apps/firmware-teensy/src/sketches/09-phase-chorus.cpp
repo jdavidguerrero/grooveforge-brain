@@ -120,32 +120,47 @@ void loop() {
 
         switch (cmd) {
             case 'r': {
-                g_rate = Serial.parseFloat();
+                // Clamp aquí y en la clase — g_rate debe reflejar el valor real aplicado
+                float val = Serial.parseFloat();
+                if (val < 0.1f)  val = 0.1f;
+                if (val > 10.0f) val = 10.0f;
+                g_rate = val;
                 chorus.setRate(g_rate);
                 Serial.printf("Rate: %.2f Hz\n", g_rate);
                 break;
             }
             case 'd': {
-                g_depth = Serial.parseFloat();
+                float val = Serial.parseFloat();
+                if (val < 0.0f) val = 0.0f;
+                if (val > 1.0f) val = 1.0f;
+                g_depth = val;
                 chorus.setDepth(g_depth);
                 Serial.printf("Depth: %.2f\n", g_depth);
                 break;
             }
             case 't': {
-                g_drift = Serial.parseFloat();
+                float val = Serial.parseFloat();
+                if (val < 0.0f) val = 0.0f;
+                if (val > 1.0f) val = 1.0f;
+                g_drift = val;
                 chorus.setDrift(g_drift);
                 Serial.printf("Drift: %.2f\n", g_drift);
                 break;
             }
             case 'v': {
-                // parseFloat().toInt() equivalente: parseFloat devuelve float, se trunca a int
-                g_voices = (uint8_t)Serial.parseFloat();
+                uint8_t val = (uint8_t)Serial.parseFloat();
+                if (val < 1) val = 1;
+                if (val > 4) val = 4;
+                g_voices = val;
                 chorus.setVoices(g_voices);
                 Serial.printf("Voices: %d\n", g_voices);
                 break;
             }
             case 'm': {
-                g_mix = Serial.parseFloat();
+                float val = Serial.parseFloat();
+                if (val < 0.0f) val = 0.0f;
+                if (val > 1.0f) val = 1.0f;
+                g_mix = val;
                 chorus.setMix(g_mix);
                 Serial.printf("Mix: %.2f\n", g_mix);
                 break;

@@ -1,6 +1,6 @@
 # Sprint 2.4 — FX Phase Chorus
 
-**Status:** In Progress
+**Status:** Done — CPU 1.1%, 7 bloques, chorus funcional en hardware
 **Refs:** `apps/docs/05-fx-architecture.md` §1.8, `apps/docs/01-architecture.md` §3.4
 
 ---
@@ -787,26 +787,66 @@ pio run -e sketch --target upload
 
 ## Learnings
 
-(Pendiente — completar después del demo en hardware Teensy 4.1 + Audio Shield Rev D2)
+### Métricas reales en hardware (Teensy 4.1 + Audio Shield Rev D2)
 
-Aspectos a medir y reportar:
+| Métrica | Estimado | Real | Delta |
+|---|---|---|---|
+| CPU @ 4 voces activas | ~6% | **1.1%** | -82% (mucho mejor) |
+| AudioMemory peak | ~8 bloques | **7 bloques** | -13% |
 
-- CPU real vs. estimado (~6% estimado, ¿qué reporta el hardware con 4 voces?)
-- Audibilidad real del drift caótico: ¿el factor 0.3 en la modulación de nivel wet
-  es suficiente para dar "respiración" o hay que aumentarlo?
-- Click audible al cambiar Voices en runtime: ¿el fade de 10ms es suficiente para
-  eliminarlo o se necesita una rampa más larga?
-- Consistencia del nivel al cambiar Voices (1→4): ¿hay diferencia de nivel
-  perceptible que requiera compensación de ganancia por número de voces?
-- Comportamiento de `AudioEffectChorus.begin()` con buffer de 1200 samples: ¿hay
-  artifacts audibles con LFO interno en los extremos del buffer?
-- Perceptibilidad real de la diferencia t0.0 vs t1.0 en el acorde C mayor
-  con sawtooth — puede que con señales más complejas la diferencia sea más o menos
-  notable
-- Rate máximo usable antes de que el chorus suene como vibrato/trémolo en lugar de
-  chorus (¿es el límite 3 Hz? ¿5 Hz? — depende del contenido de audio)
-- Interacción con Tape Saturate (Sprint 2.3): si se encadenan Phase Chorus → Tape
-  Saturate, ¿hay problemas de nivel o intermodulación?
+El estimado fue muy conservador. `AudioEffectChorus` es más eficiente de lo esperado,
+probablemente porque opera en bloques de 128 samples en ISR con accesos de memoria secuenciales (cache-friendly).
+
+### Limitación crítica: AudioEffectChorus no expone su LFO interno
+
+**El descubrimiento más importante del sprint.** La API de `AudioEffectChorus` solo expone:
+- `begin(buffer, length, voices)` — inicialización
+- `voices(n)` — número de voces en runtime
+
+No hay parámetros para Rate ni Depth del LFO interno. El chorus modula su delay
+a una velocidad y profundidad fijas definidas en tiempo de compilación de la librería.
+
+**Consecuencia directa:** el parámetro `Rate` implementado controla únicamente la
+velocidad del LFO que modula el **nivel del canal wet** (amplitud modulation), no el
+tiempo de delay del chorus. A Rate altas (>10Hz) el efecto se convierte en trémolo
+sobre el wet, no en chorus rápido. El sonido del chorus en sí (modulación de delay)
+es fijo internamente.
+
+**Para producción (Sprint 3.x o posterior):** si se necesita Rate controlable real,
+hay dos opciones:
+1. Implementar chorus custom con `AudioEffectDelay` + modulación manual de puntero
+   de lectura desde loop() — requiere fork de la librería o implementación desde cero.
+2. Aceptar el Rate fijo y hacer de `voices(n)` el parámetro principal de variación
+   tímbrica del chorus — que es lo que el Juno-106 original hacía (el BBD
+   chorus del Juno tenía Rate semi-fijo, el usuario elegía entre Mode I y Mode II).
+
+**Decisión para v1.0:** voices es el parámetro principal. Rate en FX mode controla
+el LFO de wet-gain (efecto trémolo-sobre-chorus útil en live). Documentado en spec.
+
+### Voices (1–4): diferencia tímbrica real
+
+Verificado en hardware:
+- 1 voz: vibrato sutil, casi un pitch wobble
+- 2 voces: chorus clásico — el "sonido Juno" reconocible
+- 3 voces: más denso, ensemble feeling
+- 4 voces: lush, casi como detuning de capas
+
+La transición entre voces con fade de 10ms (`delay(10)`) eliminó los clicks audibles.
+
+### Bug encontrado y corregido: sketch no clampeaba variables de display
+
+El sketch mostraba valores fuera de rango (Rate: 300Hz, Depth: 3.0, Voices: 8)
+porque `g_XXX` variables se actualizaban con el valor raw de `Serial.parseFloat()`
+antes de pasar por el clamp de la clase. La clase aplicaba el clamp correctamente
+en audio, pero el display mentía. Corregido: clamp en el sketch antes de asignar
+`g_XXX`, sincronizando display con el valor real aplicado.
+
+### Deuda técnica identificada
+
+- Rate controlable real requiere chorus custom (no AudioEffectChorus) — candidato
+  para Sprint de DSP avanzado en Fase 4.
+- El mapping ENC R = Depth (per UI spec §3.4) es correcto: Depth es el parámetro
+  más expresivo en live. Voices se configura en setup, no en performance.
 
 ---
 
