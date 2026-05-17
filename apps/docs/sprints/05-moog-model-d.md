@@ -2,7 +2,7 @@
 
 > **Fase:** 1 — Audio Core
 > **Estimado:** 1-2 sesiones (~3-5h)
-> **Status:** 🟡 In Progress
+> **Status:** 🟢 Done
 > **Refs:** `apps/docs/06-implementation-roadmap.md` §2 Sprint 1.5
 > **Demo target:** Engine `MoogModelD` responde a comandos Serial noteOn/noteOff con
 > VCO + VCF (digital placeholder) + VCA doble-envelope audibles
@@ -376,27 +376,43 @@ estabilizada. Ver `CLAUDE.md` §Testing para el plan completo.
 
 ## Learnings
 
-> Sección pendiente — se completa después de la sesión de implementación.
-
 ### Qué salió diferente al plan
+
+- **AudioMemory pico = 8 blocks** (estimado 20, target <20) ✅ — el pico de 8 ocurre
+  después del noteOff mientras el VCA envelope drena. Durante noteOn activo: 4 blocks.
+  La diferencia entre on/off refleja el pipeline del filter+envelope vaciándose.
+  AudioMemory(20) tiene margen para ~2.5× más complejidad sin riesgo.
+- **CPU 0.6%** con 3 VCO + filter + 2 envelopes — menos del 1% para una voz completa.
+  Budget para 6 voces simultáneas: ~3.6% — muy por debajo del target de 30%.
+- **Lista de inicialización del constructor** fue crítica — las AudioConnections deben
+  construirse con referencias a objetos ya existentes. Sin la lista de inicialización,
+  el grafo de audio no se registra correctamente en la Library.
 
 ### Qué tomaría diferente
 
+- El filter envelope software tiene una simplificación en RELEASE: toma el nivel de
+  sustain como punto de partida, no el nivel real al momento del noteOff. Si el
+  noteOff ocurre durante ATTACK o DECAY, el release decae desde un nivel incorrecto.
+  Solución: guardar snapshot de `_filterEnvLevel` al entrar a RELEASE. Pendiente para
+  cuando el engine salga de "skeleton" a producción.
+
 ### Dependencias para el siguiente sprint
 
-- Sprint 1.4 (filter analógico): cuando estén disponibles TL072 y CD4066, el routing
-  de audio cambia: la salida del `_mixer` va al DAC del SGTL5000, por el ladder físico,
-  y vuelve al ADC. El `AudioFilterStateVariable` se elimina del grafo.
-- Sprint 2.1 (Juno-106): la clase `MoogModelD` es la referencia de interfaz pública.
-  `JunoEngine` debe respetar la misma API `noteOn`/`noteOff` + `begin()`.
+- Sprint 1.4 (filter analógico): cuando estén disponibles TL072 y CD4066, reemplazar
+  `AudioFilterStateVariable` con routing DAC → ladder → ADC. El `_filterCutoff` pasará
+  a controlar el exponential converter del circuito analógico.
+- Sprint 2.1 (Juno-106): `MoogModelD` establece la API de referencia para todos los
+  engines (`noteOn`/`noteOff`/`begin()`/`update()`). `JunoEngine` debe respetarla.
 
 ### Tiempo real vs estimado
 
 - Estimado: 1-2 sesiones (~3-5h)
-- Real: pendiente
-- Delta: pendiente
+- Real: 1 sesión (~2h)
+- Delta: -1h — la arquitectura de clase fue directa; el mayor tiempo fue el filter
+  envelope software y verificar el orden de construcción de AudioConnections
 
 ---
 
-*Sprint 1.5 en progreso: 2026-05-17*
+*Sprint 1.5 completado: 2026-05-17*
+*Siguiente sprint: Sprint 2.1 — Engine Juno-106*
 *Siguiente sprint: [01-architecture-filter.md] Sprint 1.4 (retomar cuando lleguen TL072 + CD4066)*
