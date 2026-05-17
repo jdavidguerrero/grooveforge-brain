@@ -108,8 +108,8 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 │                                                                    │
 │  ┌────────────────┐                                                │
 │  │ Encoders ALPS  │  GPIO directo al Teensy                       │
-│  │ Kailh switches │  6 botones + 2 encoders + action button       │
-│  │ WS2812B LEDs   │  6 keycaps + 16-LED ring                       │
+│  │ Kailh switches │  4 botones (B1-B4) + 3 encoders ALPS EC11      │
+│  │ WS2812B LEDs   │  16 LEDs: 12 ring ENC NAV + 4 keycap underglow │
 │  │ Volume pot     │  ADC analog                                   │
 │  └────────────────┘                                                │
 │                                                                    │
@@ -163,12 +163,13 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 | **ESP32-S3 con GC9A01 1.28" integrado** | $22.00 | Waveshare ESP32-S3-Touch-LCD-1.28 o equivalente |
 | SGTL5000 IC standalone | $4.00 | Chip bare en PCB producción + caps + clock |
 | Oscilador 12.288 MHz DIP-4 3.3V | $2.00 | Opcional — Teensy provee MCLK nativo |
-| ALPS EC11 encoders x2 | $4.20 | Con switch integrado |
-| Knobs aluminum CNC x2 | $1.00 | Bogotá local CNC |
-| Kailh Choc V2 switches x6 | $1.80 | Low-profile mecánico |
-| Keycaps PBT custom x6 | $2.00 | Translucent con iconografía láser |
-| WS2812B LEDs x6 | $1.00 | Iluminación keycap |
-| Action button illuminated + LED ring 16-LED | $2.50 | Mecánico con LED |
+| ALPS EC11 encoders x3 | $6.30 | ENC L + ENC R + ENC NAV — todos con push integrado |
+| Knobs aluminum CNC x2 + 1 central | $1.80 | ENC L/R: knobs estándar; ENC NAV: knob más prominente |
+| Kailh Choc V2 Brown switches x4 | $1.20 | B1-B4 (dual set keycaps: negro instalado + transparente en sobre) |
+| Keycaps PBT rectangular x4 negro | $1.20 | Instalados de fábrica — sin serigrafía (display da contexto) |
+| Keycaps PBT rectangular x4 transparente | $0.80 | En sobre (dual set) |
+| Keycap circular custom PETG/PBT x1 | $0.50 | ENC NAV — diseño Juan, icono ● grabado láser |
+| WS2812B-2020 SMD x16 | $1.20 | 12 ring ENC NAV + 4 keycap underglow — cadena única, 1 pin Teensy |
 | Volume pot 10kΩ log + knob | $1.00 | Panel mount + aluminum knob |
 | USB-C + USB-A connectors | $0.80 | USB-C device, USB-A host |
 | Audio jacks 1/4" TRS x2 | $3.60 | Switched ground |
@@ -179,7 +180,7 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 | **CD4066 quad analog switch** | **$0.30** | Software bypass control |
 | ~~Toggle switch TPDT panel-mount~~ | ~~$0.50~~ | ~~Eliminado — bypass 100% software vía CD4066~~ |
 | **Capacitors 1nF polystyrene x4 + passives** | **$1.30** | Filter timing caps + trimmers + resistors |
-| **Resonance pot 10kΩ log** | **$0.80** | Panel control resonance |
+| ~~Resonance pot 10kΩ log~~ | ~~$0.80~~ | ~~Eliminado — resonance controlada por ENC R (digital)~~ |
 | **Filter PCB sub-block 30x40mm** | **$0.50** | 2-layer |
 | Pogo connector 6-pin magnetic | $1.50 | Würth o equivalente |
 | PCB principal 4-layer 180x100mm | $6.00 | Audio + digital + power planes |
@@ -254,13 +255,18 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | 19 | I2C1 SCL | SGTL5000 control |
 | 0 | UART RX | ← ESP32-S3 TX |
 | 1 | UART TX | → ESP32-S3 RX |
-| 2-6, 9 | GPIO | 6 Kailh switches (pulled-up) |
-| 14-17 | GPIO | 2 encoders A/B/SW (rotary) |
-| 26 | GPIO | Action button input |
-| 25 | GPIO | Filter bypass control (CD4066 enable — GUI via Bridge Protocol) |
+| 2-5 | GPIO | 4 Kailh Choc V2 switches B1-B4 (pulled-up) |
+| 10-11 | GPIO | ENC L: A / B (rotary phases) |
+| 12 | GPIO | ENC L: SW (push — filter bypass toggle) |
+| 13 | GPIO | ENC R: A |
+| 14 | GPIO | ENC R: B |
+| 15 | GPIO | ENC R: SW (push — resonance reset a 0) |
+| 16 | GPIO | ENC NAV: A |
+| 17 | GPIO | ENC NAV: B |
+| 26 | GPIO | ENC NAV: SW (push — confirm / AI·Action / double-push = mode switch) |
+| 25 | GPIO | Filter bypass control (CD4066 enable — ENC L push via firmware) |
 | 27 | GPIO | **Libre** — TPDT eliminado (bypass 100% software) |
-| 28 | PWM | LED ring 16-LED (WS2812B chain) |
-| 29 | WS2812B DOUT | 6 keycap LEDs daisy-chain |
+| 28 | WS2812B DIN | 16 LEDs cadena única: 12 ring ENC NAV + 4 keycap underglow |
 | A0 (14) | ADC | Volume pot read |
 | 36 | GPIO | Pogo INT in (slave interrupt) |
 | 37/38 | I2C2 SDA/SCL | Pogo bus master (slaves) |
@@ -282,7 +288,77 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | GPIO 18 | Display backlight PWM | GC9A01 backlight |
 | (Internal) | WiFi + BT | 802.11 b/g/n + BT 5.0 LE |
 
-### 3.4 Discrete 2N3904 Ladder Filter Design
+### 3.4 UI Controls Spec — Panel v5 Final
+
+> **SSoT:** Notion "Hardware UI Spec — CERRADO (Panel v5 Final)" · Mayo 17, 2026
+
+**Filosofía:** minimalista boutique — 3 encoders + 4 botones + 1 vol pot. Más cercano al OP-1 que al Elektron.
+
+#### Inventario de controles
+
+| ID | Tipo | Turn | Push |
+|---|---|---|---|
+| ENC L | ALPS EC11 | Synth: Cutoff / FX: Dry-Wet | Filter bypass toggle |
+| ENC R | ALPS EC11 | Synth: Resonance / FX: Depth/param principal | Resonance reset a 0 |
+| ENC NAV | ALPS EC11 | Navegar menú / páginas / FX | 1× confirm/AI·Action · 2× rápido = modo SYNTH↔FX |
+| B1-B4 | Kailh Choc V2 Brown | — | Synth: OSC/ENV/LFO/PRESET · FX: INSERT/SEND/MASTER/slot |
+| VOL | Pot 10kΩ log | Volumen salida (siempre, no cambia con modo) | — |
+
+#### Modo SYNTH
+
+```
+ENC L    → Cutoff del filtro analógico discreto 2N3904
+ENC R    → Resonance
+ENC NAV  → Navegar páginas del synth (OSC / ENV / LFO/MOD / ENGINE / PRESET)
+ENC L push  → Filter bypass CD4066 ON/OFF (pin 25)
+ENC R push  → Resonance reset a 0
+ENC NAV push → Confirm / AI·Action (escala al nivel activo: 0=menú, 1=Scale Lock, 3=cloud, 4=DAW)
+B1=OSC · B2=ENV · B3=LFO/MOD · B4=PRESET/ENGINE
+```
+
+#### Modo FX (RMX-1000 inspired)
+
+```
+ENC L    → Dry/Wet del FX activo
+ENC R    → Parámetro principal del FX activo (definido por cada FX)
+ENC NAV  → Scroll entre los 12 FX disponibles
+ENC NAV push → Activar/desactivar FX seleccionado
+B1=INSERT · B2=SEND · B3=MASTER · B4=FX slot favorito
+```
+
+**Cambio de modo:** doble push ENC NAV (≤ 2 s)
+
+#### LED ring ENC NAV (12× WS2812B-2020 SMD)
+
+| Estado | Animación | Color |
+|---|---|---|
+| Synth mode | Pulso suave | Teal `#1D9E75` |
+| FX mode | Pulso suave | Purple `#534AB7` |
+| Cambio de modo | Sweep 360° | Teal → Purple |
+| IA procesando | Giro rápido | Teal brillante |
+| Sugerencia lista | 3 pulsos + fijo | Teal |
+| DAW conectado | Fijo | Purple |
+| Error / sin conexión | Pulso lento | Rojo |
+| Scale Lock activo | Fijo | Verde |
+
+#### ENC R mapping por FX (parámetro principal en FX mode)
+
+| FX | ENC L (Dry/Wet) | ENC R (Depth/param) |
+|---|---|---|
+| Cymatic Resonator | Mix | Resonance (Q) |
+| Granular Cloud | Mix | Size (grain duration) |
+| Ghost Echo | Mix | Feedback |
+| Spectral Smear | Mix | Smear time |
+| **Tape Saturate** | **Mix** | **Drive** |
+| Bit Sculpt | Mix | Bits |
+| Modal Reverb | Mix | Decay |
+| Phase Chorus | Mix | Depth |
+| Pitch Mosaic | Mix | Interval 1 |
+| Spring + Plate | Mix | Decay |
+| Glitch Stutter | Mix | Pattern division |
+| Sub Genesis | Mix | Sub level |
+
+### 3.5 Discrete 2N3904 Ladder Filter Design
 
 **Topology:** 4-pole low-pass transistor ladder (Moog Minimoog 1970 reference)
 
