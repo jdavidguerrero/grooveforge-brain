@@ -199,6 +199,10 @@ SGTL5000 DAC → 1/4" TRS L/R out
 
 **Marketing hook único:** "Reverb de guadua colombiana — único en el mundo"
 
+**Implementado en Sprint 2.7** — materiales: campana, guadua, cristal, madera.
+CPU medido: 1.2%. Memoria: 5/11 bloques AudioMemory.
+Doc: `apps/docs/sprints/12-modal-reverb.md`
+
 ---
 
 ### 1.8 🌗 PHASE CHORUS (Insert Layer)
@@ -351,24 +355,24 @@ SGTL5000 DAC → 1/4" TRS L/R out
 ## 4. Roadmap
 
 ### v1.0 ship (Q3 2027)
-- [ ] Cymatic Resonator
-- [ ] Granular Cloud
-- [ ] Ghost Echo
-- [ ] Tape Saturate
-- [ ] Bit Sculpt
-- [ ] Modal Reverb (campana + guadua)
-- [ ] Phase Chorus
-- [ ] Spring + Plate
-- [ ] Sub Genesis
+- [x] Tape Saturate — Sprint 2.3 ✅ CPU 3%
+- [x] Phase Chorus — Sprint 2.4 ✅ CPU 1.1%
+- [x] Bit Sculpt — Sprint 2.5 ✅ CPU 0.6%
+- [x] Sub Genesis — Sprint 2.6 ✅ CPU 0.8%
+- [x] Modal Reverb (campana + guadua + cristal + madera) — Sprint 2.7 ✅ CPU 1.2%
+- [ ] Cymatic Resonator — Sprint 2.8
+- [ ] Granular Cloud — Sprint 2.9
+- [ ] Spring + Plate — Sprint 2.10
+- [ ] Ghost Echo (v1.0 sin Markov, v2.0 con TinyML) — Sprint 2.11
 
 ### v1.1 free update (Q1 2027)
 - [ ] Spectral Smear
-- [ ] Glitch Stutter
-- [ ] Pitch Mosaic simplified
+- [ ] Glitch Stutter (requiere TinyML beat detection — Sprint 4.5+)
+- [ ] Pitch Mosaic simplified (requiere TinyML key detection — Sprint 4.3+)
 
 ### v1.2 free update (Q2 2027)
 - [ ] Pitch Mosaic enhanced (phase-vocoder custom)
-- [ ] Modal Reverb extra materials (cristal, madera, cuero, metal)
+- [ ] Ghost Echo v2.0 — Markov chain rhythm prediction (requiere TinyML beat detection — Sprint 4.5+)
 - [ ] FX chains community sharing (cloud Layer 2)
 
 ## 5. Live Testing Protocol (Juan/GPROG)

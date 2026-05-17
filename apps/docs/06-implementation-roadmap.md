@@ -26,7 +26,7 @@
 |---|---|---|
 | **Fase 0** | Foundation | Tooling, monorepo, skills, agents, CLAUDE.md |
 | **Fase 1** | Nivel 0 — Audio core | Tono 440Hz → first engine → filter analog |
-| **Fase 2** | Nivel 0 — Multi-engine + FX | 3 engines + 5-8 FX signature |
+| **Fase 2** | Nivel 0 — Multi-engine + FX | 3 engines + 11 FX signature |
 | **Fase 3** | Nivel 0 — UI + display | Encoders + buttons + display GC9A01 funcional |
 | **Fase 4** | Nivel 1 — MIDI + TinyML | USB-A host + 3 TinyML models |
 | **Fase 5** | Nivel 3 — WiFi + Cloud | ESP32-S3 con WiFi + cloud sync |
@@ -168,9 +168,9 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 
 ## 3. Fase 2 — Multi-Engine + FX (Semana 7-14, Jul-Ago 2026)
 
-**Objetivo:** 3 engines completos + 5-8 efectos signature.
+**Objetivo:** 3 engines completos + 11 efectos signature.
 
-### Sprint 2.1 — Engine Juno-106 (2 sesiones)
+### Sprint 2.1 — Engine Juno-106 (2 sesiones) ✅
 
 **Theory:**
 - Roland Juno-106 arquitectura: 1 DCO + sub + chorus + VCF + VCA
@@ -179,13 +179,13 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 - Por qué los Juno suenan "hi-fi" vs los Moog "warm"
 
 **Implementation:**
-- [ ] `apps/firmware-teensy/src/engines/juno_106.cpp`
-- [ ] Chorus modelado del BBD vintage
-- [ ] Engine switch via Serial command
+- [x] `apps/firmware-teensy/src/engines/juno_106.cpp`
+- [x] Chorus modelado del BBD vintage
+- [x] Engine switch via Serial command
 
 **Demo audible:** A/B Moog vs Juno con misma nota.
 
-### Sprint 2.2 — Engine Prophet-5 (2 sesiones)
+### Sprint 2.2 — Engine Prophet-5 (2 sesiones) ✅
 
 **Theory:**
 - Sequential Circuits Prophet-5 arquitectura
@@ -194,13 +194,13 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 - Por qué el Prophet es el "sonido de los 80s"
 
 **Implementation:**
-- [ ] `apps/firmware-teensy/src/engines/prophet_5.cpp`
-- [ ] Cross-modulation algorithm
-- [ ] Polyphony management (5 voices)
+- [x] `apps/firmware-teensy/src/engines/prophet_5.cpp`
+- [x] Cross-modulation algorithm
+- [x] Polyphony management (5 voices)
 
 **Demo audible:** 3 engines disponibles, switch entre ellos.
 
-### Sprint 2.3 — FX Tape Saturate (1 sesión)
+### Sprint 2.3 — FX Tape Saturate (1 sesión) ✅
 
 **Theory:**
 - Saturación vs distorsión vs clipping
@@ -209,13 +209,14 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 - Por qué el LFO caótico vs sinusoidal
 
 **Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/tape_saturate.cpp`
-- [ ] Custom waveshaper curve
-- [ ] LFO drift caotic generator
+- [x] `apps/firmware-teensy/src/fx/tape_saturate.cpp`
+- [x] Custom waveshaper curve
+- [x] LFO drift caotic generator
 
 **Demo audible:** Engine sin/con tape saturate.
+**Doc:** `apps/docs/sprints/08-tape-saturate.md`
 
-### Sprint 2.4 — FX Phase Chorus (1 sesión)
+### Sprint 2.4 — FX Phase Chorus (1 sesión) ✅
 
 **Theory:**
 - Chorus = delay corto modulado por LFO
@@ -223,46 +224,161 @@ Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 - Multi-voice chorus stacking
 
 **Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/phase_chorus.cpp`
-- [ ] LFO con drift caótico (no perfecto sin)
-- [ ] Voice stacking 1-4 chorus voices
+- [x] `apps/firmware-teensy/src/fx/phase_chorus.cpp`
+- [x] LFO con drift caótico (no perfecto sinusoidal)
+- [x] Voice stacking 1-4 chorus voices
 
 **Demo audible:** Engine + tape + chorus = signature warmth.
+**Doc:** `apps/docs/sprints/09-phase-chorus.md`
 
-### Sprint 2.5 — FX Modal Reverb (Guadua) (2 sesiones)
+### Sprint 2.5 — FX Bit Sculpt (1 sesión) ✅
 
-**Theory:**
-- Reverb = sum of decaying resonant modes
-- Cómo medir modos físicos de un objeto real (FFT sample)
-- Bandpass filter banks parallel
-- Por qué la guadua tiene espectro único
-
-**Implementation:**
-- [ ] Capture FFT de impacto en guadua real (mic + Audacity)
-- [ ] `apps/firmware-teensy/src/fx/modal_reverb.cpp`
-- [ ] Bank of 6-8 resonant filters tuned al espectro
-- [ ] 4 materials initially: campana, guadua, cristal, madera
-
-**Demo audible:** "Reverb de guadua colombiana" — el sello único.
-
-### Sprint 2.6 — FX Ghost Echo (con Markov chain) (2 sesiones)
+> **Nota:** El roadmap original asignaba este slot a "Modal Reverb". El Modal Reverb se
+> implementó como Sprint 2.7 (ver abajo). Bit Sculpt se adelantó como sprint
+> independiente por su menor complejidad de señal y aporte inmediato al CPU budget
+> del FX stack.
 
 **Theory:**
-- Markov chains: probabilidad de transición entre estados
-- Beat tracking simple
-- Por qué un delay "musical" supera un delay literal
-- Latency budget tight
+- Bitcrusher: reducción de word-length y sample rate
+- Dithering estratégico para preservar pitch en bit-depths bajos
+- Por qué quantization noise tiene carácter musical vs ruido aleatorio
 
 **Implementation:**
-- [ ] Markov chain trainer en Python (`apps/training/markov-rhythm.py`)
-- [ ] Bundle como C array en firmware
+- [x] `apps/firmware-teensy/src/fx/bit_sculpt.cpp`
+- [x] Custom dither algorithm sobre AudioEffectBitcrusher
+- [x] Sample rate reduction independiente de bit-depth
+
+**CPU medido:** 0.6%
+**Demo audible:** Engine + Bit Sculpt en descenso 16→1 bit.
+**Doc:** `apps/docs/sprints/10-bit-sculpt.md`
+
+### Sprint 2.6 — FX Sub Genesis (1 sesión) ✅
+
+> **Nota:** El roadmap original asignaba este slot a "Ghost Echo". Ghost Echo se
+> implementa como Sprint 2.11 (versión simplificada sin Markov chain). Sub Genesis
+> se adelantó porque el análisis de pitch es más directo con la Teensy Audio Library
+> y completa el FX stack de "enriquecimiento" (sub + distorsión + coro).
+
+**Theory:**
+- Sub-octave synthesis: dividir la frecuencia fundamental por 2
+- Pitch tracking con AudioFilterStateVariable LP para aislar fundamental
+- Saturación analógica modelada para sub-bass con carácter
+
+**Implementation:**
+- [x] `apps/firmware-teensy/src/fx/sub_genesis.cpp`
+- [x] Pitch tracking via LP filter + zero-crossing detection
+- [x] AudioSynthWaveform (sub-octave generator) + waveshaper saturation
+
+**CPU medido:** 0.8%
+**Demo audible:** Engine + Sub Genesis — bass weight sin EQ surgery.
+**Doc:** `apps/docs/sprints/11-sub-genesis.md`
+
+### Sprint 2.7 — FX Modal Reverb (2 sesiones) ✅
+
+> **SPRINT AGREGADO** respecto al roadmap original. El Modal Reverb es el
+> diferenciador de producto más fuerte de la Fase 2 — "reverb de guadua colombiana"
+> es un elemento de marketing y de identidad cultural que ningún competidor a $599
+> puede replicar. Su complejidad (6 filtros bandpass paralelos + envelopes por modo)
+> justifica un sprint dedicado. Este sprint hace que la Fase 2 entregue 8 FX en lugar
+> de los 6-7 originalmente planeados — todos dentro del CPU budget documentado.
+
+**Theory:**
+- Síntesis modal: modos resonantes de objetos físicos (barras, placas, campanas)
+- Ecuación de Euler-Bernoulli para barras libres — ratios β_nL inarmónicos
+- Q del filtro vs T60 de decay: arquitectura dual para evitar instabilidad numérica
+- 4 materiales: campana (Cu-Sn), guadua (Guadua angustifolia), cristal, madera
+
+**Implementation:**
+- [x] `apps/firmware-teensy/src/fx/modal_reverb.cpp`
+- [x] 6× AudioFilterBiquad bandpass paralelos (Q=50)
+- [x] Decay envelopes por modo en loop() (no audio thread)
+- [x] 4 materiales con frecuencias y T60 físicamente fundamentados
+
+**CPU medido:** 1.2%, Memoria: 5/11 bloques AudioMemory
+**Demo audible:** Chord C mayor con reverb de guadua — carácter inconfundible.
+**Doc:** `apps/docs/sprints/12-modal-reverb.md`
+
+### Sprint 2.8 — FX Cymatic Resonator (1 sesión)
+
+**Theory:**
+- Patrones cimáticos (Chladni, 1787): superficies vibrando crean nodos y antinodos
+- Por qué 4 BP filters en paralelo modelan modos resonantes del objeto virtual
+- Harmonic series con skip del 4to parcial (ratios 1:2:3:5) para crear tensión armónica
+- LFO lento (0.1–3Hz) modulando tune: sensación de cristal que respira
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/fx/cymatic_resonator.cpp`
+- [ ] 4× AudioFilterBiquad BP en paralelo, Q=10–80
+- [ ] AudioMixer4 (paralelo) + dry/wet final
+- [ ] LFO modulando ratios de frecuencia en update()
+
+**Parámetros:** Tune [0.5-2.0], Density [1-4 modos], Resonance Q [10-80], LFO Rate [0.1-3.0 Hz], Mix, Bypass
+**CPU estimado:** ~8%
+**Doc:** `apps/docs/sprints/13-cymatic-resonator.md`
+
+### Sprint 2.9 — FX Granular Cloud (1-2 sesiones)
+
+**Theory:**
+- Síntesis granular (Xenakis, 1960s; Roads, "Microsound", 2001): el sonido se construye de granos
+- Umbral perceptual: ≥30 granos/seg = tono continuo; <30 = textura
+- AudioEffectGranular: buffer int16_t de 12800 muestras = 267ms a 48kHz
+- Pitch via setSpeed(ratio): 1.0=unison, 0.5=octava baja, 2.0=octava alta
+- Modo freeze: snapshot del audio granulizado en loop (pad ambient independiente del input)
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/fx/granular_cloud.cpp`
+- [ ] AudioEffectGranular con buffer externo int16_t
+- [ ] Grain Size [5-250 ms], Speed [0.25-4.0], Freeze toggle
+
+**Parámetros:** Grain Size, Speed, Freeze, Mix, Bypass
+**CPU estimado:** ~12%
+**Doc:** `apps/docs/sprints/14-granular-cloud.md`
+
+### Sprint 2.10 — FX Spring + Plate (1 sesión)
+
+**Theory:**
+- Spring reverb (Hammond, 1941): reflexiones físicas en resorte de metal — carácter "wobbly"
+- Plate reverb (EMT 140, 1957): placa 2.4m × 1.4m con transductor piezo — densa y suave
+- AudioEffectFreeverb: red Schroeder/Moorer de allpass + comb filters
+- roomsize(0-1) → longitudes de delay de los combs; damping(0-1) → LP de feedback (HF decay rate)
+- Diferencia audible: spring tiene "drip" en transientes, plate es uniforme
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/fx/spring_plate.cpp`
+- [ ] 2× AudioEffectFreeverb (spring + plate) en paralelo
+- [ ] Crossfade matrix spring↔plate via _blendMix
+
+**Parámetros:** Algorithm [spring/plate/blend], Room Size [0-1], Damping [0-1], Blend [0-1], Mix, Bypass
+**CPU estimado:** ~10% (2× Freeverb ≈ 5% cada uno)
+**Doc:** `apps/docs/sprints/15-spring-plate.md`
+
+### Sprint 2.11 — FX Ghost Echo — v1.0 sin Markov (1 sesión)
+
+**Theory:**
+- Delay con feedback + tape color: cada repetición pasa por LP filter que atenúa HF
+- Feedback loop válido en Teensy Audio Library: AudioEffectDelay introduce latencia de
+  exactamente 1 bloque (128 samples = 2.67ms) — el feedback usa siempre samples de n-1 bloques,
+  no hay dependencia circular verdadera
+- AudioFilterStateVariable (port 0 = lowpass) con Q=0.7 (Butterworth) como LP de cinta
+- Tape character: setTapeLP(hz) controla pérdida de HF por pasada — 500Hz = eco oscuro (cinta
+  gastada), 12000Hz = eco brillante (cinta nueva)
+
+**Markov chain deferred (v2.0):** la versión v1.0 es un delay clásico con tape color.
+En v2.0 (Fase 4, Sprint 4.5+), la TinyML beat detection alimentará un Markov chain que
+predice beats y hace que los ecos "anticipen" el groove — las repeticiones literales se
+convierten en variaciones rítmicas coherentes. Este es el "Ghost" del nombre: los ecos
+saben cuándo aparecer.
+
+**Implementation:**
 - [ ] `apps/firmware-teensy/src/fx/ghost_echo.cpp`
+- [ ] AudioEffectDelay (hasta 1400ms) + AudioFilterStateVariable LP feedback
+- [ ] 2× AudioMixer4 (feedback path + dry/wet)
 
-**Demo audible:** Delay que "sabe" cuándo entrar.
+**Parámetros:** Delay Time [10-1400 ms], Feedback [0-0.95], Tape LP [500-12000 Hz], Mix, Bypass
+**CPU estimado:** ~6%
+**Doc:** `apps/docs/sprints/16-ghost-echo.md`
 
-### Sprint 2.7 — FX restantes (Granular, Bit Sculpt, Sub Genesis) (2-3 sesiones)
-
-**HITO FASE 2:** 3 engines + 6-8 FX signature ejecutándose. Esto es ya un producto demostrable.
+**HITO FASE 2:** 3 engines + 11 FX signature ejecutándose. Esto es ya un producto demostrable.
 
 ---
 

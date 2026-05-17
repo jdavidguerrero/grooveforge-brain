@@ -167,7 +167,11 @@ private:
     // Ratios 1:2:3:5 — pseudo-armónicos que generan interferencia espectral compleja.
     // No son la serie de Fourier (1:2:4:8) ni la serie de Fibonacci estricta (1:1:2:3:5).
     // El 5 en lugar del 4 introduce una inharmonicidad que da el carácter "cristalino".
-    static constexpr float BASE_FREQ    = 440.0f;
+    //
+    // BASE_FREQ = C4 (261.63 Hz) — alineado con el chord de demo (C4+E4+G4).
+    // Con ratios 1:2:3:5: modos en 261, 523, 784, 1308 Hz → coincide con fundamentales
+    // y armónicos del acorde C mayor. tune=1.0 = default útil, no arbitrario.
+    static constexpr float BASE_FREQ    = 261.63f;
     static constexpr float RATIOS[4]    = {1.0f, 2.0f, 3.0f, 5.0f};
 
     // ── Estado de parámetros ──────────────────────────────────────────────────────

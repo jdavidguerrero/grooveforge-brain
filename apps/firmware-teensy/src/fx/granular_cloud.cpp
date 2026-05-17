@@ -35,10 +35,13 @@ void GranularCloud::begin(AudioStream& inputStream, float volume) {
     // 12800 muestras × (1/48000 s/muestra) = 0.267s de capacidad de buffer.
     _granular.begin(_granularBuffer, GRANULAR_MEMORY_SIZE);
 
-    // Modo inicial: passthrough (no freeze) con pitch 1:1.
-    // startPlayback(false) = passthrough mode (false = no freeze).
-    // Ref: Teensy Audio Library AudioEffectGranular API
-    _granular.startPlayback(false);
+    // Modo inicial: pitch shift passthrough con grain size de 100ms.
+    // AudioEffectGranular API: begin() inicializa el buffer pero no arranca la granulación.
+    // beginPitchShift(samples) activa el modo passthrough con pitch control via setSpeed().
+    // beginFreeze(samples) alterna al modo freeze (captura y loop de granos).
+    // No existe startPlayback() — la activación es siempre via beginPitchShift o beginFreeze.
+    float grainSamples = _grainSize * (AUDIO_SAMPLE_RATE_EXACT / 1000.0f);
+    _granular.beginPitchShift(grainSamples);
     _granular.setSpeed(_speed);
 
     _dryWetMix.gain(0, 1.0f);     // dry siempre presente
@@ -88,8 +91,9 @@ void GranularCloud::setFreeze(bool f) {
         // El argumento es el grain size en muestras.
         _granular.beginFreeze(_grainSize * AUDIO_SAMPLE_RATE_EXACT / 1000.0f);
     } else {
-        // Volver a passthrough — startPlayback(false) = modo no-freeze.
-        _granular.startPlayback(false);
+        // Volver a passthrough — beginPitchShift() reactiva la granulización en tiempo real.
+        float grainSamples = _grainSize * (AUDIO_SAMPLE_RATE_EXACT / 1000.0f);
+        _granular.beginPitchShift(grainSamples);
         _granular.setSpeed(_speed);
     }
 }
