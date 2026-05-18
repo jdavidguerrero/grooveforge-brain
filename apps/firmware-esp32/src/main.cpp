@@ -2,71 +2,68 @@
  * @file main.cpp
  * @brief Entry point — GrooveForge Brain ESP32-S3
  *
- * Sprint 3.1: Setup LVGL 8.3 + GC9A01 240x240, boot animation, pantalla principal.
+ * Sprint 3.4: 23 vistas de UI en modo carrusel (una cada 5s, bucle infinito).
  *
  * Secuencia de boot:
- *   setup()  → lv_port_disp_init() → screen_boot_create()
- *   loop()   → lv_task_handler() [LVGL tick via millis() custom]
- *              → screen_boot_done()? → screen_main_create()
+ *   setup() → lv_port_disp_init() → screen_boot_create()
+ *   loop()  → lv_task_handler() + lv_tick_inc(5)
+ *           → screen_boot_done()? → carousel_start()
  *
- * Nota sobre lv_tick_inc():
- *   No se llama en loop() porque lv_conf.h tiene LV_TICK_CUSTOM=1 con millis().
- *   LVGL consulta millis() directamente — mas preciso que incrementos manuales.
- *   Ver lv_conf.h para la configuracion.
+ * El boot anima una sola vez; despues el carrusel toma el control y cicla las
+ * 23 vistas indefinidamente. Ver apps/docs/sprints/18-display-ui-carousel.md.
  *
- * Sprint 3.2 agregara:
- *   - Bridge Protocol slave (UART RX desde Teensy)
- *   - screen_main_set_engine() / set_fx() / set_status() con datos reales
- *   - WiFi manager init
+ * Nota sobre el tick: lv_conf.h tiene LV_TICK_CUSTOM=0, por eso loop() llama
+ * lv_tick_inc(5) manualmente (patron validado de groove_drum).
  */
 
 #include <Arduino.h>
 #include <lvgl.h>
 #include "display/lv_port_disp.h"
 #include "display/screens/screen_boot.h"
-#include "display/screens/screen_main.h"
+#include "display/carousel/carousel.h"
+#include "bridge/bridge_slave.h"
+#include "bridge/bridge_handlers.h"
 
-static bool s_main_created = false;
+static bool        s_carousel_started = false;
+static BridgeSlave s_bridge;
 
 void setup() {
     Serial.begin(115200);
-    /* 2s de espera para que USB CDC enumere en el host antes de cualquier print.
-     * Sin esto los primeros prints se pierden si el monitor no esta listo. */
+    /* 2s para que el USB CDC enumere antes de los primeros prints. */
     delay(2000);
 
-    Serial.println("=== GrooveForge Brain — ESP32-S3 Boot ==="); Serial.flush();
-    Serial.printf("Sprint 3.1 | Display: GC9A01 240x240 | LVGL 8.x\n");
+    Serial.println("=== GrooveForge Brain — ESP32-S3 ==="); Serial.flush();
+    Serial.println("Sprint 3.4 | Display UI carousel | 23 views | LVGL 8.x");
 
-    /* Inicializar LVGL + driver GC9A01 + buffers de rendering */
+    /* Bridge Protocol UART slave — init antes del display para que los logs
+     * de bridge aparezcan en orden cronológico en el monitor serial. */
+    bridge_handlers_init(s_bridge);
+    s_bridge.init();
+
+    /* LVGL + driver GC9A01 + buffers de rendering */
     lv_port_disp_init();
 
-    /* Crear pantalla de boot y lanzar animaciones */
+    /* Pantalla de boot animada (corre una sola vez) */
     screen_boot_create();
-
     Serial.println("Boot screen active — animating...");
 }
 
 void loop() {
-    /* lv_task_handler() procesa:
-     *   - Animaciones pendientes (arc sweep, fade-ins del boot)
-     *   - Invalidaciones de pantalla (redraws)
-     *   - Timers y eventos LVGL
-     *
-     * Sin este call, LVGL no renderiza nada.
-     * Frecuencia minima recomendada: cada 5ms (~200Hz cap).
-     * LVGL internamente respeta LV_DISP_DEF_REFR_PERIOD (17ms = ~60fps). */
+    /* lv_task_handler() procesa animaciones, invalidaciones, timers y eventos.
+     * lv_tick_inc(5) avanza el reloj interno de LVGL (LV_TICK_CUSTOM=0). */
+    /* Bridge poll: procesa bytes UART disponibles sin bloquear el loop */
+    s_bridge.poll();
+
     lv_task_handler();
+    lv_tick_inc(5);
 
-    /* Transicion boot → main: una sola vez cuando la animacion termina */
-    if (!s_main_created && screen_boot_done()) {
-        s_main_created = true;
-
-        /* Limpiar widgets del boot screen antes de crear el main */
+    /* Transicion boot → carrusel: una sola vez al terminar la animacion. */
+    if (!s_carousel_started && screen_boot_done()) {
+        s_carousel_started = true;
         lv_obj_clean(lv_scr_act());
-
-        screen_main_create();
-        Serial.println("Boot done — main screen active");
+        carousel_start();
+        Serial.println("Boot done — carousel active");
     }
 
-    delay(5); /* cap ~200fps, LVGL throttlea internamente a LV_DISP_DEF_REFR_PERIOD */
+    delay(5);
 }

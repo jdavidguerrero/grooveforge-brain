@@ -47,7 +47,9 @@
 /* Heap interno de LVGL — 64KB para boot + main screen con arcs, labels y animaciones */
 #define LV_MEM_CUSTOM 0
 #if LV_MEM_CUSTOM == 0
-    #define LV_MEM_SIZE (64U * 1024U)
+    /* 96KB — Sprint 3.4: 23 vistas con canvas/bar; los buffers de canvas
+     * grandes (ADSR, LFO) van a PSRAM aparte para no agotar este pool. */
+    #define LV_MEM_SIZE (96U * 1024U)
     #define LV_MEM_ADR 0
     #if LV_MEM_ADR == 0
         #undef LV_MEM_POOL_INCLUDE
@@ -72,13 +74,11 @@
 
 #define LV_INDEV_DEF_READ_PERIOD 30
 
-/* LV_TICK_CUSTOM=1: LVGL llama millis() directamente.
- * Mas preciso que lv_tick_inc(1) manual en loop() — elimina deriva de tiempo. */
-#define LV_TICK_CUSTOM 1
-#if LV_TICK_CUSTOM
-    #define LV_TICK_CUSTOM_INCLUDE "Arduino.h"
-    #define LV_TICK_CUSTOM_SYS_TIME_EXPR (millis())
-#endif
+/* LV_TICK_CUSTOM=0: tick manual via lv_tick_inc(5) en loop().
+ * Con millis() (custom=1) el tick arranca en >4000ms al boot → screen_boot_done()
+ * retorna TRUE inmediatamente → race condition en el primer render.
+ * Patron de groove_drum (mismo HW): tick manual desde 0 en lv_init(). */
+#define LV_TICK_CUSTOM 0
 
 #define LV_DPI_DEF 130
 
@@ -141,6 +141,8 @@
  * Others
  *-----------*/
 
+/* Monitores de dev (FPS / heap). Build de demo final → 0 (no ensucian la UI).
+ * El heap plano del carrusel quedo verificado: delta=0 en un loop completo. */
 #define LV_USE_PERF_MONITOR 0
 #define LV_USE_MEM_MONITOR 0
 #define LV_USE_REFR_DEBUG 0
@@ -193,13 +195,13 @@
  */
 #define LV_FONT_MONTSERRAT_8  0
 #define LV_FONT_MONTSERRAT_10 0
-#define LV_FONT_MONTSERRAT_12 1
+#define LV_FONT_MONTSERRAT_12 0
 #define LV_FONT_MONTSERRAT_14 0
-#define LV_FONT_MONTSERRAT_16 1
+#define LV_FONT_MONTSERRAT_16 0
 #define LV_FONT_MONTSERRAT_18 0
 #define LV_FONT_MONTSERRAT_20 0
 #define LV_FONT_MONTSERRAT_22 0
-#define LV_FONT_MONTSERRAT_24 1
+#define LV_FONT_MONTSERRAT_24 0
 #define LV_FONT_MONTSERRAT_26 0
 #define LV_FONT_MONTSERRAT_28 0
 #define LV_FONT_MONTSERRAT_30 0
@@ -220,10 +222,16 @@
 #define LV_FONT_UNSCII_8  0
 #define LV_FONT_UNSCII_16 0
 
-#define LV_FONT_CUSTOM_DECLARE
+/* Fuentes custom IBM Plex Mono (Sprint 3.4) — generadas en src/display/fonts/ */
+#define LV_FONT_CUSTOM_DECLARE  LV_FONT_DECLARE(ibm_plex_mono_8)  \
+                                LV_FONT_DECLARE(ibm_plex_mono_11) \
+                                LV_FONT_DECLARE(ibm_plex_mono_16) \
+                                LV_FONT_DECLARE(ibm_plex_mono_22) \
+                                LV_FONT_DECLARE(ibm_plex_mono_36) \
+                                LV_FONT_DECLARE(ibm_plex_mono_64)
 
-/* Default: Montserrat 16 — buena legibilidad en 240px */
-#define LV_FONT_DEFAULT &lv_font_montserrat_16
+/* Default: IBM Plex Mono 16 — texto de cuerpo de la UI */
+#define LV_FONT_DEFAULT &ibm_plex_mono_16
 
 #define LV_FONT_FMT_TXT_LARGE 0
 #define LV_USE_FONT_COMPRESSED 0
@@ -248,12 +256,12 @@
  *================*/
 
 /* Solo widgets que usamos en Sprint 3.1 — el resto deshabilitado para reducir flash */
-#define LV_USE_ARC        1   /* ring de boot + ring decorativo en screen_main */
+#define LV_USE_ARC        1   /* rings, arcs FX, page dots, progreso */
 
-#define LV_USE_BAR        0
+#define LV_USE_BAR        1   /* niveles OSC, ENV, send, mix score, peak meters */
 #define LV_USE_BTN        0
 #define LV_USE_BTNMATRIX  0
-#define LV_USE_CANVAS     0
+#define LV_USE_CANVAS     1   /* glifos line-art, waveforms, curva ADSR, LFO */
 #define LV_USE_CHECKBOX   0
 #define LV_USE_DROPDOWN   0
 
@@ -265,7 +273,7 @@
     #define LV_LABEL_LONG_TXT_HINT 0
 #endif
 
-#define LV_USE_LINE       0
+#define LV_USE_LINE       1   /* velocity line, segmentos ADSR, ejes, flechas */
 #define LV_USE_ROLLER     0
 #define LV_USE_SLIDER     0
 #define LV_USE_SWITCH     0

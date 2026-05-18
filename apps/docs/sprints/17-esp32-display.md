@@ -1,6 +1,6 @@
 # Sprint 3.1 — ESP32-S3 Display GC9A01 (Fase 3 — UI + Display)
 
-**Status:** En Implementación | Mayo 2026
+**Status:** CERRADO ✓ | Mayo 2026
 **Refs:** `apps/docs/01-architecture.md` §3.2, §5.1, `apps/docs/06-implementation-roadmap.md` §4
 
 ---
@@ -505,13 +505,96 @@ fondo esté en `#0B0B12` — confirma que la máscara circular está funcionando
 
 ## Learnings
 
-*(Se completa después de la implementación y verificación en el módulo Waveshare
-ESP32-S3-Touch-LCD-1.28. Secciones típicas: velocidad SPI real vs teórica, comportamiento
-del DMA con los buffers parciales, ajustes al timing de la boot animation post-observación,
-diferencia entre los colores renderizados en pantalla y los hex values del diseño —
-el GC9A01 puede tener una curva gamma que corre los colores vs la expectativa,
-comportamiento de LVGL cuando WiFi está activo simultáneamente y el scheduler del
-ESP32-S3 reparte tiempo.)*
+### Causa raíz del bug de pantalla negra: `TFT_RST` en pin equivocado
+
+El problema fundamental fue `TFT_RST=12` en lugar de `TFT_RST=14`. Con el pin incorrecto,
+el GC9A01 nunca recibe el pulso de hardware-reset al boot → el controlador queda en un
+estado de encendido indefinido. El SPI funcionaba perfectamente: `flush_cb` corría,
+`pushColors()` enviaba píxeles, pero el panel los ignoraba. La pantalla aparece negra
+aunque toda la cadena de software esté correcta.
+
+El diagnóstico fue difícil porque el bug es silencioso — no hay error en ningún registro,
+no hay crash. La clave fue comparar contra `groove_drum` (repositorio propio con el mismo
+módulo Waveshare ESP32-S3-Touch-LCD-1.28 funcionando): ese firmware tenía `TFT_RST=14`.
+**Lección: para bugs de display silenciosos, comparar pin-a-pin contra hardware de referencia
+conocido es el diagnóstico más rápido.**
+
+**Pines validados contra groove_drum (autoritativos para este módulo):**
+
+```
+MOSI=11  SCLK=10  CS=9  DC=8  RST=14  BL=2   ← correctos
+MOSI=11  SCLK=10  CS=9  DC=8  RST=12  BL=40  ← incorrectos (spec original del sprint)
+```
+
+### `SPI.begin()` pre-init es obligatorio en ESP32-S3 + IDF5
+
+Sin `SPI.begin(TFT_SCLK, -1, TFT_MOSI, -1)` *antes* de `tft.init()`, la llamada interna
+`spiStartBus()` recibe un `bus_num` inválido para IDF5: el switch-case interno no lo cubre,
+retorna sin asignar `spi->dev`, y la primera escritura al registro SPI toca `NULL+0x10`
+→ **StoreProhibited @ EXCVADDR 0x00000010**.
+
+El pre-init informa al sistema IDF cuáles son los pines del bus HSPI antes de que TFT_eSPI
+intente configurarlos. Con `USE_HSPI_PORT=1` y el pin correcto en `SPI.begin()`, la
+inicialización toma el path correcto para ESP32-S3 / SPI2 / GC9A01.
+
+```cpp
+SPI.begin(TFT_SCLK, -1, TFT_MOSI, -1);  // CRÍTICO: antes de tft.init()
+tft.init();
+```
+
+### Versión de plataforma pinada: `espressif32@6.9.0`
+
+Versiones más nuevas del platform de PlatformIO traen otro Arduino core / IDF con cambios
+en el driver SPI que causan regresiones con este módulo. La versión `6.9.0` es la que
+funciona, validada en groove_drum. Documentado en `platformio.ini` como constraint permanente.
+
+### El warning "HSPI Does not have default pins on ESP32S3" es no-fatal
+
+TFT_eSPI emite ese warning al usar `USE_HSPI_PORT=1` en un ESP32-S3 (donde HSPI se
+renombró a SPI2). El warning es cosmético — la inicialización continúa correctamente con
+los pines explícitos del `build_flags`. Se puede ignorar en el monitor serial.
+
+### `LV_TICK_CUSTOM=0` con `lv_tick_inc(5)` en `loop()` — patrón validado
+
+`LV_TICK_CUSTOM=1` con `millis()` causó una race condition: al boot, `millis()` ya
+está en >2000ms (por el `delay(2000)` de espera del CDC), así que `screen_boot_done()`
+retornaba `true` inmediatamente en el primer loop → sin animación de boot. El tick manual
+desde 0 (con `lv_tick_inc(5)`) elimina este problema: el reloj interno de LVGL arranca
+en 0 en `lv_init()`, independientemente del uptime del ESP32.
+
+### Partición `huge_app.csv` requerida
+
+La app con LVGL + TFT_eSPI + fuentes IBM Plex Mono supera la partición `default` de
+1.2MB. `huge_app.csv` da ~3MB de app — holgado para las fuentes (~170KB) y el resto
+del firmware.
+
+### `lv_obj_clean()` es la API correcta para limpiar la pantalla entre vistas
+
+`lv_obj_del(lv_scr_act())` elimina la pantalla raíz, lo que puede causar estado
+inconsistente en LVGL. `lv_obj_clean(lv_scr_act())` elimina solo los hijos,
+preservando la pantalla raíz — correcto para el patrón de carrusel.
+
+### Colores en pantalla vs hex values del diseño
+
+El GC9A01 renderiza los colores con ligera saturación adicional en los tonos teal
+(#1D9E75 aparece algo más brillante de lo esperado en pantalla). Los colores del fondo
+negro (#0A0A0A) son excelentes — el panel IPS produce negros profundos sin backlight
+bleed visible.
+
+### `DISP_BUF_LINES` 20 → 40 para vistas complejas
+
+Las vistas con canvas/animaciones invalidan regiones grandes cada frame. Con 20 líneas
+de buffer, el número de llamadas a `flush_cb` por frame era alto (12 llamadas para
+frame completo). Con 40 líneas (38KB total en SRAM) se reduce a 6 llamadas — mejor
+throughput con costo de RAM aceptable para el ESP32-S3.
+
+---
+
+**Sprint 3.1 — CERRADO · Mayo 2026**
+
+*Demo validado: boot animation + main screen visible en el GC9A01 físico. Root cause
+del bug de pantalla negra identificado y documentado. Sprint 3.4 (carrusel de 23 vistas)
+arranca a continuación.*
 
 ---
 
