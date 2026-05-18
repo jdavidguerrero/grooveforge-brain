@@ -1,11 +1,39 @@
-# 📖 GrooveForge Brain — Implementation Roadmap v0.1 (Phase & Sprint Spec)
+# 📖 GrooveForge Brain — Implementation Roadmap v0.2 (Phase & Sprint Spec)
 
 > **OpenSpec de implementación** — fases, sprints y hitos para construir el GrooveForge Brain desde cero hasta shipping v1.0.
 > **Parent:** GFD v3.0 — Master Strategy & Spec (SSoT)
 > **Sibling docs:** OpenSpec v0.3, AI Architecture v0.1, FX Architecture v0.1, Filter Design Spec v0.1, Bridge Protocol v0.1
-> **Status:** v0.1 — Mayo 15, 2026
+> **Status:** v0.2 — Mayo 18, 2026
 > **Owner:** Juan Guerrero (GPROG)
 > **Methodology:** OpenSpec spec-first — cada fase es "vendible" o "demostrable" antes de pasar a la siguiente.
+
+---
+
+## Changelog v0.1 → v0.2 — Reprioritización AI-first
+
+Este documento es *living* (`CLAUDE.md` §Jerarquía de autoridad: el roadmap es
+ajustable sin violar `00–05`). La v0.2 reordena las fases para **priorizar AI/ML**:
+
+- **Fases 0–4 cerradas** — audio core, 3 engines, 11 FX, UI/display, MIDI host y los
+  3 modelos TinyML entrenados (key, chord, beat). Detalle archivado en `sprints/01–25`.
+- **Nueva Fase 5 — AI Activation:** los 3 modelos hoy compilan pero **no corren** en
+  el device (falta vendorear TFLite Micro). Esta fase los activa end-to-end. Sin ella,
+  el "Nivel 1" no está realmente completo.
+- **Nueva Fase 6 — Layer 1 AI completo:** los features de AI on-device restantes.
+- **Cloud, DAW, PCB y Shipping se corren** a Fases 7–10 (eran 5–8 en v0.1).
+- **Genre Fingerprint removido** de Layer 1 (era gimmick — el género es cultural, no
+  acústico, y desde un synth solo hay poca señal). Su remanente útil — sugerir un pack
+  de presets — se absorbe en Layer 2 cloud (Sprint 7.4).
+- **Note Continuation movido a la nube** (Sprint 7.3): un modelo generativo *bueno* no
+  cabe con calidad en el Teensy; la nube no tiene límite de tamaño de modelo.
+
+**Tradeoff aceptado conscientemente:** shipping pasa de Fase 8 → Fase 10. La fecha de
+venta se mueve meses. Mitigación: toda la AI se desarrolla en dev boards (Teensy 4.1 +
+ESP32-S3) — el PCB es para *shipping*, no para *desarrollo*.
+
+**Nota de SSoT:** este reorden NO contradice `00-master-strategy.md`. El North Star de
+5 niveles sigue intacto — la v0.2 solo adelanta los niveles de AI (1 y 3) frente al
+hardware. Una eventual revisión del North Star, si se decide, es cambio aparte.
 
 ---
 
@@ -18,7 +46,8 @@
 3. **Phase gates**: cada fase tiene un hito demostrable y observable. Sin demo audible/visible no se pasa a la siguiente.
 4. **Time budget honest**: Brain es prioridad #2 (GroovePilot es #1). 10-18h/sem realistas, no 40h.
 5. **One thing at a time**: nunca implementar 2 features simultáneas. Una termina, se valida, se pasa a la siguiente.
-6. **Vertical slices**: cada sprint entrega algo end-to-end (audio in → audio out), no "todo el backend antes que cualquier UI".
+6. **Vertical slices**: cada sprint entrega algo end-to-end, no "todo el backend antes que cualquier UI".
+7. **AI que cambia el sonido, no la pantalla** *(v0.2)*: un modelo que solo pone un label en el display es un bullet de spec-sheet. Un modelo que cambia lo que sale del parlante es un buy-reason. Priorizar el segundo.
 
 ### 0.2 Mapeo a North Star (5 niveles)
 
@@ -28,620 +57,403 @@
 | **Fase 1** | Nivel 0 — Audio core | Tono 440Hz → first engine → filter analog |
 | **Fase 2** | Nivel 0 — Multi-engine + FX | 3 engines + 11 FX signature |
 | **Fase 3** | Nivel 0 — UI + display | Encoders + buttons + display GC9A01 funcional |
-| **Fase 4** | Nivel 1 — MIDI + TinyML | USB-A host + 3 TinyML models |
-| **Fase 5** | Nivel 3 — WiFi + Cloud | ESP32-S3 con WiFi + cloud sync |
-| **Fase 6** | Nivel 4 — DAW bridge | GroovePilot VST3 integration |
-| **Fase 7** | PCB + manufactura | PCB v0.1 → prototype → batch 1 |
-| **Fase 8** | Shipping | Pre-orders → ensamblaje → envios |
+| **Fase 4** | Nivel 1 — MIDI + modelos | USB-A host + 3 modelos TinyML entrenados |
+| **Fase 5** | Nivel 1 — AI Activation | Los modelos corren en el device y reaccionan |
+| **Fase 6** | Nivel 1 — Layer 1 completo | 6+ features AI on-device, offline |
+| **Fase 7** | Nivel 3 — Layer 2 Cloud AI | ESP32-S3 con WiFi + cloud generativo |
+| **Fase 8** | Nivel 4 — DAW bridge | GroovePilot VST3 integration |
+| **Fase 9** | PCB + manufactura | PCB v0.1 → prototype → batch 1 |
+| **Fase 10** | Shipping | Pre-orders → ensamblaje → envíos |
 
 Nivel 2 (slaves via pogo) queda para post-launch v1.x.
 
 ---
 
-## 1. Fase 0 — Foundation (Semana 1-2, Mayo 2026)
+## 1–4. Fases 0–4 — CERRADAS ✓
 
-**Objetivo:** monorepo + tooling + agents + CLAUDE.md completos antes de escribir una sola línea de código de firmware.
+Detalle completo de cada sprint archivado en `apps/docs/sprints/`. Resumen:
 
-### Sprint 0.1 — Setup monorepo
+### Fase 0 — Foundation ✓
+Monorepo Nx, PlatformIO, agents, skills, CLAUDE.md, specs `00–06`, CI/CD.
 
-**Entregables:**
-- [ ] Repo `grooveforge-brain/` en GitHub (private)
-- [ ] Estructura Nx monorepo con apps:
-  - `apps/firmware-teensy/` (PlatformIO C++)
-  - `apps/firmware-esp32/` (PlatformIO C++)
-  - `apps/bridge-protocol/` (shared C headers)
-  - `apps/hardware/` (KiCad PCB schematics)
-  - `apps/design/` (industrial design Figma files / 3D models)
-  - `apps/docs/` (technical documentation Markdown)
-  - `apps/training/` (Python TinyML model training)
-- [ ] `CLAUDE.md` raiz con principios educational-first
-- [ ] `.claude/agents/` con sub-agents especializados
-- [ ] `.claude/skills/` con skills personalizados
-- [ ] CI/CD GitHub Actions básico (firmware build + tests)
+### Fase 1 — Audio Core ✓
+| Sprint | Entregable | Doc |
+|---|---|---|
+| 1.1 | Hello tone 440Hz I2S + SGTL5000 | `01-hello-tone.md` |
+| 1.2 | Multi-oscilador + ADSR | `02-multi-osc-adsr.md` |
+| 1.3 | Matching jig transistores 2N3904 | `03-matching-jig.md` |
+| 1.4 | Filter ladder discreto | ⏸ DEFERRED — componentes pendientes (ver Fase 9) |
+| 1.5 | Engine Moog Model D | `05-moog-model-d.md` |
 
-### Sprint 0.2 — Documentación y Specs
+### Fase 2 — Multi-Engine + FX ✓
+3 engines (Moog Model D, Juno-106, Prophet-5) + 11 FX signature. Docs `06–16`.
+Tape Saturate, Phase Chorus, Bit Sculpt, Sub Genesis, Modal Reverb, Cymatic Resonator,
+Granular Cloud, Spring+Plate, Ghost Echo.
 
-**Entregables:**
-- [ ] `apps/docs/01-architecture.md` — traducción del OpenSpec v0.3
-- [ ] `apps/docs/02-bridge-protocol.md` — protocolo Teensy-ESP32-VST3
-- [ ] `apps/docs/03-filter-design.md` — filter discreto 2N3904
-- [ ] `apps/docs/04-ai-architecture.md` — 3-layer AI spec
-- [ ] `apps/docs/05-fx-architecture.md` — 12 signature effects
-- [ ] `apps/docs/06-implementation-roadmap.md` — este doc
+### Fase 3 — UI + Display ✓
+| Sprint | Entregable | Doc |
+|---|---|---|
+| 3.1 | ESP32-S3 + display GC9A01 + LVGL | `17-esp32-display.md` |
+| 3.2 | UART Bridge Protocol Teensy↔ESP32 | `19-bridge-protocol.md` |
+| 3.3 | Encoders + buttons + LEDs (SW — HW pendiente cableado) | `20-encoders-buttons.md` |
+| 3.4 | Carrusel 23 vistas LVGL | `18-display-ui-carousel.md` |
 
-**Hito Fase 0:** Estructura del monorepo completa, agents funcionando, primer commit con "hello world" en firmware-teensy.
+### Fase 4 — MIDI + modelos TinyML ✓
+| Sprint | Entregable | Doc |
+|---|---|---|
+| 4.1 | USB-A host MIDI input | `21-usb-midi-host.md` |
+| 4.2 | TinyML training pipeline (uv + TFLite) | `22-tinyml-pipeline.md` |
+| 4.3 | Key Detection Model — 94% acc, 19KB int8 | `23-key-detector.md` |
+| 4.4 | Chord Recognition Model — 61 clases, 23KB int8 | `24-chord-recognizer.md` |
+| 4.5 | Beat Follower Model — BPM, 11KB int8 | `25-beat-follower.md` |
 
----
-
-## 2. Fase 1 — Audio Core (Semana 3-6, Junio 2026)
-
-**Objetivo:** del silencio al primer engine Moog Model D pasando por el filter analog discreto.
-
-### Sprint 1.1 — Hello World Audio (1 sesión, ~3h)
-
-**Tema:** I2S audio output con Teensy 4.1 + SGTL5000.
-
-**Theory section a documentar:**
-- Qué es I2S y por qué los chips de audio lo usan
-- Cómo el Teensy genera MCLK nativo (vs Pi necesita oscilador externo)
-- Audio block size, sample rate, AudioMemory
-- Teensy Audio Library design (declarative connections)
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/sketches/01-hello-tone.cpp`
-- [ ] Test 440Hz sine wave output
-- [ ] Documentation `docs/sprints/01-hello-tone.md`
-
-**Demo audible:** tono 440Hz por jack del Audio Shield.
-
-### Sprint 1.2 — Multi-Oscillator + Envelope (1-2 sesiones)
-
-**Theory:**
-- ADSR envelope: attack, decay, sustain, release
-- Por qué los Moog vintage suenan "fat": detune entre osciladores
-- Sub-octave generation
-- Sawtooth vs square vs triangle waveforms
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/sketches/02-multi-osc-adsr.cpp`
-- [ ] 3 osciladores + ADSR + mixer
-- [ ] Note on/off via Serial commands para testing
-
-**Demo audible:** ataque/decay/sustain audible al disparar nota.
-
-### Sprint 1.3 — Matching Jig + Transistor Pairs (1 sesión hardware)
-
-**Theory:**
-- Teoría diferencial pair (Q1/Q2 emisores cortos)
-- Por qué ΔVbe matching afecta el sonido del filter
-- Constant current source (fuente espejo)
-- ADC measurement precision
-
-**Implementation hardware:**
-- [ ] Arduino jig con socket DIP/ZIF + LCD
-- [ ] Código Arduino para medir Vbe at 100µA
-- [ ] Procesar batch de 100 transistores 2N3904
-- [ ] Resultado: 8 pairs ΔVbe < 2mV
-
-**Demo visible:** batch de pairs etiquetados con valores Vbe.
-
-### Sprint 1.4 — Filter Discreto Ladder Protoboard (2-3 sesiones hardware) ⏸ DEFERRED
-
-> **Technical debt:** componentes TL072CP y CD4066 pendientes de conseguir.
-> Re-medición de transistores con protocolo térmico correcto pendiente (ver Sprint 1.3 learnings).
-> Se retoma después de Sprint 1.5+. No bloquea el avance — el engine Moog Model D
-> funciona sin el filter físico; se agrega el routing analógico cuando esté disponible.
-
-**Theory:**
-- Topología transistor ladder Moog 1970
-- 4-pole low-pass (24dB/oct)
-- Resonance feedback path
-- V/oct exponential converter
-- Cómo cada stage agrega un polo de 6dB/oct
-
-**Implementation hardware:**
-- [ ] Armado en protoboard del ladder con pairs matched
-- [ ] Calibration 5 pasos (cutoff range, V/oct, resonance, bypass match, pass/fail)
-- [ ] Test sweep 20Hz-20kHz audible
-- [ ] Self-oscillation a 80% resonance pot
-
-**Demo audible:** sweep del filter sobre el output del Teensy (Sprint 1.2).
-
-### Sprint 1.5 — Engine Moog Model D Skeleton (1-2 sesiones)
-
-**Theory:**
-- Arquitectura Moog Minimoog: 3 VCO + Mixer + VCF (ladder) + VCA + 2 envelopes
-- Por qué detune entre osc1/osc2 da "warmth"
-- Cross-modulation y noise
-- Glide (portamento)
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/engines/moog_model_d.cpp` (clase completa)
-- [ ] Parámetros user-controllable via Serial
-- [ ] Audio routing through analog filter (audio in via ADC)
-
-**Demo audible:** Moog Model D engine + filter discreto sonando juntos.
-
-**HITO FASE 1**: Engine Moog Model D + filter analog discreto. Esto solo es ya un instrumento usable.
+**Estado real:** los 3 modelos están entrenados y sus clases C++ existen, pero **no
+corren en el Teensy** — falta el runtime TFLite Micro vendoreado. Eso es la Fase 5.
 
 ---
 
-## 3. Fase 2 — Multi-Engine + FX (Semana 7-14, Jul-Ago 2026)
+## 5. Fase 5 — AI Activation
 
-**Objetivo:** 3 engines completos + 11 efectos signature.
+**Objetivo:** los 3 modelos pasan de "compilan" a "corren en el device y reaccionan".
+Es la fase que hace real el Nivel 1. Sin ella no hay AI demostrable.
 
-### Sprint 2.1 — Engine Juno-106 (2 sesiones) ✅
+**Por qué es una fase y no un sprint:** activar TFLite Micro, calcular features en
+firmware, y conectar los resultados al audio y al display son 5 piezas verticales
+distintas. Cada una tiene su demo.
 
-**Theory:**
-- Roland Juno-106 arquitectura: 1 DCO + sub + chorus + VCF + VCA
-- Digital-Controlled Oscillator (DCO) vs VCO
-- Bucket Brigade Delay (BBD) chorus original
-- Por qué los Juno suenan "hi-fi" vs los Moog "warm"
-
-**Implementation:**
-- [x] `apps/firmware-teensy/src/engines/juno_106.cpp`
-- [x] Chorus modelado del BBD vintage
-- [x] Engine switch via Serial command
-
-**Demo audible:** A/B Moog vs Juno con misma nota.
-
-### Sprint 2.2 — Engine Prophet-5 (2 sesiones) ✅
+### Sprint 5.1 — TFLite Micro vendoring + runtime en Teensy
 
 **Theory:**
-- Sequential Circuits Prophet-5 arquitectura
-- 2 oscillators with cross-modulation
-- Curtis CEM3340 chip (original) y cómo emularlo digital
-- Por qué el Prophet es el "sonido de los 80s"
+- Por qué `Arduino_TensorFlowLite` del registry NO sirve para Teensy (periféricos de
+  Arduino Nano hardcodeados → no compila para Cortex-M7 Teensy)
+- Generación del árbol mínimo de TFLite Micro (`create_tflm_tree.py` de Google)
+- CMSIS-NN: kernels DSP optimizados para Cortex-M — por qué acelera int8 ~3-4×
+- Tensor arena en `DMAMEM` vs `RAM1` — por qué no competir con el DMA de audio
 
 **Implementation:**
-- [x] `apps/firmware-teensy/src/engines/prophet_5.cpp`
-- [x] Cross-modulation algorithm
-- [x] Polyphony management (5 voices)
+- [ ] `apps/firmware-teensy/lib/tflite-micro/` — runtime vendoreado
+- [ ] `platformio.ini` — include paths, `-DTF_LITE_STATIC_MEMORY`, CMSIS-NN
+- [ ] Sketch que carga `key_detector` y corre 1 inferencia con histograma hardcodeado
 
-**Demo audible:** 3 engines disponibles, switch entre ellos.
+**Demo:** el Teensy imprime por Serial el resultado de inferir un histograma de C mayor → `C maj`.
 
-### Sprint 2.3 — FX Tape Saturate (1 sesión) ✅
+### Sprint 5.2 — Pitch class histogram en C++ + inference loop
 
 **Theory:**
-- Saturación vs distorsión vs clipping
-- Waveshaper transfer functions
-- Wow/flutter en cinta magnetofonica
-- Por qué el LFO caótico vs sinusoidal
+- El histograma en firmware — equivalente C++ de `midi_utils.get_pitch_class_histogram()`
+- Ventana deslizante: acumular notas activas en una ventana de ~2s
+- Pesado temporal: notas recientes pesan más vs ventana plana — tradeoffs
+- Correr 3 modelos secuencialmente compartiendo un solo tensor arena (~56KB)
 
 **Implementation:**
-- [x] `apps/firmware-teensy/src/fx/tape_saturate.cpp`
-- [x] Custom waveshaper curve
-- [x] LFO drift caotic generator
+- [ ] `apps/firmware-teensy/src/ml/pitch_histogram.cpp` — acumulador
+- [ ] `apps/firmware-teensy/src/ml/ml_engine.cpp` — orquestador de los 3 modelos
+- [ ] Sketch: MIDI in → histograma → 3 inferencias → Serial
 
-**Demo audible:** Engine sin/con tape saturate.
-**Doc:** `apps/docs/sprints/08-tape-saturate.md`
+**Demo:** tocás teclado USB → Serial muestra key + chord + BPM en tiempo real.
 
-### Sprint 2.4 — FX Phase Chorus (1 sesión) ✅
+### Sprint 5.3 — Scale Lock (Tier S)
 
 **Theory:**
-- Chorus = delay corto modulado por LFO
-- Bucket-Brigade Devices (BBD) y por qué "respiran"
-- Multi-voice chorus stacking
+- Del key detectado a la escala: qué pitch classes pertenecen a Em, C maj, etc.
+- Snap: nota fuera de escala → semitono más cercano dentro de escala
+- Trigger por usuario (botón "Lock Scale") — el usuario confirma, esquiva la ambigüedad
+- Latencia: el snap debe ocurrir antes del `noteOn()` al engine (<1ms)
 
 **Implementation:**
-- [x] `apps/firmware-teensy/src/fx/phase_chorus.cpp`
-- [x] LFO con drift caótico (no perfecto sinusoidal)
-- [x] Voice stacking 1-4 chorus voices
+- [ ] `apps/firmware-teensy/src/ml/scale_lock.cpp`
+- [ ] Integración en el path MIDI → engine
+- [ ] UI: botón de lock + LED feedback
 
-**Demo audible:** Engine + tape + chorus = signature warmth.
-**Doc:** `apps/docs/sprints/09-phase-chorus.md`
+**Demo audible:** con Scale Lock en Em, tocás cromático → todo suena en Em. Nadie toca mal.
 
-### Sprint 2.5 — FX Bit Sculpt (1 sesión) ✅
-
-> **Nota:** El roadmap original asignaba este slot a "Modal Reverb". El Modal Reverb se
-> implementó como Sprint 2.7 (ver abajo). Bit Sculpt se adelantó como sprint
-> independiente por su menor complejidad de señal y aporte inmediato al CPU budget
-> del FX stack.
+### Sprint 5.4 — Beat-synced FX (Tier A)
 
 **Theory:**
-- Bitcrusher: reducción de word-length y sample rate
-- Dithering estratégico para preservar pitch en bit-depths bajos
-- Por qué quantization noise tiene carácter musical vs ruido aleatorio
+- Beat Follower → BPM → período en ms (`60000 / BPM`)
+- Sincronizar Ghost Echo: delay time = negra o subdivisiones del beat
+- Sincronizar Phase Chorus LFO al tempo
+- Confidence gate: si confidence < umbral, NO sincronizar (un sync errado suena peor
+  que ningún sync). Fallback a tap tempo manual.
 
 **Implementation:**
-- [x] `apps/firmware-teensy/src/fx/bit_sculpt.cpp`
-- [x] Custom dither algorithm sobre AudioEffectBitcrusher
-- [x] Sample rate reduction independiente de bit-depth
+- [ ] Conectar `BeatFollower` a `ghost_echo.cpp` y `phase_chorus.cpp`
+- [ ] Confidence gating + tap tempo fallback
 
-**CPU medido:** 0.6%
-**Demo audible:** Engine + Bit Sculpt en descenso 16→1 bit.
-**Doc:** `apps/docs/sprints/10-bit-sculpt.md`
+**Demo audible:** tocás en 120 BPM → el delay se engancha al tempo automáticamente.
 
-### Sprint 2.6 — FX Sub Genesis (1 sesión) ✅
-
-> **Nota:** El roadmap original asignaba este slot a "Ghost Echo". Ghost Echo se
-> implementa como Sprint 2.11 (versión simplificada sin Markov chain). Sub Genesis
-> se adelantó porque el análisis de pitch es más directo con la Teensy Audio Library
-> y completa el FX stack de "enriquecimiento" (sub + distorsión + coro).
+### Sprint 5.5 — Display AI views vía Bridge Protocol
 
 **Theory:**
-- Sub-octave synthesis: dividir la frecuencia fundamental por 2
-- Pitch tracking con AudioFilterStateVariable LP para aislar fundamental
-- Saturación analógica modelada para sub-bass con carácter
+- Resultados ML → frames Bridge Protocol → ESP32 → carrusel
+- Comando: extender el protocolo con un `AI_RESULT` o reusar `PARAM_CHANGED`
+- Throttling: enviar solo cambios significativos, no cada inferencia
 
 **Implementation:**
-- [x] `apps/firmware-teensy/src/fx/sub_genesis.cpp`
-- [x] Pitch tracking via LP filter + zero-crossing detection
-- [x] AudioSynthWaveform (sub-octave generator) + waveshaper saturation
+- [ ] Teensy `bridge_master` envía resultados ML
+- [ ] ESP32 `bridge_handlers` actualiza views 02 (synth main), 10 (ai processing), 16 (scale lock)
 
-**CPU medido:** 0.8%
-**Demo audible:** Engine + Sub Genesis — bass weight sin EQ surgery.
-**Doc:** `apps/docs/sprints/11-sub-genesis.md`
+**Demo visible:** tocás → el display del ESP32 muestra key/chord/BPM en vivo.
 
-### Sprint 2.7 — FX Modal Reverb (2 sesiones) ✅
-
-> **SPRINT AGREGADO** respecto al roadmap original. El Modal Reverb es el
-> diferenciador de producto más fuerte de la Fase 2 — "reverb de guadua colombiana"
-> es un elemento de marketing y de identidad cultural que ningún competidor a $599
-> puede replicar. Su complejidad (6 filtros bandpass paralelos + envelopes por modo)
-> justifica un sprint dedicado. Este sprint hace que la Fase 2 entregue 8 FX en lugar
-> de los 6-7 originalmente planeados — todos dentro del CPU budget documentado.
-
-**Theory:**
-- Síntesis modal: modos resonantes de objetos físicos (barras, placas, campanas)
-- Ecuación de Euler-Bernoulli para barras libres — ratios β_nL inarmónicos
-- Q del filtro vs T60 de decay: arquitectura dual para evitar instabilidad numérica
-- 4 materiales: campana (Cu-Sn), guadua (Guadua angustifolia), cristal, madera
-
-**Implementation:**
-- [x] `apps/firmware-teensy/src/fx/modal_reverb.cpp`
-- [x] 6× AudioFilterBiquad bandpass paralelos (Q=50)
-- [x] Decay envelopes por modo en loop() (no audio thread)
-- [x] 4 materiales con frecuencias y T60 físicamente fundamentados
-
-**CPU medido:** 1.2%, Memoria: 5/11 bloques AudioMemory
-**Demo audible:** Chord C mayor con reverb de guadua — carácter inconfundible.
-**Doc:** `apps/docs/sprints/12-modal-reverb.md`
-
-### Sprint 2.8 — FX Cymatic Resonator (1 sesión)
-
-**Theory:**
-- Patrones cimáticos (Chladni, 1787): superficies vibrando crean nodos y antinodos
-- Por qué 4 BP filters en paralelo modelan modos resonantes del objeto virtual
-- Harmonic series con skip del 4to parcial (ratios 1:2:3:5) para crear tensión armónica
-- LFO lento (0.1–3Hz) modulando tune: sensación de cristal que respira
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/cymatic_resonator.cpp`
-- [ ] 4× AudioFilterBiquad BP en paralelo, Q=10–80
-- [ ] AudioMixer4 (paralelo) + dry/wet final
-- [ ] LFO modulando ratios de frecuencia en update()
-
-**Parámetros:** Tune [0.5-2.0], Density [1-4 modos], Resonance Q [10-80], LFO Rate [0.1-3.0 Hz], Mix, Bypass
-**CPU estimado:** ~8%
-**Doc:** `apps/docs/sprints/13-cymatic-resonator.md`
-
-### Sprint 2.9 — FX Granular Cloud (1-2 sesiones)
-
-**Theory:**
-- Síntesis granular (Xenakis, 1960s; Roads, "Microsound", 2001): el sonido se construye de granos
-- Umbral perceptual: ≥30 granos/seg = tono continuo; <30 = textura
-- AudioEffectGranular: buffer int16_t de 12800 muestras = 267ms a 48kHz
-- Pitch via setSpeed(ratio): 1.0=unison, 0.5=octava baja, 2.0=octava alta
-- Modo freeze: snapshot del audio granulizado en loop (pad ambient independiente del input)
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/granular_cloud.cpp`
-- [ ] AudioEffectGranular con buffer externo int16_t
-- [ ] Grain Size [5-250 ms], Speed [0.25-4.0], Freeze toggle
-
-**Parámetros:** Grain Size, Speed, Freeze, Mix, Bypass
-**CPU estimado:** ~12%
-**Doc:** `apps/docs/sprints/14-granular-cloud.md`
-
-### Sprint 2.10 — FX Spring + Plate (1 sesión)
-
-**Theory:**
-- Spring reverb (Hammond, 1941): reflexiones físicas en resorte de metal — carácter "wobbly"
-- Plate reverb (EMT 140, 1957): placa 2.4m × 1.4m con transductor piezo — densa y suave
-- AudioEffectFreeverb: red Schroeder/Moorer de allpass + comb filters
-- roomsize(0-1) → longitudes de delay de los combs; damping(0-1) → LP de feedback (HF decay rate)
-- Diferencia audible: spring tiene "drip" en transientes, plate es uniforme
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/spring_plate.cpp`
-- [ ] 2× AudioEffectFreeverb (spring + plate) en paralelo
-- [ ] Crossfade matrix spring↔plate via _blendMix
-
-**Parámetros:** Algorithm [spring/plate/blend], Room Size [0-1], Damping [0-1], Blend [0-1], Mix, Bypass
-**CPU estimado:** ~10% (2× Freeverb ≈ 5% cada uno)
-**Doc:** `apps/docs/sprints/15-spring-plate.md`
-
-### Sprint 2.11 — FX Ghost Echo — v1.0 sin Markov (1 sesión)
-
-**Theory:**
-- Delay con feedback + tape color: cada repetición pasa por LP filter que atenúa HF
-- Feedback loop válido en Teensy Audio Library: AudioEffectDelay introduce latencia de
-  exactamente 1 bloque (128 samples = 2.67ms) — el feedback usa siempre samples de n-1 bloques,
-  no hay dependencia circular verdadera
-- AudioFilterStateVariable (port 0 = lowpass) con Q=0.7 (Butterworth) como LP de cinta
-- Tape character: setTapeLP(hz) controla pérdida de HF por pasada — 500Hz = eco oscuro (cinta
-  gastada), 12000Hz = eco brillante (cinta nueva)
-
-**Markov chain deferred (v2.0):** la versión v1.0 es un delay clásico con tape color.
-En v2.0 (Fase 4, Sprint 4.5+), la TinyML beat detection alimentará un Markov chain que
-predice beats y hace que los ecos "anticipen" el groove — las repeticiones literales se
-convierten en variaciones rítmicas coherentes. Este es el "Ghost" del nombre: los ecos
-saben cuándo aparecer.
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/fx/ghost_echo.cpp`
-- [ ] AudioEffectDelay (hasta 1400ms) + AudioFilterStateVariable LP feedback
-- [ ] 2× AudioMixer4 (feedback path + dry/wet)
-
-**Parámetros:** Delay Time [10-1400 ms], Feedback [0-0.95], Tape LP [500-12000 Hz], Mix, Bypass
-**CPU estimado:** ~6%
-**Doc:** `apps/docs/sprints/16-ghost-echo.md`
-
-**HITO FASE 2:** 3 engines + 11 FX signature ejecutándose. Esto es ya un producto demostrable.
+**HITO FASE 5:** tocás el teclado → el Brain detecta tonalidad/acorde/tempo y **reacciona**
+(sonido + display). Primer demo de AI real end-to-end. Nivel 1 verdaderamente activo.
 
 ---
 
-## 4. Fase 3 — UI + Display (Semana 15-20, Sep-Oct 2026)
+## 6. Fase 6 — Layer 1 AI completo
 
-**Objetivo:** display GC9A01 + encoders + buttons + LEDs full UI funcional.
+**Objetivo:** los features de AI on-device restantes — offline, instantáneos.
 
-### Sprint 3.1 — ESP32-S3 setup + display LVGL (2 sesiones)
-
-**Theory:**
-- LVGL framework: por qué usándolo en lugar de drivers manuales
-- Circular displays: mapeo de coordenadas circulares vs rectangulares
-- Frame buffer management con poca RAM
-- DMA SPI transfers
-
-**Implementation:**
-- [ ] `apps/firmware-esp32/src/display/main.cpp`
-- [ ] LVGL initialized, first "hello" screen
-- [ ] Boot animation
-
-### Sprint 3.2 — UART Bridge Protocol Teensy ↔ ESP32 (1-2 sesiones)
+### Sprint 6.1 — Multi-task backbone refactor
 
 **Theory:**
-- Frame structure [CMD][LEN][SEQ][PAYLOAD][CRC8]
-- Baud rate 921600: por qué este número
-- CRC8 algorithm and why we need it
-- Async vs sync communication patterns
+- Un modelo, múltiples cabezas: backbone compartido + heads para key / chord / mood
+- Por qué: 1 inferencia en vez de N → menos CPU, menos arena, escala el *conteo de
+  features* sin escalar el *costo*
+- Entrenamiento multi-task: loss combinada, weighting de heads
+- Tradeoff: acoplamiento — re-entrenar un head implica re-validar todos
 
 **Implementation:**
-- [ ] `apps/bridge-protocol/protocol.h` (shared header)
-- [ ] `apps/firmware-teensy/src/bridge/uart_master.cpp`
-- [ ] `apps/firmware-esp32/src/bridge/uart_slave.cpp`
-- [ ] Test: Teensy sends "engine changed to Moog" → ESP32 updates display
+- [ ] `apps/training/models/multitask/`
+- [ ] Reemplaza `key_detector` + `chord_recognizer` por un modelo unificado
 
-### Sprint 3.3 — Encoders + Buttons UI (1-2 sesiones)
+**Criterio de pass:** debe mostrar una **ganancia de CPU medible** vs los 2 modelos
+separados; si no, no se mergea (no refactorizar por refactorizar).
+
+### Sprint 6.2 — Auto-Harmonization (Tier S)
 
 **Theory:**
-- Encoder pulse decoding (quadrature)
-- Button debouncing
-- WS2812B protocol (1-wire timing critical)
-- Por qué Teensy maneja UI mejor que ESP32 (real-time GPIO)
+- Armonización diatónica: dada key + nota → tercera/sexta diatónica
+- Por qué es ~90% teoría musical (la tabla de intervalos es determinística) y dónde
+  entra el ML — elegir el intervalo que mejor suena según contexto y densidad
+- Voice leading básico (evitar saltos disonantes)
 
 **Implementation:**
-- [ ] `apps/firmware-teensy/src/ui/encoders.cpp`
-- [ ] `apps/firmware-teensy/src/ui/buttons.cpp`
-- [ ] `apps/firmware-teensy/src/ui/leds.cpp`
-- [ ] Mapeo encoders → parameters de engine activo
+- [ ] `apps/firmware-teensy/src/ml/auto_harmonize.cpp`
+- [ ] Genera la voz de armonía → segunda voz en el engine polifónico
 
-**Demo audible+visible:** girar encoder → cutoff del filter cambia + display muestra valor.
+**Demo audible:** tocás una nota → escuchás dos voces en armonía, siempre en escala.
 
-### Sprint 3.4 — Full UI menu navigation (2 sesiones)
+### Sprint 6.3 — Smart Arpeggiator (Tier S)
+
+**Theory:**
+- Arpegiador clásico vs "smart": el patrón se adapta al acorde detectado
+- Markov chain sobre transiciones de notas, condicionada a acorde + key
+- Por qué Markov y no red neuronal: CPU-trivial, sin tensor arena, igualmente generativo
+- Sync al Beat Follower — el arpegio corre al BPM detectado
 
 **Implementation:**
-- [ ] Menu system en ESP32 (LVGL)
-- [ ] Engine selection, FX selection, preset browser
-- [ ] Visual feedback de parámetros
+- [ ] `apps/firmware-teensy/src/ml/smart_arp.cpp`
+- [ ] Integración con chord recognizer + beat follower
 
-**HITO FASE 3:** Brain completamente operable con encoders + buttons + display. Sin computadora.
+**Demo audible:** mantenés un acorde → arpegio inteligente, en escala, en tempo.
+
+### Sprint 6.4 — Groove Humanizer (Tier A)
+
+**Theory:**
+- Quantización rígida vs groove humano — micro-timing
+- Perfil de desviaciones del usuario, extraído del trabajo de IOIs del Beat Follower
+- Versión no-personalizada (jitter con buen gusto) vs personalizada (aprende del usuario)
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/ml/groove.cpp`
+- [ ] Aplica el perfil de groove al Smart Arpeggiator
+
+**Demo audible:** A/B — arpegio robótico vs humanizado.
+
+### Sprint 6.5 — Velocity Curve Learn (Tier B)
+
+**Theory:**
+- Curva de velocity: cómo el MIDI velocity (0-127) mapea a la dinámica del engine
+- Calibración por histograma de velocity del usuario en el primer minuto de uso
+- Por qué es estadística (calibración), no ML — y por qué eso está bien
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/ml/velocity_learn.cpp`
+
+**Demo:** dos usuarios con fuerza de toque distinta → el Brain se adapta a cada uno.
+
+> **Genre Fingerprint:** removido de Layer 1 (ver Changelog). Su utilidad real —
+> sugerir un pack de presets según estilo — se reubica en Layer 2 (Sprint 7.4), donde
+> el análisis de estilo tiene más sentido junto a Community Patches y Genre Profiles.
+
+**HITO FASE 6:** 6+ features de AI on-device funcionando, todas offline e instantáneas.
 
 ---
 
-## 5. Fase 4 — MIDI + TinyML (Semana 21-28, Nov-Dec 2026)
+## 7. Fase 7 — Layer 2 Cloud AI (vía ESP32-S3 WiFi)
 
-**Objetivo:** USB-A host MIDI input + Layer 1 TinyML features.
+**Objetivo:** ESP32-S3 conectado a GroovePilot cloud para Layer 2 AI. La nube no tiene
+límite de tamaño de modelo — acá viven las features generativas grandes.
+**Referencia:** `04-ai-architecture.md §2`.
 
-### Sprint 4.1 — USB-A Host MIDI Input (1-2 sesiones)
+### Sprint 7.1 — ESP32-S3 WiFi setup
 
-**Theory:**
-- USB host vs device modes
-- USB Audio class vs USB MIDI class
-- Teensy USBHost_t36 library
-- MIDI message parsing (NoteOn, NoteOff, CC)
-
-**Implementation:**
-- [ ] `apps/firmware-teensy/src/usb/midi_host.cpp`
-- [ ] Plug a USB MIDI keyboard, toca notas, escuchá engine
-
-### Sprint 4.2 — TinyML Training Pipeline Setup (1 sesión)
-
-**Theory:**
-- TensorFlow vs PyTorch para este caso
-- Quantization int8: por qué y cómo afecta accuracy
-- TFLite Micro vs full TFLite
-- Datasets para musica: Lakh MIDI, Maestro
-
-**Implementation:**
-- [ ] `apps/training/setup.py` (uv + dependencies)
-- [ ] `apps/training/datasets/` (download scripts)
-- [ ] First notebook: data exploration
-
-### Sprint 4.3 — Key Detection Model (2 sesiones)
-
-**Theory:**
-- Music theory: key vs scale vs mode
-- Pitch class distribution
-- Chord profiles (Krumhansl-Schmuckler)
-- Why ML beats rule-based for ambiguous cases
-
-**Implementation:**
-- [ ] `apps/training/models/key_detector.py`
-- [ ] Train on MIDI dataset
-- [ ] Quantize to TFLite Micro int8
-- [ ] Bundle en firmware como C array
-- [ ] `apps/firmware-teensy/src/ml/key_detector.cpp`
-
-**Demo:** tocas 5-6 notas → display muestra "Em detected".
-
-### Sprint 4.4 — Chord Recognition Model (2 sesiones)
-
-**Theory:**
-- Chord types: triads, 7ths, extended
-- Why 3+ simultaneous notes
-- Common chord progressions per genre
-
-**Implementation:**
-- [ ] `apps/training/models/chord_recognizer.py`
-- [ ] Train + quantize + bundle
-- [ ] `apps/firmware-teensy/src/ml/chord_recognizer.cpp`
-
-**Demo:** tocás acorde con mano izquierda → display muestra "Em7".
-
-### Sprint 4.5 — Beat Follower Model (1-2 sesiones)
-
-**Theory:**
-- Onset detection
-- Tempo estimation (autocorrelation)
-- Beat tracking vs tempo tracking
-
-**Implementation:**
-- [ ] `apps/training/models/beat_tracker.py`
-- [ ] Quantize + bundle
-- [ ] `apps/firmware-teensy/src/ml/beat_tracker.cpp`
-
-**Demo:** tocás ritmo → display muestra BPM detectado en tiempo real.
-
-**HITO FASE 4:** Brain Nivel 1 completo — teclado MIDI + 3 TinyML features instantáneos.
-
----
-
-## 6. Fase 5 — WiFi + Cloud (Semana 29-32, Ene 2027)
-
-**Objetivo:** ESP32-S3 conectado a GroovePilot cloud para Layer 2 AI.
-
-### Sprint 5.1 — ESP32-S3 WiFi setup (1 sesión)
-
-**Theory:**
-- WiFi WPA2 connection flow
-- mDNS discovery
-- HTTPS client + certificate validation
+**Theory:** WiFi WPA2 connection flow, mDNS discovery, HTTPS client + certificados.
 
 **Implementation:**
 - [ ] `apps/firmware-esp32/src/wifi/manager.cpp`
 - [ ] WiFi config via web setup portal
 - [ ] Cloud connectivity check
 
-### Sprint 5.2 — GroovePilot Cloud API integration (2 sesiones)
+### Sprint 7.2 — GroovePilot Cloud API integration
 
-**Theory:**
-- REST vs WebSocket
-- Authentication patterns
-- Rate limiting
+**Theory:** REST vs WebSocket, auth patterns, rate limiting.
 
 **Implementation:**
 - [ ] `apps/firmware-esp32/src/cloud/client.cpp`
-- [ ] Patch search endpoint
-- [ ] Display search results en GC9A01
+- [ ] Patch Search NL (lenguaje natural) endpoint
+- [ ] Progression Suggester endpoint
+- [ ] Resultados en el display GC9A01
 
-**Demo:** encoder + text input (via app or buttons) → patches encontrados.
+**Demo:** describís un sonido → 5 patches matching aparecen en el display.
 
-### Sprint 5.3 — OTA updates (1-2 sesiones)
+### Sprint 7.3 — Cloud generative: Note Continuation + Style Transfer
 
 **Theory:**
-- OTA partitions en ESP32
-- Rollback strategies
-- Firmware signing
+- Por qué un modelo generativo *bueno* va en la nube, no en el Teensy (tamaño)
+- Note Continuation: melodía reciente → continuación sugerida (el Brain *propone*, no
+  auto-toca — el usuario acepta)
+- Style Transfer: preset/secuencia → versión modificada según estilo
+
+**Implementation:**
+- [ ] Endpoints cloud `/continue` y `/transfer/style`
+- [ ] UI de aceptar/rechazar sugerencia generada
+
+**Demo:** tocás 4 compases → la nube sugiere los siguientes 4, los aceptás o no.
+
+### Sprint 7.4 — Preset Pack Suggester (Genre Fingerprint rescatado)
+
+**Theory:**
+- El remanente útil del Genre Fingerprint — sin el gimmick de "detectar tu género"
+- Server-side: metadata de estilo (key, acorde, densidad, dinámica) → recomendar un
+  pack de presets, no un label de género
+
+**Implementation:**
+- [ ] Endpoint `/suggest/packs`
+- [ ] El Brain manda metadata (nunca audio) → recibe recomendación de pack
+
+**Demo:** tras unos minutos tocando → el Brain sugiere "probá el pack Ambient Pads".
+
+### Sprint 7.5 — OTA updates
+
+**Theory:** OTA partitions en ESP32, rollback strategies, firmware signing.
 
 **Implementation:**
 - [ ] OTA update mechanism
-- [ ] Update Teensy firmware via UART + bootloader
+- [ ] Update del firmware Teensy via UART + bootloader
 
-**HITO FASE 5:** Brain con WiFi funcional + cloud features.
+**HITO FASE 7:** features AI de nube — generativas, ilimitadas en tamaño de modelo.
+Layer 1 sigue 100% funcional sin WiFi (degradación offline limpia).
 
 ---
 
-## 7. Fase 6 — DAW Bridge (Semana 33-40, Feb-Mar 2027)
+## 8. Fase 8 — Layer 3 DAW Bridge (GroovePilot VST3)
 
-**Objetivo:** integración GroovePilot VST3 via USB-CDC.
+**Objetivo:** integración GroovePilot VST3 via USB-CDC. **Referencia:** `04-ai-architecture.md §3`.
 
-### Sprint 6.1 — USB Audio + MIDI composite (1-2 sesiones)
+### Sprint 8.1 — USB Audio + MIDI composite
+- [ ] Teensy USB type composite — DAW reconoce Brain como audio + MIDI device
 
-**Implementation:**
-- [ ] Teensy USB type configured for composite
-- [ ] DAW reconoce Brain como audio + MIDI device
-
-### Sprint 6.2 — GroovePilot VST3 communication (2-3 sesiones)
-
-**Implementation:**
-- [ ] CDC serial channel
-- [ ] Bridge Protocol over CDC
+### Sprint 8.2 — GroovePilot VST3 communication
+- [ ] CDC serial channel + Bridge Protocol over CDC
 - [ ] VST3 plugin updates con info del Brain
 
-### Sprint 6.3 — Mix-Aware features (3-4 sesiones)
-
-**Implementation:**
-- [ ] VST3 envia mix analysis al Brain
+### Sprint 8.3 — Mix-Aware features
+- [ ] VST3 envía mix analysis al Brain
 - [ ] Brain ajusta automáticamente (cutoff, level)
-- [ ] Frequency conflict detection on display
+- [ ] Frequency conflict detection en el display
 
-**HITO FASE 6:** Brain Nivel 4 funcional — integración profunda con Ableton + GroovePilot.
-
----
-
-## 8. Fase 7 — PCB + Manufactura (Semana 41-48, Abr-May 2027)
-
-### Sprint 7.1 — PCB v0.1 schematic completo en KiCad (2-3 sesiones)
-
-### Sprint 7.2 — PCB v0.1 layout + routing (3-4 sesiones)
-
-### Sprint 7.3 — Prototype fabrication + hand soldering (2 sesiones)
-
-### Sprint 7.4 — Enclosure CNC + 3D printing (3-4 sesiones)
-
-**HITO FASE 7:** 5 prototipos completos producidos.
+**HITO FASE 8:** Brain Nivel 4 — integración profunda con Ableton + GroovePilot.
 
 ---
 
-## 9. Fase 8 — Shipping (Semana 49+, Junio 2027+)
+## 9. Fase 9 — PCB + Manufactura
 
-### Sprint 8.1 — Beta testing program (10 units a beta testers PTDJA)
+### Sprint 9.1 — Filter ladder discreto 2N3904 (era Sprint 1.4, deferred)
+Retomado acá: armado del ladder con pairs matched, calibración 5 pasos, sweep
+20Hz-20kHz, self-oscillation a 80% resonance. **Referencia:** `03-filter-design.md`.
 
-### Sprint 8.2 — Manufactura batch 1 (JLCPCB SMT + assembly)
+### Sprint 9.2 — PCB v0.1 schematic completo en KiCad
+### Sprint 9.3 — PCB v0.1 layout + routing
+### Sprint 9.4 — Prototype fabrication + hand soldering
+### Sprint 9.5 — Enclosure CNC + 3D printing
 
-### Sprint 8.3 — Pre-order fulfillment
+**HITO FASE 9:** 5 prototipos completos producidos.
 
 ---
 
-## 10. Tracking & Metrics
+## 10. Fase 10 — Shipping
 
-### 10.1 Por sprint
+### Sprint 10.1 — Beta testing program (10 units a beta testers PTDJA)
+### Sprint 10.2 — Manufactura batch 1 (JLCPCB SMT + assembly)
+### Sprint 10.3 — Pre-order fulfillment
 
+---
+
+## 11. Tier de features AI — referencia de priorización
+
+Clasificación de los modelos por valor real (funcional × vendible). Guía qué se
+marketea como hero feature y qué es soporte/enabler.
+
+| Feature | Fase | Tier | Naturaleza | Nota |
+|---|---|---|---|---|
+| Scale Lock | 5.3 | **S** | ML (key) + reglas | Buy-reason. "No podés tocar mal." |
+| Auto-Harmonization | 6.2 | **S** | ~90% teoría musical | Magia instantánea para no-músicos |
+| Smart Arpeggiator | 6.3 | **S** | Markov chain | La gente busca arpegiadores |
+| Beat-synced FX | 5.4 | **A** | ML (beat) | Vale si maneja FX, no el número solo |
+| Groove Humanizer | 6.4 | **A** | ML + DSP | Feature de connoisseur |
+| Chord Recognizer | 5.2 | **B** | ML | Enabler de otros, no hero |
+| Velocity Curve Learn | 6.5 | **B** | Estadística | Polish invisible, table stakes |
+| Note Continuation | 7.3 | cloud | Generativo | On-device era riesgoso → nube |
+| ~~Genre Fingerprint~~ | — | C | — | Removido. Rescatado como 7.4 |
+
+**Integridad de marketing:** de los features de arriba, varios son teoría musical /
+estadística / Markov, no redes neuronales. Funcionan excelente — pero marketear un
+*conteo* de "modelos de AI" invita escrutinio. Marketear **outcomes** ("nunca toques
+mal", "armonía en tiempo real", "FX que siguen tu groove") bajo el paraguas
+"AI-powered" es honesto y defendible.
+
+---
+
+## 12. Tracking & Metrics
+
+### 12.1 Por sprint
 - [ ] Theory document escrito antes del code
 - [ ] Code review (con Claude Code) antes de merge
 - [ ] Demo audible/visible/grabable
 - [ ] Tests passing
 - [ ] Documentation actualizado
 
-### 10.2 Por fase
-
-- Hito tangible (audio output, display showing data, working PCB, etc)
+### 12.2 Por fase
+- Hito tangible (audio output, display showing data, working PCB, etc.)
 - Engineering log update con learnings
-- Time spent vs estimated (track for future fase estimation)
+- Time spent vs estimated
 - Decisions log con alternativas consideradas
 
-## 11. Anti-patterns que vamos a evitar
+### 12.3 Métricas AI específicas (Fases 5-7)
+- Inference latency on-device (target <20ms p99 — `04-ai-architecture.md §8`)
+- Tensor arena footprint (target ≤200KB total — `04-ai-architecture.md §1.2`)
+- Accuracy en música real vs sintética (medir el reality gap honestamente)
+- CPU del path de audio NO degradado por la inferencia (audio <1ms sagrado)
+
+---
+
+## 13. Anti-patterns que vamos a evitar
 
 - ❌ Implementar varias features en paralelo sin terminar ninguna
 - ❌ Saltarse el spec y empezar a codear directo
 - ❌ Olvidar el theory document (code without understanding)
-- ❌ Optimización prematura ("esto podría ser más eficiente")
-- ❌ Scope creep ("y si agregamos esto otro feature")
-- ❌ No grabar demos audibles (no hay evidencia después de meses)
+- ❌ Optimización prematura
+- ❌ Scope creep ("y si agregamos esta otra feature")
+- ❌ No grabar demos audibles
+- ❌ *(v0.2)* AI que solo cambia la pantalla y se vende como buy-reason
+- ❌ *(v0.2)* Refactorizar a multi-task sin una ganancia de CPU medible
+- ❌ *(v0.2)* Marketear un conteo de modelos en vez de outcomes
 
-## 12. Living document
+---
+
+## 14. Living document
 
 Este documento se actualiza después de cada sprint con:
 - Status real (terminado, en progreso, blocked)
@@ -651,5 +463,5 @@ Este documento se actualiza después de cada sprint con:
 
 ---
 
-*End of Implementation Roadmap v0.1*
+*End of Implementation Roadmap v0.2*
 *GrooveForge Brain · Spec-first development · Juan Guerrero (GPROG)*
