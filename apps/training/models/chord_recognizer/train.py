@@ -225,14 +225,24 @@ def main() -> None:
     parser.add_argument(
         "--n-train",
         type=int,
-        default=15000,
-        help="Muestras de entrenamiento (default: 15000).",
+        default=30000,
+        help="Muestras de entrenamiento (default: 30000).",
     )
     parser.add_argument(
         "--n-val",
         type=int,
-        default=3000,
-        help="Muestras de validación (default: 3000).",
+        default=6000,
+        help="Muestras de validación (default: 6000).",
+    )
+    parser.add_argument(
+        "--noise-level",
+        type=float,
+        default=0.02,
+        help=(
+            "Ruido gaussiano en el histograma (default: 0.02). "
+            "CRÍTICO: 0.05 destruye la separabilidad entre clases que difieren "
+            "en 1 semitono (ej: C_7 vs C_maj7). Ver key detector noise_level discovery."
+        ),
     )
     args = parser.parse_args()
 
@@ -246,16 +256,16 @@ def main() -> None:
     print(f"\nGenerando dataset sintético...")
     t_data = time.time()
     X_train, y_train = generate_synthetic_dataset(
-        n_samples=args.n_train, noise_level=0.05, rng=rng
+        n_samples=args.n_train, noise_level=args.noise_level, rng=rng
     )
     X_val, y_val = generate_synthetic_dataset(
-        n_samples=args.n_val, noise_level=0.05, rng=rng
+        n_samples=args.n_val, noise_level=args.noise_level, rng=rng
     )
     elapsed_data = time.time() - t_data
 
     print(
         f"Dataset: {len(X_train)} train / {len(X_val)} val "
-        f"(sintético, {NUM_CLASSES} clases, {elapsed_data:.1f}s)"
+        f"(sintético, {NUM_CLASSES} clases, noise={args.noise_level}, {elapsed_data:.1f}s)"
     )
     print(f"X_train shape: {X_train.shape}, dtype: {X_train.dtype}")
     print(f"Labels rango: [{y_train.min()}, {y_train.max()}]")
