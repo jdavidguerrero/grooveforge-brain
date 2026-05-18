@@ -1,0 +1,46 @@
+{
+  "name": "tflite-micro",
+  "version": "2.0.0",
+  "description": "TensorFlow Lite for Microcontrollers — vendored for Teensy 4.1",
+  "keywords": ["tensorflow", "tflite", "machine learning", "embedded"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tensorflow/tflite-micro"
+  },
+  "authors": {
+    "name": "Google TFLite Micro Team"
+  },
+  "license": "Apache-2.0",
+  "build": {
+    "srcFilter": [
+      "+<**/*.cpp>",
+      "+<**/*.cc>",
+      "-<**/*_test.cc>",
+      "-<**/*_test.cpp>",
+      "-<**/*_test_common.cc>",
+      "-<**/*_test_common.cpp>",
+      "-<**/*kernel_runner*>",
+      "-<**/*test_helper*>",
+      "-<**/*recording_micro*>",
+      "-<**/*fake_micro*>",
+      "-<**/*mock_micro*>",
+      "-<tensorflow/lite/micro/benchmarks/>",
+      "-<tensorflow/lite/micro/examples/>",
+      "-<tensorflow/lite/micro/testing/>",
+      "-<tensorflow/lite/micro/integration_tests/>",
+      "-<tensorflow/lite/micro/models/>",
+      "-<tensorflow/lite/micro/tools/>",
+      "-<tensorflow/lite/micro/kernels/arc_mli/>",
+      "-<tensorflow/lite/micro/kernels/hexagon/>",
+      "-<tensorflow/lite/micro/kernels/xtensa/>",
+      "-<tensorflow/lite/micro/kernels/ceva/>",
+      "-<tensorflow/lite/micro/kernels/cmsis_nn/>",
+      "-<tensorflow/lite/micro/kernels/ethos_u/>",
+      "-<tensorflow/lite/micro/kernels/test_data_generation/>",
+      "-<tensorflow/lite/micro/kernels/testdata/>",
+      "-<internal/>",
+      "-<fixedpoint/>"
+    ],
+    "flags": ["-DTF_LITE_STATIC_MEMORY", "-fno-rtti", "-fno-exceptions"]
+  }
+}

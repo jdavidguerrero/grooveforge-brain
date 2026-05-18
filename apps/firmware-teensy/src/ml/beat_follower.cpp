@@ -19,6 +19,7 @@
 // Guard: excluir este archivo en el env native (host tests sin TFLite)
 #ifndef NATIVE_TEST
 
+#include <Arduino.h>  // Serial, delay — necesario al compilar como unidad independiente
 #include "beat_follower.h"
 #include "beat_follower_model.h"  // g_beat_follower_model[], g_beat_follower_model_len
 

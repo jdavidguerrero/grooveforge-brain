@@ -13,6 +13,7 @@
 // Guard: excluir este archivo en el env native (host tests sin TFLite)
 #ifndef NATIVE_TEST
 
+#include <Arduino.h>  // Serial — necesario al compilar como unidad independiente
 #include "key_detector.h"
 #include "key_detector_model.h"  // g_key_detector_model[], g_key_detector_model_len
 

@@ -19,6 +19,7 @@
 // Guard: excluir este archivo en el env native (host tests sin TFLite)
 #ifndef NATIVE_TEST
 
+#include <Arduino.h>  // Serial — necesario al compilar como unidad independiente
 #include "chord_recognizer.h"
 #include "chord_recognizer_model.h"  // g_chord_recognizer_model[], g_chord_recognizer_model_len
 
