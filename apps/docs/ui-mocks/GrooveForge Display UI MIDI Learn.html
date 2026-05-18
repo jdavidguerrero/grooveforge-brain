@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrooveForge Brain — Display UI v1.0 (Addendum · View 23)</title>
+  <link rel="stylesheet" href="blueprint-styles.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #0e1117;
+      overflow: hidden;
+      width: 100vw; height: 100vh;
+    }
+    #root { width: 100%; height: 100%; }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+    .pulse-glow { animation: pulse-glow 0.9s ease-in-out infinite; }
+
+    @keyframes pulse-rec {
+      0%, 100% { opacity: 0.4; transform: scale(0.85); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .pulse-rec { animation: pulse-rec 0.8s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+    @keyframes scan-dots {
+      0%   { opacity: 0.2; }
+      20%  { opacity: 1; }
+      80%  { opacity: 0.4; }
+      100% { opacity: 0.2; }
+    }
+    .scan-d1 { animation: scan-dots 1.2s ease-in-out infinite; animation-delay: 0s; }
+    .scan-d2 { animation: scan-dots 1.2s ease-in-out infinite; animation-delay: 0.2s; }
+    .scan-d3 { animation: scan-dots 1.2s ease-in-out infinite; animation-delay: 0.4s; }
+
+    @keyframes flash-ring {
+      0%   { opacity: 0; transform: scale(0.6); }
+      40%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.15); }
+    }
+    .flash-ring { animation: flash-ring 1s ease-out infinite; transform-origin: 120px 120px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const C = {
+      bg: '#0A0A0A',
+      teal: '#1D9E75',
+      tealBright: '#5DCAA5',
+      tealDim: '#0E5040',
+      red: '#E84A4A',
+      amber: '#E8B84A',
+      white: '#FFFFFF',
+      gray: '#9FE1CB',
+      grayDim: '#4A6058',
+    };
+
+    const PAGE_W = 1920;
+    const PAGE_H = 1080;
+
+    /* ========= ARC HELPERS ========= */
+    function polar(cx, cy, r, deg) {
+      const a = (deg - 90) * Math.PI / 180;
+      return { x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) };
+    }
+    function arc(cx, cy, r, s, e) {
+      const a = polar(cx, cy, r, e), b = polar(cx, cy, r, s);
+      const large = e - s <= 180 ? 0 : 1;
+      return `M ${a.x} ${a.y} A ${r} ${r} 0 ${large} 0 ${b.x} ${b.y}`;
+    }
+
+    /* ========= SHARED ELEMENTS ========= */
+
+    function Disc({ children, glow }) {
+      return (
+        <g>
+          <circle cx={120} cy={120} r={120} fill={C.bg} />
+          {glow && (
+            <g>
+              <circle cx={120} cy={120} r={118} fill="none"
+                stroke={glow} strokeWidth={1.5} opacity={0.35} />
+              <circle cx={120} cy={120} r={114} fill="none"
+                stroke={glow} strokeWidth={0.5} opacity={0.2} />
+            </g>
+          )}
+          {children}
+        </g>
+      );
+    }
+
+    function ArcTitleRow({ stateLabel }) {
+      // "MIDI LEARN" curved across top arc, "REC ●" badge at upper-right
+      return (
+        <g>
+          <defs>
+            <path id="mlArc" d="M 30 120 A 90 90 0 0 1 210 120" fill="none" />
+          </defs>
+          <text fontFamily="'IBM Plex Mono', monospace"
+            fontSize={11} fill={C.teal} fontWeight={600} letterSpacing={3}>
+            <textPath href="#mlArc" startOffset="50%" textAnchor="middle">
+              MIDI LEARN
+            </textPath>
+          </text>
+
+          {/* REC pill — to the right of the curved title */}
+          <g transform="translate(178, 50)">
+            <circle cx={0} cy={0} r={2.6} fill={C.red} className="pulse-rec" />
+            <text x={6} y={3} textAnchor="start"
+              fontFamily="'IBM Plex Mono', monospace" fontSize={7}
+              fill={C.red} fontWeight={700} letterSpacing={1.5}>REC</text>
+          </g>
+
+          {/* State micro-label upper-left */}
+          {stateLabel && (
+            <text x={42} y={52} textAnchor="start"
+              fontFamily="'IBM Plex Mono', monospace" fontSize={6.5}
+              fill={C.teal} opacity={0.6} letterSpacing={1.5}>{stateLabel}</text>
+          )}
+        </g>
+      );
+    }
+
+    function ParamScroller({ active = 'OSC1 DETUNE', prev = 'OSC1 LEVEL', next = 'OSC1 WAVE' }) {
+      // Param name centered with prev/next hints flanking
+      return (
+        <g>
+          <text x={46} y={106} textAnchor="start"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+            fill={C.gray} opacity={0.32} letterSpacing={0.8}>◀</text>
+          <text x={56} y={107} textAnchor="start"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={6.5}
+            fill={C.gray} opacity={0.35} letterSpacing={0.6}>{prev}</text>
+
+          <text x={120} y={114} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={17}
+            fill={C.white} fontWeight={500} letterSpacing={1.2}>{active}</text>
+
+          <text x={184} y={107} textAnchor="end"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={6.5}
+            fill={C.gray} opacity={0.35} letterSpacing={0.6}>{next}</text>
+          <text x={194} y={106} textAnchor="end"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+            fill={C.gray} opacity={0.32} letterSpacing={0.8}>▶</text>
+        </g>
+      );
+    }
+
+    function ActionPrompts({ variant }) {
+      // 3 small prompts at bottom — adapts per state
+      const prompts = variant === 'save'
+        ? [
+            { dot: true, color: C.tealBright, label: 'PRESS TO SAVE' },
+          ]
+        : variant === 'mapped'
+          ? []
+          : [
+              { dot: true, color: C.tealBright, label: 'SAVE' },
+              { arrow: '◀', color: C.gray, label: 'PARAM' },
+              { arrow: '▶', color: C.gray, label: 'PARAM', right: true },
+            ];
+
+      if (variant === 'save') {
+        return (
+          <g>
+            <circle cx={92} cy={216} r={2.8} fill={C.tealBright} />
+            <text x={98} y={219} textAnchor="start"
+              fontFamily="'IBM Plex Mono', monospace" fontSize={8.5}
+              fill={C.tealBright} fontWeight={600} letterSpacing={1.5}>PRESS TO SAVE</text>
+          </g>
+        );
+      }
+      if (variant === 'mapped') {
+        return (
+          <g>
+            <text x={120} y={219} textAnchor="middle"
+              fontFamily="'IBM Plex Mono', monospace" fontSize={7}
+              fill={C.gray} opacity={0.55} letterSpacing={1.5}>NEXT PARAM IN 0.5s</text>
+          </g>
+        );
+      }
+      // Default — 3 prompts
+      return (
+        <g>
+          {/* SAVE — center */}
+          <circle cx={110} cy={216} r={2.6} fill={C.tealBright} />
+          <text x={116} y={219} textAnchor="start"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={7.5}
+            fill={C.tealBright} fontWeight={600} letterSpacing={1.3}>SAVE</text>
+          {/* L PARAM — bottom left */}
+          <text x={42} y={205} textAnchor="start"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={7}
+            fill={C.gray} opacity={0.7} letterSpacing={1.2}>◀ L</text>
+          <text x={42} y={216} textAnchor="start"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={7.5}
+            fill={C.gray} letterSpacing={1.2} fontWeight={500}>PARAM</text>
+          {/* R PARAM — bottom right */}
+          <text x={198} y={205} textAnchor="end"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={7}
+            fill={C.gray} opacity={0.7} letterSpacing={1.2}>R ▶</text>
+          <text x={198} y={216} textAnchor="end"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={7.5}
+            fill={C.gray} letterSpacing={1.2} fontWeight={500}>PARAM</text>
+        </g>
+      );
+    }
+
+    /* ========= STATE A — WAITING ========= */
+    function StateA() {
+      return (
+        <Disc>
+          <ArcTitleRow stateLabel="A · WAITING" />
+          <ParamScroller />
+
+          {/* Mapping status */}
+          <text x={120} y={134} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={9}
+            fill={C.gray} opacity={0.55} letterSpacing={2}>NO MAPPING</text>
+
+          {/* Divider */}
+          <line x1={64} y1={148} x2={176} y2={148}
+            stroke={C.tealDim} strokeWidth={0.5} opacity={0.5} />
+
+          {/* Waiting message + scanning dots */}
+          <text x={120} y={170} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={10}
+            fill={C.teal} opacity={0.75} letterSpacing={2} fontWeight={500}>MOVE A KNOB</text>
+
+          <g transform="translate(120, 184)">
+            <circle cx={-7} cy={0} r={1.8} fill={C.teal} className="scan-d1" />
+            <circle cx={0}  cy={0} r={1.8} fill={C.teal} className="scan-d2" />
+            <circle cx={7}  cy={0} r={1.8} fill={C.teal} className="scan-d3" />
+          </g>
+
+          <ActionPrompts />
+        </Disc>
+      );
+    }
+
+    /* ========= STATE B — CC DETECTED ========= */
+    function StateB() {
+      return (
+        <Disc glow={C.tealBright}>
+          <ArcTitleRow stateLabel="B · DETECTED" />
+
+          {/* Flash ring — expanding */}
+          <circle cx={120} cy={120} r={100} fill="none"
+            stroke={C.tealBright} strokeWidth={1.4}
+            opacity={0.6} className="flash-ring" />
+
+          <ParamScroller />
+
+          {/* Detected CC — bright */}
+          <g>
+            {/* Glow ground */}
+            <rect x={60} y={126} width={120} height={20} rx={3}
+              fill={C.teal} opacity={0.12} />
+            <text x={120} y={141} textAnchor="middle"
+              fontFamily="'IBM Plex Mono', monospace" fontSize={14}
+              fill={C.tealBright} fontWeight={600} letterSpacing={2}>CC 74 · CH 1</text>
+          </g>
+
+          {/* "RECEIVED" callout */}
+          <text x={120} y={166} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={8}
+            fill={C.tealBright} opacity={0.85} letterSpacing={2.5} fontWeight={500}>
+            ✓ CC 74 RECEIVED
+          </text>
+
+          {/* Source — controller name guess */}
+          <text x={120} y={180} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={6.5}
+            fill={C.gray} opacity={0.55} letterSpacing={1.2}>FROM KEYBOARD · USB-A</text>
+
+          <ActionPrompts variant="save" />
+        </Disc>
+      );
+    }
+
+    /* ========= STATE C — MAPPING SAVED ========= */
+    function StateC() {
+      return (
+        <Disc glow={C.tealBright}>
+          <ArcTitleRow stateLabel="C · SAVED" />
+
+          {/* Param (smaller, gives room for checkmark) */}
+          <text x={120} y={86} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={12}
+            fill={C.gray} opacity={0.8} letterSpacing={1.2}>OSC1 DETUNE</text>
+
+          {/* Checkmark circle */}
+          <g transform="translate(120, 124)">
+            <circle cx={0} cy={0} r={26} fill="none"
+              stroke={C.tealBright} strokeWidth={2} />
+            <circle cx={0} cy={0} r={26} fill={C.tealBright} opacity={0.12} />
+            <path d="M -10 1 L -3 9 L 11 -7"
+              fill="none" stroke={C.tealBright} strokeWidth={3}
+              strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+
+          {/* MAPPED text */}
+          <text x={120} y={172} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={13}
+            fill={C.tealBright} fontWeight={600} letterSpacing={3.5}>MAPPED</text>
+
+          {/* Detail */}
+          <text x={120} y={188} textAnchor="middle"
+            fontFamily="'IBM Plex Mono', monospace" fontSize={8}
+            fill={C.gray} opacity={0.7} letterSpacing={1.5}>CC 74 · CH 1</text>
+
+          <ActionPrompts variant="mapped" />
+        </Disc>
+      );
+    }
+
+    /* ========= MAIN PAGE ========= */
+
+    function Spec() {
+      const [scale, setScale] = useState(1);
+      useEffect(() => {
+        function fit() {
+          setScale(Math.min(window.innerWidth / PAGE_W, window.innerHeight / PAGE_H));
+        }
+        fit();
+        window.addEventListener('resize', fit);
+        return () => window.removeEventListener('resize', fit);
+      }, []);
+
+      return (
+        <div style={{
+          width: '100vw', height: '100vh',
+          background: '#0e1117', overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            width: PAGE_W, height: PAGE_H,
+            transform: `scale(${scale})`, transformOrigin: 'center center',
+            position: 'relative',
+          }}>
+            {/* Grid bg */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              backgroundImage: `
+                linear-gradient(#1a1f2a 1px, transparent 1px),
+                linear-gradient(90deg, #1a1f2a 1px, transparent 1px),
+                linear-gradient(#242a38 1px, transparent 1px),
+                linear-gradient(90deg, #242a38 1px, transparent 1px)
+              `,
+              backgroundSize: '20px 20px, 20px 20px, 100px 100px, 100px 100px',
+              opacity: 0.4, pointerEvents: 'none',
+            }} />
+            <div style={{ position: 'absolute', inset: 15, border: '1px solid #2a3040', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: 18, border: '0.5px solid #1e2535', pointerEvents: 'none' }} />
+
+            <Header />
+            <Body />
+            <TitleBlock />
+          </div>
+        </div>
+      );
+    }
+
+    function Header() {
+      return (
+        <div style={{
+          position: 'absolute', top: 28, left: 36, right: 36,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        }}>
+          <div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 28, fontWeight: 700, letterSpacing: 6,
+              color: '#1D9E75', textTransform: 'uppercase',
+            }}>GrooveForge Brain</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11, color: '#6A7080', letterSpacing: 2, marginTop: 4,
+            }}>DISPLAY UI v1.0 — ADDENDUM — VIEW 23 · MIDI LEARN</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 10, color: '#E8A030', letterSpacing: 1,
+            }}>REV A — 3 STATES (A · B · C)</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 9, color: '#5a6070', letterSpacing: 1, marginTop: 3,
+            }}>ENTER: HOLD ENC NAV · 2 s</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 9, color: '#5a6070', letterSpacing: 1, marginTop: 2,
+            }}>EXIT: DOUBLE-PUSH ENC NAV</div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ========= BODY ========= */
+
+    function Body() {
+      return (
+        <div style={{
+          position: 'absolute', top: 110, left: 36, right: 36, bottom: 70,
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr 1fr 1.05fr',
+          gap: 14,
+        }}>
+          <StateTile letter="A" name="WAITING" tone={C.gray}
+            sub="No CC received yet"
+            duration="dwell · until CC or ENC turn"
+            view={<StateA />}
+            elements={[
+              ['A', 'Title arc "MIDI LEARN"', '#1D9E75 · 11 px · letter-spacing 3', 'static'],
+              ['B', 'REC indicator ●', '#E84A4A · 2.6 r + label', 'pulse 0.8 s loop'],
+              ['C', 'Param scroller', '#FFFFFF center / #9FE1CB sides op 0.35', 'live · ENC L/R'],
+              ['D', '"NO MAPPING"', '#9FE1CB · 9 px · op 0.55', 'static for unmapped'],
+              ['E', '"MOVE A KNOB"', '#1D9E75 · 10 px · w500', 'static'],
+              ['F', '3 scanning dots', '#1D9E75 · 1.8 r · stagger 200 ms', 'scan-dots 1.2 s'],
+              ['G', '3 action prompts', '● SAVE · ◀ L PARAM · R PARAM ▶', 'static · always visible'],
+            ]} />
+
+          <StateTile letter="B" name="DETECTED" tone={C.tealBright}
+            sub="CC value captured from MIDI input"
+            duration="≈ 1000 ms · ENC NAV push saves"
+            view={<StateB />}
+            elements={[
+              ['A', 'Title arc + REC', 'same as A · REC stays pulsing', 'live'],
+              ['B', 'Flash ring', '#5DCAA5 · 1.4 px · 100 r expand', 'one-shot 1 s · loops while visible'],
+              ['C', 'Disc glow rim', '#5DCAA5 · 118 r · op 0.35', 'fade-in 120 ms'],
+              ['D', '"CC 74 · CH 1"', '#5DCAA5 · 14 px · w600 · spacing 2', 'live · CC value'],
+              ['E', '"✓ CC 74 RECEIVED"', '#5DCAA5 · 8 px · w500', 'fade-in 80 ms'],
+              ['F', 'Source line', 'controller name · #9FE1CB op 0.55', 'static'],
+              ['G', '"PRESS TO SAVE"', '#5DCAA5 dot + label · 8.5 px', 'static · awaits NAV push'],
+            ]} />
+
+          <StateTile letter="C" name="MAPPED" tone={C.tealBright}
+            sub="Saved · auto-advances to next param"
+            duration="≈ 500 ms · then State A on next param"
+            view={<StateC />}
+            elements={[
+              ['A', 'Title arc + REC', 'still active · subsequent states', 'live'],
+              ['B', 'Param name', '#9FE1CB · 12 px · op 0.8', 'fades 200 ms'],
+              ['C', 'Checkmark circle', '#5DCAA5 · 26 r · 2 px stroke + 12 % fill', 'one-shot 400 ms scale-in'],
+              ['D', 'Check stroke', '#5DCAA5 · 3 px · round caps', 'draws 200 ms'],
+              ['E', '"MAPPED"', '#5DCAA5 · 13 px · w600 · spacing 3.5', 'fade-in 80 ms'],
+              ['F', 'CC detail', '#9FE1CB · 8 px · op 0.7', 'static'],
+              ['G', '"NEXT PARAM IN 0.5s"', '#9FE1CB · 7 px · op 0.55', 'countdown text'],
+            ]} />
+
+          <FSMTile />
+        </div>
+      );
+    }
+
+    /* ========= STATE TILE ========= */
+
+    function StateTile({ letter, name, tone, sub, duration, view, elements }) {
+      return (
+        <div style={{
+          background: '#11141b',
+          border: '1px solid #2a3040',
+          padding: '12px 16px 10px',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 11, fontWeight: 700, color: tone,
+              letterSpacing: 2, padding: '2px 7px',
+              border: `0.7px solid ${tone}`, borderRadius: 2,
+            }}>STATE {letter}</div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 14, fontWeight: 600, color: '#C8CDD8', letterSpacing: 1.5,
+            }}>{name}</div>
+          </div>
+
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 8.5, color: '#9FE1CB', opacity: 0.7,
+            letterSpacing: 0.8, marginBottom: 8,
+          }}>{sub}</div>
+
+          {/* Display */}
+          <div style={{
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            padding: '4px 0',
+          }}>
+            <svg width={240} height={240} viewBox="0 0 240 240">
+              <circle cx={120} cy={120} r={122} fill="none"
+                stroke="#2a3040" strokeWidth={1.5} />
+              <circle cx={120} cy={120} r={125} fill="none"
+                stroke="#1e2535" strokeWidth={0.5} />
+              {view}
+            </svg>
+          </div>
+
+          {/* Duration */}
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 8, color: '#E8A030', letterSpacing: 1.2,
+            margin: '8px 0 6px', fontWeight: 600,
+          }}>
+            <span style={{ color: '#5a6070', marginRight: 6 }}>DURATION</span>
+            {duration}
+          </div>
+
+          {/* Elements */}
+          <div style={{ flex: 1, minHeight: 0 }}>
+            {elements.map((row, i) => (
+              <div key={`el-${i}`} style={{
+                display: 'grid',
+                gridTemplateColumns: '14px 1fr 1.6fr',
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 7.6, lineHeight: '12px',
+                color: '#9FE1CB', gap: 5,
+                padding: '1.5px 0',
+                borderBottom: i < elements.length - 1 ? '0.4px dashed #1e2535' : 'none',
+              }}>
+                <span style={{ color: '#E8A030', fontWeight: 600 }}>{row[0]}</span>
+                <span style={{ color: '#C8CDD8' }}>{row[1]}</span>
+                <span style={{ color: '#5a6070' }}>{row[2]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ========= FSM TILE ========= */
+
+    function FSMTile() {
+      return (
+        <div style={{
+          background: '#11141b',
+          border: '1px solid #2a3040',
+          padding: '12px 16px 10px',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 11, fontWeight: 700, color: '#1D9E75',
+              letterSpacing: 2, padding: '2px 7px',
+              border: '0.7px solid #1D9E75', borderRadius: 2,
+            }}>FSM</div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 14, fontWeight: 600, color: '#C8CDD8', letterSpacing: 1.5,
+            }}>STATE MACHINE</div>
+          </div>
+
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 8.5, color: '#9FE1CB', opacity: 0.7,
+            letterSpacing: 0.8, marginBottom: 10,
+          }}>Transitions, input bindings, LVGL impl</div>
+
+          {/* FSM diagram */}
+          <svg width="100%" height="160" viewBox="0 0 240 160" style={{ marginBottom: 6 }}>
+            {/* Nodes */}
+            {[
+              { x: 40, y: 80, l: 'A', name: 'WAIT' },
+              { x: 120, y: 40, l: 'B', name: 'DETECT' },
+              { x: 200, y: 80, l: 'C', name: 'SAVED' },
+              { x: 120, y: 130, l: 'X', name: 'EXIT' },
+            ].map((n, i) => (
+              <g key={`n-${i}`}>
+                <circle cx={n.x} cy={n.y} r={18}
+                  fill={C.bg} stroke={n.l === 'X' ? '#5a6070' : C.tealBright}
+                  strokeWidth={1.2} />
+                <text x={n.x} y={n.y - 2} textAnchor="middle"
+                  fontFamily="'IBM Plex Mono', monospace" fontSize={9}
+                  fill={n.l === 'X' ? '#9FE1CB' : C.tealBright}
+                  fontWeight={700} letterSpacing={1}>{n.l}</text>
+                <text x={n.x} y={n.y + 8} textAnchor="middle"
+                  fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+                  fill="#9FE1CB" opacity={0.6} letterSpacing={0.8}>{n.name}</text>
+              </g>
+            ))}
+            {/* Arrows */}
+            {/* A → B (CC received) */}
+            <g>
+              <path d="M 56 70 Q 88 42 102 42" fill="none"
+                stroke={C.tealBright} strokeWidth={1} />
+              <polygon points="102,42 96,39 96,45" fill={C.tealBright} />
+              <text x={78} y={36} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+                fill={C.tealBright} letterSpacing={0.5}>CC IN</text>
+            </g>
+            {/* B → C (NAV push) */}
+            <g>
+              <path d="M 138 42 Q 172 42 184 70" fill="none"
+                stroke={C.tealBright} strokeWidth={1} />
+              <polygon points="184,70 188,64 178,68" fill={C.tealBright} />
+              <text x={162} y={36} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+                fill={C.tealBright} letterSpacing={0.5}>● NAV</text>
+            </g>
+            {/* C → A (auto-advance) */}
+            <g>
+              <path d="M 184 92 Q 120 110 56 92" fill="none"
+                stroke={C.gray} strokeWidth={1} strokeDasharray="3 2" opacity={0.7} />
+              <polygon points="56,92 62,90 60,96" fill={C.gray} opacity={0.7} />
+              <text x={120} y={104} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+                fill={C.gray} opacity={0.7} letterSpacing={0.5}>NEXT PARAM · 500 ms</text>
+            </g>
+            {/* A → X (double-push) */}
+            <g>
+              <path d="M 48 96 Q 80 130 102 130" fill="none"
+                stroke="#E8A030" strokeWidth={0.9} />
+              <polygon points="102,130 96,127 96,133" fill="#E8A030" />
+              <text x={70} y={124} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={6}
+                fill="#E8A030" letterSpacing={0.5}>2× NAV</text>
+            </g>
+            {/* B → A (no save · ENC L/R turn) */}
+            <g>
+              <path d="M 108 56 Q 70 64 58 66" fill="none"
+                stroke="#5a6070" strokeWidth={0.7} strokeDasharray="2 2" />
+              <polygon points="58,66 64,62 64,70" fill="#5a6070" />
+              <text x={88} y={62} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={5.5}
+                fill="#5a6070" letterSpacing={0.5}>ENC TURN</text>
+            </g>
+
+            {/* Self-loops for L push (delete) on A */}
+            <g>
+              <circle cx={28} cy={104} r={6} fill="none"
+                stroke={C.red} strokeWidth={0.7} />
+              <text x={20} y={120} textAnchor="middle"
+                fontFamily="'IBM Plex Mono', monospace" fontSize={5.5}
+                fill={C.red} letterSpacing={0.5}>● L = DEL</text>
+            </g>
+          </svg>
+
+          <FSMRow label="ENTER">Hold ENC NAV for 2 s from any view</FSMRow>
+          <FSMRow label="ENC L/R">Scroll Brain params · prev / next</FSMRow>
+          <FSMRow label="CC IN">A → B · captures CC + channel, ≈1 s flash</FSMRow>
+          <FSMRow label="● NAV">B → C · save mapping, auto-advance</FSMRow>
+          <FSMRow label="● L">Delete current mapping (A only)</FSMRow>
+          <FSMRow label="2× NAV">Exit MIDI Learn · back to prior view</FSMRow>
+
+          <div style={{
+            marginTop: 8, paddingTop: 6,
+            borderTop: '0.6px solid #2a3040',
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 7.5, color: '#9FE1CB', letterSpacing: 0.5,
+            lineHeight: '11.5px',
+          }}>
+            <div><span style={{ color: '#1D9E75', fontWeight: 600, marginRight: 6 }}>LVGL</span>
+              lv_label · lv_arc · lv_anim (flash-ring) · lv_obj (REC pulse) · lv_canvas (checkmark)</div>
+            <div style={{ marginTop: 3 }}><span style={{ color: '#E8A030', fontWeight: 600, marginRight: 6 }}>ANIM</span>
+              REC pulse 800 ms · scan dots 1.2 s · flash 1 s · check scale-in 400 ms</div>
+            <div style={{ marginTop: 3 }}><span style={{ color: '#5DCAA5', fontWeight: 600, marginRight: 6 }}>PERSIST</span>
+              mapping table → NVS · key = param_id · val = {`{cc, ch}`}</div>
+          </div>
+        </div>
+      );
+    }
+
+    function FSMRow({ label, children }) {
+      return (
+        <div style={{
+          display: 'grid', gridTemplateColumns: '64px 1fr', gap: 6,
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 7.8, lineHeight: '12px',
+          padding: '1.5px 0',
+        }}>
+          <span style={{ color: '#E8A030', fontWeight: 600, letterSpacing: 0.8 }}>{label}</span>
+          <span style={{ color: '#C8CDD8', opacity: 0.85 }}>{children}</span>
+        </div>
+      );
+    }
+
+    /* ========= TITLE BLOCK ========= */
+
+    function TitleBlock() {
+      return (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: 52, background: '#1a1e25',
+          borderTop: '1.5px solid #2a3040',
+          display: 'flex', alignItems: 'center',
+          padding: '0 36px', gap: 50,
+        }}>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 14, fontWeight: 700, color: '#1D9E75',
+            letterSpacing: 4, textTransform: 'uppercase',
+          }}>GPROG</div>
+          <div style={{ width: 1, height: 28, background: '#2a3040' }} />
+          <div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 10, color: '#C8CDD8', letterSpacing: 1.5,
+            }}>GrooveForge Brain — Display UI v1.0 (Addendum · View 23) — GPROG / Bogotá / 2026</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 8, color: '#5a6070', letterSpacing: 1, marginTop: 2,
+            }}>MIDI LEARN · 3-STATE FSM — pairs with sheets GFB-UI-001 &amp; GFB-UI-002</div>
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', gap: 30, alignItems: 'center' }}>
+            <TBField label="DRAWN" value="GPROG" />
+            <TBField label="DATE" value="2026-05-17" />
+            <TBField label="SHEET" value="UI / ADD 1" />
+            <TBField label="DWG NO." value="GFB-UI-023" />
+          </div>
+        </div>
+      );
+    }
+
+    function TBField({ label, value }) {
+      return (
+        <div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 7, color: '#5a6070', letterSpacing: 1,
+          }}>{label}</div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 9, color: '#C8CDD8', letterSpacing: 0.5, marginTop: 1,
+          }}>{value}</div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Spec />);
+  </script>
+</body>
+</html>

@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrooveForge Brain — Display UI v1.0 (Part 2/2)</title>
+  <link rel="stylesheet" href="blueprint-styles.css">
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      background: #0e1117;
+      overflow: hidden;
+      width: 100vw; height: 100vh;
+    }
+    #root { width: 100%; height: 100%; }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.55; transform: scale(0.92); }
+    }
+    .breathe { animation: breathe 1.4s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    .pulse-glow { animation: pulse-glow 1.8s ease-in-out infinite; }
+
+    @keyframes rotate-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .rotate-slow { animation: rotate-slow 12s linear infinite; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" src="display-views.jsx"></script>
+  <script type="text/babel" src="display-views-part2.jsx"></script>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const PAGE_W = 1920;
+    const PAGE_H = 1550;
+
+    function Spec2() {
+      const [scale, setScale] = useState(1);
+
+      useEffect(() => {
+        function fit() {
+          setScale(Math.min(window.innerWidth / PAGE_W, window.innerHeight / PAGE_H));
+        }
+        fit();
+        window.addEventListener('resize', fit);
+        return () => window.removeEventListener('resize', fit);
+      }, []);
+
+      return (
+        <div style={{
+          width: '100vw', height: '100vh',
+          background: '#0e1117', overflow: 'hidden',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <div style={{
+            width: PAGE_W, height: PAGE_H,
+            transform: `scale(${scale})`, transformOrigin: 'center center',
+            position: 'relative',
+          }}>
+            {/* Grid bg */}
+            <div style={{
+              position: 'absolute', inset: 0,
+              backgroundImage: `
+                linear-gradient(#1a1f2a 1px, transparent 1px),
+                linear-gradient(90deg, #1a1f2a 1px, transparent 1px),
+                linear-gradient(#242a38 1px, transparent 1px),
+                linear-gradient(90deg, #242a38 1px, transparent 1px)
+              `,
+              backgroundSize: '20px 20px, 20px 20px, 100px 100px, 100px 100px',
+              opacity: 0.4, pointerEvents: 'none',
+            }} />
+            <div style={{ position: 'absolute', inset: 15, border: '1px solid #2a3040', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: 18, border: '0.5px solid #1e2535', pointerEvents: 'none' }} />
+
+            <Header />
+            <LevelLegend />
+            <ViewGrid />
+            <TitleBlock />
+          </div>
+        </div>
+      );
+    }
+
+    function Header() {
+      return (
+        <div style={{
+          position: 'absolute', top: 28, left: 36, right: 36,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+        }}>
+          <div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 28, fontWeight: 700, letterSpacing: 6,
+              color: '#1D9E75', textTransform: 'uppercase',
+            }}>GrooveForge Brain</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 11, color: '#6A7080', letterSpacing: 2, marginTop: 4,
+            }}>DISPLAY UI v1.0 — PART 2/2 — SECONDARY STATES, CONNECTIVITY, ERRORS &amp; OVERLAYS</div>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 10, color: '#E8A030', letterSpacing: 1,
+            }}>REV A — 12 VIEWS — IDS 11 – 22</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 9, color: '#5a6070', letterSpacing: 1, marginTop: 3,
+            }}>CONTINUES FROM PART 1/2 (VIEWS 01 – 10)</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 9, color: '#5a6070', letterSpacing: 1, marginTop: 2,
+            }}>SAFE ZONE: 220 px Ø ( 10 px MARGIN )</div>
+          </div>
+        </div>
+      );
+    }
+
+    function LevelLegend() {
+      const levels = [
+        { lv: '0', name: 'STANDALONE', sub: 'Out of the box', color: '#1D9E75' },
+        { lv: '1', name: 'MIDI KEYBOARD', sub: 'TinyML · Scale Lock', color: '#5DCAA5' },
+        { lv: '2', name: '+ SLAVES (POGO)', sub: 'v1.x · future', color: '#9FE1CB', dim: true },
+        { lv: '3', name: '+ WIFI / CLOUD', sub: 'Patch search · AI', color: '#534AB7' },
+        { lv: '4', name: '+ DAW (VST3)', sub: 'GroovePilot link', color: '#7A6FE0' },
+      ];
+
+      return (
+        <div style={{
+          position: 'absolute', top: 88, left: 36, right: 36, height: 100,
+          background: '#11141b', border: '1px solid #2a3040',
+          padding: '10px 22px', display: 'flex', gap: 26,
+          alignItems: 'center',
+        }}>
+          <div style={{
+            display: 'flex', flexDirection: 'column', gap: 4,
+            paddingRight: 22, borderRight: '1px solid #1e2535',
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 9, color: '#1D9E75', letterSpacing: 2.5,
+              fontWeight: 600,
+            }}>CAPABILITY LEVELS</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 8, color: '#9FE1CB', opacity: 0.6,
+              letterSpacing: 0.5, maxWidth: 130,
+            }}>Hardware tier ladder — most views gated by level</div>
+          </div>
+
+          {levels.map((lv, i) => (
+            <div key={`lv-${i}`} style={{
+              flex: 1, display: 'flex', flexDirection: 'column',
+              gap: 4, opacity: lv.dim ? 0.4 : 1,
+            }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+              }}>
+                <div style={{
+                  width: 22, height: 22, borderRadius: '50%',
+                  background: '#0A0A0A', border: `1.5px solid ${lv.color}`,
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 10, color: lv.color, fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: lv.dim ? 'none' : `0 0 8px ${lv.color}33`,
+                }}>{lv.lv}</div>
+                <div style={{
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 9.5, color: '#C8CDD8',
+                  fontWeight: 500, letterSpacing: 1,
+                }}>{lv.name}</div>
+              </div>
+              <div style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 7.5, color: '#6A7080', letterSpacing: 0.5,
+                marginLeft: 30,
+              }}>{lv.sub}</div>
+            </div>
+          ))}
+
+          {/* Mini palette */}
+          <div style={{
+            display: 'flex', gap: 8, alignItems: 'center',
+            paddingLeft: 18, borderLeft: '1px solid #1e2535',
+          }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 9, color: '#1D9E75', letterSpacing: 2.5,
+              fontWeight: 600, writingMode: 'vertical-rl',
+              transform: 'rotate(180deg)', height: 60,
+            }}>SEMANTIC</div>
+            {[
+              { hex: '#5DCAA5', name: 'OK' },
+              { hex: '#E8B84A', name: 'WARN' },
+              { hex: '#E84A4A', name: 'ERR' },
+              { hex: '#7A6FE0', name: 'FX' },
+            ].map(s => (
+              <div key={s.hex} style={{
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', gap: 2,
+              }}>
+                <div style={{
+                  width: 18, height: 18, borderRadius: 3,
+                  background: s.hex, boxShadow: `0 0 6px ${s.hex}66`,
+                }} />
+                <div style={{
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: 6.5, color: '#C8CDD8', letterSpacing: 1,
+                }}>{s.name}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ============ GRID ============ */
+
+    function ViewGrid() {
+      const tiles = [
+        { num: '11', title: 'IDLE / STANDBY', view: 'idle',
+          level: '0', stateBadge: 'PASSIVE',
+          lvgl: 'lv_label · lv_arc (slow rotate)',
+          anim: 'breathe 1.4 s · ring rot 12 s',
+          fsm: 'ENTER 30 s no input · EXIT any input → previous view',
+          elements: [
+            ['A', 'Engine name dim', '#1D9E75 · 14 px · op 0.55', 'static'],
+            ['B', 'Breathing dot', '#1D9E75 + glow', 'pulse 1.4 s loop'],
+            ['C', 'Rotating tick ring', '#0E5040 · 92 r · dash 2/18', 'rot 12 s'],
+            ['D', 'Inactive timer', '#9FE1CB · 7 px · op 0.25', 'live · once/min'],
+          ] },
+        { num: '12', title: 'PRESET BROWSER', view: 'presets',
+          level: '0', stateBadge: 'BROWSER',
+          lvgl: 'lv_label · lv_list (h-scroll)',
+          anim: 'h-scroll 140 ms · ease-out per NAV click',
+          fsm: 'ENTER from MENU · EXIT NAV push loads · L push saves',
+          elements: [
+            ['A', 'Favorite star', '#5DCAA5 · 10 px', 'shown if favorited'],
+            ['B', 'Preset name hero', '#FFFFFF · 20 px · w500', 'updates 0 ms (instant)'],
+            ['C', 'Category', '#5DCAA5 · 9 px · w/ spacing', 'live'],
+            ['D', '#N / TOTAL', '#9FE1CB · 10 px', 'live'],
+            ['E', 'Preview strip', '5 names · center bright', 'h-scrolls'],
+            ['F', 'Center brackets', '#5DCAA5 · 1 px corners', 'static'],
+          ] },
+        { num: '13', title: 'INSERT LAYER', view: 'insert',
+          level: '0', stateBadge: 'FX MODE',
+          lvgl: 'lv_obj grid · lv_canvas glyphs',
+          anim: 'cursor snap 80 ms on NAV detent',
+          fsm: 'ENTER B1 from FX main · EXIT NAV push toggles · B1 returns',
+          elements: [
+            ['A', 'Active FX icon', '#7A6FE0 · 0.9× scale · bright', 'engaged'],
+            ['B', 'Inactive FX', '#534AB7 · 0.75× · op 0.4', 'outline only'],
+            ['C', 'FX label', 'white if active / gray if not', 'per-row'],
+            ['D', 'ACTIVE counter', '#7A6FE0 · 8 px · w600', 'live · 0–7'],
+            ['E', 'Layer tint', '#534AB7 · op 0.18', 'static · mode marker'],
+          ] },
+        { num: '14', title: 'SEND LAYER', view: 'send',
+          level: '0', stateBadge: 'FX MODE',
+          lvgl: 'lv_bar (send level) · lv_canvas',
+          anim: 'send bar fill 60 ms on ENC',
+          fsm: 'ENTER B2 from FX main · EXIT NAV push toggles · B2 back to FX',
+          elements: [
+            ['A', 'Send-level bar', '#7A6FE0 · 2 px · 26 px max', 'live · ENC L'],
+            ['B', 'Bar track', '#2A2658 · 1 px', 'static'],
+            ['C', 'FX icon + name', 'standard active style', 'per-row'],
+            ['D', 'ACTIVE counter', '#7A6FE0 · 8 px', 'live · 0–N'],
+          ] },
+        { num: '15', title: 'MASTER LAYER', view: 'master',
+          level: '0', stateBadge: 'FX MODE',
+          lvgl: 'lv_obj · lv_canvas · lv_label',
+          anim: 'flow arrow gentle pulse 2 s',
+          fsm: 'ENTER B3 from FX main · always-on chain · EXIT B3 back',
+          elements: [
+            ['A', 'Signal flow arrow', '#7A6FE0 · op 0.75', 'static + 2 s pulse'],
+            ['B', 'FLOW label', '#7A6FE0 · 6.5 px', 'static'],
+            ['C', 'Master FX rows', '2-col compact', 'per-row toggles'],
+            ['D', 'Tint + mode pill', '#534AB7 / FX', 'static'],
+          ] },
+
+        { num: '16', title: 'SCALE LOCK', view: 'scale',
+          level: '1', stateBadge: 'TinyML',
+          lvgl: 'lv_label · lv_obj (7 dots) · lv_anim',
+          anim: 'IN-flash 80 ms green · OUT-flash 120 ms red',
+          fsm: 'ENTER MIDI kbd connected + Scale Lock on · LIVE per MIDI note',
+          elements: [
+            ['A', 'Scale name hero', '#FFFFFF · 26 px · w500', 'updates on detect'],
+            ['B', 'Tonic line', '#5DCAA5 · 9 px · op 0.8', 'live'],
+            ['C', 'Degree dots (7)', 'in-scale filled · out-scale ring', 'static per scale'],
+            ['D', 'IN marker', '#5DCAA5 + pulse', 'live · last played note'],
+            ['E', 'TinyML badge', '#5DCAA5 outline pill', 'static'],
+          ] },
+        { num: '17', title: 'WIFI SETUP', view: 'wifi',
+          level: '3', stateBadge: 'CONNECT',
+          lvgl: 'lv_arc (×3) · lv_label · lv_anim',
+          anim: 'arc cascade 800 ms · dot fill sequential',
+          fsm: 'ENTER MENU › Network · EXIT on success → 1.5 s checkmark · FAIL → retry',
+          elements: [
+            ['A', 'WiFi arcs (3)', '#1D9E75 → #5DCAA5 cascade', 'sequential pulse'],
+            ['B', 'State text', '#FFFFFF · 13 px · w500', 'SEARCH / CONN / OK / FAIL'],
+            ['C', 'SSID', '#5DCAA5 · 10 px', 'when found'],
+            ['D', 'Progress dots', '#5DCAA5 · 5 dots', 'live'],
+            ['E', 'Browser hint', '#9FE1CB · 6.5 px · op 0.5', 'static'],
+          ] },
+        { num: '18', title: 'AI SUGGESTION', view: 'aisuggest',
+          level: '3', stateBadge: 'CLOUD AI',
+          lvgl: 'lv_obj (box) · lv_canvas glyph · lv_label',
+          anim: 'box glow fade-in 240 ms · ease-out',
+          fsm: 'ENTER cloud push notif · EXIT NAV push APPLY · R push DISMISS · 30 s auto-dismiss',
+          elements: [
+            ['A', 'Type glyph', 'line-art (kbd/note/EQ)', 'static per type'],
+            ['B', 'Suggestion box', '#5DCAA5 stroke · 6 % fill', 'subtle glow'],
+            ['C', 'Suggestion text', '#FFFFFF · 13 px hero · gray sub', 'static'],
+            ['D', 'Source label', '#1D9E75 · 7 px · op 0.65', 'static'],
+            ['E', 'APPLY prompt', '#5DCAA5 dot + label', 'NAV push'],
+            ['F', 'DISMISS prompt', '#9FE1CB × + label', 'R push'],
+          ] },
+        { num: '19', title: 'DAW CONNECTED', view: 'daw',
+          level: '4', stateBadge: 'MIX-AWARE',
+          lvgl: 'lv_label · lv_bar (mix score) · lv_obj (conflict band)',
+          anim: 'BPM smooth lerp 240 ms · conflict band breathe 1.2 s',
+          fsm: 'ENTER GP-VST3 handshake · LIVE for session · EXIT host close',
+          elements: [
+            ['A', 'BPM hero', '#FFFFFF · 28 px', 'live · lerped'],
+            ['B', 'Key / Section', '#FFFFFF · 11–13 px', 'live'],
+            ['C', 'Mix score', '#7A6FE0 · 2 px bar 0-100', 'live'],
+            ['D', 'Conflict band', '#E84A4A · 1.6 px segment', 'live · warn'],
+            ['E', 'Link dot', '#7A6FE0 · top-right 3 r', 'pulse alive 2 s'],
+            ['F', 'MIX-AWARE pill', '#7A6FE0 outline', 'when GP sending'],
+          ] },
+        { num: '20', title: 'OTA UPDATE', view: 'ota',
+          level: '3', stateBadge: 'BLOCKING',
+          lvgl: 'lv_arc · lv_label · lv_obj (step dots)',
+          anim: 'arc tween linear · steps snap',
+          fsm: 'ENTER MENU › Firmware · LOCKED no inputs except cancel during DOWNLOAD',
+          elements: [
+            ['A', 'Progress arc', '#5DCAA5 · 4 px · 96 r · 360°', 'linear fill'],
+            ['B', '% hero', '#FFFFFF · 42 px · w300', 'live integer'],
+            ['C', 'Step text', '#5DCAA5 · 9 px · w500', 'live'],
+            ['D', 'Step dots (4)', 'done filled · active glow', 'state machine'],
+            ['E', 'ETA', '#9FE1CB · 7 px · op 0.6', 'live · mm:ss'],
+            ['F', '"DO NOT POWER OFF"', '#E8B84A · 7.5 px · w600', 'static during flash'],
+          ] },
+
+        { num: '21', title: 'ERROR STATES', view: 'errors', span: 2, wide: true,
+          level: '0–3', stateBadge: 'ALERT',
+          lvgl: 'lv_label · lv_obj (warn triangle) · lv_anim (flash)',
+          anim: 'red icon flash 120 ms × 3 on entry',
+          fsm: '11a auto-dismiss 3 s → previous · 11b persists · 11c LOCKED until restart',
+          elements: [
+            ['A', 'Warning triangle', '2.5 px stroke · color = severity', 'static'],
+            ['B', 'Title text', '14–18 px · w600 · severity color', 'static'],
+            ['C', 'Sub message', '#9FE1CB · 9 px · op 0.7', 'static'],
+            ['D', 'Error code (mono)', '#FFFFFF · 10 px · spacing 1.5', 'critical only'],
+            ['E', 'Action prompt', '#E8B84A · 9 px · w600', 'when actionable'],
+            ['F', 'Red tint bg', '#E84A4A · op 0.18', 'critical only'],
+          ] },
+        { num: '22', title: 'VOLUME OVERLAY', view: 'volume',
+          level: '0', stateBadge: 'OVERLAY',
+          lvgl: 'lv_arc · lv_bar (×2) · lv_label · scrim',
+          anim: 'arc fill 80 ms · auto-dismiss 1500 ms after last ENC tick',
+          fsm: 'ENTER on volume change · OVERLAYS any view · EXIT 1.5 s idle',
+          elements: [
+            ['A', 'Scrim layer', '#0A0A0A · op 0.55', 'static while shown'],
+            ['B', 'Volume arc', '#5DCAA5 · 4 px · 270° span', 'live ENC'],
+            ['C', 'dB hero', '#FFFFFF · 36 px · w400', 'live'],
+            ['D', 'Output %', '#9FE1CB · 8 px · op 0.6', 'live'],
+            ['E', 'L / R peak bars', '#5DCAA5 fill · #E84A4A clip flash', 'live · 30 fps'],
+            ['F', 'Underlying hint', '#1D9E75 · op 0.2', 'glimpse only'],
+          ] },
+      ];
+
+      // 5-col x 3-row grid
+      // Row 1: 11, 12, 13, 14, 15 (5 tiles, 1 col each)
+      // Row 2: 16, 17, 18, 19, 20 (5 tiles)
+      // Row 3: 21 (span 2), 22 (1 col), Impl notes (span 2)
+
+      return (
+        <div style={{
+          position: 'absolute', top: 200, left: 28, right: 28, bottom: 70,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+          gridTemplateRows: '1fr 1fr 1fr',
+          gap: 10,
+        }}>
+          {tiles.slice(0, 5).map((t, i) => <Tile key={`r1-${i}`} {...t} />)}
+          {tiles.slice(5, 10).map((t, i) => <Tile key={`r2-${i}`} {...t} />)}
+          <Tile {...tiles[10]} /> {/* Errors span 2 */}
+          <Tile {...tiles[11]} /> {/* Volume */}
+          <ImplNotesTile />
+        </div>
+      );
+    }
+
+    /* ============ TILE ============ */
+
+    function Tile({ num, title, view, span, wide, lvgl, anim, fsm, elements, level, stateBadge }) {
+      const colSpan = span || 1;
+      return (
+        <div style={{
+          gridColumn: `span ${colSpan}`,
+          background: '#11141b',
+          border: '1px solid #2a3040',
+          padding: '8px 12px 6px',
+          display: 'flex', flexDirection: 'column',
+          position: 'relative', overflow: 'hidden',
+          minHeight: 0,
+        }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 10, fontWeight: 700, color: '#1D9E75',
+              letterSpacing: 2, padding: '2px 6px',
+              border: '0.7px solid #1D9E75', borderRadius: 2,
+            }}>VIEW {num}</div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 12, fontWeight: 600, color: '#C8CDD8', letterSpacing: 1.2,
+            }}>{title}</div>
+            <div style={{ flex: 1 }} />
+            <LevelBadge level={level} />
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 7, color: '#E8A030', letterSpacing: 1.2,
+              fontWeight: 600, opacity: 0.85,
+            }}>{stateBadge}</div>
+          </div>
+
+          {/* Display */}
+          <div style={{
+            display: 'flex', justifyContent: 'center', alignItems: 'center',
+            padding: '2px 0',
+          }}>
+            <DisplaySVG view={view} wide={wide} />
+          </div>
+
+          {/* Elements list */}
+          <div style={{ marginTop: 3, flex: 1, minHeight: 0 }}>
+            {elements.map((row, i) => (
+              <div key={`el-${i}`} style={{
+                display: 'grid',
+                gridTemplateColumns: wide ? '14px 1.1fr 1.6fr 1.2fr' : '14px 1fr 1.4fr 1fr',
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: 7.2, lineHeight: '11.5px',
+                color: '#9FE1CB', gap: 4,
+                padding: '1px 0',
+                borderBottom: i < elements.length - 1 ? '0.4px dashed #1e2535' : 'none',
+              }}>
+                <span style={{ color: '#E8A030', fontWeight: 600 }}>{row[0]}</span>
+                <span style={{ color: '#C8CDD8' }}>{row[1]}</span>
+                <span style={{ color: '#5a6070' }}>{row[2]}</span>
+                <span style={{ color: '#5DCAA5', opacity: 0.7 }}>{row[3]}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            marginTop: 4, paddingTop: 4,
+            borderTop: '0.6px solid #2a3040',
+            display: 'flex', flexDirection: 'column', gap: 1.5,
+          }}>
+            <FooterLine label="LVGL" color="#1D9E75">{lvgl}</FooterLine>
+            <FooterLine label="ANIM" color="#E8A030">{anim}</FooterLine>
+            <FooterLine label="FSM" color="#5DCAA5">{fsm}</FooterLine>
+          </div>
+        </div>
+      );
+    }
+
+    function FooterLine({ label, color, children }) {
+      return (
+        <div style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 7.5, color: '#9FE1CB',
+          letterSpacing: 0.5, lineHeight: '11px',
+        }}>
+          <span style={{ color, fontWeight: 600, marginRight: 6, letterSpacing: 1 }}>{label}</span>
+          {children}
+        </div>
+      );
+    }
+
+    function LevelBadge({ level }) {
+      return (
+        <div style={{
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 7, color: '#5DCAA5', letterSpacing: 1,
+          padding: '1px 5px', borderRadius: 6,
+          border: '0.6px solid #5DCAA5', fontWeight: 600,
+        }}>LV {level}</div>
+      );
+    }
+
+    /* ============ DISPLAY WRAPPER ============ */
+
+    function DisplaySVG({ view, wide }) {
+      const renderView = () => {
+        switch (view) {
+          case 'idle': return <ViewIdle />;
+          case 'presets': return <ViewPresets />;
+          case 'insert': return <ViewInsertLayer />;
+          case 'send': return <ViewSendLayer />;
+          case 'master': return <ViewMasterLayer />;
+          case 'scale': return <ViewScaleLock />;
+          case 'wifi': return <ViewWifi />;
+          case 'aisuggest': return <ViewAISuggestion />;
+          case 'daw': return <ViewDAW />;
+          case 'ota': return <ViewOTA />;
+          case 'errors': return <ViewErrors />;
+          case 'volume': return <ViewVolume />;
+          default: return null;
+        }
+      };
+
+      const W = wide ? 420 : 200;
+      const H = wide ? 165 : 200;
+      const VBW = wide ? 420 : 240;
+      const VBH = wide ? 270 : 240;
+
+      return (
+        <svg width={W} height={H} viewBox={`0 0 ${VBW} ${VBH}`}>
+          {wide ? (
+            <g>
+              {[0, 140, 280].map((tx, i) => (
+                <g key={`rim-${i}`} transform={`translate(${tx}, 0) scale(0.5)`}>
+                  <circle cx={120} cy={120} r={122} fill="none"
+                    stroke="#2a3040" strokeWidth={1.5} />
+                </g>
+              ))}
+            </g>
+          ) : (
+            <g>
+              <circle cx={120} cy={120} r={122} fill="none"
+                stroke="#2a3040" strokeWidth={1.5} />
+              <circle cx={120} cy={120} r={125} fill="none"
+                stroke="#1e2535" strokeWidth={0.5} />
+            </g>
+          )}
+          {renderView()}
+        </svg>
+      );
+    }
+
+    /* ============ IMPL NOTES ============ */
+
+    function ImplNotesTile() {
+      return (
+        <div style={{
+          gridColumn: 'span 2',
+          background: '#11141b',
+          border: '1px solid #2a3040',
+          padding: '8px 14px',
+          display: 'flex', flexDirection: 'column',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 10, fontWeight: 700, color: '#1D9E75',
+              letterSpacing: 2, padding: '2px 6px',
+              border: '0.7px solid #1D9E75', borderRadius: 2,
+            }}>IMPL</div>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 12, fontWeight: 600, color: '#C8CDD8', letterSpacing: 1.2,
+            }}>SECONDARY-VIEW NOTES</div>
+            <div style={{ flex: 1 }} />
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 7, color: '#E8A030', letterSpacing: 1.2, fontWeight: 600,
+            }}>SHARED PATTERNS</div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, flex: 1 }}>
+            <NoteBlock title="OVERLAYS / TRANSIENTS">
+              <NoteRow label="VOLUME">overlay 1.5 s after last ENC tick</NoteRow>
+              <NoteRow label="ERROR 11a">scrim + 3 s timer · then prev view</NoteRow>
+              <NoteRow label="AI SUGGEST">30 s soft timeout · NAV/R hard exit</NoteRow>
+              <NoteRow label="STACK">overlays render above all views via z-layer 0xA0</NoteRow>
+              <NoteRow label="WAKE">any ENC turn / button press · 0 ms exit idle</NoteRow>
+            </NoteBlock>
+
+            <NoteBlock title="LEVEL GATING">
+              <NoteRow label="LV 0">11 · 12 · 13 · 14 · 15 · 22 always available</NoteRow>
+              <NoteRow label="LV 1">+ 16 (Scale Lock when MIDI kbd detected)</NoteRow>
+              <NoteRow label="LV 3">+ 17 · 18 · 20 (network/cloud/OTA)</NoteRow>
+              <NoteRow label="LV 4">+ 19 (DAW context via GP-VST3)</NoteRow>
+              <NoteRow label="OFFLINE">18 / 19 → grayed entry in MENU</NoteRow>
+            </NoteBlock>
+
+            <NoteBlock title="SEMANTIC COLORS">
+              <NoteRow label="OK">#5DCAA5 — success / in-scale / connected</NoteRow>
+              <NoteRow label="WARN">#E8B84A — calibration / "DO NOT POWER OFF"</NoteRow>
+              <NoteRow label="ERR">#E84A4A — disconnect / clip / critical</NoteRow>
+              <NoteRow label="FX">#534AB7 → #7A6FE0 — purple mode chrome</NoteRow>
+              <NoteRow label="MUTE">all UI dims to op 0.55 over 200 ms when idle</NoteRow>
+            </NoteBlock>
+
+            <NoteBlock title="ANIMATION BUDGET">
+              <NoteRow label="60 FPS">vol arc · peak meters · DAW BPM lerp</NoteRow>
+              <NoteRow label="30 FPS">LFO wave · WiFi cascade · AI orbit</NoteRow>
+              <NoteRow label="SLOW">idle ring rot 12 s · breathe 1.4 s loop</NoteRow>
+              <NoteRow label="ONE-SHOT">checkmark 400 ms · clip flash 120 ms</NoteRow>
+              <NoteRow label="CPU CAP">≤ 12 % during animation · LVGL render @ SPI 40 MHz</NoteRow>
+            </NoteBlock>
+          </div>
+        </div>
+      );
+    }
+
+    function NoteBlock({ title, children }) {
+      return (
+        <div>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 8.5, color: '#1D9E75',
+            letterSpacing: 2.5, fontWeight: 600,
+            marginBottom: 4,
+            borderBottom: '0.6px solid #1e2535',
+            paddingBottom: 3,
+          }}>{title}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    function NoteRow({ label, children }) {
+      return (
+        <div style={{
+          display: 'grid', gridTemplateColumns: '54px 1fr', gap: 6,
+          fontFamily: "'IBM Plex Mono', monospace",
+          fontSize: 7.5, lineHeight: '11px',
+        }}>
+          <span style={{ color: '#E8A030', letterSpacing: 0.8, fontWeight: 500 }}>{label}</span>
+          <span style={{ color: '#C8CDD8', opacity: 0.85 }}>{children}</span>
+        </div>
+      );
+    }
+
+    /* ============ TITLE BLOCK ============ */
+
+    function TitleBlock() {
+      return (
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          height: 52, background: '#1a1e25',
+          borderTop: '1.5px solid #2a3040',
+          display: 'flex', alignItems: 'center',
+          padding: '0 36px', gap: 50,
+        }}>
+          <div style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 14, fontWeight: 700, color: '#1D9E75',
+            letterSpacing: 4, textTransform: 'uppercase',
+          }}>GPROG</div>
+          <div style={{ width: 1, height: 28, background: '#2a3040' }} />
+          <div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 10, color: '#C8CDD8', letterSpacing: 1.5,
+            }}>GrooveForge Brain — Display UI v1.0 (Part 2/2) — GPROG / Bogotá / 2026</div>
+            <div style={{
+              fontFamily: "'IBM Plex Mono', monospace",
+              fontSize: 8, color: '#5a6070', letterSpacing: 1, marginTop: 2,
+            }}>SECONDARY VIEWS · CONNECTIVITY · ERRORS · OVERLAYS — pairs with sheet GFB-UI-001</div>
+          </div>
+          <div style={{ flex: 1 }} />
+          <div style={{ display: 'flex', gap: 30, alignItems: 'center' }}>
+            <TBField label="DRAWN" value="GPROG" />
+            <TBField label="DATE" value="2026-05-17" />
+            <TBField label="SHEET" value="UI / 2 OF 2" />
+            <TBField label="DWG NO." value="GFB-UI-002" />
+          </div>
+        </div>
+      );
+    }
+
+    function TBField({ label, value }) {
+      return (
+        <div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 7, color: '#5a6070', letterSpacing: 1,
+          }}>{label}</div>
+          <div style={{
+            fontFamily: "'IBM Plex Mono', monospace",
+            fontSize: 9, color: '#C8CDD8', letterSpacing: 0.5, marginTop: 1,
+          }}>{value}</div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Spec2 />);
+  </script>
+</body>
+</html>

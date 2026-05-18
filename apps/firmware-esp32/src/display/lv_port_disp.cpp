@@ -47,7 +47,10 @@
  * El GC9A01 acepta burst de hasta la pantalla completa (240*240*2 = 115KB),
  * pero no tenemos esa RAM disponible como buffer contiguo.
  */
-static constexpr uint16_t DISP_BUF_LINES = 20;
+/* Sprint 3.4: 40 lineas (antes 20). Las vistas con canvas/animacion invalidan
+ * regiones grandes cada frame; un buffer mas alto reduce el numero de flushes.
+ * 240*40*2 = 19.2KB por buffer, 38KB total en BSS — holgado en la SRAM del S3. */
+static constexpr uint16_t DISP_BUF_LINES = 40;
 
 /* ── Buffers de rendering ────────────────────────────────────────────────── */
 
@@ -58,12 +61,13 @@ static lv_color_t buf2[BRAIN_DISP_W * DISP_BUF_LINES];
 static lv_disp_draw_buf_t draw_buf;
 static lv_disp_drv_t      disp_drv;
 
-/* Puntero a TFT_eSPI — inicializado en lv_port_disp_init(), NO como global estatico.
- * El constructor de TFT_eSPI en algunos builds toca el bus SPI antes de que el
- * hardware este listo (static init order = antes de setup()), causando StoreProhibited
- * en la estructura spi_t con offset 0x10 (campo uninitialized). Lazy init via new()
- * garantiza que la construccion ocurre dentro de setup(), con hardware disponible. */
-static TFT_eSPI* tft = nullptr;
+/* TFT_eSPI como global estatico — patron extraido de groove_drum (mismo HW).
+ * El constructor corre en static init (antes de setup()), sin tocar hardware.
+ * Con USER_SETUP_LOADED=1 + GC9A01_DRIVER=1 el constructor solo almacena config;
+ * el hardware SPI se inicializa en tft.init() dentro de lv_port_disp_init().
+ * La instancia existente antes de SPI.begin() es necesaria para que HSPI
+ * registre su SPIClass correctamente cuando el bus se pre-inicializa. */
+static TFT_eSPI tft(BRAIN_DISP_W, BRAIN_DISP_H);
 
 /* ── flush callback ──────────────────────────────────────────────────────── */
 
@@ -81,55 +85,48 @@ static void disp_flush(lv_disp_drv_t* drv, const lv_area_t* area, lv_color_t* co
     const uint32_t w = static_cast<uint32_t>(area->x2 - area->x1 + 1);
     const uint32_t h = static_cast<uint32_t>(area->y2 - area->y1 + 1);
 
-    tft->startWrite();
-    tft->setAddrWindow(area->x1, area->y1, w, h);
-    tft->pushColors(reinterpret_cast<uint16_t*>(color_p), w * h, true);
-    tft->endWrite();
+    tft.startWrite();
+    tft.setAddrWindow(area->x1, area->y1, w, h);
+    /* swap=true: el HAL SPI del ESP32 invierte bytes en la transferencia DMA.
+     * pushColors(true) compensa esa inversion — patron de groove_drum (mismo HW). */
+    tft.pushColors(reinterpret_cast<uint16_t*>(color_p), w * h, true);
+    tft.endWrite();
 
-    /* Avisar a LVGL que el flush termino — sin esto el rendering se bloquea */
     lv_disp_flush_ready(drv);
 }
 
 /* ── Implementacion publica ──────────────────────────────────────────────── */
 
 void lv_port_disp_init(void) {
-    /* 1. Pre-inicializar el bus HSPI con los pines correctos ANTES de TFT_eSPI.
-     *
-     * En ESP32-S3, HSPI no tiene "default pins" definidos. Si TFT_eSPI llama
-     * spiStartBus() sin que el bus este pre-inicializado, recibe un spi_t* con
-     * spi->dev == NULL → StoreProhibited @ 0x10.
-     *
-     * SPI.begin(SCLK, MISO=-1, MOSI, SS=-1) fuerza la asignacion de pines al
-     * bus HSPI antes de que TFT_eSPI lo toque. Patron de groove_drum (mismo HW). */
-    Serial.println("[disp] SPI.begin (pre-init HSPI pins)"); Serial.flush();
+    /* Orden identico a groove_drum (mismo HW, funcionaba):
+     * 1. SPI.begin() pre-init del bus HSPI con pines correctos
+     * 2. Backlight
+     * 3. tft.init() + setSwapBytes
+     * 4. fillScreen de prueba
+     * 5. lv_init() + buffers + driver */
+
+    /* SPI.begin() pre-inicializa el bus HSPI con los pines correctos ANTES de
+     * tft.init(). Sin esto spiStartBus() recibe bus_num invalido en IDF5:
+     * spi->dev queda NULL → StoreProhibited @ EXCVADDR 0x10. */
+    Serial.println("[disp] SPI.begin"); Serial.flush();
     SPI.begin(TFT_SCLK, -1, TFT_MOSI, -1);
 
-    /* 2. Construir TFT_eSPI y arrancar el GC9A01.
-     *    Lazy init via new() garantiza construccion dentro de setup(). */
-    Serial.println("[disp] new TFT_eSPI"); Serial.flush();
-    tft = new TFT_eSPI();
+    /* Backlight en GPIO 2 (TFT_BL) ANTES de tft.init() — pin validado en
+     * groove_drum. TFT_eSPI tambien lo maneja via TFT_BACKLIGHT_ON, esto es
+     * belt-and-suspenders para garantizar luz desde el primer instante. */
+    pinMode(2, OUTPUT); digitalWrite(2, HIGH);
+    Serial.println("[disp] backlight ON"); Serial.flush();
 
-    Serial.println("[disp] tft->init()"); Serial.flush();
-    tft->init();
+    Serial.println("[disp] tft.init()"); Serial.flush();
+    tft.init();
+    tft.setSwapBytes(true);
 
-    /* setSwapBytes(true): TFT_eSPI en ESP32-S3 necesita swap de bytes RGB565
-     * para que los colores sean correctos. Sin esto los canales R/B se invierten. */
-    tft->setSwapBytes(true);
+    tft.setRotation(0);
 
-    Serial.println("[disp] setRotation"); Serial.flush();
-    tft->setRotation(0); /* portrait 0deg */
-
-    /* Backlight: activamos GPIO2 y GPIO40 — ambos candidatos segun el hardware.
-     * groove_drum (mismo panel) usaba GPIO2; schematic Waveshare 1.28 dice GPIO40.
-     * Activar ambos es inocuo: el pin incorrecto simplemente no hace nada. */
-    pinMode(2,  OUTPUT); digitalWrite(2,  HIGH);
-    pinMode(40, OUTPUT); digitalWrite(40, HIGH);
-
-    Serial.println("[disp] fillScreen"); Serial.flush();
-    tft->fillScreen(TFT_BLACK); /* negro antes de que LVGL tome control */
+    /* Limpiar la pantalla a negro antes de ceder el control a LVGL. */
+    tft.fillScreen(TFT_BLACK);
 
     /* 2. Inicializar LVGL */
-    Serial.println("[disp] lv_init()"); Serial.flush();
     lv_init();
 
     /* 3. Registrar double buffer */
