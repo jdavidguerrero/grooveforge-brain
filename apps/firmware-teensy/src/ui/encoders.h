@@ -70,6 +70,12 @@ private:
     Encoder _enc_r{13, 14};
     Encoder _enc_nav{16, 17};
 
+    // Last consumed absolute position (in raw pulses, multiple of PULSES_PER_DETENT).
+    // Tracks partial pulses across loop() cycles — avoids the readAndReset() loss bug.
+    int32_t _last_l   = 0;
+    int32_t _last_r   = 0;
+    int32_t _last_nav = 0;
+
     // Teensyduino Bounce2 bundle: Button is a global class (no namespace prefix).
     Button _sw_l;
     Button _sw_r;

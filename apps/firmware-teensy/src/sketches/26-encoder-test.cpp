@@ -121,6 +121,8 @@ void setup() {
     Serial.println("  pressed → keycap Naranja  |  held → keycap Rojo");
     Serial.println("LEDs: 0-11 ring ENC NAV | 12-15 keycap B1-B4 | pin 28");
     Serial.println("----------------------------------------------------------------------");
+    Serial.println("DEBUG: cada 2s imprime raw counts — deben cambiar al girar");
+    Serial.println("  Si raw no cambia → problema de cableado (COM/GND del encoder)");
 }
 
 void loop() {
@@ -232,6 +234,17 @@ void loop() {
                         (COLOR_TEAL.b * bri) / 255);
         }
         leds.show();
+    }
+
+    // ── DEBUG: raw counts cada 2s — cambian si el encoder está bien cableado
+    static uint32_t last_raw_print = 0;
+    if (now - last_raw_print >= 2000) {
+        last_raw_print = now;
+        // Acceso directo a los Encoder objects via punteros temporales no es posible
+        // desde fuera de la clase — usamos una lectura de posición acumulada
+        Serial.printf("[RAW] Si estos cambian al girar → SW bug. Si no cambian → cableado COM/GND\n");
+        Serial.printf("  total_l=%d  total_r=%d  total_nav=%d\n",
+                      (int)total_l, (int)total_r, (int)total_nav);
     }
 
     delay(5);  // 200Hz poll
