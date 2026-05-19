@@ -139,6 +139,46 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 └──────────────────────────────────────────────────────────────────┘
 ```
 
+### 2.1 Audio Signal Path — Modo Synth vs Modo FX Processor
+
+El GrooveForge Brain opera en **dos modos exclusivos**, alternados con doble-push
+del encoder NAV (ver §3.4). Cada modo tiene un camino de señal distinto. El filtro
+analógico 2N3904 vive en un **loop externo al SGTL5000**: el DAC alimenta la entrada
+del filtro y el retorno del filtro entra al `LINE_IN`.
+
+**Modo Synth** — el Teensy genera audio de síntesis; pasa por el filtro analógico:
+
+```
+Teensy engine ─I2S─▶ SGTL5000 DAC ─▶ LINE_OUT ─▶ [filtro 2N3904 ladder]
+                                                         │
+                          SGTL5000 LINE_IN ◀─ 74HC4053 ◀─┘
+                                 │
+                  ┌──────────────┴──────────────┐
+                  ▼                             ▼
+            ADC ─▶ Teensy                 jacks de salida
+            (captura USB Audio,           (ruteo interno SGTL5000)
+             análisis ML)
+```
+
+El filtro se usa en los 5 engines (`03-filter-design.md §6.1`).
+
+**Modo FX Processor** (estilo Roland RMX-1000) — audio externo entra por el jack
+`FX IN`; el Teensy aplica los 12 FX digitales; el filtro analógico queda fuera:
+
+```
+Jack FX IN 1/4" TRS ─▶ 74HC4053 ─▶ SGTL5000 LINE_IN ─▶ ADC ─▶ Teensy FX chain
+                                                                     │
+              jacks de salida ◀─ SGTL5000 ◀─ LINE_OUT ◀─ DAC ◀───────┘
+```
+
+**Switch de ruteo 74HC4053 (GPIO 27):** triple SPDT que selecciona la fuente del
+`LINE_IN` del SGTL5000 — retorno del filtro (Synth) o jack `FX IN` (FX Processor).
+Canal A = `LINE_IN_L`, canal B = `LINE_IN_R`, canal C spare. `GPIO 27` LOW = Synth,
+HIGH = FX. Análisis completo: `apps/docs/theory/audio-routing-dual-mode.md`.
+
+**Salida:** en ambos modos los jacks de salida se alimentan desde el SGTL5000 — el
+ruteo interno por I2C selecciona la fuente según el modo. No requiere switch externo.
+
 ### Key architecture decisions
 
 | Componente | v0.2 (anterior) | v0.3 (FINAL) | Razón |
@@ -172,8 +212,10 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 | WS2812B-2020 SMD x16 | $1.20 | 12 ring ENC NAV + 4 keycap underglow — cadena única, 1 pin Teensy |
 | Volume pot 10kΩ log + knob | $1.00 | Panel mount + aluminum knob |
 | USB-C + USB-A connectors | $0.80 | USB-C device, USB-A host |
-| Audio jacks 1/4" TRS x2 | $3.60 | Switched ground |
-| Audio jacks 3.5mm x2 | $1.20 | Headphones + line in |
+| Audio jacks 1/4" TRS x2 (output L/R) | $3.60 | Switched ground |
+| Audio jacks 1/4" TRS x2 (FX IN L/R) | $3.60 | Entrada Modo FX Processor — estéreo |
+| Audio jack 3.5mm x1 (headphones) | $0.60 | Headphones |
+| **74HC4053 triple SPDT analog switch** | **$0.35** | Ruteo audio Synth/FX — GPIO 27 |
 | LiPo 3000mAh + IP5306 + LC filter | $9.00 | Battery operation + audio rail filter |
 | **2N3904 NPN x12 (matched pairs)** | **$0.60** | 8 ladder + 4 spare/exp converter |
 | **TL072 dual opamp x2** | **$0.80** | Input/output buffers + CV converter |
@@ -188,12 +230,12 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 | Aluminum top panel CNC | $6.00 | 2mm anodizado, Bogotá |
 | Guadua panel finished | $2.50 | Local sourcing + sealing |
 | Passives + cables + screws + misc | $4.50 | Resistores + caps + standoffs |
-| **Subtotal componentes** | **~$110** | |
+| **Subtotal componentes** | **~$113** | Incluye 74HC4053 + jack FX IN 1/4" (Modo FX Processor) |
 | Ensamblaje + QC + filter cal | $10.00 | Filter cal 5-7 min/unidad |
-| **TOTAL per unit (qty 100)** | **~$120** | |
+| **TOTAL per unit (qty 100)** | **~$123** | |
 
-> **Volumen 500-1000u:** BOM baja a ~$87
-> **Volumen 1000+:** BOM baja a ~$75
+> **Volumen 500-1000u:** BOM baja a ~$90
+> **Volumen 1000+:** BOM baja a ~$78
 
 ### 3.2 Power Architecture
 
@@ -265,7 +307,7 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | 17 | GPIO | ENC NAV: B |
 | 26 | GPIO | ENC NAV: SW (push — confirm / AI·Action / double-push = mode switch) |
 | 25 | GPIO | Filter bypass control (CD4066 enable — ENC L push via firmware) |
-| 27 | GPIO | **Libre** — TPDT eliminado (bypass 100% software) |
+| 27 | GPIO | 74HC4053 mode select — ruteo audio Synth/FX (LOW=Synth, HIGH=FX) |
 | 28 | WS2812B DIN | 16 LEDs cadena única: 12 ring ENC NAV + 4 keycap underglow |
 | A0 (14) | ADC | Volume pot read |
 | 36 | GPIO | Pogo INT in (slave interrupt) |

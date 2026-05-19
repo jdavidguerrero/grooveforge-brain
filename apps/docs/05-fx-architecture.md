@@ -25,8 +25,14 @@ Un boutique synth a $599 con 12 efectos signature ejecutándose en hardware dedi
 
 ## 0.2 Arquitectura FX (3 Layers)
 
+La cadena de FX es **agnóstica a la fuente** — procesa de forma idéntica el audio
+generado por un engine de síntesis (Modo Synth) o el audio externo del jack `FX IN`
+(Modo FX Processor — ver `01-architecture.md §2.1`). El mismo código DSP corre en
+ambos modos; solo cambia de dónde llega la señal al grafo de audio del Teensy.
+
 ```
-Engine output (Moog/Juno/Prophet/etc)
+Fuente:  Modo Synth        → Engine output (Moog/Juno/Prophet/etc)
+         Modo FX Processor → Audio externo (jack FX IN → SGTL5000 ADC)
         ↓
 [INSERT LAYER] — efectos in-line, mono-stereo
         ↓

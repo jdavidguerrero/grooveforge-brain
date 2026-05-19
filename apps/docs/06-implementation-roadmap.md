@@ -59,6 +59,7 @@ hardware. Una eventual revisión del North Star, si se decide, es cambio aparte.
 | **Fase 3** | Nivel 0 — UI + display | Encoders + buttons + display GC9A01 funcional |
 | **Fase 4** | Nivel 1 — MIDI + modelos | USB-A host + 3 modelos TinyML entrenados |
 | **Fase 5** | Nivel 1 — AI Activation | Los modelos corren en el device y reaccionan |
+| **Fase 5B** | Nivel 1 — Modo FX Processor | El Brain procesa audio externo (estilo RMX-1000) |
 | **Fase 6** | Nivel 1 — Layer 1 completo | 6+ features AI on-device, offline |
 | **Fase 7** | Nivel 3 — Layer 2 Cloud AI | ESP32-S3 con WiFi + cloud generativo |
 | **Fase 8** | Nivel 4 — DAW bridge | GroovePilot VST3 integration |
@@ -197,6 +198,85 @@ distintas. Cada una tiene su demo.
 
 **HITO FASE 5:** tocás el teclado → el Brain detecta tonalidad/acorde/tempo y **reacciona**
 (sonido + display). Primer demo de AI real end-to-end. Nivel 1 verdaderamente activo.
+
+---
+
+## 5B. Fase 5B — Modo FX Processor
+
+**Objetivo:** habilitar el segundo modo de uso del Brain — procesador de efectos
+estilo Roland RMX-1000. Audio externo entra por el jack `FX IN`, el Teensy aplica
+los 12 FX, y sale procesado. El filtro analógico 2N3904 queda fuera del path.
+
+**Depende de hardware nuevo:** el 74HC4053 (switch de ruteo) y el jack `FX IN` 1/4"
+TRS — ver `01-architecture.md §2.1` y `apps/docs/theory/audio-routing-dual-mode.md`.
+Estos componentes deben sourcearse antes de cablear este modo. La Fase 5B arranca
+después del sprint intermedio de integración (`sprints/29-hardware-integration.md`).
+
+**Por qué después de Fase 5:** el modo FX necesita el audio path completo del
+SGTL5000 (ADC + DAC) operando junto con los FX. Más fácil con el hardware ya
+cableado y validado.
+
+### Sprint 5B.1 — Audio Input Routing & Mode Switch
+
+**Theory:**
+- `AudioInputI2S` / `AudioOutputI2S` de Teensy Audio Library — singletons, un grafo
+- Ruteo del SGTL5000: selección de fuente del ADC, control del 74HC4053 por GPIO 27
+- Switch de modo Synth↔FX: doble-push ENC NAV → GPIO 27 + reconfiguración del grafo
+- Bypass: `LINE_IN → DAC` directo (dry, wet=0)
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/audio/mode_switch.cpp` — control GPIO 27 + estado de modo
+- [ ] Sketch de prueba: audio in → out passthrough, verificar el jack FX IN
+
+**Criterio de pass:** señal en el jack FX IN sale limpia por el output; el switch de
+modo no genera pop audible.
+
+### Sprint 5B.2 — FX Chain on Audio Input
+
+**Theory:**
+- Los 12 FX son source-agnostic (`05-fx-architecture.md §0.2`) — el mismo código DSP
+  procesa audio del engine o del ADC
+- Wet/dry mix, layers INSERT/SEND/MASTER aplicados al audio externo
+- Mapeo de controles en Modo FX (`01-architecture.md §3.4`)
+
+**Implementation:**
+- [ ] Rutear `AudioInputI2S` → FX chain → `AudioOutputI2S`
+- [ ] ENC L = dry/wet, ENC R = parámetro del FX activo
+
+**Demo audible:** entra un loop de batería por FX IN → le aplicás reverb/delay/bitcrush
+en vivo con los encoders.
+
+### Sprint 5B.3 — Audio Onset Detection → Beat Follower
+
+**Theory:**
+- Onset detection desde audio: spectral flux del FFT / derivada del RMS
+- Los onsets de audio alimentan el Beat Follower existente (mismo modelo, IOI histogram)
+- Diferencia con el modo MIDI: en MIDI los onsets son NoteOn; en audio hay que detectarlos
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/ml/audio_onset.cpp`
+- [ ] FFT1024 → spectral flux → onset → `beat_follower.on_onset()`
+
+**Demo audible:** entra un loop por FX IN → el beat-synced FX se sincroniza al BPM
+del audio, sin MIDI.
+
+### Sprint 5B.4 — ML FX Recommendation (Tier A)
+
+**Theory:**
+- Sistema de recomendación: lee el audio entrante, recomienda FX + parámetros
+- Features de FFT: spectral centroid, RMS por banda, flatness, dominant frequency
+- v1 reglas heurísticas (determinístico, sin training); v2 modelo TFLite entrenado
+- Por qué reglas primero: validar el concepto sin training, baseline para el modelo
+
+**Implementation:**
+- [ ] `apps/firmware-teensy/src/ml/fx_recommender.cpp` — extracción de features + reglas
+- [ ] (v2) `apps/training/models/fx_recommender/` — modelo TFLite
+
+**Demo:** entra un pad → el Brain sugiere reverb oscuro. Entra percusión → sugiere
+delay corto + beat-sync. La sugerencia aparece en el display.
+
+**HITO FASE 5B:** el Brain funciona como procesador de FX — insertable en el
+send/return de un mixer, con FX reactivos al audio que entra.
 
 ---
 
