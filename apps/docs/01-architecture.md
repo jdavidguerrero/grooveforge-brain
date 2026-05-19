@@ -160,7 +160,7 @@ Teensy engine ─I2S─▶ SGTL5000 DAC ─▶ LINE_OUT ─▶ [filtro 2N3904 la
              análisis ML)
 ```
 
-El filtro analógico aplica **exclusivamente al engine Moog Model D** (`03-filter-design.md §6.1`). Los demás engines tienen CD4066 en bypass por default — pasan directo de DAC a LINE_IN sin atravesar el hardware de filtro.
+El filtro analógico está disponible para **todos los engines** (`03-filter-design.md §6.1`), cada uno con cutoff/resonance defaults calibrados para su carácter sonoro. En modo Synth, todos los engines pasan por el hardware de filtro; el CD4066 (GPIO 25) permite bypass por software. Los modelos ML (Beat Follower, Chord Recognizer, Key Detector) modulan el CV del filtro para comportamiento contextual (Sprint 5B.4).
 
 **Modo FX Processor** (estilo Roland RMX-1000) — audio externo entra por el jack
 `FX IN`; el Teensy aplica los 12 FX digitales; el filtro analógico queda fuera:

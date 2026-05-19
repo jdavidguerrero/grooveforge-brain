@@ -249,27 +249,35 @@ Final QA:
 
 ### 6.1 Filter routing per engine
 
-El filtro analógico 2N3904 es **exclusivo del engine Moog Model D**. Es el corazón sonoro
-de ese engine — sin el ladder analógico, el Moog Model D no tiene su carácter distintivo.
-Los demás engines tienen bypass del filtro analógico activo por default (el CD4066 en bypass,
-GPIO 25 = HIGH) y no pasan por el hardware de filtro.
+El filtro analógico 2N3904 está disponible para **todos los engines**. Es el diferenciador
+central del producto — convierte cualquier engine digital en un instrumento con carácter
+analógico real. Cada engine tiene un punto de partida (cutoff/resonance default) calibrado
+para su identidad sonora; el usuario puede ajustarlo con ENC L/R y persiste en preset.
 
-| Engine | Filter analógico | Razón |
-|---|---|---|
-| **Moog Model D** | **ON por default** | El ladder discreto es su identidad sonora |
-| Juno-106 | OFF | Su carácter proviene de su filtro state-variable digital + chorus |
-| Prophet-5 | OFF | Su carácter proviene de su filtro CEM/SSM state-variable digital |
-| OB-6 | OFF | Su carácter proviene de su filtro state-variable digital |
-| DX7 | OFF | FM puro — no tiene filtro en su arquitectura original |
-| ARP 2600 | OFF | Su carácter proviene de su filtro state-variable multimode digital |
+| Engine | Cutoff default | Resonance default | Rationale |
+|---|---|---|---|
+| **Moog Model D** | 800 Hz | 35% | Su identidad — warm y oscuro; filtro digital bypaseado (§6.3) |
+| Juno-106 | 4 kHz | 15% | Juno es brillante — coloreado suave para calidez analógica |
+| Prophet-5 | 3 kHz | 20% | Hereda algo del carácter Curtis CEM; complementa el digital |
+| OB-6 | 5 kHz | 10% | OB-6 es abierto — mínima coloración, solo toque analógico |
+| ARP 2600 | 2 kHz | 25% | ARP era oscuro — el ladder refuerza ese carácter |
+| DX7 | 12 kHz | 0% | FM limpio — casi sin filtrar, solo calor analógico del pass-through |
 
-**User override:** el usuario puede activar el filtro analógico en cualquier engine desde el
-panel (ENC L push + hold en modo SYNTH). Esto crea sonidos híbridos experimentales, pero no
-es el comportamiento por default. Firmware gestiona el estado de CD4066 (GPIO 25) por engine
-y lo persiste en preset.
+**Modulación inteligente via ML (Sprint 5B.4):** los modelos Beat Follower, Chord Recognizer
+y Key Detector alimentan el CV del filtro analógico:
+- Beat Follower BPM → LFO sincronizado al beat → cutoff modulado rítmicamente
+- Chord Recognizer (menor/mayor/7th…) → bias de cutoff (menor = más oscuro, −20%)
+- Key Detector modo musical → perfil de resonancia (Dorian = suave, Frigio = agresivo)
 
-Teensy controls CD4066 via GPIO 25. LOW = filtro analógico activo, HIGH = bypass (señal
-directa de DAC → ADC sin pasar por el hardware de filtro).
+Esto convierte el filtro de un control estático en un procesador contextual que se adapta
+a lo que se está tocando — comportamiento no replicable por software a ningún precio.
+
+**Envelope follower (Sprint 5B.3):** el Teensy lee el RMS de la señal post-filtro (ADC) y
+lo usa para modular el cutoff automáticamente. Comportamiento auto-wah disponible en todos
+los engines sin configuración adicional.
+
+Teensy controla CD4066 via GPIO 25. LOW = filtro analógico activo, HIGH = bypass.
+El estado por engine se persiste en preset.
 
 ### 6.2 CV control
 
