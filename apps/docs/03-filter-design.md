@@ -272,6 +272,53 @@ Teensy PWM @ 200kHz ──[LP filter 10kHz]──[TL072 buffer]──▶ Filter 
 
 Resonance is user-controlled directly via panel pot.
 
+### 6.3 Interacción filtro analógico ↔ filtros digitales internos por engine
+
+Cuando el filtro analógico está activo (CD4066 no en bypass, GPIO 25 = LOW), la señal de
+todos los engines lo atraviesa. Cada engine tiene además su propio filtro digital interno.
+La interacción entre ambos depende del tipo de filtro del engine:
+
+| Engine | Filtro digital interno | Topología | Cuando analógico activo |
+|---|---|---|---|
+| Moog Model D | Ladder 4-pole (24dB/oct) | **Mismo tipo** que el analógico | **BYPASS digital** |
+| Juno-106 | State-variable 2-pole | Diferente | Mantener activo — sonido híbrido intencional |
+| Prophet-5 | State-variable 2-pole | Diferente | Mantener activo — sonido híbrido intencional |
+| OB-6 | State-variable 2-pole | Diferente | Mantener activo — sonido híbrido intencional |
+| ARP 2600 | State-variable multimode | Diferente | Mantener activo — sonido híbrido intencional |
+| DX7 | Sin filtro (FM puro) | N/A | N/A (analógico OFF por default — §6.1) |
+
+**Rationale MoogModelD — bypass digital obligatorio:**
+
+Dos filtros ladder en serie (digital 4-pole + analógico 4-pole) producen un equivalente de
+8 polos (48dB/oct). El corte resultante es tan agresivo que destruye el carácter del engine
+— prácticamente silencia todo por encima del cutoff. El firmware desactiva el filtro digital
+del Moog Model D siempre que el analógico esté activo, dejando el 2N3904 como filtro único.
+
+**Rationale engines restantes — apilado intencional:**
+
+Los filtros state-variable (Juno-106, Prophet-5, OB-6) y ARP tienen topologías distintas al
+ladder. Apilarlos con el 2N3904 no duplica la pendiente de la misma forma — el digital moldea
+el timbre base del engine (su identidad sonora), y el 2N3904 agrega coloración analógica encima.
+Esto es la propuesta de valor: "motor digital con carácter analógico Moog".
+
+**Implementación en firmware (engine_manager.cpp — sprint pendiente):**
+
+```cpp
+// Llamar en cambio de engine y en cambio de estado del bypass analógico
+void sync_digital_filter_state() {
+    bool analog_active = (digitalRead(PIN_FILTER_BYPASS) == LOW); // GPIO 25 LOW = activo
+
+    if (current_engine == ENGINE_MOOG_MODEL_D) {
+        // Bypass digital cuando analógico activo — evita 8-pole (48dB/oct)
+        moog_engine.setDigitalFilterEnabled(!analog_active);
+    }
+    // Todos los demás engines: filtro digital siempre activo independiente del analógico
+}
+```
+
+**User override (v2.0):** futuro toggle "expert mode" permite forzar digital+analógico
+apilados en MoogModelD para experimentación — no en v1.0.
+
 ---
 
 ## 7. PCB Layout Guidelines
