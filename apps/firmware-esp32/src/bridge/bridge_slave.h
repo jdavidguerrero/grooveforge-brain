@@ -34,10 +34,10 @@ class BridgeSlave {
 public:
     BridgeSlave();
 
-    /** Inicializa Serial1 (GPIO 44=RX, 43=TX) a 921600 8N1. */
+    /** Inicializa Serial0/UART0 (GPIO44=RX, GPIO43=TX nativos) a 921600 8N1. */
     void init();
 
-    /** Procesa bytes disponibles en Serial1. Llamar en cada iteración de loop(). */
+    /** Procesa bytes disponibles en Serial0. Llamar en cada iteración de loop(). */
     void poll();
 
     /** Envía un frame ya construido. */

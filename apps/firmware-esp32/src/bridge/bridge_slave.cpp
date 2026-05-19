@@ -10,7 +10,10 @@
 #include <Arduino.h>
 #include <string.h>
 
-/* GPIO 44=RX ← Teensy TX (pin 1); GPIO 43=TX → Teensy RX (pin 0). */
+/* GPIO43(TX) / GPIO44(RX) son UART0 en ESP32-S3.
+ * Con ARDUINO_USB_CDC_ON_BOOT=1 (platformio.ini), Serial = USB CDC nativo
+ * y GPIO43/44 quedan libres para el bridge.
+ * Con CDC desactivado, Serial = UART0 = GPIO43/44 → conflicto y hang. */
 #define BRIDGE_UART_RX_PIN  44
 #define BRIDGE_UART_TX_PIN  43
 #define BRIDGE_UART_BAUD    921600
@@ -21,12 +24,15 @@ BridgeSlave::BridgeSlave() {
 }
 
 void BridgeSlave::init() {
+    // Serial1 con pines explícitos GPIO44(RX) / GPIO43(TX).
+    // Requiere ARDUINO_USB_CDC_ON_BOOT=1 — si CDC está desactivado, Serial=UART0
+    // ya ocupa GPIO43/44 y este begin() cuelga silenciosamente.
     Serial1.begin(BRIDGE_UART_BAUD, SERIAL_8N1, BRIDGE_UART_RX_PIN, BRIDGE_UART_TX_PIN);
     _rx_state   = RxState::IDLE;
     _connected  = false;
     _last_hb_ms = 0;
     _tx_seq     = 0;
-    Serial.printf("[bridge] init — UART1 @ %u baud RX=%d TX=%d\n",
+    Serial.printf("[bridge] init — Serial1 @ %u baud (GPIO%d=RX GPIO%d=TX)\n",
                   BRIDGE_UART_BAUD, BRIDGE_UART_RX_PIN, BRIDGE_UART_TX_PIN);
     Serial.flush();
 }
