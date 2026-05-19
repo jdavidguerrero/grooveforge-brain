@@ -10,12 +10,11 @@
 #include <Arduino.h>
 #include <string.h>
 
-/* GPIO43(TX) / GPIO44(RX) son UART0 en ESP32-S3.
- * Con ARDUINO_USB_CDC_ON_BOOT=1 (platformio.ini), Serial = USB CDC nativo
- * y GPIO43/44 quedan libres para el bridge.
- * Con CDC desactivado, Serial = UART0 = GPIO43/44 → conflicto y hang. */
-#define BRIDGE_UART_RX_PIN  44
-#define BRIDGE_UART_TX_PIN  43
+/* GPIO17(TX) / GPIO18(RX) — pines UART libres en Waveshare ESP32-S3-Touch-LCD-1.28.
+ * GPIO43/44 = UART0 = Serial (debug) — NO usar para bridge.
+ * Serial1 con pines explícitos 17/18 no tiene conflicto con Serial debug. */
+#define BRIDGE_UART_RX_PIN  18
+#define BRIDGE_UART_TX_PIN  17
 #define BRIDGE_UART_BAUD    921600
 
 BridgeSlave::BridgeSlave() {
@@ -24,9 +23,8 @@ BridgeSlave::BridgeSlave() {
 }
 
 void BridgeSlave::init() {
-    // Serial1 con pines explícitos GPIO44(RX) / GPIO43(TX).
-    // Requiere ARDUINO_USB_CDC_ON_BOOT=1 — si CDC está desactivado, Serial=UART0
-    // ya ocupa GPIO43/44 y este begin() cuelga silenciosamente.
+    // Serial1 con pines explícitos GPIO18(RX) / GPIO17(TX).
+    // GPIO43/44 = UART0/Serial (debug) → no conflicto con Serial1 en 17/18.
     Serial1.begin(BRIDGE_UART_BAUD, SERIAL_8N1, BRIDGE_UART_RX_PIN, BRIDGE_UART_TX_PIN);
     _rx_state   = RxState::IDLE;
     _connected  = false;
