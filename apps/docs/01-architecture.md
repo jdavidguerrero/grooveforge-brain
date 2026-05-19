@@ -323,7 +323,7 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | Pin | Function | Conexión |
 |---|---|---|
 | GPIO 17 | UART TX (Serial1) | → Teensy RX (pin 0) |
-| GPIO 18 | UART RX (Serial1) | ← Teensy TX (pin 1) |
+| GPIO 16 | UART RX (Serial1) | ← Teensy TX (pin 1) |
 | GPIO 43 | UART0 TX (Serial debug) | USB-UART bridge interno — NO usar para bridge |
 | GPIO 44 | UART0 RX (Serial debug) | USB-UART bridge interno — NO usar para bridge |
 | GPIO 7/8/9/10/11/12 | SPI display | GC9A01 (internal connection) |

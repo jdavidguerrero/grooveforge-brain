@@ -10,10 +10,10 @@
 #include <Arduino.h>
 #include <string.h>
 
-/* GPIO17(TX) / GPIO18(RX) — pines UART libres en Waveshare ESP32-S3-Touch-LCD-1.28.
+/* GPIO17(TX) / GPIO16(RX) — pines UART del conector Waveshare ESP32-S3-Touch-LCD-1.28.
  * GPIO43/44 = UART0 = Serial (debug) — NO usar para bridge.
- * Serial1 con pines explícitos 17/18 no tiene conflicto con Serial debug. */
-#define BRIDGE_UART_RX_PIN  18
+ * Serial1 con pines explícitos 16/17 no tiene conflicto con Serial debug. */
+#define BRIDGE_UART_RX_PIN  16
 #define BRIDGE_UART_TX_PIN  17
 #define BRIDGE_UART_BAUD    921600
 
