@@ -248,6 +248,22 @@ static uint8_t g_fx_sub2[NUM_FX] = {1, 2, 1, 1, 1, 2, 1, 1, 1};
 // Modo top-level: 0=FX, 1=SYNTH. B2 cicla entre los dos.
 static uint8_t  g_top_mode      = 0;
 
+// ── Estado navegación SYNTH (modo 1) ──────────────────────────────────────
+// Espeja la jerarquía de sketch 28 / Sprint 31.
+static constexpr uint8_t NUM_SYNTH_ENGINES = 3;   // Moog / Juno / Prophet
+static uint8_t  g_synth_level   = 0;   // 0=ENGINE_LIST, 1=SUBHOME, 2=GROUP_VIEW
+static uint8_t  g_engine_cursor = 0;   // cursor en ENGINE_LIST
+static uint8_t  g_active_group  = 0;   // 0=OSC, 1=ENV, 2=FILTER, 3=LFO
+static uint8_t  g_group_cursor  = 0;   // cursor dentro del grupo activo
+// Valores normalizados [grupo][param] para envío al ESP32.
+// FILTER inicial: cutoff=0.5 (voz media), resonance=0.1 (limpio).
+static float    g_synth_vals[4][4] = {
+    {0.5f, 0.5f, 0.5f, 0.5f},   // OSC
+    {0.7f, 0.3f, 0.5f, 0.5f},   // ENV  (attack bajo, release medio)
+    {0.5f, 0.1f, 0.5f, 0.5f},   // FILTER (cutoff mitad, resonance limpio)
+    {0.3f, 0.5f, 0.5f, 0.5f},   // LFO
+};
+
 // Estado del arm de AI mode (hold 4s en ENC NAV en FX_MAIN)
 static bool     g_ai_arming     = false;
 static uint32_t g_ai_arm_start  = 0;
@@ -643,6 +659,124 @@ static void handle_encoders() {
         Serial.println("[AI] arm cancelled (encoder moved)");
     }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // MODO SYNTH — navegación a 3 niveles (ENGINE_LIST → SUBHOME → GROUP_VIEW)
+    // Bug fix: sketch 27 no tenía encoder logic para modo SYNTH; todo encoder
+    // input enviaba param_ids de FX que confundían al ESP32.
+    // ══════════════════════════════════════════════════════════════════════
+    if (g_top_mode == 1) {
+
+        // ── Nivel 0 — ENGINE_LIST ─────────────────────────────────────────
+        // ENC NAV gira → mueve cursor entre engines (wrap modular)
+        // ENC NAV push → selecciona engine, sube a SUBHOME
+        if (g_synth_level == 0) {
+            if (delta_nav != 0) {
+                int32_t next = ((int32_t)g_engine_cursor + delta_nav
+                                + NUM_SYNTH_ENGINES) % NUM_SYNTH_ENGINES;
+                g_engine_cursor = (uint8_t)next;
+                bridge_send_param_raw(0x00FE, (float)g_engine_cursor);
+                Serial.printf("[SYNTH LIST] engine=%u\n", g_engine_cursor);
+            }
+            if (nav_push) {
+                g_synth_level = 1;
+                bridge_send_param_raw(0x00F5, 1.0f);    // → SUBHOME
+                // Enviar cutoff/resonance actuales para que los arcs carguen con valores reales
+                bridge_send_param_raw(0x1020, g_synth_vals[2][0]);
+                bridge_send_param_raw(0x1021, g_synth_vals[2][1]);
+                Serial.println("[SYNTH] → SUBHOME");
+            }
+        }
+
+        // ── Nivel 1 — ENGINE_SUBHOME ──────────────────────────────────────
+        // ENC L gira → cutoff (grupo FILTER, param 0)
+        // ENC R gira → resonance (grupo FILTER, param 1)
+        // ENC NAV push → entra a GROUP_VIEW
+        // ENC L/R push → vuelve a ENGINE_LIST
+        else if (g_synth_level == 1) {
+            if (delta_l != 0) {
+                float& v = g_synth_vals[2][0];
+                v = fmaxf(0.0f, fminf(1.0f, v + delta_l * 0.02f));
+                bridge_send_param_raw(0x1020, v);  // FILTER cutoff norm → s_synth_cutoff
+                Serial.printf("[SUBHOME] cutoff=%.2f\n", v);
+            }
+            if (delta_r != 0) {
+                float& v = g_synth_vals[2][1];
+                v = fmaxf(0.0f, fminf(1.0f, v + delta_r * 0.02f));
+                bridge_send_param_raw(0x1021, v);  // FILTER resonance norm → s_synth_resonance
+                Serial.printf("[SUBHOME] resonance=%.2f\n", v);
+            }
+            if (nav_push) {
+                g_synth_level = 2;
+                // Notificar grupo y cursor al ESP32 antes de cambiar de nivel
+                bridge_send_param_raw(0x00F6, (float)(g_active_group * 10 + g_group_cursor));
+                bridge_send_param_raw(0x00F5, 2.0f);    // → GROUP_VIEW
+                Serial.printf("[SYNTH] → GROUP_VIEW group=%u param=%u\n",
+                              g_active_group, g_group_cursor);
+            }
+            if (l_push || r_push) {
+                g_synth_level = 0;
+                bridge_send_param_raw(0x00F5, 0.0f);    // → ENGINE_LIST
+                Serial.println("[SYNTH] → ENGINE_LIST");
+            }
+        }
+
+        // ── Nivel 2 — GROUP_VIEW ──────────────────────────────────────────
+        // ENC NAV gira → cicla grupos OSC/ENV/FILTER/LFO (wrap modular)
+        // ENC L gira → mueve cursor de param dentro del grupo (clamped 0-3)
+        // ENC R gira → edita valor del param bajo cursor (norm 0.0-1.0, step 0.02)
+        // ENC L/R push → vuelve a SUBHOME
+        else {
+            if (delta_nav != 0) {
+                g_active_group = (uint8_t)((g_active_group + delta_nav + 4) % 4);
+                g_group_cursor = 0;
+                bridge_send_param_raw(0x00F6, (float)(g_active_group * 10));
+                Serial.printf("[GROUP_VIEW] grupo=%u\n", g_active_group);
+            }
+            if (delta_l != 0) {
+                int32_t nc = (int32_t)g_group_cursor + delta_l;
+                if (nc < 0) nc = 0;
+                if (nc > 3) nc = 3;
+                g_group_cursor = (uint8_t)nc;
+                bridge_send_param_raw(0x00F6,
+                    (float)(g_active_group * 10 + g_group_cursor));
+                Serial.printf("[GROUP_VIEW] param=%u\n", g_group_cursor);
+            }
+            if (delta_r != 0) {
+                // Edita el valor del param seleccionado y lo envía al ESP32.
+                // param_id encoding (mismo que sketch 28):
+                //   (0x10 + engine_id) << 8 | (group << 4) | pidx
+                // Para engine 0: 0x1000 | (group<<4) | cursor
+                float& v = g_synth_vals[g_active_group][g_group_cursor];
+                v = fmaxf(0.0f, fminf(1.0f, v + delta_r * 0.02f));
+                uint16_t pid = (uint16_t)(0x1000
+                               | ((uint16_t)g_active_group << 4)
+                               | g_group_cursor);
+                bridge_send_param_raw(pid, v);
+                // Si el param es FILTER cutoff/resonance, actualiza también la caché local
+                // para que SUBHOME tenga valores coherentes si el usuario vuelve.
+                if (g_active_group == 2) {
+                    g_synth_vals[2][g_group_cursor] = v;
+                }
+                Serial.printf("[GROUP_VIEW] grp=%u p=%u val=%.2f\n",
+                              g_active_group, g_group_cursor, v);
+            }
+            if (l_push || r_push) {
+                g_synth_level = 1;
+                bridge_send_param_raw(0x00F5, 1.0f);    // → SUBHOME
+                // Refrescar arcs con valores actuales de FILTER
+                bridge_send_param_raw(0x1020, g_synth_vals[2][0]);
+                bridge_send_param_raw(0x1021, g_synth_vals[2][1]);
+                Serial.println("[SYNTH] → SUBHOME");
+            }
+        }
+
+        return;  // ← No ejecutar el bloque FX que sigue
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // MODO FX (g_top_mode == 0) — lógica original
+    // ══════════════════════════════════════════════════════════════════════
+
     // ── ENC NAV gira ──────────────────────────────────────────────────────
     if (delta_nav != 0) {
         if (g_fx_view == FxView::FX_SELECT) {
@@ -661,7 +795,7 @@ static void handle_encoders() {
             // la señal intencional de "quiero volver a escuchar el FX".
             if (g_bypass && g_wet_dry > 0.0f) {
                 g_bypass = false;
-                apply_bypass();   // quita el bypass de audio
+                apply_bypass();
                 Serial.println("[BYPASS] auto-off via wet_dry raise");
             }
             apply_wet_dry();
@@ -683,12 +817,10 @@ static void handle_encoders() {
             // FX_MAIN: push = BYPASS toggle
             g_bypass = !g_bypass;
             if (g_bypass) {
-                // Al entrar en bypass: reset wet a 0.
-                // NO se restaura al salir — el usuario lo sube manualmente.
                 g_wet_dry = 0.0f;
             }
             apply_bypass();
-            bridge_send_param_raw(0x00FF, 0.0f);  // siempre 0 — bypass o wet ya en 0
+            bridge_send_param_raw(0x00FF, 0.0f);
             Serial.printf("[BYPASS] %s\n", g_bypass ? "ON" : "OFF");
         }
         // Iniciar AI arm solo en FX_MAIN (en FX_SELECT no tiene sentido)
@@ -717,7 +849,7 @@ static void handle_encoders() {
             g_fx_view   = FxView::FX_SELECT;
             bridge_send_param_raw(0x00FD, 2.0f);  // 2=AI mode
             Serial.println("[AI] mode activated!");
-        } else if (held > 200) {  // feedback desde t=200ms
+        } else if (held > 200) {
             if ((now - g_ai_last_prog) >= AI_PROG_INTERVAL) {
                 float progress = (float)held / (float)AI_HOLD_MS;
                 bridge_send_param_raw(0x00FB, progress);
@@ -741,9 +873,7 @@ static void handle_encoders() {
             Serial.printf("[SUB1] %s: %.3f\n", p.name, p.value);
     }
 
-    // ── ENC L push → rotar qué parámetro controla sub1 ──────────────────
-    // Simétrico con ENC R push (rota sub2). Nunca toma el mismo índice que sub2.
-    // Envía 0xF7 para sincronizar el display del ESP32 y PARAM_CHANGED del nuevo sub1.
+    // ── ENC L push → rotar qué parámetro controla sub1 ───────────────────
     if (l_push) {
         uint8_t num = fx_desc[g_active_fx].num_params;
         uint8_t s1  = g_fx_sub1[g_active_fx];
@@ -776,22 +906,17 @@ static void handle_encoders() {
     }
 
     // ── ENC R push → rotar qué parámetro controla sub2 ───────────────────
-    // Cicla por los params del FX activo saltando el que ya controla sub1.
-    // Envía 0xF7 para sincronizar el display del ESP32 y PARAM_CHANGED del nuevo sub2.
     if (r_push) {
         uint8_t num = fx_desc[g_active_fx].num_params;
         uint8_t s1  = g_fx_sub1[g_active_fx];
         uint8_t s2  = g_fx_sub2[g_active_fx];
-        // Buscar siguiente param != sub1
         for (uint8_t i = 0; i < num; i++) {
             s2 = (s2 + 1) % num;
             if (s2 != s1) break;
         }
         g_fx_sub2[g_active_fx] = s2;
-        // Sync al ESP32 (0xF7: fx*100 + sub1*10 + sub2)
         float sync = (float)(g_active_fx * 100 + s1 * 10 + s2);
         bridge_send_param_raw(0x00F7, sync);
-        // Enviar valor actual del nuevo param como referencia visual
         FxParam& p = fx_desc[g_active_fx].params[s2];
         bridge_send_param_changed(g_active_fx, s2, p.value);
         Serial.printf("[SUB2 ROT] FX%u sub2→%u (%s)\n", g_active_fx, s2, p.name);
@@ -803,21 +928,36 @@ static void handle_encoders() {
 static void handle_buttons() {
     uint32_t now = millis();
 
-    // B1 = HOME: vuelve a FX_SELECT, cancela AI arm, notifica ESP32
+    // B1 = HOME: comportamiento depende del modo activo
     if (buttons.pressed(0)) {
-        g_fx_view   = FxView::FX_SELECT;
         g_ai_arming = false;
-        bridge_send_param_raw(0x00FA, 0.0f);   // 0=FX HOME
-        bridge_send_param_raw(0x00FE, (float)g_fx_cursor);
-        print_fx_select_status();
-        Serial.println("[HOME] → FX_SELECT");
+        if (g_top_mode == 1) {
+            // SYNTH mode: reset a ENGINE_LIST (nivel 0)
+            g_synth_level = 0;
+            bridge_send_param_raw(0x00FA, 0.0f);  // ESP32 → VIEW_IDX_ENGINE_LIST
+            bridge_send_param_raw(0x00FE, (float)g_engine_cursor);
+            Serial.println("[HOME] SYNTH → ENGINE_LIST");
+        } else {
+            // FX mode: reset a FX_SELECT
+            g_fx_view = FxView::FX_SELECT;
+            bridge_send_param_raw(0x00FA, 0.0f);  // ESP32 → VIEW_IDX_FX_SELECT
+            bridge_send_param_raw(0x00FE, (float)g_fx_cursor);
+            print_fx_select_status();
+            Serial.println("[HOME] FX → FX_SELECT");
+        }
     }
 
     // B2 = MODE TOGGLE FX ↔ SYNTH
     if (buttons.pressed(1)) {
         g_top_mode = (g_top_mode + 1) % 2;   // 0=FX, 1=SYNTH
+        if (g_top_mode == 1) {
+            // Entrando a SYNTH: siempre arranca en ENGINE_LIST
+            g_synth_level = 0;
+        } else {
+            // Volviendo a FX: reset a FX_SELECT
+            g_fx_view = FxView::FX_SELECT;
+        }
         bridge_send_param_raw(0x00FD, (float)g_top_mode);
-        g_fx_view = FxView::FX_SELECT;
         Serial.printf("[MODE] → %s\n", g_top_mode == 0 ? "FX" : "SYNTH");
     }
 
