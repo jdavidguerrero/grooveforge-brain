@@ -36,7 +36,7 @@
  *                            _dryWetMix ──→ _out L+R
  *
  * CPU estimado: ~6% (apps/docs/05-fx-architecture.md §1.3)
- * AudioMemory: begin() llama AudioMemory(30).
+ * AudioMemory: 30 bloques recomendados — el sketch es responsable de llamar AudioMemory().
  *
  * Theory: apps/docs/sprints/16-ghost-echo.md (pendiente)
  * Refs: apps/docs/05-fx-architecture.md §1.3
@@ -50,15 +50,35 @@ public:
     GhostEcho();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea 2 AudioConnections dinámicas: inputStream→_feedbackMix(ch0) e
-     * inputStream→_dryWetMix(ch0). Llama AudioMemory(30) internamente.
+     * inputStream→_dryWetMix(ch0). NO llama AudioMemory() ni codec.enable() —
+     * el sketch compartido es responsable de ambos.
      *
      * @param inputStream Stream de audio de entrada.
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * El sketch conecta este nodo al mixer compartido de salida. El FX no
+     * instancia AudioOutputI2S — hay una sola instancia global en el sketch.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * GhostEcho es mono-interno: ambos canales salen del mismo nodo (port 0).
+     * El sketch conecta L a out ch0 y R a out ch1 desde el mismo AudioMixer4.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Tiempo de delay en milisegundos.
@@ -121,16 +141,13 @@ private:
     AudioMixer4              _feedbackMix;    ///< ch0=nuevo audio, ch1=feedback filtrado
     AudioEffectDelay         _delay;          ///< delay multi-tap, usamos solo tap 0
     AudioFilterStateVariable _feedbackLP;     ///< LP en path de feedback (tape color)
-    AudioMixer4              _dryWetMix;
-    AudioOutputI2S           _out;
-    AudioControlSGTL5000     _codec;
+    AudioMixer4              _dryWetMix;      ///< último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas (init list del constructor) ──────────────────────────
     // _feedbackMix(0) → _delay(0)          — el mix entra al delay
     // _delay(0) → _feedbackLP(0)           — tap 0 del delay al LP filter
     // _feedbackLP(port 0 = LP) → _feedbackMix(ch1)  — feedback filtrado cierra el loop
     // _delay(0) → _dryWetMix(ch1)          — fan-out: misma tap al wet out
-    // _dryWetMix(0) → _out L+R
     //
     // Fan-out desde _delay tap 0: AudioConnection múltiple desde el mismo output port
     // es válido en Teensy Audio Library — el scheduler lo resuelve sin copias extras.
@@ -138,15 +155,13 @@ private:
     AudioConnection _cDelayLP;         ///< _delay(tap0) → _feedbackLP
     AudioConnection _cLPFeedback;      ///< _feedbackLP(port0=LP) → _feedbackMix(ch1)
     AudioConnection _cDelayWet;        ///< _delay(tap0) → _dryWetMix(ch1) — fan-out
-    AudioConnection _cOutL;
-    AudioConnection _cOutR;
 
     // ── Conexiones dinámicas ──────────────────────────────────────────────────────
     AudioConnection* _cIn;    ///< inputStream → _feedbackMix(ch0)
     AudioConnection* _cDry;   ///< inputStream → _dryWetMix(ch0)
 
     // ── Estado de parámetros ──────────────────────────────────────────────────────
-    float _delayMs  = 375.0f;    ///< tiempo de delay [10.0, 1400.0] ms
+    float _delayMs  = 10.0f;    ///< tiempo de delay [10.0, 1400.0] ms
     float _feedback = 0.45f;     ///< gain de feedback [0.0, 0.95]
     float _tapeLP   = 5000.0f;   ///< cutoff del LP de cinta [500.0, 12000.0] Hz
     float _mix      = 0.5f;      ///< wet level [0.0, 1.0]

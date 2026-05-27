@@ -77,8 +77,6 @@ ModalReverb::ModalReverb()
     , _cMixAWet  (_modeMixA, 0, _wetMix,  0)   // modeMixA → wetMix ch0
     , _cMixBWet  (_modeMixB, 0, _wetMix,  1)   // modeMixB → wetMix ch1
     , _cWetDry   (_wetMix,   0, _dryWetMix, 1) // wetMix → dryWetMix ch1 (wet)
-    , _cOutL     (_dryWetMix, 0, _out,    0)   // dryWetMix → I2S Left
-    , _cOutR     (_dryWetMix, 0, _out,    1)   // dryWetMix → I2S Right
 {
     // Punteros dinámicos sin inicializar hasta begin()
     for (int i = 0; i < 6; i++) _cMode[i] = nullptr;
@@ -86,14 +84,8 @@ ModalReverb::ModalReverb()
 }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void ModalReverb::begin(AudioStream& inputStream, float volume) {
-    // 6 modos + 4 mixers (A, B, wet, dryWet) + out ≈ 11 objetos activos.
-    // AudioMemory(30) da ~2.7× headroom sobre los bloques activos.
-    // Cada bloque = 128 muestras × 4 bytes = 512 bytes.
-    AudioMemory(30);
-
-    _codec.enable();
-    _codec.volume(volume);
+// AudioMemory y codec son responsabilidad del sketch — ModalReverb solo crea conexiones.
+void ModalReverb::begin(AudioStream& inputStream) {
 
     // Inicializar niveles de modo en 1.0 — modos siempre excitados por el input continuo.
     // En v1.0 no hay onset detection: los filtros BP resuenan mientras haya energía

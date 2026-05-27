@@ -45,15 +45,30 @@ public:
     CymaticResonator();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea 5 AudioConnections dinámicas: 4 fan-out a los modos BP + 1 al dry path.
-     * Llama AudioMemory(30) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada.
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * CymaticResonator es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Ratio de sintonía global sobre BASE_FREQ.
@@ -82,15 +97,16 @@ public:
      * @brief Factor Q de todos los filtros bandpass.
      *
      * Q determina el ancho de banda: BW = freq / Q.
-     * Q=10  → BW=44Hz @440Hz — resonancia ancha, suena compleja pero difusa.
-     * Q=30  → BW=14.7Hz @440Hz — sweet spot: coloración clara sin inestabilidad.
-     * Q=80  → BW=5.5Hz @440Hz — resonancia muy estrecha, casi tonal, filtra duro.
+     * Q=1   → BW=261Hz @261Hz — muy ancho, coloración suave como caja de resonancia.
+     * Q=5   → BW=52Hz @261Hz  — default: resonancia audible sin efecto "filtro".
+     * Q=15  → BW=17Hz @261Hz  — estrecho, picos tónicos, carácter cristalino.
+     * Q=30  → BW=9Hz @261Hz   — muy estrecho, cuasi-tonal, peligro de inestabilidad.
      *
      * Nota: AudioFilterBiquad en float32 puede ser inestable con Q>100 a frecuencias
-     * bajas. Clampeado a 80 como máximo seguro.
+     * bajas. Clampeado a 30 como máximo práctico.
      * Ref: Zölzer "DAFX" (2011), §3.2 — estabilidad numérica de biquad resonante.
      *
-     * @param q Factor Q [10.0, 80.0].
+     * @param q Factor Q [1.0, 30.0].
      */
     void setResonance(float q);
 
@@ -141,22 +157,17 @@ private:
     // ── Audio objects (Teensy Audio Library oficial) ──────────────────────────────
     AudioFilterBiquad    _mode[4];      ///< 4 filtros BP en paralelo
     AudioMixer4          _modeMix;      ///< suma de los 4 modos
-    AudioMixer4          _dryWetMix;    ///< dry(ch0) + wet(ch1)
-    AudioOutputI2S       _out;
-    AudioControlSGTL5000 _codec;
+    AudioMixer4          _dryWetMix;    ///< último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas (inicializadas en lista del constructor) ─────────────
     // _mode[0..3] → _modeMix(ch0..3)  — 4 conexiones
     // _modeMix → _dryWetMix(ch1)      — wet path
-    // _dryWetMix → _out L+R           — 2 conexiones
-    // Total: 7 conexiones estáticas
+    // Total: 5 conexiones estáticas
     AudioConnection _cMode0Mix;   ///< _mode[0] → _modeMix(ch0)
     AudioConnection _cMode1Mix;   ///< _mode[1] → _modeMix(ch1)
     AudioConnection _cMode2Mix;   ///< _mode[2] → _modeMix(ch2)
     AudioConnection _cMode3Mix;   ///< _mode[3] → _modeMix(ch3)
     AudioConnection _cMixWet;     ///< _modeMix → _dryWetMix(ch1)
-    AudioConnection _cOutL;       ///< _dryWetMix → _out(L)
-    AudioConnection _cOutR;       ///< _dryWetMix → _out(R)
 
     // ── Conexiones dinámicas (creadas en begin()) ─────────────────────────────────
     // Fan-out desde inputStream: una conexión por modo + una al dry.

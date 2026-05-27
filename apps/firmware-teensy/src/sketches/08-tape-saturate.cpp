@@ -2,10 +2,9 @@
 // Sprint 2.3 — FX Tape Saturate: demo interactivo via Serial.
 // Theory y signal flow: apps/docs/sprints/08-tape-saturate.md
 //
-// NOTA DE ARQUITECTURA: los engines actuales (Prophet5, MoogModelD, Juno106) tienen
-// AudioOutputI2S privado dentro del engine — no se pueden encadenar FX directamente.
-// Este sketch valida el FX de forma independiente con 3 AudioSynthWaveform (chord C mayor).
-// En Fase 3, el routing FX se integrará en src/main.cpp con un grafo unificado.
+// El sketch es dueño del AudioOutputI2S, AudioControlSGTL5000 y AudioMemory compartidos.
+// TapeSaturate expone getOutputL()/getOutputR() para conectar al output mixer del sketch.
+// Este patrón permite declarar múltiples FX en el mismo sketch sin conflictos de I2S.
 //
 // Comandos Serial (115200 baud):
 //   d<valor>  → Drive (1.0–10.0)       ej: d5.0
@@ -34,8 +33,22 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
-// ── TapeSaturate: conecta srcMix como input en begin() ───────────────────────────
+// ── Output compartido — una sola instancia de AudioOutputI2S por sketch ──────────
+// TapeSaturate ya no contiene AudioOutputI2S: el sketch es dueño del output.
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
+// ── TapeSaturate: expone getOutputL()/getOutputR() para conectar aquí ────────────
 TapeSaturate tape;
+
+// Conexiones FX → output compartido (creadas después de tape, para que el linker
+// resuelva el orden de los objetos AudioStream en el grafo del scheduler)
+AudioConnection cFxL(tape.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(tape.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 // ── Frecuencias base del acorde C mayor ──────────────────────────────────────────
 static constexpr float FREQ_C4 = 261.63f;
@@ -53,7 +66,17 @@ static bool  g_bypass  = false;
 void setup() {
     Serial.begin(115200);
 
-    // AudioMemory se llama dentro de tape.begin()
+    // El sketch es dueño de AudioMemory y el codec — TapeSaturate ya no los llama.
+    // 80 bloques: mismo budget que antes (Prophet-5 compatible).
+    AudioMemory(80);
+
+    codec.enable();
+    codec.volume(0.5f);
+
+    // outMixL/R: solo el canal 0 activo (FX conectado en ch0). Gain 1.0 = pass-through.
+    outMixL.gain(0, 1.0f);
+    outMixR.gain(0, 1.0f);
+
     // srcMix: gain uniforme para los 3 osciladores (0.33 × 3 = ~1.0 amplitud total)
     srcMix.gain(0, 0.33f);
     srcMix.gain(1, 0.33f);
@@ -73,8 +96,8 @@ void setup() {
     osc3.frequency(FREQ_G4);
     osc3.amplitude(0.4f);
 
-    // TapeSaturate conecta srcMix como input y llama AudioMemory(80)
-    tape.begin(srcMix, 0.5f);
+    // TapeSaturate: solo crea las conexiones dinámicas desde srcMix
+    tape.begin(srcMix);
 
     // Valores de demo: saturación sutil que demuestra calidez sin exagerar
     tape.setDrive(g_drive);

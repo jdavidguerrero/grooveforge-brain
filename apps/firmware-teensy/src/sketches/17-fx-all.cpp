@@ -12,13 +12,12 @@
 
 #define ACTIVE_FX 1
 
-// ── Por qué no hay "cambio de FX en runtime" ─────────────────────────────────
-// Teensy Audio Library solo admite UNA instancia de AudioOutputI2S en el programa.
-// Cada clase FX contiene su propio AudioOutputI2S privado como miembro. Si se
-// instanciaran dos FX a la vez, el segundo AudioOutputI2S registraría un segundo
-// callback DMA → conflicto de hardware → crash o silencio.
-// La selección via #define resuelve el conflicto en tiempo de compilación:
-// solo un FX existe en memoria por flash. El cambio requiere reflashear (~5s).
+// ── Por qué no hay "cambio de FX en runtime" (v1.0) ─────────────────────────────
+// Las clases FX ya NO tienen AudioOutputI2S interno — el sketch es dueño del output
+// compartido. El cambio en runtime es posible en v2.0 usando AudioConnection dinámicas
+// (punteros): desconectar el FX activo y reconectar el siguiente al outMixL/R.
+// En v1.0 el ACTIVE_FX #define selecciona qué FX se incluye — simple y sin bugs.
+// El cambio requiere reflashear (~5s). En v2.0 será runtime sin reflash.
 
 #include <Arduino.h>
 #include <Audio.h>
@@ -34,6 +33,13 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
+// ── Output compartido — fuera de los bloques #if para que exista una sola vez ───
+// Cada FX expone getOutputL()/getOutputR() para conectar aquí.
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
 // ═════════════════════════════════════════════════════════════════════════════
 // FX 1 — CYMATIC RESONATOR (Sprint 2.8)
 // ═════════════════════════════════════════════════════════════════════════════
@@ -41,6 +47,10 @@ AudioConnection c3(osc3, 0, srcMix, 2);
 
 #include "fx/cymatic_resonator.h"
 CymaticResonator fx;
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 static float   g_tune      = 1.0f;    // 0.5–2.0
 static uint8_t g_density   = 4;       // 1–4
@@ -53,12 +63,16 @@ void setup() {
     Serial.begin(115200);
     delay(1200);
 
+    AudioMemory(30);
+    codec.enable(); codec.volume(0.7f);
+    outMixL.gain(0, 1.0f); outMixR.gain(0, 1.0f);
+
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.25f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.25f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.25f);
     srcMix.gain(0, 0.33f); srcMix.gain(1, 0.33f); srcMix.gain(2, 0.33f); srcMix.gain(3, 0.0f);
 
-    fx.begin(srcMix, 0.7f);
+    fx.begin(srcMix);
     fx.setTune(g_tune); fx.setDensity(g_density); fx.setResonance(g_resonance);
     fx.setLfoRate(g_lfoRate); fx.setMix(g_mix); fx.setBypass(g_bypass);
 
@@ -128,6 +142,10 @@ void loop() {
 
 #include "fx/granular_cloud.h"
 GranularCloud fx;
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 static float g_grainSize = 100.0f;   // 5–250 ms
 static float g_speed     = 1.0f;     // 0.25–4.0
@@ -139,12 +157,16 @@ void setup() {
     Serial.begin(115200);
     delay(1200);
 
+    AudioMemory(30);
+    codec.enable(); codec.volume(0.7f);
+    outMixL.gain(0, 1.0f); outMixR.gain(0, 1.0f);
+
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.25f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.25f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.25f);
     srcMix.gain(0, 0.33f); srcMix.gain(1, 0.33f); srcMix.gain(2, 0.33f); srcMix.gain(3, 0.0f);
 
-    fx.begin(srcMix, 0.7f);
+    fx.begin(srcMix);
     fx.setGrainSize(g_grainSize); fx.setSpeed(g_speed);
     fx.setFreeze(g_freeze); fx.setMix(g_mix); fx.setBypass(g_bypass);
 
@@ -205,6 +227,10 @@ void loop() {
 
 #include "fx/spring_plate.h"
 SpringPlate fx;
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 static uint8_t g_algorithm = 0;      // 0=spring 1=plate 2=blend
 static float   g_roomSize  = 0.5f;   // 0.0–1.0
@@ -221,12 +247,16 @@ void setup() {
     Serial.begin(115200);
     delay(1200);
 
+    AudioMemory(30);
+    codec.enable(); codec.volume(0.7f);
+    outMixL.gain(0, 1.0f); outMixR.gain(0, 1.0f);
+
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.25f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.25f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.25f);
     srcMix.gain(0, 0.33f); srcMix.gain(1, 0.33f); srcMix.gain(2, 0.33f); srcMix.gain(3, 0.0f);
 
-    fx.begin(srcMix, 0.7f);
+    fx.begin(srcMix);
     fx.setAlgorithm(g_algorithm); fx.setRoomSize(g_roomSize);
     fx.setDamping(g_damping); fx.setBlend(g_blend);
     fx.setMix(g_mix); fx.setBypass(g_bypass);
@@ -297,6 +327,10 @@ void loop() {
 
 #include "fx/ghost_echo.h"
 GhostEcho fx;
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 static float g_delayMs  = 375.0f;   // 10–1400 ms
 static float g_feedback = 0.45f;    // 0.0–0.95
@@ -308,12 +342,16 @@ void setup() {
     Serial.begin(115200);
     delay(1200);
 
+    AudioMemory(30);
+    codec.enable(); codec.volume(0.7f);
+    outMixL.gain(0, 1.0f); outMixR.gain(0, 1.0f);
+
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.25f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.25f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.25f);
     srcMix.gain(0, 0.33f); srcMix.gain(1, 0.33f); srcMix.gain(2, 0.33f); srcMix.gain(3, 0.0f);
 
-    fx.begin(srcMix, 0.7f);
+    fx.begin(srcMix);
     fx.setDelayMs(g_delayMs); fx.setFeedback(g_feedback);
     fx.setTapeLP(g_tapeLP); fx.setMix(g_mix); fx.setBypass(g_bypass);
 

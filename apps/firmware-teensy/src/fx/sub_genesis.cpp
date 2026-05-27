@@ -17,20 +17,11 @@ SubGenesis::SubGenesis()
     , _cSubSatLP (_subSat,     0, _subLP,        0)   // subSat out → subLP in
     , _cSubLPMix (_subLP,      0, _subMix,       0)   // subLP LP(out0) → subMix ch0
     , _cSubMixWet(_subMix,     0, _dryWetMix,    1)   // subMix out → dryWetMix ch1 (wet)
-    , _cMixL     (_dryWetMix,  0, _out,          0)   // dryWetMix → I2S Left
-    , _cMixR     (_dryWetMix,  0, _out,          1)   // dryWetMix → I2S Right
 {}
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void SubGenesis::begin(AudioStream& inputStream, float volume) {
-    // 3 oscs (chord) + srcMix + subOsc + subSat + subLP + subMix + dryWetMix ≈ 9 objetos.
-    // AudioMemory(20) da ~2.2× headroom sobre los bloques activos.
-    // Ref: apps/docs/sprints/11-sub-genesis.md §CPU
-    AudioMemory(20);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void SubGenesis::begin(AudioStream& inputStream) {
     // Sub oscillator: forma de onda y frecuencia inicial.
     // begin(wave) resetea el oscilador — frecuencia y amplitud deben setearse después.
     _subOsc.begin(_waveform);

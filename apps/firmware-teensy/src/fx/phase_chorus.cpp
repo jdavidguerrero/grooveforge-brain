@@ -15,25 +15,17 @@
 PhaseChorus::PhaseChorus()
     : _cPreSatChorus(_preSat,      0, _chorus,     0)   // pre-sat out → chorus in
     , _cChorusWet   (_chorus,      0, _dryWetMix,  1)   // chorus out  → wet channel
-    , _cMixL        (_dryWetMix,   0, _out,        0)   // mix → I2S Left
-    , _cMixR        (_dryWetMix,   0, _out,        1)   // mix → I2S Right
 {}
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void PhaseChorus::begin(AudioStream& inputStream, float volume) {
-    // 3 oscs + chorus ocupa ~8 bloques activos. AudioMemory(20) da 2.5× headroom.
-    // Ref: apps/docs/sprints/09-phase-chorus.md §"Bloques AudioMemory"
-    AudioMemory(20);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+// CRÍTICO: el sketch debe llamar AudioMemory() ANTES de begin() — chorus.begin()
+// accede al pool de bloques de audio internamente.
+void PhaseChorus::begin(AudioStream& inputStream) {
     // Pre-sat: drive=1.5 fijo — coloración de tercer armónico sin distorsión audible
     _buildPreSatTable(1.5f);
 
-    // CRÍTICO: chorus.begin() DESPUÉS de AudioMemory().
-    // Si se llama antes, los punteros internos del objeto apuntan a memoria no inicializada
-    // → comportamiento indefinido (ruido o bloqueo).
+    // chorus.begin() requiere que AudioMemory() ya haya sido llamado por el sketch.
     // Ref: apps/docs/sprints/09-phase-chorus.md §"Inicialización del chorus — orden obligatorio"
     _chorus.begin(_chorusBuf, CHORUS_BUF_LEN, _voices);
 

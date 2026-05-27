@@ -15,20 +15,11 @@ BitSculpt::BitSculpt()
     : _cNoiseDither(_noise,      0, _ditherMix,  1)   // noise → ditherMix ch1
     , _cDitherCrush(_ditherMix,  0, _crusher,    0)   // ditherMix out → crusher in
     , _cCrushWet   (_crusher,    0, _dryWetMix,  1)   // crusher out → wet channel
-    , _cMixL       (_dryWetMix,  0, _out,        0)   // mix → I2S Left
-    , _cMixR       (_dryWetMix,  0, _out,        1)   // mix → I2S Right
 {}
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void BitSculpt::begin(AudioStream& inputStream, float volume) {
-    // 3 oscs + srcMix + noise + ditherMix + crusher + dryWetMix ≈ 9 bloques activos.
-    // AudioMemory(20) da ~2.2× headroom — suficiente.
-    // Ref: apps/docs/sprints/10-bit-sculpt.md §CPU
-    AudioMemory(20);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void BitSculpt::begin(AudioStream& inputStream) {
     // Noise white: empieza silenciado — update() ajusta el nivel según Sculpt y bits.
     // amplitude() no es gain del mixer; escala la amplitud interna del generador LFSR.
     // Lo dejamos en 1.0 y controlamos el nivel exclusivamente desde _ditherMix.gain(1).

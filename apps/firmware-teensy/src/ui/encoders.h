@@ -60,6 +60,13 @@ public:
     bool sw_nav_pressed();
 
     /**
+     * @brief Returns true while the nav encoder switch is physically held down (debounced).
+     *        Use for hold-duration detection (AI mode arm, etc.).
+     *        Not const: Bounce2 Button::isPressed() is non-const in this version.
+     */
+    bool sw_nav_is_down();
+
+    /**
      * @brief Update Bounce2 state for all three switches. Call once per loop().
      */
     void update();

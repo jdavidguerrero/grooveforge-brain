@@ -32,7 +32,7 @@
  *                          _dryWetMix → _out L+R
  *
  * CPU estimado: ~8-10% (budget en 05-fx-architecture.md §1.7: ~12%).
- * AudioMemory: begin() llama AudioMemory(30) — 6 modos + 4 mixers + overhead.
+ * AudioMemory: 30 bloques recomendados — el sketch es responsable de llamar AudioMemory().
  *
  * Theory completa: apps/docs/sprints/12-modal-reverb.md
  * Refs: apps/docs/05-fx-architecture.md §1.7
@@ -74,16 +74,31 @@ public:
     ModalReverb();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea las 7 AudioConnection dinámicas (6 fan-out a modos + 1 dry).
      * Debe llamarse una vez en setup(), después de configurar la fuente de audio.
-     * Llama AudioMemory(30) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada (ej: AudioMixer4 del engine chord).
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * ModalReverb es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Selecciona el material resonante.
@@ -166,12 +181,10 @@ private:
     AudioMixer4         _modeMixA;     ///< modos 0–3 (AudioMixer4 acepta 4 entradas máx)
     AudioMixer4         _modeMixB;     ///< modos 4–5
     AudioMixer4         _wetMix;       ///< mezcla _modeMixA(ch0) + _modeMixB(ch1)
-    AudioMixer4         _dryWetMix;    ///< dry(ch0) + wet(ch1)
-    AudioOutputI2S      _out;
-    AudioControlSGTL5000 _codec;
+    AudioMixer4         _dryWetMix;    ///< último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas — inicializadas en lista del constructor ─────────────
-    // 11 conexiones: modos→mixA/B, mixA/B→wetMix, wetMix→dryWetMix, dryWetMix→out L+R
+    // 9 conexiones: modos→mixA/B, mixA/B→wetMix, wetMix→dryWetMix
     AudioConnection _cMode0MixA;   // _mode[0] → _modeMixA(ch0)
     AudioConnection _cMode1MixA;   // _mode[1] → _modeMixA(ch1)
     AudioConnection _cMode2MixA;   // _mode[2] → _modeMixA(ch2)
@@ -181,8 +194,6 @@ private:
     AudioConnection _cMixAWet;     // _modeMixA → _wetMix(ch0)
     AudioConnection _cMixBWet;     // _modeMixB → _wetMix(ch1)
     AudioConnection _cWetDry;      // _wetMix   → _dryWetMix(ch1) [wet path]
-    AudioConnection _cOutL;        // _dryWetMix → _out(L, ch0)
-    AudioConnection _cOutR;        // _dryWetMix → _out(R, ch1)
 
     // ── Conexiones dinámicas — creadas en begin(), dependen de inputStream ────────
     // Fan-out: 6 desde inputStream hacia cada _mode[] + 1 hacia dry path.

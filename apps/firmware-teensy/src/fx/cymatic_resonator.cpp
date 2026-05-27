@@ -17,21 +17,14 @@ CymaticResonator::CymaticResonator()
     , _cMode2Mix(_mode[2], 0, _modeMix,    2)
     , _cMode3Mix(_mode[3], 0, _modeMix,    3)
     , _cMixWet  (_modeMix, 0, _dryWetMix,  1)   // modeMix → wet channel
-    , _cOutL    (_dryWetMix, 0, _out,      0)   // L
-    , _cOutR    (_dryWetMix, 0, _out,      1)   // R
 {
     for (int i = 0; i < 4; i++) _cMode[i] = nullptr;
     _cDry = nullptr;
 }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void CymaticResonator::begin(AudioStream& inputStream, float volume) {
-    // 4 filtros BP + 2 mixers + out ≈ 7 objetos. AudioMemory(30) da margen amplio.
-    AudioMemory(30);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void CymaticResonator::begin(AudioStream& inputStream) {
     // _modeMix: ganancias iniciales uniformes — _updateMixerGains() las ajusta
     // luego según _density. El 0.5f compensa la suma de hasta 4 modos en paralelo.
     // Sin normalización, 4 modos activos pueden sumar hasta 4× la amplitud individual.
@@ -40,9 +33,13 @@ void CymaticResonator::begin(AudioStream& inputStream, float volume) {
     _modeMix.gain(2, 0.5f);
     _modeMix.gain(3, 0.5f);
 
-    // _dryWetMix: dry siempre presente, wet controlado por _mix
-    _dryWetMix.gain(0, 1.0f);     // ch0 = dry
-    _dryWetMix.gain(1, _mix);     // ch1 = wet (resonancias)
+    // _dryWetMix: modelo de resonador físico — dry siempre presente, resonancias
+    // se SUMAN encima (no reemplazan). El dry baja suavemente para dejar headroom.
+    // mix=0 → dry=1.0, wet=0.0 (transparente)
+    // mix=1 → dry=0.6, wet=0.4 (resonancias +6dB sobre el dry reducido)
+    // Max output = 0.6 (dry) + 0.4 × 1.0 (un modo al centro, gain=1/density) ≤ 1.0
+    _dryWetMix.gain(0, 1.0f - _mix * 0.4f);  // dry: 1.0→0.6
+    _dryWetMix.gain(1, _mix * 0.4f);           // wet: 0.0→0.4 (additive)
     _dryWetMix.gain(2, 0.0f);
     _dryWetMix.gain(3, 0.0f);
 
@@ -79,8 +76,8 @@ void CymaticResonator::setDensity(uint8_t density) {
 
 // ── setResonance() ───────────────────────────────────────────────────────────────
 void CymaticResonator::setResonance(float q) {
-    if (q < 10.0f) q = 10.0f;
-    if (q > 80.0f) q = 80.0f;
+    if (q < 1.0f)  q = 1.0f;
+    if (q > 30.0f) q = 30.0f;
     _resonance = q;
     _applyFilters(1.0f + 0.05f * sinf(_lfoPhase));
 }
@@ -93,19 +90,32 @@ void CymaticResonator::setLfoRate(float hz) {
 }
 
 // ── setMix() ─────────────────────────────────────────────────────────────────────
+// Modelo de resonador físico: las resonancias se SUMAN al dry (no lo reemplazan).
+// mix=0 → dry=1.0, wet=0.0  (transparente — sin color)
+// mix=1 → dry=0.6, wet=0.4  (resonancias claramente audibles sobre el dry)
+// Headroom: max output = 0.6 + 0.4×(1/density)×density = 0.6 + 0.4 = 1.0 ✓
 void CymaticResonator::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
     if (!_bypass) {
-        _dryWetMix.gain(1, _mix);
+        _dryWetMix.gain(0, 1.0f - _mix * 0.4f);
+        _dryWetMix.gain(1, _mix * 0.4f);
     }
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
+// bypass=true: dry full a 1.0, wet silenciado.
+// bypass=false: restaura ganancia según _mix.
 void CymaticResonator::setBypass(bool bypass) {
     _bypass = bypass;
-    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
+    if (_bypass) {
+        _dryWetMix.gain(0, 1.0f);
+        _dryWetMix.gain(1, 0.0f);
+    } else {
+        _dryWetMix.gain(0, 1.0f - _mix * 0.4f);
+        _dryWetMix.gain(1, _mix * 0.4f);
+    }
 }
 
 // ── update() ─────────────────────────────────────────────────────────────────────
@@ -151,13 +161,13 @@ void CymaticResonator::_applyFilters(float lfoMod) {
 }
 
 // ── _updateMixerGains() ──────────────────────────────────────────────────────────
-// Activa modos 0..(density-1) con ganancia 0.5 (normalizada para evitar clipping)
-// y silencia los modos density..3. El 0.5 asegura que la suma máxima de 4 modos
-// no supere la unidad en la entrada del _dryWetMix.
+// Activa modos 0..(density-1) con ganancia 1/density para normalizar la suma.
+// Con Q alto (BP estrecho), la energía capturada ya es baja — usar 0.5 la reducía
+// demasiado y hacía el efecto imperceptible. 1/density mantiene nivel constante
+// independientemente de cuántos modos estén activos.
 void CymaticResonator::_updateMixerGains() {
+    float g = (_density > 0) ? (1.0f / (float)_density) : 0.25f;
     for (int i = 0; i < 4; i++) {
-        // 0.5f fijo en lugar de 1/density: evita cambios bruscos de volumen al
-        // cambiar density — el oyente percibe más "contenido", no más "volumen".
-        _modeMix.gain(i, (i < (int)_density) ? 0.5f : 0.0f);
+        _modeMix.gain(i, (i < (int)_density) ? g : 0.0f);
     }
 }

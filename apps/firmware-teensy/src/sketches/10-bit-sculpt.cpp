@@ -2,9 +2,8 @@
 // Sprint 2.5 — FX Bit Sculpt: demo interactivo via Serial.
 // Theory y signal flow: apps/docs/sprints/10-bit-sculpt.md
 //
-// NOTA DE ARQUITECTURA: misma estrategia que Sprint 2.3 y 2.4.
-// El FX tiene AudioOutputI2S privado — no se encadena con un main.cpp de producción.
-// En Fase 3 el routing FX se integrará en src/main.cpp con grafo unificado.
+// El sketch es dueño del AudioOutputI2S, AudioControlSGTL5000 y AudioMemory compartidos.
+// BitSculpt expone getOutputL()/getOutputR() para conectar al output mixer del sketch.
 //
 // LECCIÓN SPRINT 2.4: clampear valores en g_XXX ANTES de pasar a la clase.
 // El display (y el reporte Serial) muestra el valor real aplicado, no el que llegó raw.
@@ -33,8 +32,19 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
-// ── BitSculpt: conecta srcMix como input en begin() ──────────────────────────────
+// ── Output compartido ─────────────────────────────────────────────────────────────
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
+// ── BitSculpt: expone getOutputL()/getOutputR() para conectar aquí ────────────────
 BitSculpt fx;
+
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 // ── Frecuencias base del acorde C mayor ──────────────────────────────────────────
 static constexpr float FREQ_C4 = 261.63f;
@@ -52,6 +62,13 @@ static bool    g_bypass     = false;
 
 void setup() {
     Serial.begin(115200);
+
+    AudioMemory(20);
+    codec.enable();
+    codec.volume(0.5f);
+
+    outMixL.gain(0, 1.0f);
+    outMixR.gain(0, 1.0f);
 
     // srcMix: 3 canales iguales. 0.33 × 3 ≈ 1.0 amplitud total con headroom adecuado.
     srcMix.gain(0, 0.33f);
@@ -73,10 +90,10 @@ void setup() {
     osc3.frequency(FREQ_G4);
     osc3.amplitude(0.4f);
 
-    // BitSculpt conecta srcMix como input y llama AudioMemory(20)
-    fx.begin(srcMix, 0.5f);
+    // BitSculpt: solo crea las conexiones dinámicas desde srcMix
+    fx.begin(srcMix);
 
-    // Aplicar defaults — valores ya clampeados en las variables g_XXX
+    // Aplicar defaults
     fx.setBits(g_bits);
     fx.setSampleRate(g_sampleRate);
     fx.setSculpt(g_sculpt);

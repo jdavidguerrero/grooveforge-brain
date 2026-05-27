@@ -21,8 +21,19 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
+// ── Output compartido ─────────────────────────────────────────────────────────────
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
 // FX — la conexión dinámica (inputStream → dryWetMix) se crea en begin()
 SubGenesis fx;
+
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 // ── Estado de parámetros con defaults de demo ─────────────────────────────────────
 // LECCIÓN APRENDIDA: clampear SIEMPRE en el sketch antes de asignar g_XXX.
@@ -89,8 +100,14 @@ void setup() {
     Serial.begin(115200);
     delay(800);   // esperar al Serial Monitor en re-enum USB
 
+    AudioMemory(20);
+    codec.enable();
+    codec.volume(0.5f);
+
+    outMixL.gain(0, 1.0f);
+    outMixR.gain(0, 1.0f);
+
     // Chord C mayor: C4 + E4 + G4, sawtooth, amplitude 0.4 por oscilador
-    // (mismo nivel que sprints 2.3–2.5 para comparación directa)
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.4f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.4f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.4f);
@@ -101,8 +118,8 @@ void setup() {
     srcMix.gain(2, 0.33f);
     srcMix.gain(3, 0.0f);
 
-    // Inicializar SubGenesis — begin() llama AudioMemory(20)
-    fx.begin(srcMix, 0.5f);
+    // SubGenesis: solo crea la conexión dinámica desde srcMix
+    fx.begin(srcMix);
 
     // Aplicar defaults con CLAMP EN SKETCH antes de asignar g_XXX
     // Lección aprendida: protección doble (sketch + setter) garantiza g_XXX coherente.

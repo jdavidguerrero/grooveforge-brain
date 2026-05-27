@@ -31,7 +31,7 @@
  *   AudioOutputI2S L+R
  *
  * CPU estimado: ~3.5% adicional sobre el engine (apps/docs/sprints/11-sub-genesis.md §CPU)
- * AudioMemory: begin() llama AudioMemory(20) — suficiente para 3 oscs + sub genesis.
+ * AudioMemory: 20 bloques recomendados — el sketch es responsable de llamar AudioMemory().
  *
  * Decisión de diseño: el sub-oscilador es independiente del input stream.
  * No se hace pitch tracking de audio (latencia inaceptable en live). La frecuencia
@@ -51,16 +51,31 @@ public:
     SubGenesis();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea la AudioConnection dinámica desde inputStream hacia el dry path.
      * Debe llamarse una vez en setup(), después de configurar la fuente de audio.
-     * Llama AudioMemory(20) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada (ej: AudioMixer4 del engine chord).
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * SubGenesis es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Frecuencia raíz del patch activo.
@@ -166,17 +181,13 @@ private:
     AudioEffectWaveshaper     _subSat;     // saturación tanh — añade armónicos al sub
     AudioFilterStateVariable  _subLP;      // LP post-saturación: enfoca el sub-bass
     AudioMixer4               _subMix;     // nivel del sub antes del blend (ch0 activo)
-    AudioMixer4               _dryWetMix;  // dry(ch0=input, 1.0) + wet(ch1=sub, _mix)
-    AudioOutputI2S            _out;
-    AudioControlSGTL5000      _codec;
+    AudioMixer4               _dryWetMix;  // último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas (inicializadas en lista del constructor) ──────────────
     AudioConnection _cSubOscSat;   // _subOsc    → _subSat
     AudioConnection _cSubSatLP;    // _subSat    → _subLP
     AudioConnection _cSubLPMix;    // _subLP(LP) → _subMix(ch0)
     AudioConnection _cSubMixWet;   // _subMix    → _dryWetMix(ch1)
-    AudioConnection _cMixL;        // _dryWetMix → _out(L, ch0)
-    AudioConnection _cMixR;        // _dryWetMix → _out(R, ch1)
 
     // ── Conexión dinámica (creada en begin(), depende de inputStream) ──────────────
     // Solo una: inputStream → _dryWetMix(ch0) — dry path directo al blend.

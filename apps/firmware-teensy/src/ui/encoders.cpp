@@ -33,7 +33,9 @@ int32_t Encoders::read_enc_l() {
     int32_t delta_raw = current - _last_l;
     int32_t detents = delta_raw / PULSES_PER_DETENT;
     _last_l += detents * PULSES_PER_DETENT;  // consume only whole detents
-    return detents;
+    // Invertir signo: hardware gira antimanecillas con delta positivo;
+    // convenio lógico: CW = positivo.
+    return -detents;
 }
 
 int32_t Encoders::read_enc_r() {
@@ -41,7 +43,7 @@ int32_t Encoders::read_enc_r() {
     int32_t delta_raw = current - _last_r;
     int32_t detents = delta_raw / PULSES_PER_DETENT;
     _last_r += detents * PULSES_PER_DETENT;
-    return detents;
+    return -detents;
 }
 
 int32_t Encoders::read_enc_nav() {
@@ -49,7 +51,7 @@ int32_t Encoders::read_enc_nav() {
     int32_t delta_raw = current - _last_nav;
     int32_t detents = delta_raw / PULSES_PER_DETENT;
     _last_nav += detents * PULSES_PER_DETENT;
-    return detents;
+    return -detents;
 }
 
 bool Encoders::sw_l_pressed() {
@@ -62,6 +64,10 @@ bool Encoders::sw_r_pressed() {
 
 bool Encoders::sw_nav_pressed() {
     return _sw_nav.pressed();
+}
+
+bool Encoders::sw_nav_is_down() {
+    return _sw_nav.isPressed();
 }
 
 void Encoders::update() {

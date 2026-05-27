@@ -20,7 +20,7 @@
  *                                                           AudioOutputI2S L+R
  *
  * CPU estimado: ~3.7% adicional sobre el engine (05-fx-architecture.md §1.5)
- * AudioMemory: begin() llama AudioMemory(80) — Prophet-5 usa 72, Tape añade ~8 bloques.
+ * AudioMemory: 80 bloques recomendados con Prophet-5 — el sketch es responsable de llamar AudioMemory().
  *
  * Theory completa: apps/docs/sprints/08-tape-saturate.md
  * Refs: apps/docs/05-fx-architecture.md §1.5
@@ -31,18 +31,32 @@ public:
     TapeSaturate();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea las AudioConnections dinámicas hacia inputStream (el FX no puede
      * conocer la fuente en tiempo de compilación — viene del engine activo).
      * Debe llamarse una vez en setup(), después de configurar la fuente de audio.
-     *
-     * Llama AudioMemory(80) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada (ej: AudioMixer4 del engine).
-     * @param volume      Volumen del codec, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * TapeSaturate es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Drive de saturación — controla la compresión de la curva tanh.
@@ -137,17 +151,13 @@ private:
     AudioEffectWaveshaper   _waveshaper;    // curva tanh — custom, código propio
     AudioFilterStateVariable _lpFilter;    // Age rolloff (6–20 kHz LP)
     AudioFilterStateVariable _hpFilter;    // subsonic cut fija 20 Hz HP
-    AudioMixer4             _dryWetMix;    // ch0=dry, ch1=wet
-    AudioOutputI2S          _out;
-    AudioControlSGTL5000    _codec;
+    AudioMixer4             _dryWetMix;    // último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas (inicializadas en constructor) ───────────────────────
     // AudioFilterStateVariable: out0=lowpass, out1=bandpass, out2=highpass
     AudioConnection _cWaveLp;     // waveshaper      → _lpFilter (in0)
     AudioConnection _cLpHp;       // _lpFilter(out0) → _hpFilter (in0)
     AudioConnection _cHpWet;      // _hpFilter(out2=highpass) → _dryWetMix (ch1, wet)
-    AudioConnection _cMixL;       // _dryWetMix      → _out (ch0, L)
-    AudioConnection _cMixR;       // _dryWetMix      → _out (ch1, R)
 
     // ── Conexiones dinámicas (creadas en begin(), dependen de inputStream) ────────
     // Se asignan con new porque inputStream es desconocido en tiempo de compilación.

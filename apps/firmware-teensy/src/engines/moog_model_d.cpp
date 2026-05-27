@@ -4,6 +4,7 @@
 
 #include "moog_model_d.h"
 #include <math.h>
+#include <Wire.h>
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 // Las AudioConnections deben construirse con referencias a objetos que ya existen.
@@ -28,8 +29,20 @@ void MoogModelD::begin(float volume) {
     // Calculado: 8 conexiones activas + buffer de seguridad (ver theory doc)
     AudioMemory(20);
 
-    _codec.enable();
-    _codec.volume(volume);
+    // Wire.begin() explícito antes de enable(): USBHost_t36 corre constructores
+    // globales antes de setup(), lo que puede dejar Wire sin inicializar cuando
+    // AudioControlSGTL5000::enable() lo llama internamente. Llamarlo aquí garantiza
+    // que el bus I2C está listo independientemente del orden de construcción global.
+    Wire.begin();
+    delay(10);   // margen para que el bus I2C estabilice tras begin()
+
+    bool codec_ok = _codec.enable();
+    Serial.print(F("[MoogModelD] SGTL5000 enable: "));
+    Serial.println(codec_ok ? F("OK") : F("FAIL — revisar I2C (SDA=18, SCL=19) y 3.3V"));
+
+    _codec.volume(volume);        // headphones (jack 3.5mm en el Teensy)
+    _codec.lineOutLevel(13);      // line out — 3.16Vpp (nivel estándar -10dBV)
+                                  // Sin esta llamada la salida 1/4" queda muda.
 
     // VCOs en sawtooth — onda más rica en armónicos, base del sonido Moog
     _osc1.begin(WAVEFORM_SAWTOOTH);

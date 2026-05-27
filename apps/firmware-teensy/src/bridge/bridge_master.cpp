@@ -61,6 +61,36 @@ void BridgeMaster::init() {
         }
     }, this);
 
+    /* Handler interno para GF_CMD_NACK — el ESP32 rechazó un frame nuestro.
+     * Payload: [seq_nacked: 1B, reason: 1B]
+     * Loguea el motivo para facilitar debug. No reintenta automáticamente:
+     * los comandos del sketch son fire-and-forget (async), el retry es
+     * responsabilidad de la capa superior si se implementa en el futuro. */
+    on_command(GF_CMD_NACK, [](const GF_Frame* f, void* ctx) {
+        BridgeMaster* self = static_cast<BridgeMaster*>(ctx);
+        /* El NACK también confirma que el ESP32 está vivo y parseando */
+        self->_esp32_alive    = true;
+        self->_last_hb_ack_ms = millis();
+
+        if (f->len >= 2) {
+            uint8_t nacked_seq = f->payload[0];
+            uint8_t reason     = f->payload[1];
+            static const char* reasons[] = {
+                "?",           /* 0x00 — no definido */
+                "CRC_ERR",     /* 0x01 */
+                "BAD_CMD",     /* 0x02 */
+                "BAD_LEN",     /* 0x03 */
+                "BAD_PARAM",   /* 0x04 */
+                "OOM",         /* 0x05 */
+            };
+            const char* r_str = (reason < 6) ? reasons[reason] : "UNKNOWN";
+            Serial.printf("[master] NACK seq=%u reason=0x%02X (%s)\n",
+                          nacked_seq, reason, r_str);
+        } else {
+            Serial.printf("[master] NACK (malformed, len=%u)\n", f->len);
+        }
+    }, this);
+
     Serial.printf("[master] init — Serial1 @ 921600 baud, RX=pin0, TX=pin1\n");
     Serial.flush();
 }

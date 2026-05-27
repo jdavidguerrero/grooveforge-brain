@@ -21,7 +21,7 @@
  * El dry path toma la señal ANTES del pre-sat: depth=0 reproduce el engine sin coloración.
  *
  * CPU estimado: ~4.7% adicional sobre el engine (05-fx-architecture.md §1.8)
- * AudioMemory: begin() llama AudioMemory(20) — suficiente para sketch de 3 oscs + chorus.
+ * AudioMemory: 20 bloques recomendados — el sketch debe llamar AudioMemory() ANTES de begin().
  *
  * Theory completa: apps/docs/sprints/09-phase-chorus.md
  * Refs: apps/docs/05-fx-architecture.md §1.8
@@ -33,19 +33,35 @@ public:
     PhaseChorus();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea las AudioConnections dinámicas hacia inputStream (la fuente no se conoce
      * en tiempo de compilación — viene del engine o mixer activo).
-     * Llama AudioMemory(20) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
-     * IMPORTANTE: AudioEffectChorus.begin() se llama aquí, después de AudioMemory().
-     * Llamarlo antes produce comportamiento indefinido (punteros internos no inicializados).
+     * IMPORTANTE: AudioEffectChorus.begin() se llama aquí. El sketch debe haber
+     * llamado AudioMemory() ANTES de llamar a este método — si AudioMemory() no fue
+     * llamado, los punteros internos del chorus apuntan a memoria no inicializada.
      *
      * @param inputStream Stream de audio de entrada (ej: AudioMixer4 del engine).
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * PhaseChorus es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Velocidad del LFO de chorus.
@@ -141,9 +157,7 @@ private:
     // ── Audio objects internos (Teensy Audio Library oficial) ─────────────────────
     AudioEffectWaveshaper _preSat;      // saturación suave pre-chorus (código custom: tabla tanh)
     AudioEffectChorus     _chorus;      // núcleo del efecto — código oficial PJRC
-    AudioMixer4           _dryWetMix;  // ch0=dry, ch1=wet modulado por LFO
-    AudioOutputI2S        _out;
-    AudioControlSGTL5000  _codec;
+    AudioMixer4           _dryWetMix;   // último nodo — expuesto via getOutputL/R()
 
     // ── Buffer de delay del chorus (RAM estática, no usa AudioMemory pool) ─────────
     // 1200 samples × 2 bytes = 2400 bytes ≈ 2.3 KB
@@ -154,10 +168,8 @@ private:
     short _chorusBuf[CHORUS_BUF_LEN];
 
     // ── Conexiones estáticas (inicializadas en lista del constructor) ──────────────
-    AudioConnection _cPreSatChorus;  // _preSat     → _chorus     (wet path)
-    AudioConnection _cChorusWet;     // _chorus     → _dryWetMix(ch1)
-    AudioConnection _cMixL;          // _dryWetMix  → _out(ch0, L)
-    AudioConnection _cMixR;          // _dryWetMix  → _out(ch1, R)
+    AudioConnection _cPreSatChorus;  // _preSat    → _chorus     (wet path)
+    AudioConnection _cChorusWet;     // _chorus    → _dryWetMix(ch1)
 
     // ── Conexiones dinámicas (creadas en begin(), dependen de inputStream) ─────────
     AudioConnection* _cIn1 = nullptr;   // inputStream → _preSat (wet path)

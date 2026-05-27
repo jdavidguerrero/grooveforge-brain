@@ -15,19 +15,11 @@ TapeSaturate::TapeSaturate()
     : _cWaveLp(_waveshaper,  0, _lpFilter,  0)   // waveshaper out → lpFilter in
     , _cLpHp  (_lpFilter,    0, _hpFilter,  0)   // lpFilter lowpass(out0) → hpFilter in
     , _cHpWet (_hpFilter,    2, _dryWetMix, 1)   // hpFilter highpass(out2) → wet channel
-    , _cMixL  (_dryWetMix,   0, _out,       0)   // mix → I2S Left
-    , _cMixR  (_dryWetMix,   0, _out,       1)   // mix → I2S Right
 {}
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void TapeSaturate::begin(AudioStream& inputStream, float volume) {
-    // 72 bloques del Prophet-5 + ~8 bloques de Tape Saturate = 80 total.
-    // Si el sketch no usa Prophet-5 (solo 3 oscs simples), hay headroom mayor.
-    AudioMemory(80);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void TapeSaturate::begin(AudioStream& inputStream) {
     // Drive inicial: saturación sutil (curva casi lineal, apenas colorea el sonido)
     _buildWaveshapeTable(2.0f);
 

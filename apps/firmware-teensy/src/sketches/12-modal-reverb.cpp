@@ -30,8 +30,19 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
+// ── Output compartido ─────────────────────────────────────────────────────────────
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
 // ── FX ───────────────────────────────────────────────────────────────────────────
 ModalReverb fx;   // Custom — apps/firmware-teensy/src/fx/modal_reverb.h
+
+AudioConnection cFxL(fx.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(fx.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 // ── Estado de parámetros (fuente de verdad para los setters con clamp) ───────────
 // Clampear SIEMPRE aquí antes de llamar fx.set*() — los setters de la clase
@@ -86,8 +97,14 @@ void setup() {
     Serial.begin(115200);
     delay(1200);   // tiempo para que el monitor serial conecte
 
+    AudioMemory(30);
+    codec.enable();
+    codec.volume(0.7f);
+
+    outMixL.gain(0, 1.0f);
+    outMixR.gain(0, 1.0f);
+
     // Fuente: chord C mayor, sawtooth, amplitud 0.25 por oscilador
-    // (3 oscs en paralelo → suma máxima de 0.75 antes del srcMix)
     osc1.begin(WAVEFORM_SAWTOOTH); osc1.frequency(261.63f); osc1.amplitude(0.25f);
     osc2.begin(WAVEFORM_SAWTOOTH); osc2.frequency(329.63f); osc2.amplitude(0.25f);
     osc3.begin(WAVEFORM_SAWTOOTH); osc3.frequency(392.00f); osc3.amplitude(0.25f);
@@ -98,9 +115,8 @@ void setup() {
     srcMix.gain(2, 0.33f);
     srcMix.gain(3, 0.0f);
 
-    // begin() crea las AudioConnections dinámicas desde srcMix hacia los 6 modos + dry,
-    // inicializa el codec SGTL5000 y llama AudioMemory(30).
-    fx.begin(srcMix, 0.7f);
+    // begin() crea las AudioConnections dinámicas desde srcMix hacia los 6 modos + dry.
+    fx.begin(srcMix);
 
     // Estado inicial: campana, medium, todos los modos, mix=0.6
     fx.setMaterial(to_material(g_material));

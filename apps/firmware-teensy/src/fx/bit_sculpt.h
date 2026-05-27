@@ -25,7 +25,7 @@
  * El dry toma la señal ANTES de ditherMix: Mix=0.0 reproduce el engine sin artefactos.
  *
  * CPU estimado: ~3.6% adicional sobre el engine (apps/docs/sprints/10-bit-sculpt.md §CPU)
- * AudioMemory: begin() llama AudioMemory(20) — suficiente para 3 oscs + bit sculpt.
+ * AudioMemory: 20 bloques recomendados — el sketch es responsable de llamar AudioMemory().
  *
  * Theory completa: apps/docs/sprints/10-bit-sculpt.md
  * Refs: apps/docs/05-fx-architecture.md §1.6
@@ -38,16 +38,31 @@ public:
     BitSculpt();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea las AudioConnections dinámicas hacia inputStream. Debe llamarse
      * una vez en setup(), después de configurar la fuente de audio.
-     * Llama AudioMemory(20) internamente — no llamar AudioMemory() desde el sketch.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada (ej: AudioMixer4 del engine).
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * BitSculpt es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Resolución de cuantización en bits.
@@ -132,16 +147,12 @@ private:
     AudioSynthNoiseWhite  _noise;       // fuente de dither (RPDF blanco)
     AudioMixer4           _ditherMix;   // ch0=señal, ch1=noise → bitcrusher
     AudioEffectBitcrusher _crusher;     // cuantización de amplitud + sample-and-hold
-    AudioMixer4           _dryWetMix;   // ch0=dry, ch1=wet
-    AudioOutputI2S        _out;
-    AudioControlSGTL5000  _codec;
+    AudioMixer4           _dryWetMix;   // último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas (inicializadas en lista del constructor) ──────────────
     AudioConnection _cNoiseDither;  // _noise     → _ditherMix(ch1)
     AudioConnection _cDitherCrush;  // _ditherMix → _crusher
     AudioConnection _cCrushWet;     // _crusher   → _dryWetMix(ch1)
-    AudioConnection _cMixL;         // _dryWetMix → _out(ch0, L)
-    AudioConnection _cMixR;         // _dryWetMix → _out(ch1, R)
 
     // ── Conexiones dinámicas (creadas en begin(), dependen de inputStream) ─────────
     AudioConnection* _cIn1 = nullptr;   // inputStream → _ditherMix(ch0) — wet path

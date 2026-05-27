@@ -48,16 +48,31 @@ public:
     GranularCloud();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Llama _granular.begin() con el buffer estático y GRANULAR_MEMORY_SIZE.
      * Crea 2 AudioConnections dinámicas: inputStream→_granular e inputStream→dry.
-     * Llama AudioMemory(30) internamente.
+     * NO llama AudioMemory() ni codec.enable() — responsabilidad del sketch.
      *
      * @param inputStream Stream de audio de entrada.
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * GranularCloud es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Duración de cada grano en milisegundos.
@@ -123,14 +138,10 @@ public:
 private:
     // ── Audio objects (Teensy Audio Library oficial) ──────────────────────────────
     AudioEffectGranular  _granular;    ///< granulizador built-in de Teensy Audio Library
-    AudioMixer4          _dryWetMix;
-    AudioOutputI2S       _out;
-    AudioControlSGTL5000 _codec;
+    AudioMixer4          _dryWetMix;   ///< último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas ──────────────────────────────────────────────────────
     AudioConnection _cGranWet;   ///< _granular → _dryWetMix(ch1)
-    AudioConnection _cOutL;      ///< _dryWetMix → _out(L)
-    AudioConnection _cOutR;      ///< _dryWetMix → _out(R)
 
     // ── Conexiones dinámicas ──────────────────────────────────────────────────────
     AudioConnection* _cIn;    ///< inputStream → _granular

@@ -7,10 +7,10 @@
 // fase con el quarter note detectado. Musicalmente equivale a un side-chain
 // compressor o un auto-wah sincronizado al ritmo.
 //
-// CC MIDI  91 (Effect 1 Depth): intensidad del pump 0=off, 127=maximo
-//   Mapeo: norm 0.0 → sin modulacion, norm 1.0 → 2 octavas de swing arriba/abajo
-// CC MIDI  74 (Brightness):     cutoff base (20–20000 Hz, log scale)
-// CC MIDI  71 (Resonance):      resonancia del filtro (0.7–8.0)
+// CC MIDI  93 (knob 5 MiniLab): intensidad del pump 0=off, 127=maximo
+//   Mapeo: norm 0.0 → sin modulacion, norm 1.0 → ±1 octava de swing
+// CC MIDI  74 (knob 1 MiniLab): cutoff base (800–8000 Hz, log scale)
+// CC MIDI  71 (knob 2 MiniLab): resonancia del filtro (0.7–4.0)
 //
 // Cross-ref: apps/docs/sprints/28-beat-synced-fx.md
 //            apps/docs/05-fx-architecture.md §2 — CPU budget
@@ -29,13 +29,21 @@ static BeatSync     beat_sync;
 static MoogModelD   engine;
 
 // Parámetros del filter pump — accedidos solo desde loop() (no desde ISR).
-static float    cutoff_base_hz  = 800.0f;
+// cutoff_base arranca en 2kHz para que el pump sea audible desde el inicio.
+static float    cutoff_base_hz  = 2000.0f;
 static float    pump_depth      = 0.0f;   // 0.0 = off, 1.0 = maximo
 
 // El beat_period_ms se recalcula cada vez que llega un BPM valido.
 // Valor inicial 500ms = 120 BPM para que el LFO ya tenga una frecuencia si
 // el BeatFollower no ha inferido aún.
 static uint32_t beat_period_ms  = 500;
+
+// Timestamp del último onset recibido — para detectar silencio.
+// Si no llega ningún NoteOn en SILENCE_TIMEOUT_MS Y no hay nota activa,
+// se resetea el BeatFollower. Una nota sostenida no cuenta como silencio.
+static uint32_t last_onset_ms   = 0;
+static bool     note_held       = false;   // true mientras haya una nota presionada
+static constexpr uint32_t SILENCE_TIMEOUT_MS = 3000;
 
 static constexpr uint32_t INFERENCE_PERIOD_MS = 500;
 
@@ -50,11 +58,14 @@ static void on_note_on(uint8_t ch, uint8_t note, uint8_t vel) {
         return;
     }
     // Registrar onset para el Beat Follower — el histograma IOI se acumula aquí.
-    beat_fol.on_onset(millis());
+    last_onset_ms = millis();
+    note_held     = true;
+    beat_fol.on_onset(last_onset_ms);
     engine.noteOn(note, vel / 127.0f);
 }
 
 static void on_note_off(uint8_t ch, uint8_t note, uint8_t vel) {
+    note_held = false;
     engine.noteOff();
 }
 
@@ -62,17 +73,20 @@ static void on_cc(uint8_t ch, uint8_t cc, uint8_t val) {
     float norm = val / 127.0f;
     switch (cc) {
         case 74:
-            // CC 74 (Brightness) → cutoff base, mapeo log (20–20000 Hz).
-            // Escala log porque el oído percibe la frecuencia logarítmicamente.
-            cutoff_base_hz = 20.0f * powf(1000.0f, norm);
+            // CC 74 (knob 1 MiniLab) → cutoff base, mapeo log (200–8000 Hz).
+            // Rango reducido vs 20-20kHz: el pump necesita espacio para barrer
+            // arriba y abajo — si el base está en 20Hz el pump baja por debajo
+            // del rango audible y no se escucha.
+            cutoff_base_hz = 200.0f * powf(40.0f, norm);   // 200Hz a 8kHz
             engine.setFilterCutoff(cutoff_base_hz);
             break;
         case 71:
             // CC 71 (Timbre) → resonancia. Q 0.7 = Butterworth, Q 8.0 = cerca de auto-oscilacion.
             engine.setFilterResonance(0.7f + norm * 7.3f);
             break;
-        case 91:
-            // CC 91 (Effect 1 Depth) → intensidad del pump.
+        case 93:
+            // CC 93 (knob 5 MiniLab mkII por defecto) → intensidad del pump.
+            // CC 91 no está mapeado en el MiniLab por defecto — CC 93 sí lo está.
             pump_depth = norm;
             Serial.print(F("[BeatFX] Pump depth: "));
             Serial.println(pump_depth, 2);
@@ -85,19 +99,58 @@ static void on_cc(uint8_t ch, uint8_t cc, uint8_t val) {
 // ---------------------------------------------------------------------------
 
 static void run_beat_inference() {
+    uint32_t now = millis();
+
+    // Timeout de silencio: resetear solo si no hay nota activa Y pasaron
+    // SILENCE_TIMEOUT_MS desde el último NoteOn. Una nota sostenida no es silencio.
+    if (!note_held && last_onset_ms > 0 && (now - last_onset_ms) > SILENCE_TIMEOUT_MS) {
+        beat_fol.reset();
+        last_onset_ms = 0;
+        beat_period_ms = 500;   // volver a default 120 BPM
+        Serial.println(F("[Beat] silencio — BPM reseteado"));
+        return;
+    }
+
     BeatResult br = beat_fol.infer();
     if (!br.valid) return;
 
-    beat_sync.update(br, 0.7f);
-
-    if (beat_sync.has_bpm()) {
-        beat_period_ms = (uint32_t)(60000.0f / beat_sync.bpm());
-        Serial.print(F("[Beat] "));
-        Serial.print(beat_sync.bpm(), 1);
-        Serial.print(F(" BPM, period: "));
-        Serial.print(beat_period_ms);
-        Serial.println(F("ms"));
+    // Tempo folding: el modelo detecta IOIs entre notas consecutivas, no beats.
+    // Si tocas corcheas a 90 BPM, los IOIs son 333ms → modelo ve ~180 BPM.
+    // Fix heurístico: si BPM > 180, dividir a la mitad (asume notas = 2x el beat).
+    // Si sigue > 180 tras dividir, dividir de nuevo (notas = 4x el beat).
+    // Rango musical razonable: 60–180 BPM.
+    float folded_bpm = br.bpm;
+    while (folded_bpm > 180.0f) {
+        folded_bpm *= 0.5f;
     }
+
+    // Crear un BeatResult corregido para BeatSync
+    BeatResult br_folded   = br;
+    br_folded.bpm          = folded_bpm;
+    br_folded.beat_period_ms = (uint32_t)(60000.0f / folded_bpm);
+
+    // BeatSync usa EMA alpha=0.1 (diseñado para delays — converge en ~15s).
+    // Para el filter pump queremos respuesta rápida: usamos media de 3 muestras.
+    static float bpm_window[3] = { 0.0f, 0.0f, 0.0f };
+    static uint8_t bpm_idx = 0;
+    static uint8_t bpm_filled = 0;
+    bpm_window[bpm_idx] = folded_bpm;
+    bpm_idx = (bpm_idx + 1) % 3;
+    if (bpm_filled < 3) bpm_filled++;
+
+    float bpm_avg = 0.0f;
+    for (uint8_t i = 0; i < bpm_filled; i++) bpm_avg += bpm_window[i];
+    bpm_avg /= bpm_filled;
+
+    beat_period_ms = (uint32_t)(60000.0f / bpm_avg);
+
+    Serial.print(F("[Beat] "));
+    Serial.print(bpm_avg, 1);
+    Serial.print(F(" BPM  (raw: "));
+    Serial.print(br.bpm, 0);
+    Serial.print(F(")  period: "));
+    Serial.print(beat_period_ms);
+    Serial.println(F("ms"));
 }
 
 // ---------------------------------------------------------------------------
@@ -149,10 +202,10 @@ void setup() {
     Serial.begin(115200);
     delay(1500);
     Serial.println(F("=== Sprint 5.4 - Beat-synced FX (Filter Pump) ==="));
-    Serial.println(F("Toca con ritmo -> Brain detecta BPM -> filtro se sincroniza al tempo"));
-    Serial.println(F("  CC 91 (0-127) -> intensidad del pump (0=off, 127=maximo)"));
-    Serial.println(F("  CC 74 (0-127) -> cutoff base (20-20000 Hz log)"));
-    Serial.println(F("  CC 71 (0-127) -> resonancia del filtro"));
+    Serial.println(F("Toca con ritmo -> Brain detecta BPM -> filtro bombea al tempo"));
+    Serial.println(F("  Knob 5 / CC 93 -> pump depth (0=off, 127=maximo efecto)"));
+    Serial.println(F("  Knob 1 / CC 74 -> cutoff base (200-8000 Hz)  [arranca en 2kHz]"));
+    Serial.println(F("  Knob 2 / CC 71 -> resonancia (0.7-4.0)"));
     Serial.println();
 
     Serial.print(F("Init BeatFollower... "));

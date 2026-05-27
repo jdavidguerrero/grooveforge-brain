@@ -2,10 +2,8 @@
 // Sprint 2.4 — FX Phase Chorus: demo interactivo via Serial.
 // Theory y signal flow: apps/docs/sprints/09-phase-chorus.md
 //
-// NOTA DE ARQUITECTURA: misma estrategia que Sprint 2.3 (08-tape-saturate.cpp).
-// Los engines tienen AudioOutputI2S privado — no se encadenan directamente.
-// Este sketch valida el FX con 3 AudioSynthWaveform (chord C mayor).
-// En Fase 3, el routing FX se integrará en src/main.cpp con grafo unificado.
+// El sketch es dueño del AudioOutputI2S, AudioControlSGTL5000 y AudioMemory compartidos.
+// PhaseChorus expone getOutputL()/getOutputR() para conectar al output mixer del sketch.
 //
 // Comandos Serial (115200 baud):
 //   r<valor>  → Rate Hz   (0.1–10.0)  ej: r0.5
@@ -32,8 +30,19 @@ AudioConnection c1(osc1, 0, srcMix, 0);
 AudioConnection c2(osc2, 0, srcMix, 1);
 AudioConnection c3(osc3, 0, srcMix, 2);
 
-// ── PhaseChorus: conecta srcMix como input en begin() ────────────────────────────
+// ── Output compartido ─────────────────────────────────────────────────────────────
+AudioMixer4          outMixL;
+AudioMixer4          outMixR;
+AudioOutputI2S       audioOut;
+AudioControlSGTL5000 codec;
+
+// ── PhaseChorus: expone getOutputL()/getOutputR() para conectar aquí ─────────────
 PhaseChorus chorus;
+
+AudioConnection cFxL(chorus.getOutputL(), 0, outMixL, 0);
+AudioConnection cFxR(chorus.getOutputR(), 0, outMixR, 0);
+AudioConnection cOutL(outMixL, 0, audioOut, 0);
+AudioConnection cOutR(outMixR, 0, audioOut, 1);
 
 // ── Frecuencias base del acorde C mayor ──────────────────────────────────────────
 static constexpr float FREQ_C4 = 261.63f;
@@ -50,6 +59,15 @@ static bool    g_bypass = false;
 
 void setup() {
     Serial.begin(115200);
+
+    // CRÍTICO: AudioMemory ANTES de chorus.begin() — el chorus interno requiere el pool.
+    // Ref: apps/docs/sprints/09-phase-chorus.md §"Inicialización del chorus — orden obligatorio"
+    AudioMemory(20);
+    codec.enable();
+    codec.volume(0.5f);
+
+    outMixL.gain(0, 1.0f);
+    outMixR.gain(0, 1.0f);
 
     // Gains uniformes: 0.33 × 3 ≈ 1.0 amplitud total con headroom
     srcMix.gain(0, 0.33f);
@@ -71,8 +89,8 @@ void setup() {
     osc3.frequency(FREQ_G4);
     osc3.amplitude(0.4f);
 
-    // PhaseChorus conecta srcMix como input y llama AudioMemory(20)
-    chorus.begin(srcMix, 0.5f);
+    // PhaseChorus: solo crea las conexiones dinámicas desde srcMix
+    chorus.begin(srcMix);
 
     // Valores nominales: "Juno-106 chord" (ref: apps/docs/sprints/09-phase-chorus.md §Demo)
     chorus.setRate(g_rate);

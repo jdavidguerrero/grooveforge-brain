@@ -31,8 +31,6 @@ SpringPlate::SpringPlate()
     : _cSpringBlend(_spring,   0, _blendMix,   0)
     , _cPlateBlend (_plate,    0, _blendMix,   1)
     , _cBlendWet   (_blendMix, 0, _dryWetMix,  1)   // blend → wet channel
-    , _cOutL       (_dryWetMix, 0, _out,       0)
-    , _cOutR       (_dryWetMix, 0, _out,       1)
 {
     _cSpring = nullptr;
     _cPlate  = nullptr;
@@ -40,12 +38,8 @@ SpringPlate::SpringPlate()
 }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void SpringPlate::begin(AudioStream& inputStream, float volume) {
-    AudioMemory(30);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void SpringPlate::begin(AudioStream& inputStream) {
     // Aplicar tuning inicial de spring (default algorithm=0)
     _spring.roomsize(SPRING_ROOMSIZE);
     _spring.damping (SPRING_DAMPING);

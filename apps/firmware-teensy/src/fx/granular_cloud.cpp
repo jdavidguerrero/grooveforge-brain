@@ -16,20 +16,14 @@ DMAMEM int16_t GranularCloud::_granularBuffer[GranularCloud::GRANULAR_MEMORY_SIZ
 // ── Constructor ──────────────────────────────────────────────────────────────────
 GranularCloud::GranularCloud()
     : _cGranWet(_granular,    0, _dryWetMix, 1)   // granular → wet channel
-    , _cOutL   (_dryWetMix,   0, _out,       0)
-    , _cOutR   (_dryWetMix,   0, _out,       1)
 {
     _cIn  = nullptr;
     _cDry = nullptr;
 }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void GranularCloud::begin(AudioStream& inputStream, float volume) {
-    AudioMemory(30);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec son responsabilidad del sketch.
+void GranularCloud::begin(AudioStream& inputStream) {
     // Inicializar el granulizador con el buffer DMA y el tamaño en muestras.
     // AudioEffectGranular.begin(buffer, numSamples) — numSamples es int, no bytes.
     // 12800 muestras × (1/48000 s/muestra) = 0.267s de capacidad de buffer.

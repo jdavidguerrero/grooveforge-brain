@@ -22,20 +22,15 @@ GhostEcho::GhostEcho()
     , _cDelayLP      (_delay,       0, _feedbackLP,   0)
     , _cLPFeedback   (_feedbackLP,  0, _feedbackMix,  1)   // port 0 = LP output
     , _cDelayWet     (_delay,       0, _dryWetMix,    1)   // fan-out: tap 0 al wet
-    , _cOutL         (_dryWetMix,   0, _out,          0)
-    , _cOutR         (_dryWetMix,   0, _out,          1)
 {
     _cIn  = nullptr;
     _cDry = nullptr;
 }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
-void GhostEcho::begin(AudioStream& inputStream, float volume) {
-    AudioMemory(30);
-
-    _codec.enable();
-    _codec.volume(volume);
-
+// AudioMemory y codec.enable() son responsabilidad del sketch — GhostEcho solo
+// crea las conexiones internas y las dos dinámicas desde inputStream.
+void GhostEcho::begin(AudioStream& inputStream) {
     // _feedbackMix: ch0 = señal nueva (gain 1.0), ch1 = feedback filtrado (gain = _feedback)
     // El feedback NO va directamente al delay — va al mixer que suma con la señal nueva.
     // Esto permite que la señal original siempre llegue limpia al delay, mientras que

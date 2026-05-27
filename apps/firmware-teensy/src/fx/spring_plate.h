@@ -47,15 +47,30 @@ public:
     SpringPlate();
 
     /**
-     * @brief Conecta el stream de entrada e inicializa el codec SGTL5000.
+     * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.
      *
      * Crea 3 AudioConnections dinámicas: inputStream→_spring, inputStream→_plate,
-     * inputStream→_dryWetMix(dry). Llama AudioMemory(30) internamente.
+     * inputStream→_dryWetMix(dry). NO llama AudioMemory() ni codec.enable().
      *
      * @param inputStream Stream de audio de entrada.
-     * @param volume      Volumen del codec SGTL5000, 0.0–1.0 (default 0.5).
      */
-    void begin(AudioStream& inputStream, float volume = 0.5f);
+    void begin(AudioStream& inputStream);
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal izquierdo.
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputL() { return _dryWetMix; }
+
+    /**
+     * @brief Retorna el último nodo del grafo de audio — canal derecho.
+     *
+     * SpringPlate es mono-interno: ambos canales salen del mismo nodo (port 0).
+     *
+     * @return Referencia al AudioMixer4 de salida (output port 0).
+     */
+    AudioStream& getOutputR() { return _dryWetMix; }
 
     /**
      * @brief Selecciona el algoritmo de reverb.
@@ -125,16 +140,12 @@ private:
     AudioEffectFreeverb  _spring;     ///< reverb spring: roomsize=0.4, damping=0.7
     AudioEffectFreeverb  _plate;      ///< reverb plate: roomsize=0.75, damping=0.3
     AudioMixer4          _blendMix;   ///< crossfade spring/plate
-    AudioMixer4          _dryWetMix;
-    AudioOutputI2S       _out;
-    AudioControlSGTL5000 _codec;
+    AudioMixer4          _dryWetMix;  ///< último nodo — expuesto via getOutputL/R()
 
     // ── Conexiones estáticas ──────────────────────────────────────────────────────
     AudioConnection _cSpringBlend;   ///< _spring → _blendMix(ch0)
     AudioConnection _cPlateBlend;    ///< _plate  → _blendMix(ch1)
     AudioConnection _cBlendWet;      ///< _blendMix → _dryWetMix(ch1)
-    AudioConnection _cOutL;
-    AudioConnection _cOutR;
 
     // ── Conexiones dinámicas ──────────────────────────────────────────────────────
     AudioConnection* _cSpring;   ///< inputStream → _spring
