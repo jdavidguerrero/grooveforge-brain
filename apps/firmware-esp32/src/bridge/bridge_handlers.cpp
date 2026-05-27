@@ -255,11 +255,14 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
         carousel_goto(VIEW_IDX_MODE_SWITCH);
         lv_timer_create([](lv_timer_t* t) {
             lv_timer_del(t);
-            /* Navegar al modo destino almacenado en s_top_mode. */
+            /* Navegar al modo destino almacenado en s_top_mode.
+             * SYNTH → ENGINE_LIST: el usuario selecciona engine antes de editar
+             * parámetros (mismo destino que el handler directo 0x00F4).
+             * FX → FX_MAIN: muestra el efecto activo con arco wet/dry. */
             switch (s_top_mode) {
-                case 1:  carousel_goto(VIEW_IDX_SYNTH_MAIN); break;  // SYNTH
-                case 2:  carousel_goto(VIEW_IDX_AI_PROC);    break;  // AI
-                default: carousel_goto(VIEW_IDX_FX_MAIN);    break;  // FX
+                case 1:  carousel_goto(VIEW_IDX_ENGINE_LIST); break;  // SYNTH → elige engine
+                case 2:  carousel_goto(VIEW_IDX_AI_PROC);     break;  // AI full
+                default: carousel_goto(VIEW_IDX_FX_MAIN);     break;  // FX
             }
         }, 1000, nullptr);  /* 1s es suficiente para MODE SWITCH — 3s era excesivo */
         Serial.printf("[bridge] MODE SWITCH → %u\n", (unsigned)new_mode);
@@ -295,11 +298,18 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
         }
         /* Para 0 < value < 1: el timer en view_10_overlay actualiza el arco en-place. */
     } else if (param_id == 0xFA) {
-        /* HOME (B1): volver a FX SELECT para elegir efecto.
-         * Equivalente al "menú principal" del modo FX — RMX B.SELECT. */
+        /* HOME (B1): volver al "menú principal" del modo activo.
+         *   FX mode   → FX SELECT   (elegir efecto — RMX B.SELECT)
+         *   SYNTH mode→ ENGINE LIST (elegir engine — equivalente a RMX B.SELECT)
+         * Bug fix: antes siempre iba a FX_SELECT sin revisar s_top_mode. */
         carousel_pause();
-        carousel_goto(VIEW_IDX_FX_SELECT);
-        Serial.println("[bridge] HOME → FX SELECT");
+        if (s_top_mode == 1) {
+            carousel_goto(VIEW_IDX_ENGINE_LIST);
+            Serial.println("[bridge] HOME → ENGINE LIST (SYNTH mode)");
+        } else {
+            carousel_goto(VIEW_IDX_FX_SELECT);
+            Serial.println("[bridge] HOME → FX SELECT (FX mode)");
+        }
         Serial.flush();
     } else if (param_id == 0xF9) {
         /* TAP TEMPO (B3): el Teensy calcula el BPM; el display solo loguea.
