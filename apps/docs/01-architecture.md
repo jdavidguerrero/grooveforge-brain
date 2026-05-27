@@ -429,6 +429,92 @@ Ver doc separado: **🎚️ Filter Design Spec v0.1** para detalles completos.
 | DX7 | **OFF** | Clean FM | Yes (toggle ON for "warmed FM") |
 | ARP 2600 | ON | ARP + Moog warmth | Yes |
 
+### 3.6 Top Panel PCB Architecture
+
+> **Decisión:** 2026-05-27. Documentado por primera vez aquí.
+
+#### Problema
+
+Los encoders (ENC1, ENC2, ENC NAV) y los botones (B1-B4) están montados sobre el top
+panel de aluminio, que tiene **BODY_H_F=42mm de altura**. La PCB principal (Teensy) está
+en el fondo del PETG body. Conectar componentes del top panel directamente a la main PCB
+requeriría cables cortos en ángulo o una PCB rígida que no cabe en el espacio.
+
+#### Decisión: 2-PCB approach
+
+| PCB | Nombre | Dimensión estimada | Contenido | Conexión |
+|-----|--------|--------------------|-----------|----------|
+| Main PCB | `groovebrain-main` | 168×88mm | Teensy 4.1, SGTL5000, power, jacks, USB | — |
+| Top Panel PCB | `groovebrain-panel` | ~130×25mm | ENC1, ENC2, ENC NAV, B1-B4, WS2812B ring | JST ribbon → main PCB |
+
+**Top Panel PCB** es una PCB delgada (~25mm de alto) que se monta bajo el aluminio:
+- Footprints EC11 para los 3 encoders (ENC NAV tiene 4 pads extra para WS2812B data + 5V)
+- Footprints Kailh Choc V2 para los 4 botones (retroiluminados — 2 pads extra por switch)
+- Header JST-SH 1.0mm (o similar) de N pines hacia la main PCB
+- 4 agujeros M2.5 para tornillos que fijan la PCB bajo el panel de aluminio
+
+**ENC NAV vs ENC1/ENC2 en la misma PCB:**
+- ENC NAV footprint: 3 pines encoder + 2 pines LED ring (data WS2812B + GND)
+- ENC1/ENC2 footprint: solo 3 pines encoder — el pad de ring simplemente no se popula
+- Una sola PCB sirve para las 3 posiciones de encoder
+
+#### Layout del panel v0.5 (SSoT)
+
+```
+Y_panel (0=trasero, 100=frontal)
+  100 ──────────────────────────────────────────────── frente del instrumento
+        [VOL]                               (X=22, Y=14)
+   22   ──────── [ENCNAV]  ────────────────            (X=90, Y=22)
+        ───── LED ring ────                            (X=90, Y=22, Ø32mm)
+
+   44   [ENC1]  [B2]       DISPLAY   [B4]  [ENC2]     Y=44: botones inferiores
+        X=22    X=52        X=90      X=128  X=158
+   55   [ENC1]                               [ENC2]    Y=55: encoders laterales
+   60           DISPLAY                                Y=60: display center
+   66   [ENC1]  [B1]       DISPLAY   [B3]  [ENC2]     Y=66: botones superiores
+
+  ...
+    0 ──────── panel trasero
+```
+
+**Asignación de botones:**
+
+| ID | Posición | X_panel | Y_panel | Modo SYNTH | Modo FX |
+|----|----------|---------|---------|------------|---------|
+| B1 | col izq, superior | 52mm | 66mm | OSC | INSERT |
+| B2 | col izq, inferior | 52mm | 44mm | ENV | SEND |
+| B3 | col der, superior | 128mm | 66mm | LFO/MOD | MASTER |
+| B4 | col der, inferior | 128mm | 44mm | PRESET/ENGINE | FX slot fav |
+
+#### Módulo display (Waveshare ESP32-S3-Touch-LCD-1.28) — dimensiones verificadas por datasheet
+
+| Parámetro | Valor | Fuente |
+|-----------|-------|--------|
+| Vidrio OD (LENS OD) | Ø38.51mm | Waveshare datasheet |
+| Viewing area activa | Ø35.67mm | Waveshare datasheet |
+| PCB circular | Ø41mm | Waveshare datasheet |
+| Stack TP+LCD height | 3.58mm | Waveshare datasheet |
+
+**Concepto de instalación (corrección v0.5):** El módulo va **debajo** del panel de aluminio:
+- El cutout Ø36mm en el aluminio es una **ventana** — ni el vidrio (38.51mm) ni el PCB (41mm) pasan por él
+- El vidrio del módulo se presiona contra la **cara inferior** del aluminio, mirando hacia arriba
+- El labio del vidrio (38.51mm OD) impide que el módulo caiga por el cutout (36mm < 38.51mm)
+- Desde arriba: el usuario ve el display circular recesado 2mm (grosor del aluminio) — efecto estético limpio
+- El **display bracket (Part 05)** retiene el módulo desde abajo, presionándolo contra el aluminio:
+  - Cavity circular ≥ Ø41mm para el PCB
+  - Altura = BRACKET_H = 15mm (desde PCB principal hasta cara inferior del top panel)
+
+Los pines UART (GPIO43/44) del ESP32-S3 se cablan directamente a la main PCB (Teensy)
+via cable que desciende por el interior del bracket y el PETG body.
+El Top Panel PCB **no lleva** conector para la pantalla.
+
+#### Prototipo v1 vs PCB v1.0
+
+| Fase | Implementación |
+|------|---------------|
+| **Prototipo v1** (actual) | Cables directos de cada encoder/botón a la main PCB. Sin Top Panel PCB. Complejidad de cableado: ~18 señales. |
+| **PCB v1.0** | Top Panel PCB fabricada. JST ribbon de 18-22 pines. Cableado limpio. |
+
 ---
 
 ## 4. Software Architecture

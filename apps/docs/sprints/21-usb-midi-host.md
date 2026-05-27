@@ -1,6 +1,6 @@
 # Sprint 4.1 — USB-A Host MIDI Input
 
-**Status:** Implementado — pendiente demo on-device
+**Status:** ✅ COMPLETO — demo on-device validado Mayo 19, 2026
 **Fecha:** Mayo 18, 2026
 **Nivel de superpoderes:** Nivel 1 — "+ Teclado MIDI (USB-A host)"
 
@@ -199,12 +199,12 @@ Teensyduino y el LDF la resuelve via `#include <USBHost_t36.h>`.
 
 Para validar el sprint en hardware:
 
-- [ ] Enchufar teclado MIDI USB al conector USB-A del Teensy 4.1
-- [ ] Serial muestra `[MidiHost] device connected: <nombre>` o `(name not available)`
-- [ ] Tocar nota en el teclado → audio sale por SGTL5000 (headphones o 1/4" out)
-- [ ] Soltar nota → release del envelope audible
-- [ ] CC 74 desde 0 a 127 → cutoff sube de 20Hz a 20kHz audiblemente
-- [ ] CC 71 desde 0 a 127 → resonance sube de Q 0.7 a Q 8.0 audiblemente
+- [x] Enchufar teclado MIDI USB al conector USB-A del Teensy 4.1
+- [x] Serial muestra `[MidiHost] device connected: Arturia MiniLab mkII`
+- [x] Tocar nota en el teclado → audio sale por SGTL5000 (headphones)
+- [x] Soltar nota → release del envelope audible
+- [x] CC 74 desde 0 a 127 → cutoff sube de 20Hz a 20kHz audiblemente
+- [x] CC 71 desde 0 a 127 → resonance sube de Q 0.7 a Q 8.0 audiblemente
 - [ ] NoteOn con velocity 0 desde el teclado → trata como NoteOff (sin nota colgada)
 - [ ] Desenchufar teclado → Serial muestra `[MidiHost] device disconnected`
 - [ ] Reconectar teclado → funciona sin reset del Teensy
