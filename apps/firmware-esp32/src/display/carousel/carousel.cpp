@@ -18,6 +18,7 @@
 #include "lvgl.h"
 #include <Arduino.h>
 
+
 /* Descriptor de una vista del carrusel. */
 typedef struct {
     void        (*create)(lv_obj_t* parent);
@@ -55,6 +56,7 @@ static const uint8_t GF_VIEW_COUNT = sizeof(s_views) / sizeof(s_views[0]);
 
 static uint8_t     s_idx   = 0;
 static lv_timer_t* s_dwell = nullptr;   /* timer de permanencia de la vista */
+static bool        s_ai_overlay_active = false;  /* true mientras overlay AI esté sobre la vista */
 
 /* Construye la vista actual sobre la pantalla activa. */
 static void build_current(void) {
@@ -86,15 +88,115 @@ static void on_wipe_out_done(void) {
     gf_transition_in(on_wipe_in_done);
 }
 
-/* Expira el dwell → arrancar la transicion de salida. */
+/* Expira el dwell → arrancar la transicion de salida.
+ * Solo se usa para la transicion splash→FX (one-shot). */
 static void dwell_cb(lv_timer_t* /*t*/) {
-    lv_timer_pause(s_dwell);
+    if (s_dwell != nullptr) lv_timer_pause(s_dwell);
     gf_transition_out(on_wipe_out_done);
+}
+
+/* Callback one-shot: fin del splash → modo FX por defecto. */
+static void on_splash_done(lv_timer_t* t) {
+    lv_timer_del(t);
+    s_dwell = nullptr;   // evitar que goto/pause lo reanuden
+    carousel_goto(VIEW_IDX_FX_MAIN);
 }
 
 void carousel_start(void) {
     gf_transition_init();
-    s_idx = 0;
+    s_idx  = 0;
+    s_dwell = nullptr;  // sin avance periodico — la UI es bridge-driven
     build_current();
-    s_dwell = lv_timer_create(dwell_cb, GF_CAROUSEL_DWELL_MS, nullptr);
+    /* Mostrar splash 2s, luego saltar a FX MAIN. */
+    lv_timer_create(on_splash_done, 2000, nullptr);
 }
+
+uint8_t carousel_get_current(void) { return s_idx; }
+
+void carousel_pause(void) {
+    if (s_dwell != nullptr) lv_timer_pause(s_dwell);
+}
+
+void carousel_resume(void) {
+    if (s_dwell != nullptr) {
+        lv_timer_reset(s_dwell);
+        lv_timer_resume(s_dwell);
+    }
+}
+
+void carousel_goto(uint8_t idx) {
+    if (idx >= GF_VIEW_COUNT) return;
+
+    /* Pausar el dwell para que no dispare otra transicion mientras hacemos el swap. */
+    if (s_dwell != nullptr) lv_timer_pause(s_dwell);
+
+    /* Si el overlay AI estaba activo, destruirlo inmediatamente (sin fade) antes
+     * de que lv_obj_clean() libere los widgets — esto evita que animaciones
+     * pendientes del overlay disparen contra punteros ya liberados. */
+    if (s_ai_overlay_active) {
+        view_10_overlay_destroy_immediate();
+        s_ai_overlay_active = false;
+    }
+
+    /* Destruir la vista activa y limpiar estado LVGL. */
+    if (s_views[s_idx].destroy != nullptr) s_views[s_idx].destroy();
+    gf_anim_kill_all();
+    lv_obj_clean(lv_scr_act());
+
+    /* Saltar al indice solicitado y construir. */
+    s_idx = idx;
+    build_current();
+
+    /* Reanudar el dwell desde cero para que la nueva vista tenga 5s completos. */
+    if (s_dwell != nullptr) {
+        lv_timer_reset(s_dwell);
+        lv_timer_resume(s_dwell);
+    }
+}
+
+/* ── AI Overlay API ─────────────────────────────────────────────────────── */
+
+void carousel_ai_overlay_start(void) {
+    if (s_ai_overlay_active) return;          /* ya activo — ignorar duplicados */
+    s_ai_overlay_active = true;
+    /* Pausar el dwell para que no avance sola mientras el hold ocurre. */
+    if (s_dwell != nullptr) lv_timer_pause(s_dwell);
+    view_10_overlay_start(lv_scr_act());
+    Serial.printf("[carousel] AI overlay start  heap=%u\n", (unsigned)ESP.getFreeHeap());
+    Serial.flush();
+}
+
+void carousel_ai_overlay_cancel(void) {
+    if (!s_ai_overlay_active) return;
+    s_ai_overlay_active = false;
+    view_10_overlay_cancel();                 /* fade-out 200ms, la vista anterior reaparece */
+    Serial.println("[carousel] AI overlay cancelled — view restored");
+    Serial.flush();
+}
+
+void carousel_ai_overlay_complete(void) {
+    if (!s_ai_overlay_active) return;
+    s_ai_overlay_active = false;
+
+    /* Flash blanco 100ms sobre todo lo que hay en pantalla. */
+    lv_obj_t* flash = lv_obj_create(lv_scr_act());
+    lv_obj_set_size(flash, 240, 240);
+    lv_obj_set_pos(flash, 0, 0);
+    lv_obj_set_style_bg_color(flash, lv_color_white(), 0);
+    lv_obj_set_style_bg_opa(flash, LV_OPA_COVER, 0);
+    lv_obj_set_style_border_width(flash, 0, 0);
+    lv_obj_set_style_radius(flash, 0, 0);
+    lv_obj_clear_flag(flash, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+
+    /* Después de 100ms: goto full view_10 (lv_obj_clean eliminará flash + overlay
+     * + vista anterior; view_10_create construye la vista completa). */
+    lv_timer_create([](lv_timer_t* t) {
+        lv_timer_del(t);
+        carousel_goto(VIEW_IDX_AI_PROC);
+    }, 100, nullptr);
+
+    Serial.println("[carousel] AI overlay complete — flash → view_10 full");
+    Serial.flush();
+}
+
+bool carousel_ai_overlay_active(void) { return s_ai_overlay_active; }

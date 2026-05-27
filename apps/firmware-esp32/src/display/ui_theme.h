@@ -56,6 +56,15 @@
 /** Blanco: texto hero (notas, valores grandes) */
 #define GF_COLOR_WHITE          lv_color_hex(0xFFFFFF)
 
+/** Blanco roto: hero values en sprint 30 (menos fatigante que #FFF puro en OLED). */
+#define GF_COLOR_HERO_WHITE     lv_color_hex(0xF2F2F2)
+
+/** Naranja bypass: overlay BYPASS activo en view_07 FX MAIN. */
+#define GF_COLOR_BYPASS_ORANGE  lv_color_hex(0xFF6A35)
+
+/** Gris monitor: cutoff monitor permanente en view_02 SYNTH (no compite con HERO). */
+#define GF_COLOR_MONITOR_GRAY   lv_color_hex(0x5A5A6E)
+
 /* ── Tipografia — IBM Plex Mono, 6 tamanos ───────────────────────────────── */
 
 /**
@@ -69,6 +78,22 @@
 #define GF_FONT_TITLE   (&ibm_plex_mono_22)   /* 20-26px: FX hero, scale name */
 #define GF_FONT_HERO    (&ibm_plex_mono_36)   /* 28-42px: BPM, dB, OTA % */
 #define GF_FONT_GIANT   (&ibm_plex_mono_64)   /* 48-64px: nota hero del synth */
+
+/* ── Aliases sprint 30 (nav RMX-style + UI hierarchy) ───────────────────── */
+
+/**
+ * HERO_XL (64px): wet/dry central en FX MAIN, valor SYNTH en HERO. Alias de
+ * GF_FONT_GIANT — no requiere nueva fuente generada.
+ */
+#define GF_FONT_HERO_XL  GF_FONT_GIANT
+
+/**
+ * MAJOR (36px): sub-params FX (TIME / FEEDBACK) y valores secundarios. Alias
+ * de GF_FONT_HERO — el spec pide 32px; 36px es el snap más cercano sin
+ * recompilar fuente. Si la diferencia importa, generar ibm_plex_mono_32 con
+ * lv-font-conv y reemplazar este alias.
+ */
+#define GF_FONT_MAJOR    GF_FONT_HERO
 
 /* ── Geometria del display circular ──────────────────────────────────────── */
 
