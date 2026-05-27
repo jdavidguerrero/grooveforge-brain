@@ -99,3 +99,13 @@ bool bridge_get_scale_lock_bypass(void);
 
 /** true si Beat Follower está bypassed. Actualizado por PARAM_CHANGED param_id=0x00F3. */
 bool bridge_get_beat_follower_bypass(void);
+
+/**
+ * @brief Valor cacheado de un parámetro synth (normalizado 0.0–1.0).
+ *
+ * Indexado por engine (0=Moog, 1=Juno, 2=Prophet), grupo (0=OSC, 1=ENV,
+ * 2=FILTER, 3=LFO) y param dentro del grupo (0-3).
+ * Actualizado por cada PARAM_CHANGED con param_id byte-alto 0x10-0x12.
+ * Retorna 0.0f si el param aún no ha sido enviado por el Teensy.
+ */
+float bridge_get_synth_param_cached(uint8_t engine, uint8_t group, uint8_t pidx);

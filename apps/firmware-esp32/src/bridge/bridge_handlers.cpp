@@ -54,6 +54,11 @@ static uint8_t s_engine_cursor  = 0;   // cursor en ENGINE_LIST
 static float   s_synth_cutoff     = 0.5f;   // último cutoff recibido (grupo FILTER param 0)
 static float   s_synth_resonance  = 0.1f;   // último resonance recibido (grupo FILTER param 1)
 
+/* Caché completa de parámetros synth: [engine 0-2][grupo 0-3][param 0-3]
+ * Poblada por cada PARAM_CHANGED con byte-alto 0x10-0x12.
+ * Permite a las vistas GROUP_VIEW inicializar todos los valores correctamente. */
+static float   s_synth_cache[3][4][4] = {};
+
 /* Caché de valores por FX y parámetro */
 static float   s_param_cache[9][4]  = {};
 
@@ -100,6 +105,11 @@ uint8_t bridge_get_synth_param(void)    { return s_synth_param; }
 uint8_t bridge_get_engine_cursor(void)  { return s_engine_cursor; }
 float   bridge_get_synth_cutoff(void)   { return s_synth_cutoff; }
 float   bridge_get_synth_resonance(void){ return s_synth_resonance; }
+
+float bridge_get_synth_param_cached(uint8_t engine, uint8_t group, uint8_t pidx) {
+    if (engine >= 3 || group >= 4 || pidx >= 4) return 0.0f;
+    return s_synth_cache[engine][group][pidx];
+}
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
@@ -368,10 +378,15 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
          * encoding: (0x10 + engine_id) << 8 | (group << 4) | param_idx
          * Extraer cutoff y resonance del grupo FILTER (group=2). */
         if (is_synth_param) {
+            uint8_t eng  = (fx_idx - 0x10) & 0x03;   // engine 0-2
             uint8_t grp  = (p_idx >> 4) & 0x0F;
             uint8_t pidx = p_idx & 0x0F;
             if (grp == 2 && pidx == 0) s_synth_cutoff    = value;
-            if (grp == 2 && pidx == 1) s_synth_resonance  = value;
+            if (grp == 2 && pidx == 1) s_synth_resonance = value;
+            // Popula caché completa para que las vistas inicialicen correctamente
+            if (eng < 3 && grp < 4 && pidx < 4) {
+                s_synth_cache[eng][grp][pidx] = value;
+            }
             s_param_value        = value;
             s_last_real_param_id = param_id;
             s_last_real_param_ms = lv_tick_get();

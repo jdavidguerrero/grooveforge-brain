@@ -810,11 +810,13 @@ static void handle_buttons() {
         Serial.println("[HOME] → ENGINE_LIST");
     }
 
-    // B2 = MODE TOGGLE — el orquestador de modo (sketch 27 o main.cpp) maneja esto.
-    // En el sketch de desarrollo lo dejamos como print para no cambiar top_mode
-    // desde dos lugares a la vez.
+    // B2 = MODE TOGGLE SYNTH → FX: envía 0xFD=0 al ESP32 (FX mode).
+    // En sketch 28 solo existe modo SYNTH, así que B2 siempre manda de vuelta a FX.
+    // El Teensy se mantiene en sketch 28 (audio SYNTH sigue activo), pero el
+    // ESP32 cambia su carrusel a FX_SELECT. En producción main.cpp coordinará ambos.
     if (buttons.pressed(1)) {
-        Serial.println("[B2] MODE TOGGLE — reservado para orquestador");
+        bridge_send_param_raw(0x00FD, 0.0f);  // 0 = FX mode
+        Serial.println("[B2] MODE → FX (ESP32 display)");
     }
 
     // B3 = TAP TEMPO — universal
