@@ -25,10 +25,11 @@ MoogModelD::MoogModelD() :
 // ── begin() ───────────────────────────────────────────────────────────────────
 
 void MoogModelD::begin(float volume) {
-    // 20 bloques × 256 bytes = 5.12KB
-    // Calculado: 8 conexiones activas + buffer de seguridad (ver theory doc)
-    AudioMemory(20);
-
+    // AudioMemory() es responsabilidad del caller (sketch) — NO llamar aquí.
+    // Razón: AudioMemory() es una macro que crea un static array + registra el pool.
+    // Llamarla dos veces (sketch + begin) re-inicializa con el segundo tamaño, perdiendo
+    // el primero. El sketch 28 llama AudioMemory(40) para dar margen al bridge+navegación.
+    //
     // Wire.begin() explícito antes de enable(): USBHost_t36 corre constructores
     // globales antes de setup(), lo que puede dejar Wire sin inicializar cuando
     // AudioControlSGTL5000::enable() lo llama internamente. Llamarlo aquí garantiza

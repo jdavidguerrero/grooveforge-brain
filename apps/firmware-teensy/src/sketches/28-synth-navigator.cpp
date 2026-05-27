@@ -861,9 +861,10 @@ void setup() {
     delay(200);
     Serial.println("[SKETCH 28] Synth Navigator — GrooveForge Brain");
 
-    // AudioMemory: MoogModelD llama AudioMemory(20) internamente en begin().
-    // Agregamos 20 bloques extra para el overhead de la navegación y el bridge.
-    // Total: 40 bloques ≈ 10.2KB RAM (budget: 400KB).
+    // AudioMemory: debe llamarse ANTES de moog.begin() y de cualquier audio object.
+    // 40 bloques × 256 bytes = 10.24KB RAM (budget disponible: ~400KB).
+    // Desglose: 8 conexiones MoogModelD + buffer para bridge + usbMIDI audio path.
+    // MoogModelD.begin() ya NO llama AudioMemory() internamente — el sketch es dueño.
     AudioMemory(40);
 
     // Solo activar Moog — ver TODO arriba sobre conflicto de AudioOutputI2S.
@@ -908,7 +909,29 @@ void setup() {
 void loop() {
     bridge.poll();
     handle_heartbeat();
+
+    // ── USB-A host MIDI (teclado MIDI externo conectado al puerto USB-A) ────────
     midi_host.poll();
+
+    // ── USB device MIDI (computador / DAW → micro-USB) ───────────────────────────
+    // Con USB_MIDI_AUDIO_SERIAL el Teensy es simultáneamente host (USB-A) y device
+    // (micro-USB). usbMIDI consume los mensajes que el computador envía al Teensy.
+    // Ruteamos a los mismos callbacks del host para unificar la lógica de audio.
+    // Útil para probar con una app MIDI virtual en el computador sin teclado físico.
+    while (usbMIDI.read()) {
+        uint8_t type = usbMIDI.getType();
+        uint8_t ch   = usbMIDI.getChannel();
+        uint8_t d1   = usbMIDI.getData1();
+        uint8_t d2   = usbMIDI.getData2();
+        if      (type == usbMIDI.NoteOn)          midi_note_on(ch, d1, d2);
+        else if (type == usbMIDI.NoteOff)         midi_note_off(ch, d1, d2);
+        else if (type == usbMIDI.ControlChange)   midi_cc(ch, d1, d2);
+        else if (type == usbMIDI.PitchBend) {
+            // usbMIDI.getData1()/getData2() para PitchBend: d1=LSB, d2=MSB (7-bit cada uno)
+            int16_t bend = (int16_t)(((uint16_t)d2 << 7) | d1) - 8192;
+            (void)bend; // pitch bend: reservado para Sprint 32 (portamento control)
+        }
+    }
 
     encoders.update();
     buttons.update();

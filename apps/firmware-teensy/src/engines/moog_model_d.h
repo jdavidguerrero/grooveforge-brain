@@ -30,8 +30,10 @@ public:
     /**
      * @brief Inicializa el codec SGTL5000 y el grafo de audio.
      *
-     * Debe llamarse una vez en setup(), antes de cualquier noteOn.
-     * Llama AudioMemory(20) internamente — no llamar AudioMemory() desde el sketch.
+     * Debe llamarse una vez en setup(), DESPUÉS de AudioMemory() del sketch.
+     * No llama AudioMemory() internamente — el sketch es responsable de llamarla
+     * con el tamaño correcto antes de begin() (mínimo 20 bloques para el engine
+     * solo; 40+ si hay bridge, navegación y otros objetos de audio activos).
      *
      * @param volume Volumen del codec, 0.0–1.0 (default 0.5)
      */
