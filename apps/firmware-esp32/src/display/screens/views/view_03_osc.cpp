@@ -113,6 +113,7 @@ typedef struct {
     lv_obj_t*  arc;        ///< arc para level (nullptr si no aplica)
     lv_obj_t*  vu_thumb;   ///< thumb del VU para oct (nullptr si no aplica)
     lv_obj_t*  val_lbl;    ///< siempre presente — muestra el valor formateado
+    lv_obj_t*  aux_lbl;    ///< sufijo/auxiliar (ej: "ST" para INTERVAL)
 } page_t;
 
 /* ── Estado global de la vista ────────────────────────────────────────────── */
@@ -367,10 +368,17 @@ static void build_interval_page(lv_obj_t* page, uint8_t idx, const char* title) 
     lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
     if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
 
-    lv_obj_t* vl = gf_label(page, "0 ST", GF_FONT_HERO_XL, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_CENTER, 0, 0);
+    // Número grande — GF_FONT_HERO_XL (64px) tiene solo dígitos 0-9.
+    // El sufijo "ST" va separado en GF_FONT_HERO (36px, ASCII completo).
+    lv_obj_t* vl = gf_label(page, "0", GF_FONT_HERO_XL, GF_COLOR_WHITE);
+    if (vl) lv_obj_align(vl, LV_ALIGN_CENTER, -20, -5);
     s_pages[idx].val_lbl = vl;
-    s_pages[idx].viz     = VIZ_INTERVAL;
+
+    lv_obj_t* su = gf_label(page, "ST", GF_FONT_HERO, GF_COLOR_TEAL_PLUS);
+    if (su) lv_obj_align(su, LV_ALIGN_CENTER, 52, 22);
+    s_pages[idx].aux_lbl = su;
+
+    s_pages[idx].viz = VIZ_INTERVAL;
 }
 
 static void build_generic_page(lv_obj_t* page, uint8_t idx, const char* title) {
@@ -440,10 +448,11 @@ static void osc_tick(lv_timer_t* /*t*/) {
                 int st = (int)lroundf(v * 24.0f);
                 if (st < 0) st = 0; if (st > 24) st = 24;
                 if (p.val_lbl) {
-                    static char buf[12];
-                    snprintf(buf, sizeof(buf), "%d ST", st);
+                    static char buf[8];
+                    snprintf(buf, sizeof(buf), "%d", st);
                     lv_label_set_text(p.val_lbl, buf);
                 }
+                // p.aux_lbl ("ST") es estático, no necesita actualización
                 break;
             }
             case VIZ_GENERIC:

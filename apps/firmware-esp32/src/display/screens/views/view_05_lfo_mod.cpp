@@ -1,174 +1,363 @@
 /**
  * @file view_05_lfo_mod.cpp
- * @brief Vista 05 — LFO · MOD (Sprint 31 Batch D — rate y depth desde bridge)
+ * @brief Vista 05 — LFO / MOD (Sprint 32 — engine-aware, 2 páginas por slider)
  *
- * Onda LFO animada: lv_timer a ~30fps redibuja la senoidal con desfase creciente.
- * Sprint 31 agrega:
- *   - Velocidad de scroll proporcional al rate actual del bridge
- *   - Labels RATE y DEPTH actualizados dinamicamente segun bridge_get_param_value()
- *   - Cursor activo (rate=0 / depth=1) resaltado en teal+
+ * Diseño engine-aware: el contenido de las 2 páginas varía según el engine activo.
  *
- * El incremento de fase por tick se mapea linealmente:
- *   rate_norm [0,1] → incremento [2,20] grados/tick @ 33ms ≈ [0.17,1.67 Hz]
- * Esto da scrolling perceptible a rate bajo y rapido a rate alto, sin saltos.
+ *   Moog (0x10) — group=3, 2 params:
+ *     Página 0 "LFO RATE":  sinusoide animada cuya velocidad = rate norm→Hz.
+ *     Página 1 "LFO DEPTH": arc 0-100%.
  *
- * El timer se registra con gf_anim_register_timer() para limpieza automatica.
+ *   Juno (0x11) — group=3, 2 params:
+ *     Página 0 "CHORUS":      big text "ON"/"OFF" + dot de 40px coloreado.
+ *     Página 1 "CHORUS MODE": big text "MODE I" / "MODE II".
+ *
+ *   Prophet (0x12) — group=3, 2 params:
+ *     Página 0 "OSC MIX":   arc 0-100% con labels "A" y "B" a los lados,
+ *                             texto "Axx%/Bxx%" en GF_FONT_LABEL debajo.
+ *     Página 1 "LFO DEPTH": arc 0-100%.
+ *
+ * Animación de la sinusoide Moog: s_rate_phase avanza en grados/tick
+ * proporcional a hz = 0.1 + rate_norm * 9.9.  Fórmula:
+ *   phase_inc = hz * 360 * 0.033  [grados por tick a 33ms]
+ *
+ * Bridge params: bridge_get_synth_param_cached(engine_idx, 3 /*LFO*\/, param_idx)
+ * Valores devueltos: normalizados [0.0, 1.0].
  */
 
 #include "views.h"
 #include "../../ui_theme.h"
 #include "../../widgets/gf_widgets.h"
 #include "../../widgets/gf_glyphs.h"
-#include "../../widgets/gf_anim.h"
+#include "../../widgets/gf_param_slider.h"
 #include "../../../bridge/bridge_handlers.h"
-#include <math.h>
 #include <stdio.h>
+#include <math.h>
 
-static constexpr lv_coord_t LFO_W  = 184;
-static constexpr lv_coord_t LFO_H  = 60;
-static constexpr lv_coord_t LFO_DY = -8;     ///< offset y del canvas respecto al centro
+/* ── Tipos de visualización ───────────────────────────────────────────────── */
 
-/* ── Estado persistente ───────────────────────────────────────────────────── */
+typedef enum {
+    LFOVIZ_RATE,    ///< sinusoide animada — velocidad proporcional al rate
+    LFOVIZ_DEPTH,   ///< arc 0-100%
+    LFOVIZ_ONOFF,   ///< big text "ON" / "OFF" con dot de color
+    LFOVIZ_MODE,    ///< big text "MODE I" / "MODE II"
+    LFOVIZ_MIX,     ///< arc 0-100% con labels A/B y texto "Axx%/Bxx%"
+} lfo_viz_t;
 
-static lv_obj_t* s_wave_cv   = nullptr;
-static lv_obj_t* s_playhead  = nullptr;
-static lv_obj_t* s_rate_lbl  = nullptr;   ///< label "RATE  x.x HZ"
-static lv_obj_t* s_depth_lbl = nullptr;   ///< label "DEPTH  xx%"
-static uint32_t  s_phase     = 0;
+/* ── Descriptor por engine ────────────────────────────────────────────────── */
 
-/* Ultimo rate y depth almacenados para que al mover el cursor a DEPTH no se
- * pierda el ultimo rate recibido (y viceversa). */
-static float s_last_rate  = 0.3f;   ///< normalizado 0-1
-static float s_last_depth = 0.6f;   ///< normalizado 0-1
+typedef struct {
+    const char* title;
+    lfo_viz_t   viz;
+} lfo_param_t;
 
-/* ── Evaluacion de onda ───────────────────────────────────────────────────── */
+typedef struct {
+    lfo_param_t params[2];
+    uint8_t     num;
+} lfo_engine_t;
 
-static float lfo_value(float t) {
-    const float ph = s_phase * (float)M_PI / 180.0f;
-    return sinf(t * 2.0f * 2.0f * (float)M_PI + ph);   /* 2 ciclos visibles */
+static const lfo_engine_t LFO_ENGINES[3] = {
+    /* 0 — Moog Model D */
+    { {{ "LFO RATE",    LFOVIZ_RATE  }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
+    /* 1 — Juno-106    */
+    { {{ "CHORUS",      LFOVIZ_ONOFF }, { "CHORUS MODE", LFOVIZ_MODE  }}, 2 },
+    /* 2 — Prophet-5   */
+    { {{ "OSC MIX",     LFOVIZ_MIX   }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
+};
+
+/* ── Estado por página ────────────────────────────────────────────────────── */
+
+typedef struct {
+    lfo_viz_t  viz;
+    lv_obj_t*  canvas;    ///< LFOVIZ_RATE — canvas de la sinusoide
+    lv_obj_t*  arc;       ///< LFOVIZ_DEPTH / LFOVIZ_MIX — lv_arc
+    lv_obj_t*  val_lbl;   ///< valor principal (Hz, %, ON/OFF, MODE I/II, "Axx%")
+    lv_obj_t*  aux_lbl;   ///< auxiliar: "Axx%/Bxx%" para MIX; dot para ONOFF
+    lv_obj_t*  dot_obj;   ///< dot de 40px para ONOFF (color cambia según estado)
+} lfo_page_t;
+
+/* ── Estado global ────────────────────────────────────────────────────────── */
+
+static lv_obj_t*   s_slider     = nullptr;
+static lv_timer_t* s_timer      = nullptr;
+static lfo_page_t  s_pages[2]   = {};
+static uint8_t     s_last_param = 0xFF;
+static uint8_t     s_engine_idx = 0;
+static float       s_rate_phase = 0.0f;   ///< fase acumulada de la sinusoide [0..360)
+
+/* ── Dimensiones del canvas de sinusoide ──────────────────────────────────── */
+
+static const lv_coord_t LFO_W = 180;
+static const lv_coord_t LFO_H = 60;
+
+/* ── Dibujo de la sinusoide animada ──────────────────────────────────────── */
+
+/**
+ * @brief Redibuja el canvas de la onda LFO con la fase actual.
+ *
+ * La fase en grados se convierte a radianes para sinf().
+ * Se dibujan 2 ciclos visibles con scroll a la velocidad del rate.
+ */
+static void draw_rate_canvas(lv_obj_t* canvas, float phase_deg) {
+    if (!canvas) return;
+    lv_canvas_fill_bg(canvas, lv_color_black(), LV_OPA_TRANSP);
+
+    /* Eje central atenuado */
+    lv_draw_rect_dsc_t ax;
+    lv_draw_rect_dsc_init(&ax);
+    ax.bg_color = GF_COLOR_GRAY; ax.bg_opa = 55;
+    lv_canvas_draw_rect(canvas, 0, LFO_H / 2, LFO_W, 1, &ax);
+
+    const float mid = (LFO_H - 1) / 2.0f;
+    const float amp = (LFO_H - 1) / 2.0f - 3.0f;
+    const float ph  = phase_deg * (float)M_PI / 180.0f;
+
+    lv_point_t pts[64];
+    for (int i = 0; i < 64; i++) {
+        float u = (float)i / 63.0f;
+        /* 2 ciclos visibles con scroll de fase */
+        float t = u * 2.0f * 2.0f * (float)M_PI + ph;
+        pts[i].x = (lv_coord_t)lroundf(u * (LFO_W - 1));
+        pts[i].y = (lv_coord_t)lroundf(mid - sinf(t) * amp);
+    }
+
+    lv_draw_line_dsc_t d;
+    lv_draw_line_dsc_init(&d);
+    d.color = GF_COLOR_TEAL_PLUS; d.width = 2; d.opa = LV_OPA_COVER;
+    d.round_start = d.round_end = 1;
+    lv_canvas_draw_line(canvas, pts, 64, &d);
 }
 
-/* ── Tick de animacion — 33ms (~30fps) ───────────────────────────────────── */
+/* ── Creación de arc reutilizable ─────────────────────────────────────────── */
+
+/**
+ * @brief Crea un lv_arc 120×120 estilo GF centrado en la página.
+ *
+ * La misma configuración se usa para DEPTH y MIX. No tiene knob ni click.
+ */
+static lv_obj_t* create_level_arc(lv_obj_t* page) {
+    lv_obj_t* arc = lv_arc_create(page);
+    lv_obj_set_size(arc, 120, 120);
+    lv_obj_align(arc, LV_ALIGN_CENTER, 0, -5);
+    lv_arc_set_rotation(arc, 135);
+    lv_arc_set_bg_angles(arc, 0, 270);
+    lv_arc_set_range(arc, 0, 100);
+    lv_arc_set_value(arc, 0);
+    lv_obj_set_style_arc_color(arc, GF_COLOR_TEAL_DIM,  LV_PART_MAIN);
+    lv_obj_set_style_arc_color(arc, GF_COLOR_TEAL_PLUS, LV_PART_INDICATOR);
+    lv_obj_set_style_arc_width(arc, 10, LV_PART_MAIN);
+    lv_obj_set_style_arc_width(arc, 10, LV_PART_INDICATOR);
+    lv_obj_remove_style(arc, NULL, LV_PART_KNOB);
+    lv_obj_clear_flag(arc, LV_OBJ_FLAG_CLICKABLE);
+    return arc;
+}
+
+/* ── Page builders ────────────────────────────────────────────────────────── */
+
+static void build_rate_page(lv_obj_t* page, uint8_t idx, const char* title) {
+    lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
+
+    lv_obj_t* cv = gf_canvas_create(page, LFO_W, LFO_H);
+    if (cv) lv_obj_align(cv, LV_ALIGN_CENTER, 0, -12);
+    s_pages[idx].canvas = cv;
+
+    lv_obj_t* vl = gf_label(page, "0.1 HZ", GF_FONT_HERO, GF_COLOR_WHITE);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    s_pages[idx].val_lbl = vl;
+    s_pages[idx].viz     = LFOVIZ_RATE;
+}
+
+static void build_depth_page(lv_obj_t* page, uint8_t idx, const char* title) {
+    lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
+
+    s_pages[idx].arc = create_level_arc(page);
+
+    lv_obj_t* vl = gf_label(page, "0%", GF_FONT_HERO, GF_COLOR_WHITE);
+    if (vl) lv_obj_align(vl, LV_ALIGN_CENTER, 0, -5);
+    s_pages[idx].val_lbl = vl;
+    s_pages[idx].viz     = LFOVIZ_DEPTH;
+}
+
+static void build_onoff_page(lv_obj_t* page, uint8_t idx, const char* title) {
+    lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
+
+    /* Dot de 40px centrado arriba del texto */
+    lv_obj_t* dot = gf_dot(page, 40, GF_COLOR_GRAY);
+    if (dot) lv_obj_align(dot, LV_ALIGN_CENTER, 0, -22);
+    s_pages[idx].dot_obj = dot;
+
+    lv_obj_t* vl = gf_label(page, "OFF", GF_FONT_HERO, GF_COLOR_GRAY);
+    if (vl) lv_obj_align(vl, LV_ALIGN_CENTER, 0, 22);
+    s_pages[idx].val_lbl = vl;
+    s_pages[idx].viz     = LFOVIZ_ONOFF;
+}
+
+static void build_mode_page(lv_obj_t* page, uint8_t idx, const char* title) {
+    lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
+
+    lv_obj_t* vl = gf_label(page, "MODE I", GF_FONT_HERO, GF_COLOR_WHITE);
+    if (vl) lv_obj_align(vl, LV_ALIGN_CENTER, 0, 0);
+    s_pages[idx].val_lbl = vl;
+    s_pages[idx].viz     = LFOVIZ_MODE;
+}
+
+static void build_mix_page(lv_obj_t* page, uint8_t idx, const char* title) {
+    lv_obj_t* t = gf_label(page, title, GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (t) lv_obj_align(t, LV_ALIGN_TOP_MID, 0, 12);
+
+    s_pages[idx].arc = create_level_arc(page);
+
+    /* Labels "A" y "B" a los lados del arc */
+    lv_obj_t* la = gf_label(page, "A", GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (la) lv_obj_align(la, LV_ALIGN_CENTER, -68, -5);
+
+    lv_obj_t* lb = gf_label(page, "B", GF_FONT_LABEL, GF_COLOR_TEAL_PLUS);
+    if (lb) lv_obj_align(lb, LV_ALIGN_CENTER, 68, -5);
+
+    /* Texto compuesto "Axx%/Bxx%" en GF_FONT_LABEL debajo del arc */
+    lv_obj_t* vl = gf_label(page, "A100%/B0%", GF_FONT_LABEL, GF_COLOR_WHITE);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    s_pages[idx].val_lbl = vl;
+    s_pages[idx].viz     = LFOVIZ_MIX;
+}
+
+/* ── Timer principal — 33ms ────────────────────────────────────────────────── */
 
 static void lfo_tick(lv_timer_t* /*t*/) {
-    /* Lee el param activo y el valor actual del bridge. */
-    uint8_t cur_param = bridge_get_synth_param();
-    float   cur_val   = bridge_get_param_value();
-
-    /* Actualiza la cache segun cual parametro esta activo. */
-    if (cur_param == 0) {
-        s_last_rate = cur_val;
-    } else {
-        /* cur_param == 1 (depth) u otro — el rate no cambio. */
-        s_last_depth = cur_val;
+    /* Sincronizar slider con cursor del Teensy */
+    uint8_t cur = bridge_get_synth_param();
+    if (cur >= 2) cur = 0;
+    if (cur != s_last_param) {
+        s_last_param = cur;
+        gf_pslider_set_active(s_slider, cur, true);
     }
 
-    /* Incremento de fase proporcional al rate actual.
-     * Rate 0.0 → 2°/tick, rate 1.0 → 20°/tick. */
-    uint32_t inc = (uint32_t)(2.0f + s_last_rate * 18.0f);
-    s_phase = (s_phase + inc) % 360;
+    for (uint8_t i = 0; i < 2; i++) {
+        float norm = bridge_get_synth_param_cached(s_engine_idx, 3 /* LFO */, i);
+        lfo_page_t& p = s_pages[i];
 
-    /* Redibuja la onda. */
-    if (s_wave_cv) {
-        lv_canvas_fill_bg(s_wave_cv, lv_color_black(), LV_OPA_TRANSP);
+        switch (p.viz) {
 
-        const float mid = (LFO_H - 1) / 2.0f;
-        const float amp = (LFO_H - 1) / 2.0f - 3.0f;
+            case LFOVIZ_RATE: {
+                /* Avanzar fase según rate actual */
+                float hz = 0.1f + norm * 9.9f;
+                float phase_inc = hz * 360.0f * 0.033f;
+                s_rate_phase = fmodf(s_rate_phase + phase_inc, 360.0f);
+                draw_rate_canvas(p.canvas, s_rate_phase);
 
-        lv_point_t pts[48];
-        for (int i = 0; i < 48; i++) {
-            const float t = (float)i / 47.0f;
-            pts[i].x = (lv_coord_t)lroundf(t * (LFO_W - 1));
-            pts[i].y = (lv_coord_t)lroundf(mid - lfo_value(t) * amp);
+                if (p.val_lbl) {
+                    static char buf[16];
+                    snprintf(buf, sizeof(buf), "%.1f HZ", (double)hz);
+                    lv_label_set_text(p.val_lbl, buf);
+                }
+                break;
+            }
+
+            case LFOVIZ_DEPTH: {
+                int pct = (int)lroundf(norm * 100.0f);
+                if (pct < 0) pct = 0;
+                if (pct > 100) pct = 100;
+                if (p.arc) lv_arc_set_value(p.arc, pct);
+                if (p.val_lbl) {
+                    static char buf[8];
+                    snprintf(buf, sizeof(buf), "%d%%", pct);
+                    lv_label_set_text(p.val_lbl, buf);
+                }
+                break;
+            }
+
+            case LFOVIZ_ONOFF: {
+                bool on = (norm > 0.5f);
+                lv_color_t c = on ? GF_COLOR_TEAL_PLUS : GF_COLOR_GRAY;
+                if (p.val_lbl) {
+                    lv_label_set_text(p.val_lbl, on ? "ON" : "OFF");
+                    lv_obj_set_style_text_color(p.val_lbl, c, 0);
+                }
+                if (p.dot_obj) {
+                    lv_obj_set_style_bg_color(p.dot_obj, c, 0);
+                }
+                break;
+            }
+
+            case LFOVIZ_MODE: {
+                bool mode2 = (norm > 0.5f);
+                if (p.val_lbl) {
+                    lv_label_set_text(p.val_lbl, mode2 ? "MODE II" : "MODE I");
+                }
+                break;
+            }
+
+            case LFOVIZ_MIX: {
+                /* norm=0 → 100% OSC A, norm=1 → 100% OSC B */
+                int pct_b = (int)lroundf(norm * 100.0f);
+                if (pct_b < 0) pct_b = 0;
+                if (pct_b > 100) pct_b = 100;
+                int pct_a = 100 - pct_b;
+                if (p.arc) lv_arc_set_value(p.arc, pct_b);
+                if (p.val_lbl) {
+                    static char buf[20];
+                    snprintf(buf, sizeof(buf), "A%d%%/B%d%%", pct_a, pct_b);
+                    lv_label_set_text(p.val_lbl, buf);
+                }
+                break;
+            }
+
+            default:
+                break;
         }
-        lv_draw_line_dsc_t d;
-        lv_draw_line_dsc_init(&d);
-        d.color       = GF_COLOR_TEAL_PLUS;
-        d.width       = 2;
-        d.opa         = LV_OPA_COVER;
-        d.round_start = d.round_end = 1;
-        lv_canvas_draw_line(s_wave_cv, pts, 48, &d);
-
-        /* Playhead fijo en x=centro, su y sigue la onda. */
-        if (s_playhead) {
-            const float py = mid - lfo_value(0.5f) * amp;
-            lv_obj_align(s_playhead, LV_ALIGN_CENTER, 0,
-                         LFO_DY - LFO_H / 2 + (lv_coord_t)lroundf(py));
-        }
-    }
-
-    /* Actualiza los labels de rate y depth con los valores actuales.
-     * Resaltamos el label del param activo en teal+, el otro en blanco. */
-    if (s_rate_lbl) {
-        static char rbuf[24];
-        /* rate_norm [0,1] → rango musical 0.1–10.0 Hz */
-        float hz = 0.1f + s_last_rate * 9.9f;
-        snprintf(rbuf, sizeof(rbuf), "RATE  %.1f HZ", (double)hz);
-        lv_label_set_text(s_rate_lbl, rbuf);
-        lv_obj_set_style_text_color(s_rate_lbl,
-            (cur_param == 0) ? GF_COLOR_TEAL_PLUS : GF_COLOR_WHITE, 0);
-    }
-
-    if (s_depth_lbl) {
-        static char dbuf[20];
-        snprintf(dbuf, sizeof(dbuf), "DEPTH  %d%%", (int)(s_last_depth * 100.0f + 0.5f));
-        lv_label_set_text(s_depth_lbl, dbuf);
-        lv_obj_set_style_text_color(s_depth_lbl,
-            (cur_param == 1) ? GF_COLOR_TEAL_PLUS : GF_COLOR_WHITE, 0);
     }
 }
 
-/* ── Creacion ─────────────────────────────────────────────────────────────── */
+/* ── Create / Destroy ─────────────────────────────────────────────────────────── */
 
 void view_05_create(lv_obj_t* parent) {
-    s_wave_cv   = nullptr;
-    s_playhead  = nullptr;
-    s_rate_lbl  = nullptr;
-    s_depth_lbl = nullptr;
-    s_phase     = 0;
-    /* Inicializa con el valor actual del bridge para el primer frame. */
-    s_last_rate  = bridge_get_param_value();
-    s_last_depth = 0.6f;
+    s_slider     = nullptr;
+    s_timer      = nullptr;
+    s_last_param = 0xFF;
+    s_rate_phase = 0.0f;
+    for (uint8_t i = 0; i < 2; i++) s_pages[i] = lfo_page_t{};
+
+    uint8_t eng_id = bridge_get_engine_id();
+    s_engine_idx = (eng_id >= 0x10 && eng_id <= 0x12) ? (eng_id - 0x10) : 0;
+
+    const lfo_engine_t& eng = LFO_ENGINES[s_engine_idx];
 
     gf_screen_bg(parent);
-    gf_arc_title(parent, "LFO MOD", GF_COLOR_TEAL);
+    s_slider = gf_pslider_create(parent, eng.num);
 
-    /* Eje central (linea fina atenuada) — detras del canvas. */
-    lv_obj_t* axis = lv_obj_create(parent);
-    lv_obj_set_size(axis, LFO_W, 1);
-    lv_obj_set_style_bg_color(axis, GF_COLOR_GRAY, 0);
-    lv_obj_set_style_bg_opa(axis, 55, 0);
-    lv_obj_set_style_border_width(axis, 0, 0);
-    lv_obj_clear_flag(axis, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_align(axis, LV_ALIGN_CENTER, 0, LFO_DY);
+    for (uint8_t i = 0; i < eng.num; i++) {
+        lv_obj_t* page = gf_pslider_get_page(s_slider, i);
+        if (!page) continue;
+        const lfo_param_t& pd = eng.params[i];
+        switch (pd.viz) {
+            case LFOVIZ_RATE:  build_rate_page (page, i, pd.title); break;
+            case LFOVIZ_DEPTH: build_depth_page(page, i, pd.title); break;
+            case LFOVIZ_ONOFF: build_onoff_page(page, i, pd.title); break;
+            case LFOVIZ_MODE:  build_mode_page (page, i, pd.title); break;
+            case LFOVIZ_MIX:   build_mix_page  (page, i, pd.title); break;
+            default: break;
+        }
+    }
 
-    /* Canvas de la onda LFO. */
-    s_wave_cv = gf_canvas_create(parent, LFO_W, LFO_H);
-    if (s_wave_cv) lv_obj_align(s_wave_cv, LV_ALIGN_CENTER, 0, LFO_DY);
+    uint8_t init_param = bridge_get_synth_param();
+    if (init_param >= eng.num) init_param = 0;
+    gf_pslider_set_active(s_slider, init_param, false);
+    s_last_param = init_param;
 
-    /* Playhead — dot blanco en x=centro, y sigue la onda. */
-    s_playhead = gf_dot(parent, 5, GF_COLOR_WHITE);
+    gf_page_dots(parent, eng.num, init_param, GF_COLOR_TEAL);
+    gf_mode_pill(parent, "LFO", GF_COLOR_TEAL);
 
-    /* Labels dinamicos RATE / DEPTH. */
-    s_rate_lbl  = gf_hero_label(parent, "RATE  ?", GF_FONT_LABEL, GF_COLOR_WHITE, 40);
-    s_depth_lbl = gf_hero_label(parent, "DEPTH  ?", GF_FONT_LABEL, GF_COLOR_WHITE, 58);
-
-    /* Hint de target — estatico. */
-    gf_hero_label(parent, "TARGET CUTOFF", GF_FONT_MICRO, GF_COLOR_TEAL_PLUS, -52);
-
-    /* Timer ~30fps registrado para limpieza automatica al cambiar de vista. */
-    lv_timer_t* t = lv_timer_create(lfo_tick, 33, nullptr);
-    gf_anim_register_timer(t);
-    lfo_tick(nullptr);   /* primer frame inmediato */
-
-    gf_page_dots(parent, 5, 3, GF_COLOR_TEAL);
-    gf_mode_pill(parent, "SYNTH", GF_COLOR_TEAL);
+    s_timer = lv_timer_create(lfo_tick, 33, nullptr);
+    lfo_tick(nullptr);
 }
 
 void view_05_destroy(void) {
-    /* El timer lo destruye gf_anim_kill_all(); aqui solo se sueltan punteros. */
-    s_wave_cv   = nullptr;
-    s_playhead  = nullptr;
-    s_rate_lbl  = nullptr;
-    s_depth_lbl = nullptr;
+    if (s_timer) { lv_timer_del(s_timer); s_timer = nullptr; }
+    s_slider     = nullptr;
+    s_last_param = 0xFF;
+    for (uint8_t i = 0; i < 2; i++) s_pages[i] = lfo_page_t{};
 }
