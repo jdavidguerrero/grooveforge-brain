@@ -260,6 +260,11 @@ static uint8_t  g_group_cursor[NUM_ENGINES][4] = {};
 
 static bool     g_scale_lock_bypass    = false;
 static bool     g_beat_follower_bypass = false;
+
+// Modo del display ESP32: 0=FX, 1=SYNTH. Sketch 28 arranca en SYNTH (1).
+// B2 cicla entre los dos enviando 0x00FD al ESP32 — el Teensy sigue haciendo
+// audio SYNTH independientemente de lo que muestra el display.
+static uint8_t  g_display_mode = 1;
 // g_in_ai_mode: true cuando view_10 está activa.
 // Se activa cuando el arm completa (0xFD=2.0 enviado), se desactiva con B1 (HOME).
 static bool     g_in_ai_mode          = false;
@@ -810,13 +815,13 @@ static void handle_buttons() {
         Serial.println("[HOME] → ENGINE_LIST");
     }
 
-    // B2 = MODE TOGGLE SYNTH → FX: envía 0xFD=0 al ESP32 (FX mode).
-    // En sketch 28 solo existe modo SYNTH, así que B2 siempre manda de vuelta a FX.
-    // El Teensy se mantiene en sketch 28 (audio SYNTH sigue activo), pero el
-    // ESP32 cambia su carrusel a FX_SELECT. En producción main.cpp coordinará ambos.
+    // B2 = MODE TOGGLE FX ↔ SYNTH (display ESP32).
+    // El audio Teensy sigue siendo SYNTH independientemente; solo cambia la
+    // vista del ESP32. En producción main.cpp coordinará ambos sketches.
     if (buttons.pressed(1)) {
-        bridge_send_param_raw(0x00FD, 0.0f);  // 0 = FX mode
-        Serial.println("[B2] MODE → FX (ESP32 display)");
+        g_display_mode = (g_display_mode == 0) ? 1 : 0;
+        bridge_send_param_raw(0x00FD, (float)g_display_mode);
+        Serial.printf("[B2] DISPLAY MODE → %s\n", g_display_mode == 1 ? "SYNTH" : "FX");
     }
 
     // B3 = TAP TEMPO — universal
