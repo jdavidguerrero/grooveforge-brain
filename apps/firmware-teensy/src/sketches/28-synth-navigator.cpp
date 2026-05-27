@@ -234,6 +234,23 @@ MoogModelD  moog;
 Juno106     juno;    // TODO: activar cuando engines usen I2S externo compartido
 Prophet5    prophet; // TODO: ídem
 
+// ── Ruta de audio USB (diagnóstico sin codec SGTL5000) ───────────────────────────
+// Con USB_MIDI_AUDIO_SERIAL el Teensy aparece como dispositivo de audio en el
+// computador via micro-USB. Esta ruta permite escuchar audio sin el codec físico:
+//   macOS: Ajustes de sonido → Salida → "Teensy MIDI/Audio"
+//   Windows: Configuración de sonido → "Teensy Audio"
+//
+// AudioConnection debe ser global (static local se destruiría). El grafo es:
+//   g_usb_osc (sawtooth) → g_usb_env (ADSR) → g_usb_out (USB L+R)
+// g_usb_osc replica la nota del Moog. Si se oye por USB pero no por jack → codec.
+// Si no se oye por USB → las notas MIDI no llegan al callback.
+AudioSynthWaveform  g_usb_osc;
+AudioEffectEnvelope g_usb_env;
+AudioOutputUSB      g_usb_out;
+AudioConnection     g_usb_c1(g_usb_osc, 0, g_usb_env, 0);
+AudioConnection     g_usb_c2(g_usb_env, 0, g_usb_out, 0);
+AudioConnection     g_usb_c3(g_usb_env, 0, g_usb_out, 1);
+
 // ── UI ──────────────────────────────────────────────────────────────────────────
 
 Encoders encoders;
@@ -506,6 +523,8 @@ static void midi_note_on(uint8_t ch, uint8_t note, uint8_t vel) {
     (void)ch;
     if (vel == 0) {
         // velocity 0 en NoteOn es equivalente a NoteOff según spec MIDI 1.0
+        Serial.printf("[MIDI-OFF(v0)] note=%u\n", note);
+        g_usb_env.noteOff();
         if (g_active_engine == 2) prophet.noteOff(note);
         else if (g_active_engine == 1) juno.noteOff();
         else                           moog.noteOff();
@@ -525,7 +544,15 @@ static void midi_note_on(uint8_t ch, uint8_t note, uint8_t vel) {
     if (transposed > 127) transposed = 127;
     uint8_t tnote = (uint8_t)transposed;
 
+    Serial.printf("[MIDI-ON] note=%u vel=%u → transposed=%u engine=%s\n",
+                  note, vel, tnote, g_desc[g_active_engine].name);
+
     g_last_midi_note = note; // guardar nota original para el noteOff del Prophet
+
+    // Ruta USB audio: sawtooth simple a la misma frecuencia → diagnóstico sin codec
+    float usb_freq = 440.0f * powf(2.0f, ((int)tnote - 69) / 12.0f);
+    g_usb_osc.frequency(usb_freq);
+    g_usb_env.noteOn();
 
     switch (g_active_engine) {
     case 0: moog.noteOn(tnote, velocity_norm);    break;
@@ -536,6 +563,8 @@ static void midi_note_on(uint8_t ch, uint8_t note, uint8_t vel) {
 
 static void midi_note_off(uint8_t ch, uint8_t note, uint8_t vel) {
     (void)ch; (void)vel;
+    Serial.printf("[MIDI-OFF] note=%u\n", note);
+    g_usb_env.noteOff();
     switch (g_active_engine) {
     case 0: moog.noteOff();         break;
     case 1: juno.noteOff();         break;
@@ -571,6 +600,7 @@ static void midi_cc(uint8_t ch, uint8_t cc, uint8_t val) {
 // ── Panic — silenciar todos los engines ─────────────────────────────────────────
 
 static void all_engines_panic() {
+    g_usb_env.noteOff();
     moog.noteOff();
     juno.noteOff();
     // Prophet: silenciar todas las notas posibles (voice stealing interno)
@@ -861,11 +891,24 @@ void setup() {
     delay(200);
     Serial.println("[SKETCH 28] Synth Navigator — GrooveForge Brain");
 
-    // AudioMemory: debe llamarse ANTES de moog.begin() y de cualquier audio object.
-    // 40 bloques × 256 bytes = 10.24KB RAM (budget disponible: ~400KB).
-    // Desglose: 8 conexiones MoogModelD + buffer para bridge + usbMIDI audio path.
+    // AudioMemory: debe llamarse ANTES de cualquier audio object.
+    // 60 bloques × 256 bytes = 15.36KB RAM (budget disponible: ~400KB).
+    // Desglose: 8 conexiones MoogModelD + 3 conexiones USB debug path + margen bridge.
     // MoogModelD.begin() ya NO llama AudioMemory() internamente — el sketch es dueño.
-    AudioMemory(40);
+    AudioMemory(60);
+
+    // USB debug synth — sawtooth simple que replica las notas MIDI por USB audio.
+    // Permite verificar audio sin el codec SGTL5000:
+    //   macOS: Preferencias de Sistema → Sonido → Salida → "Teensy MIDI/Audio"
+    //   Windows: Configuración → Sistema → Sonido → "Teensy Audio"
+    g_usb_osc.begin(WAVEFORM_SAWTOOTH);
+    g_usb_osc.amplitude(0.7f);
+    g_usb_osc.frequency(440.0f);
+    g_usb_env.attack(10.0f);
+    g_usb_env.decay(100.0f);
+    g_usb_env.sustain(0.7f);
+    g_usb_env.release(300.0f);
+    Serial.println("[SETUP] USB audio OK — 'Teensy MIDI/Audio' en salida de sonido del SO");
 
     // Solo activar Moog — ver TODO arriba sobre conflicto de AudioOutputI2S.
     moog.begin(0.5f);
