@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.6
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.7
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -723,13 +723,18 @@ def run(_ctx):
                         try:  # v1 API fallback
                             chamfers6.add(chamfers6.createInput(ch_edges, val(0.1)))
                         except: pass
-                # Ø3mm LED window centrado en el cap (Kailh backlight hole)
+                # LED window 5×2mm rectangular centrado en el cap (Kailh backlight)
+                #   5mm en X (ancho), 2mm en Y — orientacion landscape
                 cp_bh = cplanes6.createInput()
                 cp_bh.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
                 pl_bh = cplanes6.add(cp_bh)
                 sk_bh = c6.sketches.add(pl_bh)
-                sk_bh.sketchCurves.sketchCircles.addByCenterRadius(
-                    P.create(x0, y0, 0), 0.15)   # r=1.5mm → Ø3mm
+                hw_x, hw_y = 0.25, 0.10  # mitades: 2.5mm y 1mm
+                lbh = sk_bh.sketchCurves.sketchLines
+                lbh.addByTwoPoints(P.create(x0-hw_x,y0-hw_y,0),P.create(x0+hw_x,y0-hw_y,0))
+                lbh.addByTwoPoints(P.create(x0+hw_x,y0-hw_y,0),P.create(x0+hw_x,y0+hw_y,0))
+                lbh.addByTwoPoints(P.create(x0+hw_x,y0+hw_y,0),P.create(x0-hw_x,y0+hw_y,0))
+                lbh.addByTwoPoints(P.create(x0-hw_x,y0+hw_y,0),P.create(x0-hw_x,y0-hw_y,0))
                 if sk_bh.profiles.count > 0:
                     inp_bh = exts6.createInput(
                         sk_bh.profiles.item(0), FO.CutFeatureOperation)
@@ -737,25 +742,28 @@ def run(_ctx):
                         dist(BTN_H + 0.05), ED.PositiveExtentDirection)
                     inp_bh.participantBodies = [b_bc]
                     exts6.add(inp_bh)
-        print('  Button caps OK (negro matte, chamfer 1mm, LED window Ø3mm)')
+        print('  Button caps OK (negro matte, chamfer 1mm, LED window 5x2mm rect)')
 
-        # -- LED indicator visuals: Ø2.5mm × 0.5mm verdes, en la base del orificio del cap
-        #    Simulan el LED del Kailh switch iluminando desde adentro hacia arriba.
-        #    Posición: mismo centro que cada botón (Z_BASE = tope del panel).
+        # -- LED indicator visuals: 4x1.5mm rectangular × 0.5mm verdes, en la base del window
+        #    Misma orientacion que el LED window 5x2mm — ligeramente mas pequeno para fit
         for bx, by in [(52,66),(52,44),(128,66),(128,44)]:
             xl, yl = cx(bx), cy(by)
             cp_li = cplanes6.createInput()
             cp_li.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
             pl_li = cplanes6.add(cp_li)
             sk_li = c6.sketches.add(pl_li)
-            sk_li.sketchCurves.sketchCircles.addByCenterRadius(
-                P.create(xl, yl, 0), 0.125)   # r=1.25mm → Ø2.5mm (cabe en hole Ø3mm)
+            lx2, ly2 = 0.20, 0.075  # mitades: 2mm, 0.75mm → rect 4×1.5mm
+            lli = sk_li.sketchCurves.sketchLines
+            lli.addByTwoPoints(P.create(xl-lx2,yl-ly2,0),P.create(xl+lx2,yl-ly2,0))
+            lli.addByTwoPoints(P.create(xl+lx2,yl-ly2,0),P.create(xl+lx2,yl+ly2,0))
+            lli.addByTwoPoints(P.create(xl+lx2,yl+ly2,0),P.create(xl-lx2,yl+ly2,0))
+            lli.addByTwoPoints(P.create(xl-lx2,yl+ly2,0),P.create(xl-lx2,yl-ly2,0))
             if sk_li.profiles.count > 0:
                 inp_li = exts6.createInput(sk_li.profiles.item(0), FO.NewBodyFeatureOperation)
-                inp_li.setOneSideExtent(dist(0.05), ED.PositiveExtentDirection)  # 0.5mm fino
+                inp_li.setOneSideExtent(dist(0.05), ED.PositiveExtentDirection)
                 b_li = exts6.add(inp_li).bodies.item(0)
                 b_li.name = f'LED_{bx}_{by}'
-        print('  LED indicators OK (Ø2.5mm × 0.5mm in cap holes)')
+        print('  LED indicators OK (4x1.5mm rect x 0.5mm in cap windows)')
 
         # -- Display screen face Ø35mm × 2mm (verde — brand color GrooveForge)
         cp_ds = cplanes6.createInput()
