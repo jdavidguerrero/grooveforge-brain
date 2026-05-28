@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.9
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v4.0
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -229,25 +229,39 @@ def run(_ctx):
         exts1.add(inp_pedH)
         print(f'  Step6 pedestales: bodies_in={f_ped.bodies.count} faces={body1.faces.count}')
 
-        # Step 7 — Pogo slot (cara trasera Y=0)
-        cp_pg = cplanes1.createInput()
-        cp_pg.setByOffset(c1.xZConstructionPlane, val(-0.05))
-        pl_pg = cplanes1.add(cp_pg)
-        sk_pg = c1.sketches.add(pl_pg)
-        pw, ph, z_ctr = 1.43/2, 0.83/2, 1.5
-        lpg = sk_pg.sketchCurves.sketchLines
-        lpg.addByTwoPoints(P.create(-pw, 0, z_ctr-ph), P.create( pw, 0, z_ctr-ph))
-        lpg.addByTwoPoints(P.create( pw, 0, z_ctr-ph), P.create( pw, 0, z_ctr+ph))
-        lpg.addByTwoPoints(P.create( pw, 0, z_ctr+ph), P.create(-pw, 0, z_ctr+ph))
-        lpg.addByTwoPoints(P.create(-pw, 0, z_ctr+ph), P.create(-pw, 0, z_ctr-ph))
-        if sk_pg.profiles.count > 0:
-            inp_pg = exts1.createInput(sk_pg.profiles.item(0), FO.NewBodyFeatureOperation)
-            inp_pg.setOneSideExtent(dist(WT + 0.1), ED.PositiveExtentDirection)
-            f_pg = exts1.add(inp_pg)
-            pgc = OC.create(); pgc.add(f_pg.bodies.item(0))
-            ci_pg = combos1.createInput(body1, pgc)
-            ci_pg.operation = FO.CutFeatureOperation; ci_pg.isKeepToolBodies = False
-            combos1.add(ci_pg)
+        # Step 7 — Pogo slots inter-módulo (cara trasera Y=0 + cara frontal Y=D)
+        #   Stack modular: módulos se encadenan en eje Y (profundidad).
+        #   Ancho 180mm fijo en todos los módulos; profundidad variable por módulo.
+        #   Slot: 14.3mm ancho × 8.3mm alto, centrado en X=0, Z=15mm
+        #   Pogo spec: 01-architecture.md §3.3 — UART + power 5V + GND
+        pw, ph, z_ctr = 1.43/2, 0.83/2, 1.5   # mitades en cm: 7.15mm, 4.15mm, Z=15mm
+
+        def add_pogo_slot(plane_offset, extent_dir):
+            cp_pg = cplanes1.createInput()
+            cp_pg.setByOffset(c1.xZConstructionPlane, val(plane_offset))
+            pl_pg = cplanes1.add(cp_pg)
+            sk_pg = c1.sketches.add(pl_pg)
+            lpg = sk_pg.sketchCurves.sketchLines
+            lpg.addByTwoPoints(P.create(-pw, 0, z_ctr-ph), P.create( pw, 0, z_ctr-ph))
+            lpg.addByTwoPoints(P.create( pw, 0, z_ctr-ph), P.create( pw, 0, z_ctr+ph))
+            lpg.addByTwoPoints(P.create( pw, 0, z_ctr+ph), P.create(-pw, 0, z_ctr+ph))
+            lpg.addByTwoPoints(P.create(-pw, 0, z_ctr+ph), P.create(-pw, 0, z_ctr-ph))
+            if sk_pg.profiles.count > 0:
+                inp_pg = exts1.createInput(sk_pg.profiles.item(0), FO.NewBodyFeatureOperation)
+                inp_pg.setOneSideExtent(dist(WT + 0.1), extent_dir)
+                f_pg = exts1.add(inp_pg)
+                pgc = OC.create(); pgc.add(f_pg.bodies.item(0))
+                ci_pg = combos1.createInput(body1, pgc)
+                ci_pg.operation = FO.CutFeatureOperation; ci_pg.isKeepToolBodies = False
+                combos1.add(ci_pg)
+                return sk_pg.profiles.count
+            return 0
+
+        # Cara trasera (Y=0): conecta al módulo detrás del Brain
+        n_back  = add_pogo_slot(-0.05, ED.PositiveExtentDirection)
+        # Cara frontal (Y=D=100mm): conecta al módulo delante del Brain (hacia el usuario)
+        n_front = add_pogo_slot(D + 0.05, ED.NegativeExtentDirection)
+        print(f'  Step7 pogo slots: back={n_back} front={n_front} (14.3x8.3mm @ Z=15mm)')
 
         # Step 8 — Patas de silicona (4 recesos en base Z=0)
         pata_pos = [(-8.0, 0.5), (8.0, 0.5), (-8.0, 9.5), (8.0, 9.5)]
