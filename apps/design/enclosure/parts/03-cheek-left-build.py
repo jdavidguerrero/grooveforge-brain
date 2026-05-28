@@ -7,9 +7,12 @@
 #   Y: 0..38mm hacia arriba (altura, Y=0 = base)
 #   Z: 0..100mm (profundidad: Z=0 = cara trasera/Pogo, Z=100 = cara frontal/usuario)
 #
-# POSICIÓN DEL CHEEK IZQUIERDO:
-#   X: -90mm a -102mm (CHEEK_T=12mm, exterior al PETG body)
-#   = X: -9.0 a -10.2 cm en Fusion
+# POSICIÓN DEL CHEEK IZQUIERDO (v0.7 — Option B: encastre en rebaje):
+#   PETG body con rebaje 6mm: pared exterior izquierda en X = -8.4cm
+#   Cheek 12mm: 6mm encajados en rebaje + 6mm protrudidos
+#   X: -84mm (cara interior, dentro del rebaje del PETG) a -96mm (cara exterior visible)
+#   = X: -8.4 a -9.6 cm en Fusion
+#   Total instrumento con cheek derecho simetrico: 192mm (no 204mm)
 #
 # DIFERENCIA vs spec 03-cheek-left-guadua.md (v0.1):
 #   El spec referencia BODY_H_F=42mm / BODY_H_R=30mm (diseño inclinado).
@@ -43,8 +46,8 @@ def run(context):
         BODY_H  = 3.8   # 38mm en cm
         CHEEK_T = 1.2   # 12mm en cm
         BODY_D  = 10.0  # 100mm en cm
-        X_INNER = -9.0  # cara interior del cheek (borde exterior del PETG)
-        X_OUTER = -10.2 # cara exterior visible (-9.0 - 1.2)
+        X_INNER = -8.4  # cara interior del cheek = pared exterior del PETG tras rebaje 6mm
+        X_OUTER = -9.6  # cara exterior visible (-8.4 - 1.2 = -9.6)  → total instrumento 192mm
 
         # Alturas Y de elementos
         JACK_Y  = 2.1   # JACK_Z = 21mm → Y=2.1cm (centro de jacks)
