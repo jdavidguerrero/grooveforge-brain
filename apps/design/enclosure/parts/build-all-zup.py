@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.8
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.9
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -663,12 +663,12 @@ def run(_ctx):
             knob.name = kname
             return knob
 
-        # Encoders L/R — estilo Moog clásico: base Ø18mm, top Ø13mm, h=22mm
-        make_knob(cx(22),  cy(55), 0.90, 0.65, 2.2, 'Knob_EncL')
-        make_knob(cx(158), cy(55), 0.90, 0.65, 2.2, 'Knob_EncR')
-        # Nav encoder — reducido v3.4: base Ø15mm, top Ø11mm, h=18mm
-        make_knob(cx(90),  cy(22), 0.75, 0.55, 1.8, 'Knob_Nav')
-        print('  Knobs Moog OK (L/R: Ø18→13mm h22 | Nav: Ø15→11mm h18)')
+        # Encoders L/R: base Ø18mm, top Ø13mm, h=20mm
+        make_knob(cx(22),  cy(55), 0.90, 0.65, 2.0, 'Knob_EncL')
+        make_knob(cx(158), cy(55), 0.90, 0.65, 2.0, 'Knob_EncR')
+        # Nav encoder: base Ø15mm, top Ø11mm, h=20mm
+        make_knob(cx(90),  cy(22), 0.75, 0.55, 2.0, 'Knob_Nav')
+        print('  Knobs OK (L/R: Ø18->13mm h20 | Nav: Ø15->11mm h20)')
 
         # -- Button caps 13×13mm × 2.5mm — negro matte, chamfer 1mm en aristas top
         #    Kailh switches con LED externo: orificio Ø3mm centrado en el cap
