@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.2
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.3
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -27,10 +27,11 @@
 #   Y:   0..100 mm   (profundidad, Y=0 = cara trasera/Pogo, Y=100 = frontal/user)
 #   Z:   0..38  mm   (altura, Z=0 = base, Z=38 = boca PETG)
 #
-# Cheeks v0.7 Option B:
+# Cheeks v0.8 — 10mm grosor (reducido de 12mm):
 #   X_INNER = ±8.4cm  (cara interior del cheek = fondo rebaje PETG)
-#   X_OUTER = ±9.6cm  (cara exterior visible)
-#   Total instrumento: 192mm × 100mm × 42mm (con cheeks proud 2mm sobre panel)
+#   X_OUTER = ±9.4cm  (cara exterior visible)
+#   Total instrumento: 188mm × 100mm × 42mm (con cheeks proud 2mm sobre panel)
+#   Rebaje PETG sin cambios: 6mm (X_INNER ±8.4 → ±9.0), 4mm protrude visible
 #
 # PARA EJECUTAR:
 #   Fusion 360: Shift+S → Scripts → "+" → Python → pegar → Run
@@ -79,12 +80,12 @@ def run(_ctx):
         W, D, H    = 18.0, 10.0, 3.8     # PETG body: 180 x 100 x 38 mm
         H_CHEEK    = H + 0.4              # 42mm — cheeks proud 2mm sobre panel top (Z=40)
         WT, PT     = 0.3, 0.2             # pared PETG 3mm, panel aluminio 2mm
-        CT         = 1.2                  # grosor cheek 12mm
+        CT         = 1.0                  # grosor cheek 10mm (v0.8, reducido de 12mm)
         SH, SOD    = 0.5, 0.6             # standoff height 5mm, diameter 6mm
         IMD, IMH   = 0.42, 0.6            # heat insert Ø4.2mm, depth 6mm
         PTD, PTH   = 1.0, 0.2             # pata silicona Ø10mm, depth 2mm
-        X_INNER_R, X_OUTER_R =  8.4,  9.6
-        X_INNER_L, X_OUTER_L = -8.4, -9.6
+        X_INNER_R, X_OUTER_R =  8.4,  9.4   # 10mm cheek: 6mm rebaje PETG + 4mm protrude
+        X_INNER_L, X_OUTER_L = -8.4, -9.4
         JZ = 2.1   # centro altura jacks = 21mm
 
         # cx/cy: convierte posicion en mm (ref 0..180 horizontal) a cm (ref -9..+9)
@@ -610,6 +611,33 @@ def run(_ctx):
         inp5c.participantBodies = [body5]
         exts5.add(inp5c)
         print(f'  05_Display_Bracket FINAL: {bbox(body5)}')
+
+        # ==================================================================
+        # COLORES POR MATERIAL (00-master-strategy.md §8.2)
+        #   PETG body    → dark anthracite  → Plastic - Matte (Black)
+        #   Aluminum     → anodized grey    → Aluminum - Anodized Rough (Grey)
+        #   Guadua       → bamboo natural   → Bamboo Light - Semigloss
+        #   Display brkt → mismo PETG       → Plastic - Matte (Black)
+        # ==================================================================
+        app_lib = app.materialLibraries.itemByName('Fusion Appearance Library')
+        color_map = {
+            'PETG_Body':       'Plastic - Matte (Black)',
+            'Aluminum_Panel':  'Aluminum - Anodized Rough (Grey)',
+            'Cheek_Left':      'Bamboo Light - Semigloss',
+            'Cheek_Right':     'Bamboo Light - Semigloss',
+            'Display_Bracket': 'Plastic - Matte (Black)',
+        }
+        for occ in root.occurrences:
+            cmp = occ.component
+            for j in range(cmp.bRepBodies.count):
+                b = cmp.bRepBodies.item(j)
+                if b.name in color_map:
+                    src_app = app_lib.appearances.itemByName(color_map[b.name])
+                    if src_app:
+                        des_nm = f'GF_{b.name}'
+                        existing = des.appearances.itemByName(des_nm)
+                        des_app = existing if existing else des.appearances.addByCopy(src_app, des_nm)
+                        b.appearance = des_app
 
         # ==================================================================
         # RESUMEN FINAL
