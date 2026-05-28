@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.4
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.5
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -374,6 +374,22 @@ def run(_ctx):
         inp2r.participantBodies = [body2]
         exts2.add(inp2r)
         print(f'  Step4 encoder+LED ring: {sk2r.profiles.count} profiles → faces={body2.faces.count}')
+
+        # Step 5 — indicator holes Ø2mm (4×, LED feedback por panel)
+        #   Centrados 11mm por encima del centro de cada botón (+Y)
+        #   Btn(52,66) → indicator(52,77) | Btn(52,44) → indicator(52,55)
+        #   Btn(128,66) → indicator(128,77) | Btn(128,44) → indicator(128,55)
+        sk2ind = c2.sketches.add(pl_p)
+        for xp, yp in [(52,77),(52,55),(128,77),(128,55)]:
+            sk2ind.sketchCurves.sketchCircles.addByCenterRadius(
+                P.create(cx(xp), cy(yp), 0), 0.10)   # r=1mm → Ø2mm
+        sel2ind = OC.create()
+        for i in range(sk2ind.profiles.count): sel2ind.add(sk2ind.profiles.item(i))
+        inp2ind = exts2.createInput(sel2ind, FO.CutFeatureOperation)
+        inp2ind.setOneSideExtent(dist(PT + 0.05), ED.PositiveExtentDirection)
+        inp2ind.participantBodies = [body2]
+        exts2.add(inp2ind)
+        print(f'  Step5 indicator holes: {sk2ind.profiles.count} holes → faces={body2.faces.count}')
         print(f'  02_Top_Panel FINAL: {bbox(body2)}  bodies_in_comp={c2.bRepBodies.count}')
 
         # ==================================================================
@@ -628,7 +644,8 @@ def run(_ctx):
         exts6    = c6.features.extrudeFeatures
         lofts6   = c6.features.loftFeatures
         combos6  = c6.features.combineFeatures
-        cplanes6 = c6.constructionPlanes
+        cplanes6  = c6.constructionPlanes
+        chamfers6 = c6.features.chamferFeatures
 
         Z_BASE = H + PT   # 4.0cm — base de los knobs sobre el panel
 
@@ -676,7 +693,10 @@ def run(_ctx):
         make_knob(cx(90),  cy(22), 0.75, 0.55, 1.8, 'Knob_Nav')
         print('  Knobs Moog OK (L/R: Ø18→13mm h22 | Nav: Ø15→11mm h18)')
 
-        # -- Button caps 13×13mm × 2.5mm (retroiluminados — translucido blanco)
+        # -- Button caps 13×13mm × 2.5mm — negro matte, chamfer 1mm en aristas top
+        #    Botones negros (no retroiluminados); el feedback va por agujero Ø2mm
+        #    en el panel, centrado 11mm sobre el cap (Step 5 Part 02).
+        BTN_H = 0.25   # altura cap = 2.5mm
         for bx, by in [(52,66),(52,44),(128,66),(128,44)]:
             x0, y0 = cx(bx), cy(by)
             cp_bc = cplanes6.createInput()
@@ -691,10 +711,43 @@ def run(_ctx):
             lb.addByTwoPoints(P.create(x0-hb,y0+hb,0),P.create(x0-hb,y0-hb,0))
             if sk_bc.profiles.count > 0:
                 inp_bc = exts6.createInput(sk_bc.profiles.item(0), FO.NewBodyFeatureOperation)
-                inp_bc.setOneSideExtent(dist(0.25), ED.PositiveExtentDirection)
+                inp_bc.setOneSideExtent(dist(BTN_H), ED.PositiveExtentDirection)
                 b_bc = exts6.add(inp_bc).bodies.item(0)
                 b_bc.name = f'Btn_{bx}_{by}'
-        print('  Button caps OK')
+                # Chamfer 1mm en las 4 aristas superiores del cap
+                top_Z = Z_BASE + BTN_H
+                ch_edges = OC.create()
+                for e in b_bc.edges:
+                    v1e, v2e = e.startVertex.geometry, e.endVertex.geometry
+                    if abs(v1e.z - top_Z) < 0.005 and abs(v2e.z - top_Z) < 0.005:
+                        ch_edges.add(e)
+                if ch_edges.count > 0:
+                    try:
+                        ch_in = chamfers6.createInput2()
+                        ch_in.chamferEdgeSets.addEqualDistanceChamferEdgeSet(
+                            ch_edges, val(0.1), True)   # 1mm
+                        chamfers6.add(ch_in)
+                    except Exception as _ech:
+                        try:  # v1 API fallback
+                            chamfers6.add(chamfers6.createInput(ch_edges, val(0.1)))
+                        except: pass
+        print('  Button caps OK (negro matte, chamfer 1mm)')
+
+        # -- LED indicator visuals: Ø1.5mm × 1.5mm, verdes, dentro del orificio del panel
+        #    Posición: 11mm sobre el centro de cada botón (coincide con holes Step5 Part02)
+        for xp, yp in [(52,77),(52,55),(128,77),(128,55)]:
+            cp_li = cplanes6.createInput()
+            cp_li.setByOffset(c6.xYConstructionPlane, val(H + PT - 0.15))
+            pl_li = cplanes6.add(cp_li)
+            sk_li = c6.sketches.add(pl_li)
+            sk_li.sketchCurves.sketchCircles.addByCenterRadius(
+                P.create(cx(xp), cy(yp), 0), 0.075)   # r=0.75mm → Ø1.5mm
+            if sk_li.profiles.count > 0:
+                inp_li = exts6.createInput(sk_li.profiles.item(0), FO.NewBodyFeatureOperation)
+                inp_li.setOneSideExtent(dist(0.2), ED.PositiveExtentDirection)
+                b_li = exts6.add(inp_li).bodies.item(0)
+                b_li.name = f'LED_{xp}_{yp}'
+        print('  LED indicators OK')
 
         # -- Display screen face Ø35mm × 2mm (verde — brand color GrooveForge)
         cp_ds = cplanes6.createInput()
@@ -790,7 +843,8 @@ def run(_ctx):
                         app_name = body_colors.get(nm)
                         if app_name is None:
                             if nm.startswith('Knob_'):    app_name = 'Plastic - Matte (Black)'
-                            elif nm.startswith('Btn_'):   app_name = 'Plastic - Translucent Glossy (White)'
+                            elif nm.startswith('Btn_'):   app_name = 'Plastic - Matte (Black)'
+                            elif nm.startswith('LED_'):   app_name = 'Paint - Enamel Glossy (Green)'
                             elif nm.startswith('Conn_'):  app_name = 'Aluminum - Satin'
                         if app_name:
                             a = get_app(app_name)
