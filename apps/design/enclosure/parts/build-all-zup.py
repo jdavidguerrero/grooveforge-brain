@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.7
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.8
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -641,7 +641,8 @@ def run(_ctx):
         Z_BASE = H + PT   # 4.0cm — base de los knobs sobre el panel
 
         def make_knob(kx, ky, base_r, top_r, kh, kname):
-            """Knob estilo Moog: frustum (loft) + pointer nub en cara frontal (+Y)."""
+            """Knob estilo Moog: frustum (loft) sin pointer.
+            Encoders infinitos no tienen posición absoluta — sin indicador."""
             # Bottom circle at Z_BASE
             cp_b = cplanes6.createInput()
             cp_b.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
@@ -654,27 +655,12 @@ def run(_ctx):
             pl_t = cplanes6.add(cp_t)
             sk_t = c6.sketches.add(pl_t)
             sk_t.sketchCurves.sketchCircles.addByCenterRadius(P.create(kx, ky, 0), top_r)
-            # Loft: frustum cónico
+            # Loft: frustum cónico — sin pointer nub (encoder infinito)
             inp_l = lofts6.createInput(FO.NewBodyFeatureOperation)
             inp_l.loftSections.add(sk_b.profiles.item(0))
             inp_l.loftSections.add(sk_t.profiles.item(0))
             knob = lofts6.add(inp_l).bodies.item(0)
             knob.name = kname
-            # Pointer nub: Ø3mm × 2mm, en cara frontal (max +Y desde centro del knob)
-            cp_n = cplanes6.createInput()
-            cp_n.setByOffset(c6.xYConstructionPlane, val(Z_BASE + kh))
-            pl_n = cplanes6.add(cp_n)
-            sk_n = c6.sketches.add(pl_n)
-            sk_n.sketchCurves.sketchCircles.addByCenterRadius(
-                P.create(kx, ky + top_r * 0.55, 0), 0.15)  # r=1.5mm toward user
-            inp_n = exts6.createInput(sk_n.profiles.item(0), FO.NewBodyFeatureOperation)
-            inp_n.setOneSideExtent(dist(0.2), ED.PositiveExtentDirection)
-            f_n = exts6.add(inp_n)
-            nc = OC.create()
-            for i in range(f_n.bodies.count): nc.add(f_n.bodies.item(i))
-            ci_n = combos6.createInput(knob, nc)
-            ci_n.operation = FO.JoinFeatureOperation; ci_n.isKeepToolBodies = False
-            combos6.add(ci_n)
             return knob
 
         # Encoders L/R — estilo Moog clásico: base Ø18mm, top Ø13mm, h=22mm
