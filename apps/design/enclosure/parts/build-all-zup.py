@@ -514,7 +514,7 @@ def run(_ctx):
             l4c.addByTwoPoints(P.create(-z1, y0, 0), P.create(-z0, y0, 0))
         sel4c = OC.create()
         for i in range(sk4c.profiles.count): sel4c.add(sk4c.profiles.item(i))
-        print(f'  cutout profiles: {sk4c.profiles.count}  (esperado 6: 2 circ + 4 rect)')
+        print(f'  cutout profiles: {sk4c.profiles.count}  (esperado 4: 2 circ + 2 rect)')
         if sk4c.profiles.count > 0:
             # NewBodyFeatureOperation + CombineFeature — patrón obligatorio para yZConstructionPlane
             # Cara exterior X=+9.6: NegativeExtentDirection = -X = interior del cheek derecho
