@@ -31,7 +31,7 @@
 #   El documento debe tener defaultModelingOrientation = Z-UP (1)
 # =============================================================================
 
-import adsk.core, adsk.fusion, traceback
+import adsk.core, adsk.fusion, traceback, math
 
 
 def run(_ctx):
@@ -302,7 +302,7 @@ def run(_ctx):
         holes = [
             (22,  55, 6.5),   # encoder mount screw izquierdo
             (158, 55, 6.5),   # encoder mount screw derecho
-            (90,  22, 6.5),   # LED ring mount (cerca cara trasera)
+            # (90, 22) → encoder shaft + LED ring en Step 4 (no Ø6.5 aquí)
             (22,  14, 7.0),   # pogo connector mount
             (90,  60, 36.0),  # display Ø36mm
             (10,   8, 3.2),   # M3 esquina FI (trasera-izq)
@@ -340,23 +340,33 @@ def run(_ctx):
         exts2.add(inp2b)
         print(f'  Step3 button cutouts: faces={body2.faces.count}')
 
-        # Step 4 — LED ring: cortar AMBOS profiles (anulo + circulo interior)
-        # con CutFeatureOperation directo para evitar body residual.
-        # Resultado: ventana circular Ø32mm en la zona del encoder LED ring.
+        # Step 4 — Nav encoder: shaft Ø7mm + LED indicator ring (12 × Ø2.5mm @ R=12mm)
+        # El encoder nav tiene solo el orificio del eje; los LEDs pasan por 12 pequeños
+        # orificios dispuestos en anillo — sin ventana abierta Ø32mm.
+        EX, EY = cx(90), cy(22)   # centro encoder: X=0.0cm, Y=2.2cm
         sk2r = c2.sketches.add(pl_p)
-        cr = P.create(cx(90), cy(22), 0)
-        sk2r.sketchCurves.sketchCircles.addByCenterRadius(cr, 1.6)  # R_outer = 16mm
-        sk2r.sketchCurves.sketchCircles.addByCenterRadius(cr, 1.2)  # R_inner = 12mm
-        profs = [sk2r.profiles.item(i) for i in range(sk2r.profiles.count)]
-        profs.sort(key=lambda p: p.areaProperties().area)
-        # Profiles ordenados por area: [anulo ~352mm2, circulo_inner ~452mm2, resto_panel grande]
-        led_sel = OC.create()
-        for p in profs[:2]: led_sel.add(p)  # anulo + circulo interior = ventana Ø32mm
-        inp2r = exts2.createInput(led_sel, FO.CutFeatureOperation)
+
+        # Orificio del eje Ø7mm (solo la palanca/knob pasa por aquí)
+        sk2r.sketchCurves.sketchCircles.addByCenterRadius(
+            P.create(EX, EY, 0), 0.35)   # r=3.5mm
+
+        # Anillo de LEDs: 12 × Ø2.5mm a R=12mm del centro
+        R_LED = 1.2   # 12mm en cm
+        for k in range(12):
+            ang = math.radians(k * 30)
+            sk2r.sketchCurves.sketchCircles.addByCenterRadius(
+                P.create(EX + R_LED * math.cos(ang),
+                         EY + R_LED * math.sin(ang), 0),
+                0.125)   # r=1.25mm → Ø2.5mm
+
+        sel2r = OC.create()
+        for i in range(sk2r.profiles.count): sel2r.add(sk2r.profiles.item(i))
+        # 13 profiles: 1 eje + 12 LED  — todos son orificios, no incluye el fondo del panel
+        inp2r = exts2.createInput(sel2r, FO.CutFeatureOperation)
         inp2r.setOneSideExtent(dist(PT + 0.05), ED.PositiveExtentDirection)
         inp2r.participantBodies = [body2]
         exts2.add(inp2r)
-        print(f'  Step4 LED ring: faces={body2.faces.count}')
+        print(f'  Step4 encoder+LED ring: {sk2r.profiles.count} profiles → faces={body2.faces.count}')
         print(f'  02_Top_Panel FINAL: {bbox(body2)}  bodies_in_comp={c2.bRepBodies.count}')
 
         # ==================================================================
@@ -409,14 +419,11 @@ def run(_ctx):
         for i in range(sk3c.profiles.count): sel3c.add(sk3c.profiles.item(i))
         print(f'  cutout profiles: {sk3c.profiles.count}  (esperado 3)')
         if sk3c.profiles.count > 0:
-            inp3c = exts3.createInput(sel3c, FO.NewBodyFeatureOperation)
+            # CutFeatureOperation directo — evita cuerpos residuales del patrón NewBody+Combine
+            inp3c = exts3.createInput(sel3c, FO.CutFeatureOperation)
             inp3c.setOneSideExtent(dist(CT + 0.1), ED.PositiveExtentDirection)
-            f3c = exts3.add(inp3c)
-            cc3 = OC.create()
-            for i in range(f3c.bodies.count): cc3.add(f3c.bodies.item(i))
-            ci3c = combos3.createInput(body3, cc3)
-            ci3c.operation = FO.CutFeatureOperation; ci3c.isKeepToolBodies = False
-            combos3.add(ci3c)
+            inp3c.participantBodies = [body3]
+            exts3.add(inp3c)
 
         # Heat inserts cara interior X=X_INNER_L=-8.4cm (2× M3 para fijación al PETG)
         cp3i = cplanes3.createInput()
@@ -427,15 +434,12 @@ def run(_ctx):
             sk3f.sketchCurves.sketchCircles.addByCenterRadius(P.create(0, y_cm, H/2), 0.21)
         sel3f = OC.create()
         for i in range(sk3f.profiles.count): sel3f.add(sk3f.profiles.item(i))
-        if sk3f.profiles.count > 0:
-            inp3f = exts3.createInput(sel3f, FO.NewBodyFeatureOperation)
+        if sel3f.count > 0:
+            # Cara interior X=-8.4: NegativeExtentDirection = hacia -X = adentro del cheek
+            inp3f = exts3.createInput(sel3f, FO.CutFeatureOperation)
             inp3f.setOneSideExtent(dist(0.7), ED.NegativeExtentDirection)
-            f3f = exts3.add(inp3f)
-            cf3 = OC.create()
-            for i in range(f3f.bodies.count): cf3.add(f3f.bodies.item(i))
-            ci3f = combos3.createInput(body3, cf3)
-            ci3f.operation = FO.CutFeatureOperation; ci3f.isKeepToolBodies = False
-            combos3.add(ci3f)
+            inp3f.participantBodies = [body3]
+            exts3.add(inp3f)
         print(f'  03_Cheek_Left FINAL: {bbox(body3)}')
 
         # ==================================================================
@@ -492,14 +496,12 @@ def run(_ctx):
         for i in range(sk4c.profiles.count): sel4c.add(sk4c.profiles.item(i))
         print(f'  cutout profiles: {sk4c.profiles.count}  (esperado 6: 2 circ + 4 rect)')
         if sk4c.profiles.count > 0:
-            inp4c = exts4.createInput(sel4c, FO.NewBodyFeatureOperation)
+            # CutFeatureOperation directo — evita cuerpos residuales del patrón NewBody+Combine
+            # NegativeExtentDirection desde X=+9.6 = hacia -X = adentro del cheek derecho
+            inp4c = exts4.createInput(sel4c, FO.CutFeatureOperation)
             inp4c.setOneSideExtent(dist(CT + 0.1), ED.NegativeExtentDirection)
-            f4c = exts4.add(inp4c)
-            cc4 = OC.create()
-            for i in range(f4c.bodies.count): cc4.add(f4c.bodies.item(i))
-            ci4c = combos4.createInput(body4, cc4)
-            ci4c.operation = FO.CutFeatureOperation; ci4c.isKeepToolBodies = False
-            combos4.add(ci4c)
+            inp4c.participantBodies = [body4]
+            exts4.add(inp4c)
 
         # Heat inserts cara interior X=+8.4cm
         cp4i = cplanes4.createInput()
@@ -511,14 +513,11 @@ def run(_ctx):
         sel4f = OC.create()
         for i in range(sk4f.profiles.count): sel4f.add(sk4f.profiles.item(i))
         if sel4f.count > 0:
-            inp4f = exts4.createInput(sel4f, FO.NewBodyFeatureOperation)
+            # Cara interior X=+8.4: PositiveExtentDirection = hacia +X = adentro del cheek
+            inp4f = exts4.createInput(sel4f, FO.CutFeatureOperation)
             inp4f.setOneSideExtent(dist(0.7), ED.PositiveExtentDirection)
-            f4f = exts4.add(inp4f)
-            cf4 = OC.create()
-            for i in range(f4f.bodies.count): cf4.add(f4f.bodies.item(i))
-            ci4f = combos4.createInput(body4, cf4)
-            ci4f.operation = FO.CutFeatureOperation; ci4f.isKeepToolBodies = False
-            combos4.add(ci4f)
+            inp4f.participantBodies = [body4]
+            exts4.add(inp4f)
         print(f'  04_Cheek_Right FINAL: {bbox(body4)}')
 
         # ==================================================================

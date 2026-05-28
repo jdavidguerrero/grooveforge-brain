@@ -1,3 +1,5 @@
+# DEPRECATED — usar build-all-zup.py (script canónico Z-UP, todos los fixes incorporados)
+# Este archivo es Y-UP. Los cutouts usan NewBody+Combine que no funcionan; ver build-all-zup.py.
 # =============================================================================
 # GrooveForge Brain — 04_Cheek_Right_Guadua (Audio OUT + USB)
 # Script Fusion 360 (Python API) — v0.6 rectangular body

@@ -1,3 +1,5 @@
+# DEPRECATED — usar build-all-zup.py (script canónico Z-UP, todos los fixes incorporados)
+# Este archivo es Y-UP, tiene el encoder como ventana Ø32mm y no tiene los LED holes correctos.
 # =============================================================================
 # GrooveForge Brain — 02_Top_Panel_Aluminum
 # Script Fusion 360 (Python API) — v0.6 orientación correcta

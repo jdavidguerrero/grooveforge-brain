@@ -1,3 +1,5 @@
+# DEPRECATED — usar build-all-zup.py (script canónico Z-UP, todos los fixes incorporados)
+# Este archivo es Y-UP y no refleja las posiciones actuales de los cheeks ni el panel de 168mm.
 # =============================================================================
 # GrooveForge Brain — 01_PETG_Body (v0.6 — Caja rectangular para stack modular)
 # Script Fusion 360 (Python API) — v0.17
