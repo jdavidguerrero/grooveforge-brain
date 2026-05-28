@@ -1,12 +1,14 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.1
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.2
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
 # 1. COORDENADAS EN PLANOS OFFSET:
 #    Sketch en xYConstructionPlane offset Z=H  → P.create(x, y, 0)   Z=0, no Z=H
 #    Sketch en xZConstructionPlane offset Y=k  → P.create(x, 0, z)   Y=0, no Y=k
-#    Sketch en yZConstructionPlane offset X=k  → P.create(0, y, z)   X=0, no X=k
+#    Sketch en yZConstructionPlane offset X=k  → P.create(-z, y, 0)
+#       eje X sketch = -Z mundo,  eje Y sketch = +Y mundo (verificado empírico)
+#       P.create(0, y, z) INCORRECTO — coloca perfiles a Z=0 y desplazados en X
 #
 # 2. LED RING: usar CutFeatureOperation directo en el body (no CombineFeature)
 #    para evitar body residual del anulo.
@@ -15,6 +17,10 @@
 #    atraviese el piso del PETG y haga JOIN. Tapa flush con la boca del PETG.
 #
 # 4. PANEL ANGOSTO: 168mm X[-8.4,+8.4] para no solapar los cheeks en el techo.
+#
+# 5. CHEEK CUTOUTS — patrón obligatorio para yZConstructionPlane:
+#    NewBodyFeatureOperation + CombineFeature.CutFeatureOperation
+#    CutFeatureOperation + participantBodies FALLA en sketches de yZConstructionPlane.
 #
 # CONVENCION Z-UP:
 #   X: -90..+90 mm   (ancho, izquierda negativo)
@@ -413,33 +419,45 @@ def run(_ctx):
         cp3o.setByOffset(c3.yZConstructionPlane, val(X_OUTER_L))
         pl3o = cplanes3.add(cp3o)
         sk3c = c3.sketches.add(pl3o)
+        # sketch_x = -Z_mundo, sketch_y = +Y_mundo → P.create(-JZ, y_cm, 0)
         for y_cm, r_cm in [(3.0, 0.55), (5.5, 0.55), (7.8, 0.375)]:
-            sk3c.sketchCurves.sketchCircles.addByCenterRadius(P.create(0, y_cm, JZ), r_cm)
+            sk3c.sketchCurves.sketchCircles.addByCenterRadius(P.create(-JZ, y_cm, 0), r_cm)
         sel3c = OC.create()
         for i in range(sk3c.profiles.count): sel3c.add(sk3c.profiles.item(i))
         print(f'  cutout profiles: {sk3c.profiles.count}  (esperado 3)')
         if sk3c.profiles.count > 0:
-            # CutFeatureOperation directo — evita cuerpos residuales del patrón NewBody+Combine
-            inp3c = exts3.createInput(sel3c, FO.CutFeatureOperation)
+            # NewBodyFeatureOperation + CombineFeature — patrón obligatorio para yZConstructionPlane
+            # Cara exterior X=-9.6: PositiveExtentDirection = +X = interior del cheek izquierdo
+            inp3c = exts3.createInput(sel3c, FO.NewBodyFeatureOperation)
             inp3c.setOneSideExtent(dist(CT + 0.1), ED.PositiveExtentDirection)
-            inp3c.participantBodies = [body3]
-            exts3.add(inp3c)
+            f3c = exts3.add(inp3c)
+            cc3 = OC.create()
+            for i in range(f3c.bodies.count): cc3.add(f3c.bodies.item(i))
+            ci3c = combos3.createInput(body3, cc3)
+            ci3c.operation = FO.CutFeatureOperation; ci3c.isKeepToolBodies = False
+            combos3.add(ci3c)
 
         # Heat inserts cara interior X=X_INNER_L=-8.4cm (2× M3 para fijación al PETG)
         cp3i = cplanes3.createInput()
         cp3i.setByOffset(c3.yZConstructionPlane, val(X_INNER_L))
         pl3i = cplanes3.add(cp3i)
         sk3f = c3.sketches.add(pl3i)
+        # sketch_x = -Z_mundo → P.create(-H/2, y_cm, 0) coloca en Z_mundo=H/2=19mm
         for y_cm in [2.5, 7.5]:
-            sk3f.sketchCurves.sketchCircles.addByCenterRadius(P.create(0, y_cm, H/2), 0.21)
+            sk3f.sketchCurves.sketchCircles.addByCenterRadius(P.create(-H/2, y_cm, 0), 0.21)
         sel3f = OC.create()
         for i in range(sk3f.profiles.count): sel3f.add(sk3f.profiles.item(i))
         if sel3f.count > 0:
-            # Cara interior X=-8.4: NegativeExtentDirection = hacia -X = adentro del cheek
-            inp3f = exts3.createInput(sel3f, FO.CutFeatureOperation)
+            # NewBodyFeatureOperation + CombineFeature — patrón obligatorio para yZConstructionPlane
+            # Cara interior X=-8.4: NegativeExtentDirection = -X = adentro del cheek izquierdo
+            inp3f = exts3.createInput(sel3f, FO.NewBodyFeatureOperation)
             inp3f.setOneSideExtent(dist(0.7), ED.NegativeExtentDirection)
-            inp3f.participantBodies = [body3]
-            exts3.add(inp3f)
+            f3f = exts3.add(inp3f)
+            cf3 = OC.create()
+            for i in range(f3f.bodies.count): cf3.add(f3f.bodies.item(i))
+            ci3f = combos3.createInput(body3, cf3)
+            ci3f.operation = FO.CutFeatureOperation; ci3f.isKeepToolBodies = False
+            combos3.add(ci3f)
         print(f'  03_Cheek_Left FINAL: {bbox(body3)}')
 
         # ==================================================================
@@ -479,45 +497,57 @@ def run(_ctx):
         cp4o.setByOffset(c4.yZConstructionPlane, val(X_OUTER_R))
         pl4o = cplanes4.add(cp4o)
         sk4c = c4.sketches.add(pl4o)
+        # sketch_x = -Z_mundo, sketch_y = +Y_mundo → P.create(-z, y, 0)
         # TRS circulares
         for y_cm in [3.8, 6.0]:
-            sk4c.sketchCurves.sketchCircles.addByCenterRadius(P.create(0, y_cm, JZ), 0.55)
+            sk4c.sketchCurves.sketchCircles.addByCenterRadius(P.create(-JZ, y_cm, 0), 0.55)
         # USB-C rectangulares 11×5.5mm
+        # UW2: mitad en Y (profundidad 11mm), UH2: mitad en Z (altura 5.5mm)
         UW2, UH2 = 1.1/2, 0.55/2
         for y_cm in [1.5, 8.2]:
             y0, y1 = y_cm - UW2, y_cm + UW2
             z0, z1 = JZ - UH2, JZ + UH2
             l4c = sk4c.sketchCurves.sketchLines
-            l4c.addByTwoPoints(P.create(0, y0, z0), P.create(0, y1, z0))
-            l4c.addByTwoPoints(P.create(0, y1, z0), P.create(0, y1, z1))
-            l4c.addByTwoPoints(P.create(0, y1, z1), P.create(0, y0, z1))
-            l4c.addByTwoPoints(P.create(0, y0, z1), P.create(0, y0, z0))
+            l4c.addByTwoPoints(P.create(-z0, y0, 0), P.create(-z0, y1, 0))
+            l4c.addByTwoPoints(P.create(-z0, y1, 0), P.create(-z1, y1, 0))
+            l4c.addByTwoPoints(P.create(-z1, y1, 0), P.create(-z1, y0, 0))
+            l4c.addByTwoPoints(P.create(-z1, y0, 0), P.create(-z0, y0, 0))
         sel4c = OC.create()
         for i in range(sk4c.profiles.count): sel4c.add(sk4c.profiles.item(i))
         print(f'  cutout profiles: {sk4c.profiles.count}  (esperado 6: 2 circ + 4 rect)')
         if sk4c.profiles.count > 0:
-            # CutFeatureOperation directo — evita cuerpos residuales del patrón NewBody+Combine
-            # NegativeExtentDirection desde X=+9.6 = hacia -X = adentro del cheek derecho
-            inp4c = exts4.createInput(sel4c, FO.CutFeatureOperation)
+            # NewBodyFeatureOperation + CombineFeature — patrón obligatorio para yZConstructionPlane
+            # Cara exterior X=+9.6: NegativeExtentDirection = -X = interior del cheek derecho
+            inp4c = exts4.createInput(sel4c, FO.NewBodyFeatureOperation)
             inp4c.setOneSideExtent(dist(CT + 0.1), ED.NegativeExtentDirection)
-            inp4c.participantBodies = [body4]
-            exts4.add(inp4c)
+            f4c = exts4.add(inp4c)
+            cc4 = OC.create()
+            for i in range(f4c.bodies.count): cc4.add(f4c.bodies.item(i))
+            ci4c = combos4.createInput(body4, cc4)
+            ci4c.operation = FO.CutFeatureOperation; ci4c.isKeepToolBodies = False
+            combos4.add(ci4c)
 
         # Heat inserts cara interior X=+8.4cm
         cp4i = cplanes4.createInput()
         cp4i.setByOffset(c4.yZConstructionPlane, val(X_INNER_R))
         pl4i = cplanes4.add(cp4i)
         sk4f = c4.sketches.add(pl4i)
+        # sketch_x = -Z_mundo → P.create(-H/2, y_cm, 0) coloca en Z_mundo=H/2=19mm
         for y_cm in [2.5, 7.5]:
-            sk4f.sketchCurves.sketchCircles.addByCenterRadius(P.create(0, y_cm, H/2), 0.21)
+            sk4f.sketchCurves.sketchCircles.addByCenterRadius(P.create(-H/2, y_cm, 0), 0.21)
         sel4f = OC.create()
         for i in range(sk4f.profiles.count): sel4f.add(sk4f.profiles.item(i))
         if sel4f.count > 0:
-            # Cara interior X=+8.4: PositiveExtentDirection = hacia +X = adentro del cheek
-            inp4f = exts4.createInput(sel4f, FO.CutFeatureOperation)
+            # NewBodyFeatureOperation + CombineFeature — patrón obligatorio para yZConstructionPlane
+            # Cara interior X=+8.4: PositiveExtentDirection = +X = adentro del cheek derecho
+            inp4f = exts4.createInput(sel4f, FO.NewBodyFeatureOperation)
             inp4f.setOneSideExtent(dist(0.7), ED.PositiveExtentDirection)
-            inp4f.participantBodies = [body4]
-            exts4.add(inp4f)
+            f4f = exts4.add(inp4f)
+            cf4 = OC.create()
+            for i in range(f4f.bodies.count): cf4.add(f4f.bodies.item(i))
+            ci4f = combos4.createInput(body4, cf4)
+            ci4f.operation = FO.CutFeatureOperation; ci4f.isKeepToolBodies = False
+            combos4.add(ci4f)
         print(f'  04_Cheek_Right FINAL: {bbox(body4)}')
 
         # ==================================================================
