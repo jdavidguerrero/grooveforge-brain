@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.3
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.4
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -358,7 +358,7 @@ def run(_ctx):
             P.create(EX, EY, 0), 0.35)   # r=3.5mm
 
         # Anillo de LEDs: 12 × Ø2.5mm a R=12mm del centro
-        R_LED = 1.2   # 12mm en cm
+        R_LED = 1.6   # 16mm en cm (v3.4 — anillo ampliado para mejor visibilidad)
         for k in range(12):
             ang = math.radians(k * 30)
             sk2r.sketchCurves.sketchCircles.addByCenterRadius(
@@ -613,31 +613,191 @@ def run(_ctx):
         print(f'  05_Display_Bracket FINAL: {bbox(body5)}')
 
         # ==================================================================
-        # COLORES POR MATERIAL (00-master-strategy.md §8.2)
-        #   PETG body    → dark anthracite  → Plastic - Matte (Black)
-        #   Aluminum     → anodized grey    → Aluminum - Anodized Rough (Grey)
-        #   Guadua       → bamboo natural   → Bamboo Light - Semigloss
-        #   Display brkt → mismo PETG       → Plastic - Matte (Black)
+        # PART 06 — CONTROLS VISUAL  (render reference — no funcional)
+        #   Knobs estilo Moog: frustum (loft base→top) + pointer nub en cara
+        #   frontal (+Y). Botones retroiluminados, pantalla, cuerpos conectores.
+        #
+        #   Moog knob ratios (verificados contra Minimoog/Grandmother):
+        #     Encoder L/R : base Ø18mm → top Ø13mm, h=22mm
+        #     Nav encoder : base Ø15mm → top Ø11mm, h=18mm  (reducido v3.4)
+        #   LED ring: R=16mm (ampliado de 12mm, coincide con panel Part 02)
         # ==================================================================
-        app_lib = app.materialLibraries.itemByName('Fusion Appearance Library')
-        color_map = {
-            'PETG_Body':       'Plastic - Matte (Black)',
-            'Aluminum_Panel':  'Aluminum - Anodized Rough (Grey)',
-            'Cheek_Left':      'Bamboo Light - Semigloss',
-            'Cheek_Right':     'Bamboo Light - Semigloss',
-            'Display_Bracket': 'Plastic - Matte (Black)',
-        }
-        for occ in root.occurrences:
-            cmp = occ.component
-            for j in range(cmp.bRepBodies.count):
-                b = cmp.bRepBodies.item(j)
-                if b.name in color_map:
-                    src_app = app_lib.appearances.itemByName(color_map[b.name])
-                    if src_app:
-                        des_nm = f'GF_{b.name}'
-                        existing = des.appearances.itemByName(des_nm)
-                        des_app = existing if existing else des.appearances.addByCopy(src_app, des_nm)
-                        b.appearance = des_app
+        print('\n===== 06_Controls_Visual =====')
+        occ6 = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
+        c6 = occ6.component; c6.name = '06_Controls_Visual'
+        exts6    = c6.features.extrudeFeatures
+        lofts6   = c6.features.loftFeatures
+        combos6  = c6.features.combineFeatures
+        cplanes6 = c6.constructionPlanes
+
+        Z_BASE = H + PT   # 4.0cm — base de los knobs sobre el panel
+
+        def make_knob(kx, ky, base_r, top_r, kh, kname):
+            """Knob estilo Moog: frustum (loft) + pointer nub en cara frontal (+Y)."""
+            # Bottom circle at Z_BASE
+            cp_b = cplanes6.createInput()
+            cp_b.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
+            pl_b = cplanes6.add(cp_b)
+            sk_b = c6.sketches.add(pl_b)
+            sk_b.sketchCurves.sketchCircles.addByCenterRadius(P.create(kx, ky, 0), base_r)
+            # Top circle at Z_BASE + kh
+            cp_t = cplanes6.createInput()
+            cp_t.setByOffset(c6.xYConstructionPlane, val(Z_BASE + kh))
+            pl_t = cplanes6.add(cp_t)
+            sk_t = c6.sketches.add(pl_t)
+            sk_t.sketchCurves.sketchCircles.addByCenterRadius(P.create(kx, ky, 0), top_r)
+            # Loft: frustum cónico
+            inp_l = lofts6.createInput(FO.NewBodyFeatureOperation)
+            inp_l.loftSections.add(sk_b.profiles.item(0))
+            inp_l.loftSections.add(sk_t.profiles.item(0))
+            knob = lofts6.add(inp_l).bodies.item(0)
+            knob.name = kname
+            # Pointer nub: Ø3mm × 2mm, en cara frontal (max +Y desde centro del knob)
+            cp_n = cplanes6.createInput()
+            cp_n.setByOffset(c6.xYConstructionPlane, val(Z_BASE + kh))
+            pl_n = cplanes6.add(cp_n)
+            sk_n = c6.sketches.add(pl_n)
+            sk_n.sketchCurves.sketchCircles.addByCenterRadius(
+                P.create(kx, ky + top_r * 0.55, 0), 0.15)  # r=1.5mm toward user
+            inp_n = exts6.createInput(sk_n.profiles.item(0), FO.NewBodyFeatureOperation)
+            inp_n.setOneSideExtent(dist(0.2), ED.PositiveExtentDirection)
+            f_n = exts6.add(inp_n)
+            nc = OC.create()
+            for i in range(f_n.bodies.count): nc.add(f_n.bodies.item(i))
+            ci_n = combos6.createInput(knob, nc)
+            ci_n.operation = FO.JoinFeatureOperation; ci_n.isKeepToolBodies = False
+            combos6.add(ci_n)
+            return knob
+
+        # Encoders L/R — estilo Moog clásico: base Ø18mm, top Ø13mm, h=22mm
+        make_knob(cx(22),  cy(55), 0.90, 0.65, 2.2, 'Knob_EncL')
+        make_knob(cx(158), cy(55), 0.90, 0.65, 2.2, 'Knob_EncR')
+        # Nav encoder — reducido v3.4: base Ø15mm, top Ø11mm, h=18mm
+        make_knob(cx(90),  cy(22), 0.75, 0.55, 1.8, 'Knob_Nav')
+        print('  Knobs Moog OK (L/R: Ø18→13mm h22 | Nav: Ø15→11mm h18)')
+
+        # -- Button caps 13×13mm × 2.5mm (retroiluminados — translucido blanco)
+        for bx, by in [(52,66),(52,44),(128,66),(128,44)]:
+            x0, y0 = cx(bx), cy(by)
+            cp_bc = cplanes6.createInput()
+            cp_bc.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
+            pl_bc = cplanes6.add(cp_bc)
+            sk_bc = c6.sketches.add(pl_bc)
+            hb = 0.65  # 6.5mm = mitad de 13mm
+            lb = sk_bc.sketchCurves.sketchLines
+            lb.addByTwoPoints(P.create(x0-hb,y0-hb,0),P.create(x0+hb,y0-hb,0))
+            lb.addByTwoPoints(P.create(x0+hb,y0-hb,0),P.create(x0+hb,y0+hb,0))
+            lb.addByTwoPoints(P.create(x0+hb,y0+hb,0),P.create(x0-hb,y0+hb,0))
+            lb.addByTwoPoints(P.create(x0-hb,y0+hb,0),P.create(x0-hb,y0-hb,0))
+            if sk_bc.profiles.count > 0:
+                inp_bc = exts6.createInput(sk_bc.profiles.item(0), FO.NewBodyFeatureOperation)
+                inp_bc.setOneSideExtent(dist(0.25), ED.PositiveExtentDirection)
+                b_bc = exts6.add(inp_bc).bodies.item(0)
+                b_bc.name = f'Btn_{bx}_{by}'
+        print('  Button caps OK')
+
+        # -- Display screen face Ø35mm × 2mm (verde — brand color GrooveForge)
+        cp_ds = cplanes6.createInput()
+        cp_ds.setByOffset(c6.xYConstructionPlane, val(H + 0.05))
+        pl_ds = cplanes6.add(cp_ds)
+        sk_ds = c6.sketches.add(pl_ds)
+        sk_ds.sketchCurves.sketchCircles.addByCenterRadius(P.create(0.0, 6.0, 0), 1.75)
+        if sk_ds.profiles.count > 0:
+            inp_ds = exts6.createInput(sk_ds.profiles.item(0), FO.NewBodyFeatureOperation)
+            inp_ds.setOneSideExtent(dist(0.2), ED.PositiveExtentDirection)
+            b_ds = exts6.add(inp_ds).bodies.item(0)
+            b_ds.name = 'Display_Screen'
+        print('  Display screen OK')
+
+        # -- Conectores cheek izquierdo (cara X=X_OUTER_L, protruyen 4mm hacia afuera)
+        #    TRS IN L (Y=30mm), TRS IN R (Y=55mm), AUX 3.5mm (Y=78mm)
+        cp_lc = cplanes6.createInput()
+        cp_lc.setByOffset(c6.yZConstructionPlane, val(X_OUTER_L - 0.4))
+        pl_lc = cplanes6.add(cp_lc)
+        sk_lc = c6.sketches.add(pl_lc)
+        for y_cm, r_cm in [(3.0, 0.47), (5.5, 0.47), (7.8, 0.28)]:
+            sk_lc.sketchCurves.sketchCircles.addByCenterRadius(P.create(-JZ, y_cm, 0), r_cm)
+        sel_lc = OC.create()
+        for i in range(sk_lc.profiles.count): sel_lc.add(sk_lc.profiles.item(i))
+        if sel_lc.count > 0:
+            inp_lc = exts6.createInput(sel_lc, FO.NewBodyFeatureOperation)
+            inp_lc.setOneSideExtent(dist(0.4), ED.NegativeExtentDirection)
+            f_lc = exts6.add(inp_lc)
+            for i in range(f_lc.bodies.count):
+                f_lc.bodies.item(i).name = f'Conn_L_{i}'
+        print('  Conectores izq OK')
+
+        # -- Conectores cheek derecho (cara X=X_OUTER_R, protruyen 4mm hacia afuera)
+        #    USB-C Data (Y=15mm), TRS OUT L (Y=38mm), TRS OUT R (Y=60mm), USB-C Host (Y=82mm)
+        cp_rc = cplanes6.createInput()
+        cp_rc.setByOffset(c6.yZConstructionPlane, val(X_OUTER_R + 0.4))
+        pl_rc = cplanes6.add(cp_rc)
+        sk_rc = c6.sketches.add(pl_rc)
+        for y_cm in [3.8, 6.0]:   # TRS circles
+            sk_rc.sketchCurves.sketchCircles.addByCenterRadius(P.create(-JZ, y_cm, 0), 0.47)
+        UW2r, UH2r = 0.45, 0.20   # USB-C bodies 9×4mm
+        for y_cm in [1.5, 8.2]:
+            y0r, y1r = y_cm - UW2r, y_cm + UW2r
+            z0r, z1r = JZ - UH2r, JZ + UH2r
+            lrc = sk_rc.sketchCurves.sketchLines
+            lrc.addByTwoPoints(P.create(-z0r, y0r, 0), P.create(-z0r, y1r, 0))
+            lrc.addByTwoPoints(P.create(-z0r, y1r, 0), P.create(-z1r, y1r, 0))
+            lrc.addByTwoPoints(P.create(-z1r, y1r, 0), P.create(-z1r, y0r, 0))
+            lrc.addByTwoPoints(P.create(-z1r, y0r, 0), P.create(-z0r, y0r, 0))
+        sel_rc = OC.create()
+        for i in range(sk_rc.profiles.count): sel_rc.add(sk_rc.profiles.item(i))
+        if sel_rc.count > 0:
+            inp_rc = exts6.createInput(sel_rc, FO.NewBodyFeatureOperation)
+            inp_rc.setOneSideExtent(dist(0.4), ED.PositiveExtentDirection)
+            f_rc = exts6.add(inp_rc)
+            for i in range(f_rc.bodies.count):
+                f_rc.bodies.item(i).name = f'Conn_R_{i}'
+        print('  Conectores der OK')
+        print('  06_Controls_Visual COMPLETO')
+
+        # ==================================================================
+        # COLORES POR MATERIAL (00-master-strategy.md §8.2)
+        #   PETG body / display bracket / knobs → dark anthracite → Matte Black
+        #   Aluminum panel → anodized grey → Aluminum Anodized Rough
+        #   Guadua cheeks  → bamboo natural → Bamboo Light Semigloss
+        #   Buttons        → retroiluminado → Translucent Glossy White
+        #   Connectors     → brushed metal  → Aluminum Satin
+        #   Display screen → brand green    → Paint Enamel Glossy Green
+        # ==================================================================
+        try:
+            app_lib = app.materialLibraries.itemByName('Fusion Appearance Library')
+            if app_lib:
+                def get_app(name):
+                    des_nm = f'GF_{name.replace(" ","_").replace("-","_")}'
+                    existing = des.appearances.itemByName(des_nm)
+                    if existing: return existing
+                    src = app_lib.appearances.itemByName(name)
+                    return des.appearances.addByCopy(src, des_nm) if src else None
+
+                body_colors = {
+                    'PETG_Body':       'Plastic - Matte (Black)',
+                    'Aluminum_Panel':  'Aluminum - Anodized Rough (Grey)',
+                    'Cheek_Left':      'Bamboo Light - Semigloss',
+                    'Cheek_Right':     'Bamboo Light - Semigloss',
+                    'Display_Bracket': 'Plastic - Matte (Black)',
+                    'Display_Screen':  'Paint - Enamel Glossy (Green)',
+                }
+                for occ in root.occurrences:
+                    cmp = occ.component
+                    for j in range(cmp.bRepBodies.count):
+                        b = cmp.bRepBodies.item(j)
+                        nm = b.name
+                        app_name = body_colors.get(nm)
+                        if app_name is None:
+                            if nm.startswith('Knob_'):    app_name = 'Plastic - Matte (Black)'
+                            elif nm.startswith('Btn_'):   app_name = 'Plastic - Translucent Glossy (White)'
+                            elif nm.startswith('Conn_'):  app_name = 'Aluminum - Satin'
+                        if app_name:
+                            a = get_app(app_name)
+                            if a: b.appearance = a
+                print('  Colores aplicados OK')
+        except Exception as e_col:
+            print(f'  Colores (warning): {e_col}')
 
         # ==================================================================
         # RESUMEN FINAL
