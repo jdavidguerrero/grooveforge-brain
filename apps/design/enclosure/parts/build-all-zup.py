@@ -1,5 +1,5 @@
 # =============================================================================
-# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.5
+# GrooveForge Brain — Build All Parts (Z-UP NATIVO) v3.6
 #
 # REGLAS APRENDIDAS (empirico verificado en doc Fusion Z-UP):
 #
@@ -375,21 +375,12 @@ def run(_ctx):
         exts2.add(inp2r)
         print(f'  Step4 encoder+LED ring: {sk2r.profiles.count} profiles → faces={body2.faces.count}')
 
-        # Step 5 — indicator holes Ø2mm (4×, LED feedback por panel)
-        #   Centrados 11mm por encima del centro de cada botón (+Y)
-        #   Btn(52,66) → indicator(52,77) | Btn(52,44) → indicator(52,55)
-        #   Btn(128,66) → indicator(128,77) | Btn(128,44) → indicator(128,55)
-        sk2ind = c2.sketches.add(pl_p)
-        for xp, yp in [(52,77),(52,55),(128,77),(128,55)]:
-            sk2ind.sketchCurves.sketchCircles.addByCenterRadius(
-                P.create(cx(xp), cy(yp), 0), 0.10)   # r=1mm → Ø2mm
-        sel2ind = OC.create()
-        for i in range(sk2ind.profiles.count): sel2ind.add(sk2ind.profiles.item(i))
-        inp2ind = exts2.createInput(sel2ind, FO.CutFeatureOperation)
-        inp2ind.setOneSideExtent(dist(PT + 0.05), ED.PositiveExtentDirection)
-        inp2ind.participantBodies = [body2]
-        exts2.add(inp2ind)
-        print(f'  Step5 indicator holes: {sk2ind.profiles.count} holes → faces={body2.faces.count}')
+        # Step 5 — eliminado (v3.6)
+        #   Los indicadores LED van en el orificio Ø3mm del keycap (Part 06),
+        #   no como agujeros separados en el panel. Los Kailh switches tienen
+        #   slot para LED externo que ilumina a través del keycap desde adentro.
+        #   Los cutouts 14×14mm del switch (Step 3) ya contemplan el acceso del LED.
+        print(f'  Step5 skipped (LED feedback via keycap hole — see Part 06)')
         print(f'  02_Top_Panel FINAL: {bbox(body2)}  bodies_in_comp={c2.bRepBodies.count}')
 
         # ==================================================================
@@ -694,8 +685,9 @@ def run(_ctx):
         print('  Knobs Moog OK (L/R: Ø18→13mm h22 | Nav: Ø15→11mm h18)')
 
         # -- Button caps 13×13mm × 2.5mm — negro matte, chamfer 1mm en aristas top
-        #    Botones negros (no retroiluminados); el feedback va por agujero Ø2mm
-        #    en el panel, centrado 11mm sobre el cap (Step 5 Part 02).
+        #    Kailh switches con LED externo: orificio Ø3mm centrado en el cap
+        #    permite que el LED del switch ilumine a través del keycap (backlight).
+        #    La serigrafía va grabada en el panel de aluminio (Step 3), no en el cap.
         BTN_H = 0.25   # altura cap = 2.5mm
         for bx, by in [(52,66),(52,44),(128,66),(128,44)]:
             x0, y0 = cx(bx), cy(by)
@@ -731,23 +723,39 @@ def run(_ctx):
                         try:  # v1 API fallback
                             chamfers6.add(chamfers6.createInput(ch_edges, val(0.1)))
                         except: pass
-        print('  Button caps OK (negro matte, chamfer 1mm)')
+                # Ø3mm LED window centrado en el cap (Kailh backlight hole)
+                cp_bh = cplanes6.createInput()
+                cp_bh.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
+                pl_bh = cplanes6.add(cp_bh)
+                sk_bh = c6.sketches.add(pl_bh)
+                sk_bh.sketchCurves.sketchCircles.addByCenterRadius(
+                    P.create(x0, y0, 0), 0.15)   # r=1.5mm → Ø3mm
+                if sk_bh.profiles.count > 0:
+                    inp_bh = exts6.createInput(
+                        sk_bh.profiles.item(0), FO.CutFeatureOperation)
+                    inp_bh.setOneSideExtent(
+                        dist(BTN_H + 0.05), ED.PositiveExtentDirection)
+                    inp_bh.participantBodies = [b_bc]
+                    exts6.add(inp_bh)
+        print('  Button caps OK (negro matte, chamfer 1mm, LED window Ø3mm)')
 
-        # -- LED indicator visuals: Ø1.5mm × 1.5mm, verdes, dentro del orificio del panel
-        #    Posición: 11mm sobre el centro de cada botón (coincide con holes Step5 Part02)
-        for xp, yp in [(52,77),(52,55),(128,77),(128,55)]:
+        # -- LED indicator visuals: Ø2.5mm × 0.5mm verdes, en la base del orificio del cap
+        #    Simulan el LED del Kailh switch iluminando desde adentro hacia arriba.
+        #    Posición: mismo centro que cada botón (Z_BASE = tope del panel).
+        for bx, by in [(52,66),(52,44),(128,66),(128,44)]:
+            xl, yl = cx(bx), cy(by)
             cp_li = cplanes6.createInput()
-            cp_li.setByOffset(c6.xYConstructionPlane, val(H + PT - 0.15))
+            cp_li.setByOffset(c6.xYConstructionPlane, val(Z_BASE))
             pl_li = cplanes6.add(cp_li)
             sk_li = c6.sketches.add(pl_li)
             sk_li.sketchCurves.sketchCircles.addByCenterRadius(
-                P.create(cx(xp), cy(yp), 0), 0.075)   # r=0.75mm → Ø1.5mm
+                P.create(xl, yl, 0), 0.125)   # r=1.25mm → Ø2.5mm (cabe en hole Ø3mm)
             if sk_li.profiles.count > 0:
                 inp_li = exts6.createInput(sk_li.profiles.item(0), FO.NewBodyFeatureOperation)
-                inp_li.setOneSideExtent(dist(0.2), ED.PositiveExtentDirection)
+                inp_li.setOneSideExtent(dist(0.05), ED.PositiveExtentDirection)  # 0.5mm fino
                 b_li = exts6.add(inp_li).bodies.item(0)
-                b_li.name = f'LED_{xp}_{yp}'
-        print('  LED indicators OK')
+                b_li.name = f'LED_{bx}_{by}'
+        print('  LED indicators OK (Ø2.5mm × 0.5mm in cap holes)')
 
         # -- Display screen face Ø35mm × 2mm (verde — brand color GrooveForge)
         cp_ds = cplanes6.createInput()
