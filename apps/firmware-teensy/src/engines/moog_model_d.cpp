@@ -4,12 +4,15 @@
 
 #include "moog_model_d.h"
 #include <math.h>
-#include <Wire.h>
 
 // ── Constructor ───────────────────────────────────────────────────────────────
 // Las AudioConnections deben construirse con referencias a objetos que ya existen.
 // La lista de inicialización garantiza que los audio objects se construyen primero
 // (orden de declaración en el header), y luego las conexiones los referencian.
+//
+// Sprint 36: _c7/_c8 (_vcaEnv → _out L+R) eliminados. La salida del engine se
+// expone vía getOutput() y src/audio/audio_graph.cpp la conecta al AudioMixer4
+// compartido antes del singleton AudioOutputI2S.
 
 MoogModelD::MoogModelD() :
     _c1(_osc1,   0, _mixer,  0),
@@ -17,33 +20,22 @@ MoogModelD::MoogModelD() :
     _c3(_osc3,   0, _mixer,  2),
     _c4(_noise,  0, _mixer,  3),
     _c5(_mixer,  0, _filter, 0),
-    _c6(_filter, 0, _vcaEnv, 0),
-    _c7(_vcaEnv, 0, _out,    0),   // canal L
-    _c8(_vcaEnv, 0, _out,    1)    // canal R
+    _c6(_filter, 0, _vcaEnv, 0)
 {}
 
 // ── begin() ───────────────────────────────────────────────────────────────────
 
 void MoogModelD::begin(float volume) {
-    // AudioMemory() es responsabilidad del caller (sketch) — NO llamar aquí.
+    (void)volume;   // Sprint 36: el volumen se controla en audio_graph::init().
+                    // Mantener firma para compatibilidad con sketches legacy.
+
+    // AudioMemory() es responsabilidad del caller (main.cpp/sketch) — NO llamar aquí.
     // Razón: AudioMemory() es una macro que crea un static array + registra el pool.
-    // Llamarla dos veces (sketch + begin) re-inicializa con el segundo tamaño, perdiendo
-    // el primero. El sketch 28 llama AudioMemory(40) para dar margen al bridge+navegación.
+    // Llamarla dos veces re-inicializa con el segundo tamaño, perdiendo el primero.
     //
-    // Wire.begin() explícito antes de enable(): USBHost_t36 corre constructores
-    // globales antes de setup(), lo que puede dejar Wire sin inicializar cuando
-    // AudioControlSGTL5000::enable() lo llama internamente. Llamarlo aquí garantiza
-    // que el bus I2C está listo independientemente del orden de construcción global.
-    Wire.begin();
-    delay(10);   // margen para que el bus I2C estabilice tras begin()
-
-    bool codec_ok = _codec.enable();
-    Serial.print(F("[MoogModelD] SGTL5000 enable: "));
-    Serial.println(codec_ok ? F("OK") : F("FAIL — revisar I2C (SDA=18, SCL=19) y 3.3V"));
-
-    _codec.volume(volume);        // headphones (jack 3.5mm en el Teensy)
-    _codec.lineOutLevel(13);      // line out — 3.16Vpp (nivel estándar -10dBV)
-                                  // Sin esta llamada la salida 1/4" queda muda.
+    // Sprint 36: codec.enable() + Wire.begin() también se movieron a audio_graph::init().
+    // Razón: el codec SGTL5000 y el bus I2C son singletons de hardware. Inicializarlos
+    // desde cada engine causaría doble-enable() si más de un engine.begin() corre.
 
     // VCOs en sawtooth — onda más rica en armónicos, base del sonido Moog
     _osc1.begin(WAVEFORM_SAWTOOTH);
@@ -123,6 +115,11 @@ void MoogModelD::setWaveform(uint8_t osc_idx, uint16_t waveform) {
 
 void MoogModelD::setDetune(float cents) {
     _detuneCents = cents;
+    _updateOscFreqs();
+}
+
+void MoogModelD::setVco3Interval(float semitones) {
+    _vco3Semitones = semitones;
     _updateOscFreqs();
 }
 
@@ -209,7 +206,9 @@ void MoogModelD::update() {
 void MoogModelD::_updateOscFreqs() {
     _osc1.frequency(_currentFreq);
     _osc2.frequency(_currentFreq * _centsToRatio(_detuneCents));
-    _osc3.frequency(_currentFreq / 2.0f);   // sub-octave fija (ver theory doc)
+    // VCO3: intervalo configurable en semitones (default -12 = sub-octava).
+    // El Minimoog real usa switch de octava (32'/16'/8'/4'/2') — aquí continuo.
+    _osc3.frequency(_currentFreq * _semitonesToRatio(_vco3Semitones));
 }
 
 void MoogModelD::_updateFilterEnv(uint32_t dt_ms) {
@@ -286,4 +285,9 @@ float MoogModelD::_midiToFreq(uint8_t midi_note) {
 float MoogModelD::_centsToRatio(float cents) {
     // 1200 cents = 1 octava = factor 2.0
     return powf(2.0f, cents / 1200.0f);
+}
+
+float MoogModelD::_semitonesToRatio(float semitones) {
+    // 12 semitones = 1 octava = factor 2.0
+    return powf(2.0f, semitones / 12.0f);
 }

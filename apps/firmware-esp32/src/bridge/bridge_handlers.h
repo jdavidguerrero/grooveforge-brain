@@ -94,11 +94,126 @@ float bridge_get_synth_cutoff(void);
 /** Resonancia del filtro del engine activo (0.0–1.0). Actualizado por PARAM_CHANGED grupo FILTER param 1. */
 float bridge_get_synth_resonance(void);
 
+/** true si el FX activo está en bypass (sin audio de efecto). Actualizado por param_id=0x00E8. */
+bool bridge_get_fx_bypass(void);
+
 /** true si Scale Lock está bypassed. Actualizado por PARAM_CHANGED param_id=0x00F2. */
 bool bridge_get_scale_lock_bypass(void);
 
 /** true si Beat Follower está bypassed. Actualizado por PARAM_CHANGED param_id=0x00F3. */
 bool bridge_get_beat_follower_bypass(void);
+
+/** Ordenamiento del chromagram en view_10. 0=cromático, 1=CoF (default).
+ *  Cambia con PARAM_CHANGED param_id=0x00F0. */
+uint8_t bridge_get_chromagram_ordering(void);
+
+/**
+ * @defgroup ml_results Resultados de inferencia ML (Sprint 32)
+ *
+ * Actualizados por GF_CMD_KEY_DETECTED (0x80), GF_CMD_CHORD_DETECTED (0x81)
+ * y GF_CMD_BEAT_DETECTED (0x82). Antes de recibir el primer frame retornan
+ * "---" / 0.
+ *
+ * Encoding de payload — ver `apps/docs/sprints/32-ml-engine-integration.md`:
+ *   KEY_DETECTED:   payload[0]=key_idx (0-23), payload[1]=confidence
+ *   CHORD_DETECTED: payload[0]=root (0-11),    payload[1]=quality (0-7)
+ *   BEAT_DETECTED:  payload[0:1]=bpm×10 uint16 LE
+ * @{
+ */
+/** Nombre de la tonalidad detectada, ej. "C MAJ" / "F# MIN" / "---". */
+const char* bridge_get_ai_key_name(void);
+
+/** Nombre del acorde detectado, ej. "Am7" / "C" / "---". */
+const char* bridge_get_ai_chord_name(void);
+
+/** BPM detectado (integer). 0 = desconocido. */
+uint16_t bridge_get_ai_bpm(void);
+
+/** Índice de la tonalidad detectada (0-23). 0-11=mayor, 12-23=menor.
+ *  0xFF = ninguna detectada aún. */
+uint8_t bridge_get_ai_key_idx(void);
+
+/** Root del acorde detectado (0-11, donde 0=C). 0xFF = ninguno. */
+uint8_t bridge_get_ai_chord_root(void);
+
+/** Quality del acorde detectado (0=maj,1=min,2=7,3=m7,4=maj7,5=N). 0xFF = ninguno. */
+uint8_t bridge_get_ai_chord_quality(void);
+/** @} */
+
+/**
+ * @defgroup groove_state Estado live del modo AI (Sprint 33 — GROOVE_STATE 0x83)
+ *
+ * Actualizados por GF_CMD_GROOVE_STATE (0x83), que el Teensy envía @ 4Hz
+ * mientras `g_in_ai_mode == true`. Cuando no hay frames recientes (>2s)
+ * los getters retornan valores neutros (0 / sin snap).
+ *
+ * Payload del frame 0x83 (16 bytes):
+ *   pitch_activity[12]   EMA tau=2s, 0-255 cada uno
+ *   snap_event           rising-edge: 1 por un solo frame tras un snap
+ *   snap_from, snap_to   MIDI notes 0-127 del evento snap
+ *   beat_phase_256       0-255 dentro del bar actual (4 beats)
+ *
+ * Ver `apps/docs/sprints/33-ai-hero-viz.md §"Comando GROOVE_STATE 0x83"`.
+ * @{
+ */
+
+/**
+ * @brief Actividad acumulada de pitch class (0-11), normalizada 0-255.
+ *        0=C, 1=C#, 2=D, ..., 11=B. EMA con tau=2s actualizada por el Teensy.
+ * @param pc Pitch class 0-11 (idx fuera de rango → 0)
+ * @return uint8_t 0-255 — proporcional al brillo del segmento en view_10
+ */
+uint8_t bridge_get_pitch_activity(uint8_t pc);
+
+/**
+ * @brief Información del último evento de snap (scale lock corrigiendo nota).
+ *        Si nunca se ha producido snap o el último fue hace > 5s → retorna
+ *        from=0, to=0, age_ms=0xFFFFFFFF.
+ *
+ * @param[out] from   MIDI note original que el usuario tocó (0-127)
+ * @param[out] to     MIDI note resultante después del snap (0-127)
+ * @param[out] age_ms Tiempo desde el evento en ms (0xFFFFFFFF si nunca)
+ */
+void bridge_get_last_snap(uint8_t* from, uint8_t* to, uint32_t* age_ms);
+
+/**
+ * @brief Estadísticas acumulativas de snap desde que se entró a AI mode.
+ *        Se resetean cuando se reinicia AI mode (Teensy reinicia counters).
+ *
+ * @param[out] snapped Cuántas notas fueron cuantizadas por scale lock
+ * @param[out] total   Cuántas notas se tocaron en total mientras AI mode activo
+ */
+void bridge_get_snap_stats(uint16_t* snapped, uint16_t* total);
+
+/**
+ * @brief Fase dentro del compás actual (bar = 4 beats).
+ *        Útil para animar el "bar sweep" del chromagram en sync con el tempo
+ *        detectado por el BeatFollower del Teensy. 0=downbeat, 255=just before
+ *        next downbeat.
+ *
+ * @return uint8_t 0-255 (interpolar entre frames para fluidez)
+ */
+uint8_t bridge_get_beat_phase(void);
+
+/** @} */
+
+/**
+ * @defgroup note_state Estado de nota MIDI activa (Sprint 31)
+ *
+ * Capturado por los handlers NOTE_ON / NOTE_OFF. Permite a view_02 animar
+ * el osciloscopio en función de la tecla presionada:
+ *   - bridge_get_note_midi()     → número MIDI de la nota (0-127)
+ *   - bridge_get_note_velocity() → velocidad normalizada [0,1]
+ *   - bridge_get_note_active()   → true mientras la nota está presionada
+ * @{
+ */
+/** Número MIDI de la última nota ON (0-127). Default: 69 (A4). */
+uint8_t bridge_get_note_midi(void);
+/** Velocidad de la última nota ON, normalizada [0.0, 1.0]. */
+float   bridge_get_note_velocity(void);
+/** true si hay una nota presionada en este momento. */
+bool    bridge_get_note_active(void);
+/** @} */
 
 /**
  * @brief Valor cacheado de un parámetro synth (normalizado 0.0–1.0).
@@ -109,3 +224,56 @@ bool bridge_get_beat_follower_bypass(void);
  * Retorna 0.0f si el param aún no ha sido enviado por el Teensy.
  */
 float bridge_get_synth_param_cached(uint8_t engine, uint8_t group, uint8_t pidx);
+
+/**
+ * @defgroup manual_scale_override Override manual de escala (Sprint 34 Batch J)
+ *
+ * Actualizado por PARAM_CHANGED param_id=0x00EF (Teensy → ESP32).
+ * Protocolo:
+ *   value < 0      → AUTO mode (detección AI activa, sin override)
+ *   value 0-23     → MANUAL mode con key_idx fijo (0-11 major, 12-23 minor)
+ *
+ * Nota: se usa 0x00EF (no 0x00F6) porque 0x00F6 está ocupado para SYNTH group nav.
+ * @{
+ */
+/** true si el usuario fijó la escala manualmente desde view_16. */
+bool bridge_get_scale_manual_mode(void);
+
+/** Key index manual activo (0-23). 0xFF cuando manual_mode=false.
+ *  Mismo encoding que bridge_get_ai_key_idx(): 0-11 major, 12-23 minor. */
+uint8_t bridge_get_scale_manual_key(void);
+/** @} */
+
+/**
+ * @defgroup ai_rack_state Estado de la AI Rack (Sprint 45)
+ *
+ * Actualizados por PARAM_CHANGED con IDs 0x00E9-0x00EE (únicos libres del
+ * rango especial byte-alto=0 / byte-bajo 0xE9-0xEE).
+ *
+ * Scale Lock on/off → bridge_get_scale_lock_bypass() (0x00F2, invertido para ON=bypass false)
+ * Beat FX on/off   → bridge_get_beat_follower_bypass() (0x00F3, invertido igual)
+ * @{
+ */
+
+/** Fila activa en la AI Rack (0-5). Actualizado por param_id=0x00E9. */
+uint8_t bridge_get_ai_rack_cursor(void);
+
+/** true si Auto-Harmonize está habilitado. Actualizado por param_id=0x00EA. */
+bool bridge_get_auto_harm_enabled(void);
+
+/** Intervalo de armonía activo: 0=THIRD, 1=SIXTH. Actualizado por param_id=0x00EB. */
+uint8_t bridge_get_auto_harm_interval(void);
+
+/** Modo del arpeggiador (0=UP,1=DOWN,2=UP_DOWN,3=RANDOM,4=SMART). Actualizado por 0x00EC. */
+uint8_t bridge_get_arp_mode(void);
+
+/** División rítmica del arp (0=QUARTER,1=EIGHTH,2=SIXTEENTH). Actualizado por 0x00ED. */
+uint8_t bridge_get_arp_division(void);
+
+/** Estilo del Groove Humanizer (0=OFF,1=HUMAN,2=SWING). Actualizado por 0x00EE (parte entera). */
+uint8_t bridge_get_groove_style(void);
+
+/** Intensidad del Groove Humanizer (0.0-0.99). Actualizado por 0x00EE (parte fraccionaria). */
+float bridge_get_groove_amount(void);
+
+/** @} */

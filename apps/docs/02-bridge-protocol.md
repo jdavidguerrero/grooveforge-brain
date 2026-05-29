@@ -157,10 +157,11 @@ Mismo protocolo binario sobre dos transports (UART y USB-CDC) para mantener la c
 
 | CMD | Name | Payload | Description |
 |---|---|---|---|
-| 0x80 | KEY_DETECTED | [key: 1B, confidence: 1B] | Key detection result |
-| 0x81 | CHORD_DETECTED | [chord: 2B, confidence: 1B] | Chord recognition result |
-| 0x82 | BEAT_DETECTED | [bpm: 2B, phase: 1B] | Beat tracker result |
-| 0x83 | GENRE_DETECTED | [genre: 1B, confidence: 1B] | Genre fingerprint result |
+| 0x80 | KEY_DETECTED | [key: 1B, confidence: 1B] | Key detection result (event-driven) |
+| 0x81 | CHORD_DETECTED | [chord: 2B, confidence: 1B] | Chord recognition result (event-driven) |
+| 0x82 | BEAT_DETECTED | [bpm: 2B, phase: 1B] | Beat tracker result (event-driven) |
+| 0x83 | GROOVE_STATE | [activity: 12B, snap_event: 1B, snap_from: 1B, snap_to: 1B, beat_phase: 1B] | Periodic ML state @ 4Hz mientras `in_ai_mode` — chromagram EMA + snap rising-edge + bar phase. Spec completo en `apps/docs/sprints/33-ai-hero-viz.md` |
+| 0x84 | GENRE_DETECTED | [genre: 1B, confidence: 1B] | Genre fingerprint result (reasignado en Sprint 33 desde 0x83) |
 
 ---
 

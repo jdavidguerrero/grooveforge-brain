@@ -49,6 +49,7 @@
 class SubGenesis {
 public:
     SubGenesis();
+    ~SubGenesis();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

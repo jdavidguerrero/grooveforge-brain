@@ -83,6 +83,12 @@ ModalReverb::ModalReverb()
     _cDry = nullptr;
 }
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+ModalReverb::~ModalReverb() {
+    for (uint8_t i = 0; i < 6; i++) delete _cMode[i];
+    delete _cDry;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch — ModalReverb solo crea conexiones.
 void ModalReverb::begin(AudioStream& inputStream) {
@@ -219,24 +225,20 @@ void ModalReverb::setDiffusion(uint8_t n) {
 }
 
 // ── setMix() ─────────────────────────────────────────────────────────────────────
-// Dry/wet clásico: dry = 1.0 fijo, wet = _mix (no aditivo, a diferencia del Sub Genesis).
+// Crossfade verdadero: dry = 1-mix, wet = mix. Nivel constante en todo el rango.
 void ModalReverb::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
-    if (!_bypass) {
-        _dryWetMix.gain(1, _mix);
-    }
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
+    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
 void ModalReverb::setBypass(bool bypass) {
     _bypass = bypass;
-    if (_bypass) {
-        _dryWetMix.gain(1, 0.0f);   // silenciar wet — dry pasa limpio
-    } else {
-        _dryWetMix.gain(1, _mix);   // restaurar wet
-    }
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
+    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 
 // ── update() ─────────────────────────────────────────────────────────────────────

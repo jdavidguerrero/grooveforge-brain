@@ -2,6 +2,8 @@
 
 // Teensy Audio Library (oficial — PaulStoffregen/Audio, incluida con Teensyduino)
 #include <Audio.h>
+// Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013)
+#include "../audio/moog_ladder.h"
 
 static constexpr uint8_t PROPHET_VOICES = 5;
 
@@ -149,23 +151,35 @@ public:
      */
     void update();
 
+    /**
+     * @brief Retorna el último nodo del grafo del engine — fuente para mezcla externa.
+     *
+     * El `_finalMix` ya combina las 5 voces (vía masterMixA + masterMixB). Sprint 36:
+     * main.cpp lo conecta a un AudioMixer4 compartido que enruta al singleton I2S.
+     *
+     * @return Referencia al `_finalMix` (output port 0 = mono mix de 5 voces).
+     */
+    AudioStream& getOutput() { return _finalMix; }
+
 private:
     // ── Audio objects — 5 voces estáticas (Teensy Audio Library oficial) ─────────
     AudioSynthWaveform       _oscA[PROPHET_VOICES];
     AudioSynthWaveform       _oscB[PROPHET_VOICES];
     AudioMixer4              _voiceMix[PROPHET_VOICES];    // oscA (ch0) + oscB (ch1)
-    AudioFilterStateVariable _vcf[PROPHET_VOICES];
+    // Filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013) — código custom.
+    // 5 instancias independientes (una por voz). API compatible con AudioFilterStateVariable.
+    MoogLadder4P             _vcf[PROPHET_VOICES];
     AudioEffectEnvelope      _vcaEnv[PROPHET_VOICES];
 
     // Master mix: AudioMixer4 tiene 4 entradas → 2 mixers para 5 voces
     // masterMixA: voces 0–3 (canales 0–3)
     // masterMixB: voz 4 (canal 0), canales 1–3 vacíos
-    // finalMix:   masterMixA (ch0) + masterMixB (ch1) → out
+    // finalMix:   masterMixA (ch0) + masterMixB (ch1) — SIN salida propia
     AudioMixer4              _masterMixA;
     AudioMixer4              _masterMixB;
     AudioMixer4              _finalMix;
-    AudioOutputI2S           _out;
-    AudioControlSGTL5000     _codec;
+    // AudioOutputI2S y AudioControlSGTL5000 eliminados — son singleton de hardware.
+    // Sprint 32 conectará _finalMix al mixer compartido del sketch.
 
     // ── Conexiones — 27 individuales (AudioConnection no tiene copy ctor) ─────────
     // Por voz: oscA→voiceMix(0), oscB→voiceMix(1), voiceMix→vcf, vcf→vcaEnv (×5 = 20)
@@ -177,8 +191,8 @@ private:
     // vcaEnv → masterMix (5)
     AudioConnection _c20, _c21, _c22, _c23;  // voces 0–3 → masterMixA
     AudioConnection _c24;                     // voz 4 → masterMixB
-    // master path (3)
-    AudioConnection _c25, _c26, _c27, _c28;  // masterMixA→finalMix, masterMixB→finalMix, L, R
+    // master path (2) — _c27/_c28 eliminados (no hay _out propio)
+    AudioConnection _c25, _c26;              // masterMixA→finalMix, masterMixB→finalMix
 
     // ── Voice state ───────────────────────────────────────────────────────────────
     struct VoiceState {

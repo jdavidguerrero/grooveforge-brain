@@ -29,6 +29,7 @@
 class TapeSaturate {
 public:
     TapeSaturate();
+    ~TapeSaturate();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

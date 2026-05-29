@@ -22,6 +22,12 @@ CymaticResonator::CymaticResonator()
     _cDry = nullptr;
 }
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+CymaticResonator::~CymaticResonator() {
+    for (uint8_t i = 0; i < 4; i++) delete _cMode[i];
+    delete _cDry;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void CymaticResonator::begin(AudioStream& inputStream) {

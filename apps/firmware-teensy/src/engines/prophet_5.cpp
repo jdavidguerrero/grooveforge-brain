@@ -62,22 +62,20 @@ Prophet5::Prophet5() :
     _c22(_vcaEnv[2],   0, _masterMixA,  2),
     _c23(_vcaEnv[3],   0, _masterMixA,  3),
     _c24(_vcaEnv[4],   0, _masterMixB,  0),
-    // master path
-    _c25(_masterMixA,  0, _finalMix,    0),
-    _c26(_masterMixB,  0, _finalMix,    1),
-    _c27(_finalMix,    0, _out,         0),   // canal L
-    _c28(_finalMix,    0, _out,         1)    // canal R
+    // master path — _c27/_c28 eliminados: no hay _out propio.
+    // Sprint 32 conectará _finalMix al mixer compartido del sketch.
+    _c25(_masterMixA, 0, _finalMix, 0),
+    _c26(_masterMixB, 0, _finalMix, 1)
 {}
 
 // ── begin() ───────────────────────────────────────────────────────────────────
 
 void Prophet5::begin(float volume) {
-    // 72 bloques × 256B = 18.4KB — factor 2.5× sobre los 29 bloques activos
-    // Ver cálculo detallado en theory doc §"AudioMemory para 5 voces"
-    AudioMemory(72);
-
-    _codec.enable();
-    _codec.volume(volume);
+    // AudioMemory y codec son responsabilidad del sketch — el Prophet es un engine
+    // "headless" que procesa audio internamente pero no posee la salida I2S.
+    // El sketch (sketch 28) llama AudioMemory(40) y moog.begin() que inicializa
+    // el codec compartido. Ver moog_model_d.h §begin() para la razón de diseño.
+    (void)volume;  // el volumen lo gestiona el codec del Moog (compartido)
 
     // Inicializar cada voz
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {

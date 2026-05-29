@@ -36,6 +36,7 @@
 class BitSculpt {
 public:
     BitSculpt();
+    ~BitSculpt();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

@@ -45,6 +45,11 @@ void view_20_create(lv_obj_t* parent); void view_20_destroy(void);  /* OTA Updat
 void view_21_create(lv_obj_t* parent); void view_21_destroy(void);  /* Error States */
 void view_22_create(lv_obj_t* parent); void view_22_destroy(void);  /* Volume Overlay */
 void view_23_create(lv_obj_t* parent); void view_23_destroy(void);  /* MIDI Learn */
+void view_24_create(lv_obj_t* parent); void view_24_destroy(void);  /* Filter Group (PARAM_LIST level 2) */
+void view_25_create(lv_obj_t* parent); void view_25_destroy(void);  /* AI Models — toggle/status (Sprint 32) */
+void view_26_create(lv_obj_t* parent); void view_26_destroy(void);  /* Karaoke — nota activa hero (Sprint 34) */
+void view_27_create(lv_obj_t* parent); void view_27_destroy(void);  /* AI Feed — panel status AI (Sprint 34) */
+void view_28_create(lv_obj_t* parent); void view_28_destroy(void);  /* AI Rack — control surface 6 features (Sprint 45) */
 
 #ifdef __cplusplus
 }

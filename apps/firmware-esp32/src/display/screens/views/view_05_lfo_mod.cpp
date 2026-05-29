@@ -56,13 +56,19 @@ typedef struct {
     uint8_t     num;
 } lfo_engine_t;
 
-static const lfo_engine_t LFO_ENGINES[3] = {
+static const lfo_engine_t LFO_ENGINES[6] = {
     /* 0 — Moog Model D */
     { {{ "LFO RATE",    LFOVIZ_RATE  }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
     /* 1 — Juno-106    */
     { {{ "CHORUS",      LFOVIZ_ONOFF }, { "CHORUS MODE", LFOVIZ_MODE  }}, 2 },
     /* 2 — Prophet-5   */
     { {{ "OSC MIX",     LFOVIZ_MIX   }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
+    /* 3 — OB-6        */
+    { {{ "LFO RATE",    LFOVIZ_RATE  }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
+    /* 4 — DX7         */
+    { {{ "LFO RATE",    LFOVIZ_RATE  }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
+    /* 5 — ARP 2600    */
+    { {{ "LFO RATE",    LFOVIZ_RATE  }, { "LFO DEPTH",   LFOVIZ_DEPTH }}, 2 },
 };
 
 /* ── Estado por página ────────────────────────────────────────────────────── */
@@ -163,7 +169,7 @@ static void build_rate_page(lv_obj_t* page, uint8_t idx, const char* title) {
     s_pages[idx].canvas = cv;
 
     lv_obj_t* vl = gf_label(page, "0.1 HZ", GF_FONT_HERO, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -30);
     s_pages[idx].val_lbl = vl;
     s_pages[idx].viz     = LFOVIZ_RATE;
 }
@@ -220,7 +226,7 @@ static void build_mix_page(lv_obj_t* page, uint8_t idx, const char* title) {
 
     /* Texto compuesto "Axx%/Bxx%" en GF_FONT_LABEL debajo del arc */
     lv_obj_t* vl = gf_label(page, "A100%/B0%", GF_FONT_LABEL, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -30);
     s_pages[idx].val_lbl = vl;
     s_pages[idx].viz     = LFOVIZ_MIX;
 }
@@ -322,7 +328,7 @@ void view_05_create(lv_obj_t* parent) {
     for (uint8_t i = 0; i < 2; i++) s_pages[i] = lfo_page_t{};
 
     uint8_t eng_id = bridge_get_engine_id();
-    s_engine_idx = (eng_id >= 0x10 && eng_id <= 0x12) ? (eng_id - 0x10) : 0;
+    s_engine_idx = (eng_id >= 0x10 && eng_id <= 0x15) ? (uint8_t)(eng_id - 0x10) : 0;
 
     const lfo_engine_t& eng = LFO_ENGINES[s_engine_idx];
 
@@ -348,7 +354,7 @@ void view_05_create(lv_obj_t* parent) {
     gf_pslider_set_active(s_slider, init_param, false);
     s_last_param = init_param;
 
-    gf_page_dots(parent, eng.num, init_param, GF_COLOR_TEAL);
+    gf_page_dots(parent, eng.num, init_param, GF_COLOR_TEAL, 8);
     gf_mode_pill(parent, "LFO", GF_COLOR_TEAL);
 
     s_timer = lv_timer_create(lfo_tick, 33, nullptr);

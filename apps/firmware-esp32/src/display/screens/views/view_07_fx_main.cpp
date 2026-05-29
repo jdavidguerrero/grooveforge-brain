@@ -81,6 +81,9 @@ static uint8_t  s_prev_focus    = 0xFF;
 static uint32_t s_focus_last_ms = 0;
 static uint16_t s_focus_last_id = 0xFFFF;
 
+/* Bypass visual — track prev para solo llamar set_style cuando cambia. */
+static bool s_bypass_prev = false;
+
 /* ── Helpers: parámetros categóricos ─────────────────────────────────────── */
 
 static const char* categorical_str(uint8_t fx, uint8_t param, float val) {
@@ -138,11 +141,30 @@ static void set_focus_opa(uint8_t focus) {
     if (s_sub_name[1]) lv_obj_set_style_opa(s_sub_name[1], subR_opa, 0);
 }
 
+/* ── Tabla de nombres de FX (mismo orden que view_08 y FxManager) ─────────
+ * Fuente de verdad: 05-fx-architecture.md §1 (orden implementado en firmware)
+ * Debe coincidir con FX_NAMES[] de view_08_fx_select.cpp. */
+static constexpr uint8_t FX_COUNT = 9;
+static const char* const FX_LABEL_NAMES[FX_COUNT] = {
+    "GHOST ECHO",    // 0 — §1.3
+    "MODAL REV",     // 1 — §1.7
+    "PHASE CHORUS",  // 2 — §1.8
+    "BIT SCULPT",    // 3 — §1.6
+    "TAPE SAT",      // 4 — §1.5
+    "CYMATIC RES",   // 5 — §1.1
+    "GRANULAR",      // 6 — §1.2
+    "SPRING PLATE",  // 7 — §1.10
+    "SUB GENESIS",   // 8 — §1.12
+};
+
 /* ── Timer callback 20fps (50ms) ─────────────────────────────────────────── */
 
 static void fx_main_timer_cb(lv_timer_t* /*t*/) {
-    uint8_t fx_id = bridge_get_engine_id();
-    if (fx_id >= 9) fx_id = 0;
+    /* Bug fix Sprint 36: se usaba bridge_get_engine_id() (synth engine 0-2)
+     * como FX ID. El FX activo en la UI se determina por bridge_get_fx_cursor()
+     * (0-8), que el Teensy actualiza con param_id=0xFE al navegar en FX_SELECT. */
+    uint8_t fx_id = bridge_get_fx_cursor();
+    if (fx_id >= FX_COUNT) fx_id = 0;
     uint8_t sub1 = bridge_get_sub1(fx_id);
     uint8_t sub2 = bridge_get_sub2(fx_id);
 
@@ -151,8 +173,9 @@ static void fx_main_timer_cb(lv_timer_t* /*t*/) {
     int   wet_pct = (int)(wet * 100.0f + 0.5f);
     if (s_wet_arc) lv_arc_set_value(s_wet_arc, wet_pct);
 
-    /* 2. FX name */
-    if (s_fx_label) lv_label_set_text(s_fx_label, bridge_get_engine_name());
+    /* 2. FX name — usar tabla local; bridge_get_engine_name() retorna el nombre
+     * del synth engine (e.g. "Moog Model D"), no el nombre del FX. */
+    if (s_fx_label) lv_label_set_text(s_fx_label, FX_LABEL_NAMES[fx_id]);
 
     /* 3. Sub-arcs + nombre del param (sin label de porcentaje) */
     float val1 = bridge_get_param_cached(fx_id, sub1);
@@ -189,21 +212,18 @@ static void fx_main_timer_cb(lv_timer_t* /*t*/) {
         set_focus_opa(new_focus);   /* inmediato — sin lv_anim */
     }
 
-    /* 5. Bypass visual — dim pronunciado cuando wet≈0 e idle.
-     * wet arc principal: OPA_BYPASS (~18%) — contraste claro vs estado activo.
-     * sub-arcs + labels: OPA_BYPASS también — todo apagado en bypass idle.
-     * Solo aplica en s_focus==0xFF: si el usuario gira ENC L/R el arc que toca
-     * se ilumina para feedback visual, vuelve a bypass-dim al soltar (2.5s). */
-    if (wet < 0.01f && s_focus == 0xFF) {
-        if (s_wet_arc) lv_obj_set_style_opa(s_wet_arc, OPA_BYPASS, 0);
-        for (int i = 0; i < 2; i++) {
-            if (s_sub_arc[i])  lv_obj_set_style_opa(s_sub_arc[i],  OPA_BYPASS, 0);
-            if (s_sub_name[i]) lv_obj_set_style_opa(s_sub_name[i], OPA_BYPASS, 0);
+    /* 5. Bypass visual — cuando bypass=ON, solo se ve el indicador (fill del arco),
+     * sin el anillo de fondo completo. Esto diferencia visualmente bypass ON vs OFF:
+     *   bypass OFF: fondo purple dim (360°) + indicador bright hasta el nivel wet.
+     *   bypass ON:  fondo invisible + indicador muestra el nivel acumulado en el dial
+     *               (permite ver el "preset" que se aplicará al un-bypassear). */
+    bool bypassed = bridge_get_fx_bypass();
+    if (bypassed != s_bypass_prev) {
+        s_bypass_prev = bypassed;
+        if (s_wet_arc) {
+            lv_obj_set_style_arc_opa(s_wet_arc,
+                bypassed ? LV_OPA_TRANSP : LV_OPA_COVER, LV_PART_MAIN);
         }
-    } else if (wet >= 0.01f) {
-        /* Al salir de bypass (wet sube), restaurar wet arc a opacidad normal.
-         * Los sub-arcs los maneja set_focus_opa() — no tocarlos aquí. */
-        if (s_wet_arc) lv_obj_set_style_opa(s_wet_arc, OPA_FULL, 0);
     }
 
     /* 6. Spectrum bars */
@@ -255,12 +275,15 @@ void view_07_create(lv_obj_t* parent) {
     s_focus        = 0xFF;
     s_prev_focus   = 0xFF;
     s_focus_last_id= 0xFFFF;
+    s_bypass_prev  = !bridge_get_fx_bypass();  // forzar actualización al primer tick
 
     gf_screen_bg(parent);
     gf_tint(parent, GF_COLOR_PURPLE, 46);
 
-    uint8_t fx_id = bridge_get_engine_id();
-    if (fx_id >= 9) fx_id = 0;
+    /* Bug fix Sprint 36: bridge_get_engine_id() retorna el engine SYNTH (0-2).
+     * El FX activo en UI se determina por bridge_get_fx_cursor() (0-8). */
+    uint8_t fx_id = bridge_get_fx_cursor();
+    if (fx_id >= FX_COUNT) fx_id = 0;
     uint8_t sub1 = bridge_get_sub1(fx_id);
     uint8_t sub2 = bridge_get_sub2(fx_id);
     float   wet  = bridge_get_wet_dry();
@@ -284,7 +307,9 @@ void view_07_create(lv_obj_t* parent) {
 
     /* ── B. FX name — grande, blanco, protagonismo visual ───────────────── */
     /* ancho=160px + wrap evita que nombres largos ("Cymatic Resonator") cubran los arcs */
-    lv_obj_t* fnm = gf_label(parent, bridge_get_engine_name(),
+    /* Bug fix Sprint 36: bridge_get_engine_name() retorna nombre del synth engine.
+     * Usar FX_LABEL_NAMES[] (mismo orden que bridge_get_param_name/view_08). */
+    lv_obj_t* fnm = gf_label(parent, FX_LABEL_NAMES[fx_id],
                               GF_FONT_TITLE, GF_COLOR_WHITE);
     if (fnm) {
         lv_obj_set_width(fnm, 160);

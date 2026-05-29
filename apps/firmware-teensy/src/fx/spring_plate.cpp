@@ -37,6 +37,13 @@ SpringPlate::SpringPlate()
     _cDry    = nullptr;
 }
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+SpringPlate::~SpringPlate() {
+    delete _cSpring;
+    delete _cPlate;
+    delete _cDry;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void SpringPlate::begin(AudioStream& inputStream) {
@@ -132,14 +139,14 @@ void SpringPlate::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
-    if (!_bypass) {
-        _dryWetMix.gain(1, _mix);
-    }
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
+    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
 void SpringPlate::setBypass(bool bypass) {
     _bypass = bypass;
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
     _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 

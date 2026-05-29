@@ -17,6 +17,12 @@ TapeSaturate::TapeSaturate()
     , _cHpWet (_hpFilter,    2, _dryWetMix, 1)   // hpFilter highpass(out2) → wet channel
 {}
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+TapeSaturate::~TapeSaturate() {
+    delete _cIn1;
+    delete _cIn2;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void TapeSaturate::begin(AudioStream& inputStream) {

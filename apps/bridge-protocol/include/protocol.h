@@ -102,7 +102,12 @@ typedef enum : uint8_t {
     GF_CMD_KEY_DETECTED     = 0x80,
     GF_CMD_CHORD_DETECTED   = 0x81,
     GF_CMD_BEAT_DETECTED    = 0x82,
-    GF_CMD_GENRE_DETECTED   = 0x83,
+    /* 0x83 GROOVE_STATE (Sprint 33) — payload 16B @ 4Hz mientras g_in_ai_mode:
+     *   pitch_activity[12] EMA tau=2s + snap_event + snap_from + snap_to + beat_phase_256
+     * Reasignado desde GENRE_DETECTED (que se movió a 0x84). Ver
+     * apps/docs/02-bridge-protocol.md §7 y apps/docs/sprints/33-ai-hero-viz.md. */
+    GF_CMD_GROOVE_STATE     = 0x83,
+    GF_CMD_GENRE_DETECTED   = 0x84,
 
     /* 0xF0 — Multi-frame transfer */
     GF_CMD_BEGIN_TRANSFER   = 0xF0,

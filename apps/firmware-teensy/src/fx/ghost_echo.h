@@ -48,6 +48,7 @@ class GhostEcho {
 public:
 
     GhostEcho();
+    ~GhostEcho();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

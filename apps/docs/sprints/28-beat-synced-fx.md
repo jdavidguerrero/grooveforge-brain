@@ -377,8 +377,51 @@ Criterios de aceptación:
 
 ## Learnings
 
-*(Placeholder — completar después de implementar. Preguntas abiertas: ¿el EMA con
-α=0.1 es suficientemente rápido para seguir un cambio de tempo intencional en live
-performance? ¿El umbral 0.7 de confidence gate produce demasiados frames congelados
-en músicos no entrenados? ¿Hay artifacts audibles cuando el delay cambia ~5ms entre
-frames?)*
+### Integración en sketch 28 — Sprint 5.4 cerrado Mayo 2026
+
+La clase `BeatSync` fue implementada con un sketch standalone (sketch 25) y luego
+integrada en el navegador principal (sketch 28). Las lecciones de la integración:
+
+**BeatSync no toca `AudioEffectDelay` directamente — decisión correcta.** Al separar
+la lógica de BPM→ms del objeto de audio, la integración en sketch 28 fue trivial:
+solo un `g_beat_sync.update(b)` en el handler de BEAT_CHANGED y un `apply_fx_param()`
+en `handle_beat_sync_fx()`. No hubo que refactorizar nada del grafo de audio.
+
+**El rango del descriptor de UI (0-200 ms) ≠ rango del hardware (10-1400 ms).**
+`fx_desc[0].params[0].value` tiene max_val=200 para el encoder UI, pero
+`GhostEcho::setDelayMs()` acepta hasta 1400 ms. Beat-sync escribe directamente en
+el descriptor Y llama `apply_fx_param()`, bypaseando el clamp del UI. Esto es
+intencional — 375 ms a 120 BPM es un delay musical estándar que no cabe en el rango
+de 200 ms del encoder. En una revisión futura, el descriptor debería tener max_val
+ajustado según si beat-sync está activo o no.
+
+**`build_src_filter` explícito requiere mantenimiento.** Al agregar una nueva
+dependencia (beat_sync.cpp) sin actualizar `platformio.ini`, el linker falló
+silenciosamente con "undefined reference". Para sketch 28 el filtro ahora incluye
+`+<fx/beat_sync.cpp>`. Lección: cuando se agrega un `#include` a un archivo
+existente, verificar siempre que la fuente esté en el filtro del env activo.
+
+**La condición de gate es correcta.** `g_in_ai_mode && g_fx_manager.is_active() &&
+!g_fx_bypass && g_beat_sync.has_bpm()` — los cuatro checks son necesarios. Sin
+`g_in_ai_mode`, beat-sync correría en cualquier contexto. Sin `!g_fx_bypass`, el
+delay cambiaría sin audio FX activo. Sin `has_bpm()`, habría un update al BPM default
+de 120 antes del primer beat real.
+
+### Preguntas abiertas (post-hardware-test)
+
+- El EMA α=0.1 produce tau ≈ 10 beats ≈ 5s a 120 BPM. En performance en vivo,
+  un cambio intencional de 120→140 BPM tarda ~5s en reflejarse. Si esto suena
+  demasiado lento, α=0.2 (tau ≈ 4.5 beats) es el siguiente valor a probar.
+- El umbral 0.7 de confidence gate podría producir delays congelados en patrones
+  sincopados donde el BeatFollower tiene baja confianza. Si el usuario reporta que
+  el delay "no sigue", reducir el umbral a 0.55 y ver si el sync se vuelve errático.
+- El cambio de delay audible cuando beat-sync actualiza: `AudioEffectDelay.delay()`
+  es O(1) y no hay interpolación — puede haber un pequeño artifact en cada tick de
+  500 ms. Si es audible, se puede suavizar aplicando la actualización en pasos de ±10 ms
+  por tick hasta llegar al target.
+
+### Tiempo real
+
+El sprint 5.4 tuvo dos partes: BeatSync standalone (Sprint anterior), integración
+en sketch 28 (este sprint). La integración tomó ~30 minutos de implementación más
+verificación de compilación.

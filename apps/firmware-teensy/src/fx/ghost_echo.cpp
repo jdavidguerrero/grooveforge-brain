@@ -27,6 +27,15 @@ GhostEcho::GhostEcho()
     _cDry = nullptr;
 }
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+// AudioConnection::~AudioConnection() removes the connection from the audio graph
+// before the member audio nodes are destroyed — ordering is safe because member
+// destructors run after the destructor body.
+GhostEcho::~GhostEcho() {
+    delete _cIn;
+    delete _cDry;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec.enable() son responsabilidad del sketch — GhostEcho solo
 // crea las conexiones internas y las dos dinámicas desde inputStream.
@@ -97,14 +106,14 @@ void GhostEcho::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
-    if (!_bypass) {
-        _dryWetMix.gain(1, _mix);
-    }
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
+    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
 void GhostEcho::setBypass(bool bypass) {
     _bypass = bypass;
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
     _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
     // Nota: el delay buffer NO se limpia en bypass — los ecos acumulados persisten.
     // Comportamiento intencional: toggle de bypass mid-performance sin silencio abrupto.

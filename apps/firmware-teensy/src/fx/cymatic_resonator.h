@@ -43,6 +43,7 @@ class CymaticResonator {
 public:
 
     CymaticResonator();
+    ~CymaticResonator();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

@@ -9,6 +9,7 @@
 #include "views.h"
 #include "../../ui_theme.h"
 #include "../../widgets/gf_widgets.h"
+#include "../../../bridge/bridge_handlers.h"
 
 static void opa_cb(void* obj, int32_t v) {
     lv_obj_set_style_opa(static_cast<lv_obj_t*>(obj), static_cast<lv_opa_t>(v), 0);
@@ -45,7 +46,7 @@ void view_11_create(lv_obj_t* parent) {
     lv_anim_start(&ra);
 
     /* A. Nombre del engine — atenuado (~0.55). */
-    lv_obj_t* en = gf_hero_label(parent, "MOOG MODEL D", GF_FONT_LABEL,
+    lv_obj_t* en = gf_hero_label(parent, bridge_get_engine_name(), GF_FONT_LABEL,
                                  GF_COLOR_TEAL, -14);
     lv_obj_set_style_opa(en, 140, 0);
 

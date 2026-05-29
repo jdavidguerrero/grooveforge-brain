@@ -76,12 +76,16 @@ lv_obj_t* gf_arc(lv_obj_t* parent, lv_coord_t size, lv_coord_t width,
 lv_obj_t* gf_mode_pill(lv_obj_t* parent, const char* txt, lv_color_t color);
 
 /**
- * @brief Fila de page dots a y=198. El dot activo es mas grande y brillante.
+ * @brief Fila de page dots. El dot activo es mas grande y brillante.
  * @param count  Numero de dots.
  * @param active Indice del dot activo (0-based).
  * @param color  Color base.
+ * @param y_abs  Posicion vertical absoluta en pantalla (default GF_PAGE_DOTS_Y=198).
+ *               Usar y_abs=8 para situar los dots sobre el slider en lugar de debajo
+ *               del contenido (evita solapamiento con mode pill y labels de valor).
  */
-void gf_page_dots(lv_obj_t* parent, uint8_t count, uint8_t active, lv_color_t color);
+void gf_page_dots(lv_obj_t* parent, uint8_t count, uint8_t active, lv_color_t color,
+                  lv_coord_t y_abs = 198);   /* 198 = GF_PAGE_DOTS_Y (ui_theme.h) */
 
 /**
  * @brief Titulo curvo siguiendo el arco superior (span ~centrado en 12 o'clock).

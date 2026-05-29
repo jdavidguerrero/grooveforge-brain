@@ -21,6 +21,12 @@ GranularCloud::GranularCloud()
     _cDry = nullptr;
 }
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+GranularCloud::~GranularCloud() {
+    delete _cIn;
+    delete _cDry;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void GranularCloud::begin(AudioStream& inputStream) {
@@ -97,14 +103,14 @@ void GranularCloud::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
-    if (!_bypass) {
-        _dryWetMix.gain(1, _mix);
-    }
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
+    _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
 void GranularCloud::setBypass(bool bypass) {
     _bypass = bypass;
+    _dryWetMix.gain(0, _bypass ? 1.0f : 1.0f - _mix);
     _dryWetMix.gain(1, _bypass ? 0.0f : _mix);
 }
 

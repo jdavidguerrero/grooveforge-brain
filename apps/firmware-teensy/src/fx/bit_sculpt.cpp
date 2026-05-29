@@ -17,6 +17,12 @@ BitSculpt::BitSculpt()
     , _cCrushWet   (_crusher,    0, _dryWetMix,  1)   // crusher out → wet channel
 {}
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+BitSculpt::~BitSculpt() {
+    delete _cIn1;
+    delete _cIn2;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void BitSculpt::begin(AudioStream& inputStream) {

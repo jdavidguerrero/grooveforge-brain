@@ -72,6 +72,7 @@ public:
     static const ModeParams MADERA[6];
 
     ModalReverb();
+    ~ModalReverb();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

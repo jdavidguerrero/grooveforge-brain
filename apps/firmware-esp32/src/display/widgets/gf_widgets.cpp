@@ -131,9 +131,10 @@ lv_obj_t* gf_mode_pill(lv_obj_t* parent, const char* txt, lv_color_t color) {
 
 /* ── Page dots ───────────────────────────────────────────────────────────── */
 
-void gf_page_dots(lv_obj_t* parent, uint8_t count, uint8_t active, lv_color_t color) {
+void gf_page_dots(lv_obj_t* parent, uint8_t count, uint8_t active, lv_color_t color,
+                  lv_coord_t y_abs) {
     if (count == 0) return;
-    const lv_coord_t dy = GF_PAGE_DOTS_Y - GF_DISP_CY;       /* offset y del centro */
+    const lv_coord_t dy = y_abs - GF_DISP_CY;                 /* offset y del centro */
     const lv_coord_t total_w = (count - 1) * GF_PAGE_DOTS_GAP;
 
     for (uint8_t i = 0; i < count; i++) {

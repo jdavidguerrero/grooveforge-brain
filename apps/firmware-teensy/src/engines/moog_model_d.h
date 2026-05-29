@@ -2,6 +2,8 @@
 
 // Teensy Audio Library (oficial — PaulStoffregen/Audio, incluida con Teensyduino)
 #include <Audio.h>
+// Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013)
+#include "../audio/moog_ladder.h"
 
 /**
  * @brief Motor de síntesis Moog Minimoog Model D para GrooveForge Brain.
@@ -68,11 +70,28 @@ public:
      * @brief Ajusta el detune entre osc1 y osc2 en cents.
      *
      * El detune crea beating (interferencia periódica) que da el "warmth" del Moog.
-     * osc3 permanece siempre en sub-octava (baseFreq / 2).
      *
      * @param cents Detune en cents. 100 = 1 semitono. Rango útil: 0–50.
      */
     void setDetune(float cents);
+
+    /**
+     * @brief Intervalo de VCO3 relativo a VCO1 en semitones.
+     *
+     * El Minimoog real tiene VCO3 como oscilador completamente independiente con
+     * switch de octava (32', 16', 8', 4', 2') y ajuste fino. Aquí se expone como
+     * intervalo continuo en semitones para control digital preciso.
+     *
+     * Valores de referencia del hardware original:
+     *   -24 = 32' (dos octavas bajo VCO1) — grave pesado
+     *   -12 = 16' (sub-octava)           — default, "bass foundation"
+     *     0 = 8'  (unísono con VCO1)     — engrosamiento de unísono
+     *   +12 = 4'  (octava arriba)        — brillante
+     *   +24 = 2'  (dos octavas arriba)   — muy brillante
+     *
+     * @param semitones Intervalo en semitones (−24 a +24). Default: −12.
+     */
+    void setVco3Interval(float semitones);
 
     /**
      * @brief Ajusta los gains del mixer de osciladores.
@@ -156,6 +175,17 @@ public:
      */
     void update();
 
+    /**
+     * @brief Retorna el último nodo del grafo del engine — fuente para mezcla externa.
+     *
+     * Sprint 36: extraer AudioOutputI2S/AudioControlSGTL5000 a `src/audio/audio_graph.cpp`
+     * para permitir multi-engine. El sketch (o main.cpp) conecta esta salida a un
+     * AudioMixer4 compartido que enruta al singleton I2S.
+     *
+     * @return Referencia al _vcaEnv — output mono del engine (mismo en L y R).
+     */
+    AudioStream& getOutput() { return _vcaEnv; }
+
 private:
     // ── Audio objects (Teensy Audio Library oficial) ──────────────────────────
     AudioSynthWaveform       _osc1;
@@ -163,22 +193,29 @@ private:
     AudioSynthWaveform       _osc3;
     AudioSynthNoiseWhite     _noise;
     AudioMixer4              _mixer;
-    // TODO Sprint 1.4: reemplazar con routing via SGTL5000 ADC cuando el ladder
-    //                  analógico 2N3904 esté disponible.
-    AudioFilterStateVariable _filter;
+    // Filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013) — código custom.
+    // Reemplaza AudioFilterStateVariable placeholder. API compatible: frequency(),
+    // resonance(), octaveControl(). El filtro analógico 2N3904 sigue operando sobre
+    // la mezcla final (apps/docs/03-filter-design.md §0).
+    MoogLadder4P _filter;
     AudioEffectEnvelope      _vcaEnv;
-    AudioOutputI2S           _out;
-    AudioControlSGTL5000     _codec;
+    // AudioOutputI2S y AudioControlSGTL5000 movidos a src/audio/audio_graph.cpp
+    // (Sprint 36) — son singletons de hardware, no pueden estar duplicados entre
+    // los 3 engines. Cada engine expone su _vcaEnv vía getOutput() y el audio_graph
+    // los mezcla en un AudioMixer4 compartido antes del singleton I2S.
 
     // ── Conexiones del grafo (deben existir mientras el engine viva) ──────────
-    AudioConnection _c1, _c2, _c3, _c4, _c5, _c6, _c7, _c8;
+    // _c7/_c8 (_vcaEnv → _out L+R) eliminados en Sprint 36 — la conexión al I2S
+    // vive ahora en src/audio/audio_graph.cpp via getOutput().
+    AudioConnection _c1, _c2, _c3, _c4, _c5, _c6;
 
     // ── Estado de pitch y glide ───────────────────────────────────────────────
     float    _baseFreq     = 440.0f;   // frecuencia de la nota activa
     float    _targetFreq   = 440.0f;   // destino del glide
     float    _currentFreq  = 440.0f;   // frecuencia actual (interpola hacia target)
     float    _glideMs      = 0.0f;
-    float    _detuneCents  = 5.0f;
+    float    _detuneCents   = 5.0f;
+    float    _vco3Semitones = -12.0f;  ///< intervalo VCO3 vs VCO1 [semitones]; default sub-octava
 
     // ── Estado del filtro ─────────────────────────────────────────────────────
     float    _filterCutoff = 800.0f;   // Hz, base sin modulación
@@ -204,4 +241,5 @@ private:
     void  _updateFilterEnv(uint32_t dt_ms);
     float _midiToFreq(uint8_t midi_note);
     float _centsToRatio(float cents);
+    float _semitonesToRatio(float semitones);  ///< 2^(semitones/12)
 };

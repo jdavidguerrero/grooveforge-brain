@@ -17,6 +17,12 @@ PhaseChorus::PhaseChorus()
     , _cChorusWet   (_chorus,      0, _dryWetMix,  1)   // chorus out  → wet channel
 {}
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+PhaseChorus::~PhaseChorus() {
+    delete _cIn1;
+    delete _cIn2;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 // CRÍTICO: el sketch debe llamar AudioMemory() ANTES de begin() — chorus.begin()

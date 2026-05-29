@@ -51,6 +51,11 @@ static const gf_view_desc_t s_views[] = {
     { view_21_create, view_21_destroy, "ERROR"       },
     { view_22_create, view_22_destroy, "VOLUME"      },
     { view_23_create, view_23_destroy, "MIDI LEARN"  },
+    { view_24_create, view_24_destroy, "FILTER"      },   /* idx 23 = VIEW_IDX_SYNTH_FILTER */
+    { view_25_create, view_25_destroy, "AI MODELS"   },   /* idx 24 = VIEW_IDX_AI_MODELS */
+    { view_26_create, view_26_destroy, "KARAOKE"     },   /* idx 25 = VIEW_IDX_AI_KARAOKE */
+    { view_27_create, view_27_destroy, "AI FEED"     },   /* idx 26 = VIEW_IDX_AI_FEED */
+    { view_28_create, view_28_destroy, "AI RACK"     },   /* idx 27 = VIEW_IDX_AI_RACK (Sprint 45) */
 };
 static const uint8_t GF_VIEW_COUNT = sizeof(s_views) / sizeof(s_views[0]);
 

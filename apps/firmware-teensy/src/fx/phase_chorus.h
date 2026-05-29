@@ -31,6 +31,7 @@
 class PhaseChorus {
 public:
     PhaseChorus();
+    ~PhaseChorus();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

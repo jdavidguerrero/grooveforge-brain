@@ -19,6 +19,11 @@ SubGenesis::SubGenesis()
     , _cSubMixWet(_subMix,     0, _dryWetMix,    1)   // subMix out → dryWetMix ch1 (wet)
 {}
 
+// ── Destructor ───────────────────────────────────────────────────────────────────
+SubGenesis::~SubGenesis() {
+    delete _cIn;
+}
+
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void SubGenesis::begin(AudioStream& inputStream) {

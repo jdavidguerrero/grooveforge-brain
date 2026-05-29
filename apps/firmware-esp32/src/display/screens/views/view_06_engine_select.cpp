@@ -1,16 +1,28 @@
 /**
  * @file view_06_engine_select.cpp
- * @brief Vista 06 — ENGINE SELECT (Sprint 31 Batch C — dinámica)
+ * @brief Vista 06 — ENGINE SELECT (Sprint 31 — card carousel redesign)
  *
- * Lista de engines: fila activa con fondo teal, code box por engine, filas
- * "coming soon" atenuadas con tag v1.1, scrollbar y footer hint.
+ * Carrusel vertical de 3 tarjetas sobre display circular 240×240:
  *
- * Sprint 31: la fila activa se actualiza en tiempo real via un timer de 100ms
- * que lee bridge_get_engine_cursor(). Los highlights de fondo (s_row_bg[]) se
- * muestran/ocultan cambiando bg_opa directamente, sin rebuild de la vista.
+ *   ┌──────────────────────────────┐
+ *   │      ENGINE                  │ ← label teal dy=-98
+ *   │  ┌──────────────────────┐    │
+ *   │  │ JUNO-106 (dim 40%)   │    │ ← slot 0  dy=-56  160×44
+ *   │  └──────────────────────┘    │
+ *   │  ┌───────────────────────┐   │
+ *   │  │  MOOG MODEL D  ←─────────── slot 1 (activo)  dy=0  205×62
+ *   │  │  BASS / LEADS / MONO  │   │
+ *   │  └───────────────────────┘   │
+ *   │  ┌──────────────────────┐    │
+ *   │  │ PROPHET-5 (dim 40%)  │    │ ← slot 2  dy=+58  160×44
+ *   │  └──────────────────────┘    │
+ *   │      NAV TO SELECT           │ ← hint  dy=+92
+ *   └──────────────────────────────┘
  *
- * Solo las primeras 3 filas son seleccionables (engines no "coming soon");
- * el cursor del bridge está limitado al rango 0-2 por el firmware del Teensy.
+ * Solo engines seleccionables (0-2). Cursor llega de bridge_get_engine_cursor().
+ * Sin code boxes, sin scrollbar, sin mode pill.
+ *
+ * Timer 100ms: actualiza los 3 slots cuando el cursor del Teensy cambia.
  */
 
 #include "views.h"
@@ -18,134 +30,163 @@
 #include "../../widgets/gf_widgets.h"
 #include "../../../bridge/bridge_handlers.h"
 
-/* ── Tabla de engines ────────────────────────────────────────────────────── */
+/* ── Datos de los engines ────────────────────────────────────────────────── */
 
-struct EngineRow { const char* name; const char* code; bool soon; };
-static constexpr EngineRow ENG[5] = {
-    {"MOOG MODEL D", "M", false},
-    {"JUNO-106",     "J", false},
-    {"PROPHET-5",    "P", false},
-    {"DX UNIT",      "D", true},
-    {"OB SYNTH",     "O", true},
+static constexpr uint8_t NUM_SEL = 6;
+
+static const char* ENG_NAMES[NUM_SEL] = {
+    "MOOG MODEL D",
+    "JUNO-106",
+    "PROPHET-5",
+    "OB-6",
+    "DX7",
+    "ARP 2600",
 };
-static constexpr uint8_t  NUM_ENG   = 5;
-static constexpr uint8_t  NUM_SEL   = 3;   ///< engines seleccionables (no "coming soon")
-static constexpr lv_coord_t DY[5] = {-56, -28, 0, 28, 56};
+
+/**
+ * Sugerencias de estilo por engine — aparecen solo en la tarjeta activa (slot 1).
+ * Separador "/" para garantizar compatibilidad con el charset de ibm_plex_mono_8.
+ */
+static const char* ENG_TAGS[NUM_SEL] = {
+    "BASS / LEADS / MONO",
+    "PADS / STRINGS / CHORUS",
+    "CHORDS / POLY / LUSH",
+    "CHORDS / AI / POLY",
+    "FM / BELLS / DIGITAL",
+    "RING MOD / SEMI / RAW",
+};
+
+/* ── Geometría de slots ──────────────────────────────────────────────────── */
+
+/** dy desde el centro de pantalla de cada slot (top, center, bottom) */
+static constexpr lv_coord_t SLOT_DY[3] = { -56, 0, 58 };
+/** Ancho de la tarjeta de cada slot */
+static constexpr lv_coord_t SLOT_W[3]  = { 160, 205, 160 };
+/** Alto de la tarjeta de cada slot */
+static constexpr lv_coord_t SLOT_H[3]  = {  44,  62,  44 };
+/** Opacidad de los slots adyacentes (0=transparente, 255=sólido) */
+static constexpr lv_opa_t   ADJ_OPA    = 100;   ///< ~39% de opacidad
 
 /* ── Estado persistente ──────────────────────────────────────────────────── */
 
-/* Fondos de fila — solo para las filas seleccionables (índices 0..NUM_SEL-1). */
-static lv_obj_t*   s_row_bg[NUM_SEL] = {};
-static lv_timer_t* s_timer           = nullptr;
-static uint8_t     s_last_cursor     = 0xFF;
+static lv_obj_t*   s_slot_name[3] = {};  ///< label del nombre en cada slot
+static lv_obj_t*   s_slot_tags    = nullptr;  ///< tags de estilo, solo slot 1
+static lv_timer_t* s_timer        = nullptr;
+static uint8_t     s_last_cursor  = 0xFF;
 
-/* ── Timer: actualiza el highlight de la fila activa ────────────────────── */
+/* ── Helper: asignar engine a cada slot según cursor activo ──────────────── */
+
+static void update_cards(uint8_t cursor) {
+    /* Slot 0 (top)    → engine anterior en el ciclo */
+    /* Slot 1 (center) → engine activo */
+    /* Slot 2 (bottom) → engine siguiente en el ciclo */
+    const uint8_t e[3] = {
+        (uint8_t)((cursor + NUM_SEL - 1) % NUM_SEL),  /* top    = prev */
+        cursor,                                         /* center = active */
+        (uint8_t)((cursor + 1)           % NUM_SEL),  /* bottom = next */
+    };
+
+    for (uint8_t s = 0; s < 3; s++) {
+        if (s_slot_name[s]) lv_label_set_text(s_slot_name[s], ENG_NAMES[e[s]]);
+    }
+    if (s_slot_tags) lv_label_set_text(s_slot_tags, ENG_TAGS[e[1]]);
+}
+
+/* ── Timer callback 100ms ────────────────────────────────────────────────── */
 
 static void engine_timer_cb(lv_timer_t* /*t*/) {
     uint8_t cursor = bridge_get_engine_cursor();
     if (cursor >= NUM_SEL) cursor = 0;
     if (cursor == s_last_cursor) return;
     s_last_cursor = cursor;
-
-    for (uint8_t i = 0; i < NUM_SEL; i++) {
-        if (s_row_bg[i]) {
-            lv_obj_set_style_bg_opa(s_row_bg[i], (i == cursor) ? 56 : 0, 0);
-        }
-    }
+    update_cards(cursor);
 }
 
 /* ── Entrada principal ───────────────────────────────────────────────────── */
 
 void view_06_create(lv_obj_t* parent) {
-    for (uint8_t i = 0; i < NUM_SEL; i++) s_row_bg[i] = nullptr;
-    s_timer      = nullptr;
+    for (uint8_t i = 0; i < 3; i++) s_slot_name[i] = nullptr;
+    s_slot_tags   = nullptr;
+    s_timer       = nullptr;
     s_last_cursor = 0xFF;
 
     gf_screen_bg(parent);
-    gf_arc_title(parent, "ENGINE", GF_COLOR_TEAL);
+    gf_tint(parent, GF_COLOR_TEAL, 18);
 
+    /* ── Título "ENGINE" — simple, centrado arriba ───────────────────────── */
+    lv_obj_t* title = gf_label(parent, "ENGINE", GF_FONT_LABEL, GF_COLOR_TEAL);
+    if (title) lv_obj_align(title, LV_ALIGN_CENTER, 0, -98);
+
+    /* ── 3 tarjetas (slots) ──────────────────────────────────────────────── */
     uint8_t cursor = bridge_get_engine_cursor();
     if (cursor >= NUM_SEL) cursor = 0;
 
-    for (uint8_t i = 0; i < NUM_ENG; i++) {
-        const bool is_act = (i == cursor);
+    for (uint8_t s = 0; s < 3; s++) {
+        const bool is_center = (s == 1);
 
-        /* A. Fondo de la fila — creado siempre para filas seleccionables,
-         *    con opa=0 cuando no está activa para que el timer pueda ajustarla. */
-        if (i < NUM_SEL) {
-            lv_obj_t* hl = lv_obj_create(parent);
-            lv_obj_set_size(hl, 188, 26);
-            lv_obj_set_style_radius(hl, 5, 0);
-            lv_obj_set_style_bg_color(hl, GF_COLOR_TEAL, 0);
-            lv_obj_set_style_bg_opa(hl, is_act ? 56 : 0, 0);
-            lv_obj_set_style_border_width(hl, 0, 0);
-            lv_obj_clear_flag(hl, LV_OBJ_FLAG_SCROLLABLE);
-            lv_obj_align(hl, LV_ALIGN_CENTER, 0, DY[i]);
-            s_row_bg[i] = hl;
+        /* Contenedor de la tarjeta */
+        lv_obj_t* card = lv_obj_create(parent);
+        lv_obj_set_size(card, SLOT_W[s], SLOT_H[s]);
+        lv_obj_align(card, LV_ALIGN_CENTER, 0, SLOT_DY[s]);
+        lv_obj_set_style_radius(card, 8, 0);
+        lv_obj_set_style_pad_all(card, 0, 0);
+        lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+
+        /* Fondo y borde — solo la tarjeta central tiene acento teal */
+        if (is_center) {
+            lv_obj_set_style_bg_color(card, GF_COLOR_TEAL, 0);
+            lv_obj_set_style_bg_opa(card, 22, 0);        /* sutil: ~9% */
+            lv_obj_set_style_border_color(card, GF_COLOR_TEAL, 0);
+            lv_obj_set_style_border_width(card, 1, 0);
+            lv_obj_set_style_border_opa(card, LV_OPA_COVER, 0);
+        } else {
+            lv_obj_set_style_bg_opa(card, LV_OPA_TRANSP, 0);
+            lv_obj_set_style_border_width(card, 0, 0);
+            /* Atenuar toda la tarjeta (incluye labels hijos) */
+            lv_obj_set_style_opa(card, ADJ_OPA, 0);
         }
 
-        /* B. Code box — cuadrado teal con la inicial del engine. */
-        lv_obj_t* box = lv_obj_create(parent);
-        lv_obj_set_size(box, 16, 16);
-        lv_obj_set_style_radius(box, 2, 0);
-        lv_obj_set_style_bg_color(box, ENG[i].soon ? GF_COLOR_TEAL_DIM : GF_COLOR_TEAL, 0);
-        lv_obj_set_style_bg_opa(box, LV_OPA_COVER, 0);
-        lv_obj_set_style_border_width(box, 0, 0);
-        lv_obj_clear_flag(box, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_align(box, LV_ALIGN_CENTER, -76, DY[i]);
-        lv_obj_t* code = gf_label(box, ENG[i].code, GF_FONT_MICRO, GF_COLOR_BG);
-        lv_obj_center(code);
+        /* Nombre del engine — ancho fijo para que el centrado no varíe
+         * al cambiar el texto en el timer (label_long_clip + text_align_center). */
+        const lv_coord_t name_w = SLOT_W[s] - 10;
+        lv_obj_t* nm = gf_label(card,
+                                 is_center ? "---" : "---",
+                                 is_center ? GF_FONT_BODY : GF_FONT_LABEL,
+                                 is_center ? GF_COLOR_WHITE : GF_COLOR_GRAY);
+        lv_obj_set_width(nm, name_w);
+        lv_label_set_long_mode(nm, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_align(nm, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_align(nm, LV_ALIGN_CENTER, 0, is_center ? -10 : 0);
+        s_slot_name[s] = nm;
 
-        /* C. Nombre del engine. */
-        lv_color_t name_c = is_act ? GF_COLOR_WHITE : GF_COLOR_GRAY;
-        lv_obj_t* nm = gf_label(parent, ENG[i].name, GF_FONT_LABEL, name_c);
-        lv_obj_align(nm, LV_ALIGN_CENTER, -52, DY[i]);
-
-        /* D. Tag v1.1 + atenuado para engines "coming soon". */
-        if (ENG[i].soon) {
-            lv_obj_set_style_opa(nm, 82, 0);
-            lv_obj_t* tag = gf_label(parent, "v1.1", GF_FONT_MICRO, GF_COLOR_GRAY);
-            lv_obj_set_style_opa(tag, 82, 0);
-            lv_obj_align(tag, LV_ALIGN_CENTER, 76, DY[i]);
+        /* Tags de estilo — solo en la tarjeta central */
+        if (is_center) {
+            lv_obj_t* tags = gf_label(card, "---", GF_FONT_MICRO, GF_COLOR_TEAL_PLUS);
+            lv_obj_set_width(tags, name_w);
+            lv_label_set_long_mode(tags, LV_LABEL_LONG_CLIP);
+            lv_obj_set_style_text_align(tags, LV_TEXT_ALIGN_CENTER, 0);
+            lv_obj_align(tags, LV_ALIGN_CENTER, 0, +18);
+            s_slot_tags = tags;
         }
     }
 
-    /* E. Scrollbar — posición del thumb refleja cursor actual. */
-    lv_obj_t* track = lv_obj_create(parent);
-    lv_obj_set_size(track, 2, 120);
-    lv_obj_set_style_bg_color(track, GF_COLOR_TEAL_DIM, 0);
-    lv_obj_set_style_bg_opa(track, LV_OPA_COVER, 0);
-    lv_obj_set_style_border_width(track, 0, 0);
-    lv_obj_set_style_radius(track, 1, 0);
-    lv_obj_clear_flag(track, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_align(track, LV_ALIGN_RIGHT_MID, -14, 0);
-
-    /* Thumb estático en la posición inicial — el timer no lo actualiza por simplicidad;
-     * el cursor cambia rápido y el thumb es solo feedback visual secundario. */
-    lv_obj_t* thumb = lv_obj_create(parent);
-    lv_obj_set_size(thumb, 2, 44);
-    lv_obj_set_style_bg_color(thumb, GF_COLOR_TEAL, 0);
-    lv_obj_set_style_bg_opa(thumb, LV_OPA_COVER, 0);
-    lv_obj_set_style_border_width(thumb, 0, 0);
-    lv_obj_set_style_radius(thumb, 1, 0);
-    lv_obj_clear_flag(thumb, LV_OBJ_FLAG_SCROLLABLE);
-    /* Desplazar thumb proporcionalmente al cursor (rango 0..NUM_SEL-1 → -38..+38). */
-    lv_coord_t thumb_dy = (lv_coord_t)(-38 + cursor * 38);
-    lv_obj_align(thumb, LV_ALIGN_RIGHT_MID, -14, thumb_dy);
-
-    /* F. Footer hint. */
-    lv_obj_t* hint = gf_label(parent, "NAV TO SELECT", GF_FONT_MICRO, GF_COLOR_GRAY);
-    lv_obj_set_style_opa(hint, 150, 0);
-    lv_obj_align(hint, LV_ALIGN_CENTER, 0, 88);
-
-    gf_mode_pill(parent, "SYNTH", GF_COLOR_TEAL);
-
-    /* ── Timer 100ms — actualiza highlight de fila activa ───────────────── */
+    /* Rellenar contenido inicial */
+    update_cards(cursor);
     s_last_cursor = cursor;
+
+    /* ── Hint ────────────────────────────────────────────────────────────── */
+    lv_obj_t* hint = gf_label(parent, "NAV TO SELECT", GF_FONT_MICRO, GF_COLOR_GRAY);
+    if (hint) {
+        lv_obj_set_style_opa(hint, 140, 0);
+        lv_obj_align(hint, LV_ALIGN_CENTER, 0, 92);
+    }
+
+    /* Timer 100ms: actualiza highlight de la tarjeta activa */
     s_timer = lv_timer_create(engine_timer_cb, 100, nullptr);
 }
 
 void view_06_destroy(void) {
     if (s_timer) { lv_timer_del(s_timer); s_timer = nullptr; }
-    for (uint8_t i = 0; i < NUM_SEL; i++) s_row_bg[i] = nullptr;
+    for (uint8_t i = 0; i < 3; i++) s_slot_name[i] = nullptr;
+    s_slot_tags = nullptr;
 }

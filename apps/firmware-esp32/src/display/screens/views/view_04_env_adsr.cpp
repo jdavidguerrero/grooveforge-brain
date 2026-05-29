@@ -158,7 +158,7 @@ static void build_env_page(lv_obj_t* page, uint8_t idx) {
 
     const char* init_str = (idx == 2) ? "0%" : "0 MS";
     lv_obj_t* vl = gf_label(page, init_str, GF_FONT_HERO, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -30);
     s_pages[idx].val_lbl = vl;
 
     draw_env_canvas(cv, idx, 0.0f);
@@ -220,7 +220,7 @@ void view_04_create(lv_obj_t* parent) {
     }
 
     uint8_t eng_id = bridge_get_engine_id();
-    s_engine_idx = (eng_id >= 0x10 && eng_id <= 0x12) ? (eng_id - 0x10) : 0;
+    s_engine_idx = (eng_id >= 0x10) ? (uint8_t)(eng_id - 0x10) : 0;
 
     gf_screen_bg(parent);
     s_slider = gf_pslider_create(parent, 4);
@@ -235,7 +235,7 @@ void view_04_create(lv_obj_t* parent) {
     gf_pslider_set_active(s_slider, init_param, false);
     s_last_param = init_param;
 
-    gf_page_dots(parent, 4, init_param, GF_COLOR_TEAL);
+    gf_page_dots(parent, 4, init_param, GF_COLOR_TEAL, 8);
     gf_mode_pill(parent, "ENV", GF_COLOR_TEAL);
 
     s_timer = lv_timer_create(env_tick, 33, nullptr);

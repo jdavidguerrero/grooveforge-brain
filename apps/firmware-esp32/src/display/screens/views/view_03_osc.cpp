@@ -10,6 +10,8 @@
  *     1  TRANSPOSE   (vertical VU -2..+2)
  *     2  VCO2 WAVE   (animated waveform)
  *     3  DETUNE      (two-wave beating)
+ *     4  VCO3 WAVE   (animated waveform) — NEW
+ *     5  VCO3 INT    (big number semitones -24..+24) — NEW
  *
  *   Juno-106 (0x11):
  *     0  VCO WAVE    (animated waveform)
@@ -21,6 +23,24 @@
  *     1  OSC B WAVE  (animated waveform)
  *     2  B INTERVAL  (big number semitones)
  *     3  CROSSMOD    (arc 0-100%)
+ *
+ *   OB-6 (0x13):
+ *     0  VCO1 WAVE   (animated waveform)
+ *     1  VCO2 WAVE   (animated waveform)
+ *     2  DETUNE      (generic: semitones -12..+12)
+ *     3  SUB LEVEL   (arc 0-100%)
+ *
+ *   DX7 (0x14):
+ *     0  FM RATIO    (generic: 0.5..8.0)
+ *     1  FM DEPTH    (arc 0-100%)
+ *     2  CAR WAVE    (animated waveform)
+ *     3  MOD WAVE    (animated waveform)
+ *
+ *   ARP 2600 (0x15):
+ *     0  VCO1 WAVE   (animated waveform)
+ *     1  VCO2 RATIO  (generic: 0.5..4.0)
+ *     2  RING MIX    (arc 0-100%)
+ *     3  NOISE       (arc 0-100%)
  *
  * Animaciones: timer @30fps redibuja canvases con phase scroll y actualiza
  * todos los value labels desde el cache del bridge. Cursor del Teensy
@@ -73,16 +93,18 @@ typedef struct {
     uint8_t      num;
 } osc_engine_t;
 
-static const osc_engine_t ENGINES[3] = {
-    /* 0 — Moog Model D */
+static const osc_engine_t ENGINES[6] = {
+    /* 0 — Moog Model D — 6 params: VCO1 + VCO2 + VCO3 independiente */
     {
         {
-            { "VCO1 WAVE", VIZ_WAVE   },
-            { "TRANSPOSE", VIZ_OCT    },
-            { "VCO2 WAVE", VIZ_WAVE   },
-            { "DETUNE",    VIZ_DETUNE },
+            { "VCO1 WAVE", VIZ_WAVE     },   /* param 0 */
+            { "TRANSPOSE", VIZ_OCT      },   /* param 1 */
+            { "VCO2 WAVE", VIZ_WAVE     },   /* param 2 */
+            { "DETUNE",    VIZ_DETUNE   },   /* param 3 */
+            { "VCO3 WAVE", VIZ_WAVE     },   /* param 4 — NEW */
+            { "VCO3 INT",  VIZ_INTERVAL },   /* param 5 — NEW: semitones -24..+24 */
         },
-        4
+        6
     },
     /* 1 — Juno-106 */
     {
@@ -100,6 +122,39 @@ static const osc_engine_t ENGINES[3] = {
             { "OSC B WAVE",  VIZ_WAVE     },
             { "B INTERVAL",  VIZ_INTERVAL },
             { "CROSSMOD",    VIZ_LEVEL    },
+        },
+        4
+    },
+
+    /* 3 — OB-6 */
+    {
+        {
+            { "VCO1 WAVE",  VIZ_WAVE    },
+            { "VCO2 WAVE",  VIZ_WAVE    },
+            { "DETUNE",     VIZ_GENERIC },   /* semitones -12..+12 */
+            { "SUB LEVEL",  VIZ_LEVEL   },
+        },
+        4
+    },
+
+    /* 4 — DX7 */
+    {
+        {
+            { "FM RATIO",   VIZ_GENERIC },   /* 0.5..8.0 */
+            { "FM DEPTH",   VIZ_LEVEL   },   /* 0..2, norm to 0..1 for display */
+            { "CAR WAVE",   VIZ_WAVE    },
+            { "MOD WAVE",   VIZ_WAVE    },
+        },
+        4
+    },
+
+    /* 5 — ARP 2600 */
+    {
+        {
+            { "VCO1 WAVE",  VIZ_WAVE    },
+            { "VCO2 RATIO", VIZ_GENERIC },   /* 0.5..4.0 */
+            { "RING MIX",   VIZ_LEVEL   },
+            { "NOISE",      VIZ_LEVEL   },
         },
         4
     },
@@ -257,7 +312,7 @@ static void build_wave_page(lv_obj_t* page, uint8_t idx, const char* title) {
     s_pages[idx].canvas = cv;
 
     lv_obj_t* vl = gf_label(page, "SINE", GF_FONT_HERO, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -30);
     s_pages[idx].val_lbl = vl;
     s_pages[idx].viz     = VIZ_WAVE;
 }
@@ -332,7 +387,7 @@ static void build_detune_page(lv_obj_t* page, uint8_t idx, const char* title) {
     s_pages[idx].canvas = cv;
 
     lv_obj_t* vl = gf_label(page, "+0 ct", GF_FONT_HERO, GF_COLOR_WHITE);
-    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -10);
+    if (vl) lv_obj_align(vl, LV_ALIGN_BOTTOM_MID, 0, -30);
     s_pages[idx].val_lbl = vl;
     s_pages[idx].viz     = VIZ_DETUNE;
 }
@@ -486,9 +541,10 @@ void view_03_create(lv_obj_t* parent) {
     s_num_pages  = 0;
     for (uint8_t i = 0; i < 6; i++) s_pages[i] = page_t{};
 
-    /* Engine activo: el ID llega como 0x10-0x12. Mapear a índice 0-2. */
+    /* Engine activo: el ID llega como 0x10-0x15. Mapear a índice 0-5. */
     uint8_t eng_id  = bridge_get_engine_id();
-    s_engine_idx    = (eng_id >= 0x10 && eng_id <= 0x12) ? (eng_id - 0x10) : 0;
+    s_engine_idx    = (eng_id >= 0x10) ? (uint8_t)(eng_id - 0x10) : 0;
+    if (s_engine_idx >= 6) s_engine_idx = 0;
     s_num_pages     = ENGINES[s_engine_idx].num;
     if (s_num_pages == 0 || s_num_pages > 6) s_num_pages = 1;
 
@@ -516,7 +572,7 @@ void view_03_create(lv_obj_t* parent) {
     gf_pslider_set_active(s_slider, init_param, false);
     s_last_param = init_param;
 
-    gf_page_dots(parent, s_num_pages, init_param, GF_COLOR_TEAL);
+    gf_page_dots(parent, s_num_pages, init_param, GF_COLOR_TEAL, 8);
     gf_mode_pill(parent, "OSC", GF_COLOR_TEAL);
 
     s_timer = lv_timer_create(osc_tick, 33, nullptr);

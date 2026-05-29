@@ -65,6 +65,69 @@
 /** Gris monitor: cutoff monitor permanente en view_02 SYNTH (no compite con HERO). */
 #define GF_COLOR_MONITOR_GRAY   lv_color_hex(0x5A5A6E)
 
+/* ── Camelot Wheel palette (Sprint 34) ───────────────────────────────────────
+ * 12 colores rainbow indexados por posición en el Circle of Fifths.
+ * Posición 0 (C) = Camelot 8B (cyan). Avanza CW por quintas.
+ * Convención visual estilo Mixed In Key / Rekordbox — vocabulario DJ existente.
+ *
+ *   CoF pos | Pitch | Camelot | Hue °
+ *   --------|-------|---------|-------
+ *      0    |  C    |   8B    |  187 cyan
+ *      1    |  G    |   9B    |  207 azul-cyan
+ *      2    |  D    |  10B    |  220 azul
+ *      3    |  A    |  11B    |  245 indigo
+ *      4    |  E    |  12B    |  282 púrpura
+ *      5    |  B    |   1B    |  358 rojo
+ *      6    |  F#   |   2B    |   14 rojo-naranja
+ *      7    |  C#   |   3B    |   30 naranja
+ *      8    |  G#   |   4B    |   48 amarillo
+ *      9    |  D#   |   5B    |   71 verde-limón
+ *     10    |  A#   |   6B    |  110 verde
+ *     11    |  F    |   7B    |  153 verde-teal
+ *
+ * Ver apps/docs/sprints/34-camelot-hero-modes.md §"Paleta Camelot". */
+#define GF_COLOR_CAMELOT_0   lv_color_hex(0x1FB6BB)  /* C  — 8B  cyan */
+#define GF_COLOR_CAMELOT_1   lv_color_hex(0x1D86C4)  /* G  — 9B  azul-cyan */
+#define GF_COLOR_CAMELOT_2   lv_color_hex(0x3358C0)  /* D  — 10B azul */
+#define GF_COLOR_CAMELOT_3   lv_color_hex(0x5540B8)  /* A  — 11B indigo */
+#define GF_COLOR_CAMELOT_4   lv_color_hex(0x8A2DB5)  /* E  — 12B púrpura */
+#define GF_COLOR_CAMELOT_5   lv_color_hex(0xB61F32)  /* B  — 1B  rojo */
+#define GF_COLOR_CAMELOT_6   lv_color_hex(0xDD4D28)  /* F# — 2B  rojo-naranja */
+#define GF_COLOR_CAMELOT_7   lv_color_hex(0xDD902C)  /* C# — 3B  naranja */
+#define GF_COLOR_CAMELOT_8   lv_color_hex(0xDDB42A)  /* G# — 4B  amarillo */
+#define GF_COLOR_CAMELOT_9   lv_color_hex(0xB0CC30)  /* D# — 5B  verde-limón */
+#define GF_COLOR_CAMELOT_10  lv_color_hex(0x74C443)  /* A# — 6B  verde */
+#define GF_COLOR_CAMELOT_11  lv_color_hex(0x2EBB87)  /* F  — 7B  verde-teal */
+
+/**
+ * @brief Color Camelot por posición CoF (0-11).
+ *        Wrap-around seguro (pos % 12). Mismo color sirve para major (Camelot B)
+ *        y minor (A) — la distinción A/B se hace en el código alfanumérico, no en color.
+ */
+static inline lv_color_t gf_camelot_color(uint8_t cof_pos) {
+    static const lv_color_t T[12] = {
+        GF_COLOR_CAMELOT_0,  GF_COLOR_CAMELOT_1,  GF_COLOR_CAMELOT_2,
+        GF_COLOR_CAMELOT_3,  GF_COLOR_CAMELOT_4,  GF_COLOR_CAMELOT_5,
+        GF_COLOR_CAMELOT_6,  GF_COLOR_CAMELOT_7,  GF_COLOR_CAMELOT_8,
+        GF_COLOR_CAMELOT_9,  GF_COLOR_CAMELOT_10, GF_COLOR_CAMELOT_11,
+    };
+    return T[cof_pos % 12];
+}
+
+/**
+ * @brief Número Camelot (1-12) por posición CoF.
+ *        Use con la letra ('B' para major, 'A' para minor) para formar
+ *        el código completo "8B", "11A", etc.
+ *
+ * Ejemplo:
+ *   uint8_t key_idx = 3;  // A major
+ *   uint8_t cof_pos = PC_TO_COF_POS[key_idx % 12];
+ *   uint8_t num     = COF_TO_CAMELOT_NUM[cof_pos];   // → 11
+ *   char letter     = (key_idx < 12) ? 'B' : 'A';     // → 'B'
+ *   snprintf(buf, "%u%c", num, letter);               // → "11B"
+ */
+static const uint8_t COF_TO_CAMELOT_NUM[12] = { 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7 };
+
 /* ── Tipografia — IBM Plex Mono, 6 tamanos ───────────────────────────────── */
 
 /**

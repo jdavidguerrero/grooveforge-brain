@@ -46,6 +46,7 @@ public:
     static constexpr int GRANULAR_MEMORY_SIZE = 12800;
 
     GranularCloud();
+    ~GranularCloud();
 
     /**
      * @brief Conecta el stream de entrada. El sketch maneja AudioMemory y el codec.

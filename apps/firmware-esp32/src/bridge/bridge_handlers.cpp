@@ -43,8 +43,44 @@ static uint8_t s_top_mode          = 0;      // 0=FX, 1=SYNTH, 2=AI (param_id=0x
 static float   s_ai_progress       = -1.0f;  // 0.0-1.0 durante arm; -1=inactivo (0xFB)
 
 /* Bypass de modelos AI (Sprint 31 Batch E+F) */
-static bool s_scale_lock_bypass    = false;
-static bool s_beat_follower_bypass = false;
+static bool    s_scale_lock_bypass    = false;
+static bool    s_beat_follower_bypass = false;
+static uint8_t s_chromagram_ordering  = 1;    ///< 0=cromático, 1=CoF (default)
+
+/* Bypass del FX activo — param_id=0xFA. Controla visual del arco wet en view_07. */
+static bool    s_fx_bypass            = false;
+
+/* Manual scale override (Sprint 34 Batch J — param_id 0x00EF) */
+static bool    s_scale_manual_mode = false;   ///< true = usuario fijó escala en view_16
+static uint8_t s_scale_manual_key  = 0xFF;    ///< 0-23 key_idx; 0xFF = AUTO
+
+/* AI Rack state (Sprint 45 — param_ids 0x00E9-0x00EE) */
+static uint8_t s_ai_rack_cursor    = 0;      ///< fila activa (0-5)
+static bool    s_auto_harm_enabled = false;  ///< Auto-Harmonize ON/OFF
+static uint8_t s_auto_harm_interval = 0;    ///< 0=THIRD, 1=SIXTH (HarmonyInterval enum)
+static uint8_t s_arp_mode          = 4;     ///< SmartArp::Mode (4=SMART default)
+static uint8_t s_arp_division      = 1;     ///< SmartArp::Division (1=EIGHTH default)
+static uint8_t s_groove_style      = 1;     ///< GrooveHumanizer::Style (1=HUMAN default)
+static float   s_groove_amount     = 0.5f;  ///< intensidad 0.0-0.99
+
+/* Resultados de inferencia ML (Sprint 32 — GF_CMD_KEY/CHORD/BEAT_DETECTED) */
+static char     s_ai_key_name[12]   = "---";  ///< "C MAJ" / "F# MIN" / "---"
+static char     s_ai_chord_name[12] = "---";  ///< "Am7" / "C" / "---"
+static uint16_t s_ai_bpm            = 0;      ///< BPM entero; 0 = desconocido
+/* Raw indices para view_10 chromagram + chord triad (Sprint 33) */
+static uint8_t  s_ai_key_idx        = 0xFF;   ///< 0-23; 0xFF = no detectado
+static uint8_t  s_ai_chord_root     = 0xFF;   ///< 0-11; 0xFF = no detectado
+static uint8_t  s_ai_chord_quality  = 0xFF;   ///< 0-5; 0xFF = no detectado
+
+/* Estado GROOVE_STATE live (Sprint 33 — GF_CMD_GROOVE_STATE 0x83) */
+static uint8_t  s_pitch_activity[12]         = {0};  ///< EMA tau=2s, 0-255 por pitch class
+static uint8_t  s_last_snap_from             = 0;
+static uint8_t  s_last_snap_to               = 0;
+static uint32_t s_last_snap_ms               = 0;    ///< millis() del último snap; 0 = nunca
+static uint16_t s_snapped_count              = 0;    ///< notas cuantizadas desde entrada a AI mode
+static uint16_t s_total_count               = 0;    ///< notas tocadas en AI mode (via NOTE_ON)
+static uint8_t  s_beat_phase                = 0;
+static uint32_t s_last_groove_state_log_ms  = 0;    ///< throttle de Serial logging (1Hz)
 
 /* Navegación SYNTH (Sprint 31) */
 static uint8_t s_synth_level    = 0;   // 0=ENGINE_LIST, 1=SUBHOME, 2=GROUP_VIEW
@@ -54,10 +90,18 @@ static uint8_t s_engine_cursor  = 0;   // cursor en ENGINE_LIST
 static float   s_synth_cutoff     = 0.5f;   // último cutoff recibido (grupo FILTER param 0)
 static float   s_synth_resonance  = 0.1f;   // último resonance recibido (grupo FILTER param 1)
 
-/* Caché completa de parámetros synth: [engine 0-2][grupo 0-3][param 0-3]
- * Poblada por cada PARAM_CHANGED con byte-alto 0x10-0x12.
- * Permite a las vistas GROUP_VIEW inicializar todos los valores correctamente. */
-static float   s_synth_cache[3][4][4] = {};
+/* MIDI note state — capturado por on_note_on / on_note_off (Sprint 31)
+ * Usado por view_02 para animar el osciloscopio según la nota presionada. */
+static uint8_t s_note_midi     = 69;    ///< número MIDI (0-127); default A4
+static float   s_note_velocity = 0.0f;  ///< velocidad normalizada [0,1]; 0 = sin nota
+static bool    s_note_active   = false; ///< true mientras la nota está presionada
+
+/* Caché completa de parámetros synth: [engine 0-5][grupo 0-3][param 0-5]
+ * Poblada por cada PARAM_CHANGED con byte-alto 0x10-0x15.
+ * Permite a las vistas GROUP_VIEW inicializar todos los valores correctamente.
+ * Sprint 38: expandido de [3] a [6] engines para OB-6/DX7/ARP.
+ * Sprint 41: expandido de [4] a [6] params para VCO3 del Moog (params 4-5 en OSC). */
+static float   s_synth_cache[6][4][6] = {};
 
 /* Caché de valores por FX y parámetro */
 static float   s_param_cache[9][4]  = {};
@@ -96,8 +140,28 @@ uint8_t  bridge_get_sub2(uint8_t fx)            { return (fx < 9) ? s_sub2[fx] :
 uint16_t bridge_get_last_real_param_id(void)    { return s_last_real_param_id; }
 uint32_t bridge_get_last_real_param_ms(void)    { return s_last_real_param_ms; }
 
-bool bridge_get_scale_lock_bypass(void)    { return s_scale_lock_bypass; }
-bool bridge_get_beat_follower_bypass(void) { return s_beat_follower_bypass; }
+bool    bridge_get_scale_lock_bypass(void)    { return s_scale_lock_bypass; }
+bool    bridge_get_beat_follower_bypass(void) { return s_beat_follower_bypass; }
+uint8_t bridge_get_chromagram_ordering(void)  { return s_chromagram_ordering; }
+bool    bridge_get_scale_manual_mode(void)    { return s_scale_manual_mode; }
+uint8_t bridge_get_scale_manual_key(void)     { return s_scale_manual_key; }
+bool    bridge_get_fx_bypass(void)            { return s_fx_bypass; }
+
+/* AI Rack getters (Sprint 45) */
+uint8_t bridge_get_ai_rack_cursor(void)     { return s_ai_rack_cursor; }
+bool    bridge_get_auto_harm_enabled(void)  { return s_auto_harm_enabled; }
+uint8_t bridge_get_auto_harm_interval(void) { return s_auto_harm_interval; }
+uint8_t bridge_get_arp_mode(void)           { return s_arp_mode; }
+uint8_t bridge_get_arp_division(void)       { return s_arp_division; }
+uint8_t bridge_get_groove_style(void)       { return s_groove_style; }
+float   bridge_get_groove_amount(void)      { return s_groove_amount; }
+
+const char* bridge_get_ai_key_name(void)    { return s_ai_key_name; }
+const char* bridge_get_ai_chord_name(void)  { return s_ai_chord_name; }
+uint16_t    bridge_get_ai_bpm(void)         { return s_ai_bpm; }
+uint8_t     bridge_get_ai_key_idx(void)     { return s_ai_key_idx; }
+uint8_t     bridge_get_ai_chord_root(void)  { return s_ai_chord_root; }
+uint8_t     bridge_get_ai_chord_quality(void) { return s_ai_chord_quality; }
 
 uint8_t bridge_get_synth_level(void)    { return s_synth_level; }
 uint8_t bridge_get_synth_group(void)    { return s_synth_group; }
@@ -105,15 +169,53 @@ uint8_t bridge_get_synth_param(void)    { return s_synth_param; }
 uint8_t bridge_get_engine_cursor(void)  { return s_engine_cursor; }
 float   bridge_get_synth_cutoff(void)   { return s_synth_cutoff; }
 float   bridge_get_synth_resonance(void){ return s_synth_resonance; }
+uint8_t bridge_get_note_midi(void)      { return s_note_midi; }
+float   bridge_get_note_velocity(void)  { return s_note_velocity; }
+bool    bridge_get_note_active(void)    { return s_note_active; }
 
 float bridge_get_synth_param_cached(uint8_t engine, uint8_t group, uint8_t pidx) {
-    if (engine >= 3 || group >= 4 || pidx >= 4) return 0.0f;
+    if (engine >= 6 || group >= 4 || pidx >= 6) return 0.0f;
     return s_synth_cache[engine][group][pidx];
 }
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
 static void auto_ack(const GF_Frame* f, BridgeSlave* slave) {
+    slave->send_ack(f->seq);
+}
+
+/* ── Handlers MIDI (Sprint 31 — osciloscope reactivo) ────────────────────── */
+
+/**
+ * NOTE_ON: payload [note:1B, velocity:1B, channel:1B]
+ * Almacena nota y velocity para que view_02 anime el osciloscopio.
+ * Attack instantáneo: el envelope lo sube la vista en el siguiente tick.
+ */
+static void on_note_on(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len >= 2) {
+        s_note_midi     = f->payload[0];
+        s_note_velocity = (float)f->payload[1] / 127.0f;
+        s_note_active   = true;
+        /* Contar notas en AI mode para la estadística snap_stats.
+         * s_total_count se resetea al salir de AI mode (handler 0xFD/0x00F4). */
+        if (s_top_mode == 2) {
+            s_total_count++;
+        }
+    }
+    slave->send_ack(f->seq);
+}
+
+/**
+ * NOTE_OFF: payload [note:1B, channel:1B]
+ * Solo silencia si es la nota activa (simplificación: sin polyphony tracking).
+ * El decay del envelope lo gestiona view_02 de forma suave.
+ */
+static void on_note_off(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len >= 1 && f->payload[0] == s_note_midi) {
+        s_note_active = false;
+    }
     slave->send_ack(f->seq);
 }
 
@@ -176,18 +278,23 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
     memcpy(&value,    f->payload + 2, 4);
 
     if (param_id == 0xFF) {
-        /* wet/dry global — siempre salta a FX MAIN con la animación del arco.
-         * ENC L es un control "global" que hace visible el nivel wet/dry
-         * independientemente de en qué vista estaba el usuario.
-         * Forzar sub-modo FX_MAIN (param_cursor=0xFF) para que build_fx_main()
-         * corra y muestre el arco animado + spectrum. */
+        /* wet/dry global — el timer de view_07 lee s_wet_dry cada 50ms y actualiza
+         * el arco in-place, sin necesidad de reconstruir la vista.
+         * Solo navegar a FX_MAIN si el usuario estaba en otra vista. */
         s_wet_dry      = value;
         s_param_cursor = 0xFF;
-        carousel_goto(VIEW_IDX_FX_MAIN);
+        if (carousel_get_current() != VIEW_IDX_FX_MAIN) {
+            carousel_goto(VIEW_IDX_FX_MAIN);
+        }
     } else if (param_id == 0x00F4) {
         /* top_mode — anuncio directo desde setup() sin animación de transición.
          * 0xFD (double-click NAV) sí muestra view_09; este llega silencioso. */
         uint8_t new_mode = (uint8_t)(value + 0.5f);
+        /* Resetear contadores de AI mode al salir (entrar a cualquier otro modo). */
+        if (s_top_mode == 2 && new_mode != 2) {
+            s_snapped_count = 0;
+            s_total_count   = 0;
+        }
         s_top_mode = new_mode;
         carousel_pause();
         if (new_mode == 1) {
@@ -214,11 +321,11 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
         s_synth_param = (uint8_t)(code % 10);
         carousel_pause();
         switch (s_synth_group) {
-            case 0: carousel_goto(VIEW_IDX_SYNTH_OSC);      break;
-            case 1: carousel_goto(VIEW_IDX_SYNTH_ENV);      break;
-            case 2: carousel_goto(VIEW_IDX_SYNTH_SUBHOME);  break;  // FILTER → arc view
-            case 3: carousel_goto(VIEW_IDX_SYNTH_LFO);      break;
-            default: carousel_goto(VIEW_IDX_SYNTH_SUBHOME); break;
+            case 0: carousel_goto(VIEW_IDX_SYNTH_OSC);     break;
+            case 1: carousel_goto(VIEW_IDX_SYNTH_ENV);     break;
+            case 2: carousel_goto(VIEW_IDX_SYNTH_FILTER);  break;  // FILTER → vista dedicada (view_24)
+            case 3: carousel_goto(VIEW_IDX_SYNTH_LFO);     break;
+            default: carousel_goto(VIEW_IDX_SYNTH_OSC);    break;
         }
         Serial.printf("[bridge] SYNTH_GROUP → %u param=%u\n",
                       (unsigned)s_synth_group, (unsigned)s_synth_param);
@@ -259,6 +366,11 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
          * Muestra view_09 (MODE SWITCH) 1s, luego navega al modo destino.
          * Para AI (value=2): el arm ya se completó — s_ai_progress viene de 0xFB. */
         uint8_t new_mode = (uint8_t)(value + 0.5f);
+        /* Resetear contadores de AI mode al salir (entrar a cualquier otro modo). */
+        if (s_top_mode == 2 && new_mode != 2) {
+            s_snapped_count = 0;
+            s_total_count   = 0;
+        }
         s_top_mode    = new_mode;
         s_ai_progress = -1.0f;   // arm completado, limpiar progreso
         carousel_pause();
@@ -335,6 +447,25 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
         carousel_goto(VIEW_IDX_FX_MAIN);
         Serial.println("[bridge] PANIC — wet=0 → FX MAIN");
         Serial.flush();
+    } else if (param_id == 0x00F1) {
+        /* AI sub-view navigation — ENC NAV cicla 3 sub-vistas (Sprint 45 consolidación).
+         * 0 → view_10  AI PROC (Camelot hero — default al entrar)
+         * 1 → view_28  AI RACK (control surface 6 features)
+         * 2 → view_16  SCALE LOCK (idx 15)
+         * view_25/26/27 quedan registradas pero fuera del ciclo principal.
+         * Spec: apps/docs/sprints/45-ai-mode-consolidation.md */
+        uint8_t sub = (uint8_t)(value + 0.5f);
+        if (sub > 2) sub = 0;
+        static const uint8_t SUBVIEW_MAP[3] = {
+            VIEW_IDX_AI_PROC,    /* 0 → view_10 Camelot */
+            VIEW_IDX_AI_RACK,    /* 1 → view_28 AI Rack (Sprint 45) */
+            15,                   /* 2 → view_16 Scale Lock (idx 15) */
+        };
+        carousel_pause();
+        carousel_goto(SUBVIEW_MAP[sub]);
+        Serial.printf("[bridge] AI_NAV -> sub=%u (view_idx=%u)\n",
+                      (unsigned)sub, (unsigned)SUBVIEW_MAP[sub]);
+        Serial.flush();
     } else if (param_id == 0x00F2) {
         /* Scale Lock bypass — ENC L click en view_10.
          * 0.0 = algoritmo activo, 1.0 = bypassed (notas sin cuantizar). */
@@ -346,6 +477,69 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
          * 0.0 = activo (sigue el tempo), 1.0 = bypassed (tempo libre). */
         s_beat_follower_bypass = (value > 0.5f);
         Serial.printf("[bridge] BEAT_FOLLOWER bypass=%u\n", (unsigned)s_beat_follower_bypass);
+        Serial.flush();
+    } else if (param_id == 0x00F0) {
+        /* Ordenamiento del chromagram en view_10.
+         * 0.0 = cromático (C C# D ... B), 1.0 = Circle of Fifths (CoF). */
+        uint8_t ord = (uint8_t)(value + 0.5f);
+        if (ord > 1) ord = 1;
+        s_chromagram_ordering = ord;
+        Serial.printf("[bridge] CHROMAGRAM ORDERING → %s\n",
+                      ord == 0 ? "CROMATIC" : "COF");
+        Serial.flush();
+    } else if (param_id == 0x00EF) {
+        /* Manual scale override (Sprint 34 Batch J).
+         * value < 0  → AUTO mode: AI detector toma control.
+         * value 0-23 → MANUAL mode con key_idx fijo (0-11=major, 12-23=minor). */
+        if (value < 0.0f) {
+            s_scale_manual_mode = false;
+            s_scale_manual_key  = 0xFF;
+            Serial.println("[bridge] SCALE override -> AUTO");
+        } else {
+            uint8_t k = (uint8_t)(value + 0.5f);
+            if (k > 23) k = 0;
+            s_scale_manual_mode = true;
+            s_scale_manual_key  = k;
+            Serial.printf("[bridge] SCALE override -> MANUAL key_idx=%u\n", (unsigned)k);
+        }
+        Serial.flush();
+    } else if (param_id == 0x00E9) {
+        /* AI Rack cursor — fila activa (0-5). Sprint 45. */
+        s_ai_rack_cursor = (uint8_t)(value + 0.5f);
+        if (s_ai_rack_cursor > 5) s_ai_rack_cursor = 0;
+    } else if (param_id == 0x00EA) {
+        /* Auto-Harmonize enabled — 0.0=OFF, 1.0=ON. Sprint 45. */
+        s_auto_harm_enabled = (value > 0.5f);
+        Serial.printf("[bridge] AUTO_HARM enabled=%u\n", (unsigned)s_auto_harm_enabled);
+        Serial.flush();
+    } else if (param_id == 0x00EB) {
+        /* Auto-Harmonize interval — 0=THIRD, 1=SIXTH. Sprint 45. */
+        s_auto_harm_interval = (uint8_t)(value + 0.5f);
+        if (s_auto_harm_interval > 1) s_auto_harm_interval = 0;
+        Serial.printf("[bridge] AUTO_HARM interval=%u\n", (unsigned)s_auto_harm_interval);
+        Serial.flush();
+    } else if (param_id == 0x00EC) {
+        /* Arp mode (0=UP,1=DOWN,2=UP_DOWN,3=RANDOM,4=SMART). Sprint 45. */
+        s_arp_mode = (uint8_t)(value + 0.5f);
+        if (s_arp_mode > 4) s_arp_mode = 4;
+        Serial.printf("[bridge] ARP mode=%u\n", (unsigned)s_arp_mode);
+        Serial.flush();
+    } else if (param_id == 0x00ED) {
+        /* Arp division (0=QUARTER,1=EIGHTH,2=SIXTEENTH). Sprint 45. */
+        s_arp_division = (uint8_t)(value + 0.5f);
+        if (s_arp_division > 2) s_arp_division = 2;
+        Serial.printf("[bridge] ARP division=%u\n", (unsigned)s_arp_division);
+        Serial.flush();
+    } else if (param_id == 0x00EE) {
+        /* Groove packed — parte entera=style(0-2), parte fraccional=amount(0-0.99).
+         * Sprint 45. */
+        s_groove_style  = (uint8_t)value;
+        s_groove_amount = value - (float)s_groove_style;
+        if (s_groove_style > 2) s_groove_style = 2;
+        if (s_groove_amount < 0.0f) s_groove_amount = 0.0f;
+        if (s_groove_amount > 0.99f) s_groove_amount = 0.99f;
+        Serial.printf("[bridge] GROOVE style=%u amount=%.2f\n",
+                      (unsigned)s_groove_style, (double)s_groove_amount);
         Serial.flush();
     }
 
@@ -366,7 +560,7 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
         // byte bajo = param_idx (0-3), por lo que nunca coinciden con el rango especial.
         uint8_t fx_idx = (uint8_t)(param_id >> 8);
         uint8_t p_idx  = (uint8_t)(param_id & 0xFF);
-        bool is_synth_param = (fx_idx >= 0x10 && fx_idx <= 0x12);
+        bool is_synth_param = (fx_idx >= 0x10 && fx_idx <= 0x15);  // 0x10-0x15 = engines 0-5
         bool is_special = (fx_idx == 0) && (p_idx >= 0xE0);  // solo byte-alto=0 con p_idx especial
         if (!is_special && !is_synth_param && fx_idx < 9 && p_idx < 4) {
             s_param_cache[fx_idx][p_idx] = value;
@@ -378,19 +572,24 @@ static void on_param_changed(const GF_Frame* f, void* ctx) {
          * encoding: (0x10 + engine_id) << 8 | (group << 4) | param_idx
          * Extraer cutoff y resonance del grupo FILTER (group=2). */
         if (is_synth_param) {
-            uint8_t eng  = (fx_idx - 0x10) & 0x03;   // engine 0-2
+            uint8_t eng  = (uint8_t)(fx_idx - 0x10);  // engine 0-5 (OB6=3, DX7=4, ARP=5)
             uint8_t grp  = (p_idx >> 4) & 0x0F;
             uint8_t pidx = p_idx & 0x0F;
             if (grp == 2 && pidx == 0) s_synth_cutoff    = value;
             if (grp == 2 && pidx == 1) s_synth_resonance = value;
             // Popula caché completa para que las vistas inicialicen correctamente
-            if (eng < 3 && grp < 4 && pidx < 4) {
+            if (eng < 6 && grp < 4 && pidx < 6) {
                 s_synth_cache[eng][grp][pidx] = value;
             }
             s_param_value        = value;
             s_last_real_param_id = param_id;
             s_last_real_param_ms = lv_tick_get();
         }
+    }
+
+    /* Bypass FX (0xE8) — solo almacenar; view_07 lo lee en el timer. */
+    if (param_id == 0x00E8) {
+        s_fx_bypass = (value > 0.5f);
     }
 
     /* Bandas de spectrum analyzer (0xE0-0xE7) — solo almacenar.
@@ -437,6 +636,156 @@ static void on_cloud_status(const GF_Frame* f, void* ctx) {
     slave->send_ack(f->seq);
 }
 
+/* ── Handlers ML inference (Sprint 32) ───────────────────────────────────── */
+
+/**
+ * KEY_DETECTED: payload[0]=key_idx (0-23), payload[1]=confidence (0-100).
+ * key_idx 0-11 = C–B mayor; 12-23 = C–B menor.
+ * Almacena el nombre formateado en s_ai_key_name para que view_10 lo lea.
+ */
+static void on_key_detected(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len >= 1) {
+        static const char* const NOTES[12] = {
+            "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"
+        };
+        uint8_t idx = f->payload[0];
+        /* Guardar raw index ANTES del snprintf — view_10 lo usa para diatonic mask */
+        s_ai_key_idx  = (idx < 24) ? idx : 0xFF;
+        bool is_minor = (idx >= 12);
+        uint8_t note  = is_minor ? (idx - 12) : idx;
+        if (note < 12) {
+            snprintf(s_ai_key_name, sizeof(s_ai_key_name),
+                     "%s %s", NOTES[note], is_minor ? "MIN" : "MAJ");
+        }
+        Serial.printf("[bridge] KEY_DETECTED — %s (conf=%u)\n",
+                      s_ai_key_name, (unsigned)(f->len >= 2 ? f->payload[1] : 0));
+        Serial.flush();
+    }
+    slave->send_ack(f->seq);
+}
+
+/**
+ * CHORD_DETECTED: payload[0]=root (0-11), payload[1]=chord_type, payload[2]=confidence.
+ * chord_type del ChordRecognizer: 0=maj, 1=min, 2=7, 3=m7, 4=maj7, 5=N (no chord).
+ */
+static void on_chord_detected(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len >= 2) {
+        static const char* const NOTES[12] = {
+            "C","C#","D","D#","E","F","F#","G","G#","A","A#","B"
+        };
+        /* chord_type del ChordRecognizer: 0=maj,1=min,2=7,3=m7,4=maj7,5=N */
+        static const char* const QUAL[5] = { "", "m", "7", "m7", "M7" };
+        uint8_t root = f->payload[0];
+        uint8_t qual = f->payload[1];
+        /* Guardar raw valores ANTES del snprintf — view_10 los usa para triad viz */
+        s_ai_chord_root    = (root < 12) ? root : 0xFF;
+        s_ai_chord_quality = (qual <= 5) ? qual : 0xFF;
+        if (qual == 5 || root >= 12) {
+            /* N (no chord) o root inválido — mostrar "---" */
+            snprintf(s_ai_chord_name, sizeof(s_ai_chord_name), "---");
+        } else if (qual < 5) {
+            snprintf(s_ai_chord_name, sizeof(s_ai_chord_name),
+                     "%s%s", NOTES[root], QUAL[qual]);
+        }
+        Serial.printf("[bridge] CHORD_DETECTED — %s (conf=%u)\n",
+                      s_ai_chord_name, (unsigned)(f->len >= 3 ? f->payload[2] : 0));
+        Serial.flush();
+    }
+    slave->send_ack(f->seq);
+}
+
+/**
+ * BEAT_DETECTED: payload[0:1] = BPM×10 uint16 little-endian.
+ * Ej.: 1200 = 120.0 BPM, 935 = 93.5 BPM. 0 = desconocido.
+ * Se almacena el BPM entero (÷10) para display "120 BPM".
+ */
+static void on_beat_detected(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len >= 2) {
+        uint16_t bpm_x10;
+        memcpy(&bpm_x10, f->payload, 2);
+        s_ai_bpm = (uint16_t)(bpm_x10 / 10);
+        Serial.printf("[bridge] BEAT_DETECTED — %u BPM\n", (unsigned)s_ai_bpm);
+        Serial.flush();
+    }
+    slave->send_ack(f->seq);
+}
+
+/* ── Handler GROOVE_STATE (Sprint 33 — 0x83) ─────────────────────────────── */
+
+/**
+ * GROOVE_STATE: payload fijo de 16 bytes @ 4Hz desde Teensy mientras g_in_ai_mode.
+ *   [0..11]  pitch_activity[12] — EMA tau=2s de NOTE_ON velocity, mapeado 0-255
+ *   [12]     snap_event         — rising-edge: 1 por un solo frame tras un snap
+ *   [13]     snap_from          — MIDI note original (0-127)
+ *   [14]     snap_to            — MIDI note cuantizada (0-127)
+ *   [15]     beat_phase_256     — fase dentro del bar (0=downbeat, 255=casi siguiente)
+ */
+static void on_groove_state(const GF_Frame* f, void* ctx) {
+    BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
+    if (f->len != 16) {
+        slave->send_nack(f->seq, GF_NACK_INVALID_LEN);
+        return;
+    }
+
+    memcpy(s_pitch_activity, f->payload, 12);
+
+    if (f->payload[12] != 0) {
+        /* snap_event rising-edge: registrar nota corregida */
+        s_last_snap_from = f->payload[13];
+        s_last_snap_to   = f->payload[14];
+        s_last_snap_ms   = millis();
+        s_snapped_count++;
+    }
+
+    s_beat_phase = f->payload[15];
+
+    /* Logging throttled 1Hz — solo 7 pitch classes de la escala mayor de C
+     * para no inundar el monitor (indices 0,2,4,5,7,9,11). */
+    uint32_t now = millis();
+    if (now - s_last_groove_state_log_ms > 1000) {
+        s_last_groove_state_log_ms = now;
+        Serial.printf("[bridge] GROOVE_STATE — activity[C,D,E,F,G,A,B]=[%u,%u,%u,%u,%u,%u,%u]"
+                      "  snap=%u/%u  phase=%u\n",
+                      s_pitch_activity[0],  s_pitch_activity[2],  s_pitch_activity[4],
+                      s_pitch_activity[5],  s_pitch_activity[7],  s_pitch_activity[9],
+                      s_pitch_activity[11],
+                      (unsigned)s_snapped_count, (unsigned)s_total_count,
+                      (unsigned)s_beat_phase);
+        Serial.flush();
+    }
+
+    slave->send_ack(f->seq);
+}
+
+/* ── Getters de GROOVE_STATE ─────────────────────────────────────────────── */
+
+uint8_t bridge_get_pitch_activity(uint8_t pc) {
+    return (pc < 12) ? s_pitch_activity[pc] : 0;
+}
+
+void bridge_get_last_snap(uint8_t* from, uint8_t* to, uint32_t* age_ms) {
+    if (s_last_snap_ms == 0) {
+        *from   = 0;
+        *to     = 0;
+        *age_ms = 0xFFFFFFFF;
+        return;
+    }
+    *from       = s_last_snap_from;
+    *to         = s_last_snap_to;
+    uint32_t age = millis() - s_last_snap_ms;
+    *age_ms     = (age > 5000) ? 0xFFFFFFFF : age;   // expira a los 5s
+}
+
+void bridge_get_snap_stats(uint16_t* snapped, uint16_t* total) {
+    *snapped = s_snapped_count;
+    *total   = s_total_count;
+}
+
+uint8_t bridge_get_beat_phase(void) { return s_beat_phase; }
+
 /* Handler genérico para CMDs sin handler específico: ACK sin acción */
 static void on_generic(const GF_Frame* f, void* ctx) {
     BridgeSlave* slave = static_cast<BridgeSlave*>(ctx);
@@ -469,8 +818,8 @@ void bridge_handlers_init(BridgeSlave& slave) {
     slave.on_command(GF_CMD_FX_CHAIN_SAVE,    on_generic, &slave);
 
     /* MIDI/Audio */
-    slave.on_command(GF_CMD_NOTE_ON,    on_generic, &slave);
-    slave.on_command(GF_CMD_NOTE_OFF,   on_generic, &slave);
+    slave.on_command(GF_CMD_NOTE_ON,    on_note_on,  &slave);
+    slave.on_command(GF_CMD_NOTE_OFF,   on_note_off, &slave);
     slave.on_command(GF_CMD_CC,         on_generic, &slave);
     slave.on_command(GF_CMD_PITCH_BEND, on_generic, &slave);
     slave.on_command(GF_CMD_TEMPO,      on_generic, &slave);
@@ -502,10 +851,11 @@ void bridge_handlers_init(BridgeSlave& slave) {
     slave.on_command(GF_CMD_SLAVE_DETECTED, on_generic, &slave);
     slave.on_command(GF_CMD_SLAVE_REMOVED,  on_generic, &slave);
     slave.on_command(GF_CMD_SLAVE_DATA,     on_generic, &slave);
-    slave.on_command(GF_CMD_KEY_DETECTED,   on_generic, &slave);
-    slave.on_command(GF_CMD_CHORD_DETECTED, on_generic, &slave);
-    slave.on_command(GF_CMD_BEAT_DETECTED,  on_generic, &slave);
-    slave.on_command(GF_CMD_GENRE_DETECTED, on_generic, &slave);
+    slave.on_command(GF_CMD_KEY_DETECTED,   on_key_detected,   &slave);
+    slave.on_command(GF_CMD_CHORD_DETECTED, on_chord_detected, &slave);
+    slave.on_command(GF_CMD_BEAT_DETECTED,  on_beat_detected,  &slave);
+    slave.on_command(GF_CMD_GROOVE_STATE,   on_groove_state,   &slave);
+    slave.on_command(GF_CMD_GENRE_DETECTED, on_generic,        &slave);
     slave.on_command(GF_CMD_BEGIN_TRANSFER, on_generic, &slave);
     slave.on_command(GF_CMD_CHUNK,          on_generic, &slave);
     slave.on_command(GF_CMD_END_TRANSFER,   on_generic, &slave);
