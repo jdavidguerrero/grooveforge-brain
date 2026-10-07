@@ -49,8 +49,9 @@ Icon?
 .Trashes
 
 # VS Code
-.vscode/settings.json
-.vscode/launch.json
+**/.vscode/settings.json
+**/.vscode/launch.json
+**/.vscode/c_cpp_properties.json
 # (keep .vscode/extensions.json — útil para sugerir extensiones al team)
 
 # Logs
