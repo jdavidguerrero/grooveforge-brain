@@ -38,10 +38,17 @@ Este spec precede cualquier archivo CAD. Todo lo que no esté especificado aquí
 ### Device dimensions
 
 ```
-PETG body central:  180mm × 100mm × 42mm frontal / 30mm trasero
-Guadua cheeks:      +12mm cada lado (izq y der)
-Total instrumento:  204mm × 100mm × 42mm frontal / 30mm trasero
+PETG body central:  180mm × 100mm × 38mm           (v0.6 caja rectangular)
+Guadua cheeks:      12mm grosor, 6mm en rebaje PETG + 6mm protruye exterior
+Total instrumento:  192mm × 100mm × 38mm           (v0.5 — Option B encastre)
 ```
+
+> **v0.5 — Resolucion de contradiccion cheek/total:** El cheek de 12mm encaja 6mm
+> en el rebaje del PETG (CHEEK_REBAJE_D=6mm) y los otros 6mm sobresalen al exterior.
+> Total real = 180 + 2*6 = 192mm. El valor "204mm" en v0.3/v0.4 asumia el cheek
+> 100% exterior, lo cual ignoraba el rebaje del §10 ensamblaje. v0.5 resuelve la
+> contradiccion preservando rebaje (junta protegida de humedad Bogota) + identidad
+> visual de guadua sobresaliendo 6mm.
 
 El perfil más flat (42mm vs 52mm de v0.2) es posible porque sin LiPo el componente más alto es el Teensy 4.1 + conector (aprox 8mm sobre PCB) más el standoff (5mm) más la PCB (1.6mm) = ~15mm. Con paredes PETG de 3mm, la altura mínima es ~21mm. El target de 42mm frontal da 21mm de margen — suficiente para el routing interno y la inclinación ergonómica.
 
@@ -51,7 +58,7 @@ El perfil más flat (42mm vs 52mm de v0.2) es posible porque sin LiPo el compone
 |---|---|---|---|---|
 | OP-1 original | 230mm | 101mm | 28mm | 1kg |
 | OP-1 Field | 228mm | 104mm | 37mm | 1.1kg |
-| **GrooveForge Brain v0.3** | **204mm** | **100mm** | **42mm** | **~400g est.** |
+| **GrooveForge Brain v0.5** | **192mm** | **100mm** | **38mm** | **~400g est.** |
 | OP-Z | 228mm | 57mm | 10mm | 280g |
 
 El Brain v0.3 tiene el mismo orden de magnitud del OP-1: portátil, sobre escritorio, cabe en mochila.
@@ -61,7 +68,7 @@ El Brain v0.3 tiene el mismo orden de magnitud del OP-1: portátil, sobre escrit
 ```
 VISTA FRONTAL
 
-│← 12mm →│←————— 180mm (PETG body) ——————→│← 12mm →│
+│← 6mm →│←———————— 180mm (PETG body) —————————→│← 6mm →│
          ┌──────────────────────────────────┐
          │   TOP PANEL ALUMINIO 2mm         │
 ┌────────┤  [B1][B2][B3][B4]               ├────────┐
@@ -70,10 +77,10 @@ VISTA FRONTAL
 │ LEFT   │       [VOL]                     │ RIGHT  │
 │ INPUTS │  PETG body (anthracite)         │OUTPUTS │
 └────────┴──────────────────────────────────┴────────┘
-│← —————————————— 204mm total ——————————————————————→│
+│← —————————————— 192mm total ——————————————————————→│
 
-Altura frontal: 42mm
-Altura trasera: 30mm  (tilt ~7° — más suave que v0.2)
+Altura: 38mm uniforme (v0.6 caja rectangular para stack modular)
+Nota: cada cheek 12mm grueso; 6mm encastrado en rebaje PETG + 6mm visible exterior.
 ```
 
 ### Relación PCB → enclosure

@@ -1,3 +1,5 @@
+# DEPRECATED — usar build-all-zup.py (script canónico Z-UP, todos los fixes incorporados)
+# Este archivo es Y-UP.
 # =============================================================================
 # GrooveForge Brain — 05_Display_Bracket (Soporte ESP32-S3 GC9A01 bajo panel)
 # Script Fusion 360 (Python API) — v0.2

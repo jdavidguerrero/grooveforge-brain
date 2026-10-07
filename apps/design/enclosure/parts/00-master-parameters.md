@@ -42,7 +42,7 @@ BODY_H_F, BODY_H_R y TILT_ANGLE eliminados en v0.6 — ver §1.
 | `BODY_W` | 180.0 | mm | Ancho del PETG body central | 01, 02 | §1 master spec |
 | `BODY_D` | 100.0 | mm | Profundidad del PETG body (frente a trasero) | 01, 02, 03, 04 | §1 master spec |
 | `BODY_H` | 38.0 | mm | Altura del PETG body (caja rectangular — mismo valor frente y trasero) | 01, 02, 03, 04 | v0.6 stack modular |
-| `TOTAL_W` | 204.0 | mm | Ancho total instrumento con cheeks | 99 | §1 master spec |
+| `TOTAL_W` | 192.0 | mm | Ancho total instrumento con cheeks (v0.7: cheek 12mm con 6mm en rebaje + 6mm afuera = 180 + 2*6 protrudido) | 99 | §1 master spec v0.5 |
 
 > **ELIMINADOS en v0.6:** `BODY_H_F` (42mm), `BODY_H_R` (30mm), `TILT_ANGLE` (7deg).
 > Usar `BODY_H = 38mm` en todas las piezas. Calculo: base 3mm + standoff PCB 5mm +
@@ -262,7 +262,7 @@ def run(context):
         ("BODY_W",          "180 mm",   "Ancho PETG body central"),
         ("BODY_D",          "100 mm",   "Profundidad PETG body (frente a trasero)"),
         ("BODY_H",          "38 mm",    "Altura PETG body — rectangular v0.6 (BODY_H_F/H_R eliminados)"),
-        ("TOTAL_W",         "204 mm",   "Ancho total con cheeks"),
+        ("TOTAL_W",         "192 mm",   "Ancho total con cheeks (v0.7: 6mm en rebaje + 6mm fuera por lado)"),
         # --- Espesores ---
         ("WALL_T",          "3 mm",     "Espesor pared PETG"),
         ("PANEL_T",         "2 mm",     "Espesor top panel aluminio"),
