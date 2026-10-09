@@ -27,8 +27,7 @@
 #define SDL_INCLUDE_PATH     <SDL.h>
 #define SDL_DUAL_DISPLAY     0
 
-/* ── Framebuffer (Raspberry Pi) ────────────────────────────────────────────── */
-#define FBDEV_PATH           "/dev/fb0"
+/* El framebuffer no usa lv_drivers: lo maneja src/hal/fb.cpp. */
 
 /* ── Touch evdev (Raspberry Pi) ────────────────────────────────────────────────
  * El path real se pasa por línea de comandos (--touch); este es solo el default.

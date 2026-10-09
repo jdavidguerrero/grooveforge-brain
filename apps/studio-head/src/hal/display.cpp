@@ -7,7 +7,7 @@
 #if defined(STUDIO_DISPLAY_SDL)
 #include "sdl/sdl.h"
 #elif defined(STUDIO_DISPLAY_FBDEV)
-#include "display/fbdev.h"
+#include "hal/fb.h"
 #include "indev/evdev.h"
 #endif
 
@@ -42,8 +42,8 @@ bool hal_init(const char* touch_dev) {
     disp_drv.flush_cb = sdl_display_flush;
     indev_drv.read_cb = sdl_mouse_read;
 #elif defined(STUDIO_DISPLAY_FBDEV)
-    fbdev_init();
-    disp_drv.flush_cb = fbdev_flush;
+    if (!fb_open("/dev/fb0")) return false;
+    disp_drv.flush_cb = fb_flush;
     if (!touch_dev) {
         evdev_init();  // usa EVDEV_NAME de lv_drv_conf.h
     } else if (!evdev_set_file(const_cast<char*>(touch_dev))) {
