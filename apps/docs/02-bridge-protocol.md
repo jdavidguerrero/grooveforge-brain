@@ -82,7 +82,7 @@ Mismo protocolo binario sobre dos transports (UART y USB-CDC) para mantener la c
 
 | CMD | Name | Payload | Description |
 |---|---|---|---|
-| 0x10 | SET_ENGINE | [engine_id: 1B] | Switch active engine (0=Moog, 1=Juno, etc) |
+| 0x10 | SET_ENGINE | [engine_id: 1B] | Switch active engine (ver tabla `engine_id`) |
 | 0x11 | GET_ENGINE | empty | Request current engine |
 | 0x12 | ENGINE_CHANGED | [engine_id: 1B, name: string] | Notify engine changed |
 | 0x13 | SET_PARAM | [param_id: 2B, value: 4B float] | Set engine parameter |
@@ -90,6 +90,18 @@ Mismo protocolo binario sobre dos transports (UART y USB-CDC) para mantener la c
 | 0x15 | LOAD_PRESET | [preset_id: 2B] | Load preset by ID |
 | 0x16 | SAVE_PRESET | [preset_id: 2B, name: string] | Save current state as preset |
 | 0x17 | PRESET_LOADED | [preset_id: 2B, name: string] | Notify preset loaded |
+
+**`engine_id`** (actualizado 2026-10-07): el payload lleva el índice del engine, 0x00–0x05. El firmware
+actual envía `0x10 + índice` y se corrige en la tarea R-B3.
+
+| engine_id | Engine |
+|---|---|
+| 0x00 | Moog Model D |
+| 0x01 | Juno-106 |
+| 0x02 | Prophet-5 |
+| 0x03 | OB-6 |
+| 0x04 | DX7 |
+| 0x05 | ARP 2600 |
 
 ### 2.3 FX commands (0x20 - 0x2F)
 

@@ -5,6 +5,11 @@
 > **Parent:** GFD v3.0 — Master Strategy & Spec (SSoT)
 > **Status:** v0.3 final — May 15, 2026
 > **Author:** Juan Guerrero (GPROG)
+>
+> **Actualizaciones 2026-10-07** (ver `apps/docs/adr/`): **ADR-003** — el filtro 2N3904 pasa a add-on
+> externo; el Brain v1 usa el filtro digital `MoogLadder4P` y expone una salida de CV (§2.1, §3.3, §3.5).
+> **ADR-004** — panel de Studio con 5 encoders, 6 botones y pot IN; volumen al pin 22 (§3.3, §3.4).
+> **ADR-002** — variante Studio (no comercial) con cabeza Raspberry Pi + pantalla DSI de 5".
 
 ---
 
@@ -141,6 +146,11 @@ Cada nivel es opcional. El producto base ya es completo — las capas son expans
 
 ### 2.1 Audio Signal Path — Modo Synth vs Modo FX Processor
 
+> **ADR-003 (Accepted):** en el Brain v1 el filtro analógico **no está integrado**. El camino es
+> `Teensy engine ─I2S─▶ SGTL5000 DAC ─▶ LINE_OUT ─▶ salida` y, opcionalmente, `salida ─▶ add-on ladder
+> externo`. El `LINE_IN` del SGTL5000 queda libre para el modo FX Processor. El texto que sigue describe
+> el loop integrado original y queda como referencia para el add-on.
+
 El GrooveForge Brain opera en **dos modos exclusivos**, alternados con doble-push
 del encoder NAV (ver §3.4). Cada modo tiene un camino de señal distinto. El filtro
 analógico 2N3904 vive en un **loop externo al SGTL5000**: el DAC alimenta la entrada
@@ -196,6 +206,9 @@ ruteo interno por I2C selecciona la fuente según el modo. No requiere switch ex
 ## 3. Hardware Specification
 
 ### 3.1 Bill of Materials (qty 100)
+
+> **ADR-003:** las filas del filtro (2N3904, capacitores de poliestireno, filter PCB y calibración) pasan
+> al add-on externo. El costo y el margen del producto comercial quedan en revisión (`00`).
 
 | Componente | Costo | Notas técnicas |
 |---|---|---|
@@ -306,13 +319,20 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | 16 | GPIO | ENC NAV: A |
 | 17 | GPIO | ENC NAV: B |
 | 26 | GPIO | ENC NAV: SW (push — confirm / AI·Action / double-push = mode switch) |
-| 25 | GPIO | Filter bypass control (CD4066 enable — ENC L push via firmware) |
+| 25 (A11) | ADC | Lectura del switch de pad de entrada (Studio, ADR-004). Antes: bypass CD4066, eliminado por ADR-003 |
 | 27 | GPIO | 74HC4053 mode select — ruteo audio Synth/FX (LOW=Synth, HIGH=FX) |
-| 28 | WS2812B DIN | 16 LEDs cadena única: 12 ring ENC NAV + 4 keycap underglow |
-| A0 (14) | ADC | Volume pot read |
+| 28 | WS2812B DIN | 16 LEDs cadena única: 12 ring ENC NAV + 4 keycap underglow (Studio: +2 keycaps = 18, ADR-004) |
+| 22 (A8) | ADC | Volume pot read (ADR-004: sale del pin 14, que es ENC R-B — resuelve X3) |
 | 36 | GPIO | Pogo INT in (slave interrupt) |
 | 37/38 | I2C2 SDA/SCL | Pogo bus master (slaves) |
 | 39 | GPIO | USB host mode select |
+| 24 (A10) | ADC | Pot IN — ganancia de entrada (Studio, ADR-004) |
+| 29 | PWM | CV out de cutoff para el add-on (ADR-003) |
+| 33 | PWM | CV out 2, opcional (ADR-003) |
+| 30 / 31 / 32 | GPIO | P1: A / B / SW (Studio, ADR-004) |
+| 34 / 35 / 9 | GPIO | P2: A / B / SW (Studio, ADR-004) |
+| 40 | GPIO | B5 MODE (Studio, ADR-004) |
+| 41 | GPIO | B6 HOLD/SHIFT (Studio, ADR-004) |
 
 > **Nota I2S (Teensy 4.x):** los pines de datos I2S son 7 (`SAI1 OUT1A`, TX → DAC)
 > y 8 (`SAI1 IN1`, RX ← ADC) — los del Audio Shield Rev D2. La Rev C / Teensy 3.x
@@ -333,6 +353,10 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 | (Internal) | WiFi + BT | 802.11 b/g/n + BT 5.0 LE |
 
 ### 3.4 UI Controls Spec — Panel v5 Final
+
+> **ADR-004 (Studio):** la variante Studio suma P1 y P2 (encoders), B5 MODE, B6 HOLD/SHIFT y un pot IN,
+> cableados al Teensy; el comercial deja esos pines sin poblar. En Studio el cambio de modo es con B5 MODE
+> (sin doble push de NAV, push inmediato); el comercial conserva el doble push.
 
 > **SSoT:** Notion "Hardware UI Spec — CERRADO (Panel v5 Final)" · Mayo 17, 2026
 
@@ -403,6 +427,8 @@ B1=INSERT · B2=SEND · B3=MASTER · B4=FX slot favorito
 | Sub Genesis | Mix | Sub level |
 
 ### 3.5 Discrete 2N3904 Ladder Filter Design
+
+> **ADR-003:** este bloque pasa al **add-on externo**. El Brain v1 solo lleva la salida de CV (§3.3).
 
 **Topology:** 4-pole low-pass transistor ladder (Moog Minimoog 1970 reference)
 

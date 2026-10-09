@@ -10,6 +10,12 @@
 > - 🎚️ Filter Design Spec v0.1 — Discrete 2N3904 Ladder
 > - 🔌 Bridge Protocol v0.1 — Communication Spec
 > - 📖 Implementation Roadmap v0.1 — Phase & Sprint Spec
+>
+> **⚠️ Actualización 2026-10-07 — ADR-003 (Accepted):** el filtro 2N3904 deja de estar integrado en el
+> Brain v1 y pasa a ser un add-on externo; el Brain v1 sale con el filtro digital `MoogLadder4P` y una
+> salida de CV. Las afirmaciones de este documento sobre "filtro analógico discreto" integrado (pitch,
+> diferenciadores, tabla competitiva, pricing) **están en revisión para el producto comercial**: ADR-003
+> no las resuelve. La variante Studio (ADR-002) es de uso personal y no se comercializa.
 
 ---
 

@@ -60,6 +60,8 @@
 | ¿Modelos TinyML? ¿Training? ¿Memory budget ML? | `apps/docs/04-ai-architecture.md` |
 | ¿Qué efectos hay? ¿CPU FX? ¿Stack técnico FX? | `apps/docs/05-fx-architecture.md` |
 | ¿Qué sprint sigue? ¿Hitos de fase? | `apps/docs/06-implementation-roadmap.md` |
+| ¿Decisiones posteriores a los specs? | `apps/docs/adr/` (ADR-002 Studio, ADR-003 filtro add-on, ADR-004 panel Studio) |
+| ¿Variante Studio (cabeza Pi + pantalla 5")? | `apps/docs/variants/studio/` |
 
 ### Jerarquía de autoridad en conflictos
 
@@ -74,13 +76,15 @@
 
 Resumen rápido. Verificar números exactos en los specs citados.
 
-### Audio path (inmutable)
+### Audio path
 
 ```
-Teensy 4.1 → I2S nativo → SGTL5000 → 2N3904 ladder → SGTL5000 ADC → USB Audio
+Teensy 4.1 → I2S nativo → SGTL5000 DAC → LINE_OUT → salida   (+ add-on ladder externo, opcional)
 ```
 
-No proponer arquitectura alternativa sin revisar `01-architecture.md` §2.
+Desde ADR-003 (2026-10-07) el filtro 2N3904 es un add-on externo controlado por CV y el Brain v1 usa el
+filtro digital `MoogLadder4P`. No proponer otra arquitectura sin revisar `01-architecture.md` §2 y los
+ADRs en `apps/docs/adr/`.
 
 ### Latencia
 
@@ -108,13 +112,13 @@ No proponer arquitectura alternativa sin revisar `01-architecture.md` §2.
 | TFLite models en flash | ~500KB flash | `04-ai-architecture.md` §1.2 |
 | Inference latency | **<20ms p99** | `04-ai-architecture.md` §8 |
 
-### Filter discreto 2N3904
+### Filter discreto 2N3904 (add-on externo — ADR-003)
 
 - Cutoff: 20Hz–20kHz, 24dB/oct — `03-filter-design.md` §2.1
 - Resonancia: 0 a auto-oscilación (threshold 80% pot) — `03-filter-design.md` §2.1
 - V/oct tracking target: **±10 cents** / 5 octavas — `03-filter-design.md` §2.1
-- GPIO Teensy: bypass CD4066 → **pin 25** (GUI vía Bridge Protocol) — `01-architecture.md` §3.3
-- Pin 27 libre — TPDT eliminado del diseño
+- Control desde el Brain: CV de cutoff en el **pin 29** (PWM), opcional pin 33 — `01-architecture.md` §3.3
+- Pin 25 ya no es bypass CD4066: lee el switch de pad (Studio, ADR-004). Pin 27 = 74HC4053 (ruteo Synth/FX), a revisar con D5
 
 ### Bridge Protocol frame
 

@@ -5,6 +5,12 @@
 > **Sibling:** OpenSpec v0.3
 > **Status:** v0.1 — Mayo 15, 2026
 > **Reference design:** Moog Minimoog 1970 (Bob Moog's original transistor ladder)
+>
+> **Actualización 2026-10-07 — [ADR-003](adr/ADR-003-filtro-analogico-add-on.md) (Accepted):** el ladder 2N3904
+> deja de estar integrado en el Brain v1 y pasa a ser un **add-on externo** con alimentación propia,
+> controlado por la salida de CV del Brain. Este documento queda como **referencia de diseño del
+> add-on**. El rol por engine (§6.3) quedó resuelto con la decisión D1; el bypass por CD4066 (GPIO 25)
+> ya no aplica al Brain.
 
 ---
 
@@ -295,11 +301,19 @@ resonance reset a 0. No hay pot físico de resonancia — el único pot en el pa
 volumen (`01-architecture.md §3.4`). La señal de control sale por PWM/DAC del Teensy al
 circuito de feedback del filtro analógico (pendiente de definir en sprint de filter CV).
 
-### 6.3 Interacción filtro analógico ↔ filtro digital en Moog Model D
+### 6.3 Interacción filtro analógico ↔ filtro digital (rol por engine — D1)
 
-El filtro analógico 2N3904 aplica **únicamente al Moog Model D** (§6.1). El Moog Model D
-tiene también un filtro ladder digital interno (parte del engine en Teensy Audio Library).
-Cuando el filtro analógico está activo, el digital se bypasea:
+**Decisión D1 (2026-10-07, resuelve la contradicción X1):** el filtro analógico aplica a **todos los
+engines**, con un rol distinto según el engine. Con ADR-003 esta política rige cuando el **add-on**
+está conectado; sin add-on, el filtro digital (`MoogLadder4P`) queda siempre activo.
+
+| Engine | Filtro digital (`MoogLadder4P`, por voz) | Filtro analógico (add-on) |
+|---|---|---|
+| Model D (mono) | **apagado** | es el filtro; el envelope del Teensy lo mueve por CV |
+| DX7 | **apagado** (el original no tenía filtro) | casi abierto, solo color |
+| Juno-106, Prophet-5, OB-6, ARP 2600 | encendido, por voz | filtro maestro sobre la mezcla, abierto por defecto |
+
+Lo que esta política evita en Model D y DX7:
 
 **Problema — dos ladders en serie:**
 
@@ -313,22 +327,23 @@ prácticamente silencia todo por encima del cutoff. No es el sonido Moog.
 
 **Solución — bypass digital cuando analógico activo:**
 
-| Estado CD4066 (GPIO 25) | Filtro digital Moog | Filtro analógico 2N3904 |
+| Add-on (ADR-003) | Filtro digital (Model D / DX7) | Filtro analógico 2N3904 |
 |---|---|---|
-| LOW — analógico activo | **BYPASS** | Activo — el 2N3904 ES el filtro |
-| HIGH — bypass analógico | Activo | Bypaseado |
+| conectado y activo | **BYPASS** | Activo — el 2N3904 ES el filtro |
+| sin add-on o apagado | Activo | — |
 
-El 2N3904 sustituye, no complementa, al filtro digital del Moog Model D.
+En Model D y DX7 el 2N3904 sustituye al filtro digital. En los polifónicos lo complementa como filtro
+maestro: los dos cutoffs tienen que quedar separados para no sumar 48 dB/oct.
 
 **Implementación en firmware (engine_manager.cpp — sprint pendiente):**
 
 ```cpp
 // Llamar al cambiar engine y al cambiar estado del bypass analógico (GPIO 25)
 void sync_moog_digital_filter() {
-    // Solo aplica a MoogModelD — otros engines no tienen filtro analógico activo
-    if (current_engine != ENGINE_MOOG_MODEL_D) return;
+    // D1: solo Model D y DX7 apagan el digital; los polys lo mantienen por voz
+    if (current_engine != ENGINE_MOOG_MODEL_D && current_engine != ENGINE_DX7) return;
 
-    bool analog_active = (digitalRead(PIN_FILTER_BYPASS) == LOW); // GPIO 25 LOW = activo
+    bool analog_active = addon_ladder_enabled(); // ADR-003: el usuario indica que el add-on está activo
     moog_engine.setDigitalFilterEnabled(!analog_active);
     // analog ON  → digital OFF (el 2N3904 toma el rol del filtro)
     // analog OFF → digital ON  (bypass analógico = filtro digital como fallback)
