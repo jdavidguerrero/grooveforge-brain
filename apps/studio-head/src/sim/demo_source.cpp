@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <initializer_list>
 
 namespace {
 
@@ -15,12 +16,16 @@ float filter_db(float f, float fc, float res) {
     return lp + res * 14.0f * std::exp(-(l2 * l2) / 0.05f);
 }
 
-struct KeyDemo { uint8_t camelot; bool minor; const char* name; const char* chord; uint8_t conf; };
-constexpr KeyDemo KEYS[] = {
-    {8, true, "A MINOR", "Am7", 87},
-    {7, true, "D MINOR", "Dm9", 81},
-    {9, true, "E MINOR", "Em7", 84},
-    {8, false, "C MAJOR", "Cmaj7", 78},
+struct KeyDemo {
+    uint8_t camelot; bool minor; const char* name; const char* chord; uint8_t conf;
+    uint16_t chord_pcs;  ///< bit n = clase de nota n (0 = C) presente en el acorde
+};
+constexpr uint16_t pcs(std::initializer_list<int> l) { uint16_t m = 0; for (int n : l) m |= uint16_t(1u << n); return m; }
+const KeyDemo KEYS[] = {
+    {8, true, "A MINOR", "Am7", 87, pcs({9, 0, 4, 7})},
+    {7, true, "D MINOR", "Dm9", 81, pcs({2, 5, 9, 0, 4})},
+    {9, true, "E MINOR", "Em7", 84, pcs({4, 7, 11, 2})},
+    {8, false, "C MAJOR", "Cmaj7", 78, pcs({0, 4, 7, 11})},
 };
 
 }  // namespace
@@ -57,6 +62,12 @@ void demo_tick(StudioState& s, uint32_t now_ms) {
     std::snprintf(s.key_name, sizeof(s.key_name), "%s", k.name);
     std::snprintf(s.chord, sizeof(s.chord), "%s", k.chord);
     s.key_conf = k.conf;
+
+    // Cromagrama: las notas del acorde dominan; el resto queda bajo (studio-data.js: chroma).
+    for (int n = 0; n < 12; ++n) {
+        const float base = (k.chord_pcs >> n) & 1u ? 0.85f : 0.12f;
+        s.chroma[n] = std::clamp(base * (0.8f + 0.3f * std::sin(t * 2.1f + n * 1.7f)), 0.05f, 1.0f);
+    }
 
     // P1/P2 respiran despacio para ver las barras de la fila 2.
     s.p1 = 0.48f + 0.10f * std::sin(t * 0.7f);

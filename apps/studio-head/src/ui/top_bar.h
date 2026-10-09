@@ -12,11 +12,13 @@ public:
     /// @param page_index posición en NAV (PERFORM 0, AI 1, SPECTRUM 2); -1 sin puntos.
     void create(lv_obj_t* parent, const char* page, int page_index);
     void update(const StudioState& s);
+    void set_page(const char* page);
 
 private:
     lv_obj_t* _bar = nullptr;
     lv_obj_t* _mode = nullptr;
     lv_obj_t* _mode_txt = nullptr;
+    lv_obj_t* _title = nullptr;
     lv_obj_t* _dots[3] = {};
     lv_obj_t* _bypass = nullptr;
     lv_obj_t* _key_sq = nullptr;

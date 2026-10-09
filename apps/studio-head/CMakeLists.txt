@@ -3,6 +3,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(studio_head C CXX)
 
+# FetchContent_Populate con detalles declarados (CMake ≥ 3.30) y el install() de LVGL (CMake ≥ 3.31).
+if(POLICY CMP0169)
+  cmake_policy(SET CMP0169 OLD)
+endif()
+if(POLICY CMP0177)
+  cmake_policy(SET CMP0177 NEW)
+endif()
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -75,10 +83,15 @@ add_executable(studio-head
   src/ui/bottom_bar.cpp
   src/ui/screen_boot.cpp
   src/ui/screen_perform.cpp
+  src/ui/screen_ai.cpp
+  src/ui/screen_spectrum.cpp
+  src/ui/screen_env.cpp
+  src/ui/input.cpp
+  src/ui/app.cpp
   ${FONT_SOURCES})
 target_include_directories(studio-head PRIVATE src include)
 if(STUDIO_DISPLAY STREQUAL "FBDEV")
   target_sources(studio-head PRIVATE src/hal/fb.cpp)
 endif()
-target_link_libraries(studio-head PRIVATE lvgl studio_drivers)
+target_link_libraries(studio-head PRIVATE studio_drivers)  # lvgl llega a través de studio_drivers
 target_compile_options(studio-head PRIVATE -Wall -Wextra)

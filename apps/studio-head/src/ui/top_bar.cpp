@@ -2,7 +2,9 @@
 
 #include <cmath>
 #include <cstdio>
+#include <cstring>
 
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -37,8 +39,8 @@ void TopBar::create(lv_obj_t* parent, const char* page, int page_index) {
     lv_obj_set_style_text_letter_space(_mode_txt, 2, 0);
     lv_obj_center(_mode_txt);
 
-    lv_obj_t* title = label(_bar, T16, WHITE, page);
-    lv_obj_set_style_text_letter_space(title, 1, 0);
+    _title = label(_bar, T16, WHITE, page);
+    lv_obj_set_style_text_letter_space(_title, 1, 0);
 
     lv_obj_t* dots = flex_row(_bar, 4);
     for (auto& d : _dots) {
@@ -65,6 +67,12 @@ void TopBar::create(lv_obj_t* parent, const char* page, int page_index) {
     _link = label(link, T12, MON, "ENGINE OK");
 
     _vol = label(_bar, T12, MON, "VOL -6.0");
+
+    input_attach_tap(_bar, Ctl::NavNext);  // atajo táctil: tocar la barra = girar NAV
+}
+
+void TopBar::set_page(const char* page) {
+    if (std::strcmp(lv_label_get_text(_title), page) != 0) lv_label_set_text(_title, page);
 }
 
 void TopBar::update(const StudioState& s) {

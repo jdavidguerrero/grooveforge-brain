@@ -8,7 +8,10 @@
  * Uso:
  *   studio-head                      # Mac (SDL) o Pi (FBDEV), modo demo
  *   studio-head --touch /dev/input/event4
- *   studio-head --snapshot perform.ppm [--snapshot-ms 3000]   # guarda la pantalla y sale
+ *   studio-head --snapshot perform.ppm [--snapshot-ms 3000] [--page ai] [--shift]
+ *
+ * Navegación en el demo: tocar la barra superior = NAV; B1–B4, MODE y B6 en la barra inferior.
+ * En el simulador: ← → NAV, 1–4 B1–B4, M MODE, S SHIFT.
  */
 #include <cstdio>
 #include <cstdlib>
@@ -21,14 +24,15 @@
 #include "state/studio_state.h"
 #include "studio_tick.h"
 #include "ui/screen_boot.h"
-#include "ui/screen_perform.h"
+#include "ui/app.h"
+#include "ui/input.h"
 
 namespace {
 
 constexpr uint32_t BOOT_MS = 1200;
 
 void usage() {
-    std::printf("studio-head [--touch <dispositivo evdev>] [--snapshot <archivo.ppm> [--snapshot-ms N]]\n");
+    std::printf("studio-head [--touch <evdev>] [--snapshot <archivo.ppm> [--snapshot-ms N] [--page perform|ai|spectrum|env] [--shift]]\n");
 }
 
 /// Guarda la pantalla activa como PPM (P6, RGB de 8 bits).
@@ -56,6 +60,8 @@ int main(int argc, char** argv) {
     const char* touch = nullptr;
     const char* snapshot = nullptr;
     uint32_t snapshot_ms = 3000;
+    Page start_page = Page::Perform;
+    bool start_shift = false;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--touch") == 0 && i + 1 < argc) {
             touch = argv[++i];
@@ -63,6 +69,12 @@ int main(int argc, char** argv) {
             snapshot = argv[++i];
         } else if (std::strcmp(argv[i], "--snapshot-ms") == 0 && i + 1 < argc) {
             snapshot_ms = uint32_t(std::atoi(argv[++i]));
+        } else if (std::strcmp(argv[i], "--page") == 0 && i + 1 < argc) {
+            const char* p = argv[++i];
+            start_page = !std::strcmp(p, "ai") ? Page::Ai : !std::strcmp(p, "spectrum") ? Page::Spectrum
+                       : !std::strcmp(p, "env") ? Page::Env : Page::Perform;
+        } else if (std::strcmp(argv[i], "--shift") == 0) {
+            start_shift = true;
         } else if (std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0) {
             usage();
             return 0;
@@ -75,10 +87,12 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    input_keyboard_init();
     lv_scr_load(screen_boot_create("DEMO MODE"));
 
     StudioState state;
-    ScreenPerform perform;
+    state.shift = start_shift;
+    App app;
     bool booted = false;
     const uint32_t t0 = studio_tick_ms();
 
@@ -88,11 +102,16 @@ int main(int argc, char** argv) {
 
         if (!booted && now - t0 >= BOOT_MS) {
             lv_obj_t* old = lv_scr_act();
-            lv_scr_load(perform.create());
+            app.create();
+            app.show(start_page);
             lv_obj_del(old);
             booted = true;
         }
-        if (booted) perform.update(state);
+        if (booted) {
+            Ctl c;
+            while (input_poll(c)) app.handle(c, state);
+            app.update(state);
+        }
 
         if (snapshot && now - t0 >= snapshot_ms) {
             lv_refr_now(nullptr);

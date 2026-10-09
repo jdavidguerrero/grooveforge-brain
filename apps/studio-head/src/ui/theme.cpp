@@ -1,5 +1,7 @@
 #include "ui/theme.h"
 
+#include "ui/screen.h"
+
 LV_FONT_DECLARE(gf_mono_12_r)
 LV_FONT_DECLARE(gf_mono_12_sb)
 LV_FONT_DECLARE(gf_mono_16_r)
@@ -75,3 +77,12 @@ void set_text_color(lv_obj_t* obj, uint32_t color) {
 }
 
 }  // namespace gf
+
+lv_obj_t* screen_root() {
+    lv_obj_t* scr = lv_obj_create(nullptr);
+    lv_obj_remove_style_all(scr);
+    lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(scr, lv_color_hex(gf::BG), 0);
+    lv_obj_clear_flag(scr, LV_OBJ_FLAG_SCROLLABLE);
+    return scr;
+}

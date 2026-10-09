@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "ui/dsp_math.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -23,13 +24,6 @@ constexpr EngineInfo ENGINES[6] = {
     {"OB-6", "POLY 6 · DUAL SAW"},  {"DX7", "FM · 4-OP"},           {"ARP 2600", "SEMI-MODULAR"},
 };
 
-float freq_frac(float f) { return std::clamp(std::log(f / 20.0f) / std::log(1000.0f), 0.0f, 1.0f); }
-
-float filter_db(float f, float fc, float res) {
-    const float r = f / fc;
-    const float l2 = std::log2(r);
-    return -10.0f * std::log10(1.0f + std::pow(r, 8.0f)) + res * 14.0f * std::exp(-(l2 * l2) / 0.05f);
-}
 
 lv_obj_t* chip_row(lv_obj_t* box) {
     lv_obj_set_style_pad_hor(box, 12, 0);
@@ -46,11 +40,7 @@ void format_cutoff(float hz, char* out, size_t n) {
 }  // namespace
 
 lv_obj_t* ScreenPerform::create() {
-    _scr = lv_obj_create(nullptr);
-    lv_obj_remove_style_all(_scr);
-    lv_obj_set_style_bg_opa(_scr, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_color(_scr, lv_color_hex(BG), 0);
-    lv_obj_clear_flag(_scr, LV_OBJ_FLAG_SCROLLABLE);
+    _scr = screen_root();
 
     _top.create(_scr, "PERFORM", 0);
 

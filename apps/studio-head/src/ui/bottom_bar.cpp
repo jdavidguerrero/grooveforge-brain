@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -61,6 +62,7 @@ void BottomBar::create(lv_obj_t* parent) {
         std::snprintf(b, sizeof(b), "B%d", i + 1);
         lv_obj_t* n = label(k.cell, T12, MON, b);
         lv_obj_align(n, LV_ALIGN_TOP_MID, 0, 38);
+        input_attach_tap(k.cell, static_cast<Ctl>(int(Ctl::B1) + i));
     }
     build_enc(_enc[1], cell(_bar, 696, 0, 104, ROW1_H, true), true);
 
@@ -73,6 +75,7 @@ void BottomBar::create(lv_obj_t* parent) {
     build_param(_p[0], cell(row2, 0, 0, 200, ROW2_H, false), 1);
 
     lv_obj_t* mode = cell(row2, 200, 0, 96, ROW2_H, true);
+    input_attach_tap(mode, Ctl::Mode);
     lv_obj_t* mg = group(mode, LV_FLEX_FLOW_ROW, 6);
     lv_obj_center(mg);
     lv_obj_t* ml = label(mg, T12B, GRAY, "MODE");
@@ -93,6 +96,7 @@ void BottomBar::create(lv_obj_t* parent) {
     lv_obj_set_style_text_letter_space(_nav_val, 1, 0);
 
     _b6_cell = cell(row2, 504, 0, 96, ROW2_H, true);
+    input_attach_tap(_b6_cell, Ctl::Shift);
     lv_obj_t* bg6 = group(_b6_cell, LV_FLEX_FLOW_ROW, 6);
     lv_obj_center(bg6);
     _b6_lbl = label(bg6, T12B, GRAY, "SHIFT");

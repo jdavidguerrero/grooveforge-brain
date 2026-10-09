@@ -1,8 +1,7 @@
 #pragma once
 
-#include "lvgl.h"
-#include "state/studio_state.h"
 #include "ui/bottom_bar.h"
+#include "ui/screen.h"
 #include "ui/top_bar.h"
 
 /**
@@ -11,10 +10,10 @@
  *
  * Geometría tomada de claude-design-2026-10-09/Perform v3.dc.html.
  */
-class ScreenPerform {
+class ScreenPerform : public Screen {
 public:
-    lv_obj_t* create();
-    void update(const StudioState& s);
+    lv_obj_t* create() override;
+    void update(const StudioState& s) override;
 
 private:
     static constexpr int TICKS = 31;

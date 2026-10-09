@@ -9,14 +9,19 @@ con la pantalla Freenove de 5" (o un simulador SDL en la Mac).
 
 ![PERFORM en modo demo](docs/perform-demo.png)
 
+| AI / HARMONY | SPECTRUM | ENV |
+|---|---|---|
+| ![AI](docs/ai-demo.png) | ![SPECTRUM](docs/spectrum-demo.png) | ![ENV](docs/env-demo.png) |
+
 ## Estado
 
 | Hecho | Pendiente |
 |---|---|
 | CMake + LVGL 8.4 + lv_drivers (SDL y framebuffer/evdev) | hilo de I/O con el bridge (tarea 38) |
 | Tipografía IBM Plex Mono: 7 tamaños, pesos 400 y 600 | transporte de replay (36) |
-| Modo demo: cutoff, espectro, tonalidad, BPM animados | pantallas AI, SPECTRUM, ENV, FX MAIN… |
-| Splash y pantalla PERFORM de la UI v3 | ilustraciones de los engines (120×80 RGB565) |
+| Modo demo: cutoff, espectro, tonalidad, cromagrama y BPM animados | |
+| Splash, PERFORM, AI / HARMONY, SPECTRUM y ENV de la UI v3 | FX MAIN (con visualización), PRESETS, ENGINE SELECT, OSC, LFO, overlays |
+| Navegación: NAV entre vistas, B2 abre/cierra ENV, MODE, SHIFT | ilustraciones de los engines (120×80 RGB565) |
 | `--snapshot` para guardar la pantalla en un archivo | systemd, watchdog, solo lectura (43) |
 
 Hoy la app corre **sin Teensy**: todos los datos los inventa `src/sim/demo_source.cpp`. Cuando
@@ -36,8 +41,17 @@ cmake --build build -j8
 Captura sin ventana interactiva (sale sola):
 
 ```bash
-./build/studio-head --snapshot perform.ppm --snapshot-ms 3000
+./build/studio-head --snapshot ai.ppm --snapshot-ms 3000 --page ai      # perform | ai | spectrum | env
 ```
+
+**Navegación en el demo** (mientras no hay controles físicos conectados):
+
+| Acción | Touch (Pi) | Teclado (simulador) |
+|---|---|---|
+| NAV: PERFORM → AI → SPECTRUM | tocar la barra superior | ← → |
+| B1–B4 (B2 abre y cierra ENV) | tocar la soft-key | 1–4 |
+| B5 MODE | tocar la celda MODE | M |
+| B6 SHIFT | tocar la celda SHIFT | S |
 
 ## En la Raspberry Pi (Pi 5 para desarrollar, después la 3B o la 2B)
 
