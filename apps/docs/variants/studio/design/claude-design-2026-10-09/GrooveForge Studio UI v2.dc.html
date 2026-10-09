@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script src="./studio-data.js"></script>
+<style>body{margin:0;background:#101010}a{color:#5DCAA5}a:hover{color:#9FE1CB}</style>
+</helmet>
+<div style="width:1416px;box-sizing:border-box;padding:64px;background:#101010;color:#E6E6E6;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;gap:96px">
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#5DCAA5">GROOVEFORGE BRAIN · STUDIO · V2</div>
+    <div style="font-size:40px;font-weight:600;color:#F2F2F2">Studio UI v2 · two-row control panel</div>
+    <div style="font-size:15px;color:#8A8A8A">800×480 · 1× · LVGL 8.3 software render · IBM Plex Mono 400/600 · 7 sizes · 8 px grid · 2026-10-07 · supersedes v1 (GrooveForge Studio UI.dc.html)</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">0</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Changes against v1</span></div>
+    <div style="display:grid;grid-template-columns:48px 200px minmax(0,1fr) minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">AREA</div><div style="padding:8px 16px 8px 0">V1</div><div style="padding:8px 0">V2</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">01</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Bottom bar</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">800×64 at y 416. ENC L · B1–B4 · ENC R.</div><div style="border-top:1px solid #262626;padding:8px 0">800×96 at y 384. Row 1 (64 px) unchanged. New row 2 (32 px): P1 · MODE · NAV · B6 · P2, in the same left-to-right order as the physical row 2.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">02</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Content area</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">16,48 · 768×360.</div><div style="border-top:1px solid #262626;padding:8px 0">16,48 · 768×328 (−32 px, inside the 40 px limit). Every screen re-laid out; per-screen geometry in section B notes.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">03</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Mode switch</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">NAV double push (window TBD).</div><div style="border-top:1px solid #262626;padding:8px 0">B5 MODE, single press. Banner 08c names MODE. NAV double push has no function; the double-push TBD is closed.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">04</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">SHIFT (SYNTH, B6)</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">—</div><div style="border-top:1px solid #262626;padding:8px 0">P1/P2 blocks fill solid TEAL_PLUS with #0A0A0A text and tags read SHIFT P1 / P2 SHIFT. B6 cell fills TEAL_PLUS and reads SHIFT ON.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">05</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">HOLD (FX, B6)</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">—</div><div style="border-top:1px solid #262626;padding:8px 0">B6 cell fills solid HERO_WHITE and reads HOLD ON; a HERO_WHITE HOLD pill appears in the FX header. Two small regions repaint once; no flashes.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">06</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">ENV</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">NAV selects segment → push → turn to edit.</div><div style="border-top:1px solid #262626;padding:8px 0">Direct edit: P1 ATTACK, P2 DECAY; with SHIFT, P1 SUSTAIN, P2 RELEASE. Active pair highlighted. NAV turn only moves a highlight outline. Graph 240 → 208 px high.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">07</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">FX MAIN</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">Dry/Wet + one parameter; route buttons in panel.</div><div style="border-top:1px solid #262626;padding:8px 0">Dry/Wet + 3 parameters in a 2×2 grid laid out like the controls (ENC L · ENC R over P1 · P2), each tagged with its control. Route stays on B1–B3 soft-keys only. List rows 30 → 27 px. Variants: main, HOLD, bypass.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">08</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">PERFORM · AI · SPECTRUM</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">—</div><div style="border-top:1px solid #262626;padding:8px 0">P1/P2 values in row 2. PERFORM dials 208 → 192, strip 88 → 72. AI wheel 352 → 320, chroma 88 → 64. SPECTRUM plot 288 → 256.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">09</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">ENGINE SELECT · PRESETS</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">—</div><div style="border-top:1px solid #262626;padding:8px 0">P1/P2 shown dimmed as NO FUNCTION. Tile rows 176 → 160 (ACTIVE marker moved to name row). Presets show 6 rows instead of 7.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">10</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Overlays</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">Bypass toast 200,272. Mode banner 0,176. Error footer 64 px.</div><div style="border-top:1px solid #262626;padding:8px 0">Bypass toast 200,252. Mode banner 0,152. Error footer 96 px.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">11</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Tokens</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">12 hex + 4 Studio, 7 sizes, 2 weights.</div><div style="border-top:1px solid #262626;padding:8px 0">Unchanged. No new colours, sizes or weights.</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#C8C8C8;max-width:1000px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#E8B84A;padding-bottom:4px">OPEN ITEMS</div>
+      <div>P1/P2 hardware: absolute pots or encoders. The spec assumes pots and adds a pickup state (soft takeover) for SHIFT; drop it if they are encoders.</div>
+      <div>SHIFT behaviour: momentary (held) assumed; latching is TBD.</div>
+      <div>HOLD: drawn as a latched state; its audio function is defined outside this spec.</div>
+      <div>FX parameters 2 and 3: names and units per FX are TBD. TIME and MOD DEPTH on Ghost Echo are illustrative.</div>
+      <div>Enclosure mm ↔ px table: not available. Label anchors in section A are parameters.</div>
+      <div>Still open from v1: connection-error heartbeat timeout; redrawn 120×80 engine thumbnails.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">A</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Layout, physical panel, P1/P2 map</span><span style="font-size:14px;color:#8A8A8A">Tokens unchanged from v1</span></div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">SCREEN REGIONS · 1:1</div>
+        <div style="position:relative;width:800px;height:480px;background:#0A0A0A;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:16px;color:#9FE1CB">
+          <div style="position:absolute;left:0;top:0;width:800px;height:40px;box-sizing:border-box;border:1px dashed #1D9E75;padding:12px 16px">TOP BAR · 0,0 · 800×40 (unchanged)</div>
+          <div style="position:absolute;left:16px;top:48px;width:768px;height:328px;box-sizing:border-box;border:1px dashed #5A5A6E;padding:16px;color:#5A5A6E">CONTENT · 16,48 · 768×328<br>was 768×360 · −32 px</div>
+          <div style="position:absolute;left:0;top:384px;width:128px;height:64px;box-sizing:border-box;border:1px dashed #5DCAA5;padding:8px">ENC L<br>0,384 · 128×64</div>
+          <div style="position:absolute;left:128px;top:384px;width:136px;height:64px;box-sizing:border-box;border:1px dashed #1D9E75;padding:8px">B1<br>128,384</div>
+          <div style="position:absolute;left:264px;top:384px;width:136px;height:64px;box-sizing:border-box;border:1px dashed #1D9E75;padding:8px">B2<br>264,384</div>
+          <div style="position:absolute;left:400px;top:384px;width:136px;height:64px;box-sizing:border-box;border:1px dashed #1D9E75;padding:8px">B3<br>400,384</div>
+          <div style="position:absolute;left:536px;top:384px;width:136px;height:64px;box-sizing:border-box;border:1px dashed #1D9E75;padding:8px">B4<br>536,384</div>
+          <div style="position:absolute;left:672px;top:384px;width:128px;height:64px;box-sizing:border-box;border:1px dashed #5DCAA5;padding:8px">ENC R<br>672,384</div>
+          <div style="position:absolute;left:0;top:448px;width:224px;height:32px;box-sizing:border-box;border:1px dashed #F2F2F2;padding:7px 8px;color:#F2F2F2">P1 · 0,448 · 224×32</div>
+          <div style="position:absolute;left:224px;top:448px;width:112px;height:32px;box-sizing:border-box;border:1px dashed #9FE1CB;padding:7px 8px">MODE · 224</div>
+          <div style="position:absolute;left:336px;top:448px;width:128px;height:32px;box-sizing:border-box;border:1px dashed #9FE1CB;padding:7px 8px">NAV · 336</div>
+          <div style="position:absolute;left:464px;top:448px;width:112px;height:32px;box-sizing:border-box;border:1px dashed #9FE1CB;padding:7px 8px">B6 · 464</div>
+          <div style="position:absolute;left:576px;top:448px;width:224px;height:32px;box-sizing:border-box;border:1px dashed #F2F2F2;padding:7px 8px;color:#F2F2F2;text-align:right">P2 · 576,448 · 224×32</div>
+        </div>
+      </div>
+      <div style="width:440px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">BOTTOM BAR · 800×96</div>
+        <div>Row 1 keeps v1 geometry so B1–B4 stay under their keys and existing soft-key code is unchanged.</div>
+        <div>Row 2 is 32 px and display-only: MODE, NAV and B6 are physical buttons, and 32 px is under the 64 px touch minimum. Touch shortcuts remain on row 1 soft-keys and in content.</div>
+        <div>P1 and P2 are 224 px wide and pinned to the left and right screen edges, the closest points to the knobs, which sit outside the display width. ENC L and ENC R are pinned the same way in row 1, so each side column reads encoder above pot, matching the panel.</div>
+        <div>P blocks: tag T12/600 · label T12 · value T16/600 · 2 px value bar inset 16. P2 is mirrored so its tag sits on the outer edge.</div>
+        <div>Repaint cost: P block 224×32 on pot change (≤30 Hz). SHIFT/HOLD changes repaint two P blocks and one 112×32 cell.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">PHYSICAL PANEL · TWO ROWS · LABEL ↔ CONTROL · ASSUMED 4 PX/MM</div>
+        <div style="position:relative;width:960px;height:520px;background:#161616;border:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:12px;color:#9FE1CB">
+          <div style="position:absolute;left:264px;top:32px;width:432px;height:259px;background:#0A0A0A;outline:1px solid #0E5040"></div>
+          <div style="position:absolute;left:280px;top:48px;width:400px;height:168px;border:1px dashed #2A2A2A;display:flex;align-items:center;justify-content:center;color:#5A5A6E">5" ACTIVE AREA ~108 MM · 800×480</div>
+          <div style="position:absolute;left:264px;top:239px;width:432px;height:35px;display:flex;color:#5DCAA5">
+            <div style="width:69px;box-sizing:border-box;border:1px solid #1D9E75;display:flex;align-items:center;justify-content:center">ENC L</div>
+            <div style="width:74px;box-sizing:border-box;border:1px solid #0E5040;display:flex;align-items:center;justify-content:center">B1</div>
+            <div style="width:73px;box-sizing:border-box;border:1px solid #0E5040;display:flex;align-items:center;justify-content:center">B2</div>
+            <div style="width:74px;box-sizing:border-box;border:1px solid #0E5040;display:flex;align-items:center;justify-content:center">B3</div>
+            <div style="width:73px;box-sizing:border-box;border:1px solid #0E5040;display:flex;align-items:center;justify-content:center">B4</div>
+            <div style="width:69px;box-sizing:border-box;border:1px solid #1D9E75;display:flex;align-items:center;justify-content:center">ENC R</div>
+          </div>
+          <div style="position:absolute;left:264px;top:274px;width:432px;height:17px;display:flex;color:#F2F2F2;font-size:10px">
+            <div style="width:121px;box-sizing:border-box;border:1px solid #F2F2F2;display:flex;align-items:center;justify-content:center">P1</div>
+            <div style="width:60px;box-sizing:border-box;border:1px solid #5A5A6E;display:flex;align-items:center;justify-content:center;color:#9FE1CB">MODE</div>
+            <div style="width:70px;box-sizing:border-box;border:1px solid #5A5A6E;display:flex;align-items:center;justify-content:center;color:#9FE1CB">NAV</div>
+            <div style="width:60px;box-sizing:border-box;border:1px solid #5A5A6E;display:flex;align-items:center;justify-content:center;color:#9FE1CB">B6</div>
+            <div style="width:121px;box-sizing:border-box;border:1px solid #F2F2F2;display:flex;align-items:center;justify-content:center">P2</div>
+          </div>
+          <svg width="960" height="520" style="position:absolute;left:0;top:0">
+            <g style="stroke:#5DCAA5;stroke-width:1px;stroke-dasharray:3 3;fill:none">
+              <path d="M298 274 L168 318"></path><path d="M370 274 L370 330"></path><path d="M443 274 L443 330"></path><path d="M517 274 L517 330"></path><path d="M590 274 L590 330"></path><path d="M661 274 L792 318"></path>
+            </g>
+            <g style="stroke:#F2F2F2;stroke-width:1px;stroke-dasharray:3 3;fill:none">
+              <path d="M324 291 L120 404"></path><path d="M636 291 L840 404"></path>
+            </g>
+            <g style="stroke:#9FE1CB;stroke-width:1px;stroke-dasharray:3 3;fill:none">
+              <path d="M415 291 L415 420"></path><path d="M480 291 L480 408"></path><path d="M545 291 L545 420"></path>
+            </g>
+          </svg>
+          <div style="position:absolute;left:136px;top:316px;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:44px;height:44px;border-radius:50%;background:#0A0A0A;border:2px solid #1D9E75;box-sizing:border-box"></div>ENC L</div>
+          <div style="position:absolute;left:760px;top:316px;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:44px;height:44px;border-radius:50%;background:#0A0A0A;border:2px solid #1D9E75;box-sizing:border-box"></div>ENC R</div>
+          <div style="position:absolute;left:340px;top:330px;width:280px;height:40px">
+            <div style="position:absolute;left:10px;top:0;width:40px;height:20px;background:#0A0A0A;border:2px solid #0E5040;box-sizing:border-box"></div>
+            <div style="position:absolute;left:83px;top:0;width:40px;height:20px;background:#0A0A0A;border:2px solid #0E5040;box-sizing:border-box"></div>
+            <div style="position:absolute;left:157px;top:0;width:40px;height:20px;background:#0A0A0A;border:2px solid #0E5040;box-sizing:border-box"></div>
+            <div style="position:absolute;left:230px;top:0;width:40px;height:20px;background:#0A0A0A;border:2px solid #0E5040;box-sizing:border-box"></div>
+            <div style="position:absolute;left:0;top:26px;width:60px;text-align:center">B1</div><div style="position:absolute;left:73px;top:26px;width:60px;text-align:center">B2</div><div style="position:absolute;left:147px;top:26px;width:60px;text-align:center">B3</div><div style="position:absolute;left:220px;top:26px;width:60px;text-align:center">B4</div>
+          </div>
+          <div style="position:absolute;left:88px;top:404px;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:44px;height:44px;border-radius:50%;background:#0A0A0A;border:2px solid #F2F2F2;box-sizing:border-box"></div>P1</div>
+          <div style="position:absolute;left:385px;top:420px;width:60px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:40px;height:20px;background:#0A0A0A;border:2px solid #9FE1CB;box-sizing:border-box"></div>B5 MODE</div>
+          <div style="position:absolute;left:448px;top:408px;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:44px;height:44px;border-radius:50%;background:#0A0A0A;border:2px solid #5DCAA5;box-sizing:border-box"></div>NAV</div>
+          <div style="position:absolute;left:505px;top:420px;width:80px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:40px;height:20px;background:#0A0A0A;border:2px solid #9FE1CB;box-sizing:border-box"></div>B6 HOLD/SHIFT</div>
+          <div style="position:absolute;left:808px;top:404px;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:44px;height:44px;border-radius:50%;background:#0A0A0A;border:2px solid #F2F2F2;box-sizing:border-box"></div>P2</div>
+          <div style="position:absolute;left:896px;top:412px;width:48px;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="width:28px;height:28px;border-radius:50%;background:#0A0A0A;border:2px solid #5A5A6E;box-sizing:border-box"></div>VOL</div>
+          <div style="position:absolute;left:16px;top:332px;color:#5A5A6E">ROW 1</div>
+          <div style="position:absolute;left:16px;top:420px;color:#5A5A6E">ROW 2</div>
+          <div style="position:absolute;left:16px;top:492px;color:#5A5A6E">Screen bar drawn at 0.54× (432 px = 800 px). Control positions are assumptions; replace with enclosure CAD.</div>
+        </div>
+      </div>
+      <div style="width:280px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">LABEL ANCHORS · PARAMETERS</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:96px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">ENC_L_X</span><span>0 · pinned left</span>
+          <span style="color:#9FE1CB">B1..B4_CX</span><span>196 · 332 · 468 · 604</span>
+          <span style="color:#9FE1CB">ENC_R_X</span><span>672 · pinned right</span>
+          <span style="color:#9FE1CB">P1_X</span><span>0 · pinned left</span>
+          <span style="color:#9FE1CB">MODE_CX</span><span>280</span>
+          <span style="color:#9FE1CB">NAV_CX</span><span>400</span>
+          <span style="color:#9FE1CB">B6_CX</span><span>520</span>
+          <span style="color:#9FE1CB">P2_X</span><span>576 · pinned right</span>
+        </div>
+        <div>When the enclosure table exists: px = (control_mm − screen_left_mm) × 7.41 (800 px / 108 mm). Move a row-2 cell centre to the result if it lands inside 0–800; controls that land outside stay pinned to the nearest edge.</div>
+        <div>Row-2 cell widths can change (MODE, NAV, B6 ≥ 96 px each) as long as P1 and P2 keep ≥ 192 px.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">P1 / P2 MAP PER SCREEN</div>
+      <div style="display:grid;grid-template-columns:240px 240px 240px minmax(0,1fr);font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:16px;color:#F2F2F2;max-width:1100px">
+        <div style="display:contents;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:8px 0">SCREEN</div><div style="padding:8px 0">P1</div><div style="padding:8px 0">P2</div><div style="padding:8px 0">WITH SHIFT (B6) · P1 / P2</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">FILTER ENV AMOUNT</div><div style="border-top:1px solid #262626;padding:8px 0">LFO → CUTOFF</div><div style="border-top:1px solid #262626;padding:8px 0">GLIDE / DRIVE</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ENV</div><div style="border-top:1px solid #262626;padding:8px 0">ATTACK</div><div style="border-top:1px solid #262626;padding:8px 0">DECAY</div><div style="border-top:1px solid #262626;padding:8px 0">SUSTAIN / RELEASE</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">OSC</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">DETUNE</div><div style="border-top:1px solid #262626;padding:8px 0">OCTAVE / MIX</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">LFO</div><div style="border-top:1px solid #262626;padding:8px 0">RATE</div><div style="border-top:1px solid #262626;padding:8px 0">DEPTH</div><div style="border-top:1px solid #262626;padding:8px 0">SHAPE / DESTINATION</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">AI / HARMONY</div><div style="border-top:1px solid #262626;padding:8px 0">ARP RATE</div><div style="border-top:1px solid #262626;padding:8px 0">HUMANIZE</div><div style="border-top:1px solid #262626;padding:8px 0">ARP GATE / SWING</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">SPECTRUM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#7A6FE0">FX MAIN</div><div style="border-top:1px solid #262626;padding:8px 0">FX parameter 2</div><div style="border-top:1px solid #262626;padding:8px 0">FX parameter 3</div><div style="border-top:1px solid #262626;padding:8px 0">(B6 is HOLD)</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ENGINE SELECT / PRESETS</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">no function (dimmed)</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">no function</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">—</div></div>
+      </div>
+      <div style="font-size:12px;color:#8A8A8A;max-width:1000px;line-height:18px">Bar labels are abbreviated to fit 224 px: FILTER ENV AMOUNT → FLT ENV AMT, LFO → CUTOFF → LFO→CUTOFF, DESTINATION → DEST. In FX mode B6 is HOLD on every screen; SHIFT exists only in SYNTH.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:64px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">B</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Screens · 800×480 · 1×</span><span style="font-size:14px;color:#8A8A8A">NAV turn: PERFORM → AI → SPECTRUM. B5 MODE: SYNTH ↔ FX.</span></div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">01</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">PERFORM</span><span style="font-size:13px;color:#8A8A8A">SYNTH · P1/P2 in row 2</span></div>
+        <div data-screen-label="01 Perform" style="width:800px;height:480px;outline:1px solid #2A2A2A"><dc-import name="Perform v2" still="{{ still }}" hint-size="800px,480px"></dc-import></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.perform }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">01b</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">PERFORM · SHIFT</span><span style="font-size:13px;color:#8A8A8A">B6 held · P1 GLIDE, P2 DRIVE</span></div>
+        <div data-screen-label="01b Perform Shift" style="width:800px;height:480px;outline:1px solid #2A2A2A"><dc-import name="Perform v2" shift="{{ true }}" still="{{ still }}" hint-size="800px,480px"></dc-import></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.performShift }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">02</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">ENGINE SELECT</span><span style="font-size:13px;color:#8A8A8A">SYNTH · cursor on JUNO-106 · P1/P2 no function</span></div>
+        <div data-screen-label="02 Engine Select" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="ENGINE SELECT" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+          <div style="position:absolute;left:16px;top:48px;width:280px;height:180px;background:#0A0A0A">{{ focusCard }}</div>
+          <div style="position:absolute;left:16px;top:48px;width:280px;height:180px;box-sizing:border-box;border:2px solid #5DCAA5"></div>
+          <div style="position:absolute;left:16px;top:236px;font-size:28px;line-height:32px;font-weight:600">JUNO-106</div>
+          <div style="position:absolute;left:16px;top:276px;font-size:16px;line-height:16px;color:#5DCAA5;letter-spacing:1px">POLY 6 · CHORUS</div>
+          <div style="position:absolute;left:16px;top:300px;font-size:12px;line-height:16px;color:#9FE1CB">POLY 6 VOICES · DCO · BBD CHORUS</div>
+          <div style="position:absolute;left:16px;top:328px;width:280px;height:48px;box-sizing:border-box;border:1px solid #0E5040;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+            <span style="font-size:12px;font-weight:600;color:#5DCAA5;letter-spacing:1px">NAV PUSH</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">LOAD ENGINE</span>
+          </div>
+          <div style="position:absolute;left:312px;top:48px;width:472px;display:grid;grid-template-columns:repeat(3,152px);grid-auto-rows:160px;gap:8px">
+            <sc-for list="{{ tiles }}" as="e" hint-placeholder-count="6">
+              <div style="box-sizing:border-box;border:2px solid {{ e.bd }};background:{{ e.bg }};padding:12px 14px;display:flex;flex-direction:column">
+                <div style="width:120px;height:80px;background:#0A0A0A">{{ e.thumb }}</div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:16px;line-height:16px;font-weight:600;flex:1;white-space:nowrap">{{ e.name }}</span><sc-if value="{{ e.act }}" hint-placeholder-val="{{ false }}"><div style="width:8px;height:8px;background:#5DCAA5"></div></sc-if></div>
+                <div style="font-size:12px;line-height:16px;color:#9FE1CB;margin-top:4px">{{ e.tag }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="SYNTH" active="{{ 3 }}" keys="{{ keysEngine }}" p-off="{{ true }}" nav="ENGINE" hint-size="800px,96px"></dc-import></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.engine }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <sc-for list="{{ envv }}" as="v" hint-placeholder-count="2">
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">{{ v.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ v.title }}</span><span style="font-size:13px;color:#8A8A8A">{{ v.sub }}</span></div>
+          <div data-screen-label="{{ v.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+            <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="ENV · MODEL D" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+            <svg width="768" height="208" style="position:absolute;left:16px;top:48px">
+              <rect x="0.5" y="0.5" width="767" height="207" fill="#141414" stroke="#242424"></rect>
+              <line x1="24" y1="184.5" x2="744" y2="184.5" stroke="#242424"></line>
+              <line x1="120.5" y1="16" x2="120.5" y2="192" style="stroke:#242424;stroke-dasharray:4 4"></line>
+              <line x1="320.5" y1="16" x2="320.5" y2="192" style="stroke:#242424;stroke-dasharray:4 4"></line>
+              <line x1="512.5" y1="16" x2="512.5" y2="192" style="stroke:#242424;stroke-dasharray:4 4"></line>
+              <path d="M24 184 L120 24 C150 74 200 85 320 85 L512 85 C540 160 600 184 744 184 Z" fill="#0F1E1A"></path>
+              <path d="M24 184 L120 24" fill="none" style="stroke:{{ v.sa.c }};stroke-width:{{ v.sa.w }}px"></path>
+              <path d="M120 24 C150 74 200 85 320 85" fill="none" style="stroke:{{ v.sd.c }};stroke-width:{{ v.sd.w }}px"></path>
+              <path d="M320 85 L512 85" fill="none" style="stroke:{{ v.ss.c }};stroke-width:{{ v.ss.w }}px"></path>
+              <path d="M512 85 C540 160 600 184 744 184" fill="none" style="stroke:{{ v.sr.c }};stroke-width:{{ v.sr.w }}px"></path>
+              <sc-for list="{{ v.nodes }}" as="n" hint-placeholder-count="5"><rect x="{{ n.x }}" y="{{ n.y }}" width="8" height="8" fill="{{ n.c }}"></rect></sc-for>
+            </svg>
+            <sc-for list="{{ v.segL }}" as="s" hint-placeholder-count="4"><div style="position:absolute;left:{{ s.x }}px;top:58px;font-size:12px;line-height:12px;font-weight:600;color:{{ s.c }}">{{ s.l }}</div></sc-for>
+            <div style="position:absolute;left:16px;top:264px;display:flex;gap:8px">
+              <sc-for list="{{ v.cells }}" as="c" hint-placeholder-count="4">
+                <div style="width:186px;height:112px;box-sizing:border-box;background:{{ c.bg }};border-top:4px solid {{ c.top }};outline:2px solid {{ c.ol }};outline-offset:-2px;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span style="font-size:12px;line-height:16px;color:{{ c.lc }};font-weight:600;letter-spacing:1px">{{ c.l }}</span>
+                    <span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ c.tbg }};color:{{ c.tc }};box-shadow:inset 0 0 0 1px {{ c.tbd }}">{{ c.tag }}</span>
+                  </div>
+                  <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600;color:{{ c.vc }}">{{ c.v }}</span><span style="font-size:12px;color:{{ c.lc }}">{{ c.u }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="SYNTH" active="{{ 1 }}" shift="{{ v.shift }}" p1="{{ v.p1 }}" p2="{{ v.p2 }}" nav="HIGHLIGHT" hint-size="800px,96px"></dc-import></div>
+          </div>
+        </div>
+        <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ v.notes }}" hint-size="440px,480px"></dc-import></sc-if>
+      </div>
+    </sc-for>
+
+    <sc-for list="{{ fxv }}" as="v" hint-placeholder-count="3">
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#534AB7;padding:2px 8px">{{ v.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ v.title }}</span><span style="font-size:13px;color:#8A8A8A">{{ v.sub }}</span></div>
+          <div data-screen-label="{{ v.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+            <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="FX" page="FX" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+            <div style="position:absolute;left:16px;top:48px;width:296px;display:flex;flex-direction:column">
+              <sc-for list="{{ v.rows }}" as="r" hint-placeholder-count="12">
+                <div style="height:27px;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:0 12px 0 8px;background:{{ r.bg }};border-left:4px solid {{ r.bl }}">
+                  <span style="font-size:12px;line-height:12px;color:{{ r.ic }};width:16px">{{ r.idx }}</span>
+                  <span style="font-size:16px;line-height:16px;color:{{ r.nc }};flex:1;white-space:nowrap;overflow:hidden">{{ r.name }}</span>
+                  <sc-if value="{{ r.dis }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:12px;color:#5A5A6E;border:1px solid #5A5A6E;padding:1px 4px">IN DEV</span></sc-if>
+                  <sc-if value="{{ r.en }}" hint-placeholder-val="{{ true }}"><div style="width:10px;height:10px;box-sizing:border-box;background:{{ r.sq }};border:2px solid {{ r.sb }}"></div></sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute;left:328px;top:48px;width:456px;height:328px">
+              <div style="position:absolute;left:0;top:0;font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">SLOT 03 · {{ v.state }}</div>
+              <div style="position:absolute;left:0;top:16px;font-size:28px;line-height:32px;font-weight:600;color:#F2F2F2">GHOST ECHO</div>
+              <div style="position:absolute;right:0;top:12px;display:flex;gap:8px">
+                <sc-if value="{{ v.hold }}" hint-placeholder-val="{{ false }}"><div style="height:32px;padding:0 12px;background:#F2F2F2;color:#0A0A0A;font-size:16px;font-weight:600;display:flex;align-items:center;letter-spacing:1px">HOLD</div></sc-if>
+                <div style="height:32px;padding:0 12px;background:{{ v.pillBg }};color:#0A0A0A;font-size:16px;font-weight:600;display:flex;align-items:center;letter-spacing:1px">{{ v.pill }}</div>
+              </div>
+              <div style="position:absolute;left:0;top:56px;width:456px;display:grid;grid-template-columns:224px 224px;grid-auto-rows:132px;gap:8px">
+                <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;padding:12px 16px;display:flex;flex-direction:column;justify-content:space-between">
+                  <div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ v.chipBg }};color:#F2F2F2">ENC L</span><span style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">DRY / WET</span></div>
+                  <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:64px;line-height:64px;font-weight:600;color:{{ v.valC }}">42</span><span style="font-size:28px;line-height:28px;color:{{ v.valC }}">%</span></div>
+                  <div style="width:192px;height:4px;background:{{ v.track }}"><div style="width:81px;height:4px;background:{{ v.lit }}"></div></div>
+                </div>
+                <sc-for list="{{ v.params }}" as="q" hint-placeholder-count="3">
+                  <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;padding:12px 16px;display:flex;flex-direction:column;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ v.chipBg }};color:#F2F2F2">{{ q.ctl }}</span><span style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px;white-space:nowrap">{{ q.l }}</span></div>
+                    <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600;color:{{ v.valC }}">{{ q.v }}</span><span style="font-size:16px;line-height:16px;color:#9FE1CB">{{ q.u }}</span></div>
+                    <div style="width:192px;height:4px;background:{{ v.track }}"><div style="width:{{ q.fw }}px;height:4px;background:{{ v.lit }}"></div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="FX" active="{{ 0 }}" keys="{{ keysFx }}" enc-l="{{ v.encL }}" enc-r="{{ v.encR }}" p1="{{ v.p1 }}" p2="{{ v.p2 }}" hold="{{ v.hold }}" nav="SLOT" hint-size="800px,96px"></dc-import></div>
+          </div>
+        </div>
+        <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ v.notes }}" hint-size="440px,480px"></dc-import></sc-if>
+      </div>
+    </sc-for>
+
+    <sc-for list="{{ aiv }}" as="v" hint-placeholder-count="2">
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:{{ v.hi }};padding:2px 8px">{{ v.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">AI / HARMONY</span><span style="font-size:13px;color:#8A8A8A">{{ v.sub }}</span></div>
+          <div data-screen-label="{{ v.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+            <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="{{ v.mode }}" page="AI / HARMONY" pi="{{ v.pi }}" hint-size="800px,40px"></dc-import></div>
+            <svg width="320" height="320" style="position:absolute;left:16px;top:48px">
+              <sc-for list="{{ wheel }}" as="s" hint-placeholder-count="24"><path d="{{ s.d }}" fill="{{ s.fill }}" stroke="{{ s.stroke }}" style="stroke-width:2px"></path></sc-for>
+            </svg>
+            <sc-for list="{{ wheel }}" as="s" hint-placeholder-count="24"><div style="position:absolute;left:{{ s.hx }}px;top:{{ s.hy }}px;transform:translate(-50%,-50%);font-size:12px;line-height:12px;font-weight:600;color:{{ s.tc }}">{{ s.label }}</div></sc-for>
+            <div style="position:absolute;left:112px;top:144px;width:128px;height:128px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+              <div style="font-size:64px;line-height:64px;font-weight:600">8A</div>
+              <div style="font-size:16px;line-height:16px;font-weight:600;color:#1FB6BB">A MINOR</div>
+              <div style="font-size:12px;line-height:16px;color:#9FE1CB">KEY 87%</div>
+            </div>
+            <div style="position:absolute;left:360px;top:48px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">CHORD</div>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600">Am7</span><span style="font-size:12px;color:#5A5A6E">82%</span></div>
+            </div>
+            <div style="position:absolute;left:584px;top:48px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">GENRE</div>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600">HOUSE</span><span style="font-size:12px;color:#5A5A6E">71%</span></div>
+            </div>
+            <div style="position:absolute;left:360px;top:128px;font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">CHROMA · 12 BINS</div>
+            <div style="position:absolute;left:360px;top:148px;width:424px;height:64px;display:flex;align-items:flex-end;gap:4px;background:#141414">
+              <sc-for list="{{ v.chroma }}" as="b" hint-placeholder-count="12"><div style="flex:1;height:{{ b.h }}px;background:{{ b.c }}"></div></sc-for>
+            </div>
+            <div style="position:absolute;left:360px;top:216px;width:424px;display:flex;gap:4px">
+              <sc-for list="{{ v.chroma }}" as="b" hint-placeholder-count="12"><div style="flex:1;text-align:center;font-size:12px;line-height:16px;color:#5A5A6E">{{ b.l }}</div></sc-for>
+            </div>
+            <div style="position:absolute;left:360px;top:240px;width:424px;height:64px;box-sizing:border-box;background:#141414;border:1px solid #242424;padding:0 16px;display:flex;align-items:center;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:4px;flex:1">
+                <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">SCALE LOCK</div>
+                <div style="display:flex"><span style="font-size:12px;line-height:12px;font-weight:600;background:{{ v.mc }};color:{{ v.lockTc }};padding:4px 8px;letter-spacing:1px">ON</span></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+                <div style="font-size:12px;line-height:16px;color:#5A5A6E;letter-spacing:1px">LAST SNAP</div>
+                <div style="font-size:28px;line-height:28px;font-weight:600">G#3 → A3</div>
+              </div>
+            </div>
+            <div style="position:absolute;left:360px;top:312px;width:424px;height:64px;display:flex;align-items:flex-end;justify-content:space-between">
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">BPM · BAR PHASE</div>
+                <div style="font-size:40px;line-height:40px;font-weight:600">124.0</div>
+              </div>
+              <div style="display:flex;gap:4px;align-items:flex-end;padding-bottom:4px">
+                <sc-for list="{{ v.cells }}" as="c" hint-placeholder-count="16"><div style="width:10px;height:{{ c.h }}px;background:{{ c.c }}"></div></sc-for>
+              </div>
+            </div>
+            <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="{{ v.mode }}" active="{{ v.active }}" keys="{{ v.keys }}" enc-l="{{ v.encL }}" enc-r="{{ v.encR }}" p1="{{ v.p1 }}" p2="{{ v.p2 }}" nav="{{ v.nav }}" hint-size="800px,96px"></dc-import></div>
+          </div>
+        </div>
+        <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ v.notes }}" hint-size="440px,480px"></dc-import></sc-if>
+      </div>
+    </sc-for>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">06</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">SPECTRUM</span><span style="font-size:13px;color:#8A8A8A">SYNTH · full-screen analyzer</span></div>
+        <div data-screen-label="06 Spectrum" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="SPECTRUM" pi="{{ 2 }}" hint-size="800px,40px"></dc-import></div>
+          <sc-for list="{{ dbs }}" as="d" hint-placeholder-count="6">
+            <div style="position:absolute;left:16px;top:{{ d.ly }}px;width:40px;text-align:right;font-size:12px;line-height:12px;color:#5A5A6E">{{ d.l }}</div>
+            <div style="position:absolute;left:64px;top:{{ d.gy }}px;width:704px;height:1px;background:#1C1C1C"></div>
+          </sc-for>
+          <div style="position:absolute;left:64px;top:48px;width:704px;height:256px;display:flex;gap:4px">
+            <sc-for list="{{ spBars }}" as="b" hint-placeholder-count="32">
+              <div style="flex:1;height:256px;position:relative">
+                <div style="position:absolute;left:0;right:0;bottom:0;height:{{ b.h }}px;background:{{ b.c }}"></div>
+                <div style="position:absolute;left:0;right:0;bottom:{{ b.pk }}px;height:2px;background:#F2F2F2"></div>
+              </div>
+            </sc-for>
+          </div>
+          <svg width="704" height="256" style="position:absolute;left:64px;top:48px;overflow:visible">
+            <line x1="{{ spCutX }}" y1="0" x2="{{ spCutX }}" y2="256" style="stroke:#5DCAA5;stroke-width:2px"></line>
+            <path d="{{ spCurve }}" fill="none" style="stroke:#F2F2F2;stroke-width:2px"></path>
+            <rect x="{{ resMX }}" y="{{ resMY }}" width="10" height="10" fill="#0A0A0A" style="stroke:#5DCAA5;stroke-width:2px"></rect>
+          </svg>
+          <div style="position:absolute;left:{{ resLX }}px;top:{{ resLY }}px;font-size:12px;line-height:12px;font-weight:600;color:#5DCAA5">RES 62%</div>
+          <sc-for list="{{ freqs }}" as="f" hint-placeholder-count="10"><div style="position:absolute;left:{{ f.x }}px;top:312px;transform:translateX(-50%);font-size:12px;line-height:16px;color:#5A5A6E">{{ f.l }}</div></sc-for>
+          <div style="position:absolute;left:16px;top:336px;width:768px;height:40px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:12px;line-height:16px;color:#5A5A6E">32 BANDS · LOG · dB · PEAK HOLD</div>
+            <div style="display:flex;gap:24px;align-items:baseline">
+              <span style="font-size:28px;line-height:28px;font-weight:600;color:#5DCAA5">FC 1240 HZ</span>
+              <span style="font-size:28px;line-height:28px;font-weight:600;color:#F2F2F2">RES 62%</span>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="SYNTH" active="{{ -1 }}" nav="VIEW" hint-size="800px,96px"></dc-import></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.spectrum }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">07</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">PRESETS</span><span style="font-size:13px;color:#8A8A8A">SYNTH · browser for the active engine · P1/P2 no function</span></div>
+        <div data-screen-label="07 Presets" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="PRESETS" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+          <div style="position:absolute;left:16px;top:48px;width:768px;height:48px;box-sizing:border-box;border-bottom:1px solid #242424;display:flex;align-items:center;gap:16px">
+            <span style="font-size:12px;color:#9FE1CB;letter-spacing:1px">ENGINE</span>
+            <span style="font-size:20px;line-height:20px;font-weight:600">MODEL D</span>
+            <span style="font-size:12px;color:#9FE1CB;flex:1">MONO · 3 VCO</span>
+            <span style="font-size:12px;color:#5A5A6E">B4 · ENGINE SELECT</span>
+          </div>
+          <div style="position:absolute;left:16px;top:104px;width:456px;display:flex;flex-direction:column">
+            <sc-for list="{{ presets }}" as="p" hint-placeholder-count="6">
+              <div style="height:40px;box-sizing:border-box;display:flex;align-items:center;gap:16px;padding:0 16px 0 12px;background:{{ p.bg }};border-left:4px solid {{ p.bl }};border-bottom:1px solid #1C1C1C">
+                <span style="font-size:12px;color:#5A5A6E;width:40px">{{ p.s }}</span>
+                <span style="font-size:16px;line-height:16px;font-weight:{{ p.fw }};color:{{ p.nc }};flex:1">{{ p.n }}</span>
+                <sc-if value="{{ p.loaded }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;font-weight:600;color:#5DCAA5;letter-spacing:1px">LOADED</span></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div style="position:absolute;left:476px;top:104px;width:4px;height:240px;background:#1C1C1C"><div style="width:4px;height:80px;margin-top:56px;background:#1D9E75"></div></div>
+          <div style="position:absolute;left:496px;top:104px;width:288px;height:272px;box-sizing:border-box;border:1px solid #242424;background:#141414;padding:16px;display:flex;flex-direction:column;gap:8px">
+            <div style="width:120px;height:80px;background:#0A0A0A">{{ presetThumb }}</div>
+            <div style="font-size:12px;line-height:16px;color:#5A5A6E;margin-top:4px">A-09</div>
+            <div style="font-size:28px;line-height:32px;font-weight:600">GLASS STAIRS</div>
+            <div style="font-size:12px;line-height:16px;color:#9FE1CB">MODEL D · MONO · 3 VCO</div>
+            <div style="flex:1"></div>
+            <div style="height:48px;flex:none;box-sizing:border-box;border:1px solid #1D9E75;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+              <span style="font-size:12px;font-weight:600;color:#5DCAA5;letter-spacing:1px">NAV PUSH</span><span style="font-size:16px;font-weight:600">LOAD</span>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="SYNTH" active="{{ 3 }}" p-off="{{ true }}" nav="LIST" hint-size="800px,96px"></dc-import></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.presets }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#9FE1CB;padding:2px 8px">08a</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">VOLUME</span><span style="font-size:13px;color:#8A8A8A">overlay over any screen</span></div>
+        <div data-screen-label="08a Volume" style="position:relative;width:800px;height:480px;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <dc-import name="Perform v2" still="{{ still }}" hint-size="800px,480px"></dc-import>
+          <div style="position:absolute;left:200px;top:56px;width:400px;height:144px;box-sizing:border-box;background:#141414;border:2px solid #9FE1CB;padding:14px 22px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:12px;line-height:16px;letter-spacing:1px"><span style="color:#9FE1CB">OUTPUT VOLUME</span><span style="color:#5A5A6E">VOL</span></div>
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:64px;line-height:64px;font-weight:600">-6.0</span><span style="font-size:16px;color:#9FE1CB">DB</span></div>
+            <div style="display:flex;gap:3px"><sc-for list="{{ volSeg }}" as="s" hint-placeholder-count="32"><div style="width:8px;height:12px;background:{{ s.c }}"></div></sc-for></div>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.vol }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#FF6A35;padding:2px 8px">08b</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">FILTER BYPASS</span><span style="font-size:13px;color:#8A8A8A">toast + persistent bypass state on PERFORM</span></div>
+        <div data-screen-label="08b Filter Bypass" style="position:relative;width:800px;height:480px;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <dc-import name="Perform v2" bypass="{{ true }}" still="{{ still }}" hint-size="800px,480px"></dc-import>
+          <div style="position:absolute;left:200px;top:252px;width:400px;height:64px;background:#FF6A35;color:#0A0A0A;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+            <div style="font-size:28px;line-height:28px;font-weight:600">FILTER BYPASS · ON</div>
+            <div style="font-size:12px;line-height:12px;letter-spacing:1px">ENC L PUSH TO RESTORE</div>
+          </div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.byp }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#534AB7;padding:2px 8px">08c</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">MODE CHANGE · SYNTH → FX</span><span style="font-size:13px;color:#8A8A8A">frame at B5 MODE press; chrome already swapped</span></div>
+        <div data-screen-label="08c Mode Change" style="position:relative;width:800px;height:480px;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <dc-import name="Perform v2" still="{{ still }}" hint-size="800px,480px"></dc-import>
+          <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="FX" page="FX" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+          <div style="position:absolute;left:0;top:152px;width:800px;height:128px;background:#534AB7;display:flex;align-items:center;gap:32px;padding:0 32px;box-sizing:border-box">
+            <div style="font-size:96px;line-height:96px;font-weight:600;color:#F2F2F2">FX</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:28px;line-height:28px;font-weight:600;color:#F2F2F2">MODE</div>
+              <div style="font-size:12px;line-height:16px;color:#F2F2F2;letter-spacing:1px">ENC L DRY/WET · ENC R · P1 · P2 FX PARAMS · B6 HOLD · MODE BACK</div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="FX" active="{{ 0 }}" keys="{{ keysFx }}" enc-l="{{ fxEncL }}" enc-r="{{ fxEncR }}" p1="{{ fxP1 }}" p2="{{ fxP2 }}" nav="SLOT" hint-size="800px,96px"></dc-import></div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.mode }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#E84A4A;padding:2px 8px">08d</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">CONNECTION ERROR</span><span style="font-size:13px;color:#8A8A8A">audio engine link lost · replaces any screen</span></div>
+        <div data-screen-label="08d Connection Error" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="NO AUDIO ENGINE" pi="{{ -1 }}" link="LOST" hint-size="800px,40px"></dc-import></div>
+          <div style="position:absolute;left:64px;top:120px;width:8px;height:160px;background:#E84A4A"></div>
+          <div style="position:absolute;left:96px;top:120px;width:640px;display:flex;flex-direction:column;gap:16px">
+            <div style="font-size:12px;line-height:16px;font-weight:600;color:#E84A4A;letter-spacing:2px">ERROR</div>
+            <div style="font-size:40px;line-height:48px;font-weight:600">AUDIO ENGINE NOT RESPONDING</div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:16px;line-height:16px;color:#9FE1CB">RECONNECTING
+              <div style="display:flex;gap:4px"><sc-for list="{{ errDots }}" as="d" hint-placeholder-count="3"><div style="width:8px;height:8px;background:{{ d.c }}"></div></sc-for></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:96px;top:296px;width:280px;height:48px;box-sizing:border-box;border:1px solid #9FE1CB;display:flex;align-items:center;justify-content:space-between;padding:0 16px">
+            <span style="font-size:12px;font-weight:600;color:#9FE1CB;letter-spacing:1px">NAV PUSH</span><span style="font-size:16px;font-weight:600">RETRY NOW</span>
+          </div>
+          <div style="position:absolute;left:0;top:384px;width:800px;height:96px;box-sizing:border-box;border-top:1px solid #242424;display:flex;align-items:center;justify-content:center;font-size:12px;color:#5A5A6E;letter-spacing:1px">CONTROLS PAUSED UNTIL THE ENGINE RESPONDS · VOL STAYS ACTIVE</div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.err }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">08e</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">BOOT SPLASH</span><span style="font-size:13px;color:#8A8A8A">unchanged from v1</span></div>
+        <div data-screen-label="08e Boot" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <div style="position:absolute;left:240px;top:160px;width:320px;display:flex;flex-direction:column;align-items:center;gap:16px">
+            <div style="width:24px;height:24px;background:#1D9E75"></div>
+            <div style="font-size:40px;line-height:40px;font-weight:600;letter-spacing:2px">GROOVEFORGE</div>
+            <div style="font-size:16px;line-height:16px;color:#5DCAA5;letter-spacing:4px">BRAIN · STUDIO</div>
+          </div>
+          <div style="position:absolute;left:240px;top:328px;width:320px;height:4px;background:#0E5040"><div style="width:192px;height:4px;background:#5DCAA5"></div></div>
+          <div style="position:absolute;left:240px;top:344px;width:320px;text-align:center;font-size:12px;line-height:16px;color:#5A5A6E;letter-spacing:1px">CONNECTING AUDIO ENGINE</div>
+        </div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.boot }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">C</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Component sheet</span></div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">TOP BAR · SYNTH / FX / BYPASS / LINK LOST · 800×40 · UNCHANGED</div>
+      <dc-import name="TopBar" mode="SYNTH" page="PERFORM" pi="{{ 0 }}" hint-size="800px,40px"></dc-import>
+      <dc-import name="TopBar" mode="FX" page="FX" pi="{{ -1 }}" hint-size="800px,40px"></dc-import>
+      <dc-import name="TopBar" mode="SYNTH" page="PERFORM" pi="{{ 0 }}" bypass="{{ true }}" hint-size="800px,40px"></dc-import>
+      <dc-import name="TopBar" mode="SYNTH" page="NO AUDIO ENGINE" pi="{{ -1 }}" link="LOST" hint-size="800px,40px"></dc-import>
+    </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">BOTTOM BAR · 800×96 · STATES</div>
+        <sc-for list="{{ barStates }}" as="b" hint-placeholder-count="7">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9FE1CB">{{ b.cap }}</div>
+            <dc-import name="BottomBar" mode="{{ b.mode }}" active="{{ b.active }}" keys="{{ b.keys }}" enc-l="{{ b.encL }}" enc-r="{{ b.encR }}" p1="{{ b.p1 }}" p2="{{ b.p2 }}" shift="{{ b.shift }}" hold="{{ b.hold }}" p-off="{{ b.pOff }}" disabled="{{ b.dis }}" nav="{{ b.nav }}" hint-size="800px,96px"></dc-import>
+          </div>
+        </sc-for>
+      </div>
+      <div style="width:440px;display:flex;flex-direction:column;gap:16px;padding-top:30px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">ROW 2 CELLS · 32 PX HIGH</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">P1 / P2 · 224</span><br>Idle: tag in mode colour, label GRAY, value HERO_WHITE, bar mode accent on dim track. SHIFT: whole block solid TEAL_PLUS, all text #0A0A0A, tag SHIFT P1 / P2 SHIFT. Pickup: value and bar in MONITOR_GRAY, 2×8 HERO_WHITE tick marks the pot position; once the pot crosses the stored value the block returns to idle. No function: label NO FUNCTION, value —, all MONITOR_GRAY.</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">MODE · 112</span><br>Shows where a press goes: chip filled with the target mode's colour (PURPLE chip reading FX in SYNTH, TEAL chip reading SYNTH in FX).</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">NAV · 128</span><br>Current NAV-turn function in one word: VIEW, ENGINE, HIGHLIGHT, SLOT, LIST.</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">B6 · 112</span><br>SYNTH: SHIFT OFF / SHIFT ON (solid TEAL_PLUS). FX: HOLD OFF / HOLD ON (solid HERO_WHITE). HERO_WHITE is not used as a fill anywhere else, so HOLD cannot be confused with a selection.</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">Disabled</span><br>Everything MONITOR_GRAY, no accent fills. Used on 08d (as a text footer) and during boot.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">FX PARAM CELL 224×132 · ACTIVE / BYPASSED</div>
+        <div style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;background:#0A0A0A;padding:16px">
+          <sc-for list="{{ fxCells }}" as="q" hint-placeholder-count="2">
+            <div style="width:224px;height:132px;box-sizing:border-box;background:#141414;border:1px solid #242424;padding:12px 16px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ q.chip }};color:#F2F2F2">P1</span><span style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">TIME</span></div>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600;color:{{ q.vc }}">375</span><span style="font-size:16px;line-height:16px;color:#9FE1CB">MS</span></div>
+              <div style="width:192px;height:4px;background:{{ q.track }}"><div style="width:96px;height:4px;background:{{ q.lit }}"></div></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="width:480px;font-size:12px;line-height:16px;color:#8A8A8A;text-wrap:pretty">Control chip T12/600 on PURPLE_DIM (LINE when bypassed). Dry/Wet cell uses T64 + T28 unit; the other three T40 + T16 unit. Grid order mirrors the panel: ENC L, ENC R / P1, P2.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">ENV VALUE CELL 186×112 · ACTIVE PAIR / INACTIVE / NAV HIGHLIGHT</div>
+        <div style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;background:#0A0A0A;padding:16px">
+          <sc-for list="{{ envCells }}" as="c" hint-placeholder-count="3">
+            <div style="width:186px;height:112px;box-sizing:border-box;background:{{ c.bg }};border-top:4px solid {{ c.top }};outline:2px solid {{ c.ol }};outline-offset:-2px;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <span style="font-size:12px;line-height:16px;color:{{ c.lc }};font-weight:600;letter-spacing:1px">{{ c.l }}</span>
+                <span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ c.tbg }};color:{{ c.tc }};box-shadow:inset 0 0 0 1px {{ c.tbd }}">{{ c.tag }}</span>
+              </div>
+              <div style="display:flex;align-items:baseline;gap:8px"><span style="font-size:40px;line-height:40px;font-weight:600;color:{{ c.vc }}">{{ c.v }}</span><span style="font-size:12px;color:{{ c.lc }}">{{ c.u }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="width:590px;font-size:12px;line-height:16px;color:#8A8A8A;text-wrap:pretty">Active pair: TEAL_DIM fill, 4 px TEAL_PLUS top, solid TEAL_PLUS tag. Inactive: SURFACE fill, LINE top, outlined MONITOR_GRAY tag. NAV highlight: 2 px HERO_WHITE inset outline; visual aid only, no edit function. The 1 px tag outline is a border in LVGL, not a shadow.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">AI CHIPS · 186×40 · UNCHANGED</div>
+        <div style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;background:#0A0A0A;padding:16px">
+          <div style="width:186px;height:40px;box-sizing:border-box;background:#1FB6BB;color:#0A0A0A;display:flex;align-items:center;gap:8px;padding:0 12px"><span style="font-size:20px;line-height:20px;font-weight:600">8A</span><span style="font-size:12px;font-weight:600;flex:1">A MINOR</span><span style="font-size:12px">87%</span></div>
+          <div style="width:186px;height:40px;box-sizing:border-box;background:#141414;border:1px solid #242424;display:flex;align-items:center;gap:8px;padding:0 12px"><span style="font-size:12px;color:#9FE1CB">CHORD</span><span style="font-size:20px;line-height:20px;font-weight:600;flex:1">Am7</span><span style="font-size:12px;color:#5A5A6E">82%</span></div>
+          <div style="width:186px;height:40px;box-sizing:border-box;background:#141414;border:1px solid #242424;display:flex;align-items:center;gap:8px;padding:0 12px"><span style="font-size:12px;color:#9FE1CB">GENRE</span><span style="font-size:20px;line-height:20px;font-weight:600;flex:1;color:#5A5A6E">—</span><span style="font-size:12px;color:#5A5A6E">LOW</span></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">ENGINE TILE 152×160 · IDLE / CURSOR / ACTIVE</div>
+        <div style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+          <sc-for list="{{ tileStates }}" as="e" hint-placeholder-count="3">
+            <div style="width:152px;height:160px;box-sizing:border-box;border:2px solid {{ e.bd }};background:{{ e.bg }};padding:12px 14px;display:flex;flex-direction:column">
+              <div style="width:120px;height:80px">{{ e.thumb }}</div>
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:16px;line-height:16px;font-weight:600;flex:1;white-space:nowrap">{{ e.name }}</span><sc-if value="{{ e.act }}" hint-placeholder-val="{{ false }}"><div style="width:8px;height:8px;background:#5DCAA5"></div></sc-if></div>
+              <div style="font-size:12px;line-height:16px;color:#9FE1CB;margin-top:4px">{{ e.tag }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">FX LIST ITEM 296×27 · CURSOR / ON / OFF / DISABLED</div>
+        <div style="width:296px;display:flex;flex-direction:column;font-family:'IBM Plex Mono',monospace;background:#0A0A0A">
+          <sc-for list="{{ fxStates }}" as="r" hint-placeholder-count="4">
+            <div style="height:27px;box-sizing:border-box;display:flex;align-items:center;gap:8px;padding:0 12px 0 8px;background:{{ r.bg }};border-left:4px solid {{ r.bl }}">
+              <span style="font-size:12px;line-height:12px;color:{{ r.ic }};width:16px">{{ r.idx }}</span>
+              <span style="font-size:16px;line-height:16px;color:{{ r.nc }};flex:1;white-space:nowrap">{{ r.name }}</span>
+              <sc-if value="{{ r.dis }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:12px;color:#5A5A6E;border:1px solid #5A5A6E;padding:1px 4px">IN DEV</span></sc-if>
+              <sc-if value="{{ r.en }}" hint-placeholder-val="{{ true }}"><div style="width:10px;height:10px;box-sizing:border-box;background:{{ r.sq }};border:2px solid {{ r.sb }}"></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;letter-spacing:1.5px;color:#7A7A7A">SPECTRUM STRIP 768×72 (WAS 88)</div>
+        <div style="position:relative;width:768px;height:72px;box-sizing:border-box;background:#141414;border:1px solid #242424;overflow:hidden">
+          <div style="position:absolute;left:1px;right:1px;bottom:0;height:70px;display:flex;align-items:flex-end;gap:4px">
+            <sc-for list="{{ stripBars }}" as="b" hint-placeholder-count="32"><div style="flex:1;height:{{ b.h }}px;background:#1D9E75"></div></sc-for>
+          </div>
+          <svg width="766" height="70" style="position:absolute;left:0;top:0">
+            <line x1="{{ stripCutX }}" y1="0" x2="{{ stripCutX }}" y2="70" style="stroke:#5DCAA5;stroke-width:1px"></line>
+            <path d="{{ stripCurve }}" fill="none" style="stroke:#5DCAA5;stroke-width:2px"></path>
+          </svg>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="font-size:12px;letter-spacing:1.5px;color:#7A7A7A">OVERLAY · MODE BANNER 800×128 (SHOWN 50 %)</div>
+        <div style="width:400px;height:64px;background:#534AB7;display:flex;align-items:center;gap:16px;padding:0 16px;box-sizing:border-box">
+          <div style="font-size:40px;line-height:40px;font-weight:600">FX</div>
+          <div style="font-size:16px;line-height:16px;font-weight:600">MODE</div>
+        </div>
+        <div style="width:400px;height:64px;background:#1D9E75;display:flex;align-items:center;gap:16px;padding:0 16px;box-sizing:border-box;color:#0A0A0A">
+          <div style="font-size:40px;line-height:40px;font-weight:600">SYNTH</div>
+          <div style="font-size:16px;line-height:16px;font-weight:600">MODE</div>
+        </div>
+        <div style="width:400px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;line-height:16px;color:#8A8A8A">Trigger is B5 MODE. Volume overlay, bypass toast and warning are unchanged from v1 (bypass toast moved to y 252).</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">D</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Engine illustrations</span><span style="font-size:14px;color:#8A8A8A">Unchanged from v1</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,280px);gap:32px 40px">
+      <sc-for list="{{ eng }}" as="e" hint-placeholder-count="6">
+        <div style="display:flex;flex-direction:column;gap:12px;font-family:'IBM Plex Mono',monospace">
+          <div style="width:280px;height:180px;outline:1px solid #2A2A2A">{{ e.card }}</div>
+          <div style="display:flex;gap:16px;align-items:flex-end">
+            <div style="width:120px;height:80px;outline:1px solid #2A2A2A;flex:none">{{ e.thumb }}</div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:16px;font-weight:600;color:#F2F2F2">{{ e.name }}</div>
+              <div style="font-size:12px;color:#5DCAA5">{{ e.tag }}</div>
+              <div style="font-size:11px;color:#8A8A8A">280×180 · 120×80</div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:13px;color:#8A8A8A;max-width:880px;line-height:20px">Thumbnails are centre crops of the card art; final 120×80 exports should be redrawn with roughly half the controls. Export both sizes as opaque RGB565 at 1×.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;animate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;View&quot;},&quot;showNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  state = { t: 0 };
+  peaks = new Array(32).fill(0);
+  componentDidMount() {
+    this.iv = setInterval(() => {
+      if (!window.GF) return;
+      if (this.props.animate === false) { if (!this.ok) { this.ok = 1; this.setState({ t: 1.3 }); } return; }
+      this.setState(s => ({ t: s.t + 0.125 }));
+    }, 125);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+  renderVals() {
+    const G = window.GF;
+    const showNotes = this.props.showNotes !== false, still = this.props.animate === false;
+    if (!G) return { showNotes, still, notes: {} };
+    const { C, S, MODE: M } = G, t = this.state.t;
+    if (!this.eng) this.eng = G.ENGINES.map(e => ({ ...e, card: G.illo(React, e.id, 280, 180), thumb: G.illo(React, e.id, 120, 80) }));
+    const eng = this.eng, N = this.notes();
+    const tiles = eng.map((e, i) => ({ ...e, bd: i === 1 ? C.TEAL_PLUS : C.LINE, bg: i === 1 ? C.TEAL_DIM : C.SURFACE, act: i === 0 }));
+    const tileStates = [{ ...tiles[2] }, { ...tiles[1] }, { ...tiles[0] }];
+    const keysFx = ['INSERT', 'SEND', 'MASTER', 'FAV FX'];
+    const fxEncL = { l: 'DRY/WET', v: '42', u: '%', f: .42 }, fxEncR = { l: 'FEEDBK', v: '58', u: '%', f: .58 };
+    const fxP1 = { l: 'TIME', v: '375', u: 'MS', f: .5 }, fxP2 = { l: 'MOD DEPTH', v: '24', u: '%', f: .24 };
+
+    const envCell = (l, v, u, tag, on, nav) => ({ l, v, u, tag, bg: on ? C.TEAL_DIM : C.SURFACE, top: on ? C.TEAL_PLUS : C.LINE, ol: nav ? C.WHITE : 'transparent',
+      lc: on ? C.WHITE : C.MON, vc: on ? C.WHITE : C.GRAY, tbg: on ? C.TEAL_PLUS : 'transparent', tc: on ? C.BG : C.MON, tbd: on ? C.TEAL_PLUS : C.MON });
+    const seg = on => ({ c: on ? C.TEAL_PLUS : C.TEAL, w: on ? 4 : 2 });
+    const envv = [false, true].map(sh => ({
+      id: sh ? '03b' : '03a', label: sh ? '03b Env Shift' : '03a Env', shift: sh,
+      title: sh ? 'ENV · SHIFT ON' : 'ENV · SHIFT OFF', sub: sh ? 'B6 held · P1 SUSTAIN, P2 RELEASE · NAV highlight on R' : 'P1 ATTACK, P2 DECAY · NAV highlight on D',
+      sa: seg(!sh), sd: seg(!sh), ss: seg(sh), sr: seg(sh),
+      nodes: [[24, 184], [120, 24], [320, 85], [512, 85], [744, 184]].map(([x, y], i) => ({ x: x - 4, y: y - 4, c: (sh ? i >= 2 : i <= 2) ? C.WHITE : C.TEAL })),
+      segL: [['A', 68], ['D', 216], ['S', 412], ['R', 624]].map(([l, x], i) => ({ l, x, c: (sh ? i >= 2 : i < 2) ? C.TEAL_PLUS : C.MON })),
+      cells: [envCell('ATTACK', '12', 'MS', 'P1', !sh, false), envCell('DECAY', '340', 'MS', 'P2', !sh, !sh), envCell('SUSTAIN', '62', '%', 'SHIFT P1', sh, false), envCell('RELEASE', '480', 'MS', 'SHIFT P2', sh, sh)],
+      p1: sh ? { l: 'SUSTAIN', v: '62', u: '%', f: .62 } : { l: 'ATTACK', v: '12', u: 'MS', f: .06 },
+      p2: sh ? { l: 'RELEASE', v: '480', u: 'MS', f: .4 } : { l: 'DECAY', v: '340', u: 'MS', f: .3 },
+      notes: sh ? N.envOn : N.env }));
+    const envCells = [envCell('ATTACK', '12', 'MS', 'P1', true, false), envCell('SUSTAIN', '62', '%', 'SHIFT P1', false, false), envCell('DECAY', '340', 'MS', 'P2', true, true)];
+
+    const onSet = [1, 2, 6];
+    const fxRow = (f, i, cur, on) => ({ idx: String(i + 1).padStart(2, '0'), name: f.name, dis: f.dis, en: !f.dis,
+      bg: cur ? C.PURPLE : 'transparent', bl: cur ? C.PURPLE_BRIGHT : 'transparent', ic: cur ? C.WHITE : C.MON,
+      nc: f.dis ? C.MON : cur ? C.WHITE : C.GRAY, sq: on ? (cur ? C.WHITE : C.PURPLE_BRIGHT) : 'transparent', sb: on ? (cur ? C.WHITE : C.PURPLE_BRIGHT) : (cur ? C.WHITE : C.MON) });
+    const fxv = ['main', 'hold', 'byp'].map(k => {
+      const byp = k === 'byp', hold = k === 'hold', lit = byp ? C.MON : C.PURPLE_BRIGHT, valC = byp ? C.MON : C.WHITE;
+      const dimP = o => byp ? { ...o, c: C.MON, fc: C.MON } : o;
+      return {
+        id: { main: '04a', hold: '04b', byp: '04c' }[k], title: { main: 'FX MAIN', hold: 'FX MAIN · HOLD ON', byp: 'FX MAIN · BYPASS' }[k],
+        label: { main: '04a FX Main', hold: '04b FX Hold', byp: '04c FX Bypass' }[k],
+        sub: { main: 'FX · Ghost Echo · 4 parameters · names of params 2/3 illustrative', hold: 'FX · B6 pressed · HOLD latched', byp: 'FX · active FX bypassed with NAV push' }[k],
+        hold, rows: G.FX.map((f, i) => fxRow(f, i, i === 2, onSet.includes(i) && !(byp && i === 2))),
+        valC, lit, track: byp ? C.LINE : C.PURPLE_DIM, chipBg: byp ? C.LINE : C.PURPLE_DIM,
+        state: byp ? 'BYPASSED' : 'ACTIVE', pill: byp ? 'BYPASS' : 'ON', pillBg: byp ? C.ORANGE : C.PURPLE_BRIGHT,
+        params: [{ ctl: 'ENC R', l: 'FEEDBACK', v: '58', u: '%', fw: 111 }, { ctl: 'P1', l: 'TIME', v: '375', u: 'MS', fw: 96 }, { ctl: 'P2', l: 'MOD DEPTH', v: '24', u: '%', fw: 46 }],
+        encL: dimP(fxEncL), encR: dimP(fxEncR), p1: dimP(fxP1), p2: dimP(fxP2),
+        notes: N['fx_' + k] };
+    });
+    const fxStates = [fxRow(G.FX[2], 2, true, true), fxRow(G.FX[1], 1, false, true), fxRow(G.FX[4], 4, false, false), fxRow(G.FX[3], 3, false, false)];
+    const fxCells = [{ chip: C.PURPLE_DIM, vc: C.WHITE, track: C.PURPLE_DIM, lit: C.PURPLE_BRIGHT }, { chip: C.LINE, vc: C.MON, track: C.LINE, lit: C.MON }];
+
+    const tq = Math.floor(t * 4) / 4;
+    const prof = [.55, .08, .3, .12, .62, .25, .1, .4, .15, .92, .1, .22];
+    const NN = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const step = Math.floor(t * 124 / 60 * 4) % 16;
+    if (!this.wheel) this.wheel = G.wheel(160, 160, 152, 108, 64, S.key).map(s => ({ ...s, hx: 16 + s.lx, hy: 48 + s.ly }));
+    const aiv = ['SYNTH', 'FX'].map(m => {
+      const P = M[m], fx = m === 'FX';
+      return { id: fx ? '05b' : '05a', mode: m, label: fx ? '05b AI FX' : '05a AI Synth', sub: fx ? 'FX mode · P1/P2 = FX params · B6 HOLD' : 'SYNTH · P1 ARP RATE, P2 HUMANIZE · NAV push Scale Lock',
+        pi: fx ? -1 : 1, hi: P.hi, mc: P.mc, lockTc: fx ? C.WHITE : C.BG, nav: fx ? 'SLOT' : 'VIEW',
+        chroma: prof.map((v, i) => ({ l: NN[i], h: Math.round(64 * Math.max(.05, Math.min(1, v * (0.8 + 0.3 * Math.sin(tq * 2.1 + i * 1.7))))), c: P.hi })),
+        cells: Array.from({ length: 16 }, (_, i) => ({ h: i % 4 === 0 ? 24 : 16, c: i === step ? P.hi : i < step ? P.mc : C.LINE })),
+        active: fx ? 0 : -1, keys: fx ? keysFx : ['OSC', 'ENV', 'LFO / MOD', 'PRESET'],
+        encL: fx ? fxEncL : undefined, encR: fx ? fxEncR : undefined,
+        p1: fx ? fxP1 : { l: 'ARP RATE', v: '1/16', u: '', f: .5 }, p2: fx ? fxP2 : { l: 'HUMANIZE', v: '18', u: '%', f: .18 },
+        notes: fx ? N.aifx : N.ai };
+    });
+
+    const H = 256, sp = G.spectrum(t, false), fc = S.cutoff, k = H / 72;
+    if (this.lastT !== t) { this.peaks = this.peaks.map((p, i) => Math.max(p - 3, (sp[i] + 60) * k)); this.lastT = t; }
+    const spBars = sp.map((db, i) => { const h = Math.round((db + 60) * k), f = 20 * Math.pow(1000, (i + .5) / 32); return { h, pk: Math.round(Math.max(h + 2, this.peaks[i])), c: f <= fc ? C.TEAL_PLUS : C.TEAL }; });
+    const spCutX = Math.round(S.cutFrac * 704), resY = Math.round(H * (12 - G.filterDb(fc, fc, S.res)) / 72);
+    const dbs = [0, -12, -24, -36, -48, -60].map(d => { const gy = Math.round(H * (12 - d) / 72); return { l: d === 0 ? '0 dB' : String(d), ly: 48 + gy - 6, gy: 48 + gy }; });
+    const freqs = [[20, '20'], [50, '50'], [100, '100'], [200, '200'], [500, '500'], [1000, '1K'], [2000, '2K'], [5000, '5K'], [10000, '10K'], [20000, '20K']].map(([f, l]) => ({ l, x: 64 + Math.round(G.fFrac(f) * 704) }));
+
+    const presets = [{ s: '', n: '+ SAVE CURRENT AS NEW', save: 1 }, { s: 'A-05', n: 'NIGHT BUS' }, { s: 'A-06', n: 'DUST LEAD' }, { s: 'A-07', n: 'BASS FOUNDRY', loaded: 1 }, { s: 'A-08', n: 'LOW CATHEDRAL' }, { s: 'A-09', n: 'GLASS STAIRS', cur: 1 }]
+      .map(p => ({ ...p, loaded: !!p.loaded, bg: p.cur ? C.TEAL_DIM : 'transparent', bl: p.cur ? C.TEAL_PLUS : 'transparent', nc: p.save ? C.TEAL_PLUS : p.cur ? C.WHITE : C.GRAY, fw: p.cur || p.save ? 600 : 400 }));
+
+    const sKeys = ['OSC', 'ENV', 'LFO / MOD', 'PRESET'];
+    const barStates = [
+      { cap: 'SYNTH · PERFORM · idle', mode: 'SYNTH', active: -1, nav: 'VIEW' },
+      { cap: 'SYNTH · SHIFT ON (B6 held) · P1 GLIDE, P2 DRIVE', mode: 'SYNTH', active: -1, nav: 'VIEW', shift: true, p1: { l: 'GLIDE', v: '120', u: 'MS', f: .3 }, p2: { l: 'DRIVE', v: '35', u: '%', f: .35 } },
+      { cap: 'SYNTH · ENV · P1 pickup after SHIFT release (stored 12 MS, pot at 62 %)', mode: 'SYNTH', active: 1, nav: 'HIGHLIGHT', p1: { l: 'ATTACK', v: '12', u: 'MS', f: .06, pick: true, pos: .62 }, p2: { l: 'DECAY', v: '340', u: 'MS', f: .3 } },
+      { cap: 'FX · idle · HOLD OFF', mode: 'FX', active: 0, keys: keysFx, encL: fxEncL, encR: fxEncR, p1: fxP1, p2: fxP2, nav: 'SLOT' },
+      { cap: 'FX · HOLD ON', mode: 'FX', active: 0, keys: keysFx, encL: fxEncL, encR: fxEncR, p1: fxP1, p2: fxP2, nav: 'SLOT', hold: true },
+      { cap: 'SYNTH · ENGINE SELECT / PRESETS · P1/P2 no function', mode: 'SYNTH', active: 3, nav: 'ENGINE', pOff: true },
+      { cap: 'Disabled', mode: 'SYNTH', active: -1, nav: 'VIEW', dis: true }
+    ].map(b => ({ shift: false, hold: false, pOff: false, dis: false, keys: sKeys, ...b }));
+
+    const sb = G.spectrum(t, false);
+    return {
+      showNotes, still, notes: N, eng, tiles, tileStates, focusCard: eng[1].card, presetThumb: eng[0].thumb,
+      keysEngine: ['OSC', 'ENV', 'LFO / MOD', 'ENGINE'], keysFx, fxEncL, fxEncR, fxP1, fxP2,
+      envv, envCells, fxv, fxStates, fxCells, aiv, wheel: this.wheel, barStates,
+      spBars, spCurve: G.curve(704, H, fc, S.res, 12), spCutX, resMX: spCutX - 5, resMY: resY - 5, resLX: 64 + spCutX + 12, resLY: 48 + resY - 6, dbs, freqs,
+      presets, volSeg: Array.from({ length: 32 }, (_, i) => ({ c: i < 24 ? C.GRAY : C.LINE })),
+      errDots: [0, 1, 2].map(i => ({ c: i === Math.floor(t * 2) % 3 ? C.GRAY : C.LINE })),
+      stripBars: sb.map(db => ({ h: Math.max(2, Math.round((db + 60) / 72 * 70)) })), stripCurve: G.curve(766, 70, fc, S.res, 12), stripCutX: Math.round(S.cutFrac * 766) + 0.5
+    };
+  }
+  notes() {
+    if (this._n) return this._n;
+    const bar = ['Bottom bar', '0,384 · 800×96 · row 1 y 384 (64) · row 2 y 448 (32)'];
+    const synthEnc = [['ENC L / R', 'Cutoff / resonance (always, in SYNTH)'], ['ENC L push', 'Filter bypass → 08b']];
+    const synthSys = [['B5 MODE', 'Switch to FX → 08c'], ['B6', 'SHIFT, momentary (latch TBD)']];
+    this._n = {
+      perform: {
+        c: [['ENC L turn', 'Cutoff, log taper 20 Hz–20 kHz'], ['ENC L push', 'Filter bypass on/off → 08b'], ['ENC R turn', 'Resonance 0–100 %'], ['ENC R push', 'Resonance reset to 0'], ['P1', 'Filter env amount 0–100 %'], ['P2', 'LFO → cutoff depth 0–100 %'], ['SHIFT + P1 / P2', 'Glide / drive → 01b'], ['NAV turn', 'Next view: PERFORM → AI → SPECTRUM'], ['NAV push', 'No function'], ...synthSys, ['B1–B4', 'OSC · ENV · LFO/MOD · PRESET (B4 again → ENGINE SELECT)'], ['VOL', 'Output volume → 08a'], ['Touch', 'Tap engine card (232×192) → ENGINE SELECT']],
+        a: [['Spectrum strip', '768×72 · 30 Hz'], ['Beat dots', '4 × 8×8 in BPM chip · on each beat'], ['Dials', 'Redraw on encoder change only'], ['P blocks', '224×32 each · on pot change, ≤30 Hz'], ['Chips', 'Redraw on new AI value (≤4 Hz)']],
+        d: [['Engine card', 'engine.active · preset.slot / name'], ['Dials', 'filter.cutoff · filter.resonance · filter.bypass'], ['P1 / P2', 'filter.env_amount · lfo.cutoff_depth'], ['Spectrum', 'spectrum[32] dB'], ['Chips', 'ai.key · ai.chord · ai.bpm · ai.genre + confidences']],
+        s: [['Engine card', '16,48 · 232×192 · pad 15'], ['Thumbnail', '32,64 · 120×80; ENGINE label to its right'], ['Cutoff dial', '296,48 · 192×192 · 31 ticks r78–92 over 270°'], ['Res dial', '560,48 · 192×192'], ['Dial value', 'T64 at +56; label T16 at +160'], ['Spectrum strip', '16,248 · 768×72 · 32 bars, gap 4'], ['AI chips', '16,328 · 4 × 186×40, gap 8'], bar] },
+      performShift: {
+        c: [['B6 held', 'SHIFT on; P1 = GLIDE 0–2000 ms, P2 = DRIVE 0–100 %'], ['B6 released', 'P1/P2 return to primary params with pickup (see component sheet)'], ['Everything else', 'Same as 01']],
+        a: [['P blocks + B6 cell', 'Repaint once on SHIFT change']],
+        d: [['P1 / P2', 'voice.glide · drive.amount'], ['State', 'ui.shift']],
+        s: [['P blocks', 'Solid TEAL_PLUS fill, #0A0A0A text'], ['Tags', 'SHIFT P1 (left) · P2 SHIFT (right)'], ['B6 cell', '464,448 · 112×32 · TEAL_PLUS']] },
+      engine: {
+        c: [['NAV turn', 'Move cursor through 6 tiles, row-major, wraps'], ['NAV push', 'Load engine under cursor, return to PERFORM'], ['B4', 'Back to PERFORM'], ['P1 / P2', 'No function (shown NO FUNCTION, dimmed)'], ...synthSys, ...synthEnc, ['Touch', 'Tap tile (152×160) = load']],
+        a: [['Focus card', 'Image swap on cursor move, ≤200 ms fade'], ['Tiles', 'Static; two tiles redraw per cursor move']],
+        d: [['Tiles / card', 'Static engine metadata (6)'], ['ACTIVE marker', 'engine.active']],
+        s: [['Focus card', '16,48 · 280×180 · 2 px TEAL_PLUS frame'], ['Name', '16,236 · T28'], ['Tag', '16,276 · T16'], ['Architecture', '16,300 · T12'], ['Action hint', '16,328 · 280×48'], ['Tile grid', '312,48 · 3 × 152, rows 160, gap 8'], ['Tile', 'pad 12/14 · thumb 120×80 · ACTIVE = 8×8 on name row'], bar] },
+      env: {
+        c: [['P1', 'Attack, direct'], ['P2', 'Decay, direct'], ['SHIFT + P1 / P2', 'Sustain / release → 03b'], ['NAV turn', 'Moves highlight outline A→D→S→R (visual aid only)'], ['NAV push', 'No function'], ['B2', 'Back to PERFORM'], ...synthSys, ...synthEnc],
+        a: [['Graph', 'Redraw on value change only'], ['Pair swap', '4 cells + 4 segments repaint once on SHIFT change']],
+        d: [['A / D / S / R', 'engine.env.attack · decay · sustain · release (per engine)'], ['Active pair', 'ui.shift'], ['Highlight', 'ui.env_cursor']],
+        s: [['Graph', '16,48 · 768×208'], ['Plot', 'inset 24 · 720×160 · baseline y 184 · nodes 8×8'], ['Active segments', 'TEAL_PLUS 4 px, white end nodes'], ['Value cells', '16,264 · 4 × 186×112, gap 8'], ['Cell tag', 'T12/600 · P1 / P2 / SHIFT P1 / SHIFT P2'], bar] },
+      envOn: {
+        c: [['B6 held', 'P1 → Sustain, P2 → Release'], ['B6 released', 'Back to A/D; pots need pickup before they change A/D']],
+        a: [['Pair swap', 'Same regions as 03a']],
+        d: [['State', 'ui.shift = true']],
+        s: [['Active cells', 'S, R: TEAL_DIM + TEAL_PLUS top'], ['P blocks', 'Solid TEAL_PLUS']] },
+      fx_main: {
+        c: [['ENC L turn', 'Dry/Wet'], ['ENC R turn', 'FX parameter 1 (FEEDBACK on Ghost Echo)'], ['P1', 'FX parameter 2 (TIME, illustrative)'], ['P2', 'FX parameter 3 (MOD DEPTH, illustrative)'], ['NAV turn', 'Move through slots (IN DEV skipped)'], ['NAV push', 'Toggle FX on / bypass → 04c'], ['B5 MODE', 'Back to SYNTH'], ['B6', 'HOLD toggle → 04b'], ['B1 / B2 / B3', 'Route INSERT / SEND / MASTER'], ['B4', 'Jump to favourite FX']],
+        a: [['Param cells', 'Each 224×132 · redraw on its control only'], ['List', 'Static; two rows redraw per cursor move']],
+        d: [['List', 'fx.slots[12] · available flag · on/off'], ['Panel', 'fx.active · fx.drywet · fx.params[3] {name, value, unit} — names TBD per FX'], ['Route', 'fx.route (soft-keys)']],
+        s: [['List', '16,48 · 296×324 · 12 rows × 27'], ['Panel', '328,48 · 456×328'], ['Header', '328,64 T28 · pills right, 32 h, gap 8'], ['Grid', '328,104 · 2×2 · 224×132, gap 8'], ['Cell', 'pad 12/16 · chip T12/600 · bar 192×4 at bottom'], ['Dry/Wet', 'T64 + T28 unit'], ['Params', 'T40 + T16 unit'], bar] },
+      fx_hold: {
+        c: [['B6 press', 'HOLD on/off (latched)'], ['Others', 'Same as 04a; params stay editable']],
+        a: [['None', 'B6 cell and HOLD pill repaint once']],
+        d: [['State', 'fx.hold']],
+        s: [['B6 cell', '464,448 · 112×32 · solid HERO_WHITE, #0A0A0A text'], ['HOLD pill', 'left of status pill · 32 h · HERO_WHITE']] },
+      fx_byp: {
+        c: [['NAV push', 'Re-enables the FX'], ['ENC / P1 / P2', 'Still editable while bypassed; values in MONITOR_GRAY']],
+        d: [['State', 'fx.enabled = false → BYPASS pill, square outline']],
+        s: [['Pill', 'right edge 784, y 60 · 32 h · BYPASS_ORANGE'], ['Chips', 'LINE fill']] },
+      ai: {
+        c: [['NAV turn', 'Next view (SPECTRUM)'], ['NAV push', 'Scale Lock on/off'], ['P1 / P2', 'Arp rate / humanize'], ['SHIFT + P1 / P2', 'Arp gate / swing'], ...synthSys, ...synthEnc],
+        a: [['Chromagram', '424×64 · 4 Hz'], ['Bar phase', '16 cells · each 16th'], ['Wheel', 'Only on key change, ≤200 ms'], ['P blocks', 'On pot change']],
+        d: [['Wheel + centre', 'ai.key · ai.key_conf'], ['Chord / Genre', 'ai.chord · ai.genre + conf'], ['Chroma', 'ai.chroma[12]'], ['Scale Lock', 'ai.scale_lock · last snap'], ['P1 / P2', 'arp.rate · arp.humanize (· arp.gate · arp.swing)']],
+        s: [['Wheel', '16,48 · 320×320 · r 64 / 106–108 / 152'], ['Centre', '112,144 · 128×128'], ['Chord', '360,48'], ['Genre', '584,48'], ['Chroma', '360,148 · 424×64; labels y 216'], ['Scale Lock', '360,240 · 424×64'], ['BPM + phase', '360,312 · 424×64'], bar] },
+      aifx: {
+        c: [['NAV push', 'Toggles active FX (FX rule); Scale Lock is SYNTH-only'], ['ENC L / R · P1 / P2', 'Dry/Wet · FX params 1–3 of the active FX'], ['B6', 'HOLD'], ['B5 MODE', 'Back to SYNTH']],
+        d: [['Chrome', 'Purple chrome; key colours stay Camelot']] },
+      spectrum: {
+        c: [['ENC L / R', 'Cutoff / res; overlay moves live'], ['ENC L push', 'Filter bypass'], ['P1 / P2 · SHIFT', 'Same as PERFORM'], ['NAV turn', 'Next view (PERFORM)'], ['B1–B4', 'Same as PERFORM'], ...synthSys],
+        a: [['Bars + peaks', '704×256 · 30 Hz'], ['Peak hold', 'Hold 1.5 s, fall 20 dB/s']],
+        d: [['Bars', 'spectrum[32] dB'], ['Curve', '4-pole response from cutoff + res']],
+        s: [['dB axis', '16,48 · 40 w · 72 dB over 256 px'], ['Plot', '64,48 · 704×256 · 32 bars, gap 4'], ['Freq axis', 'y 312'], ['Readout', '16,336 · 768×40 · T28'], bar] },
+      presets: {
+        c: [['NAV turn', 'Move cursor'], ['NAV push', 'Load preset; on SAVE row, saves to next free slot'], ['B4', 'ENGINE SELECT'], ['P1 / P2', 'No function (dimmed)'], ...synthSys, ...synthEnc],
+        a: [['None', 'Static page']],
+        d: [['List', 'presets[engine] {slot, name}'], ['LOADED', 'preset.loaded']],
+        s: [['Header', '16,48 · 768×48'], ['List', '16,104 · 456×240 · 6 rows × 40'], ['Scroll bar', '476,104 · 4×240'], ['Detail', '496,104 · 288×272 · pad 16'], bar] },
+      vol: {
+        c: [['VOL', 'Any movement shows the overlay; hides 1.5 s after last move'], ['Others', 'Keep working underneath']],
+        a: [['Panel', '400×144 · redraw per VOL step; fade ≤150 ms']],
+        d: [['Value', 'output.volume_db']],
+        s: [['Panel', '200,56 · 400×144 (unchanged)']] },
+      byp: {
+        c: [['ENC L push', 'Toggle bypass; toast for 1.5 s']],
+        a: [['Toast', '400×64 · fade ≤150 ms']],
+        d: [['State', 'filter.bypass → dial grey, BYP in ENC L, FILTER BYP tag, flat orange curve']],
+        s: [['Toast', '200,252 · 400×64 (over spectrum strip)']] },
+      mode: {
+        c: [['B5 MODE', 'Single press toggles SYNTH ↔ FX. Reverse banner is TEAL with SYNTH'], ['NAV push ×2', 'No longer used']],
+        a: [['Banner', '800×128 · visible 600 ms'], ['Chrome', 'Top + bottom bars swap instantly; content slides ≤200 ms']],
+        d: [['Mode', 'ui.mode']],
+        s: [['Banner', '0,152 · 800×128 · T96 + T28 + T12 hint'], bar] },
+      err: {
+        c: [['NAV push', 'Retry now'], ['VOL', 'Stays active'], ['Others', 'Disabled, incl. MODE, B6, P1/P2']],
+        a: [['Dots', '3 × 8×8 · 2 Hz']],
+        d: [['Trigger', 'Engine link status = lost (heartbeat timeout TBD)']],
+        s: [['Red rule', '64,120 · 8×160'], ['Title', '96,152 · T40'], ['Retry box', '96,296 · 280×48'], ['Footer', '0,384 · 800×96']] },
+      boot: {
+        c: [['None', 'No input until handshake']],
+        a: [['Progress', '320×4 · per boot step']],
+        d: [['Progress', 'Boot step index']],
+        s: [['Mark', '388,160 · 24×24'], ['Wordmark', 'T40 centred, y 200'], ['Progress', '240,328 · 320×4']] }
+    };
+    return this._n;
+  }
+}
+</script>
+</body>
+</html>

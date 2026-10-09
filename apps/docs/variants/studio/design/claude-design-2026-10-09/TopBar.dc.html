@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"></helmet>
+<div style="width:800px;height:40px;box-sizing:border-box;background:#0A0A0A;border-bottom:1px solid {{ dim }};display:flex;align-items:center;gap:16px;padding:0 16px;font-family:'IBM Plex Mono',monospace">
+  <div style="width:72px;height:24px;background:{{ mc }};color:#0A0A0A;font-size:12px;font-weight:600;letter-spacing:2px;display:flex;align-items:center;justify-content:center">{{ mode }}</div>
+  <div style="font-size:16px;line-height:16px;font-weight:600;color:#F2F2F2;letter-spacing:1px">{{ page }}</div>
+  <div style="display:flex;gap:4px"><sc-for list="{{ dots }}" as="d" hint-placeholder-count="3"><div style="width:8px;height:8px;background:{{ d.c }}"></div></sc-for></div>
+  <div style="flex:1"></div>
+  <sc-if value="{{ bypass }}" hint-placeholder-val="{{ false }}"><div style="height:24px;padding:0 8px;background:#FF6A35;color:#0A0A0A;font-size:12px;font-weight:600;display:flex;align-items:center;letter-spacing:1px">FILTER BYP</div></sc-if>
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#9FE1CB"><div style="width:8px;height:8px;background:#1FB6BB"></div>8A</div>
+  <div style="font-size:12px;color:#5A5A6E">124.0 BPM</div>
+  <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:{{ linkC }}"><div style="width:8px;height:8px;background:{{ linkC }}"></div>{{ linkT }}</div>
+  <div style="font-size:12px;color:#5A5A6E">VOL {{ vol }}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:40},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;SYNTH&quot;,&quot;FX&quot;],&quot;default&quot;:&quot;SYNTH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;page&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PERFORM&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;pi&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;bypass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;link&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;OK&quot;,&quot;LOST&quot;],&quot;default&quot;:&quot;OK&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;vol&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;-6.0&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, fx = p.mode === 'FX';
+    const mc = fx ? '#534AB7' : '#1D9E75', dim = fx ? '#2B2758' : '#0E5040', hi = fx ? '#7A6FE0' : '#5DCAA5';
+    const pi = p.pi ?? -1, lost = p.link === 'LOST';
+    return { mode: p.mode || 'SYNTH', page: p.page || '', mc, dim,
+      dots: pi < 0 ? [] : [0, 1, 2].map(i => ({ c: i === pi ? hi : dim })),
+      bypass: !!p.bypass, linkC: lost ? '#E84A4A' : '#5A5A6E', linkT: lost ? 'ENGINE LOST' : 'ENGINE OK', vol: p.vol || '-6.0' };
+  }
+}
+</script>
+</body>
+</html>

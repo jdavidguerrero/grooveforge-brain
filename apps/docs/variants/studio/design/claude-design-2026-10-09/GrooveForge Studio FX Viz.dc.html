@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#101010}a{color:#5DCAA5}a:hover{color:#9FE1CB}</style>
+</helmet>
+<div style="width:2608px;box-sizing:border-box;padding:64px;background:#101010;color:#E6E6E6;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;gap:96px">
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#7A6FE0">GROOVEFORGE BRAIN · STUDIO · FX MAIN · VISUALIZACIÓN</div>
+    <div style="font-size:40px;font-weight:600;color:#F2F2F2">Ver cómo el efecto altera la señal de entrada</div>
+    <div style="font-size:15px;color:#8A8A8A">800×480 · 1× · LVGL 8.3 por software · solo rellenos sólidos · 30 fps · extiende Studio UI v3 y reemplaza sus pantallas 04a–04c · tokens sin cambios</div>
+  </div>
+
+  <div style="display:flex;gap:96px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:24px;width:1200px">
+      <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">0</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Cambios contra v3 · 04a FX MAIN</span></div>
+      <div style="display:grid;grid-template-columns:48px 200px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">01</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Gráfica</div><div style="border-top:1px solid #262626;padding:8px 0">56,120 · 728×256. Ocupa el lugar del panel de parámetros y es lo más grande de la pantalla.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">02</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Parámetros</div><div style="border-top:1px solid #262626;padding:8px 0">Se quitan las 4 celdas 224×132. Los cuatro valores ya están en la barra inferior (ENC L, ENC R, P1, P2), así que no se pierde información.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">03</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Lista de FX</div><div style="border-top:1px solid #262626;padding:8px 0">Deja de estar fija. Al girar NAV aparece la lista de v3 (264×328, 12 filas × 27) en 56,48 sobre la gráfica y se oculta 1.5 s después del último paso. NAV push sigue siendo on/off.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">04</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Medidor IN</div><div style="border-top:1px solid #262626;padding:8px 0">Pasa al borde izquierdo: 16,48 · 24×328. Geometría interna igual a v3.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">05</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Selector de vista</div><div style="border-top:1px solid #262626;padding:8px 0">3 pestañas de 88×64 (mínimo táctil 64) en 518,48. Un tap en la gráfica también cicla ONDA → ESPECTRO → FIRMA. No se agrega control físico: el mapeo de v3 queda intacto. La vista es global, no por FX, y se recuerda al apagar.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">06</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Colores</div><div style="border-top:1px solid #262626;padding:8px 0">DRY en MONITOR_GRAY #5A5A6E, WET en PURPLE_BRIGHT #7A6FE0. En bypass la WET pasa a PURPLE_DIM #2B2758. Sin tokens nuevos.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A6FE0">07</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Render</div><div style="border-top:1px solid #262626;padding:8px 0">ONDA y ESPECTRO repintan la gráfica a 30 Hz, con el mismo presupuesto que 06 SPECTRUM (704×256). FIRMA repinta solo zonas chicas, salvo Cymatic (232×232). Con FX MAIN abierto, lo único que se anima además de la gráfica es el medidor.</div></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:24px;width:900px">
+      <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">A</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Regiones y estados</span></div>
+      <div style="display:grid;grid-template-columns:160px 220px minmax(0,1fr);font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:16px;color:#F2F2F2">
+        <div style="display:contents;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:6px 0">REGIÓN</div><div style="padding:6px 0">X,Y · W×H</div><div style="padding:6px 0">NOTA</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Top bar</div><div style="border-top:1px solid #262626;padding:6px 0">0,0 · 800×40</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">sin cambios</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Medidor IN</div><div style="border-top:1px solid #262626;padding:6px 0">16,48 · 24×328</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">barras 10×272 en y 80, clip 10×8 en y 68, PAD en y 360</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Cabecera</div><div style="border-top:1px solid #262626;padding:6px 0">56,48 · 456×64</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">SLOT/estado 12 px GRAY · nombre 28/600 · píldoras 32 alto, 8 px a la derecha del nombre</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Pestañas</div><div style="border-top:1px solid #262626;padding:6px 0">518,48 · 3 × 88×64</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">gap 1 · activa PURPLE_DIM + 4 px PURPLE_BRIGHT abajo, texto HERO_WHITE 16/600 · inactiva SURFACE, texto GRAY</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Gráfica</div><div style="border-top:1px solid #262626;padding:6px 0">56,120 · 728×256</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">marco 1 px LINE · zona de tap = toda la gráfica</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Lista (NAV)</div><div style="border-top:1px solid #262626;padding:6px 0">56,48 · 264×328</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">temporal · la gráfica sigue corriendo debajo</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:6px 0;color:#9FE1CB">Barra inferior</div><div style="border-top:1px solid #262626;padding:6px 0">0,384 · 800×96</div><div style="border-top:1px solid #262626;padding:6px 0;color:#B8B8B8">BottomBar3 de v3, NAV = SLOT</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#C8C8C8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-bottom:4px">BYPASS Y HOLD EN LAS TRES VISTAS</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#FF6A35">BYPASS</span> · DRY igual. Todo lo que es WET pasa a PURPLE_DIM: la traza, las barras del espectro y la forma de la firma. La fila Δ del espectro se apaga. Los indicadores vivos de la firma (punto, cabezal) pasan a MONITOR_GRAY. Así la WET queda como vista previa de lo que va a entrar.</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">HOLD</span> · Con B6 apretado la WET se ve a color completo aunque el FX estuviera apagado, y el marco de la gráfica pasa a 2 px HERO_WHITE (se repinta una vez). Al soltar, vuelve al estado anterior.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#C8C8C8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#E8B84A;padding-bottom:4px">PENDIENTES</div>
+        <div>WET = salida después de DRY/WET (lo que se oye). Hay que confirmar que el motor puede exponer las dos señales.</div>
+        <div>La WET atenuada en bypass supone que el FX sigue procesando en bypass, algo que HOLD con colas ya necesita. Si no es así, la WET se dibuja plana.</div>
+        <div>Los nombres de los parámetros 2/3 siguen pendientes. DRIVE, BITS, DECAY, RING, TONE, BIAS, ROOT y SPREAD son nombres de trabajo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:48px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">B</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">FX MAIN · 3 vistas × 3 FX de ejemplo</span><span style="font-size:14px;color:#8A8A8A">Tap en pestaña o en la gráfica · columnas: ONDA · ESPECTRO · FIRMA</span></div>
+    <sc-for list="{{ rows }}" as="row" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;color:#7A6FE0">{{ row.h }}</div>
+        <div style="display:flex;gap:40px;align-items:flex-start">
+          <sc-for list="{{ row.s }}" as="s" hint-placeholder-count="3">
+            <div id="{{ s.id }}" style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#534AB7;padding:2px 8px">{{ s.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ s.title }}</span><span style="font-size:13px;color:#8A8A8A">{{ s.sub }}</span></div>
+              <div data-screen-label="{{ s.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+                <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="FX" page="FX" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+                <canvas data-viz="meter" width="24" height="328" style="position:absolute;left:16px;top:48px;display:block"></canvas>
+                <div style="position:absolute;left:56px;top:48px;width:456px;height:64px;display:flex;flex-direction:column;justify-content:center;gap:4px">
+                  <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">{{ s.line }}</div>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <div style="font-size:28px;line-height:32px;font-weight:600;color:#F2F2F2;white-space:nowrap">{{ s.name }}</div>
+                    <sc-for list="{{ s.pills }}" as="p" hint-placeholder-count="1">
+                      <div style="height:32px;padding:0 12px;background:{{ p.bg }};color:#0A0A0A;font-size:16px;font-weight:600;display:flex;align-items:center;letter-spacing:1px">{{ p.t }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="position:absolute;left:518px;top:48px;display:flex;gap:1px">
+                  <sc-for list="{{ s.tabs }}" as="tb" hint-placeholder-count="3">
+                    <div style="width:88px;height:64px;box-sizing:border-box;background:{{ tb.bg }};border-bottom:4px solid {{ tb.bar }};color:{{ tb.c }};font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;padding-top:4px">{{ tb.t }}</div>
+                  </sc-for>
+                </div>
+                <canvas data-viz="{{ s.viz }}" data-fx="{{ s.fx }}" data-st="{{ s.st }}" width="728" height="256" style="position:absolute;left:56px;top:120px;display:block"></canvas>
+                <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar3" mode="FX" active="{{ 0 }}" keys="{{ keysFx }}" enc-l="{{ s.encL }}" enc-r="{{ s.encR }}" p1="{{ s.p1 }}" p2="{{ s.p2 }}" hold="{{ s.hold }}" nav="SLOT" hint-size="800px,96px"></dc-import></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;color:#7A6FE0">ESTADOS · GHOST ECHO · ONDA</div>
+      <div style="display:flex;gap:40px;align-items:flex-start">
+        <sc-for list="{{ states }}" as="s" hint-placeholder-count="2">
+          <div id="{{ s.id }}" style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#534AB7;padding:2px 8px">{{ s.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ s.title }}</span><span style="font-size:13px;color:#8A8A8A">{{ s.sub }}</span></div>
+            <div data-screen-label="{{ s.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+              <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="FX" page="FX" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+              <canvas data-viz="meter" width="24" height="328" style="position:absolute;left:16px;top:48px;display:block"></canvas>
+              <div style="position:absolute;left:56px;top:48px;width:456px;height:64px;display:flex;flex-direction:column;justify-content:center;gap:4px">
+                <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">{{ s.line }}</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="font-size:28px;line-height:32px;font-weight:600;color:#F2F2F2;white-space:nowrap">{{ s.name }}</div>
+                  <sc-for list="{{ s.pills }}" as="p" hint-placeholder-count="1">
+                    <div style="height:32px;padding:0 12px;background:{{ p.bg }};color:#0A0A0A;font-size:16px;font-weight:600;display:flex;align-items:center;letter-spacing:1px">{{ p.t }}</div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="position:absolute;left:518px;top:48px;display:flex;gap:1px">
+                <sc-for list="{{ s.tabs }}" as="tb" hint-placeholder-count="3">
+                  <div style="width:88px;height:64px;box-sizing:border-box;background:{{ tb.bg }};border-bottom:4px solid {{ tb.bar }};color:{{ tb.c }};font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;padding-top:4px">{{ tb.t }}</div>
+                </sc-for>
+              </div>
+              <canvas data-viz="{{ s.viz }}" data-fx="{{ s.fx }}" data-st="{{ s.st }}" width="728" height="256" style="position:absolute;left:56px;top:120px;display:block"></canvas>
+              <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar3" mode="FX" active="{{ 0 }}" keys="{{ keysFx }}" enc-l="{{ s.encL }}" enc-r="{{ s.encR }}" p1="{{ s.p1 }}" p2="{{ s.p2 }}" hold="{{ s.hold }}" nav="SLOT" hint-size="800px,96px"></dc-import></div>
+            </div>
+          </div>
+        </sc-for>
+        <div style="width:640px;display:flex;flex-direction:column;gap:12px;padding-top:34px;font-size:13px;line-height:20px;color:#C8C8C8">
+          <div><span style="font-family:'IBM Plex Mono',monospace;color:#FF6A35">10j BYPASS</span><br>La DRY se dibuja encima (lo que se oye) en 3 px de ancho y la WET queda detrás, en 5 px PURPLE_DIM. Leyenda: WET · BYPASS. Píldora BYPASS, valores de la barra en MONITOR_GRAY.</div>
+          <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">10k HOLD</span><br>Igual que 10a, con el marco de 2 px HERO_WHITE, la píldora HOLD y B6 en HELD. Si el FX estaba en bypass, al apretar B6 pasa de 10j a 10k y al soltar vuelve a 10j.</div>
+          <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">Transición</span><br>Sin animación: el cambio de color se aplica en el próximo frame (≤ 33 ms).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">C</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Vista FIRMA · los 9 FX disponibles</span><span style="font-size:14px;color:#8A8A8A">728×256 · 1× · lo que ocupa la gráfica en FX MAIN · Phase Chorus y Sub Genesis son propuestas</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,728px);gap:48px 40px">
+      <sc-for list="{{ sigs }}" as="g" hint-placeholder-count="9">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <canvas data-viz="sig" data-fx="{{ g.fx }}" data-st="main" width="728" height="256" style="display:block;outline:1px solid #2A2A2A"></canvas>
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#7A6FE0">{{ g.slot }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#F2F2F2">{{ g.name }}</span><span style="font-size:13px;color:#8A8A8A">{{ g.kind }}</span></div>
+          <div style="display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 12px;font-size:13px;line-height:19px;color:#C8C8C8">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A;padding-top:1px">MUESTRA</span><span style="text-wrap:pretty">{{ g.m }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A;padding-top:1px">DATOS</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ g.d }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A;padding-top:1px">REDIBUJO</span><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ g.r }}</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:56px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">D</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Componentes</span><span style="font-size:14px;color:#8A8A8A">Medidas en px a 1× · los acercamientos son 8×, una celda = 1 px</span></div>
+    <sc-for list="{{ comps }}" as="cp" hint-placeholder-count="4">
+      <div style="display:flex;gap:56px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;gap:12px;width:728px;flex:none">
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#F2F2F2;background:#534AB7;padding:2px 8px">{{ cp.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ cp.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#8A8A8A">{{ cp.size }}</span></div>
+          <canvas data-viz="{{ cp.viz }}" data-fx="{{ cp.fx }}" data-st="main" width="{{ cp.w }}" height="{{ cp.h }}" style="display:block;align-self:flex-start;outline:1px solid #2A2A2A"></canvas>
+          <sc-if value="{{ cp.zoom }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:8px;padding-top:12px">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">{{ cp.zl }}</div>
+              <canvas data-viz="{{ cp.zoom }}" data-st="main" width="{{ cp.zw }}" height="176" style="display:block;align-self:flex-start;outline:1px solid #2A2A2A"></canvas>
+            </div>
+          </sc-if>
+        </div>
+        <div style="width:760px;display:flex;flex-direction:column;padding-top:34px">
+          <sc-for list="{{ cp.spec }}" as="r" hint-placeholder-count="6">
+            <div style="display:grid;grid-template-columns:168px minmax(0,1fr);gap:16px;font-size:13px;line-height:19px;border-top:1px solid #262626;padding:6px 0;color:#C8C8C8">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ r.a }}</span><span style="text-wrap:pretty">{{ r.b }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#7A6FE0">E</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Datos y tasa de refresco por vista</span><span style="font-size:14px;color:#8A8A8A">El motor envía solo el flujo de la vista visible (ui.fx_view). Fuera de FX MAIN no se envía nada.</span></div>
+    <div style="display:grid;grid-template-columns:200px 420px 110px 90px 320px minmax(0,1fr);font-size:13px;line-height:19px;color:#C8C8C8;max-width:2000px">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:8px 16px 8px 0">VISTA</div><div style="padding:8px 16px 8px 0">DATOS MOTOR → UI</div><div style="padding:8px 16px 8px 0">B / FRAME</div><div style="padding:8px 16px 8px 0">TASA</div><div style="padding:8px 16px 8px 0">REGIÓN QUE SE REPINTA</div><div style="padding:8px 0">NOTAS</div></div>
+      <sc-for list="{{ dataRows }}" as="r" hint-placeholder-count="10">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#9FE1CB">{{ r.v }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ r.d }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ r.b }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ r.r }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">{{ r.g }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;text-wrap:pretty">{{ r.n }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:13px;line-height:20px;color:#8A8A8A;max-width:1400px">Pico de ancho de banda: ONDA, 480 B × 30 = 14.4 KB/s, más el medidor. Toda la geometría se dibuja con lv_draw_rect relleno, sin antialiasing, sin lv_line ni arcos. Las curvas que solo dependen de parámetros (transferencia, ecos, envolventes, chorus) se calculan en la UI y se cachean en un lv_canvas que se regenera solo cuando cambia el parámetro.</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;animate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;View&quot;},&quot;scopeCols&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;72&quot;,&quot;90&quot;,&quot;120&quot;],&quot;default&quot;:&quot;120&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Osciloscopio&quot;}}">
+class Component extends DCLogic {
+  K = { BG: '#0A0A0A', PB: '#7A6FE0', P: '#534AB7', PD: '#2B2758', MON: '#5A5A6E', W: '#F2F2F2', GRAY: '#9FE1CB', LINE: '#242424', S: '#141414', S2: '#1C1C1C', OR: '#FF6A35' };
+  SEQ = [110, 110, 146.83, 98];
+  MR = [1, 1.59, 2.14, 2.3, 2.65, 2.92, 3.16, 3.5];
+  MODES = [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [2, 5], [1, 5], [3, 5]];
+
+  componentDidMount() {
+    this.t0 = performance.now(); this.last = 0;
+    const loop = now => {
+      this.raf = requestAnimationFrame(loop);
+      if (now - this.last < 32) return;
+      this.last = now;
+      const still = this.props.animate === false, t = still ? 1.35 : 0.4 + (now - this.t0) / 1000;
+      document.querySelectorAll('canvas[data-viz]').forEach(c => {
+        if (still && c._still) return;
+        try { this.draw(c, t); c._still = still; } catch (e) { if (!this.err) { this.err = 1; console.error(e); } }
+      });
+    };
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => { this.raf = requestAnimationFrame(loop); });
+  }
+  componentWillUnmount() { cancelAnimationFrame(this.raf); }
+
+  R(x, c, a, b, w, h) { x.fillStyle = c; x.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); }
+  T(x, s, a, b, c, o) { o = o || {}; x.font = (o.w || 400) + ' ' + (o.s || 12) + 'px "IBM Plex Mono", monospace'; x.fillStyle = c; x.textAlign = o.al || 'left'; x.textBaseline = 'alphabetic'; x.fillText(s, a, b); }
+  nt(t) { const L = .6, k = Math.floor(t / L), tn = t - k * L, q = this.SEQ; return { f: q[k % 4], fp: q[(k + 3) % 4], env: .3 + .65 * Math.exp(-tn * 2.5), tn }; }
+  wave(f, s, ph) { ph = ph || 0; const a = 6.2832 * f * s + ph; return (.7 * Math.sin(a) + .25 * Math.sin(2 * a + .5) + .12 * Math.sin(3 * a + 1.1)) / 1.1; }
+  amps(t) { const n = this.nt(t); return this.MR.map((_, k) => Math.max(.08, Math.min(1, (.35 + .65 * n.env) * (.55 + .45 * Math.sin(t * (.7 + .23 * k) + k * 1.9))))); }
+  wet(fx, s, n, t, a) {
+    const d = n.env * this.wave(n.f, s);
+    if (fx === 'tape') return Math.tanh(4.1 * d) / Math.tanh(4.1) * .92;
+    if (fx === 'cym') { let o = .55 * d; for (let k = 0; k < 8; k++) o += .1 * a[k] * n.env * Math.sin(6.2832 * n.f * this.MR[k] * s + k); return Math.max(-1, Math.min(1, o)); }
+    const e = this.wave(n.fp, s, t * 2.1) * (.35 + .4 * Math.exp(-n.tn));
+    return Math.max(-1, Math.min(1, .7 * d + .45 * e));
+  }
+  dbs(v) { const d = 20 * Math.log10(Math.max(v, 1e-4)); return (d < 0 ? '−' : '+') + Math.abs(d).toFixed(1); }
+  bandOf(f) { return 31 * Math.log(f / 20) / Math.log(1000); }
+  gs(z, s) { return Math.exp(-z * z / (2 * s * s)); }
+  hash(n) { const v = Math.sin(n * 127.1 + 311.7) * 43758.5453; return v - Math.floor(v); }
+  leg(x, W, items, right) {
+    let px = 8;
+    items.forEach(it => {
+      if (it.line) this.R(x, it.c, px, 11, 14, 2); else this.R(x, it.c, px, 7, 10, 10);
+      px += it.line ? 20 : 16;
+      this.T(x, it.l, px, 17, this.K.GRAY);
+      px += x.measureText(it.l).width + 16;
+    });
+    if (right) this.T(x, right, W - 8, 17, this.K.MON, { al: 'right' });
+  }
+  frame(x, W, H, st) {
+    if (st === 'hold') { x.lineWidth = 2; x.strokeStyle = this.K.W; x.strokeRect(1, 1, W - 2, H - 2); }
+    else { x.lineWidth = 1; x.strokeStyle = this.K.LINE; x.strokeRect(.5, .5, W - 1, H - 1); }
+  }
+
+  draw(c, t) {
+    const x = c.getContext('2d'), W = c.width, H = c.height, d = c.dataset, st = d.st || 'main', fx = d.fx || 'ghost';
+    x.fillStyle = this.K.BG; x.fillRect(0, 0, W, H);
+    const v = d.viz;
+    if (v === 'meter') return this.meter(x, c, t);
+    if (v === 'zscope') return this.zscope(x, W, H);
+    if (v === 'zspec') return this.zspec(x, W, H);
+    if (v === 'plate') return this.plate(x, t, 0, 0);
+    if (v === 'curveOnly') return this.curve(x, t, fx, 0, 0, false);
+    if (v === 'scope') this.scope(x, W, H, t, fx, st);
+    else if (v === 'spec') this.spec(x, W, H, t, fx, st);
+    else if (v === 'sig') this.sig(x, W, H, t, fx);
+    this.frame(x, W, H, st);
+  }
+
+  meter(x, c, t) {
+    const K = this.K, n = this.nt(t);
+    this.T(x, 'IN', 12, 13, K.GRAY, { w: 600, al: 'center' });
+    this.R(x, K.LINE, 0, 20, 10, 8); this.R(x, K.LINE, 14, 20, 10, 8);
+    c._pk = c._pk || [0, 0];
+    [0, 14].forEach((bx, j) => {
+      this.R(x, K.S2, bx, 32, 10, 272);
+      const l = Math.max(.1, Math.min(1, (.5 + .1 * Math.sin(t * 5.3 + j * 1.3)) * (.75 + .35 * n.env)));
+      const h = Math.round(272 * l);
+      c._pk[j] = Math.max(c._pk[j] - 4, h);
+      this.R(x, K.GRAY, bx, 304 - h, 10, h);
+      this.R(x, K.W, bx, 304 - Math.min(270, c._pk[j] + 2), 10, 2);
+    });
+    this.T(x, '−10', 12, 324, K.MON, { al: 'center' });
+  }
+
+  scope(x, W, H, t, fx, st) {
+    const K = this.K, n = this.nt(t), cols = +(this.props.scopeCols || 120), pitch = 720 / cols, win = .0427, cy = 136, A = 104;
+    const a = fx === 'cym' ? this.amps(t) : null, byp = st === 'byp';
+    this.R(x, K.LINE, 4, cy, 720, 1); this.R(x, K.LINE, 4, cy - A, 720, 1); this.R(x, K.LINE, 4, cy + A, 720, 1);
+    for (let i = 1; i < 4; i++) this.R(x, K.LINE, 4 + i * 180, 24, 1, 224);
+    const wide = Math.max(2, Math.round(pitch - 1)), thin = Math.max(1, Math.round(wide * .6)), off = Math.floor((wide - thin) / 2);
+    for (let i = 0; i < cols; i++) {
+      let d0 = 9, d1 = -9, w0 = 9, w1 = -9;
+      for (let k = 0; k <= 6; k++) {
+        const s = (i + k / 6) * win / cols, dv = n.env * this.wave(n.f, s), wv = this.wet(fx, s, n, t, a);
+        d0 = Math.min(d0, dv); d1 = Math.max(d1, dv); w0 = Math.min(w0, wv); w1 = Math.max(w1, wv);
+      }
+      const X = 4 + i * pitch;
+      if (byp) {
+        this.R(x, K.PD, X, cy - w1 * A, wide, Math.max(2, (w1 - w0) * A));
+        this.R(x, K.MON, X + off, cy - d1 * A, thin, Math.max(2, (d1 - d0) * A));
+      } else {
+        this.R(x, K.MON, X, cy - d1 * A, wide, Math.max(2, (d1 - d0) * A));
+        this.R(x, K.PB, X + off, cy - w1 * A, thin, Math.max(2, (w1 - w0) * A));
+      }
+    }
+    this.leg(x, W, [{ c: K.MON, l: 'DRY' }, { c: byp ? K.PD : K.PB, l: byp ? 'WET · BYPASS' : 'WET' }], '42.7 MS · ' + cols + ' COL · TRIG ↑ DRY');
+  }
+
+  specData(fx, t) {
+    const n = this.nt(t), fb = this.bandOf(n.f), a = fx === 'cym' ? this.amps(t) : null, D = [], Wt = [];
+    for (let i = 0; i < 32; i++) {
+      const d = -6 - Math.max(0, i - fb) * 1.7 - Math.max(0, fb - i) * 9 + 2 * Math.sin(i * 1.7 + t * 3.1) + 1.5 * Math.sin(i * .6 - t * 1.3) + 10 * Math.log10(n.env);
+      let w = d;
+      if (fx === 'tape') { if (i > fb + 1 && i < 27) w += 4 + 7 * Math.sin(Math.PI * (i - fb - 1) / (26 - fb)); if (i > 26) w -= (i - 26) * 3.5; }
+      else if (fx === 'cym') { for (let k = 0; k < 8; k++) w += 15 * a[k] * this.gs(i - this.bandOf(n.f * this.MR[k]), .6); }
+      else { if (i > 19) w -= (i - 19) * 1.6; w += 9 * this.gs(i - this.bandOf(n.fp * 2), 1.1); }
+      D.push(Math.max(-60, Math.min(0, d))); Wt.push(Math.max(-60, Math.min(0, w)));
+    }
+    return { D, Wt };
+  }
+  spec(x, W, H, t, fx, st) {
+    const K = this.K, { D, Wt } = this.specData(fx, t), y = db => 28 + (-db / 60) * 188, x0 = 12, byp = st === 'byp', wc = byp ? K.PD : K.PB;
+    [-20, -40].forEach(db => { this.R(x, K.LINE, x0, y(db), 704, 1); this.T(x, '−' + (-db) + ' DB', x0 + 2, y(db) - 4, K.MON); });
+    this.R(x, K.LINE, x0, 216, 704, 1);
+    for (let i = 0; i < 32; i++) { const yw = y(Wt[i]); this.R(x, wc, x0 + i * 22 + 3, yw, 16, 216 - yw); }
+    for (let i = 0; i < 32; i++) { const yd = y(D[i]); this.R(x, K.BG, x0 + i * 22, yd - 1, 22, 4); if (i) { const yp = y(D[i - 1]); this.R(x, K.BG, x0 + i * 22 - 1, Math.min(yp, yd) - 1, 4, Math.abs(yp - yd) + 4); } }
+    for (let i = 0; i < 32; i++) { const yd = y(D[i]); this.R(x, K.MON, x0 + i * 22, yd, 22, 2); if (i) { const yp = y(D[i - 1]); this.R(x, K.MON, x0 + i * 22, Math.min(yp, yd), 2, Math.abs(yp - yd) + 2); } }
+    for (let i = 0; i < 32; i++) {
+      const dd = Wt[i] - D[i], bx = x0 + i * 22 + 3;
+      if (!byp && dd >= 3) this.R(x, K.PB, bx, 224, 16, 10);
+      else if (!byp && dd <= -3) this.R(x, K.MON, bx, 224, 16, 10);
+      else this.R(x, K.LINE, bx, 228, 16, 2);
+    }
+    [[20, '20'], [100, '100'], [1000, '1K'], [10000, '10K'], [20000, '20K']].forEach(([f, l]) => { const cx = x0 + this.bandOf(f) * 22 + 11; this.T(x, l, Math.min(W - 18, Math.max(20, cx)), 250, K.MON, { al: 'center' }); });
+    this.leg(x, W, [{ c: K.MON, l: 'DRY', line: 1 }, { c: wc, l: 'WET' }, { c: byp ? K.LINE : K.PB, l: 'Δ AGREGA' }, { c: byp ? K.LINE : K.MON, l: 'Δ QUITA' }], '32 BANDAS · 0 A −60 DB · Δ = ±3 DB');
+  }
+
+  sig(x, W, H, t, fx) {
+    if (fx === 'ghost') return this.sGhost(x, W, t);
+    if (fx === 'tape' || fx === 'bit') return this.curve(x, t, fx, 40, 12, true);
+    if (fx === 'cym') return this.sCym(x, W, t);
+    if (fx === 'gran') return this.sGran(x, W, t);
+    if (fx === 'modal' || fx === 'spring') return this.sVerb(x, W, t, fx);
+    if (fx === 'chorus') return this.sChorus(x, W, t);
+    if (fx === 'sub') return this.sSub(x, W, t);
+  }
+  axisDb(x, top, bot, x0, x1) {
+    const K = this.K;
+    [0, -20, -40, -60].forEach(db => { const y = top + (-db / 60) * (bot - top); this.R(x, K.LINE, x0, y, x1 - x0, 1); this.T(x, db ? '−' + (-db) : '0', x0 - 8, y + 4, K.MON, { al: 'right' }); });
+  }
+  sGhost(x, W, t) {
+    const K = this.K, x0 = 56, x1 = 712, s = (x1 - x0) / 3000, top = 36, bot = 220, fbDb = 20 * Math.log10(.58), y = db => top + (-db / 60) * (bot - top);
+    this.axisDb(x, top, bot, x0, x1);
+    const pt = (t % 3) * 1000;
+    for (let px = 0; px < x1 - x0; px += 6) { const db = fbDb * (px / s) / 375; if (db < -60) break; this.R(x, K.MON, x0 + px, y(db) - 1, 2, 2); }
+    let cur = -1;
+    for (let n = 0; n * 375 <= 3000; n++) if (n * 375 <= pt) cur = n;
+    for (let n = 0; n * 375 <= 3000; n++) {
+      const ms = n * 375, db = n * fbDb, cx = x0 + ms * s, yt = y(db);
+      this.R(x, n === 0 ? K.MON : ms <= pt ? K.PB : K.P, cx - 4, yt, 8, bot - yt);
+      if (n === cur && n > 0) this.R(x, K.W, cx - 4, yt - 4, 8, 2);
+      this.T(x, String(ms), Math.min(cx, x1 - 14), 240, K.MON, { al: 'center' });
+    }
+    this.R(x, K.W, x0 + pt * s - 1, top, 2, bot - top);
+    this.T(x, 'MS', W - 4, 240, K.MON, { al: 'right' });
+    this.leg(x, W, [{ c: K.MON, l: 'DRY' }, { c: K.PB, l: 'ECO SONADO' }, { c: K.P, l: 'POR SONAR' }], 'TIME 375 MS · FB 58 % · −4.7 DB/REP · −60 DB A 4.8 S');
+  }
+  curve(x, t, fx, bx, by, full) {
+    const K = this.K, bw = 480, bh = 232, cx = bx + bw / 2, cy = by + bh / 2;
+    const f = fx === 'bit' ? v => Math.round(v * 8) / 8 : v => Math.tanh(4.1 * v) / Math.tanh(4.1);
+    x.lineWidth = 1; x.strokeStyle = K.LINE; x.strokeRect(bx + .5, by + .5, bw - 1, bh - 1);
+    this.R(x, K.LINE, bx, cy, bw, 1); this.R(x, K.LINE, cx, by, 1, bh);
+    for (let i = 0; i < bw; i += 6) { const py = cy - ((i - bw / 2) / (bw / 2)) * (bh / 2); this.R(x, K.MON, bx + i, py - 1, 2, 2); }
+    let prev = null;
+    for (let i = 0; i < bw; i++) {
+      const v = (i / (bw - 1)) * 2 - 1, py = Math.round(cy - Math.max(-1, Math.min(1, f(v))) * (bh / 2 - 2));
+      if (prev === null) prev = py;
+      this.R(x, K.PB, bx + i - (i ? 1 : 0), Math.min(prev, py) - 1, 2, Math.abs(py - prev) + 2);
+      prev = py;
+    }
+    const n = this.nt(t), lv = Math.min(.98, n.env * .98 + .02 * Math.sin(t * 9)), px = cx + lv * bw / 2, py = cy - f(lv) * (bh / 2 - 2);
+    this.R(x, K.MON, px, py, 1, cy - py); this.R(x, K.MON, cx, py, px - cx, 1);
+    this.R(x, K.W, px - 5, py - 5, 10, 10);
+    this.T(x, 'OUT', bx + 8, by + 18, K.MON); this.T(x, 'IN', bx + bw - 8, cy - 8, K.MON, { al: 'right' });
+    if (!full) return;
+    const ox = 552;
+    this.T(x, 'IN', ox, 40, K.GRAY, { w: 600 }); this.T(x, this.dbs(lv), ox, 78, K.W, { s: 28, w: 600 }); this.T(x, 'DBFS', ox + 96, 78, K.MON);
+    this.T(x, 'OUT', ox, 122, K.GRAY, { w: 600 }); this.T(x, this.dbs(Math.abs(f(lv))), ox, 160, K.W, { s: 28, w: 600 }); this.T(x, 'DBFS', ox + 96, 160, K.MON);
+    this.R(x, K.W, ox, 194, 10, 10); this.T(x, 'NIVEL ACTUAL', ox + 16, 203, K.GRAY);
+    this.T(x, fx === 'bit' ? 'FORMA · BITS 4 (ENC R)' : 'FORMA · DRIVE 62 % (ENC R)', ox, 236, K.MON);
+  }
+  plate(x, t, bx, by) {
+    const K = this.K, N = 58, NN = N * N;
+    if (!this.cb) {
+      const B = new Float32Array(8 * NN);
+      this.MODES.forEach(([n, m], k) => { const sg = k % 2 ? 1 : -1; for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) { const u = (i + .5) / N, v = (j + .5) / N; B[k * NN + j * N + i] = Math.cos(n * Math.PI * u) * Math.cos(m * Math.PI * v) + sg * Math.cos(m * Math.PI * u) * Math.cos(n * Math.PI * v); } });
+      this.cb = B;
+    }
+    const a = this.amps(t), F = new Float32Array(NN); let mx = 1e-6;
+    for (let c = 0; c < NN; c++) { let s = 0; for (let k = 0; k < 8; k++) s += a[k] * this.cb[k * NN + c]; F[c] = s; const q = Math.abs(s); if (q > mx) mx = q; }
+    this.R(x, K.S, bx, by, N * 4, N * 4);
+    for (let c = 0; c < NN; c++) { const r = Math.abs(F[c]) / mx; if (r < .06) this.R(x, K.PB, bx + (c % N) * 4, by + Math.floor(c / N) * 4, 4, 4); else if (r < .14) this.R(x, K.P, bx + (c % N) * 4, by + Math.floor(c / N) * 4, 4, 4); }
+    return a;
+  }
+  sCym(x, W, t) {
+    const K = this.K, a = this.plate(x, t, 12, 12);
+    this.T(x, 'MODOS · AMPLITUD', 272, 28, K.GRAY, { w: 600 });
+    this.T(x, 'ARENA = NODOS', W - 8, 28, K.MON, { al: 'right' });
+    this.MODES.forEach(([n, m], k) => {
+      const y = 44 + k * 25;
+      this.T(x, 'M' + (k + 1) + ' ' + n + ',' + m, 272, y + 10, K.GRAY);
+      this.R(x, K.PD, 368, y, 340, 10); this.R(x, K.PB, 368, y, Math.round(340 * a[k]), 10);
+    });
+  }
+  sGran(x, W, t) {
+    const K = this.K, ax = 56, aw = 656, s = aw / 2000, y = p => 124 - p * 7.5;
+    [12, 0, -12].forEach(p => { this.R(x, K.LINE, ax, y(p), aw, 1); this.T(x, (p > 0 ? '+' : p < 0 ? '−' : '') + Math.abs(p), ax - 8, y(p) + 4, K.MON, { al: 'right' }); });
+    const dens = 40, N = 18, g0 = Math.floor(t * dens), life = N / dens, head = tb => (tb * 1000) % 2000, lanes = [-12, 0, 0, 0, 7, 12];
+    for (let j = 0; j < N; j++) {
+      const g = g0 - j, birth = g / dens, age = t - birth, am = Math.sin(Math.PI * Math.min(1, age / life));
+      const pos = (head(birth) - 80 - this.hash(g) * 700 + 4000) % 2000, size = 50 + this.hash(g + .37) * 90, p = lanes[Math.floor(this.hash(g + .71) * 6)];
+      const w = size * s, X = ax + pos * s;
+      this.R(x, am > .66 ? K.PB : am > .33 ? K.P : K.PD, X, y(p) - 4, Math.min(w, ax + aw - X), 8);
+    }
+    this.R(x, K.W, ax + head(t) * s - 1, 28, 2, 192);
+    [0, 500, 1000, 1500, 2000].forEach(ms => this.T(x, String(ms), ax + ms * s, 240, K.MON, { al: 'center' }));
+    this.T(x, 'MS', ax + aw + 16, 240, K.MON);
+    this.leg(x, W, [{ c: K.PB, l: 'GRANO' }, { c: K.W, l: 'ESCRITURA' }], 'X = POSICIÓN · ANCHO = TAMAÑO · Y = PITCH (ST)');
+  }
+  sVerb(x, W, t, fx) {
+    const K = this.K, ax = 56, top = 36, bot = 220, spring = fx === 'spring', dec = spring ? 1.8 : 2.4, dur = spring ? 2.7 : 3.6, pre = .02, pt = t % 4;
+    this.R(x, K.LINE, ax, bot, 660, 1); this.R(x, K.LINE, ax, top, 660, 1);
+    this.T(x, '0 DB', ax - 8, top + 4, K.MON, { al: 'right' });
+    for (let c = 0; c < 110; c++) {
+      const tm = (c + .5) / 110 * dur;
+      let e = tm < pre ? 0 : Math.exp(-6.91 * (tm - pre) / dec);
+      if (!spring) e = Math.min(1, e * (1 + .12 * Math.cos(6.2832 * tm * 2.3)) * (1 + .08 * Math.cos(6.2832 * tm * 5.7)));
+      const h = (bot - top) * e * (spring ? .8 : 1);
+      this.R(x, tm <= pt ? K.P : K.PD, ax + c * 6, bot - h, 5, h);
+      if (!spring && h > 2) this.R(x, K.PB, ax + c * 6, bot - h, 5, 2);
+    }
+    if (spring) for (let tm = pre; tm < dur; tm += .028) {
+      const es = Math.exp(-tm * 3.2) * (.6 + .4 * Math.sin(tm * 90)), h = (bot - top) * es;
+      this.R(x, tm <= pt ? K.PB : K.P, ax + tm / dur * 660, bot - h, 2, h);
+    }
+    const rx = ax + (pre + dec) / dur * 660;
+    for (let yy = top; yy < bot; yy += 6) this.R(x, K.W, rx, yy, 2, 2);
+    this.T(x, 'RT60 ' + dec.toFixed(1) + ' S', rx + 8, top + 16, K.W);
+    if (pt < dur) this.R(x, K.W, ax + pt / dur * 660 - 1, top, 2, bot - top);
+    for (let s = 0; s <= dur + 1e-6; s += .5) this.T(x, s ? s.toFixed(1) : '0', ax + s / dur * 660, 240, K.MON, { al: 'center' });
+    this.T(x, 'S', ax + 676, 240, K.MON);
+    if (spring) this.leg(x, W, [{ c: K.P, l: 'PLATE' }, { c: K.PB, l: 'SPRING' }], 'DECAY 1.8 S · REBOTE 28 MS');
+    else this.leg(x, W, [{ c: K.P, l: 'COLA SONADA' }, { c: K.PD, l: 'POR SONAR' }], 'DECAY 2.4 S · PRE 20 MS');
+  }
+  sChorus(x, W, t) {
+    const K = this.K, ax = 56, aw = 656, top = 36, bot = 220, y = ms => bot - (ms - 5) / 10 * (bot - top), col = [K.PB, K.W, K.P];
+    [5, 10, 15].forEach(ms => { this.R(x, K.LINE, ax, y(ms), aw, 1); this.T(x, String(ms), ax - 8, y(ms) + 4, K.MON, { al: 'right' }); });
+    for (let v = 0; v < 3; v++) for (let px = 0; px < aw; px += 4) { const ms = 10 + 4 * Math.sin(6.2832 * (px / aw + v / 3)); this.R(x, col[v], ax + px, y(ms) - 1, 2, 2); }
+    const ph = (t * .4) % 1, X = ax + ph * aw;
+    this.R(x, K.MON, X, top, 1, bot - top);
+    for (let v = 0; v < 3; v++) { const ms = 10 + 4 * Math.sin(6.2832 * (ph + v / 3)); this.R(x, col[v], X - 5, y(ms) - 5, 10, 10); }
+    ['0°', '90°', '180°', '270°', '360°'].forEach((l, i) => this.T(x, l, ax + i * aw / 4, 240, K.MON, { al: 'center' }));
+    this.leg(x, W, [{ c: K.PB, l: 'V1' }, { c: K.W, l: 'V2' }, { c: K.P, l: 'V3' }], 'RETARDO (MS) EN UN CICLO DE LFO · RATE 0.4 HZ · ±4 MS');
+  }
+  sSub(x, W, t) {
+    const K = this.K, ax = 56, aw = 656, top = 36, bot = 204, X = f => ax + Math.log(f / 20) / Math.log(40) * aw, n = this.nt(t);
+    const NM = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'], nm = f => { const m = Math.round(12 * Math.log2(f / 440)) + 69; return NM[m % 12] + (Math.floor(m / 12) - 1); };
+    this.R(x, K.LINE, ax, bot, aw, 1);
+    const env = .35 + .65 * n.env, bars = [[n.f, K.MON, 16, 1, 1], [n.f * 2, K.MON, 8, .45, 0], [n.f * 3, K.MON, 8, .3, 0], [n.f / 2, K.PB, 24, .7, 1], [n.f / 4, K.P, 24, .4, 1]];
+    bars.forEach(([f, c, w, l, lab]) => { const h = (bot - top) * l * env, cx = X(f); this.R(x, c, cx - w / 2, bot - h, w, h); if (lab) { this.T(x, nm(f), cx, 224, K.W, { al: 'center', w: 600 }); this.T(x, f.toFixed(f < 100 ? 1 : 0) + ' HZ', cx, 242, K.MON, { al: 'center' }); } });
+    this.leg(x, W, [{ c: K.MON, l: 'ENTRADA' }, { c: K.PB, l: 'SUB −1 OCT' }, { c: K.P, l: 'SUB −2 OCT' }], 'TRACK ' + nm(n.f) + ' · 20–800 HZ LOG');
+  }
+  zscope(x, W, H) {
+    const K = this.K, z = 8, d = [[4, 18], [3, 19], [5, 16], [7, 14], [9, 13], [10, 12]], w = [[6, 15], [6, 16], [8, 14], [9, 13], [11, 13], [11, 12]];
+    for (let i = 0; i < 6; i++) { this.R(x, K.MON, i * 6 * z, d[i][0] * z, 5 * z, (d[i][1] - d[i][0]) * z); this.R(x, K.PB, (i * 6 + 1) * z, w[i][0] * z, 3 * z, (w[i][1] - w[i][0]) * z); }
+    for (let i = 0; i <= W; i += z) this.R(x, K.LINE, i, 0, 1, H);
+    for (let j = 0; j <= H; j += z) this.R(x, K.LINE, 0, j, W, 1);
+    this.T(x, 'DRY 5', 4, 14, K.GRAY, { w: 600 }); this.T(x, 'WET 3 · +1', 52, 14, K.GRAY, { w: 600 }); this.T(x, 'GAP 1 · PASO 6', 148, 14, K.GRAY, { w: 600 });
+  }
+  zspec(x, W, H) {
+    const K = this.K, z = 8;
+    const band = (b, wt, dy) => { this.R(x, K.PB, (b * 22 + 3) * z, wt * z, 16 * z, H - wt * z); this.R(x, K.BG, b * 22 * z, (dy - 1) * z, 22 * z, 4 * z); };
+    band(0, 9, 5); band(1, 11, 15);
+    this.R(x, K.BG, (22 - 1) * z, 4 * z, 4 * z, 13 * z);
+    this.R(x, K.MON, 0, 5 * z, 22 * z, 2 * z); this.R(x, K.MON, 22 * z, 15 * z, 22 * z, 2 * z); this.R(x, K.MON, 22 * z, 5 * z, 2 * z, 12 * z);
+    for (let i = 0; i <= W; i += z) this.R(x, K.LINE, i, 0, 1, H);
+    for (let j = 0; j <= H; j += z) this.R(x, K.LINE, 0, j, W, 1);
+    this.T(x, 'PASO 22 · BARRA 16 EN +3 · CONTORNO 2 · HALO BG 1', 4, 14, K.GRAY, { w: 600 });
+  }
+
+  renderVals() {
+    const K = this.K;
+    const FXD = {
+      ghost: { name: 'GHOST ECHO', slot: '03', L: { l: 'DRY/WET', v: '42', u: '%', f: .42 }, Rr: { l: 'FEEDBK', v: '58', u: '%', f: .58 }, p1: { l: 'TIME', v: '375', u: 'MS', f: .5 }, p2: { l: 'MOD DEPTH', v: '24', u: '%', f: .24 } },
+      tape: { name: 'TAPE SATURATE', slot: '05', L: { l: 'DRY/WET', v: '100', u: '%', f: 1 }, Rr: { l: 'DRIVE', v: '62', u: '%', f: .62 }, p1: { l: 'TONE', v: '40', u: '%', f: .4 }, p2: { l: 'BIAS', v: '50', u: '%', f: .5 } },
+      cym: { name: 'CYMATIC RESONATOR', slot: '01', L: { l: 'DRY/WET', v: '55', u: '%', f: .55 }, Rr: { l: 'RING', v: '70', u: '%', f: .7 }, p1: { l: 'ROOT', v: 'A2', u: '', f: .3 }, p2: { l: 'SPREAD', v: '30', u: '%', f: .3 } }
+    };
+    const V = ['ONDA', 'ESPECTRO', 'FIRMA'], VZ = ['scope', 'spec', 'sig'];
+    const scr = (id, fx, vi, st, sub) => {
+      const f = FXD[fx], byp = st === 'byp', hold = st === 'hold', dim = o => byp ? { ...o, c: K.MON, fc: K.MON } : o;
+      return {
+        id, fx, viz: VZ[vi], st, sub, title: V[vi] + ' · ' + f.name + (byp ? ' · BYPASS' : hold ? ' · HOLD' : ''), label: id + ' ' + V[vi] + ' ' + f.name + (byp ? ' Bypass' : hold ? ' Hold' : ''),
+        name: f.name, line: 'SLOT ' + f.slot + ' / 12 · ' + (byp ? 'BYPASSED' : hold ? 'ON WHILE HELD' : 'ACTIVE'),
+        pills: [...(hold ? [{ t: 'HOLD', bg: K.W }] : []), { t: byp ? 'BYPASS' : 'ON', bg: byp ? K.OR : K.PB }],
+        tabs: V.map((t, i) => ({ t, bg: i === vi ? K.PD : K.S, c: i === vi ? K.W : K.GRAY, bar: i === vi ? K.PB : K.S })),
+        hold, encL: dim(f.L), encR: dim(f.Rr), p1: dim(f.p1), p2: dim(f.p2)
+      };
+    };
+    const rows = [
+      { h: 'GHOST ECHO · SLOT 03', s: [scr('10a', 'ghost', 0, 'main', 'el eco de la nota anterior se corre contra la DRY fija'), scr('10b', 'ghost', 1, 'main', 'suma la nota repetida, pierde agudos'), scr('10c', 'ghost', 2, 'main', 'repeticiones según TIME y FEEDBACK')] },
+      { h: 'TAPE SATURATE · SLOT 05', s: [scr('10d', 'tape', 0, 'main', 'picos aplanados frente a la DRY'), scr('10e', 'tape', 1, 'main', 'armónicos agregados en medios y agudos'), scr('10f', 'tape', 2, 'main', 'curva de transferencia + nivel actual')] },
+      { h: 'CYMATIC RESONATOR · SLOT 01', s: [scr('10g', 'cym', 0, 'main', 'resonancias de los modos sobre la DRY'), scr('10h', 'cym', 1, 'main', 'picos en las bandas de los 8 modos'), scr('10i', 'cym', 2, 'main', 'patrón de Chladni')] }
+    ];
+    const states = [scr('10j', 'ghost', 0, 'byp', 'NAV push · WET como vista previa'), scr('10k', 'ghost', 0, 'hold', 'B6 apretado · marco blanco 2 px')];
+    const sigs = [
+      { fx: 'cym', slot: '01', name: 'CYMATIC RESONATOR', kind: 'patrón de Chladni', m: 'Arena sobre las líneas nodales de una placa cuadrada; el patrón cambia con la amplitud de los 8 modos. A la derecha, la amplitud de cada modo.', d: '8 × uint8 amplitud de modo', r: '30 Hz · placa 232×232 + barras 340×10' },
+      { fx: 'gran', slot: '02', name: 'GRANULAR CLOUD', kind: 'nube de granos', m: 'Cada grano es un rect: x = posición en el buffer de 2 s, ancho = tamaño, fila = pitch. El tono indica la envolvente del grano (sube y baja). La línea blanca es la escritura.', d: '≤ 24 granos × {pos u16, size u8, pitch i8, amp u8} + cabeza u16', r: '30 Hz · 656×200' },
+      { fx: 'ghost', slot: '03', name: 'GHOST ECHO', kind: 'línea de tiempo de ecos', m: 'Repeticiones cada TIME, con su altura en dB según FEEDBACK y la recta de caída hasta −60 dB. El cabezal arranca en cada ataque y enciende los ecos que ya sonaron.', d: 'TIME, FEEDBACK al cambiar + evento de ataque (u32 ms)', r: 'cabezal 30 Hz · 4×184 + 1 tapa 8×2' },
+      { fx: 'tape', slot: '05', name: 'TAPE SATURATE', kind: 'curva de transferencia', m: 'Curva tanh según DRIVE contra la identidad punteada (DRY). El punto marca el pico actual: cuanto más se aleja de la diagonal, más satura.', d: 'DRIVE al cambiar + pico de entrada (float)', r: 'punto 30 Hz · curva solo al cambiar DRIVE' },
+      { fx: 'bit', slot: '06', name: 'BIT SCULPT', kind: 'curva de transferencia', m: 'Escalera de 2^BITS niveles; a 4 bits se cuentan los 16 escalones. El punto marca el nivel actual. La reducción de sample rate no se ve en esta curva y queda en ONDA.', d: 'BITS al cambiar + pico de entrada (float)', r: 'punto 30 Hz · curva solo al cambiar BITS' },
+      { fx: 'modal', slot: '07', name: 'MODAL REVERB', kind: 'envolvente de caída', m: 'Envolvente según DECAY con el batido de los modos y la marca RT60. Las columnas que ya sonaron desde el último ataque se ven más claras.', d: 'DECAY, PRE al cambiar + evento de ataque', r: 'cabezal 30 Hz · 2 columnas de 6×184' },
+      { fx: 'chorus', slot: '08', name: 'PHASE CHORUS', kind: 'propuesta · retardo por voz', m: 'Retardo de cada una de las 3 voces durante un ciclo del LFO. Los cuadros marcan dónde está cada voz ahora; la separación vertical es la profundidad del chorus.', d: 'RATE, DEPTH al cambiar + fase LFO u16', r: '30 Hz · cabezal 1×184 + 3 cuadros 10×10' },
+      { fx: 'spring', slot: '10', name: 'SPRING + PLATE', kind: 'envolvente de caída', m: 'Cola PLATE según DECAY, con los rebotes del resorte cada 28 ms encima, que decaen más rápido. Mismo cabezal que Modal Reverb.', d: 'DECAY al cambiar + evento de ataque', r: 'cabezal 30 Hz · 2 columnas de 6×184' },
+      { fx: 'sub', slot: '12', name: 'SUB GENESIS', kind: 'propuesta · escalera de octavas', m: 'Fundamental detectada y 2 armónicos de la entrada en MONITOR_GRAY, y las suboctavas generadas en morado con su nota. Se ve qué nota está siguiendo y cuánto sub agrega.', d: 'f0 (float) + nivel de entrada + 2 niveles de sub', r: '15 Hz · 5 barras ≤ 24×168' }
+    ];
+    const S = (a, b) => ({ a, b });
+    const comps = [
+      { id: 'C1', name: 'Osciloscopio dual', size: '728×256', viz: 'scope', fx: 'tape', w: 728, h: 256, zoom: 'zscope', zw: 288, zl: '6 COLUMNAS A 8× · DRY 5 PX · WET 3 PX CENTRADA · 1 PX LIBRE',
+        spec: [S('Marco', '1 px LINE; con HOLD, 2 px HERO_WHITE.'), S('Leyenda', 'Franja y 0–24. Muestras 10×10 en y 7, texto 12 px GRAY en baseline 17; texto derecho MONITOR_GRAY.'), S('Área de traza', '4,24 · 720×224. Centro en y 136; fondo de escala ±104 px, con líneas LINE en y 32 y 240.'), S('Columnas', '120 de 6 px. DRY: rect de 5 px en x+0. WET: rect de 3 px en x+1, encima. En bypass se invierte el orden: WET de 5 px en PURPLE_DIM debajo y DRY de 3 px encima.'), S('Alto mínimo', '2 px por columna, para que una señal plana siga viéndose.'), S('Divisiones', 'Verticales LINE cada 30 columnas (10.7 ms).'), S('Ventana', '2048 muestras a 48 kHz = 42.7 ms; 17 muestras por columna, mín/máx.'), S('Trigger', 'Cruce por cero ascendente de la DRY con histéresis de ±2 %. La WET usa el mismo índice, así se ve el corrimiento de fase y la latencia. Si no hay cruce en 2 ventanas, corre libre y la leyenda dice FREE.'), S('Dibujo', '240 lv_draw_rect por frame, sin AA. Región: 720×224 a 30 Hz.'), S('Variantes', '72 col × 10 px o 90 × 8 px, con la misma regla (ancho DRY = paso − 1, WET = 60 %). Probar en Tweaks.')] },
+      { id: 'C2', name: 'Espectro dual', size: '728×256', viz: 'spec', fx: 'tape', w: 728, h: 256, zoom: 'zspec', zw: 352, zl: '2 BANDAS A 8× · DRY POR ENCIMA Y POR DENTRO DE LA BARRA',
+        spec: [S('Escala', '0 dB en y 28, −60 dB en y 216 (3.13 px/dB). Líneas LINE en −20 y −40, rotuladas a la izquierda.'), S('Bandas', '32 logarítmicas, 20 Hz–20 kHz (≈ 1/3.2 oct), paso de 22 px desde x 12 (704 px).'), S('WET', 'Barra de 16 px en x+3, PURPLE_BRIGHT, desde la base y 216.'), S('DRY', 'Contorno escalonado de 2 px MONITOR_GRAY a lo ancho de la banda (22 px), con conectores verticales de 2 px. Debajo, un halo BG de 1 px por lado para que se lea sobre la barra.'), S('Fila Δ', 'y 224 · 16×10 por banda. WET ≥ DRY + 3 dB → PURPLE_BRIGHT (agrega). WET ≤ DRY − 3 dB → MONITOR_GRAY (quita). Si no, raya LINE de 16×2. Se apaga en bypass.'), S('Frecuencias', '20 · 100 · 1K · 10K · 20K, 12 px MONITOR_GRAY en baseline 250.'), S('Balística', 'En el motor: subida inmediata, caída de 20 dB/s, igual que 06 SPECTRUM.'), S('Dibujo', '32 barras + 64 rects de contorno + 32 celdas Δ por frame. Región: 704×212 a 30 Hz.')] },
+      { id: 'C3', name: 'Curva de transferencia', size: '480×232 · dentro de la gráfica en 40,12', viz: 'curveOnly', fx: 'tape', w: 480, h: 232,
+        spec: [S('Ejes', 'Entrada −1…+1 en horizontal (240 px por unidad), salida en vertical (114 px por unidad). Cruz central y marco en LINE.'), S('Identidad', 'Puntos 2×2 MONITOR_GRAY cada 6 px: es la DRY, sin efecto.'), S('Curva', '2 px PURPLE_BRIGHT, una muestra por px (480), unidas con rects verticales. Se regenera en un lv_canvas solo cuando cambia DRIVE o BITS.'), S('Nivel', 'Cuadro de 10×10 HERO_WHITE en (pico, f(pico)), con guías de 1 px MONITOR_GRAY hasta la cruz. Región: rectángulo punto–cruz, unión del viejo y el nuevo.'), S('Lecturas', 'Solo en FX MAIN: IN y OUT en 28/600 en x 552, unidad DBFS en 12 px; la línea FORMA dice qué parámetro define la curva.'), S('Bit Sculpt', 'Mismo componente; la curva es una escalera: horizontales de 2 px y verticales de 2 px en cada salto.')] },
+      { id: 'C4', name: 'Patrón de Chladni', size: '232×232', viz: 'plate', fx: 'cym', w: 232, h: 232,
+        spec: [S('Placa', '58×58 celdas de 4 px, fondo SURFACE.'), S('Campo', 'u(x,y) = Σ aₖ·[cos(nπx)·cos(mπy) ± cos(mπx)·cos(nπy)], signo alterno por modo. 8 modos (n,m): 1,2 · 1,3 · 2,3 · 1,4 · 3,4 · 2,5 · 1,5 · 3,5.'), S('Arena', '|u| < 6 % del máximo del frame → PURPLE_BRIGHT; < 14 % → PURPLE; el resto queda en SURFACE. Dos tonos, sin degradados.'), S('Costo', 'Bases precalculadas: 8 × 3364 en int8 (27 KB). Por frame: 27 k multiplicaciones-suma y ≤ 1200 rects de 4×4.'), S('Barras de modo', 'En FX MAIN: 8 × (340×10), paso de 25 px, desde 368,44. Etiqueta M1…M8 con n,m en 12 px GRAY.'), S('Tasa', '30 Hz. Si el CPU no alcanza, se baja a 29×29 celdas de 8 px, sin otros cambios.')] }
+    ];
+    const D = (v, d, b, r, g, n) => ({ v, d, b, r, g, n });
+    const dataRows = [
+      D('Medidor IN', 'rms L/R, pico L/R (u8), clip L/R (bits)', '5', '30 Hz', '2 × 10×272 + clips 10×8', 'Sin cambios contra v3; siempre activo en FX MAIN.'),
+      D('ONDA', 'dry[120]{mín,máx} i8 + wet[120]{mín,máx} i8', '480', '30 Hz', '720×224', 'Trigger y diezmado en el motor. WET = salida después de DRY/WET.'),
+      D('ESPECTRO', 'dry[32] u8 + wet[32] u8 (0…−60 dB, 0.25 dB/LSB)', '64', '30 Hz', '704×212', 'FFT de 2048 con ventana Hann; bandas y balística en el motor.'),
+      D('FIRMA · Tape / Bit', 'pico de entrada (u16); DRIVE o BITS al cambiar', '2', '30 Hz', 'punto + guías ≤ 250×120', 'La curva se calcula en la UI.'),
+      D('FIRMA · Ghost Echo', 'evento de ataque (u32 ms); TIME, FEEDBACK al cambiar', '4 por ataque', '30 Hz', 'cabezal 4×184 + tapa 8×2', 'Detector de ataque en el motor, umbral −30 dBFS.'),
+      D('FIRMA · Modal / Spring', 'evento de ataque; DECAY, PRE al cambiar', '4 por ataque', '30 Hz', '2 columnas 6×184', 'Mismo detector que Ghost Echo.'),
+      D('FIRMA · Cymatic', 'amplitud de 8 modos (u8)', '8', '30 Hz', '232×232 + 8 × 340×10', 'La única firma con región grande.'),
+      D('FIRMA · Granular', '≤ 24 × {pos u16, size u8, pitch i8, amp u8} + cabeza u16', '≤ 122', '30 Hz', '656×200', 'Rects de 8 px de alto, 3 tonos según amp.'),
+      D('FIRMA · Phase Chorus', 'fase del LFO (u16); RATE, DEPTH al cambiar', '2', '30 Hz', 'cabezal 1×184 + 3 × 10×10', 'Las curvas de las voces se calculan en la UI.'),
+      D('FIRMA · Sub Genesis', 'f0 (float), nivel de entrada, 2 niveles de sub (u8)', '7', '15 Hz', '5 barras ≤ 24×168', 'f0 cambia con la nota; 15 Hz alcanza.')
+    ];
+    return { rows, states, sigs, comps, dataRows, keysFx: ['INSERT', 'SEND', 'MASTER', 'FAV FX'] };
+  }
+}
+</script>
+</body>
+</html>

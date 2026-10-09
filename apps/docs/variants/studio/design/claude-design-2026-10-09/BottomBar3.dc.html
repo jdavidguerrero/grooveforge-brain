@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"></helmet>
+<div style="width:800px;height:96px;display:flex;flex-direction:column;background:#0A0A0A;border-top:1px solid {{ dim }};box-sizing:border-box;font-family:'IBM Plex Mono',monospace">
+  <div style="height:63px;display:flex">
+    <div style="width:104px;flex:none;box-sizing:border-box;padding:0 12px;display:flex;flex-direction:column;justify-content:center;gap:4px">
+      <div style="display:flex;gap:8px;font-size:12px;line-height:12px;letter-spacing:1px"><span style="color:{{ mc }};font-weight:600">L</span><span style="color:{{ lc }}">{{ L.l }}</span></div>
+      <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:20px;line-height:20px;font-weight:600;color:{{ L.c }}">{{ L.v }}</span><span style="font-size:12px;line-height:12px;color:{{ lc }}">{{ L.u }}</span></div>
+      <div style="width:80px;height:4px;background:{{ dim }}"><div style="width:{{ L.fw }}px;height:4px;background:{{ L.fc }}"></div></div>
+    </div>
+    <sc-for list="{{ keys }}" as="k" hint-placeholder-count="4">
+      <div style="width:148px;flex:none;box-sizing:border-box;border-left:1px solid #242424;background:{{ k.bg }};position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px">
+        <div style="position:absolute;left:0;right:0;top:0;height:4px;background:{{ k.bar }}"></div>
+        <div style="font-size:16px;line-height:16px;font-weight:600;color:{{ k.tc }};letter-spacing:1px">{{ k.l }}</div>
+        <div style="font-size:12px;line-height:12px;color:#5A5A6E">{{ k.n }}</div>
+      </div>
+    </sc-for>
+    <div style="width:104px;flex:none;box-sizing:border-box;border-left:1px solid #242424;padding:0 12px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:4px">
+      <div style="display:flex;gap:8px;font-size:12px;line-height:12px;letter-spacing:1px"><span style="color:{{ lc }}">{{ R.l }}</span><span style="color:{{ mc }};font-weight:600">R</span></div>
+      <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:20px;line-height:20px;font-weight:600;color:{{ R.c }}">{{ R.v }}</span><span style="font-size:12px;line-height:12px;color:{{ lc }}">{{ R.u }}</span></div>
+      <div style="width:80px;height:4px;background:{{ dim }}"><div style="width:{{ R.fw }}px;height:4px;background:{{ R.fc }}"></div></div>
+    </div>
+  </div>
+  <div style="height:32px;display:flex;border-top:1px solid #242424">
+    <div style="width:200px;flex:none;box-sizing:border-box;position:relative;background:{{ P1.bg }};padding:0 16px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:{{ P1.tagC }};letter-spacing:1px;white-space:nowrap">{{ P1.tag }}</span>
+      <span style="font-size:12px;line-height:12px;color:{{ P1.lc }};flex:1;white-space:nowrap;overflow:hidden">{{ P1.l }}</span>
+      <span style="font-size:16px;line-height:16px;font-weight:600;color:{{ P1.c }};white-space:nowrap">{{ P1.v }}</span><span style="font-size:12px;line-height:12px;color:{{ P1.lc }}">{{ P1.u }}</span>
+      <div style="position:absolute;left:16px;bottom:0;width:168px;height:2px;background:{{ P1.track }}"><div style="width:{{ P1.fw }}px;height:2px;background:{{ P1.fc }}"></div></div>
+      <sc-if value="{{ P1.pick }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ P1.px }}px;bottom:0;width:2px;height:8px;background:#F2F2F2"></div></sc-if>
+    </div>
+    <div style="width:96px;flex:none;box-sizing:border-box;border-left:1px solid #242424;display:flex;align-items:center;justify-content:center;gap:6px">
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:{{ lc }};letter-spacing:1px">MODE</span>
+      <span style="font-size:12px;line-height:12px;font-weight:600;background:{{ nextBg }};color:{{ nextC }};padding:2px 6px;letter-spacing:1px">{{ next }}</span>
+    </div>
+    <div style="width:208px;flex:none;box-sizing:border-box;border-left:1px solid #242424;display:flex;align-items:center;justify-content:center;gap:8px">
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:#5A5A6E;letter-spacing:1px">NAV</span>
+      <span style="font-size:12px;line-height:12px;color:{{ lc }};letter-spacing:1px">{{ nav }}</span>
+    </div>
+    <div style="width:96px;flex:none;box-sizing:border-box;border-left:1px solid #242424;background:{{ b6bg }};display:flex;align-items:center;justify-content:center;gap:8px">
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:{{ b6c }};letter-spacing:1px">{{ b6 }}</span>
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:{{ b6sc }};letter-spacing:1px">{{ b6s }}</span>
+    </div>
+    <div style="width:200px;flex:none;box-sizing:border-box;border-left:1px solid #242424;position:relative;background:{{ P2.bg }};padding:0 16px;display:flex;align-items:center;gap:8px">
+      <span style="font-size:16px;line-height:16px;font-weight:600;color:{{ P2.c }};white-space:nowrap">{{ P2.v }}</span><span style="font-size:12px;line-height:12px;color:{{ P2.lc }}">{{ P2.u }}</span>
+      <span style="font-size:12px;line-height:12px;color:{{ P2.lc }};flex:1;white-space:nowrap;overflow:hidden;text-align:right">{{ P2.l }}</span>
+      <span style="font-size:12px;line-height:12px;font-weight:600;color:{{ P2.tagC }};letter-spacing:1px;white-space:nowrap">{{ P2.tag }}</span>
+      <div style="position:absolute;left:16px;bottom:0;width:168px;height:2px;background:{{ P2.track }}"><div style="width:{{ P2.fw }}px;height:2px;background:{{ P2.fc }}"></div></div>
+      <sc-if value="{{ P2.pick }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:{{ P2.px }}px;bottom:0;width:2px;height:8px;background:#F2F2F2"></div></sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:96},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;SYNTH&quot;,&quot;FX&quot;],&quot;default&quot;:&quot;SYNTH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;active&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-1,&quot;tsType&quot;:&quot;number&quot;},&quot;shift&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;hold&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;pOff&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;disabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;nav&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;VIEW&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;b6&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;SHIFT&quot;,&quot;HOLD&quot;],&quot;default&quot;:&quot;SHIFT&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;keys&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string[]&quot;},&quot;encL&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;encR&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;p1&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;p2&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, fx = p.mode === 'FX', dis = !!p.disabled;
+    const MON = '#5A5A6E', W = '#F2F2F2', BG = '#0A0A0A', GRAY = '#9FE1CB';
+    const mc = fx ? '#534AB7' : '#1D9E75', hi = fx ? '#7A6FE0' : '#5DCAA5', dim = fx ? '#2B2758' : '#0E5040';
+    const lc = dis ? MON : GRAY, a = p.active ?? -1;
+    const keys = (p.keys || ['OSC', 'ENV', 'LFO / MOD', 'PRESET']).map((l, i) => ({
+      l, n: 'B' + (i + 1), bg: !dis && i === a ? dim : BG, tc: dis ? MON : i === a ? W : GRAY, bar: !dis && i === a ? hi : 'transparent' }));
+    const enc = e => { e = e || {}; const f = Math.max(0, Math.min(1, e.f ?? 0)); return { l: e.l || '', v: e.v || '', u: e.u || '', c: dis ? MON : e.c || W, fw: Math.round(80 * f), fc: dis ? '#242424' : e.fc || hi }; };
+    const shift = !fx && !!p.shift, off = dis || !!p.pOff;
+    const pot = (e, n) => {
+      e = e || {}; const f = Math.max(0, Math.min(1, e.f ?? 0)), pick = !off && !!e.pick;
+      if (off) return { tag: 'P' + n, l: p.pOff ? 'NO FUNCTION' : e.l || '', v: p.pOff ? '—' : e.v || '', u: '', bg: BG, tagC: MON, lc: MON, c: MON, track: '#1C1C1C', fw: 0, fc: MON, pick: false, px: 0 };
+      if (shift) return { tag: n === 1 ? 'SHIFT P1' : 'P2 SHIFT', l: e.l || '', v: e.v || '', u: e.u || '', bg: hi, tagC: BG, lc: BG, c: BG, track: dim, fw: Math.round(168 * f), fc: BG, pick, px: 16 + Math.round(168 * (e.pos ?? 0)) };
+      return { tag: 'P' + n, l: e.l || '', v: e.v || '', u: e.u || '', bg: BG, tagC: mc === '#534AB7' ? hi : mc, lc: GRAY, c: pick ? MON : W, track: dim, fw: Math.round(168 * f), fc: pick ? MON : hi, pick, px: 16 + Math.round(168 * (e.pos ?? 0)) };
+    };
+    const b6 = p.b6 || (fx ? 'HOLD' : 'SHIFT'), on = b6 === 'HOLD' ? !!p.hold : shift;
+    return {
+      keys, mc, dim, lc,
+      L: enc(p.encL || { l: 'CUTOFF', v: '1240', u: 'HZ', f: 0.6 }), R: enc(p.encR || { l: 'RES', v: '62', u: '%', f: 0.62 }),
+      P1: pot(p.p1 || { l: 'FLT ENV AMT', v: '48', u: '%', f: .48 }, 1), P2: pot(p.p2 || { l: 'LFO→CUTOFF', v: '20', u: '%', f: .2 }, 2),
+      next: fx ? 'SYNTH' : 'FX', nextBg: dis ? '#1C1C1C' : fx ? '#1D9E75' : '#534AB7', nextC: dis ? MON : fx ? BG : W,
+      nav: p.nav || 'VIEW',
+      b6, b6s: on ? (b6 === 'HOLD' ? 'HELD' : 'ON') : 'OFF', b6bg: dis ? BG : on ? (b6 === 'HOLD' ? W : hi) : BG, b6c: dis ? MON : on ? BG : GRAY, b6sc: dis ? MON : on ? BG : MON
+    };
+  }
+}
+</script>
+</body>
+</html>

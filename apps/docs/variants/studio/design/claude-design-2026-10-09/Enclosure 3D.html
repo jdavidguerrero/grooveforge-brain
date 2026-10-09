@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrooveForge Studio · enclosure 3D</title>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+    "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
+    "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
+    "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
+  },
+  "integrity": {
+    "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
+    "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
+    "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
+    "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+  }
+}
+</script>
+<style>html,body{margin:0;height:100%;background:#d9d6cf}three-d-stage:not(:defined){visibility:hidden}three-d-stage{display:block;width:100vw;height:100vh}</style>
+</head>
+<body>
+<three-d-stage name="grooveforge-studio-enclosure" background="#d9d6cf"></three-d-stage>
+<script src="three-d-stage.js"></script>
+<script type="module">
+const q = new URLSearchParams(location.search);
+const CHEEKS = q.get('cheeks') === '1', REAR = q.get('view') === 'rear';
+const stage = document.querySelector('three-d-stage');
+const { THREE } = await stage.ready;
+const mm = v => v / 1000;
+const ANG = Math.atan2(35, 164.3), PD = 164.3, FEET = 6, HF = 20, HB = 55; // body heights under the 2 mm panel
+const M = {
+  petg: new THREE.MeshStandardMaterial({ name: 'petg_anthracite', color: 0x16171a, roughness: 0.62, metalness: 0 }),
+  alu: new THREE.MeshStandardMaterial({ name: 'alu_anodized_black', color: 0x2a2c30, roughness: 0.38, metalness: 0.35 }),
+  knob: new THREE.MeshStandardMaterial({ name: 'knob_black', color: 0x1b1b1d, roughness: 0.45, metalness: 0.2 }),
+  key: new THREE.MeshStandardMaterial({ name: 'keycap_dark', color: 0x24262a, roughness: 0.55, metalness: 0 }),
+  teal: new THREE.MeshStandardMaterial({ name: 'teal_accent', color: 0x1d9e75, roughness: 0.5, metalness: 0, emissive: 0x0b3d2d }),
+  purple: new THREE.MeshStandardMaterial({ name: 'purple_accent', color: 0x534ab7, roughness: 0.5, metalness: 0 }),
+  ring: new THREE.MeshStandardMaterial({ name: 'led_ring_diffuser', color: 0x5dcaa5, roughness: 0.3, emissive: 0x5dcaa5, emissiveIntensity: 0.8 }),
+  nickel: new THREE.MeshStandardMaterial({ name: 'jack_nickel', color: 0xb8bcc2, roughness: 0.3, metalness: 0.4 }),
+  hole: new THREE.MeshStandardMaterial({ name: 'opening_black', color: 0x050505, roughness: 0.9 }),
+  rubber: new THREE.MeshStandardMaterial({ name: 'rubber_feet', color: 0x0c0c0c, roughness: 0.95 }),
+  guadua: new THREE.MeshStandardMaterial({ name: 'guadua', color: 0xb58a52, roughness: 0.7, metalness: 0 }),
+  guaduaDark: new THREE.MeshStandardMaterial({ name: 'guadua_node', color: 0x8a6538, roughness: 0.75 })
+};
+// screen texture (render only)
+const cv = document.createElement('canvas'); cv.width = 800; cv.height = 480;
+const g = cv.getContext('2d');
+g.fillStyle = '#0A0A0A'; g.fillRect(0, 0, 800, 480);
+g.fillStyle = '#1D9E75'; g.fillRect(16, 8, 72, 24);
+g.fillStyle = '#141414'; g.fillRect(16, 48, 232, 192);
+g.strokeStyle = '#0E5040'; g.lineWidth = 1; g.strokeRect(16.5, 48.5, 231, 191);
+for (const cx of [392, 656]) { g.strokeStyle = '#0E5040'; g.lineWidth = 12; g.beginPath(); g.arc(cx, 144, 84, 0.75 * Math.PI, 2.25 * Math.PI); g.stroke(); g.strokeStyle = '#5DCAA5'; g.beginPath(); g.arc(cx, 144, 84, 0.75 * Math.PI, (0.75 + 1.5 * (cx < 500 ? .6 : .62)) * Math.PI); g.stroke(); g.fillStyle = '#F2F2F2'; g.font = '600 56px monospace'; g.textAlign = 'center'; g.fillText(cx < 500 ? '1240' : '62', cx, 164); }
+g.fillStyle = '#141414'; g.fillRect(16, 248, 768, 72);
+for (let i = 0; i < 32; i++) { const h = 10 + 50 * Math.abs(Math.sin(i * 0.7) * Math.exp(-i / 22)); g.fillStyle = '#1D9E75'; g.fillRect(17 + i * 24, 320 - h, 20, h); }
+g.fillStyle = '#1FB6BB'; g.fillRect(16, 328, 186, 40);
+for (let i = 1; i < 4; i++) { g.fillStyle = '#141414'; g.fillRect(16 + i * 194, 328, 186, 40); }
+g.fillStyle = '#242424'; g.fillRect(0, 384, 800, 1); g.fillRect(0, 448, 800, 1);
+g.fillStyle = '#9FE1CB'; g.font = '600 16px monospace'; ['OSC', 'ENV', 'LFO / MOD', 'PRESET'].forEach((t, i) => g.fillText(t, 178 + i * 148, 420));
+const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
+const screenMat = new THREE.MeshBasicMaterial({ name: 'screen', map: tex });
+
+const root = new THREE.Group(); root.name = 'grooveforge_studio';
+// side profile (plan depth a, height b)
+function profile(h0, h1) { const s = new THREE.Shape(); s.moveTo(0, 0); s.lineTo(mm(PD), 0); s.lineTo(mm(PD), mm(h1)); s.lineTo(0, mm(h0)); s.closePath(); return s; }
+function wedge(name, mat, x0, w, h0, h1) {
+  const geo = new THREE.ExtrudeGeometry(profile(h0, h1), { depth: mm(w), bevelEnabled: false });
+  const m = new THREE.Mesh(geo, mat); m.name = name; m.rotation.y = Math.PI / 2;
+  m.position.set(mm(x0 - 90), mm(FEET), mm(82)); return m;
+}
+// rotation.y=+90° maps shape x → -Z; shift so front sits at +82 mm
+root.add(wedge('body_petg', M.petg, 0, 180, HF, HB));
+
+// top panel (flat sheet coords: u 0..180 across, v 0..168 front→back)
+const P = new THREE.Group(); P.name = 'top_panel_group';
+P.position.set(mm(-90), mm(FEET + HF), mm(82)); P.rotation.x = ANG;
+const rr = (s, x, y, w, h, r) => { s.moveTo(x + r, y); s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r); s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h); s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r); s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y); };
+const sheet = new THREE.Shape(); rr(sheet, 0, 0, mm(180), mm(168), mm(3));
+const hole = (fn) => { const p = new THREE.Path(); fn(p); sheet.holes.push(p); };
+const circ = (x, y, r) => hole(p => p.absarc(mm(x), mm(y), mm(r), 0, Math.PI * 2, true));
+const rect = (x, y, w, h) => hole(p => { p.moveTo(mm(x), mm(y)); p.lineTo(mm(x), mm(y + h)); p.lineTo(mm(x + w), mm(y + h)); p.lineTo(mm(x + w), mm(y)); p.closePath(); });
+rect(34.5, 78.5, 111, 67.8);
+const KEYS = [[60, 62], [80, 62], [100, 62], [120, 62], [60, 32], [120, 32]];
+const ENCS = [[32, 62], [148, 62], [32, 32], [148, 32], [90, 32]];
+KEYS.forEach(([x, y]) => rect(x - 7, y - 7, 14, 14));
+ENCS.forEach(([x, y]) => circ(x, y, x === 90 ? 16 : 3.6));
+circ(15, 96, 3.6); circ(165, 96, 3.6);
+for (let i = 0; i < 29; i++) rect(20 + i * 5 - 1.25, 153, 2.5, 10);
+const plateGeo = new THREE.ExtrudeGeometry(sheet, { depth: mm(2), bevelEnabled: false, curveSegments: 16 });
+const plate = new THREE.Mesh(plateGeo, M.alu); plate.name = 'top_panel_alu_2mm'; plate.rotation.x = -Math.PI / 2; P.add(plate);
+// shape y → -Z after rotation.x=-90°
+const scr = new THREE.Mesh(new THREE.PlaneGeometry(mm(108), mm(64.8)), screenMat); scr.name = 'display_active_area';
+scr.rotation.x = -Math.PI / 2; scr.position.set(mm(90), mm(0.6), -mm(112.4)); P.add(scr);
+const bez = new THREE.Mesh(new THREE.PlaneGeometry(mm(111), mm(67.8)), M.hole); bez.name = 'display_glass_border';
+bez.rotation.x = -Math.PI / 2; bez.position.set(mm(90), mm(0.5), -mm(112.4)); P.add(bez);
+const under = new THREE.Mesh(new THREE.PlaneGeometry(mm(180), mm(168)), M.hole); under.name = 'panel_shadow_backing';
+under.rotation.x = -Math.PI / 2; under.position.set(mm(90), mm(-0.4), -mm(84)); P.add(under);
+ENCS.forEach(([x, y], i) => {
+  const k = new THREE.Group(); k.name = 'knob_' + ['enc_l', 'enc_r', 'p1', 'p2', 'nav'][i];
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(mm(9.6), mm(10), mm(15), 48), M.knob); body.name = k.name + '_body'; body.position.y = mm(9.5);
+  const ptr = new THREE.Mesh(new THREE.BoxGeometry(mm(1.4), mm(0.6), mm(7)), M.teal); ptr.name = k.name + '_pointer'; ptr.position.set(0, mm(17.05), mm(-4.5));
+  const skirt = new THREE.Mesh(new THREE.CylinderGeometry(mm(10.8), mm(10.8), mm(1.5), 48), M.knob); skirt.name = k.name + '_skirt'; skirt.position.y = mm(2.75);
+  k.add(body, ptr, skirt); k.position.set(mm(x), 0, -mm(y)); k.rotation.y = -0.6 + i * 0.5; P.add(k);
+});
+const ring = new THREE.Mesh(new THREE.RingGeometry(mm(12), mm(16), 64), M.ring); ring.name = 'nav_led_ring_diffuser';
+ring.rotation.x = -Math.PI / 2; ring.position.set(mm(90), mm(1.2), -mm(32)); P.add(ring);
+const vol = new THREE.Group(); vol.name = 'knob_vol';
+const vb = new THREE.Mesh(new THREE.CylinderGeometry(mm(7.2), mm(7.5), mm(12), 48), M.knob); vb.name = 'knob_vol_body'; vb.position.y = mm(8);
+const vp = new THREE.Mesh(new THREE.BoxGeometry(mm(1.2), mm(0.6), mm(5)), M.teal); vp.name = 'knob_vol_pointer'; vp.position.set(0, mm(14.05), mm(-3.5));
+vol.add(vb, vp); vol.position.set(mm(165), 0, -mm(96)); P.add(vol);
+const inK = new THREE.Group(); inK.name = 'knob_in';
+const ib = vb.clone(); ib.name = 'knob_in_body'; const ip = vp.clone(); ip.name = 'knob_in_pointer';
+inK.add(ib, ip); inK.position.set(mm(15), 0, -mm(96)); inK.rotation.y = 0.9; P.add(inK);
+KEYS.forEach(([x, y], i) => {
+  const mat = i === 4 ? M.purple : i === 5 ? M.teal : M.key;
+  const geo = new THREE.BoxGeometry(mm(17.6), mm(3.2), mm(16.6));
+  const c = new THREE.Mesh(geo, mat); c.name = 'keycap_' + ['b1', 'b2', 'b3', 'b4', 'b5_mode', 'b6_hold_shift'][i];
+  c.position.set(mm(x), mm(4.8), -mm(y)); P.add(c);
+  const st = new THREE.Mesh(new THREE.BoxGeometry(mm(14), mm(3), mm(14)), M.hole); st.name = c.name + '_switch'; st.position.set(mm(x), mm(1.6), -mm(y)); P.add(st);
+});
+root.add(P);
+
+// feet
+[[14, 14], [166, 14], [14, 150], [166, 150]].forEach(([x, y], i) => {
+  const f = new THREE.Mesh(new THREE.CylinderGeometry(mm(7), mm(7), mm(FEET), 32), M.rubber); f.name = 'foot_' + i;
+  f.position.set(mm(x - 90), mm(FEET / 2), mm(82 - y)); root.add(f);
+});
+
+// rear connectors (x body coords from front-left; z from body bottom)
+const RZ = mm(82 - PD) - mm(0.6);
+const rear = (name, mesh, x, z) => { mesh.name = name; mesh.position.set(mm(x - 90), mm(FEET + z), RZ); root.add(mesh); };
+const jack = (name, x, z, rOuter) => {
+  const n = new THREE.Mesh(new THREE.CylinderGeometry(mm(rOuter), mm(rOuter), mm(2.2), 6), M.nickel); n.rotation.x = Math.PI / 2; rear(name + '_nut', n, x, z);
+  const h = new THREE.Mesh(new THREE.CylinderGeometry(mm(rOuter * 0.45), mm(rOuter * 0.45), mm(2.4), 24), M.hole); h.rotation.x = Math.PI / 2; rear(name + '_bore', h, x, z);
+};
+jack('out_l', 168, 42, 7); jack('out_r', 146, 42, 7); jack('in_l', 168, 16, 7); jack('in_r', 146, 16, 7);
+jack('midi_in_trs', 124, 42, 4.5); jack('cv_out', 22, 22, 4.5);
+const padNut = new THREE.Mesh(new THREE.CylinderGeometry(mm(4), mm(4), mm(2), 6), M.nickel); padNut.rotation.x = Math.PI / 2; rear('input_pad_nut', padNut, 124, 16);
+const lever = new THREE.Mesh(new THREE.CylinderGeometry(mm(1), mm(1.3), mm(10), 16), M.nickel); lever.rotation.x = Math.PI / 2 - 0.3; lever.name = 'input_pad_lever';
+lever.position.set(mm(124 - 90), mm(FEET + 16 + 1.5), RZ - mm(5)); root.add(lever);
+rear('usb_c_teensy', new THREE.Mesh(new THREE.BoxGeometry(mm(9.5), mm(3.8), mm(1.2)), M.hole), 104, 42);
+rear('usb_a_host', new THREE.Mesh(new THREE.BoxGeometry(mm(14), mm(6.5), mm(1.2)), M.hole), 104, 16);
+rear('usb_c_power', new THREE.Mesh(new THREE.BoxGeometry(mm(9.5), mm(3.8), mm(1.2)), M.hole), 22, 44);
+const cover = new THREE.Mesh(new THREE.BoxGeometry(mm(54), mm(42), mm(1.2)), M.petg); rear('pi_service_cover', cover, 65, 27);
+for (let i = 0; i < 9; i++) rear('vent_cover_' + i, new THREE.Mesh(new THREE.BoxGeometry(mm(3), mm(32), mm(1.4)), M.hole), 45 + i * 5.5 - 1.5 + 2, 27);
+
+
+if (CHEEKS) {
+  [[-12, 'left'], [180, 'right']].forEach(([x0, s]) => {
+    const c = wedge('cheek_guadua_' + s, M.guadua, x0, 12, HF + 2, HB + 2); root.add(c);
+    for (let i = 0; i < 3; i++) {
+      const y = 30 + i * 52, h = HF + 2 + (HB - HF) * y / PD;
+      const n = new THREE.Mesh(new THREE.BoxGeometry(mm(12.2), mm(h - 0.4), mm(1.2)), M.guaduaDark); n.name = 'cheek_node_' + s + '_' + i;
+      n.position.set(mm(x0 + 6 - 90), mm(FEET + h / 2), mm(82 - y)); root.add(n);
+    }
+  });
+}
+root.position.y = 0;
+if (REAR) root.rotation.y = Math.PI;
+stage.setObject(root);
+</script>
+</body>
+</html>

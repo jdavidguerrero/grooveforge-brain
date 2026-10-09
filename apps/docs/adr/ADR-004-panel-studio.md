@@ -1,6 +1,6 @@
 # ADR-004: Panel de Studio — 5 encoders y 6 botones cableados al Teensy
 
-**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada
+**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada · Revisión 2 (2026-10-09): posición de IN/VOL según el enclosure validado
 **Date:** 2026-10-07
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-002 (variante Studio), ADR-003 (add-on del ladder)
@@ -59,7 +59,8 @@ autorización explícita.
    firmware es uno solo, la corrección aplica también a la base.
 7. **LEDs:** los dos keycaps nuevos se suman a la cadena WS2812 del pin 28 (18 LEDs en total).
 8. **Entrada de audio (revisión 1):**
-   - **Pot IN**, simétrico al VOL (IN en el extremo izquierdo de la fila 2, VOL en el derecho). Es un
+   - **Pot IN**, simétrico al VOL. **Rev. 2:** IN y VOL van a los costados de la pantalla, en (15, 96) y
+     (165, 96) mm; en los extremos de la fila 2 ninguna etiqueta quedaba a ≤ 25 mm de su control. Es un
      control, no un pot en el camino del audio: el Teensy lo lee y fija la ganancia analógica del
      codec (`lineInLevel`, 16 pasos de ~1.5 dB entre 3.12 y 0.24 Vpp de fondo de escala) más una
      ganancia digital fina para suavizar los pasos.

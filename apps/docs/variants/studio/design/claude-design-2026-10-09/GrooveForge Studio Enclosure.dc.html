@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#101010}a{color:#5DCAA5}a:hover{color:#9FE1CB}</style>
+</helmet>
+<div style="width:1416px;box-sizing:border-box;padding:64px;background:#101010;color:#E6E6E6;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;gap:96px">
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#5DCAA5">GROOVEFORGE BRAIN · STUDIO · ENCLOSURE</div>
+    <div style="font-size:40px;font-weight:600;color:#F2F2F2">Enclosure de escritorio · diseño y validación</div>
+    <div style="font-size:15px;color:#8A8A8A">PETG FDM pared 3 mm · aluminio 2 mm CNC R3 · cuña 12° · 2026-10-07 · medidas en mm salvo indicación · dibujos SVG a escala real (imprimir al 100 %)</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">0</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Resultado</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">HUELLA SIN MEJILLAS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">180 × 165 × 63</div><div style="font-size:13px;color:#A8A8A8">ancho × fondo × alto, con patas de 6 mm</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">CON MEJILLAS DE GUADUA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">204 × 165 × 65</div><div style="font-size:13px;color:#A8A8A8">2 × 12 mm; sobresalen 2 mm sobre el panel</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">FORMA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">Cuña 12°</div><div style="font-size:13px;color:#A8A8A8">frente 28 mm, fondo 63 mm sobre la mesa</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">REGLAS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#5DCAA5">12 pasan · 1 condicionada</div><div style="font-size:13px;color:#A8A8A8">13 reglas · condicionada al largo del cable DSI</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 48px;font-size:14px;line-height:22px;color:#C8C8C8;max-width:1200px">
+      <div><span style="color:#F2F2F2;font-weight:600">Hipótesis confirmada.</span> ENC L, ENC R, P1 y P2 quedan fuera del ancho de la pantalla (x 32 y 148; la pantalla activa va de 36 a 144). El panel mide 180 mm de ancho.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">B1–B4 a 20 mm de paso, no 18.4.</span> Con keycaps de 18 mm, el paso de la UI v1/v2 (136 px = 18.4 mm) deja 0.4 mm entre keycaps y no cumple los 1.5 mm. Las etiquetas de soft-key pasan a 148 px.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">IN y VOL a los costados de la pantalla, simétricos:</span> (15, 96) y (165, 96), diferencia 0.0 mm. En los extremos de la fila 2, IN quedaría en x ≤ 6.5 (P1 + 8 mm de borde) y a 29.5 mm o más del borde de la pantalla, así que ninguna etiqueta cumpliría los 25 mm.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">PCB de panel en dos niveles.</span> Los EC11 piden la PCB a 8.5 mm bajo la cara superior; los Choc V2 a 3.4 mm. PCB-A (encoders) y PCB-K (teclas + anillo LED) separadas por 5.1 mm.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Aluminio de 2 mm con rebaje.</span> Los Choc V2 clipsan en placa de 1.2 mm: cada cutout de 14 × 14 lleva un rebaje por debajo de 16 × 16 × 0.8 mm.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Anillo de NAV.</span> Una ventana anular de 32/24 mm deja suelto el disco central. Se corta un agujero de Ø 32 y se inserta un difusor de PC esmerilado de 2 mm con el centro impreso en negro.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Pi 3B horizontal en el piso, debajo de la pantalla,</span> con los puertos hacia atrás. Ethernet y USB de la Pi quedan detrás de una tapa trasera ranurada que también sirve de salida de aire. La microSD se accede por una tapa inferior.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Todos los conectores en la pared trasera de PETG,</span> con el switch INPUT PAD entre las entradas y el USB host. Los laterales quedan lisos para las mejillas, que se fijan con imanes ocultos y no tapan nada.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">1</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Vista superior · panel de aluminio · 1:1</span><span style="font-size:14px;color:#8A8A8A">Coordenadas de la chapa plana: x desde el borde izquierdo, y desde el borde frontal</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:24px">
+        <svg width="200mm" height="190mm" viewBox="-10 -12 200 190" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <rect x="0" y="0" width="180" height="168" rx="3" fill="#1A1B1E" stroke="#9FE1CB" style="stroke-width:0.35px"></rect>
+          <line x1="0" y1="153" x2="180" y2="153" style="stroke:#E8B84A;stroke-width:0.25px;stroke-dasharray:1.5 1"></line>
+          <text x="1.5" y="156.4" fill="#E8B84A" style="font-size:2.2px">LÍMITE 15 mm DEL BORDE FRONTAL</text>
+          <rect x="29.5" y="17.6" width="121" height="76" fill="none" stroke="#5A5A6E" style="stroke-width:0.25px;stroke-dasharray:1.2 0.8"></rect>
+          <text x="30.5" y="20.2" fill="#5A5A6E" style="font-size:2.2px">MÓDULO 121 × 76 (VERIFICAR)</text>
+          <rect x="34.5" y="21.7" width="111" height="67.8" rx="1" fill="#0A0A0A" stroke="#5DCAA5" style="stroke-width:0.3px"></rect>
+          <rect x="36" y="23.2" width="108" height="64.8" fill="none" stroke="#1D9E75" style="stroke-width:0.2px;stroke-dasharray:0.8 0.6"></rect>
+          <line x1="86" y1="55.6" x2="94" y2="55.6" style="stroke:#F2F2F2;stroke-width:0.25px"></line><line x1="90" y1="51.6" x2="90" y2="59.6" style="stroke:#F2F2F2;stroke-width:0.25px"></line>
+          <text x="90" y="64" text-anchor="middle" fill="#F2F2F2" style="font-size:2.6px">PANTALLA · CENTRO (90, 112.4)</text>
+          <text x="90" y="67.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.2px">ventana 111 × 67.8 · activa 108 × 64.8 · 0.135 mm/px</text>
+          <text x="90" y="70.6" text-anchor="middle" fill="#9FE1CB" style="font-size:2.2px">activa x 36–144 · y 80–144.8</text>
+          <rect x="22" y="96" width="136" height="52" fill="none" stroke="#1D9E75" style="stroke-width:0.25px;stroke-dasharray:0.4 0.8"></rect>
+          <text x="23" y="95.4" fill="#1D9E75" style="font-size:2px">PCB-A ENCODERS (−8.5)</text>
+          <rect x="46" y="96" width="88" height="50" fill="none" stroke="#7A6FE0" style="stroke-width:0.25px;stroke-dasharray:2 0.8"></rect>
+          <text x="133" y="95.4" text-anchor="end" fill="#7A6FE0" style="font-size:2px">PCB-K TECLAS + LED (−3.4)</text>
+          <rect x="157" y="64" width="16" height="16" fill="none" stroke="#1D9E75" style="stroke-width:0.25px;stroke-dasharray:0.4 0.8"></rect>
+          <rect x="7" y="64" width="16" height="16" fill="none" stroke="#1D9E75" style="stroke-width:0.25px;stroke-dasharray:0.4 0.8"></rect>
+          <sc-for list="{{ vents }}" as="s" hint-placeholder-count="29"><rect x="{{ s.x }}" y="5" width="2.5" height="10" rx="1.25" fill="#0A0A0A" stroke="#5A5A6E" style="stroke-width:0.15px"></rect></sc-for>
+          <text x="90" y="3.2" text-anchor="middle" fill="#5A5A6E" style="font-size:2.2px">29 RANURAS 2.5 × 10 · SALIDA DE AIRE · y 153–163</text>
+          <sc-for list="{{ keys }}" as="k" hint-placeholder-count="6">
+            <rect x="{{ k.cx }}" y="{{ k.cy }}" width="18" height="17" rx="1" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></rect>
+            <rect x="{{ k.hx }}" y="{{ k.hy }}" width="14" height="14" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></rect>
+          </sc-for>
+          <sc-for list="{{ encs }}" as="e" hint-placeholder-count="5">
+            <circle cx="{{ e.x }}" cy="{{ e.y }}" r="10" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle>
+            <circle cx="{{ e.x }}" cy="{{ e.y }}" r="{{ e.hr }}" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          </sc-for>
+          <text x="60" y="117.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B1</text><text x="60" y="120.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(60, 62)</text>
+          <text x="80" y="117.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B2</text><text x="80" y="120.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(80, 62)</text>
+          <text x="100" y="117.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B3</text><text x="100" y="120.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(100, 62)</text>
+          <text x="120" y="117.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B4</text><text x="120" y="120.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(120, 62)</text>
+          <text x="60" y="147.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B5 MODE</text><text x="60" y="150.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(60, 32)</text>
+          <text x="120" y="147.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">B6</text><text x="120" y="150.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(120, 32)</text>
+          <text x="32" y="119.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">ENC L</text><text x="32" y="122.2" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(32, 62)</text>
+          <text x="148" y="119.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">ENC R</text><text x="148" y="122.2" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(148, 62)</text>
+          <text x="32" y="149.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">P1</text><text x="32" y="152.2" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(32, 32)</text>
+          <text x="148" y="149.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">P2</text><text x="148" y="152.2" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(148, 32)</text>
+          <text x="90" y="155.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">NAV</text><text x="90" y="158.4" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(90, 32)</text>
+          <circle cx="90" cy="136" r="12" fill="none" stroke="#5DCAA5" style="stroke-width:0.2px;stroke-dasharray:0.5 0.5"></circle>
+          <circle cx="15" cy="72" r="7.5" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle>
+          <circle cx="15" cy="72" r="3.5" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="15" y="83.5" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">IN</text>
+          <text x="15" y="86.6" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(15, 96)</text>
+          <circle cx="165" cy="72" r="7.5" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle>
+          <circle cx="165" cy="72" r="3.5" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="165" y="83.5" text-anchor="middle" fill="#F2F2F2" style="font-size:2.4px;font-weight:600">VOL</text>
+          <text x="165" y="86.6" text-anchor="middle" fill="#9FE1CB" style="font-size:2.1px">(165, 96)</text>
+          <line x1="90" y1="-2" x2="90" y2="170" style="stroke:#5A5A6E;stroke-width:0.15px;stroke-dasharray:3 1 0.5 1"></line>
+          <text x="91" y="169.5" fill="#5A5A6E" style="font-size:2px">EJE x 90</text>
+          <line x1="0" y1="172" x2="180" y2="172" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <line x1="0" y1="170" x2="0" y2="174" style="stroke:#7A7A7A;stroke-width:0.2px"></line><line x1="180" y1="170" x2="180" y2="174" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="90" y="176.5" text-anchor="middle" fill="#B8B8B8" style="font-size:2.6px">180</text>
+          <line x1="184" y1="0" x2="184" y2="168" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <line x1="182" y1="0" x2="186" y2="0" style="stroke:#7A7A7A;stroke-width:0.2px"></line><line x1="182" y1="168" x2="186" y2="168" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="187" y="84" fill="#B8B8B8" style="font-size:2.6px" transform="rotate(90 187 84)" text-anchor="middle">168 en la chapa · 164.3 en planta</text>
+          <text x="-2" y="168" text-anchor="end" fill="#7A7A7A" style="font-size:2.2px">FRENTE</text>
+        </svg>
+      </div>
+      <div style="width:380px;display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">LEYENDA</div>
+        <div>Línea continua blanca: corte CNC. Punteado claro: contorno de perilla Ø 20 (IN y VOL Ø 15) y keycap 18 × 17. Gris punteado: módulo de pantalla bajo la chapa. Verde y violeta: PCB-A y PCB-K vistas a través de la chapa.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:8px">CORTES CNC</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:150px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">Ventana</span><span>111 × 67.8 · R1</span>
+          <span style="color:#9FE1CB">Choc × 6</span><span>14.0 × 14.0 + rebaje 16 × 16 × 0.8 por debajo</span>
+          <span style="color:#9FE1CB">EC11 × 4</span><span>Ø 7.2 (rosca M7; verificar)</span>
+          <span style="color:#9FE1CB">NAV</span><span>Ø 32 + difusor 32/7</span>
+          <span style="color:#9FE1CB">IN + VOL RV09</span><span>2 × Ø 7.0</span>
+          <span style="color:#9FE1CB">Ranuras</span><span>29 × 2.5 × 10, paso 5</span>
+          <span style="color:#9FE1CB">Fijación</span><span>6 × espárrago PEM M3 por debajo (sin tornillos a la vista)</span>
+          <span style="color:#9FE1CB">Acabado</span><span>6061-T6, anodizado negro, R3 en esquinas</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:8px">FILAS</div>
+        <div>Fila 1 en y 62: ENC L · B1–B4 · ENC R. Fila 2 en y 32: P1 · MODE · NAV · B6 · P2. Paso entre filas: 30 mm. MODE queda debajo de B1 y B6 debajo de B4.</div>
+        <div>La pantalla queda centrada en el panel (x 90). Todo el panel es simétrico respecto de x 90, incluidos IN y VOL.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">2</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Tabla de alineación control ↔ etiqueta</span><span style="font-size:14px;color:#8A8A8A">x_etiqueta (mm) = 36 + 0.135 × px · px = (x_mm − 36) / 0.135</span></div>
+    <div style="display:grid;grid-template-columns:120px 90px 70px 130px 110px 150px 110px 90px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:18px;color:#F2F2F2">
+      <div style="display:contents;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">CONTROL</div><div style="padding:8px 0">X FÍSICO</div><div style="padding:8px 0">Y</div><div style="padding:8px 0">ETIQUETA V2 PX</div><div style="padding:8px 0">Δ V2 MM</div><div style="padding:8px 0">ETIQUETA V3 PX</div><div style="padding:8px 0">Δ V3 MM</div><div style="padding:8px 0">≤ 25</div></div>
+      <sc-for list="{{ align }}" as="a" hint-placeholder-count="12">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">{{ a.n }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.x }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#8A8A8A">{{ a.y }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.p2 }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:{{ a.c2 }}">{{ a.d2 }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.p3 }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.d3 }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#5DCAA5;font-weight:600">{{ a.ok }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#B8B8B8;max-width:1100px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-bottom:4px">CAMBIOS PARA LA UI V3</div>
+      <div>Fila 1 de la barra inferior: ENC L 0–104 · B1–B4 en segmentos de 148 px (104, 252, 400, 548) · ENC R 696–800. Centros de soft-key a 178 / 326 / 474 / 622, a menos de 0.05 mm de cada tecla.</div>
+      <div>Fila 2: P1 0–200 · MODE 200–296 · NAV 296–504 · B6 504–600 · P2 600–800. Los bloques P siguen por encima del mínimo de 192 px; MODE y B6 quedan en 96 px.</div>
+      <div>Overlays de los pots pegados al borde de su lado: VOL en x 384–800 con chip VOL en 760–800 (centro 780); INPUT GAIN en x 0–416 con chip IN en 0–40 (centro 20). Ambos quedan a 23.7 mm de su perilla. Con la UI v2, VOL quedaba a 48 mm.</div>
+      <div>Las etiquetas de ENC L y ENC R no pueden estar a menos de 4 mm de su perilla porque la perilla queda fuera de la pantalla; la mejor posición es pegadas al borde.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">3</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Corte lateral A-A en x = 60 · 1:1</span><span style="font-size:14px;color:#8A8A8A">Pasa por B1, MODE y la Pi; encoders y Teensy proyectados en punteado</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:24px">
+        <svg width="216mm" height="96mm" viewBox="-16 -10 216 96" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <g transform="translate(0 72) scale(1 -1)">
+            <line x1="-14" y1="0" x2="186" y2="0" style="stroke:#5A5A6E;stroke-width:0.3px"></line>
+            <rect x="7" y="0" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+            <rect x="143" y="0" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+            <polygon points="0,6 164.3,6 164.3,60.96 0,25.96" fill="#16171A" stroke="#9FE1CB" style="stroke-width:0.3px"></polygon>
+            <polygon points="3,9 161.3,9 161.3,60.32 3,26.6" fill="#0E0E10" stroke="#5A5A6E" style="stroke-width:0.2px"></polygon>
+            <rect x="66" y="5.6" width="20" height="3.8" fill="#0E0E10"></rect>
+            <line x1="66" y1="6" x2="86" y2="6" style="stroke:#E8B84A;stroke-width:0.3px;stroke-dasharray:1 0.6"></line>
+            <sc-for list="{{ bslots }}" as="s" hint-placeholder-count="12"><rect x="{{ s.x }}" y="5.6" width="2.5" height="3.8" fill="#0C0C0C"></rect></sc-for>
+            <rect x="160.9" y="14" width="3.8" height="32" fill="#0C0C0C"></rect>
+            <polygon points="0,28 164.3,63 164.3,60.96 0,25.96" fill="#3A3C42" stroke="#F2F2F2" style="stroke-width:0.2px"></polygon>
+            <line x1="76.78" y1="44.36" x2="143.09" y2="58.49" style="stroke:#5DCAA5;stroke-width:0.6px"></line>
+            <polygon points="72.35,41.55 146.68,57.39 145.43,51.53 71.10,35.69" fill="#0A0A0A" stroke="#5DCAA5" style="stroke-width:0.25px"></polygon>
+            <polygon points="20.81,29.26 69.71,39.68 69.38,38.12 20.48,27.69" fill="#2B2758" stroke="#7A6FE0" style="stroke-width:0.2px"></polygon>
+            <polygon points="17.79,23.85 68.65,34.69 68.31,33.13 17.45,22.29" fill="#0E5040" stroke="#1D9E75" style="stroke-width:0.2px"></polygon>
+            <polygon points="24.20,32.04 37.89,34.96 37.43,32.80 23.74,29.89" fill="#242424" stroke="#9FE1CB" style="stroke-width:0.15px"></polygon>
+            <polygon points="53.54,38.29 67.23,41.21 66.78,39.06 53.08,36.14" fill="#242424" stroke="#9FE1CB" style="stroke-width:0.15px"></polygon>
+            <polygon points="27.39,33.84 35.21,35.50 35.79,38.24 27.97,36.58" fill="#242424"></polygon>
+            <polygon points="56.73,40.09 64.55,41.76 65.13,44.50 57.31,42.83" fill="#242424"></polygon>
+            <polygon points="23.57,35.64 40.19,39.18 40.86,42.31 24.23,38.77" fill="#534AB7" stroke="#F2F2F2" style="stroke-width:0.15px"></polygon>
+            <polygon points="52.91,41.89 69.53,45.43 70.20,48.56 53.58,45.02" fill="#2A2C30" stroke="#F2F2F2" style="stroke-width:0.15px"></polygon>
+            <polygon points="21.83,34.05 41.39,38.22 44.52,52.89 24.96,48.72" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></polygon>
+            <polygon points="51.17,40.31 70.73,44.47 73.86,59.15 54.30,54.98" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></polygon>
+            <polygon points="24.52,31.36 37.24,34.07 35.88,27.71 23.17,25.00" fill="none" stroke="#1D9E75" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></polygon>
+            <polygon points="53.86,37.61 66.58,40.32 65.23,33.96 52.51,31.26" fill="none" stroke="#1D9E75" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></polygon>
+            <rect x="74" y="15" width="85" height="1.6" fill="#0E5040" stroke="#7A6FE0" style="stroke-width:0.2px"></rect>
+            <rect x="77" y="9" width="2.5" height="6" fill="#5A5A6E"></rect><rect x="133" y="9" width="2.5" height="6" fill="#5A5A6E"></rect>
+            <rect x="100" y="16.6" width="14" height="10" fill="#2A2C30" stroke="#7A6FE0" style="stroke-width:0.15px"></rect>
+            <rect x="140" y="16.6" width="21" height="16" fill="#1C1C1C" stroke="#7A6FE0" style="stroke-width:0.15px"></rect>
+            <rect x="72" y="13.5" width="3" height="1.2" fill="#E8B84A"></rect>
+            <rect x="76" y="13" width="50" height="17" fill="none" stroke="#E8B84A" style="stroke-width:0.2px;stroke-dasharray:1 0.6"></rect>
+            <rect x="131" y="39" width="30" height="14" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:1 0.6"></rect>
+            <rect x="131" y="15" width="30" height="14" fill="none" stroke="#9FE1CB" style="stroke-width:0.2px;stroke-dasharray:1 0.6"></rect>
+            <polyline points="80,3 84,12 92,24 120,36 150,52 156,62.5" fill="none" stroke="#5DCAA5" style="stroke-width:0.35px;stroke-dasharray:1.4 0.8"></polyline>
+            <polyline points="120,3 124,12 150,24 166,30" fill="none" stroke="#5DCAA5" style="stroke-width:0.35px;stroke-dasharray:1.4 0.8"></polyline>
+          </g>
+          <text x="-14" y="64" fill="#7A7A7A" style="font-size:2.2px">FRENTE</text>
+          <text x="166" y="-6" fill="#5DCAA5" style="font-size:2.2px">↑ SALIDA PANEL</text>
+          <text x="167" y="40" fill="#5DCAA5" style="font-size:2.2px">→ SALIDA TRASERA</text>
+          <text x="92" y="77" fill="#5DCAA5" style="font-size:2.2px">↑ ENTRADA INFERIOR (PATAS 6 mm)</text>
+          <text x="66" y="70.5" fill="#E8B84A" style="font-size:2px">TAPA microSD</text>
+          <text x="100" y="12" fill="#5DCAA5" style="font-size:2.4px">PANTALLA 6 mm + JUNTA 0.5</text>
+          <text x="-14" y="24" fill="#9FE1CB" style="font-size:2.2px">PERILLAS Ø20 (PROY.)</text>
+          <text x="2" y="52.5" fill="#7A6FE0" style="font-size:2.1px">PCB-K −3.4</text>
+          <text x="2" y="55.5" fill="#1D9E75" style="font-size:2.1px">PCB-A −8.5</text>
+          <text x="96" y="68.5" fill="#7A6FE0" style="font-size:2.2px">RASPBERRY PI 3B · PISO + 6</text>
+          <text x="98" y="54" fill="#E8B84A" style="font-size:2.1px">TEENSY + AUDIO (x 103–175, PROY.)</text>
+          <text x="131" y="31" fill="#9FE1CB" style="font-size:2.1px">JACKS 1/4" (PROY.)</text>
+          <line x1="-6" y1="72" x2="-6" y2="44" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="-8" y="58" text-anchor="middle" fill="#B8B8B8" style="font-size:2.4px" transform="rotate(-90 -8 58)">28</text>
+          <line x1="194" y1="72" x2="194" y2="9" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="197" y="40" fill="#B8B8B8" style="font-size:2.4px" transform="rotate(-90 197 40)" text-anchor="middle">63</text>
+          <line x1="0" y1="80" x2="164.3" y2="80" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="40" y="84" text-anchor="middle" fill="#B8B8B8" style="font-size:2.4px">164.3 en planta</text>
+          <path d="M 20 46 A 20 20 0 0 0 19.56 41.83" fill="none" style="stroke:#F2F2F2;stroke-width:0.2px"></path>
+          <text x="10" y="44" fill="#F2F2F2" style="font-size:2.6px">12°</text>
+        </svg>
+      </div>
+      <div style="width:360px;display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">APILADO (BAJO LA CARA SUPERIOR, NORMAL AL PANEL)</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:72px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">0 – 2</span><span>Aluminio (1.2 en los rebajes Choc)</span>
+          <span style="color:#9FE1CB">3.4 – 5.0</span><span>PCB-K: 6 Choc V2 + 16 LED SK6812-MINI-E de montaje inverso bajo el difusor</span>
+          <span style="color:#9FE1CB">8.5 – 10.1</span><span>PCB-A: 5 EC11. NAV pasa por un corte de PCB-K</span>
+          <span style="color:#9FE1CB">2 – 8</span><span>Módulo de pantalla (6 asumido) sobre junta de 0.5, prensado con marco de PETG</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:6px">ALTURAS SOBRE LA MESA</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:72px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">0 – 6</span><span>Patas Ø 14 × 6, goma</span>
+          <span style="color:#9FE1CB">6 – 9</span><span>Fondo PETG 3 mm, atornillado</span>
+          <span style="color:#9FE1CB">15 – 16.6</span><span>PCB de la Pi sobre separadores M2.5 × 6</span>
+          <span style="color:#9FE1CB">≤ 32.6</span><span>Puertos USB/RJ45 (16 sobre la PCB)</span>
+          <span style="color:#9FE1CB">≥ 35.7</span><span>Parte trasera del módulo. Holgura mínima con la Pi: 9.1</span>
+          <span style="color:#9FE1CB">28 / 63</span><span>Altura total frente / fondo</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:6px">CABLE DSI</div>
+        <div>El conector DSI de la Pi está en el extremo frontal (lado microSD). Recorrido hasta el conector del módulo: ~ 85 mm, con un bucle de R ≥ 5 mm y sin pliegues. Pide un cable de al menos 100 mm.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">CAJA PLANA CONTRA CUÑA · VISTA SENTADO (OJO 450 mm SOBRE LA MESA, 500 mm DE DISTANCIA → LÍNEA DE VISTA 42° HACIA ABAJO)</div>
+      <div style="display:grid;grid-template-columns:160px 170px 190px 190px minmax(0,1fr);font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:18px;color:#F2F2F2;max-width:1200px">
+        <div style="display:contents;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">OPCIÓN</div><div style="padding:8px 0">FRENTE / FONDO</div><div style="padding:8px 0">ÁNGULO A LA NORMAL</div><div style="padding:8px 0">ALTURA APARENTE</div><div style="padding:8px 0">NOTA</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0">Plana</div><div style="border-top:1px solid #262626;padding:8px 0">47 / 47</div><div style="border-top:1px solid #262626;padding:8px 0">48°</div><div style="border-top:1px solid #262626;padding:8px 0">0.67</div><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Sans',sans-serif;color:#B8B8B8">La altura la fija la Pi bajo la pantalla. Muñeca 19 mm más alta.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0">Cuña 10°</div><div style="border-top:1px solid #262626;padding:8px 0">28 / 57</div><div style="border-top:1px solid #262626;padding:8px 0">38°</div><div style="border-top:1px solid #262626;padding:8px 0">0.79</div><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Sans',sans-serif;color:#B8B8B8">Holgura Pi–módulo 6 mm, justa para el disipador.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#5DCAA5;font-weight:600">Cuña 12° ✓</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5DCAA5">28 / 63</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5DCAA5">36°</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5DCAA5">0.81</div><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Sans',sans-serif;color:#B8B8B8">+21 % de altura aparente frente a la plana. La pared trasera de 57 mm admite dos filas de jacks.</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0">Cuña 15°</div><div style="border-top:1px solid #262626;padding:8px 0">28 / 72</div><div style="border-top:1px solid #262626;padding:8px 0">33°</div><div style="border-top:1px solid #262626;padding:8px 0">0.84</div><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Sans',sans-serif;color:#B8B8B8">Mejora solo 3 % más y suma 9 mm de alto y 15 % más de tiempo de impresión.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">4</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Panel de conectores · pared trasera · 1:1</span><span style="font-size:14px;color:#8A8A8A">Visto desde atrás: la izquierda del dibujo es el lado derecho del equipo. Cotas x en coordenadas del panel frontal.</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:24px">
+        <svg width="214mm" height="84mm" viewBox="-17 -8 214 84" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <rect x="-12" y="-2" width="12" height="59" fill="none" stroke="#B58A52" style="stroke-width:0.25px;stroke-dasharray:1.2 0.8"></rect>
+          <rect x="180" y="-2" width="12" height="59" fill="none" stroke="#B58A52" style="stroke-width:0.25px;stroke-dasharray:1.2 0.8"></rect>
+          <text x="-6" y="30" text-anchor="middle" fill="#B58A52" style="font-size:2.2px" transform="rotate(-90 -6 30)">MEJILLA OPCIONAL</text>
+          <text x="186" y="30" text-anchor="middle" fill="#B58A52" style="font-size:2.2px" transform="rotate(90 186 30)">MEJILLA OPCIONAL</text>
+          <rect x="0" y="0" width="180" height="57" fill="#16171A" stroke="#9FE1CB" style="stroke-width:0.3px"></rect>
+          <rect x="0" y="-2" width="180" height="2" fill="#3A3C42"></rect>
+          <rect x="7" y="57" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+          <rect x="159" y="57" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+          <line x1="-14" y1="63" x2="194" y2="63" style="stroke:#5A5A6E;stroke-width:0.3px"></line>
+          <rect x="88" y="9" width="54" height="42" rx="1" fill="#1E1F23" stroke="#7A6FE0" style="stroke-width:0.25px"></rect>
+          <sc-for list="{{ rslots }}" as="s" hint-placeholder-count="9"><rect x="{{ s.x }}" y="14" width="3" height="32" rx="1.5" fill="#0A0A0A"></rect></sc-for>
+          <circle cx="12" cy="15" r="10" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="12" cy="15" r="5.25" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="12" y="1.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">OUT L</text><text x="12" y="4" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">1/4&quot; · Ø10.5</text>
+          <circle cx="34" cy="15" r="10" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="34" cy="15" r="5.25" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="34" y="1.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">OUT R</text><text x="34" y="4" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">1/4&quot; · Ø10.5</text>
+          <circle cx="12" cy="41" r="10" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="12" cy="41" r="5.25" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="12" y="54" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">IN L</text><text x="12" y="56.6" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">1/4&quot; · Ø10.5</text>
+          <circle cx="34" cy="41" r="10" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="34" cy="41" r="5.25" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="34" y="54" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">IN R</text><text x="34" y="56.6" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">1/4&quot; · Ø10.5</text>
+          <circle cx="56" cy="15" r="6" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="56" cy="15" r="3.5" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="56" y="5.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">MIDI IN</text><text x="56" y="8" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">TRS 3.5 · Ø7</text>
+          <circle cx="76" cy="15" r="6" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="76" cy="15" r="3" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="76" y="5.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">USB TEENSY</text><text x="76" y="8" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">USB-C datos</text>
+          <circle cx="76" cy="41" r="8.5" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="76" cy="41" r="4.2" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="76" y="52.5" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">USB HOST</text><text x="76" y="55.1" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">USB-A</text>
+          <circle cx="158" cy="13" r="6" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="158" cy="13" r="3" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="158" y="3.4" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">USB-C 5V 3A</text><text x="158" y="6" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">alimentación</text>
+          <circle cx="158" cy="35" r="6" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></circle><circle cx="158" cy="35" r="3.5" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+          <text x="158" y="44" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">CV OUT</text><text x="158" y="46.6" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">3.5 · Ø7</text>
+          <rect x="51" y="38" width="10" height="6" rx="1" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></rect>
+          <circle cx="56" cy="41" r="3.1" fill="none" stroke="#B8BCC2" style="stroke-width:0.25px"></circle>
+          <rect x="55.2" y="36" width="1.6" height="5" rx="0.8" fill="#B8BCC2"></rect>
+          <rect x="47" y="34" width="18" height="13" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></rect>
+          <text x="56" y="31.6" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">INPUT PAD</text>
+          <text x="62" y="37" text-anchor="start" fill="#9FE1CB" style="font-size:1.9px">0</text><text x="62" y="41.6" text-anchor="start" fill="#9FE1CB" style="font-size:1.9px">−10</text><text x="62" y="46.2" text-anchor="start" fill="#9FE1CB" style="font-size:1.9px">−20</text>
+          <text x="56" y="50.4" text-anchor="middle" fill="#9FE1CB" style="font-size:1.9px">palanca 3 pos.</text>
+          <text x="115" y="12.4" text-anchor="middle" fill="#7A6FE0" style="font-size:2px">TAPA DE SERVICIO PI · 2 × M3</text>
+          <text x="115" y="54.6" text-anchor="middle" fill="#7A6FE0" style="font-size:1.9px">x 38–92 · 9 ranuras 3 × 32 (salida de aire)</text>
+          <text x="90" y="69" text-anchor="middle" fill="#B8B8B8" style="font-size:2.4px">180 · alto de la pared 57 (63 con patas)</text>
+        </svg>
+      </div>
+      <div style="width:360px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">POSICIONES · X PANEL / Z DESDE LA BASE DEL CUERPO</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:150px minmax(0,1fr);gap:0 8px">
+          <sc-for list="{{ conns }}" as="c" hint-placeholder-count="9"><span style="color:#9FE1CB">{{ c.n }}</span><span>{{ c.pos }}</span></sc-for>
+          <span style="color:#9FE1CB">ETHERNET PI</span><span>tras la tapa de servicio · x ~ 50, z ~ 18</span>
+          <span style="color:#9FE1CB">microSD PI</span><span>tapa inferior 20 × 18 · y 68–86</span>
+        </div>
+        <div>Círculo punteado: envolvente del conector macho (1/4" Ø 20, 3.5 mm Ø 12, USB-A 16 × 9, USB-C 12 × 7). Separación mínima entre envolventes: 6.0 mm (MIDI ↔ OUT R y entre filas de jacks).</div>
+        <div>INPUT PAD: switch de palanca de 3 posiciones (arriba 0, centro −10, abajo −20 dB), agujero Ø 6.2. Quedan 12 mm libres a cada lado para el dedo (hasta el macho de IN R y el de USB host). La serigrafía va encima y a la derecha, fuera de las envolventes de los conectores.</div>
+        <div>El USB del Teensy es solo de datos: se corta el puente VUSB–VIN del Teensy y todo se alimenta desde el USB-C de 5 V / 3 A.</div>
+        <div>USB-A host: conector de panel cableado al puerto host del Teensy 4.1 (header de 5 pines).</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">5</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Vista explotada · piezas y materiales</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="width:620px;display:flex;flex-direction:column;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">
+        <sc-for list="{{ layers }}" as="l" hint-placeholder-count="10">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:24px;text-align:right;color:#7A7A7A">{{ l.i }}</div>
+            <div style="flex:none;width:{{ l.w }}px;margin-left:{{ l.ml }}px;height:{{ l.h }}px;background:{{ l.c }};border:1px solid {{ l.b }}"></div>
+            <div style="color:#F2F2F2">{{ l.n }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;gap:16px;align-items:center;padding-top:12px;padding-left:36px">
+          <div style="width:24px;height:90px;background:#B58A52;position:relative"><div style="position:absolute;left:7px;top:14px;width:10px;height:10px;border-radius:50%;background:#2A2C30"></div><div style="position:absolute;left:7px;top:66px;width:10px;height:10px;border-radius:50%;background:#2A2C30"></div></div>
+          <div style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:20px;color:#B8B8B8;max-width:420px">11 · Mejillas de guadua opcionales, 12 mm, perfil de la cuña. 4 imanes Ø 10 × 2 N42 por lado, alineados con 4 imanes iguales en bolsillos internos del lateral de PETG (piel exterior de 0.8 mm: sin agujeros a la vista).</div>
+        </div>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:28px 180px minmax(0,1fr);font-size:12.5px;line-height:18px;color:#C8C8C8">
+        <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:6px 0">#</div><div style="padding:6px 0">PIEZA</div><div style="padding:6px 0">MATERIAL · PROCESO · FIJACIÓN</div></div>
+        <sc-for list="{{ bom }}" as="b" hint-placeholder-count="11">
+          <div style="display:contents">
+            <div style="border-top:1px solid #262626;padding:6px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ b.i }}</div>
+            <div style="border-top:1px solid #262626;padding:6px 0;color:#F2F2F2">{{ b.n }}</div>
+            <div style="border-top:1px solid #262626;padding:6px 0">{{ b.d }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">6</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Reporte de reglas</span></div>
+    <div style="display:grid;grid-template-columns:40px 300px 140px 150px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">REGLA</div><div style="padding:8px 0">RESULTADO</div><div style="padding:8px 0">VALOR</div><div style="padding:8px 0">DÓNDE / CÓMO</div></div>
+      <sc-for list="{{ rules }}" as="r" hint-placeholder-count="11">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:10px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ r.i }}</div>
+          <div style="border-top:1px solid #262626;padding:10px 16px 10px 0;color:#F2F2F2">{{ r.n }}</div>
+          <div style="border-top:1px solid #262626;padding:10px 0"><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:1px;padding:3px 8px;background:{{ r.bg }};color:#0A0A0A">{{ r.s }}</span></div>
+          <div style="border-top:1px solid #262626;padding:10px 0;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">{{ r.v }}</div>
+          <div style="border-top:1px solid #262626;padding:10px 0;text-wrap:pretty">{{ r.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="font-size:13px;line-height:20px;color:#8A8A8A;max-width:1100px">Ventilación: tiro natural con aire que sube ΔT, altura de chimenea H = 45 mm (de la entrada inferior a las salidas), Cd = 0.6. Área efectiva de entrada y salida en serie: 1 / √(1/30² + 1/16.1²) = 14.2 cm². Se requieren 12.8 cm² a 4.5 W con ΔT ≤ 20 K, y 12.2 cm² a 6 W (máximo sostenido) con ΔT ≤ 25 K. Se dejan bosses para un ventilador opcional de 30 × 30 mm a 5 V sobre la tapa de servicio.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">7</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Renders de referencia</span><span style="font-size:14px;color:#8A8A8A">Modelo 3D en vivo: arrastra para girar. Descarga OBJ o GLB desde cada vista. <a href="Enclosure 3D.html?view=rear">Vista trasera</a></span></div>
+    <div style="display:flex;gap:32px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#9FE1CB">A · BASE SIN MEJILLAS</div>
+        <iframe src="Enclosure 3D.html" style="width:624px;height:420px;border:1px solid #262626;display:block"></iframe>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#B58A52">B · CON MEJILLAS DE GUADUA</div>
+        <iframe src="Enclosure 3D.html?cheeks=1" style="width:624px;height:420px;border:1px solid #262626;display:block"></iframe>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#8A8A8A;max-width:1000px;line-height:20px">Son vistas de un modelo geométrico simplificado, no renders fotorrealistas. La imagen de la pantalla es solo de referencia. Geometría, alturas y posiciones coinciden con las secciones 1, 3 y 4.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">8</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Medir con calibre antes de fabricar</span></div>
+    <div style="display:grid;grid-template-columns:40px 280px 200px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">MEDIDA</div><div style="padding:8px 0">VALOR ASUMIDO</div><div style="padding:8px 0">QUÉ CAMBIA SI DIFIERE</div></div>
+      <sc-for list="{{ verify }}" as="m" hint-placeholder-count="16">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ m.i }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 16px 8px 0;color:#F2F2F2">{{ m.n }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#E8B84A">{{ m.v }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;text-wrap:pretty">{{ m.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const f1 = v => (Math.round(v * 10) / 10).toFixed(1);
+    const keys = [['B1', 60, 62], ['B2', 80, 62], ['B3', 100, 62], ['B4', 120, 62], ['B5 MODE', 60, 32], ['B6', 120, 32]].map(([n, x, v]) => {
+      const cy = 168 - v; return { n, x, cx: x - 9, cy: cy - 8.5, hx: x - 7, hy: cy - 7, ty: cy + 11.6, ty2: cy + 14.4, c: '(' + x + ', ' + v + ')' }; });
+    const encs = [['ENC L', 32, 62], ['ENC R', 148, 62], ['P1', 32, 32], ['P2', 148, 32], ['NAV', 90, 32]].map(([n, x, v]) => {
+      const nav = n === 'NAV', y = 168 - v; return { n, x, y, hr: nav ? 16 : 3.6, ty: y + (nav ? 19.6 : 13.4), ty2: y + (nav ? 22.4 : 16.2), c: '(' + x + ', ' + v + ')' }; });
+    const vents = Array.from({ length: 29 }, (_, i) => ({ x: 20 + i * 5 - 1.25 }));
+    const align = [['ENC L', 32, 62, 64, 52], ['B1', 60, 62, 196, 178], ['B2', 80, 62, 332, 326], ['B3', 100, 62, 468, 474], ['B4', 120, 62, 604, 622], ['ENC R', 148, 62, 736, 748],
+      ['P1', 32, 32, 112, 100], ['B5 MODE', 60, 32, 280, 248], ['NAV', 90, 32, 400, 400], ['B6', 120, 32, 520, 552], ['P2', 148, 32, 688, 700], ['IN', 15, 96, null, 20], ['VOL', 165, 96, 578, 780]].map(([n, x, y, p2, p3]) => {
+      const d2 = p2 == null ? null : Math.abs(x - (36 + 0.135 * p2)), d3 = Math.abs(x - (36 + 0.135 * p3));
+      return { n, x: x.toFixed(1), y: y.toFixed(1), p2: p2 == null ? '—' : p2, p3, d2: d2 == null ? 'no existía' : f1(d2), d3: f1(d3), c2: d2 > 25 ? '#E84A4A' : '#F2F2F2', ok: d3 <= 25 ? 'PASA' : 'NO' }; });
+    const bslots = Array.from({ length: 12 }, (_, i) => ({ x: 88 + i * 6 }));
+    const conns = [
+      ['OUT L', 168, 42, 5.25, 10, '1/4" · Ø10.5'], ['OUT R', 146, 42, 5.25, 10, '1/4" · Ø10.5'], ['IN L', 168, 16, 5.25, 10, '1/4" · Ø10.5'], ['IN R', 146, 16, 5.25, 10, '1/4" · Ø10.5'],
+      ['INPUT PAD', 124, 16, 3.1, 0, 'palanca 3 pos. · Ø6.2'], ['MIDI IN', 124, 42, 3.5, 6, 'TRS 3.5 · Ø7'], ['USB TEENSY', 104, 42, 3, 6, 'USB-C datos'], ['USB HOST', 104, 16, 4.2, 8.5, 'USB-A'], ['USB-C 5V 3A', 22, 44, 3, 6, 'alimentación'], ['CV OUT', 22, 22, 3.5, 6, '3.5 · Ø7']
+    ].map(([n, x, z, hr, env, c]) => { const sx = 180 - x, sy = 57 - z; return { n, sx, sy, hr, env, c, ly: sy + env + 3, ly2: sy + env + 5.6, pos: 'x ' + x + ' · z ' + z + ' · ' + c }; });
+    const rslots = Array.from({ length: 9 }, (_, i) => ({ x: 180 - (45 + i * 5.5) - 1.5 }));
+    const lslots = [];
+    const layers = [
+      ['1', 'Perillas Ø20 × 5, VOL Ø15, keycaps Choc × 6', 300, 40, 10, '#1B1B1D', '#5A5A6E'],
+      ['2', 'Difusor anillo NAV, PC esmerilado 2 mm', 60, 160, 6, '#5DCAA5', '#5DCAA5'],
+      ['3', 'Panel superior, aluminio 2 mm', 520, 0, 8, '#3A3C42', '#9FE1CB'],
+      ['4', 'Junta de espuma 0.5 + módulo de pantalla 5"', 240, 180, 14, '#0A0A0A', '#5DCAA5'],
+      ['5', 'PCB-K (teclas + LED) sobre separadores 5.1', 180, 40, 6, '#2B2758', '#7A6FE0'],
+      ['6', 'PCB-A (encoders) + 2 PCB-V (IN, VOL)', 260, 20, 6, '#0E5040', '#1D9E75'],
+      ['7', 'Cuerpo PETG 3 mm, cuña 12°, nervios internos', 520, 0, 40, '#16171A', '#9FE1CB'],
+      ['8', 'Pi 3B · Teensy + Audio · placa de alimentación', 420, 60, 16, '#1C1C1C', '#7A6FE0'],
+      ['9', 'Tapa trasera de servicio ranurada', 110, 120, 10, '#1E1F23', '#7A6FE0'],
+      ['10', 'Fondo PETG 3 mm + tapa microSD + 4 patas', 520, 0, 6, '#16171A', '#5A5A6E']
+    ].map(([i, n, w, ml, h, c, b]) => ({ i, n, w, ml, h, c, b }));
+    const bom = [
+      ['1', 'Perillas y keycaps', 'Perillas de aluminio negro Ø 20 con eje D 6 mm (5) y Ø 15 (IN y VOL). Keycaps Choc 1u: B5 púrpura #534AB7, B6 teal #1D9E75, B1–B4 antracita.'],
+      ['2', 'Difusor NAV', 'Policarbonato esmerilado 2 mm, Ø 32 / agujero 7, centro Ø 24 impreso en negro. Pegado por debajo del aluminio.'],
+      ['3', 'Panel superior', 'Al 6061-T6 2 mm, CNC, R3, anodizado negro, grabado láser de etiquetas. 6 espárragos PEM FH-M3-8 por debajo.'],
+      ['4', 'Pantalla', 'Freenove 5" DSI IPS táctil. Junta de espuma EPDM 0.5 mm; marco de PETG con 4 M3 a bosses del cuerpo.'],
+      ['5', 'PCB-K', 'FR4 1.6 mm. 6 Choc V2 hot-swap, 16 SK6812-MINI-E en r 14 mm. Corte Ø 16 para el NAV. Separadores M2 de 5.1 mm sobre PCB-A.'],
+      ['6', 'PCB-A / PCB-V', 'FR4 1.6 mm. 5 EC11 sujetos con tuerca al aluminio. IN y VOL (RV09) en dos PCB-V, una a cada lado de la pantalla, con cable JST al PCB-A.'],
+      ['7', 'Cuerpo', 'PETG antracita, pared 3 mm, 4 perímetros, 30 % gyroid. Se imprime boca abajo (180 × 165 × 57). Insertos M3 de latón. Bolsillos internos para imanes.'],
+      ['8', 'Electrónica', 'Pi 3B + disipador, en el piso con separadores M2.5 × 6. Placa portadora 72 × 50 para Teensy 4.1 + Audio Shield Rev D, en x 103–175, y 76–126. Placa de alimentación USB-C con polyfuse de 3 A y TVS. Switch INPUT PAD de palanca de 3 posiciones (0 / −10 / −20 dB) en la pared trasera, con red resistiva en la portadora y lectura por GPIO del Teensy.'],
+      ['9', 'Tapa de servicio', 'PETG 2 mm, 9 ranuras 3 × 32, 2 × M3. Al retirarla quedan Ethernet y USB de la Pi.'],
+      ['10', 'Fondo', 'PETG 3 mm, 8 × M3 a insertos. Ranuras de entrada 2.5 × 80 (12) y 2.5 × 40 (12). Tapa microSD 20 × 18 con 1 M2. Patas de goma Ø 14 × 6.'],
+      ['11', 'Mejillas (opcional)', 'Guadua laminada 12 mm, aceite natural. 4 imanes N42 Ø 10 × 2 por lado. No llevan agujeros funcionales.']
+    ].map(([i, n, d]) => ({ i, n, d }));
+    const OK = '#5DCAA5', CO = '#E8B84A';
+    const rules = [
+      ['Perilla–perilla ≥ 8 mm entre bordes', 'PASA', OK, '10.0 mm', 'ENC L–P1 y ENC R–P2 (paso entre filas 30 − 2 × 10). ENC L–IN y ENC R–VOL: 20.5.'],
+      ['Perilla–keycap ≥ 6 mm entre bordes', 'PASA', OK, '9.0 mm', 'ENC L–B1, ENC R–B4, P1–MODE y P2–B6 (28 − 10 − 9). NAV–MODE/B6: 11.0; el anillo de NAV queda a 5.0 del keycap.'],
+      ['Keycap–keycap ≥ 1.5 mm entre bordes', 'PASA', OK, '2.0 mm', 'B1–B4 con paso de 20. Con el paso de la UI v1/v2 (18.4) serían 0.4 mm y no pasaría. Entre filas: 13.0.'],
+      ['Ningún control a < 15 mm del borde frontal', 'PASA', OK, '22.0 mm', 'Borde de las perillas de la fila 2 (y 32 − 10). Keycaps: 23.5. Ventana del anillo NAV: 16.0.'],
+      ['La mano no tapa la pantalla al girar', 'PASA', OK, '0.0 / 1.5 mm', 'Filas 1 y 2 terminan en y 72; la ventana empieza en 78.5 (6.5 mm). IN y VOL: el agarre (r 19.5) llega justo al borde de la ventana y queda a 1.5 mm del área activa. Es el valor más justo del panel.'],
+      ['Etiqueta ≤ 25 mm horizontal de su control', 'PASA', OK, '23.7 mm', 'Con la UI v3: máximo IN y VOL 23.7 (chips en el borde), P1/P2 17.5, ENC L/R 11.0, B1–B4 < 0.1.'],
+      ['Cable DSI sin tensión ni pliegue en filo', 'COND.', CO, '~85 mm', 'Recorrido estimado de 85 mm con bucle R ≥ 5. Pasa si el cable de Freenove mide ≥ 100 mm y el conector del módulo está en el borde frontal.'],
+      ['Ventilación suficiente para la Pi 3B', 'PASA', OK, '14.2 cm²', 'Entrada inferior 30 cm², salida 16.1 cm² (panel 7.0 + tapa 8.6 + holguras). Requerido: 12.8 cm². Margen: 11 %.'],
+      ['Conectores accesibles, sin choques', 'PASA', OK, '6.0 mm', 'Separación mínima entre envolventes de conectores macho. Todos en la pared trasera, que mide 57 mm de alto; los jacks bajos quedan a 12 mm de la mesa.'],
+      ['Huella razonable junto a un teclado', 'PASA', OK, '180 × 165 × 63', 'Con mejillas: 204 × 165 × 65. Cabe al lado de un teclado de 61 teclas (~ 950 × 300) en un escritorio de 1200 × 600.'],
+      ['Sin mejillas: cerrado y rígido; con mejillas: sin modificar nada', 'PASA', OK, '0 piezas', 'Cuerpo cerrado por el aluminio (6 PEM) y el fondo (8 M3), con nervios de 2 mm. Las mejillas se pegan con 4 imanes por lado tras una piel de 0.8 mm; no tapan conectores ni ranuras (todo está atrás, arriba o abajo).'],
+      ['IN y VOL simétricos respecto del eje central', 'PASA', OK, '0.0 mm', 'IN (15, 96) y VOL (165, 96): 75.0 mm a cada lado de x 90, misma altura. Sus overlays también son espejo (chip en 0–40 y en 760–800).'],
+      ['Switch de pad operable y legible con las entradas enchufadas', 'PASA', OK, '12 mm', 'Palanca en x 124, z 16: 12 mm libres hasta el macho de IN R (Ø 20) y hasta el de USB host. La posición se lee por la palanca y por la serigrafía 0 / −10 / −20 a su derecha.']
+    ].map(([n, s, bg, v, d], i) => ({ i: String(i + 1).padStart(2, '0'), n, s, bg, v, d }));
+    const verify = [
+      ['Contorno del módulo de pantalla', '121 × 76', 'Posición de la ventana y largo del panel. Si el área activa no está centrada en el módulo, mover la ventana.'],
+      ['Espesor del módulo (vidrio + LCD + placa)', '6.0', 'Holgura Pi–módulo (9.1).'],
+      ['Ubicación del conector FPC del módulo', 'borde frontal', 'Largo y recorrido del cable DSI.'],
+      ['Largo del cable DSI 15 pines', '≥ 100', 'Regla 7.'],
+      ['Rosca y buje del EC11', 'M7 · 5 mm', 'El brief dice agujero de 6.5; un M7 pide 7.2. Con chapa de 2 mm la tuerca necesita buje ≥ 5.'],
+      ['Altura del cuerpo del EC11 hasta la base del buje', '6.5', 'Profundidad de PCB-A (8.5).'],
+      ['Diámetro y faldón de la perilla elegida', 'Ø 20', 'Reglas 1, 2 y 4.'],
+      ['Keycap Choc 1u real', '18 × 17', 'Si es de 17.5 × 16.5, el paso puede bajar a 19.'],
+      ['Placa del Choc V2 y profundidad del rebaje', '1.2 / 0.8', 'Fijación de las teclas.'],
+      ['RV09 de IN y VOL: agujero, eje y perilla', 'Ø 7 · Ø 15', 'Posición de IN y VOL y holgura con la ventana (regla 5).'],
+      ['Switch INPUT PAD: buje, largo de palanca, recorrido', 'Ø 6.2 · 10 · ±25°', 'Regla 13 y serigrafía.'],
+      ['Pi 3B: altura de los puertos, posición de la microSD y del DSI', '16 · frente', 'Tapa inferior y recorrido DSI.'],
+      ['Audio Shield Rev D', '36 × 31', 'Tamaño de la placa portadora (72 × 50).'],
+      ['Jack 1/4": entre caras, largo del cuerpo, espesor de panel admitido', '14 · 30 · ≤ 4', 'Filas de jacks y espacio del Teensy.'],
+      ['Conectores USB-C / USB-A de panel', '12 × 7 / 16 × 9', 'Separaciones en la pared trasera.'],
+      ['Fuerza de los imanes a través de 0.8 mm de PETG', '≥ 5 N por par', 'Si no alcanza: imanes de Ø 12 × 3 o una espiga de centrado.'],
+      ['Consumo real (Pi + pantalla + Teensy + teclado USB)', '≤ 2.75 A', 'Presupuesto de 5 V / 3 A y carga térmica (6 W).']
+    ].map(([n, v, d], i) => ({ i: String(i + 1).padStart(2, '0'), n, v, d }));
+    return { keys, encs, vents, align, bslots, conns, rslots, lslots, layers, bom, rules, verify };
+  }
+}
+</script>
+</body>
+</html>

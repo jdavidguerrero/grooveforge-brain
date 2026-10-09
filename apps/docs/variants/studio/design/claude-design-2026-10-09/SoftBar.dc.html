@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"></helmet>
+<div style="width:800px;height:64px;display:flex;background:#0A0A0A;border-top:1px solid {{ dim }};box-sizing:border-box;font-family:'IBM Plex Mono',monospace">
+  <div style="width:128px;flex:none;box-sizing:border-box;padding:0 16px;display:flex;flex-direction:column;justify-content:center;gap:4px">
+    <div style="display:flex;gap:8px;font-size:12px;line-height:12px;letter-spacing:1px"><span style="color:{{ mc }};font-weight:600">L</span><span style="color:#9FE1CB">{{ L.l }}</span></div>
+    <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:20px;line-height:20px;font-weight:600;color:{{ L.c }}">{{ L.v }}</span><span style="font-size:12px;line-height:12px;color:#9FE1CB">{{ L.u }}</span></div>
+    <div style="width:96px;height:4px;background:{{ dim }}"><div style="width:{{ L.fw }}px;height:4px;background:{{ L.fc }}"></div></div>
+  </div>
+  <sc-for list="{{ keys }}" as="k" hint-placeholder-count="4">
+    <div style="width:136px;flex:none;box-sizing:border-box;border-left:1px solid #242424;background:{{ k.bg }};position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:6px">
+      <div style="position:absolute;left:0;right:0;top:0;height:4px;background:{{ k.bar }}"></div>
+      <div style="font-size:16px;line-height:16px;font-weight:600;color:{{ k.tc }};letter-spacing:1px">{{ k.l }}</div>
+      <div style="font-size:12px;line-height:12px;color:#5A5A6E">{{ k.n }}</div>
+    </div>
+  </sc-for>
+  <div style="width:128px;flex:none;box-sizing:border-box;border-left:1px solid #242424;padding:0 16px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;gap:4px">
+    <div style="display:flex;gap:8px;font-size:12px;line-height:12px;letter-spacing:1px"><span style="color:#9FE1CB">{{ R.l }}</span><span style="color:{{ mc }};font-weight:600">R</span></div>
+    <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:20px;line-height:20px;font-weight:600;color:{{ R.c }}">{{ R.v }}</span><span style="font-size:12px;line-height:12px;color:#9FE1CB">{{ R.u }}</span></div>
+    <div style="width:96px;height:4px;background:{{ dim }}"><div style="width:{{ R.fw }}px;height:4px;background:{{ R.fc }}"></div></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:64},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;SYNTH&quot;,&quot;FX&quot;],&quot;default&quot;:&quot;SYNTH&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;active&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-1,&quot;tsType&quot;:&quot;number&quot;},&quot;disabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;keys&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;string[]&quot;},&quot;encL&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;},&quot;encR&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;object&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, fx = p.mode === 'FX';
+    const mc = fx ? '#534AB7' : '#1D9E75', hi = fx ? '#7A6FE0' : '#5DCAA5', dim = fx ? '#2B2758' : '#0E5040';
+    const a = p.active ?? -1;
+    const keys = (p.keys || ['OSC', 'ENV', 'LFO / MOD', 'PRESET']).map((l, i) => ({
+      l, n: 'B' + (i + 1), bg: i === a ? dim : '#0A0A0A', tc: p.disabled ? '#5A5A6E' : i === a ? '#F2F2F2' : '#9FE1CB', bar: i === a ? hi : 'transparent' }));
+    const enc = e => { e = e || {}; const f = Math.max(0, Math.min(1, e.f ?? 0)); return { l: e.l || '', v: e.v || '', u: e.u || '', c: e.c || '#F2F2F2', fw: Math.round(96 * f), fc: e.fc || hi }; };
+    return { keys, L: enc(p.encL || { l: 'CUTOFF', v: '1240', u: 'HZ', f: 0.6 }), R: enc(p.encR || { l: 'RES', v: '62', u: '%', f: 0.62 }), mc, dim };
+  }
+}
+</script>
+</body>
+</html>

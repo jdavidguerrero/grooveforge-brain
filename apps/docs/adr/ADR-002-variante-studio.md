@@ -36,7 +36,8 @@
    B2 y se corrige). En Studio, el giro de NAV recorre PERFORM → AI → SPECTRUM y B1–B4 abren las
    páginas de edición.
 5. **Touch, fase 1:** atajo secundario. Toda función se opera con los controles físicos.
-6. **Diseño de referencia:** `variants/studio/design/studio-ui-claude-design.html`.
+6. **Diseño de referencia:** `variants/studio/design/` (ver su `README.md`). Vigentes desde el 2026-10-09:
+   UI v3, FX Viz y Enclosure en `claude-design-2026-10-09/`.
 
 ## Options Considered
 

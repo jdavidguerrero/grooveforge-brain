@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet"><script src="./studio-data.js"></script></helmet>
+<div style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+  <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="PERFORM" pi="{{ 0 }}" bypass="{{ bypass }}" hint-size="800px,40px"></dc-import></div>
+
+  <div style="position:absolute;left:16px;top:48px;width:232px;height:192px;box-sizing:border-box;border:1px solid #0E5040;background:#141414;padding:15px;display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;gap:8px;align-items:flex-start">
+      <div style="width:120px;height:80px;background:#0A0A0A">{{ thumb }}</div>
+      <div style="font-size:12px;line-height:16px;color:#9FE1CB;letter-spacing:1px">ENGINE</div>
+    </div>
+    <div>
+      <div style="font-size:20px;line-height:24px;font-weight:600">MODEL D</div>
+      <div style="font-size:12px;line-height:16px;color:#9FE1CB">MONO · 3 VCO</div>
+    </div>
+    <div style="font-size:12px;line-height:16px;color:#F2F2F2">A-07 BASS FOUNDRY</div>
+  </div>
+
+  <div style="position:absolute;left:296px;top:48px;width:192px;height:192px">
+    <svg width="192" height="192" style="position:absolute;left:0;top:0">
+      <sc-for list="{{ cutTicks }}" as="k" hint-placeholder-count="31"><line x1="{{ k.x1 }}" y1="{{ k.y1 }}" x2="{{ k.x2 }}" y2="{{ k.y2 }}" style="stroke:{{ k.c }};stroke-width:{{ k.w }}px"></line></sc-for>
+    </svg>
+    <div style="position:absolute;left:0;top:56px;width:192px;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="font-size:64px;line-height:64px;font-weight:600;color:{{ cutC }}">1240</div>
+      <sc-if value="{{ bypass }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;line-height:12px;font-weight:600;background:#FF6A35;color:#0A0A0A;padding:2px 8px;letter-spacing:1px">BYPASS</div></sc-if>
+      <sc-if value="{{ notByp }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;line-height:12px;color:#9FE1CB;letter-spacing:2px">HZ</div></sc-if>
+    </div>
+    <div style="position:absolute;left:0;top:160px;width:192px;text-align:center;font-size:16px;line-height:16px;font-weight:600;color:{{ cutLabelC }};letter-spacing:2px">CUTOFF</div>
+  </div>
+
+  <div style="position:absolute;left:560px;top:48px;width:192px;height:192px">
+    <svg width="192" height="192" style="position:absolute;left:0;top:0">
+      <sc-for list="{{ resTicks }}" as="k" hint-placeholder-count="31"><line x1="{{ k.x1 }}" y1="{{ k.y1 }}" x2="{{ k.x2 }}" y2="{{ k.y2 }}" style="stroke:{{ k.c }};stroke-width:{{ k.w }}px"></line></sc-for>
+    </svg>
+    <div style="position:absolute;left:0;top:56px;width:192px;display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div style="font-size:64px;line-height:64px;font-weight:600;color:#F2F2F2">62</div>
+      <div style="font-size:12px;line-height:12px;color:#9FE1CB;letter-spacing:2px">%</div>
+    </div>
+    <div style="position:absolute;left:0;top:160px;width:192px;text-align:center;font-size:16px;line-height:16px;font-weight:600;color:#9FE1CB;letter-spacing:2px">RESONANCE</div>
+  </div>
+
+  <div style="position:absolute;left:16px;top:248px;width:768px;height:72px;box-sizing:border-box;background:#141414;border:1px solid #242424;overflow:hidden">
+    <div style="position:absolute;left:1px;right:1px;bottom:0;height:70px;display:flex;align-items:flex-end;gap:4px">
+      <sc-for list="{{ bars }}" as="b" hint-placeholder-count="32"><div style="flex:1;height:{{ b.h }}px;background:#1D9E75"></div></sc-for>
+    </div>
+    <svg width="766" height="70" style="position:absolute;left:0;top:0">
+      <line x1="{{ cutX }}" y1="0" x2="{{ cutX }}" y2="70" style="stroke:{{ cutLineC }};stroke-width:1px"></line>
+      <path d="{{ curve }}" fill="none" style="stroke:{{ curveC }};stroke-width:2px"></path>
+    </svg>
+    <div style="position:absolute;left:{{ cutTagX }}px;top:4px;font-size:12px;line-height:12px;color:{{ curveC }}">{{ cutTag }}</div>
+  </div>
+
+  <div style="position:absolute;left:16px;top:328px;display:flex;gap:8px">
+    <div style="width:186px;height:40px;box-sizing:border-box;background:#1FB6BB;color:#0A0A0A;display:flex;align-items:center;gap:8px;padding:0 12px">
+      <span style="font-size:20px;line-height:20px;font-weight:600">8A</span><span style="font-size:12px;font-weight:600;flex:1">A MINOR</span><span style="font-size:12px">87%</span>
+    </div>
+    <div style="width:186px;height:40px;box-sizing:border-box;background:#141414;border:1px solid #242424;display:flex;align-items:center;gap:8px;padding:0 12px">
+      <span style="font-size:12px;color:#9FE1CB">CHORD</span><span style="font-size:20px;line-height:20px;font-weight:600;flex:1">Am7</span><span style="font-size:12px;color:#5A5A6E">82%</span>
+    </div>
+    <div style="width:186px;height:40px;box-sizing:border-box;background:#141414;border:1px solid #242424;display:flex;align-items:center;gap:8px;padding:0 12px">
+      <span style="font-size:12px;color:#9FE1CB">BPM</span><span style="font-size:20px;line-height:20px;font-weight:600;flex:1">124.0</span>
+      <div style="display:flex;gap:4px"><sc-for list="{{ beats }}" as="d" hint-placeholder-count="4"><div style="width:8px;height:8px;background:{{ d.c }}"></div></sc-for></div>
+    </div>
+    <div style="width:186px;height:40px;box-sizing:border-box;background:#141414;border:1px solid #242424;display:flex;align-items:center;gap:8px;padding:0 12px">
+      <span style="font-size:12px;color:#9FE1CB">GENRE</span><span style="font-size:20px;line-height:20px;font-weight:600;flex:1">HOUSE</span><span style="font-size:12px;color:#5A5A6E">71%</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar" mode="{{ barMode }}" enc-l="{{ encL }}" enc-r="{{ encR }}" p1="{{ p1 }}" p2="{{ p2 }}" shift="{{ shift }}" active="{{ -1 }}" nav="VIEW" hint-size="800px,96px"></dc-import></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:480},&quot;bypass&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;shift&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;still&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { t: 0 };
+  componentDidMount() {
+    this.iv = setInterval(() => {
+      if (!window.GF) return;
+      if (this.props.still) { if (!this.ok) { this.ok = 1; this.setState({ t: 1.3 }); } return; }
+      this.setState(s => ({ t: s.t + 0.1 }));
+    }, 100);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+  renderVals() {
+    const G = window.GF; if (!G) return { notByp: true, barMode: 'SYNTH' };
+    const { C, S } = G, t = this.state.t, byp = !!this.props.bypass, sh = !!this.props.shift;
+    if (!this.th) this.th = G.illo(React, 'modeld', 120, 80);
+    const sp = G.spectrum(t, byp);
+    const cutX = Math.round(S.cutFrac * 766) + 0.5;
+    const beat = Math.floor(t * 124 / 60) % 4;
+    return {
+      thumb: this.th, bypass: byp, notByp: !byp, shift: sh, barMode: this.props.barMode || 'SYNTH',
+      cutTicks: G.ticks(S.cutFrac, 96, 96, 78, 92, 31, byp ? '#3A3A44' : C.TEAL_PLUS, byp ? '#1A1A1A' : C.TEAL_DIM, byp ? C.MON : C.WHITE),
+      resTicks: G.ticks(S.res, 96, 96, 78, 92, 31, C.TEAL_PLUS, C.TEAL_DIM),
+      cutC: byp ? C.MON : C.WHITE, cutLabelC: byp ? C.ORANGE : C.GRAY,
+      bars: sp.map(db => ({ h: Math.max(2, Math.round((db + 60) / 72 * 70)) })),
+      curve: G.curve(766, 70, byp ? 40000 : S.cutoff, byp ? 0 : S.res, 12),
+      curveC: byp ? C.ORANGE : C.TEAL_PLUS, cutLineC: byp ? 'transparent' : C.TEAL_PLUS,
+      cutX, cutTagX: Math.round(cutX) + 6, cutTag: byp ? 'FILTER BYPASSED · FLAT' : 'FC 1.24K',
+      beats: [0, 1, 2, 3].map(i => ({ c: i === beat ? C.TEAL_PLUS : C.TEAL_DIM })),
+      encL: { l: 'CUTOFF', v: byp ? 'BYP' : '1240', u: byp ? '' : 'HZ', f: S.cutFrac, c: byp ? C.ORANGE : C.WHITE, fc: byp ? C.ORANGE : undefined },
+      encR: { l: 'RES', v: '62', u: '%', f: S.res },
+      p1: sh ? { l: 'GLIDE', v: '120', u: 'MS', f: .3 } : { l: 'FLT ENV AMT', v: '48', u: '%', f: .48 },
+      p2: sh ? { l: 'DRIVE', v: '35', u: '%', f: .35 } : { l: 'LFO→CUTOFF', v: '20', u: '%', f: .2 }
+    };
+  }
+}
+</script>
+</body>
+</html>
