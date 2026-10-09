@@ -65,6 +65,15 @@ Captura sin ventana interactiva (sale sola):
 
 La primera configuración baja LVGL y lv_drivers de GitHub, así que necesita internet.
 
+**Verificado en la Pi 5 (2026-10-09):** Raspberry Pi OS sobre Debian 13 (trixie), aarch64. La Freenove
+aparece como `DSI-1` a 800×480 y `/dev/fb0` es la pantalla DSI (32 bpp; el driver convierte desde
+RGB565). El touch es un `ft5x06` en `/dev/input/event5`. Sin `sudo`, `cmake` se instala en el usuario:
+
+```bash
+python3 -m venv ~/.venvs/cmake && ~/.venvs/cmake/bin/pip install cmake
+~/.venvs/cmake/bin/cmake -B build -DSTUDIO_DISPLAY=FBDEV -DSTUDIO_PERF=ON
+```
+
 ## Estructura
 
 ```

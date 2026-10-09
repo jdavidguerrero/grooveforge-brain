@@ -133,10 +133,11 @@ void ScreenPerform::build_dial(Dial& d, int x, const char* caption, const char* 
         lv_obj_set_style_line_width(d.ticks[i], 2, 0);
         lv_obj_set_style_line_color(d.ticks[i], lv_color_hex(TEAL_DIM), 0);
     }
+    // Con fondo propio: el tick largo del valor actual pasa por detrás de las cifras.
     d.value = label(d.root, T64, WHITE, "");
-    lv_obj_set_width(d.value, DIAL);
-    lv_obj_set_style_text_align(d.value, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_pos(d.value, 0, 56);
+    lv_obj_set_style_bg_opa(d.value, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(d.value, lv_color_hex(BG), 0);
+    lv_obj_align(d.value, LV_ALIGN_TOP_MID, 0, 56);
     d.unit = label(d.root, T12, GRAY, unit);
     lv_obj_set_style_text_letter_space(d.unit, 2, 0);
     lv_obj_align(d.unit, LV_ALIGN_TOP_MID, 0, 128);
@@ -150,6 +151,7 @@ void ScreenPerform::update_dial(Dial& d, float frac, const char* val, uint32_t o
     if (std::strcmp(val, d.last_val) != 0) {
         std::snprintf(d.last_val, sizeof(d.last_val), "%s", val);
         lv_label_set_text(d.value, val);
+        lv_obj_align(d.value, LV_ALIGN_TOP_MID, 0, 56);
     }
     const int idx = int(std::lround(std::clamp(frac, 0.0f, 1.0f) * (TICKS - 1)));
     if (idx == d.last_idx) return;
@@ -198,13 +200,17 @@ void ScreenPerform::update(const StudioState& s) {
         lv_obj_set_height(_bars[i], h);
     }
 
+    std::snprintf(buf, sizeof(buf), "FC %d HZ", int(std::lround(s.cutoff_hz)));
+    if (std::strcmp(buf, _last_cut_tag) != 0) {
+        std::snprintf(_last_cut_tag, sizeof(_last_cut_tag), "%s", buf);
+        lv_label_set_text(_cut_tag, buf);
+    }
+
     // Línea del cutoff y curva del filtro: solo cuando el cutoff se mueve un píxel.
     const int cut_x = int(std::lround(cut_frac * (PLOT_W - 1)));
     if (cut_x != _last_cut_x) {
         _last_cut_x = cut_x;
         lv_obj_set_x(_cut_line, cut_x);
-        std::snprintf(buf, sizeof(buf), "FC %d HZ", int(std::lround(s.cutoff_hz)));
-        lv_label_set_text(_cut_tag, buf);
         lv_obj_set_x(_cut_tag, cut_x < PLOT_W - 110 ? cut_x + 6 : cut_x - 104);
         for (int p = 0; p < CURVE_PTS; ++p) {
             const float x = float(p) * (PLOT_W - 1) / (CURVE_PTS - 1);

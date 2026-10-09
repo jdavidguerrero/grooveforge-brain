@@ -53,6 +53,7 @@ private:
     lv_obj_t* _curve = nullptr;
     lv_point_t _curve_pts[CURVE_PTS] = {};
     int _last_cut_x = -1;
+    char _last_cut_tag[32] = {};
 
     Chip _key = {}, _chord = {}, _bpm = {}, _genre = {};
     lv_obj_t* _beats[4] = {};

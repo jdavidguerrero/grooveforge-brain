@@ -44,8 +44,9 @@ bool hal_init(const char* touch_dev) {
 #elif defined(STUDIO_DISPLAY_FBDEV)
     fbdev_init();
     disp_drv.flush_cb = fbdev_flush;
-    evdev_init();
-    if (touch_dev && !evdev_set_file(const_cast<char*>(touch_dev))) {
+    if (!touch_dev) {
+        evdev_init();  // usa EVDEV_NAME de lv_drv_conf.h
+    } else if (!evdev_set_file(const_cast<char*>(touch_dev))) {
         std::fprintf(stderr, "studio-head: no se pudo abrir el touch %s (sigo sin touch)\n", touch_dev);
     }
     indev_drv.read_cb = evdev_read;
