@@ -1,0 +1,106 @@
+#include "ui/input.h"
+
+#if defined(STUDIO_DISPLAY_SDL)
+#include "sdl/sdl.h"
+#endif
+
+namespace {
+
+constexpr int QUEUE = 16;
+Ctl queue[QUEUE];
+int head = 0, tail = 0;
+
+void on_tap(lv_event_t* e) {
+    // Si el dedo se deslizó lo suficiente para ser un gesto, al soltar no hay tap.
+    if (lv_event_get_code(e) == LV_EVENT_CLICKED && lv_indev_get_gesture_dir(lv_indev_get_act()) != LV_DIR_NONE) return;
+    input_post(static_cast<Ctl>(reinterpret_cast<uintptr_t>(lv_event_get_user_data(e))));
+}
+
+void on_gesture(lv_event_t*) {
+    switch (lv_indev_get_gesture_dir(lv_indev_get_act())) {
+        case LV_DIR_LEFT:   input_post(Ctl::NavNext); break;
+        case LV_DIR_RIGHT:  input_post(Ctl::NavPrev); break;
+        case LV_DIR_TOP:    input_post(Ctl::SwipeUp); break;
+        case LV_DIR_BOTTOM: input_post(Ctl::SwipeDown); break;
+        default: break;
+    }
+}
+
+#if defined(STUDIO_DISPLAY_SDL)
+lv_indev_drv_t kb_drv;
+
+void on_key(lv_event_t* e) {
+    switch (lv_event_get_key(e)) {
+        case LV_KEY_RIGHT: input_post(Ctl::NavNext); break;
+        case LV_KEY_LEFT:  input_post(Ctl::NavPrev); break;
+        case LV_KEY_ENTER: input_post(Ctl::NavPush); break;
+        case '1': input_post(Ctl::B1); break;
+        case '2': input_post(Ctl::B2); break;
+        case '3': input_post(Ctl::B3); break;
+        case '4': input_post(Ctl::B4); break;
+        case 'm': case 'M': input_post(Ctl::Mode); break;
+        case 's': case 'S': input_post(Ctl::Shift); break;
+        case 'h': case 'H': input_post(Ctl::HoldToggle); break;
+        case 'b': case 'B': input_post(Ctl::EncLPush); break;
+        case 'e': case 'E': input_post(Ctl::EngineCard); break;
+        case 'v': case 'V': input_post(Ctl::FxViewNext); break;
+        case '-': input_post(Ctl::VolDown); break;
+        case '=': case '+': input_post(Ctl::VolUp); break;
+        case '[': input_post(Ctl::InDown); break;
+        case ']': input_post(Ctl::InUp); break;
+        case 'p': case 'P': input_post(Ctl::PadCycle); break;
+        case 'l': case 'L': input_post(Ctl::LinkToggle); break;
+        default: break;
+    }
+}
+#endif
+
+}  // namespace
+
+void input_post(Ctl c) {
+    const int next = (head + 1) % QUEUE;
+    if (next == tail) return;  // cola llena: se descarta (regla 4 del theory doc §2.3)
+    queue[head] = c;
+    head = next;
+}
+
+bool input_poll(Ctl& out) {
+    if (tail == head) return false;
+    out = queue[tail];
+    tail = (tail + 1) % QUEUE;
+    return true;
+}
+
+void input_attach_tap(lv_obj_t* obj, Ctl c) {
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_CLICKED, reinterpret_cast<void*>(uintptr_t(c)));
+}
+
+void input_attach_gestures(lv_obj_t* screen) {
+    lv_obj_add_event_cb(screen, on_gesture, LV_EVENT_GESTURE, nullptr);
+}
+
+void input_attach_hold(lv_obj_t* obj, Ctl down, Ctl up) {
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_PRESSED, reinterpret_cast<void*>(uintptr_t(down)));
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_RELEASED, reinterpret_cast<void*>(uintptr_t(up)));
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_PRESS_LOST, reinterpret_cast<void*>(uintptr_t(up)));
+}
+
+void input_keyboard_init() {
+#if defined(STUDIO_DISPLAY_SDL)
+    lv_indev_drv_init(&kb_drv);
+    kb_drv.type = LV_INDEV_TYPE_KEYPAD;
+    kb_drv.read_cb = sdl_keyboard_read;
+    lv_indev_t* kb = lv_indev_drv_register(&kb_drv);
+
+    // Un objeto invisible en la capa superior recibe las teclas en cualquier pantalla.
+    lv_obj_t* sink = lv_obj_create(lv_layer_top());
+    lv_obj_remove_style_all(sink);
+    lv_obj_set_size(sink, 1, 1);
+    lv_obj_add_event_cb(sink, on_key, LV_EVENT_KEY, nullptr);
+    lv_group_t* g = lv_group_create();
+    lv_group_add_obj(g, sink);
+    lv_indev_set_group(kb, g);
+#endif
+}

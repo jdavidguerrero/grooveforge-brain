@@ -1,0 +1,23 @@
+# GrooveForge Studio head — modo kiosko (theory doc §8.1).
+# Lo instala deploy/install-kiosk.sh, que reemplaza @USER@ por el usuario que corre sudo.
+#
+# Pendiente respecto del theory doc: Type=notify + WatchdogSec=2 cuando la app llame a sd_notify
+# (READY=1 tras la primera pantalla, WATCHDOG=1 en cada vuelta del loop). Hasta entonces, simple.
+
+[Unit]
+Description=GrooveForge Studio head
+# Sin dependencias por defecto: no espera red, login ni multi-user (§8.2).
+DefaultDependencies=no
+After=local-fs.target systemd-udevd.service dev-dri-card0.device dev-studio\x2dtouch.device
+Wants=dev-dri-card0.device dev-studio\x2dtouch.device
+
+[Service]
+Type=simple
+User=@USER@
+SupplementaryGroups=video input
+ExecStart=/opt/studio-head/studio-head --touch /dev/studio-touch
+Restart=always
+RestartSec=500ms
+
+[Install]
+WantedBy=sysinit.target

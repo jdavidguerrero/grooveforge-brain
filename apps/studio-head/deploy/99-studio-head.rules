@@ -1,0 +1,5 @@
+# GrooveForge Studio head (theory doc §8.3).
+# Unidad de systemd para la tarjeta DRM, así el servicio puede esperarla.
+SUBSYSTEM=="drm", KERNEL=="card[0-9]", TAG+="systemd"
+# Nombre fijo para el touch de la Freenove (ft5x06): el número de eventN cambia entre placas.
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="*ft5x06*", SYMLINK+="studio-touch", TAG+="systemd"

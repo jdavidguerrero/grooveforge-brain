@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="./studio-data.js"></script>
+<style>body{margin:0;background:#101010}a{color:#5DCAA5}a:hover{color:#9FE1CB}</style>
+</helmet>
+<div data-screen-label="08g Boot Animated" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+  <div style="position:absolute;left:{{ lineX }}px;top:200px;width:{{ lineW }}px;height:2px;background:#5DCAA5"></div>
+  <sc-for list="{{ bars }}" as="b" hint-placeholder-count="32"><div style="position:absolute;left:{{ b.x }}px;top:{{ b.y }}px;width:20px;height:{{ b.h }}px;background:{{ b.c }}"></div></sc-for>
+  <div style="position:absolute;left:257px;top:216px;display:flex">
+    <sc-for list="{{ letters }}" as="l" hint-placeholder-count="11">
+      <div style="position:relative;width:26px;height:40px;display:flex;justify-content:center">
+        <span style="font-size:40px;line-height:40px;font-weight:600;color:{{ l.c }}">{{ l.ch }}</span>
+        <sc-if value="{{ l.cur }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:1px;top:0;width:24px;height:40px;background:#5DCAA5"></div></sc-if>
+      </div>
+    </sc-for>
+  </div>
+  <div style="position:absolute;left:0;top:268px;width:800px;text-align:center;font-size:16px;line-height:16px;color:#5DCAA5;letter-spacing:4px;opacity:{{ subO }}">BRAIN · STUDIO</div>
+  <sc-if value="{{ showEngines }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;left:20px;top:296px;display:flex;gap:8px;opacity:{{ rowO }}">
+      <sc-for list="{{ eng }}" as="e" hint-placeholder-count="6">
+        <div style="width:120px;display:flex;flex-direction:column">
+          <div style="width:120px;height:80px;background:#0A0A0A;opacity:{{ e.o }}">{{ e.thumb }}</div>
+          <div style="width:120px;height:4px;margin-top:4px;background:{{ e.bc }}"></div>
+          <div style="font-size:12px;line-height:12px;color:{{ e.lc }};padding-top:6px;white-space:nowrap">{{ e.name }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-for list="{{ segs }}" as="s" hint-placeholder-count="32"><div style="position:absolute;left:{{ s.x }}px;top:420px;width:20px;height:8px;background:{{ s.c }};opacity:{{ barO }}"></div></sc-for>
+  <div style="position:absolute;left:18px;top:444px;font-size:12px;line-height:12px;letter-spacing:1px;color:{{ stC }};white-space:nowrap">{{ st }}</div>
+  <div style="position:absolute;right:18px;top:440px;font-size:16px;line-height:16px;font-weight:600;color:{{ pcC }};white-space:nowrap">{{ pc }}</div>
+  <div style="position:absolute;left:0;top:0;width:800px;height:480px;background:#0A0A0A;opacity:{{ fade }};pointer-events:none"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:800,&quot;height&quot;:480},&quot;still&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Playback&quot;},&quot;speed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.25,&quot;max&quot;:2,&quot;step&quot;:0.25,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Playback&quot;},&quot;showEngines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Content&quot;}}">
+class Component extends DCLogic {
+  state = { t: 0 };
+  componentDidMount() {
+    this.t0 = performance.now();
+    this.iv = setInterval(() => {
+      if (this.props.still) { if (this.state.t !== 3.1) this.setState({ t: 3.1 }); return; }
+      const sp = this.props.speed ?? 1;
+      this.setState({ t: ((performance.now() - this.t0) / 1000 * sp) % 6.2 });
+    }, 33);
+  }
+  componentWillUnmount() { clearInterval(this.iv); }
+  renderVals() {
+    const t = this.state.t, G = window.GF;
+    const TP = '#5DCAA5', TE = '#1D9E75', W = '#F2F2F2', GR = '#9FE1CB', MON = '#5A5A6E', OFF = '#1C1C1C';
+    const cl = v => Math.max(0, Math.min(1, v)), ease = v => 1 - Math.pow(1 - cl(v), 3);
+    const flash = t >= 4.6 && t < 4.75;
+    const lw = Math.round(768 * ease(t / .4) / 2) * 2;
+    const front = (t - .4) / 1.0 * 36 - 2;
+    const bars = Array.from({ length: 32 }, (_, i) => {
+      const idle = 8 + 30 * Math.exp(-Math.pow((i - 8) / 10, 2)) + 6 * (.5 + .5 * Math.sin(i * 1.9 + t * 5));
+      let h = 0, c = TE;
+      if (t < .4) h = 0;
+      else if (t < 1.4) { if (i <= front) { const pk = 110 * Math.exp(-Math.pow(i - front, 2) / 3); h = idle + pk; c = Math.abs(i - front) < 1 ? W : pk > 20 ? TP : TE; } }
+      else { h = idle; if (t >= 4.6 && t < 5.1) { const k = Math.sin(Math.PI * (t - 4.6) / .5) * Math.max(0, 1 - Math.abs(i - 15.5) / 18); h += 100 * k; c = flash ? W : k > .2 ? TP : TE; } }
+      h = Math.min(150, Math.round(h / 2) * 2);
+      return { x: 18 + i * 24, y: 200 - h, h, c };
+    });
+    const WORD = 'GROOVEFORGE', n = Math.max(0, Math.min(11, Math.floor((t - 1.0) / .06)));
+    const curOn = t >= .95 && n < 11 && Math.floor(t * 10) % 2 === 0;
+    const letters = WORD.split('').map((ch, i) => ({ ch, c: i < n ? W : 'transparent', cur: curOn && i === n }));
+    if (G && !this.eng) this.eng = G.ENGINES.map(e => ({ id: e.id, name: e.name, thumb: G.illo(React, e.id, 120, 80) }));
+    const eng = (this.eng || []).map((e, i) => {
+      const s = 2.0 + i * .35, k = cl((t - s) / .35);
+      const st = t < s ? 0 : t < s + .35 ? 1 : 2, blink = Math.floor(t * 12) % 2 === 0;
+      return { ...e, o: st === 0 ? .15 : st === 1 ? .15 + .85 * k : 1, bc: st === 0 ? '#242424' : st === 1 ? (blink ? TP : TE) : flash ? W : TE, lc: st === 0 ? MON : st === 1 ? W : GR };
+    });
+    const p = t < 1.8 ? 0 : t < 2 ? .08 * (t - 1.8) / .2 : t < 4.1 ? .08 + .72 * (t - 2) / 2.1 : t < 4.6 ? .8 + .2 * (t - 4.1) / .5 : 1;
+    const lit = Math.floor(p * 32);
+    const segs = Array.from({ length: 32 }, (_, i) => ({ x: 18 + i * 24, c: flash ? W : i < lit ? TP : i === lit && p > 0 && p < 1 ? W : OFF }));
+    const ei = Math.min(5, Math.floor((t - 2) / .35)), en = this.eng && this.eng[ei] ? this.eng[ei].name : '';
+    const st = t < 1.8 ? '' : t < 2 ? 'LINKING AUDIO ENGINE' : t < 4.1 ? 'LOADING ENGINE ' + (ei + 1) + '/6 · ' + en : t < 4.35 ? 'AI MODELS · KEY · CHORD · GENRE' : t < 4.6 ? 'FX RACK · 12 SLOTS' : 'READY';
+    return {
+      lineX: 400 - lw / 2, lineW: lw, bars, letters, subO: cl((t - 1.75) / .25), showEngines: this.props.showEngines !== false,
+      rowO: t < 1.8 ? 0 : 1, eng, segs, barO: t < 1.6 ? 0 : 1,
+      st, stC: t >= 4.6 ? TP : GR, pc: t < 1.8 ? '' : Math.round(p * 100) + ' %', pcC: t >= 4.6 ? TP : W,
+      fade: t < 5.7 ? 0 : cl((t - 5.7) / .4)
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -7,7 +7,8 @@
 
 | Archivo / carpeta | Qué es | Estado |
 |---|---|---|
-| `claude-design-2026-10-09/GrooveForge Studio UI v3.dc.html` | UI con los controles finales y las etiquetas alineadas al enclosure | **vigente** (reemplaza v1 y v2) |
+| `claude-design-2026-10-09/GrooveForge Studio UI v3.dc.html` | UI con los controles finales y las etiquetas alineadas al enclosure; desde 2026-10-12 incluye OSC (11a–11e, 11c2), LFO / MOD (12a–12b) y el splash animado (08g) | **vigente** (reemplaza v1 y v2) |
+| `claude-design-2026-10-09/Boot Splash.dc.html` | splash animado 08g (6.2 s; en el equipo se reproduce una vez) | **vigente** (reemplaza a 08e) |
 | `claude-design-2026-10-09/GrooveForge Studio FX Viz.dc.html` | FX MAIN con visualización (ONDA / ESPECTRO / FIRMA) | **vigente** (extiende v3 y reemplaza sus pantallas 04a–04c) |
 | `claude-design-2026-10-09/GrooveForge Studio Enclosure.dc.html` | Enclosure de escritorio: vistas 1:1, corte, conectores, explotada, reglas | **vigente** |
 | `claude-design-2026-10-09/Enclosure 3D.html` | Modelo 3D simplificado, con descarga OBJ/GLB (`?cheeks=1` muestra las mejillas) | referencia |
@@ -17,6 +18,7 @@
 | `studio-ui-claude-design.html` | UI v1 standalone (abre sin dependencias) | historial |
 | `claude-design-prompt.md` | prompt de la v1 (chat nuevo) | — |
 | `claude-design-prompt-v2-controles.md`, `claude-design-prompt-enclosure.md` | prompts de controles y enclosure (chat nuevo) | — |
+| `claude-design-prompt-osc-lfo.md` | iteración OSC / LFO / MOD (mismo chat de la v3) | — |
 
 **Cómo abrir:** los `.dc.html` necesitan `support.js` en la misma carpeta. Ábrelos en el navegador
 desde `claude-design-2026-10-09/`. Las fuentes (IBM Plex) se cargan desde Google Fonts.

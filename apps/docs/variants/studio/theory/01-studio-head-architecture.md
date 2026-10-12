@@ -231,6 +231,28 @@ ser **refresco parcial**: solo el espectro y los medidores se redibujan cada fra
 - El hilo de UI y el de I/O pueden fijarse a núcleos distintos (`pthread_setaffinity_np`); se
   decide después de medir, no antes.
 
+### 5.4 Gráficas de alta tasa: objetos, canvas o dibujo directo
+
+FX MAIN (diseño *FX Viz*) dibuja un osciloscopio de 120 columnas × 2 trazas, un espectro dual de
+32 bandas o una "firma" del efecto, todo a 30 Hz en 728×256. Hay tres formas de hacerlo en LVGL 8:
+
+| Técnica | Memoria | Costo por frame | Cuándo usarla |
+|---|---|---|---|
+| Un `lv_obj` por elemento (barras de SPECTRUM) | ~100 B por objeto | LVGL recalcula y redibuja solo lo que cambió | Pocos elementos (≤ ~100) con geometría estable |
+| `lv_canvas` (gráfica de ENV) | W×H×2 B (728×256 = 373 KB) | Se pinta el buffer y LVGL lo copia como imagen | Contenido que cambia poco: se pinta una vez y se reutiliza |
+| Dibujo directo en `LV_EVENT_DRAW_MAIN` | 0 B extra | Se emiten `lv_draw_rect` directo al buffer de render, recortados al área sucia | Contenido que cambia todos los frames |
+
+Para ONDA y ESPECTRO todo cambia en cada frame, así que un canvas pagaría dos veces (pintar el
+buffer y copiarlo) y 240 objetos costarían más en bookkeeping que en píxeles. **Dibujo directo**:
+el objeto se invalida a 30 Hz y su callback emite rects sólidos sin antialiasing, que es
+exactamente lo que pide el diseño ("todo con `lv_draw_rect` relleno, sin AA, sin `lv_line` ni
+arcos"). Como LVGL renderiza en franjas (el buffer parcial es de 800×80), el callback se llama una
+vez por franja y cada `lv_draw_rect` que cae fuera del área de recorte se descarta barato.
+
+Las firmas que solo dependen de parámetros (curva de transferencia, ecos, envolventes) podrían
+cachearse en un canvas, como sugiere el diseño. Hoy se recalculan en cada frame porque el costo
+medido en la Pi 5 es despreciable; se cachean solo si la medición en la Pi 2B lo pide (§11).
+
 ---
 
 ## 6. Input táctil
