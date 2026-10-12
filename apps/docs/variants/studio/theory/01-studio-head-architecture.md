@@ -1,21 +1,23 @@
-# Studio Head — Arquitectura de la cabeza gráfica (Pi 2B + Freenove DSI)
+# Studio Head — Arquitectura de la cabeza gráfica (Pi 3B + Freenove DSI)
 
 > **Tipo:** theory doc (precede al código, `CLAUDE.md`).
 > **Variante:** Brain · Studio (personal, no comercial). Ver spec delta y ADR-002 (pendientes).
 > **Specs base que respeta:** `02-bridge-protocol.md` (frame, heartbeat, timeouts, recovery),
 > `01-architecture.md` §5.2 (latencias), diseño `variants/studio/design/` (pantallas 08d y 08e).
-> **Fecha:** 2026-10-07
+> **Fecha:** 2026-10-07 · **Revisión 2026-10-12:** la placa pasa de la Pi 2B a la **Pi 3 Model B v1.2**
+> (ADR-002 rev. 1). Donde el texto dice "2B" por razones de rendimiento, el criterio vale igual para la
+> 3B (que es más rápida); los cambios concretos están en §4.3, §7.2, §9 y §11.
 
 ---
 
 ## 0. Qué resuelve este documento
 
-La cabeza de Studio es una Raspberry Pi 2B con una pantalla táctil DSI de 800×480. Tiene un
+La cabeza de Studio es una Raspberry Pi 3 Model B v1.2 con una pantalla táctil DSI de 800×480. Tiene un
 solo trabajo: **mostrar el estado del Brain y mandar comandos táctiles**, arrancando rápido y
 sin colgarse cuando el enlace con el Teensy falla.
 
 Este doc define el modelo de fallos, la arquitectura de la app, el sistema operativo mínimo,
-la supervisión y el camino de desarrollo Pi 5 → Pi 2B. **No** cubre el diseño visual de las
+la supervisión y el camino de desarrollo Pi 5 → Pi 3B. **No** cubre el diseño visual de las
 pantallas (eso es el diseño de Claude Design) ni el lado Teensy del bridge (tarea R-C1 del plan
 de remediación).
 
@@ -174,9 +176,11 @@ El parser es una máquina de estados byte a byte. Lo que lo hace robusto:
 
 **Por qué el PL011 y no el mini-UART.** La Pi tiene dos UART: el PL011 (completo, con su propio
 reloj) y el mini-UART (cuyo baudrate deriva del clock del core, que cambia con la frecuencia de la
-GPU). A 921600 el mini-UART no es confiable. La Pi 2B **no tiene Bluetooth**, así que el PL011
-ya está en GPIO14/15 como `/dev/ttyAMA0`. Solo hay que liberar la consola serial:
-borrar `console=serial0,115200` de `cmdline.txt` y deshabilitar `serial-getty@ttyAMA0`.
+GPU). A 921600 el mini-UART no es confiable. En la **Pi 3B el Bluetooth ocupa el PL011**: se libera
+con `dtoverlay=disable-bt` en `config.txt` (y `systemctl disable hciuart`), y el PL011 vuelve a
+GPIO14/15 como `/dev/ttyAMA0`. Después hay que liberar la consola serial: borrar
+`console=serial0,115200` de `cmdline.txt` y deshabilitar `serial-getty@ttyAMA0`. (La Pi 2B no tiene
+Bluetooth y no necesita el overlay.)
 
 **¿Llega el PL011 a 921600?** El baudrate sale de un divisor fraccional sobre UARTCLK
 (ARM PL011 TRM, §3.3.6). Con UARTCLK = 48 MHz (verificar con `vcgencmd measure_clock uart`):
@@ -200,7 +204,7 @@ meter jitter. Con esto debería alcanzar; **se mide antes de dar por cumplido el
 
 ---
 
-## 5. Render en la Pi 2B
+## 5. Render en la Pi (presupuesto calculado para la 2B; la 3B tiene más margen)
 
 ### 5.1 El presupuesto de ancho de banda
 
@@ -282,7 +286,10 @@ userspace**: lo que systemd arranca antes de la app.
 ### 7.2 Etapa 1 — Raspberry Pi OS Lite recortado (meta: UI operativa en ≤12 s)
 
 - `config.txt`: `disable_splash=1`, `boot_delay=0`, `dtparam=audio=off`, overlay KMS
-  (`vc4-kms-v3d`) más el overlay que indique Freenove para el panel.
+  (`vc4-kms-v3d`) más **`dtoverlay=vc4-kms-dsi-7inch`** para la Freenove (medido en la 3B: la
+  autodetección no la reconoce; es el driver de la pantalla oficial de 7", 800×480 con touch ft5x06).
+- Implementado en `apps/studio-head/deploy/install-kiosk.sh` (servicio, regla udev, cmdline sin logo ni
+  cursor ni blanking); faltan las podas de servicios y el rootfs de solo lectura.
 - `cmdline.txt`: `quiet loglevel=3 logo.nologo fastboot noswap` y sin `console=serial0`.
 - Deshabilitar: `NetworkManager-wait-online`, `avahi-daemon`, `triggerhappy`, `ModemManager`,
   `dphys-swapfile`, `apt-daily*.timer`, `man-db.timer`, `keyboard-setup`.
@@ -353,24 +360,23 @@ El nombre exacto del touch se lee con `evtest` en la Pi.
 
 ---
 
-## 9. Desarrollar en la Pi 5, desplegar en la Pi 2B
+## 9. Desarrollar en la Pi 5, desplegar en la Pi 3B
 
 ### 9.1 Diferencias que muerden
 
-| | Pi 5 | Pi 2B |
-|---|---|---|
-| CPU | Cortex-A76, aarch64 | Cortex-A7 (v1.1) o A53 (v1.2), armhf de 32 bits |
-| Velocidad relativa | ~10× | 1× |
-| DSI | 22 pines, nodo DRM `card1` | 15 pines, nodo DRM `card0` |
-| Binarios | no se copian entre ellas | — |
+| | Pi 5 | Pi 3B (v1.2) | Pi 2B (repuesto) |
+|---|---|---|---|
+| CPU | Cortex-A76, aarch64 | 4 × Cortex-A53 a 1.2 GHz, armhf de 32 bits | Cortex-A7 (v1.1) o A53 (v1.2) |
+| Velocidad relativa | ~8× | ~1.5× | 1× |
+| DSI | 22 pines, nodo DRM `card1` | 15 pines, `card0`, overlay `vc4-kms-dsi-7inch` | igual que la 3B |
+| Binarios | no se copian entre ellas | — | — |
 
 - **Confirmar la revisión de la 2B:** `grep Revision /proc/cpuinfo` (a01041/a21041 = v1.1 con
   Cortex-A7; a22042 = v1.2 con A53).
-- **Compilar para cada una.** CMake con tres toolchains: `native` (Mac/SDL), `aarch64` (Pi 5) y
-  `armhf` (Pi 2B: `-mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard`). Para la 2B, lo más
-  reproducible es un contenedor Docker `linux/arm/v7` con el sysroot de Raspberry Pi OS.
-- **La Pi 5 miente sobre el rendimiento.** Todo criterio de §11 se mide en la 2B, desde la
-  primera semana.
+- **Compilar para cada una.** Hoy se compila en la propia 3B (Raspberry Pi OS Lite de 32 bits trae
+  cmake y gcc; un build completo tarda ~2–3 min, uno incremental ~30 s). El contenedor Docker
+  `linux/arm/v7` queda como opción si compilar en la placa se vuelve lento.
+- **La Pi 5 miente sobre el rendimiento.** Todo criterio de §11 se mide en la 3B.
 
 ### 9.2 Capas intercambiables (HAL)
 
@@ -412,7 +418,11 @@ la regla de PlatformIO**, a registrar en el ADR-002.
 
 ---
 
-## 11. Criterios de aceptación (medidos en la Pi 2B)
+## 11. Criterios de aceptación (medidos en la Pi 3B)
+
+Medido el 2026-10-12: **30 fps** en todas las pantallas; CPU del hilo de UI **23–40 % de un núcleo**
+(SPECTRUM es el peor caso; incluye la simulación del modo demo). Falta medir arranque, reconexión,
+watchdog y round-trip.
 
 | Métrica | Meta | Cómo se mide |
 |---|---|---|

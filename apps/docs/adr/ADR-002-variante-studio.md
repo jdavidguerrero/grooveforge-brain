@@ -1,6 +1,6 @@
-# ADR-002: Variante Brain · Studio (cabeza Pi 2B + pantalla DSI de 5")
+# ADR-002: Variante Brain · Studio (cabeza Raspberry Pi 3B + pantalla DSI de 5")
 
-**Status:** Accepted
+**Status:** Accepted — Revisión 1 (2026-10-12): la cabeza pasa de la Pi 2B a la Pi 3 Model B v1.2
 **Date:** 2026-10-07
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-001 (`apps/docs/content/adr/`), ADR-003 (filtro analógico como add-on)
@@ -22,9 +22,11 @@
 
 1. **Brain · Studio** es una variante personal, **no comercial**: mismo cuerpo, otra cabeza.
    - Idénticos a la base: firmware del Teensy (sin `#ifdef` de variante), engines, FX, ML,
-     controles físicos (3 encoders, 4 botones, volumen) y bridge protocol `02`.
-   - Cabeza: **Pi 2B + Freenove DSI 800×480 táctil**, como bridge slave por UART 921600.
-2. App de la cabeza: `apps/studio-head/`, **C++17 + CMake + LVGL 8.3** (misma versión mayor que el
+     controles físicos (3 encoders, 4 botones, volumen) y bridge protocol `02`. *(El panel de Studio se
+     amplió después con ADR-004: 5 encoders, 6 botones, pots IN y VOL.)*
+   - Cabeza: **Pi 3 Model B v1.2 + Freenove DSI 800×480 táctil**, como bridge slave por UART 921600
+     (Revisión 1; originalmente Pi 2B).
+2. App de la cabeza: `apps/studio-head/`, **C++17 + CMake + LVGL 8.4** (misma versión mayor que el
    ESP32), DRM/fbdev + evdev. Arquitectura en `variants/studio/theory/01-studio-head-architecture.md`.
 3. **Reglas de la variante:**
    - Ninguna feature musical vive solo en Studio: todo lo musical entra primero a la base.
@@ -67,19 +69,41 @@ PlatformIO; boot de Linux (mitigado con systemd y rootfs de solo lectura).
 
 **Desviaciones registradas:**
 - Excepción a la regla PlatformIO para `apps/studio-head/`.
-- Latencia del bridge: `02` §7.3 pide <2 ms p95. Se mide en la 2B; si no cumple, se decide en un
+- Latencia del bridge: `02` §7.3 pide <2 ms p95. Se mide en la 3B; si no cumple, se decide en un
   ADR nuevo si se relaja solo para Studio.
 
 **A revisitar:**
-- Frames de espectro: requieren enmendar `02` (rango libre 0x90–0xEF). Necesita autorización.
+- Frames de espectro y demás datos de la GUI: listados en `02` §2.10 (rango 0x90–0x9F, no normativo);
+  se definen con la tarea 38.
 - Nombres de los engines (marcas registradas) antes de mostrarlos en contenido.
 - La robustez del bridge del lado Teensy (R-C1) es prerrequisito de la reconexión automática.
 
 ## Action Items
 
 Ver hito **Brain · 4 Studio head** en Notion (Micro-tareas). Resumen:
-1. [ ] Esqueleto `apps/studio-head` con simulador SDL.
+1. [x] Esqueleto `apps/studio-head` con simulador SDL (y todas las pantallas de la UI v3, 2026-10-12).
 2. [ ] Transporte de replay, hilo de I/O con parser resync y `StudioState`.
-3. [ ] Pantalla de enlace perdido y reconexión (depende de R-C1).
-4. [ ] Toolchain armhf, systemd con watchdog, rootfs de solo lectura.
-5. [ ] Medir los criterios de aceptación del theory doc en la 2B.
+3. [ ] Pantalla de enlace perdido (hecha) y reconexión (depende de R-C1).
+4. [ ] Toolchain armhf, systemd con watchdog, rootfs de solo lectura. (Hecho: servicio systemd y kiosko
+   en `apps/studio-head/deploy/`, compilando en la propia 3B; faltan sd_notify/watchdog y solo lectura.)
+5. [ ] Medir los criterios de aceptación del theory doc en la 3B. (Hecho en parte: 30 fps, 23–40 % de un
+   núcleo; falta el tiempo de arranque.)
+
+## Revisión 1 — Pi 3 Model B v1.2 (2026-10-12)
+
+**Cambio:** la cabeza es una **Raspberry Pi 3 Model B v1.2** (4 × Cortex-A53 a 1.2 GHz, 1 GB). La 3B+
+del mismo lote no lee la SD (pendiente de diagnóstico); la 2B queda como repuesto y referencia de peor
+caso.
+
+**Por qué:** más margen de CPU para FX MAIN (gráficas a 30 Hz), arranque más rápido y Wi-Fi integrado
+para desarrollar. Misma huella, agujeros, puertos y conector DSI que la 2B: el enclosure validado ya
+la ubica en el piso bajo la pantalla.
+
+**Costo:** el Bluetooth de la 3B ocupa el UART PL011. Se libera con `dtoverlay=disable-bt` en
+`config.txt`; el mini-UART no sirve a 921600 (su reloj depende del core).
+
+**Medido (Raspberry Pi OS Lite 32 bits, trixie):** la Freenove necesita `dtoverlay=vc4-kms-dsi-7inch`
+(la autodetección que funcionó en la Pi 5 no la reconoce); `/dev/fb0` a 16 bpp y touch ft5x06. La GUI
+corre a **30 fps** con **23–40 % de un núcleo** según la pantalla (el peor caso es SPECTRUM), sin
+throttling a ~45 °C.
+

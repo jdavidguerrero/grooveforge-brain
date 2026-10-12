@@ -5,7 +5,13 @@
 > (ADR-005) y lo que salió de la GUI y del enclosure validado.
 >
 > **Regla:** `00–06` no se editan sin autorización explícita. Cada fila dice qué cambiar y quién
-> lo autoriza. Nada de esto está aplicado todavía.
+> lo autoriza.
+>
+> **Aplicado el 2026-10-12** (autorizado: "fusionar y aplicar todo"): fusión de `feat/studio-head`;
+> `01` §header/3.1/3.2/3.4/3.6/4.1; `02` §2.10; `05` §1.13; `06` §10B; ADR-002 rev. 1, ADR-004 y
+> ADR-005 (acciones); theory doc de la cabeza; `CLAUDE.md` raíz, de firmware y de hardware. Quedan
+> abiertas las decisiones de §6 (van al theory doc del PCB). Al revisar `05` contra `01` §3.4 apareció
+> una diferencia en la GUI (ENC R de Cymatic y Phase Chorus): se corrigió el catálogo de `apps/studio-head`.
 
 ---
 

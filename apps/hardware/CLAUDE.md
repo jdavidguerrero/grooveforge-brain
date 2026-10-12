@@ -41,7 +41,14 @@ kicad/
     └── bom-jlcpcb.csv
 ```
 
-## PCB specs
+## Studio (variante personal — ADR-002 / ADR-004)
+
+4 placas (`01` §3.6, 2026-10-12): panel (6 Choc V2 + 5 EC11 + 18 LEDs), 2 placas de potenciómetro
+(IN y VOL) y la portadora (Teensy 4.1 + Audio Shield como módulos, alimentación USB-C 5 V 3 A,
+conectores traseros). Los LEDs y los SMD se piden **ensamblados en JLCPCB** (BOM + CPL con part
+numbers de LCSC). Theory doc del PCB de Studio antes del esquemático.
+
+## PCB specs (comercial)
 
 - Main PCB: 4-layer, 180×100mm
 - Filter sub-block: 2-layer, 30×40mm

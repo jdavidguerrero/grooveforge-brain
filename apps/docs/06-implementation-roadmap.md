@@ -471,6 +471,27 @@ Retomado acá: armado del ladder con pairs matched, calibración 5 pasos, sweep
 
 ---
 
+## 10B. Track Studio (variante personal — ADR-002, ADR-004)
+
+> **Agregado 2026-10-12.** Studio es la unidad personal de Juan: cabeza Raspberry Pi 3 Model B v1.2 +
+> Freenove 5", panel de 5 encoders, 6 botones y pots IN/VOL. No se vende y **no mueve las fases del
+> comercial**: corre en paralelo y reutiliza el mismo firmware del Teensy. Su "hecho" cercano es
+> **Studio v1**: el instrumento armado, con la cabeza mostrando el estado real del Teensy.
+
+| Paso | Estado | Hito demostrable |
+|---|---|---|
+| S1 — Cabeza gráfica (`apps/studio-head`) | ✅ 2026-10-12 | Todas las pantallas de la UI v3 + FX Viz + OSC/LFO en la 3B a 30 fps, en modo demo y en kiosko |
+| S2 — Panel en protoboard | 🟡 sketch46 listo | 5 encoders, 6 botones y 18 LEDs respondiendo en los pines del ADR-004 |
+| S3 — Firmware del panel | ⬜ | `ui/encoders` y `ui/buttons` con 5 + 6, MODE, HOLD/SHIFT, pot IN → `lineInLevel` (ADR-004 acciones 1 y 6) |
+| S4 — Bridge Teensy ↔ cabeza | ⬜ | Hilo de I/O en la cabeza (tarea 38) + comandos de Studio en `02` (espectro, medidor IN, flujos de FX, OSC, LFO) |
+| S5 — PCB de Studio | ⬜ | Theory doc del PCB → KiCad de las 4 placas (panel, 2 pots, portadora) → pedido JLCPCB con LEDs ensamblados |
+| S6 — Enclosure | ⬜ | Fusion 360 + impresión en la Ender 3 V3 (después de medir el EC11, el cable DSI y la pantalla) |
+| S7 — Features nuevos de firmware | ⬜ | LFO de los engines (spec primero) · DX7 de 4 operadores (ADR-005) · ajustes y MIDI (ADR-006 propuesto) |
+
+Orden: S2 → S3 → S5 en paralelo con S4. S7 entra cuando el instrumento físico esté armado.
+
+---
+
 ## 11. Tier de features AI — referencia de priorización
 
 Clasificación de los modelos por valor real (funcional × vendible). Guía qué se

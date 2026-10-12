@@ -10,6 +10,10 @@
 > externo; el Brain v1 usa el filtro digital `MoogLadder4P` y expone una salida de CV (§2.1, §3.3, §3.5).
 > **ADR-004** — panel de Studio con 5 encoders, 6 botones y pot IN; volumen al pin 22 (§3.3, §3.4).
 > **ADR-002** — variante Studio (no comercial) con cabeza Raspberry Pi + pantalla DSI de 5".
+>
+> **Actualizaciones 2026-10-12:** **ADR-005** — el DX7 pasa a FM de 4 operadores con un objeto de audio
+> propio (§4.1). **Studio:** la cabeza es una Raspberry Pi 3 Model B v1.2 con la Freenove de 5" (ADR-002);
+> BOM, alimentación, controles y placas de Studio en §3.1, §3.2, §3.4 y §3.6. Estado de los engines en §4.1.
 
 ---
 
@@ -250,6 +254,28 @@ ruteo interno por I2C selecciona la fuente según el modo. No requiere switch ex
 > **Volumen 500-1000u:** BOM baja a ~$90
 > **Volumen 1000+:** BOM baja a ~$78
 
+#### BOM de Studio (unidad personal — ADR-002, ADR-004)
+
+Studio no se fabrica en serie: la lista es por componente, sin costo por volumen. El detalle de
+placas y part numbers de LCSC va en el theory doc del PCB de Studio.
+
+| Componente | Cant. | Notas |
+|---|---|---|
+| Teensy 4.1 | 1 | Mismo firmware que el comercial |
+| Teensy Audio Shield Rev D (SGTL5000) | 1 | Módulo sobre headers en la portadora (decisión 2026-10-12) |
+| Raspberry Pi 3 Model B v1.2 | 1 | Cabeza gráfica; UART PL011 con `dtoverlay=disable-bt` |
+| Freenove 5" DSI 800×480 táctil (ft5x06) | 1 | `dtoverlay=vc4-kms-dsi-7inch`; cable DSI de 15 pines ≥ 100 mm |
+| ALPS EC11 con push | 5 | ENC L, ENC R, ENC NAV, P1, P2; buje largo si van en la misma placa que los Choc |
+| Kailh Choc V2 | 6 | B1–B6 |
+| LEDs direccionables | 18 | 12 anillo de NAV + 6 keycaps, ensamblados por JLCPCB; modelo en el theory doc del PCB |
+| Potenciómetro RV09 | 2 | IN (pin 24) y VOL (pin 22) |
+| Palanca de 3 posiciones | 1 | Pad de entrada 0 / −10 / −20 dB, panel trasero (lectura en pin 25) |
+| Jack 1/4" TRS | 4 | OUT L/R e IN L/R |
+| Jack TRS 3.5 mm | 2 | MIDI IN y CV OUT |
+| USB-C 5 V 3 A + polyfuse 3 A + TVS | 1 | Única entrada de alimentación |
+| USB-C (datos del Teensy) y USB-A (host) | 1 + 1 | Panel trasero |
+| PCBs | 4 | Panel, 2 de potenciómetro y portadora (§3.6) |
+
 ### 3.2 Power Architecture
 
 ```
@@ -294,6 +320,15 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 - Teensy y ESP32-S3 corren de digital 5V (regulación interna a 3.3V)
 - SGTL5000 + filter discreto corren de audio 5V filtered
 - Battery debe soportar pico ~500mA (Teensy + ESP32 + LEDs + WiFi TX simultáneo)
+
+#### Alimentación de Studio (ADR-002, ADR-004)
+
+Sin batería. Una sola entrada USB-C de 5 V / 3 A, con polyfuse de 3 A y TVS en la portadora, alimenta
+la Raspberry Pi 3B, la Teensy (por VIN, con el puente **VUSB–VIN cortado** para que el USB de datos no
+alimente) y los LEDs. El codec va en el Audio Shield, alimentado desde el 3.3 V de la Teensy.
+
+Presupuesto: la Pi 3B llega a ~2.5 A en picos y 18 LEDs en blanco pleno a ~1 A, así que el total puede
+pasar de 3 A. **El firmware limita el brillo de los LEDs** para quedar dentro del presupuesto.
 
 ### 3.3 Pin Mapping
 
@@ -375,10 +410,10 @@ USB-C 5V input ──┬──▶ IP5306 (charge)
 #### Modo SYNTH
 
 ```
-ENC L    → Cutoff del filtro analógico discreto 2N3904
+ENC L    → Cutoff (filtro digital MoogLadder4P; con el add-on, también su CV — ADR-003)
 ENC R    → Resonance
 ENC NAV  → Navegar páginas del synth (OSC / ENV / LFO/MOD / ENGINE / PRESET)
-ENC L push  → Filter bypass CD4066 ON/OFF (pin 25)
+ENC L push  → Filter bypass ON/OFF (por software; el CD4066 del pin 25 se eliminó con ADR-003)
 ENC R push  → Resonance reset a 0
 ENC NAV push → Confirm / AI·Action (escala al nivel activo: 0=menú, 1=Scale Lock, 3=cloud, 4=DAW)
 B1=OSC · B2=ENV · B3=LFO/MOD · B4=PRESET/ENGINE
@@ -395,6 +430,22 @@ B1=INSERT · B2=SEND · B3=MASTER · B4=FX slot favorito
 ```
 
 **Cambio de modo:** doble push ENC NAV (≤ 2 s)
+
+#### Controles de Studio (ADR-004)
+
+| ID | Tipo | Pin(es) | Turn | Push |
+|---|---|---|---|---|
+| P1 | ALPS EC11 | 30 / 31 / 32 | SYNTH: 1er parámetro de la página · FX: parámetro 2 del FX | Sin función asignada |
+| P2 | ALPS EC11 | 34 / 35 / 9 | SYNTH: 2º parámetro de la página · FX: parámetro 3 del FX | Sin función asignada |
+| B5 | Kailh Choc V2 | 40 | — | MODE: SYNTH ⇄ FX (reemplaza al doble push de NAV en Studio) |
+| B6 | Kailh Choc V2 | 41 | — | SYNTH: SHIFT (P1/P2 pasan al par secundario) · FX: HOLD momentáneo |
+| IN | Pot RV09 | 24 (A10) | Ganancia de entrada: `lineInLevel` del codec + ajuste digital fino | — |
+| VOL | Pot RV09 | 22 (A8) | Volumen de salida | — |
+| PAD | Palanca 3 pos. | 25 (A11) | Pad de entrada 0 / −10 / −20 dB (panel trasero) | — |
+
+En Studio, ENC L / R / NAV y B1–B4 mantienen el mapeo de arriba, salvo que el cambio de modo es con B5 y
+el push de NAV es inmediato. La GUI de Studio (`apps/studio-head`) muestra el par activo de P1/P2 en la
+fila 2 de la barra inferior y las páginas OSC / ENV / LFO con sus 4 valores (diseño v3).
 
 #### LED ring ENC NAV (12× WS2812B-2020 SMD)
 
@@ -534,6 +585,20 @@ Los pines UART (GPIO43/44) del ESP32-S3 se cablan directamente a la main PCB (Te
 via cable que desciende por el interior del bracket y el PETG body.
 El Top Panel PCB **no lleva** conector para la pantalla.
 
+#### Studio: 4 placas (decisión 2026-10-12)
+
+El enclosure de Studio validado en Claude Design pedía 6 placas porque los Choc y los EC11 quedaban a
+alturas distintas bajo el aluminio. Se simplifica a 4:
+
+| Placa | Contenido | Conexión |
+|---|---|---|
+| Panel | 6 Choc V2, 5 EC11 (buje largo para compartir placa con los Choc), 18 LEDs ensamblados por JLCPCB | Cable plano a la portadora |
+| Pot IN y pot VOL (×2) | Un RV09 cada una, a los costados de la pantalla | JST a la portadora |
+| Portadora | Teensy 4.1 + Audio Shield (módulos), alimentación USB-C 5 V 3 A con polyfuse y TVS, conectores del panel trasero, UART a la Pi, CV OUT, lectura del pad | — |
+
+La Raspberry Pi 3B y la pantalla son módulos aparte. Capas, conectores y footprints: theory doc del PCB
+de Studio.
+
 #### Prototipo v1 vs PCB v1.0
 
 | Fase | Implementación |
@@ -551,16 +616,16 @@ El Top Panel PCB **no lleva** conector para la pantalla.
 
 **Synth engines (v1.0 ship con 3, expandible):**
 
-| Engine | Status | Implementation |
-|---|---|---|
-| Moog Model D | Ship v1.0 | AudioSynthWaveform x3 + AudioMixer4 + AudioEffectEnvelope + filter routing |
-| Juno-106 | Ship v1.0 | AudioSynthWaveform + sub osc + AudioEffectChorus + filter routing |
-| Prophet-5 | Ship v1.0 | AudioSynthWaveform x2 + cross-mod + filter routing |
-| OB-6 | v1.1 (Q1 2027) free update | AudioSynthWaveform x2 + AudioSynthWaveformDc + filter |
-| DX7 | v1.2 (Q2 2027) free update | AudioSynthWaveformPWM x6 (FM operators) + filter bypass |
-| ARP 2600 | v1.3 (Q3 2027) free update | AudioSynthWaveform + AudioEffectRingMod + filter |
+| Engine | Status (plan comercial) | Firmware hoy (2026-10) | Implementation |
+|---|---|---|---|
+| Moog Model D | Ship v1.0 | Implementado, mono | AudioSynthWaveform x3 + AudioMixer4 + AudioEffectEnvelope + filter routing |
+| Juno-106 | Ship v1.0 | Implementado, 6 voces | AudioSynthWaveform + sub osc + AudioEffectChorus + filter routing |
+| Prophet-5 | Ship v1.0 | Implementado, 5 voces | AudioSynthWaveform x2 + cross-mod + filter routing |
+| OB-6 | v1.1 (Q1 2027) free update | Implementado, 6 voces | AudioSynthWaveform x2 + AudioSynthWaveformDc + filter |
+| DX7 | v1.2 (Q2 2027) free update | Implementado con 2 operadores (provisorio) | **FM de 4 operadores con un objeto AudioStream propio, 8 algoritmos y feedback (ADR-005)**; filtro opcional |
+| ARP 2600 | v1.3 (Q3 2027) free update | Implementado, 4 voces | AudioSynthWaveform + AudioEffectRingMod + filter |
 
-**Polyphony targets:**
+**Polyphony targets** (el firmware hoy: Moog mono por diseño, Juno 6 — fiel al original):
 - Moog Model D: 6 voces simultáneas
 - Juno-106: 8 voces simultáneas
 - Prophet-5: 5 voces simultáneas

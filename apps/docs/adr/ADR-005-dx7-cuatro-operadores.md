@@ -1,11 +1,11 @@
 # ADR-005: Engine DX7 de 4 operadores con un objeto de audio propio
 
-**Status:** Accepted
+**Status:** Accepted (`01` §4.1 actualizado el 2026-10-12)
 **Date:** 2026-10-12
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-002 (variante Studio: página OSC), `auditoria-tecnica-2026-05.md` (DX7 no es FM real)
 **Afecta specs:** `01-architecture.md` §4.1, fila DX7 ("AudioSynthWaveformPWM x6 (FM operators)").
-No se edita hasta autorización explícita.
+Actualizado el 2026-10-12.
 
 ---
 
@@ -88,7 +88,7 @@ grafo y el audio se procesa en bloques de 128 muestras (2.9 ms a 44.1 kHz).
 
 ## Action Items
 
-1. [ ] Autorización para actualizar la fila DX7 de `01-architecture.md` §4.1.
+1. [x] Fila DX7 de `01-architecture.md` §4.1 actualizada (autorizado 2026-10-12).
 2. [x] Prompt de Claude Design (OSC · DX7) con 4 operadores.
 3. [x] Etiqueta del DX7 en la UI de Studio.
 4. [ ] Theory doc del engine FM de 4 operadores (`apps/docs/sprints/`).

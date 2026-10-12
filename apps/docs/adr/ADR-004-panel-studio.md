@@ -94,10 +94,13 @@ diseño de UI necesita una iteración; el panel es más ancho que el comercial.
 
 ## Action Items
 
-1. [ ] Firmware: 5 encoders + 6 botones, MODE, HOLD/SHIFT, doble push configurable.
-2. [ ] Mapa de parámetros 2 y 3 para los 9 FX (y el par de cada página en SYNTH).
-3. [ ] Iteración de UI en Claude Design (`variants/studio/design/claude-design-prompt-v2-controles.md`).
-4. [ ] Validación del enclosure en Claude Design (`variants/studio/design/claude-design-prompt-enclosure.md`).
+1. [ ] Firmware: 5 encoders + 6 botones, MODE, HOLD/SHIFT, doble push configurable. (Pines validables con
+   `sketches/46-studio-controls-test.cpp`, 2026-10-12; falta integrarlo en `ui/encoders` y `ui/buttons`.)
+2. [x] Mapa de parámetros 2 y 3 para los FX: `05` §1.13 (2026-10-12). El par de cada página en SYNTH está
+   en la GUI (OSC: plantilla por engine; ENV; LFO).
+3. [x] Iteración de UI en Claude Design (UI v3, 2026-10-09; OSC/LFO, 2026-10-12).
+4. [x] Validación del enclosure en Claude Design (2026-10-09). Reparto de PCBs simplificado a 4 placas
+   (`01` §3.6, 2026-10-12).
 5. [x] Con autorización: actualizar `01` §3.3 y §3.4 (2026-10-07).
 6. [ ] (rev. 1) Firmware: pot IN → `lineInLevel` + ganancia fina + medidor de entrada; lectura del pad.
 7. [ ] (rev. 1) Theory doc del PCB: pad 0/−10/−20 dB y protección de la entrada.

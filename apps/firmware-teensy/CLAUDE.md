@@ -8,7 +8,10 @@ FX, filter control, UI, Bridge Protocol master y USB composite.
 - `apps/docs/01-architecture.md` §3.3 — Pin Mapping (contrato de GPIO, NO cambiar sin consultar)
 - `apps/docs/01-architecture.md` §4.1 — Synth engines y polyphony targets
 - `apps/docs/02-bridge-protocol.md` — Teensy es el master del protocolo UART/USB-CDC
-- `apps/docs/03-filter-design.md` — GPIO 25 → CD4066 bypass, GPIO 27 lee TPDT state
+- `apps/docs/03-filter-design.md` y ADR-003 — el filtro 2N3904 es un add-on externo: CV de cutoff en el
+  pin 29 (PWM), opcional el 33. El CD4066 (pin 25) y el TPDT se eliminaron.
+- ADR-004 — panel de Studio: P1 (30/31/32), P2 (34/35/9), B5 MODE (40), B6 HOLD/SHIFT (41), pot IN (24),
+  pot VOL (22), lectura del pad (25), 18 LEDs en el pin 28. Prueba: `pio run -e sketch46`.
 - `apps/docs/05-fx-architecture.md` — 12 FX signature, CPU budget por efecto
 
 ## Stack

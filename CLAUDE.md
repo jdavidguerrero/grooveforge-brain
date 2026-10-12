@@ -60,8 +60,8 @@
 | ¿Modelos TinyML? ¿Training? ¿Memory budget ML? | `apps/docs/04-ai-architecture.md` |
 | ¿Qué efectos hay? ¿CPU FX? ¿Stack técnico FX? | `apps/docs/05-fx-architecture.md` |
 | ¿Qué sprint sigue? ¿Hitos de fase? | `apps/docs/06-implementation-roadmap.md` |
-| ¿Decisiones posteriores a los specs? | `apps/docs/adr/` (ADR-002 Studio, ADR-003 filtro add-on, ADR-004 panel Studio) |
-| ¿Variante Studio (cabeza Pi + pantalla 5")? | `apps/docs/variants/studio/` |
+| ¿Decisiones posteriores a los specs? | `apps/docs/adr/` (ADR-002 Studio, ADR-003 filtro add-on, ADR-004 panel Studio, ADR-005 DX7 de 4 operadores) |
+| ¿Variante Studio (cabeza Pi 3B + pantalla 5")? | `apps/docs/variants/studio/` · app: `apps/studio-head/` · track: `06` §10B |
 
 ### Jerarquía de autoridad en conflictos
 

@@ -177,6 +177,30 @@ actual envía `0x10 + índice` y se corrige en la tarea R-B3.
 
 ---
 
+### 2.10 Pendiente: datos de la cabeza Studio (no normativo — agregado 2026-10-12)
+
+La cabeza Studio (ADR-002) habla este mismo protocolo como slave UART, igual que el ESP32. Su GUI ya
+dibuja datos que todavía **no tienen comando**; hoy los genera el modo demo de `apps/studio-head`. Los
+comandos se definen con la tarea 38 (hilo de I/O de la cabeza). Rango propuesto: **0x90–0x9F**, libre.
+
+| Dato | Uso en la GUI | Tasa y tamaño (diseño) |
+|---|---|---|
+| Espectro de salida, 32 bandas (u8, 0 = −60 dB) | PERFORM, SPECTRUM | 30 Hz · 32 B |
+| Medidor IN L/R, clip L/R, pad, ganancia IN | FX MAIN, overlays IN e INPUT CLIPPING | 30 Hz · 5 B |
+| FX MAIN · ONDA: 120 columnas mín/máx de DRY y WET (i8) | Vista WAVE | 30 Hz · 480 B (multi-frame, §3.3) |
+| FX MAIN · ESPECTRO: 32 bandas DRY + 32 WET | Vista SPECTRUM | 30 Hz · 64 B |
+| FX MAIN · FIRMA: datos chicos por FX (pico, ataque, 8 modos, granos, fase de LFO, f0) | Vista SIGNATURE | 15–30 Hz · 2–122 B (FX Viz §E) |
+| Estado de FX: slot, on/off, HOLD, ruteo, DRY/WET + 3 parámetros | FX MAIN | al cambiar · revisar contra §2.3 |
+| OSC: valores de los slots de cada oscilador (y plantilla, si viaja) | Página OSC | al cambiar |
+| DX7: ratio / level por operador, algoritmo, feedback | OSC · DX7 (ADR-005) | al cambiar |
+| LFO: forma, rate, sync, división, profundidad por destino, fase | Página LFO / MOD | fase a 30 Hz · resto al cambiar |
+| Presets: banco del engine, cargado, guardar | PRESETS | al entrar a la página |
+
+Solo se envía el flujo de la vista visible (la cabeza informa la página activa), para no gastar
+ancho de banda del UART en lo que no se ve.
+
+---
+
 ## 3. Communication Patterns
 
 ### 3.1 Request-Response with ACK

@@ -328,6 +328,33 @@ Doc: `apps/docs/sprints/12-modal-reverb.md`
 
 ---
 
+## 1.13 Parámetros en el panel (ADR-004 — agregado 2026-10-12)
+
+Cada FX expone 4 controles: **ENC L = Mix (Dry/Wet)**, **ENC R = parámetro principal** (tabla de
+`01-architecture.md` §3.4, que manda) y, en Studio, **P1 / P2 = los dos "Parámetros user" siguientes**
+de la sección del FX, en el orden en que aparecen arriba (sin Mix ni el de ENC R).
+
+| FX | ENC R | P1 | P2 |
+|---|---|---|---|
+| Cymatic Resonator | Resonance | Density | Tune |
+| Granular Cloud | Size | Density | Pitch spread |
+| Ghost Echo | Feedback | Time | Ghost amount |
+| Spectral Smear | Smear time | Resolution | Spectral tilt |
+| Tape Saturate | Drive | Wow | Flutter |
+| Bit Sculpt | Bits | Sample rate | Sculpt |
+| Modal Reverb | Decay | Material (bell / guadua / glass / wood) | Size |
+| Phase Chorus | Depth | Rate | Drift |
+| Pitch Mosaic | Interval 1 | Interval 2 | Scale lock |
+| Spring + Plate | Decay | Algorithm (spring / plate / blend) | Damping |
+| Glitch Stutter | Pattern | Probability | Pitch |
+| Sub Genesis | Sub level | Octaves | Drive |
+
+Los parámetros que quedan fuera del panel (Granular: Position; Ghost: Tape character; Spectral: Freeze;
+Tape: Age; Modal: Diffusion; Chorus: Voices; Spring: Pre-delay; Sub: Cutoff) siguen disponibles por MIDI y
+por presets.
+
+---
+
 ## 2. CPU Budget Analysis
 
 | Layer | Efectos simultáneos típicos | CPU |
