@@ -8,10 +8,13 @@
  * Uso:
  *   studio-head                      # Mac (SDL) o Pi (FBDEV), modo demo
  *   studio-head --touch /dev/input/event4
- *   studio-head --snapshot perform.ppm [--snapshot-ms 3000] [--page ai] [--shift]
+ *   studio-head --snapshot fx.ppm [--snapshot-ms N] [--page fx] [--fx-view signature] [--fx-slot 4]
+ *   studio-head --snapshot boot.ppm --page boot --snapshot-ms 3100   # un cuadro del splash
+ *               [--shift] [--hold] [--bypass] [--overlay vol|in|toast|banner|clip]
  *
  * Navegación en el demo: tocar la barra superior = NAV; B1–B4, MODE y B6 en la barra inferior.
- * En el simulador: ← → NAV, 1–4 B1–B4, M MODE, S SHIFT.
+ * En el simulador, además del touch: ← → NAV, Enter push, 1–4 B1–B4, M MODE, S SHIFT, H HOLD,
+ * B bypass, E ENGINE SELECT, V vista de FX, − = VOL, [ ] IN, P PAD, L enlace perdido.
  */
 #include <cstdio>
 #include <cstdlib>
@@ -29,28 +32,53 @@
 
 namespace {
 
-constexpr uint32_t BOOT_MS = 1200;
+constexpr uint32_t BOOT_MS = BootSplash::DURATION_MS;
 
 void usage() {
-    std::printf("studio-head [--touch <evdev>] [--snapshot <archivo.ppm> [--snapshot-ms N] [--page perform|ai|spectrum|env] [--shift]]\n");
+    std::printf("studio-head [--touch <evdev>] [--snapshot <archivo.ppm> [--snapshot-ms N]\n"
+                "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|boot] [--shift]\n"
+                "            [--engine 0-5] [--fx-view wave|spectrum|signature] [--fx-slot 1-12] [--hold] [--bypass]\n"
+                "            [--overlay vol|in|toast|banner|clip]]\n");
 }
 
-/// Guarda la pantalla activa como PPM (P6, RGB de 8 bits).
+Page parse_page(const char* p) {
+    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo"};
+    for (int i = 0; i < int(Page::Count); ++i)
+        if (!std::strcmp(p, NAMES[i])) return Page(i);
+    return Page::Perform;
+}
+
+/// Guarda la pantalla activa + la capa superior (overlays) como PPM (P6, RGB de 8 bits).
 bool save_snapshot(const char* path) {
     lv_img_dsc_t* img = lv_snapshot_take(lv_scr_act(), LV_IMG_CF_TRUE_COLOR);
     if (!img) return false;
+    // lv_snapshot no incluye lv_layer_top(): se captura aparte con alfa y se compone encima.
+    lv_img_dsc_t* top = lv_snapshot_take(lv_layer_top(), LV_IMG_CF_TRUE_COLOR_ALPHA);
     FILE* f = std::fopen(path, "wb");
-    if (!f) { lv_snapshot_free(img); return false; }
+    if (!f) {
+        lv_snapshot_free(img);
+        if (top) lv_snapshot_free(top);
+        return false;
+    }
     const int w = img->header.w, h = img->header.h;
+    const bool blend = top && top->header.w == w && top->header.h == h;
     std::fprintf(f, "P6\n%d %d\n255\n", w, h);
     const lv_color_t* px = reinterpret_cast<const lv_color_t*>(img->data);
     for (int i = 0; i < w * h; ++i) {
-        const uint32_t c = lv_color_to32(px[i]);
-        const unsigned char rgb[3] = {uint8_t(c >> 16), uint8_t(c >> 8), uint8_t(c)};
+        lv_color_t c = px[i];
+        if (blend) {
+            const uint8_t* t = top->data + i * LV_IMG_PX_SIZE_ALPHA_BYTE;
+            lv_color_t tc;
+            std::memcpy(&tc, t, sizeof(tc));
+            c = lv_color_mix(tc, c, t[LV_IMG_PX_SIZE_ALPHA_BYTE - 1]);
+        }
+        const uint32_t c32 = lv_color_to32(c);
+        const unsigned char rgb[3] = {uint8_t(c32 >> 16), uint8_t(c32 >> 8), uint8_t(c32)};
         std::fwrite(rgb, 1, 3, f);
     }
     std::fclose(f);
     lv_snapshot_free(img);
+    if (top) lv_snapshot_free(top);
     return true;
 }
 
@@ -59,9 +87,12 @@ bool save_snapshot(const char* path) {
 int main(int argc, char** argv) {
     const char* touch = nullptr;
     const char* snapshot = nullptr;
-    uint32_t snapshot_ms = 3000;
+    uint32_t snapshot_ms = BOOT_MS + 1500;  // por defecto, ya pasado el splash
+    bool boot_only = false;
     Page start_page = Page::Perform;
-    bool start_shift = false;
+    bool start_shift = false, start_hold = false, start_bypass = false;
+    int fx_view = -1, fx_slot = -1, engine = -1;
+    const char* overlay = nullptr;
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--touch") == 0 && i + 1 < argc) {
             touch = argv[++i];
@@ -70,11 +101,24 @@ int main(int argc, char** argv) {
         } else if (std::strcmp(argv[i], "--snapshot-ms") == 0 && i + 1 < argc) {
             snapshot_ms = uint32_t(std::atoi(argv[++i]));
         } else if (std::strcmp(argv[i], "--page") == 0 && i + 1 < argc) {
-            const char* p = argv[++i];
-            start_page = !std::strcmp(p, "ai") ? Page::Ai : !std::strcmp(p, "spectrum") ? Page::Spectrum
-                       : !std::strcmp(p, "env") ? Page::Env : Page::Perform;
+            ++i;
+            boot_only = !std::strcmp(argv[i], "boot");
+            start_page = parse_page(argv[i]);
         } else if (std::strcmp(argv[i], "--shift") == 0) {
             start_shift = true;
+        } else if (std::strcmp(argv[i], "--hold") == 0) {
+            start_hold = true;
+        } else if (std::strcmp(argv[i], "--bypass") == 0) {
+            start_bypass = true;
+        } else if (std::strcmp(argv[i], "--fx-view") == 0 && i + 1 < argc) {
+            const char* v = argv[++i];
+            fx_view = !std::strcmp(v, "spectrum") ? 1 : !std::strcmp(v, "signature") ? 2 : 0;
+        } else if (std::strcmp(argv[i], "--engine") == 0 && i + 1 < argc) {
+            engine = std::atoi(argv[++i]);
+        } else if (std::strcmp(argv[i], "--fx-slot") == 0 && i + 1 < argc) {
+            fx_slot = std::atoi(argv[++i]) - 1;
+        } else if (std::strcmp(argv[i], "--overlay") == 0 && i + 1 < argc) {
+            overlay = argv[++i];
         } else if (std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0) {
             usage();
             return 0;
@@ -88,10 +132,22 @@ int main(int argc, char** argv) {
     }
 
     input_keyboard_init();
-    lv_scr_load(screen_boot_create("DEMO MODE"));
+    BootSplash splash;
+    lv_scr_load(splash.create());
 
     StudioState state;
+    demo_init(state);
     state.shift = start_shift;
+    if (start_page == Page::Fx) state.mode = Mode::Fx;
+    if (start_page == Page::Error) state.link = LinkState::Lost;
+    state.fx_hold = start_hold;
+    if (fx_view >= 0) state.fx_view = FxView(fx_view);
+    if (fx_slot >= 0 && fx_slot < FX_SLOTS) state.fx_slot = uint8_t(fx_slot);
+    if (engine >= 0 && engine < 6) state.engine = uint8_t(engine);
+    if (start_bypass) {
+        if (state.mode == Mode::Fx) state.fx_on &= uint16_t(~(1u << state.fx_slot));
+        else state.filter_bypass = true;
+    }
     App app;
     bool booted = false;
     const uint32_t t0 = studio_tick_ms();
@@ -100,12 +156,22 @@ int main(int argc, char** argv) {
         const uint32_t now = studio_tick_ms();
         demo_tick(state, now);
 
-        if (!booted && now - t0 >= BOOT_MS) {
+        if (!booted) splash.update(now - t0);
+        if (!booted && !boot_only && now - t0 >= BOOT_MS) {
             lv_obj_t* old = lv_scr_act();
             app.create();
-            app.show(start_page);
+            app.show(start_page == Page::Error ? Page::Perform : start_page);
             lv_obj_del(old);
             booted = true;
+            Ctl drop;
+            while (input_poll(drop)) {}  // el splash no recibe input (08g): se descarta lo tocado antes de READY
+            if (overlay) {
+                const Overlay o = !std::strcmp(overlay, "in") ? Overlay::Input : !std::strcmp(overlay, "toast") ? Overlay::Bypass
+                                : !std::strcmp(overlay, "banner") ? Overlay::ModeBanner : !std::strcmp(overlay, "clip") ? Overlay::Clip
+                                : Overlay::Volume;
+                app.update(state);  // toma los valores iniciales antes de forzar
+                app.overlays().force(o);
+            }
         }
         if (booted) {
             Ctl c;

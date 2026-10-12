@@ -35,6 +35,7 @@ private:
     TopBar _top;
     BottomBar _bottom;
 
+    lv_obj_t* _art = nullptr;
     lv_obj_t* _engine_name = nullptr;
     lv_obj_t* _engine_tag = nullptr;
     lv_obj_t* _preset = nullptr;

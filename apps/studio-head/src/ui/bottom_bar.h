@@ -17,9 +17,17 @@ public:
 
     void set_mode(bool fx, bool shift);
     void set_enc(bool right, const char* lbl, const char* val, const char* unit, float frac);
+    /// ENC L / R en SYNTH: CUTOFF (escala log 20 Hz–20 kHz) y RES.
+    void set_filter_encs(float cutoff_hz, float resonance);
     void set_keys(const char* const labels[4], int active);
     void set_param(int n, const char* lbl, const char* val, const char* unit, float frac);
     void set_nav(const char* text);
+    /// B6 en FX: HOLD apretado → celda HERO_WHITE con HELD.
+    void set_hold(bool held);
+    /// P1/P2 sin función (ENGINE SELECT, PRESETS): NO FUNCTION atenuado.
+    void set_params_off(bool off);
+    /// Valores en MONITOR_GRAY (FX en bypass: siguen editables, pero no suenan).
+    void set_dim(bool dim);
 
 private:
     struct Enc { lv_obj_t *tag, *lbl, *val, *unit, *track, *fill; char last[24]; int last_fw; };
@@ -29,6 +37,8 @@ private:
     void build_enc(Enc& e, lv_obj_t* cell, bool right);
     void build_param(Param& p, lv_obj_t* cell, int n);
     void paint_params();
+    void paint_b6();
+    void paint_encs();
 
     lv_obj_t* _bar = nullptr;
     Enc _enc[2] = {};
@@ -38,7 +48,7 @@ private:
     lv_obj_t *_nav_val = nullptr;
     lv_obj_t *_b6_cell = nullptr, *_b6_lbl = nullptr, *_b6_state = nullptr;
 
-    bool _fx = false, _shift = false;
+    bool _fx = false, _shift = false, _hold = false, _p_off = false, _dim = false;
     int _last_mode = -1, _last_active = -2;
     char _last_keys[64] = {};
     char _last_nav[24] = {};

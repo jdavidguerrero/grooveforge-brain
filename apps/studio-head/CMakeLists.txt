@@ -78,6 +78,8 @@ add_executable(studio-head
   src/hal/tick.c
   src/hal/display.cpp
   src/sim/demo_source.cpp
+  src/state/fx_catalog.cpp
+  src/state/osc_catalog.cpp
   src/ui/theme.cpp
   src/ui/top_bar.cpp
   src/ui/bottom_bar.cpp
@@ -86,6 +88,18 @@ add_executable(studio-head
   src/ui/screen_ai.cpp
   src/ui/screen_spectrum.cpp
   src/ui/screen_env.cpp
+  src/ui/screen_fx.cpp
+  src/ui/screen_engine.cpp
+  src/ui/screen_presets.cpp
+  src/ui/screen_error.cpp
+  src/ui/overlays.cpp
+  src/ui/painter.cpp
+  src/ui/engines.cpp
+  src/ui/fx_viz.cpp
+  src/ui/edit_draw.cpp
+  src/ui/edit_cells.cpp
+  src/ui/screen_osc.cpp
+  src/ui/screen_lfo.cpp
   src/ui/input.cpp
   src/ui/app.cpp
   ${FONT_SOURCES})

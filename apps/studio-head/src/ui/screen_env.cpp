@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "ui/engines.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -19,7 +20,6 @@ constexpr uint32_t AREA = 0x0F1E1A;
 
 lv_color_t canvas_buf[GW * GH];
 
-const char* const ENGINE_NAMES[6] = {"MODEL D", "JUNO-106", "PROPHET-5", "OB-6", "DX7", "ARP 2600"};
 const char* const CELL_NAMES[4] = {"ATTACK", "DECAY", "SUSTAIN", "RELEASE"};
 const char* const CELL_TAGS[4] = {"P1", "P2", "SHIFT P1", "SHIFT P2"};
 
@@ -185,7 +185,7 @@ void ScreenEnv::update(const StudioState& s) {
     if (s.engine != _last_engine && s.engine < 6) {
         _last_engine = s.engine;
         char t[24];
-        std::snprintf(t, sizeof(t), "ENV \xC2\xB7 %s", ENGINE_NAMES[s.engine]);
+        std::snprintf(t, sizeof(t), "ENV \xC2\xB7 %s", engine_info(s.engine).name);
         _top.set_page(t);
     }
 

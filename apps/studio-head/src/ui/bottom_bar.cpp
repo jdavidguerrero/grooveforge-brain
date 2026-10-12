@@ -97,6 +97,7 @@ void BottomBar::create(lv_obj_t* parent) {
 
     _b6_cell = cell(row2, 504, 0, 96, ROW2_H, true);
     input_attach_tap(_b6_cell, Ctl::Shift);
+    input_attach_hold(_b6_cell, Ctl::HoldOn, Ctl::HoldOff);
     lv_obj_t* bg6 = group(_b6_cell, LV_FLEX_FLOW_ROW, 6);
     lv_obj_center(bg6);
     _b6_lbl = label(bg6, T12B, GRAY, "SHIFT");
@@ -156,14 +157,11 @@ void BottomBar::set_mode(bool fx, bool shift) {
     _last_mode = m;
     _fx = fx;
     _shift = !fx && shift;
+    if (!fx) _hold = false;
     const ModeColors mc = mode_colors(fx);
 
     lv_obj_set_style_border_color(_bar, lv_color_hex(mc.dim), 0);
-    for (Enc& e : _enc) {
-        set_text_color(e.tag, mc.mc);
-        set_bg(e.track, mc.dim);
-        set_bg(e.fill, mc.hi);
-    }
+    paint_encs();
     for (Key& k : _keys) set_bg(k.bar, BG);
     _last_active = -2;
 
@@ -172,13 +170,47 @@ void BottomBar::set_mode(bool fx, bool shift) {
     set_text_color(_mode_next, fx ? BG : WHITE);
     lv_label_set_text(_mode_next, fx ? "SYNTH" : "FX");
 
-    // B6: HOLD en FX, SHIFT en SYNTH.
     lv_label_set_text(_b6_lbl, fx ? "HOLD" : "SHIFT");
-    set_bg(_b6_cell, _shift ? mc.hi : BG);
-    set_text_color(_b6_lbl, _shift ? BG : GRAY);
-    set_text_color(_b6_state, _shift ? BG : MON);
-    lv_label_set_text(_b6_state, _shift ? "ON" : "OFF");
+    paint_b6();
+    paint_params();
+}
 
+void BottomBar::paint_encs() {
+    const ModeColors mc = mode_colors(_fx);
+    for (Enc& e : _enc) {
+        set_text_color(e.tag, mc.mc);
+        set_text_color(e.val, _dim ? MON : WHITE);
+        set_bg(e.track, mc.dim);
+        set_bg(e.fill, _dim ? MON : mc.hi);
+    }
+}
+
+// B6: HOLD en FX (HERO_WHITE mientras se aprieta), SHIFT en SYNTH.
+void BottomBar::paint_b6() {
+    const bool on = _fx ? _hold : _shift;
+    set_bg(_b6_cell, on ? (_fx ? WHITE : mode_colors(_fx).hi) : BG);
+    set_text_color(_b6_lbl, on ? BG : GRAY);
+    set_text_color(_b6_state, on ? BG : MON);
+    lv_label_set_text(_b6_state, on ? (_fx ? "HELD" : "ON") : "OFF");
+}
+
+void BottomBar::set_hold(bool held) {
+    held = held && _fx;
+    if (held == _hold) return;
+    _hold = held;
+    paint_b6();
+}
+
+void BottomBar::set_params_off(bool off) {
+    if (off == _p_off) return;
+    _p_off = off;
+    paint_params();
+}
+
+void BottomBar::set_dim(bool dim) {
+    if (dim == _dim) return;
+    _dim = dim;
+    paint_encs();
     paint_params();
 }
 
@@ -186,7 +218,24 @@ void BottomBar::paint_params() {
     const ModeColors mc = mode_colors(_fx);
     for (int i = 0; i < 2; ++i) {
         Param& p = _p[i];
-        const uint32_t fg = _shift ? BG : WHITE;
+        p.last[0] = '\0';  // fuerza a set_param a reescribir el texto
+        p.last_fw = -1;
+        if (_p_off) {
+            set_bg(p.cell, BG);
+            lv_label_set_text(p.tag, i == 0 ? "P1" : "P2");
+            set_text_color(p.tag, MON);
+            lv_label_set_text(p.lbl, "NO FUNCTION");
+            set_text_color(p.lbl, MON);
+            lv_label_set_text(p.unit, "");
+            lv_label_set_text(p.val, "—");
+            set_text_color(p.val, MON);
+            set_bg(p.track, SURFACE_2);
+            lv_obj_set_width(p.fill, 0);
+            lv_obj_align(p.lbl, LV_ALIGN_LEFT_MID, 40, -1);
+            lv_obj_align_to(p.val, p.unit, LV_ALIGN_OUT_LEFT_MID, -4, 0);
+            continue;
+        }
+        const uint32_t fg = _shift ? BG : _dim ? MON : WHITE;
         const uint32_t lc = _shift ? BG : GRAY;
         set_bg(p.cell, _shift ? mc.hi : BG);
         lv_label_set_text(p.tag, _shift ? (i == 0 ? "SHIFT P1" : "P2 SHIFT") : (i == 0 ? "P1" : "P2"));
@@ -195,7 +244,7 @@ void BottomBar::paint_params() {
         set_text_color(p.unit, lc);
         set_text_color(p.val, fg);
         set_bg(p.track, mc.dim);
-        set_bg(p.fill, _shift ? BG : mc.hi);
+        set_bg(p.fill, _shift ? BG : _dim ? MON : mc.hi);
         lv_obj_align(p.lbl, LV_ALIGN_LEFT_MID, _shift ? 88 : 40, -1);
     }
 }
@@ -217,6 +266,14 @@ void BottomBar::set_enc(bool right, const char* lbl, const char* val, const char
     }
 }
 
+void BottomBar::set_filter_encs(float cutoff_hz, float resonance) {
+    char v[16];
+    std::snprintf(v, sizeof(v), "%d", int(std::lround(cutoff_hz)));
+    set_enc(false, "CUTOFF", v, "HZ", std::log(cutoff_hz / 20.0f) / std::log(1000.0f));
+    std::snprintf(v, sizeof(v), "%d", int(std::lround(resonance * 100.0f)));
+    set_enc(true, "RES", v, "%", resonance);
+}
+
 void BottomBar::set_keys(const char* const labels[4], int active) {
     char key[64];
     std::snprintf(key, sizeof(key), "%s|%s|%s|%s", labels[0], labels[1], labels[2], labels[3]);
@@ -236,6 +293,7 @@ void BottomBar::set_keys(const char* const labels[4], int active) {
 }
 
 void BottomBar::set_param(int n, const char* lbl, const char* val, const char* unit, float frac) {
+    if (_p_off) return;
     Param& p = _p[n == 2 ? 1 : 0];
     char key[32];
     std::snprintf(key, sizeof(key), "%s|%s|%s", lbl, val, unit);
@@ -245,6 +303,15 @@ void BottomBar::set_param(int n, const char* lbl, const char* val, const char* u
         lv_label_set_text(p.val, val);
         lv_label_set_text(p.unit, unit);
         lv_obj_align_to(p.val, p.unit, LV_ALIGN_OUT_LEFT_MID, -4, 0);
+        // La etiqueta se recorta donde empieza el valor: con SHIFT el tag es más ancho y los valores
+        // largos (CUTOFF, ALGORITHM) la pisarían.
+        lv_obj_update_layout(p.cell);
+        const int lx = _shift ? 88 : 40;
+        // Se corta en letras enteras (el avance de la fuente es fraccional: se mide el prefijo).
+        const int avail = std::max(0, int(lv_obj_get_x(p.val)) - 4 - lx);
+        uint32_t n = uint32_t(std::strlen(lbl));
+        while (n > 0 && lv_txt_get_width(lbl, n, T12, 0, LV_TEXT_FLAG_NONE) > avail) --n;
+        lv_obj_set_width(p.lbl, lv_txt_get_width(lbl, n, T12, 0, LV_TEXT_FLAG_NONE) + 1);
     }
     const int fw = frac_px(frac, P_TRACK_W);
     if (fw != p.last_fw) {

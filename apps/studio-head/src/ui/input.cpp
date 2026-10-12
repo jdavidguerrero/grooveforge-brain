@@ -28,6 +28,16 @@ void on_key(lv_event_t* e) {
         case '4': input_post(Ctl::B4); break;
         case 'm': case 'M': input_post(Ctl::Mode); break;
         case 's': case 'S': input_post(Ctl::Shift); break;
+        case 'h': case 'H': input_post(Ctl::HoldToggle); break;
+        case 'b': case 'B': input_post(Ctl::EncLPush); break;
+        case 'e': case 'E': input_post(Ctl::EngineCard); break;
+        case 'v': case 'V': input_post(Ctl::FxViewNext); break;
+        case '-': input_post(Ctl::VolDown); break;
+        case '=': case '+': input_post(Ctl::VolUp); break;
+        case '[': input_post(Ctl::InDown); break;
+        case ']': input_post(Ctl::InUp); break;
+        case 'p': case 'P': input_post(Ctl::PadCycle); break;
+        case 'l': case 'L': input_post(Ctl::LinkToggle); break;
         default: break;
     }
 }
@@ -52,6 +62,13 @@ bool input_poll(Ctl& out) {
 void input_attach_tap(lv_obj_t* obj, Ctl c) {
     lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_add_event_cb(obj, on_tap, LV_EVENT_CLICKED, reinterpret_cast<void*>(uintptr_t(c)));
+}
+
+void input_attach_hold(lv_obj_t* obj, Ctl down, Ctl up) {
+    lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_PRESSED, reinterpret_cast<void*>(uintptr_t(down)));
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_RELEASED, reinterpret_cast<void*>(uintptr_t(up)));
+    lv_obj_add_event_cb(obj, on_tap, LV_EVENT_PRESS_LOST, reinterpret_cast<void*>(uintptr_t(up)));
 }
 
 void input_keyboard_init() {

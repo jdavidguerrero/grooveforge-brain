@@ -17,7 +17,19 @@ enum class Ctl : uint8_t {
     NavPush,  ///< NAV push (acción de la pantalla)
     B1, B2, B3, B4,
     Mode,     ///< B5 MODE: SYNTH ⇄ FX
-    Shift,    ///< B6 (en el demo alterna; en el hardware es momentáneo)
+    Shift,    ///< B6 en SYNTH (en el demo alterna; en el hardware es momentáneo)
+    HoldOn,   ///< B6 apretado en FX (momentáneo, estilo RMX-1000)
+    HoldOff,  ///< B6 suelto en FX
+    HoldToggle,
+    EncLPush, ///< ENC L push: filter bypass
+    EngineCard,   ///< tap en la card del engine (PERFORM) → ENGINE SELECT
+    Pick0, Pick1, Pick2, Pick3, Pick4, Pick5,  ///< tap en una tile de ENGINE SELECT
+    FxWave, FxSpectrum, FxSignature,  ///< tap en una pestaña de FX MAIN
+    FxViewNext,   ///< tap en la gráfica de FX MAIN
+    VolUp, VolDown,   ///< pot VOL (en el demo, teclado)
+    InUp, InDown,     ///< pot IN
+    PadCycle,         ///< switch INPUT PAD trasero: 0 → −10 → −20 dB
+    LinkToggle,       ///< demo: simula la pérdida del enlace con el motor
 };
 
 void input_post(Ctl c);
@@ -26,5 +38,13 @@ bool input_poll(Ctl& out);
 /// Hace tocable un objeto y publica @p c al tocarlo (atajo táctil, theory doc §6).
 void input_attach_tap(lv_obj_t* obj, Ctl c);
 
-/// Teclado del simulador SDL: ← → NAV, Enter push, 1–4 B1–B4, M MODE, S SHIFT. No-op en FBDEV.
+/// Publica @p down al apretar y @p up al soltar (controles momentáneos como HOLD).
+void input_attach_hold(lv_obj_t* obj, Ctl down, Ctl up);
+
+/**
+ * @brief Teclado del simulador SDL. No-op en FBDEV.
+ *
+ * ← → NAV · Enter push · 1–4 B1–B4 · M MODE · S SHIFT · H HOLD · B ENC L push · E ENGINE SELECT ·
+ * V vista de FX · − = VOL · [ ] IN · P PAD · L enlace perdido.
+ */
 void input_keyboard_init();

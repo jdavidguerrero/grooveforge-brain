@@ -6,6 +6,8 @@
 #include <cstring>
 
 #include "ui/dsp_math.h"
+#include "ui/engines.h"
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -17,12 +19,6 @@ constexpr int STRIP_X = 16, STRIP_Y = 248, STRIP_W = 768, STRIP_H = 72;
 constexpr int PLOT_W = 766, PLOT_H = 70, BAR_GAP = 4;
 // Diales de 192×192: ticks entre r 78 y 92 (escala de r 86–100 en 208 px de la v1).
 constexpr int DIAL = 192, DIAL_C = 96, TICK_R1 = 78, TICK_R2 = 92;
-
-struct EngineInfo { const char* name; const char* tag; };
-constexpr EngineInfo ENGINES[6] = {
-    {"MODEL D", "MONO · 3 VCO"},    {"JUNO-106", "POLY 6 · CHORUS"}, {"PROPHET-5", "POLY 5 · 2 VCO"},
-    {"OB-6", "POLY 6 · DUAL SAW"},  {"DX7", "FM · 4-OP"},           {"ARP 2600", "SEMI-MODULAR"},
-};
 
 
 lv_obj_t* chip_row(lv_obj_t* box) {
@@ -46,7 +42,8 @@ lv_obj_t* ScreenPerform::create() {
 
     // ── Card del engine ──────────────────────────────────────────────────────
     lv_obj_t* card = box(_scr, 16, 48, 232, 192, SURFACE, TEAL_DIM);
-    rect(card, 15, 15, 120, 80, BG);  // miniatura 120×80 (ilustración RGB565, pendiente)
+    input_attach_tap(card, Ctl::EngineCard);  // v3: tocar la card abre ENGINE SELECT
+    _art = engine_art_create(card, 15, 15, 120, 80, 0);
     lv_obj_t* eng = label(card, T12, GRAY, "ENGINE");
     lv_obj_set_style_text_letter_space(eng, 1, 0);
     lv_obj_set_pos(eng, 143, 15);
@@ -59,6 +56,7 @@ lv_obj_t* ScreenPerform::create() {
 
     // ── Diales ───────────────────────────────────────────────────────────────
     build_dial(_cut, 296, "CUTOFF", "HZ");
+    input_attach_tap(_cut.root, Ctl::EncLPush);  // atajo táctil del demo: tocar el dial = ENC L push
     build_dial(_res, 560, "RESONANCE", "%");
 
     // ── Franja de espectro ───────────────────────────────────────────────────
@@ -165,12 +163,13 @@ void ScreenPerform::update_dial(Dial& d, float frac, const char* val, uint32_t o
 void ScreenPerform::update(const StudioState& s) {
     _top.update(s);
 
-    if (s.engine != _last_engine && s.engine < 6) {
+    if (s.engine != _last_engine) {
         _last_engine = s.engine;
-        lv_label_set_text(_engine_name, ENGINES[s.engine].name);
-        lv_label_set_text(_engine_tag, ENGINES[s.engine].tag);
-        lv_label_set_text(_preset, s.preset);
+        lv_label_set_text(_engine_name, engine_info(s.engine).name);
+        lv_label_set_text(_engine_tag, engine_info(s.engine).tag);
+        engine_art_set(_art, s.engine);
     }
+    if (std::strcmp(lv_label_get_text(_preset), s.preset) != 0) lv_label_set_text(_preset, s.preset);
 
     // Diales
     char buf[32];

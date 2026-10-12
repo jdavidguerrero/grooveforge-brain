@@ -37,6 +37,7 @@
       <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">10</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">VOL overlay</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">Centred, 200–600.</div><div style="border-top:1px solid #262626;padding:8px 0">Flush right, 384–800, VOL chip at 760–800.</div></div>
       <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">11</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Screen geometry</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">—</div><div style="border-top:1px solid #262626;padding:8px 0">PERFORM dials 208 → 192, strip 88 → 72. AI wheel 352 → 320, chroma 88 → 64. SPECTRUM plot 288 → 256. ENGINE tiles 176 → 160. PRESETS 6 rows. Bypass toast y 252, mode banner y 152.</div></div>
       <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">12</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">Tokens</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">12 hex + 4 Studio, 7 sizes, 2 weights.</div><div style="border-top:1px solid #262626;padding:8px 0">Unchanged. No new colours, sizes or weights.</div></div>
+      <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">13</div><div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">OSC · LFO / MOD</div><div style="border-top:1px solid #262626;padding:8px 16px 8px 0">B1 / B3 listed, no page.</div><div style="border-top:1px solid #262626;padding:8px 0">Added 2026-10-12: screens 11a–11e, 11c2, 12a–12b with ENV grammar. OSC is a data-driven template (engine-named slots, table in A). LFO / MOD is a spec for firmware still to be written. New components: oscillator select row, wave icon, phase dot + destination meter, FM operator box, algorithm tile.</div></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#C8C8C8;max-width:1000px">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#E8B84A;padding-bottom:4px">OPEN ITEMS</div>
@@ -45,6 +46,8 @@
       <div>INPUT PAD: shown only if the firmware can read the switch; otherwise the PAD chip and meter label are hidden.</div>
       <div>IN range (dB) depends on the firmware.</div>
       <div>Still open from v1: connection-error heartbeat timeout; redrawn 120×80 engine thumbnails. From the enclosure: DSI cable length.</div>
+      <div>OSC: OB-6 has 5 oscillator parameters for 4 slots; proposal makes slot P2 per-stop (SUB on VCO 1, INTERVAL on VCO 2). DX7 fine ratio has no control on this page (ADR-005).</div>
+      <div>LFO: retrigger on note (free-running assumed); division list beyond 1/4 · 1/8 · 1/16 · 1/8T; whether the engine pushes lfo.phase or the UI derives it from rate + timestamp.</div>
     </div>
   </div>
 
@@ -102,8 +105,8 @@
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ENC R</div><div style="border-top:1px solid #262626;padding:8px 0">FX parameter 1</div><div style="border-top:1px solid #262626;padding:8px 0">Resonance</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">P1</div><div style="border-top:1px solid #262626;padding:8px 0">FX parameter 2</div><div style="border-top:1px solid #262626;padding:8px 0">1st parameter of the page</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">P2</div><div style="border-top:1px solid #262626;padding:8px 0">FX parameter 3</div><div style="border-top:1px solid #262626;padding:8px 0">2nd parameter of the page</div></div>
-        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">NAV</div><div style="border-top:1px solid #262626;padding:8px 0">Browse FX; push = on/off</div><div style="border-top:1px solid #262626;padding:8px 0">Views and cursor; push = action</div></div>
-        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">B1–B3</div><div style="border-top:1px solid #262626;padding:8px 0">INSERT / SEND / MASTER</div><div style="border-top:1px solid #262626;padding:8px 0">OSC / ENV / LFO</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">NAV</div><div style="border-top:1px solid #262626;padding:8px 0">Browse FX; push = on/off</div><div style="border-top:1px solid #262626;padding:8px 0">Views and cursor; push = action. OSC: selects oscillator / operator. LFO: push = SYNC on/off</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">B1–B3</div><div style="border-top:1px solid #262626;padding:8px 0">INSERT / SEND / MASTER</div><div style="border-top:1px solid #262626;padding:8px 0">OSC / ENV / LFO · MOD; same key again = back to last view</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">B4</div><div style="border-top:1px solid #262626;padding:8px 0">Favourite FX</div><div style="border-top:1px solid #262626;padding:8px 0">PRESET / ENGINE</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">B5</div><div style="border-top:1px solid #262626;padding:8px 0">MODE</div><div style="border-top:1px solid #262626;padding:8px 0">MODE</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">B6</div><div style="border-top:1px solid #262626;padding:8px 0">HOLD</div><div style="border-top:1px solid #262626;padding:8px 0">SHIFT</div></div>
@@ -119,7 +122,7 @@
         <div style="display:contents;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:8px 0">SCREEN</div><div style="padding:8px 0">P1</div><div style="padding:8px 0">P2</div><div style="padding:8px 0">WITH SHIFT (B6) · P1 / P2</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">FILTER ENV AMOUNT</div><div style="border-top:1px solid #262626;padding:8px 0">LFO → CUTOFF</div><div style="border-top:1px solid #262626;padding:8px 0">GLIDE / DRIVE</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ENV</div><div style="border-top:1px solid #262626;padding:8px 0">ATTACK</div><div style="border-top:1px solid #262626;padding:8px 0">DECAY</div><div style="border-top:1px solid #262626;padding:8px 0">SUSTAIN / RELEASE</div></div>
-        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">OSC</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">DETUNE</div><div style="border-top:1px solid #262626;padding:8px 0">OCTAVE / MIX</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">OSC</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">DETUNE</div><div style="border-top:1px solid #262626;padding:8px 0">OCTAVE / MIX · generic; engine-named, see slot table</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">LFO</div><div style="border-top:1px solid #262626;padding:8px 0">RATE</div><div style="border-top:1px solid #262626;padding:8px 0">DEPTH</div><div style="border-top:1px solid #262626;padding:8px 0">SHAPE / DESTINATION</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">AI / HARMONY</div><div style="border-top:1px solid #262626;padding:8px 0">ARP RATE</div><div style="border-top:1px solid #262626;padding:8px 0">HUMANIZE</div><div style="border-top:1px solid #262626;padding:8px 0">ARP GATE / SWING</div></div>
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">SPECTRUM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div><div style="border-top:1px solid #262626;padding:8px 0">same as PERFORM</div></div>
@@ -127,6 +130,20 @@
         <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ENGINE SELECT / PRESETS</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">no function (dimmed)</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">no function</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">—</div></div>
       </div>
       <div style="font-size:12px;color:#8A8A8A;max-width:1000px;line-height:18px">Bar labels are abbreviated to fit 224 px: FILTER ENV AMOUNT → FLT ENV AMT, LFO → CUTOFF → LFO→CUTOFF, DESTINATION → DEST. In FX mode B6 is HOLD on every screen; SHIFT exists only in SYNTH.</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">OSC SLOTS PER ENGINE · FROM FIRMWARE · NEW</div>
+      <div style="display:grid;grid-template-columns:110px 150px 90px minmax(0,1fr) 120px 110px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:16px;color:#F2F2F2;max-width:1100px">
+        <div style="display:contents;font-size:11px;letter-spacing:1.5px;color:#7A7A7A"><div style="padding:8px 0">ENGINE</div><div style="padding:8px 0">NAV STOPS</div><div style="padding:8px 0">P1</div><div style="padding:8px 0">P2</div><div style="padding:8px 0">SHIFT P1</div><div style="padding:8px 0">SHIFT P2</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">MODEL D</div><div style="border-top:1px solid #262626;padding:8px 0">VCO 1 · 2 · 3</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">— on VCO 1 · DETUNE CT on VCO 2 · INTERVAL ST on VCO 3</div><div style="border-top:1px solid #262626;padding:8px 0">LEVEL</div><div style="border-top:1px solid #262626;padding:8px 0">NOISE</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">JUNO-106</div><div style="border-top:1px solid #262626;padding:8px 0">none (1 DCO)</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">SUB</div><div style="border-top:1px solid #262626;padding:8px 0">NOISE</div><div style="border-top:1px solid #262626;padding:8px 0;color:#5A5A6E">not used</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">PROPHET-5</div><div style="border-top:1px solid #262626;padding:8px 0">OSC A · B</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">— on A · INTERVAL ST on B</div><div style="border-top:1px solid #262626;padding:8px 0">CROSSMOD</div><div style="border-top:1px solid #262626;padding:8px 0">MIX A/B</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">OB-6</div><div style="border-top:1px solid #262626;padding:8px 0">VCO 1 · 2</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0;color:#E8B84A">SUB on VCO 1 · INTERVAL ST on VCO 2 (open)</div><div style="border-top:1px solid #262626;padding:8px 0">LEVEL</div><div style="border-top:1px solid #262626;padding:8px 0">NOISE</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">DX7</div><div style="border-top:1px solid #262626;padding:8px 0">OP 1 · 2 · 3 · 4</div><div style="border-top:1px solid #262626;padding:8px 0">RATIO</div><div style="border-top:1px solid #262626;padding:8px 0">LEVEL</div><div style="border-top:1px solid #262626;padding:8px 0">ALGORITHM</div><div style="border-top:1px solid #262626;padding:8px 0">FEEDBACK</div></div>
+        <div style="display:contents"><div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">ARP 2600</div><div style="border-top:1px solid #262626;padding:8px 0">VCO 1 · 2</div><div style="border-top:1px solid #262626;padding:8px 0">WAVE</div><div style="border-top:1px solid #262626;padding:8px 0">— on VCO 1 · RATIO on VCO 2</div><div style="border-top:1px solid #262626;padding:8px 0">RING MIX</div><div style="border-top:1px solid #262626;padding:8px 0">NOISE</div></div>
+      </div>
+      <div style="font-size:12px;color:#8A8A8A;max-width:1000px;line-height:18px">Rule: NAV stops are oscillators only. Level-only sources (SUB, NOISE, RING) sit in the chip row without a box and are edited through a slot. Each stop supplies 4 slots {name, unit, kind, range}; a null slot renders the NOT USED cell and NO FUNCTION in row 2. Pitch units: detune in cents (CT), intervals in semitones (ST); no footage.</div>
     </div>
   </div>
 
@@ -518,6 +535,62 @@
       </div>
       <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.boot }}" hint-size="440px,480px"></dc-import></sc-if>
     </div>
+
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">08g</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">BOOT SPLASH · ANIMATED</span><span style="font-size:13px;color:#8A8A8A">proposal next to 08e · 6.2 s loop in the spec, plays once on the device</span></div>
+        <div style="width:800px;height:480px;outline:1px solid #2A2A2A"><dc-import name="Boot Splash" still="{{ still }}" hint-size="800px,480px"></dc-import></div>
+      </div>
+      <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ notes.bootAnim }}" hint-size="440px,480px"></dc-import></sc-if>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #262626;padding-top:24px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#5DCAA5">11–12 · EDIT PAGES OSC (B1) AND LFO / MOD (B3) · ADDED 2026-10-12</div>
+      <div style="font-size:14px;line-height:22px;color:#8A8A8A;max-width:1100px;text-wrap:pretty">Same grammar as ENV 03a / 03b: graph 16,48 · 768×208 on SURFACE, four value cells 16,264 · 4 × 186×112. B1 / B3 open the page; the same key again returns to the last view. Everything is solid rects with no antialiasing; traces are 2 px columns. Only the LFO phase dot and destination marker animate (30 Hz); waveforms redraw on parameter change.</div>
+    </div>
+
+    <sc-for list="{{ editv }}" as="v" hint-placeholder-count="8">
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:#0A0A0A;background:#5DCAA5;padding:2px 8px">{{ v.id }}</span><span style="font-size:16px;font-weight:600;color:#F2F2F2">{{ v.title }}</span><span style="font-size:13px;color:#8A8A8A">{{ v.sub }}</span><sc-if value="{{ v.prop }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#E8B84A;border:1px solid #E8B84A;padding:1px 6px;white-space:nowrap">{{ v.propT }}</span></sc-if></div>
+          <div data-screen-label="{{ v.label }}" style="position:relative;width:800px;height:480px;background:#0A0A0A;overflow:hidden;outline:1px solid #2A2A2A;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+            <div style="position:absolute;left:0;top:0"><dc-import name="TopBar" mode="SYNTH" page="{{ v.page }}" pi="{{ -1 }}" hint-size="800px,40px"></dc-import></div>
+            <svg width="768" height="208" shape-rendering="crispEdges" style="position:absolute;left:16px;top:48px">
+              <rect x="0.5" y="0.5" width="767" height="207" fill="#141414" stroke="#242424"></rect>
+              <sc-for list="{{ v.rects }}" as="r" hint-placeholder-count="0"><rect x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.c }}"></rect></sc-for>
+            </svg>
+            <sc-if value="{{ v.hasDot }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:16px;top:48px;width:768px;height:208px;pointer-events:none">{{ v.dot }}</div></sc-if>
+            <sc-for list="{{ v.txt }}" as="t" hint-placeholder-count="0"><div style="position:absolute;left:{{ t.x }}px;top:{{ t.y }}px;font-size:{{ t.s }}px;line-height:{{ t.s }}px;font-weight:{{ t.w }};color:{{ t.c }};white-space:nowrap">{{ t.l }}</div></sc-for>
+            <div style="position:absolute;left:16px;top:264px;display:flex;gap:8px">
+              <sc-for list="{{ v.cells }}" as="c" hint-placeholder-count="4">
+                <div style="width:186px;height:112px;box-sizing:border-box;background:{{ c.bg }};border-top:4px solid {{ c.top }};outline:2px solid {{ c.ol }};outline-offset:-2px;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                    <span style="font-size:12px;line-height:16px;color:{{ c.lc }};font-weight:600;letter-spacing:1px;white-space:nowrap">{{ c.l }}</span>
+                    <span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ c.tbg }};color:{{ c.tc }};box-shadow:inset 0 0 0 1px {{ c.tbd }};white-space:nowrap">{{ c.tag }}</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <sc-if value="{{ c.hasIc }}" hint-placeholder-val="{{ false }}"><svg width="24" height="16" shape-rendering="crispEdges" style="flex:none"><sc-for list="{{ c.ic }}" as="r" hint-placeholder-count="0"><rect x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.c }}"></rect></sc-for></svg></sc-if>
+                    <span style="font-size:40px;line-height:40px;font-weight:600;color:{{ c.vc }};white-space:nowrap">{{ c.v }}</span><span style="font-size:12px;color:{{ c.lc }};white-space:nowrap;align-self:flex-end">{{ c.u }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="position:absolute;left:0;top:384px"><dc-import name="BottomBar3" mode="SYNTH" active="{{ v.active }}" shift="{{ v.shift }}" p1="{{ v.p1 }}" p2="{{ v.p2 }}" nav="{{ v.nav }}" hint-size="800px,96px"></dc-import></div>
+          </div>
+        </div>
+        <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ true }}"><dc-import name="Notes" n="{{ v.notes }}" hint-size="440px,480px"></dc-import></sc-if>
+      </div>
+    </sc-for>
+
+    <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:#C8C8C8;max-width:1100px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#E8B84A;padding-bottom:4px">CONFLICTS WITH V3 · NOTED, NOT RESOLVED</div>
+      <div>1 · The control tables name OSC SHIFT P1 / P2 OCTAVE / MIX. No engine implements OCTAVE in firmware; the page uses engine-named slots instead. Detune is shown in cents, intervals in semitones.</div>
+      <div>2 · Note 03a says B2 returns to PERFORM. This brief says the key returns to the last view (PERFORM / AI / SPECTRUM). OSC and LFO notes follow the brief; 03a is unchanged.</div>
+      <div>3 · PERFORM P2 is LFO → CUTOFF, but the firmware has no LFO yet, so that control has nothing to drive until the LFO lands. Once it does, PERFORM P2 and LFO P2 (destination CUTOFF) write the same value: lfo.depth[CUTOFF].</div>
+      <div>4 · v3 defines NAV push as “action”. On OSC it has no function; on LFO it toggles SYNC. NAV cell labels gain OSC, OP, NONE and PUSH SYNC.</div>
+      <div>5 · On DX7, SHIFT ON swaps the graph for the algorithm picker (11c2). Everywhere else SHIFT only swaps the active pair.</div>
+      <div>6 · LFO / MOD second layer: when it exists it would be the NAV-turn target on this page (LFO ↔ MOD), with a layer tab in the header row left of the shape chips. Not designed.</div>
+    </div>
   </div>
 
   <div style="display:flex;flex-direction:column;gap:40px">
@@ -545,7 +618,7 @@
         <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">ROW 2 CELLS · 32 PX HIGH</div>
         <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">P1 / P2 · 200</span><br>Idle: tag in mode colour, label GRAY, value HERO_WHITE, 2 px bar (168) in mode accent on dim track. SHIFT: whole block solid TEAL_PLUS, all text #0A0A0A, tag SHIFT P1 / P2 SHIFT. P1/P2 are encoders, so no pickup state is needed. No function: label NO FUNCTION, value —, all MONITOR_GRAY.</div>
         <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">MODE · 96</span><br>Shows where a press goes: chip filled with the target mode's colour (PURPLE chip reading FX in SYNTH, TEAL chip reading SYNTH in FX).</div>
-        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">NAV · 208</span><br>Current NAV-turn function in one word: VIEW, ENGINE, HIGHLIGHT, SLOT, LIST.</div>
+        <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">NAV · 208</span><br>Current NAV-turn function in one word: VIEW, ENGINE, HIGHLIGHT, SLOT, LIST; new: OSC, OP, NONE (one oscillator), PUSH SYNC (LFO).</div>
         <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">B6 · 96</span><br>SYNTH: SHIFT OFF / SHIFT ON (solid TEAL_PLUS) while held. FX: HOLD OFF / HOLD HELD (solid HERO_WHITE) while held; the FX sounds only while B6 is down. HERO_WHITE is not used as a fill anywhere else, so HOLD cannot be confused with a selection.</div>
         <div><span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">Disabled</span><br>Everything MONITOR_GRAY, no accent fills. Used on 08d (as a text footer) and during boot.</div>
       </div>
@@ -666,6 +739,40 @@
               <sc-if value="{{ r.en }}" hint-placeholder-val="{{ true }}"><div style="width:10px;height:10px;box-sizing:border-box;background:{{ r.sq }};border:2px solid {{ r.sb }}"></div></sc-if>
             </div>
           </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#5DCAA5">NEW · OSC / LFO COMPONENTS</div>
+      <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+        <sc-for list="{{ cs }}" as="k" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">{{ k.cap }}</div>
+            <div style="position:relative;width:{{ k.pw }}px;height:{{ k.ph }}px;background:#141414;font-family:'IBM Plex Mono',monospace">
+              <svg width="{{ k.pw }}" height="{{ k.ph }}" viewBox="0 0 {{ k.w }} {{ k.h }}" shape-rendering="crispEdges" style="position:absolute;left:0;top:0;display:block"><sc-for list="{{ k.R }}" as="r" hint-placeholder-count="0"><rect x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.c }}"></rect></sc-for></svg>
+              <sc-for list="{{ k.T }}" as="t" hint-placeholder-count="0"><div style="position:absolute;left:{{ t.x }}px;top:{{ t.y }}px;font-size:{{ t.s }}px;line-height:{{ t.s }}px;font-weight:{{ t.w }};color:{{ t.c }};white-space:nowrap">{{ t.l }}</div></sc-for>
+            </div>
+            <div style="width:{{ k.nw }}px;font-size:12px;line-height:16px;color:#8A8A8A;text-wrap:pretty">{{ k.note }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">VALUE CELL 186×112 · WITH WAVE ICON / NOT USED</div>
+          <div style="display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;background:#0A0A0A;padding:16px">
+            <sc-for list="{{ csCells }}" as="c" hint-placeholder-count="3">
+              <div style="width:186px;height:112px;box-sizing:border-box;background:{{ c.bg }};border-top:4px solid {{ c.top }};outline:2px solid {{ c.ol }};outline-offset:-2px;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                  <span style="font-size:12px;line-height:16px;color:{{ c.lc }};font-weight:600;letter-spacing:1px;white-space:nowrap">{{ c.l }}</span>
+                  <span style="font-size:12px;line-height:12px;font-weight:600;letter-spacing:1px;padding:2px 6px;background:{{ c.tbg }};color:{{ c.tc }};box-shadow:inset 0 0 0 1px {{ c.tbd }};white-space:nowrap">{{ c.tag }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <sc-if value="{{ c.hasIc }}" hint-placeholder-val="{{ false }}"><svg width="24" height="16" shape-rendering="crispEdges" style="flex:none"><sc-for list="{{ c.ic }}" as="r" hint-placeholder-count="0"><rect x="{{ r.x }}" y="{{ r.y }}" width="{{ r.w }}" height="{{ r.h }}" fill="{{ r.c }}"></rect></sc-for></svg></sc-if>
+                  <span style="font-size:40px;line-height:40px;font-weight:600;color:{{ c.vc }};white-space:nowrap">{{ c.v }}</span><span style="font-size:12px;color:{{ c.lc }};white-space:nowrap;align-self:flex-end">{{ c.u }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="width:590px;font-size:12px;line-height:16px;color:#8A8A8A;text-wrap:pretty">Discrete values (WAVE, SHAPE) get a 24×16 icon left of the T40 name, icon colour follows the value colour. NOT USED: BG fill, #1C1C1C frame, everything MONITOR_GRAY; row 2 shows NO FUNCTION for that pot.</div>
         </div>
       </div>
     </div>
@@ -824,10 +931,12 @@ class Component extends DCLogic {
       { cap: 'Disabled', mode: 'SYNTH', active: -1, nav: 'VIEW', dis: true }
     ].map(b => ({ shift: false, hold: false, pOff: false, dis: false, keys: sKeys, ...b }));
 
+    const ED = this.editPages(C, still);
     const sb = G.spectrum(t, false);
     const inSeg = (lit, pk, clip) => Array.from({ length: 31 }, (_, i) => ({ c: i === 30 ? (clip ? C.RED : C.LINE) : i === pk ? C.WHITE : i < lit ? (i >= 26 ? C.AMBER : C.GRAY) : C.LINE }));
     return {
       inSegL: inSeg(23, 25, false), inSegR: inSeg(21, 24, false), mN: { mL: 160, mR: 148, pL: 190, pR: 176, clipL: C.LINE, clipR: C.LINE }, mK: { mL: 272, mR: 266, pL: 270, pR: 270, clipL: C.RED, clipR: C.LINE },
+      editv: ED.editv, cs: ED.cs, csCells: ED.csCells,
       showNotes, still, notes: N, eng, tiles, tileStates, focusCard: eng[1].card, presetThumb: eng[0].thumb,
       keysEngine: ['OSC', 'ENV', 'LFO / MOD', 'ENGINE'], keysFx, fxEncL, fxEncR, fxP1, fxP2,
       envv, envCells, fxv, fxStates, fxCells, aiv, wheel: this.wheel, barStates,
@@ -836,6 +945,189 @@ class Component extends DCLogic {
       errDots: [0, 1, 2].map(i => ({ c: i === Math.floor(t * 2) % 3 ? C.GRAY : C.LINE })),
       stripBars: sb.map(db => ({ h: Math.max(2, Math.round((db + 60) / 72 * 70)) })), stripCurve: G.curve(766, 70, fc, S.res, 12), stripCutX: Math.round(S.cutFrac * 766) + 0.5
     };
+  }
+  editPages(C, still) {
+    if (this._ed && this._ed.still === still) return this._ed;
+    const SUR = '#141414', LN = '#242424', BG = C.BG, N = this.notes();
+    if (!this.Dot) this.Dot = function PhaseDot(p) {
+      const a = React.useRef(null), b = React.useRef(null);
+      React.useEffect(() => {
+        let raf = 0, last = 0; const t0 = performance.now();
+        const put = ph => { const x = Math.floor(ph / p.cyc * p.w / 2) * 2, v = p.val(ph);
+          if (a.current) a.current.style.transform = 'translate(' + (p.x0 + x - 4) + 'px,' + (Math.round(p.cy - v * p.amp) - 4) + 'px)';
+          if (b.current) b.current.style.transform = 'translate(' + p.bx + 'px,' + (Math.round(p.by - v * p.bd) - 2) + 'px)'; };
+        const tick = now => { raf = requestAnimationFrame(tick); if (now - last < 33) return; last = now; put(((now - t0) / 1000 * p.rate) % p.cyc); };
+        if (p.still) put(p.cyc * .3); else raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+      }, [p.still]);
+      return React.createElement('div', { style: { position: 'absolute', left: 0, top: 0, width: 768, height: 208, pointerEvents: 'none' } },
+        React.createElement('div', { ref: b, style: { position: 'absolute', left: 0, top: 0, width: p.bw, height: 4, background: '#F2F2F2' } }),
+        React.createElement('div', { ref: a, style: { position: 'absolute', left: 0, top: 0, width: 8, height: 8, background: '#F2F2F2' } }));
+    };
+    const rnd = i => { const s = Math.sin(i * 12.9898 + 4.1) * 43758.5453; return s - Math.floor(s); };
+    const SH = [.6, -.35, .9, -.7, .15, -.9, .45, -.1];
+    const wv = (k, p) => { if (k === 'S&H') return SH[((Math.floor(p) % 8) + 8) % 8]; const ph = ((p % 1) + 1) % 1;
+      return k === 'SAW' ? 2 * ph - 1 : k === 'TRI' ? (ph < .5 ? 4 * ph - 1 : 3 - 4 * ph) : k === 'SQR' ? (ph < .5 ? 1 : -1) : k === 'PULSE' ? (ph < .25 ? 1 : -1) : Math.sin(2 * Math.PI * ph); };
+    const trace = (R, k, x0, cy, w, amp, cyc, off, c, th, st) => {
+      let py = null;
+      for (let x = 0; x < w; x += st) {
+        const v = k === 'NOISE' ? rnd(x * 7 + cy) * 2 - 1 : wv(k, (x - off) / (w / cyc));
+        const y = Math.round(cy - v * amp), a = py === null ? y : Math.min(py, y), b = py === null ? y : Math.max(py, y);
+        R.push({ x: x0 + x, y: a - (th >> 1), w: st, h: b - a + th, c }); py = y;
+      }
+      return R;
+    };
+    const icon = (k, c, x, y) => trace([], k, x, y + 8, 24, 5, k === 'S&H' ? 4 : k === 'TRI' || k === 'SINE' ? 1 : 2, 0, c, 2, 1);
+    const box = (R, x, y, w, h, bc, fc, b) => { R.push({ x, y, w, h, c: bc }); if (fc !== bc) R.push({ x: x + b, y: y + b, w: w - 2 * b, h: h - 2 * b, c: fc }); };
+    const tx = (x, y, l, c, s, w) => ({ x, y, l, c, s: s || 12, w: w || 600 });
+    const toS = T => T.map(t => ({ ...t, x: t.x + 16, y: t.y + 48 }));
+    const TAGS = ['P1', 'P2', 'SHIFT P1', 'SHIFT P2'];
+    const cell = (l, v, u, tag, on, k) => ({ l, v, u, tag, bg: on ? C.TEAL_DIM : SUR, top: on ? C.TEAL_PLUS : LN, ol: 'transparent', lc: on ? C.WHITE : C.MON, vc: on ? C.WHITE : C.GRAY, tbg: on ? C.TEAL_PLUS : 'transparent', tc: on ? BG : C.MON, tbd: on ? C.TEAL_PLUS : C.MON, hasIc: !!k, ic: k ? icon(k, on ? C.TEAL_PLUS : C.GRAY, 0, 0) : [] });
+    const none = tag => ({ l: 'NOT USED', v: '—', u: '', tag, bg: BG, top: '#1C1C1C', ol: '#1C1C1C', lc: C.MON, vc: C.MON, tbg: 'transparent', tc: C.MON, tbd: LN, hasIc: false, ic: [] });
+    const cells4 = (sh, a) => a.map((x, i) => x ? cell(x[0], x[1], x[2], TAGS[i], sh ? i > 1 : i < 2, x[3]) : none(TAGS[i]));
+    const selRow = (R, T, items, sel, hint) => {
+      let x = 16;
+      items.forEach((it, i) => {
+        const on = i === sel, w = it.stop ? 104 : 72;
+        if (it.stop) { if (on) R.push({ x, y: 8, w, h: 24, c: C.TEAL_PLUS }); else box(R, x, 8, w, 24, LN, SUR, 1); }
+        T.push(tx(x + 10, 14, it.n, on ? BG : it.stop ? C.GRAY : C.MON));
+        if (it.k) R.push(...icon(it.k, on ? BG : C.GRAY, x + w - 34, 12));
+        x += w + 8;
+      });
+      if (hint) T.push(tx(x + 24, 14, hint, C.MON, 12, 400));
+    };
+    const lanes = (R, T, L, sel) => {
+      const n = L.length, lh = Math.min(64, Math.floor(160 / n));
+      [120, 352, 584].forEach(x => R.push({ x, y: 40, w: 1, h: n * lh, c: LN }));
+      L.forEach((o, i) => {
+        const top = 40 + i * lh, cy = top + (lh >> 1), on = i === sel, c = on ? C.TEAL_PLUS : C.TEAL;
+        if (i) R.push({ x: 16, y: top, w: 736, h: 1, c: '#1C1C1C' });
+        if (on) R.push({ x: 16, y: top + 4, w: 4, h: lh - 8, c: C.TEAL_PLUS });
+        T.push(tx(28, cy - 13, o.n, on ? C.TEAL_PLUS : C.GRAY), tx(28, cy + 3, o.s, on ? C.WHITE : C.MON, 12, 400));
+        trace(R, o.k, 120, cy, 464, Math.max(3, Math.round((lh / 2 - 6) * Math.max(.25, o.lv))), o.cyc, o.off || 0, c, 2, 2);
+        if (o.off) R.push({ x: 120, y: top + 3, w: o.off, h: 2, c: C.WHITE });
+        R.push({ x: 600, y: cy - 4, w: 112, h: 8, c: '#1C1C1C' }, { x: 600, y: cy - 4, w: Math.round(112 * o.lv), h: 8, c });
+        T.push(tx(720, cy - 6, String(Math.round(o.lv * 100)), on ? C.WHITE : C.GRAY));
+      });
+      T.push(tx(600, 14, 'LEVEL', C.MON, 12, 400));
+    };
+    const osc = (items, L, sel, hint) => { const R = [], T = []; selRow(R, T, items, sel, hint); lanes(R, T, L, sel); return { R, T }; };
+    const ALG = [
+      { p: [[0, 0], [0, 1], [0, 2], [0, 3]], e: [[4, 3], [3, 2], [2, 1]] },
+      { p: [[.5, 0], [.5, 1], [0, 2], [1, 2]], e: [[3, 2], [4, 2], [2, 1]] },
+      { p: [[.5, 0], [0, 1], [0, 2], [1, 1]], e: [[3, 2], [2, 1], [4, 1]] },
+      { p: [[.5, 0], [0, 1], [1, 1], [1, 2]], e: [[4, 3], [3, 1], [2, 1]] },
+      { p: [[0, 0], [0, 1], [1, 0], [1, 1]], e: [[2, 1], [4, 3]] },
+      { p: [[0, 0], [1, 0], [2, 0], [1, 1]], e: [[4, 1], [4, 2], [4, 3]] },
+      { p: [[0, 0], [1, 0], [2, 0], [2, 1]], e: [[4, 3]] },
+      { p: [[0, 0], [1, 0], [2, 0], [3, 0]], e: [] }];
+    const diag = (R, T, a, o) => {
+      const A = ALG[a - 1], hl = o.lt >> 1;
+      const P = A.p.map(([c, r]) => ({ x: Math.round(o.ox + c * o.cp), y: o.by - r * o.rp, r }));
+      const cx = k => P[k - 1].x + (o.bw >> 1);
+      A.e.forEach(([m, d]) => { const mx = cx(m), mb = P[m - 1].y + o.bh, dx = cx(d), tt = P[d - 1].y, my = Math.round((mb + tt) / 2);
+        R.push({ x: mx - hl, y: mb, w: o.lt, h: my - mb, c: o.lc }, { x: Math.min(mx, dx) - hl, y: my - hl, w: Math.abs(dx - mx) + o.lt, h: o.lt, c: o.lc }, { x: dx - hl, y: my - hl, w: o.lt, h: tt - my + hl, c: o.lc }); });
+      const f = P[3], x1 = f.x + o.bw, ym = f.y + (o.bh >> 1), c4 = cx(4), top = f.y - o.fo;
+      R.push({ x: x1, y: ym - hl, w: o.fo, h: o.lt, c: o.lc }, { x: x1 + o.fo - hl, y: top - hl, w: o.lt, h: ym - top + o.lt, c: o.lc }, { x: c4 - hl, y: top - hl, w: x1 + o.fo - c4 + hl, h: o.lt, c: o.lc }, { x: c4 - hl, y: top, w: o.lt, h: o.fo, c: o.lc });
+      const car = [1, 2, 3, 4].filter(k => P[k - 1].r === 0), busY = o.by + o.bh + o.bus;
+      car.forEach(k => R.push({ x: cx(k) - hl, y: o.by + o.bh, w: o.lt, h: o.bus, c: o.lc }));
+      const bx0 = Math.min(...car.map(cx)), bx1 = o.busEnd || Math.max(...car.map(cx));
+      R.push({ x: bx0 - hl, y: busY - hl, w: bx1 - bx0 + o.lt, h: o.lt, c: o.lc });
+      P.forEach((p, i) => { const k = i + 1, s = k === o.sel, isC = p.r === 0;
+        box(R, p.x, p.y, o.bw, o.bh, s ? o.selF : o.lc, s ? o.selF : isC ? o.car : o.modF, o.b);
+        if (o.txt) T.push(tx(p.x + 22, p.y + 8, 'OP ' + k, s ? BG : isC ? C.WHITE : C.GRAY)); });
+      return { car: car.length, fbX: x1 + o.fo + 6, fbY: ym - 6 };
+    };
+    const tile = (R, T, a, sel, x, y) => {
+      const A = ALG[a - 1], span = Math.max(...A.p.map(p => p[0])) * 20 + 16, lc = sel ? C.TEAL_PLUS : C.TEAL, bg = sel ? C.TEAL_DIM : BG;
+      if (sel) R.push({ x, y, w: 88, h: 192, c: bg }, { x, y, w: 88, h: 4, c: C.TEAL_PLUS }); else box(R, x, y, 88, 192, LN, bg, 1);
+      const d = diag(R, T, a, { ox: x + Math.round((88 - span) / 2), by: y + 130, bw: 16, bh: 12, cp: 20, rp: 22, lt: 1, fo: 4, bus: 8, lc, car: lc, modF: bg, selF: lc, sel: 0, b: 1 });
+      T.push(tx(x + 8, y + 12, String(a), sel ? C.WHITE : C.GRAY, 16), tx(x + 8, y + 164, d.car + ' OUT', sel ? C.TEAL_PLUS : C.MON, 12, 400));
+    };
+    const dx = sh => {
+      const R = [], T = [];
+      if (sh) { for (let i = 0; i < 8; i++) tile(R, T, i + 1, i === 3, 11 + i * 94, 8); return { R, T }; }
+      selRow(R, T, [1, 2, 3, 4].map(k => ({ n: 'OP ' + k, stop: 1 })), 1, 'NAV SELECTS · ALG 4 · FB 3');
+      const d = diag(R, T, 4, { ox: 40, by: 148, bw: 72, bh: 28, cp: 104, rp: 44, lt: 2, fo: 10, bus: 12, busEnd: 400, lc: C.TEAL, car: C.TEAL_DIM, modF: SUR, selF: C.TEAL_PLUS, sel: 2, b: 2, txt: true });
+      T.push(tx(d.fbX, d.fbY, 'FB 3', C.GRAY), tx(408, 182, 'OUT', C.MON, 12, 400), tx(456, 40, 'LEVEL', C.MON, 12, 400), tx(704, 40, 'RATIO', C.MON, 12, 400));
+      const ra = ['1.00', '2.00', '1.00', '3.50'];
+      [99, 78, 62, 45].forEach((v, i) => { const on = i === 1, y = 60 + i * 30, c = on ? C.TEAL_PLUS : C.TEAL;
+        T.push(tx(456, y, 'OP ' + (i + 1), on ? C.TEAL_PLUS : C.GRAY), tx(672, y, String(v), on ? C.WHITE : C.GRAY), tx(704, y, '×' + ra[i], on ? C.WHITE : C.MON, 12, 400));
+        R.push({ x: 504, y: y + 2, w: 160, h: 8, c: '#1C1C1C' }, { x: 504, y: y + 2, w: Math.round(160 * v / 99), h: 8, c }); });
+      box(R, 456, 182, 12, 12, C.TEAL, C.TEAL_DIM, 2); box(R, 560, 182, 12, 12, C.TEAL, SUR, 2);
+      T.push(tx(476, 182, 'CARRIER', C.MON, 12, 400), tx(580, 182, 'MODULATOR', C.MON, 12, 400));
+      return { R, T };
+    };
+    const lfoG = (sh, o) => {
+      const R = [], T = [];
+      ['SINE', 'TRI', 'SAW', 'SQR', 'S&H'].forEach((k, i) => { const x = 16 + i * 52, on = k === o.shape;
+        if (on) R.push({ x, y: 8, w: 48, h: 24, c: sh ? C.TEAL_PLUS : C.TEAL_DIM }); else box(R, x, 8, 48, 24, LN, SUR, 1);
+        R.push(...icon(k, on ? (sh ? BG : C.TEAL_PLUS) : sh ? C.GRAY : C.MON, x + 12, 12)); });
+      ['CUTOFF', 'PITCH', 'AMP', 'PWM'].forEach((k, i) => { const x = 480 + i * 68, on = k === o.dest;
+        if (on) R.push({ x, y: 8, w: 64, h: 24, c: sh ? C.TEAL_PLUS : C.TEAL_DIM }); else box(R, x, 8, 64, 24, LN, SUR, 1);
+        T.push(tx(x + 8, 14, k, on ? (sh ? BG : C.WHITE) : sh ? C.GRAY : C.MON));
+        if (o.dep.includes(k)) R.push({ x: x + 56, y: 12, w: 4, h: 4, c: on ? (sh ? BG : C.TEAL_PLUS) : C.TEAL }); });
+      T.push(tx(288, 12, o.rv, C.WHITE, 16), tx(288 + o.rv.length * 10 + 8, 14, o.rs, C.MON, 12, 400));
+      const w = 512, x0 = 24, cy = 124, amp = 56, cyc = o.shape === 'S&H' ? 8 : 2, step = w / cyc;
+      R.push({ x: x0, y: cy, w, h: 1, c: LN });
+      for (let i = 0; i <= cyc; i++) R.push({ x: x0 + Math.round(i * step), y: 44, w: 1, h: 148, c: LN });
+      if (o.sync) { const beats = cyc * o.div; for (let b = 0; b < beats; b++) { const bx = x0 + Math.round(b * w / beats); R.push({ x: bx, y: 44, w: 2, h: 8, c: C.WHITE }); T.push(tx(bx + 4, 186, 'BEAT ' + (b + 1), C.MON, 12, 400)); } }
+      else T.push(tx(28, 186, '0', C.MON, 12, 400), tx(284, 186, '0.42 S', C.MON, 12, 400), tx(492, 186, '0.83 S', C.MON, 12, 400));
+      trace(R, o.shape, x0, cy, w, amp, cyc, 0, C.TEAL_PLUS, 2, 2);
+      T.push(tx(560, 40, '→ ' + o.dest, C.TEAL_PLUS));
+      R.push({ x: 568, y: 64, w: 12, h: 116, c: '#1C1C1C' }, { x: 568, y: o.by - o.bd, w: 12, h: 2 * o.bd, c: C.TEAL_DIM }, { x: 564, y: o.by - 1, w: 20, h: 2, c: C.GRAY });
+      T.push(tx(592, o.by - o.bd - 6, o.hi, C.GRAY, 12, 400), tx(592, o.by - 6, o.base, C.WHITE), tx(592, o.by + o.bd - 6, o.lo, C.GRAY, 12, 400), tx(560, 186, 'DEPTH ' + o.dv, C.MON, 12, 400));
+      const dot = React.createElement(this.Dot, { key: o.id, still, x0, w, cyc, cy, amp, rate: o.rate, by: o.by, bd: o.bd, bx: 564, bw: 20, val: p => wv(o.shape, p) });
+      return { R, T, dot };
+    };
+    const S = (o, g) => ({ prop: false, propT: '', active: 0, ...o, rects: g.R, txt: toS(g.T), dot: g.dot || null, hasDot: !!g.dot });
+    const md = [{ n: 'VCO 1', k: 'SAW', stop: 1 }, { n: 'VCO 2', k: 'SAW', stop: 1 }, { n: 'VCO 3', k: 'SQR', stop: 1 }, { n: 'NOISE' }];
+    const mdL = [{ n: 'VCO 1', s: 'REF', k: 'SAW', lv: .8, cyc: 2 }, { n: 'VCO 2', s: '+7 CT', k: 'SAW', lv: .72, cyc: 2, off: 14 }, { n: 'VCO 3', s: '−12 ST', k: 'SQR', lv: .5, cyc: 1 }, { n: 'NOISE', s: 'WHITE', k: 'NOISE', lv: .12, cyc: 1 }];
+    const mdCells = [['WAVE', 'SAW', '', 'SAW'], ['DETUNE', '+7', 'CT'], ['LEVEL', '72', '%'], ['NOISE', '12', '%']];
+    const lfoA = { id: '12a', shape: 'TRI', dest: 'CUTOFF', dep: ['CUTOFF', 'PITCH'], rv: '2.40 HZ', rs: 'FREE · 0.42 S', sync: false, rate: 2.4, by: 110, bd: 23, hi: '2090', base: '1240 HZ', lo: '740', dv: '20 %' };
+    const lfoB = { id: '12b', shape: 'S&H', dest: 'PITCH', dep: ['CUTOFF', 'PITCH'], rv: '1/8', rs: 'SYNC 124 BPM', sync: true, div: .5, rate: 124 / 60 * 2, by: 122, bd: 15, hi: '+3 ST', base: '0 ST', lo: '−3 ST', dv: '3 ST' };
+    const editv = [
+      S({ id: '11a', label: '11a OSC Model D', title: 'OSC · MODEL D · SHIFT OFF', sub: 'VCO 2 selected · P1 WAVE, P2 DETUNE · NAV selects the VCO', page: 'OSC · MODEL D', shift: false, nav: 'OSC',
+        cells: cells4(false, mdCells), p1: { l: 'WAVE', v: 'SAW', u: '', f: 0 }, p2: { l: 'DETUNE', v: '+7', u: 'CT', f: .57 }, notes: N.osc }, osc(md, mdL, 1, 'NAV SELECTS')),
+      S({ id: '11b', label: '11b OSC Model D Shift', title: 'OSC · MODEL D · SHIFT ON', sub: 'B6 held · P1 LEVEL (VCO 2), P2 NOISE', page: 'OSC · MODEL D', shift: true, nav: 'OSC',
+        cells: cells4(true, mdCells), p1: { l: 'LEVEL', v: '72', u: '%', f: .72 }, p2: { l: 'NOISE', v: '12', u: '%', f: .12 }, notes: N.oscOn }, osc(md, mdL, 1, 'NAV SELECTS')),
+      S({ id: '11c', label: '11c OSC DX7', title: 'OSC · DX7 · SHIFT OFF', sub: 'OP 2 selected · algorithm 4 · P1 RATIO, P2 LEVEL', page: 'OSC · DX7', prop: true, propT: 'PROPOSAL · ADR-005', shift: false, nav: 'OP',
+        cells: cells4(false, [['RATIO', '2.00', '×'], ['LEVEL', '78', ''], ['ALGORITHM', '4', 'OF 8'], ['FEEDBACK', '3', 'OF 7']]), p1: { l: 'RATIO', v: '2.00', u: '×', f: .1 }, p2: { l: 'LEVEL', v: '78', u: '', f: .78 }, notes: N.dx7 }, dx(false)),
+      S({ id: '11c2', label: '11c2 OSC DX7 Algorithms', title: 'OSC · DX7 · SHIFT ON · ALGORITHM PICKER', sub: 'B6 held · P1 ALGORITHM, P2 FEEDBACK · graph shows all 8', page: 'OSC · DX7', prop: true, propT: 'PROPOSAL · ADR-005', shift: true, nav: 'OP',
+        cells: cells4(true, [['RATIO', '2.00', '×'], ['LEVEL', '78', ''], ['ALGORITHM', '4', 'OF 8'], ['FEEDBACK', '3', 'OF 7']]), p1: { l: 'ALGORITHM', v: '4', u: '', f: .43 }, p2: { l: 'FEEDBACK', v: '3', u: '', f: .43 }, notes: N.dx7Alg }, dx(true)),
+      S({ id: '11d', label: '11d OSC Juno-106', title: 'OSC · JUNO-106', sub: '1 DCO + SUB + NOISE · NAV has no function · SHIFT P2 not used', page: 'OSC · JUNO-106', shift: false, nav: 'NONE',
+        cells: cells4(false, [['WAVE', 'SAW', '', 'SAW'], ['SUB', '60', '%'], ['NOISE', '10', '%'], null]), p1: { l: 'WAVE', v: 'SAW', u: '', f: 0 }, p2: { l: 'SUB', v: '60', u: '%', f: .6 }, notes: N.juno },
+        osc([{ n: 'DCO', k: 'SAW', stop: 1 }, { n: 'SUB' }, { n: 'NOISE' }], [{ n: 'DCO', s: '1 OSC', k: 'SAW', lv: 1, cyc: 2 }, { n: 'SUB', s: '−1 OCT', k: 'SQR', lv: .6, cyc: 1 }, { n: 'NOISE', s: 'WHITE', k: 'NOISE', lv: .1, cyc: 1 }], 0, 'NAV · NO FUNCTION · 1 OSCILLATOR')),
+      S({ id: '11e', label: '11e OSC Prophet-5', title: 'OSC · PROPHET-5', sub: 'OSC B selected · P2 INTERVAL · SHIFT P1 CROSSMOD, P2 MIX A/B', page: 'OSC · PROPHET-5', shift: false, nav: 'OSC',
+        cells: cells4(false, [['WAVE', 'PULSE', '', 'PULSE'], ['INTERVAL', '+7', 'ST'], ['CROSSMOD', '30', '%'], ['MIX A/B', '60:40', '']]), p1: { l: 'WAVE', v: 'PULSE', u: '', f: 1 }, p2: { l: 'INTERVAL', v: '+7', u: 'ST', f: .65 }, notes: N.prophet },
+        osc([{ n: 'OSC A', k: 'SAW', stop: 1 }, { n: 'OSC B', k: 'PULSE', stop: 1 }], [{ n: 'OSC A', s: 'XMOD 30%', k: 'SAW', lv: .6, cyc: 2 }, { n: 'OSC B', s: '+7 ST', k: 'PULSE', lv: .4, cyc: 2 * Math.pow(2, 7 / 12) }], 1, 'NAV SELECTS')),
+      S({ id: '12a', label: '12a LFO', title: 'LFO / MOD · SHIFT OFF', sub: 'RATE free 2.40 Hz · TRI → CUTOFF 20 % · live phase dot', page: 'LFO · MODEL D', prop: true, propT: 'SPEC · NOT IN FIRMWARE YET', active: 2, shift: false, nav: 'PUSH SYNC',
+        cells: cells4(false, [['RATE', '2.40', 'HZ'], ['DEPTH', '20', '%'], ['SHAPE', 'TRI', '', 'TRI'], ['DEST', 'CUTOFF', '']]), p1: { l: 'RATE', v: '2.40', u: 'HZ', f: .3 }, p2: { l: 'DEPTH', v: '20', u: '%', f: .2 }, notes: N.lfo }, lfoG(false, lfoA)),
+      S({ id: '12b', label: '12b LFO Shift', title: 'LFO / MOD · SHIFT ON', sub: 'B6 held · P1 SHAPE, P2 DESTINATION · RATE synced 1/8 · S&H → PITCH', page: 'LFO · MODEL D', prop: true, propT: 'SPEC · NOT IN FIRMWARE YET', active: 2, shift: true, nav: 'PUSH SYNC',
+        cells: cells4(true, [['RATE', '1/8', 'SYNC'], ['DEPTH', '3', 'ST'], ['SHAPE', 'S&H', '', 'S&H'], ['DEST', 'PITCH', '']]), p1: { l: 'SHAPE', v: 'S&H', u: '', f: 1 }, p2: { l: 'DEST', v: 'PITCH', u: '', f: .33 }, notes: N.lfoOn }, lfoG(true, lfoB))
+    ];
+    const K = (cap, w, h, sc, g, note) => ({ cap, w, h, pw: w * sc, ph: h * sc, R: g.R, T: g.T, note, nw: Math.max(240, Math.min(560, w * sc)) });
+    const g1 = { R: [], T: [] }; selRow(g1.R, g1.T, [{ n: 'VCO 1', k: 'SAW', stop: 1 }, { n: 'VCO 2', k: 'TRI', stop: 1 }, { n: 'NOISE' }], 0, '');
+    const KS = ['SAW', 'TRI', 'SQR', 'PULSE', 'SINE', 'S&H', 'NOISE'];
+    const g2 = { R: [], T: [] }; KS.forEach((k, i) => { g2.R.push(...icon(k, C.TEAL_PLUS, 8 + i * 56, 8)); g2.T.push(tx(8 + i * 56, 30, k, C.MON, 12, 400)); });
+    const g3 = { R: [], T: [] }; KS.forEach((k, i) => g3.R.push(...icon(k, C.TEAL_PLUS, 4 + i * 30, 2)));
+    const g4 = { R: [], T: [] };
+    box(g4.R, 8, 8, 72, 28, C.TEAL_PLUS, C.TEAL_PLUS, 2); box(g4.R, 96, 8, 72, 28, C.TEAL, C.TEAL_DIM, 2); box(g4.R, 184, 8, 72, 28, C.TEAL, SUR, 2);
+    g4.T.push(tx(30, 16, 'OP 2', BG), tx(118, 16, 'OP 1', C.WHITE), tx(206, 16, 'OP 3', C.GRAY));
+    const g5 = { R: [], T: [] }; tile(g5.R, g5.T, 4, true, 8, 8); tile(g5.R, g5.T, 6, false, 104, 8);
+    const g6 = { R: [], T: [] }; g6.R.push({ x: 8, y: 40, w: 128, h: 1, c: LN }); trace(g6.R, 'TRI', 8, 40, 128, 24, 2, 0, C.TEAL_PLUS, 2, 2);
+    g6.R.push({ x: 8 + 38 - 4, y: Math.round(40 - wv('TRI', .6) * 24) - 4, w: 8, h: 8, c: C.WHITE }, { x: 168, y: 8, w: 12, h: 64, c: '#1C1C1C' }, { x: 168, y: 26, w: 12, h: 28, c: C.TEAL_DIM }, { x: 164, y: 39, w: 20, h: 2, c: C.GRAY }, { x: 164, y: Math.round(40 - wv('TRI', .6) * 14) - 2, w: 20, h: 4, c: C.WHITE });
+    const cs = [
+      K('OSC SELECT ROW · CHIP 104×24 · SELECTED / NAV STOP / LEVEL-ONLY', 400, 40, 1, g1, 'Selected: solid TEAL_PLUS, #0A0A0A text and icon. NAV stop: SURFACE with 1 px LINE frame, GRAY. Level-only source (SUB, NOISE, RING): 72 wide, no frame, MONITOR_GRAY; never a NAV stop. Hint text after the last chip.'),
+      K('WAVE ICON 24×16 · 1×', 400, 48, 1, g2, 'Drawn as 1 px columns, 2 px thick, same routine as the graph traces. Used in the select row, value cells and LFO shape chips. Export as 1-bit A8 masks and tint at draw time.'),
+      K('WAVE ICON · 4× PIXEL DETAIL', 212, 20, 4, g3, 'SAW · TRI · SQR · PULSE (25 %) · SINE · S&H (4 steps) · NOISE.'),
+      K('FM OPERATOR 72×28 · SELECTED / CARRIER / MODULATOR', 264, 44, 1, g4, 'Selected: solid TEAL_PLUS. Carrier: TEAL_DIM fill, 2 px TEAL frame. Modulator: SURFACE fill, 2 px TEAL frame. Connections 2 px TEAL, orthogonal; OP 4 feedback loop 10 px.'),
+      K('ALGORITHM TILE 88×192 · SELECTED / IDLE', 200, 208, 1, g5, 'Mini operators 16×12, 1 px lines, col pitch 20, row pitch 22. Selected: TEAL_DIM + 4 px TEAL_PLUS top. Bottom line counts carriers.'),
+      K('PHASE DOT 8×8 + DESTINATION METER 12×116 (SHOWN 64)', 200, 80, 1, g6, 'Dot HERO_WHITE, centred on the trace at the engine phase. Meter: track #1C1C1C, sweep band TEAL_DIM = ±depth, base tick 20×2 GRAY, live marker 20×4 HERO_WHITE. Dot and marker move together at 30 Hz; nothing else animates.')
+    ];
+    const csCells = [cell('WAVE', 'SAW', '', 'P1', true, 'SAW'), cell('SHAPE', 'S&H', '', 'SHIFT P1', false, 'S&H'), none('SHIFT P2')];
+    this._ed = { still, editv, cs, csCells };
+    return this._ed;
   }
   notes() {
     if (this._n) return this._n;
@@ -930,6 +1222,51 @@ class Component extends DCLogic {
         a: [['Dots', '3 × 8×8 · 2 Hz']],
         d: [['Trigger', 'Engine link status = lost (heartbeat timeout TBD)']],
         s: [['Red rule', '64,120 · 8×160'], ['Title', '96,152 · T40'], ['Retry box', '96,296 · 280×48'], ['Footer', '0,384 · 800×96']] },
+      osc: {
+        c: [['P1', 'WAVE of the selected VCO: SAW · TRI · SQR · PULSE (one detent per shape)'], ['P2', 'DETUNE on VCO 2 (cents) · INTERVAL on VCO 3 (semitones) · not used on VCO 1 (reference)'], ['SHIFT + P1 / P2', 'LEVEL of the selected VCO / NOISE level → 11b'], ['NAV turn', 'Selects VCO 1 → 2 → 3, wraps. P1 / P2 follow the selection'], ['NAV push', 'No function'], ['B1', 'Back to the last view (PERFORM / AI / SPECTRUM)'], ...synthSys, ...synthEnc],
+        a: [['Select row', '2 chips repaint per NAV step'], ['Lane', '464×h trace redraws only when its WAVE / pitch / level changes'], ['Level bars', '112×8 · on level change'], ['Cells', '186×112 · on pot change, ≤30 Hz']],
+        d: [['Template', 'engine.osc.stops[] {name, waves[]} · engine.osc.slots[stop][4] {name, unit, kind enum|num, value, min, max} or null'], ['Wave', 'osc[n].wave (index into waves[])'], ['Pitch', 'osc[2].detune_ct · osc[3].interval_st'], ['Levels', 'osc[n].level · noise.level'], ['Selection', 'ui.osc_sel']],
+        s: [['Graph', '16,48 · 768×208'], ['Select row', '32,56 · chips 104×24, gap 8 · level-only 72×24 · icon at chip x+70'], ['Lanes', '32,88 · 736×160 · h = min(64, 160 / n) · 4 lanes × 40 here'], ['Lane label', '44 · name T12/600 · sub T12 · selected = 4 px TEAL_PLUS bar at x 32'], ['Trace', '136 · 464 w = 2 cycles of VCO 1 · 2 px columns'], ['Ref lines', 'x 136 / 368 / 600 · 1 px LINE'], ['Detune', 'shift 2 px per cent (display exaggeration) + 2 px HERO_WHITE bracket'], ['Level bars', '616 · 112×8 · value T12 at 736'], ['Cells', '16,264 · 4 × 186×112, gap 8'], bar] },
+      oscOn: {
+        c: [['B6 held', 'P1 LEVEL of the selected VCO, P2 NOISE'], ['NAV while held', 'Still moves the selection; SHIFT P1 follows it'], ['B6 released', 'Back to WAVE / DETUNE']],
+        a: [['Pair swap', '4 cells + row-2 blocks repaint once on SHIFT change']],
+        d: [['State', 'ui.shift = true']],
+        s: [['Active cells', 'LEVEL, NOISE: TEAL_DIM + TEAL_PLUS top'], ['P blocks', 'Solid TEAL_PLUS']] },
+      dx7: {
+        c: [['P1', 'RATIO of the selected operator, coarse steps 0.50 · 1 · 2 … 31'], ['P2', 'LEVEL 0–99'], ['SHIFT + P1 / P2', 'ALGORITHM 1–8 / FEEDBACK 0–7 (OP 4) → 11c2'], ['NAV turn', 'Selects OP 1 → 4, wraps'], ['NAV push', 'No function'], ['Fine ratio', 'No control on this page (open, ADR-005)'], ['B1', 'Back to the last view'], ...synthSys, ...synthEnc],
+        a: [['Diagram', '400×156 · redraw on algorithm change only'], ['Selection', 'op box + chip + level row repaint per NAV step'], ['Level bars', '4 × 160×8 · on level change']],
+        d: [['Operators', 'op[n].ratio_coarse · op[n].ratio_fine · op[n].level'], ['Global', 'fm.algorithm 1–8 · fm.feedback 0–7'], ['Topology', 'static UI table: alg[8] {pos[4] col,row · edges[] · carriers}'], ['Not here', 'op[n].env (stays on ENV)'], ['Status', 'FM engine in development, ADR-005']],
+        s: [['Select row', '32,56 · 4 chips 104×24'], ['Op box', '72×28 · 2 px frame · col pitch 104 · row pitch 44 · bottom row y 196'], ['Diagram origin', '56,108 (OP 4 here)'], ['Edges', '2 px TEAL · down / across / down'], ['Feedback', 'OP 4 · 10 px loop, label FB n'], ['Out bus', 'y 236 to x 416, label OUT'], ['Levels', '472,108 · 4 rows × 30 · bar 160×8 · ratio T12 at 720'], ['Legend', '472,230 · 12×12 swatches'], bar] },
+      dx7Alg: {
+        c: [['B6 held', 'Graph becomes the picker. P1 moves the selection live (no confirm), P2 FEEDBACK'], ['B6 released', 'Back to 11c with the new algorithm'], ['NAV', 'Still selects the operator (not shown in the picker)']],
+        a: [['Picker', '768×208 full repaint on SHIFT change · then 2 tiles per ALGORITHM step']],
+        d: [['Value', 'fm.algorithm · fm.feedback']],
+        s: [['Tiles', '27,56 · 8 × 88×192, gap 6'], ['Selected', 'TEAL_DIM + 4 px TEAL_PLUS top'], ['Mini op', '16×12 · 1 px · col 20 · row 22 · bottom row at tile y+130'], ['Number', 'T16/600 at +8,+12'], ['Carrier count', 'T12 at +8,+164']] },
+      juno: {
+        c: [['NAV turn', 'No function: one oscillator. Row still shows DCO selected; NAV cell reads NONE'], ['P1', 'WAVE of the DCO'], ['P2', 'SUB level (square, −1 oct, fixed)'], ['SHIFT + P1', 'NOISE level'], ['SHIFT + P2', 'Not used: cell NOT USED, row 2 NO FUNCTION'], ['B1', 'Back to the last view'], ...synthSys, ...synthEnc],
+        a: [['Lanes', 'Same rules as 11a']],
+        d: [['Values', 'osc[1].wave · sub.level · noise.level'], ['Template', 'slots[0][3] = null']],
+        s: [['Select row', 'DCO 104×24 + SUB, NOISE level-only'], ['Lanes', '3 × 53'], ['SUB trace', '1 cycle in the window (−1 oct)'], ['Unused cell', 'BG fill, #1C1C1C frame, all MONITOR_GRAY'], bar] },
+      prophet: {
+        c: [['NAV turn', 'OSC A ↔ OSC B'], ['P1', 'WAVE: SAW · TRI · PULSE'], ['P2', 'INTERVAL of OSC B −24…+24 ST; not used on OSC A'], ['SHIFT + P1', 'CROSSMOD B → A 0–100 %'], ['SHIFT + P2', 'MIX A/B, centre detent 50:50'], ['B1', 'Back to the last view'], ...synthSys, ...synthEnc],
+        a: [['Lanes', 'Same rules as 11a; XMOD is shown as text, not drawn into the trace']],
+        d: [['Values', 'osc[1..2].wave · osc[2].interval_st · xmod.amount · mix.ab']],
+        s: [['Lanes', '2 × 64'], ['OSC B trace', '3.0 cycles at +7 ST'], ['Label check', 'longest slot so far CROSSMOD / ALGORITHM (9 ch T12 ≈ 65 px) fits beside the tag'], bar] },
+      lfo: {
+        c: [['P1', 'RATE 0.05–20 Hz (FREE) or division (SYNC)'], ['P2', 'DEPTH of the selected destination. For CUTOFF this is the same value as PERFORM P2'], ['SHIFT + P1 / P2', 'SHAPE / DESTINATION → 12b'], ['NAV push', 'SYNC on/off; on enable RATE snaps to the nearest division'], ['NAV turn', 'Reserved for LFO ↔ MOD when the second layer exists'], ['B3', 'Back to the last view'], ...synthSys, ...synthEnc],
+        a: [['Phase dot', '8×8 · 30 Hz · invalidate old + new rect'], ['Dest marker', '20×4 · same 30 Hz tick'], ['Waveform', '512×148 · on SHAPE or SYNC change only'], ['Header chips', 'on SHAPE / DEST change']],
+        d: [['To add', 'lfo.shape enum SINE TRI SAW SQR SH'], ['', 'lfo.rate_hz · lfo.sync bool · lfo.division enum (1/4 1/8 1/16 1/8T …)'], ['', 'lfo.depth[4] CUTOFF PITCH AMP PWM, one value per destination, all active at once'], ['', 'lfo.phase 0–1 at 30 Hz · lfo.sh_value'], ['Existing', 'filter.cutoff (meter base) · ai.bpm (sync)'], ['UI', 'ui.lfo_dest (which depth P2 edits)']],
+        s: [['Shape chips', '32,56 · 5 × 48×24, gap 4 · icon 24×16'], ['Rate readout', '304,60 · T16 + T12'], ['Dest chips', '496,56 · 4 × 64×24, gap 4 · 4×4 dot = depth ≠ 0'], ['Wave', '40,92 · 512×148 · 2 cycles · zero line y 172 · ±56'], ['Cycle lines', 'x 40 / 296 / 552 · 1 px LINE'], ['Axis', 'y 234 · T12 · seconds'], ['Dest meter', '584,112 · 12×116 · band ±depth · base tick 20×2'], bar] },
+      lfoOn: {
+        c: [['B6 held', 'P1 SHAPE, P2 DESTINATION'], ['DEST', 'Changes which depth P2 edits and what the meter shows; other depths keep running'], ['SYNC', 'RATE cell shows the division; header shows SYNC + BPM; beat ticks replace seconds'], ['S&H', 'Window shows 8 steps (one per period) instead of 2 cycles']],
+        a: [['Pair swap', '4 cells + header chips repaint once on SHIFT change'], ['Dot', 'Keeps running at 30 Hz']],
+        d: [['State', 'lfo.sync = true · lfo.division = 1/8 · ai.bpm 124 → 4.13 Hz']],
+        s: [['Beat ticks', 'HERO_WHITE 2×8 at y 92, one per beat · labels BEAT n at y 234'], ['Chips (SHIFT)', 'selected solid TEAL_PLUS, others GRAY']] },
+      bootAnim: {
+        c: [['None', 'No input until READY; then cuts to PERFORM (or last view)'], ['VOL', 'Live from power-on']],
+        a: [['0.0–0.4 s', 'Baseline 2 px TEAL_PLUS grows from centre to 768 px'], ['0.4–1.4 s', '32 bars 20 w rise left → right with a travelling resonant peak (filter sweep); front bar HERO_WHITE'], ['1.0–1.7 s', 'Wordmark typed, 1 letter / 60 ms, 24×40 TEAL_PLUS block cursor'], ['1.8–4.6 s', 'Engine thumbs 120×80 light up one by one (opa 15 → 100 %), load bar 32 × 20×8 fills'], ['4.6–5.1 s', 'READY: bars pulse from the centre, 2 frames HERO_WHITE flash on bars + segments'], ['Rate', '30 Hz; dirty area ≤ 768×150 bars + 760×8 bar']],
+        d: [['Progress', 'boot.step (link · engine n/6 · AI models · FX rack · ready)'], ['Thumbs', 'Same 120×80 RGB565 assets as ENGINE SELECT'], ['Idle bars', 'Fake until the audio link is up; may switch to spectrum[32] once linked']],
+        s: [['Bars', '18,50 · 32 × 20 w, pitch 24, baseline y 200, max h 150'], ['Wordmark', '257,216 · 11 cells × 26 · T40/600'], ['Sub', 'y 268 · T16 TEAL_PLUS · spacing 4'], ['Thumbs', '20,296 · 6 × 120×80, gap 8 · status bar 4 px at y 380 · name T12 at y 390'], ['Load bar', '18,420 · 32 × 20×8 on the bar pitch'], ['Status', '18,444 T12 · % right T16'], ['Fade', 'full-screen BG at opa 0 → 100 % over 400 ms before PERFORM']] },
       boot: {
         c: [['None', 'No input until handshake']],
         a: [['Progress', '320×4 · per boot step']],
