@@ -14,6 +14,7 @@ struct FxParam {
     const char* unit;
     float lo, hi, def;
     uint8_t decimals;
+    const char* const* labels = nullptr;  ///< parámetro de opciones: el valor es el índice
 };
 
 struct FxInfo {
@@ -27,8 +28,8 @@ struct FxInfo {
 /**
  * @brief Los 12 Signature Effects (05-fx-architecture.md §1).
  *
- * Los tres parámetros son los tres primeros "Parámetros user" del spec sin contar Mix (que va
- * en ENC L). El diseño FX Viz usa nombres de trabajo para los parámetros 2/3; manda el spec.
+ * ENC R es el parámetro principal de 01-architecture.md §3.4; P1 / P2, los dos "Parámetros user"
+ * siguientes (05 §1.13). ENC L es siempre Mix (DRY/WET).
  */
 extern const FxInfo FX_CATALOG[FX_SLOTS];
 

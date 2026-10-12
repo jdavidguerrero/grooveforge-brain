@@ -326,7 +326,7 @@ void sig_granular(const Painter& p, const StudioState& s, const Pal& c, VizState
 void sig_verb(const Painter& p, bool spring, const float* val, const Pal& c, uint32_t since_attack) {
     constexpr float AX = 56, TOP = 36, BOT = 220, AW = 660;
     const float dec = std::max(0.1f, val[1]);
-    const float pre = spring ? val[3] / 1000.0f : 0.02f;
+    const float pre = 0.02f;  // pre-delay fuera del panel (05 §1.13)
     const float dur = 1.5f * dec + pre;
     const float pt = since_attack / 1000.0f;
 
@@ -366,7 +366,7 @@ void sig_verb(const Painter& p, bool spring, const float* val, const Pal& c, uin
         std::snprintf(t, sizeof(t), "DECAY %.1f S · BOUNCE 28 MS", double(dec));
         legend(p, {{c.p, "PLATE", false}, {c.pb, "SPRING", false}}, t);
     } else {
-        std::snprintf(t, sizeof(t), "DECAY %.1f S · PRE %d MS", double(dec), int(pre * 1000));
+        std::snprintf(t, sizeof(t), "DECAY %.1f S · PRE %d MS", double(dec), int(std::lround(pre * 1000)));
         legend(p, {{c.p, "TAIL PLAYED", false}, {PURPLE_DIM, "UPCOMING", false}}, t);
     }
 }
@@ -374,7 +374,7 @@ void sig_verb(const Painter& p, bool spring, const float* val, const Pal& c, uin
 /// Phase Chorus: retardo de las 3 voces en un ciclo del LFO.
 void sig_chorus(const Painter& p, const StudioState& s, const float* val, const Pal& c) {
     constexpr float AX = 56, AW = 656, TOP = 36, BOT = 220;
-    const float depth = val[2] / 100.0f * 8.0f;  // DEPTH 50 % = ±4 ms
+    const float depth = val[1] / 100.0f * 8.0f;  // DEPTH (ENC R) 50 % = ±4 ms
     auto y = [](float ms) { return BOT - (ms - 5) / 10 * (BOT - TOP); };
     const uint32_t col[3] = {c.pb, c.live, c.p};
     for (int ms : {5, 10, 15}) {
@@ -397,7 +397,7 @@ void sig_chorus(const Painter& p, const StudioState& s, const float* val, const 
     static const char* const DEG[5] = {"0°", "90°", "180°", "270°", "360°"};
     for (int i = 0; i < 5; ++i) p.text(AX + i * AW / 4, 240, DEG[i], MON, T12, LV_TEXT_ALIGN_CENTER);
     char t[80];
-    std::snprintf(t, sizeof(t), "DELAY (MS) OVER ONE LFO CYCLE · RATE %.1f HZ · ±%.0f MS", double(val[1]), double(depth));
+    std::snprintf(t, sizeof(t), "DELAY (MS) OVER ONE LFO CYCLE · RATE %.1f HZ · ±%.0f MS", double(val[2]), double(depth));
     legend(p, {{c.pb, "V1", false}, {c.live, "V2", false}, {c.p, "V3", false}}, t);
 }
 

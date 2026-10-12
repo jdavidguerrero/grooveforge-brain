@@ -1,11 +1,17 @@
 #include "state/fx_catalog.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
+
+namespace {
+const char* const MATERIALS[] = {"BELL", "GUADUA", "GLASS", "WOOD"};
+const char* const ALGORITHMS[] = {"SPRING", "PLATE", "BLEND"};
+}  // namespace
 
 const FxInfo FX_CATALOG[FX_SLOTS] = {
     {"CYMATIC RESONATOR", true, FxRoute::Insert, FxSig::Cymatic,
-     {{"DENSITY", "MODES", 1, 4, 4, 0}, {"TUNE", "", 1, 4, 1.59f, 2}, {"RESONANCE", "%", 0, 100, 70, 0}}},
+     {{"RESON", "%", 0, 100, 70, 0}, {"DENSITY", "MODES", 1, 4, 4, 0}, {"TUNE", "", 1, 4, 1.59f, 2}}},
     {"GRANULAR CLOUD", true, FxRoute::Insert, FxSig::Granular,
      {{"SIZE", "MS", 5, 500, 120, 0}, {"DENSITY", "/S", 1, 50, 40, 0}, {"PITCH SPRD", "ST", 0, 12, 7, 0}}},
     {"GHOST ECHO", true, FxRoute::Send, FxSig::Ghost,
@@ -17,13 +23,13 @@ const FxInfo FX_CATALOG[FX_SLOTS] = {
     {"BIT SCULPT", true, FxRoute::Insert, FxSig::Bit,
      {{"BITS", "", 1, 16, 4, 0}, {"RATE", "KHZ", 1, 48, 12, 0}, {"SCULPT", "%", 0, 100, 30, 0}}},
     {"MODAL REVERB", true, FxRoute::Send, FxSig::Modal,
-     {{"DECAY", "S", 0.2f, 8, 2.4f, 1}, {"SIZE", "%", 0, 100, 50, 0}, {"DIFFUSION", "%", 0, 100, 60, 0}}},
+     {{"DECAY", "S", 0.2f, 8, 2.4f, 1}, {"MATERIAL", "", 0, 3, 1, 0, MATERIALS}, {"SIZE", "%", 0, 100, 50, 0}}},
     {"PHASE CHORUS", true, FxRoute::Insert, FxSig::Chorus,
-     {{"RATE", "HZ", 0.1f, 10, 0.4f, 1}, {"DEPTH", "%", 0, 100, 50, 0}, {"DRIFT", "%", 0, 100, 20, 0}}},
+     {{"DEPTH", "%", 0, 100, 50, 0}, {"RATE", "HZ", 0.1f, 10, 0.4f, 1}, {"DRIFT", "%", 0, 100, 20, 0}}},
     {"PITCH MOSAIC", false, FxRoute::Insert, FxSig::None,
      {{"INT 1", "ST", -24, 24, 7, 0}, {"INTERVAL 2", "ST", -24, 24, 12, 0}, {"SCALE LOCK", "", 0, 1, 1, 0}}},
     {"SPRING + PLATE", true, FxRoute::Master, FxSig::Spring,
-     {{"DECAY", "S", 0.5f, 10, 1.8f, 1}, {"DAMPING", "%", 0, 100, 40, 0}, {"PRE-DELAY", "MS", 0, 100, 20, 0}}},
+     {{"DECAY", "S", 0.5f, 10, 1.8f, 1}, {"ALGORITHM", "", 0, 2, 2, 0, ALGORITHMS}, {"DAMPING", "%", 0, 100, 40, 0}}},
     {"GLITCH STUTTER", false, FxRoute::Insert, FxSig::None,
      {{"PATTERN", "1/N", 4, 32, 16, 0}, {"PROBABILITY", "%", 0, 100, 50, 0}, {"PITCH", "ST", -12, 12, 0, 0}}},
     {"SUB GENESIS", true, FxRoute::Master, FxSig::Sub,
@@ -44,6 +50,11 @@ float fx_frac(const FxParam& p, float v) {
 }
 
 void fx_format(const FxParam& p, float v, char* out, size_t n) {
+    if (p.labels) {
+        const int i = std::clamp(int(std::lround(v)), int(p.lo), int(p.hi));
+        std::snprintf(out, n, "%s", p.labels[i]);
+        return;
+    }
     std::snprintf(out, n, "%.*f", int(p.decimals), double(v));
 }
 

@@ -145,7 +145,7 @@ void demo_fx(StudioState& s, float t, uint32_t now_ms) {
     for (int k = 0; k < 8; ++k) o.mode_amp[k] = uint8_t(amps[k] * 255);
     o.f0_hz = n.f;
     o.in_env = 0.35f + 0.65f * n.env;
-    o.lfo_phase = uint16_t(std::fmod(t * (fx.sig == FxSig::Chorus ? val[1] : 0.4f), 1.0f) * 65535);
+    o.lfo_phase = uint16_t(std::fmod(t * (fx.sig == FxSig::Chorus ? val[2] : 0.4f), 1.0f) * 65535);
 
     // Granular: granos que nacen a DENSITY por segundo y viven N/DENSITY s; el cabezal escribe a 1×.
     const float dens = fx.sig == FxSig::Granular ? std::max(1.0f, val[2]) : 40.0f;
