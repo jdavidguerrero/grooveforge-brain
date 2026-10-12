@@ -31,12 +31,13 @@ con la pantalla Freenove de 5" (o un simulador SDL en la Mac).
 |---|---|
 | CMake + LVGL 8.4 + lv_drivers (SDL y framebuffer/evdev) | hilo de I/O con el bridge (tarea 38) |
 | Tipografía IBM Plex Mono: 7 tamaños, pesos 400 y 600 | transporte de replay (36) |
-| Modo demo: cutoff, espectro, tonalidad, cromagrama, BPM, flujos de FX y fase del LFO | systemd, watchdog, solo lectura (43) |
+| Modo demo: cutoff, espectro, tonalidad, cromagrama, BPM, flujos de FX y fase del LFO | sd_notify + watchdog, solo lectura (43) |
 | Todas las pantallas de la UI v3: PERFORM, AI, SPECTRUM, ENV, OSC, LFO / MOD, ENGINE SELECT, PRESETS, error de conexión | LFO en el firmware (la página es la especificación) |
 | FX MAIN con las vistas ONDA, ESPECTRO y FIRMA (9 FX), HOLD y bypass | engine DX7 de 4 operadores en el firmware (ADR-005) |
 | Overlays: VOL, IN, toast de bypass, banner de modo, INPUT CLIPPING; splash animado | arranque ≤12 s medido en la 3B |
 | Ilustraciones de los 6 engines dibujadas en C (sin assets) | |
 | `--snapshot` (incluye los overlays) | |
+| Modo kiosko: servicio systemd, regla udev, consola fuera de la pantalla (`deploy/`) | |
 
 **Medido en la Pi 3 Model B v1.2 (2026-10-12):** 30 fps; 23–40 % de **un** núcleo según la pantalla
 (el peor caso es SPECTRUM; OSC, LFO y FX MAIN rondan el 25 %). Ese número incluye la simulación
@@ -125,6 +126,20 @@ RGB565). El touch es un `ft5x06` en `/dev/input/event5`. Sin `sudo`, `cmake` se 
 python3 -m venv ~/.venvs/cmake && ~/.venvs/cmake/bin/pip install cmake
 ~/.venvs/cmake/bin/cmake -B build -DSTUDIO_DISPLAY=FBDEV -DSTUDIO_PERF=ON
 ```
+
+## Modo kiosko (arranque automático en la Pi)
+
+Una vez compilado en la Pi:
+
+```bash
+sudo ~/grooveforge/studio-head/deploy/install-kiosk.sh
+```
+
+Copia el binario a `/opt/studio-head/`, instala la regla udev (`/dev/studio-touch`) y el servicio
+`studio-head.service` (arranca en `sysinit`, sin esperar red ni login; se reinicia solo si se cae),
+saca el login de tty1 y deja `cmdline.txt` sin logo, sin cursor y sin apagar la pantalla. Guarda
+copias `.studio-bak` de `cmdline.txt` y `config.txt`. Volver a correrlo actualiza el binario;
+`deploy/uninstall-kiosk.sh` deshace todo. Pendiente: `Type=notify` + watchdog (theory doc §8.1).
 
 ## Estructura
 
