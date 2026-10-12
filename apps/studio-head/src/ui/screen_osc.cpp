@@ -7,6 +7,7 @@
 
 #include "ui/edit_draw.h"
 #include "ui/engines.h"
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -21,7 +22,7 @@ const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
 
 struct Lane {
     const char* name;
-    char sub[16];
+    char sub[24];
     Wave wave;
     float level;   ///< 0–1
     float cycles;  ///< ciclos en la ventana de 464 px (VCO 1 = 2)
@@ -244,6 +245,7 @@ lv_obj_t* ScreenOsc::create() {
     _scr = screen_root();
     _top.create(_scr, "OSC", -1);
     _graph = draw_area(_scr, GX, GY, GW, GH, on_graph_draw, this);
+    input_attach_tap(_graph, Ctl::NavNext);  // atajo táctil: tocar la gráfica = siguiente oscilador
     _cells.create(_scr);
     _bottom.create(_scr);
     return _scr;

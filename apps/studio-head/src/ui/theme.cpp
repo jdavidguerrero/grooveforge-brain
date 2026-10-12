@@ -1,5 +1,6 @@
 #include "ui/theme.h"
 
+#include "ui/input.h"
 #include "ui/screen.h"
 
 LV_FONT_DECLARE(gf_mono_12_r)
@@ -84,5 +85,6 @@ lv_obj_t* screen_root() {
     lv_obj_set_style_bg_opa(scr, LV_OPA_COVER, 0);
     lv_obj_set_style_bg_color(scr, lv_color_hex(gf::BG), 0);
     lv_obj_clear_flag(scr, LV_OBJ_FLAG_SCROLLABLE);
+    input_attach_gestures(scr);
     return scr;
 }

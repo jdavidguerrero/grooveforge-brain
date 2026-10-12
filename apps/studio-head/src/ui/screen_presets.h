@@ -17,11 +17,15 @@ public:
     void update(const StudioState& s) override;
 
     void move_cursor(int dir, const StudioState& s);
+    /// Tap en la fila visible @p i: la primera vez mueve el cursor; devuelve true si ya estaba ahí
+    /// (segundo tap = cargar).
+    bool tap_row(int i, const StudioState& s);
+    static constexpr int ROWS_VISIBLE = 6;
     /// Fila bajo el cursor: 0 = guardar, n ≥ 1 = preset n − 1.
     int cursor() const { return _cursor; }
 
 private:
-    static constexpr int VISIBLE = 6;
+    static constexpr int VISIBLE = ROWS_VISIBLE;
     struct Row { lv_obj_t *box, *slot, *name, *loaded; };
 
     lv_obj_t* _scr = nullptr;

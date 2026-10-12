@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "ui/engines.h"
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -49,6 +50,7 @@ lv_obj_t* ScreenPresets::create() {
         lv_obj_align(r.slot, LV_ALIGN_LEFT_MID, 16, 0);
         r.name = label(r.box, T16R, GRAY, "");
         lv_obj_align(r.name, LV_ALIGN_LEFT_MID, 16 + 40 + 16, 0);
+        input_attach_tap(r.box, static_cast<Ctl>(int(Ctl::Pick0) + i));
         r.loaded = label(r.box, T12B, TEAL_PLUS, "LOADED");
         lv_obj_set_style_text_letter_space(r.loaded, 1, 0);
         lv_obj_align(r.loaded, LV_ALIGN_RIGHT_MID, -16, 0);
@@ -70,6 +72,7 @@ lv_obj_t* ScreenPresets::create() {
     lv_obj_t* spacer = rect(d, 0, 0, 1, 1, SURFACE);
     lv_obj_set_flex_grow(spacer, 1);
     lv_obj_t* act = box(d, 0, 0, 256, 48, SURFACE, TEAL);
+    input_attach_tap(act, Ctl::NavPush);  // atajo táctil: tocar NAV PUSH · LOAD
     lv_obj_set_style_pad_hor(act, 15, 0);
     lv_obj_t* np = label(act, T12B, TEAL_PLUS, "NAV PUSH");
     lv_obj_set_style_text_letter_space(np, 1, 0);
@@ -87,6 +90,13 @@ lv_obj_t* ScreenPresets::create() {
 void ScreenPresets::move_cursor(int dir, const StudioState& s) {
     const int rows = s.preset_count + 1;
     _cursor = std::clamp(_cursor + dir, 0, rows - 1);
+}
+
+bool ScreenPresets::tap_row(int i, const StudioState& s) {
+    const int row = std::clamp(_top_row + i, 0, int(s.preset_count));
+    if (row == _cursor) return true;
+    _cursor = row;
+    return false;
 }
 
 void ScreenPresets::update(const StudioState& s) {

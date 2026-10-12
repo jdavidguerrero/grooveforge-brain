@@ -35,6 +35,7 @@ void TopBar::create(lv_obj_t* parent, const char* page, int page_index) {
     lv_obj_set_style_pad_column(_bar, 16, 0);
 
     _mode = rect(_bar, 0, 0, 72, 24, TEAL);
+    input_attach_tap(_mode, Ctl::Mode);  // atajo táctil: tocar SYNTH / FX = B5 MODE
     _mode_txt = label(_mode, T12B, BG, "SYNTH");
     lv_obj_set_style_text_letter_space(_mode_txt, 2, 0);
     lv_obj_center(_mode_txt);

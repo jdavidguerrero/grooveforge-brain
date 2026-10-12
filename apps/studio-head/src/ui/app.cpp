@@ -136,6 +136,12 @@ void App::handle_synth(Ctl c, StudioState& s) {
         switch (c) {
             case Ctl::NavNext: _presets.move_cursor(1, s); break;
             case Ctl::NavPrev: _presets.move_cursor(-1, s); break;
+            case Ctl::SwipeUp:   _presets.move_cursor(ScreenPresets::ROWS_VISIBLE, s); break;
+            case Ctl::SwipeDown: _presets.move_cursor(-ScreenPresets::ROWS_VISIBLE, s); break;
+            case Ctl::Pick0: case Ctl::Pick1: case Ctl::Pick2:
+            case Ctl::Pick3: case Ctl::Pick4: case Ctl::Pick5:
+                if (_presets.tap_row(int(c) - int(Ctl::Pick0), s)) handle_synth(Ctl::NavPush, s);
+                break;
             case Ctl::NavPush:
                 if (_presets.cursor() == 0) {  // guardar en el próximo slot libre
                     if (s.preset_count < PRESET_MAX) {

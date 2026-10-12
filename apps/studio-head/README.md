@@ -72,12 +72,14 @@ Por defecto la captura se toma cuando ya terminó el splash (6.1 s).
 
 | Acción | Touch (Pi) | Teclado (simulador) |
 |---|---|---|
-| NAV girar (vistas; oscilador en OSC; slot en FX) | tocar la barra superior | ← → |
-| NAV push (SYNC en LFO; on/bypass en FX) | tocar la píldora ON/BYPASS en FX | Enter |
+| NAV girar (vistas; oscilador en OSC; slot en FX; cursor en listas) | deslizar ← →, o tocar la barra superior | ← → |
+| NAV push (cargar en listas; SYNC en LFO; on/bypass en FX) | tocar la caja NAV PUSH, la gráfica de LFO o la píldora ON/BYPASS | Enter |
 | B1 OSC · B2 ENV · B3 LFO / MOD (la misma tecla vuelve) · B4 PRESETS → ENGINE SELECT | tocar la soft-key | 1–4 |
-| B5 MODE (SYNTH ⇄ FX) | tocar la celda MODE | M |
+| B5 MODE (SYNTH ⇄ FX) | tocar la etiqueta SYNTH / FX de la barra superior (o la celda MODE) | M |
 | B6: SHIFT en SYNTH, HOLD (mantener) en FX | tocar / mantener la celda B6 | S / H |
-| ENGINE SELECT | tocar la card del engine | E |
+| ENGINE SELECT · cargar un engine | tocar la card del engine · tocar una tile | E |
+| PRESETS | tocar una fila = cursor, otra vez = cargar; deslizar ↑ ↓ = página | ← → Enter |
+| OSC: siguiente oscilador | tocar la gráfica | ← → |
 | ENC L push (filter bypass) | tocar el dial de cutoff | B |
 | Vista de FX MAIN | tocar una pestaña o la gráfica | V |
 | VOL · IN · PAD | — | − = · [ ] · P |

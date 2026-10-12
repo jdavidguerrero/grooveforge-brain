@@ -7,6 +7,7 @@
 
 #include "ui/edit_draw.h"
 #include "ui/engines.h"
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -44,6 +45,7 @@ lv_obj_t* ScreenLfo::create() {
     _scr = screen_root();
     _top.create(_scr, "LFO", -1);
     _graph = draw_area(_scr, GX, GY, GW, GH, on_graph_draw, this);
+    input_attach_tap(_graph, Ctl::NavPush);  // atajo táctil: tocar la gráfica = NAV push (SYNC)
     _cells.create(_scr);
     _bottom.create(_scr);
     return _scr;

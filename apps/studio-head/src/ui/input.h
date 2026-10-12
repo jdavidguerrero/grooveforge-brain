@@ -30,6 +30,8 @@ enum class Ctl : uint8_t {
     InUp, InDown,     ///< pot IN
     PadCycle,         ///< switch INPUT PAD trasero: 0 → −10 → −20 dB
     LinkToggle,       ///< demo: simula la pérdida del enlace con el motor
+    SwipeUp,          ///< deslizar hacia arriba (listas: siguiente página)
+    SwipeDown,        ///< deslizar hacia abajo (listas: página anterior)
 };
 
 void input_post(Ctl c);
@@ -37,6 +39,12 @@ bool input_poll(Ctl& out);
 
 /// Hace tocable un objeto y publica @p c al tocarlo (atajo táctil, theory doc §6).
 void input_attach_tap(lv_obj_t* obj, Ctl c);
+
+/**
+ * @brief Gestos sobre una pantalla: deslizar a izquierda / derecha = NAV ±1, arriba / abajo =
+ *        SwipeUp / SwipeDown. Un toque que termina en gesto no cuenta como tap.
+ */
+void input_attach_gestures(lv_obj_t* screen);
 
 /// Publica @p down al apretar y @p up al soltar (controles momentáneos como HOLD).
 void input_attach_hold(lv_obj_t* obj, Ctl down, Ctl up);

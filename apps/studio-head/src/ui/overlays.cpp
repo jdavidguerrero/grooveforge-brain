@@ -135,7 +135,7 @@ void Overlays::build_clip(lv_obj_t* top) {
     lv_obj_align(in, LV_ALIGN_TOP_RIGHT, -24, 18);
     lv_obj_t* title = label(_clip, T28, WHITE, "INPUT CLIPPING");
     lv_obj_set_pos(title, 24, 42 - (T28->line_height - 32) / 2);
-    lv_obj_t* act = label(_clip, T16, AMBER, "BAJA IN O SUBE EL PAD");
+    lv_obj_t* act = label(_clip, T16, AMBER, "LOWER IN OR RAISE THE PAD");
     lv_obj_set_pos(act, 24, 82 - (T16->line_height - 16) / 2);
     _clip_detail = label(_clip, T12, GRAY, "");
     lv_obj_set_pos(_clip_detail, 24, 106);

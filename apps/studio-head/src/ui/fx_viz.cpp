@@ -142,9 +142,9 @@ void draw_spec(const Painter& p, const StudioState& s, VizState st) {
         const float cx = X0 + band_of(q.f) * 22 + 11;
         p.text(std::clamp(cx, 20.0f, float(VIZ_W - 18)), 250, q.l, MON, T12, LV_TEXT_ALIGN_CENTER);
     }
-    legend(p, {{MON, "DRY", true}, {wc, "WET", false}, {byp ? LINE : PURPLE_BRIGHT, "∆ AGREGA", false},
-               {byp ? LINE : MON, "∆ QUITA", false}},
-           "32 BANDAS · 0 A −60 DB · ∆ = ±3 DB");
+    legend(p, {{MON, "DRY", true}, {wc, "WET", false}, {byp ? LINE : PURPLE_BRIGHT, "∆ ADDS", false},
+               {byp ? LINE : MON, "∆ REMOVES", false}},
+           "32 BANDS · 0 TO −60 DB · ∆ = ±3 DB");
 }
 
 // ── §C · Firmas ──────────────────────────────────────────────────────────────
@@ -195,9 +195,9 @@ void sig_ghost(const Painter& p, const float* val, const Pal& c, uint32_t since_
 
     char right[80];
     const float to60 = 60.0f / std::max(0.01f, -fb_db) * time / 1000.0f;
-    std::snprintf(right, sizeof(right), "TIME %d MS · FB %d %% · −%.1f DB/REP · −60 DB A %.1f S", int(time),
+    std::snprintf(right, sizeof(right), "TIME %d MS · FB %d %% · −%.1f DB/REP · −60 DB IN %.1f S", int(time),
                   int(std::lround(val[1])), double(-fb_db), double(to60));
-    legend(p, {{MON, "DRY", false}, {c.pb, "ECO SONADO", false}, {c.p, "POR SONAR", false}}, right);
+    legend(p, {{MON, "DRY", false}, {c.pb, "ECHO PLAYED", false}, {c.p, "UPCOMING", false}}, right);
 }
 
 /// Tape / Bit: curva de transferencia contra la identidad y el nivel actual (FX Viz C3).
@@ -240,7 +240,7 @@ void sig_curve(const Painter& p, FxSig sig, const float* val, const Pal& c, floa
     p.text(OX, 160, t, WHITE, T28);
     p.text(OX + 96, 160, "DBFS", MON, T12);
     p.fill(OX, 194, 10, 10, c.live);
-    p.text(OX + 16, 203, "NIVEL ACTUAL", GRAY, T12);
+    p.text(OX + 16, 203, "CURRENT LEVEL", GRAY, T12);
     if (sig == FxSig::Bit) std::snprintf(t, sizeof(t), "BITS %d · ENC R", int(val[1]));
     else std::snprintf(t, sizeof(t), "DRIVE %.1f DB · ENC R", double(val[1]));
     p.text(OX, 236, t, MON, T12);
@@ -282,8 +282,8 @@ void sig_cymatic(const Painter& p, const StudioState& s, VizState st) {
         if (r < 0.06f) p.fill(12 + (i % N) * 4, 12 + (i / N) * 4, 4, 4, sand1);
         else if (r < 0.14f) p.fill(12 + (i % N) * 4, 12 + (i / N) * 4, 4, 4, sand2);
     }
-    p.text(272, 28, "MODOS · AMPLITUD", GRAY, T12B);
-    p.text(VIZ_W - 8, 28, "ARENA = NODOS", MON, T12, LV_TEXT_ALIGN_RIGHT);
+    p.text(272, 28, "MODES · AMPLITUDE", GRAY, T12B);
+    p.text(VIZ_W - 8, 28, "SAND = NODES", MON, T12, LV_TEXT_ALIGN_RIGHT);
     for (int k = 0; k < 8; ++k) {
         const int y = 44 + k * 25;
         char t[16];
@@ -319,7 +319,7 @@ void sig_granular(const Painter& p, const StudioState& s, const Pal& c, VizState
         p.text(AX + ms * S, 240, t, MON, T12, LV_TEXT_ALIGN_CENTER);
     }
     p.text(AX + AW + 16, 240, "MS", MON, T12);
-    legend(p, {{c.pb, "GRANO", false}, {c.live, "ESCRITURA", false}}, "X = POSICIÓN · ANCHO = TAMAÑO · Y = PITCH (ST)");
+    legend(p, {{c.pb, "GRAIN", false}, {c.live, "WRITE HEAD", false}}, "X = POSITION · WIDTH = SIZE · Y = PITCH (ST)");
 }
 
 /// Modal Reverb / Spring + Plate: envolvente de caída con la marca RT60 y el cabezal.
@@ -363,11 +363,11 @@ void sig_verb(const Painter& p, bool spring, const float* val, const Pal& c, uin
     }
     p.text(AX + 676, 240, "S", MON, T12);
     if (spring) {
-        std::snprintf(t, sizeof(t), "DECAY %.1f S · REBOTE 28 MS", double(dec));
+        std::snprintf(t, sizeof(t), "DECAY %.1f S · BOUNCE 28 MS", double(dec));
         legend(p, {{c.p, "PLATE", false}, {c.pb, "SPRING", false}}, t);
     } else {
         std::snprintf(t, sizeof(t), "DECAY %.1f S · PRE %d MS", double(dec), int(pre * 1000));
-        legend(p, {{c.p, "COLA SONADA", false}, {PURPLE_DIM, "POR SONAR", false}}, t);
+        legend(p, {{c.p, "TAIL PLAYED", false}, {PURPLE_DIM, "UPCOMING", false}}, t);
     }
 }
 
@@ -397,7 +397,7 @@ void sig_chorus(const Painter& p, const StudioState& s, const float* val, const 
     static const char* const DEG[5] = {"0°", "90°", "180°", "270°", "360°"};
     for (int i = 0; i < 5; ++i) p.text(AX + i * AW / 4, 240, DEG[i], MON, T12, LV_TEXT_ALIGN_CENTER);
     char t[80];
-    std::snprintf(t, sizeof(t), "RETARDO (MS) EN UN CICLO DE LFO · RATE %.1f HZ · ±%.0f MS", double(val[1]), double(depth));
+    std::snprintf(t, sizeof(t), "DELAY (MS) OVER ONE LFO CYCLE · RATE %.1f HZ · ±%.0f MS", double(val[1]), double(depth));
     legend(p, {{c.pb, "V1", false}, {c.live, "V2", false}, {c.p, "V3", false}}, t);
 }
 
@@ -425,8 +425,8 @@ void sig_sub(const Painter& p, const StudioState& s, const float* val, const Pal
     }
     char nm[16], right[48];
     std::snprintf(right, sizeof(right), "TRACK %s · 20–800 HZ LOG", note_name(f0, nm, sizeof(nm)));
-    if (two) legend(p, {{MON, "ENTRADA", false}, {c.pb, "SUB −1 OCT", false}, {c.p, "SUB −2 OCT", false}}, right);
-    else legend(p, {{MON, "ENTRADA", false}, {c.pb, "SUB −1 OCT", false}}, right);
+    if (two) legend(p, {{MON, "INPUT", false}, {c.pb, "SUB −1 OCT", false}, {c.p, "SUB −2 OCT", false}}, right);
+    else legend(p, {{MON, "INPUT", false}, {c.pb, "SUB −1 OCT", false}}, right);
 }
 
 void draw_sig(const Painter& p, const StudioState& s, VizState st, uint32_t now_ms) {

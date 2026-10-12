@@ -5,7 +5,7 @@
 
 const FxInfo FX_CATALOG[FX_SLOTS] = {
     {"CYMATIC RESONATOR", true, FxRoute::Insert, FxSig::Cymatic,
-     {{"DENSITY", "MODOS", 1, 4, 4, 0}, {"TUNE", "", 1, 4, 1.59f, 2}, {"RESONANCE", "%", 0, 100, 70, 0}}},
+     {{"DENSITY", "MODES", 1, 4, 4, 0}, {"TUNE", "", 1, 4, 1.59f, 2}, {"RESONANCE", "%", 0, 100, 70, 0}}},
     {"GRANULAR CLOUD", true, FxRoute::Insert, FxSig::Granular,
      {{"SIZE", "MS", 5, 500, 120, 0}, {"DENSITY", "/S", 1, 50, 40, 0}, {"PITCH SPRD", "ST", 0, 12, 7, 0}}},
     {"GHOST ECHO", true, FxRoute::Send, FxSig::Ghost,

@@ -24,7 +24,7 @@ constexpr uint32_t CLIP_LATCH_MS = 2000;
 constexpr float PEAK_FALL_PX_PER_MS = 4.0f / 33.3f;  // 4 px por frame a 30 Hz (v3: meter)
 
 const char* const KEYS_FX[4] = {"INSERT", "SEND", "MASTER", "FAV FX"};
-const char* const TABS[3] = {"ONDA", "ESPECTRO", "FIRMA"};
+const char* const TABS[3] = {"WAVE", "SPECTRUM", "SIGNATURE"};
 
 lv_obj_t* flex(lv_obj_t* parent, lv_flex_flow_t flow, int gap) {
     lv_obj_t* o = lv_obj_create(parent);
