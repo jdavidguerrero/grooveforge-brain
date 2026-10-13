@@ -146,10 +146,10 @@ USB-C 5 V (solo CC, 2× 5.1 kΩ) ─► polyfuse 3 A ─► TVS 5 V ─┬─►
 | OUT L / OUT R (1/4" TRS) | LINE OUT del Audio Shield | Verificar si el shield trae capacitores de acople en LINE OUT; si no, 10 µF + 47 kΩ a GND |
 | IN L / IN R (1/4" TRS) | → pad → protección → LINE IN del shield | §8.1 |
 | PAD (palanca de 3 posiciones) | 0 / −10 / −20 dB, y lectura en el pin 25 | §8.1 |
-| MIDI IN (TRS 3.5, tipo A) | Optoacoplador → UART de la Teensy | **Ver §10, decisión 1** |
+| PHONES (TRS 3.5) | Salida de audífonos del SGTL5000 (HP L / HP R / **HP_VGND**) | El común es una tierra virtual de ~1.5 V: el sleeve va a HP_VGND, **nunca a GND ni al chasis** (jack de cuerpo plástico, aislado) |
 | CV OUT (TRS 3.5) | PWM del pin 29 → RC de 2 polos → buffer | Para el add-on del ladder (ADR-003) |
-| USB-C datos de la Teensy | USB del módulo | Prolongador al panel trasero |
-| USB-A host | Pines de USB host de la Teensy | |
+| USB-C datos de la Teensy | USB del módulo; **MIDI por USB** | Prolongador al panel trasero |
+| USB-A host | Pines de USB host de la Teensy; controladores MIDI USB | |
 
 ### 8.1 Pad y protección de la entrada (ADR-004, acción 7)
 
@@ -186,13 +186,9 @@ Una fuente de +4 dBu (≈ 4.4 Vpp) o un mixer de DJ caliente lo superan.
 
 ## 10. Decisiones abiertas
 
-1. **MIDI IN por TRS necesita un RX de UART, y no queda ninguno libre.** Los RX de la Teensy 4.1 son
-   0 (puente con la Pi), 7 (I2S), 15 (ENC R SW), 16 (NAV A), 21 (I2S), 25 (pad), 28 (LEDs) y 34 (P2 A).
-   Opciones (todas cambian `01` §3.3, que necesita autorización):
-   - **Mover la lectura del pad del 25 a otro pin analógico** y usar el 25 como RX6 para MIDI. Requiere
-     liberar un analógico: por ejemplo, B6 del 41 al 6 (libre si el Audio Shield no tiene la memoria
-     opcional) y el pad al 41 (A17).
-   - Usar MIDI solo por USB (host USB-A y USB de la Teensy) y sacar el jack TRS del panel trasero.
+1. ~~MIDI IN por TRS~~ — **resuelto 2026-10-13: MIDI solo por USB** (USB-A host y USB de la Teensy).
+   No quedaba ningún RX de UART libre (0, 7, 15, 16, 21, 25, 28 y 34 están ocupados); el mapa de pines
+   de `01` §3.3 no cambia. El hueco del jack TRS en el panel trasero pasa a ser **PHONES**.
 2. **Conector PCB-K ↔ PCB-A** (§6.1): placa a placa de 6.5 mm o cable corto.
 3. **Choc soldados o en socket hot-swap.** El socket se monta en la cara inferior, donde también van los
    LEDs; hay que verificar que el socket y el LED no choquen bajo cada tecla.

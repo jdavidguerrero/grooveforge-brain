@@ -271,7 +271,7 @@ placas y part numbers de LCSC va en el theory doc del PCB de Studio.
 | Potenciómetro RV09 vertical, eje estriado Ø6 de 25 mm | 2 | IN (pin 24) y VOL (pin 22) |
 | Palanca de 3 posiciones | 1 | Pad de entrada 0 / −10 / −20 dB, panel trasero (lectura en pin 25) |
 | Jack 1/4" TRS | 4 | OUT L/R e IN L/R |
-| Jack TRS 3.5 mm | 2 | MIDI IN y CV OUT |
+| Jack TRS 3.5 mm | 2 | PHONES (común = HP_VGND del SGTL5000, aislado) y CV OUT. MIDI solo por USB (2026-10-13) |
 | USB-C 5 V 3 A + polyfuse 3 A + TVS | 1 | Única entrada de alimentación |
 | USB-C (datos del Teensy) y USB-A (host) | 1 + 1 | Panel trasero |
 | PCBs | 3 | PCB-K, PCB-A y portadora (§3.6) |

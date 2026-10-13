@@ -52,7 +52,8 @@ Coordenadas del panel: **x** desde el borde izquierdo, **y** desde el borde fron
 - **Interior:** Pi 3B en el piso bajo la pantalla, con los puertos hacia atrás; portadora de
   72 × 50 para Teensy 4.1 + Audio Shield en x 103–175, y 76–126; placa de alimentación USB-C con
   polyfuse de 3 A y TVS. **Se corta el puente VUSB–VIN del Teensy**: todo se alimenta del USB-C de 5V.
-- **Conectores (pared trasera):** OUT L/R e IN L/R en 1/4"; MIDI IN TRS 3.5; USB-C del Teensy (datos);
+- **Conectores (pared trasera):** OUT L/R e IN L/R en 1/4"; ~~MIDI IN TRS 3.5~~ → **PHONES TRS 3.5**
+  (2026-10-13: MIDI solo por USB, no queda RX de UART libre); USB-C del Teensy (datos y MIDI);
   USB-A host; USB-C 5V 3A; CV OUT 3.5; INPUT PAD (palanca de 3 posiciones, Ø6.2) entre las entradas y
   el USB host; tapa de servicio de la Pi (Ethernet y USB) y tapa inferior para la microSD.
 - **Mejillas opcionales:** guadua laminada de 12 mm, 4 imanes N42 Ø10 × 2 por lado detrás de una piel
