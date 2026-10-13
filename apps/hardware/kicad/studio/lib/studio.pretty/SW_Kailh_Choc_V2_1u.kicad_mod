@@ -1,0 +1,84 @@
+(footprint "SW_Kailh_Choc_V2_1u"
+  (version 20241229)
+  (generator "kicad-mcp")
+  (generator_version "9.0")
+  (layer "F.Cu")
+  (descr "Kailh Choc V2 (MX-stem), 1u, soldado. Plano Kailh 'Recommended PCB Layout': centro Ø5.0, guia Ø1.6 en (-5.00,-5.15), pines Ø1.2 en (0,5.90) y (5.00,3.80). Ventana de LED en (0,-4.93): el hueco lo aporta el footprint del SK6812MINI-E en B.Cu. VERIFICAR imprimiendo 1:1 antes del pedido.")
+  (tags "kailh choc v2 low profile keyswitch")
+
+  (property "Reference" "REF**" (at 0 -8.5 0)
+    (layer "F.SilkS")
+    (uuid "b8211638-777d-4ed9-9bd5-ebd4ffa573bf")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (property "Value" "SW_Kailh_Choc_V2_1u" (at 0 8.5 0)
+    (layer "F.Fab")
+    (uuid "7ae725e1-5b79-4df8-a4b5-6c77f812ce4b")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (property "Datasheet" "" (at 0 0 0)
+    (layer "F.Fab")
+    (uuid "bdaa4a01-e3fd-4797-89fd-39940d8bb7f0")
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+
+  (fp_rect
+    (start -7.75 -7.75)
+    (end 7.75 7.75)
+    (stroke (width 0.05) (type default))
+    (fill none)
+    (layer "F.CrtYd")
+    (uuid "bffa6d8b-a8c1-4183-8ad5-307d4d77fbf5")
+  )
+
+  (fp_rect
+    (start -7.5 -7.5)
+    (end 7.5 7.5)
+    (stroke (width 0.12) (type default))
+    (fill none)
+    (layer "F.SilkS")
+    (uuid "e821b2f4-c0dd-4f74-bfc8-1c0bfdfc3cc3")
+  )
+
+  (fp_rect
+    (start -7.5 -7.5)
+    (end 7.5 7.5)
+    (stroke (width 0.1) (type default))
+    (fill none)
+    (layer "F.Fab")
+    (uuid "c012ee75-0f82-49e5-9ca5-b5f58fef353d")
+  )
+
+  (pad "" np_thru_hole rect
+    (at 0 0)
+    (size 5 5)
+    (drill 5)
+    (layers "*.Cu" "*.Mask")
+    (uuid "c0274585-3076-475f-b881-8ed8722a39fd")
+  )
+
+  (pad "" np_thru_hole rect
+    (at -5 -5.15)
+    (size 1.6 1.6)
+    (drill 1.6)
+    (layers "*.Cu" "*.Mask")
+    (uuid "7d2eb5e4-f6b3-4235-9733-98fdd73ce062")
+  )
+
+  (pad "1" thru_hole circle
+    (at 0 5.9)
+    (size 2 2)
+    (drill 1.2)
+    (layers "*.Cu" "*.Mask")
+    (uuid "39a69c79-24c9-4abf-b752-fa34e8a7f707")
+  )
+
+  (pad "2" thru_hole circle
+    (at 5 3.8)
+    (size 2 2)
+    (drill 1.2)
+    (layers "*.Cu" "*.Mask")
+    (uuid "58b96a12-40fd-411f-9a82-85943ca61a5e")
+  )
+
+)
