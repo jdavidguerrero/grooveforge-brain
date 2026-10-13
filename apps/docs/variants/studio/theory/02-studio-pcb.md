@@ -85,7 +85,11 @@ Coordenadas del panel: x desde el borde izquierdo, y desde el borde frontal (enc
 
 ### 4.3 Portadora — en el piso
 
-- **Teensy 4.1 + Audio Shield Rev D** como módulos sobre headers (decisión 2026-10-12).
+- **Teensy 4.1 + Audio Shield Rev D** como módulos sobre headers (decisión 2026-10-12), **lado a lado**, no
+  apilados (2026-10-13): el shield va en sus propios zócalos 1×14 (J15/J16) y la portadora solo cablea
+  7, 8, 18–21, 23, 3V3 y GND. Así los pines 10–13 (ENC L/R) y 15 (push de ENC R) no tocan el slot SD ni
+  el footprint MEM, se reusa el shield ya soldado y se ganan ~12 mm de altura. Costo: ~9 pistas de
+  I2S/I2C de 3–4 cm; MCLK (11.3 MHz) corta y sobre plano de GND.
 - **Alimentación** (§7), **conectores del panel trasero** (§8), **UART a la Pi** (pines 0/1 de la Teensy ↔
   GPIO14/15 de la Pi, 3.3 V directo, GND común), **CV OUT** (pin 29), **lectura del pad** (pin 25).
 - Ubicación del enclosure: 72 × 50 mm en x 103–175, y 76–126. Probablemente crezca al absorber la placa
@@ -161,10 +165,11 @@ Una fuente de +4 dBu (≈ 4.4 Vpp) o un mixer de DJ caliente lo superan.
 | Toma | Resistencias (E96) | Relación | Atenuación |
 |---|---|---|---|
 | 0 dB | entrada directa | 1 | 0 dB |
-| −10 dB | (10.2 k + 4.75 k) / 47.35 k | 0.316 | −10.0 dB |
-| −20 dB | 4.75 k / 47.35 k | 0.100 | −20.0 dB |
+| −10 dB | (12.4 k + 5.23 k) / 50.0 k, cargada con 101 kΩ | 0.316 | −10.1 dB (simulado) |
+| −20 dB | 5.23 k / 50.0 k, cargada con 101 kΩ | 0.100 | −20.1 dB (simulado) |
 
-(escalera: 32.4 k → 10.2 k → 4.75 k → GND)
+(escalera: 32.4 k → 12.4 k → 5.23 k → GND. Recalculada el 2026-10-13 con la carga de R10 + R12 hacia
+VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación: `03-studio-input-stage.md`.)
 
 - **Carga:** la impedancia de salida de la toma (hasta ~11 kΩ) contra la entrada del SGTL5000 (~29 kΩ,
   verificar en el datasheet) agrega ~2–3 dB de atenuación y la hace depender del codec. Hay dos salidas:
@@ -206,7 +211,7 @@ Una fuente de +4 dBu (≈ 4.4 Vpp) o un mixer de DJ caliente lo superan.
 `apps/hardware/kicad/studio/{pcb-k,pcb-a,portadora}` — ERC sin violaciones en los tres; PDFs en
 `apps/hardware/kicad/studio/docs/`. Notas que salieron al dibujarlos:
 
-- **El slot microSD del Audio Shield no se usa:** comparte los pines 10–13 con ENC L y ENC R.
+- **El slot microSD del Audio Shield no se usa:** sus pines 10–13 quedan sin conexión en J15/J16.
 - **Raspberry Pi:** IDC 2×5 a los pines 1–10 de su header (5 V en 2 y 4, GND en 6 y 9, TXD en 8, RXD en 10).
   Cable con dos hilos por 5 V y por GND.
 - **Jacks traseros:** la portadora del enclosure (y 76–126) no llega a la pared trasera (y 165). En el
