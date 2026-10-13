@@ -269,7 +269,7 @@ placas y part numbers de LCSC va en el theory doc del PCB de Studio.
 | Kailh Choc V2 | 6 | B1–B6 |
 | LEDs direccionables | 18 | 12 anillo de NAV + 6 keycaps, ensamblados por JLCPCB; modelo en el theory doc del PCB |
 | Potenciómetro RV09 vertical, eje estriado Ø6 de 25 mm | 2 | IN (pin 24) y VOL (pin 22) |
-| Palanca de 3 posiciones | 1 | Pad de entrada 0 / −10 / −20 dB, panel trasero (lectura en pin 25) |
+| Palanca DP3T de 3 posiciones | 1 | Pad de entrada 0 / −10 / −20 dB en L y R, panel trasero (la posición no se lee) |
 | Jack 1/4" TRS | 4 | OUT L/R e IN L/R |
 | Jack TRS 3.5 mm | 2 | PHONES (común = HP_VGND del SGTL5000, aislado) y CV OUT. MIDI solo por USB (2026-10-13) |
 | USB-C 5 V 3 A + polyfuse 3 A + TVS | 1 | Única entrada de alimentación |
@@ -590,12 +590,12 @@ El Top Panel PCB **no lleva** conector para la pantalla.
 El enclosure de Studio validado en Claude Design pedía 6 placas. Los Choc V2 exigen su PCB a −3.4 mm bajo
 la cara superior del aluminio y el cuerpo del EC11 (5 mm) tiene que quedar bajo el aluminio, así que el
 panel necesita **dos niveles**. Con el buje liso del EC11 como guía, la placa de los encoders baja a
-−11.5 mm y absorbe también los pots:
+−12.0 mm y absorbe también los pots:
 
 | Placa | Altura | Contenido |
 |---|---|---|
 | PCB-K | −3.4 mm | 6 Choc V2 y los 18 SK6812-MINI-E (6 keycaps + 12 en anillo alrededor de NAV), ensamblados por JLCPCB |
-| PCB-A | −11.5 mm | 5 EC11 y los 2 RV09 (IN, VOL) en brazos a los costados de la pantalla; un cable IDC 2×15 a la portadora |
+| PCB-A | −12.0 mm | 5 EC11 y los 2 RV09 (IN, VOL) en brazos a los costados de la pantalla, sobre separadores M3 de 10 mm; un cable IDC 2×15 a la portadora |
 | Portadora | piso | Teensy 4.1 + Audio Shield (módulos), alimentación USB-C 5 V 3 A con polyfuse y TVS, conectores del panel trasero, UART a la Pi, CV OUT, lectura del pad |
 
 La Raspberry Pi 3B y la pantalla son módulos aparte. Detalle (apilado, conexiones, LEDs, pad de entrada

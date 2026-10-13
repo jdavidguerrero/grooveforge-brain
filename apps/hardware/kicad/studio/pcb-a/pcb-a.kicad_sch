@@ -8,7 +8,7 @@
 		(title "Studio PCB-A — encoders y pots")
 		(date "2026-10-13")
 		(rev "0.1")
-		(comment 1 "5 ALPS EC11 (L=25, buje liso Ø6.8) + 2 RV09 B10K; placa a -11.5 mm bajo el aluminio")
+		(comment 1 "5 ALPS EC11 (L=25, buje liso Ø6.8) + 2 RV09 B10K; placa a -12.0 mm bajo el aluminio (separadores M3 de 10 mm)")
 		(comment 2 "Theory doc: apps/docs/variants/studio/theory/02-studio-pcb.md")
 	)
 	(lib_symbols
@@ -4353,7 +4353,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_JST:JST_SH_BM10B-SRSS-TB_1x10-1MP_P1.00mm_Vertical"
+		(property "Footprint" "Connector_JST:JST_SH_SM10B-SRSS-TB_1x10-1MP_P1.00mm_Horizontal"
 			(at 229.87 149.86 0)
 			(hide yes)
 			(show_name no)

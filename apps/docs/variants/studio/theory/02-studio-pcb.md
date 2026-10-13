@@ -40,14 +40,14 @@ separadores).
 | Elemento | Altura | Comentario |
 |---|---|---|
 | Cara superior del aluminio | 0 | |
-| Borde del buje del EC11 | **+0.5** | Asoma 0.5 mm; lo tapa el faldón del knob |
-| Punta del eje en reposo | **+15.0** | 13.5 mm apretado; los 10 mm estriados quedan completos sobre el panel |
+| Borde del buje del EC11 | **0.0** | Al ras del aluminio; lo tapa el faldón del knob |
+| Punta del eje en reposo | **+14.5** | 13.0 mm apretado; los 10 mm estriados quedan completos sobre el panel |
 | Cara inferior del aluminio | −2.0 | |
 | **PCB-K** (cara superior) | **−3.4** | Choc V2; espesor 1.6 → cara inferior en −5.0 |
 | LEDs SK6812-MINI-E (cara inferior de PCB-K) | −5.0 a ~−6.0 | Montaje invertido: brillan hacia arriba por agujeros de PCB-K |
-| Tope del cuerpo del EC11 | −6.5 | 1.5 mm de aire bajo PCB-K (0.5 bajo los LEDs) |
-| **PCB-A** (cara superior) | **−11.5** | Base de los EC11 y de los RV09 |
-| Pines del EC11 / fin del apilado | ~−16.6 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~29 mm por dentro |
+| Tope del cuerpo del EC11 | −7.0 | 2.0 mm de aire bajo PCB-K (1.0 bajo los LEDs) |
+| **PCB-A** (cara superior) | **−12.0** | Base de los EC11 y de los RV09; separadores M3 de **10 mm** (medida estándar) desde la cara inferior del aluminio |
+| Pines del EC11 / fin del apilado | ~−17.1 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~29 mm por dentro |
 
 **Agujeros en el aluminio que cambian respecto del enclosure:** EC11 pasa de Ø7.2 con rosca M7 a
 **Ø7.1 liso** (buje de 6.8 + 0.3 de juego). El resto (Choc 14×14 con rebaje 16×16×0.8, NAV Ø32 con
@@ -65,21 +65,22 @@ Coordenadas del panel: x desde el borde izquierdo, y desde el borde frontal (enc
 - **6 Choc V2:** B1–B4 en (60/80/100/120, 62), B5 en (60, 32), B6 en (120, 32).
 - **18 SK6812-MINI-E** en la cara inferior: 6 bajo las ventanas de LED de los Choc y **12 en anillo**
   alrededor de NAV (90, 32), radio ~13 mm, mirando al difusor de Ø32.
-- **5 agujeros de ~7.5 mm** para los bujes de los EC11: ENC L (32, 62), ENC R (148, 62), P1 (32, 32),
+- **5 agujeros de 8.0 mm** para los bujes de los EC11 (Ø6.8 + ±0.6 de tolerancia de alineación entre placas): ENC L (32, 62), ENC R (148, 62), P1 (32, 32),
   P2 (148, 32), NAV (90, 32).
-- Contorno aproximado: x 18–162, y 14–76. Agujeros de montaje hacia los espárragos PEM M3 del aluminio.
+- Contorno aproximado: x 18–162, y 14–76.
+- **Sujeción:** PCB-K cuelga de los 6 Choc enganchados en el rebaje del aluminio (como un teclado con placa).
+  Los separadores de PCB-A la atraviesan por agujeros de paso de ~6.5 mm sin tocarla.
 - **Ensamblado JLCPCB en una sola cara (la inferior):** LEDs y condensadores. Los Choc se sueldan a mano
   (o en socket hot-swap, a decidir).
 
-### 4.2 PCB-A — encoders y pots (−11.5 mm)
+### 4.2 PCB-A — encoders y pots (−12.0 mm)
 
 - **5 EC11** bajo sus agujeros (mismas coordenadas de §4.1).
 - **2 RV09** en dos brazos que suben por los costados de la pantalla hasta (15, 96) y (165, 96). Los
   brazos tienen que pasar por fuera del módulo Freenove: **medir el módulo antes de cerrar el contorno**
   (tarea 44.61).
 - Contorno aproximado: franja x 6–174, y 18–78, más brazos x 6–24 y x 156–174 hasta y ~106.
-- Soporte: separadores M3 hasta los espárragos del aluminio (9.5 mm entre PCB-A y la cara inferior del
-  aluminio).
+- Soporte: separadores M3 de 10 mm atornillados a los espárragos PEM del aluminio, tuerca M3 debajo de PCB-A.
 - Todo through-hole: se suelda a mano o con el ensamblado THT de JLCPCB.
 
 ### 4.3 Portadora — en el piso
@@ -93,19 +94,18 @@ Coordenadas del panel: x desde el borde izquierdo, y desde el borde frontal (enc
 ## 5. RV09 para IN y VOL
 
 Vertical, eje estriado de 6 mm con el mismo número de estrías que el EC11 (para usar el mismo knob),
-**largo 25 mm desde la base**, en PCB-A a −11.5 mm: la punta queda a +13.5, a la par de los encoders.
+**largo 25 mm desde la base**, en PCB-A a −12.0 mm: la punta queda a +13.0, igual que un EC11 apretado y
+1.5 mm por debajo de uno en reposo (con knobs iguales casi no se nota).
 El modelo exacto se elige en LCSC antes de comprar (y define el agujero del aluminio).
 
 ## 6. Conexiones entre placas
 
 ### 6.1 PCB-K ↔ PCB-A
 
-Separación entre la cara inferior de PCB-K (−5.0) y la superior de PCB-A (−11.5): **6.5 mm**. Opciones:
-
-| Opción | Pro | Contra |
-|---|---|---|
-| **Conector placa a placa de 1.27 mm**, altura de apilado ~6.5 mm | Sin cables; JLCPCB lo monta | Hay que encontrar uno con esa altura exacta en LCSC |
-| Cable corto con JST-SH | Tolerante a errores de altura | Un cable más que armar |
+Separación entre la cara inferior de PCB-K (−5.0) y la superior de PCB-A (−12.0): **7.0 mm**.
+**Decisión (2026-10-13): cable corto con JST-SH de 10 pines y conectores de entrada lateral (SM10B)** en
+el borde de cada placa. Dos conectores verticales enfrentados no caben en 7 mm, y el cable tolera errores
+de altura.
 
 Por PCB-K pasan 9 señales: B1–B6, datos de LEDs, 5 V y GND.
 
@@ -145,7 +145,7 @@ USB-C 5 V (solo CC, 2× 5.1 kΩ) ─► polyfuse 3 A ─► TVS 5 V ─┬─►
 |---|---|---|
 | OUT L / OUT R (1/4" TRS) | LINE OUT del Audio Shield | Verificar si el shield trae capacitores de acople en LINE OUT; si no, 10 µF + 47 kΩ a GND |
 | IN L / IN R (1/4" TRS) | → pad → protección → LINE IN del shield | §8.1 |
-| PAD (palanca de 3 posiciones) | 0 / −10 / −20 dB, y lectura en el pin 25 | §8.1 |
+| PAD (palanca DP3T de 3 posiciones) | 0 / −10 / −20 dB en L y R | §8.1 (la posición no se lee) |
 | PHONES (TRS 3.5) | Salida de audífonos del SGTL5000 (HP L / HP R / **HP_VGND**) | El común es una tierra virtual de ~1.5 V: el sleeve va a HP_VGND, **nunca a GND ni al chasis** (jack de cuerpo plástico, aislado) |
 | CV OUT (TRS 3.5) | PWM del pin 29 → RC de 2 polos → buffer | Para el add-on del ladder (ADR-003) |
 | USB-C datos de la Teensy | USB del módulo; **MIDI por USB** | Prolongador al panel trasero |
@@ -172,8 +172,13 @@ Una fuente de +4 dBu (≈ 4.4 Vpp) o un mixer de DJ caliente lo superan.
   después del pad, que además aísla la protección. **Se recomienda el buffer.**
 - **Protección:** resistencia en serie de 1 kΩ + diodos Schottky dobles (BAT54S) a 3.3 V y GND antes del
   buffer.
-- **Lectura del pad:** la palanca es de **dos polos (DP3T)**: un polo elige la toma de audio y el otro
-  conecta un divisor que da 3 voltajes distintos al pin 25 (ADC).
+- **Lectura del pad: no se lee.** La entrada es estéreo, así que la palanca DP3T usa un polo para L y
+  otro para R; leer la posición pediría un tercer polo (3P3T, poco común en palanca). La GUI oculta el
+  chip de PAD, como prevé el diseño v3. El pin 25 queda libre.
+- **Cadena por canal** (esquemático de la portadora): jack → escalera → palanca → 1 µF → 1 kΩ → BAT54S a
+  3.3 V / GND sobre un nodo polarizado a VREF (1.65 V, 100 kΩ) → seguidor MCP6004 → 2.2 µF → LINE IN.
+  Las protecciones van sobre el nodo polarizado: sobre el nodo de 0 V recortarían los semiciclos
+  negativos.
 
 ## 9. LEDs
 
@@ -189,12 +194,24 @@ Una fuente de +4 dBu (≈ 4.4 Vpp) o un mixer de DJ caliente lo superan.
 1. ~~MIDI IN por TRS~~ — **resuelto 2026-10-13: MIDI solo por USB** (USB-A host y USB de la Teensy).
    No quedaba ningún RX de UART libre (0, 7, 15, 16, 21, 25, 28 y 34 están ocupados); el mapa de pines
    de `01` §3.3 no cambia. El hueco del jack TRS en el panel trasero pasa a ser **PHONES**.
-2. **Conector PCB-K ↔ PCB-A** (§6.1): placa a placa de 6.5 mm o cable corto.
+2. ~~Conector PCB-K ↔ PCB-A~~ — resuelto: JST-SH 10 de entrada lateral (§6.1).
 3. **Choc soldados o en socket hot-swap.** El socket se monta en la cara inferior, donde también van los
    LEDs; hay que verificar que el socket y el LED no choquen bajo cada tecla.
-4. **Buffer de entrada** (§8.1): recomendado.
+4. ~~Buffer de entrada~~ — resuelto: MCP6004 (seguidores L y R, VREF y CV OUT en el mismo integrado).
 5. **Acople de LINE OUT** del Audio Shield (§8): verificar el esquemático del shield Rev D.
 6. **Módulo Freenove y cable DSI:** medirlos antes de cerrar los brazos de PCB-A y la posición de la Pi.
+
+## 10B. Esquemáticos (rev 0.1, 2026-10-13)
+
+`apps/hardware/kicad/studio/{pcb-k,pcb-a,portadora}` — ERC sin violaciones en los tres; PDFs en
+`apps/hardware/kicad/studio/docs/`. Notas que salieron al dibujarlos:
+
+- **El slot microSD del Audio Shield no se usa:** comparte los pines 10–13 con ENC L y ENC R.
+- **Raspberry Pi:** IDC 2×5 a los pines 1–10 de su header (5 V en 2 y 4, GND en 6 y 9, TXD en 8, RXD en 10).
+  Cable con dos hilos por 5 V y por GND.
+- **Jacks traseros:** la portadora del enclosure (y 76–126) no llega a la pared trasera (y 165). En el
+  layout se decide si la placa crece hasta la pared (jacks soldados, lo más limpio) o los jacks van al
+  panel con cables.
 
 ## 11. Próximo paso
 
