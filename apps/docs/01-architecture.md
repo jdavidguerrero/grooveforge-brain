@@ -265,16 +265,16 @@ placas y part numbers de LCSC va en el theory doc del PCB de Studio.
 | Teensy Audio Shield Rev D (SGTL5000) | 1 | Módulo sobre headers en la portadora (decisión 2026-10-12) |
 | Raspberry Pi 3 Model B v1.2 | 1 | Cabeza gráfica; UART PL011 con `dtoverlay=disable-bt` |
 | Freenove 5" DSI 800×480 táctil (ft5x06) | 1 | `dtoverlay=vc4-kms-dsi-7inch`; cable DSI de 15 pines ≥ 100 mm |
-| ALPS EC11 con push | 5 | ENC L, ENC R, ENC NAV, P1, P2; buje largo si van en la misma placa que los Choc |
+| ALPS EC11 con push (L=25, buje liso Ø6.8) | 5 | ENC L, ENC R, ENC NAV, P1, P2; el buje liso pasa por el aluminio como guía |
 | Kailh Choc V2 | 6 | B1–B6 |
 | LEDs direccionables | 18 | 12 anillo de NAV + 6 keycaps, ensamblados por JLCPCB; modelo en el theory doc del PCB |
-| Potenciómetro RV09 | 2 | IN (pin 24) y VOL (pin 22) |
+| Potenciómetro RV09 vertical, eje estriado Ø6 de 25 mm | 2 | IN (pin 24) y VOL (pin 22) |
 | Palanca de 3 posiciones | 1 | Pad de entrada 0 / −10 / −20 dB, panel trasero (lectura en pin 25) |
 | Jack 1/4" TRS | 4 | OUT L/R e IN L/R |
 | Jack TRS 3.5 mm | 2 | MIDI IN y CV OUT |
 | USB-C 5 V 3 A + polyfuse 3 A + TVS | 1 | Única entrada de alimentación |
 | USB-C (datos del Teensy) y USB-A (host) | 1 + 1 | Panel trasero |
-| PCBs | 4 | Panel, 2 de potenciómetro y portadora (§3.6) |
+| PCBs | 3 | PCB-K, PCB-A y portadora (§3.6) |
 
 ### 3.2 Power Architecture
 
@@ -585,19 +585,21 @@ Los pines UART (GPIO43/44) del ESP32-S3 se cablan directamente a la main PCB (Te
 via cable que desciende por el interior del bracket y el PETG body.
 El Top Panel PCB **no lleva** conector para la pantalla.
 
-#### Studio: 4 placas (decisión 2026-10-12)
+#### Studio: 3 placas (decisión 2026-10-13)
 
-El enclosure de Studio validado en Claude Design pedía 6 placas porque los Choc y los EC11 quedaban a
-alturas distintas bajo el aluminio. Se simplifica a 4:
+El enclosure de Studio validado en Claude Design pedía 6 placas. Los Choc V2 exigen su PCB a −3.4 mm bajo
+la cara superior del aluminio y el cuerpo del EC11 (5 mm) tiene que quedar bajo el aluminio, así que el
+panel necesita **dos niveles**. Con el buje liso del EC11 como guía, la placa de los encoders baja a
+−11.5 mm y absorbe también los pots:
 
-| Placa | Contenido | Conexión |
+| Placa | Altura | Contenido |
 |---|---|---|
-| Panel | 6 Choc V2, 5 EC11 (buje largo para compartir placa con los Choc), 18 LEDs ensamblados por JLCPCB | Cable plano a la portadora |
-| Pot IN y pot VOL (×2) | Un RV09 cada una, a los costados de la pantalla | JST a la portadora |
-| Portadora | Teensy 4.1 + Audio Shield (módulos), alimentación USB-C 5 V 3 A con polyfuse y TVS, conectores del panel trasero, UART a la Pi, CV OUT, lectura del pad | — |
+| PCB-K | −3.4 mm | 6 Choc V2 y los 18 SK6812-MINI-E (6 keycaps + 12 en anillo alrededor de NAV), ensamblados por JLCPCB |
+| PCB-A | −11.5 mm | 5 EC11 y los 2 RV09 (IN, VOL) en brazos a los costados de la pantalla; un cable IDC 2×15 a la portadora |
+| Portadora | piso | Teensy 4.1 + Audio Shield (módulos), alimentación USB-C 5 V 3 A con polyfuse y TVS, conectores del panel trasero, UART a la Pi, CV OUT, lectura del pad |
 
-La Raspberry Pi 3B y la pantalla son módulos aparte. Capas, conectores y footprints: theory doc del PCB
-de Studio.
+La Raspberry Pi 3B y la pantalla son módulos aparte. Detalle (apilado, conexiones, LEDs, pad de entrada
+y decisiones abiertas): `variants/studio/theory/02-studio-pcb.md`.
 
 #### Prototipo v1 vs PCB v1.0
 

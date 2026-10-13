@@ -85,12 +85,12 @@ Coordenadas del panel: **x** desde el borde izquierdo, **y** desde el borde fron
 | # | Tema | Acción |
 |---|---|---|
 | 1 | La regla 7 depende de que el cable DSI de la Freenove mida ≥ 100 mm | medirlo |
-| 2 | El diseño pide agujero de **7.2 mm** para el EC11 (rosca M7); `00-master-parameters.md` del comercial usa 6.5 | verificar con la pieza real; si el comercial usa el mismo EC11, su parámetro también está mal |
+| 2 | El diseño pide agujero de **7.2 mm** para el EC11 (rosca M7); `00-master-parameters.md` del comercial usa 6.5 | **Resuelto 2026-10-13:** el EC11 de Juan tiene buje **liso de Ø6.8** (sin rosca): agujero guía de **Ø7.1**, sin tuerca. Apilado nuevo en `theory/02-studio-pcb.md` |
 | 3 | El anillo de NAV como ventana anular de 32/24 deja **suelto el disco central**. Studio lo resuelve con agujero de Ø32 + difusor | **el enclosure comercial tiene el mismo problema** (`RING_EXT_D` 32 / `RING_INT_D` 24) |
 | 4 | Al girar IN o VOL, la mano queda a 1.5 mm del área táctil: riesgo de toques accidentales | zona muerta táctil junto a IN/VOL en el Studio head, y probar en una maqueta |
 | 5 | IN y VOL se movieron de los extremos de la fila 2 a los costados de la pantalla (si no, ninguna etiqueta cumplía los 25 mm) | reflejado en ADR-004 rev. 2 |
 | 6 | B1–B4 a 20 mm de paso (con 18.4 los keycaps quedaban a 0.4 mm) | ya aplicado en la v3 |
-| 7 | El panel pide 5 placas: PCB-K, PCB-A, 2 PCB-V y la portadora, más la de alimentación | evaluar simplificaciones en el theory doc del PCB (por ejemplo, EC11 de buje más largo para una sola placa) |
+| 7 | El panel pide 5 placas: PCB-K, PCB-A, 2 PCB-V y la portadora, más la de alimentación | **Resuelto 2026-10-13:** 3 placas. PCB-K a −3.4, PCB-A a −11.5 con los pots, portadora con la alimentación (`01` §3.6) |
 | 8 | El rebaje de 0.8 mm bajo cada Choc es una operación CNC extra en el aluminio | alternativa: placa de switches separada de 1.2 mm |
 | 9 | Visualización: WET es la salida después de dry/wet. Hay que confirmar que el motor expone entrada y salida; la vista previa en bypass supone que el FX sigue procesando | definirlo en el theory doc de visualización |
 | 10 | ONDA usa 480 B por frame y `02` limita el payload a 255 B | partirlo en 2 frames (theory doc de visualización) |
