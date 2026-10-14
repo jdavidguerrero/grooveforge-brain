@@ -63,6 +63,13 @@ def refresh_from_lib(board, ref):
             p.SetNet(nets[p.GetNumber()])
 
 
+def radius(board, ref, pad_number, cx, cy):
+    """Distancia (mm) del pad al centro del anillo."""
+    pad = next(p for p in board.FindFootprintByReference(ref).Pads() if p.GetNumber() == pad_number)
+    x, y = pcbnew.ToMM(pad.GetPosition())
+    return math.hypot(x - cx, y - cy)
+
+
 def edge_line(board, x0, y0, x1, y1):
     s = pcbnew.PCB_SHAPE(board)
     s.SetShape(pcbnew.SHAPE_T_SEGMENT)
@@ -107,25 +114,32 @@ def main():
     for i, (led, sw) in enumerate(KEY_LEDS.items()):
         x, y = pcb(*KEYS[sw])
         place(board, led, x, y - LED_OFFSET, back=True)
-        place(board, f"C{13 + i}", x - 7.0, y - LED_OFFSET, rot=0, back=True)
+        # Capacitor a la derecha, pasando la guía del Choc (x+5): a la izquierda tapaba el DIN del LED.
+        place(board, f"C{13 + i}", x + 7.5, y - LED_OFFSET, rot=0, back=True)
 
     # Anillo de NAV: D1 arriba (atrás) y en sentido horario, = índices 0–11 del firmware.
     cx, cy = pcb(*ENCODERS["NAV"])
     for i in range(12):
         a = math.radians(i * 30)
-        # Pads en dirección radial: así 12 LEDs caben en el anillo sin tocarse.
-        place(board, f"D{i + 1}", cx + RING_R * math.sin(a), cy - RING_R * math.cos(a), rot=90 - i * 30, back=True)
+        # Pads en dirección radial: así 12 LEDs caben en el anillo sin tocarse. Con 270° (y no 90°) el
+        # DOUT de cada LED queda del lado del LED siguiente y su DIN del lado del anterior: cada salto de
+        # datos cruza un solo hueco. VDD queda adentro (anillo de +5V) y GND afuera (vías al plano).
+        place(board, f"D{i + 1}", cx + RING_R * math.sin(a), cy - RING_R * math.cos(a), rot=270 - i * 30, back=True)
         # Cap en el hueco hacia el LED siguiente (2.9 mm libres a r=13), orientado radial.
         ac = math.radians(i * 30 + 15)
-        place(board, f"C{i + 1}", cx + RING_CAP_R * math.sin(ac), cy - RING_CAP_R * math.cos(ac),
-              rot=90 - (i * 30 + 15), back=True)
+        ref = f"C{i + 1}"
+        x, y = cx + RING_CAP_R * math.sin(ac), cy - RING_CAP_R * math.cos(ac)
+        place(board, ref, x, y, rot=90 - (i * 30 + 15), back=True)
+        # Pad 1 (+5V) hacia adentro, junto al VDD del LED siguiente; pad 2 (GND) hacia afuera.
+        if radius(board, ref, "1", cx, cy) > radius(board, ref, "2", cx, cy):
+            place(board, ref, x, y, rot=270 - (i * 30 + 15), back=True)
 
-    # Conector al borde trasero, entrada de 47 µF y puntos de prueba.
+    # Conector al borde trasero; 47 µF sobre el bus de +5V; puntos de prueba sobre sus pistas
+    # (TP1 en LED_DIN entre SW2 y SW3, TP2 en LED_DOUT junto a D18). Ver route_pcb_k_keys.py.
     place(board, "J1", 140.0, y0 + 3.5, rot=180, back=True)
-    place(board, "C19", 150.0, y0 + 5.0, back=True)
-    place(board, "TP1", 130.0, y0 + 5.0, back=True)
-    sx, sy = pcb(*KEYS["SW6"])
-    place(board, "TP2", sx + 6.0, sy + 9.0, back=True)
+    place(board, "C19", 159.0, 136.8, back=True)
+    place(board, "TP1", 139.7, 140.0, back=True)
+    place(board, "TP2", 178.0, 160.9, back=True)
 
     # Designadores: en 0402/LED no caben sin pisar pads. JLC ensambla desde el CPL; quedan en Fab.
     for fp in board.GetFootprints():
@@ -135,6 +149,8 @@ def main():
             ref.SetVisible(False)
         elif name.startswith("SW"):
             ref.SetTextPos(fp.GetPosition() + pcbnew.VECTOR2I(0, pcbnew.FromMM(-8.6)))
+        elif name.startswith("TP"):
+            ref.SetTextPos(fp.GetPosition() + pcbnew.VECTOR2I(0, pcbnew.FromMM(-1.5)))
         elif name == "J1":
             ref.SetTextPos(fp.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(0), pcbnew.FromMM(5.0)))
 

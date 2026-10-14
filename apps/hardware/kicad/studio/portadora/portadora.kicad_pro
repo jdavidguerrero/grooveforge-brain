@@ -10,7 +10,15 @@
     },
     "layer_pairs": [],
     "layer_presets": [],
-    "viewports": []
+    "viewports": [],
+    "design_settings": {
+      "rules": {
+        "min_hole_to_hole": 0.5,
+        "min_via_diameter": 0.5,
+        "min_through_hole_diameter": 0.3,
+        "min_via_annular_width": 0.13
+      }
+    }
   },
   "boards": [],
   "component_class_settings": {

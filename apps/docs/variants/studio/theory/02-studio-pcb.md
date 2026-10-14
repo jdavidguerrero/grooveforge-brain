@@ -113,6 +113,22 @@ de altura.
 
 Por PCB-K pasan 9 señales: B1–B6, datos de LEDs, 5 V y GND.
 
+**Orden de pines (rev. 2026-10-14, igual en PCB-K y PCB-A, cable 1:1):**
+
+| Pin | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Señal | B4 | B6 | B3 | GND | +5V | GND | LED_DIN | B2 | B5 | B1 |
+
+El orden sale del ruteo de PCB-K. J1 está en el borde trasero, centrado (pin 10 al oeste). Cada línea de
+botón baja por una vía a F.Cu y se abre hacia su tecla sin cruzar a ninguna otra:
+- B1, B5 y B2 van al oeste;
+- B4, B6 y B3 van al este;
+- LED_DIN baja al anillo;
+- +5V y GND quedan en el centro, cada uno con su vía.
+
+Con el orden anterior (+5V, GND, LED_DIN, GND, B1…B6) hacían falta ~14 cruces entre capas. Los pines de la
+Teensy no cambian.
+
 ### 6.2 Panel → portadora (un solo cable desde PCB-A)
 
 | Grupo | Señales | Pines de la Teensy (`01` §3.3) |

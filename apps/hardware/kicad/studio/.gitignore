@@ -4,3 +4,7 @@ fp-info-cache
 *-backups/
 *.lck
 _autosave-*
+
+# Intermedios de Freerouting
+*.dsn
+*.ses

@@ -5487,106 +5487,6 @@
 		(uuid "ecee8b31-3941-4733-a5f6-3765a3969df3")
 	)
 	(label "+5V"
-		(at 224.79 139.70000000000002 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5a5f4e61-76f1-4c9a-88d0-edbc9ea18f5e")
-	)
-	(label "GND"
-		(at 224.79 142.24 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c68047e0-e591-4b5e-a50b-8dbeaa70acf5")
-	)
-	(label "LED_DIN"
-		(at 224.79 144.78 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "dea19a2e-f910-49cb-bf18-bed53b332f2e")
-	)
-	(label "GND"
-		(at 224.79 147.32000000000002 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "49dcbb8a-1791-4053-9990-0827a3a0b94d")
-	)
-	(label "B1"
-		(at 224.79 149.86 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c4032390-215b-481c-a0da-82c30a014229")
-	)
-	(label "B2"
-		(at 224.79 152.4 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "4db3f134-1601-4d04-a705-b56040b9e5b9")
-	)
-	(label "B3"
-		(at 224.79 154.94000000000003 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c2d3b030-d9a0-47f7-9875-3c5d0f31a64c")
-	)
-	(label "B4"
-		(at 224.79 157.48000000000002 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "477ce57a-1c2d-4592-9831-6e0a02c4ac97")
-	)
-	(label "B5"
-		(at 224.79 160.02 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7041610e-37af-4d5c-bd6d-b5515c55cd22")
-	)
-	(label "B6"
-		(at 224.79 162.56 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c51db0d6-3e64-4df0-a6d7-2ca338048d7d")
-	)
-	(label "+5V"
 		(at 314.96000000000004 142.24 0)
 		(effects
 			(font
@@ -5932,6 +5832,106 @@
 			(justify left bottom)
 		)
 		(uuid "dd5c38f0-4e69-4e84-a3b5-ef08022156dc")
+	)
+	(label "B4"
+		(at 224.79 139.70000000000002 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "249f3453-53fc-414d-865b-6a03a8de3794")
+	)
+	(label "B6"
+		(at 224.79 142.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "84a614d8-0e54-43f8-94ac-099ed04bbc1f")
+	)
+	(label "B3"
+		(at 224.79 144.78 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "757bf6e9-9267-49e8-8f20-0f87157a50f4")
+	)
+	(label "GND"
+		(at 224.79 147.32000000000002 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "33c6e80e-d231-45bb-a9f5-6f6b32155db4")
+	)
+	(label "+5V"
+		(at 224.79 149.86 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "a8f3dbc3-e27b-4592-b82e-8189f11f8808")
+	)
+	(label "GND"
+		(at 224.79 152.4 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "99b0e34f-ac87-4b22-a810-6575b97064dc")
+	)
+	(label "LED_DIN"
+		(at 224.79 154.94000000000003 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f6212535-3ad7-456d-94fa-cd2211989ae6")
+	)
+	(label "B2"
+		(at 224.79 157.48000000000002 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4c59cb7b-c81f-4cea-b1c5-2c68c6df073b")
+	)
+	(label "B5"
+		(at 224.79 160.02 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "4d63b284-7a63-4f2f-82bd-cdb08f221931")
+	)
+	(label "B1"
+		(at 224.79 162.56 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b29e4dce-d411-409f-bfd1-d75693ed8e69")
 	)
 	(sheet_instances
 		(path "/"
