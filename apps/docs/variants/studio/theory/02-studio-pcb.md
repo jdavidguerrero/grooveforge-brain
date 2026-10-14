@@ -47,7 +47,10 @@ separadores).
 | LEDs SK6812-MINI-E (cara inferior de PCB-K) | −5.0 a ~−6.0 | Montaje invertido: brillan hacia arriba por agujeros de PCB-K |
 | Tope del cuerpo del EC11 | −7.0 | 2.0 mm de aire bajo PCB-K (1.0 bajo los LEDs) |
 | **PCB-A** (cara superior) | **−12.0** | Base de los EC11 y de los RV09; separadores M3 de **10 mm** (medida estándar) desde la cara inferior del aluminio |
-| Pines del EC11 / fin del apilado | ~−17.1 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~29 mm por dentro |
+| Pines del EC11 / fin del apilado | ~−17.1 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~44 mm por dentro (rev. +15 mm) |
+| Pantalla Freenove (vidrio + placa, 7.6 mm) | −2.5 a −10.1 | Junta de 0.5 bajo el aluminio. En y 76.9–152.9 (centro corrido a 114.9, rev. 2026-10-14): 0.9 mm de aire frente al borde trasero de PCB-K (y 76) y 1.9 mm sobre PCB-A |
+| Pi 3B (atornillada a la pantalla) | hasta −40.4 | 38.4 mm desde el vidrio en USB/Ethernet (§4.5) |
+| Piso interior (PETG 3 mm) | z = 3 sobre la base | Enclosure 43 / 78 mm (rev. +15 mm): ver alturas libres en §4.5 |
 
 **Agujeros en el aluminio que cambian respecto del enclosure:** EC11 pasa de Ø7.2 con rosca M7 a
 **Ø7.1 liso** (buje de 6.8 + 0.3 de juego). El resto (Choc 14×14 con rebaje 16×16×0.8, NAV Ø32 con
@@ -56,7 +59,7 @@ difusor, salida de aire) queda igual. El agujero de los RV09 se fija con el mode
 **El knob:** necesita un orificio ≥ 10 mm de profundo y su faldón tiene que quedar a ≥ 2 mm del aluminio
 para que el push baje 1.5 mm sin tocar.
 
-## 4. Las 3 placas
+## 4. Las placas (3 + la trasera, §4.4)
 
 Coordenadas del panel: x desde el borde izquierdo, y desde el borde frontal (enclosure).
 
@@ -83,17 +86,50 @@ Coordenadas del panel: x desde el borde izquierdo, y desde el borde frontal (enc
 - Soporte: separadores M3 de 10 mm atornillados a los espárragos PEM del aluminio, tuerca M3 debajo de PCB-A.
 - Todo through-hole: se suelda a mano o con el ensamblado THT de JLCPCB.
 
-### 4.3 Portadora — en el piso
+### 4.3 Portadora — en el piso, bajo la Pi (rev. 2026-10-14)
 
 - **Teensy 4.1 + Audio Shield Rev D** como módulos sobre headers (decisión 2026-10-12), **lado a lado**, no
   apilados (2026-10-13): el shield va en sus propios zócalos 1×14 (J15/J16) y la portadora solo cablea
   7, 8, 18–21, 23, 3V3 y GND. Así los pines 10–13 (ENC L/R) y 15 (push de ENC R) no tocan el slot SD ni
   el footprint MEM, se reusa el shield ya soldado y se ganan ~12 mm de altura. Costo: ~9 pistas de
   I2S/I2C de 3–4 cm; MCLK (11.3 MHz) corta y sobre plano de GND.
-- **Alimentación** (§7), **conectores del panel trasero** (§8), **UART a la Pi** (pines 0/1 de la Teensy ↔
-  GPIO14/15 de la Pi, 3.3 V directo, GND común), **CV OUT** (pin 29), **lectura del pad** (pin 25).
-- Ubicación del enclosure: 72 × 50 mm en x 103–175, y 76–126. Probablemente crezca al absorber la placa
-  de alimentación: revisar contra la Pi 3B, que va en el mismo piso.
+- **Alimentación** (§7), **jacks traseros** (§4.4), **UART a la Pi** (pines 0/1 de la Teensy ↔ GPIO14/15
+  de la Pi, 3.3 V directo, GND común), **CV OUT** (pin 29).
+- **Ubicación:** en el piso bajo la Pi (§4.5), con la hilera de jacks contra la pared trasera. Objetivo
+  ≤ 100 × 100 mm (tarifa base de JLCPCB). Alto del conjunto: separador 5 + placa 1.6 + zócalo 8.5 + Teensy
+  1.6 + piezas ~3 ≈ **20 mm sobre el piso**.
+
+### 4.4 Jacks traseros: una hilera soldada a la portadora (decisión 2026-10-14)
+
+El diseño de Claude Design ponía los jacks en dos filas (z ≈ 16 y 42) y una tapa de servicio para la Pi en
+x 38–92. Con la Pi atornillada a la pantalla y sus puertos hacia el costado, **la tapa se elimina** y la
+pared trasera queda libre; con el enclosure 15 mm más alto (§3), la portadora llega a la pared:
+
+- **Hilera baja, soldada a la portadora:** IN L/R y OUT L/R (1/4" TRS), PHONES (3.5 TRS) y CV OUT (3.5).
+  Jacks **horizontales de PCB** (eje paralelo a la placa), los más comunes y baratos de LCSC. Las x salen
+  del layout.
+- **Arriba, de panel con cable:** USB-C Teensy, USB-A host, USB-C 5 V y la palanca PAD (cableada al header
+  SW1 de 2×4, junto a la escalera R4–R9).
+- ~~Placa trasera vertical (J20/J17, IDC 2×8)~~: se dibujó el 2026-10-14 y se descartó el mismo día; no
+  llegó a commit.
+
+### 4.5 Raspberry Pi y alturas libres (medido 2026-10-14)
+
+La Pi 3B **va atornillada detrás del módulo Freenove** (120.8 × 76 × 7.6 mm; 38.4 mm con la Pi). En el
+enclosure (pantalla centrada en (90, 114.9), §3): Pi en x ~43–132, y ~92–149, con USB y Ethernet hacia la
+**derecha** (hasta x ~138), el HDMI hacia atrás y el GPIO hacia el frente (medido sobre foto, ±2 mm).
+
+Altura libre sobre el piso (z = 3) con el enclosure de +15 mm:
+
+| Zona | Libre |
+|---|---|
+| Bajo USB/Ethernet (x ~120–138; 38.4 mm de hondo) | ~20 mm adelante (y 92) → ~32 mm atrás |
+| Bajo el resto de la Pi (~31 mm de hondo con el GPIO) | ~29 mm adelante → ~43 mm atrás |
+| Franja delantera del módulo (y 77–92) y fuera de él | más de 30 mm |
+
+La portadora (~20 mm) cabe en cualquier lugar bajo la Pi; bajo USB/Ethernet adelante solo pistas y piezas
+bajas. Los puertos de la Pi quedan adentro (mantenimiento con la caja abierta): la Pi usa WiFi y se
+alimenta por el GPIO (J6, §7).
 
 ## 5. RV09 para IN y VOL
 
@@ -220,7 +256,10 @@ VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación:
    LEDs; hay que verificar que el socket y el LED no choquen bajo cada tecla.
 4. ~~Buffer de entrada~~ — resuelto: MCP6004 (seguidores L y R, VREF y CV OUT en el mismo integrado).
 5. **Acople de LINE OUT** del Audio Shield (§8): verificar el esquemático del shield Rev D.
-6. **Módulo Freenove y cable DSI:** medirlos antes de cerrar los brazos de PCB-A y la posición de la Pi.
+6. ~~Módulo Freenove y Pi~~ — **medido 2026-10-14** (§4.5). Consecuencias: enclosure +15 mm, pantalla
+   corrida 2.5 mm hacia atrás (choque del vidrio con PCB-K), sin tapa de servicio. Los brazos de PCB-A
+   (x 6–24 y 156–174) quedan 5.6 mm fuera del módulo.
+7. **Jacks horizontales de la portadora:** elegir modelos de LCSC (1/4" TRS y 3.5 TRS) al hacer el layout.
 
 ## 10B. Esquemáticos (rev 0.1, 2026-10-13)
 
@@ -230,9 +269,8 @@ VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación:
 - **El slot microSD del Audio Shield no se usa:** sus pines 10–13 quedan sin conexión en J15/J16.
 - **Raspberry Pi:** IDC 2×5 a los pines 1–10 de su header (5 V en 2 y 4, GND en 6 y 9, TXD en 8, RXD en 10).
   Cable con dos hilos por 5 V y por GND.
-- **Jacks traseros:** la portadora del enclosure (y 76–126) no llega a la pared trasera (y 165). En el
-  layout se decide si la placa crece hasta la pared (jacks soldados, lo más limpio) o los jacks van al
-  panel con cables.
+- **Jacks traseros:** ~~la portadora crece hasta la pared o jacks de panel~~ → **resuelto 2026-10-14:**
+  placa trasera vertical con los jacks soldados (§4.4).
 
 ## 11. Próximo paso
 

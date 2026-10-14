@@ -28,14 +28,33 @@ def main():
         d = re.search(r'\(description "([^"]*)"\)', comp)
         ds = re.search(r'\(datasheet "([^"]*)"\)', comp)
         fields[ref] = {"Description": d.group(1) if d else "", "Datasheet": ds.group(1) if ds else ""}
+    unconnected = {}
+    for chunk in re.split(r"\(net\s*\(code", text)[1:]:
+        net_name = re.search(r'\(name "([^"]+)"', chunk).group(1)
+        if net_name.startswith("unconnected-"):
+            unconnected[net_name] = re.findall(r'\(ref "([^"]+)"\)\s*\(pin "([^"]+)"\)', chunk)
     path = os.path.join(folder, f"{name}.kicad_pcb")
     board = pcbnew.LoadBoard(path)
     for fp in board.GetFootprints():
         ref = fp.GetReference()
         for field, value in fields.get(ref, {}).items():
             fp.SetField(field, value)
-        if ref.startswith("TP"):
+        if ref.startswith(("TP", "JP")):
+            # Puntos de prueba y solder jumpers: cobre de la placa, no piezas que JLC monte.
             fp.SetExcludedFromBOM(True)
+            fp.SetExcludedFromPosFiles(True)
+    # Pines sin conexión: el esquemático les da una red "unconnected-(…)" propia y la paridad la exige.
+    for net_name, nodes in unconnected.items():
+        net = board.FindNet(net_name)
+        if net is None:
+            net = pcbnew.NETINFO_ITEM(board, net_name)
+            board.Add(net)
+        for ref, pin in nodes:
+            fp = board.FindFootprintByReference(ref)
+            if fp:
+                for pad in fp.Pads():
+                    if pad.GetNumber() == pin and not pad.GetNetname():
+                        pad.SetNet(net)
     pcbnew.SaveBoard(path, board)
     print(f"{name}: campos sincronizados")
 

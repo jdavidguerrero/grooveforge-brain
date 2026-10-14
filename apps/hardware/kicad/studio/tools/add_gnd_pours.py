@@ -31,6 +31,29 @@ def stitch(board, gnd, bbox):
     board.Add(group)
 
     fills = [z.GetFilledPolysList(z.GetLayer()) for z in board.Zones() if z.GetNetname() == "/GND"]
+    # Agujeros existentes (pads con taladro y vías): una vía nueva respeta 0.5 mm agujero-agujero (JLCPCB).
+    holes = [(p.GetPosition(), max(p.GetDrillSize().x, p.GetDrillSize().y) // 2, p.GetNetname())
+             for fp in board.GetFootprints() for p in fp.Pads() if p.GetDrillSize().x > 0]
+    holes += [(t.GetPosition(), t.GetDrill() // 2, t.GetNetname())
+              for t in board.GetTracks() if t.GetClass() == "PCB_VIA"]
+    gap = pcbnew.FromMM(0.5 + VIA_DRILL / 2)
+
+    def free(x, y):
+        return all(math.hypot(x - c.x, y - c.y) >= r + gap for c, r, _ in holes)
+
+    def fits(x, y):
+        return free(x, y) and all(f.Contains(pcbnew.VECTOR2I(int(x + dx), int(y + dy)))
+                                  for f in fills for dx, dy in ring)
+
+    def add_via(x, y):
+        v = pcbnew.PCB_VIA(board)
+        v.SetPosition(pcbnew.VECTOR2I(int(x), int(y)))
+        v.SetWidth(pcbnew.FromMM(VIA_D))
+        v.SetDrill(pcbnew.FromMM(VIA_DRILL))
+        v.SetNet(gnd)
+        board.Add(v)
+        group.AddItem(v)
+        holes.append((v.GetPosition(), pcbnew.FromMM(VIA_DRILL) // 2, "/GND"))
     # El relleno ya guarda su holgura con el resto del cobre: si el círculo de la vía (más 0.1 mm) cae
     # adentro, la vía respeta la holgura.
     r = pcbnew.FromMM(VIA_D / 2 + 0.1)
@@ -41,17 +64,33 @@ def stitch(board, gnd, bbox):
     while y < bbox.GetBottom():
         x = bbox.GetLeft() + step // 2
         while x < bbox.GetRight():
-            if all(f.Contains(pcbnew.VECTOR2I(int(x + dx), int(y + dy))) for f in fills for dx, dy in ring):
-                v = pcbnew.PCB_VIA(board)
-                v.SetPosition(pcbnew.VECTOR2I(int(x), int(y)))
-                v.SetWidth(pcbnew.FromMM(VIA_D))
-                v.SetDrill(pcbnew.FromMM(VIA_DRILL))
-                v.SetNet(gnd)
-                board.Add(v)
-                group.AddItem(v)
+            if fits(x, y):
+                add_via(x, y)
                 count += 1
             x += step
         y += step
+
+    # Islas sin ninguna vía adentro (quedan sueltas aunque toquen pads): buscar un lugar en grilla fina.
+    fine = pcbnew.FromMM(0.5)
+    for f in fills:
+        for i in range(f.OutlineCount()):
+            island = pcbnew.SHAPE_POLY_SET()
+            island.AddOutline(f.Outline(i))
+            # Ya unida a la otra cara si tiene adentro una vía o un pad pasante de GND.
+            if any(n == "/GND" and island.Contains(c) for c, _, n in holes):
+                continue
+            bb = f.Outline(i).BBox()
+            done = False
+            yy = bb.GetTop()
+            while yy < bb.GetBottom() and not done:
+                xx = bb.GetLeft()
+                while xx < bb.GetRight() and not done:
+                    if island.Contains(pcbnew.VECTOR2I(int(xx), int(yy))) and fits(xx, yy):
+                        add_via(xx, yy)
+                        count += 1
+                        done = True
+                    xx += fine
+                yy += fine
     return count
 
 

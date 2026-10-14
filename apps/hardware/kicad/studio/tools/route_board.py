@@ -119,7 +119,12 @@ def main():
     board = pcbnew.LoadBoard(pcb_path)   # recargar: las holguras de la clase vuelven a las del proyecto
     if not pcbnew.ImportSpecctraSES(board, ses):
         raise SystemExit("no se pudo importar el SES")
-    for t in kept:                       # el SES reemplaza todas las pistas: reponer las de SKIP_NETS
+    # El SES reemplaza las pistas (menos las bloqueadas, que KiCad conserva): borrar lo que quede de
+    # SKIP_NETS y reponer la copia guardada, así no se duplica nada.
+    for t in list(board.GetTracks()):
+        if t.GetNetname() in SKIP_NETS:
+            board.Delete(t)
+    for t in kept:
         t.SetParent(board)
         board.Add(t)
     print(f"tramos sueltos borrados: {remove_dangling(board)}")

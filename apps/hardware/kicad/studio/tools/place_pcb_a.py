@@ -69,7 +69,7 @@ def place_center(board, ref, cx, cy, rot=0.0, back=False, by="shaft"):
 
 def place(board, ref, x, y, rot=0.0, back=False):
     fp = board.FindFootprintByReference(ref)
-    if back and not fp.IsFlipped():
+    if back != fp.IsFlipped():
         fp.Flip(fp.GetPosition(), False)
     fp.SetPosition(vec(x, y))
     fp.SetOrientationDegrees(rot)
@@ -101,14 +101,15 @@ def main():
     for p in STANDOFFS:
         edge(board, pcbnew.SHAPE_T_CIRCLE, c=pcb(*p), d=STANDOFF_HOLE)
 
-    # Encoders: A/C/B al oeste del eje, switch al este. Capacitores en la cara inferior junto a cada pin.
+    # Encoders: A/C/B al oeste del eje, switch al este. Capacitores en la cara SUPERIOR (con J1): la placa
+    # queda de una sola cara para el ensamble Economic de JLCPCB (rev. 2026-10-14).
     for ref, (x, y) in ENCODERS.items():
         cx, cy = pcb(x, y)
         place_center(board, ref, cx, cy)
         c_a, c_b, c_sw = ENC_CAPS[ref]
-        place(board, c_a, cx - 11.0, cy - 2.5, rot=180, back=True)     # pad 1 (señal) hacia el pin
-        place(board, c_b, cx - 11.0, cy + 2.5, rot=180, back=True)
-        place(board, c_sw, cx + 11.0, cy + 2.5, rot=0, back=True)
+        place(board, c_a, cx - 11.0, cy - 2.5, rot=180)                # pad 1 (señal) hacia el pin
+        place(board, c_b, cx - 11.0, cy + 2.5, rot=180)
+        place(board, c_sw, cx + 11.0, cy + 2.5, rot=0)
 
     # Pots: pines hacia la franja (abajo en la placa) para bajar por el brazo.
     for ref, (x, y) in POTS.items():
@@ -118,7 +119,8 @@ def main():
         fp = board.FindFootprintByReference(ref)
         wiper = next(p for p in fp.Pads() if p.GetNumber() == "2").GetPosition()
         wx, wy = pcbnew.ToMM(wiper.x), pcbnew.ToMM(wiper.y)
-        place(board, cap, wx, wy - 3.2, rot=90, back=True)
+        # Arriba no cabe bajo el cuerpo del pot: va al costado de los pines, lejos del separador del brazo.
+        place(board, cap, wx - 6.0, wy + 3.0, rot=0)
 
     # J1 (a PCB-K): cara superior, abre hacia atrás (−y en la placa), hacia el J1 de PCB-K.
     place_center(board, "J1", 100.0, 150.0, rot=180, by="pads")
@@ -127,7 +129,41 @@ def main():
     j2 = board.FindFootprintByReference("J2")
     p30 = next(p for p in j2.Pads() if p.GetNumber() == "30").GetPosition()
     # Fuera de la caja de la IDC (la caja ocupa ±5 mm alrededor de y 128 en esta cara).
-    place(board, "C18", pcbnew.ToMM(p30.x), 135.5, rot=0, back=True)
+    place(board, "C18", pcbnew.ToMM(p30.x), 135.5, rot=0)
+
+    # Pines de GND del JST (1 mm de paso): vía propia al plano justo detrás del pad. Si no, las pistas de
+    # los pines vecinos encierran el cobre del pad en una isla suelta. Bloqueadas, antes del ruteo.
+    for g in list(board.Groups()):
+        if g.GetName() == "escapes_gnd_j1":
+            for item in list(g.GetItems()):
+                board.Delete(item)
+            board.Delete(g)
+    group = pcbnew.PCB_GROUP(board)
+    group.SetName("escapes_gnd_j1")
+    board.Add(group)
+    gnd = board.FindNet("/GND") or board.FindNet("GND")
+    j1 = board.FindFootprintByReference("J1")
+    for pad in j1.Pads():
+        if pad.GetNetname() in ("/GND", "GND"):
+            a = pad.GetPosition()
+            b = pcbnew.VECTOR2I(a.x, a.y + pcbnew.FromMM(1.9))
+            t = pcbnew.PCB_TRACK(board)
+            t.SetStart(a)
+            t.SetEnd(b)
+            t.SetWidth(pcbnew.FromMM(0.3))
+            t.SetLayer(pcbnew.F_Cu)
+            t.SetNet(gnd)
+            t.SetLocked(True)
+            board.Add(t)
+            group.AddItem(t)
+            v = pcbnew.PCB_VIA(board)
+            v.SetPosition(b)
+            v.SetWidth(pcbnew.FromMM(0.6))
+            v.SetDrill(pcbnew.FromMM(0.3))
+            v.SetNet(gnd)
+            v.SetLocked(True)
+            board.Add(v)
+            group.AddItem(v)
 
     # Designadores de los 0603 ocultos (JLC ensambla desde el CPL); quedan en Fab.
     for fp in board.GetFootprints():

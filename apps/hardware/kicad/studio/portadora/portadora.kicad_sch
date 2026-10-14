@@ -8373,9 +8373,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "1baaf1c1-52f4-4284-976c-3848bfa06b1e")
 		(property "Reference" "JP1"
@@ -8929,7 +8929,7 @@
 				)
 			)
 		)
-		(property "Value" "IN L 6.35"
+		(property "Value" "IN L 1/4 NRJ3HF-1"
 			(at 25.4 185.42 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -8939,7 +8939,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NMJ6HFD2_Horizontal"
+		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
 			(at 25.4 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -9011,7 +9011,7 @@
 				)
 			)
 		)
-		(property "Value" "IN R 6.35"
+		(property "Value" "IN R 1/4 NRJ3HF-1"
 			(at 25.4 232.41 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9021,7 +9021,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NMJ6HFD2_Horizontal"
+		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
 			(at 25.4 229.87 0)
 			(hide yes)
 			(show_name no)
@@ -11202,7 +11202,7 @@
 				)
 			)
 		)
-		(property "Value" "OUT L 6.35"
+		(property "Value" "OUT L 1/4 NRJ3HF-1"
 			(at 309.88 182.88 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11212,7 +11212,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NMJ6HFD2_Horizontal"
+		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
 			(at 309.88 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -11284,7 +11284,7 @@
 				)
 			)
 		)
-		(property "Value" "OUT R 6.35"
+		(property "Value" "OUT R 1/4 NRJ3HF-1"
 			(at 309.88 217.17 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -11294,7 +11294,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NMJ6HFD2_Horizontal"
+		(property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
 			(at 309.88 214.63 0)
 			(hide yes)
 			(show_name no)
@@ -15146,9 +15146,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "1d9c8805-ad1d-46bb-88e5-47f62012b17b")
 		(property "Reference" "JP2"
@@ -15225,9 +15225,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "bfc66a65-1422-4394-818b-2e80c0186558")
 		(property "Reference" "JP3"
@@ -15304,9 +15304,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "fef7f97f-e1b5-491d-b538-60dd366856ae")
 		(property "Reference" "JP4"
@@ -15383,9 +15383,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "d53b182b-a646-4c34-8adb-89f6eeff0688")
 		(property "Reference" "JP5"
@@ -15462,9 +15462,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "bd78bc8c-b8d8-4f11-9155-3aa3ab720cbb")
 		(property "Reference" "TP1"
@@ -15538,9 +15538,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "4c7d6dee-4088-46f1-b6c2-dfd545835b34")
 		(property "Reference" "TP2"
@@ -15614,9 +15614,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "d95f308b-1e4d-4999-84dd-a29bc19d3c81")
 		(property "Reference" "TP3"
@@ -15690,9 +15690,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "867c150d-b396-4b99-8e11-b3722455619c")
 		(property "Reference" "TP4"
@@ -15766,9 +15766,9 @@
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
-		(in_bom yes)
+		(in_bom no)
 		(on_board yes)
-		(in_pos_files yes)
+		(in_pos_files no)
 		(dnp no)
 		(uuid "00bc55e1-bf71-49fc-93ce-742fff4b7de1")
 		(property "Reference" "TP5"

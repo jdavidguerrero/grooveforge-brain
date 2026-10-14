@@ -1,8 +1,9 @@
 """Simulación de la etapa de entrada y del CV OUT de la portadora de Studio (ngspice de KiCad).
 
 Criterios C1–C6: apps/docs/variants/studio/theory/03-studio-input-stage.md §4.
-Valores y topología: se leen del esquemático (portadora/portadora.kicad_sch) exportando su netlist con
-kicad-cli. Si el esquemático deja de coincidir con el circuito simulado, el script se detiene y dice qué
+Valores y topología: se leen del esquemático de la portadora exportando su netlist con kicad-cli. Si en
+algún momento la entrada se reparte entre dos placas, agregarlas a SCHEMATICS: las redes se unen por
+nombre y el cable CABLE se verifica pin a pin. Si el esquemático deja de coincidir con el circuito simulado, el script se detiene y dice qué
 red cambió. Correrlo antes de cada pedido.
 
 Correr con cualquier Python 3 que tenga numpy:
@@ -22,7 +23,8 @@ import numpy as np
 LIBNGSPICE = "/Applications/KiCad/KiCad.app/Contents/Frameworks/libngspice.0.dylib"
 KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 HERE = os.path.dirname(os.path.abspath(__file__))
-SCHEMATIC = os.path.join(HERE, "..", "portadora", "portadora.kicad_sch")
+SCHEMATICS = [os.path.join(HERE, "..", "portadora", "portadora.kicad_sch")]
+CABLE = ("J17", "J20")         # solo si hay dos placas en SCHEMATICS
 
 # Circuito simulado = estas conexiones del esquemático (ref.pin por red). Canal L; el R se deriva
 # cambiando las referencias. Si alguna falta, el netlist de la simulación ya no representa la placa.
@@ -145,18 +147,25 @@ def parse_value(text):
 
 def load_schematic():
     """Exporta el netlist de la portadora, verifica la topología y devuelve {ref: valor}."""
+    values, nets, cable = {}, {}, []
     with tempfile.TemporaryDirectory() as tmp:
-        net_path = os.path.join(tmp, "portadora.net")
-        subprocess.run([KICAD_CLI, "sch", "export", "netlist", "--format", "kicadsexpr",
-                        "-o", net_path, SCHEMATIC], check=True, capture_output=True)
-        text = open(net_path).read()
-
-    values = {m.group(1): m.group(2)
-              for m in re.finditer(r'\(comp\s*\(ref "([^"]+)"\)\s*\(value "([^"]*)"\)', text)}
-    nets = {}
-    for chunk in re.split(r"\(net\s*\(code", text)[1:]:
-        name = re.search(r'\(name "([^"]+)"', chunk).group(1).lstrip("/")
-        nets[name] = {f"{r}.{p}" for r, p in re.findall(r'\(ref "([^"]+)"\)\s*\(pin "([^"]+)"\)', chunk)}
+        for sch in SCHEMATICS:
+            net_path = os.path.join(tmp, "board.net")
+            subprocess.run([KICAD_CLI, "sch", "export", "netlist", "--format", "kicadsexpr",
+                            "-o", net_path, sch], check=True, capture_output=True)
+            text = open(net_path).read()
+            values.update({m.group(1): m.group(2) for m in
+                           re.finditer(r'\(comp\s*\(ref "([^"]+)"\)\s*\(value "([^"]*)"\)', text)})
+            pins = {}
+            for chunk in re.split(r"\(net\s*\(code", text)[1:]:
+                name = re.search(r'\(name "([^"]+)"', chunk).group(1).lstrip("/")
+                nodes = re.findall(r'\(ref "([^"]+)"\)\s*\(pin "([^"]+)"\)', chunk)
+                # Redes de las dos placas con el mismo nombre = la misma red a través del cable.
+                nets.setdefault(name, set()).update(f"{r}.{p}" for r, p in nodes)
+                pins.update({p: name for r, p in nodes if r in CABLE})
+            cable.append(pins)
+    if len(cable) == 2 and cable[0] != cable[1]:
+        raise SystemExit(f"El cable {CABLE[0]} ↔ {CABLE[1]} no coincide pin a pin entre las dos placas")
 
     def to_r(item):
         """Referencia del canal L → la equivalente del R (pin exacto primero, luego prefijo de ref)."""

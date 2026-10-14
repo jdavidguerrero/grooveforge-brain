@@ -29,11 +29,15 @@ desde `claude-design-2026-10-09/`. Las fuentes (IBM Plex) se cargan desde Google
 
 Coordenadas del panel: **x** desde el borde izquierdo, **y** desde el borde frontal, en mm.
 
-- **Forma:** cuña de 12°, 28 mm adelante y 63 mm atrás. Huella **180 × 165 × 63** sin mejillas;
-  **204 × 165 × 65** con mejillas.
+- **Forma (rev. 2026-10-14):** cuña de 12°, **43 mm adelante y 78 mm atrás** (+15 mm parejo sobre el
+  diseño de Claude Design, que tenía 28 / 63). Huella **180 × 165 × 78** sin mejillas; **204 × 165 × 80** con
+  mejillas. El aluminio y todo lo que cuelga de él (PCB-K, PCB-A, pantalla) no cambia; baja el piso. Motivo:
+  la portadora entra bajo la Pi con margen y hay más volumen de aire (theory/02 §3).
 - **Materiales:** PETG 3 mm (impreso boca abajo, insertos M3), aluminio 6061-T6 de 2 mm anodizado
   negro con 6 espárragos PEM M3 por debajo, fondo PETG 3 mm con patas de goma Ø14 × 6.
-- **Pantalla:** centro (90, 112.4); ventana 111 × 67.8 R1; área activa x 36–144, y 80–144.8.
+- **Pantalla (rev. 2026-10-14):** centro **(90, 114.9)**, corrida 2.5 mm hacia atrás para que el vidrio del
+  módulo (120.8 × 76) no se monte sobre PCB-K; ventana 111 × 67.8 R1; área activa x 36–144, y 82.5–147.3.
+  Módulo Freenove: y 76.9–152.9, 7.6 mm de grosor (vidrio + placa) y 38.4 mm con la Pi atornillada atrás.
 
 | Control | x | y |
 |---|---|---|
@@ -46,16 +50,20 @@ Coordenadas del panel: **x** desde el borde izquierdo, **y** desde el borde fron
 
 - **Cortes CNC:** Choc 14 × 14 con rebaje de 16 × 16 × 0.8 por debajo (placa de 1.2 para el clip);
   EC11 Ø7.2 (rosca M7, **verificar**); NAV Ø32 con difusor de PC esmerilado de 2 mm; RV09 Ø7;
-  29 ranuras de 2.5 × 10 como salida de aire.
-- **Apilado bajo el aluminio:** PCB-K (6 Choc + 16 LED SK6812-MINI-E) a −3.4 mm; PCB-A (5 EC11) a
-  −8.5 mm; IN y VOL en dos PCB-V con cable JST; módulo de pantalla de 6 mm (asumido) con junta de 0.5.
-- **Interior:** Pi 3B en el piso bajo la pantalla, con los puertos hacia atrás; portadora de
-  72 × 50 para Teensy 4.1 + Audio Shield en x 103–175, y 76–126; placa de alimentación USB-C con
-  polyfuse de 3 A y TVS. **Se corta el puente VUSB–VIN del Teensy**: todo se alimenta del USB-C de 5V.
-- **Conectores (pared trasera):** OUT L/R e IN L/R en 1/4"; ~~MIDI IN TRS 3.5~~ → **PHONES TRS 3.5**
-  (2026-10-13: MIDI solo por USB, no queda RX de UART libre); USB-C del Teensy (datos y MIDI);
-  USB-A host; USB-C 5V 3A; CV OUT 3.5; INPUT PAD (palanca de 3 posiciones, Ø6.2) entre las entradas y
-  el USB host; tapa de servicio de la Pi (Ethernet y USB) y tapa inferior para la microSD.
+  29 ranuras de 2.5 × 10 como salida de aire, en **y 155–165** (subidas 2 mm con la pantalla).
+- **Apilado bajo el aluminio:** PCB-K (6 Choc + 18 LED SK6812-MINI-E) a −3.4 mm; PCB-A (5 EC11 + pots
+  IN/VOL en dos brazos) a −12.0 mm; módulo de pantalla de 7.6 mm (medido) con junta de 0.5, fondo a
+  −10.1 mm. Detalle en theory/02 §3.
+- **Interior (rev. 2026-10-14):** la **Pi 3B va atornillada detrás del módulo Freenove** (x ~43–132, y
+  ~92–149), con USB y Ethernet hacia la **derecha** (adentro de la caja; se usan solo para mantenimiento).
+  La **portadora** (Teensy 4.1 + Audio Shield + entrada analógica + jacks) va en el piso bajo la Pi, con la
+  hilera de jacks contra la pared trasera (theory/02 §4.3). Alimentación por USB-C de panel 5 V con polyfuse
+  de 3 A y TVS en la portadora. **Se corta el puente VUSB–VIN del Teensy**.
+- **Conectores (pared trasera, rev. 2026-10-14):** **una sola hilera baja de jacks soldados a la
+  portadora**: OUT L/R e IN L/R en 1/4", **PHONES TRS 3.5** (~~MIDI IN~~: MIDI solo por USB, 2026-10-13) y CV
+  OUT 3.5. **Arriba, conectores de panel con cable:** USB-C del Teensy (datos y MIDI), USB-A host, USB-C 5 V
+  3 A y la palanca INPUT PAD (3 posiciones, Ø6.2). ~~Tapa de servicio de la Pi~~ (sus puertos miran al
+  costado). Las posiciones x de la hilera salen del layout de la portadora.
 - **Mejillas opcionales:** guadua laminada de 12 mm, 4 imanes N42 Ø10 × 2 por lado detrás de una piel
   de PETG de 0.8 mm. No tapan nada.
 - **Reglas:** 12 pasan y 1 queda condicionada (cable DSI de al menos 100 mm).
