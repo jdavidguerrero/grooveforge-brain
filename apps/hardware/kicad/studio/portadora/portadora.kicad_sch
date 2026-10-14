@@ -7206,6 +7206,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C69689"
+			(at 80.01 39.37 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resettable fuse, polymeric positive temperature coefficient"
 			(at 80.01 39.37 0)
 			(hide yes)
@@ -7275,6 +7286,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 95.25 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C113975"
 			(at 95.25 54.61 0)
 			(hide yes)
 			(show_name no)
@@ -7366,6 +7388,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C2992605"
+			(at 107.95 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Polarized capacitor"
 			(at 107.95 54.61 0)
 			(hide yes)
@@ -7437,6 +7470,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 119.38 54.61 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 119.38 54.61 0)
 			(hide yes)
 			(show_name no)
@@ -7818,6 +7862,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C15850"
+			(at 250.19 49.53 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 250.19 49.53 0)
 			(hide yes)
@@ -7975,6 +8030,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 289.56 110.49 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C48687630"
 			(at 289.56 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -8148,6 +8214,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C492442"
+			(at 369.57 74.93 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Generic connector, double row, 02x05, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
 			(at 369.57 74.93 0)
 			(hide yes)
@@ -8251,6 +8328,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C842287"
+			(at 39.37 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Single Buffer Gate Tri-State, Low-Voltage CMOS"
 			(at 39.37 119.38 0)
 			(hide yes)
@@ -8331,6 +8419,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 25.4 134.62 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C14663"
 			(at 25.4 134.62 0)
 			(hide yes)
 			(show_name no)
@@ -8492,6 +8591,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 90.17 119.38 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23138"
 			(at 90.17 119.38 0)
 			(hide yes)
 			(show_name no)
@@ -8961,6 +9071,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C22419846"
+			(at 25.4 180.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 25.4 180.34 0)
 			(hide yes)
@@ -9043,6 +9164,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C22419846"
+			(at 25.4 229.87 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 25.4 229.87 0)
 			(hide yes)
@@ -9093,7 +9225,7 @@
 				)
 			)
 		)
-		(property "Value" "32.4k"
+		(property "Value" "33k"
 			(at 49.53 172.72 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9115,6 +9247,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 170.18 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C4216"
 			(at 49.53 170.18 0)
 			(hide yes)
 			(show_name no)
@@ -9172,7 +9315,7 @@
 				)
 			)
 		)
-		(property "Value" "12.4k"
+		(property "Value" "12k"
 			(at 49.53 187.96 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9194,6 +9337,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C22790"
 			(at 49.53 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -9251,7 +9405,7 @@
 				)
 			)
 		)
-		(property "Value" "5.23k"
+		(property "Value" "5.1k"
 			(at 49.53 201.93 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9273,6 +9427,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 199.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23186"
 			(at 49.53 199.39 0)
 			(hide yes)
 			(show_name no)
@@ -9330,7 +9495,7 @@
 				)
 			)
 		)
-		(property "Value" "32.4k"
+		(property "Value" "33k"
 			(at 49.53 222.25 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9352,6 +9517,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 219.71 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C4216"
 			(at 49.53 219.71 0)
 			(hide yes)
 			(show_name no)
@@ -9409,7 +9585,7 @@
 				)
 			)
 		)
-		(property "Value" "12.4k"
+		(property "Value" "12k"
 			(at 49.53 237.49 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9431,6 +9607,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 234.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C22790"
 			(at 49.53 234.95 0)
 			(hide yes)
 			(show_name no)
@@ -9488,7 +9675,7 @@
 				)
 			)
 		)
-		(property "Value" "5.23k"
+		(property "Value" "5.1k"
 			(at 49.53 252.73 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -9510,6 +9697,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 49.53 250.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23186"
 			(at 49.53 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -9686,6 +9884,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C28323"
+			(at 105.41 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 105.41 185.42 0)
 			(hide yes)
@@ -9757,6 +9966,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 105.41 234.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C28323"
 			(at 105.41 234.95 0)
 			(hide yes)
 			(show_name no)
@@ -9846,6 +10066,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 118.11 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 118.11 185.42 0)
 			(hide yes)
@@ -9915,6 +10146,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 118.11 234.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C21190"
 			(at 118.11 234.95 0)
 			(hide yes)
 			(show_name no)
@@ -10004,6 +10246,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25803"
+			(at 132.08 199.39 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 132.08 199.39 0)
 			(hide yes)
@@ -10073,6 +10326,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 132.08 250.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25803"
 			(at 132.08 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -10156,6 +10420,17 @@
 		)
 		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
 			(at 141.732 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C7420333"
+			(at 144.78 185.42 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10250,6 +10525,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C7420333"
+			(at 144.78 234.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
 			(at 144.78 234.95 0)
 			(hide yes)
@@ -10334,6 +10620,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 199.39 270.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 199.39 270.51 0)
 			(hide yes)
@@ -10382,7 +10679,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2uF"
+		(property "Value" "4.7uF"
 			(at 204.47 187.96 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10405,6 +10702,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 204.47 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C1779"
 			(at 204.47 185.42 0)
 			(hide yes)
 			(show_name no)
@@ -10463,7 +10771,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2.2uF"
+		(property "Value" "4.7uF"
 			(at 204.47 237.49 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -10486,6 +10794,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 204.47 234.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C1779"
 			(at 204.47 234.95 0)
 			(hide yes)
 			(show_name no)
@@ -10575,6 +10894,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25804"
+			(at 229.87 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 229.87 255.27 0)
 			(hide yes)
@@ -10644,6 +10974,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 240.03 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C25804"
 			(at 240.03 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -10725,6 +11066,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 250.19 255.27 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C15850"
 			(at 250.19 255.27 0)
 			(hide yes)
 			(show_name no)
@@ -10916,6 +11268,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C15850"
+			(at 270.51 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 270.51 185.42 0)
 			(hide yes)
@@ -10987,6 +11350,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 270.51 214.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C15850"
 			(at 270.51 214.63 0)
 			(hide yes)
 			(show_name no)
@@ -11076,6 +11450,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25819"
+			(at 283.21 195.58 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 283.21 195.58 0)
 			(hide yes)
@@ -11155,6 +11540,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C25819"
+			(at 283.21 224.79 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 283.21 224.79 0)
 			(hide yes)
@@ -11224,6 +11620,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 309.88 180.34 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C22419846"
 			(at 309.88 180.34 0)
 			(hide yes)
 			(show_name no)
@@ -11316,6 +11723,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C22419846"
+			(at 309.88 214.63 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 309.88 214.63 0)
 			(hide yes)
@@ -11388,6 +11806,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 309.88 250.19 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C4992459"
 			(at 309.88 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -11480,6 +11909,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C23162"
+			(at 340.36 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 340.36 149.86 0)
 			(hide yes)
@@ -11561,6 +12001,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 350.52 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 350.52 160.02 0)
 			(hide yes)
@@ -11630,6 +12081,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 359.41 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C23162"
 			(at 359.41 149.86 0)
 			(hide yes)
 			(show_name no)
@@ -11721,6 +12183,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 369.57 160.02 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Unpolarized capacitor"
 			(at 369.57 160.02 0)
 			(hide yes)
@@ -11800,6 +12273,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C21190"
+			(at 389.89 175.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "Resistor"
 			(at 389.89 175.26 0)
 			(hide yes)
@@ -11869,6 +12353,17 @@
 			)
 		)
 		(property "Datasheet" ""
+			(at 394.97 204.47 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C4992459"
 			(at 394.97 204.47 0)
 			(hide yes)
 			(show_name no)
@@ -11963,6 +12458,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C7378"
+			(at 175.26 185.42 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
 			(at 175.26 185.42 0)
 			(hide yes)
@@ -12038,6 +12544,17 @@
 		)
 		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
 			(at 176.53 240.03 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C7378"
+			(at 175.26 234.95 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -12131,6 +12648,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C7378"
+			(at 265.43 270.51 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
 			(at 265.43 270.51 0)
 			(hide yes)
@@ -12215,6 +12743,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C7378"
+			(at 379.73 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
 			(at 379.73 149.86 0)
 			(hide yes)
@@ -12290,6 +12829,17 @@
 		)
 		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
 			(at 215.9 275.59 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C7378"
+			(at 214.63 270.51 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)

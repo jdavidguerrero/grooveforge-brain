@@ -261,7 +261,13 @@ VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación:
   **buffer 74AHCT1G125** alimentado a 5 V en la portadora, junto al pin 28, y una resistencia de 330 Ω en
   serie en la línea de datos.
 - Desacople: 100 nF por LED (o uno cada dos, según el layout) + 100 µF en la entrada de PCB-K.
-- Antes del pedido: verificar el part number y el stock en LCSC.
+- **Pieza (2026-10-14): SK6812MINI-EA** (LCSC C5378731) en lugar del MINI-E (C5149201). Mismo pinout
+  (1 GND, 2 DIN, 3 VDD, 4 DOUT), mismo cuerpo de 3.2 × 2.8 mm y mismo montaje invertido. La diferencia es
+  de pedido: el MINI-E es "Standard only" en JLC y forzaba el ensamble Standard de PCB-K (~US$25–40 más);
+  el MINI-EA entra en Economic. Su hoja de datos recomienda un recorte de 3.8 × 3.4 mm; se mantiene el
+  del footprint (≈3.4 × 3.0, 0.1 mm por lado alrededor del cuerpo, el mismo con el que se usa el
+  MINI-E) porque un recorte de 3.8 mm de ancho pisa los pads del propio LED. Riesgo aceptado: holgura de
+  montaje justa; revisarla en las primeras placas.
 
 ## 10. Decisiones abiertas
 
@@ -288,6 +294,40 @@ VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación:
   Cable con dos hilos por 5 V y por GND.
 - **Jacks traseros:** ~~la portadora crece hasta la pared o jacks de panel~~ → **resuelto 2026-10-14:**
   placa trasera vertical con los jacks soldados (§4.4).
+
+## 10C. Fabricación (2026-10-14)
+
+- **Ruteo:** las tres placas pasan DRC con paridad de esquemático (0 violaciones, 0 sin conectar, 0 errores
+  de footprint) contra las reglas de JLCPCB.
+- **Qué ensambla JLC:** solo los SMD, todos en una cara (PCB-K abajo, PCB-A y portadora arriba) y todos en
+  ensamble **Economic**. El campo `LCSC` de cada símbolo lo escribe `tools/set_lcsc.py`; se eligieron
+  piezas Basic cuando había (resistencias E12 y MLCC comunes).
+- **Qué se suelda a mano:** zócalos de la Teensy y del shield, headers, IDC, jacks, pots, encoders, Choc y
+  JST-XH (THT; ensamblarlos en JLC cuesta más que soldarlos).
+- **Archivos:** `tools/export_fab.py` genera `fab/<placa>/` con Gerbers + taladros (zip), BOM y CPL en el
+  formato de JLC. Las rotaciones de SOT-23, SOIC y electrolíticos llevan la corrección conocida; **antes
+  de pagar, revisar el visor de ubicación de JLC**, sobre todo los LEDs de PCB-K, los BAT54S y el U1.
+
+## 10D. Montaje y conexiones verificadas (2026-10-14)
+
+- **Audio Shield boca arriba**, con la SD hacia la izquierda: como en la Teensy vista desde arriba, la fila
+  GND/0–12 (J16) va **atrás** y la fila 13–23/VIN (J15) adelante. La primera versión ruteada tenía las
+  filas al revés (el shield quedaba espejado respecto de la Teensy); se corrigió y se re-ruteó la portadora.
+  Antes de enchufarlo: el GND de la esquina derecha de la fila de atrás debe caer en J16.14.
+- **LINE IN/OUT del shield:** sus pads están arriba y no pasan por las filas de pines. Van con hilos cortos
+  desde el header soldado en el shield hasta **J9** (1 LINE IN L, 2 LINE IN R, 3 GND, 4 LINE OUT L,
+  5 LINE OUT R, 6 GND, 7 HP L, 8 HP R, 9 HP VGND). El Rev D no tiene pads de HP: esos hilos salen de las
+  patas de su jack.
+- **J3 (USB host) no conecta nada en la placa:** los pines de host de la Teensy 4.1 están en un header
+  sobre la propia Teensy, no en las filas que entran a los zócalos. El USB-A del panel se cablea directo a
+  ese header (cable de host de PJRC o hilos Dupont). Verificar con multímetro que el puerto tenga 5 V con
+  la Teensy alimentada por VIN y el puente VUSB–VIN cortado.
+- **5 V de la Pi:** Pi + Freenove pueden pedir ~2.5 A por los pines 2 y 4 del IDC 2×5. El conector de cable
+  tiene que ser de 3 A por contacto (LCSC C53309334); el de 1 A no alcanza. Revisar `vcgencmd get_throttled`.
+- **Cable PCB-K ↔ PCB-A:** los dos J1 tienen el pin 1 al este y quedan enfrentados (~47 mm en diagonal):
+  cable 1:1 con hilos sueltos ya crimpados (kit JST-SH), ~60–80 mm.
+- **Verificación de punta a punta** (netlists de las 3 placas): los 10 pines del JST-SH y los 30 del IDC
+  2×15 coinciden 1:1, y cada control llega al pin de la Teensy de `01` §3.3.
 
 ## 11. Próximo paso
 

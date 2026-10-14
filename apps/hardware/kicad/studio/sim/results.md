@@ -1,21 +1,21 @@
 # Resultados · etapa de entrada y CV de la portadora
 
 Generado por `input_stage_sim.py` (ngspice de KiCad; MCP6004 por parámetros del datasheet, no el macro oficial).
-Valores leídos del esquemático de la portadora (topología verificada): escalera 32.4k / 12.4k / 5.23k · C5 1uF · R10 1k · R12 100k · C8 2.2uF · RC del CV 4.7k / 100nF ×2.
+Valores leídos del esquemático de la portadora (topología verificada): escalera 33k / 12k / 5.1k · C5 1uF · R10 1k · R12 100k · C8 4.7uF · RC del CV 4.7k / 100nF ×2.
 
 ## C1 · Niveles del pad (1 kHz) y C2 · Respuesta 20 Hz–20 kHz
 
 | Pad | R_in codec | Ganancia @1 kHz | Error vs nominal | 20 Hz | 20 kHz | Plano ±0.5 dB |
 |---|---|---|---|---|---|---|
-| 0 dB | 10 k | -0.11 dB | -0.11 dB | -0.56 dB | -0.00 dB | no |
-| 0 dB | 29 k | -0.11 dB | -0.11 dB | -0.09 dB | -0.00 dB | sí |
+| 0 dB | 10 k | -0.11 dB | -0.11 dB | -0.15 dB | -0.00 dB | sí |
+| 0 dB | 29 k | -0.11 dB | -0.11 dB | -0.04 dB | -0.00 dB | sí |
 | 0 dB | 100 k | -0.11 dB | -0.11 dB | -0.03 dB | -0.00 dB | sí |
-| 10 dB | 10 k | -10.09 dB | -0.09 dB | -0.56 dB | -0.00 dB | no |
-| 10 dB | 29 k | -10.09 dB | -0.09 dB | -0.09 dB | -0.00 dB | sí |
-| 10 dB | 100 k | -10.09 dB | -0.09 dB | -0.03 dB | -0.00 dB | sí |
-| 20 dB | 10 k | -20.11 dB | -0.11 dB | -0.56 dB | -0.00 dB | no |
-| 20 dB | 29 k | -20.11 dB | -0.11 dB | -0.09 dB | -0.00 dB | sí |
-| 20 dB | 100 k | -20.11 dB | -0.11 dB | -0.03 dB | -0.00 dB | sí |
+| 10 dB | 10 k | -10.36 dB | -0.36 dB | -0.14 dB | -0.00 dB | sí |
+| 10 dB | 29 k | -10.36 dB | -0.36 dB | -0.04 dB | -0.00 dB | sí |
+| 10 dB | 100 k | -10.36 dB | -0.36 dB | -0.02 dB | -0.00 dB | sí |
+| 20 dB | 10 k | -20.33 dB | -0.33 dB | -0.15 dB | -0.00 dB | sí |
+| 20 dB | 29 k | -20.33 dB | -0.33 dB | -0.04 dB | -0.00 dB | sí |
+| 20 dB | 100 k | -20.33 dB | -0.33 dB | -0.03 dB | -0.00 dB | sí |
 
 **C1 ✅** (tomas −10/−20 a ±0.5 dB) · **C2 ✅** (±0.5 dB con R_in = 29 k)
 
@@ -42,7 +42,7 @@ Valores leídos del esquemático de la portadora (topología verificada): escale
 | Corriente en la entrada del MCP6004 (pico) | 0.0 µA | ≤ 2 mA | ✅ |
 | Corriente por R10 / BAT54S (pico) | 8.98 mA | < 200 mA | ✅ |
 | Corriente inyectada al +3V3 (pico) | 8.96 mA | informativo | ✅ |
-| Salida en LINE IN (min / max) | -1.63 V / 1.63 V | informativo | ✅ |
+| Salida en LINE IN (min / max) | -1.63 V / 1.62 V | informativo | ✅ |
 
 **C4 ✅**
 

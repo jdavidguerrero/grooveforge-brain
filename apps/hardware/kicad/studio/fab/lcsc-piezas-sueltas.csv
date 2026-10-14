@@ -1,0 +1,10 @@
+LCSC Part Number,Quantity,Manufacturer Part Number,Description,Customer Part Number
+C48687630,2,BH254V-30P,IDC box header 2x15 2.54 mm vertical - PCB-A J2 (1 + 1 repuesto; el de la portadora lo monta JLC),J2 (PCB-A)
+C158012,2,B2B-XH-A(LF)(SN),JST-XH 2 pines vertical - entrada 5 V (1 + 1 repuesto),J10
+C41376163,2,HC-PM254-8.5H-1x24PZ,Zócalo hembra 1x24 2.54 mm - Teensy 4.1,J1 J2 (portadora)
+C2905420,2,KH-2.54FH-1X14P-H8.5,Zócalo hembra 1x14 2.54 mm - Audio Shield,J15 J16
+C42431788,2,PZ2.54-1X40P-H25,Header macho 1x40 2.54 mm (cortar) - J3 1x5 y J9 1x9 y SW1 2x4 (dos tiras de 4),J3 J9 SW1
+C21862,3,2.54-2*15P,Conector IDC hembra 2x15 para cable plano (2 extremos + 1 repuesto),Cable J5-J2
+C53309334,3,XDFH-0258-2*5P,Conector IDC hembra 2x5 para cable plano - 3 A por contacto (lleva el 5 V de la Pi) (2 extremos + 1 repuesto),Cable J6-Pi
+C144401,3,XHP-2,Carcasa JST-XH 2 pines para el cable de 5 V,Cable J10
+C140573,10,SXH-001T-P0.6,Terminal JST-XH para crimpar (22-28 AWG),Cable J10

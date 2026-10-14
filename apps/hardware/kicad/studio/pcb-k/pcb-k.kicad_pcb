@@ -819,7 +819,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 240)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -858,6 +858,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "82eb8787-9e5e-4b4c-a474-51dc570a6660")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -1248,7 +1260,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -1287,6 +1299,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "37eb8a7b-c87f-4ac7-aebf-b23d5a853759")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -1675,7 +1699,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 60)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -1714,6 +1738,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "044190a3-3ec0-47d4-ba14-1d14d601cfc5")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -2255,6 +2291,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "cbeeab62-66d8-4399-93d4-566edaa25f12")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2410,6 +2458,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "28ffb967-93cc-477a-99cb-c1959727229f")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2561,6 +2621,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C96123"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "42ed7e21-3c6c-474e-b1c3-2312e61bec86")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -2716,6 +2788,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "2e013ca7-a42d-4f7f-9615-9b7d47bbc79a")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2867,6 +2951,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "5faad3d9-d4a3-4f16-9d2e-1e4d7dadb09b")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -3024,6 +3120,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "9efaaf5d-f5b9-4431-a90b-8dc78f409481")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3177,6 +3285,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "c1676372-83f9-4135-b164-378a52fc931d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3284,7 +3404,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 270)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -3323,6 +3443,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "8010ebc6-01df-476c-a0fe-992b992a5df6")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -3711,7 +3843,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -3750,6 +3882,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "a3b79a2b-318e-4565-a189-3b4117e0bc20")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -4186,6 +4330,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "54589693-64e4-4503-8a40-91c3e799b415")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -4293,7 +4449,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -4332,6 +4488,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "38a193f7-21e2-48db-b2d2-7c1b1c65bfe5")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -4720,7 +4888,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 210)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -4759,6 +4927,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "6e0f8dda-18e2-456e-bfe7-f6b7e85ba5da")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -5149,7 +5329,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 300)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -5188,6 +5368,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "31f7da11-f7c2-496b-9805-3256b111774b")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -5626,6 +5818,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "42c7cf73-60ca-47b1-b256-690823f86378")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5733,7 +5937,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 90)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -5772,6 +5976,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "6dfb3b94-6fd7-4b02-ba4a-af78de6ded46")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -6208,6 +6424,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "017bdc98-2cae-4f9b-b8ff-01dcf56d6735")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6363,6 +6591,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "cefcf395-672f-4646-9770-8134e9a7d421")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6470,7 +6710,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 0)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -6509,6 +6749,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "a40e6a34-746b-4c49-88d6-286639f7c44c")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -6897,7 +7149,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 30)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -6936,6 +7188,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "e5b389a5-3914-4ebc-9dad-5dbc22e68b32")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -7326,7 +7590,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -7365,6 +7629,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "bc93824a-a7b6-402a-b6ba-530173b3bbbe")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -7801,6 +8077,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "e01aaaf8-4ea9-4f2a-acd8-2a5ee884621d")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7954,6 +8242,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "2c2c55ca-fc08-40f9-9511-3b4134d6d6d8")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8105,6 +8405,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "2ab9c3f5-c8f1-4d79-b3a5-b4b7fb9b4214")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -8262,6 +8574,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "2452ee33-6f6b-4fc2-832a-d4e5990340da")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8369,7 +8693,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -8408,6 +8732,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "11ac579f-b6af-437c-b56b-a50b17a37645")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -8844,6 +9180,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "b7470da5-03de-4dff-9e42-1c7cfd3d1a7e")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9099,6 +9447,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C160409"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "7f0bbf11-5389-45ad-bbe8-08fea46a3a63")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -9572,6 +9932,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "7cf893c9-c675-4c4b-8176-dc77955d1f12")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9677,7 +10049,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 150)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -9716,6 +10088,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "ca43f874-06d6-400a-92df-f83d8a719e15")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -10106,7 +10490,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -10145,6 +10529,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "3b417a3c-12e4-43c1-a6d5-5a3138949c2b")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -10581,6 +10977,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "2f9c8724-ec93-4c19-ab40-e6e79e105d89")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10688,7 +11096,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 120)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -10727,6 +11135,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "11c6fbb0-8c95-49ae-9e8a-26889edda9da")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -11117,7 +11537,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 180)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -11156,6 +11576,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "a8d21f31-5de2-419c-8d8b-2318b7a53a74")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)
@@ -11592,6 +12024,18 @@
 				(justify mirror)
 			)
 		)
+		(property "LCSC" "C14663"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "3a402b15-cc81-472d-9067-80fd1b657337")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11699,7 +12143,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "SK6812MINI-E"
+		(property "Value" "SK6812MINI-EA"
 			(at 0 -2.54 330)
 			(unlocked yes)
 			(layer "B.Fab")
@@ -11738,6 +12182,18 @@
 					(thickness 0.15)
 				)
 				(justify mirror)
+			)
+		)
+		(property "LCSC" "C5378731"
+			(at 0 0 0)
+			(layer "B.SilkS")
+			(hide yes)
+			(uuid "0cf6cfac-e437-480c-9dbf-49fa0ffd01d6")
+			(effects
+				(font
+					(size 1.27 1.27)
+					(thickness 0.15)
+				)
 			)
 		)
 		(attr smd)

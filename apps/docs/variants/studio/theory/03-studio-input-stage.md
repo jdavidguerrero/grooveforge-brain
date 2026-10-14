@@ -13,10 +13,10 @@ Este documento define **qué tiene que cumplir**, **cómo se valida sin hardware
 ## 1. El circuito (por canal; R entre paréntesis)
 
 ```
-IN_L ─┬─ 32.4k (R4) ─┬─ 12.4k (R5) ─┬─ 5.23k (R6) ─ GND        escalera del pad (rev. §8)
+IN_L ─┬─ 33k (R4) ───┬─ 12k (R5) ───┬─ 5.1k (R6) ── GND        escalera del pad (rev. §8)
       │              │ TAP10        │ TAP20
       └──────────────┴──────────────┴──► SW1 (0 / −10 / −20 dB) ─► PAD_L
-PAD_L ─ 1 µF (C5) ─ 1k (R10) ─┬─ PROT_L ─► (+) U2A MCP6004, seguidor ─► BUF_L ─ 2.2 µF (C8) ─► LINE IN L
+PAD_L ─ 1 µF (C5) ─ 1k (R10) ─┬─ PROT_L ─► (+) U2A MCP6004, seguidor ─► BUF_L ─ 4.7 µF (C8) ─► LINE IN L
                               ├─ BAT54S (D2) a +3V3 y GND
                               └─ 100k (R12) ─ VREF
 
@@ -36,7 +36,7 @@ U2 es un solo MCP6004, con 4 amplificadores operacionales: L, R, VREF y CV.
 | R10 1k + BAT54S | Protección: limita la corriente y los diodos recortan a ~0.3 V más allá de los rieles |
 | R12 100k a VREF | Centra la señal en 1.65 V, a mitad de la alimentación de 3.3 V. Sin esto, el seguidor de una sola fuente recortaría los semiciclos negativos |
 | Seguidor U2A | Impedancia alta hacia el pad y baja hacia el codec. Así el pad atenúa lo mismo sin importar qué carga ponga el SGTL5000 |
-| C8 2.2 µF | Acople hacia el LINE IN, que tiene su propia polarización interna |
+| C8 4.7 µF | Acople hacia el LINE IN, que tiene su propia polarización interna |
 | U2C (VREF) | Fuente de 1.65 V de baja impedancia, compartida por L y R |
 | RC ×2 + U2D | Filtra el PWM (≈36.6 kHz) hasta dejar una DC limpia de 0–3.3 V para el add-on del ladder (ADR-003) |
 
@@ -202,6 +202,16 @@ Corrida del 2026-10-13. Tablas completas en `apps/hardware/kicad/studio/sim/resu
 - **CV final de 3.24 V con 100 % de duty:** el riel del seguidor (−25 mV) más la caída en R20 contra 100 kΩ.
 - **Lo que esto no prueba:** el ruido y la THD real del MCP6004 (§7). Para eso queda la medición con la
   placa, con el sketch de dBFS en LINE IN.
+
+**Tercera corrida (2026-10-14): valores Basic de JLCPCB.** Las E96 y el 2.2 µF son piezas Extended en JLC
+(US$3 de cargo por referencia). Se cambiaron por piezas Basic:
+- R4/R7: 32.4k → **33k**; R5/R8: 12.4k → **12k**; R6/R9: 5.23k → **5.1k**;
+- C8/C9: 2.2 µF → **4.7 µF** (la opción de arriba, para el caso de un codec de ~10 kΩ).
+
+Todo sigue pasando: C1 queda en −10.36 / −20.33 dB a 1 kHz con R_in = 29 k (antes −10.09 / −20.11), y
+C2 mejora a −0.04 dB en 20 Hz. El costo es margen: el error de las tomas pasa de ~0.1 a ~0.35 dB, y la
+tolerancia del 1 % de las resistencias se come parte de los 0.15 dB que quedan. Detalle en
+`sim/results.md`.
 
 ## Referencias
 

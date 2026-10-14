@@ -38,9 +38,11 @@ JACKS_35 = {"J13": 62.0, "J14": 50.0}                                 # PHONES, 
 # Teensy 4.1 (USB hacia −X): pin 1 de cada fila a 1.27 mm del borde del USB.
 TEENSY_PIN1_X = 51.3
 TEENSY_ROWS_Y = {"J1": 75.0, "J2": 90.24}                             # fila 0–12 adelante, 13–23 atrás
-# Audio Shield: filas a 15.24 mm, pin 1 (12 y 13) a la izquierda; su borde no toca el de la Teensy.
+# Audio Shield boca arriba (pines hacia abajo), con la ranura SD a la izquierda: los pines 12 y 13 quedan
+# a la izquierda y, como en la Teensy vista desde arriba, la fila GND/0–12 (J16) va ATRÁS y la fila
+# 13–23/VIN (J15) adelante. Rev. 2026-10-14: antes estaban al revés y el shield quedaba espejado.
 SHIELD_PIN1_X = 56.5
-SHIELD_ROWS_Y = {"J16": 100.4, "J15": 115.64}
+SHIELD_ROWS_Y = {"J16": 115.64, "J15": 100.4}
 
 # (ref, X, Y, rot) en planta; centro del footprint salvo los conectores ubicados por sus pads.
 PARTS = [
