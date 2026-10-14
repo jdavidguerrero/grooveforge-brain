@@ -70,27 +70,64 @@ def stitch(board, gnd, bbox):
             x += step
         y += step
 
-    # Islas sin ninguna vía adentro (quedan sueltas aunque toquen pads): buscar un lugar en grilla fina.
+    # Grupos de islas sueltos: islas de F y B unidas entre sí por agujeros de GND (vías, pads pasantes)
+    # pero no al plano principal. Se busca un punto donde una isla del grupo y el plano principal de la
+    # otra cara se solapen, y se pone una vía ahí (grilla fina de 0.5 mm).
     fine = pcbnew.FromMM(0.5)
-    for f in fills:
-        for i in range(f.OutlineCount()):
-            island = pcbnew.SHAPE_POLY_SET()
-            island.AddOutline(f.Outline(i))
-            # Ya unida a la otra cara si tiene adentro una vía o un pad pasante de GND.
-            if any(n == "/GND" and island.Contains(c) for c, _, n in holes):
+    for _ in range(10):
+        islands = []                            # (capa, polígono, área)
+        for z in board.Zones():
+            if z.GetNetname() != "/GND":
                 continue
-            bb = f.Outline(i).BBox()
-            done = False
+            layer = pcbnew.F_Cu if z.IsOnLayer(pcbnew.F_Cu) else pcbnew.B_Cu
+            f = z.GetFilledPolysList(layer)
+            for i in range(f.OutlineCount()):
+                poly = pcbnew.SHAPE_POLY_SET()
+                poly.AddOutline(f.Outline(i))
+                islands.append((layer, poly, f.Outline(i).Area()))
+        parent = list(range(len(islands)))
+
+        def find(a):
+            while parent[a] != a:
+                a = parent[a]
+            return a
+
+        for c, _, n in holes:
+            if n != "/GND":
+                continue
+            inside = [k for k, (_, poly, _) in enumerate(islands) if poly.Contains(c)]
+            for k in inside[1:]:
+                parent[find(k)] = find(inside[0])
+        main = find(max(range(len(islands)), key=lambda k: islands[k][2]))
+        loose = [k for k in range(len(islands)) if find(k) != main]
+        if not loose:
+            break
+        mains = {pcbnew.F_Cu: [], pcbnew.B_Cu: []}
+        for k, (layer, poly, _) in enumerate(islands):
+            if find(k) == main:
+                mains[layer].append(poly)
+        fixed = False
+        for k in loose:
+            layer, poly, _ = islands[k]
+            other = pcbnew.B_Cu if layer == pcbnew.F_Cu else pcbnew.F_Cu
+            bb = poly.BBox()
             yy = bb.GetTop()
-            while yy < bb.GetBottom() and not done:
+            while yy < bb.GetBottom() and not fixed:
                 xx = bb.GetLeft()
-                while xx < bb.GetRight() and not done:
-                    if island.Contains(pcbnew.VECTOR2I(int(xx), int(yy))) and fits(xx, yy):
+                while xx < bb.GetRight() and not fixed:
+                    pts = [pcbnew.VECTOR2I(int(xx + dx), int(yy + dy)) for dx, dy in ring]
+                    if free(xx, yy) and all(poly.Contains(p) for p in pts) and \
+                            any(all(m.Contains(p) for p in pts) for m in mains[other]):
                         add_via(xx, yy)
                         count += 1
-                        done = True
+                        fixed = True
                     xx += fine
                 yy += fine
+            if fixed:
+                break
+        if not fixed:
+            break                               # no hay dónde: queda para revisar a mano
+        pcbnew.ZONE_FILLER(board).Fill(board.Zones())
     return count
 
 

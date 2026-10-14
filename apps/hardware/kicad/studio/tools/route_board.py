@@ -46,6 +46,28 @@ def add_npth_keepouts(board, margin=0.3):
             board.Add(z)
 
 
+def add_kept_keepouts(board, kept, clear=0.3):
+    """Las pistas y vías de SKIP_NETS (p. ej. escapes de GND) no van al DSN: se cubren con zonas de
+    exclusión (rectángulo envolvente + holgura) para que Freerouting no les pase por encima."""
+    c = pcbnew.FromMM(clear)
+    for t in kept:
+        bb = t.GetBoundingBox()
+        z = pcbnew.ZONE(board)
+        z.SetIsRuleArea(True)
+        z.SetDoNotAllowTracks(True)
+        z.SetDoNotAllowVias(True)
+        if t.GetClass() == "PCB_VIA":
+            z.SetLayerSet(pcbnew.LSET.AllCuMask())
+        else:
+            z.SetLayer(t.GetLayer())
+        o = z.Outline()
+        o.NewOutline()
+        for x, y in ((bb.GetLeft() - c, bb.GetTop() - c), (bb.GetRight() + c, bb.GetTop() - c),
+                     (bb.GetRight() + c, bb.GetBottom() + c), (bb.GetLeft() - c, bb.GetBottom() + c)):
+            o.Append(x, y)
+        board.Add(z)
+
+
 def remove_dangling(board):
     """Borra tramos sueltos que Freerouting deja a veces (extremo sin pad, vía ni otra pista)."""
     removed = 0
@@ -98,6 +120,7 @@ def main():
     for z in list(board.Zones()):
         board.Delete(z)
     add_npth_keepouts(board)
+    add_kept_keepouts(board, kept)
     if not pcbnew.ExportSpecctraDSN(board, dsn):
         raise SystemExit("no se pudo exportar el DSN")
     strip_nets(dsn, SKIP_NETS)

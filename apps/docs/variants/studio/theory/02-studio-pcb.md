@@ -180,6 +180,23 @@ Teensy no cambian.
 a mano). Los botones y los encoders usan los pull-ups internos de la Teensy; se agrega un condensador de
 10 nF por pin de encoder en PCB-A para filtrar rebote y ruido del cable (a validar con el sketch46).
 
+**Orden de pines (rev. 2026-10-14, igual en PCB-A J2 y portadora J5, cable plano 1:1):**
+
+| Pines | 1–2 | 3–4 | 5–6 | 7–8 | 9–10 | 11–12 | 13–14 | 15–16 |
+|---|---|---|---|---|---|---|---|---|
+| Señales | +5V, +5V | GND, GND | B1, GND | B2, POT_VOL | B3, B4 | NAV_B, NAV_A | P2_SW, ENCR_SW | ENCL_A, ENCR_B |
+
+| Pines | 17–18 | 19–20 | 21–22 | 23–24 | 25–26 | 27–28 | 29–30 |
+|---|---|---|---|---|---|---|---|
+| Señales | ENCL_B, ENCR_A | ENCL_SW, B6 | POT_IN, B5 | NAV_SW, P2_B | P1_A, LED_DIN | P2_A, P1_B | P1_SW, +3V3 |
+
+**Por qué este orden:** las señales van ordenadas según la posición x de su pin en la Teensy, de modo
+que en la portadora el bus baja de J5 a la Teensy casi derecho.
+
+Con el orden anterior (+5V, GND, LED_DIN, B1…B6, ENCL…, POT) las líneas se cruzaban en el canal de
+6.5 mm entre J5 y la Teensy, y siempre quedaba alguna encerrada al rutear. Los pines de la Teensy no
+cambian.
+
 ## 7. Alimentación (portadora)
 
 ```

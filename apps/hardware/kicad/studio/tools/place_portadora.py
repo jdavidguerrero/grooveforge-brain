@@ -12,8 +12,8 @@ Franjas (de atrás hacia adelante):
              IN L, IN R, OUT L, OUT R, PHONES, CV OUT.
   Y  92–137  Audio Shield a la izquierda · bloque analógico (MCP6004) a la derecha: bajo los USB/Ethernet
              de la Pi solo piezas bajas (theory/02 §4.5).
-  Y  72– 92  Teensy 4.1 a lo largo, USB hacia la izquierda · alimentación a la derecha.
-  Y  61– 72  J6 (cable a la Pi, GPIO 1–10) a la izquierda · J5 (IDC desde PCB-A) a la derecha, corrido
+  Y  72– 92  Teensy 4.1 a lo largo, USB hacia la izquierda.
+  Y  61– 72  J6 (cable a la Pi) · alimentación (J10, F1, TVS) · J5 (IDC desde PCB-A), corrido
              respecto del J2 de PCB-A para que el cable haga una S.
 Placa: X 44–141, Y 62–162 (97 × 100 mm). Después correr trim_silk_outside.py (serigrafía de las narices
 de los jacks, que atraviesan la pared).
@@ -44,9 +44,11 @@ SHIELD_ROWS_Y = {"J16": 100.4, "J15": 115.64}
 
 # (ref, X, Y, rot) en planta; centro del footprint salvo los conectores ubicados por sus pads.
 PARTS = [
-    # Alimentación (J10 desde la placa USB-C de panel → F1 → TVS → +5V)
-    ("J10", 134.0, 88.0, 0), ("F1", 127.0, 88.0, 90), ("D1", 121.0, 88.0, 90),
-    ("C1", 128.0, 80.0, 0), ("C3", 121.0, 80.0, 90), ("C4", 136.0, 73.5, 0),
+    # Alimentación al frente, entre J6 y J5: la Pi (J6) toma hasta 2.5 A y queda a ~20 mm del fusible
+    # (con el bloque a la derecha eran 115 mm y una vía). J10 recibe el cable de la USB-C de panel
+    # (pared trasera, x 22). El 100 µF queda a la derecha como reserva para los LEDs (J5).
+    ("J10", 72.0, 66.5, 0), ("F1", 82.5, 64.8, 0), ("D1", 82.8, 69.6, 0), ("C3", 70.5, 71.6, 0),
+    ("C1", 128.0, 82.0, 0), ("C4", 136.0, 73.5, 0),
     # Buffer de LEDs bajo la Teensy, entre sus filas (pin 28 = fila delantera, X 99.6)
     ("U1", 98.0, 82.0, 0), ("C2", 98.0, 85.6, 0), ("JP1", 103.0, 82.0, 90), ("R3", 107.0, 82.0, 90),
     # Entrada analógica (L arriba, R abajo de U2) y VREF
@@ -143,7 +145,7 @@ def main():
     # Designadores de los SMD chicos ocultos (JLC ensambla desde el CPL); quedan en Fab.
     for fp in board.GetFootprints():
         name = fp.GetReference()
-        if name[0] in "CRD" or name.startswith(("JP", "TP")):
+        if name[0] in "CRDF" or name.startswith(("JP", "TP")):
             fp.Reference().SetVisible(False)
         elif name == "SW1":            # al lado del header: arriba choca con la serigrafía de J7
             fp.Reference().SetTextPos(fp.GetPosition() + pcbnew.VECTOR2I(pcbnew.FromMM(-4.0), pcbnew.FromMM(3.8)))
