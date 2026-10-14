@@ -25,6 +25,44 @@ ROUTE_CLEARANCE = 0.25
 TIMEOUT = 420
 
 
+def add_npth_keepouts(board, margin=0.3):
+    """Freerouting no ve los agujeros sin cobre (p. ej. los de posicionamiento del EC11): se cubren con
+    zonas de exclusión cuadradas solo para el DSN (no se guardan en la placa)."""
+    for fp in board.GetFootprints():
+        for p in fp.Pads():
+            if p.GetAttribute() != pcbnew.PAD_ATTRIB_NPTH:
+                continue
+            c = p.GetPosition()
+            r = max(p.GetDrillSize().x, p.GetDrillSize().y) // 2 + pcbnew.FromMM(margin)
+            z = pcbnew.ZONE(board)
+            z.SetIsRuleArea(True)
+            z.SetDoNotAllowTracks(True)
+            z.SetDoNotAllowVias(True)
+            z.SetLayerSet(pcbnew.LSET.AllCuMask())
+            o = z.Outline()
+            o.NewOutline()
+            for dx, dy in ((-r, -r), (r, -r), (r, r), (-r, r)):
+                o.Append(c.x + dx, c.y + dy)
+            board.Add(z)
+
+
+def remove_dangling(board):
+    """Borra tramos sueltos que Freerouting deja a veces (extremo sin pad, vía ni otra pista)."""
+    removed = 0
+    while True:
+        board.BuildConnectivity()
+        conn = board.GetConnectivity()
+        loose = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and not t.IsLocked()
+                 and conn.TestTrackEndpointDangling(t, False)]
+        loose += [v for v in board.GetTracks() if v.GetClass() == "PCB_VIA" and not v.IsLocked()
+                  and len(conn.GetConnectedItems(v)) < 2]
+        if not loose:
+            return removed
+        for t in loose:
+            board.Delete(t)
+            removed += 1
+
+
 def strip_nets(dsn, nets):
     """Saca redes del DSN: sus pads quedan como obstáculos y Freerouting no intenta unirlos."""
     text = open(dsn).read()
@@ -59,6 +97,7 @@ def main():
     default.SetClearance(pcbnew.FromMM(ROUTE_CLEARANCE))
     for z in list(board.Zones()):
         board.Delete(z)
+    add_npth_keepouts(board)
     if not pcbnew.ExportSpecctraDSN(board, dsn):
         raise SystemExit("no se pudo exportar el DSN")
     strip_nets(dsn, SKIP_NETS)
@@ -83,6 +122,7 @@ def main():
     for t in kept:                       # el SES reemplaza todas las pistas: reponer las de SKIP_NETS
         t.SetParent(board)
         board.Add(t)
+    print(f"tramos sueltos borrados: {remove_dangling(board)}")
     pcbnew.SaveBoard(pcb_path, board)
     print(f"{name}: ruteo importado ({len(board.GetTracks())} pistas y vías)")
 

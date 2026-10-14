@@ -67,6 +67,15 @@ def main():
         if z.GetNetname() == "/GND":
             board.Delete(z)
 
+    # Pads de GND de los conectores: unión sólida al plano. Entre pines de 1–2.54 mm las pistas vecinas
+    # dejan los alivios térmicos con un solo radio (DRC "starved thermal"); el retorno de GND del cable
+    # pasa por acá, así que conviene la unión llena.
+    for fp in board.GetFootprints():
+        if fp.GetReference().startswith("J"):
+            for p in fp.Pads():
+                if p.GetNetname() == "/GND":
+                    p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
+
     bbox = board.GetBoardEdgesBoundingBox()
     for layer in layers:
         z = pcbnew.ZONE(board)
