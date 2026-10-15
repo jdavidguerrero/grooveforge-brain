@@ -2328,6 +2328,9 @@ void setup() {
     Serial.begin(115200);
     delay(200);
     Serial.println("[SKETCH 28] Synth Navigator — GrooveForge Brain");
+    // Si el arranque anterior terminó en una falla (hard fault, watchdog), el core de Teensy guarda el
+    // motivo y la dirección: imprimirlo es la única pista cuando el audio se cuelga en la ISR.
+    if (CrashReport) Serial.print(CrashReport);
 
     // ── Sprint 36: Audio graph backbone ─────────────────────────────────────
     // audio_graph::init() hace AudioMemory(80) + Wire.begin() + codec.enable()
