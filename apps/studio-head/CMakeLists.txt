@@ -102,10 +102,14 @@ add_executable(studio-head
   src/ui/screen_lfo.cpp
   src/ui/input.cpp
   src/ui/app.cpp
+  src/link/bridge_link.cpp
   ${FONT_SOURCES})
-target_include_directories(studio-head PRIVATE src include)
+# protocol.h es el mismo header de los dos firmwares (02-bridge-protocol.md); en la Pi se copia con
+# rsync manteniendo apps/bridge-protocol al lado de apps/studio-head.
+target_include_directories(studio-head PRIVATE src include ${CMAKE_CURRENT_SOURCE_DIR}/../bridge-protocol/include)
+find_package(Threads REQUIRED)
 if(STUDIO_DISPLAY STREQUAL "FBDEV")
   target_sources(studio-head PRIVATE src/hal/fb.cpp)
 endif()
-target_link_libraries(studio-head PRIVATE studio_drivers)  # lvgl llega a través de studio_drivers
+target_link_libraries(studio-head PRIVATE studio_drivers Threads::Threads)  # lvgl llega a través de studio_drivers
 target_compile_options(studio-head PRIVATE -Wall -Wextra)

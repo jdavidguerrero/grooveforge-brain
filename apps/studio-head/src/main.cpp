@@ -2,12 +2,13 @@
  * @file main.cpp
  * @brief GrooveForge Brain · Studio head — cabeza gráfica de 800×480.
  *
- * Fase actual: modo demo (sin Teensy). El bucle es de un solo hilo; el hilo de I/O del bridge
- * llega con la tarea 38 (theory doc §2).
+ * Sin --uart corre en modo demo (datos simulados). Con --uart, un hilo de I/O aparte habla el
+ * Bridge Protocol con el Teensy (src/link/, tarea 38, theory doc §2–4) y la UI dibuja ese estado.
  *
  * Uso:
  *   studio-head                      # Mac (SDL) o Pi (FBDEV), modo demo
  *   studio-head --touch /dev/input/event4
+ *   studio-head --uart /dev/ttyAMA0  # datos reales del Teensy por el bridge (Pi 3B: PL011)
  *   studio-head --snapshot fx.ppm [--snapshot-ms N] [--page fx] [--fx-view signature] [--fx-slot 4]
  *   studio-head --snapshot boot.ppm --page boot --snapshot-ms 3100   # un cuadro del splash
  *               [--shift] [--hold] [--bypass] [--overlay vol|in|toast|banner|clip]
@@ -22,6 +23,7 @@
 #include <unistd.h>
 
 #include "hal/display.h"
+#include "link/bridge_link.h"
 #include "lvgl.h"
 #include "sim/demo_source.h"
 #include "state/studio_state.h"
@@ -35,7 +37,7 @@ namespace {
 constexpr uint32_t BOOT_MS = BootSplash::DURATION_MS;
 
 void usage() {
-    std::printf("studio-head [--touch <evdev>] [--snapshot <archivo.ppm> [--snapshot-ms N]\n"
+    std::printf("studio-head [--touch <evdev>] [--uart <tty>] [--snapshot <archivo.ppm> [--snapshot-ms N]\n"
                 "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|boot] [--shift]\n"
                 "            [--engine 0-5] [--fx-view wave|spectrum|signature] [--fx-slot 1-12] [--hold] [--bypass]\n"
                 "            [--overlay vol|in|toast|banner|clip]]\n");
@@ -86,6 +88,7 @@ bool save_snapshot(const char* path) {
 
 int main(int argc, char** argv) {
     const char* touch = nullptr;
+    const char* uart = nullptr;
     const char* snapshot = nullptr;
     uint32_t snapshot_ms = BOOT_MS + 1500;  // por defecto, ya pasado el splash
     bool boot_only = false;
@@ -96,6 +99,8 @@ int main(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--touch") == 0 && i + 1 < argc) {
             touch = argv[++i];
+        } else if (std::strcmp(argv[i], "--uart") == 0 && i + 1 < argc) {
+            uart = argv[++i];
         } else if (std::strcmp(argv[i], "--snapshot") == 0 && i + 1 < argc) {
             snapshot = argv[++i];
         } else if (std::strcmp(argv[i], "--snapshot-ms") == 0 && i + 1 < argc) {
@@ -148,13 +153,20 @@ int main(int argc, char** argv) {
         if (state.mode == Mode::Fx) state.fx_on &= uint16_t(~(1u << state.fx_slot));
         else state.filter_bypass = true;
     }
+    // Con el Teensy, el demo solo deja los valores iniciales (presets, FX): lo demás llega por el bridge.
+    BridgeLink link;
+    const bool use_link = uart && link.start(uart);
+    if (uart && !use_link) std::fprintf(stderr, "studio-head: no se pudo abrir %s, sigo en modo demo\n", uart);
+    if (use_link) state.link = LinkState::Connecting;
+
     App app;
     bool booted = false;
     const uint32_t t0 = studio_tick_ms();
 
     for (;;) {
         const uint32_t now = studio_tick_ms();
-        demo_tick(state, now);
+        if (use_link) link.apply(state);
+        else demo_tick(state, now);
 
         if (!booted) splash.update(now - t0);
         if (!booted && !boot_only && now - t0 >= BOOT_MS) {
