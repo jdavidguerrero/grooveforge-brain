@@ -392,8 +392,9 @@ Objetivo del owner: US$80–100 en PCBs con envío (la cotización de 3 placas e
   Dupont a **J1 de PCB-A**: header **1×10 acodado** (mismo pinout que el JST-SH: B4, B6, B3, GND, +5V,
   GND, LED_DIN, B2, B5, B1), en (50, 50) del panel con los pines hacia los Choc. PCB-A re-ruteada con
   `tools/build_pcb_a.sh`: DRC con paridad 0/0/0; el IDC 2×15 sigue 1:1 con la portadora.
-- **A mano:** jacks, IDC, JST-XH, zócalos, headers y PCB-A completa, con `fab/lcsc-piezas-sueltas.csv`
-  (16 líneas). Los pots RV09 no están en LCSC: comprarlos aparte.
+- **A mano:** IDC, JST-XH, zócalos, headers y PCB-A completa. **Todo se compra local** (decisión de Juan,
+  2026-10-15): `fab/compras-locales.md`, con lo que hay que verificar en la tienda (paso, altura de los
+  zócalos, roscas). `fab/lcsc-piezas-sueltas.csv` queda solo como referencia.
 - **Archivos para JLC:** `fab/portadora/` (Gerbers, BOM, CPL) y `fab/pcb-a/pcb-a-gerbers.zip`. `fab/pcb-k/`
   queda del pedido anterior: no subirlo.
 - **Pared trasera:** HOST vuelve a **USB-A** (no admite un computador por error, no necesita Rp en CC y es el
@@ -425,7 +426,7 @@ hilos (NRJ3HF-1: T, R, S; SJ1-3533NG: 2 punta, 3 anillo, 1 malla), con cable apa
   **Verificar con los jacks comprados** (rosca y largo del cuerpo) antes de imprimir.
 - **Holguras con cuerpos aproximados** (1/4" 16 × 22 × 28 de fondo; 3.5 10 × 12 × 18): ≥ 1.4 mm sobre la
   portadora, ≥ 6.2 mm a la Pi, ≥ 3 mm a las paredes laterales.
-- `fab/lcsc-piezas-sueltas.csv` ya no lleva jacks.
+- Jacks y conectores de chasis: ver `fab/compras-locales.md`.
 
 ## 11. Próximo paso
 
