@@ -8040,17 +8040,6 @@
 				)
 			)
 		)
-		(property "LCSC" "C48687630"
-			(at 289.56 110.49 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Description" "Generic connector, double row, 02x15, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
 			(at 289.56 110.49 0)
 			(hide yes)
@@ -8204,17 +8193,6 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 369.57 74.93 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C492442"
 			(at 369.57 74.93 0)
 			(hide yes)
 			(show_name no)
@@ -9071,17 +9049,6 @@
 				)
 			)
 		)
-		(property "LCSC" "C22419846"
-			(at 25.4 180.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 25.4 180.34 0)
 			(hide yes)
@@ -9154,17 +9121,6 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 25.4 229.87 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C22419846"
 			(at 25.4 229.87 0)
 			(hide yes)
 			(show_name no)
@@ -11630,17 +11586,6 @@
 				)
 			)
 		)
-		(property "LCSC" "C22419846"
-			(at 309.88 180.34 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 309.88 180.34 0)
 			(hide yes)
@@ -11723,17 +11668,6 @@
 				)
 			)
 		)
-		(property "LCSC" "C22419846"
-			(at 309.88 214.63 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
 		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
 			(at 309.88 214.63 0)
 			(hide yes)
@@ -11806,17 +11740,6 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 309.88 250.19 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C4992459"
 			(at 309.88 250.19 0)
 			(hide yes)
 			(show_name no)
@@ -12353,17 +12276,6 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 394.97 204.47 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C4992459"
 			(at 394.97 204.47 0)
 			(hide yes)
 			(show_name no)

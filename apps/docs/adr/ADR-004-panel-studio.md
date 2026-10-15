@@ -1,6 +1,6 @@
 # ADR-004: Panel de Studio — 5 encoders y 6 botones cableados al Teensy
 
-**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada · Revisión 2 (2026-10-09): posición de IN/VOL según el enclosure validado
+**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada · Revisión 2 (2026-10-09): posición de IN/VOL según el enclosure validado · Revisión 3 (2026-10-15): prototipo sin LEDs ni PCB-K
 **Date:** 2026-10-07
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-002 (variante Studio), ADR-003 (add-on del ladder)
@@ -91,6 +91,33 @@ diseño de UI necesita una iteración; el panel es más ancho que el comercial.
 - Pin 25 (bypass del CD4066) queda libre por ADR-003.
 - Pin 27 (74HC4053, ruteo Synth/FX): revisar si sigue haciendo falta junto con la decisión D5.
 - Ajustar las acciones del mapeo con el uso real (el owner lo va a ir revisando tocando).
+
+## Revisión 3 (2026-10-15): prototipo económico sin LEDs
+
+**Decisión del owner** para bajar el costo del primer prototipo (objetivo: US$80–100 en PCBs con envío):
+
+- **Sin LEDs en el prototipo.** El punto 7 de la decisión (18 WS2812/SK6812 en la cadena del pin 28) queda
+  diferido. El buffer 74AHCT1G125 y la línea LED_DIN siguen en la portadora y en PCB-A.
+- **Sin PCB-K.** Los 6 Choc V2 se clipsan en el rebaje del aluminio como antes y se cablean con 7 hilos
+  (B1–B6 + GND) a **J1 de PCB-A**, que pasa de JST-SH a un **header 1×10 acodado** con el mismo pinout
+  (B4, B6, B3, GND, +5V, GND, LED_DIN, B2, B5, B1): +5V y LED_DIN quedan libres para un anillo o tira de
+  LEDs cableada más adelante. El diseño de PCB-K queda en el repo, no se pide.
+- **Pines del Teensy sin cambios:** el firmware y `01` §3.3 no cambian por esto; el pin 28 queda sin carga.
+- **Fabricación:** portadora con ensamble solo de SMD; PCB-A sin ensamble; todos los THT a mano
+  (`theory/02` §10F).
+
+**Luces cableadas (2026-10-15, mismo día):** el owner tiene un anillo WS2812 de 12 LEDs (Ø34/Ø49.5) y
+APA102/SK9822 5050 sueltos.
+- **NAV:** el anillo va bajo el aluminio, sobre un **difusor de PC esmerilado Ø44 × 2 mm** que hace de guía de
+  luz y asoma por el agujero de Ø32 (los LEDs del anillo quedan en Ø42, bajo el aluminio). Se conecta a J1 de
+  PCB-A (+5V, LED_DIN, GND): pin 28 por el buffer de la portadora, sin cambios de placa.
+- **Teclas:** un APA102 por Choc en un **soporte impreso** encajado en el poste central, bajo la ventana de LED.
+  Cadena cableada a mano (5V, GND, datos, reloj). Datos y reloj desde **pines 36 y 37** de la Teensy, con
+  hilos soldados a J2.21/J2.20 de la portadora (sin conexión en la placa); FastLED por software SPI.
+  Nivel de 3.3 V contra V_IH de ~3.5 V del APA102 a 5 V: suele funcionar con cables cortos y reloj lento.
+
+`01` §3.3 sigue listando los 18 LEDs: no se edita sin autorización. Si el producto final vuelve a llevar
+LEDs, PCB-K está lista para pedirse.
 
 ## Action Items
 

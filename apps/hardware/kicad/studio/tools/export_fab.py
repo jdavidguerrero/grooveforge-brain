@@ -25,6 +25,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 LAYERS = "F.Cu,B.Cu,F.Paste,B.Paste,F.Silkscreen,B.Silkscreen,F.Mask,B.Mask,Edge.Cuts"
+# Rev. 2026-10-15 (prototipo económico): PCB-K no se pide (sin LEDs, los Choc van cableados a J1 de PCB-A)
+# y PCB-A va sin ensamble. Solo la portadora lleva BOM y CPL.
+BOARDS = ["pcb-a", "portadora"]
+ASSEMBLE = {"pcb-k": True, "pcb-a": False, "portadora": True}
 ROT_FIX = [(r"^SOT-23", 180), (r"^SOIC-", 270), (r"^CP_Elec_", 180),
            (r"^IDC-Header_", -90)]   # el modelo de JLC del box header está acostado a 0°
 
@@ -87,13 +91,16 @@ def bom_and_cpl(name, pcb, out):
 
 
 def main():
-    names = sys.argv[1:] or ["pcb-k", "pcb-a", "portadora"]
+    names = sys.argv[1:] or BOARDS
     for name in names:
         pcb = os.path.join(ROOT, name, f"{name}.kicad_pcb")
         out = os.path.join(ROOT, "fab", name)
         shutil.rmtree(out, ignore_errors=True)
         os.makedirs(out)
         files = gerbers(name, pcb, out)
+        if not ASSEMBLE.get(name, True):
+            print(f"{name}: {len(files)} archivos Gerber/taladro · sin ensamble (solo PCB)")
+            continue
         lines, parts, sides = bom_and_cpl(name, pcb, out)
         print(f"{name}: {len(files)} archivos Gerber/taladro · BOM {lines} líneas · CPL {parts} piezas "
               f"({', '.join(sorted(sides))})")

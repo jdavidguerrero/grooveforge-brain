@@ -47,10 +47,10 @@ separadores).
 | LEDs SK6812-MINI-E (cara inferior de PCB-K) | −5.0 a ~−6.0 | Montaje invertido: brillan hacia arriba por agujeros de PCB-K |
 | Tope del cuerpo del EC11 | −7.0 | 2.0 mm de aire bajo PCB-K (1.0 bajo los LEDs) |
 | **PCB-A** (cara superior) | **−12.0** | Base de los EC11 y de los RV09; separadores M3 de **10 mm** (medida estándar) desde la cara inferior del aluminio |
-| Pines del EC11 / fin del apilado | ~−17.1 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~44 mm por dentro (rev. +15 mm) |
+| Pines del EC11 / fin del apilado | ~−17.1 | En la franja de los encoders (y = 20–75 mm) la cuña tiene ~49 mm por dentro (rev. +20 mm) |
 | Pantalla Freenove (vidrio + placa, 7.6 mm) | −2.5 a −10.1 | Junta de 0.5 bajo el aluminio. En y 76.9–152.9 (centro corrido a 114.9, rev. 2026-10-14): 0.9 mm de aire frente al borde trasero de PCB-K (y 76) y 1.9 mm sobre PCB-A |
 | Pi 3B (atornillada a la pantalla) | hasta −40.4 | 38.4 mm desde el vidrio en USB/Ethernet (§4.5) |
-| Piso interior (PETG 3 mm) | z = 3 sobre la base | Enclosure 43 / 78 mm (rev. +15 mm): ver alturas libres en §4.5 |
+| Piso interior (PETG 3 mm) | z = 3 sobre la base | Enclosure **48 / 83 mm** (rev. +20 mm, 2026-10-14 b): ver §4.5 y §10E |
 
 **Agujeros en el aluminio que cambian respecto del enclosure:** EC11 pasa de Ø7.2 con rosca M7 a
 **Ø7.1 liso** (buje de 6.8 + 0.3 de juego). El resto (Choc 14×14 con rebaje 16×16×0.8, NAV Ø32 con
@@ -108,7 +108,7 @@ pared trasera queda libre; con el enclosure 15 mm más alto (§3), la portadora 
 - **Hilera baja, soldada a la portadora:** IN L/R y OUT L/R (1/4" TRS), PHONES (3.5 TRS) y CV OUT (3.5).
   Jacks **horizontales de PCB** (eje paralelo a la placa), los más comunes y baratos de LCSC. Las x salen
   del layout.
-- **Arriba, de panel con cable:** USB-C Teensy, USB-A host, USB-C 5 V y la palanca PAD (cableada al header
+- **De panel con cable (rev. §10E: en la misma hilera que los jacks):** USB-C Teensy, USB-A host, USB-C 5 V y la palanca PAD (cableada al header
   SW1 de 2×4, junto a la escalera R4–R9).
 - ~~Placa trasera vertical (J20/J17, IDC 2×8)~~: se dibujó el 2026-10-14 y se descartó el mismo día; no
   llegó a commit.
@@ -119,7 +119,7 @@ La Pi 3B **va atornillada detrás del módulo Freenove** (120.8 × 76 × 7.6 mm;
 enclosure (pantalla centrada en (90, 114.9), §3): Pi en x ~43–132, y ~92–149, con USB y Ethernet hacia la
 **derecha** (hasta x ~138), el HDMI hacia atrás y el GPIO hacia el frente (medido sobre foto, ±2 mm).
 
-Altura libre sobre el piso (z = 3) con el enclosure de +15 mm:
+Altura libre sobre el piso (z = 3) con el enclosure de +15 mm (con +20 mm, 2026-10-14 b, sumar 5 mm):
 
 | Zona | Libre |
 |---|---|
@@ -328,6 +328,104 @@ VREF; la rev 0.1 usaba 10.2 k / 4.75 k y daba −11.0 / −20.4 dB. Validación:
   cable 1:1 con hilos sueltos ya crimpados (kit JST-SH), ~60–80 mm.
 - **Verificación de punta a punta** (netlists de las 3 placas): los 10 pines del JST-SH y los 30 del IDC
   2×15 coinciden 1:1, y cada control llega al pin de la Teensy de `01` §3.3.
+
+## 10E. Validación del enclosure en FreeCAD (2026-10-14)
+
+Modelo en `apps/design/3d-models/studio/studio-enclosure.FCStd`: cuerpo, aluminio con sus cortes, las 3 placas
+exportadas de KiCad (STEP) y bloques medidos para la pantalla, la Pi, la Teensy, el shield, los EC11, los
+RV09 y los jacks. Revisión de choques con `freecadcmd` (las booleanas sobre los STEP no caben en el
+tiempo de la GUI).
+
+- **Medida de la Pi (Juan):** pines del GPIO hasta 25 mm (se toma el peor caso: desde el dorso de la
+  pantalla, -35.1 en el marco del panel); pin 1 a 24 mm del borde izquierdo y 20 mm del inferior del
+  módulo, GPIO hacia los controles. En el panel: pin 1 en (53.6, 96.9).
+- **Choque encontrado:** el IDC del cable J6 en el GPIO caía sobre el extremo SD del Audio Shield
+  (0 mm con 43/78 y la portadora en su sitio). Juan quiere el shield sobre headers (reparable).
+- **Solución adoptada:** enclosure **+5 mm (48/83, 12°)** y **portadora corrida +16 mm en X** (x 60–157).
+  Las placas no cambian. Peor caso: shield 4.8 mm, jack de audífonos del shield 6.3 mm, Teensy 7.8 mm,
+  jacks ≥ 12.7 mm de la Pi. Con la medida tomada desde el vidrio, todo suma ~7.6 mm.
+- **LINE IN/OUT del shield:** header **acodado (90°)** o hilos soldados a los pads; uno vertical con Dupont
+  (14 mm) choca con el GPIO. Lado J9: header vertical con Dupont, para poder desmontar el shield.
+- **Medida corregida (Juan):** los 25 mm del GPIO son **desde el vidrio**. Holguras de la Pi sobre la
+  portadora: shield 6.2 mm (contra USB/Ethernet en el caso conservador de 38.4 mm), Teensy 11.1, jacks ≥ 12.7.
+  Los 38.4 mm de USB/Ethernet no cuadran con los 25 del GPIO (darían ~32): volver a medir.
+- **Sujeción de la pantalla (decisión 2026-10-14):** junta de EPDM de 0.5 mm entre el borde del vidrio y el
+  aluminio; **4 espárragos PEM M3 × 12** en el aluminio en (22, 116), (22, 146), (158, 116) y (158, 146);
+  **dos barras de PETG** (`apps/design/3d-models/studio/barra-pantalla-{izq,der}.stl`, 15 × 43 × 11 mm) con
+  un pilar por espárrago y un **labio de 3.5 mm** sobre el borde del dorso del módulo en y 109–152 (del lado
+  del conector DSI quedan 5 mm libres con la flex puesta). La Pi sigue atornillada a la Freenove: panel,
+  PCB-K, PCB-A, pantalla y Pi salen juntos al levantar la tapa. Holguras: 3 mm a los brazos de PCB-A,
+  7.5 mm a los pots. Impresión: cara plana de la barra sobre la cama, pilares hacia arriba.
+- **Pared trasera (resuelto 2026-10-14):**
+  - Jacks (eje sobre la cara superior de la portadora, z = 9.6 sobre la base): **NRJ3HF-1 a 6.5 mm**
+    (dibujo ST-NRJ3HF-1 de Neutrik; recorte Ø11.2, panel < 3 mm) → agujeros **Ø11.4 en z 16.1**, x 95, 113,
+    131, 149; **SJ1-3533NG a 7.0 ± 0.15 mm** (hoja de Same Sky/CUI; nariz Ø6 de 4 mm) → **Ø6.5 en z 16.6**,
+    x 66 y 78.
+  - **Una sola fila** (Juan no quiere los USB sobre los jacks), todo en **z 16.1**: a la izquierda de los jacks
+    **5V IN** USB-C (x 14), **USB** de la Teensy USB-C (x 30) y **HOST USB-A** (x 47; fue USB-C un rato,
+    §10F); a la derecha la palanca PAD Ø6.2 (x 168, junto a IN L). Cortes genéricos (9.4 × 3.6 y
+    13.6 × 6.4): ajustar con el conector de panel elegido. Holguras: ≥ 5 mm a los jacks y la portadora.
+  - Pared trasera de 2.5 mm por dentro: 0.5 mm de juego con el borde de la portadora.
+- **Piso:** 4 separadores Ø7 × 5 mm con inserto M3 (Ø4.0) en (64, 100), (64, 128), (154, 128), (154, 77).
+- **Fijación del aluminio al cuerpo:** 5 tornillos M3 avellanados (90°, Ø6.5) desde arriba a insertos M3
+  (Ø4.0 × 6) en bosses Ø9 unidos a las paredes, en (8, 8), (172, 8), (8, 160), (172, 160) y (90, 8) del
+  panel. **Rev. §10G:** el de (90, 8) pasa a dos, en (40, 8) y (140, 8).
+- **Patas:** 4 de goma Ø14 × 6 en rebajes de 0.6 mm, en (16, 16), (164, 16), (16, 149), (164, 149) de la base.
+- **Archivos** (`apps/design/3d-models/studio/`):
+  - `cuerpo-petg.stl` — 180 × 165 × 81 mm, ~240 cm³ (el aluminio completa los 83).
+  - `barra-pantalla-{izq,der}.stl` — barras de la pantalla.
+  - `panel-aluminio.dxf` — 180 × 168.7 mm (largo inclinado), vista superior, origen en la esquina delantera
+    izquierda. Capas: `CORTE_PASANTE` (contorno, Choc 14 × 14, EC11 Ø7.1, NAV Ø32, RV09 Ø7, ventana
+    111 × 67.8 R1, 29 ranuras, 5 × Ø3.4 de fijación, 10 × Ø4.22 para PEM FH-M3), `REBAJE_0p8_CARA_INFERIOR`
+    (16 × 16 × 0.8 bajo cada Choc) y `AVELLANADO_90_CARA_SUPERIOR`.
+  - `studio-enclosure.FCStd` — modelo completo con las placas (los STEP de las placas no se versionan).
+
+## 10F. Prototipo económico: 2 placas (2026-10-15, ADR-004 rev. 3)
+
+Objetivo del owner: US$80–100 en PCBs con envío (la cotización de 3 placas ensambladas daba ~US$171).
+
+- **Se piden 2 placas:**
+  - **Portadora** (97 × 100, tarifa base): ensamble Economic **solo de SMD** (19 líneas, 38 piezas).
+  - **PCB-A**: solo PCB, **sin ensamble**. Todo lo que lleva es THT más 18 pasivos 0603/0805 opcionales
+    (antirrebote de encoders y desacople), soldables a mano.
+- **PCB-K no se pide** y el prototipo va **sin LEDs**. Los Choc se clipsan en el aluminio y se cablean con
+  Dupont a **J1 de PCB-A**: header **1×10 acodado** (mismo pinout que el JST-SH: B4, B6, B3, GND, +5V,
+  GND, LED_DIN, B2, B5, B1), en (50, 50) del panel con los pines hacia los Choc. PCB-A re-ruteada con
+  `tools/build_pcb_a.sh`: DRC con paridad 0/0/0; el IDC 2×15 sigue 1:1 con la portadora.
+- **A mano:** jacks, IDC, JST-XH, zócalos, headers y PCB-A completa, con `fab/lcsc-piezas-sueltas.csv`
+  (16 líneas). Los pots RV09 no están en LCSC: comprarlos aparte.
+- **Archivos para JLC:** `fab/portadora/` (Gerbers, BOM, CPL) y `fab/pcb-a/pcb-a-gerbers.zip`. `fab/pcb-k/`
+  queda del pedido anterior: no subirlo.
+- **Pared trasera:** HOST vuelve a **USB-A** (no admite un computador por error, no necesita Rp en CC y es el
+  cable que traen los controladores); 5V IN y USB de la Teensy en USB-C.
+
+## 10G. Luces cableadas y fijación delantera (2026-10-15)
+
+- **NAV:** anillo WS2812 de 12 (Ø34/Ø49.5, LEDs en Ø~42) bajo un difusor Ø44 × 2 de PC esmerilado
+  (`apps/design/3d-models/studio/difusor-nav.dxf`), apoyado en la cara inferior del aluminio. Anillo de -4.0 a
+  -7.2: rodea el cuerpo del EC11 de NAV; 0.6 mm a las carcasas de B5/B6 y 1.2 mm a sus soportes.
+- **Teclas:** `soporte-tecla-<x>-<y>.stl` (6 piezas, 10 × 11 × 2.2 mm), a presión en el poste central del Choc,
+  con bolsillo de 0.8 mm para el APA102 5050 bajo la ventana de LED (cara del LED a 1 mm de la base del Choc)
+  y canal para los hilos hacia atrás. Datos/reloj desde los pines 36/37 de la Teensy (ADR-004 rev. 3).
+- **Fijación del aluminio:** el boss del centro delantero (90, 8) chocaba con el anillo; se reemplaza por dos en
+  **(40, 8) y (140, 8)** (5.5 mm a PCB-A). Quedan 6: las 4 esquinas y esos dos. `panel-aluminio.dxf` y
+  `cuerpo-petg.stl` actualizados.
+
+## 10H. Conectores de chasis en la pared trasera (2026-10-15)
+
+Decisión de Juan: **todos los conectores son de chasis** (se consiguen en Bogotá y la fuerza del plug la toma la
+pared, no las soldaduras). La portadora **no cambia**: los footprints de los jacks quedan como pads para los
+hilos (NRJ3HF-1: T, R, S; SJ1-3533NG: 2 punta, 3 anillo, 1 malla), con cable apantallado de 5–10 cm.
+
+- **Fila única en z 22** (los cuerpos de chasis de 1/4" miden ~22 mm: centrados en z 16 tocaban la placa).
+  De izquierda a derecha, mirando de frente: **5V IN** USB-C (x 12), **USB** USB-C (26), **HOST** USB-A (41),
+  **OUT L** (58), **OUT R** (77), **PHONES** (95), **CV OUT** (108), **PAD** (122), **IN L** (148), **IN R** (166).
+  Debajo del USB/Ethernet de la Pi (x 113–134) solo van piezas bajas (3.5 y PAD).
+- **Agujeros:** 1/4" Ø9.6 (rosca 3/8"), 3.5 Ø6.2 (M6), PAD Ø6.2, USB-C 9.4 × 3.6, USB-A 13.6 × 6.4.
+  **Verificar con los jacks comprados** (rosca y largo del cuerpo) antes de imprimir.
+- **Holguras con cuerpos aproximados** (1/4" 16 × 22 × 28 de fondo; 3.5 10 × 12 × 18): ≥ 1.4 mm sobre la
+  portadora, ≥ 6.2 mm a la Pi, ≥ 3 mm a las paredes laterales.
+- `fab/lcsc-piezas-sueltas.csv` ya no lleva jacks.
 
 ## 11. Próximo paso
 

@@ -1,9 +1,14 @@
 LCSC Part Number,Quantity,Manufacturer Part Number,Description,Customer Part Number
-C48687630,2,BH254V-30P,IDC box header 2x15 2.54 mm vertical - PCB-A J2 (1 + 1 repuesto; el de la portadora lo monta JLC),J2 (PCB-A)
-C158012,2,B2B-XH-A(LF)(SN),JST-XH 2 pines vertical - entrada 5 V (1 + 1 repuesto),J10
+C48687630,3,BH254V-30P,IDC box header 2x15 2.54 mm vertical (2 + 1 repuesto),J5 (portadora) / J2 (PCB-A)
+C492442,2,BH254V-10P,IDC box header 2x5 2.54 mm vertical - a la Pi (1 + 1 repuesto),J6 (portadora)
+C158012,2,B2B-XH-A(LF)(SN),JST-XH 2 pines vertical - entrada 5 V (1 + 1 repuesto),J10 (portadora)
 C41376163,2,HC-PM254-8.5H-1x24PZ,Zócalo hembra 1x24 2.54 mm - Teensy 4.1,J1 J2 (portadora)
-C2905420,2,KH-2.54FH-1X14P-H8.5,Zócalo hembra 1x14 2.54 mm - Audio Shield,J15 J16
-C42431788,2,PZ2.54-1X40P-H25,Header macho 1x40 2.54 mm (cortar) - J3 1x5 y J9 1x9 y SW1 2x4 (dos tiras de 4),J3 J9 SW1
+C2905420,2,KH-2.54FH-1X14P-H8.5,Zócalo hembra 1x14 2.54 mm - Audio Shield,J15 J16 (portadora)
+C42431788,2,PZ2.54-1X40P-H25,Header macho recto 1x40 2.54 mm (cortar) - J3 1x5 y J9 1x9 y SW1 2x4 (dos tiras de 4),J3 J9 SW1 (portadora)
+C2334,1,2.54-1*40P Bent,Header macho acodado 1x40 2.54 mm (cortar 1x10) - Choc + LEDs futuros; y 1x9 acodado para LINE del shield,J1 (PCB-A)
+C57112,20,0603B103K500NT,Condensador 10 nF 0603 - antirrebote de encoders (15 + repuestos),C1-C15 (PCB-A)
+C14663,5,CC0603KRX7R9BB104,Condensador 100 nF 0603 - pots (2 + repuestos),C16 C17 (PCB-A)
+C15850,2,CL21A106KAYNNNE,Condensador 10 uF 0805 - desacople 3V3,C18 (PCB-A)
 C21862,3,2.54-2*15P,Conector IDC hembra 2x15 para cable plano (2 extremos + 1 repuesto),Cable J5-J2
 C53309334,3,XDFH-0258-2*5P,Conector IDC hembra 2x5 para cable plano - 3 A por contacto (lleva el 5 V de la Pi) (2 extremos + 1 repuesto),Cable J6-Pi
 C144401,3,XHP-2,Carcasa JST-XH 2 pines para el cable de 5 V,Cable J10

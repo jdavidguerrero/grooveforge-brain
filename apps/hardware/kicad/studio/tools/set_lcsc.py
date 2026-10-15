@@ -2,8 +2,8 @@
 
   python3 apps/hardware/kicad/studio/tools/set_lcsc.py
 
-Los SMD, y en la portadora también los jacks y los IDC. El resto de los THT (JST-XH, zócalos de la
-Teensy y el shield, headers, el IDC de PCB-A, pots, encoders, Choc) se sueldan a mano y quedan sin LCSC. Los números se verificaron con el buscador
+Los SMD (solo la portadora se ensambla; PCB-A va sin ensamble desde 2026-10-15). Los THT (jacks, IDC,
+JST-XH, zócalos, headers, pots, encoders, Choc) se sueldan a mano y quedan sin LCSC. Los números se verificaron con el buscador
 de piezas de JLC el 2026-10-14: todos admiten ensamble Economic, y se eligieron piezas Basic cuando
 había una.
 """
@@ -29,14 +29,9 @@ LCSC = {
     "SK6812MINI-EA": "C5378731",
 }
 # Conectores SMD, por referencia (su valor es descriptivo)
-BY_REF = {("pcb-k", "J1"): "C160409", ("pcb-a", "J1"): "C160409",
-          # Portadora: jacks e IDC los suelda JLC (THT, cargo por unión)
-          **{("portadora", j): "C22419846" for j in ("J7", "J8", "J11", "J12")},    # NRJ3HF-1
-          **{("portadora", j): "C4992459" for j in ("J13", "J14")},                 # SJ1-3533NG
-          ("portadora", "J5"): "C48687630",     # IDC 2×15 al panel (XFCN BH254V-30P)
-          ("portadora", "J6"): "C492442"}       # IDC 2×5 a la Pi (XFCN BH254V-10P)
-# El resto de los THT (JST-XH, zócalos, headers, el IDC de PCB-A) se compra suelto en LCSC:
-# fab/lcsc-piezas-sueltas.csv.
+BY_REF = {("pcb-k", "J1"): "C160409"}
+# Prototipo económico (2026-10-15): JLC ensambla solo los SMD de la portadora. Jacks, IDC, zócalos, headers y
+# todo PCB-A se sueldan a mano con piezas de fab/lcsc-piezas-sueltas.csv.
 RENAME = {("pcb-k", "SK6812MINI-E"): "SK6812MINI-EA"}
 
 PROP = ('\t\t(property "LCSC" "{}"\n\t\t\t(at {} {} 0)\n\t\t\t(hide yes)\n\t\t\t(show_name no)\n'

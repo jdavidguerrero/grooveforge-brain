@@ -1,0 +1,3 @@
+# Generados: se exportan de KiCad (kicad-cli pcb export step) y FreeCAD los respalda solo.
+*.step
+*.FCBak

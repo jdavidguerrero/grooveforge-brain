@@ -7,9 +7,9 @@ Mismo sistema que place_pcb_k.py: panel (x desde la izquierda, y desde el frente
 x_pcb = x + 50, y_pcb = 200 - y. Fuente: theory/02-studio-pcb.md §4.2 y §6.
 
 PCB-A queda a −12.0 mm (cara superior). Por arriba tiene 7 mm de aire hasta PCB-K: J2 (IDC 2×15, caja
-de ~9 mm) va en la cara inferior, apuntando a la portadora en el piso. J1 (JST-SH lateral) va arriba,
-~40 mm hacia el frente del J1 de PCB-K y mirándolo: el J1 de PCB-K abre hacia el frente, así que un cable
-de 50 mm cruza el hueco en diagonal.
+de ~9 mm) va en la cara inferior, apuntando a la portadora en el piso. J1 (header 1×10 acodado, rev.
+2026-10-15: sin PCB-K) va arriba, con los pines hacia los Choc: 7 hilos Dupont a los switches (B1–B6 y GND)
+y +5V/LED_DIN libres para LEDs futuros.
 
 PROVISIONAL: los brazos de los pots (x 6–24 y 156–174 hasta y 106) asumen un módulo Freenove de
 ~121 mm de ancho centrado en x 90. Medir el módulo y el cable DSI antes del pedido (tarea 44.61).
@@ -122,8 +122,8 @@ def main():
         # Arriba no cabe bajo el cuerpo del pot: va al costado de los pines, lejos del separador del brazo.
         place(board, cap, wx - 6.0, wy + 3.0, rot=0)
 
-    # J1 (a PCB-K): cara superior, abre hacia atrás (−y en la placa), hacia el J1 de PCB-K.
-    place_center(board, "J1", 100.0, 150.0, rot=180, by="pads")
+    # J1 (Choc + LEDs futuros): cara superior, header acodado con los pines hacia +x (los Choc).
+    place_center(board, "J1", 100.0, 150.0, rot=0, by="pads")
     # J2 (a la portadora): cara inferior, eje largo horizontal, junto al borde trasero.
     place_center(board, "J2", 163.0, 128.0, rot=90, back=True, by="pads")
     j2 = board.FindFootprintByReference("J2")
@@ -131,39 +131,12 @@ def main():
     # Fuera de la caja de la IDC (la caja ocupa ±5 mm alrededor de y 128 en esta cara).
     place(board, "C18", pcbnew.ToMM(p30.x), 135.5, rot=0)
 
-    # Pines de GND del JST (1 mm de paso): vía propia al plano justo detrás del pad. Si no, las pistas de
-    # los pines vecinos encierran el cobre del pad en una isla suelta. Bloqueadas, antes del ruteo.
+    # El JST-SH de 1 mm necesitaba vías de escape propias para GND; el header de 2.54 no.
     for g in list(board.Groups()):
         if g.GetName() == "escapes_gnd_j1":
             for item in list(g.GetItems()):
                 board.Delete(item)
             board.Delete(g)
-    group = pcbnew.PCB_GROUP(board)
-    group.SetName("escapes_gnd_j1")
-    board.Add(group)
-    gnd = board.FindNet("/GND") or board.FindNet("GND")
-    j1 = board.FindFootprintByReference("J1")
-    for pad in j1.Pads():
-        if pad.GetNetname() in ("/GND", "GND"):
-            a = pad.GetPosition()
-            b = pcbnew.VECTOR2I(a.x, a.y + pcbnew.FromMM(1.9))
-            t = pcbnew.PCB_TRACK(board)
-            t.SetStart(a)
-            t.SetEnd(b)
-            t.SetWidth(pcbnew.FromMM(0.3))
-            t.SetLayer(pcbnew.F_Cu)
-            t.SetNet(gnd)
-            t.SetLocked(True)
-            board.Add(t)
-            group.AddItem(t)
-            v = pcbnew.PCB_VIA(board)
-            v.SetPosition(b)
-            v.SetWidth(pcbnew.FromMM(0.6))
-            v.SetDrill(pcbnew.FromMM(0.3))
-            v.SetNet(gnd)
-            v.SetLocked(True)
-            board.Add(v)
-            group.AddItem(v)
 
     # Designadores de los 0603 ocultos (JLC ensambla desde el CPL); quedan en Fab.
     for fp in board.GetFootprints():
