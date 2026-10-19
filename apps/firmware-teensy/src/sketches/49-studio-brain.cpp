@@ -473,9 +473,14 @@ void bridge_param(uint16_t id, float norm) {
 }
 
 /// Lo editado en el panel sale al computador por su CC (theory/07 §3) para que Ableton lo grabe.
+uint32_t cc_out_ms[128] = {};            // último envío de cada CC (para no aplicar el eco del computador)
+
 void cc_out(uint16_t id, float norm) {
     const uint8_t cc = studio::param_cc(id, ui.engine());
-    if (cc != 0xFF) usbMIDI.sendControlChange(cc, uint8_t(lroundf(constrain(norm, 0.0f, 1.0f) * 127.0f)), MIDI_OUT_CH);
+    if (cc == 0xFF) return;
+    if (cc == 74) norm = gf_cutoff_cc_norm(ui.engine(), cutoff[ui.engine()]);   // CC del cutoff: logarítmico
+    usbMIDI.sendControlChange(cc, uint8_t(lroundf(constrain(norm, 0.0f, 1.0f) * 127.0f)), MIDI_OUT_CH);
+    cc_out_ms[cc] = millis();
 }
 
 void bridge_engine() {
@@ -830,7 +835,7 @@ void control_change(byte ch, byte cc, byte val) {
         apply_sfx(e);
         return;
     }
-    if (cc == 74) { cutoff[e] = gf_denorm(GF_CUTOFF_RANGE[e], val / 127.0f); engine_filter(e); bridge_filter(); }
+    if (cc == 74) { cutoff[e] = gf_cutoff_from_cc_norm(e, val / 127.0f); engine_filter(e); bridge_filter(); }
     if (cc == 71) { resonance[e] = gf_denorm(RESO_RANGE[e], val / 127.0f); engine_filter(e); bridge_filter(); }
     if (cc == 1) {
         wheel = val / 127.0f;
@@ -849,6 +854,13 @@ void host_note_on(byte ch, byte note, byte vel) {
 void host_note_off(byte ch, byte note, byte vel) {
     note_off(ch, note, vel);
     usbMIDI.sendNoteOff(note, vel, ch);
+}
+
+// CC del computador: si es el eco de lo que el Brain acaba de mandar (Ableton con monitoreo de MIDI, theory/07 §3),
+// se ignora. Si no, aplicarlo cuantiza el valor a 7 bits y frena la perilla (el cutoff quedaba en 83 Hz).
+void usb_control_change(byte ch, byte cc, byte val) {
+    if (cc < 128 && cc_out_ms[cc] && millis() - cc_out_ms[cc] < 150) return;
+    control_change(ch, cc, val);
 }
 
 void host_control_change(byte ch, byte cc, byte val) {
@@ -949,7 +961,7 @@ void setup() {
     // MIDI del computador por el USB de la Teensy (piano roll de Ableton, clock de la sesión)
     usbMIDI.setHandleNoteOn(note_on);
     usbMIDI.setHandleNoteOff(note_off);
-    usbMIDI.setHandleControlChange(control_change);
+    usbMIDI.setHandleControlChange(usb_control_change);
     usbMIDI.setHandlePitchChange(pitch_bend);
     usbMIDI.setHandleAfterTouchChannel(after_touch);
     usbMIDI.setHandleClock(clock_tick);

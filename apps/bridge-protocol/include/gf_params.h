@@ -85,6 +85,18 @@ static inline float gf_clamp01(float v) { return v < 0.0f ? 0.0f : v > 1.0f ? 1.
 static inline float gf_norm(GF_Range r, float v) { return gf_clamp01((v - r.lo) / (r.hi - r.lo)); }
 static inline float gf_denorm(GF_Range r, float n) { return r.lo + gf_clamp01(n) * (r.hi - r.lo); }
 
+/** Cutoff ↔ CC 74 en escala logarítmica (theory/07 §3): 128 pasos repartidos por octavas, no en Hz lineales
+ *  (lineal, el paso 1 caía en ~83 Hz y no había resolución en los graves). */
+static inline float gf_cutoff_cc_norm(uint8_t engine, float hz) {
+    const GF_Range r = GF_CUTOFF_RANGE[engine];
+    if (hz <= r.lo) return 0.0f;
+    return gf_clamp01(logf(hz / r.lo) / logf(r.hi / r.lo));
+}
+static inline float gf_cutoff_from_cc_norm(uint8_t engine, float n) {
+    const GF_Range r = GF_CUTOFF_RANGE[engine];
+    return r.lo * powf(r.hi / r.lo, gf_clamp01(n));
+}
+
 /** RATE libre 0.05–20 Hz en escala log. */
 static inline float gf_lfo_rate_norm(float hz) {
     return gf_clamp01(logf(hz / GF_LFO_RATE_MIN) / logf(GF_LFO_RATE_MAX / GF_LFO_RATE_MIN));

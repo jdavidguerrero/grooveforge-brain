@@ -285,6 +285,21 @@ void test_cc_ida_y_vuelta() {
     TEST_ASSERT_EQUAL_UINT8(0xFF, param_cc(0x1100, 2));                // param de otro engine
 }
 
+// CC 74 logarítmico (theory/07 §3): el paso 1 queda cerca del mínimo, no en ~83 Hz como con la escala lineal.
+void test_cutoff_cc_logaritmico() {
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        const GF_Range r = GF_CUTOFF_RANGE[e];
+        TEST_ASSERT_FLOAT_WITHIN(0.01f, r.lo, gf_cutoff_from_cc_norm(e, 0.0f));
+        TEST_ASSERT_FLOAT_WITHIN(1.0f, r.hi, gf_cutoff_from_cc_norm(e, 1.0f));
+        TEST_ASSERT_TRUE(gf_cutoff_from_cc_norm(e, 1.0f / 127.0f) < r.lo * 1.06f);   // un paso < 6 %
+        for (int v = 0; v <= 127; v += 7) {                                          // ida y vuelta por CC
+            const float hz = gf_cutoff_from_cc_norm(e, v / 127.0f);
+            TEST_ASSERT_EQUAL_INT(v, int(lroundf(gf_cutoff_cc_norm(e, hz) * 127.0f)));
+        }
+    }
+    TEST_ASSERT_EQUAL_INT(1, int(lroundf(gf_cutoff_cc_norm(0, 21.0f) * 127.0f)));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_perform_p1_env_amt_p2_lfo_cutoff);
@@ -302,5 +317,6 @@ int main() {
     RUN_TEST(test_nuevos_slots_juno_ob6_arp);
     RUN_TEST(test_cc_entrada);
     RUN_TEST(test_cc_ida_y_vuelta);
+    RUN_TEST(test_cutoff_cc_logaritmico);
     return UNITY_END();
 }

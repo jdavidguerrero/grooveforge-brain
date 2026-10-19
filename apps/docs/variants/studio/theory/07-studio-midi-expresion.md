@@ -36,6 +36,14 @@ el mismo CC** al computador (`usbMIDI`), así Ableton graba la automatización y
 Los slots sin uso en el engine activo ignoran su CC. Los CC 64 (sustain pedal) y 123 (all notes off) siguen el
 estándar MIDI.
 
+**Correcciones tras la prueba en el hardware (2026-10-19):**
+
+- **CC 74 (cutoff) en escala logarítmica:** `gf_cutoff_cc_norm` / `gf_cutoff_from_cc_norm`. Lineal en Hz, los 128
+  pasos de 20–8000 Hz daban ~63 Hz por paso: el paso 1 caía en 82.8 Hz y no había resolución en los graves.
+- **Eco del computador:** un CC que llega por `usbMIDI` hasta 150 ms después de que el Brain mandó ese mismo CC se
+  ignora. Si Ableton monitorea el MIDI del Brain, le devuelve lo que este manda; aplicarlo cuantizaba la perilla a
+  7 bits (con el cutoff lineal, ENC L no pasaba de 83 Hz).
+
 ## 4. Implementación
 
 - `studio::apply_cc()` y `studio::param_cc()` en `page_params` (lógica pura, tests native): CC → cambio del patch +
