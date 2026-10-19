@@ -17,7 +17,7 @@ namespace studio {
 
 constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
-constexpr uint8_t PRESET_FORMAT = 1;        ///< versión del formato del archivo
+constexpr uint8_t PRESET_FORMAT = 2;        ///< versión del formato (2: NOISE del Model D en su parada, 2026-10-19)
 
 /// Un sonido: el patch editable + el filtro de ENC L / R.
 struct Preset {
