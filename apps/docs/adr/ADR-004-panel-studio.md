@@ -116,6 +116,14 @@ APA102/SK9822 5050 sueltos.
   hilos soldados a J2.21/J2.20 de la portadora (sin conexión en la placa); FastLED por software SPI.
   Nivel de 3.3 V contra V_IH de ~3.5 V del APA102 a 5 V: suele funcionar con cables cortos y reloj lento.
 
+**Cambio (2026-10-16, Juan):** las teclas usan WS2812 sueltos en la misma cadena del anillo (pin 28, LEDs 12–17)
+en lugar de APA102 en los pines 36/37: un solo pin, datos a 5 V por el buffer de la portadora. Detalle en
+`variants/studio/theory/04-studio-ui-state.md` §8.
+
+**Cambio de mapeo (2026-10-16, Juan):** ENC L / R son CUTOFF / RES solo en las vistas (home). En OSC, ENV, LFO y
+SYNTH FX los 4 encoders (P1, P2, ENC L, ENC R) editan la página, y SHIFT da otros 4. NAV push largo vuelve a home.
+B4 = SYNTH FX y SHIFT + B4 = PRESETS (theory/05 de Studio). Detalle en theory/04 §3.1.
+
 `01` §3.3 sigue listando los 18 LEDs: no se edita sin autorización. Si el producto final vuelve a llevar
 LEDs, PCB-K está lista para pedirse.
 

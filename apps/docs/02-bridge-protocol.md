@@ -132,6 +132,8 @@ actual envía `0x10 + índice` y se corrige en la tarea R-B3.
 | 0x41 | DISPLAY_TEXT | [x: 1B, y: 1B, color: 2B, text: string] | Draw text |
 | 0x42 | LED_SET | [led_id: 1B, r: 1B, g: 1B, b: 1B] | Set LED color |
 | 0x43 | LED_PATTERN | [pattern_id: 1B, duration: 2B] | Run LED animation |
+| 0x44 | UI_STATE | [22 B, `variants/studio/theory/04-studio-ui-state.md` §4] | **Studio (2026-10-15).** Estado de UI completo (modo, página, cursor, SHIFT/HOLD, FX). Teensy → cabeza en cada cambio (≤ 1 cada 20 ms) y 1 Hz |
+| 0x45 | UI_INPUT | [control: 1B, value: i8] | **Studio (2026-10-15).** Gesto táctil de la cabeza → Teensy, procesado como un control físico (fase 2) |
 
 ### 2.6 Cloud commands (0x50 - 0x5F) - ESP32 ↔ Teensy
 

@@ -74,6 +74,9 @@ typedef enum : uint8_t {
     GF_CMD_DISPLAY_TEXT     = 0x41,
     GF_CMD_LED_SET          = 0x42,
     GF_CMD_LED_PATTERN      = 0x43,
+    /* Studio (02 §2.5, theory/04): estado de UI del Teensy y gestos de la cabeza */
+    GF_CMD_UI_STATE         = 0x44,
+    GF_CMD_UI_INPUT         = 0x45,
 
     /* 0x50 — Cloud (ESP32 ↔ Teensy) */
     GF_CMD_CLOUD_STATUS         = 0x50,
@@ -212,4 +215,45 @@ static inline size_t gf_frame_serialize(const GF_Frame* f, uint8_t* buf, size_t 
     if (f->len > 0) memcpy(buf + 3, f->payload, f->len);
     buf[3 + f->len] = gf_frame_crc(f);
     return needed;
+}
+
+/* ── UI_STATE (0x44, Studio — theory/04 §4) ─────────────────────────────────── */
+#define GF_UI_STATE_LEN   22U
+#define GF_UI_FX_SLOTS    12U
+
+/** @brief Estado de UI que el Teensy manda entero a la cabeza de Studio ("el último valor gana"). */
+typedef struct {
+    uint8_t  mode;                      /* 0 SYNTH, 1 FX */
+    uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO */
+    uint8_t  shift;                     /* 0/1 */
+    uint8_t  fx_hold;                   /* 0/1 */
+    uint8_t  cursor;                    /* ENGINE: tile · PRESETS: fila (0 = SAVE) · OSC: oscilador */
+    uint8_t  fx_slot;                   /* 0-11 */
+    uint8_t  fx_view;                   /* 0 ONDA, 1 ESPECTRO, 2 FIRMA */
+    uint8_t  flags;                     /* bit0 filter_bypass, bit1 lfo_sync */
+    uint16_t fx_on;                     /* bit n = slot n encendido */
+    uint8_t  fx_route[GF_UI_FX_SLOTS];  /* 0 INSERT, 1 SEND, 2 MASTER */
+} GF_UiState;
+
+#define GF_UI_FLAG_FILTER_BYPASS 0x01U
+#define GF_UI_FLAG_LFO_SYNC      0x02U
+
+/** @brief Serializa a los 22 bytes del payload (little-endian). @return GF_UI_STATE_LEN. */
+static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {
+    out[0] = u->mode;   out[1] = u->page;    out[2] = u->shift;   out[3] = u->fx_hold;
+    out[4] = u->cursor; out[5] = u->fx_slot; out[6] = u->fx_view; out[7] = u->flags;
+    out[8] = (uint8_t)(u->fx_on & 0xFFu);
+    out[9] = (uint8_t)(u->fx_on >> 8);
+    memcpy(out + 10, u->fx_route, GF_UI_FX_SLOTS);
+    return GF_UI_STATE_LEN;
+}
+
+/** @brief Deserializa el payload. @return false si len no es GF_UI_STATE_LEN (→ NACK INVALID_LEN). */
+static inline bool gf_ui_state_unpack(const uint8_t* in, size_t len, GF_UiState* u) {
+    if (len != GF_UI_STATE_LEN) return false;
+    u->mode = in[0];   u->page = in[1];    u->shift = in[2];   u->fx_hold = in[3];
+    u->cursor = in[4]; u->fx_slot = in[5]; u->fx_view = in[6]; u->flags = in[7];
+    u->fx_on = (uint16_t)(in[8] | (in[9] << 8));
+    memcpy(u->fx_route, in + 10, GF_UI_FX_SLOTS);
+    return true;
 }
