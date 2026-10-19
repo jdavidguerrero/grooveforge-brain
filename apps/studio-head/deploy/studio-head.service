@@ -8,14 +8,15 @@
 Description=GrooveForge Studio head
 # Sin dependencias por defecto: no espera red, login ni multi-user (§8.2).
 DefaultDependencies=no
-After=local-fs.target systemd-udevd.service dev-dri-card0.device dev-studio\x2dtouch.device
-Wants=dev-dri-card0.device dev-studio\x2dtouch.device
+After=local-fs.target systemd-udevd.service dev-dri-card0.device dev-studio\x2dtouch.device dev-ttyAMA0.device
+Wants=dev-dri-card0.device dev-studio\x2dtouch.device dev-ttyAMA0.device
 
 [Service]
 Type=simple
 User=@USER@
-SupplementaryGroups=video input
-ExecStart=/opt/studio-head/studio-head --touch /dev/studio-touch
+SupplementaryGroups=video input dialout
+# --uart: el bridge con el Teensy (GPIO14/15, theory/01 de Studio). Sin él la cabeza corre en modo demo.
+ExecStart=/opt/studio-head/studio-head --touch /dev/studio-touch --uart /dev/ttyAMA0
 Restart=always
 RestartSec=500ms
 
