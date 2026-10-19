@@ -85,6 +85,7 @@ void Juno106::begin(float volume) {
         _filter[i].frequency(_filterCutoff);
         _filter[i].resonance(0.7f);
         _filter[i].set_drive(1.1f);
+        _filter[i].setCharacter(dsp::LadderCharacter::Ir3109);   // IR3109: 4 OTA (fidelidad §9.1)
         _filter[i].octaveControl(1.0f);
 
         _filterEnv[i].setAttack(10.0f);

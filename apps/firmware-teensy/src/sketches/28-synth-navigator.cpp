@@ -529,6 +529,13 @@ static AudioConnection c_prophet2mix(prophet.getOutput(), 0, g_engine_mix_a, 2);
 static AudioConnection c_ob62mix    (ob6.getOutput(),     0, g_engine_mix_a, 3);
 static AudioConnection c_dx72mix    (dx7.getOutput(),     0, g_engine_mix_b, 0);
 static AudioConnection c_arp2mix    (arp.getOutput(),     0, g_engine_mix_b, 1);
+// Lado derecho (fidelidad §9.3): mono a los dos lados; el Juno manda el R de su chorus estéreo
+static AudioConnection c_moog2mixR   (moog.getOutput(),    0, g_engine_mix_ra, 0);
+static AudioConnection c_juno2mixR   (juno.getOutput(),    Juno106::OUTPUT_PORT_R, g_engine_mix_ra, 1);
+static AudioConnection c_prophet2mixR(prophet.getOutput(), 0, g_engine_mix_ra, 2);
+static AudioConnection c_ob62mixR    (ob6.getOutput(),     0, g_engine_mix_ra, 3);
+static AudioConnection c_dx72mixR    (dx7.getOutput(),     0, g_engine_mix_rb, 0);
+static AudioConnection c_arp2mixR    (arp.getOutput(),     0, g_engine_mix_rb, 1);
 
 // ── Nota sobre AudioOutputUSB ────────────────────────────────────────────────────
 // ELIMINADO: AudioOutputUSB conflicta con AudioOutputI2S en Teensy 4.x.
@@ -1832,7 +1839,7 @@ static void handle_encoders() {
                 // no a g_engine_mix. FX_MANAGER_ID traduce UI index → FxManager audio ID.
                 g_fx_manager.activate(FX_MANAGER_ID[g_active_fx], g_audio_in);
                 // Arrancar con el wet predeterminado listo (performance-ready).
-                // set_wet() llama setMix() interno — g_master_mix.gain(1) queda fijo en 1.0.
+                // set_wet() llama setMix() interno — el canal 1 de los masters queda fijo en 1.0.
                 g_fx_manager.set_wet(g_fx_wet_dry);
 
                 // Sincronizar el objeto FX con la tabla de parámetros de la UI.
@@ -1893,14 +1900,14 @@ static void handle_encoders() {
                     // Bypass ON: resetear dial a 0 + silenciar FX + monitor directo.
                     // El reset permite presetear desde 0 con el encoder mientras bypassed.
                     g_fx_wet_dry = 0.0f;
-                    g_master_mix.gain(1, 0.0f);
-                    g_master_mix.gain(2, 1.0f);
+                    audio_graph::set_master_gain(1, 0.0f);
+                    audio_graph::set_master_gain(2, 1.0f);
                     bridge_send_param_raw(0x00FF, 0.0f);
                     bridge_send_param_raw(0x00E8, 1.0f);  // bypass ON → fondo arco invisible
                 } else {
                     // Bypass OFF: restaurar canal master + aplicar wet interno
-                    g_master_mix.gain(1, 1.0f);
-                    g_master_mix.gain(2, 0.0f);
+                    audio_graph::set_master_gain(1, 1.0f);
+                    audio_graph::set_master_gain(2, 0.0f);
                     g_fx_manager.set_wet(g_fx_wet_dry);
                     bridge_send_param_raw(0x00FF, g_fx_wet_dry);
                     bridge_send_param_raw(0x00E8, 0.0f);  // bypass OFF → fondo arco visible

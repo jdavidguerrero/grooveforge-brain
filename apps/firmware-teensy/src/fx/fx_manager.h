@@ -134,4 +134,5 @@ private:
     uint8_t          _active_id = FX_NONE;
     void*            _instance  = nullptr;
     AudioConnection* _c_out     = nullptr;   ///< FX getOutputL() → g_master_mix ch1
+    AudioConnection* _c_out_r   = nullptr;   ///< la misma salida → g_master_mix_r ch1 (lado derecho, §9.3)
 };

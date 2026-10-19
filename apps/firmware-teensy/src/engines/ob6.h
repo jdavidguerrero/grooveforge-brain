@@ -6,6 +6,7 @@
 #include "../audio/polyblep_waveform.h"
 #include "../audio/sem_svf.h"
 #include "../dsp/analog_env.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t OB6_VOICES = 6;
@@ -109,7 +110,7 @@ private:
     AudioSynthNoiseWhite     _noise[OB6_VOICES];
     AudioMixer4              _voiceMix[OB6_VOICES];
     OberheimSemSvf2P         _filter[OB6_VOICES];
-    AudioEffectEnvelope      _ampEnv[OB6_VOICES];
+    AnalogVca      _ampEnv[OB6_VOICES];
 
     AudioMixer4              _masterMixA;
     AudioMixer4              _masterMixB;

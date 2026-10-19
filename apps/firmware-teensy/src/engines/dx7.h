@@ -5,6 +5,7 @@
 // Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013), aquí como filtro de tono
 #include "../audio/moog_ladder.h"
 #include "dx7_core.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t DX7_VOICES = 6;
@@ -109,7 +110,7 @@ private:
     Dx7Patch _patch;
 
     Dx7Voice            _voice[DX7_VOICES];
-    AudioEffectEnvelope _ampEnv[DX7_VOICES];
+    AnalogVca _ampEnv[DX7_VOICES];
     AudioMixer4         _masterMixA, _masterMixB, _finalMix;
     MoogLadder4P        _tone;
 

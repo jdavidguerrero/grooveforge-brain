@@ -33,6 +33,7 @@ public:
         _wr = 0;
         _lfoPhase = 0.0f;
         _lpState = 0.0f;
+        _lpStateR = 0.0f;
         _hpState = 0.0f;
         _bassState = 0.0f;
     }
@@ -113,6 +114,53 @@ public:
         }
     }
 
+    /**
+     * @brief Versión estéreo, como los dos MN3009 del Juno-106: la misma línea leída con el LFO triangular en
+     *        antifase (L = +tri, R = −tri) y la señal seca en los dos canales (theory/fidelidad-engines.md §9.3).
+     */
+    void render_stereo(const float* in, float* out_l, float* out_r, int n, float fs) {
+        float rate_hz = 0.513f, depth_ms = 1.6f, wet_mix = 0.45f;
+        if (_mode == 2) { rate_hz = 0.863f; depth_ms = 1.85f; wet_mix = 0.55f; }
+        else if (_mode == 3) { rate_hz = 8.0f; depth_ms = 0.38f; wet_mix = 0.55f; }
+        const float lfo_inc = rate_hz / fs;
+        const float center_samp = 0.0035f * fs;
+        const float depth_samp = (depth_ms * 0.001f) * fs;
+        const float g_bass = 1.0f - expf(-6.2831853f * 85.0f / fs);
+        const float g_hp2  = 1.0f - expf(-6.2831853f * 225.0f / fs);
+        const float g_hp3  = 1.0f - expf(-6.2831853f * 720.0f / fs);
+        const float g_bbd  = 1.0f - expf(-6.2831853f * 10000.0f / fs);
+
+        for (int i = 0; i < n; ++i) {
+            float x = in[i];
+            if (_hpf == 0) {
+                _bassState += g_bass * (x - _bassState);
+                x = x + 0.5f * _bassState;
+            } else if (_hpf == 2) {
+                _hpState += g_hp2 * (x - _hpState);
+                x = x - _hpState;
+            } else if (_hpf == 3) {
+                _hpState += g_hp3 * (x - _hpState);
+                x = x - _hpState;
+            }
+            if (_mode == 0) {
+                out_l[i] = out_r[i] = x;
+                continue;
+            }
+            _buf[_wr] = fast_tanh(x * 1.15f);
+            _lfoPhase += lfo_inc;
+            if (_lfoPhase >= 1.0f) _lfoPhase -= 1.0f;
+            const float tri = 1.0f - 4.0f * fabsf(_lfoPhase - 0.5f);
+            const float wl = read_interp(center_samp + depth_samp * tri);
+            const float wr = read_interp(center_samp - depth_samp * tri);
+            _lpState += g_bbd * (wl - _lpState);
+            _lpStateR += g_bbd * (wr - _lpStateR);
+            _wr = (_wr + 1) & BUF_MASK;
+            const float dry = (1.0f - wet_mix * 0.35f) * x;
+            out_l[i] = dry + wet_mix * _lpState;
+            out_r[i] = dry + wet_mix * _lpStateR;
+        }
+    }
+
 private:
     float read_interp(float delay_samples) const {
         if (delay_samples < 1.0f) delay_samples = 1.0f;
@@ -128,6 +176,7 @@ private:
     int _wr = 0;
     float _lfoPhase = 0.0f;
     float _lpState = 0.0f;
+    float _lpStateR = 0.0f;
     float _hpState = 0.0f;
     float _bassState = 0.0f;
     uint8_t _mode = 1;  // Default: Chorus I

@@ -6,6 +6,7 @@
 #include "../audio/moog_ladder.h"
 #include "../audio/polyblep_waveform.h"
 #include "../dsp/analog_env.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t ARP_VOICES = 4;
@@ -96,7 +97,7 @@ private:
     AudioEffectMultiply      _ringMod[ARP_VOICES];
     AudioMixer4              _voiceMix[ARP_VOICES];   // ch0=ringMod, ch1=VCO1 dry, ch2=noise, ch3=VCO2 dry
     MoogLadder4P             _filter[ARP_VOICES];
-    AudioEffectEnvelope      _ampEnv[ARP_VOICES];
+    AnalogVca      _ampEnv[ARP_VOICES];
 
     AudioMixer4 _masterMixA;
     AudioMixer4 _finalMix;

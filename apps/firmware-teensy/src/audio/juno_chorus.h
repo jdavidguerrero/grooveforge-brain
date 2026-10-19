@@ -46,31 +46,36 @@ public:
             release(in_block);
             return;
         }
-        audio_block_t* out_block = allocate();
-        if (!out_block) {
+        audio_block_t* out_l = allocate();
+        audio_block_t* out_r = allocate();
+        if (!out_l || !out_r) {
+            if (out_l) release(out_l);
+            if (out_r) release(out_r);
             release(in_block);
             return;
         }
 
-        float in_f[AUDIO_BLOCK_SAMPLES];
-        float out_f[AUDIO_BLOCK_SAMPLES];
+        float in_f[AUDIO_BLOCK_SAMPLES], l_f[AUDIO_BLOCK_SAMPLES], r_f[AUDIO_BLOCK_SAMPLES];
+        for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) in_f[i] = float(in_block->data[i]) * (1.0f / 32768.0f);
+        _core.render_stereo(in_f, l_f, r_f, AUDIO_BLOCK_SAMPLES, AUDIO_SAMPLE_RATE_EXACT);
         for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) {
-            in_f[i] = float(in_block->data[i]) * (1.0f / 32768.0f);
-        }
-        _core.render(in_f, out_f, AUDIO_BLOCK_SAMPLES, AUDIO_SAMPLE_RATE_EXACT);
-        for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) {
-            int32_t v = int32_t(out_f[i] * 32767.0f);
-            if (v > 32767) v = 32767;
-            if (v < -32768) v = -32768;
-            out_block->data[i] = int16_t(v);
+            out_l->data[i] = to_i16(l_f[i]);
+            out_r->data[i] = to_i16(r_f[i]);
         }
 
         release(in_block);
-        transmit(out_block, 0);
-        release(out_block);
+        transmit(out_l, 0);   // salida 0 = L
+        transmit(out_r, 1);   // salida 1 = R (fidelidad §9.3)
+        release(out_l);
+        release(out_r);
     }
 
 private:
+    static int16_t to_i16(float x) {
+        const int32_t v = int32_t(x * 32767.0f);
+        return int16_t(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+    }
+
     audio_block_t* _inputQueueArray[1];
     dsp::JunoChorusCore _core;
     volatile bool _enabled = true;

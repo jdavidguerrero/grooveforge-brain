@@ -11,7 +11,6 @@
 #include <string.h>
 
 #include "../dsp/fast_math.h"
-#include "../dsp/ladder_core.h"
 #include <math.h>
 #include <Arduino.h>
 
@@ -26,44 +25,19 @@ MoogLadder4P::MoogLadder4P() : AudioStream(1, inputQueueArray) {
 // ── Parámetros públicos ───────────────────────────────────────────────────────
 
 void MoogLadder4P::frequency(float hz) {
-    if (hz < 1.0f)                             hz = 1.0f;
-    if (hz > AUDIO_SAMPLE_RATE_EXACT * 0.499f) hz = AUDIO_SAMPLE_RATE_EXACT * 0.499f;
-
-    // Ecuación (20) del paper:
-    //   A = π(fc/fs) × (1 - π(fc/fs)) / (1 + π(fc/fs))
-    // Mapeo de la respuesta bilineal al eje de frecuencia analógico (pre-warping).
-    float pi_fc = (float)M_PI * hz / AUDIO_SAMPLE_RATE_EXACT;
-    float A = pi_fc * (1.0f - pi_fc) / (1.0f + pi_fc);
-
-    // g = 4·fs·A·VT — coeficiente de las derivadas diferenciales (ecs. 13-14).
-    // Absorbe fs y VT aquí para reducir operaciones en el loop de muestras.
-    float g = 4.0f * AUDIO_SAMPLE_RATE_EXACT * A * VT;
-
-    AudioNoInterrupts();
-    _A = A;
-    _g = g;
-    AudioInterrupts();
+    _zdf.set_cutoff(hz, AUDIO_SAMPLE_RATE_EXACT);
 }
 
 void MoogLadder4P::resonance(float q) {
-    // AudioFilterStateVariable usa q ∈ [0.707, 5.0].
-    // El paper de D'Angelo usa k ∈ [0.0, 4.0], donde k=4 es auto-oscilación.
-    // Mapeo lineal: q=0.707 → k=0.0, q=5.0 → k=4.0
-    float k = (q - 0.707f) / (5.0f - 0.707f) * 4.0f;
-    if (k < 0.0f) k = 0.0f;
-    if (k > 4.0f) k = 4.0f;
-    AudioNoInterrupts();
-    _k = k;
-    AudioInterrupts();
+    // Convención de AudioFilterStateVariable [0.707, 5.0] → k [0, 4.4]: el tope pasa apenas el umbral de
+    // auto-oscilación del ZDF con límite de lazo (~4.05), así la resonancia máxima canta con amplitud ~0.5.
+    const float r = (q - 0.707f) / (5.0f - 0.707f);
+    _zdf.set_k((r < 0.0f ? 0.0f : r > 1.0f ? 1.0f : r) * 4.4f);
 }
 
-void MoogLadder4P::set_drive(float drive) {
-    if (drive < 0.5f) drive = 0.5f;
-    if (drive > 4.0f) drive = 4.0f;
-    float comp = 1.0f / sqrtf(drive);
+void MoogLadder4P::setCharacter(dsp::LadderCharacter ch) {
     AudioNoInterrupts();
-    _drive = drive;
-    _inv_drive_comp = comp;
+    _zdf.set_character(ch);
     AudioInterrupts();
 }
 
@@ -82,29 +56,28 @@ void MoogLadder4P::set_enabled(bool on) {
 
 // ── Procesamiento por muestra ─────────────────────────────────────────────────
 
+void MoogLadder4P::set_drive(float drive) {
+    if (drive < 0.5f) drive = 0.5f;
+    if (drive > 4.0f) drive = 4.0f;
+    const float comp = 1.0f / sqrtf(drive);
+    AudioNoInterrupts();
+    _drive = drive;
+    _inv_drive_comp = comp;
+    AudioInterrupts();
+}
+
 void MoogLadder4P::resetState() {
-    _s = dsp::LadderState{};
+    _zdf.reset();
 }
 
 float MoogLadder4P::processSample(float in) {
-    // Escalar entrada normalizada a dominio de voltaje del modelo BJT + drive
-    float vin = in * (DRIVE * _drive);
-
-    // Derivadas (ecs. 13–14) e integración trapezoidal (ec. 15) con tanh de Padé: theory/fidelidad-engines.md §1
-    const float inv2fs = 1.0f / (2.0f * AUDIO_SAMPLE_RATE_EXACT);
-    const float v3 = dsp::ladder_step<dsp::fast_tanh>(_s, vin, _g, _k, INV2VT, inv2fs);
-
-    // Protección anti-divergencia: en transitorios de parámetros con alta
-    // resonancia + señal grande, el feedback puede divergir. isfinite()
-    // detecta NaN/Inf y resetea el estado limpiamente en lugar de propagar
-    // valores indefinidos al bloque de audio.
-    if (!isfinite(v3)) {
+    const float y = _zdf.tick(in * _drive);
+    // Protección ante NaN/Inf en transitorios de parámetros: resetea en vez de propagar
+    if (!isfinite(y)) {
         resetState();
         return 0.0f;
     }
-
-    // Escalar de vuelta a rango normalizado con compensación de ganancia por drive y soft-clip
-    float out = v3 * INV_DRIVE * _inv_drive_comp;
+    float out = y * _inv_drive_comp;
     if (out >  1.0f) out =  1.0f;
     if (out < -1.0f) out = -1.0f;
     return out;

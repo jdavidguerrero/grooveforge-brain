@@ -5,6 +5,7 @@
 // Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013) y AnalogEnv RC
 #include "../audio/moog_ladder.h"
 #include "../dsp/analog_env.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 #include "prophet_osc_core.h"
 
@@ -129,7 +130,7 @@ private:
     // ── Audio objects ───────────────────────────────────────────────────────────
     Prophet5Osc         _osc[PROPHET_VOICES];
     MoogLadder4P        _vcf[PROPHET_VOICES];
-    AudioEffectEnvelope _vcaEnv[PROPHET_VOICES];
+    AnalogVca _vcaEnv[PROPHET_VOICES];
     AudioMixer4         _masterMixA;
     AudioMixer4         _masterMixB;
     AudioMixer4         _finalMix;

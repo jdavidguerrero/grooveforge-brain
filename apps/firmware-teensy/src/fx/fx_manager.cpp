@@ -34,13 +34,15 @@ void FxManager::deactivate() {
     // 1. Silenciar el canal FX del master mix ANTES de desconectar.
     //    Evita el click audible por discontinuidad de ganancia al retirar
     //    la conexión mientras el audio ISR está corriendo.
-    g_master_mix.gain(1, 0.0f);
+    audio_graph::set_master_gain(1, 0.0f);
 
-    // 2. Destruir la AudioConnection de salida (FX output → g_master_mix ch1).
+    // 2. Destruir las AudioConnection de salida (FX output → g_master_mix y g_master_mix_r, ch1).
     //    ~AudioConnection() es atómica (IRQ-protected) y remueve la conexión
     //    del grafo antes de retornar — el ISR no la usará más.
     delete _c_out;
     _c_out = nullptr;
+    delete _c_out_r;
+    _c_out_r = nullptr;
 
     // 3. Destruir la instancia del FX:
     //    El destructor de cada FX elimina sus AudioConnection* dinámicas (_cIn,
@@ -81,6 +83,7 @@ void FxManager::deactivate() {
         TYPE* fx = new TYPE(); \
         fx->begin(INPUT); \
         _c_out = new AudioConnection(fx->getOutputL(), 0, g_master_mix, 1); \
+        _c_out_r = new AudioConnection(fx->getOutputL(), 0, g_master_mix_r, 1); /* FX mono a los dos lados */ \
         _instance = fx; \
     } while (0)
 
@@ -110,7 +113,7 @@ void FxManager::activate(uint8_t fx_id, AudioStream& input) {
 
     // Canal FX del master mix fijo en 1.0. El wet/dry real se controla internamente
     // vía set_wet() → setMix() de cada FX (crossfade puro, sin efecto de volumen).
-    g_master_mix.gain(1, 1.0f);
+    audio_graph::set_master_gain(1, 1.0f);
 
     Serial.printf("[FxManager] activated fx_id=%u input=%s\n",
                   (unsigned)fx_id,

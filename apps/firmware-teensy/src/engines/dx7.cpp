@@ -55,6 +55,7 @@ void DX7Engine::begin(float volume) {
     _tone.frequency(_filterCutoff);
     _tone.resonance(0.7f);
     _tone.set_drive(1.0f);
+    _tone.setCharacter(dsp::LadderCharacter::Cem3320);   // filtro de tono suave (sin overdrive Moog)
     _lastUpdateMs = millis();
 }
 

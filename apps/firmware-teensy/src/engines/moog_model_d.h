@@ -6,6 +6,7 @@
 #include "../audio/moog_ladder.h"
 #include "../audio/polyblep_waveform.h"
 #include "../dsp/analog_env.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 
 /**
@@ -16,7 +17,7 @@
  *
  * Dos envelopes independientes:
  *   - Filter envelope: modula el cutoff del VCF con curvas RC analógicas (dsp::AnalogEnv)
- *   - VCA envelope:    controla la amplitud via AudioEffectEnvelope (sample-accurate)
+ *   - VCA envelope:    controla la amplitud via AnalogVca (envolvente RC por muestra)
  *
  * Incluye:
  *   - Pila monofónica de 8 notas con prioridad a la última nota y single-trigger legato
@@ -90,7 +91,7 @@ private:
     AudioSynthNoiseWhite     _noise;
     AudioMixer4              _mixer;
     MoogLadder4P             _filter;
-    AudioEffectEnvelope      _vcaEnv;
+    AnalogVca      _vcaEnv;
 
     AudioConnection _c1, _c2, _c3, _c4, _c5, _c6;
 

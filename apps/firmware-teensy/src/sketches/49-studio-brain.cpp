@@ -20,7 +20,8 @@
  * ENV y LFO del engine activo, gf_params.h), BEAT_DETECTED (BPM del MIDI clock), UI_STATE y NOTE_ON.
  *
  * Cadena de FX del synth (B4, variants/studio/theory/05-studio-synth-fx.md): BIT → TAPE → CHORUS → MODAL, fija,
- * sobre g_engine_bus → g_master_mix ch1. Cada FX se apaga con su setBypass(); las 4 encendidas ≈ 6 % de CPU.
+ * una por lado (g_engine_bus → g_master_mix ch1 y g_engine_bus_r → g_master_mix_r ch1, para no perder el estéreo
+ * del Juno). Cada FX se apaga con su setBypass(); las 4 encendidas ≈ 6 % de CPU por lado.
  *
  * Luces (theory/04 §8): una cadena WS2812 en el pin 28: anillo de 12 LEDs bajo NAV (sigue a NAV) y un LED por
  * tecla B1–B6 (destello al apretar sobre su nivel de estado). FastLED de Teensyduino.
@@ -69,12 +70,62 @@ AudioConnection c_prophet(prophet.getOutput(), 0, g_engine_mix_a, 2);
 AudioConnection c_ob6(ob6.getOutput(), 0, g_engine_mix_a, 3);
 AudioConnection c_dx7(dx7.getOutput(), 0, g_engine_mix_b, 0);
 AudioConnection c_arp(arp.getOutput(), 0, g_engine_mix_b, 1);
+// Lado derecho (fidelidad §9.3): los engines mono a los dos lados; el Juno manda su chorus en estéreo
+AudioConnection c_moog_r(moog.getOutput(), 0, g_engine_mix_ra, 0);
+AudioConnection c_juno_r(juno.getOutput(), Juno106::OUTPUT_PORT_R, g_engine_mix_ra, 1);
+AudioConnection c_prophet_r(prophet.getOutput(), 0, g_engine_mix_ra, 2);
+AudioConnection c_ob6_r(ob6.getOutput(), 0, g_engine_mix_ra, 3);
+AudioConnection c_dx7_r(dx7.getOutput(), 0, g_engine_mix_rb, 0);
+AudioConnection c_arp_r(arp.getOutput(), 0, g_engine_mix_rb, 1);
 
 // Cadena de FX del synth: los 4 viven siempre en el grafo (apagar = bypass, sin recablear en vivo)
-BitSculpt sfx_bit;
-TapeSaturate sfx_tape;
-PhaseChorus sfx_chorus;
-ModalReverb sfx_modal;
+/// Una cadena de SYNTH FX (BIT → TAPE → CHORUS → MODAL). Hay una por lado para no perder el estéreo del Juno.
+struct SfxChain {
+    BitSculpt bit;
+    TapeSaturate tape;
+    PhaseChorus chorus;
+    ModalReverb modal;
+
+    void begin(AudioStream& in, AudioMixer4& master) {
+        bit.begin(in);
+        tape.begin(bit.getOutputL());
+        chorus.begin(tape.getOutputL());
+        modal.begin(chorus.getOutputL());
+        new AudioConnection(modal.getOutputL(), 0, master, 1);
+    }
+
+    void apply(const studio::Patch& p) {
+        bit.setBits(gf_sfx_bits(p.sfx_p[GF_SFX_BIT][0]));
+        bit.setSampleRate(gf_sfx_sample_rate(p.sfx_p[GF_SFX_BIT][1]));
+        bit.setSculpt(p.sfx_p[GF_SFX_BIT][2]);
+        tape.setDrive(gf_sfx_drive(p.sfx_p[GF_SFX_TAPE][0]));
+        tape.setWow(p.sfx_p[GF_SFX_TAPE][1]);
+        tape.setFlutter(p.sfx_p[GF_SFX_TAPE][2]);
+        chorus.setDepth(p.sfx_p[GF_SFX_CHORUS][0]);
+        chorus.setRate(gf_sfx_chorus_rate(p.sfx_p[GF_SFX_CHORUS][1]));
+        chorus.setDrift(p.sfx_p[GF_SFX_CHORUS][2]);
+        modal.setDecay(gf_sfx_decay(p.sfx_p[GF_SFX_MODAL][0]));
+        modal.setMaterial(ModalReverb::Material(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][1], 4)));
+        modal.setSize(ModalReverb::Size(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][2], 3)));
+        // MIX antes que bypass: setMix() reescribe las ganancias del dry/wet
+        bit.setMix(p.sfx_mix[GF_SFX_BIT]);
+        tape.setMix(p.sfx_mix[GF_SFX_TAPE]);
+        chorus.setMix(p.sfx_mix[GF_SFX_CHORUS]);
+        modal.setMix(p.sfx_mix[GF_SFX_MODAL]);
+        bit.setBypass(!p.sfx_on[GF_SFX_BIT]);
+        tape.setBypass(!p.sfx_on[GF_SFX_TAPE]);
+        chorus.setBypass(!p.sfx_on[GF_SFX_CHORUS]);
+        modal.setBypass(!p.sfx_on[GF_SFX_MODAL]);
+    }
+
+    void update(float dt_ms) {
+        tape.update(dt_ms);
+        chorus.update(dt_ms);
+        bit.update();
+        modal.update();
+    }
+};
+SfxChain sfx_l, sfx_r;
 
 // Luces del panel (theory/04 §8)
 constexpr uint8_t LED_PIN = 28;
@@ -299,30 +350,10 @@ void engine_lfo(uint8_t e, const LfoMod& m) {
     }
 }
 
-/// Lleva al motor la cadena de FX del patch del engine `e` (rangos de gf_params.h).
+/// Lleva al motor las dos cadenas de FX (L y R) con el patch del engine `e` (rangos de gf_params.h).
 void apply_sfx(uint8_t e) {
-    const studio::Patch& p = patches[e];
-    sfx_bit.setBits(gf_sfx_bits(p.sfx_p[GF_SFX_BIT][0]));
-    sfx_bit.setSampleRate(gf_sfx_sample_rate(p.sfx_p[GF_SFX_BIT][1]));
-    sfx_bit.setSculpt(p.sfx_p[GF_SFX_BIT][2]);
-    sfx_tape.setDrive(gf_sfx_drive(p.sfx_p[GF_SFX_TAPE][0]));
-    sfx_tape.setWow(p.sfx_p[GF_SFX_TAPE][1]);
-    sfx_tape.setFlutter(p.sfx_p[GF_SFX_TAPE][2]);
-    sfx_chorus.setDepth(p.sfx_p[GF_SFX_CHORUS][0]);
-    sfx_chorus.setRate(gf_sfx_chorus_rate(p.sfx_p[GF_SFX_CHORUS][1]));
-    sfx_chorus.setDrift(p.sfx_p[GF_SFX_CHORUS][2]);
-    sfx_modal.setDecay(gf_sfx_decay(p.sfx_p[GF_SFX_MODAL][0]));
-    sfx_modal.setMaterial(ModalReverb::Material(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][1], 4)));
-    sfx_modal.setSize(ModalReverb::Size(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][2], 3)));
-    // MIX antes que bypass: setMix() reescribe las ganancias del dry/wet
-    sfx_bit.setMix(p.sfx_mix[GF_SFX_BIT]);
-    sfx_tape.setMix(p.sfx_mix[GF_SFX_TAPE]);
-    sfx_chorus.setMix(p.sfx_mix[GF_SFX_CHORUS]);
-    sfx_modal.setMix(p.sfx_mix[GF_SFX_MODAL]);
-    sfx_bit.setBypass(!p.sfx_on[GF_SFX_BIT]);
-    sfx_tape.setBypass(!p.sfx_on[GF_SFX_TAPE]);
-    sfx_chorus.setBypass(!p.sfx_on[GF_SFX_CHORUS]);
-    sfx_modal.setBypass(!p.sfx_on[GF_SFX_MODAL]);
+    sfx_l.apply(patches[e]);
+    sfx_r.apply(patches[e]);
 }
 
 // ── Bridge (master) ────────────────────────────────────────────────────────────────────────────
@@ -469,7 +500,7 @@ void mod_tick() {
     m.cutoff_mul = exp2f(amt(GF_DEST_CUTOFF) * GF_LFO_CUT_OCT * v);
     // En el Prophet la rueda hace lo que diga WHEEL-MOD (como el original), no suma vibrato genérico
     const float wheel_vib = e == 2 ? 0.0f : 0.3f * wheel;
-    const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_tape.getWowFlutterMod() * 0.5f : 0.0f;
+    const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
     m.pitch_ratio = exp2f((gf_lfo_pitch_st(fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib)) * v + wf_st) / 12.0f);
     m.pwm = amt(GF_DEST_PWM) * v;
     m.amp = 1.0f - amt(GF_DEST_AMP) * (1.0f + v) * 0.5f;
@@ -617,13 +648,10 @@ void setup() {
     arp.begin();
 
     // Cadena de FX: engines → BIT → TAPE → CHORUS → MODAL → master ch1; el camino directo (ch0) queda mudo
-    sfx_bit.begin(g_engine_bus);
-    sfx_tape.begin(sfx_bit.getOutputL());
-    sfx_chorus.begin(sfx_tape.getOutputL());
-    sfx_modal.begin(sfx_chorus.getOutputL());
-    new AudioConnection(sfx_modal.getOutputL(), 0, g_master_mix, 1);
-    g_master_mix.gain(0, 0.0f);
-    g_master_mix.gain(1, 1.0f);
+    sfx_l.begin(g_engine_bus, g_master_mix);
+    sfx_r.begin(g_engine_bus_r, g_master_mix_r);
+    audio_graph::set_master_gain(0, 0.0f);   // el camino directo queda mudo: todo pasa por las cadenas
+    audio_graph::set_master_gain(1, 1.0f);
     apply_sfx(0);
 
     // PWM solo se oye en ondas de pulso (como en los originales): patch_init deja un oscilador en PULSE en el
@@ -670,11 +698,9 @@ void loop() {
     {
         static uint32_t last_fx_ms = millis();
         const uint32_t now = millis();
-        sfx_tape.update(float(now - last_fx_ms));
-        sfx_chorus.update(float(now - last_fx_ms));
+        sfx_l.update(float(now - last_fx_ms));
+        sfx_r.update(float(now - last_fx_ms));
         last_fx_ms = now;
-        sfx_bit.update();
-        sfx_modal.update();
     }
     moog.update();                          // solo el activo suena, pero todos avanzan sus envelopes
     juno.update();

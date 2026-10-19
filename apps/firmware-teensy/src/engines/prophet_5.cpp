@@ -45,6 +45,7 @@ void Prophet5::begin(float volume) {
     (void)volume;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
         _vcf[i].frequency(_filterCutoff);
+        _vcf[i].setCharacter(dsp::LadderCharacter::Cem3320);   // CEM3320 / SSI2140 (fidelidad §9.1)
         _vcf[i].resonance(_filterResonance);
         _vcf[i].set_drive(1.2f);
         _vcf[i].octaveControl(1.0f);

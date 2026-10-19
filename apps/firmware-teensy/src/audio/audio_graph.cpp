@@ -18,6 +18,12 @@ AudioMixer4           g_engine_mix_a;   // ch0=Moog, ch1=Juno, ch2=Prophet, ch3=
 AudioMixer4           g_engine_mix_b;   // ch0=DX7 (sprint 39), ch1=ARP2600 (sprint 40)
 AudioMixer4           g_engine_bus;     // ch0=mix_a, ch1=mix_b → master
 AudioMixer4           g_master_mix;
+// Lado derecho (theory/fidelidad-engines.md §9.3): los engines mono entran a los dos lados; el Juno manda su
+// chorus en estéreo. Mismas ganancias que el lado izquierdo.
+AudioMixer4           g_engine_mix_ra;
+AudioMixer4           g_engine_mix_rb;
+AudioMixer4           g_engine_bus_r;
+AudioMixer4           g_master_mix_r;
 
 // ADC del SGTL5000 — entrada de línea para FX Processor mode.
 // AudioInputI2S y AudioOutputI2S coexisten en Teensy 4.1 (I2S full-duplex).
@@ -48,7 +54,12 @@ static AudioConnection c_busToMaster    (g_engine_bus,   0, g_master_mix,  0);
 static AudioConnection c_audioInToMaster(g_audio_in,     0, g_master_mix,  2);
 static AudioConnection c_usbInToMaster  (g_usb_in,       0, g_master_mix,  3);
 static AudioConnection c_masterToI2sL  (g_master_mix,   0, g_i2s, 0);
-static AudioConnection c_masterToI2sR  (g_master_mix,   0, g_i2s, 1);
+static AudioConnection c_mixRAToBus      (g_engine_mix_ra, 0, g_engine_bus_r, 0);
+static AudioConnection c_mixRBToBus      (g_engine_mix_rb, 0, g_engine_bus_r, 1);
+static AudioConnection c_busRToMaster    (g_engine_bus_r,  0, g_master_mix_r, 0);
+static AudioConnection c_audioInToMasterR(g_audio_in,      1, g_master_mix_r, 2);   // LINE IN R
+static AudioConnection c_usbInToMasterR  (g_usb_in,        1, g_master_mix_r, 3);
+static AudioConnection c_masterToI2sR    (g_master_mix_r,  0, g_i2s, 1);
 
 // ── Estado del módulo ─────────────────────────────────────────────────────────
 static uint8_t s_active_engine    = audio_graph::ENGINE_MOOG;
@@ -66,7 +77,7 @@ bool audio_graph::init(float volume) {
     // 1. AudioMemory: el pool debe existir antes de que los audio objects pidan bloques.
     // Sprint 38: OB6 (6 voces) agrega ~30 bloques al presupuesto.
     // Ver header §AudioMemory budget para el cálculo detallado.
-    AudioMemory(96);
+    AudioMemory(128);   // +32 por el lado derecho (§9.3)
 
     // 2. Wire.begin() explícito antes de codec.enable():
     //    USBHost_t36 corre constructores globales antes de setup() y puede dejar
@@ -97,23 +108,27 @@ bool audio_graph::init(float volume) {
     //                    ch1 (FX output) = 0.0
     //                    ch2 (line-in direct) = 0.0 — off hasta FX_SELECT
     //                    ch3 = 0.0 (USB passthrough — off por defecto)
-    for (uint8_t i = 0; i < 4; i++) g_engine_mix_a.gain(i, 0.0f);
-    for (uint8_t i = 0; i < 4; i++) g_engine_mix_b.gain(i, 0.0f);
-    g_engine_bus.gain(0, 1.0f);   // mix_a siempre pasa por el bus
-    g_engine_bus.gain(1, 1.0f);   // mix_b siempre pasa por el bus
-    g_engine_bus.gain(2, 0.0f);
-    g_engine_bus.gain(3, 0.0f);
-    g_master_mix.gain(0, 1.0f);
-    g_master_mix.gain(1, 0.0f);
-    g_master_mix.gain(2, 0.0f);  // line-in direct — off por defecto (SYNTH mode)
-    g_master_mix.gain(3, 0.0f);
+    for (uint8_t i = 0; i < 4; i++) {
+        g_engine_mix_a.gain(i, 0.0f);
+        g_engine_mix_b.gain(i, 0.0f);
+        g_engine_mix_ra.gain(i, 0.0f);
+        g_engine_mix_rb.gain(i, 0.0f);
+        const float bus = i < 2 ? 1.0f : 0.0f;   // el bus suma los dos submixers
+        g_engine_bus.gain(i, bus);
+        g_engine_bus_r.gain(i, bus);
+    }
+    set_master_gain(0, 1.0f);
+    set_master_gain(1, 0.0f);
+    set_master_gain(2, 0.0f);  // line-in direct — off por defecto (SYNTH mode)
+    set_master_gain(3, 0.0f);
 
     // 5. Engine inicial: Moog activo (matches default de DeviceState).
     //    Esto se sobrescribe luego desde main.cpp cuando EEPROM restore corre.
     g_engine_mix_a.gain(ENGINE_MOOG, ENGINE_ACTIVE_GAIN);
+    g_engine_mix_ra.gain(ENGINE_MOOG, ENGINE_ACTIVE_GAIN);
     s_active_engine = ENGINE_MOOG;
 
-    Serial.printf("[audio_graph] init OK — AudioMemory=96, active=%u, vol=%.2f\n",
+    Serial.printf("[audio_graph] init OK — AudioMemory=128, active=%u, vol=%.2f\n",
                   (unsigned)s_active_engine, (double)volume);
     return codec_ok;
 }
@@ -128,6 +143,15 @@ bool audio_graph::init(float volume) {
 
 static AudioMixer4* _submix_for(uint8_t id) {
     return (id < 4) ? &g_engine_mix_a : &g_engine_mix_b;
+}
+
+static AudioMixer4* _submix_r_for(uint8_t id) {
+    return (id < 4) ? &g_engine_mix_ra : &g_engine_mix_rb;
+}
+
+void audio_graph::set_master_gain(uint8_t ch, float gain) {
+    g_master_mix.gain(ch, gain);
+    g_master_mix_r.gain(ch, gain);
 }
 
 static uint8_t _chan_for(uint8_t id) {
@@ -149,6 +173,8 @@ void audio_graph::set_active_engine(uint8_t engine_id) {
     AudioNoInterrupts();
     prev_mix->gain(prev_ch, 0.0f);
     new_mix->gain(new_ch,   ENGINE_ACTIVE_GAIN);
+    _submix_r_for(prev)->gain(prev_ch, 0.0f);
+    _submix_r_for(engine_id)->gain(new_ch, ENGINE_ACTIVE_GAIN);
     AudioInterrupts();
     s_active_engine = engine_id;
     Serial.printf("[audio_graph] active engine -> %u\n", (unsigned)engine_id);
@@ -164,29 +190,29 @@ void audio_graph::set_fx_wet(float wet) {
     // FX Processor mode: ch0 (engines) ya fue silenciado por set_fx_select_mode().
     // Solo controlamos ch1 (FX output) y ch2 (direct line-in monitor).
     // ch2 se desactiva porque el FX maneja su propio dry/wet internamente.
-    g_master_mix.gain(1, wet);
-    g_master_mix.gain(2, 0.0f);  // desactivar bypass directo cuando hay FX activo
+    set_master_gain(1, wet);
+    set_master_gain(2, 0.0f);  // desactivar bypass directo cuando hay FX activo
 }
 
 void audio_graph::set_synth_mode() {
-    g_master_mix.gain(0, 1.0f);   // engines dry — activo
-    g_master_mix.gain(1, 0.0f);   // FX — off
-    g_master_mix.gain(2, 0.0f);   // line-in direct — off
-    g_master_mix.gain(3, s_usb_passthrough ? 1.0f : 0.0f);  // USB: preservar estado
+    set_master_gain(0, 1.0f);   // engines dry — activo
+    set_master_gain(1, 0.0f);   // FX — off
+    set_master_gain(2, 0.0f);   // line-in direct — off
+    set_master_gain(3, s_usb_passthrough ? 1.0f : 0.0f);  // USB: preservar estado
     Serial.println(F("[audio_graph] SYNTH mode — engines activos, line-in off"));
 }
 
 void audio_graph::set_fx_select_mode() {
-    g_master_mix.gain(0, 0.0f);   // engines — silenciados
-    g_master_mix.gain(1, 0.0f);   // FX — aún no hay FX activo
-    g_master_mix.gain(2, 1.0f);   // line-in direct — monitoreo sin FX
-    g_master_mix.gain(3, s_usb_passthrough ? 1.0f : 0.0f);  // USB: preservar estado
+    set_master_gain(0, 0.0f);   // engines — silenciados
+    set_master_gain(1, 0.0f);   // FX — aún no hay FX activo
+    set_master_gain(2, 1.0f);   // line-in direct — monitoreo sin FX
+    set_master_gain(3, s_usb_passthrough ? 1.0f : 0.0f);  // USB: preservar estado
     Serial.println(F("[audio_graph] FX_SELECT mode — line-in direct monitor ON"));
 }
 
 void audio_graph::set_usb_passthrough(bool enable) {
     s_usb_passthrough = enable;
-    g_master_mix.gain(3, enable ? 1.0f : 0.0f);
+    set_master_gain(3, enable ? 1.0f : 0.0f);
     Serial.printf("[audio_graph] USB passthrough %s\n", enable ? "ON" : "OFF");
 }
 

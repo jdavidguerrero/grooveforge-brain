@@ -73,6 +73,10 @@ extern AudioMixer4           g_engine_mix_a;  ///< ch0=Moog, ch1=Juno, ch2=Proph
 extern AudioMixer4           g_engine_mix_b;  ///< ch0=DX7, ch1=ARP2600
 extern AudioMixer4           g_engine_bus;    ///< ch0=mix_a, ch1=mix_b → g_master_mix ch0
 extern AudioMixer4           g_master_mix;
+extern AudioMixer4           g_engine_mix_ra; ///< lado R de g_engine_mix_a (mismos canales)
+extern AudioMixer4           g_engine_mix_rb; ///< lado R de g_engine_mix_b
+extern AudioMixer4           g_engine_bus_r;  ///< lado R de g_engine_bus
+extern AudioMixer4           g_master_mix_r;  ///< lado R de g_master_mix → I2S R (fidelidad §9.3)
 extern AudioInputI2S         g_audio_in;   ///< ADC del SGTL5000 — fuente para FX Processor mode
 
 // AudioInputUSB: recibe audio de Mac/PC via USB (Teensy aparece como audio interface).
@@ -113,6 +117,9 @@ static constexpr float ENGINE_ACTIVE_GAIN = 0.7f;
  * @return true si el codec respondió por I2C, false si no (revisar SDA=18/SCL=19).
  */
 bool init(float volume = 0.5f);
+
+/// Ganancia del canal `ch` en los dos masters (L y R): las fuentes mono suenan igual en los dos lados.
+void set_master_gain(uint8_t ch, float gain);
 
 /**
  * @brief Selecciona el engine activo (silencia los otros vía mixer gain).

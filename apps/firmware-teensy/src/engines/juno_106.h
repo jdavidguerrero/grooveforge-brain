@@ -7,6 +7,7 @@
 #include "../audio/moog_ladder.h"
 #include "../audio/polyblep_waveform.h"
 #include "../dsp/analog_env.h"
+#include "../audio/analog_vca.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t JUNO_VOICES = 6;
@@ -91,6 +92,8 @@ public:
     void set_dsp_enabled(bool on);
 
     AudioStream& getOutput() { return _chorus; }
+    /// Salida estéreo del chorus: puerto 0 = L (getOutput), puerto 1 = R (fidelidad §9.3).
+    static constexpr uint8_t OUTPUT_PORT_R = 1;
 
 private:
     LfoMod _lfo;
@@ -101,7 +104,7 @@ private:
     AudioSynthNoiseWhite _noise[JUNO_VOICES];
     AudioMixer4          _voiceMix[JUNO_VOICES];
     MoogLadder4P         _filter[JUNO_VOICES];
-    AudioEffectEnvelope  _ampEnv[JUNO_VOICES];
+    AnalogVca  _ampEnv[JUNO_VOICES];
 
     // ── Master path ───────────────────────────────────────────────────────────
     AudioMixer4          _masterMixA;

@@ -5,11 +5,15 @@
 
 /**
  * @file analog_env.h
- * @brief Generador de envolvente ADSR con curvatura RC analógica y RELEASE continuo sin saltos.
+ * @brief ADSR con carga y descarga RC (un polo por etapa), evaluable por muestra o a tasa de control.
  *
- * Resuelve el bug histórico de los 5 motores sustractivos donde soltar la tecla durante
- * ATTACK o DECAY saltaba abruptamente a `sustain * (1 - t)`, y modela la carga/descarga
- * exponencial de un circuito RC real (CEM3310 / Minimoog contour).
+ * Modela el contorno de un CEM3310 / Minimoog: el ataque carga hacia un objetivo por encima del pico (1 + overshoot)
+ * y se corta en 1.0; decay y release descargan exponencialmente (τ = t / 4.6, llegan al 1 % en el tiempo pedido).
+ * El re-disparo arranca desde el nivel actual (sin click) y el release desde cualquier etapa es continuo.
+ * Teoría: theory/fidelidad-engines.md §9.2 · medición de la versión anterior: §8.
+ *
+ * Dos usos: update(dt_ms) a tasa de control (envelope del filtro, base de 1 kHz) y step() por muestra
+ * (AnalogVca, con set_rate(44100)).
  */
 
 namespace dsp {
@@ -18,10 +22,10 @@ class AnalogEnv {
 public:
     enum class Stage : uint8_t { IDLE = 0, ATTACK, DECAY, SUSTAIN, RELEASE };
 
-    void setAttack(float ms)  { _attackMs  = ms < 0.0f ? 0.0f : ms; }
-    void setDecay(float ms)   { _decayMs   = ms < 1.0f ? 1.0f : ms; }
+    void setAttack(float ms)  { _attackMs  = ms < 0.0f ? 0.0f : ms; _dirty = true; }
+    void setDecay(float ms)   { _decayMs   = ms < 1.0f ? 1.0f : ms; _dirty = true; }
     void setSustain(float s)  { _sustain   = s < 0.0f ? 0.0f : (s > 1.0f ? 1.0f : s); }
-    void setRelease(float ms) { _releaseMs = ms < 1.0f ? 1.0f : ms; }
+    void setRelease(float ms) { _releaseMs = ms < 1.0f ? 1.0f : ms; _dirty = true; }
 
     void setADSR(float a_ms, float d_ms, float s, float r_ms) {
         setAttack(a_ms);
@@ -30,102 +34,71 @@ public:
         setRelease(r_ms);
     }
 
+    /// Sobrepaso del objetivo del ataque (0.5 = carga hacia 1.5 × el pico, como el CEM3310). Menor = más curvo.
+    void setAttackOvershoot(float os) { _overshoot = os < 0.05f ? 0.05f : os; _dirty = true; }
+
+    /// Pasos por segundo de step(): 1000 para update(dt_ms), la frecuencia de muestreo para uso por muestra.
+    void set_rate(float steps_per_second) { _rate = steps_per_second; _dirty = true; }
+
     float attackMs() const  { return _attackMs; }
     float decayMs() const   { return _decayMs; }
     float sustain() const   { return _sustain; }
     float releaseMs() const { return _releaseMs; }
 
-    /// Dispara la envolvente. Si `legato == true` y ya estaba activa, continúa desde el nivel actual.
+    /// Dispara la envolvente desde el nivel actual. Con `legato` y la envolvente activa, no re-dispara.
     void noteOn(bool legato = false) {
-        if (!legato || _stage == Stage::IDLE) {
-            _stage = Stage::ATTACK;
-            _stageMs = 0;
-            _attackStart = legato ? _level : 0.0f;
-            if (!legato) _level = 0.0f;
-        }
+        if (legato && _stage != Stage::IDLE && _stage != Stage::RELEASE) return;
+        _stage = Stage::ATTACK;
     }
 
-    /// Captura el nivel exacto actual como inicio de RELEASE (cero discontinuidad).
+    /// Release desde el nivel actual, en cualquier etapa.
     void noteOff() {
-        if (_stage != Stage::IDLE) {
-            _releaseStart = _level;
-            _stage = Stage::RELEASE;
-            _stageMs = 0;
-        }
+        if (_stage != Stage::IDLE) _stage = Stage::RELEASE;
     }
 
     void reset() {
         _stage = Stage::IDLE;
-        _stageMs = 0;
         _level = 0.0f;
-        _releaseStart = 0.0f;
     }
 
-    float update(uint32_t dt_ms) {
-        _stageMs += dt_ms;
+    /// Un paso de 1 / rate segundos.
+    float step() {
+        if (_dirty) recompute();
         switch (_stage) {
             case Stage::IDLE:
                 _level = 0.0f;
                 break;
-
             case Stage::ATTACK:
-                if (_attackMs < 1.0f) {
+                _level = _attackTarget + (_level - _attackTarget) * _ca;
+                if (_level >= 1.0f) {
                     _level = 1.0f;
                     _stage = Stage::DECAY;
-                    _stageMs = 0;
-                } else {
-                    const float t = float(_stageMs) / _attackMs;
-                    if (t >= 1.0f) {
-                        _level = 1.0f;
-                        _stage = Stage::DECAY;
-                        _stageMs = 0;
-                    } else {
-                        // Curva RC convexa de carga hacia 1.0 (más rápida al inicio, natural al oído)
-                        const float shaped = 1.0f - expf(-3.2f * t);
-                        const float norm = 1.0f / (1.0f - expf(-3.2f));
-                        _level = _attackStart + (1.0f - _attackStart) * (shaped * norm);
-                    }
                 }
                 break;
-
             case Stage::DECAY:
-                if (_decayMs < 1.0f) {
+                _level = _sustain + (_level - _sustain) * _cd;
+                if (fabsf(_level - _sustain) < 1e-4f) {
                     _level = _sustain;
                     _stage = Stage::SUSTAIN;
-                } else {
-                    const float t = float(_stageMs) / _decayMs;
-                    if (t >= 1.0f) {
-                        _level = _sustain;
-                        _stage = Stage::SUSTAIN;
-                    } else {
-                        // Caída exponencial RC con "snap" analógico que llega exactamente a _sustain en t=1
-                        const float k = expf(-4.2f * t) * (1.0f - t);
-                        _level = _sustain + (1.0f - _sustain) * k;
-                    }
                 }
                 break;
-
             case Stage::SUSTAIN:
-                _level = _sustain;
+                _level = _sustain;   // sigue al knob de sustain en vivo
                 break;
-
             case Stage::RELEASE:
-                if (_releaseMs < 1.0f || _releaseStart <= 1e-4f) {
+                _level *= _cr;
+                if (_level < 1e-4f) {   // −80 dB
                     _level = 0.0f;
                     _stage = Stage::IDLE;
-                } else {
-                    const float t = float(_stageMs) / _releaseMs;
-                    if (t >= 1.0f) {
-                        _level = 0.0f;
-                        _stage = Stage::IDLE;
-                    } else {
-                        // Descarga exponencial continua desde _releaseStart hasta 0.0 en t=1
-                        const float k = expf(-3.5f * t) * (1.0f - t);
-                        _level = _releaseStart * k;
-                    }
                 }
                 break;
         }
+        return _level;
+    }
+
+    /// Avanza dt_ms milisegundos a tasa de control (rate = 1000, el valor por defecto).
+    float update(uint32_t dt_ms) {
+        for (uint32_t i = 0; i < dt_ms; ++i) step();
         return _level;
     }
 
@@ -134,15 +107,23 @@ public:
     bool active() const { return _stage != Stage::IDLE; }
 
 private:
-    float _attackMs = 10.0f;
-    float _decayMs = 300.0f;
-    float _sustain = 0.7f;
-    float _releaseMs = 400.0f;
+    void recompute() {
+        const float a_steps = _attackMs * 0.001f * _rate;
+        _attackTarget = 1.0f + _overshoot;
+        // Carga de 0 a 1 en a_steps pasos hacia (1 + os): c^n = os / (1 + os)
+        _ca = a_steps < 1.0f ? 0.0f : expf(logf(_overshoot / (1.0f + _overshoot)) / a_steps);
+        _cd = expf(-4.6f / fmaxf(_decayMs * 0.001f * _rate, 1.0f));
+        _cr = expf(-4.6f / fmaxf(_releaseMs * 0.001f * _rate, 1.0f));
+        _dirty = false;
+    }
+
+    float _attackMs = 10.0f, _decayMs = 300.0f, _sustain = 0.7f, _releaseMs = 400.0f;
+    float _overshoot = 0.5f;
+    float _rate = 1000.0f;
+    float _attackTarget = 1.5f, _ca = 0.0f, _cd = 0.0f, _cr = 0.0f;
+    bool _dirty = true;
     float _level = 0.0f;
-    float _attackStart = 0.0f;
-    float _releaseStart = 0.0f;
     Stage _stage = Stage::IDLE;
-    uint32_t _stageMs = 0;
 };
 
 }  // namespace dsp

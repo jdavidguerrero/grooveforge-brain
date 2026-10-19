@@ -73,6 +73,7 @@ void ARP2600::begin(float volume) {
         _filter[i].frequency(_filterCutoff);
         _filter[i].resonance(_filterResonance);
         _filter[i].set_drive(1.4f);   // carácter cálido del filtro ARP 4012
+        _filter[i].setCharacter(dsp::LadderCharacter::Arp4072);
         _filter[i].octaveControl(1.0f);
 
         _filterEnv[i].setAttack(10.0f);
