@@ -151,29 +151,25 @@ void ModalReverb::_applyMaterial() {
     }
 
     for (int i = 0; i < 6; i++) {
-        // Resetear level al cambiar material/size/decay — el input sostenido
-        // repone la energía de cada modo inmediatamente.
-        _modeLevel[i] = 1.0f;
-
         float freq = table[i].freqRatio * BASE_FREQ;
         float t60  = table[i].t60Base * sizeMult * _decayMult;
 
-        // Q=50 fijo: BW = freq/50 — suficientemente estrecho para timbre modal afinado
-        // sin los problemas numéricos de Q ultra-alto (Q>500 puede salir del círculo
-        // unitario en aritmética float32 del ARM Cortex-M7).
-        // El T60 real lo controla el decay envelope en update(), no el Q del filtro.
-        // Ref: apps/docs/sprints/12-modal-reverb.md §"El problema de Q alto"
-        //      Smith, "Digital Filters" (2007), Cap. 8
-        _mode[i].setBandpass(0, freq, 50.0f);
+        // Escalar Q y peso modal según el T60 efectivo (material × size × decay):
+        //   - Q ∈ [14, 150]: controla la cola resonante real de cada biquad sin inestabilidad float32
+        //   - _modeLevel[i]: pondera modos largos vs cortos según el amortiguamiento físico
+        float q = 14.0f + 22.0f * sqrtf(t60);
+        if (q > 150.0f) q = 150.0f;
+        _mode[i].setBandpass(0, freq, q);
 
-        // Decay factor por ms: level(t + 1ms) = level(t) × factor
-        // Derivado de: level(T60) = 0.001 (= -60 dB)
-        // factor = exp(ln(0.001) / (t60_ms)) = exp(-6.908 / (t60 × 1000))
-        // Ref: apps/docs/sprints/12-modal-reverb.md §"Envelope software"
+        float lvl = 0.30f + 0.70f * (t60 / (t60 + 1.8f));
+        if (lvl < 0.15f) lvl = 0.15f;
+        if (lvl > 1.00f) lvl = 1.00f;
+        _modeLevel[i] = lvl;
+
         if (t60 > 0.001f) {
             _modeDecayFactor[i] = expf(-6.908f / (t60 * 1000.0f));
         } else {
-            _modeDecayFactor[i] = 0.0f;   // decay instantáneo
+            _modeDecayFactor[i] = 0.0f;
         }
     }
 
@@ -181,10 +177,6 @@ void ModalReverb::_applyMaterial() {
 }
 
 // ── _updateMixerGains() ──────────────────────────────────────────────────────────
-// Aplica _modeLevel[] como gains en modeMixA (modos 0-3) y modeMixB (modos 4-5).
-// Los modos >= _diffusion se silencian independientemente del level.
-// Los gain updates de AudioMixer4 son thread-safe: se aplican al inicio del próximo
-// bloque completo — sin clicks por actualización mid-block.
 void ModalReverb::_updateMixerGains() {
     for (int i = 0; i < 6; i++) {
         float gain = (i < _diffusion) ? _modeLevel[i] : 0.0f;
@@ -225,7 +217,6 @@ void ModalReverb::setDiffusion(uint8_t n) {
 }
 
 // ── setMix() ─────────────────────────────────────────────────────────────────────
-// Crossfade verdadero: dry = 1-mix, wet = mix. Nivel constante en todo el rango.
 void ModalReverb::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
@@ -242,25 +233,8 @@ void ModalReverb::setBypass(bool bypass) {
 }
 
 // ── update() ─────────────────────────────────────────────────────────────────────
-// Aplica decay exponencial a los niveles de modo. Llamar desde loop().
-// El decay opera continuamente: cuando el input tiene energía, los filtros BP la
-// retienen y reponen los niveles. Cuando el input se silencia, los niveles decaen
-// con los T60 naturales del material.
 void ModalReverb::update() {
     if (_bypass) return;
-
-    uint32_t now = millis();
-    _lastUpdateMs = now;
-
-    // v1.0 simplificación: chord sostenido → input siempre activo → los filtros BP
-    // se alimentan continuamente → los mode levels se mantienen en 1.0.
-    // El decay exponencial (infraestructura completa en _modeDecayFactor[]) se activará
-    // en v2.0 cuando exista onset detection (AudioAnalyzeRMS o note-off MIDI) para
-    // detectar el silencio del input y aplicar el T60 real del material.
-    // Ref: apps/docs/sprints/12-modal-reverb.md §"Simplificación para v1.0"
-    for (int i = 0; i < 6; i++) {
-        _modeLevel[i] = 1.0f;
-    }
-
+    _lastUpdateMs = millis();
     _updateMixerGains();
 }

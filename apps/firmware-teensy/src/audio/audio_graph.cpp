@@ -144,17 +144,12 @@ void audio_graph::set_active_engine(uint8_t engine_id) {
     AudioMixer4*  new_mix  = _submix_for(engine_id);
     uint8_t       new_ch   = _chan_for(engine_id);
 
-    // Crossfade 20ms (4 pasos × 5ms) entre el engine previo y el nuevo.
-    // Evita clicks por discontinuidad de DC al hacer hard-cut de gain.
-    // Solo tocamos los dos canales involucrados — los demás permanecen en 0.
-    const uint8_t STEPS   = 4;
-    const uint8_t STEP_MS = 5;
-    for (uint8_t step = 1; step <= STEPS; step++) {
-        float t = (float)step / (float)STEPS;
-        prev_mix->gain(prev_ch, ENGINE_ACTIVE_GAIN * (1.0f - t));
-        new_mix->gain(new_ch,   ENGINE_ACTIVE_GAIN * t);
-        delay(STEP_MS);
-    }
+    // Cambio atómico sin bloquear loop() con delay(): evita perder tramas
+    // UART (921600 bps) y eventos MIDI durante el cambio de motor.
+    AudioNoInterrupts();
+    prev_mix->gain(prev_ch, 0.0f);
+    new_mix->gain(new_ch,   ENGINE_ACTIVE_GAIN);
+    AudioInterrupts();
     s_active_engine = engine_id;
     Serial.printf("[audio_graph] active engine -> %u\n", (unsigned)engine_id);
 }

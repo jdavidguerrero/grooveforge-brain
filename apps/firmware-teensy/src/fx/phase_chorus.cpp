@@ -58,10 +58,8 @@ void PhaseChorus::setDepth(float depth) {
     if (depth > 1.0f) depth = 1.0f;
     _depth = depth;
 
-    // Solo aplica inmediatamente si no estamos en bypass; si bypass=true,
-    // el gain wet está en 0.0f y update() lo restaurará al salir de bypass.
     if (!_bypass) {
-        _dryWetMix.gain(1, _depth);
+        _dryWetMix.gain(1, _mix * _depth);
     }
 }
 
@@ -76,16 +74,13 @@ void PhaseChorus::setDrift(float drift) {
 void PhaseChorus::setVoices(uint8_t v) {
     if (v < 1) v = 1;
     if (v > 4) v = 4;
+    if (v == _voices) return;
     _voices = v;
 
-    // Fade-out de 10ms antes de reorganizar taps internos del chorus.
-    // AudioEffectChorus.voices() reposiciona punteros de tap en el buffer —
-    // sin el fade produce un click audible por la discontinuidad de amplitud.
-    // Ref: apps/docs/sprints/09-phase-chorus.md §"Cambio de número de voces en runtime"
-    _dryWetMix.gain(1, 0.0f);
-    delay(10);
+    // Cambio atómico de taps sin bloquear loop() con delay(10)
+    AudioNoInterrupts();
     _chorus.voices(v);
-    // El próximo ciclo de update() restaurará la ganancia wet con el LFO drift actual.
+    AudioInterrupts();
 }
 
 // ── setMix() ─────────────────────────────────────────────────────────────────────
@@ -94,8 +89,8 @@ void PhaseChorus::setMix(float wet) {
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
     if (!_bypass) {
-        _dryWetMix.gain(0, 1.0f - _mix);
-        _dryWetMix.gain(1, _mix);
+        _dryWetMix.gain(0, 1.0f - 0.5f * _mix);
+        _dryWetMix.gain(1, _mix * _depth);
     }
 }
 
@@ -106,8 +101,8 @@ void PhaseChorus::setBypass(bool bypass) {
         _dryWetMix.gain(0, 1.0f);
         _dryWetMix.gain(1, 0.0f);
     } else {
-        _dryWetMix.gain(0, 1.0f - _mix);
-        _dryWetMix.gain(1, _mix);
+        _dryWetMix.gain(0, 1.0f - 0.5f * _mix);
+        _dryWetMix.gain(1, _mix * _depth);
     }
 }
 
@@ -115,37 +110,27 @@ void PhaseChorus::setBypass(bool bypass) {
 void PhaseChorus::update(float dt_ms) {
     const float dt_s = dt_ms * 0.001f;
 
-    // Avance de tres fases independientes (wrap en 1.0 para precisión numérica a largo plazo)
     _lfoPhase1 += _rate * dt_s;
-    _lfoPhase2 += _rate * 0.743f * dt_s;   // ≈ razón áurea invertida: máxima irracionalidad
-    _lfoPhase3 += _rate * 1.329f * dt_s;   // ajustado para "respiración" audible
+    _lfoPhase2 += _rate * 0.743f * dt_s;
+    _lfoPhase3 += _rate * 1.329f * dt_s;
 
     if (_lfoPhase1 > 1.0f) _lfoPhase1 -= 1.0f;
     if (_lfoPhase2 > 1.0f) _lfoPhase2 -= 1.0f;
     if (_lfoPhase3 > 1.0f) _lfoPhase3 -= 1.0f;
 
-    // LFO compuesto: senoide principal + dos sub-senoides inarmónicas escaladas por drift.
-    // A drift=0: solo primera senoide → LFO puro periódico.
-    // A drift=1: tres componentes → patrón que no se repite en escalas musicales.
-    // Ref: apps/docs/sprints/09-phase-chorus.md §"LFO drift caótico — rompiendo la periodicidad"
     float lfo = sinf(CHORUS_TWO_PI * _lfoPhase1)
               + _drift * 0.4f * sinf(CHORUS_TWO_PI * _lfoPhase2)
               + _drift * 0.2f * sinf(CHORUS_TWO_PI * _lfoPhase3);
 
-    // Normalización: a drift=0, amplitud pico=1.0; a drift=1, amplitud pico≈1.6.
-    // Dividir por (1 + drift*0.6) mantiene el rango efectivo en ≈[-1, +1].
     float norm = 1.0f + _drift * 0.6f;
     lfo /= norm;
     _lfoOut = lfo;
 
     if (!_bypass) {
-        // Modulación de amplitud wet: el LFO varía el gain del canal wet ±30% del depth base.
-        // El factor 0.3 es el headroom de modulación: suficiente para "breathing", sin
-        // hacer desaparecer el efecto (wet_min = depth*0.7) ni saturar (wet_max = depth*1.3).
-        // Ref: apps/docs/sprints/09-phase-chorus.md §"Cómo el LFO drift se aplica al chorus"
-        float wetGain = _depth * (1.0f + 0.3f * lfo);
+        float wetGain = _mix * _depth * (1.0f + 0.3f * lfo);
         if (wetGain < 0.0f) wetGain = 0.0f;
         if (wetGain > 1.0f) wetGain = 1.0f;
+        _dryWetMix.gain(0, 1.0f - 0.5f * _mix);
         _dryWetMix.gain(1, wetGain);
     }
 }

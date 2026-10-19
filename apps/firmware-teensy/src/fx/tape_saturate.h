@@ -181,8 +181,9 @@ private:
     static constexpr float FLUTTER_FREQ_HZ = 6.0f;
 
     // ── Estado de parámetros ──────────────────────────────────────────────────────
-    float _mix    = 0.7f;
-    bool  _bypass = false;
+    float _mix       = 0.7f;
+    float _ageAmount = 0.0f;
+    bool  _bypass    = false;
 
     // ── Helpers (código custom) ───────────────────────────────────────────────────
     /**
