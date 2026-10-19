@@ -39,6 +39,8 @@ void MoogModelD::begin(float volume) {
     _filter.set_drive(1.35f);   // ligera saturación cálida del mixer CP3 sobre el ladder
     _filter.octaveControl(1.0f);
 
+    _filterEnv.setAttackOvershoot(0.3f);   // contorno Moog: carga RC muy curva (fidelidad §10)
+    _vcaEnv.attackOvershoot(0.3f);
     _filterEnv.setAttack(20.0f);
     _filterEnv.setDecay(300.0f);
     _filterEnv.setSustain(0.4f);
@@ -250,9 +252,10 @@ void MoogModelD::update() {
 
 void MoogModelD::_updateOscFreqs() {
     const float f = _currentFreq * _lfo.pitch_ratio;
+    // Desafinación fija de cada VCO discreto (voice card del Model D, fidelidad §10): VCO 2 +1.8 ¢, VCO 3 −2.2 ¢
     _osc1.frequency(f);
-    _osc2.frequency(f * _centsToRatio(_detuneCents));
-    _osc3.frequency(f * _semitonesToRatio(_vco3Semitones) * _centsToRatio(_vco3Detune));
+    _osc2.frequency(f * _centsToRatio(_detuneCents + 1.8f));
+    _osc3.frequency(f * _semitonesToRatio(_vco3Semitones) * _centsToRatio(_vco3Detune - 2.2f));
 }
 
 float MoogModelD::_midiToFreq(uint8_t midi_note) {

@@ -57,7 +57,9 @@ void test_resonancia_afinada_en_todo_el_rango() {
             float amp;
             const double f = self_osc_hz(fc, ch, &amp);
             TEST_ASSERT_TRUE(f > 0);
-            TEST_ASSERT_TRUE(fabs(1200.0 * log2(f / fc)) < 5.0);   // ±5 cents (el modelo anterior: −1913 a 5 kHz)
+            // ±6 cents hasta 6 kHz (el modelo anterior: −1913 a 5 kHz); la saturación por etapa corre el tono unos cents
+            // hacia arriba con la amplitud, como en el original (±12 a 12 kHz)
+            TEST_ASSERT_TRUE(fabs(1200.0 * log2(f / fc)) < (fc > 6000.0f ? 12.0 : 6.0));
             TEST_ASSERT_TRUE(amp > 0.25f && amp < 1.0f);           // canta con amplitud útil y acotada
         }
 }

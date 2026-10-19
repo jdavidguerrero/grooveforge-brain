@@ -44,6 +44,10 @@ Prophet5::Prophet5() :
 void Prophet5::begin(float volume) {
     (void)volume;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        // Voice card y curva del envelope del chip (fidelidad §10)
+        _spread[i] = dsp::voice_spread(0x50505u + i * 7919u, 4.0f, 0.06f);
+        _filterEnv[i].setAttackOvershoot(0.5f);
+        _vcaEnv[i].attackOvershoot(0.5f);
         _vcf[i].frequency(_filterCutoff);
         _vcf[i].setCharacter(dsp::LadderCharacter::Cem3320);   // CEM3320 / SSI2140 (fidelidad §9.1)
         _vcf[i].resonance(_filterResonance);
@@ -159,7 +163,7 @@ void Prophet5::update() {
         const float velBright = 0.50f + 0.50f * _voices[i].velocity;
 
         _currentHz[i] += (_targetHz[i] - _currentHz[i]) * glide_k;
-        const float f = _currentHz[i] * _lfo.pitch_ratio;
+        const float f = _currentHz[i] * _lfo.pitch_ratio * _spread[i].pitch;
 
         // Osciladores
         Prophet5OscParams p;
@@ -183,7 +187,7 @@ void Prophet5::update() {
         const float oscBMod = _bTri ? (1.0f - 4.0f * fabsf(pb - 0.5f)) : (2.0f * pb - 1.0f);
 
         // Filtro: base + envelope, × LFO, × POLY-MOD (envelope + OSC B), × WHEEL-MOD, × keyboard tracking
-        float cutoff = (_filterCutoff + _filterEnvAmt * velBright * env * 6000.0f) * _lfo.cutoff_mul;
+        float cutoff = (_filterCutoff + _filterEnvAmt * velBright * env * 6000.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
         if (_pmFilter) {
             cutoff *= prophet_fast_exp2(PROPHET_PM_OCT * (_pmEnv * env + 0.5f * _pmB * oscBMod));
         }
@@ -212,8 +216,13 @@ void Prophet5::_releaseVoice(uint8_t voice_idx) {
 }
 
 int8_t Prophet5::_findFreeVoice() {
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        if (_voices[i].midi_note == 255) return (int8_t)i;
+    // Rotativa, como los polys analógicos: dos notas seguidas caen en voces (y voice cards) distintas
+    for (uint8_t k = 0; k < PROPHET_VOICES; k++) {
+        const uint8_t i = uint8_t((_rr + k) % PROPHET_VOICES);
+        if (_voices[i].midi_note == 255) {
+            _rr = uint8_t((i + 1) % PROPHET_VOICES);
+            return (int8_t)i;
+        }
     }
     return -1;
 }

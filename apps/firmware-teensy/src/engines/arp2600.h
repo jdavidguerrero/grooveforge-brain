@@ -7,6 +7,7 @@
 #include "../audio/polyblep_waveform.h"
 #include "../dsp/analog_env.h"
 #include "../audio/analog_vca.h"
+#include "../dsp/voice_spread.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t ARP_VOICES = 4;
@@ -88,6 +89,8 @@ public:
     AudioStream& getOutput() { return _finalMix; }
 
 private:
+    dsp::VoiceSpread _spread[ARP_VOICES];   ///< voice cards: desafinación y cutoff fijos por voz (fidelidad §10)
+    uint8_t _rr = 0;                         ///< asignación rotativa: próxima voz a probar
     LfoMod _lfo;
 
     // ── Audio objects — 4 voces estáticas ────────────────────────────────────

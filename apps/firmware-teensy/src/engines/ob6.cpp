@@ -64,6 +64,14 @@ void OB6::begin(float volume) {
     (void)volume;
 
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
+
+        // Voice card y curva del envelope del chip (fidelidad §10)
+
+        _spread[i] = dsp::voice_spread(0xB6B6u + i * 7919u, 2.0f, 0.03f);
+
+        _filterEnv[i].setAttackOvershoot(0.5f);
+
+        _ampEnv[i].attackOvershoot(0.5f);
         // VCOs discretos estilo Tom Oberheim SEM: drift orgánico un poco más suelto que DCO
         _vco1[i].setSeed(0x0B601001u + i * 131u);
         _vco2[i].setSeed(0x0B602001u + i * 131u);
@@ -292,7 +300,7 @@ void OB6::update() {
         const float xmodSig = _xmEnv * envLevel + _xmVco2 * _lfo.lfo;
 
         // 1. Cutoff del filtro SEM 12 dB/oct
-        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul;
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);
@@ -307,7 +315,7 @@ void OB6::update() {
 
         // 3. Glide + Pitch + VCO2 Fine Detune + X-MOD → Freq VCO1
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float fBase = _voices[i].currentHz * _lfo.pitch_ratio;
+        const float fBase = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch;
         const float f1 = _xmFreq1 ? (fBase * _semitonesToRatio(24.0f * xmodSig)) : fBase;
         const float f2 = fBase * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
 
@@ -357,8 +365,13 @@ void OB6::_releaseVoice(uint8_t voice_idx) {
 }
 
 int8_t OB6::_findFreeVoice() {
-    for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        if (_voices[i].midi_note == 255) return (int8_t)i;
+    // Rotativa, como los polys analógicos: dos notas seguidas caen en voces (y voice cards) distintas
+    for (uint8_t k = 0; k < OB6_VOICES; k++) {
+        const uint8_t i = uint8_t((_rr + k) % OB6_VOICES);
+        if (_voices[i].midi_note == 255) {
+            _rr = uint8_t((i + 1) % OB6_VOICES);
+            return (int8_t)i;
+        }
     }
     return -1;
 }

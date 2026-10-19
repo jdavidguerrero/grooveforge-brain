@@ -7,6 +7,7 @@
 #include "../audio/sem_svf.h"
 #include "../dsp/analog_env.h"
 #include "../audio/analog_vca.h"
+#include "../dsp/voice_spread.h"
 #include "lfo_mod.h"
 
 static constexpr uint8_t OB6_VOICES = 6;
@@ -101,6 +102,8 @@ public:
     AudioStream& getOutput() { return _finalMix; }
 
 private:
+    dsp::VoiceSpread _spread[OB6_VOICES];   ///< voice cards: desafinación y cutoff fijos por voz (fidelidad §10)
+    uint8_t _rr = 0;                         ///< asignación rotativa: próxima voz a probar
     LfoMod _lfo;
 
     // ── Audio objects — 6 voces estáticas ────────────────────────────────────

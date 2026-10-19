@@ -176,8 +176,14 @@ int8_t DX7Engine::_findVoiceForNote(uint8_t midi_note) {
 }
 
 int8_t DX7Engine::_findFreeVoice() {
-    for (uint8_t i = 0; i < DX7_VOICES; i++)
-        if (_voices[i].midi_note == 255) return int8_t(i);
+    // Rotativa: reparte las notas entre voces y deja sonar los releases largos de los E.PIANO
+    for (uint8_t k = 0; k < DX7_VOICES; k++) {
+        const uint8_t i = uint8_t((_rr + k) % DX7_VOICES);
+        if (_voices[i].midi_note == 255) {
+            _rr = uint8_t((i + 1) % DX7_VOICES);
+            return int8_t(i);
+        }
+    }
     return -1;
 }
 

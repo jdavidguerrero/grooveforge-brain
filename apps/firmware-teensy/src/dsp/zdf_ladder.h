@@ -23,15 +23,16 @@ struct LadderVoicing {
     float drive;       ///< ganancia antes del tanh de entrada (más alto = satura antes: el overdrive)
     float bass_comp;   ///< 0 = pierde graves con la resonancia (1 / (1 + k)); 1 = compensación completa
     float loop_limit;  ///< escala del límite del lazo: fija la amplitud de la auto-oscilación
+    float stage_sat;   ///< saturación suave a la salida de cada etapa (transistores del ladder; 0 = lineal)
 };
 
 inline LadderVoicing ladder_voicing(LadderCharacter c) {
     switch (c) {
-        case LadderCharacter::Arp4072: return {1.3f, 0.0f, 3.0f};
-        case LadderCharacter::Ir3109:  return {1.1f, 0.35f, 2.5f};
-        case LadderCharacter::Cem3320: return {1.0f, 0.5f, 3.0f};
+        case LadderCharacter::Arp4072: return {1.3f, 0.0f, 3.6f, 0.05f};
+        case LadderCharacter::Ir3109:  return {1.1f, 0.35f, 2.5f, 0.02f};
+        case LadderCharacter::Cem3320: return {1.0f, 0.5f, 3.0f, 0.02f};
         case LadderCharacter::Moog:
-        default:                       return {1.6f, 0.0f, 3.5f};
+        default:                       return {1.6f, 0.0f, 4.5f, 0.05f};
     }
 }
 
@@ -55,6 +56,7 @@ public:
         comp_ = v.bass_comp;
         limit_ = v.loop_limit;
         inv_limit_ = 1.0f / v.loop_limit;
+        stage_sat_ = v.stage_sat;
     }
 
     void reset() { s_[0] = s_[1] = s_[2] = s_[3] = 0.0f; }
@@ -75,7 +77,8 @@ public:
             const float v = G * (u - s_[i]);
             const float y = v + s_[i];
             s_[i] = y + v;
-            u = y;
+            // Saturación de la etapa sobre la señal que pasa a la siguiente (el estado queda lineal: afinación intacta)
+            u = y / (1.0f + stage_sat_ * y * y);
         }
         return u;
     }
@@ -84,6 +87,7 @@ private:
     float G_ = 0.1f, k_ = 0.0f;
     float drive_ = 1.6f, inv_drive_ = 1.0f / 1.6f, comp_ = 0.0f;
     float limit_ = 3.5f, inv_limit_ = 1.0f / 3.5f;
+    float stage_sat_ = 0.05f;
     float s_[4] = {};
 };
 

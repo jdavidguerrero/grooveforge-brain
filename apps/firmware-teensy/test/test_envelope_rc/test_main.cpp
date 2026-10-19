@@ -4,6 +4,7 @@
 
 #include "dsp/analog_env.h"
 #include "dsp/juno_chorus_core.h"
+#include "dsp/voice_spread.h"
 
 void setUp() {}
 void tearDown() {}
@@ -76,6 +77,22 @@ void test_chorus_estereo_en_antifase() {
     for (int i = 0; i < 1000; ++i) TEST_ASSERT_EQUAL_FLOAT(l[i], r[i]);   // chorus apagado: mono
 }
 
+void test_voice_cards_acotadas_y_distintas() {
+    float lo = 10, hi = 0;
+    bool distintas = false;
+    const dsp::VoiceSpread v0 = dsp::voice_spread(0x50505u, 4.0f, 0.06f);
+    for (uint32_t i = 0; i < 6; ++i) {
+        const dsp::VoiceSpread v = dsp::voice_spread(0x50505u + i * 7919u, 4.0f, 0.06f);
+        const float cents = 1200.0f * log2f(v.pitch);
+        TEST_ASSERT_TRUE(fabsf(cents) <= 4.0f);
+        TEST_ASSERT_TRUE(fabsf(v.cutoff - 1.0f) <= 0.06f);
+        if (i && fabsf(v.pitch - v0.pitch) > 1e-6f) distintas = true;
+        lo = fminf(lo, cents); hi = fmaxf(hi, cents);
+    }
+    TEST_ASSERT_TRUE(distintas);
+    TEST_ASSERT_EQUAL_FLOAT(v0.pitch, dsp::voice_spread(0x50505u, 4.0f, 0.06f).pitch);   // determinista
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_ataque_carga_rc_hacia_1_5);
@@ -83,5 +100,6 @@ int main() {
     RUN_TEST(test_redisparo_sin_salto);
     RUN_TEST(test_vca_por_muestra_continuo);
     RUN_TEST(test_chorus_estereo_en_antifase);
+    RUN_TEST(test_voice_cards_acotadas_y_distintas);
     return UNITY_END();
 }

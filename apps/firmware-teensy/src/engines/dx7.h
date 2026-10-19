@@ -106,6 +106,7 @@ public:
     AudioStream& getOutput() { return _tone; }
 
 private:
+    uint8_t _rr = 0;   ///< asignación rotativa de voces
     LfoMod _lfo;
     Dx7Patch _patch;
 

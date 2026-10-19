@@ -196,3 +196,29 @@ Design*, rev. 2.1, cap. 5 y §6.6 "cheap" nonlinear):
 
 Pendiente on-device: CPU real con 6 voces (ladder ZDF, VCA por muestra y la segunda cadena de SYNTH FX) y A/B contra
 grabaciones de los originales para ajustar drive, compensación y límite de lazo de cada carácter.
+
+## 10. Segunda vuelta de sonido: comportamiento de voz analógica (2026-10-18)
+
+Con osciladores, filtros y envelopes ya en su sitio (§9.4), lo que separa al engine del original es cómo se
+comportan **las voces entre sí** y **los detalles de cada chip**. Lote 1 (este):
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **Voice cards** | Cada voz es un circuito distinto: afinación y cutoff con pequeñas diferencias fijas (el VINTAGE del Prophet rev 4 imita esto) | `dsp::VoiceSpread` por voz, determinista: desafinación y cutoff fijos por voz |
+| **Asignación rotativa** | Prophet, OB-6 y Juno rotan las voces: dos notas iguales seguidas suenan en voces distintas | `_findFreeVoice()` busca desde la voz siguiente a la última usada |
+| **Saturación por etapa** | En el ladder Moog cada par de transistores satura, no solo la entrada | `stage_sat` en `ZdfLadder`: término cúbico suave a la salida de cada etapa (no toca el estado: la afinación con señal chica no cambia) |
+| **Curva de envelope por chip** | Juno-106: envelope generado por el MCU, ataque casi lineal; Minimoog: contorno RC muy curvo; CEM3310 (Prophet, OB): intermedio | Sobrepaso del ataque por engine en `AnalogEnv` y `AnalogVca` |
+
+Valores de partida (estimados, se ajustan en el A/B):
+
+| Engine | Desafinación por voz | Cutoff por voz | Sobrepaso del ataque | Saturación por etapa |
+|---|---|---|---|---|
+| Prophet-5 | ±4 ¢ | ±6 % | 0.5 (CEM3310) | 0.02 (CEM3320) |
+| OB-6 | ±2 ¢ | ±3 % | 0.5 | — (SEM) |
+| Juno-106 | ±0.3 ¢ (DCO) | ±4 % | 3.0 (casi lineal) | 0.02 (IR3109) |
+| Model D | VCO 2/3 ±2 ¢ fijos | — (mono) | 0.3 | 0.05 |
+| ARP 2600 | ±2 ¢ | ±3 % | 0.6 | 0.05 |
+
+**Lotes siguientes** (cada uno con su medición offline): DX7 con envolventes Yamaha de 4 rates / levels, 8 formas
+del TX81Z y detune por operador; Model D con el VCO 3 como modulador y el overdrive del mixer; OB-6 con forma de onda
+continua y sync; ARP monofónico con S&H; etapa de salida (acople en AC y saturación) y color del ruido por engine.

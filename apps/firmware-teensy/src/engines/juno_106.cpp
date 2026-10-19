@@ -59,6 +59,14 @@ void Juno106::begin(float volume) {
     (void)volume;
 
     for (uint8_t i = 0; i < JUNO_VOICES; i++) {
+
+        // Voice card y curva del envelope del chip (fidelidad §10)
+
+        _spread[i] = dsp::voice_spread(0x10601u + i * 7919u, 0.3f, 0.04f);
+
+        _filterEnv[i].setAttackOvershoot(3.0f);
+
+        _ampEnv[i].attackOvershoot(3.0f);
         // El Juno-106 usa DCOs controlados por reloj digital (drift casi nulo ~0.00015)
         _dco[i].setSeed(0x41060001u + i * 97u);
         _sub[i].setSeed(0x41061001u + i * 97u);
@@ -246,13 +254,13 @@ void Juno106::update() {
         const float envLevel = _filterEnv[i].update((float)dt);
         const float velBright = 0.50f + 0.50f * _voices[i].velocity;
 
-        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 8000.0f) * _lfo.cutoff_mul;
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 8000.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);
 
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float f = _voices[i].currentHz * _lfo.pitch_ratio;
+        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch;
         _dco[i].frequency(f);
         _sub[i].frequency(f * 0.5f);
 
@@ -292,8 +300,13 @@ void Juno106::_releaseVoice(uint8_t voice_idx) {
 }
 
 int8_t Juno106::_findFreeVoice() {
-    for (uint8_t i = 0; i < JUNO_VOICES; i++) {
-        if (_voices[i].midi_note == 255) return (int8_t)i;
+    // Rotativa, como los polys analógicos: dos notas seguidas caen en voces (y voice cards) distintas
+    for (uint8_t k = 0; k < JUNO_VOICES; k++) {
+        const uint8_t i = uint8_t((_rr + k) % JUNO_VOICES);
+        if (_voices[i].midi_note == 255) {
+            _rr = uint8_t((i + 1) % JUNO_VOICES);
+            return (int8_t)i;
+        }
     }
     return -1;
 }

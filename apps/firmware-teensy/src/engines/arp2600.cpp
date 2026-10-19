@@ -54,6 +54,14 @@ void ARP2600::begin(float volume) {
     (void)volume;
 
     for (uint8_t i = 0; i < ARP_VOICES; i++) {
+
+        // Voice card y curva del envelope del chip (fidelidad §10)
+
+        _spread[i] = dsp::voice_spread(0x26002600u + i * 7919u, 2.0f, 0.03f);
+
+        _filterEnv[i].setAttackOvershoot(0.6f);
+
+        _ampEnv[i].attackOvershoot(0.6f);
         _vco1[i].setSeed(0x26001001u + i * 173u);
         _vco2[i].setSeed(0x26002001u + i * 173u);
         _vco1[i].setDrift(0.0008f);
@@ -243,13 +251,13 @@ void ARP2600::update() {
         const float envLevel  = _filterEnv[i].update((float)dt);
         const float velBright = 0.50f + 0.50f * _voices[i].velocity;
 
-        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul;
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);
 
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float f = _voices[i].currentHz * _lfo.pitch_ratio;
+        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch;
         _vco1[i].frequency(f);
         _vco2[i].frequency(f * _vco2Ratio);
 
@@ -288,8 +296,13 @@ void ARP2600::_releaseVoice(uint8_t v) {
 }
 
 int8_t ARP2600::_findFreeVoice() {
-    for (uint8_t i = 0; i < ARP_VOICES; i++) {
-        if (_voices[i].midi_note == 255) return (int8_t)i;
+    // Rotativa, como los polys analógicos: dos notas seguidas caen en voces (y voice cards) distintas
+    for (uint8_t k = 0; k < ARP_VOICES; k++) {
+        const uint8_t i = uint8_t((_rr + k) % ARP_VOICES);
+        if (_voices[i].midi_note == 255) {
+            _rr = uint8_t((i + 1) % ARP_VOICES);
+            return (int8_t)i;
+        }
     }
     return -1;
 }
