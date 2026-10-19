@@ -4,6 +4,7 @@
 
 #include "dsp/color_noise_core.h"
 #include "dsp/note_stack.h"
+#include "dsp/output_stage_core.h"
 #include "dsp/polyblep_core.h"
 
 using namespace dsp;
@@ -96,11 +97,29 @@ void test_pila_mono_ultima_nota() {
     TEST_ASSERT_EQUAL_UINT8(51, s.top());
 }
 
+// Etapa de salida (§11.6): quita el DC y no cambia la ganancia de señal chica.
+void test_etapa_de_salida_quita_dc() {
+    OutputStageCore o;
+    o.set(8.0f, 1.2f, 44100.0f);
+    float y = 0.0f;
+    for (int i = 0; i < 44100; ++i) y = o.tick(0.5f);              // escalón de DC: a 1 s ya decayó
+    TEST_ASSERT_TRUE(fabsf(y) < 0.01f);
+    OutputStageCore s;
+    s.set(8.0f, 1.2f, 44100.0f);
+    float peak = 0.0f;
+    for (int i = 0; i < 44100; ++i) {
+        const float v = s.tick(0.01f * sinf(6.2831853f * 1000.0f * i / 44100.0f));
+        if (i > 4410) peak = fmaxf(peak, fabsf(v));
+    }
+    TEST_ASSERT_FLOAT_WITHIN(0.0005f, 0.01f, peak);                // 1 kHz chico: pasa entero
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_forma_continua_extremos);
     RUN_TEST(test_hard_sync_sigue_al_maestro);
     RUN_TEST(test_ruido_rosa_inclinado);
     RUN_TEST(test_pila_mono_ultima_nota);
+    RUN_TEST(test_etapa_de_salida_quita_dc);
     return UNITY_END();
 }

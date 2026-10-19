@@ -294,8 +294,9 @@ Panel: parada MOD **PATCH** = MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3
   asimétrico y del ruido de los LFO) y `fast_tanh` suave (drive 1.2, compensado) — `OutputStage`, un objeto por
   canal antes de las cadenas de FX.
 - **Velocity por engine** (theory/07 §2): Juno sin velocity (el 106 no tiene); Model D sin velocity (el original no
-  tiene); Prophet, OB-6, ARP → VCA y cantidad del envelope del filtro; DX7 ya la tiene (índice de modulación).
-  Aftertouch: global en el sketch (theory/07).
+  tiene); Prophet, OB-6, ARP → VCA y cantidad del envelope del filtro (ya estaba en los engines); DX7 ya la tiene
+  (índice de modulación). Se aplica en el sketch49: al Model D y al Juno les llega velocity 1. Aftertouch: global
+  en el sketch (theory/07).
 
 ### 11.7 Vista de panel (cabeza)
 

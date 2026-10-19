@@ -47,6 +47,7 @@
 #include <protocol.h>
 
 #include "../audio/audio_graph.h"
+#include "../audio/output_stage.h"
 #include "../dsp/lfo.h"
 #include "../engines/arp2600.h"
 #include "../engines/dx7.h"
@@ -87,13 +88,15 @@ AudioConnection c_arp_r(arp.getOutput(), 0, g_engine_mix_rb, 1);
 // Cadena de FX del synth: los 4 viven siempre en el grafo (apagar = bypass, sin recablear en vivo)
 /// Una cadena de SYNTH FX (BIT → TAPE → CHORUS → MODAL). Hay una por lado para no perder el estéreo del Juno.
 struct SfxChain {
+    AudioOutputStage out;                    // acople AC + saturación de salida (fidelidad §11.6)
     BitSculpt bit;
     TapeSaturate tape;
     PhaseChorus chorus;
     ModalReverb modal;
 
     void begin(AudioStream& in, AudioMixer4& master) {
-        bit.begin(in);
+        new AudioConnection(in, 0, out, 0);
+        bit.begin(out);
         tape.begin(bit.getOutputL());
         chorus.begin(tape.getOutputL());
         modal.begin(chorus.getOutputL());
@@ -225,8 +228,9 @@ uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void engine_note_on(uint8_t e, uint8_t note, float vel) {
     switch (e) {
-        case 0: moog.noteOn(note, vel); moog_note = note; break;
-        case 1: juno.noteOn(note, vel); break;
+        // El Model D y el Juno-106 originales no tienen velocity (fidelidad §11.6): suenan siempre a fondo
+        case 0: moog.noteOn(note, 1.0f); moog_note = note; break;
+        case 1: juno.noteOn(note, 1.0f); break;
         case 2: prophet.noteOn(note, vel); break;
         case 3: ob6.noteOn(note, vel); break;
         case 4: dx7.noteOn(note, vel); break;
