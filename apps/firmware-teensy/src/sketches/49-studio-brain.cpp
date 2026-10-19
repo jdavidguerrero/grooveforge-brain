@@ -26,6 +26,10 @@
  * Luces (theory/04 §8): una cadena WS2812 en el pin 28: anillo de 12 LEDs bajo NAV (sigue a NAV) y un LED por
  * tecla B1–B6 (destello al apretar sobre su nivel de estado). FastLED de Teensyduino.
  *
+ * MIDI: el teclado del USB host y el computador por el USB de la Teensy (usbMIDI: piano roll de Ableton, clock)
+ * tocan el mismo engine. El teclado se reenvía al computador (MIDI thru) para grabarlo; lo del computador no se
+ * reenvía. En Ableton: External Instrument con MIDI To = Teensy MIDI y, al grabar, Monitor en Off (theory/04 §9).
+ *
  * Fuera de esta prueba: el audio del modo FX (B5; la página navega, el motor sigue en el sketch 28), ML y presets.
  *
  *   cd apps/firmware-teensy
@@ -619,6 +623,23 @@ void control_change(byte ch, byte cc, byte val) {
     }
 }
 
+// Teclado del USB host: suena en el Brain y además se reenvía al computador por el USB de la Teensy (MIDI thru),
+// para grabarlo en Ableton. Lo que llega del computador (usbMIDI) solo suena: no se reenvía, así no hay lazos.
+void host_note_on(byte ch, byte note, byte vel) {
+    note_on(ch, note, vel);
+    usbMIDI.sendNoteOn(note, vel, ch);
+}
+
+void host_note_off(byte ch, byte note, byte vel) {
+    note_off(ch, note, vel);
+    usbMIDI.sendNoteOff(note, vel, ch);
+}
+
+void host_control_change(byte ch, byte cc, byte val) {
+    control_change(ch, cc, val);
+    usbMIDI.sendControlChange(cc, val, ch);
+}
+
 /// MIDI clock (24 ppq): promedio móvil del intervalo → BPM para el SYNC del LFO.
 void clock_tick() {
     const uint32_t now = micros();
@@ -679,16 +700,23 @@ void setup() {
 
     Serial1.begin(921600);                  // bridge con la Pi: TX1 (1) → GPIO15, RX1 (0) ← GPIO14
     usb_host.begin();
-    midi.setHandleNoteOn(note_on);
-    midi.setHandleNoteOff(note_off);
-    midi.setHandleControlChange(control_change);
+    midi.setHandleNoteOn(host_note_on);
+    midi.setHandleNoteOff(host_note_off);
+    midi.setHandleControlChange(host_control_change);
     midi.setHandleClock(clock_tick);
+    // MIDI del computador por el USB de la Teensy (piano roll de Ableton, clock de la sesión)
+    usbMIDI.setHandleNoteOn(note_on);
+    usbMIDI.setHandleNoteOff(note_off);
+    usbMIDI.setHandleControlChange(control_change);
+    usbMIDI.setHandleClock(clock_tick);
     Serial.println("[host] USB host iniciado: conectar el teclado MIDI");
 }
 
 void loop() {
     usb_host.Task();
     midi.read();
+    while (usbMIDI.read()) {
+    }
     bridge_poll();
     if (millis() - last_hb >= 1000) { last_hb = millis(); bridge_send(GF_CMD_HEARTBEAT, nullptr, 0); }
     if (millis() - last_engine_tx >= 5000) bridge_engine();

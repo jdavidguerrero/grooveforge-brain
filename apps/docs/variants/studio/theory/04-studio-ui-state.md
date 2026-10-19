@@ -127,3 +127,17 @@ los datos llegan a 5 V. Las luces salen del mismo estado de UI que se manda a la
   SHIFT / HOLD está apretado.
 - Se escribe a los LEDs solo cuando algo cambia o mientras dura una animación (60 cuadros por segundo): el WS2812
   bloquea interrupciones ~30 µs por LED, ~540 µs por cuadro con 18 LEDs.
+
+## 9. MIDI por USB y thru (agregado 2026-10-18)
+
+- El Brain toca lo que llega por **dos entradas**: el teclado del **USB host** y el **computador por el USB de la
+  Teensy** (`usbMIDI`, el firmware es `USB_MIDI_AUDIO_SERIAL`): piano roll de Ableton y clock de la sesión (SYNC del
+  LFO).
+- **Thru:** el teclado del USB host se reenvía al computador para grabarlo. Lo que llega del computador **no** se
+  reenvía (evita lazos).
+- **Conexión recomendada con Ableton:** teclado → Brain → PC. En Ableton, track MIDI con *External Instrument*:
+  *MIDI To* = Teensy MIDI, *Audio From* = la entrada de la interfaz donde entra la LINE OUT. Al grabar, **Monitor
+  en Off** (si no, Ableton le devuelve al Brain las notas que este le mandó y suenan dobles); al reproducir, el
+  piano roll toca el Brain. Alternativa: teclado → PC y Ableton manda todo al Brain (sin riesgo de notas dobles,
+  pero el Brain no suena sin el computador).
+- Audio de vuelta por el mismo USB (la Teensy como interfaz): fase siguiente, a verificar con el I2S en el hardware.
