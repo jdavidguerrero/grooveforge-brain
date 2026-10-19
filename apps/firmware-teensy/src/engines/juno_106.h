@@ -81,13 +81,24 @@ public:
     }
 
     void setAmpEnv(float a_ms, float d_ms, float s, float r_ms) {
+        _amp[0] = a_ms; _amp[1] = d_ms; _amp[2] = s; _amp[3] = r_ms;
+        // VCA en GATE (fidelidad §11.5): abre y cierra con la tecla; 1 ms / 8 ms para no hacer click
+        const bool g = _vcaGate;
         for (uint8_t i = 0; i < JUNO_VOICES; i++) {
-            _ampEnv[i].attack(a_ms);
-            _ampEnv[i].decay(d_ms);
-            _ampEnv[i].sustain(s);
-            _ampEnv[i].release(r_ms);
+            _ampEnv[i].attack(g ? 1.0f : a_ms);
+            _ampEnv[i].decay(g ? 1.0f : d_ms);
+            _ampEnv[i].sustain(g ? 1.0f : s);
+            _ampEnv[i].release(g ? 8.0f : r_ms);
         }
     }
+
+    /// VCA ENV (false) / GATE (true).
+    void setVcaGate(bool gate) {
+        _vcaGate = gate;
+        setAmpEnv(_amp[0], _amp[1], _amp[2], _amp[3]);
+    }
+    /// RANGE del DCO: 0 = 16' · 1 = 8' · 2 = 4'.
+    void setRange(uint8_t range) { _rangeRatio = range == 0 ? 0.5f : range >= 2 ? 2.0f : 1.0f; }
 
     void update();
     void set_dsp_enabled(bool on);
@@ -97,6 +108,9 @@ public:
     static constexpr uint8_t OUTPUT_PORT_R = 1;
 
 private:
+    float _amp[4] = {5.0f, 300.0f, 0.7f, 300.0f};
+    bool  _vcaGate = false;
+    float _rangeRatio = 1.0f;
     dsp::VoiceSpread _spread[JUNO_VOICES];   ///< voice cards: desafinación y cutoff fijos por voz (fidelidad §10)
     uint8_t _rr = 0;                         ///< asignación rotativa: próxima voz a probar
     LfoMod _lfo;

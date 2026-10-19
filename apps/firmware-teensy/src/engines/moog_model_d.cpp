@@ -36,7 +36,7 @@ void MoogModelD::begin(float volume) {
 
     _filter.frequency(_filterCutoff);
     _filter.resonance(0.7f);
-    _filter.set_drive(1.35f);   // ligera saturación cálida del mixer CP3 sobre el ladder
+    _filter.set_drive(_drive);  // ligera saturación cálida del mixer CP3 sobre el ladder
     _filter.octaveControl(1.0f);
 
     _filterEnv.setAttackOvershoot(0.3f);   // contorno Moog: carga RC muy curva (fidelidad §10)
@@ -131,7 +131,7 @@ void MoogModelD::setWaveform(uint8_t osc_idx, uint16_t waveform) {
     switch (osc_idx) {
         case 0: _osc1.begin(waveform); break;
         case 1: _osc2.begin(waveform); break;
-        case 2: _osc3.begin(waveform); break;
+        case 2: _osc3.begin(waveform); _v3Wave = waveform; break;
     }
 }
 
@@ -188,7 +188,25 @@ void MoogModelD::setFilterEnvAmount(float amount) {
 }
 
 void MoogModelD::setDrive(float drive) {
-    _filter.set_drive(drive);
+    _drive = drive;
+    _filter.set_drive(_drive * (1.0f + 3.0f * _overdrive));
+}
+
+void MoogModelD::setOverdrive(float od) {
+    _overdrive = od < 0.0f ? 0.0f : od > 1.0f ? 1.0f : od;
+    _filter.set_drive(_drive * (1.0f + 3.0f * _overdrive));   // el mixer saturando la entrada del ladder
+}
+
+void MoogModelD::setModulation(float mix, bool osc_mod, bool filter_mod) {
+    _modMix = mix < 0.0f ? 0.0f : mix > 1.0f ? 1.0f : mix;
+    _oscMod = osc_mod;
+    _filterMod = filter_mod;
+}
+
+void MoogModelD::setVco3Control(bool keyboard, bool lo) {
+    _vco3Kbd = keyboard;
+    _vco3Lo = lo;
+    _updateOscFreqs();
 }
 
 void MoogModelD::setFilterAttack(float ms)     { _filterEnv.setAttack(ms); }
@@ -209,6 +227,7 @@ void MoogModelD::set_dsp_enabled(bool on) {
     _osc1.enable(on);
     _osc2.enable(on);
     _osc3.enable(on);
+    _noise.enable(on);
     _filter.set_enabled(on);
 }
 
@@ -232,6 +251,28 @@ void MoogModelD::update() {
     // 2. Filter envelope RC analógico (sin salto en release)
     const float envLevel = _filterEnv.update((float)dt);
 
+    // 2b. MODULATION (fidelidad §11.2): fuente VCO 3 ↔ ruido, cantidad = rueda. El VCO 3 se sigue a tasa de
+    //     control: exacto como LFO (LO / sub-audio); la FM a frecuencia de audio del original no se reproduce.
+    float modSrc = 0.0f;
+    if ((_oscMod || _filterMod) && _wheel > 0.0f) {
+        const float f3 = _vco3Freq();
+        _v3Phase += f3 * float(dt) * 0.001f;
+        _v3Phase -= floorf(_v3Phase);
+        float v3 = 1.0f - 4.0f * fabsf(_v3Phase - 0.5f);        // TRI
+        if (_v3Wave == WAVEFORM_SAWTOOTH) v3 = 2.0f * _v3Phase - 1.0f;
+        else if (_v3Wave == WAVEFORM_SQUARE || _v3Wave == WAVEFORM_PULSE) v3 = _v3Phase < _pulseWidth ? 1.0f : -1.0f;
+        _modRng ^= _modRng << 13;
+        _modRng ^= _modRng >> 17;
+        _modRng ^= _modRng << 5;
+        _noiseSmooth += 0.3f * (float(int32_t(_modRng)) * (1.0f / 2147483648.0f) - _noiseSmooth);
+        modSrc = _wheel * (v3 + _modMix * (2.0f * _noiseSmooth - v3));
+    }
+    const float oscModRatio = _oscMod ? exp2f(modSrc) : 1.0f;    // ±12 st con la rueda a fondo
+    if (oscModRatio != _oscModRatio) {
+        _oscModRatio = oscModRatio;
+        _updateOscFreqs();
+    }
+
     // 3. LFO → PITCH y PWM
     if (_lfo.pitch_ratio != _appliedPitchRatio) {
         _appliedPitchRatio = _lfo.pitch_ratio;
@@ -244,6 +285,8 @@ void MoogModelD::update() {
 
     // 4. Aplicar cutoff + modulación del envelope + sensibilidad a velocidad
     float modulated = (_filterCutoff + _filterEnvAmt * _velBrightness * envLevel * 8000.0f) * _lfo.cutoff_mul;
+    if (_filterMod) modulated *= exp2f(3.0f * modSrc);                                 // ±3 oct
+    if (_filterKbd > 0.0f) modulated *= powf(_currentFreq / 130.81f, _filterKbd);      // KBD respecto de C3
     if (modulated < 20.0f)    modulated = 20.0f;
     if (modulated > 20000.0f) modulated = 20000.0f;
 
@@ -253,9 +296,16 @@ void MoogModelD::update() {
 void MoogModelD::_updateOscFreqs() {
     const float f = _currentFreq * _lfo.pitch_ratio;
     // Desafinación fija de cada VCO discreto (voice card del Model D, fidelidad §10): VCO 2 +1.8 ¢, VCO 3 −2.2 ¢
-    _osc1.frequency(f);
-    _osc2.frequency(f * _centsToRatio(_detuneCents + 1.8f));
-    _osc3.frequency(f * _semitonesToRatio(_vco3Semitones) * _centsToRatio(_vco3Detune - 2.2f));
+    _osc1.frequency(f * _oscModRatio);
+    _osc2.frequency(f * _oscModRatio * _centsToRatio(_detuneCents + 1.8f));
+    _osc3.frequency(_vco3Freq());
+}
+
+float MoogModelD::_vco3Freq() {
+    // OSC 3 CONTROL apagado: no sigue al teclado (dron / LFO desde C3); LO: rango sub-audio (÷100)
+    const float base = _vco3Kbd ? _currentFreq * _lfo.pitch_ratio : 130.81f;
+    const float f = base * _semitonesToRatio(_vco3Semitones) * _centsToRatio(_vco3Detune - 2.2f);
+    return _vco3Lo ? f * 0.01f : f;
 }
 
 float MoogModelD::_midiToFreq(uint8_t midi_note) {

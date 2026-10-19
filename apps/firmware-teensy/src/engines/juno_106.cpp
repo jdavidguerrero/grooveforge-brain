@@ -331,5 +331,5 @@ int8_t Juno106::_stealOldestVoice() {
 }
 
 float Juno106::_midiToFreq(uint8_t midi_note) {
-    return 440.0f * powf(2.0f, (midi_note - 69) / 12.0f);
+    return 440.0f * powf(2.0f, (midi_note - 69) / 12.0f) * _rangeRatio;   // RANGE 16' / 8' / 4'
 }

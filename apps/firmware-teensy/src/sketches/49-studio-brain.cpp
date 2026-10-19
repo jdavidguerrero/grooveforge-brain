@@ -165,6 +165,8 @@ float wheel = 0.0f;                      // CC 1, 0–1: suma vibrato como en lo
 float bend_st = 0.0f;                    // pitch bend en semitonos (±2, theory/07 §2)
 float aftertouch = 0.0f;                 // presión de canal 0–1: cutoff +1 oct y vibrato
 bool sustain_pedal = false;              // CC 64
+uint8_t notes_held = 0;                  // teclas apretadas (retardo del LFO del Juno)
+uint32_t lfo_delay_t0 = 0;               // nota nueva sin otras apretadas: arranca la rampa del LFO
 uint32_t sustained[4] = {};              // notas soltadas con el pedal apretado (bit por nota)
 constexpr float BEND_RANGE_ST = 2.0f;
 constexpr uint8_t MIDI_OUT_CH = 1;
@@ -245,6 +247,7 @@ void engine_note_off(uint8_t e, uint8_t note) {
 
 void all_notes_off() {
     memset(sustained, 0, sizeof(sustained));
+    notes_held = 0;
     moog.noteOff();
     moog_note = 255;
     for (uint8_t n = 0; n <= 127; n++) {
@@ -328,6 +331,14 @@ void engine_osc(uint8_t e) {
             moog.setOscLevels(o[0][2] / 100.0f, o[1][2] / 100.0f, o[2][2] / 100.0f, o[0][3] / 100.0f);
             moog.setPulseWidth(o[0][4] / 100.0f);
             moog.setVco3Detune(o[2][5]);
+            {   // MODULATION: MOD MIX · OSC MOD · FILTER MOD · NOISE | VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD
+                const float (&md)[GF_OSC_SLOTS] = patches[0].mod[0];
+                moog.setModulation(md[0] / 100.0f, md[1] > 0.5f, md[2] > 0.5f);
+                moog.setNoisePink(md[3] > 0.5f);
+                moog.setVco3Control(md[4] > 0.5f, md[5] > 0.5f);
+                moog.setOverdrive(md[6] / 100.0f);
+                moog.setFilterKeyboard(uint8_t(lroundf(md[7])));
+            }
             break;
         case 1:
             juno.setWaveform(w(W_JUNO, 4, o[0][0]));
@@ -336,6 +347,8 @@ void engine_osc(uint8_t e) {
             juno.setPulseWidth(o[0][3] / 100.0f);
             juno.setChorusMode(uint8_t(constrain(int(lroundf(o[0][4])), 0, 3)));
             juno.setHpf(uint8_t(constrain(int(lroundf(o[0][5])), 0, 3)));
+            juno.setRange(uint8_t(constrain(int(lroundf(o[0][6])), 0, 2)));   // 16' / 8' / 4'
+            juno.setVcaGate(o[0][7] > 0.5f);                                    // VCA ENV / GATE
             break;
         case 2: {  // theory/prophet-5-completo.md §3.1: OSC A · OSC B · MIXER
             const studio::Patch& p = patches[2];
@@ -648,11 +661,14 @@ void mod_tick() {
     lfo.set_sync(ui.state().flags & GF_UI_FLAG_LFO_SYNC, bpm, GF_LFO_DIV_BEATS[p.lfo_div]);
     const float v = lfo.tick(dt);
 
-    auto amt = [&](uint8_t d) { return gf_lfo_dest_available(e, d) ? p.lfo_amt[d] : 0.0f; };
+    // LFO DELAY del Juno (fidelidad §11.5): la profundidad sube en rampa tras una nota nueva
+    float ramp = 1.0f;
+    if (e == 1 && p.mod[0][0] > 1.0f) ramp = constrain((millis() - lfo_delay_t0) / p.mod[0][0], 0.0f, 1.0f);
+    auto amt = [&](uint8_t d) { return gf_lfo_dest_available(e, d) ? p.lfo_amt[d] * ramp : 0.0f; };
     LfoMod m;
     m.cutoff_mul = exp2f(amt(GF_DEST_CUTOFF) * GF_LFO_CUT_OCT * v + aftertouch);
-    // En el Prophet la rueda hace lo que diga WHEEL-MOD (como el original), no suma vibrato genérico
-    const float wheel_vib = e == 2 ? 0.0f : 0.3f * wheel;
+    // En el Prophet (WHEEL-MOD) y el Model D (MODULATION) la rueda hace lo del original, no un vibrato genérico
+    const float wheel_vib = (e == 2 || e == 0) ? 0.0f : 0.3f * wheel;
     const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
     const float vib = fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib + 0.3f * aftertouch);
     m.pitch_ratio = exp2f((gf_lfo_pitch_st(vib) * v + wf_st + bend_st) / 12.0f);
@@ -764,12 +780,15 @@ void note_off(byte ch, byte note, byte vel);
 void note_on(byte ch, byte note, byte vel) {
     if (vel == 0) { note_off(ch, note, 0); return; }
     sustained[note >> 5] &= ~(1u << (note & 31));
+    if (notes_held == 0) lfo_delay_t0 = millis();
+    if (notes_held < 255) ++notes_held;
     engine_note_on(ui.engine(), note, vel / 127.0f);
     const uint8_t p[2] = {note, vel};
     bridge_send(GF_CMD_NOTE_ON, p, 2);
 }
 
 void note_off(byte ch, byte note, byte vel) {
+    if (notes_held) --notes_held;
     if (sustain_pedal) { sustained[note >> 5] |= 1u << (note & 31); return; }
     engine_note_off(ui.engine(), note);
 }
@@ -804,6 +823,7 @@ void control_change(byte ch, byte cc, byte val) {
     if (cc == 1) {
         wheel = val / 127.0f;
         prophet.setWheel(wheel);
+        moog.setWheel(wheel);                       // MODULATION del Model D (fidelidad §11.2)
     }
 }
 
