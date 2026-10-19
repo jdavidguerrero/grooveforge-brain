@@ -28,8 +28,8 @@ void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uin
         case ENV:      *pos = ui.cursor; *count = 2; break;
         case LFO:      *pos = ui.cursor; *count = uint8_t(1 + GF_MOD_STOPS[engine]); break;
         case PRESETS:  *pos = ui.cursor; *count = preset_rows ? preset_rows : 1; break;
-        case PANEL:    *pos = 3; *count = 4; break;
-        default:       *pos = ui.page <= SPECTRUM ? ui.page : 0; *count = 4; break;   // las cuatro vistas
+        case PANEL:    *pos = 1; *count = 2; break;
+        default:       *pos = 0; *count = 2; break;                    // PERFORM · PANEL (theory/08)
     }
 }
 

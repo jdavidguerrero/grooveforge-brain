@@ -26,13 +26,13 @@ void test_arco_reparte_los_12_leds() {
 void test_nav_por_pagina_y_fx() {
     GF_UiState u{};
     uint8_t pos, n;
-    u.page = AI;
+    u.page = PERFORM;
     nav_position(u, 0, 9, &pos, &n);
-    TEST_ASSERT_EQUAL_UINT8(1, pos);
-    TEST_ASSERT_EQUAL_UINT8(4, n);                    // PERFORM · AI · SPECTRUM · PANEL
+    TEST_ASSERT_EQUAL_UINT8(0, pos);
+    TEST_ASSERT_EQUAL_UINT8(2, n);                    // PERFORM · PANEL (theory/08)
     u.page = PANEL;
     nav_position(u, 0, 9, &pos, &n);
-    TEST_ASSERT_EQUAL_UINT8(3, pos);
+    TEST_ASSERT_EQUAL_UINT8(1, pos);
     u.page = LFO;
     u.cursor = 2;
     nav_position(u, 2, 9, &pos, &n);          // Prophet: LFO · POLY-MOD · WHEEL-MOD

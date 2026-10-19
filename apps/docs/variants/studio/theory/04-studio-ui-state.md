@@ -33,7 +33,7 @@ Fuente de verdad del comportamiento: `App::handle` / `handle_synth` / `handle_fx
 siguen la UI v3 y ADR-004. Se traslada a `apps/firmware-teensy/src/ui/studio_ui.{h,cpp}` como lógica pura
 (sin hardware, testeable en `native`):
 
-- **SYNTH:** NAV gira PERFORM → AI → SPECTRUM → PANEL (PANEL agregada el 2026-10-19, fidelidad §11.7). B1 OSC, B2 ENV, B3 LFO / MOD (la misma tecla vuelve a la
+- **SYNTH:** NAV gira PERFORM ↔ PANEL (theory/08, 2026-10-19: AI y SPECTRUM fuera de la rotación hasta GroovePilot). B1 OSC, B2 ENV, B3 LFO / MOD (la misma tecla vuelve a la
   última vista). B4 PRESETS → ENGINE SELECT → PERFORM. En OSC, NAV elige oscilador; en LFO, NAV push
   alterna SYNC; en ENGINE/PRESETS, NAV mueve el cursor y NAV push carga. B6 = SHIFT (momentáneo en el
   hardware). ENC L push = bypass del filtro.
@@ -48,7 +48,7 @@ acción del Teensy: cambia el sonido y después avisa por PARAM_CHANGED / ENGINE
 
 - **Pulsadores de P1 y P2** (pines 32 y 9, ADR-004; agregados 2026-10-19): en la parada LFO, P1 push = siguiente
   forma de onda (en círculo). Siguen disponibles SHIFT + P1.
-- **Home = las vistas** (PERFORM, AI, SPECTRUM, PANEL): ENC L / R son CUTOFF / RES, el filtro global de todos los engines.
+- **Home = las vistas** (PERFORM, PANEL): ENC L / R son CUTOFF / RES, el filtro global de todos los engines.
 - **En las páginas de edición** (OSC, ENV, LFO, SYNTH FX) los **4 encoders son controles de la página**: P1, P2,
   ENC L, ENC R. Con SHIFT, otros 4 (capa reservada para las paradas por engine; hoy vacía).
   Antes eran 2 directos (P1 / P2) + 2 con SHIFT, y ENC L / R siempre eran el filtro.

@@ -17,17 +17,14 @@ void test_arranque_en_perform() {
     TEST_ASSERT_FALSE(ui.take_dirty());
 }
 
-void test_nav_recorre_las_vistas() {
+void test_nav_recorre_las_vistas() {   // home de theory/08: PERFORM · PANEL
     StudioUi ui;
     ui.handle(Control::Nav, 1);
-    TEST_ASSERT_EQUAL_UINT8(AI, ui.state().page);
-    ui.handle(Control::Nav, 1);
-    TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
-    ui.handle(Control::Nav, 1);
-    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);       // 4.ª vista (fidelidad §11.7)
-    ui.handle(Control::Nav, -1);                           // antes de la primera tarjeta: vista anterior
-    TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
-    ui.handle(Control::Nav, 1);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+    ui.handle(Control::Nav, -1);                           // antes de la primera tarjeta: vuelve a PERFORM
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
+    ui.handle(Control::Nav, -1);                           // en círculo: de PERFORM hacia atrás, PANEL
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
     ui.handle(Control::Key1);                              // B1 desde PANEL y vuelta: regresa a PANEL
     ui.handle(Control::Key1);
     TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
@@ -72,11 +69,11 @@ void test_p1_push_forma_del_lfo() {
 
 void test_b1_abre_osc_y_vuelve_a_la_ultima_vista() {
     StudioUi ui;
-    ui.handle(Control::Nav, 1);              // AI
+    ui.handle(Control::Nav, 1);              // PANEL
     ui.handle(Control::Key1);
     TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
     ui.handle(Control::Key1);
-    TEST_ASSERT_EQUAL_UINT8(AI, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
     ui.handle(Control::Key2);
     TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
     ui.handle(Control::Key3);                  // de ENV a LFO directo
@@ -163,14 +160,14 @@ void test_lfo_push_alterna_sync() {
 
 void test_mode_fx_y_vuelta() {
     StudioUi ui;
-    ui.handle(Control::Nav, 1);              // AI
+    ui.handle(Control::Nav, 1);              // PANEL
     ui.handle(Control::B6Down);              // SHIFT apretado
     ui.handle(Control::Mode);
     TEST_ASSERT_EQUAL_UINT8(1, ui.state().mode);
     TEST_ASSERT_EQUAL_UINT8(FX, ui.state().page);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().shift);
     ui.handle(Control::Mode);
-    TEST_ASSERT_EQUAL_UINT8(AI, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
 }
 
 void test_fx_slots_ruteo_hold_y_favorito() {
@@ -225,7 +222,7 @@ void test_lfo_nav_cambia_la_forma() {     // desde el Prophet completo: NAV elig
 
 void test_b4_abre_synth_fx_cursor_y_encendido() {
     StudioUi ui;
-    ui.handle(Control::Nav, 1);              // AI
+    ui.handle(Control::Nav, 1);              // PANEL
     ui.handle(Control::Key4);
     TEST_ASSERT_EQUAL_UINT8(SYNTH_FX, ui.state().page);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
@@ -237,7 +234,7 @@ void test_b4_abre_synth_fx_cursor_y_encendido() {
     TEST_ASSERT_EQUAL(Action::SfxToggle, r.action);
     TEST_ASSERT_EQUAL_UINT8(3, r.arg);
     ui.handle(Control::Key4);                // B4 otra vez: vuelve a la última vista
-    TEST_ASSERT_EQUAL_UINT8(AI, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
 }
 
 void test_shift_nav_push_abre_engine_select() {
@@ -255,11 +252,11 @@ void test_shift_nav_push_abre_engine_select() {
 
 void test_nav_largo_vuelve_a_home() {
     StudioUi ui;
-    ui.handle(Control::Nav, 2);              // SPECTRUM
+    ui.handle(Control::Nav, 1);              // PANEL
     ui.handle(Control::Key2);                // ENV
     ui.handle(Control::Key3);                // LFO
     ui.handle(Control::NavLong);
-    TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);   // vuelve a la última vista
     ui.handle(Control::Mode);                // en FX se queda en FX
     ui.handle(Control::NavLong);
     TEST_ASSERT_EQUAL_UINT8(FX, ui.state().page);

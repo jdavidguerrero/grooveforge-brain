@@ -16,8 +16,8 @@
 #include "ui/screen_sfx.h"
 #include "ui/screen_spectrum.h"
 
-/// Páginas de la UI (mismos ids que studio::Page del Teensy). Vistas que recorre NAV en SYNTH: PERFORM · AI ·
-/// SPECTRUM · PANEL (fidelidad §11.7).
+/// Páginas de la UI (mismos ids que studio::Page del Teensy). Vistas que recorre NAV en SYNTH: PERFORM · PANEL
+/// (theory/08 de Studio; AI y SPECTRUM vuelven con GroovePilot).
 enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Count };
 
 /**

@@ -11,14 +11,17 @@ constexpr bool FX_AVAILABLE[GF_UI_FX_SLOTS] = {true, true, true, false, true, tr
 // Ruteo por defecto de cada FX (05 §1; capa del FX en el catálogo de la cabeza)
 constexpr uint8_t FX_ROUTE_DEFAULT[GF_UI_FX_SLOTS] = {0, 0, 1, 0, 2, 0, 1, 0, 0, 2, 0, 2};
 
-bool is_view(uint8_t p) { return p == PERFORM || p == AI || p == SPECTRUM || p == PANEL; }
+// Home de theory/08 de Studio: PERFORM y PANEL. AI y SPECTRUM siguen en el enum (ids del protocolo) pero fuera de la
+// rotación hasta que lleguen los datos de GroovePilot y el comando de espectro.
+bool is_view(uint8_t p) { return p == PERFORM || p == PANEL; }
 
-/// Vistas de la home en el orden de NAV (fidelidad §11.7).
-constexpr uint8_t VIEWS[4] = {PERFORM, AI, SPECTRUM, PANEL};
+/// Vistas de la home en el orden de NAV.
+constexpr int N_VIEWS = 2;
+constexpr uint8_t VIEWS[N_VIEWS] = {PERFORM, PANEL};
 uint8_t next_view(uint8_t p, int dir) {
     int i = 0;
-    while (i < 4 && VIEWS[i] != p) ++i;
-    return VIEWS[(i % 4 + dir + 4) % 4];
+    while (i < N_VIEWS && VIEWS[i] != p) ++i;
+    return VIEWS[(i % N_VIEWS + dir + N_VIEWS) % N_VIEWS];
 }
 
 uint8_t next_fx_slot(uint8_t slot, int dir) {

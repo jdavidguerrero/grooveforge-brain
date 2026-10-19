@@ -37,7 +37,7 @@ void slot_lines(std::string& out, const OscEngine& e, const OscSlot* const* slot
 
 lv_obj_t* ScreenPanel::create() {
     _scr = screen_root();
-    _top.create(_scr, "PANEL", 3);
+    _top.create(_scr, "PANEL", 1);
     for (int i = 0; i < CARDS; ++i) {
         Card& c = _cards[i];
         c.box = rect(_scr, X0 + (i % 4) * (CW + GAP_X), Y0 + (i / 4) * (CH + GAP_Y), CW, CH, SURFACE);

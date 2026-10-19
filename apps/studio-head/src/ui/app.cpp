@@ -13,14 +13,16 @@ namespace {
 constexpr uint8_t FAV_FX_SLOT = 2;  // B4 en FX: favorito (demo: GHOST ECHO; luego, configurable)
 constexpr float VOL_MIN = -60.0f, VOL_MAX = 6.0f, IN_MIN = -12.0f, IN_MAX = 12.0f, POT_STEP = 0.5f;
 
-bool is_view(Page p) { return p == Page::Perform || p == Page::Ai || p == Page::Spectrum || p == Page::Panel; }
+// Home de theory/08 de Studio: PERFORM y PANEL. AI y SPECTRUM quedan fuera de la rotación hasta GroovePilot.
+bool is_view(Page p) { return p == Page::Perform || p == Page::Panel; }
 
 /// Vistas de la home en el orden de NAV.
-constexpr Page VIEWS[4] = {Page::Perform, Page::Ai, Page::Spectrum, Page::Panel};
+constexpr int N_VIEWS = 2;
+constexpr Page VIEWS[N_VIEWS] = {Page::Perform, Page::Panel};
 Page next_view(Page p, int dir) {
     int i = 0;
-    while (i < 4 && VIEWS[i] != p) ++i;
-    return VIEWS[(i % 4 + dir + 4) % 4];
+    while (i < N_VIEWS && VIEWS[i] != p) ++i;
+    return VIEWS[(i % N_VIEWS + dir + N_VIEWS) % N_VIEWS];
 }
 
 }  // namespace

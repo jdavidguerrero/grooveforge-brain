@@ -301,7 +301,7 @@ Panel: parada MOD **PATCH** = MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3
 
 ### 11.7 Vista de panel (cabeza)
 
-Cuarta vista de la home (después de PERFORM · AI · SPECTRUM): **PANEL**, el panel completo del engine en una
+Vista de la home junto a PERFORM (theory/08 de Studio; al principio era la cuarta, después de AI y SPECTRUM): **PANEL**, el panel completo del engine en una
 pantalla, solo lectura, con todas las secciones (OSC por parada, MOD, ENV AMP y FILTER, FILTER, LFO, SYNTH FX) en
 tarjetas, como la serigrafía del original. Navegable (corrección tras la prueba en el hardware, 2026-10-19): NAV
 recorre las tarjetas (pasada la última o antes de la primera, sigue a la vista vecina) y NAV push abre la página de
