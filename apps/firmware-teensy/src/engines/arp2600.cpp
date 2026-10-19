@@ -107,6 +107,17 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
     if (velocity < 0.0f) velocity = 0.0f;
     if (velocity > 1.0f) velocity = 1.0f;
 
+    if (_mono) {   // una voz, prioridad a la última nota; legato (sin redisparo) solo con glide
+        const bool legato = _stack.push(midi_note);
+        if (legato && _glideMs >= 1.0f && _voices[0].active) {
+            _voices[0].targetHz = _midiToFreq(midi_note);
+            _voices[0].midi_note = midi_note;
+        } else {
+            _triggerVoice(0, midi_note, velocity);
+        }
+        return;
+    }
+
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
@@ -115,6 +126,17 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
 }
 
 void ARP2600::noteOff(uint8_t midi_note) {
+    if (_mono) {
+        const uint8_t top = _stack.remove(midi_note);
+        if (top == dsp::NoteStack::NONE) {
+            if (_voices[0].active) _releaseVoice(0);
+        } else if (top != _voices[0].midi_note) {     // vuelve a la nota anterior que sigue apretada
+            _voices[0].targetHz = _midiToFreq(top);
+            if (_glideMs < 1.0f) _voices[0].currentHz = _voices[0].targetHz;
+            _voices[0].midi_note = top;
+        }
+        return;
+    }
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice >= 0) _releaseVoice((uint8_t)voice);
 }
@@ -168,6 +190,28 @@ void ARP2600::setNoiseLevel(float level) {
     if (level > 1.0f) level = 1.0f;
     _noiseLevel = level;
     for (uint8_t i = 0; i < ARP_VOICES; i++) _applyVoiceMix(i);
+}
+
+void ARP2600::setMono(bool on) {
+    if (on == _mono) return;
+    _mono = on;
+    _stack.clear();
+    for (uint8_t i = 0; i < ARP_VOICES; i++)
+        if (_voices[i].active) _releaseVoice(i);
+}
+
+void ARP2600::setSync(bool on) {
+    for (uint8_t i = 0; i < ARP_VOICES; i++) _vco2[i].syncTo(on ? &_vco1[i] : nullptr);
+}
+
+void ARP2600::setVco3(float rate_hz, float to_pitch, float to_cutoff) {
+    _v3Rate = rate_hz < 0.05f ? 0.05f : rate_hz;
+    _v3Pitch = to_pitch < 0.0f ? 0.0f : to_pitch > 1.0f ? 1.0f : to_pitch;
+    _v3Cutoff = to_cutoff < 0.0f ? 0.0f : to_cutoff > 1.0f ? 1.0f : to_cutoff;
+}
+
+void ARP2600::setNoiseColor(float color) {
+    for (uint8_t i = 0; i < ARP_VOICES; i++) _noise[i].color(color);
 }
 
 void ARP2600::_applyVoiceMix(uint8_t v) {
@@ -234,6 +278,7 @@ void ARP2600::set_dsp_enabled(bool on) {
     for (uint8_t i = 0; i < ARP_VOICES; i++) {
         _vco1[i].enable(on);
         _vco2[i].enable(on);
+        _noise[i].enable(on);
         _filter[i].set_enabled(on);
     }
 }
@@ -247,17 +292,25 @@ void ARP2600::update() {
 
     const float glide_k = _glideMs >= 1.0f ? (1.0f - expf(-float(dt) / _glideMs)) : 1.0f;
 
+    // VCO 3 en rango bajo como modulador (triángulo), a tasa de control
+    _v3Phase += _v3Rate * float(dt) * 0.001f;
+    _v3Phase -= floorf(_v3Phase);
+    const float v3 = 1.0f - 4.0f * fabsf(_v3Phase - 0.5f);
+    const float v3_pitch = _v3Pitch > 0.0f ? exp2f(_v3Pitch * v3) : 1.0f;          // ±12 st a fondo
+    const float v3_cut = _v3Cutoff > 0.0f ? exp2f(4.0f * _v3Cutoff * v3) : 1.0f;   // ±4 oct a fondo
+
     for (uint8_t i = 0; i < ARP_VOICES; i++) {
         const float envLevel  = _filterEnv[i].update((float)dt);
         const float velBright = 0.50f + 0.50f * _voices[i].velocity;
 
-        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul *
+                          _spread[i].cutoff * v3_cut;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);
 
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch;
+        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch * v3_pitch;
         _vco1[i].frequency(f);
         _vco2[i].frequency(f * _vco2Ratio);
 

@@ -150,6 +150,18 @@ void OB6::setVco1Waveform(uint16_t waveform) {
     }
 }
 
+void OB6::setVcoShape(uint8_t vco, float shape) {
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        AudioSynthPolyBlep& o = vco ? _vco2[i] : _vco1[i];
+        o.begin(AudioSynthPolyBlep::WAVEFORM_SHAPE);
+        o.setShape(shape);
+    }
+}
+
+void OB6::setSync(bool on) {
+    for (uint8_t i = 0; i < OB6_VOICES; i++) _vco2[i].syncTo(on ? &_vco1[i] : nullptr);
+}
+
 void OB6::setVco2Waveform(uint16_t waveform) {
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
         _vco2[i].begin(waveform);

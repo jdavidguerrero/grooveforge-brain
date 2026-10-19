@@ -32,6 +32,10 @@ public:
 
     void setVco1Waveform(uint16_t waveform);
     void setVco2Waveform(uint16_t waveform);
+    /// Forma continua del VCO (0 = VCO 1, 1 = VCO 2): 0 = saw, 1 = pulse (fidelidad §11.3).
+    void setVcoShape(uint8_t vco, float shape);
+    /// Hard sync: VCO 2 reinicia con cada vuelta de VCO 1.
+    void setSync(bool on);
     void setVco2Interval(float semitones);
     void setVco2Detune(float cents);
     void setPulseWidth(float pw1, float pw2);

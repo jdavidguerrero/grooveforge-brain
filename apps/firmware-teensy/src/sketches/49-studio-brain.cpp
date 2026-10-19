@@ -358,8 +358,8 @@ void engine_osc(uint8_t e) {
             break;
         }
         case 3: {
-            ob6.setVco1Waveform(w(W4, 4, o[0][0]));
-            ob6.setVco2Waveform(w(W4, 4, o[1][0]));
+            ob6.setVcoShape(0, o[0][0] / 100.0f);           // SHAPE continua (fidelidad §11.3)
+            ob6.setVcoShape(1, o[1][0] / 100.0f);
             ob6.setVco2Interval(o[1][1]);
             ob6.setOscMix(o[0][2] / 100.0f, o[1][2] / 100.0f, o[0][1] / 100.0f, o[0][3] / 100.0f);
             ob6.setPulseWidth(o[0][4] / 100.0f, o[1][4] / 100.0f);
@@ -368,6 +368,7 @@ void engine_osc(uint8_t e) {
             ob6.setFilterBpMode(o[0][7] > 0.5f);
             const float (&xm)[GF_OSC_SLOTS] = patches[3].mod[0];
             ob6.setXMod(xm[0] / 100.0f, xm[1] / 100.0f, xm[2] > 0.5f, xm[3] > 0.5f, xm[4] > 0.5f);
+            ob6.setSync(xm[5] > 0.5f);
             break;
         }
         case 5:
@@ -379,6 +380,13 @@ void engine_osc(uint8_t e) {
             arp.setNoiseLevel(o[0][3] / 100.0f);
             arp.setVco1Level(o[0][4] / 100.0f);
             arp.setVco2Level(o[1][4] / 100.0f);
+            {   // PATCH (fidelidad §11.4): MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3 → CUTOFF · NOISE COLOR
+                const float (&pa)[GF_OSC_SLOTS] = patches[5].mod[0];
+                arp.setMono(pa[0] > 0.5f);
+                arp.setSync(pa[1] > 0.5f);
+                arp.setVco3(pa[2], pa[3] / 100.0f, pa[4] / 100.0f);
+                arp.setNoiseColor(pa[5] / 100.0f);
+            }
             break;
         case 4:   // DX7 de 4 operadores: RATIO · LEVEL · (ALGORITHM · FEEDBACK en OP 1) | A · D · S · R
             dx7.setAlgorithm(uint8_t(lroundf(o[0][2])));

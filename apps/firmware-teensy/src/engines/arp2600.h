@@ -7,6 +7,8 @@
 #include "../audio/polyblep_waveform.h"
 #include "../dsp/analog_env.h"
 #include "../audio/analog_vca.h"
+#include "../audio/color_noise.h"
+#include "../dsp/note_stack.h"
 #include "../dsp/voice_spread.h"
 #include "lfo_mod.h"
 
@@ -52,6 +54,16 @@ public:
 
     void setNoiseLevel(float level);
 
+    // ── PATCH (fidelidad §11.4) ──────────────────────────────────────────────
+    /// Monofónico con prioridad a la última nota (el 2600 original); false = 4 voces.
+    void setMono(bool on);
+    /// Hard sync: VCO 2 reinicia con cada vuelta de VCO 1.
+    void setSync(bool on);
+    /// VCO 3 como modulador a tasa de control: frecuencia (Hz) y cantidades a PITCH (±12 st) y CUTOFF (±4 oct).
+    void setVco3(float rate_hz, float to_pitch, float to_cutoff);
+    /// Color del ruido: 0 = blanco, 1 = rosa.
+    void setNoiseColor(float color);
+
     void setFilterCutoff(float hz);
     void setFilterResonance(float q);
     void setFilterEnvAmount(float amount);
@@ -96,7 +108,7 @@ private:
     // ── Audio objects — 4 voces estáticas ────────────────────────────────────
     AudioSynthPolyBlep       _vco1[ARP_VOICES];
     AudioSynthPolyBlep       _vco2[ARP_VOICES];
-    AudioSynthNoiseWhite     _noise[ARP_VOICES];
+    AudioSynthColorNoise     _noise[ARP_VOICES];
     AudioEffectMultiply      _ringMod[ARP_VOICES];
     AudioMixer4              _voiceMix[ARP_VOICES];   // ch0=ringMod, ch1=VCO1 dry, ch2=noise, ch3=VCO2 dry
     MoogLadder4P             _filter[ARP_VOICES];
@@ -137,6 +149,9 @@ private:
     float _glideMs         = 0.0f;
 
     dsp::AnalogEnv _filterEnv[ARP_VOICES];
+    dsp::NoteStack _stack;                   ///< modo MONO
+    bool  _mono      = false;
+    float _v3Rate    = 5.0f, _v3Pitch = 0.0f, _v3Cutoff = 0.0f, _v3Phase = 0.0f;
     uint32_t       _lastUpdateMs = 0;
 
     int8_t _findFreeVoice();
