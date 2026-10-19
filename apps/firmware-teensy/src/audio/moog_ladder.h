@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../dsp/ladder_core.h"
 #include <Audio.h>
 #include <math.h>
 
@@ -27,10 +28,10 @@
  * (0=LP, 1=BP, 2=HP). MoogLadder4P solo expone port 0 (LP). Las
  * AudioConnection existentes que usen port 0 son directamente compatibles.
  *
- * CPU estimado por instancia: ~5 tanhf × 128 muestras/bloque ≈ 640 tanhf/bloque.
- * En Teensy 4.1 (ARM Cortex-M7 con FPU): tanhf ≈ 20-30 ciclos, a 600MHz
- * → ~0.05% CPU por instancia de filtro. 23 instancias totales (todos los
- * engines) → ~1.2% CPU adicional en worst case. Dentro del budget de 60%.
+ * CPU por instancia: con tanhf (7 por muestra, ~200 ciclos cada una) era ~8% (medido 2026-10-15) y los 28
+ * filtros juntos colgaban el sketch 28. Desde 2026-10-16 usa 5 tanh de Padé por muestra (dsp/fast_math.h,
+ * theory/fidelidad-engines.md §1): estimado ~1%, a medir. Igual solo el engine activo debe tenerlos habilitados
+ * (set_enabled()).
  *
  * Refs: D'Angelo, S. & Välimäki, V. (2013). "An improved virtual analog
  *       model of the Moog ladder filter." ICASSP 2013. DOI: 10.1109/ICASSP.2013.6638782
@@ -68,18 +69,40 @@ public:
      */
     void octaveControl(float n) { (void)n; }
 
+    /**
+     * @brief Habilita o salta el procesamiento del filtro en la ISR de audio.
+     *
+     * Cada instancia cuesta ~8% de CPU del Teensy 4.1 (5 tanhf × 128 muestras,
+     * tanhf ≈ 200 ciclos medidos). Con los 28 filtros de los 6 engines activos a la
+     * vez la ISR supera el 200% y el loop() deja de correr. Los engines inactivos
+     * deben deshabilitar sus filtros. Deshabilitado: consume y libera el bloque de
+     * entrada sin transmitir nada (silencio aguas abajo).
+     * Al re-habilitar se resetea el estado para no arrastrar energía vieja.
+     * @param on true = procesa (default tras el constructor).
+     */
+    void set_enabled(bool on);
+
+    /**
+     * @brief Ganancia de drive (saturación en la entrada del ladder).
+     * 1.0 = nominal (0.1 V/unidad), hasta 4.0 = overdrive BJT rico en armónicos.
+     */
+    void set_drive(float drive);
+
     virtual void update(void) override;
 
 private:
     audio_block_t* inputQueueArray[1];
 
     // Estado del ladder — tensiones de salida de cada stage en voltios
-    float _V[4];   // V1..V4 — output de cada BJT stage
-    float _dV[4];  // derivadas de la muestra anterior (integración bilineal, ec. 15)
+    dsp::LadderState _s;   // V1..V4 y derivadas de la muestra anterior (dsp/ladder_core.h)
 
     float _A;   // coeficiente de tuning (ec. 20): A = π(fc/fs)(1-π(fc/fs))/(1+π(fc/fs))
     float _g;   // g = 4·fs·A·VT — coeficiente de las derivadas, precomputado en frequency()
+    volatile bool _enabled = true;  // leído en la ISR de audio, escrito desde loop()
+
     float _k;   // resonancia/feedback: 0 = flat, 4 = self-oscillation
+    float _drive = 1.0f;            // multiplicador de saturación [1.0, 4.0]
+    float _inv_drive_comp = 1.0f;   // compensación parcial de ganancia
 
     // Constantes del modelo analógico (valores físicos de transistores BJT @ 300K)
     static constexpr float VT     = 0.026f;              ///< tensión térmica [V] (= kT/q, 300K)

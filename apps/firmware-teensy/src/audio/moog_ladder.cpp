@@ -9,6 +9,9 @@
 
 #include "moog_ladder.h"
 #include <string.h>
+
+#include "../dsp/fast_math.h"
+#include "../dsp/ladder_core.h"
 #include <math.h>
 #include <Arduino.h>
 
@@ -30,71 +33,78 @@ void MoogLadder4P::frequency(float hz) {
     //   A = π(fc/fs) × (1 - π(fc/fs)) / (1 + π(fc/fs))
     // Mapeo de la respuesta bilineal al eje de frecuencia analógico (pre-warping).
     float pi_fc = (float)M_PI * hz / AUDIO_SAMPLE_RATE_EXACT;
-    _A = pi_fc * (1.0f - pi_fc) / (1.0f + pi_fc);
+    float A = pi_fc * (1.0f - pi_fc) / (1.0f + pi_fc);
 
     // g = 4·fs·A·VT — coeficiente de las derivadas diferenciales (ecs. 13-14).
     // Absorbe fs y VT aquí para reducir operaciones en el loop de muestras.
-    _g = 4.0f * AUDIO_SAMPLE_RATE_EXACT * _A * VT;
+    float g = 4.0f * AUDIO_SAMPLE_RATE_EXACT * A * VT;
+
+    AudioNoInterrupts();
+    _A = A;
+    _g = g;
+    AudioInterrupts();
 }
 
 void MoogLadder4P::resonance(float q) {
     // AudioFilterStateVariable usa q ∈ [0.707, 5.0].
     // El paper de D'Angelo usa k ∈ [0.0, 4.0], donde k=4 es auto-oscilación.
     // Mapeo lineal: q=0.707 → k=0.0, q=5.0 → k=4.0
-    _k = (q - 0.707f) / (5.0f - 0.707f) * 4.0f;
-    if (_k < 0.0f) _k = 0.0f;
-    if (_k > 4.0f) _k = 4.0f;
+    float k = (q - 0.707f) / (5.0f - 0.707f) * 4.0f;
+    if (k < 0.0f) k = 0.0f;
+    if (k > 4.0f) k = 4.0f;
+    AudioNoInterrupts();
+    _k = k;
+    AudioInterrupts();
+}
+
+void MoogLadder4P::set_drive(float drive) {
+    if (drive < 0.5f) drive = 0.5f;
+    if (drive > 4.0f) drive = 4.0f;
+    float comp = 1.0f / sqrtf(drive);
+    AudioNoInterrupts();
+    _drive = drive;
+    _inv_drive_comp = comp;
+    AudioInterrupts();
+}
+
+void MoogLadder4P::set_enabled(bool on) {
+    if (on == _enabled) return;
+    if (on) {
+        // Bajo AudioNoInterrupts para que la ISR no lea un estado a medio resetear.
+        AudioNoInterrupts();
+        resetState();
+        _enabled = true;
+        AudioInterrupts();
+    } else {
+        _enabled = false;
+    }
 }
 
 // ── Procesamiento por muestra ─────────────────────────────────────────────────
 
 void MoogLadder4P::resetState() {
-    memset(_V,  0, sizeof(_V));
-    memset(_dV, 0, sizeof(_dV));
+    _s = dsp::LadderState{};
 }
 
 float MoogLadder4P::processSample(float in) {
-    // Escalar entrada normalizada a dominio de voltaje del modelo BJT
-    float vin = in * DRIVE;
+    // Escalar entrada normalizada a dominio de voltaje del modelo BJT + drive
+    float vin = in * (DRIVE * _drive);
 
-    // ── Derivadas (ecuaciones 13 y 14 del paper) ──────────────────────────────
-    //
-    // Stage 1 (ec. 13): incluye feedback de k·V4 (resonancia del ladder)
-    // Stage 2-4 (ec. 14): cada stage integra la diferencia entre el stage previo y sí mismo
-    float dV0 = -_g * (tanhf(_V[0] * INV2VT)
-                     + tanhf((vin + _k * _V[3]) * INV2VT));
-    float dV1 =  _g * (tanhf(_V[0] * INV2VT) - tanhf(_V[1] * INV2VT));
-    float dV2 =  _g * (tanhf(_V[1] * INV2VT) - tanhf(_V[2] * INV2VT));
-    float dV3 =  _g * (tanhf(_V[2] * INV2VT) - tanhf(_V[3] * INV2VT));
-
-    // ── Integración bilineal (ecuación 15 del paper) ──────────────────────────
-    // Vi[n] = Vi[n-1] + (dVi[n] + dVi[n-1]) / (2·fs)
-    // El método trapezoidal (bilineal) es estable y tiene respuesta de fase
-    // similar al integrador analógico, a diferencia del Euler forward que
-    // puede divergir con alta resonancia.
+    // Derivadas (ecs. 13–14) e integración trapezoidal (ec. 15) con tanh de Padé: theory/fidelidad-engines.md §1
     const float inv2fs = 1.0f / (2.0f * AUDIO_SAMPLE_RATE_EXACT);
-    _V[0] += (dV0 + _dV[0]) * inv2fs;
-    _V[1] += (dV1 + _dV[1]) * inv2fs;
-    _V[2] += (dV2 + _dV[2]) * inv2fs;
-    _V[3] += (dV3 + _dV[3]) * inv2fs;
-
-    // Guardar derivadas para la siguiente muestra
-    _dV[0] = dV0;
-    _dV[1] = dV1;
-    _dV[2] = dV2;
-    _dV[3] = dV3;
+    const float v3 = dsp::ladder_step<dsp::fast_tanh>(_s, vin, _g, _k, INV2VT, inv2fs);
 
     // Protección anti-divergencia: en transitorios de parámetros con alta
     // resonancia + señal grande, el feedback puede divergir. isfinite()
     // detecta NaN/Inf y resetea el estado limpiamente en lugar de propagar
     // valores indefinidos al bloque de audio.
-    if (!isfinite(_V[3])) {
+    if (!isfinite(v3)) {
         resetState();
         return 0.0f;
     }
 
-    // Escalar de vuelta a rango normalizado y limitar hard a ±1.0
-    float out = _V[3] * INV_DRIVE;
+    // Escalar de vuelta a rango normalizado con compensación de ganancia por drive y soft-clip
+    float out = v3 * INV_DRIVE * _inv_drive_comp;
     if (out >  1.0f) out =  1.0f;
     if (out < -1.0f) out = -1.0f;
     return out;
@@ -105,6 +115,10 @@ float MoogLadder4P::processSample(float in) {
 void MoogLadder4P::update(void) {
     audio_block_t* in_block = receiveReadOnly(0);
     if (!in_block) return;
+    if (!_enabled) {
+        release(in_block);
+        return;
+    }
 
     audio_block_t* out_block = allocate();
     if (!out_block) {
