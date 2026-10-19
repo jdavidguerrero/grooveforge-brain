@@ -157,6 +157,7 @@ void ScreenLfo::draw(const Painter& p, const StudioState& s) const {
     }
     text_top(p, 288, 12, rv, WHITE, T16);
     text_top(p, 288 + text_width(rv, T16) + 8, 14, rs, MON, T12);
+    text_top(p, 288, 36, "P1 PUSH: SHAPE", MON, T12);   // debajo de RATE, dentro del área de la onda
 
     // Forma: 2 ciclos (8 escalones en S&H), con líneas de ciclo y eje en segundos o en beats.
     const Wave w = shape_wave(s.lfo_shape);

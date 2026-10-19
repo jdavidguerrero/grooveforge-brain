@@ -141,14 +141,15 @@ typedef struct {
 
 /** Plantilla por engine / parada / slot, la misma que osc_catalog.cpp (el DX7 tiene página de operadores). */
 static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS] = {
-    /* MODEL D: WAVE · — / DETUNE / INTERVAL · LEVEL · NOISE (engine) | SHIFT: PW (engine) · FINE (VCO 3) */
-    {{GF_OSC_WAVE(4), GF_OSC_NONE, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
+    /* MODEL D: WAVE · — / DETUNE / INTERVAL · LEVEL | SHIFT: PW (engine) · FINE (VCO 3)
+       NOISE (4.ª parada, el ruido del MIXER del original): LEVEL · WHITE / PINK */
+    {{GF_OSC_WAVE(4), GF_OSC_NONE, GF_OSC_LEVEL, GF_OSC_NONE,
       GF_OSC_PW_GLOBAL, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},
-     {GF_OSC_WAVE(4), GF_OSC_DETUNE, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
+     {GF_OSC_WAVE(4), GF_OSC_DETUNE, GF_OSC_LEVEL, GF_OSC_NONE,
       GF_OSC_PW_GLOBAL, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},
-     {GF_OSC_WAVE(4), GF_OSC_INTERVAL, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
+     {GF_OSC_WAVE(4), GF_OSC_INTERVAL, GF_OSC_LEVEL, GF_OSC_NONE,
       GF_OSC_PW_GLOBAL, GF_OSC_DETUNE, GF_OSC_NONE, GF_OSC_NONE},
-     GF_OSC_EMPTY},
+     {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4}},
     /* JUNO-106: WAVE (SAW/SQR/PULSE/SAW+PLS) · SUB · NOISE · PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3) ·
        RANGE (16'/8'/4') · VCA (ENV/GATE) (fidelidad §11.5) */
     {{GF_OSC_WAVE(4), GF_OSC_GLOBAL100, GF_OSC_GLOBAL100, GF_OSC_PW,
@@ -180,16 +181,16 @@ static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS]
      GF_OSC_EMPTY, GF_OSC_EMPTY}};
 
 /** Paradas de OSC que recorre NAV en cada engine. */
-static const uint8_t GF_OSC_STOP_COUNT[GF_ENGINE_COUNT] = {3, 1, 3, 2, 4, 2};
+static const uint8_t GF_OSC_STOP_COUNT[GF_ENGINE_COUNT] = {4, 1, 3, 2, 4, 2};
 
 /** Paradas de MOD (después de LFO) en la página LFO / MOD de cada engine. */
 static const uint8_t GF_MOD_STOPS[GF_ENGINE_COUNT] = {1, 1, 2, 1, 2, 1};
 
 /** Plantilla de MOD (theory/fidelidad-engines.md §11): las secciones que no caben en la página OSC. */
 static const GF_OscSlot GF_MOD_SLOT[GF_ENGINE_COUNT][GF_MOD_STOPS_MAX][GF_OSC_SLOTS] = {
-    {/* MODEL D MODULATION (fidelidad §11.2): MOD MIX (VCO 3 ↔ NOISE) · OSC MOD · FILTER MOD · NOISE PINK |
-        VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD (OFF / 1/3 / 2/3 / FULL) */
-     {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE,
+    {/* MODEL D MODULATION (fidelidad §11.2): MOD MIX (VCO 3 ↔ NOISE) · OSC MOD · FILTER MOD · — |
+        VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD (OFF / 1/3 / 2/3 / FULL). WHITE / PINK: parada NOISE de OSC */
+     {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE,
       GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_LEVEL, {0, 3, 1, 4, false}},
      GF_OSC_EMPTY},
     {/* JUNO-106 LFO: DELAY (ms, fidelidad §11.5) */

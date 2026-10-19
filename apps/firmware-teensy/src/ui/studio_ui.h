@@ -27,7 +27,18 @@ enum class Control : uint8_t {
     Pick0, Pick1, Pick2, Pick3, Pick4, Pick5,
     FxView0, FxView1, FxView2, FxViewNext, EngineCard, SwipeUp, SwipeDown,
     NavLong,                                     ///< NAV push ≥ 500 ms: vuelve a home (theory/04 §3.1)
+    P1Push, P2Push,                              ///< pulsadores de P1 (pin 32) y P2 (pin 9), ADR-004
 };
+
+/// Tarjetas de la vista PANEL en el orden en que NAV las recorre (la cabeza dibuja el mismo orden).
+enum class PanelCard : uint8_t { Osc, Mod, EnvAmp, EnvFilter, Filter, Lfo, SynthFx };
+struct PanelItem {
+    PanelCard card;
+    uint8_t stop;                                ///< parada de OSC o de MOD
+};
+/// Cantidad de tarjetas de PANEL del engine y la tarjeta `i`.
+uint8_t panel_card_count(uint8_t engine);
+PanelItem panel_card(uint8_t engine, uint8_t i);
 
 /// Lo que el sketch tiene que hacer en el sonido después de un control.
 /// LfoShape lleva el paso de NAV como int8_t en `arg`; SfxToggle, el FX de la cadena del synth (0–3).
@@ -83,6 +94,7 @@ private:
     uint8_t env_sel_ = 0;                        ///< ENV: 0 AMP · 1 FILTER (lo elige NAV)
     uint8_t osc_sel_[ENGINE_COUNT] = {};
     uint8_t lfo_stop_[ENGINE_COUNT] = {};         ///< LFO / MOD: 0 = LFO, 1… = paradas de MOD del engine
+    uint8_t panel_cursor_ = 0;                   ///< PANEL: tarjeta (panel_card)
     bool dirty_ = true;
 };
 

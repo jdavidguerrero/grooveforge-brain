@@ -151,9 +151,13 @@ void test_env_filter_y_osc() {
     edit_encoder(p, u, 0, 1, 5, c);                                  // P2 = DETUNE +5 CT
     TEST_ASSERT_EQUAL_HEX16(0x1005, c[0].id);
     TEST_ASSERT_EQUAL_FLOAT(12.0f, p.osc[1][1]);
-    edit_encoder(p, u, 0, 3, -6, c);                                 // ENC R = NOISE (del engine, oscilador 0)
-    TEST_ASSERT_EQUAL_HEX16(0x1003, c[0].id);
-    TEST_ASSERT_EQUAL_FLOAT(0.0f, p.osc[0][3]);
+    TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, u, 0, 3, -6, c));     // el ruido ya no está en los VCO
+    u.cursor = 3;                                                    // parada NOISE: P1 LEVEL · P2 WHITE / PINK
+    edit_encoder(p, u, 0, 0, -6, c);
+    TEST_ASSERT_EQUAL_HEX16(0x100C, c[0].id);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, p.osc[3][0]);
+    edit_encoder(p, u, 0, 1, 1, c);
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, p.osc[3][1]);
     u.cursor = 0;
     TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, u, 0, 1, 1, c));      // VCO 1 no tiene P2
     edit_encoder(p, u, 0, 0, 9, c);                                  // WAVE avanza de a uno

@@ -153,6 +153,9 @@ Encoder enc_l(10, 11), enc_r(13, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34
 // B1–B4, B5 MODE, B6 SHIFT/HOLD, NAV push, ENC L push
 constexpr uint8_t BTN_PINS[8] = {2, 3, 4, 5, 40, 41, 26, 12};
 Bounce btn[8];
+// Pulsadores de P1 y P2 (ADR-004: P1 SW = 32, P2 SW = 9)
+constexpr uint8_t ENC_SW_PINS[2] = {32, 9};
+Bounce enc_sw[2];
 studio::StudioUi ui;
 
 const char* const ENGINE_NAME[6] = {"MOOG MODEL D", "JUNO-106", "PROPHET-5", "OB-6", "DX7", "ARP 2600"};
@@ -332,13 +335,13 @@ void engine_osc(uint8_t e) {
             for (uint8_t i = 0; i < 3; i++) moog.setWaveform(i, w(W4, 4, o[i][0]));
             moog.setDetune(o[1][1]);
             moog.setVco3Interval(o[2][1]);
-            moog.setOscLevels(o[0][2] / 100.0f, o[1][2] / 100.0f, o[2][2] / 100.0f, o[0][3] / 100.0f);
+            moog.setOscLevels(o[0][2] / 100.0f, o[1][2] / 100.0f, o[2][2] / 100.0f, o[3][0] / 100.0f);   // NOISE: 4.ª parada
+            moog.setNoisePink(o[3][1] > 0.5f);
             moog.setPulseWidth(o[0][4] / 100.0f);
             moog.setVco3Detune(o[2][5]);
             {   // MODULATION: MOD MIX · OSC MOD · FILTER MOD · NOISE | VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD
                 const float (&md)[GF_OSC_SLOTS] = patches[0].mod[0];
                 moog.setModulation(md[0] / 100.0f, md[1] > 0.5f, md[2] > 0.5f);
-                moog.setNoisePink(md[3] > 0.5f);
                 moog.setVco3Control(md[4] > 0.5f, md[5] > 0.5f);
                 moog.setOverdrive(md[6] / 100.0f);
                 moog.setFilterKeyboard(uint8_t(lroundf(md[7])));
@@ -705,7 +708,9 @@ void run_action(studio::Result r) {
             break;
         case studio::Action::LfoShape: {
             studio::ParamChange c[1];
-            studio::step_lfo_shape(patch(), ui.engine(), int8_t(r.arg), c);
+            // P1 push recorre las formas en círculo: después de S&H vuelve a SINE
+            const int8_t step = patch().lfo_shape + 1 >= int(GF_LFO_SHAPES) ? int8_t(-patch().lfo_shape) : 1;
+            studio::step_lfo_shape(patch(), ui.engine(), step, c);
             bridge_param(c[0].id, c[0].norm);
             Serial.printf("[UI] forma del LFO %u\n", patch().lfo_shape);
             break;
@@ -925,6 +930,7 @@ void setup() {
     Serial.printf("[test] cpu=%.1f%% (>0 = interrupción de audio corriendo)\n", AudioProcessorUsageMax());
 
     for (int i = 0; i < 8; i++) btn[i].attach(BTN_PINS[i], INPUT_PULLUP), btn[i].interval(5);
+    for (int i = 0; i < 2; i++) enc_sw[i].attach(ENC_SW_PINS[i], INPUT_PULLUP), enc_sw[i].interval(5);
 
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, studio::PANEL_LEDS);
     FastLED.setBrightness(80);
@@ -1035,6 +1041,10 @@ void loop() {
             ui_control(PRESS[i]);
         }
         if (i == 5 && btn[i].rose()) ui_control(Control::B6Up);   // SHIFT / HOLD momentáneos
+    }
+    for (int i = 0; i < 2; i++) {
+        enc_sw[i].update();
+        if (enc_sw[i].fell()) ui_control(i ? Control::P2Push : Control::P1Push);
     }
     leds_update();
     // UI_STATE: en cada cambio (como máximo cada 20 ms, coalescido) y 1 Hz para converger (theory/04 §5.1)

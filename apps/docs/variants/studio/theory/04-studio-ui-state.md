@@ -46,6 +46,8 @@ acción del Teensy: cambia el sonido y después avisa por PARAM_CHANGED / ENGINE
 
 ### 3.1 Cuatro encoders por página y home (aprobado por Juan, 2026-10-16)
 
+- **Pulsadores de P1 y P2** (pines 32 y 9, ADR-004; agregados 2026-10-19): en la parada LFO, P1 push = siguiente
+  forma de onda (en círculo). Siguen disponibles SHIFT + P1.
 - **Home = las vistas** (PERFORM, AI, SPECTRUM, PANEL): ENC L / R son CUTOFF / RES, el filtro global de todos los engines.
 - **En las páginas de edición** (OSC, ENV, LFO, SYNTH FX) los **4 encoders son controles de la página**: P1, P2,
   ENC L, ENC R. Con SHIFT, otros 4 (capa reservada para las paradas por engine; hoy vacía).

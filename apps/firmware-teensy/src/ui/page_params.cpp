@@ -292,11 +292,11 @@ void patch_init(Patch& p, uint8_t e) {
     p.glide = 0.0f;
     p.drive = 0.2f;
     switch (e) {
-        case 0:  // MODEL D: SAW / SAW / SQR, +7 CT, −12 ST, niveles 80 / 72 / 50, ruido 12, PW 50%, FINE 0 CT
+        case 0:  // MODEL D: SAW / SAW / SQR, +7 CT, −12 ST, niveles 80 / 72 / 50, ruido 12 blanco, PW 50%, FINE 0 CT
             o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 7; o[2][1] = -12;
-            o[0][2] = 80; o[1][2] = 72; o[2][2] = 50; o[0][3] = 12;
+            o[0][2] = 80; o[1][2] = 72; o[2][2] = 50; o[3][0] = 12; o[3][1] = 0;
             o[0][4] = 50; o[2][5] = 0;
-            // MODULATION: VCO 3 como fuente, sin destinos, ruido blanco, VCO 3 sigue al teclado, sin overdrive
+            // MODULATION: VCO 3 como fuente, sin destinos, VCO 3 sigue al teclado, sin overdrive
             p.mod[0][0] = 0; p.mod[0][1] = 0; p.mod[0][2] = 0; p.mod[0][3] = 0;
             p.mod[0][4] = 1; p.mod[0][5] = 0; p.mod[0][6] = 0; p.mod[0][7] = 0;
             break;

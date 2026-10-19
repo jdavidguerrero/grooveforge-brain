@@ -25,13 +25,49 @@ void test_nav_recorre_las_vistas() {
     TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
     ui.handle(Control::Nav, 1);
     TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);       // 4.ª vista (fidelidad §11.7)
+    ui.handle(Control::Nav, -1);                           // antes de la primera tarjeta: vista anterior
+    TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
     ui.handle(Control::Nav, 1);
-    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
-    ui.handle(Control::Nav, -1);
-    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
     ui.handle(Control::Key1);                              // B1 desde PANEL y vuelta: regresa a PANEL
     ui.handle(Control::Key1);
     TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+}
+
+// PANEL: NAV recorre las tarjetas, NAV push abre su página con la parada elegida, pasada la última → PERFORM.
+void test_panel_tarjetas_navegables() {
+    StudioUi ui;                                            // Moog: 4 OSC + 1 MOD + 5 = 10 tarjetas
+    ui.handle(Control::Nav, -1);                            // PERFORM → PANEL
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(10, panel_card_count(0));
+    ui.handle(Control::Nav, 3);                             // tarjeta 3 = NOISE
+    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+    ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+    ui.handle(Control::Key1);                               // vuelve a PANEL, en la misma tarjeta
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+    ui.handle(Control::Nav, 1);                             // 4 = MODULATION
+    ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL_UINT8(LFO, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
+    ui.handle(Control::Key3);
+    ui.handle(Control::Nav, 2);                             // 6 = ENV FILTER
+    ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
+    ui.handle(Control::Key2);
+    ui.handle(Control::Nav, 8);                             // pasada la última tarjeta: PERFORM
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
+}
+
+// P1 push en la parada LFO: siguiente forma.
+void test_p1_push_forma_del_lfo() {
+    StudioUi ui;
+    ui.handle(Control::Key3);
+    const Result r = ui.handle(Control::P1Push);
+    TEST_ASSERT_EQUAL(Action::LfoShape, r.action);
+    ui.handle(Control::Nav, 1);                             // en una parada de MOD no hace nada
+    TEST_ASSERT_EQUAL(Action::None, ui.handle(Control::P1Push).action);
 }
 
 void test_b1_abre_osc_y_vuelve_a_la_ultima_vista() {
@@ -93,10 +129,12 @@ void test_presets_save_y_load() {
 }
 
 void test_osc_recorre_los_osciladores_del_engine() {
-    StudioUi ui;                                            // Moog: 3 VCO
+    StudioUi ui;                                            // Moog: 3 VCO + NOISE
     ui.handle(Control::Key1);
     ui.handle(Control::Nav, 1);
     ui.handle(Control::Nav, 1);
+    ui.handle(Control::Nav, 1);
+    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
     ui.handle(Control::Nav, 1);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
     ui.set_engine(1);                                       // Juno: 1 DCO, NAV no hace nada
@@ -231,6 +269,8 @@ int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
     RUN_TEST(test_nav_recorre_las_vistas);
+    RUN_TEST(test_panel_tarjetas_navegables);
+    RUN_TEST(test_p1_push_forma_del_lfo);
     RUN_TEST(test_b1_abre_osc_y_vuelve_a_la_ultima_vista);
     RUN_TEST(test_b4_presets_engine_perform_y_carga_engine);
     RUN_TEST(test_engine_cursor_da_la_vuelta);

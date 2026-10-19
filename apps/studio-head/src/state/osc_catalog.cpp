@@ -70,7 +70,7 @@ const OscSlot FM_D2R    = {"D2 RATE", "MS", SlotKind::Number, 0, 5000, 0, false,
 const OscSlot MD_MIX    = {"NOISE MIX", "%", SlotKind::Number, 0, 100, 0, false, false};   // 0 = VCO 3, 100 = ruido
 const OscSlot MD_OSC    = {"OSC MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_FLT    = {"FILTER MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
-const OscSlot MD_NOISE  = {"NOISE", "", SlotKind::Choice, 0, 1, 0, false, false, L_NOISE};
+const OscSlot MD_NOISE  = {"COLOR", "", SlotKind::Choice, 0, 1, 0, false, false, L_NOISE};
 const OscSlot MD_V3KBD  = {"VCO3 KBD", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_V3LO   = {"VCO3 LO", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_ODRIVE = {"OVERDRIVE", "%", SlotKind::Number, 0, 100, 0, false, false};
@@ -94,7 +94,7 @@ const ModStop OB6_MOD[1] = {
     {"X-MOD", {&PM_ENV, &XM_VCO2, &D_FREQ1, &D_FMODE, &D_PW1, &SYNC_D, nullptr, nullptr}},
 };
 const ModStop MOOG_MOD[1] = {
-    {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, &MD_NOISE, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
+    {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, nullptr, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
 };
 const ModStop JUNO_MOD[1] = {
     {"LFO", {&JU_DELAY, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
@@ -110,11 +110,13 @@ const ModStop NO_MOD = {"", {}};
 
 // Tabla "OSC SLOTS PER ENGINE · FROM FIRMWARE" sincronizada con GF_OSC_SLOT en gf_params.h.
 const OscEngine ENGINES[6] = {
-    // MODEL D: 3 VCO + NOISE. SHIFT: PW global y FINE en VCO 3.
-    {3, 4, {{"VCO 1", true}, {"VCO 2", true}, {"VCO 3", true}, {"NOISE", false}},
-     {{&WAVE, nullptr, &LEVEL, &NOISE, &PW_G, nullptr, nullptr, nullptr},
-      {&WAVE, &DETUNE, &LEVEL, &NOISE, &PW_G, nullptr, nullptr, nullptr},
-      {&WAVE, &INTERVAL, &LEVEL, &NOISE, &PW_G, &FINE, nullptr, nullptr}},
+    // MODEL D: 3 VCO + NOISE (parada propia: LEVEL · WHITE / PINK, como el MIXER del original). SHIFT: PW global y
+    // FINE en VCO 3.
+    {4, 4, {{"VCO 1", true}, {"VCO 2", true}, {"VCO 3", true}, {"NOISE", true}},
+     {{&WAVE, nullptr, &LEVEL, nullptr, &PW_G, nullptr, nullptr, nullptr},
+      {&WAVE, &DETUNE, &LEVEL, nullptr, &PW_G, nullptr, nullptr, nullptr},
+      {&WAVE, &INTERVAL, &LEVEL, nullptr, &PW_G, &FINE, nullptr, nullptr},
+      {&LEVEL, &MD_NOISE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
      {Wave::Saw, Wave::Tri, Wave::Sqr, Wave::Pulse}, 4, false},
     // JUNO-106: 1 DCO (SAW/SQR/PULSE/SAW+PLS) + SUB + NOISE + PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3).
     {1, 3, {{"DCO", true}, {"SUB", false}, {"NOISE", false}},
@@ -185,7 +187,7 @@ void osc_load_defaults(StudioState& s) {
     // MODEL D: SAW / SAW / SQR, +7 CT, −12 ST, niveles 80 / 72 / 50, ruido 12, PW 50%, FINE 0 CT
     set(0, 0, 0, 0); set(0, 1, 0, 0); set(0, 2, 0, 2);
     set(0, 1, 1, 7); set(0, 2, 1, -12);
-    set(0, 0, 2, 80); set(0, 1, 2, 72); set(0, 2, 2, 50); set(0, 0, 3, 12);
+    set(0, 0, 2, 80); set(0, 1, 2, 72); set(0, 2, 2, 50); set(0, 3, 0, 12);   // NOISE: 4.ª parada
     set(0, 0, 4, 50); set(0, 2, 5, 0);
     s.mod_val[0][0][4] = 1;                                   // MODULATION: VCO3 KBD ON (= patch_init)
     // JUNO-106: SAW, SUB 60, NOISE 10, PW 50, CHORUS I (1), HPF FLAT (1)

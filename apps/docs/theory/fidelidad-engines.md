@@ -255,8 +255,9 @@ KBD RATE · D2 RATE.
 | **Ruido WHITE / PINK** | Switch en el panel | `AudioSynthNoisePink` (Teensy Audio Library) + selector |
 | **FILTER KBD** | Dos switches: 1/3 y 2/3 → 0, 1/3, 2/3, 1 | 4 posiciones: cutoff × (f_nota / f_C3)^k |
 
-Panel: parada MOD **MODULATION** = MOD MIX · OSC MOD · FILTER MOD · NOISE PINK | VCO3 KBD · VCO3 LO · OVERDRIVE ·
-FILTER KBD.
+Panel: parada MOD **MODULATION** = MOD MIX · OSC MOD · FILTER MOD | VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD.
+El ruido es una **parada propia de la página OSC** (NOISE: P1 LEVEL · P2 WHITE / PINK), como en el MIXER del
+original: NAV la selecciona igual que a los VCO (corrección tras la prueba en el hardware, 2026-10-19).
 
 ### 11.3 OB-6: forma continua y sync
 
@@ -302,8 +303,10 @@ Panel: parada MOD **PATCH** = MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3
 
 Cuarta vista de la home (después de PERFORM · AI · SPECTRUM): **PANEL**, el panel completo del engine en una
 pantalla, solo lectura, con todas las secciones (OSC por parada, MOD, ENV AMP y FILTER, FILTER, LFO, SYNTH FX) en
-tarjetas, como la serigrafía del original. Se edita desde las páginas; sirve para ver el patch completo de un vistazo
-al cargar un preset.
+tarjetas, como la serigrafía del original. Navegable (corrección tras la prueba en el hardware, 2026-10-19): NAV
+recorre las tarjetas (pasada la última o antes de la primera, sigue a la vista vecina) y NAV push abre la página de
+la tarjeta con su parada elegida (OSC, LFO / MOD, ENV AMP / FILTER, SYNTH FX; FILTER va a PERFORM). B1–B4 vuelven a
+PANEL en la misma tarjeta.
 
 ### 11.8 Cómo se valida
 

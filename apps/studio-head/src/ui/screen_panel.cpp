@@ -41,6 +41,8 @@ lv_obj_t* ScreenPanel::create() {
     for (int i = 0; i < CARDS; ++i) {
         Card& c = _cards[i];
         c.box = rect(_scr, X0 + (i % 4) * (CW + GAP_X), Y0 + (i / 4) * (CH + GAP_Y), CW, CH, SURFACE);
+        lv_obj_set_style_outline_pad(c.box, -2, 0);
+        lv_obj_set_style_outline_color(c.box, lv_color_hex(TEAL_PLUS), 0);
         c.title = label(c.box, T12B, TEAL, "");
         lv_obj_set_style_text_letter_space(c.title, 1, 0);
         lv_obj_set_pos(c.title, 8, 6);
@@ -134,6 +136,9 @@ void ScreenPanel::update(const StudioState& s) {
     }
     if (n < CARDS) set_card(n++, "SYNTH FX", fx, false);
     for (; n < CARDS; ++n) set_card(n, "", "", false);
+    // Tarjeta elegida con NAV (la decide el Teensy: studio::panel_card, mismo orden); NAV push abre su página
+    const int sel = s.ui_remote ? int(s.ui_cursor) : -1;
+    for (int i = 0; i < CARDS; ++i) lv_obj_set_style_outline_width(_cards[i].box, i == sel ? 2 : 0, 0);
 
     _bottom.set_mode(s.mode == Mode::Fx, s.shift);
     static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
@@ -144,5 +149,5 @@ void ScreenPanel::update(const StudioState& s) {
     _bottom.set_param(1, "FLT ENV AMT", v, "%", s.p1);
     std::snprintf(v, sizeof(v), "%d", int(std::lround(s.p2 * 100.0f)));
     _bottom.set_param(2, "LFO\xE2\x86\x92" "CUTOFF", v, "%", s.p2);
-    _bottom.set_nav("VIEW");
+    _bottom.set_nav(s.ui_remote ? "CARD · PUSH OPEN" : "VIEW");
 }

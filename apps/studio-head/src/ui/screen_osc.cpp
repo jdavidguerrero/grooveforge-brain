@@ -54,8 +54,8 @@ int build_lanes(const StudioState& s, uint8_t eng, Lane* L) {
             fmt_signed(val(1, 1), "CT", L[1].sub, sizeof(L[1].sub));
             lane(L[2], "VCO 3", wave(2), val(2, 2) / 100, interval_cycles(val(2, 1) + val(2, 5) / 100.0f));
             fmt_signed(val(2, 1), "ST", L[2].sub, sizeof(L[2].sub));
-            lane(L[3], "NOISE", Wave::Noise, val(0, 3) / 100, 1);
-            std::snprintf(L[3].sub, sizeof(L[3].sub), "WHITE");
+            lane(L[3], "NOISE", Wave::Noise, val(3, 0) / 100, 1);              // parada NOISE: LEVEL · COLOR
+            std::snprintf(L[3].sub, sizeof(L[3].sub), "%s", val(3, 1) > 0.5f ? "PINK" : "WHITE");
             return 4;
         case 1: {  // JUNO-106: DCO + Chorus BBD + HPF
             static const char* const CH_LBL[4] = {"CH OFF", "CH I", "CH II", "CH I+II"};

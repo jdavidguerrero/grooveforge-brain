@@ -32,6 +32,20 @@ uint8_t next_fx_slot(uint8_t slot, int dir) {
 
 }  // namespace
 
+uint8_t panel_card_count(uint8_t e) {
+    return e < ENGINE_COUNT ? uint8_t(GF_OSC_STOP_COUNT[e] + GF_MOD_STOPS[e] + 5) : 0;
+}
+
+PanelItem panel_card(uint8_t e, uint8_t i) {
+    const uint8_t no = GF_OSC_STOP_COUNT[e], nm = GF_MOD_STOPS[e];
+    if (i < no) return {PanelCard::Osc, i};
+    if (i < no + nm) return {PanelCard::Mod, uint8_t(i - no)};
+    static const PanelCard REST[5] = {PanelCard::EnvAmp, PanelCard::EnvFilter, PanelCard::Filter, PanelCard::Lfo,
+                                      PanelCard::SynthFx};
+    const int k = i - no - nm;
+    return {REST[k < 0 ? 0 : k > 4 ? 4 : k], 0};
+}
+
 StudioUi::StudioUi() {
     ui_.fx_slot = FAV_FX_SLOT;
     ui_.fx_on = (1u << 1) | (1u << 2) | (1u << 6);   // mismo arranque que la cabeza
@@ -41,6 +55,7 @@ StudioUi::StudioUi() {
 void StudioUi::set_engine(uint8_t engine) {
     if (engine >= ENGINE_COUNT || engine == engine_) return;
     engine_ = engine;
+    if (panel_cursor_ >= panel_card_count(engine_)) panel_cursor_ = 0;
     refresh_cursor();
     dirty_ = true;
 }
@@ -61,6 +76,7 @@ void StudioUi::refresh_cursor() {
         case LFO:     ui_.cursor = lfo_stop_[engine_]; break;
         case SYNTH_FX: ui_.cursor = sfx_cursor_; break;
         case ENV:     ui_.cursor = env_sel_; break;
+        case PANEL:   ui_.cursor = panel_cursor_; break;
         default:      ui_.cursor = 0; break;
     }
 }
@@ -173,6 +189,35 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             default: break;
         }
         return {};
+    }
+
+    if (ui_.page == PANEL && c == Control::Nav) {       // NAV recorre las tarjetas; pasados los bordes, la vista vecina
+        const int i = int(panel_cursor_) + v, n = panel_card_count(engine_);
+        if (i < 0) {
+            show(next_view(PANEL, -1));
+        } else if (i >= n) {
+            show(next_view(PANEL, 1));
+        } else {
+            panel_cursor_ = uint8_t(i);
+            refresh_cursor();
+        }
+        return {};
+    }
+    if (ui_.page == PANEL && c == Control::NavPush) {   // abre la página de la tarjeta con su parada elegida
+        const PanelItem it = panel_card(engine_, panel_cursor_);
+        switch (it.card) {
+            case PanelCard::Osc: osc_sel_[engine_] = it.stop; show(OSC); break;
+            case PanelCard::Mod: lfo_stop_[engine_] = uint8_t(it.stop + 1); show(LFO); break;
+            case PanelCard::EnvAmp: env_sel_ = 0; show(ENV); break;
+            case PanelCard::EnvFilter: env_sel_ = 1; show(ENV); break;
+            case PanelCard::Filter: show(PERFORM); break;     // cutoff / res / FLT ENV AMT viven en la home
+            case PanelCard::Lfo: lfo_stop_[engine_] = 0; show(LFO); break;
+            case PanelCard::SynthFx: show(SYNTH_FX); break;
+        }
+        return {};
+    }
+    if (ui_.page == LFO && c == Control::P1Push && lfo_stop_[engine_] == 0) {   // P1 push: siguiente forma del LFO
+        return {Action::LfoShape, 1};
     }
 
     if (ui_.page == OSC && c == Control::Nav) {
