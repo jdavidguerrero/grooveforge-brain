@@ -38,7 +38,8 @@ void BridgeSlave::init() {
 void BridgeSlave::poll() {
     /* Timeout de frame parcial: si el frame no termina en BRIDGE_FRAME_TIMEOUT_MS,
      * descartar y volver a IDLE para no bloquear el bus. */
-    if (_rx_state != RxState::IDLE && _rx_state != RxState::GOT_CMD) {
+    // También en GOT_CMD: un byte suelto que parezca CMD dejaba la máquina esperando LEN para siempre.
+    if (_rx_state != RxState::IDLE) {
         if (millis() - _rx_start_ms > BRIDGE_FRAME_TIMEOUT_MS) {
             Serial.println("[bridge] frame timeout — discarding partial frame");
             reset_rx();

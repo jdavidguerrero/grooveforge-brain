@@ -98,9 +98,9 @@ void BridgeMaster::init() {
 /* ── poll ──────────────────────────────────────────────────────────────────── */
 
 void BridgeMaster::poll() {
-    /* Timeout de frame parcial: protege contra bytes perdidos que dejarían
-     * la máquina de estados colgada en READING_PAYLOAD indefinidamente. */
-    if (_rx_state != RxState::IDLE && _rx_state != RxState::GOT_CMD) {
+    /* Timeout de frame parcial: protege contra bytes perdidos o espurios que dejarían
+     * la máquina de estados colgada en GOT_CMD / READING_PAYLOAD indefinidamente. */
+    if (_rx_state != RxState::IDLE) {
         if (millis() - _rx_start_ms > BRIDGE_FRAME_TIMEOUT_MS) {
             Serial.println("[master] frame timeout — discarding partial frame");
             reset_rx();
