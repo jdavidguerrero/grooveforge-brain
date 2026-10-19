@@ -64,19 +64,20 @@ LedRing led_ring;
 
 /* ── Colores internos ─────────────────────────────────────────────────────── */
 
+// const, no constexpr: el constructor de CRGB no es constexpr en la FastLED 3.4 de Teensyduino.
 /* Teal para SYNTH mode — versiones: bright, medium, dim */
-static constexpr CRGB TEAL_BRIGHT  = CRGB(0x1D, 0x9E, 0x75);  ///< GF_COLOR_TEAL
-static constexpr CRGB TEAL_MEDIUM  = CRGB(0x0D, 0x4A, 0x38);  ///< ~50% teal
-static constexpr CRGB TEAL_DIM     = CRGB(0x05, 0x18, 0x12);  ///< ~15% teal
+static const CRGB TEAL_BRIGHT  = CRGB(0x1D, 0x9E, 0x75);  ///< GF_COLOR_TEAL
+static const CRGB TEAL_MEDIUM  = CRGB(0x0D, 0x4A, 0x38);  ///< ~50% teal
+static const CRGB TEAL_DIM     = CRGB(0x05, 0x18, 0x12);  ///< ~15% teal
 
 /* Purple para FX mode */
-static constexpr CRGB PURPLE_BRIGHT = CRGB(0x53, 0x4A, 0xB7);  ///< GF_COLOR_PURPLE
-static constexpr CRGB PURPLE_DIM    = CRGB(0x15, 0x12, 0x2E);  ///< ~25% purple
+static const CRGB PURPLE_BRIGHT = CRGB(0x53, 0x4A, 0xB7);  ///< GF_COLOR_PURPLE
+static const CRGB PURPLE_DIM    = CRGB(0x15, 0x12, 0x2E);  ///< ~25% purple
 
 /* Colores keycap fijos */
-static constexpr CRGB WHITE_DIM     = CRGB(0x30, 0x30, 0x30);  ///< B1 HOME
-static constexpr CRGB RED_DIM       = CRGB(0x40, 0x05, 0x05);  ///< B4 PANIC
-static constexpr CRGB CYAN_DIM      = CRGB(0x08, 0x25, 0x28);  ///< B3 TAP TEMPO idle
+static const CRGB WHITE_DIM     = CRGB(0x30, 0x30, 0x30);  ///< B1 HOME
+static const CRGB RED_DIM       = CRGB(0x40, 0x05, 0x05);  ///< B4 PANIC
+static const CRGB CYAN_DIM      = CRGB(0x08, 0x25, 0x28);  ///< B3 TAP TEMPO idle
 
 /* Colores quadrant SYNTH por grupo:
  *   OSC    = verde-teal claro
@@ -84,7 +85,7 @@ static constexpr CRGB CYAN_DIM      = CRGB(0x08, 0x25, 0x28);  ///< B3 TAP TEMPO
  *   FILTER = cyan
  *   LFO    = azul-teal
  */
-static constexpr CRGB QUAD_COLORS[4] = {
+static const CRGB QUAD_COLORS[4] = {
     CRGB(0x1D, 0x9E, 0x75),  // OSC    — teal
     CRGB(0x20, 0x80, 0x60),  // ENV    — teal oscuro
     CRGB(0x1F, 0xB6, 0xBB),  // FILTER — cyan (= camelot C)

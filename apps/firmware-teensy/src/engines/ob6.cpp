@@ -1,39 +1,9 @@
 // apps/firmware-teensy/src/engines/ob6.cpp
-// Sprint 38 — OB-6 Engine: 6-voice polyphony con 2 VCOs + sub + noise por voz.
-// Theory: apps/docs/sprints/38-ob6-engine.md
+// Sequential / Oberheim OB-6 Engine: 6-voice polyphony with Oberheim SEM 12dB/oct SVF (LP↔Notch↔HP),
+// PolyBLEP VCOs, VCO2 Fine Detune, X-MOD & AnalogEnv RC.
 
 #include "ob6.h"
 #include <math.h>
-
-// ── Constructor ───────────────────────────────────────────────────────────────
-//
-// Cada AudioConnection se construye con una referencia al src y al dst.
-// La lista de inicialización garantiza que los arrays (_vco1, _vco2, etc.)
-// se construyen antes que las conexiones (orden de declaración en el header).
-//
-// Por qué conexiones individuales (no array de AudioConnection):
-// AudioConnection registra src/dst en el grafo global durante la construcción.
-// No tiene copy constructor — un array de AudioConnections requeriría llamar
-// al copy ctor en la brace-initialization, lo que no compila.
-//
-// Layout de conexiones (44 totales):
-//   _c0–_c5:   voz 0  (vco1→mix(0), vco2→mix(1), sub→mix(2), noise→mix(3), mix→filter, filter(LP,port0)→ampEnv)
-//   _c6–_c11:  voz 1
-//   _c12–_c17: voz 2
-//   _c18–_c23: voz 3
-//   _c24–_c29: voz 4
-//   _c30–_c35: voz 5
-//   _c36:      ampEnv[0] → masterMixA ch0
-//   _c37:      ampEnv[1] → masterMixA ch1
-//   _c38:      ampEnv[2] → masterMixA ch2
-//   _c39:      ampEnv[3] → masterMixA ch3
-//   _c40:      ampEnv[4] → masterMixB ch0
-//   _c41:      ampEnv[5] → masterMixB ch1
-//   _c42:      masterMixA → finalMix ch0
-//   _c43:      masterMixB → finalMix ch1
-//
-// AudioFilterStateVariable: puerto 0 = LP, 1 = BP, 2 = HP.
-// Conectamos siempre al puerto 0 (LP). setFilterMode() es un placeholder v1.
 
 OB6::OB6() :
     // Voz 0
@@ -42,7 +12,7 @@ OB6::OB6() :
     _c2 (_sub[0],       0, _voiceMix[0], 2),
     _c3 (_noise[0],     0, _voiceMix[0], 3),
     _c4 (_voiceMix[0],  0, _filter[0],   0),
-    _c5 (_filter[0],    0, _ampEnv[0],   0),   // port 0 = LP output
+    _c5 (_filter[0],    0, _ampEnv[0],   0),
     // Voz 1
     _c6 (_vco1[1],      0, _voiceMix[1], 0),
     _c7 (_vco2[1],      0, _voiceMix[1], 1),
@@ -90,96 +60,81 @@ OB6::OB6() :
     _c43(_masterMixB,   0, _finalMix,    1)
 {}
 
-// ── begin() ───────────────────────────────────────────────────────────────────
-
 void OB6::begin(float volume) {
-    (void)volume;  // volumen lo gestiona el codec compartido (audio_graph::init)
+    (void)volume;
 
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        // VCO1: sawtooth — carácter primario del OB-6 (Juno-style DCO rich harmonics)
+        // VCOs discretos estilo Tom Oberheim SEM: drift orgánico un poco más suelto que DCO
+        _vco1[i].setSeed(0x0B601001u + i * 131u);
+        _vco2[i].setSeed(0x0B602001u + i * 131u);
+        _sub[i].setSeed(0x0B603001u + i * 131u);
+        _vco1[i].setDrift(0.00085f);
+        _vco2[i].setDrift(0.00095f);
+        _sub[i].setDrift(0.00050f);
+
         _vco1[i].begin(WAVEFORM_SAWTOOTH);
         _vco1[i].amplitude(1.0f);
         _vco1[i].frequency(440.0f);
 
-        // VCO2: sawtooth — se puede detunar via setVco2Interval()
         _vco2[i].begin(WAVEFORM_SAWTOOTH);
         _vco2[i].amplitude(1.0f);
         _vco2[i].frequency(440.0f);
 
-        // Sub oscillator: square, 1 octava por debajo de VCO1.
-        // La frecuencia real se asigna en _triggerVoice() con freq * 0.5.
-        // Inicializamos en square para que begin() no dependa de un noteOn previo.
         _sub[i].begin(WAVEFORM_SQUARE);
         _sub[i].amplitude(1.0f);
         _sub[i].frequency(220.0f);
 
-        // Noise: amplitude=0 en init, controlado via voiceMix ch3
-        _noise[i].amplitude(0.0f);
+        // Importante: noise en 1.0f para que voiceMix ch3 pueda mezclarlo cuando el usuario suba NOISE
+        _noise[i].amplitude(1.0f);
 
-        // VoiceMix: defaults del OB-6 real — VCO1/VCO2 dominantes, sub sutil, noise off
-        _voiceMix[i].gain(0, 0.45f);  // vco1
-        _voiceMix[i].gain(1, 0.45f);  // vco2
-        _voiceMix[i].gain(2, 0.10f);  // sub
-        _voiceMix[i].gain(3, 0.0f);   // noise — off por defecto
+        _voiceMix[i].gain(0, _lvl1);
+        _voiceMix[i].gain(1, _lvl2);
+        _voiceMix[i].gain(2, _lvlSub);
+        _voiceMix[i].gain(3, _lvlNoise * 0.5f);
 
-        // VCF: AudioFilterStateVariable — placeholder digital para el CEM3320 del OB-6.
-        // octaveControl(1.0f): 1 octava por unidad de modulación lineal (rango SVF).
+        // Filtro Oberheim SEM 12 dB/oct State-Variable
         _filter[i].frequency(_filterCutoff);
         _filter[i].resonance(_filterResonance);
+        _filter[i].set_morph(_filterMorph);
+        _filter[i].set_bp_mode(_filterBp);
+        _filter[i].set_drive(1.3f);
         _filter[i].octaveControl(1.0f);
 
-        // VCA envelope: ADSR comparte el mismo tiempo que el filter envelope
-        _ampEnv[i].attack(_filterEnvAttackMs);
-        _ampEnv[i].decay(_filterEnvDecayMs);
-        _ampEnv[i].sustain(_filterEnvSustain);
-        _ampEnv[i].release(_filterEnvReleaseMs);
+        _filterEnv[i].setAttack(10.0f);
+        _filterEnv[i].setDecay(300.0f);
+        _filterEnv[i].setSustain(0.6f);
+        _filterEnv[i].setRelease(500.0f);
 
-        // Estado inicial del filter envelope
-        _filterEnvStage[i]   = EnvStage::IDLE;
-        _filterEnvStageMs[i] = 0;
-        _filterEnvLevel[i]   = 0.0f;
+        _ampEnv[i].attack(10.0f);
+        _ampEnv[i].decay(300.0f);
+        _ampEnv[i].sustain(0.6f);
+        _ampEnv[i].release(500.0f);
     }
 
-    // masterMixA: 4 voces × 0.25 = 1.0 nivel máximo en bus
-    _masterMixA.gain(0, 0.25f);
-    _masterMixA.gain(1, 0.25f);
-    _masterMixA.gain(2, 0.25f);
-    _masterMixA.gain(3, 0.25f);
-
-    // masterMixB: voces 4-5 en canales 0-1; canales 2-3 silenciados
-    _masterMixB.gain(0, 0.25f);
-    _masterMixB.gain(1, 0.25f);
-    _masterMixB.gain(2, 0.0f);
-    _masterMixB.gain(3, 0.0f);
-
-    // finalMix: combina ambos submixers sin atenuación adicional
-    _finalMix.gain(0, 1.0f);
-    _finalMix.gain(1, 1.0f);
-    _finalMix.gain(2, 0.0f);
-    _finalMix.gain(3, 0.0f);
+    for (uint8_t ch = 0; ch < 4; ch++) {
+        _masterMixA.gain(ch, 0.25f);
+        _masterMixB.gain(ch, ch < 2 ? 0.25f : 0.0f);
+        _finalMix.gain(ch, ch < 2 ? 1.0f : 0.0f);
+    }
 
     _lastUpdateMs = millis();
 }
 
-// ── Note control ──────────────────────────────────────────────────────────────
-
 void OB6::noteOn(uint8_t midi_note, float velocity) {
-    (void)velocity;
+    if (velocity < 0.0f) velocity = 0.0f;
+    if (velocity > 1.0f) velocity = 1.0f;
 
-    // Re-trigger si la nota ya suena — evita duplicar voces para la misma nota
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
 
-    _triggerVoice((uint8_t)voice, midi_note);
+    _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
 void OB6::noteOff(uint8_t midi_note) {
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice >= 0) _releaseVoice((uint8_t)voice);
 }
-
-// ── VCO params ────────────────────────────────────────────────────────────────
 
 void OB6::setVco1Waveform(uint16_t waveform) {
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
@@ -195,29 +150,37 @@ void OB6::setVco2Waveform(uint16_t waveform) {
 
 void OB6::setVco2Interval(float semitones) {
     _vco2Semitones = semitones;
-    // Actualizar frecuencias de VCO2 en voces activas
-    for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        if (_voices[i].midi_note != 255) {
-            float baseFreq = _midiToFreq(_voices[i].midi_note);
-            _vco2[i].frequency(baseFreq * _semitonesToRatio(_vco2Semitones));
-        }
-    }
+}
+
+void OB6::setVco2Detune(float cents) {
+    _vco2DetuneCents = cents;
+}
+
+void OB6::setPulseWidth(float pw1, float pw2) {
+    if (pw1 < 0.05f) pw1 = 0.05f;
+    if (pw1 > 0.95f) pw1 = 0.95f;
+    if (pw2 < 0.05f) pw2 = 0.05f;
+    if (pw2 > 0.95f) pw2 = 0.95f;
+    _pw1 = pw1;
+    _pw2 = pw2;
 }
 
 void OB6::setOscMix(float vco1, float vco2, float sub, float noise) {
+    _lvl1     = vco1;
+    _lvl2     = vco2;
+    _lvlSub   = sub;
+    _lvlNoise = noise;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        _voiceMix[i].gain(0, vco1);
-        _voiceMix[i].gain(1, vco2);
-        _voiceMix[i].gain(2, sub);
-        _voiceMix[i].gain(3, noise);
+        const float vel = 0.35f + 0.65f * _voices[i].velocity;
+        _voiceMix[i].gain(0, _lvl1 * vel);
+        _voiceMix[i].gain(1, _lvl2 * vel);
+        _voiceMix[i].gain(2, _lvlSub * vel);
+        _voiceMix[i].gain(3, _lvlNoise * 0.5f * vel);
     }
 }
 
-// ── Filter params ─────────────────────────────────────────────────────────────
-
 void OB6::setFilterCutoff(float hz) {
     _filterCutoff = hz;
-    // La frecuencia real se aplica en update() con la modulación del envelope sumada
 }
 
 void OB6::setFilterResonance(float q) {
@@ -231,46 +194,86 @@ void OB6::setFilterEnvAmount(float amount) {
     _filterEnvAmt = amount;
 }
 
-void OB6::setFilterMode(uint8_t mode) {
-    // v1: solo LP (puerto 0 hardcodeado en las AudioConnections del constructor).
-    // Para soportar BP/HP en runtime se necesita un AudioMixer4 por voz que sume
-    // las 3 salidas del SVF con gains proporcionales — pendiente sprint futuro.
-    // El campo _filterMode se almacena para compatibilidad futura.
-    _filterMode = mode;
-    // No-op intencional. Ver Doxygen en ob6.h para la justificación.
+void OB6::setFilterMorph(float morph) {
+    if (morph < 0.0f) morph = 0.0f;
+    if (morph > 1.0f) morph = 1.0f;
+    _filterMorph = morph;
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filter[i].set_morph(morph);
+    }
 }
 
-// ── Envelope params ───────────────────────────────────────────────────────────
+void OB6::setFilterBpMode(bool bp) {
+    _filterBp = bp;
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filter[i].set_bp_mode(bp);
+    }
+}
+
+void OB6::setFilterMode(uint8_t mode) {
+    _filterMode = mode;
+    switch (mode) {
+        case 0: // LP
+            setFilterBpMode(false);
+            setFilterMorph(0.0f);
+            break;
+        case 1: // BP
+            setFilterBpMode(true);
+            break;
+        case 2: // HP
+            setFilterBpMode(false);
+            setFilterMorph(1.0f);
+            break;
+        case 3: // Notch
+        default:
+            setFilterBpMode(false);
+            setFilterMorph(0.5f);
+            break;
+    }
+}
+
+void OB6::setDrive(float drive) {
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filter[i].set_drive(drive);
+    }
+}
 
 void OB6::setAttack(float ms) {
-    _filterEnvAttackMs = ms;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filterEnv[i].setAttack(ms);
         _ampEnv[i].attack(ms);
     }
 }
 
 void OB6::setDecay(float ms) {
-    _filterEnvDecayMs = ms;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filterEnv[i].setDecay(ms);
         _ampEnv[i].decay(ms);
     }
 }
 
 void OB6::setSustain(float level) {
-    _filterEnvSustain = level;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filterEnv[i].setSustain(level);
         _ampEnv[i].sustain(level);
     }
 }
 
 void OB6::setRelease(float ms) {
-    _filterEnvReleaseMs = ms;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _filterEnv[i].setRelease(ms);
         _ampEnv[i].release(ms);
     }
 }
 
-// ── update() — llamar desde loop() ────────────────────────────────────────────
+void OB6::set_dsp_enabled(bool on) {
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _vco1[i].enable(on);
+        _vco2[i].enable(on);
+        _sub[i].enable(on);
+        _filter[i].set_enabled(on);
+    }
+}
 
 void OB6::update() {
     uint32_t now = millis();
@@ -279,38 +282,67 @@ void OB6::update() {
 
     if (dt == 0) return;
 
-    for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        // 1. Filter envelope software (misma FSM que Prophet5)
-        _updateFilterEnv(i, dt);
+    const float glide_k = _glideMs >= 1.0f ? (1.0f - expf(-float(dt) / _glideMs)) : 1.0f;
 
-        // 2. Aplicar cutoff + modulación del envelope al VCF de esta voz.
-        // El envelope agrega hasta _filterEnvAmt × 6000 Hz sobre el cutoff base.
-        float modulated = _filterCutoff + _filterEnvAmt * _filterEnvLevel[i] * 6000.0f;
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        const float envLevel  = _filterEnv[i].update((float)dt);
+        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+
+        // X-MOD combinada: Filter Env (unipolar) + VCO2/LFO
+        const float xmodSig = _xmEnv * envLevel + _xmVco2 * _lfo.lfo;
+
+        // 1. Cutoff del filtro SEM 12 dB/oct
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);
-        // El OB-6 no tiene FM cross-modulation entre VCOs (a diferencia del Prophet-5
-        // Poly-Mod). Sin ningún mod adicional, update() es más simple.
+
+        // 2. X-MOD → Filter Mode Morph (barrido continuo LP ↔ Notch ↔ HP típico de Oberheim)
+        if (_xmMorph) {
+            float m = _filterMorph + 0.75f * xmodSig;
+            if (m < 0.0f) m = 0.0f;
+            if (m > 1.0f) m = 1.0f;
+            _filter[i].set_morph(m);
+        }
+
+        // 3. Glide + Pitch + VCO2 Fine Detune + X-MOD → Freq VCO1
+        _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
+        const float fBase = _voices[i].currentHz * _lfo.pitch_ratio;
+        const float f1 = _xmFreq1 ? (fBase * _semitonesToRatio(24.0f * xmodSig)) : fBase;
+        const float f2 = fBase * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
+
+        _vco1[i].frequency(f1);
+        _vco2[i].frequency(f2);
+        _sub[i].frequency(f1 * 0.5f);
+
+        // 4. PWM (LFO + X-MOD sobre VCO1)
+        const float xmPw = _xmPw1 ? (0.40f * xmodSig) : 0.0f;
+        _vco1[i].pulseWidth(_pw1 + 0.42f * _lfo.pwm + xmPw);
+        _vco2[i].pulseWidth(_pw2 + 0.42f * _lfo.pwm);
     }
 }
 
-// ── Private helpers ───────────────────────────────────────────────────────────
-
-void OB6::_triggerVoice(uint8_t voice_idx, uint8_t midi_note) {
+void OB6::_triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity) {
     float freq = _midiToFreq(midi_note);
+    _voices[voice_idx].targetHz = freq;
+    if (_glideMs < 1.0f || _voices[voice_idx].midi_note == 255) {
+        _voices[voice_idx].currentHz = freq;
+    }
+    _voices[voice_idx].velocity = velocity;
 
-    _vco1[voice_idx].frequency(freq);
-    _vco2[voice_idx].frequency(freq * _semitonesToRatio(_vco2Semitones));
-    // Sub osc: 1 octava por debajo de VCO1 — multiplicar por 0.5 es equivalente
-    // a bajar exactamente 12 semitones (factor 2^(-1) = 0.5).
-    _sub[voice_idx].frequency(freq * 0.5f);
+    const float vel = 0.35f + 0.65f * velocity;
+    _voiceMix[voice_idx].gain(0, _lvl1 * vel);
+    _voiceMix[voice_idx].gain(1, _lvl2 * vel);
+    _voiceMix[voice_idx].gain(2, _lvlSub * vel);
+    _voiceMix[voice_idx].gain(3, _lvlNoise * 0.5f * vel);
+
+    const float f = _voices[voice_idx].currentHz;
+    _vco1[voice_idx].frequency(f);
+    _vco2[voice_idx].frequency(f * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f));
+    _sub[voice_idx].frequency(f * 0.5f);
 
     _ampEnv[voice_idx].noteOn();
-
-    // Re-iniciar filter envelope desde cero (retrigger limpio)
-    _filterEnvStage[voice_idx]   = EnvStage::ATTACK;
-    _filterEnvStageMs[voice_idx] = 0;
-    _filterEnvLevel[voice_idx]   = 0.0f;
+    _filterEnv[voice_idx].noteOn(false);
 
     _voices[voice_idx].midi_note = midi_note;
     _voices[voice_idx].active    = true;
@@ -319,11 +351,7 @@ void OB6::_triggerVoice(uint8_t voice_idx, uint8_t midi_note) {
 
 void OB6::_releaseVoice(uint8_t voice_idx) {
     _ampEnv[voice_idx].noteOff();
-
-    _filterEnvStage[voice_idx]   = EnvStage::RELEASE;
-    _filterEnvStageMs[voice_idx] = 0;
-
-    // Marcar como libre — midi_note=255 es el centinela de "voz disponible"
+    _filterEnv[voice_idx].noteOff();
     _voices[voice_idx].midi_note = 255;
     _voices[voice_idx].active    = false;
 }
@@ -343,10 +371,8 @@ int8_t OB6::_findVoiceForNote(uint8_t midi_note) {
 }
 
 int8_t OB6::_stealOldestVoice() {
-    // Robar la voz con menor age (la que lleva más tiempo sonando)
     uint8_t  oldest_idx = 0;
     uint32_t oldest_age = _voices[0].age;
-
     for (uint8_t i = 1; i < OB6_VOICES; i++) {
         if (_voices[i].age < oldest_age) {
             oldest_age = _voices[i].age;
@@ -356,72 +382,10 @@ int8_t OB6::_stealOldestVoice() {
     return (int8_t)oldest_idx;
 }
 
-void OB6::_updateFilterEnv(uint8_t voice_idx, uint32_t dt_ms) {
-    // Misma FSM que Prophet5._updateFilterEnv.
-    // Ver prophet_5.cpp para comentarios detallados del algoritmo.
-    _filterEnvStageMs[voice_idx] += dt_ms;
-
-    switch (_filterEnvStage[voice_idx]) {
-        case EnvStage::IDLE:
-            _filterEnvLevel[voice_idx] = 0.0f;
-            break;
-
-        case EnvStage::ATTACK:
-            if (_filterEnvAttackMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = 1.0f;
-                _filterEnvStage[voice_idx] = EnvStage::DECAY;
-                _filterEnvStageMs[voice_idx] = 0;
-            } else {
-                _filterEnvLevel[voice_idx] =
-                    (float)_filterEnvStageMs[voice_idx] / _filterEnvAttackMs;
-                if (_filterEnvLevel[voice_idx] >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = 1.0f;
-                    _filterEnvStage[voice_idx] = EnvStage::DECAY;
-                    _filterEnvStageMs[voice_idx] = 0;
-                }
-            }
-            break;
-
-        case EnvStage::DECAY:
-            if (_filterEnvDecayMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = _filterEnvSustain;
-                _filterEnvStage[voice_idx] = EnvStage::SUSTAIN;
-            } else {
-                float t = (float)_filterEnvStageMs[voice_idx] / _filterEnvDecayMs;
-                _filterEnvLevel[voice_idx] = 1.0f - t * (1.0f - _filterEnvSustain);
-                if (t >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = _filterEnvSustain;
-                    _filterEnvStage[voice_idx] = EnvStage::SUSTAIN;
-                }
-            }
-            break;
-
-        case EnvStage::SUSTAIN:
-            _filterEnvLevel[voice_idx] = _filterEnvSustain;
-            break;
-
-        case EnvStage::RELEASE:
-            if (_filterEnvReleaseMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = 0.0f;
-                _filterEnvStage[voice_idx] = EnvStage::IDLE;
-            } else {
-                float t = (float)_filterEnvStageMs[voice_idx] / _filterEnvReleaseMs;
-                _filterEnvLevel[voice_idx] = _filterEnvSustain * (1.0f - t);
-                if (t >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = 0.0f;
-                    _filterEnvStage[voice_idx] = EnvStage::IDLE;
-                }
-            }
-            break;
-    }
-}
-
 float OB6::_midiToFreq(uint8_t midi_note) {
-    // A4 (MIDI 69) = 440Hz, cada semitono = factor 2^(1/12)
     return 440.0f * powf(2.0f, (midi_note - 69) / 12.0f);
 }
 
 float OB6::_semitonesToRatio(float semitones) {
-    // 12 semitones = 1 octava = factor 2.0
     return powf(2.0f, semitones / 12.0f);
 }

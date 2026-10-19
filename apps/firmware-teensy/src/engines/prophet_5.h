@@ -2,249 +2,178 @@
 
 // Teensy Audio Library (oficial — PaulStoffregen/Audio, incluida con Teensyduino)
 #include <Audio.h>
-// Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013)
+// Código custom — filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013) y AnalogEnv RC
 #include "../audio/moog_ladder.h"
+#include "../dsp/analog_env.h"
+#include "lfo_mod.h"
+#include "prophet_osc_core.h"
 
 static constexpr uint8_t PROPHET_VOICES = 5;
 
 /**
- * @brief Motor de síntesis Sequential Circuits Prophet-5 para GrooveForge Brain.
+ * @brief Osciladores de una voz del Prophet-5 como objeto de audio (código custom, subclase de AudioStream).
  *
- * 5 voces polifónicas, cada una con 2 VCOs + VCF + VCA envelope.
- * Signal flow por voz:
- *   VCO-A ──┐
- *           ├──→ VoiceMixer ──→ VCF ──→ VCA ──→ MasterMixer ──→ Output
- *   VCO-B ──┘
- *
- * Voice stealing: FIFO — se roba la voz con menor age counter cuando todas están
- * activas. Ver theory doc §"Voice Allocation".
- *
- * Cross-modulation (Poly-Mod): VCO-B modula la frecuencia de VCO-A en software.
- * Aproximación FM analógico — no FM exacto. Ver theory doc §"Cross-Modulation".
- *
- * CPU estimado: ~3% con 5 voces activas (01-architecture.md §4.1 budget: ~30%).
- * AudioMemory: 72 bloques = 18.4KB (budget: 400KB).
- *
- * Theory completa: apps/docs/sprints/07-prophet-5.md
- * Refs: apps/docs/01-architecture.md §4.1
- *       apps/docs/05-fx-architecture.md §2
+ * Envuelve a Prophet5OscCore: A, B, ruido, POLY-MOD a velocidad de audio y sync (theory/prophet-5-completo.md §2).
+ * Los parámetros los fija el engine a tasa de control con set(); el objeto los lee en la ISR de audio.
+ */
+class Prophet5Osc : public AudioStream {
+public:
+    Prophet5Osc() : AudioStream(0, nullptr) {}
+
+    /// Parámetros del próximo bloque (copia protegida contra la ISR de audio).
+    void set(const Prophet5OscParams& p) {
+        __disable_irq();
+        _p = p;
+        __enable_irq();
+    }
+
+    /// false = no genera nada (engine inactivo: no gasta CPU).
+    void enable(bool on) { _on = on; }
+
+    /// Fase actual [0,1) del OSC B para modulación de POLY-MOD → FILTER.
+    float phase_b() const { return _core.phase_b(); }
+
+    void update() override;
+
+private:
+    Prophet5OscCore _core;
+    Prophet5OscParams _p;
+    volatile bool _on = true;
+};
+
+/**
+ * @brief Engine Prophet-5: 5 voces, osciladores propios (POLY-MOD, sync, saw + pulse),
+ *        MoogLadder4P con Drive, AnalogEnv RC sin salto en release y VCA por voz.
  */
 class Prophet5 {
 public:
     Prophet5();
 
-    /**
-     * @brief Inicializa el codec SGTL5000 y el grafo de audio de 5 voces.
-     *
-     * Debe llamarse una vez en setup(), antes de cualquier noteOn.
-     * Llama AudioMemory(72) internamente — no llamar AudioMemory() desde el sketch.
-     *
-     * @param volume Volumen del codec, 0.0–1.0 (default 0.5)
-     */
     void begin(float volume = 0.5f);
 
-    /**
-     * @brief Dispara una nota polifónica.
-     *
-     * Busca una voz libre. Si no hay voces libres, roba la voz con menor age
-     * (FIFO stealing). Si la nota ya está sonando, hace re-trigger en la misma voz.
-     *
-     * @param midi_note Nota MIDI (0–127). A4 = 69.
-     * @param velocity  Velocidad normalizada 0.0–1.0 (reservado — no implementado).
-     */
     void noteOn(uint8_t midi_note, float velocity = 1.0f);
-
-    /**
-     * @brief Suelta una nota. Solo afecta la voz que tiene asignada esa nota MIDI.
-     *
-     * @param midi_note Nota MIDI a soltar (0–127).
-     */
     void noteOff(uint8_t midi_note);
 
-    /**
-     * @brief Waveform para VCO-A de todas las voces.
-     *
-     * @param waveform Constante Teensy Audio Library: WAVEFORM_SAWTOOTH,
-     *                 WAVEFORM_SQUARE, WAVEFORM_SINE, etc.
-     */
-    void setOscAWaveform(uint16_t waveform);
+    // ── OSC A ──────────────────────────────────────────────────────────────────
+    void setOscAFreq(float semitones) { _oscASemitones = semitones; }
+    void setOscAShape(bool saw, bool pulse) { _aSaw = saw; _aPulse = pulse; }
+    void setOscAPw(float pw) { _pwA = pw; }
+    void setSync(bool on) { _sync = on; }
 
-    /**
-     * @brief Waveform para VCO-B de todas las voces.
-     *
-     * @param waveform Constante Teensy Audio Library.
-     */
-    void setOscBWaveform(uint16_t waveform);
+    // ── OSC B ──────────────────────────────────────────────────────────────────
+    void setOscBInterval(float semitones) { _oscBSemitones = semitones; }
+    void setOscBFine(float cents) { _oscBFine = cents; }
+    void setOscBShape(bool saw, bool tri, bool pulse) { _bSaw = saw; _bTri = tri; _bPulse = pulse; }
+    void setOscBPw(float pw) { _pwB = pw; }
+    void setOscBKeyboard(bool on) { _bKeyboard = on; }
+    void setOscBLoFreq(bool on) { _bLoFreq = on; }
 
-    /**
-     * @brief Intervalo de VCO-B relativo a VCO-A en semitones.
-     *
-     * 0 = unísono, 12 = octava arriba, 7 = quinta justa, -12 = octava abajo.
-     * El intervalo se aplica a todas las voces simultáneamente.
-     *
-     * @param semitones Intervalo en semitones (-24 a +24).
-     */
-    void setOscBInterval(float semitones);
-
-    /**
-     * @brief Cantidad de cross-modulation de VCO-B sobre VCO-A (Poly-Mod).
-     *
-     * 0.0 = ninguna modulación (sonido puro dos VCOs).
-     * 0.3 = modulación moderada (carácter FM sutil).
-     * 1.0 = modulación máxima (sonidos metálicos/campana inarmónicos).
-     *
-     * Aproximación FM analógico — ver theory doc §"Cross-Modulation".
-     *
-     * @param amount Profundidad de crossmod, 0.0–1.0.
-     */
-    void setCrossmod(float amount);
-
-    /**
-     * @brief Mix entre VCO-A y VCO-B en cada voz.
-     *
-     * @param oscA Gain de VCO-A (0.0–1.0)
-     * @param oscB Gain de VCO-B (0.0–1.0)
-     */
-    void setOscMix(float oscA, float oscB);
-
-    /**
-     * @brief Frecuencia de corte del VCF digital de todas las voces.
-     *
-     * @param hz Frecuencia de corte en Hz (20–20000).
-     */
-    void setFilterCutoff(float hz);
-
-    /**
-     * @brief Resonancia del VCF de todas las voces.
-     *
-     * @param q Resonancia: 0.7 = Butterworth flat, 5.0 = énfasis máximo.
-     */
+    // ── MIXER, GLIDE y filtro ──────────────────────────────────────────────────
+    void setMixer(float a, float b, float noise) { _lvlA = a; _lvlB = b; _lvlN = noise; }
+    void setGlide(float ms) { _glideMs = ms; }
+    void setFilterKeyboard(float amount) { _filterKbd = amount; }
+    void setFilterCutoff(float hz) { _filterCutoff = hz; }
     void setFilterResonance(float q);
+    void setFilterEnvAmount(float amount) { _filterEnvAmt = amount; }
+    void setDrive(float drive);
 
-    /**
-     * @brief Cuánto modula el envelope el cutoff del VCF.
-     *
-     * El envelope agrega hasta filterEnvAmount × 6000 Hz al cutoff base.
-     *
-     * @param amount Modulación 0.0–1.0.
-     */
-    void setFilterEnvAmount(float amount);
+    // ── POLY-MOD y WHEEL-MOD ───────────────────────────────────────────────────
+    void setPolyMod(float filt_env, float osc_b, bool freq_a, bool pw_a, bool filter) {
+        _pmEnv = filt_env; _pmB = osc_b; _pmFreqA = freq_a; _pmPwA = pw_a; _pmFilter = filter;
+    }
+    void setWheelMod(float source_mix, bool freq_a, bool freq_b, bool pw_a, bool pw_b, bool filter) {
+        _wmMix = source_mix; _wmFreqA = freq_a; _wmFreqB = freq_b; _wmPwA = pw_a; _wmPwB = pw_b; _wmFilter = filter;
+    }
+    void setWheel(float amount) { _wheel = amount; }
 
-    /** @brief Attack del envelope (VCF + VCA comparten el mismo envelope) en ms. */
+    // ── Compatibilidad con el sketch 28 ────────────────────────────────────────
+    void setOscAWaveform(uint16_t waveform);
+    void setOscBWaveform(uint16_t waveform);
+    void setCrossmod(float amount) { _pmB = amount; _pmFreqA = amount > 0.0f || _pmFreqA; }
+    void setOscMix(float oscA, float oscB) { _lvlA = oscA; _lvlB = oscB; }
+
+    // ── Envelopes ──────────────────────────────────────────────────────────────
     void setAttack(float ms);
-    /** @brief Decay del envelope en ms. */
     void setDecay(float ms);
-    /** @brief Sustain del envelope, 0.0–1.0. */
     void setSustain(float level);
-    /** @brief Release del envelope en ms. */
     void setRelease(float ms);
 
-    /**
-     * @brief Actualiza el estado del engine — debe llamarse desde loop().
-     *
-     * Procesa por cada voz activa:
-     *  1. Filter envelope software (ATTACK/DECAY/SUSTAIN/RELEASE)
-     *  2. Cutoff del VCF con modulación de envelope aplicada
-     *  3. Cross-modulation: fase de VCO-B → modulación de frecuencia de VCO-A
-     *
-     * Resolución temporal: granularidad de loop() (~0.5–2ms).
-     */
-    void update();
+    void setLfoMod(const LfoMod& m) { _lfo = m; }
 
-    /**
-     * @brief Retorna el último nodo del grafo del engine — fuente para mezcla externa.
-     *
-     * El `_finalMix` ya combina las 5 voces (vía masterMixA + masterMixB). Sprint 36:
-     * main.cpp lo conecta a un AudioMixer4 compartido que enruta al singleton I2S.
-     *
-     * @return Referencia al `_finalMix` (output port 0 = mono mix de 5 voces).
-     */
+    void setFilterEnv(float a_ms, float d_ms, float s, float r_ms) {
+        for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+            _filterEnv[i].setAttack(a_ms);
+            _filterEnv[i].setDecay(d_ms);
+            _filterEnv[i].setSustain(s);
+            _filterEnv[i].setRelease(r_ms);
+        }
+    }
+
+    void setAmpEnv(float a_ms, float d_ms, float s, float r_ms) {
+        for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+            _vcaEnv[i].attack(a_ms);
+            _vcaEnv[i].decay(d_ms);
+            _vcaEnv[i].sustain(s);
+            _vcaEnv[i].release(r_ms);
+        }
+    }
+
+    void update();
+    void set_dsp_enabled(bool on);
+
     AudioStream& getOutput() { return _finalMix; }
 
 private:
-    // ── Audio objects — 5 voces estáticas (Teensy Audio Library oficial) ─────────
-    AudioSynthWaveform       _oscA[PROPHET_VOICES];
-    AudioSynthWaveform       _oscB[PROPHET_VOICES];
-    AudioMixer4              _voiceMix[PROPHET_VOICES];    // oscA (ch0) + oscB (ch1)
-    // Filtro digital Moog ladder D'Angelo & Välimäki (ICASSP 2013) — código custom.
-    // 5 instancias independientes (una por voz). API compatible con AudioFilterStateVariable.
-    MoogLadder4P             _vcf[PROPHET_VOICES];
-    AudioEffectEnvelope      _vcaEnv[PROPHET_VOICES];
+    LfoMod _lfo;
 
-    // Master mix: AudioMixer4 tiene 4 entradas → 2 mixers para 5 voces
-    // masterMixA: voces 0–3 (canales 0–3)
-    // masterMixB: voz 4 (canal 0), canales 1–3 vacíos
-    // finalMix:   masterMixA (ch0) + masterMixB (ch1) — SIN salida propia
-    AudioMixer4              _masterMixA;
-    AudioMixer4              _masterMixB;
-    AudioMixer4              _finalMix;
-    // AudioOutputI2S y AudioControlSGTL5000 eliminados — son singleton de hardware.
-    // Sprint 32 conectará _finalMix al mixer compartido del sketch.
+    // ── Audio objects ───────────────────────────────────────────────────────────
+    Prophet5Osc         _osc[PROPHET_VOICES];
+    MoogLadder4P        _vcf[PROPHET_VOICES];
+    AudioEffectEnvelope _vcaEnv[PROPHET_VOICES];
+    AudioMixer4         _masterMixA;
+    AudioMixer4         _masterMixB;
+    AudioMixer4         _finalMix;
 
-    // ── Conexiones — 27 individuales (AudioConnection no tiene copy ctor) ─────────
-    // Por voz: oscA→voiceMix(0), oscB→voiceMix(1), voiceMix→vcf, vcf→vcaEnv (×5 = 20)
-    AudioConnection _c0,  _c1,  _c2,  _c3;   // voz 0
-    AudioConnection _c4,  _c5,  _c6,  _c7;   // voz 1
-    AudioConnection _c8,  _c9,  _c10, _c11;  // voz 2
-    AudioConnection _c12, _c13, _c14, _c15;  // voz 3
-    AudioConnection _c16, _c17, _c18, _c19;  // voz 4
-    // vcaEnv → masterMix (5)
-    AudioConnection _c20, _c21, _c22, _c23;  // voces 0–3 → masterMixA
-    AudioConnection _c24;                     // voz 4 → masterMixB
-    // master path (2) — _c27/_c28 eliminados (no hay _out propio)
-    AudioConnection _c25, _c26;              // masterMixA→finalMix, masterMixB→finalMix
+    AudioConnection _c0, _c1, _c2, _c3, _c4, _c5, _c6, _c7, _c8, _c9;
+    AudioConnection _c10, _c11, _c12, _c13, _c14;
+    AudioConnection _c15, _c16;
 
-    // ── Voice state ───────────────────────────────────────────────────────────────
+    // ── Voces ──────────────────────────────────────────────────────────────────
     struct VoiceState {
-        uint8_t  midi_note = 255;   // 255 = libre (valor inválido en MIDI, rango 0–127)
+        uint8_t  midi_note = 255;
         bool     active    = false;
-        uint32_t age       = 0;     // para voice stealing (menor age = voz más antigua)
+        uint32_t age       = 0;
+        float    velocity  = 1.0f;
     };
     VoiceState _voices[PROPHET_VOICES];
     uint32_t   _ageCounter = 0;
+    float      _targetHz[PROPHET_VOICES] = {};
+    float      _currentHz[PROPHET_VOICES] = {};
 
-    // ── Parámetros globales ───────────────────────────────────────────────────────
-    float _filterCutoff   = 2000.0f;
-    float _filterEnvAmt   = 0.4f;
+    // ── Panel ──────────────────────────────────────────────────────────────────
+    float _oscASemitones = 0.0f, _oscBSemitones = 0.0f, _oscBFine = 0.0f;
+    bool  _aSaw = true, _aPulse = false, _sync = false;
+    bool  _bSaw = true, _bTri = false, _bPulse = false, _bKeyboard = true, _bLoFreq = false;
+    float _pwA = 0.5f, _pwB = 0.5f;
+    float _lvlA = 0.6f, _lvlB = 0.4f, _lvlN = 0.0f;
+    float _glideMs = 0.0f, _filterKbd = 0.0f;
+    float _pmEnv = 0.0f, _pmB = 0.0f;
+    bool  _pmFreqA = false, _pmPwA = false, _pmFilter = false;
+    float _wmMix = 0.0f, _wheel = 0.0f, _wmNoise = 0.0f;
+    bool  _wmFreqA = true, _wmFreqB = true, _wmPwA = false, _wmPwB = false, _wmFilter = false;
+    uint32_t _rng = 0x9E3779B9u;
+
+    float _filterCutoff    = 2000.0f;
+    float _filterEnvAmt    = 0.4f;
     float _filterResonance = 0.7f;
-    float _oscBSemitones  = 0.0f;
-    float _crossmodAmt    = 0.0f;
-    float _oscAGain       = 0.5f;
-    float _oscBGain       = 0.5f;
 
-    // ── Filter envelope por voz (software — misma arquitectura que MoogModelD) ───
-    float    _filterEnvLevel[PROPHET_VOICES]    = {};
-    float    _filterEnvAttackMs  = 10.0f;
-    float    _filterEnvDecayMs   = 300.0f;
-    float    _filterEnvSustain   = 0.7f;
-    float    _filterEnvReleaseMs = 500.0f;
+    dsp::AnalogEnv _filterEnv[PROPHET_VOICES];
+    uint32_t       _lastUpdateMs = 0;
 
-    enum class EnvStage { IDLE, ATTACK, DECAY, SUSTAIN, RELEASE };
-    EnvStage _filterEnvStage[PROPHET_VOICES]    = {};
-    uint32_t _filterEnvStageMs[PROPHET_VOICES]  = {};
-
-    // ── Cross-modulation — fase acumulada por voz ─────────────────────────────────
-    // Aproximación FM: acumulamos la fase del oscilador-B y la usamos como modulador.
-    // No es FM exacto — ver theory doc §"Cross-Modulation" para la justificación.
-    float    _crossmodPhase[PROPHET_VOICES] = {};
-
-    uint32_t _lastUpdateMs = 0;
-
-    // ── Helpers ───────────────────────────────────────────────────────────────────
-    /** @brief Retorna índice de la primera voz libre (midi_note==255), o -1 si ninguna. */
     int8_t _findFreeVoice();
-    /** @brief Retorna índice de la voz que tiene asignada midi_note, o -1 si no existe. */
     int8_t _findVoiceForNote(uint8_t midi_note);
-    /** @brief Retorna índice de la voz con menor age (más antigua). Nunca retorna -1. */
     int8_t _stealOldestVoice();
-    /** @brief Inicializa una voz con la nota MIDI dada y la dispara. */
-    void   _triggerVoice(uint8_t voice_idx, uint8_t midi_note);
-    /** @brief Dispara el release de una voz y la marca como libre. */
+    void   _triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity);
     void   _releaseVoice(uint8_t voice_idx);
-    /** @brief Avanza la máquina de estados del filter envelope de una voz. */
-    void   _updateFilterEnv(uint8_t voice_idx, uint32_t dt_ms);
-    /** @brief Convierte nota MIDI a frecuencia Hz. A4 (69) = 440Hz. */
     float  _midiToFreq(uint8_t midi_note);
-    /** @brief Convierte semitones a ratio de frecuencia. 12 semitones = 2.0. */
-    float  _semitonesToRatio(float semitones);
 };

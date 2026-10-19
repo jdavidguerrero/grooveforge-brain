@@ -1317,6 +1317,25 @@ static void all_engines_panic() {
 // ── Activar engine ──────────────────────────────────────────────────────────────
 
 /**
+ * @brief Habilita/deshabilita el DSP (filtros MoogLadder4P) de un engine.
+ *
+ * Cada MoogLadder4P cuesta ~8% de CPU; los 28 de los 6 engines juntos saturan
+ * la ISR de audio (>200%) y el loop() deja de correr. Solo el engine activo
+ * debe procesar.
+ */
+static void set_engine_dsp_enabled(uint8_t engine, bool on) {
+    switch (engine) {
+        case 0: moog.set_dsp_enabled(on);    break;
+        case 1: juno.set_dsp_enabled(on);    break;
+        case 2: prophet.set_dsp_enabled(on); break;
+        case 3: ob6.set_dsp_enabled(on);     break;
+        case 4: dx7.set_dsp_enabled(on);     break;
+        case 5: arp.set_dsp_enabled(on);     break;
+        default: break;
+    }
+}
+
+/**
  * @brief Silencia todos los engines, conmuta el audio graph, y anuncia al ESP32.
  *
  * Sprint 36: audio_graph::set_active_engine() ejecuta crossfade 20ms entre el
@@ -1333,8 +1352,16 @@ static void activate_engine(uint8_t engine) {
     g_active_engine = engine;
     g_active_group  = g_flat_params[engine][g_param_cursor[engine]].group;
 
+    // Encender los filtros del nuevo engine antes del crossfade y apagar el resto
+    // después: con los 6 engines procesando a la vez la ISR de audio pasa del 200%.
+    set_engine_dsp_enabled(engine, true);
+
     // Conmutar el audio graph (crossfade 20ms entre engines)
     audio_graph::set_active_engine(engine);
+
+    for (uint8_t e = 0; e < NUM_ENGINES; e++) {
+        if (e != engine) set_engine_dsp_enabled(e, false);
+    }
 
     Serial.printf("[ENGINE] activado: %s\n", g_desc[engine].name);
     bridge_announce_engine(engine);
@@ -2346,6 +2373,10 @@ void setup() {
     ob6.begin();
     dx7.begin();
     arp.begin();
+
+    // Solo Moog (engine activo por defecto en audio_graph::init()) procesa audio.
+    // activate_engine() más abajo aplica el engine restaurado desde EEPROM.
+    for (uint8_t e = 1; e < NUM_ENGINES; e++) set_engine_dsp_enabled(e, false);
 
     // ── Test tone de arranque ──────────────────────────────────────────────────
     // Dispara A4 (MIDI 69) por 1.2 s inmediatamente después de begin() para

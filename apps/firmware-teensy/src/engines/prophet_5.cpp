@@ -1,153 +1,82 @@
 // apps/firmware-teensy/src/engines/prophet_5.cpp
-// Sprint 2.2 — Prophet-5 Engine: 5-voice polyphony con 2 VCOs por voz.
-// Theory, voice allocation y demo: apps/docs/sprints/07-prophet-5.md
+// Prophet-5 Engine: 5-voice polyphony with Poly-Mod (including OSC B -> Filter), AnalogEnv RC & Drive.
 
 #include "prophet_5.h"
 #include <math.h>
 
-// ── Constructor ───────────────────────────────────────────────────────────────
-//
-// Las AudioConnections se construyen con referencias a los audio objects.
-// La lista de inicialización garantiza que los arrays (_oscA, _oscB, etc.) se
-// construyen primero (orden de declaración en el header), y las conexiones los
-// referencian.
-//
-// Por qué conexiones individuales (no array de AudioConnection):
-// AudioConnection registra src/dst en el grafo global en tiempo de construcción.
-// No tiene copy constructor — los arrays brace-init llamarían al copy ctor,
-// lo que no compila. Ver theory doc §"Implementation Notes".
-//
-// Layout de conexiones:
-//   _c0–_c3:   voz 0  (oscA→mix, oscB→mix, mix→vcf, vcf→vcaEnv)
-//   _c4–_c7:   voz 1
-//   _c8–_c11:  voz 2
-//   _c12–_c15: voz 3
-//   _c16–_c19: voz 4
-//   _c20–_c23: vcaEnv[0..3] → masterMixA (canales 0–3)
-//   _c24:      vcaEnv[4]    → masterMixB (canal 0)
-//   _c25:      masterMixA   → finalMix (canal 0)
-//   _c26:      masterMixB   → finalMix (canal 1)
-//   _c27:      finalMix     → out (canal L)
-//   _c28:      finalMix     → out (canal R)
+namespace {
+constexpr float SAMPLE_RATE = AUDIO_SAMPLE_RATE_EXACT;
+constexpr float C4_HZ = 261.63f;
+constexpr float OSC_SCALE = 20000.0f;
+inline float clampf(float v, float lo, float hi) { return v < lo ? lo : v > hi ? hi : v; }
+inline float st_ratio(float st) { return prophet_fast_exp2(st / 12.0f); }
+}  // namespace
+
+void Prophet5Osc::update() {
+    if (!_on) return;
+    audio_block_t* block = allocate();
+    if (!block) return;
+    float tmp[AUDIO_BLOCK_SAMPLES];
+    _core.render(_p, tmp, AUDIO_BLOCK_SAMPLES);
+    for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) {
+        const int32_t v = int32_t(tmp[i] * OSC_SCALE);
+        block->data[i] = int16_t(v > 32767 ? 32767 : v < -32768 ? -32768 : v);
+    }
+    transmit(block);
+    release(block);
+}
 
 Prophet5::Prophet5() :
-    // Voz 0
-    _c0(_oscA[0],      0, _voiceMix[0], 0),
-    _c1(_oscB[0],      0, _voiceMix[0], 1),
-    _c2(_voiceMix[0],  0, _vcf[0],      0),
-    _c3(_vcf[0],       0, _vcaEnv[0],   0),
-    // Voz 1
-    _c4(_oscA[1],      0, _voiceMix[1], 0),
-    _c5(_oscB[1],      0, _voiceMix[1], 1),
-    _c6(_voiceMix[1],  0, _vcf[1],      0),
-    _c7(_vcf[1],       0, _vcaEnv[1],   0),
-    // Voz 2
-    _c8(_oscA[2],      0, _voiceMix[2], 0),
-    _c9(_oscB[2],      0, _voiceMix[2], 1),
-    _c10(_voiceMix[2], 0, _vcf[2],      0),
-    _c11(_vcf[2],      0, _vcaEnv[2],   0),
-    // Voz 3
-    _c12(_oscA[3],     0, _voiceMix[3], 0),
-    _c13(_oscB[3],     0, _voiceMix[3], 1),
-    _c14(_voiceMix[3], 0, _vcf[3],      0),
-    _c15(_vcf[3],      0, _vcaEnv[3],   0),
-    // Voz 4
-    _c16(_oscA[4],     0, _voiceMix[4], 0),
-    _c17(_oscB[4],     0, _voiceMix[4], 1),
-    _c18(_voiceMix[4], 0, _vcf[4],      0),
-    _c19(_vcf[4],      0, _vcaEnv[4],   0),
-    // vcaEnv → master mixers
-    _c20(_vcaEnv[0],   0, _masterMixA,  0),
-    _c21(_vcaEnv[1],   0, _masterMixA,  1),
-    _c22(_vcaEnv[2],   0, _masterMixA,  2),
-    _c23(_vcaEnv[3],   0, _masterMixA,  3),
-    _c24(_vcaEnv[4],   0, _masterMixB,  0),
-    // master path — _c27/_c28 eliminados: no hay _out propio.
-    // Sprint 32 conectará _finalMix al mixer compartido del sketch.
-    _c25(_masterMixA, 0, _finalMix, 0),
-    _c26(_masterMixB, 0, _finalMix, 1)
+    _c0(_osc[0], 0, _vcf[0], 0), _c1(_vcf[0], 0, _vcaEnv[0], 0),
+    _c2(_osc[1], 0, _vcf[1], 0), _c3(_vcf[1], 0, _vcaEnv[1], 0),
+    _c4(_osc[2], 0, _vcf[2], 0), _c5(_vcf[2], 0, _vcaEnv[2], 0),
+    _c6(_osc[3], 0, _vcf[3], 0), _c7(_vcf[3], 0, _vcaEnv[3], 0),
+    _c8(_osc[4], 0, _vcf[4], 0), _c9(_vcf[4], 0, _vcaEnv[4], 0),
+    _c10(_vcaEnv[0], 0, _masterMixA, 0),
+    _c11(_vcaEnv[1], 0, _masterMixA, 1),
+    _c12(_vcaEnv[2], 0, _masterMixA, 2),
+    _c13(_vcaEnv[3], 0, _masterMixA, 3),
+    _c14(_vcaEnv[4], 0, _masterMixB, 0),
+    _c15(_masterMixA, 0, _finalMix, 0),
+    _c16(_masterMixB, 0, _finalMix, 1)
 {}
 
-// ── begin() ───────────────────────────────────────────────────────────────────
-
 void Prophet5::begin(float volume) {
-    // AudioMemory y codec son responsabilidad del sketch — el Prophet es un engine
-    // "headless" que procesa audio internamente pero no posee la salida I2S.
-    // El sketch (sketch 28) llama AudioMemory(40) y moog.begin() que inicializa
-    // el codec compartido. Ver moog_model_d.h §begin() para la razón de diseño.
-    (void)volume;  // el volumen lo gestiona el codec del Moog (compartido)
-
-    // Inicializar cada voz
+    (void)volume;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        // VCO-A: sawtooth — onda más rica en armónicos (base del sonido Prophet)
-        _oscA[i].begin(WAVEFORM_SAWTOOTH);
-        _oscA[i].amplitude(1.0f);
-        _oscA[i].frequency(440.0f);
-
-        // VCO-B: sawtooth — mismo, intervalo se aplica en _triggerVoice
-        _oscB[i].begin(WAVEFORM_SAWTOOTH);
-        _oscB[i].amplitude(1.0f);
-        _oscB[i].frequency(440.0f);
-
-        // VoiceMixer: 50% A, 50% B por defecto (Prophet-5 default mix era igual)
-        _voiceMix[i].gain(0, _oscAGain);
-        _voiceMix[i].gain(1, _oscBGain);
-        _voiceMix[i].gain(2, 0.0f);
-        _voiceMix[i].gain(3, 0.0f);
-
-        // VCF: AudioFilterStateVariable como placeholder digital
-        // TODO Sprint 1.4: reemplazar con routing via SGTL5000 ADC cuando el
-        //                  ladder analógico 2N3904 esté disponible.
         _vcf[i].frequency(_filterCutoff);
         _vcf[i].resonance(_filterResonance);
+        _vcf[i].set_drive(1.2f);
         _vcf[i].octaveControl(1.0f);
 
-        // VCA envelope
-        _vcaEnv[i].attack(_filterEnvAttackMs);
-        _vcaEnv[i].decay(_filterEnvDecayMs);
-        _vcaEnv[i].sustain(_filterEnvSustain);
-        _vcaEnv[i].release(_filterEnvReleaseMs);
+        _filterEnv[i].setAttack(10.0f);
+        _filterEnv[i].setDecay(300.0f);
+        _filterEnv[i].setSustain(0.7f);
+        _filterEnv[i].setRelease(500.0f);
 
-        // Estado inicial de filter envelope
-        _filterEnvStage[i]   = EnvStage::IDLE;
-        _filterEnvStageMs[i] = 0;
-        _filterEnvLevel[i]   = 0.0f;
-        _crossmodPhase[i]    = 0.0f;
+        _vcaEnv[i].attack(10.0f);
+        _vcaEnv[i].decay(300.0f);
+        _vcaEnv[i].sustain(0.7f);
+        _vcaEnv[i].release(500.0f);
+
+        _targetHz[i] = _currentHz[i] = 440.0f;
     }
-
-    // masterMixA: 4 voces → 25% cada una para no clipear al sumar
-    // 4 voces × 0.25 = 1.0 nivel máximo en el bus (igual que el Moog monofónico)
-    _masterMixA.gain(0, 0.25f);
-    _masterMixA.gain(1, 0.25f);
-    _masterMixA.gain(2, 0.25f);
-    _masterMixA.gain(3, 0.25f);
-
-    // masterMixB: solo la voz 4 en canal 0
-    _masterMixB.gain(0, 0.25f);
-    _masterMixB.gain(1, 0.0f);
-    _masterMixB.gain(2, 0.0f);
-    _masterMixB.gain(3, 0.0f);
-
-    // finalMix: suma masterMixA + masterMixB a unidad completa
-    _finalMix.gain(0, 1.0f);
-    _finalMix.gain(1, 1.0f);
-    _finalMix.gain(2, 0.0f);
-    _finalMix.gain(3, 0.0f);
-
+    for (uint8_t ch = 0; ch < 4; ch++) {
+        _masterMixA.gain(ch, 0.25f);
+        _masterMixB.gain(ch, ch == 0 ? 0.25f : 0.0f);
+        _finalMix.gain(ch, ch < 2 ? 1.0f : 0.0f);
+    }
     _lastUpdateMs = millis();
 }
 
-// ── Note control ──────────────────────────────────────────────────────────────
-
 void Prophet5::noteOn(uint8_t midi_note, float velocity) {
-    (void)velocity;  // reservado para implementación futura
+    if (velocity < 0.0f) velocity = 0.0f;
+    if (velocity > 1.0f) velocity = 1.0f;
 
-    // Re-trigger si la nota ya suena (evita duplicar voces para la misma nota)
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
-
-    _triggerVoice((uint8_t)voice, midi_note);
+    _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
 void Prophet5::noteOff(uint8_t midi_note) {
@@ -155,149 +84,120 @@ void Prophet5::noteOff(uint8_t midi_note) {
     if (voice >= 0) _releaseVoice((uint8_t)voice);
 }
 
-// ── VCO params ────────────────────────────────────────────────────────────────
-
 void Prophet5::setOscAWaveform(uint16_t waveform) {
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        _oscA[i].begin(waveform);
-    }
+    const bool pulse = waveform == WAVEFORM_PULSE || waveform == WAVEFORM_SQUARE;
+    setOscAShape(!pulse, pulse);
 }
 
 void Prophet5::setOscBWaveform(uint16_t waveform) {
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        _oscB[i].begin(waveform);
-    }
-}
-
-void Prophet5::setOscBInterval(float semitones) {
-    _oscBSemitones = semitones;
-    // Actualizar frecuencias de VCO-B en voces activas
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        if (_voices[i].midi_note != 255) {
-            float baseFreq = _midiToFreq(_voices[i].midi_note);
-            _oscB[i].frequency(baseFreq * _semitonesToRatio(_oscBSemitones));
-        }
-    }
-}
-
-void Prophet5::setCrossmod(float amount) {
-    _crossmodAmt = amount;
-}
-
-void Prophet5::setOscMix(float oscA, float oscB) {
-    _oscAGain = oscA;
-    _oscBGain = oscB;
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        _voiceMix[i].gain(0, _oscAGain);
-        _voiceMix[i].gain(1, _oscBGain);
-    }
-}
-
-// ── Filter params ─────────────────────────────────────────────────────────────
-
-void Prophet5::setFilterCutoff(float hz) {
-    _filterCutoff = hz;
-    // La frecuencia real se aplica en update() con la modulación del envelope sumada
+    const bool pulse = waveform == WAVEFORM_PULSE || waveform == WAVEFORM_SQUARE;
+    const bool tri = waveform == WAVEFORM_TRIANGLE;
+    setOscBShape(!pulse && !tri, tri, pulse);
 }
 
 void Prophet5::setFilterResonance(float q) {
     _filterResonance = q;
-    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        _vcf[i].resonance(q);
-    }
+    for (uint8_t i = 0; i < PROPHET_VOICES; i++) _vcf[i].resonance(q);
 }
 
-void Prophet5::setFilterEnvAmount(float amount) {
-    _filterEnvAmt = amount;
+void Prophet5::setDrive(float drive) {
+    for (uint8_t i = 0; i < PROPHET_VOICES; i++) _vcf[i].set_drive(drive);
 }
-
-// ── Envelope params (VCF + VCA compartido) ───────────────────────────────────
 
 void Prophet5::setAttack(float ms) {
-    _filterEnvAttackMs = ms;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        _filterEnv[i].setAttack(ms);
         _vcaEnv[i].attack(ms);
     }
 }
-
 void Prophet5::setDecay(float ms) {
-    _filterEnvDecayMs = ms;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        _filterEnv[i].setDecay(ms);
         _vcaEnv[i].decay(ms);
     }
 }
-
 void Prophet5::setSustain(float level) {
-    _filterEnvSustain = level;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        _filterEnv[i].setSustain(level);
         _vcaEnv[i].sustain(level);
     }
 }
-
 void Prophet5::setRelease(float ms) {
-    _filterEnvReleaseMs = ms;
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        _filterEnv[i].setRelease(ms);
         _vcaEnv[i].release(ms);
     }
 }
 
-// ── update() — llamar desde loop() ────────────────────────────────────────────
-
-void Prophet5::update() {
-    uint32_t now = millis();
-    uint32_t dt  = now - _lastUpdateMs;
-    _lastUpdateMs = now;
-
-    if (dt == 0) return;
-
+void Prophet5::set_dsp_enabled(bool on) {
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
-        // 1. Filter envelope software
-        _updateFilterEnv(i, dt);
-
-        // 2. Aplicar cutoff + modulación del envelope al VCF de esta voz
-        // El envelope agrega hasta _filterEnvAmt × 6000 Hz sobre el cutoff base.
-        float modulated = _filterCutoff + _filterEnvAmt * _filterEnvLevel[i] * 6000.0f;
-        if (modulated < 20.0f)    modulated = 20.0f;
-        if (modulated > 20000.0f) modulated = 20000.0f;
-        _vcf[i].frequency(modulated);
-
-        // 3. Cross-modulation: aproximación FM analógico del Poly-Mod
-        // Solo procesar si hay crossmod activo y la voz está sonando.
-        // Aproximación: acumulamos la fase del oscilador-B y la usamos como
-        // modulador de la frecuencia de VCO-A. No es FM exacto — ver theory doc.
-        if (_crossmodAmt > 0.001f && _voices[i].midi_note != 255) {
-            float baseFreq = _midiToFreq(_voices[i].midi_note);
-            float oscBFreq = baseFreq * _semitonesToRatio(_oscBSemitones);
-
-            // Acumular fase (dt_ms × 0.001 convierte ms → segundos)
-            _crossmodPhase[i] += oscBFreq * (float)dt * 0.001f;
-            // Normalizar a [0, 1) para evitar overflow en float a largo plazo
-            if (_crossmodPhase[i] >= 1.0f) _crossmodPhase[i] -= 1.0f;
-
-            float mod = _crossmodAmt * sinf(2.0f * M_PI * _crossmodPhase[i]);
-            // Factor 0.5: sin esto, crossmod=1.0 desafinaría una octava completa.
-            // 0.5 da hasta ±50% de la freq base — rango tímbrico útil sin romper afinación.
-            _oscA[i].frequency(baseFreq * (1.0f + mod * 0.5f));
-        }
+        _vcf[i].set_enabled(on);
+        _osc[i].enable(on);
     }
 }
 
-// ── Private helpers ───────────────────────────────────────────────────────────
+void Prophet5::update() {
+    const uint32_t now = millis();
+    const uint32_t dt = now - _lastUpdateMs;
+    _lastUpdateMs = now;
+    if (dt == 0) return;
 
-void Prophet5::_triggerVoice(uint8_t voice_idx, uint8_t midi_note) {
-    float baseFreq = _midiToFreq(midi_note);
+    // WHEEL-MOD: fuente = LFO global ↔ ruido de control
+    _rng ^= _rng << 13;
+    _rng ^= _rng >> 17;
+    _rng ^= _rng << 5;
+    _wmNoise = float(int32_t(_rng)) * (1.0f / 2147483648.0f);
+    const float wm = ((1.0f - _wmMix) * _lfo.lfo + _wmMix * _wmNoise) * _wheel;
 
-    _oscA[voice_idx].frequency(baseFreq);
-    _oscB[voice_idx].frequency(baseFreq * _semitonesToRatio(_oscBSemitones));
+    // Glide exponencial: el 63 % del camino en _glideMs
+    const float glide_k = _glideMs >= 1.0f ? 1.0f - expf(-float(dt) / _glideMs) : 1.0f;
 
+    for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
+        const float env = _filterEnv[i].update((float)dt);
+        const float velGain = 0.35f + 0.65f * _voices[i].velocity;
+        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+
+        _currentHz[i] += (_targetHz[i] - _currentHz[i]) * glide_k;
+        const float f = _currentHz[i] * _lfo.pitch_ratio;
+
+        // Osciladores
+        Prophet5OscParams p;
+        p.inc_a = f * st_ratio(_oscASemitones + (_wmFreqA ? 12.0f * wm : 0.0f)) / SAMPLE_RATE;
+        float fb = (_bKeyboard ? f : C4_HZ) * st_ratio(_oscBSemitones + _oscBFine / 100.0f + (_wmFreqB ? 12.0f * wm : 0.0f));
+        if (_bLoFreq) fb *= 0.01f;
+        p.inc_b = fb / SAMPLE_RATE;
+        p.a_saw = _aSaw; p.a_pulse = _aPulse; p.sync = _sync;
+        p.b_saw = _bSaw; p.b_tri = _bTri; p.b_pulse = _bPulse;
+        p.pw_a = clampf(_pwA + 0.45f * _lfo.pwm + (_wmPwA ? 0.45f * wm : 0.0f), 0.05f, 0.95f);
+        p.pw_b = clampf(_pwB + 0.45f * _lfo.pwm + (_wmPwB ? 0.45f * wm : 0.0f), 0.05f, 0.95f);
+        p.pm_b = _pmB; p.pm_env = _pmEnv; p.env = env;
+        p.pm_freq_a = _pmFreqA; p.pm_pw_a = _pmPwA;
+        p.lvl_a = _lvlA * velGain;
+        p.lvl_b = _lvlB * velGain;
+        p.lvl_n = _lvlN * velGain;
+        _osc[i].set(p);
+
+        // Señal instantánea del OSC B para POLY-MOD → FILTER (especialmente expresiva cuando B está en LO FREQ)
+        const float pb = _osc[i].phase_b();
+        const float oscBMod = _bTri ? (1.0f - 4.0f * fabsf(pb - 0.5f)) : (2.0f * pb - 1.0f);
+
+        // Filtro: base + envelope, × LFO, × POLY-MOD (envelope + OSC B), × WHEEL-MOD, × keyboard tracking
+        float cutoff = (_filterCutoff + _filterEnvAmt * velBright * env * 6000.0f) * _lfo.cutoff_mul;
+        if (_pmFilter) {
+            cutoff *= prophet_fast_exp2(PROPHET_PM_OCT * (_pmEnv * env + 0.5f * _pmB * oscBMod));
+        }
+        if (_wmFilter) cutoff *= prophet_fast_exp2(2.0f * wm);
+        if (_filterKbd > 0.0f) cutoff *= powf(_currentHz[i] / C4_HZ, _filterKbd);
+        _vcf[i].frequency(clampf(cutoff, 20.0f, 20000.0f));
+    }
+}
+
+void Prophet5::_triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity) {
+    _targetHz[voice_idx] = _midiToFreq(midi_note);
+    if (_glideMs < 1.0f || _voices[voice_idx].midi_note == 255) _currentHz[voice_idx] = _targetHz[voice_idx];
+    _voices[voice_idx].velocity = velocity;
     _vcaEnv[voice_idx].noteOn();
-
-    // Re-iniciar filter envelope desde cero (retrigger limpio)
-    _filterEnvStage[voice_idx]   = EnvStage::ATTACK;
-    _filterEnvStageMs[voice_idx] = 0;
-    _filterEnvLevel[voice_idx]   = 0.0f;
-    _crossmodPhase[voice_idx]    = 0.0f;
-
+    _filterEnv[voice_idx].noteOn(false);
     _voices[voice_idx].midi_note = midi_note;
     _voices[voice_idx].active    = true;
     _voices[voice_idx].age       = ++_ageCounter;
@@ -305,11 +205,7 @@ void Prophet5::_triggerVoice(uint8_t voice_idx, uint8_t midi_note) {
 
 void Prophet5::_releaseVoice(uint8_t voice_idx) {
     _vcaEnv[voice_idx].noteOff();
-
-    _filterEnvStage[voice_idx]   = EnvStage::RELEASE;
-    _filterEnvStageMs[voice_idx] = 0;
-
-    // Marcar como libre — midi_note=255 es el centinela de "voz disponible"
+    _filterEnv[voice_idx].noteOff();
     _voices[voice_idx].midi_note = 255;
     _voices[voice_idx].active    = false;
 }
@@ -329,10 +225,8 @@ int8_t Prophet5::_findVoiceForNote(uint8_t midi_note) {
 }
 
 int8_t Prophet5::_stealOldestVoice() {
-    // Robar la voz con menor age (la que lleva más tiempo sonando)
     uint8_t oldest_idx = 0;
     uint32_t oldest_age = _voices[0].age;
-
     for (uint8_t i = 1; i < PROPHET_VOICES; i++) {
         if (_voices[i].age < oldest_age) {
             oldest_age = _voices[i].age;
@@ -342,72 +236,6 @@ int8_t Prophet5::_stealOldestVoice() {
     return (int8_t)oldest_idx;
 }
 
-void Prophet5::_updateFilterEnv(uint8_t voice_idx, uint32_t dt_ms) {
-    // Misma máquina de estados que MoogModelD._updateFilterEnv, pero por voz.
-    // Ver theory doc §"Voice Allocation" y moog_model_d.cpp para la lógica base.
-    _filterEnvStageMs[voice_idx] += dt_ms;
-
-    switch (_filterEnvStage[voice_idx]) {
-        case EnvStage::IDLE:
-            _filterEnvLevel[voice_idx] = 0.0f;
-            break;
-
-        case EnvStage::ATTACK:
-            if (_filterEnvAttackMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = 1.0f;
-                _filterEnvStage[voice_idx] = EnvStage::DECAY;
-                _filterEnvStageMs[voice_idx] = 0;
-            } else {
-                _filterEnvLevel[voice_idx] =
-                    (float)_filterEnvStageMs[voice_idx] / _filterEnvAttackMs;
-                if (_filterEnvLevel[voice_idx] >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = 1.0f;
-                    _filterEnvStage[voice_idx] = EnvStage::DECAY;
-                    _filterEnvStageMs[voice_idx] = 0;
-                }
-            }
-            break;
-
-        case EnvStage::DECAY:
-            if (_filterEnvDecayMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = _filterEnvSustain;
-                _filterEnvStage[voice_idx] = EnvStage::SUSTAIN;
-            } else {
-                float t = (float)_filterEnvStageMs[voice_idx] / _filterEnvDecayMs;
-                _filterEnvLevel[voice_idx] = 1.0f - t * (1.0f - _filterEnvSustain);
-                if (t >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = _filterEnvSustain;
-                    _filterEnvStage[voice_idx] = EnvStage::SUSTAIN;
-                }
-            }
-            break;
-
-        case EnvStage::SUSTAIN:
-            _filterEnvLevel[voice_idx] = _filterEnvSustain;
-            break;
-
-        case EnvStage::RELEASE:
-            if (_filterEnvReleaseMs < 1.0f) {
-                _filterEnvLevel[voice_idx] = 0.0f;
-                _filterEnvStage[voice_idx] = EnvStage::IDLE;
-            } else {
-                float t = (float)_filterEnvStageMs[voice_idx] / _filterEnvReleaseMs;
-                _filterEnvLevel[voice_idx] = _filterEnvSustain * (1.0f - t);
-                if (t >= 1.0f) {
-                    _filterEnvLevel[voice_idx] = 0.0f;
-                    _filterEnvStage[voice_idx] = EnvStage::IDLE;
-                }
-            }
-            break;
-    }
-}
-
 float Prophet5::_midiToFreq(uint8_t midi_note) {
-    // A4 (MIDI 69) = 440Hz, cada semitono = factor 2^(1/12)
     return 440.0f * powf(2.0f, (midi_note - 69) / 12.0f);
-}
-
-float Prophet5::_semitonesToRatio(float semitones) {
-    // 12 semitones = 1 octava = factor 2.0
-    return powf(2.0f, semitones / 12.0f);
 }
