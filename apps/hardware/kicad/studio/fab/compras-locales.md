@@ -11,7 +11,8 @@
 | 2 | Conector **IDC macho 30 pines** (2×15) con carcasa ("box header"), recto | paso 2.54 mm | J5 portadora, J2 PCB-A |
 | 2 | Conector **IDC hembra 30 pines** para cable plano | paso 2.54 | cable J5 ↔ J2 |
 | 1 | Conector **IDC macho 10 pines** (2×5) con carcasa, recto | paso 2.54 | J6 portadora |
-| 2 | Conector **IDC hembra 10 pines** para cable plano | paso 2.54; ver nota del 5 V de la Pi | cable J6 ↔ Pi (pines 1–10) |
+| 1 | Conector **IDC hembra 10 pines** para cable plano | paso 2.54 | cable J6, lado portadora |
+| 1 | **Carcasa Dupont 2×5** (hembra) + 10 terminales Dupont hembra | paso 2.54; ver nota del 5 V de la Pi | cable J6, **lado Pi** (pines 1–10). Un IDC (~15 mm) tapa los pines 11–12 del GPIO |
 | 1 m | **Cable plano** (bus de datos) gris de 40 hilos | paso 1.27 mm | se separa en 30 y 10 hilos |
 | 1 | **JST-XH 2 pines** macho de placa, recto, con hembra y terminales | paso **2.5 mm** | J10 (entrada 5 V) |
 | 2 | **Espadín hembra 1×40** (regleta hembra) | paso 2.54, **altura 8.5 mm** | zócalos de la Teensy (2 × 24) |
@@ -27,8 +28,9 @@ altos, avisar antes de soldar.
 
 | Cant. | Pieza | Verificar | Va en |
 |---|---|---|---|
-| 4 | **Jack 1/4" (6.35 mm) estéreo TRS de chasis**, con tuerca | rosca (agujero de Ø9.6 previsto) y largo del cuerpo (≤ 28 mm) | IN L/R, OUT L/R |
-| 2 | **Jack 3.5 mm estéreo de chasis**, con tuerca | rosca (Ø6.2 previsto), cuerpo ≤ 18 mm | PHONES, CV OUT |
+| 4 | **Jack 1/4" (6.35 mm) estéreo TRS de chasis**, con tuerca | rosca (agujero de Ø9.6 previsto), cuerpo ≤ 16 × 22 × 28 mm (alto ≤ 22: con z 25 queda a 4.5 mm de la portadora) | IN L/R, OUT L/R |
+| 1 | **Jack 3.5 mm estéreo de chasis de cuerpo PLÁSTICO (aislado)**, con tuerca | rosca (Ø6.2 previsto), cuerpo ≤ 18 mm; que el sleeve no toque la tuerca ni el panel | PHONES: el sleeve va a HP_VGND (~1.5 V), **nunca a GND ni al aluminio** |
+| 1 | **Jack 3.5 mm estéreo de chasis**, con tuerca | rosca (Ø6.2 previsto), cuerpo ≤ 18 mm | CV OUT |
 | 1 | **Interruptor de palanca 3 posiciones** (ON-ON-ON o ON-OFF-ON según el cableado del pad) | rosca (Ø6.2 previsto) | INPUT PAD |
 | 2 | **Prolongador USB-C de panel** (hembra de panel a cable) | uno a micro-USB macho (Teensy); el otro solo para 5 V | 5V IN, USB |
 | 1 | **Prolongador USB-A hembra de panel** o USB-A hembra para soldar | | HOST (5 hilos al header de host de la Teensy) |
@@ -56,3 +58,11 @@ Sin PCB-K no hace falta el JST-SH. Los Choc se cablean con Dupont a J1 de PCB-A.
 Los IDC hembra genéricos suelen ser de **1 A por contacto**, y la Pi toma el 5 V por dos (pines 2 y 4): ~2 A.
 Una Pi 3B con la pantalla consume ~0.8–1.2 A en uso normal, así que alcanza. Si hay bajones
 (`vcgencmd get_throttled` ≠ 0x0), soldar dos hilos extra de 5 V y GND en paralelo al cable plano.
+
+## Armado: notas de la auditoría (2026-10-18)
+
+- **Panel de aluminio:** los 10 agujeros de los espárragos **PEM FH-M3** son de **Ø3.0** (`panel-aluminio.dxf` ya
+  corregido). Pedir FH-M3-12 para la pantalla y FH-M3 del largo del separador para PCB-A.
+- **Choc:** los hilos de J1 se **sueldan** a las patas del switch; un Dupont enchufado ahí cuelga ~14 mm y toca PCB-A.
+- **Pots RV09:** medir antes de cortar el aluminio que el eje quede a 7.5 mm de la fila de pines (footprint de PCB-A).
+- **Jacks de chasis:** cablear según la tabla de theory/02 §10I (las etiquetas del panel se leen L → R desde atrás).

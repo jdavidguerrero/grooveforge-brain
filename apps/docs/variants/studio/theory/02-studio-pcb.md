@@ -376,7 +376,8 @@ tiempo de la GUI).
   - `barra-pantalla-{izq,der}.stl` — barras de la pantalla.
   - `panel-aluminio.dxf` — 180 × 168.7 mm (largo inclinado), vista superior, origen en la esquina delantera
     izquierda. Capas: `CORTE_PASANTE` (contorno, Choc 14 × 14, EC11 Ø7.1, NAV Ø32, RV09 Ø7, ventana
-    111 × 67.8 R1, 29 ranuras, 5 × Ø3.4 de fijación, 10 × Ø4.22 para PEM FH-M3), `REBAJE_0p8_CARA_INFERIOR`
+    111 × 67.8 R1, 29 ranuras, 5 × Ø3.4 de fijación, 10 × **Ø3.0** para PEM FH-M3 — agujero de montaje del espárrago según PEM; hasta
+    el 2026-10-18 decía Ø4.22, que es el de un separador SO-M3: ver §10I), `REBAJE_0p8_CARA_INFERIOR`
     (16 × 16 × 0.8 bajo cada Choc) y `AVELLANADO_90_CARA_SUPERIOR`.
   - `studio-enclosure.FCStd` — modelo completo con las placas (los STEP de las placas no se versionan).
 
@@ -419,14 +420,53 @@ pared, no las soldaduras). La portadora **no cambia**: los footprints de los jac
 hilos (NRJ3HF-1: T, R, S; SJ1-3533NG: 2 punta, 3 anillo, 1 malla), con cable apantallado de 5–10 cm.
 
 - **Fila única en z 22** (los cuerpos de chasis de 1/4" miden ~22 mm: centrados en z 16 tocaban la placa).
+  **Rev. §10I (2026-10-18):** los cuatro de 1/4" suben a **z 25** (quedaban a 1.5 mm de la portadora, sobre los
+  pads); los 3.5, la palanca y los USB siguen en z 22.
   De izquierda a derecha, mirando de frente: **5V IN** USB-C (x 12), **USB** USB-C (26), **HOST** USB-A (41),
   **OUT L** (58), **OUT R** (77), **PHONES** (95), **CV OUT** (108), **PAD** (122), **IN L** (148), **IN R** (166).
+  **Rev. §10I:** las etiquetas L / R se intercambian (OUT R 58, OUT L 77, IN R 148, IN L 166) para que se lean
+  L antes que R **mirando la pared trasera**, que es como quedaron los pads de la portadora.
   Debajo del USB/Ethernet de la Pi (x 113–134) solo van piezas bajas (3.5 y PAD).
 - **Agujeros:** 1/4" Ø9.6 (rosca 3/8"), 3.5 Ø6.2 (M6), PAD Ø6.2, USB-C 9.4 × 3.6, USB-A 13.6 × 6.4.
   **Verificar con los jacks comprados** (rosca y largo del cuerpo) antes de imprimir.
-- **Holguras con cuerpos aproximados** (1/4" 16 × 22 × 28 de fondo; 3.5 10 × 12 × 18): ≥ 1.4 mm sobre la
-  portadora, ≥ 6.2 mm a la Pi, ≥ 3 mm a las paredes laterales.
+- **Holguras con cuerpos aproximados** (1/4" 16 × 22 × 28 de fondo; 3.5 10 × 12 × 18), medidas con `freecadcmd`
+  después de §10I: 1/4" **4.5 mm** sobre la portadora y ≥ 6.0 mm al USB/Ethernet de la Pi; 3.5 y palanca 6.5 mm
+  sobre la portadora y ≥ 7.2 mm a la Pi; ≥ 3 mm a las paredes laterales.
 - Jacks y conectores de chasis: ver `fab/compras-locales.md`.
+
+## 10I. Correcciones tras la auditoría del 2026-10-18 (antes de fabricar)
+
+Una auditoría externa listó 13 "bloqueantes". Verificados contra los archivos (theory, scripts, `.kicad_pcb`, CPL,
+DXF y el `.FCStd` con `freecadcmd`), quedaron así:
+
+| Punto | Veredicto | Corrección |
+|---|---|---|
+| Agujeros PEM del panel | **Real** (error de diseño) | 10 × Ø4.22 → **Ø3.0** en `panel-aluminio.dxf` (FH-M3: Ø3.00 +0.08) |
+| Jacks de 1/4" a 1.4 mm de la portadora | **Real** | Suben a z 25: 4.5 mm medidos. El cuerpo PETG se regeneró (`cuerpo-petg.stl`) |
+| Orden de los jacks vs. pads | **Real** | Etiquetas L / R intercambiadas en el panel (tabla abajo); la placa no cambia |
+| IDC 2×5 en la Pi tapa los pines 11–12 | **Real** | Del lado de la Pi va **carcasa Dupont 2×5** (12.7 mm), no IDC (~15 mm) |
+| PHONES con sleeve en HP_VGND | Ya estaba en §5; faltaba en compras | `compras-locales.md`: jack 3.5 de **cuerpo plástico** |
+| Hilos a los Choc | Hallazgo propio | Soldados a las patas del Choc: un Dupont colgando (~14 mm) toca PCB-A (7 mm de aire) |
+| CPL de C1 / U2, footprint de los pots, sentido de los pots, LEDs de PCB-K, encoders "H20" | **Falsos** | Sin cambios: C1 180°, U2 270°; los pots de 9 mm de KiCad tienen el eje a 7.5 mm; pin 1 GND / pin 3 +3V3 sube en horario; PCB-K tiene 6 Choc V2 con SK6812 invertidos; "H20mm" es el nombre del footprint |
+
+**Cableado de los jacks de chasis** (pads de la portadora → agujero del panel, x en mm del enclosure):
+
+| Pad | Señal | x del pad | Agujero (etiqueta) | x del agujero |
+|---|---|---|---|---|
+| J7 | IN L | 147 | IN L | 166 |
+| J8 | IN R | 129 | IN R | 148 |
+| J11 | OUT L | 111 | OUT L | 77 |
+| J12 | OUT R | 93 | OUT R | 58 |
+| J13 | PHONES (sleeve = HP_VGND) | 77 | PHONES | 95 |
+| J14 | CV OUT | 65 | CV OUT | 108 |
+
+Los hilos de PHONES y CV cruzan sobre los de OUT: cable apantallado de 10 cm y amarrado contra la pared.
+
+**Por qué las revisiones anteriores no lo vieron:** DRC, paridad con el esquemático y el visor de JLC verifican lo
+eléctrico y lo que está modelado. El PEM no estaba modelado (el dato de referencia era el de otro herraje), los
+cuerpos de los jacks eran aproximados y el GPIO de la Pi era una sola caja (el IDC la atravesaba igual que a sus
+pines). Desde ahora la verificación incluye una **revisión de herrajes contra hoja de datos** y una **lista de
+armado cable por cable**.
 
 ## 11. Próximo paso
 
