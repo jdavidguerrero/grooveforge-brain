@@ -46,6 +46,11 @@ acción del Teensy: cambia el sonido y después avisa por PARAM_CHANGED / ENGINE
 
 ### 3.1 Cuatro encoders por página y home (aprobado por Juan, 2026-10-16)
 
+> **Encoders (medido en el hardware, 2026-10-19):** los EC11 del prototipo dan **2 pulsos por detent**; el sketch49
+> divide la cuenta con `>> ENC_SHIFT` (= 1). Con 4 (lo que suponía antes) solo respondía uno de cada dos clics.
+> El cutoff en la home acelera girando rápido (detents a < 40 ms: 4×, < 90 ms: 2×). **NAV push en PERFORM** entra a
+> PANEL y **NAV largo** vuelve siempre a PERFORM (theory/08).
+
 - **Pulsadores de P1 y P2** (pines 32 y 9, ADR-004; agregados 2026-10-19): en la parada LFO, P1 push = siguiente
   forma de onda (en círculo). Siguen disponibles SHIFT + P1.
 - **Home = las vistas** (PERFORM, PANEL): ENC L / R son CUTOFF / RES, el filtro global de todos los engines.

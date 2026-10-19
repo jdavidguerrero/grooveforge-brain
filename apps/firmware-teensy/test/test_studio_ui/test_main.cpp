@@ -256,7 +256,12 @@ void test_nav_largo_vuelve_a_home() {
     ui.handle(Control::Key2);                // ENV
     ui.handle(Control::Key3);                // LFO
     ui.handle(Control::NavLong);
-    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);   // vuelve a la última vista
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page); // home = PERFORM
+    ui.handle(Control::NavPush);                       // NAV push en PERFORM: entra a PANEL
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+    ui.handle(Control::Nav, 3);
+    ui.handle(Control::NavLong);                       // desde PANEL, NAV largo sale a PERFORM
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
     ui.handle(Control::Mode);                // en FX se queda en FX
     ui.handle(Control::NavLong);
     TEST_ASSERT_EQUAL_UINT8(FX, ui.state().page);

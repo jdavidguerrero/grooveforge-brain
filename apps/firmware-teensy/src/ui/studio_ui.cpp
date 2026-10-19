@@ -86,8 +86,8 @@ void StudioUi::refresh_cursor() {
 
 Result StudioUi::handle(Control c, int8_t v) {
     dirty_ = true;
-    if (c == Control::NavLong) {                            // home: la última vista (en FX, FX ya es su home)
-        if (!ui_.mode) show(last_view_);
+    if (c == Control::NavLong) {                            // home = PERFORM, también desde PANEL (en FX, FX es su home)
+        if (!ui_.mode) show(PERFORM);
         return {};
     }
     if (c == Control::Mode) {
@@ -194,6 +194,10 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
         return {};
     }
 
+    if (ui_.page == PERFORM && c == Control::NavPush) {     // NAV push en PERFORM: entra a PANEL (theory/08 §4)
+        show(PANEL);
+        return {};
+    }
     if (ui_.page == PANEL && c == Control::Nav) {       // NAV recorre las tarjetas; pasados los bordes, la vista vecina
         const int i = int(panel_cursor_) + v, n = panel_card_count(engine_);
         if (i < 0) {
