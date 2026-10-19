@@ -2,6 +2,7 @@
 // El comportamiento esperado es el de App::handle de apps/studio-head.
 #include <unity.h>
 
+#include "ui/detent.h"
 #include "ui/studio_ui.h"
 
 using namespace studio;
@@ -267,6 +268,23 @@ void test_nav_largo_vuelve_a_home() {
     TEST_ASSERT_EQUAL_UINT8(FX, ui.state().page);
 }
 
+// Encoders de 2 pulsos por detent con el vaivén de ±1 medido en el hardware (2026-10-19): no rebota.
+void test_detent_con_histeresis() {
+    DetentCounter d(2);
+    const int32_t seq[] = {1, 2, 3, 4, 5, 4, 5, 4, 5, 6};          // dos detents y vaivén en 4/5 (borde de >> 1)
+    int32_t pos = 0, changes = 0, last = 0;
+    for (int32_t raw : seq) {
+        pos = d.update(raw);
+        if (pos != last) ++changes;
+        last = pos;
+    }
+    TEST_ASSERT_EQUAL_INT32(3, pos);                                // 6 pulsos = 3 detents
+    TEST_ASSERT_EQUAL_INT32(3, changes);                            // sin idas y vueltas
+    TEST_ASSERT_EQUAL_INT32(3, d.update(5));                        // el vaivén no baja
+    TEST_ASSERT_EQUAL_INT32(2, d.update(4));                        // 2 pulsos atrás sí
+    TEST_ASSERT_EQUAL_INT32(-1, d.update(-2));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -287,5 +305,6 @@ int main() {
     RUN_TEST(test_mode_fx_y_vuelta);
     RUN_TEST(test_fx_slots_ruteo_hold_y_favorito);
     RUN_TEST(test_ui_state_roundtrip);
+    RUN_TEST(test_detent_con_histeresis);
     return UNITY_END();
 }

@@ -59,6 +59,7 @@
 #include "../fx/modal_reverb.h"
 #include "../fx/phase_chorus.h"
 #include "../fx/tape_saturate.h"
+#include "../ui/detent.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/panel_leds.h"
@@ -149,7 +150,8 @@ uint32_t key_flash_ms[studio::KEY_LEDS] = {};
 USBHost usb_host;
 MIDIDevice midi(usb_host);
 
-constexpr int ENC_SHIFT = 1;   ///< log2 de los pulsos por detent: 1 = EC11 de 2 pulsos (el del prototipo)
+constexpr int ENC_PPD = 2;     ///< pulsos por detent: 2 = EC11 del prototipo (medido en el hardware, 2026-10-19)
+studio::DetentCounter det_l(ENC_PPD), det_r(ENC_PPD), det_nav(ENC_PPD), det_p1(ENC_PPD), det_p2(ENC_PPD);
 Encoder enc_l(10, 11), enc_r(13, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
 // B1–B4, B5 MODE, B6 SHIFT/HOLD, NAV push, ENC L push
 constexpr uint8_t BTN_PINS[8] = {2, 3, 4, 5, 40, 41, 26, 12};
@@ -985,11 +987,9 @@ void loop() {
     }
 
     const uint8_t e = ui.engine();
-    // Los EC11 del prototipo dan 2 pulsos por detent (medido en el hardware, 2026-10-19): >> ENC_SHIFT con 1.
-    // Desplazamiento (división hacia abajo) y no /: / trunca hacia cero y deja un detent muerto al cruzar el cero
-    // (theory/04 §3.1, auditoría 2026-10-18).
-    const int32_t l = (enc_l.read() >> ENC_SHIFT), r = (enc_r.read() >> ENC_SHIFT), n = (enc_nav.read() >> ENC_SHIFT);
-    const int32_t p1 = (enc_p1.read() >> ENC_SHIFT), p2 = (enc_p2.read() >> ENC_SHIFT);
+    // Detents con histéresis (ui/detent.h): el vaivén de ±1 pulso del contacto no mueve el valor
+    const int32_t l = det_l.update(enc_l.read()), r = det_r.update(enc_r.read()), n = det_nav.update(enc_nav.read());
+    const int32_t p1 = det_p1.update(enc_p1.read()), p2 = det_p2.update(enc_p2.read());
     // Home (vistas) y modo FX: ENC L / R = filtro. Páginas de edición: ENC L / R = 3.er y 4.º control de la página.
     const uint8_t pg = ui.state().page;
     const bool enc_lr_filter = ui.state().mode || pg == studio::PERFORM || pg == studio::AI || pg == studio::SPECTRUM ||
@@ -999,11 +999,15 @@ void loop() {
     if (r != last_r && !enc_lr_filter) { page_encoder(3, r - last_r); last_r = r; }
     if (l != last_l) {
         const GF_Range cr = GF_CUTOFF_RANGE[e];
-        // Aceleración: detents seguidos (< 40 ms) avanzan 4×, < 90 ms 2×; despacio sigue siendo fino (6 % por detent)
+        // Aceleración: detents seguidos (< 40 ms) en el mismo sentido avanzan 4×, < 90 ms 2×; al cambiar de sentido
+        // no acelera (un pulso de rebote en contra no salta 26 %). Despacio sigue siendo fino (6 % por detent).
         static uint32_t last_cut_ms = 0;
+        static int last_cut_dir = 0;
+        const int dir = l > last_l ? 1 : -1;
         const uint32_t dt_cut = millis() - last_cut_ms;
         last_cut_ms = millis();
-        const float accel = dt_cut < 40 ? 4.0f : dt_cut < 90 ? 2.0f : 1.0f;
+        const float accel = dir != last_cut_dir ? 1.0f : dt_cut < 40 ? 4.0f : dt_cut < 90 ? 2.0f : 1.0f;
+        last_cut_dir = dir;
         cutoff[e] = constrain(cutoff[e] * powf(1.06f, accel * float(l - last_l)), cr.lo, cr.hi);
         engine_filter(e);
         bridge_filter();
