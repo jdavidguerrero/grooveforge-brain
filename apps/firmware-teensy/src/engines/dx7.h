@@ -61,6 +61,10 @@ public:
     void setFeedback(uint8_t fb);
     void setOp(uint8_t op, float ratio, float level);
     void setOpEnv(uint8_t op, float attack_ms, float decay_ms, float sustain, float release_ms);
+    /// Forma W1–W8 (0–7) y DETUNE (−3…+3) de un operador (fidelidad §11.1).
+    void setOpWave(uint8_t op, uint8_t wave, int8_t detune);
+    /// Escalado de teclado (nivel de moduladores y velocidad de envolventes) y decay 2 (0 = sostiene).
+    void setKbdScaling(float level, uint8_t rate, float d2_ms);
 
     // ── Compatibilidad con el sketch 28 (engine de 2 operadores) ───────────────
     void setFmRatio(float ratio) {

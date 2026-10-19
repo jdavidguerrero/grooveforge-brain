@@ -387,6 +387,13 @@ void engine_osc(uint8_t e) {
                 dx7.setOp(k, o[k][0], o[k][1]);
                 dx7.setOpEnv(k, o[k][4], o[k][5], o[k][6] / 100.0f, o[k][7]);
             }
+            {   // MOD: WAVE / DETUNE · KBD / EG (fidelidad §11.1)
+                const studio::Patch& p = patches[4];
+                for (uint8_t k = 0; k < 4; k++)
+                    dx7.setOpWave(k, uint8_t(constrain(int(lroundf(p.mod[0][k])) - 1, 0, 7)),
+                                  int8_t(lroundf(p.mod[0][4 + k])));
+                dx7.setKbdScaling(p.mod[1][0], uint8_t(lroundf(p.mod[1][1])), p.mod[1][2]);
+            }
             break;
         default: break;
     }

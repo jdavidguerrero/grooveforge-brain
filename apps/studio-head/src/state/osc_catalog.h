@@ -19,6 +19,7 @@ enum class SlotKind : uint8_t {
     KbdTrack,    ///< keyboard tracking del filtro: OFF / HALF / FULL
     ChorusMode,  ///< Juno-106 BBD Chorus: OFF / I / II / I+II
     HpfMode,     ///< Juno-106 4-pos HPF: BST / FLAT / 225 / 720
+    Choice,      ///< discreto con etiquetas propias (OscSlot::labels, índice desde lo)
 };
 
 /// Un slot de la plantilla OSC (diseño v3 §A: {name, unit, kind, range}).
@@ -30,6 +31,7 @@ struct OscSlot {
     uint8_t decimals;
     bool signed_value;  ///< muestra "+7" / "−12"
     bool global;        ///< el valor es del engine, no del oscilador (se guarda en el oscilador 0)
+    const char* const* labels = nullptr;   ///< SlotKind::Choice
 };
 
 /// Fuente en la fila de selección: oscilador (parada de NAV) o fuente solo de nivel (SUB, NOISE, RING).

@@ -165,8 +165,10 @@ void test_ui_state_roundtrip() {
 
 void test_lfo_nav_cambia_la_forma() {     // desde el Prophet completo: NAV elige la parada (LFO · POLY · WHEEL)
     StudioUi ui;
-    ui.handle(Control::Key3);                // LFO del Moog: solo la parada LFO
-    ui.handle(Control::Nav, 1);
+    ui.handle(Control::Key3);                // LFO del Moog: LFO · MODULATION
+    ui.handle(Control::Nav, 3);
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
+    ui.handle(Control::Nav, -3);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
     ui.set_engine(2);                        // Prophet: LFO · POLY-MOD · WHEEL-MOD
     ui.handle(Control::Nav, 1);

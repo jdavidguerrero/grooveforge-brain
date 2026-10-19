@@ -39,6 +39,17 @@ constexpr uint8_t MODS[DX7_ALGORITHMS][DX7_OPS] = {
 };
 constexpr uint8_t CARRIERS[DX7_ALGORITHMS] = {0x1, 0x1, 0x1, 0x1, 0x5, 0x7, 0x7, 0xF};
 
+/// 2^x para x ≤ 0 (amplitud de la envolvente): exponente por bits, fracción por polinomio de 3.er grado (< 0.1 %).
+inline float fast_exp2(float x) {
+    if (x < -30.0f) return 0.0f;
+    const float fl = floorf(x);
+    const float f = x - fl;
+    const float p = 1.0f + f * (0.6951786f + f * (0.2261868f + f * 0.0781021f));
+    union { float v; int32_t i; } u{p};
+    u.i += int32_t(fl) << 23;
+    return u.v;
+}
+
 }  // namespace
 
 float dx7_level_amp(float level) {
@@ -51,15 +62,32 @@ bool dx7_is_carrier(int alg, int op) {
     return CARRIERS[alg - 1] & (1 << op);
 }
 
+float dx7_wave(int wave, float ph) {
+    const float* t = sine_table();
+    ph -= floorf(ph);
+    if (wave <= 0) return sine(t, ph);
+    if (wave == 1) { const float s = sine(t, ph); return s * fabsf(s); }
+    if (ph >= 0.5f) return 0.0f;                     // W3–W8: la segunda mitad del ciclo en cero
+    switch (wave) {
+        case 2: return sine(t, ph);
+        case 3: { const float s = sine(t, ph); return s * s; }
+        case 4: return sine(t, 2.0f * ph);
+        case 5: { const float s = sine(t, 2.0f * ph); return s * fabsf(s); }
+        case 6: return fabsf(sine(t, 2.0f * ph));
+        default: { const float s = sine(t, 2.0f * ph); return s * s; }
+    }
+}
+
 void Dx7VoiceCore::note_on(float hz, float velocity) {
     (void)sine_table();   // la tabla se arma acá (contexto de loop), no en la primera ISR de audio
     hz_ = hz;
+    note_ = hz > 1.0f ? 69.0f + 12.0f * log2f(hz / 440.0f) : 0.0f;
     if (velocity < 0.0f) velocity = 0.0f;
     if (velocity > 1.0f) velocity = 1.0f;
     vel_ = velocity;
     for (int k = 0; k < DX7_OPS; ++k) {
         phase_[k] = 0.0f;
-        env_[k] = 0.0f;
+        att_[k] = DX7_EG_FLOOR_DB;
         stage_[k] = ATTACK;
     }
     fb_[0] = fb_[1] = 0.0f;
@@ -90,38 +118,63 @@ void Dx7VoiceCore::render(const Dx7Patch& p, float fs, float* out, int n) {
     const float car_vel = (vel_ >= 0.999f) ? 1.0f : (0.35f + 0.65f * vel_);
     const float mod_vel = (vel_ >= 0.999f) ? 1.0f : (0.30f + 0.70f * vel_ * vel_);
 
-    // Por bloque: incrementos de fase, amplitudes y pendientes de las envolventes
-    float inc[DX7_OPS], amp[DX7_OPS], a_step[DX7_OPS], d_step[DX7_OPS], r_step[DX7_OPS], sus[DX7_OPS];
-    const float ms_to_samples = fs / 1000.0f;
+    // Escalado de teclado (§11.1): octavas sobre C3 (nota 48)
+    const float oct_up = (note_ - 48.0f) / 12.0f;
+    const float kbd_att_db = p.kbd_level > 0.0f && oct_up > 0.0f ? p.kbd_level / 99.0f * 12.0f * oct_up : 0.0f;
+    const float rate_mul = p.kbd_rate ? exp2f(oct_up * float(p.kbd_rate) / 3.0f) : 1.0f;   // > 1 = más rápido
+
+    // Por bloque: incrementos de fase, amplitudes y pendientes de las envolventes en dB por muestra
+    float inc[DX7_OPS], amp[DX7_OPS], ka[DX7_OPS], d_slope[DX7_OPS], r_slope[DX7_OPS], sus_att[DX7_OPS];
+    const float ms_to_samples = fs / 1000.0f / rate_mul;
+    const float d2_slope = p.d2_ms > 0.5f ? 60.0f / (p.d2_ms * ms_to_samples) : 0.0f;
     for (int k = 0; k < DX7_OPS; ++k) {
         const Dx7OpParams& o = p.op[k];
         const bool is_car = ((carriers >> k) & 1) != 0;
-        inc[k] = hz_ * o.ratio / fs;
+        inc[k] = hz_ * o.ratio * exp2f(float(o.detune) * DX7_DETUNE_CENTS / 1200.0f) / fs;
         amp[k] = dx7_level_amp(o.level) * (is_car ? car_vel : mod_vel);
-        sus[k] = o.sustain < 0.0f ? 0.0f : o.sustain > 1.0f ? 1.0f : o.sustain;
-        a_step[k] = o.attack_ms > 0.5f ? 1.0f / (o.attack_ms * ms_to_samples) : 1.0f;
-        d_step[k] = o.decay_ms > 0.5f ? 1.0f / (o.decay_ms * ms_to_samples) : 1.0f;
-        r_step[k] = o.release_ms > 0.5f ? 1.0f / (o.release_ms * ms_to_samples) : 1.0f;
+        if (!is_car && kbd_att_db > 0.0f) amp[k] *= exp2f(-kbd_att_db / 6.0206f);
+        const float s = o.sustain < 0.0f ? 0.0f : o.sustain > 1.0f ? 1.0f : o.sustain;
+        sus_att[k] = s <= 1.6e-5f ? DX7_EG_FLOOR_DB : fminf(DX7_EG_FLOOR_DB, -20.0f * log10f(s));
+        // Ataque: att ← att·ka, de 96 dB a 0.1 dB en attack_ms
+        ka[k] = o.attack_ms > 0.5f ? expf(logf(0.1f / DX7_EG_FLOOR_DB) / (o.attack_ms * ms_to_samples)) : 0.0f;
+        d_slope[k] = o.decay_ms > 0.5f ? 60.0f / (o.decay_ms * ms_to_samples) : DX7_EG_FLOOR_DB;
+        r_slope[k] = o.release_ms > 0.5f ? 60.0f / (o.release_ms * ms_to_samples) : DX7_EG_FLOOR_DB;
     }
 
     for (int i = 0; i < n; ++i) {
         float y[DX7_OPS];
         float sum = 0.0f;
         for (int k = DX7_OPS - 1; k >= 0; --k) {          // OP4 → OP1: los moduladores tienen número mayor
-            float& e = env_[k];
+            float& a = att_[k];
             switch (stage_[k]) {
-                case ATTACK:  e += a_step[k]; if (e >= 1.0f) { e = 1.0f; stage_[k] = DECAY; } break;
-                case DECAY:   e -= d_step[k]; if (e <= sus[k]) { e = sus[k]; stage_[k] = SUSTAIN; } break;
-                case SUSTAIN: e = sus[k]; break;
-                case RELEASE: e -= r_step[k]; if (e <= 0.0f) { e = 0.0f; stage_[k] = IDLE; } break;
-                case IDLE:    e = 0.0f; break;
+                case ATTACK:
+                    a *= ka[k];
+                    if (a < 0.1f) { a = 0.0f; stage_[k] = DECAY; }
+                    break;
+                case DECAY:
+                    a += d_slope[k];
+                    if (a >= sus_att[k]) { a = sus_att[k]; stage_[k] = SUSTAIN; }
+                    break;
+                case SUSTAIN:
+                    if (d2_slope > 0.0f) a = fminf(DX7_EG_FLOOR_DB, a + d2_slope);
+                    else a = sus_att[k];                   // sigue al SUSTAIN del panel en vivo
+                    break;
+                case RELEASE:
+                    a += r_slope[k];
+                    if (a >= DX7_EG_FLOOR_DB) { a = DX7_EG_FLOOR_DB; stage_[k] = IDLE; }
+                    break;
+                case IDLE:
+                    a = DX7_EG_FLOOR_DB;
+                    break;
             }
+            const float e = a >= DX7_EG_FLOOR_DB ? 0.0f : fast_exp2(-a * (1.0f / 6.0206f));
             float m = 0.0f;
             const uint8_t mods = MODS[alg][k];
             for (int j = k + 1; j < DX7_OPS; ++j)
                 if (mods & (1 << j)) m += y[j] * MOD_CYCLES;
             if (k == DX7_OPS - 1) m += fb * (fb_[0] + fb_[1]) * 0.5f;
-            y[k] = sine(tab, phase_[k] + m) * amp[k] * e;
+            const float ph = phase_[k] + m;
+            y[k] = (p.op[k].wave ? dx7_wave(p.op[k].wave, ph) : sine(tab, ph)) * amp[k] * e;
             phase_[k] += inc[k];
             if (phase_[k] >= 1.0f) phase_[k] -= 1.0f;
             if ((carriers >> k) & 1) sum += y[k];

@@ -135,6 +135,9 @@ typedef struct {
 #define GF_FM_OP {{0.5f, 16, 0.5f, 0, false}, {0, 99, 1, 0, false}, {1, 8, 1, 8, true}, {0, 7, 1, 8, true}, \
                   {0, 3000, 20, 0, false}, {0, 5000, 20, 0, false}, {0, 100, 2, 0, false}, {0, 5000, 20, 0, false}}
 #define GF_OSC_EMPTY     {GF_OSC_NONE4, GF_OSC_NONE4}
+/* DX7, paradas de MOD (fidelidad §11.1): W1–W8 y DETUNE por operador | KBD LEVEL · KBD RATE · D2 RATE */
+#define GF_FM_WAVE   {1, 8, 1, 8, false}
+#define GF_FM_DETUNE {-3, 3, 1, 7, false}
 
 /** Plantilla por engine / parada / slot, la misma que osc_catalog.cpp (el DX7 tiene página de operadores). */
 static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS] = {
@@ -146,9 +149,10 @@ static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS]
      {GF_OSC_WAVE(4), GF_OSC_INTERVAL, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
       GF_OSC_PW_GLOBAL, GF_OSC_DETUNE, GF_OSC_NONE, GF_OSC_NONE},
      GF_OSC_EMPTY},
-    /* JUNO-106: WAVE (SAW/SQR/PULSE/SAW+PLS) · SUB · NOISE · PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3) */
+    /* JUNO-106: WAVE (SAW/SQR/PULSE/SAW+PLS) · SUB · NOISE · PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3) ·
+       RANGE (16'/8'/4') · VCA (ENV/GATE) (fidelidad §11.5) */
     {{GF_OSC_WAVE(4), GF_OSC_GLOBAL100, GF_OSC_GLOBAL100, GF_OSC_PW,
-      GF_OSC_ENUM4_GLOBAL, GF_OSC_ENUM4_GLOBAL, GF_OSC_NONE, GF_OSC_NONE},
+      GF_OSC_ENUM4_GLOBAL, GF_OSC_ENUM4_GLOBAL, {0, 2, 1, 3, true}, GF_OSC_TOGGLE_GLOBAL},
      GF_OSC_EMPTY, GF_OSC_EMPTY, GF_OSC_EMPTY},
     /* PROPHET-5 (theory/prophet-5-completo.md §3.1):
        OSC A: FREQ · PW · SAW · PULSE | SYNC
@@ -159,10 +163,11 @@ static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS]
       GF_OSC_TOGGLE},
      {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_KBD3, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},
      GF_OSC_EMPTY},
-    /* OB-6: WAVE · SUB / INTERVAL · LEVEL · NOISE | SHIFT: PW · — / DETUNE · FLT MORPH (global) · BP MODE (global) */
-    {{GF_OSC_WAVE(4), GF_OSC_GLOBAL100, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
+    /* OB-6: SHAPE (0 saw → 100 pulse, continua: fidelidad §11.3) · SUB / INTERVAL · LEVEL · NOISE |
+       SHIFT: PW · — / DETUNE · FLT MORPH (global) · BP MODE (global) */
+    {{GF_OSC_LEVEL, GF_OSC_GLOBAL100, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
       GF_OSC_PW, GF_OSC_NONE, GF_OSC_GLOBAL100, GF_OSC_TOGGLE_GLOBAL},
-     {GF_OSC_WAVE(4), GF_OSC_INTERVAL, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
+     {GF_OSC_LEVEL, GF_OSC_INTERVAL, GF_OSC_LEVEL, GF_OSC_GLOBAL100,
       GF_OSC_PW, GF_OSC_DETUNE, GF_OSC_GLOBAL100, GF_OSC_TOGGLE_GLOBAL},
      GF_OSC_EMPTY, GF_OSC_EMPTY},
     /* DX7: OP 1–4 (ADR-005); ALGORITHM y FEEDBACK son del engine (se guardan en OP 1) */
@@ -178,22 +183,34 @@ static const GF_OscSlot GF_OSC_SLOT[GF_ENGINE_COUNT][GF_OSC_STOPS][GF_OSC_SLOTS]
 static const uint8_t GF_OSC_STOP_COUNT[GF_ENGINE_COUNT] = {3, 1, 3, 2, 4, 2};
 
 /** Paradas de MOD (después de LFO) en la página LFO / MOD de cada engine. */
-static const uint8_t GF_MOD_STOPS[GF_ENGINE_COUNT] = {0, 0, 2, 1, 0, 0};
+static const uint8_t GF_MOD_STOPS[GF_ENGINE_COUNT] = {1, 1, 2, 1, 2, 1};
 
-/** Plantilla de MOD: Prophet-5 POLY-MOD / WHEEL-MOD y OB-6 X-MOD. */
+/** Plantilla de MOD (theory/fidelidad-engines.md §11): las secciones que no caben en la página OSC. */
 static const GF_OscSlot GF_MOD_SLOT[GF_ENGINE_COUNT][GF_MOD_STOPS_MAX][GF_OSC_SLOTS] = {
-    {GF_OSC_EMPTY, GF_OSC_EMPTY},
-    {GF_OSC_EMPTY, GF_OSC_EMPTY},
+    {/* MODEL D MODULATION (fidelidad §11.2): MOD MIX (VCO 3 ↔ NOISE) · OSC MOD · FILTER MOD · NOISE PINK |
+        VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD (OFF / 1/3 / 2/3 / FULL) */
+     {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE,
+      GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_LEVEL, {0, 3, 1, 4, false}},
+     GF_OSC_EMPTY},
+    {/* JUNO-106 LFO: DELAY (ms, fidelidad §11.5) */
+     {{0, 3000, 20, 0, false}, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4},
+     GF_OSC_EMPTY},
     {/* POLY-MOD: FILT ENV · OSC B · FREQ A · PW A | FILTER */
      {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},
      /* WHEEL-MOD: SOURCE LFO↔NOISE · FREQ A · FREQ B · PW A | PW B · FILTER */
      {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE,
       GF_OSC_NONE}},
-    {/* OB-6 X-MOD: FILT ENV · VCO 2 · FREQ 1 · FLT MODE | PW 1 */
-     {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},
+    {/* OB-6 X-MOD: FILT ENV · VCO 2 · FREQ 1 · FLT MODE | PW 1 · SYNC (VCO 2 → VCO 1, §11.3) */
+     {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE},
      GF_OSC_EMPTY},
-    {GF_OSC_EMPTY, GF_OSC_EMPTY},
-    {GF_OSC_EMPTY, GF_OSC_EMPTY}};
+    {/* DX7 WAVE / DETUNE: WAVE OP1–OP4 | DETUNE OP1–OP4 */
+     {GF_FM_WAVE, GF_FM_WAVE, GF_FM_WAVE, GF_FM_WAVE, GF_FM_DETUNE, GF_FM_DETUNE, GF_FM_DETUNE, GF_FM_DETUNE},
+     /* DX7 KBD / EG: KBD LEVEL · KBD RATE · D2 RATE (ms para 60 dB; 0 = sostiene) */
+     {{0, 99, 1, 0, false}, {0, 3, 1, 4, false}, {0, 5000, 20, 0, false}, GF_OSC_NONE, GF_OSC_NONE4}},
+    {/* ARP 2600 PATCH (fidelidad §11.4): MONO · SYNC · VCO3 RATE (Hz) · VCO3 → PITCH | VCO3 → CUTOFF · NOISE COLOR */
+     {GF_OSC_TOGGLE, GF_OSC_TOGGLE, {0.1f, 30, 0.1f, 0, false}, GF_OSC_LEVEL,
+      GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_NONE, GF_OSC_NONE},
+     GF_OSC_EMPTY}};
 
 static inline bool gf_osc_used(const GF_OscSlot* s) { return s->hi > s->lo; }
 

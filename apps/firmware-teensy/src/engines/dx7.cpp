@@ -119,6 +119,22 @@ void DX7Engine::setOpEnv(uint8_t op, float attack_ms, float decay_ms, float sust
     _syncAmpReleaseWithCarriers(release_ms);
 }
 
+void DX7Engine::setOpWave(uint8_t op, uint8_t wave, int8_t detune) {
+    if (op >= DX7_OPS) return;
+    __disable_irq();
+    _patch.op[op].wave = wave < DX7_WAVES ? wave : DX7_WAVES - 1;
+    _patch.op[op].detune = detune < -3 ? -3 : detune > 3 ? 3 : detune;
+    __enable_irq();
+}
+
+void DX7Engine::setKbdScaling(float level, uint8_t rate, float d2_ms) {
+    __disable_irq();
+    _patch.kbd_level = level < 0.0f ? 0.0f : level > 99.0f ? 99.0f : level;
+    _patch.kbd_rate = rate > 3 ? 3 : rate;
+    _patch.d2_ms = d2_ms < 0.0f ? 0.0f : d2_ms;
+    __enable_irq();
+}
+
 void DX7Engine::_syncAmpReleaseWithCarriers(float min_release_ms) {
     float max_rel = min_release_ms;
     for (int k = 0; k < DX7_OPS; ++k) {

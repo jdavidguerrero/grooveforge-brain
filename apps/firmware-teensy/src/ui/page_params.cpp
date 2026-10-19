@@ -296,9 +296,14 @@ void patch_init(Patch& p, uint8_t e) {
             o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 7; o[2][1] = -12;
             o[0][2] = 80; o[1][2] = 72; o[2][2] = 50; o[0][3] = 12;
             o[0][4] = 50; o[2][5] = 0;
+            // MODULATION: VCO 3 como fuente, sin destinos, ruido blanco, VCO 3 sigue al teclado, sin overdrive
+            p.mod[0][0] = 0; p.mod[0][1] = 0; p.mod[0][2] = 0; p.mod[0][3] = 0;
+            p.mod[0][4] = 1; p.mod[0][5] = 0; p.mod[0][6] = 0; p.mod[0][7] = 0;
             break;
         case 1:  // JUNO-106: PULSE (para que se oiga el PWM), SUB 60, NOISE 10, PW 50, CHORUS I (1), HPF FLAT (1)
             o[0][0] = 2; o[0][1] = 60; o[0][2] = 10; o[0][3] = 50; o[0][4] = 1; o[0][5] = 1;
+            o[0][6] = 1; o[0][7] = 0;                     // RANGE 8' · VCA ENV
+            p.mod[0][0] = 0;                              // LFO DELAY
             break;
         case 2:  // PROPHET-5: A saw, B pulse +7 ST, MIXER 60 / 40, WHEEL-MOD → FREQ A y B (como sale de fábrica)
             o[0][0] = 0; o[0][1] = 50; o[0][2] = 1; o[0][3] = 0; o[0][4] = 0;
@@ -307,12 +312,14 @@ void patch_init(Patch& p, uint8_t e) {
             p.mod[1][0] = 0; p.mod[1][1] = 1; p.mod[1][2] = 1;
             break;
         case 3:  // OB-6: SAW / PULSE, SUB 40, +7 ST, niveles 80 / 70, ruido 0, PW 50/50, DETUNE +4 CT, MORPH 0 (LP), BP OFF
-            o[0][0] = 0; o[1][0] = 3; o[0][1] = 40; o[1][1] = 7; o[0][2] = 80; o[1][2] = 70; o[0][3] = 0;
+            o[0][0] = 0; o[1][0] = 100; o[0][1] = 40; o[1][1] = 7; o[0][2] = 80; o[1][2] = 70; o[0][3] = 0;
             o[0][4] = 50; o[1][4] = 50; o[1][5] = 4; o[0][6] = 0; o[0][7] = 0;
             break;
         case 5:  // ARP 2600: PULSE / SINE, PW 50%, ×1.50, RING 40, NOISE 5, VCO1 80%, VCO2 70%
             o[0][0] = 3; o[0][1] = 50; o[1][0] = 4; o[1][1] = 1.5f; o[0][2] = 40; o[0][3] = 5;
             o[0][4] = 80; o[1][4] = 70;
+            // PATCH: monofónico como el original, sin sync, VCO 3 a 5 Hz sin destinos, ruido blanco
+            p.mod[0][0] = 1; p.mod[0][1] = 0; p.mod[0][2] = 5; p.mod[0][3] = 0; p.mod[0][4] = 0; p.mod[0][5] = 0;
             break;
         case 4: {  // DX7: E.PIANO (algoritmo 5), igual que DX7Engine::begin()
             const float op[4][8] = {{1, 99, 5, 2, 0, 1800, 0, 400},
@@ -321,6 +328,10 @@ void patch_init(Patch& p, uint8_t e) {
                                     {14, 52, 0, 0, 0, 160, 0, 120}};
             for (int k = 0; k < 4; ++k)
                 for (int s = 0; s < 8; ++s) o[k][s] = op[k][s];
+            // WAVE / DETUNE: W1 en los 4; las dos portadoras desafinadas ±1 (el chorus natural del E.PIANO)
+            for (int k = 0; k < 4; ++k) { p.mod[0][k] = 1; p.mod[0][4 + k] = 0; }
+            p.mod[0][4] = 1; p.mod[0][6] = -1;
+            p.mod[1][0] = 0; p.mod[1][1] = 0; p.mod[1][2] = 0;   // KBD LEVEL · KBD RATE · D2 RATE
             break;
         }
         default: break;

@@ -1,5 +1,7 @@
 #include "state/osc_catalog.h"
 
+#include <gf_params.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -47,13 +49,62 @@ const OscSlot D_FREQ1   = {"FREQ 1", "", SlotKind::Toggle, 0, 1, 0, false, false
 const OscSlot D_FMODE   = {"FLT MODE", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot D_PW1     = {"PW 1", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot WM_SRC    = {"LFO/NOISE", "%", SlotKind::Number, 0, 100, 0, false, false};
+// Tercera vuelta (theory/fidelidad-engines.md §11), sincronizado con GF_MOD_SLOT / GF_OSC_SLOT
+const char* const L_FM_WAVE[8] = {"W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"};
+const char* const L_KRATE[4] = {"0", "1", "2", "3"};
+const char* const L_FKBD4[4] = {"OFF", "1/3", "2/3", "FULL"};
+const char* const L_NOISE[2] = {"WHITE", "PINK"};
+const char* const L_RANGE[3] = {"16'", "8'", "4'"};
+const char* const L_VCA[2] = {"ENV", "GATE"};
+const OscSlot FM_W1     = {"WAVE OP1", "", SlotKind::Choice, 1, 8, 0, false, false, L_FM_WAVE};
+const OscSlot FM_W2     = {"WAVE OP2", "", SlotKind::Choice, 1, 8, 0, false, false, L_FM_WAVE};
+const OscSlot FM_W3     = {"WAVE OP3", "", SlotKind::Choice, 1, 8, 0, false, false, L_FM_WAVE};
+const OscSlot FM_W4     = {"WAVE OP4", "", SlotKind::Choice, 1, 8, 0, false, false, L_FM_WAVE};
+const OscSlot FM_D1     = {"DETUNE 1", "", SlotKind::Number, -3, 3, 0, true, false};
+const OscSlot FM_D2     = {"DETUNE 2", "", SlotKind::Number, -3, 3, 0, true, false};
+const OscSlot FM_D3     = {"DETUNE 3", "", SlotKind::Number, -3, 3, 0, true, false};
+const OscSlot FM_D4     = {"DETUNE 4", "", SlotKind::Number, -3, 3, 0, true, false};
+const OscSlot FM_KLVL   = {"KBD LEVEL", "", SlotKind::Number, 0, 99, 0, false, false};
+const OscSlot FM_KRATE  = {"KBD RATE", "", SlotKind::Choice, 0, 3, 0, false, false, L_KRATE};
+const OscSlot FM_D2R    = {"D2 RATE", "MS", SlotKind::Number, 0, 5000, 0, false, false};
+const OscSlot MD_MIX    = {"MOD MIX", "%", SlotKind::MixAB, 0, 100, 0, false, false};
+const OscSlot MD_OSC    = {"OSC MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot MD_FLT    = {"FILTER MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot MD_NOISE  = {"NOISE", "", SlotKind::Choice, 0, 1, 0, false, false, L_NOISE};
+const OscSlot MD_V3KBD  = {"VCO3 KBD", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot MD_V3LO   = {"VCO3 LO", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot MD_ODRIVE = {"OVERDRIVE", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot MD_FKBD   = {"FILTER KBD", "", SlotKind::Choice, 0, 3, 0, false, false, L_FKBD4};
+const OscSlot JU_DELAY  = {"LFO DELAY", "MS", SlotKind::Number, 0, 3000, 0, false, false};
+const OscSlot JU_RANGE  = {"RANGE", "", SlotKind::Choice, 0, 2, 0, false, true, L_RANGE};
+const OscSlot JU_VCA    = {"VCA", "", SlotKind::Choice, 0, 1, 0, false, true, L_VCA};
+const OscSlot OB_SHAPE  = {"SHAPE", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot SYNC_D    = {"SYNC", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot AR_MONO   = {"MONO", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot AR_V3RATE = {"VCO3 RATE", "HZ", SlotKind::Ratio, 0.1f, 30, 1, false, false};
+const OscSlot AR_V3PIT  = {"VCO3>PITCH", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot AR_V3CUT  = {"VCO3>CUTOFF", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot AR_NCOLOR = {"NOISE COLOR", "%", SlotKind::Number, 0, 100, 0, false, false};
 
 const ModStop PROPHET_MOD[2] = {
     {"POLY-MOD", {&PM_ENV, &PM_B, &D_FREQA, &D_PWA, &D_FILTER, nullptr, nullptr, nullptr}},
     {"WHEEL-MOD", {&WM_SRC, &D_FREQA, &D_FREQB, &D_PWA, &D_PWB, &D_FILTER, nullptr, nullptr}},
 };
 const ModStop OB6_MOD[1] = {
-    {"X-MOD", {&PM_ENV, &XM_VCO2, &D_FREQ1, &D_FMODE, &D_PW1, nullptr, nullptr, nullptr}},
+    {"X-MOD", {&PM_ENV, &XM_VCO2, &D_FREQ1, &D_FMODE, &D_PW1, &SYNC_D, nullptr, nullptr}},
+};
+const ModStop MOOG_MOD[1] = {
+    {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, &MD_NOISE, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
+};
+const ModStop JUNO_MOD[1] = {
+    {"LFO", {&JU_DELAY, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
+};
+const ModStop DX7_MOD[2] = {
+    {"WAVE / DETUNE", {&FM_W1, &FM_W2, &FM_W3, &FM_W4, &FM_D1, &FM_D2, &FM_D3, &FM_D4}},
+    {"KBD / EG", {&FM_KLVL, &FM_KRATE, &FM_D2R, nullptr, nullptr, nullptr, nullptr, nullptr}},
+};
+const ModStop ARP_MOD[1] = {
+    {"PATCH", {&AR_MONO, &SYNC_D, &AR_V3RATE, &AR_V3PIT, &AR_V3CUT, &AR_NCOLOR, nullptr, nullptr}},
 };
 const ModStop NO_MOD = {"", {}};
 
@@ -67,7 +118,7 @@ const OscEngine ENGINES[6] = {
      {Wave::Saw, Wave::Tri, Wave::Sqr, Wave::Pulse}, 4, false},
     // JUNO-106: 1 DCO (SAW/SQR/PULSE/SAW+PLS) + SUB + NOISE + PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3).
     {1, 3, {{"DCO", true}, {"SUB", false}, {"NOISE", false}},
-     {{&WAVE, &SUB, &NOISE, &PW, &CHORUS_M, &HPF_M, nullptr, nullptr}},
+     {{&WAVE, &SUB, &NOISE, &PW, &CHORUS_M, &HPF_M, &JU_RANGE, &JU_VCA}},
      {Wave::Saw, Wave::Sqr, Wave::Pulse, Wave::SawPulse}, 4, false},
     // PROPHET-5 completo: OSC A · OSC B · MIXER, 8 slots por parada (capa SHIFT: SYNC, formas de B, FILTER KBD)
     {3, 3, {{"OSC A", true}, {"OSC B", true}, {"MIXER", true}},
@@ -77,8 +128,8 @@ const OscEngine ENGINES[6] = {
      {Wave::Saw, Wave::Tri, Wave::Pulse}, 3, false},
     // OB-6: VCO 1 · 2 + SUB + NOISE | SHIFT: PW · — / DETUNE · FLT MORPH (LP↔N↔HP) · BP MODE.
     {2, 4, {{"VCO 1", true}, {"VCO 2", true}, {"SUB", false}, {"NOISE", false}},
-     {{&WAVE, &SUB, &LEVEL, &NOISE, &PW, nullptr, &FLT_MORPH, &BP_MODE},
-      {&WAVE, &INTERVAL, &LEVEL, &NOISE, &PW, &DETUNE, &FLT_MORPH, &BP_MODE}},
+     {{&OB_SHAPE, &SUB, &LEVEL, &NOISE, &PW, nullptr, &FLT_MORPH, &BP_MODE},
+      {&OB_SHAPE, &INTERVAL, &LEVEL, &NOISE, &PW, &DETUNE, &FLT_MORPH, &BP_MODE}},
      {Wave::Saw, Wave::Tri, Wave::Sqr, Wave::Pulse}, 4, false},
     // DX7: FM de 4 operadores (ADR-005). La página dibuja operadores y algoritmo, no esta tabla.
     {4, 4, {{"OP 1", true}, {"OP 2", true}, {"OP 3", true}, {"OP 4", true}},
@@ -94,15 +145,20 @@ const OscEngine ENGINES[6] = {
 }  // namespace
 
 uint8_t mod_stop_count(uint8_t engine_id) {
-    if (engine_id == 2) return 2;
-    if (engine_id == 3) return 1;
-    return 0;
+    return engine_id < GF_ENGINE_COUNT ? GF_MOD_STOPS[engine_id] : 0;
 }
 
 const ModStop& mod_stop(uint8_t engine_id, int stop) {
-    if (engine_id == 2 && stop >= 0 && stop < 2) return PROPHET_MOD[stop];
-    if (engine_id == 3 && stop == 0) return OB6_MOD[0];
-    return NO_MOD;
+    if (stop < 0 || stop >= int(mod_stop_count(engine_id))) return NO_MOD;
+    switch (engine_id) {
+        case 0: return MOOG_MOD[0];
+        case 1: return JUNO_MOD[0];
+        case 2: return PROPHET_MOD[stop];
+        case 3: return OB6_MOD[0];
+        case 4: return DX7_MOD[stop];
+        case 5: return ARP_MOD[0];
+        default: return NO_MOD;
+    }
 }
 
 const char* wave_name(Wave w) {
@@ -131,19 +187,24 @@ void osc_load_defaults(StudioState& s) {
     set(0, 1, 1, 7); set(0, 2, 1, -12);
     set(0, 0, 2, 80); set(0, 1, 2, 72); set(0, 2, 2, 50); set(0, 0, 3, 12);
     set(0, 0, 4, 50); set(0, 2, 5, 0);
+    s.mod_val[0][0][4] = 1;                                   // MODULATION: VCO3 KBD ON (= patch_init)
     // JUNO-106: SAW, SUB 60, NOISE 10, PW 50, CHORUS I (1), HPF FLAT (1)
     set(1, 0, 0, 0); set(1, 0, 1, 60); set(1, 0, 2, 10); set(1, 0, 3, 50); set(1, 0, 4, 1); set(1, 0, 5, 1);
+    set(1, 0, 6, 1); set(1, 0, 7, 0);                         // RANGE 8' · VCA ENV
     // PROPHET-5: A saw, B pulse +7 ST, MIXER 60 / 40 (= patch_init del firmware); WHEEL-MOD → FREQ A y B
     set(2, 0, 1, 50); set(2, 0, 2, 1); set(2, 1, 0, 7); set(2, 1, 2, 50); set(2, 1, 3, 1); set(2, 1, 6, 1);
     set(2, 2, 0, 60); set(2, 2, 1, 40);
     s.mod_val[2][1][1] = 1; s.mod_val[2][1][2] = 1;
     // OB-6: SAW / SAW, SUB 40, +7 ST, niveles 80 / 70, ruido 0, PW 50/50, DETUNE +4 CT, MORPH 0, BP OFF
-    set(3, 0, 0, 0); set(3, 1, 0, 0); set(3, 0, 1, 40); set(3, 1, 1, 7);
+    set(3, 0, 0, 0); set(3, 1, 0, 100); set(3, 0, 1, 40); set(3, 1, 1, 7);   // SHAPE: saw / pulse
     set(3, 0, 2, 80); set(3, 1, 2, 70); set(3, 0, 3, 0);
     set(3, 0, 4, 50); set(3, 1, 4, 50); set(3, 1, 5, 4); set(3, 0, 6, 0); set(3, 0, 7, 0);
     // ARP 2600: SAW / SINE, PW 50%, ×1.50, RING 40, NOISE 5, VCO1 80%, VCO2 70%
     set(5, 0, 0, 0); set(5, 0, 1, 50); set(5, 1, 0, 4); set(5, 1, 1, 1.5f); set(5, 0, 2, 40); set(5, 0, 3, 5);
     set(5, 0, 4, 80); set(5, 1, 4, 70);
+    s.mod_val[5][0][0] = 1; s.mod_val[5][0][2] = 5;           // PATCH: MONO, VCO3 5 Hz
+    for (int k = 0; k < 4; ++k) s.mod_val[4][0][k] = 1;      // DX7: W1 en los 4 operadores
+    s.mod_val[4][0][4] = 1; s.mod_val[4][0][6] = -1;
 }
 
 void osc_format(const OscEngine& e, const OscSlot& sl, float v, char* out, size_t n) {
@@ -170,6 +231,11 @@ void osc_format(const OscEngine& e, const OscSlot& sl, float v, char* out, size_
         case SlotKind::HpfMode: {
             static const char* const H[4] = {"BST", "FLAT", "225", "720"};
             std::snprintf(out, n, "%s", H[std::clamp(int(std::lround(v)), 0, 3)]);
+            break;
+        }
+        case SlotKind::Choice: {
+            const int i = int(std::lround(v - sl.lo)), n_lab = int(std::lround(sl.hi - sl.lo)) + 1;
+            std::snprintf(out, n, "%s", sl.labels ? sl.labels[std::clamp(i, 0, n_lab - 1)] : "?");
             break;
         }
         case SlotKind::MixAB: {

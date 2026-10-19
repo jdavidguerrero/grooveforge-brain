@@ -111,7 +111,7 @@ void test_forma_sin_dar_la_vuelta_y_patch_completo() {
     step_lfo_shape(p, 0, -10, c);
     TEST_ASSERT_EQUAL_UINT8(0, p.lfo_shape);
     const uint8_t n = patch_params(p, 3, c);
-    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 5, n);                         // OB-6: 38 base + 12 OSC + 5 X-MOD
+    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6, n);                         // OB-6: 38 base + 12 OSC + 6 X-MOD (con SYNC)
     for (uint8_t i = 0; i < n; ++i) TEST_ASSERT_EQUAL_HEX8(0x13, c[i].id >> 8);
     TEST_ASSERT_TRUE(patch_params(p, 2, c) <= PATCH_PARAM_COUNT);    // Prophet: 3 paradas × 8 + MOD
 }
@@ -183,9 +183,9 @@ void test_prophet_osc_shift_mod_y_shape() {
     u.shift = 1;
     edit_encoder(p, u, 2, 0, 1, c);                                  // SHIFT P1 en la parada LFO = SHAPE
     TEST_ASSERT_EQUAL_UINT8(2, p.lfo_shape);
-    u.cursor = 1;
+    u.cursor = 2;
     u.shift = 0;
-    TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, u, 0, 0, 1, c));      // el Moog no tiene paradas de MOD
+    TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, u, 0, 0, 1, c));      // el Moog tiene una sola parada de MOD
 }
 
 void test_nuevos_slots_juno_ob6_arp() {
@@ -246,7 +246,7 @@ void test_cc_entrada() {
     TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 54, 127, c));          // POLY-MOD, parada 1 de MOD
     TEST_ASSERT_EQUAL_HEX16(0x1270, c[0].id);
     TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 2, 46, 64, c));           // el Prophet no tiene 4.ª parada de OSC
-    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 0, 54, 64, c));           // el Model D no tiene paradas de MOD
+    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 0, 110, 64, c));          // el Model D no tiene 2.ª parada de MOD
     TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 4, 46, 64, c));           // OP 4 del DX7
     TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 2, 9, 64, c));            // CC sin mapear
     TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 9, 70, 64, c));           // engine inválido

@@ -222,3 +222,95 @@ Valores de partida (estimados, se ajustan en el A/B):
 **Lotes siguientes** (cada uno con su medición offline): DX7 con envolventes Yamaha de 4 rates / levels, 8 formas
 del TX81Z y detune por operador; Model D con el VCO 3 como modulador y el overdrive del mixer; OB-6 con forma de onda
 continua y sync; ARP monofónico con S&H; etapa de salida (acople en AC y saturación) y color del ruido por engine.
+
+## 11. Tercera vuelta: secciones que faltan por engine (aprobado por Juan, 2026-10-19)
+
+"Termina de implementar todo para probar en el hardware". Cierra los lotes anunciados en §10 y las secciones de panel
+que faltaban (theory/07 de Studio, ítem 6). Regla de interfaz: lo que no cabe en la página OSC va a **paradas de MOD**
+de la página LFO / MOD (`GF_MOD_SLOT`, hasta 2 por engine), igual que POLY-MOD / WHEEL-MOD del Prophet. Así reciben
+CC (54–61 y 110–117, theory/07 §3), se guardan en el preset y la cabeza las dibuja sin pantallas nuevas.
+
+### 11.1 DX7: envolventes Yamaha, formas del TX81Z, detune y escalado de teclado
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **Envolvente en dB** | El EG del DX7 / TX81Z avanza lineal en **nivel logarítmico** (atenuación): el decay y el release suenan exponenciales; el ataque se acerca al máximo cada vez más lento en dB (sube rápido al principio en amplitud) | `Dx7VoiceCore`: estado en dB de atenuación (0 = máximo, 96 = silencio). Ataque: `att ← att·k` (aproximación exponencial en dB); decay, decay 2 y release: pendiente lineal en dB; amplitud = 2^(−att/6.02) con exp2 rápido |
+| **Tiempos** | Rates 0–99 | Se mantienen ms del panel: DECAY y RELEASE = tiempo para caer **60 dB**; ATTACK = tiempo de 96 dB a 0.1 dB |
+| **Decay 2** (D2R del TX81Z) | Con la tecla apretada el nivel sigue bajando desde D1L | D2 RATE global (0 = sostiene, si no ms para 60 dB). Simplificación: global, no por operador |
+| **8 formas de onda** (W1–W8 del TX81Z) | W1 seno · W2 seno "cuadrado" (sin·\|sin\|) · W3 medio seno · W4 medio W2 · W5 seno ×2 en la primera mitad · W6 W2 ×2 en la primera mitad · W7 \|seno ×2\| en la primera mitad · W8 \|W2 ×2\| en la primera mitad | Una forma por operador, calculada sobre la tabla de seno (sin tablas nuevas) |
+| **Detune** | −3…+3 por operador | 2 ¢ por paso (estimado, se ajusta en el A/B) |
+| **Escalado de nivel por teclado** | Atenúa operadores en las notas agudas | KBD LEVEL 0–99: hasta −12 dB por octava sobre C3, solo en **moduladores** (el uso clásico: el brillo no se dispara en el agudo). Simplificación: global |
+| **Escalado de rate** (RS 0–3) | Envolventes más rápidas en el agudo | Tiempos × 2^(−(nota − 48)/12 · RS/3): con RS 3 se duplica la velocidad por octava |
+
+Panel: parada MOD 1 **WAVE / DETUNE** = WAVE OP1–OP4 | DETUNE OP1–OP4; parada MOD 2 **KBD / EG** = KBD LEVEL ·
+KBD RATE · D2 RATE.
+
+### 11.2 Model D: MODULATION, overdrive del mixer, ruido rosa, keyboard control
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **MODULATION** | Fuente = mezcla VCO 3 ↔ NOISE (MOD MIX); destinos OSC MOD (afinación de VCO 1–2) y FILTER MOD; cantidad = rueda de modulación | VCO 3 se lee a tasa de control (su fase se integra en el engine); con OSC MOD la rueda deja de hacer el vibrato genérico y hace lo del original (como WHEEL-MOD en el Prophet) |
+| **VCO 3 KBD / LO** | OSC 3 CONTROL off: VCO 3 no sigue el teclado (dron / LFO); LO: rango sub-audio | Toggles: con KBD off, VCO 3 queda en su frecuencia de C3 + intervalo; con LO divide por 100 (0.1–20 Hz típico) |
+| **Overdrive del mixer** | Subir los niveles del mixer satura la entrada del filtro (el truco del "feedback loop") | OVERDRIVE 0–100: ganancia de entrada 1–4× antes del `fast_tanh` de entrada del ladder (ya existe `set_drive`): sumado al DRIVE del panel |
+| **Ruido WHITE / PINK** | Switch en el panel | `AudioSynthNoisePink` (Teensy Audio Library) + selector |
+| **FILTER KBD** | Dos switches: 1/3 y 2/3 → 0, 1/3, 2/3, 1 | 4 posiciones: cutoff × (f_nota / f_C3)^k |
+
+Panel: parada MOD **MODULATION** = MOD MIX · OSC MOD · FILTER MOD · NOISE PINK | VCO3 KBD · VCO3 LO · OVERDRIVE ·
+FILTER KBD.
+
+### 11.3 OB-6: forma continua y sync
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **Forma continua** | Perilla de forma de saw a pulse (con el ancho de pulso aparte) | `AudioSynthPolyBlep::setShapeMix(m)`: salida = (1 − m)·saw + m·pulse, polyBLEP en los dos bordes. WAVE de la página OSC pasa a SHAPE 0–100 |
+| **Sync** | VCO 2 se sincroniza a VCO 1 | Sync entre objetos de audio: el maestro (VCO 1, creado antes, así su `update()` corre primero en el mismo ciclo) anota en qué muestra y fracción da la vuelta; el esclavo reinicia la fase ahí y corrige el salto con un polyBLEP de un lado (aproximado: un poco más de aliasing que el BLEP de dos lados) |
+
+Panel: SHAPE reemplaza a WAVE en VCO 1 y 2; SYNC en la parada X-MOD (sexto slot, libre).
+
+### 11.4 ARP 2600: mono, sync, VCO 3 y página PATCH
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **Monofónico** | El 2600 es mono, con prioridad a la última nota | MONO: una voz, prioridad última nota, vuelve a la nota anterior al soltar (pila de 8 notas); legato sin redisparo si hay glide |
+| **Sync** | VCO 2 sincronizado a VCO 1 | El mismo sync de §11.3 |
+| **VCO 3 como modulador** | En el 2600 el VCO 3 en rango bajo modula afinación y filtro desde la matriz | VCO 3 a tasa de control (tri, 0.1–30 Hz): VCO3 → PITCH (±12 st) y VCO3 → CUTOFF (±4 oct) |
+| **S&H** | Muestrea el ruido con su reloj | Ya existe: forma S&H del LFO global (theory/lfo-modulacion.md) con destino CUTOFF / PITCH; los presets S&H BURBLE lo usan |
+| **Ruido** | Generador de ruido con color continuo | Mezcla blanco / rosa (NOISE COLOR 0–100) |
+
+Panel: parada MOD **PATCH** = MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3 → CUTOFF · NOISE COLOR.
+
+### 11.5 Juno-106: rango, VCA ENV / GATE, retardo del LFO
+
+| Comportamiento | En el original | Implementación |
+|---|---|---|
+| **RANGE 16' · 8' · 4'** | Selector de octava del DCO | Slot SHIFT 6 de OSC: −12 / 0 / +12 st |
+| **VCA ENV / GATE** | En GATE el VCA abre y cierra con la tecla, sin envolvente | Slot SHIFT 7: GATE = envolvente del VCA 1 ms · sustain 1 · release 8 ms (sin click) |
+| **LFO DELAY** | La profundidad del LFO sube en rampa tras una nota nueva (si no había otras apretadas) | Parada MOD **LFO**: DELAY 0–3000 ms; el sketch escala las cantidades del LFO con la rampa |
+
+### 11.6 Etapa de salida y velocity
+
+- **Acople AC + saturación de salida**: cada engine termina en un VCA / mezclador y un amplificador de salida que no
+  es ideal. En el bus del engine: filtro pasa altos de 1 polo a 8 Hz (quita el DC del medio seno del DX7, del pulse
+  asimétrico y del ruido de los LFO) y `fast_tanh` suave (drive 1.2, compensado) — `OutputStage`, un objeto por
+  canal antes de las cadenas de FX.
+- **Velocity por engine** (theory/07 §2): Juno sin velocity (el 106 no tiene); Model D sin velocity (el original no
+  tiene); Prophet, OB-6, ARP → VCA y cantidad del envelope del filtro; DX7 ya la tiene (índice de modulación).
+  Aftertouch: global en el sketch (theory/07).
+
+### 11.7 Vista de panel (cabeza)
+
+Cuarta vista de la home (después de PERFORM · AI · SPECTRUM): **PANEL**, el panel completo del engine en una
+pantalla, solo lectura, con todas las secciones (OSC por parada, MOD, ENV AMP y FILTER, FILTER, LFO, SYNTH FX) en
+tarjetas, como la serigrafía del original. Se edita desde las páginas; sirve para ver el patch completo de un vistazo
+al cargar un preset.
+
+### 11.8 Cómo se valida
+
+| Qué | Cómo |
+|---|---|
+| EG Yamaha: caída lineal en dB, 60 dB en el tiempo pedido | test native de `Dx7VoiceCore` |
+| Formas W1–W8: medio ciclo en cero para W3–W8, simetría de W1 / W2 | test native |
+| Sync: el esclavo reinicia en cada vuelta del maestro | test native del core polyBLEP |
+| Forma continua: m = 0 igual a saw, m = 1 igual a pulse | test native |
+| Mono del ARP: prioridad última nota y vuelta a la anterior | test native (lógica de pila aparte del engine) |
+| Todo lo demás | A/B en el hardware, `tools/offline` para lo medible |
