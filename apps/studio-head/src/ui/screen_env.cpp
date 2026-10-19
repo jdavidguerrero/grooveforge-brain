@@ -12,6 +12,15 @@ using namespace gf;
 
 namespace {
 
+/// El envelope que muestra la página: NAV elige AMP (cursor 0) o FILTER (cursor 1).
+struct EnvView { float a, d, s, r; bool filter; };
+EnvView env_view(const StudioState& st) {
+    const bool f = st.ui_cursor == 1;
+    return f ? EnvView{st.env_attack_ms, st.env_decay_ms, st.env_sustain, st.env_release_ms, true}
+             : EnvView{st.amp_attack_ms, st.amp_decay_ms, st.amp_sustain, st.amp_release_ms, false};
+}
+
+
 constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
 constexpr int X0 = 24, X1 = 744, Y_BASE = 184, Y_TOP = 24;
 constexpr int SUSTAIN_W = 192;   // ancho fijo del tramo de sustain
@@ -21,7 +30,7 @@ constexpr uint32_t AREA = 0x0F1E1A;
 lv_color_t canvas_buf[GW * GH];
 
 const char* const CELL_NAMES[4] = {"ATTACK", "DECAY", "SUSTAIN", "RELEASE"};
-const char* const CELL_TAGS[4] = {"P1", "P2", "SHIFT P1", "SHIFT P2"};
+const char* const CELL_TAGS[4] = {"P1", "P2", "ENC L", "ENC R"};
 
 void fmt_ms(float ms, char* out, size_t n) {
     if (ms >= 1000.0f) std::snprintf(out, n, "%.1f", ms / 1000.0f);
@@ -73,18 +82,19 @@ lv_obj_t* ScreenEnv::create() {
 }
 
 void ScreenEnv::draw_graph(const StudioState& s) {
+    const EnvView ev = env_view(s);
     const bool sh = s.shift;
     lv_canvas_fill_bg(_canvas, lv_color_hex(SURFACE), LV_OPA_COVER);
 
     // Reparto horizontal: sustain fijo; attack, decay y release proporcionales a su tiempo.
-    const float a = std::max(s.env_attack_ms, 1.0f), d = std::max(s.env_decay_ms, 1.0f),
-                r = std::max(s.env_release_ms, 1.0f);
+    const float a = std::max(ev.a, 1.0f), d = std::max(ev.d, 1.0f),
+                r = std::max(ev.r, 1.0f);
     const float free_w = float(X1 - X0 - SUSTAIN_W - 3 * MIN_SEG);
     const float tot = a + d + r;
     const int xa = X0 + MIN_SEG + int(free_w * a / tot);
     const int xd = xa + MIN_SEG + int(free_w * d / tot);
     const int xs = xd + SUSTAIN_W;
-    const int ys = Y_BASE - int(std::lround(std::clamp(s.env_sustain, 0.0f, 1.0f) * (Y_BASE - Y_TOP)));
+    const int ys = Y_BASE - int(std::lround(std::clamp(ev.s, 0.0f, 1.0f) * (Y_BASE - Y_TOP)));
 
     // Curva como polilínea: attack recto; decay y release con caída exponencial.
     constexpr int N = 16;
@@ -181,49 +191,43 @@ void ScreenEnv::paint_cell(Cell& c, bool on, bool nav, const char* val, const ch
 }
 
 void ScreenEnv::update(const StudioState& s) {
+    const EnvView ev = env_view(s);
     _top.update(s);
-    if (s.engine != _last_engine && s.engine < 6) {
+    if ((s.engine != _last_engine || ev.filter != _last_filter) && s.engine < 6) {
         _last_engine = s.engine;
-        char t[24];
-        std::snprintf(t, sizeof(t), "ENV \xC2\xB7 %s", engine_info(s.engine).name);
+        _last_filter = ev.filter;
+        char t[40];
+        std::snprintf(t, sizeof(t), "ENV \xC2\xB7 %s \xC2\xB7 %s", ev.filter ? "FILTER" : "AMP", engine_info(s.engine).name);
         _top.set_page(t);
     }
 
     char a[12], d[12], sus[12], r[12];
-    fmt_ms(s.env_attack_ms, a, sizeof(a));
-    fmt_ms(s.env_decay_ms, d, sizeof(d));
-    std::snprintf(sus, sizeof(sus), "%d", int(std::lround(s.env_sustain * 100.0f)));
-    fmt_ms(s.env_release_ms, r, sizeof(r));
-    const char* ua = s.env_attack_ms >= 1000.0f ? "S" : "MS";
-    const char* ud = s.env_decay_ms >= 1000.0f ? "S" : "MS";
-    const char* ur = s.env_release_ms >= 1000.0f ? "S" : "MS";
+    fmt_ms(ev.a, a, sizeof(a));
+    fmt_ms(ev.d, d, sizeof(d));
+    std::snprintf(sus, sizeof(sus), "%d", int(std::lround(ev.s * 100.0f)));
+    fmt_ms(ev.r, r, sizeof(r));
+    const char* ua = ev.a >= 1000.0f ? "S" : "MS";
+    const char* ud = ev.d >= 1000.0f ? "S" : "MS";
+    const char* ur = ev.r >= 1000.0f ? "S" : "MS";
 
     char key[64];
-    std::snprintf(key, sizeof(key), "%s|%s|%s|%s|%d", a, d, sus, r, s.shift);
+    std::snprintf(key, sizeof(key), "%s|%s|%s|%s|%d|%d", a, d, sus, r, s.shift, ev.filter);
     if (std::strcmp(key, _last_key) != 0) {
         std::snprintf(_last_key, sizeof(_last_key), "%s", key);
         draw_graph(s);
         const bool sh = s.shift;
-        paint_cell(_cells[0], !sh, false, a, ua);
-        paint_cell(_cells[1], !sh, !sh, d, ud);
-        paint_cell(_cells[2], sh, false, sus, "%");
-        paint_cell(_cells[3], sh, sh, r, ur);
+        paint_cell(_cells[0], !sh, false, a, ua);       // los 4 encoders editan A · D · S · R; SHIFT: capa vacía
+        paint_cell(_cells[1], !sh, false, d, ud);
+        paint_cell(_cells[2], !sh, false, sus, "%");
+        paint_cell(_cells[3], !sh, false, r, ur);
     }
 
     _bottom.set_mode(s.mode == Mode::Fx, s.shift);
-    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, 1);
-    char v[16];
-    std::snprintf(v, sizeof(v), "%d", int(std::lround(s.cutoff_hz)));
-    _bottom.set_enc(false, "CUTOFF", v, "HZ", std::clamp(std::log(s.cutoff_hz / 20.0f) / std::log(1000.0f), 0.0f, 1.0f));
-    std::snprintf(v, sizeof(v), "%d", int(std::lround(s.resonance * 100.0f)));
-    _bottom.set_enc(true, "RES", v, "%", s.resonance);
-    if (s.shift) {
-        _bottom.set_param(1, "SUSTAIN", sus, "%", s.env_sustain);
-        _bottom.set_param(2, "RELEASE", r, ur, s.env_release_ms / 1200.0f);
-    } else {
-        _bottom.set_param(1, "ATTACK", a, ua, s.env_attack_ms / 200.0f);
-        _bottom.set_param(2, "DECAY", d, ud, s.env_decay_ms / 1200.0f);
-    }
-    _bottom.set_nav("HIGHLIGHT");
+    _bottom.set_page_control(0, "ATTACK", a, ua, ev.a / 200.0f);
+    _bottom.set_page_control(1, "DECAY", d, ud, ev.d / 1200.0f);
+    _bottom.set_page_control(2, "SUSTAIN", sus, "%", ev.s);
+    _bottom.set_page_control(3, "RELEASE", r, ur, ev.r / 1200.0f);
+    _bottom.set_nav(ev.filter ? "AMP \xE2\x80\xB9 FILTER" : "AMP \xE2\x80\xBA FILTER");
 }

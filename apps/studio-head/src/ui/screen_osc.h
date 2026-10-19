@@ -21,6 +21,7 @@ public:
 
     /// NAV giró: siguiente oscilador u operador del engine activo (sin efecto con uno solo).
     void move_selection(int dir, const StudioState& s);
+    void set_selection(uint8_t engine, uint8_t sel) { if (engine < 6) _sel[engine] = sel; }
 
 private:
     static void on_graph_draw(lv_event_t* e);
@@ -35,6 +36,6 @@ private:
 
     const StudioState* _s = nullptr;
     uint8_t _sel[6] = {1, 0, 1, 0, 1, 1};  ///< selección por engine (los ejemplos del diseño)
-    char _last_key[160] = {};
+    char _last_key[400] = {};
     int _last_engine = -1;
 };

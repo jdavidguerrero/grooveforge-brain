@@ -22,8 +22,10 @@ constexpr int FX_GRAINS = 24;
 constexpr int PRESET_MAX = 16;
 
 constexpr int OSC_STOPS = 4;      ///< osciladores u operadores que NAV puede elegir
-constexpr int OSC_SLOTS = 4;      ///< P1 · P2 · SHIFT P1 · SHIFT P2
+constexpr int OSC_SLOTS = 8;      ///< P1 · P2 · ENC L · ENC R y los mismos con SHIFT (theory/04 §3.1)
+constexpr int MOD_STOPS = 2;      ///< paradas de MOD de la página LFO / MOD (Prophet: POLY-MOD, WHEEL-MOD)
 constexpr int LFO_DESTS = 4;      ///< CUTOFF · PITCH · AMP · PWM
+constexpr int SFX_SLOTS = 4;      ///< cadena de FX del synth: BIT · TAPE · CHORUS · MODAL
 
 enum class LfoShape : uint8_t { Sine, Tri, Saw, Sqr, SampleHold };
 
@@ -52,6 +54,11 @@ struct FxStream {
 struct StudioState {
     Mode mode = Mode::Synth;
     LinkState link = LinkState::Demo;
+
+    /// Navegación decidida por el Teensy (UI_STATE 0x44, theory/04). Con ui_remote la cabeza no navega sola.
+    bool ui_remote = false;
+    uint8_t ui_page = 0;             ///< mismo enum que Page de la UI
+    uint8_t ui_cursor = 0;           ///< ENGINE: tile · PRESETS: fila · OSC: oscilador
 
     uint8_t engine = 0;              ///< engine_id 0x00–0x05 (02 §2.2)
     char preset[24] = "A-07 BASS FOUNDRY";
@@ -82,6 +89,8 @@ struct StudioState {
     /// Página OSC: valor de cada slot por engine y por oscilador (plantilla en state/osc_catalog.h).
     /// Los slots globales del engine (NOISE, CROSSMOD, MIX…) se guardan en el oscilador 0.
     float osc_val[6][OSC_STOPS][OSC_SLOTS] = {};
+    /// Paradas de MOD por engine en unidades de la UI (plantilla en state/osc_catalog.h).
+    float mod_val[6][MOD_STOPS][OSC_SLOTS] = {};
 
     // DX7 de 4 operadores (ADR-005; firmware en desarrollo)
     float fm_ratio[4] = {1.0f, 2.0f, 1.0f, 3.5f};
@@ -89,17 +98,28 @@ struct StudioState {
     uint8_t fm_algorithm = 4;        ///< 1–8
     uint8_t fm_feedback = 3;         ///< 0–7, sobre el operador 4
 
-    // LFO (diseño 12a/12b: especificación, todavía no existe en el firmware)
+    // LFO: una cantidad por destino (theory/lfo-modulacion.md)
     LfoShape lfo_shape = LfoShape::Tri;
     float lfo_rate_hz = 2.4f;        ///< 0.05–20 Hz en modo libre
     bool lfo_sync = false;
     uint8_t lfo_div = 1;             ///< índice en 1/4 · 1/8 · 1/16 · 1/8T
-    uint8_t lfo_dest = 0;            ///< destino que edita P2 y muestra el medidor
-    /// PITCH en ST · AMP 0–1 · PWM 0–1. CUTOFF no se guarda acá: es p2 de PERFORM (mismo valor, diseño 12a).
-    float lfo_depth[LFO_DESTS] = {0.0f, 3.0f, 0.0f, 0.0f};
+    /// Cantidad por destino, 0–1 (CUTOFF · PITCH · AMP · PWM, mismo orden que GF_DEST_*). CUTOFF no se guarda
+    /// acá: es p2 de PERFORM (un solo valor por destino). PITCH en semitonos = gf_lfo_pitch_st(cantidad).
+    float lfo_amt[LFO_DESTS] = {0.0f, 0.12f, 0.0f, 0.35f};
     float lfo_phase = 0.0f;          ///< en ciclos, 0–8 (la ventana muestra 2 u 8 ciclos)
 
-    // Envolvente del filtro de la página ENV
+    /// Cadena de FX del synth (B4, theory/05 de Studio): normalizado 0–1, conversiones en gf_params.h.
+    bool sfx_on[SFX_SLOTS] = {false, true, true, false};
+    float sfx_mix[SFX_SLOTS] = {0.5f, 0.6f, 0.5f, 0.3f};
+    float sfx_p[SFX_SLOTS][3] = {{0.4f, 0.3f, 0.3f}, {0.25f, 0.2f, 0.2f}, {0.5f, 0.35f, 0.2f}, {0.45f, 1.0f / 3.0f, 0.5f}};
+
+    // Envolvente del amplificador (página ENV, NAV → AMP)
+    float amp_attack_ms = 5.0f;
+    float amp_decay_ms = 300.0f;
+    float amp_sustain = 0.7f;
+    float amp_release_ms = 300.0f;
+
+    // Envolvente del filtro de la página ENV (NAV → FILTER)
     float env_attack_ms = 12.0f;
     float env_decay_ms = 340.0f;
     float env_sustain = 0.62f;       ///< 0–1
@@ -110,7 +130,9 @@ struct StudioState {
 
     // Controles de página (ADR-004): P1/P2 y SHIFT
     float p1 = 0.48f;                ///< PERFORM: FLT ENV AMT
-    float p2 = 0.20f;                ///< PERFORM: LFO→CUTOFF
+    float p2 = 0.20f;                ///< PERFORM: LFO→CUTOFF (= cantidad CUTOFF del LFO)
+    float glide = 0.0f;              ///< PERFORM SHIFT+P1: GLIDE (0–1)
+    float drive = 0.20f;             ///< PERFORM SHIFT+P2: DRIVE (0–1)
     bool shift = false;
 
     float volume_db = -6.0f;

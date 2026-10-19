@@ -23,6 +23,7 @@ public:
     static constexpr int ROWS_VISIBLE = 6;
     /// Fila bajo el cursor: 0 = guardar, n ≥ 1 = preset n − 1.
     int cursor() const { return _cursor; }
+    void set_cursor(int c) { _cursor = c; }
 
 private:
     static constexpr int VISIBLE = ROWS_VISIBLE;

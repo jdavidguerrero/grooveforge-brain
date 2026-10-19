@@ -31,4 +31,5 @@ private:
 
     char _last_key[64] = {};
     int _last_engine = -1;
+    bool _last_filter = false;
 };

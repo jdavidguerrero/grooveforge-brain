@@ -100,6 +100,7 @@ add_executable(studio-head
   src/ui/edit_cells.cpp
   src/ui/screen_osc.cpp
   src/ui/screen_lfo.cpp
+  src/ui/screen_sfx.cpp
   src/ui/input.cpp
   src/ui/app.cpp
   src/link/bridge_link.cpp

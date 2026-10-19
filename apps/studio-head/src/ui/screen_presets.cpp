@@ -14,7 +14,7 @@ namespace {
 
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
-const char* const KEYS_PRESET[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+const char* const KEYS_PRESET[4] = {"OSC", "ENV", "LFO / MOD", "ENGINE"};  // en PRESETS, B4 abre ENGINE SELECT
 
 }  // namespace
 

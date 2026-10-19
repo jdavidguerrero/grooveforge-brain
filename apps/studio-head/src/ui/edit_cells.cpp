@@ -10,7 +10,7 @@ using namespace gf;
 
 namespace {
 
-const char* const TAGS[4] = {"P1", "P2", "SHIFT P1", "SHIFT P2"};
+const char* const TAGS[4] = {"P1", "P2", "ENC L", "ENC R"};   // los 4 encoders de la página (theory/04 §3.1)
 constexpr uint32_t UNUSED_FRAME = 0x1C1C1C;
 
 }  // namespace

@@ -21,6 +21,11 @@ public:
     void set_filter_encs(float cutoff_hz, float resonance);
     void set_keys(const char* const labels[4], int active);
     void set_param(int n, const char* lbl, const char* val, const char* unit, float frac);
+    /// Control `k` de una página de edición (theory/04 §3.1): 0 = P1, 1 = P2, 2 = ENC L, 3 = ENC R.
+    void set_page_control(int k, const char* lbl, const char* val, const char* unit, float frac) {
+        if (k < 2) set_param(k + 1, lbl, val, unit, frac);
+        else set_enc(k == 3, lbl, val, unit, frac);
+    }
     void set_nav(const char* text);
     /// B6 en FX: HOLD apretado → celda HERO_WHITE con HELD.
     void set_hold(bool held);

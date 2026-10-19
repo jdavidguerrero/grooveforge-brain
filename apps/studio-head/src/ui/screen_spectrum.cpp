@@ -104,19 +104,20 @@ void ScreenSpectrum::update(const StudioState& s) {
 
     const int cut_x = int(std::lround(cut_frac * (PW - 1)));
     const int res = int(std::lround(s.resonance * 100.0f));
-    if (cut_x != _last_cut_x || res != _last_res) {
+    const int morph_sig = (int(s.engine) << 8) | int(std::lround(s.osc_val[3][0][6])) | ((s.osc_val[3][0][7] > 0.5f ? 1 : 0) << 12);
+    if (cut_x != _last_cut_x || res != (_last_res & 0xFF) || morph_sig != (_last_res >> 8)) {
         _last_cut_x = cut_x;
-        _last_res = res;
+        _last_res = res | (morph_sig << 8);
         lv_obj_set_x(_cut_line, PX + cut_x);
         for (int p = 0; p < CURVE_PTS; ++p) {
             const float x = float(p) * (PW - 1) / (CURVE_PTS - 1);
-            const float y = std::clamp(float(db_to_y(filter_db(frac_freq(x / (PW - 1)), fc, s.resonance))), 1.0f,
+            const float y = std::clamp(float(db_to_y(engine_filter_db(s, frac_freq(x / (PW - 1))))), 1.0f,
                                        float(PH - 1));
             _curve_pts[p] = {lv_coord_t(x), lv_coord_t(y)};
         }
         lv_line_set_points(_curve, _curve_pts, CURVE_PTS);
         lv_label_set_text_fmt(_res_tag, "RES %d%%", res);
-        const int res_y = std::clamp(db_to_y(filter_db(fc, fc, s.resonance)), 0, PH - 16);
+        const int res_y = std::clamp(db_to_y(engine_filter_db(s, fc)), 0, PH - 16);
         lv_obj_set_pos(_res_tag, PX + std::min(cut_x + 8, PW - 64), PY + res_y + 2);
     }
 
@@ -134,16 +135,18 @@ void ScreenSpectrum::update(const StudioState& s) {
 
     const bool fx = s.mode == Mode::Fx;
     _bottom.set_mode(fx, s.shift);
-    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, -1);
     char v[16];
     std::snprintf(v, sizeof(v), "%d", int(std::lround(fc)));
     _bottom.set_enc(false, "CUTOFF", v, "HZ", cut_frac);
     std::snprintf(v, sizeof(v), "%d", res);
     _bottom.set_enc(true, "RES", v, "%", s.resonance);
-    std::snprintf(v, sizeof(v), "%d", int(std::lround(s.p1 * 100.0f)));
-    _bottom.set_param(1, s.shift ? "GLIDE" : "FLT ENV AMT", v, "%", s.p1);
-    std::snprintf(v, sizeof(v), "%d", int(std::lround(s.p2 * 100.0f)));
-    _bottom.set_param(2, s.shift ? "DRIVE" : "LFO\xE2\x86\x92" "CUTOFF", v, "%", s.p2);
+    const float p1_val = s.shift ? s.glide : s.p1;
+    std::snprintf(v, sizeof(v), "%d", int(std::lround(p1_val * 100.0f)));
+    _bottom.set_param(1, s.shift ? "GLIDE" : "FLT ENV AMT", v, "%", p1_val);
+    const float p2_val = s.shift ? s.drive : s.p2;
+    std::snprintf(v, sizeof(v), "%d", int(std::lround(p2_val * 100.0f)));
+    _bottom.set_param(2, s.shift ? "DRIVE" : "LFO\xE2\x86\x92" "CUTOFF", v, "%", p2_val);
     _bottom.set_nav("VIEW");
 }

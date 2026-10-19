@@ -16,7 +16,7 @@ namespace {
 
 constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
 constexpr uint32_t ROW_LINE = 0x1C1C1C;
-const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
 
 // ── Plantilla: fila de selección + pistas (diseño: selRow, lanes) ──────────────
 
@@ -49,45 +49,62 @@ int build_lanes(const StudioState& s, uint8_t eng, Lane* L) {
     switch (eng) {
         case 0:  // MODEL D
             lane(L[0], "VCO 1", wave(0), val(0, 2) / 100, 2);
-            std::snprintf(L[0].sub, sizeof(L[0].sub), "REF");
+            std::snprintf(L[0].sub, sizeof(L[0].sub), "REF · PW %d%%", int(std::lround(val(0, 4))));
             lane(L[1], "VCO 2", wave(1), val(1, 2) / 100, 2, int(std::lround(val(1, 1) * 2)));
             fmt_signed(val(1, 1), "CT", L[1].sub, sizeof(L[1].sub));
-            lane(L[2], "VCO 3", wave(2), val(2, 2) / 100, interval_cycles(val(2, 1)));
+            lane(L[2], "VCO 3", wave(2), val(2, 2) / 100, interval_cycles(val(2, 1) + val(2, 5) / 100.0f));
             fmt_signed(val(2, 1), "ST", L[2].sub, sizeof(L[2].sub));
             lane(L[3], "NOISE", Wave::Noise, val(0, 3) / 100, 1);
             std::snprintf(L[3].sub, sizeof(L[3].sub), "WHITE");
             return 4;
-        case 1:  // JUNO-106
+        case 1: {  // JUNO-106: DCO + Chorus BBD + HPF
+            static const char* const CH_LBL[4] = {"CH OFF", "CH I", "CH II", "CH I+II"};
+            static const char* const HPF_LBL[4] = {"BST", "FLAT", "225", "720"};
+            const int ch = std::clamp(int(std::lround(val(0, 4))), 0, 3);
+            const int hp = std::clamp(int(std::lround(val(0, 5))), 0, 3);
             lane(L[0], "DCO", wave(0), 1.0f, 2);
-            std::snprintf(L[0].sub, sizeof(L[0].sub), "1 OSC");
+            std::snprintf(L[0].sub, sizeof(L[0].sub), "%s · %s", CH_LBL[ch], HPF_LBL[hp]);
             lane(L[1], "SUB", Wave::Sqr, val(0, 1) / 100, 1);
             std::snprintf(L[1].sub, sizeof(L[1].sub), "−1 OCT");
             lane(L[2], "NOISE", Wave::Noise, val(0, 2) / 100, 1);
             std::snprintf(L[2].sub, sizeof(L[2].sub), "WHITE");
             return 3;
-        case 2: {  // PROPHET-5: MIX A/B reparte el nivel
-            const float mix = val(0, 3) / 100;
-            lane(L[0], "OSC A", wave(0), mix, 2);
-            std::snprintf(L[0].sub, sizeof(L[0].sub), "XMOD %d%%", int(std::lround(val(0, 2))));
-            lane(L[1], "OSC B", wave(1), 1 - mix, interval_cycles(val(1, 1)));
-            fmt_signed(val(1, 1), "ST", L[1].sub, sizeof(L[1].sub));
-            return 2;
         }
-        case 3:  // OB-6
+        case 2: {  // PROPHET-5 completo: formas encendidas, MIXER, intervalo y SYNC
+            const Wave wa = val(0, 2) > 0.5f && val(0, 3) > 0.5f ? Wave::SawPulse : val(0, 2) > 0.5f ? Wave::Saw : val(0, 3) > 0.5f ? Wave::Pulse : Wave::Noise;
+            const Wave wb = val(1, 4) > 0.5f ? Wave::Saw : val(1, 5) > 0.5f ? Wave::Tri : val(1, 6) > 0.5f ? Wave::Pulse : Wave::Noise;
+            lane(L[0], "OSC A", wa, val(2, 0) / 100, interval_cycles(val(0, 0)));
+            std::snprintf(L[0].sub, sizeof(L[0].sub), "%s%s", val(0, 2) > 0.5f && val(0, 3) > 0.5f ? "SAW+PULSE" : "",
+                          val(0, 4) > 0.5f ? " SYNC" : "");
+            lane(L[1], "OSC B", wb, val(2, 1) / 100, interval_cycles(val(1, 0) + val(1, 1) / 100));
+            fmt_signed(val(1, 0), "ST", L[1].sub, sizeof(L[1].sub));
+            lane(L[2], "NOISE", Wave::Noise, val(2, 2) / 100, 1);
+            std::snprintf(L[2].sub, sizeof(L[2].sub), "WHITE");
+            return 3;
+        }
+        case 3: {  // OB-6: VCO 1 · VCO 2 (con detune fino) + SEM Filter Morph
+            const float morph = val(0, 6);
+            const bool bp = val(0, 7) > 0.5f;
             lane(L[0], "VCO 1", wave(0), val(0, 2) / 100, 2);
-            std::snprintf(L[0].sub, sizeof(L[0].sub), "REF");
-            lane(L[1], "VCO 2", wave(1), val(1, 2) / 100, interval_cycles(val(1, 1)));
+            if (bp) std::snprintf(L[0].sub, sizeof(L[0].sub), "SEM BP");
+            else if (morph < 15.0f) std::snprintf(L[0].sub, sizeof(L[0].sub), "SEM LP");
+            else if (morph > 85.0f) std::snprintf(L[0].sub, sizeof(L[0].sub), "SEM HP");
+            else if (morph > 40.0f && morph < 60.0f) std::snprintf(L[0].sub, sizeof(L[0].sub), "SEM NOTCH");
+            else std::snprintf(L[0].sub, sizeof(L[0].sub), "MORPH %d%%", int(std::lround(morph)));
+            lane(L[1], "VCO 2", wave(1), val(1, 2) / 100, interval_cycles(val(1, 1) + val(1, 5) / 100.0f),
+                 int(std::lround(val(1, 5) * 2)));
             fmt_signed(val(1, 1), "ST", L[1].sub, sizeof(L[1].sub));
             lane(L[2], "SUB", Wave::Sqr, val(0, 1) / 100, 1);
             std::snprintf(L[2].sub, sizeof(L[2].sub), "−1 OCT");
             lane(L[3], "NOISE", Wave::Noise, val(0, 3) / 100, 1);
             std::snprintf(L[3].sub, sizeof(L[3].sub), "WHITE");
             return 4;
-        case 5: {  // ARP 2600: el ring mod es el producto de los dos VCO
+        }
+        case 5: {  // ARP 2600: VCO 1 y VCO 2 con niveles directos + RING MOD + NOISE
             const float ratio = val(1, 1);
-            lane(L[0], "VCO 1", wave(0), 0.8f, 2);
-            std::snprintf(L[0].sub, sizeof(L[0].sub), "REF");
-            lane(L[1], "VCO 2", wave(1), 0.7f, 2 * ratio);
+            lane(L[0], "VCO 1", wave(0), val(0, 4) / 100, 2);
+            std::snprintf(L[0].sub, sizeof(L[0].sub), "PW %d%%", int(std::lround(val(0, 1))));
+            lane(L[1], "VCO 2", wave(1), val(1, 4) / 100, 2 * ratio);
             std::snprintf(L[1].sub, sizeof(L[1].sub), "×%.2f", double(ratio));
             lane(L[2], "RING", Wave::Sine, val(0, 2) / 100, 2 * (1 + ratio));
             std::snprintf(L[2].sub, sizeof(L[2].sub), "VCO1×VCO2");
@@ -217,25 +234,6 @@ DiagOut diagram(const Painter& p, int alg, const DiagStyle& o) {
     return {carriers, x1 + o.fo + 6, ym - 6};
 }
 
-void alg_tile(const Painter& p, int alg, bool sel, int x, int y) {
-    const Alg& A = ALG[alg - 1];
-    float maxc = 0;
-    for (const auto& q : A.pos) maxc = std::max(maxc, q[0]);
-    const int span = int(maxc * 20) + 16;
-    const uint32_t lc = sel ? TEAL_PLUS : TEAL, bg = sel ? TEAL_DIM : BG;
-    if (sel) {
-        p.fill(x, y, 88, 192, bg);
-        p.fill(x, y, 88, 4, TEAL_PLUS);
-    } else {
-        draw_box(p, x, y, 88, 192, LINE, bg, 1);
-    }
-    const DiagOut d = diagram(p, alg, {x + (88 - span + 1) / 2, y + 130, 16, 12, 20, 22, 1, 4, 8, 0, lc, lc, bg, lc, 0, 1, false});
-    char t[12];
-    std::snprintf(t, sizeof(t), "%d", alg);
-    text_top(p, x + 8, y + 12, t, sel ? WHITE : GRAY, T16);
-    std::snprintf(t, sizeof(t), "%d OUT", d.carriers);
-    text_top(p, x + 8, y + 164, t, sel ? TEAL_PLUS : MON, T12);
-}
 
 void fmt_ratio(float r, char* out, size_t n) { std::snprintf(out, n, "%.2f", double(r)); }
 
@@ -274,8 +272,9 @@ void ScreenOsc::draw_template(const Painter& p, const StudioState& s) const {
     for (int i = 0; i < e.sources; ++i) {
         const bool stop = e.src[i].stop;
         Wave w = Wave::Noise;
-        if (stop) w = e.waves[std::clamp(int(osc_value(s, s.engine, i, 0)), 0, e.wave_count - 1)];
-        chips[i] = {e.src[i].name, stop, stop, w};
+        const bool wave_slot = stop && e.slot[i][0] && e.slot[i][0]->kind == SlotKind::WaveSel;
+        if (wave_slot) w = e.waves[std::clamp(int(osc_value(s, s.engine, i, 0)), 0, e.wave_count - 1)];
+        chips[i] = {e.src[i].name, stop, wave_slot, w};
     }
     const int sel = _sel[s.engine];
     sel_row(p, chips, e.sources, sel, e.stops > 1 ? "NAV SELECTS" : "NAV · NO FUNCTION · 1 OSCILLATOR");
@@ -285,10 +284,6 @@ void ScreenOsc::draw_template(const Painter& p, const StudioState& s) const {
 }
 
 void ScreenOsc::draw_fm(const Painter& p, const StudioState& s) const {
-    if (s.shift) {  // 11c2: selector de los 8 algoritmos
-        for (int i = 0; i < 8; ++i) alg_tile(p, i + 1, i + 1 == s.fm_algorithm, 11 + i * 94, 8);
-        return;
-    }
     const int sel = _sel[4];
     const Chip chips[4] = {{"OP 1", true, false, Wave::Sine}, {"OP 2", true, false, Wave::Sine},
                            {"OP 3", true, false, Wave::Sine}, {"OP 4", true, false, Wave::Sine}};
@@ -337,7 +332,6 @@ void ScreenOsc::update(const StudioState& s) {
     }
 
     _bottom.set_mode(s.mode == Mode::Fx, sh);
-    _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
     _bottom.set_keys(KEYS_SYNTH, 0);
     _bottom.set_nav(e.fm ? "OP" : e.stops > 1 ? "OSC" : "NONE");
 
@@ -347,37 +341,46 @@ void ScreenOsc::update(const StudioState& s) {
         std::snprintf(v[1], sizeof(v[1]), "%d", s.fm_level[sel]);
         std::snprintf(v[2], sizeof(v[2]), "%d", s.fm_algorithm);
         std::snprintf(v[3], sizeof(v[3]), "%d", s.fm_feedback);
-        _cells.set(0, !sh, "RATIO", v[0], "×");
-        _cells.set(1, !sh, "LEVEL", v[1], "");
-        _cells.set(2, sh, "ALGORITHM", v[2], "OF 8");
-        _cells.set(3, sh, "FEEDBACK", v[3], "OF 7");
-        if (sh) {
-            _bottom.set_param(1, "ALGORITHM", v[2], "", (s.fm_algorithm - 1) / 7.0f);
-            _bottom.set_param(2, "FEEDBACK", v[3], "", s.fm_feedback / 7.0f);
+        if (sh) {   // SHIFT: envolvente del operador elegido (sprints/46 §4)
+            static const char* const ENV_LBL[4] = {"ATTACK", "DECAY", "SUSTAIN", "RELEASE"};
+            static const float ENV_MAX[4] = {3000, 5000, 100, 5000};
+            for (int k = 0; k < 4; ++k) {
+                const float ev = s.osc_val[4][sel][4 + k];
+                std::snprintf(v[k], sizeof(v[k]), "%d", int(std::lround(ev)));
+                const char* u = k == 2 ? "%" : "MS";
+                _cells.set(k, true, ENV_LBL[k], v[k], u);
+                _bottom.set_page_control(k, ENV_LBL[k], v[k], u, ev / ENV_MAX[k]);
+            }
         } else {
-            _bottom.set_param(1, "RATIO", v[0], "×", (s.fm_ratio[sel] - 0.5f) / 30.5f);
-            _bottom.set_param(2, "LEVEL", v[1], "", s.fm_level[sel] / 99.0f);
+            _cells.set(0, true, "RATIO", v[0], "×");
+            _cells.set(1, true, "LEVEL", v[1], "");
+            _cells.set(2, true, "ALGORITHM", v[2], "OF 8");
+            _cells.set(3, true, "FEEDBACK", v[3], "OF 7");
+            _bottom.set_page_control(0, "RATIO", v[0], "×", (s.fm_ratio[sel] - 0.5f) / 15.5f);
+            _bottom.set_page_control(1, "LEVEL", v[1], "", s.fm_level[sel] / 99.0f);
+            _bottom.set_page_control(2, "ALGORITHM", v[2], "", (s.fm_algorithm - 1) / 7.0f);
+            _bottom.set_page_control(3, "FEEDBACK", v[3], "", s.fm_feedback / 7.0f);
         }
     } else {
-        for (int k = 0; k < OSC_SLOTS; ++k) {
-            const OscSlot* sl = e.slot[sel][k];
-            const bool on = sh ? k >= 2 : k < 2;
+        for (int k = 0; k < 4; ++k) {                  // los 4 encoders; SHIFT muestra la capa de slots 4–7
+            const int slot = (sh ? 4 : 0) + k;
+            const OscSlot* sl = e.slot[sel][slot];
             if (!sl) {
                 _cells.set_unused(k);
-                if (on) _bottom.set_param(k % 2 + 1, "NO FUNCTION", "—", "", 0);
+                _bottom.set_page_control(k, "NO FUNCTION", "—", "", 0);
                 continue;
             }
-            const float val = osc_value(s, s.engine, sel, k);
+            const float val = osc_value(s, s.engine, sel, slot);
             osc_format(e, *sl, val, v[k], sizeof(v[k]));
             const Wave icon = sl->kind == SlotKind::WaveSel ? e.waves[std::clamp(int(val), 0, e.wave_count - 1)] : Wave::Noise;
-            _cells.set(k, on, sl->name, v[k], sl->unit, icon);
-            if (on) _bottom.set_param(k % 2 + 1, sl->name, v[k], sl->unit, osc_frac(e, *sl, val));
+            _cells.set(k, true, sl->name, v[k], sl->unit, icon);
+            _bottom.set_page_control(k, sl->name, v[k], sl->unit, osc_frac(e, *sl, val));
         }
     }
 
     // La gráfica se redibuja solo cuando cambia algo de lo que muestra (diseño: "on parameter change").
-    char key[160];
-    int n = std::snprintf(key, sizeof(key), "%d|%d|%d|", s.engine, sel, sh && e.fm);
+    char key[400];
+    int n = std::snprintf(key, sizeof(key), "%d|%d|%d|", s.engine, sel, sh);
     if (e.fm) {
         n += std::snprintf(key + n, sizeof(key) - n, "%d|%d|%d%d%d%d|%.2f%.2f%.2f%.2f", s.fm_algorithm, s.fm_feedback,
                            s.fm_level[0], s.fm_level[1], s.fm_level[2], s.fm_level[3], double(s.fm_ratio[0]),

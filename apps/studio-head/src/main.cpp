@@ -44,7 +44,7 @@ void usage() {
 }
 
 Page parse_page(const char* p) {
-    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo"};
+    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo", "sfx"};
     for (int i = 0; i < int(Page::Count); ++i)
         if (!std::strcmp(p, NAMES[i])) return Page(i);
     return Page::Perform;
@@ -94,6 +94,7 @@ int main(int argc, char** argv) {
     bool boot_only = false;
     Page start_page = Page::Perform;
     bool start_shift = false, start_hold = false, start_bypass = false;
+    int start_cursor = -1;   // --cursor: parada inicial (OSC, LFO / MOD, SYNTH FX) para capturas
     int fx_view = -1, fx_slot = -1, engine = -1;
     const char* overlay = nullptr;
     for (int i = 1; i < argc; ++i) {
@@ -109,6 +110,8 @@ int main(int argc, char** argv) {
             ++i;
             boot_only = !std::strcmp(argv[i], "boot");
             start_page = parse_page(argv[i]);
+        } else if (std::strcmp(argv[i], "--cursor") == 0 && i + 1 < argc) {
+            start_cursor = std::atoi(argv[++i]);
         } else if (std::strcmp(argv[i], "--shift") == 0) {
             start_shift = true;
         } else if (std::strcmp(argv[i], "--hold") == 0) {
@@ -143,6 +146,7 @@ int main(int argc, char** argv) {
     StudioState state;
     demo_init(state);
     state.shift = start_shift;
+    if (start_cursor >= 0) state.ui_cursor = uint8_t(start_cursor);
     if (start_page == Page::Fx) state.mode = Mode::Fx;
     if (start_page == Page::Error) state.link = LinkState::Lost;
     state.fx_hold = start_hold;
@@ -186,8 +190,12 @@ int main(int argc, char** argv) {
             }
         }
         if (booted) {
+            // Con el Teensy conectado por UART, los gestos táctiles viajan como GF_CMD_UI_INPUT (0x45, theory/04 §5.2).
             Ctl c;
-            while (input_poll(c)) app.handle(c, state);
+            while (input_poll(c)) {
+                if (use_link) link.send_ui_input(c, state.shift);
+                else app.handle(c, state);
+            }
             app.update(state);
         }
 

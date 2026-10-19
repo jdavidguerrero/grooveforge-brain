@@ -5,6 +5,7 @@
 #include <cstdio>
 
 #include "state/fx_catalog.h"
+#include "state/osc_catalog.h"
 #include "studio_tick.h"
 
 namespace {
@@ -28,6 +29,7 @@ Screen* App::screen(Page p) {
         case Page::Error:    return &_error;
         case Page::Osc:      return &_osc;
         case Page::Lfo:      return &_lfo;
+        case Page::SynthFx:  return &_sfx;
         default:             return &_perform;
     }
 }
@@ -116,6 +118,12 @@ void App::handle_synth(Ctl c, StudioState& s) {
         default: break;
     }
 
+    if (c == Ctl::NavPush && s.shift) {   // SHIFT + NAV push: ENGINE SELECT desde cualquier página
+        _engine.set_cursor(s.engine);
+        show(Page::Engine);
+        return;
+    }
+
     if (_page == Page::Engine) {
         switch (c) {
             case Ctl::NavNext: _engine.move_cursor(1); break;
@@ -169,6 +177,22 @@ void App::handle_synth(Ctl c, StudioState& s) {
         _osc.move_selection(c == Ctl::NavNext ? 1 : -1, s);
         return;
     }
+    if (_page == Page::Env && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige AMP / FILTER
+        s.ui_cursor = c == Ctl::NavNext ? 1 : 0;
+        return;
+    }
+    if (_page == Page::SynthFx && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige el FX
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, SFX_SLOTS - 1));
+        return;
+    }
+    if (_page == Page::SynthFx && c == Ctl::NavPush) {
+        s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
+        return;
+    }
+    if (_page == Page::Lfo && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige la parada (LFO / MOD)
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, int(mod_stop_count(s.engine))));
+        return;
+    }
     if (_page == Page::Lfo && c == Ctl::NavPush) {
         s.lfo_sync = !s.lfo_sync;
         if (s.lfo_sync) {  // al activar SYNC, RATE salta a la división más cercana al BPM
@@ -194,8 +218,9 @@ void App::handle_synth(Ctl c, StudioState& s) {
         case Ctl::B1: toggle_page(Page::Osc); break;
         case Ctl::B2: toggle_page(Page::Env); break;
         case Ctl::B3: toggle_page(Page::Lfo); break;
-        case Ctl::B4:
-            show(Page::Presets);
+        case Ctl::B4:  // B4: SYNTH FX · SHIFT + B4: PRESETS (theory/05 de Studio)
+            if (s.shift) show(Page::Presets);
+            else toggle_page(Page::SynthFx);
             break;
         case Ctl::EngineCard:
             _engine.set_cursor(s.engine);
@@ -207,6 +232,14 @@ void App::handle_synth(Ctl c, StudioState& s) {
 }
 
 void App::update(const StudioState& s) {
+    // Con el Teensy conectado, la página y los cursores los decide él (theory/04); la de error, la cabeza.
+    if (s.ui_remote && _page != Page::Error && s.ui_page < uint8_t(Page::Count) && s.ui_page != uint8_t(Page::Error)) {
+        const Page target = Page(s.ui_page);
+        if (target == Page::Engine) _engine.set_cursor(s.ui_cursor);
+        else if (target == Page::Presets) _presets.set_cursor(s.ui_cursor);
+        else if (target == Page::Osc) _osc.set_selection(s.engine, s.ui_cursor);
+        if (target != _page) show(target);
+    }
     if (s.link == LinkState::Lost && _page != Page::Error) {
         _before_error = _page;
         show(Page::Error);

@@ -7,9 +7,11 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 
+#include <gf_params.h>
 #include <protocol.h>
 
 #include "studio_tick.h"
@@ -19,15 +21,8 @@ namespace {
 constexpr uint32_t INTERBYTE_TIMEOUT_MS = 5;    // theory/01 §4.2: un frame de 259 B tarda ~2.8 ms
 constexpr uint32_t HEARTBEAT_TIMEOUT_MS = 3000; // 02 §4.3
 
-// Rangos de ENV y FILTER por engine (descriptores del firmware, 28-synth-navigator.cpp). El Teensy
-// manda el valor normalizado 0–1 y la cabeza lo vuelve a unidades para la UI.
-struct Range { float lo, hi; };
-constexpr Range CUTOFF[6] = {{20, 8000}, {20, 8000}, {20, 8000}, {20, 20000}, {500, 20000}, {20, 20000}};
-constexpr Range ATTACK[6] = {{0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}};
-constexpr Range DECAY[6] = {{10, 5000}, {10, 5000}, {10, 5000}, {10, 5000}, {5, 3000}, {10, 5000}};
-constexpr Range RELEASE[6] = {{10, 5000}, {10, 5000}, {10, 5000}, {10, 5000}, {5, 5000}, {10, 5000}};
-
-float denorm(Range r, float v) { return r.lo + v * (r.hi - r.lo); }
+// El Teensy manda los parámetros normalizados 0–1; los rangos por engine y las conversiones están en
+// gf_params.h, compartido con el firmware.
 
 const char* const NOTE[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 const char* const NOTE_UP[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
@@ -44,7 +39,7 @@ void note_name(char* out, size_t n, uint8_t midi) { std::snprintf(out, n, "%s%d"
 
 bool FrameParser::known_cmd(uint8_t c) {
     return c <= 0x07 || (c >= 0x10 && c <= 0x17) || (c >= 0x20 && c <= 0x24) || (c >= 0x30 && c <= 0x35) ||
-           (c >= 0x40 && c <= 0x43) || (c >= 0x50 && c <= 0x57) || (c >= 0x60 && c <= 0x65) ||
+           (c >= 0x40 && c <= 0x45) || (c >= 0x50 && c <= 0x57) || (c >= 0x60 && c <= 0x65) ||
            (c >= 0x70 && c <= 0x72) || (c >= 0x80 && c <= 0x84) || (c >= 0xF0 && c <= 0xF2);
 }
 
@@ -175,14 +170,55 @@ void BridgeLink::send(uint8_t cmd, uint8_t seq, const uint8_t* payload, uint8_t 
     if (n && ::write(fd_, wire, n) != ssize_t(n)) std::perror("bridge: write");
 }
 
+void BridgeLink::send_ui_input(Ctl c, bool current_shift) {
+    if (fd_ < 0) return;
+    uint8_t id = 0xFF;
+    int8_t val = 1;
+    switch (c) {
+        case Ctl::NavNext:     id = 0; val = 1; break;
+        case Ctl::NavPrev:     id = 0; val = -1; break;
+        case Ctl::NavPush:     id = 1; break;
+        case Ctl::B1:          id = 2; break;
+        case Ctl::B2:          id = 3; break;
+        case Ctl::B3:          id = 4; break;
+        case Ctl::B4:          id = 5; break;
+        case Ctl::Mode:        id = 6; break;
+        case Ctl::Shift:       id = current_shift ? 8 : 7; break;
+        case Ctl::HoldOn:      id = 7; break;
+        case Ctl::HoldOff:     id = 8; break;
+        case Ctl::EncLPush:    id = 9; break;
+        case Ctl::Pick0: case Ctl::Pick1: case Ctl::Pick2:
+        case Ctl::Pick3: case Ctl::Pick4: case Ctl::Pick5:
+            id = uint8_t(10 + int(c) - int(Ctl::Pick0));
+            break;
+        case Ctl::FxWave:      id = 16; break;
+        case Ctl::FxSpectrum:  id = 17; break;
+        case Ctl::FxSignature: id = 18; break;
+        case Ctl::FxViewNext:  id = 19; break;
+        case Ctl::EngineCard:  id = 20; break;
+        case Ctl::SwipeUp:     id = 21; break;
+        case Ctl::SwipeDown:   id = 22; break;
+        default: return;
+    }
+    const uint8_t payload[2] = {id, uint8_t(val)};
+    send(GF_CMD_UI_INPUT, tx_seq_.fetch_add(1), payload, 2);
+}
+
 void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t len) {
     // Respuestas primero, fuera del mutex: un ACK nunca espera al render (theory/01 §2.3, regla 2).
-    if (cmd == GF_CMD_ACK || cmd == GF_CMD_NACK) return;   // la cabeza todavía no manda comandos
+    if (cmd == GF_CMD_ACK || cmd == GF_CMD_NACK) return;   // respuestas a nuestros propios frames
+    GF_UiState ui;
+    const bool ui_ok = cmd != GF_CMD_UI_STATE || gf_ui_state_unpack(p, len, &ui);
+    if (!ui_ok) {
+        const uint8_t nack[2] = {seq, GF_NACK_INVALID_LEN};
+        send(GF_CMD_NACK, seq, nack, sizeof(nack));
+        return;
+    }
     if (cmd == GF_CMD_GET_VERSION) {
         const uint8_t ver[7] = {1, 0, 0, 0, 0, 0, 0};       // como la cabeza ESP32: [maj, min, patch, build LE]
         send(GF_CMD_VERSION, seq, ver, sizeof(ver));
     } else {
-        send(GF_CMD_ACK, seq, nullptr, 0);
+        send(GF_CMD_ACK, seq, &seq, 1);                     // 1-byte seq payload compatible con BridgeMaster y sketch49
     }
 
     std::lock_guard<std::mutex> lock(mtx_);
@@ -209,16 +245,35 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
         const unsigned hi = id >> 8, group = (id >> 4) & 0xF, idx = id & 0xF;
         if (hi >= 0x10 && hi < 0x16) {
             const unsigned e = hi - 0x10;
-            if (group == 2 && idx < 2) {
+            if (group == GF_GROUP_FILTER && idx < 5) {
                 m_.filter[e][idx] = v;
                 m_.filter_dirty |= uint8_t(1u << e);
-            } else if (group == 1 && idx < 4) {
+            } else if (group == GF_GROUP_OSC || group == GF_GROUP_OSC_SHIFT) {
+                m_.osc[e][(group == GF_GROUP_OSC_SHIFT ? 16 : 0) + idx] = v;
+                m_.osc_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_MOD) {
+                m_.mod[e][idx] = v;
+                m_.osc_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_ENV && idx < 8) {
                 m_.envp[e][idx] = v;
                 m_.env_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_LFO && idx < 7) {
+                m_.lfo[e][idx] = v;
+                m_.lfo_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_SFX && idx < 8) {
+                m_.sfx[e][idx] = v;
+                m_.sfx_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_SFX_P && idx < 12) {
+                m_.sfx[e][8 + idx] = v;
+                m_.sfx_dirty |= uint8_t(1u << e);
             }
         }
         break;
     }
+    case GF_CMD_UI_STATE:
+        m_.ui = ui;
+        m_.ui_dirty = true;
+        break;
     case GF_CMD_KEY_DETECTED:
         if (len >= 1 && p[0] < 24) {
             m_.key_idx = p[0];
@@ -272,20 +327,91 @@ void BridgeLink::apply(StudioState& s) {
         m_.engine_dirty = false;
         m_.filter_dirty |= uint8_t(1u << m_.engine);   // mostrar los valores ya conocidos de ese engine
         m_.env_dirty |= uint8_t(1u << m_.engine);
+        m_.lfo_dirty |= uint8_t(1u << m_.engine);
+        m_.sfx_dirty |= uint8_t(1u << m_.engine);
+        m_.osc_dirty |= uint8_t(1u << m_.engine);
     }
-    const unsigned e = s.engine;
+    const unsigned e = s.engine < GF_ENGINE_COUNT ? s.engine : 0;
     if (m_.filter_dirty & (1u << e)) {
-        s.cutoff_hz = denorm(CUTOFF[e], m_.filter[e][0]);
+        s.cutoff_hz = gf_denorm(GF_CUTOFF_RANGE[e], m_.filter[e][0]);
         s.resonance = m_.filter[e][1];
+        s.p1 = m_.filter[e][2];
+        s.glide = m_.filter[e][3];
+        s.drive = m_.filter[e][4];
     }
     if (m_.env_dirty & (1u << e)) {
-        s.env_attack_ms = denorm(ATTACK[e], m_.envp[e][0]);
-        s.env_decay_ms = denorm(DECAY[e], m_.envp[e][1]);
-        s.env_sustain = m_.envp[e][2];
-        s.env_release_ms = denorm(RELEASE[e], m_.envp[e][3]);
+        const float* v = m_.envp[e];
+        s.amp_attack_ms = gf_denorm(GF_ATTACK_RANGE[e], v[0]);
+        s.amp_decay_ms = gf_denorm(GF_DECAY_RANGE[e], v[1]);
+        s.amp_sustain = v[2];
+        s.amp_release_ms = gf_denorm(GF_RELEASE_RANGE[e], v[3]);
+        s.env_attack_ms = gf_denorm(GF_ATTACK_RANGE[e], v[4]);
+        s.env_decay_ms = gf_denorm(GF_DECAY_RANGE[e], v[5]);
+        s.env_sustain = v[6];
+        s.env_release_ms = gf_denorm(GF_RELEASE_RANGE[e], v[7]);
     }
-    m_.filter_dirty = m_.env_dirty = 0;
+    if (m_.osc_dirty & (1u << e)) {   // los slots globales viven en el oscilador 0, igual que en osc_catalog
+        for (int st = 0; st < int(GF_OSC_STOPS); ++st)
+            for (int sl = 0; sl < int(GF_OSC_SLOTS); ++sl) {
+                const GF_OscSlot* g = &GF_OSC_SLOT[e][st][sl];
+                if (!gf_osc_used(g) || (g->global && st > 0)) continue;
+                const int base = (g->global ? 0 : st) * 4;
+                const int i = sl < 4 ? base + sl : 16 + base + sl - 4;
+                s.osc_val[e][g->global ? 0 : st][sl] = g->lo + m_.osc[e][i] * (g->hi - g->lo);
+            }
+        if (e == 4) {   // DX7: la página FM de la cabeza dibuja los campos fm_* (OP 1–4, algoritmo, feedback)
+            for (int k = 0; k < 4; ++k) {
+                s.fm_ratio[k] = s.osc_val[4][k][0];
+                s.fm_level[k] = uint8_t(std::lround(s.osc_val[4][k][1]));
+            }
+            s.fm_algorithm = uint8_t(std::lround(s.osc_val[4][0][2]));
+            s.fm_feedback = uint8_t(std::lround(s.osc_val[4][0][3]));
+        }
+        for (int st = 0; st < int(GF_MOD_STOPS[e]); ++st)
+            for (int sl = 0; sl < int(GF_OSC_SLOTS); ++sl) {
+                const GF_OscSlot* g = &GF_MOD_SLOT[e][st][sl];
+                if (gf_osc_used(g)) s.mod_val[e][st][sl] = g->lo + m_.mod[e][st * 8 + sl] * (g->hi - g->lo);
+            }
+    }
+    if (m_.lfo_dirty & (1u << e)) {
+        const float* l = m_.lfo[e];
+        s.lfo_rate_hz = gf_lfo_rate_hz(l[GF_LFO_RATE]);
+        s.lfo_shape = LfoShape(gf_index_from_norm(l[GF_LFO_SHAPE], GF_LFO_SHAPES));
+        s.lfo_div = gf_index_from_norm(l[GF_LFO_DIV], GF_LFO_DIVS);
+        for (int d = 0; d < LFO_DESTS; ++d) s.lfo_amt[d] = l[GF_LFO_AMT0 + d];
+        s.p2 = l[GF_LFO_AMT0 + GF_DEST_CUTOFF];
+    }
+    if (m_.sfx_dirty & (1u << e)) {
+        const float* x = m_.sfx[e];
+        for (int i = 0; i < SFX_SLOTS; ++i) {
+            s.sfx_on[i] = x[i] > 0.5f;
+            s.sfx_mix[i] = x[4 + i];
+            for (int k = 0; k < 3; ++k) s.sfx_p[i][k] = x[8 + i * 3 + k];
+        }
+    }
+    m_.filter_dirty = m_.env_dirty = m_.lfo_dirty = m_.sfx_dirty = m_.osc_dirty = 0;
 
+    // La fase del LFO no viaja: se integra acá con la velocidad conocida (solo es para el punto animado).
+    const float hz = s.lfo_sync ? s.bpm / 60.0f / GF_LFO_DIV_BEATS[s.lfo_div % GF_LFO_DIVS] : s.lfo_rate_hz;
+    if (last_apply_ms_) s.lfo_phase = std::fmod(s.lfo_phase + hz * (now - last_apply_ms_) / 1000.0f, 8.0f);
+    last_apply_ms_ = now;
+
+    if (m_.ui_dirty) {
+        const GF_UiState& u = m_.ui;
+        s.ui_remote = true;
+        s.mode = u.mode ? Mode::Fx : Mode::Synth;
+        s.ui_page = u.page;
+        s.ui_cursor = u.cursor;
+        s.shift = u.shift != 0;
+        s.fx_hold = u.fx_hold != 0;
+        if (u.fx_slot < FX_SLOTS) s.fx_slot = u.fx_slot;
+        if (u.fx_view < 3) s.fx_view = FxView(u.fx_view);
+        s.filter_bypass = u.flags & GF_UI_FLAG_FILTER_BYPASS;
+        s.lfo_sync = u.flags & GF_UI_FLAG_LFO_SYNC;
+        s.fx_on = u.fx_on;
+        for (int i = 0; i < FX_SLOTS; ++i) s.fx_route[i] = FxRoute(u.fx_route[i] < 3 ? u.fx_route[i] : 0);
+        m_.ui_dirty = false;
+    }
     if (m_.key_dirty) {
         const int root = m_.key_idx % 12;
         s.key_minor = m_.key_idx >= 12;

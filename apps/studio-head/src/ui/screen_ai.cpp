@@ -206,7 +206,7 @@ void ScreenAi::update(const StudioState& s) {
     }
 
     _bottom.set_mode(fx, s.shift);
-    static const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+    static const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     static const char* const KEYS_FX[4] = {"INSERT", "SEND", "MASTER", "FAV FX"};
     _bottom.set_keys(fx ? KEYS_FX : KEYS_SYNTH, fx ? 0 : -1);
     char v[16];

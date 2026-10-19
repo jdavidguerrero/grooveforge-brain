@@ -195,17 +195,19 @@ void ScreenPerform::update(const StudioState& s) {
         lv_label_set_text(_cut_tag, buf);
     }
 
-    // Línea del cutoff y curva del filtro: solo cuando el cutoff se mueve un píxel.
+    // Línea del cutoff y curva del filtro: se redibuja cuando cambia cutoff, resonancia, engine o morph de OB-6.
     const int cut_x = int(std::lround(cut_frac * (PLOT_W - 1)));
-    if (cut_x != _last_cut_x) {
-        _last_cut_x = cut_x;
+    const int curve_sig = cut_x | (int(std::lround(s.resonance * 100.0f)) << 10) | (int(s.engine) << 18) |
+                          (int(std::lround(s.osc_val[3][0][6])) << 21) | ((s.osc_val[3][0][7] > 0.5f ? 1 : 0) << 28);
+    if (curve_sig != _last_cut_x) {
+        _last_cut_x = curve_sig;
         lv_obj_set_x(_cut_line, cut_x);
         lv_obj_set_x(_cut_tag, cut_x < PLOT_W - 110 ? cut_x + 6 : cut_x - 104);
         for (int p = 0; p < CURVE_PTS; ++p) {
             const float x = float(p) * (PLOT_W - 1) / (CURVE_PTS - 1);
             const float f = 20.0f * std::pow(1000.0f, x / (PLOT_W - 1));
             const float top = 12.0f;
-            float y = PLOT_H * ((top - filter_db(f, s.cutoff_hz, s.resonance)) / (top + 60.0f));
+            float y = PLOT_H * ((top - engine_filter_db(s, f)) / (top + 60.0f));
             y = std::clamp(y, 1.0f, float(PLOT_H - 1));
             _curve_pts[p] = {lv_coord_t(x), lv_coord_t(y)};
         }
@@ -249,11 +251,13 @@ void ScreenPerform::update(const StudioState& s) {
     format_cutoff(s.cutoff_hz, buf, sizeof(buf));
     _bottom.set_enc(false, "CUTOFF", buf, "HZ", cut_frac);
     _bottom.set_enc(true, "RES", rbuf, "%", s.resonance);
-    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "PRESET"};
+    static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, -1);
-    std::snprintf(buf, sizeof(buf), "%d", int(std::lround(s.p1 * 100.0f)));
-    _bottom.set_param(1, s.shift ? "GLIDE" : "FLT ENV AMT", buf, "%", s.p1);
-    std::snprintf(buf, sizeof(buf), "%d", int(std::lround(s.p2 * 100.0f)));
-    _bottom.set_param(2, s.shift ? "DRIVE" : "LFO\xE2\x86\x92" "CUTOFF", buf, "%", s.p2);
+    const float p1_val = s.shift ? s.glide : s.p1;
+    std::snprintf(buf, sizeof(buf), "%d", int(std::lround(p1_val * 100.0f)));
+    _bottom.set_param(1, s.shift ? "GLIDE" : "FLT ENV AMT", buf, "%", p1_val);
+    const float p2_val = s.shift ? s.drive : s.p2;
+    std::snprintf(buf, sizeof(buf), "%d", int(std::lround(p2_val * 100.0f)));
+    _bottom.set_param(2, s.shift ? "DRIVE" : "LFO\xE2\x86\x92" "CUTOFF", buf, "%", p2_val);
     _bottom.set_nav("VIEW");
 }

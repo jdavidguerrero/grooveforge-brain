@@ -7,12 +7,12 @@
 #include "ui/top_bar.h"
 
 /**
- * @brief LFO / MOD (diseño v3, 12a / 12b): especificación visual del LFO que todavía no existe en el
- *        firmware.
+ * @brief LFO / MOD: un LFO y una cantidad por destino (theory/lfo-modulacion.md §8).
  *
- * Fichas de forma y destino, lectura de RATE (libre en Hz o sincronizado al BPM), 2 ciclos de la
- * forma (8 escalones en S&H) y el medidor del destino con la banda ±DEPTH. Solo el punto de fase y
- * la marca del medidor se mueven a 30 Hz: se invalida el rect viejo y el nuevo, no la gráfica entera.
+ * Fichas de forma (NAV), lectura de RATE (libre en Hz o sincronizado al BPM), 2 ciclos de la forma
+ * (8 escalones en S&H) y tres medidores: CUTOFF, PITCH y el tercer destino del engine (PWM o AMP), cada
+ * uno con su banda ±cantidad. Un destino que el engine no tiene va en gris. Solo el punto de fase y las
+ * marcas de los medidores se mueven a 30 Hz: se invalida su zona, no la gráfica entera.
  */
 class ScreenLfo : public Screen {
 public:
@@ -20,11 +20,10 @@ public:
     void update(const StudioState& s) override;
 
 private:
-    struct Meter { int by, bd; char hi[16], base[16], lo[16], dv[16]; };
-
     static void on_graph_draw(lv_event_t* e);
     void draw(const Painter& p, const StudioState& s) const;
-    Meter meter(const StudioState& s) const;
+    void draw_mod(const Painter& p, const StudioState& s) const;
+    void update_mod(const StudioState& s);
     void invalidate_local(int x, int y, int w, int h);
 
     lv_obj_t* _scr = nullptr;
@@ -34,8 +33,10 @@ private:
     lv_obj_t* _graph = nullptr;
 
     const StudioState* _s = nullptr;
-    char _last_key[96] = {};
-    int _dot_x = -100, _dot_y = 0, _mark_y = 0;
+    char _last_key[160] = {};
+    int _stop = 0;                ///< 0 = LFO; 1… = paradas de MOD del engine (POLY-MOD, WHEEL-MOD)
+    int _last_stop = -1;
+    int _dot_x = -100, _dot_y = 0;
+    int _mark_y[3] = {};
     int _last_engine = -1;
-    int _last_cut = -1;
 };

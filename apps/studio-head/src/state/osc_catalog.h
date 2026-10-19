@@ -6,15 +6,19 @@
 #include "state/studio_state.h"
 
 /// Formas de onda que conoce la UI (íconos y trazas de la página OSC / LFO).
-enum class Wave : uint8_t { Saw, Tri, Sqr, Pulse, Sine, SampleHold, Noise };
+enum class Wave : uint8_t { Saw, Tri, Sqr, Pulse, Sine, SampleHold, Noise, SawPulse };
 
 const char* wave_name(Wave w);
 
 enum class SlotKind : uint8_t {
-    WaveSel,   ///< índice en OscEngine::waves
-    Number,    ///< valor con unidad (CT, ST, %)
-    Ratio,     ///< multiplicador, "×1.50"
-    MixAB,     ///< % de A, se muestra "60:40"
+    WaveSel,     ///< índice en OscEngine::waves
+    Number,      ///< valor con unidad (CT, ST, %)
+    Ratio,       ///< multiplicador, "×1.50"
+    MixAB,       ///< % de A, se muestra "60:40"
+    Toggle,      ///< interruptor: OFF / ON
+    KbdTrack,    ///< keyboard tracking del filtro: OFF / HALF / FULL
+    ChorusMode,  ///< Juno-106 BBD Chorus: OFF / I / II / I+II
+    HpfMode,     ///< Juno-106 4-pos HPF: BST / FLAT / 225 / 720
 };
 
 /// Un slot de la plantilla OSC (diseño v3 §A: {name, unit, kind, range}).
@@ -48,6 +52,16 @@ struct OscEngine {
 };
 
 const OscEngine& osc_engine(uint8_t engine_id);
+
+/// Parada de MOD de la página LFO / MOD (theory/prophet-5-completo.md §3.2): nombre y 8 slots.
+struct ModStop {
+    const char* name;
+    const OscSlot* slot[OSC_SLOTS];
+};
+
+/// Cantidad de paradas de MOD del engine (0 = solo LFO) y cada parada.
+uint8_t mod_stop_count(uint8_t engine_id);
+const ModStop& mod_stop(uint8_t engine_id, int stop);
 
 /// Valores iniciales de la página OSC para los 6 engines (demo y primer arranque).
 void osc_load_defaults(StudioState& s);

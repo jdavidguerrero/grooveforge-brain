@@ -30,11 +30,12 @@ float wave_value(Wave w, float p) {
     if (w == Wave::SampleHold) return SH[((int(std::floor(p)) % 8) + 8) % 8];
     const float ph = p - std::floor(p);
     switch (w) {
-        case Wave::Saw:   return 2 * ph - 1;
-        case Wave::Tri:   return ph < 0.5f ? 4 * ph - 1 : 3 - 4 * ph;
-        case Wave::Sqr:   return ph < 0.5f ? 1.0f : -1.0f;
-        case Wave::Pulse: return ph < 0.25f ? 1.0f : -1.0f;
-        default:          return std::sin(2 * float(M_PI) * ph);
+        case Wave::Saw:      return 2 * ph - 1;
+        case Wave::Tri:      return ph < 0.5f ? 4 * ph - 1 : 3 - 4 * ph;
+        case Wave::Sqr:      return ph < 0.5f ? 1.0f : -1.0f;
+        case Wave::Pulse:    return ph < 0.25f ? 1.0f : -1.0f;
+        case Wave::SawPulse: return ((2 * ph - 1) + (ph < 0.35f ? 1.0f : -1.0f)) * 0.55f;
+        default:             return std::sin(2 * float(M_PI) * ph);
     }
 }
 
