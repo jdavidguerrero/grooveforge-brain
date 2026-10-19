@@ -30,7 +30,7 @@
  * tocan el mismo engine. El teclado se reenvía al computador (MIDI thru) para grabarlo; lo del computador no se
  * reenvía. En Ableton: External Instrument con MIDI To = Teensy MIDI y, al grabar, Monitor en Off (theory/04 §9).
  *
- * Fuera de esta prueba: el audio del modo FX (B5; la página navega, el motor sigue en el sketch 28), ML y presets.
+ * Fuera de esta prueba: el audio del modo FX (B5; la página navega, el motor sigue en el sketch 28), ML. Presets: LittleFS sobre el flash (theory/06).
  *
  *   cd apps/firmware-teensy
  *   pio run -e sketch49 -t upload
@@ -41,6 +41,7 @@
 #include <Bounce2.h>
 #include <Encoder.h>
 #include <FastLED.h>
+#include <LittleFS.h>
 #include <USBHost_t36.h>
 #include <gf_params.h>
 #include <protocol.h>
@@ -58,6 +59,7 @@
 #include "../fx/phase_chorus.h"
 #include "../fx/tape_saturate.h"
 #include "../ui/page_params.h"
+#include "../ui/preset_bank.h"
 #include "../ui/panel_leds.h"
 #include "../ui/studio_ui.h"
 
@@ -176,6 +178,46 @@ uint32_t last_stats = 0, last_ui_tx = 0, last_ui_beat = 0;
 bool host_seen = false;
 
 studio::Patch& patch() { return patches[ui.engine()]; }
+
+// ── Presets (variants/studio/theory/06): un archivo por preset en LittleFS sobre el flash del programa ──────────
+
+LittleFS_Program preset_fs;
+bool preset_fs_ok = false;
+
+class FlashPresetStorage : public studio::PresetStorage {
+public:
+    size_t read(uint8_t e, uint8_t i, uint8_t* buf, size_t cap) override {
+        if (!preset_fs_ok) return 0;
+        char path[32];
+        path_of(e, i, path);
+        File f = preset_fs.open(path, FILE_READ);
+        if (!f) return 0;
+        const size_t n = f.read(buf, cap);
+        f.close();
+        return n;
+    }
+    bool write(uint8_t e, uint8_t i, const uint8_t* buf, size_t len) override {
+        if (!preset_fs_ok) return false;
+        char dir[16], path[32];
+        snprintf(dir, sizeof(dir), "/presets/%u", e);
+        preset_fs.mkdir("/presets");
+        preset_fs.mkdir(dir);
+        path_of(e, i, path);
+        preset_fs.remove(path);                   // FILE_WRITE agrega al final: se reescribe desde cero
+        File f = preset_fs.open(path, FILE_WRITE);
+        if (!f) return false;
+        const size_t n = f.write(buf, len);
+        f.close();
+        return n == len;
+    }
+
+private:
+    static void path_of(uint8_t e, uint8_t i, char* out) { snprintf(out, 32, "/presets/%u/%02u.gfp", e, i); }
+};
+
+FlashPresetStorage preset_store;
+studio::PresetBank presets(preset_store);
+uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // ── Engines ─────────────────────────────────────────────────────────────────────────────────────
 
@@ -419,6 +461,80 @@ void bridge_patch() {
     for (uint8_t i = 0; i < n; ++i) bridge_param(c[i].id, c[i].norm);
 }
 
+/// Banco del engine activo a la cabeza: un PRESET_ENTRY (0x90, 02 §2.10.1) por preset.
+void bridge_presets() {
+    const uint8_t e = ui.engine(), n = presets.count(e);
+    if (n == 0) {
+        const uint8_t p[3] = {e, 0, 0};
+        bridge_send(GF_CMD_PRESET_ENTRY, p, 3);
+        return;
+    }
+    for (uint8_t i = 0; i < n; ++i) {
+        uint8_t p[3 + studio::PRESET_NAME_LEN + 1] = {e, i, n};
+        const char* name = presets.name(e, i);
+        const size_t len = strnlen(name, studio::PRESET_NAME_LEN);
+        memcpy(p + 3, name, len);
+        bridge_send(GF_CMD_PRESET_ENTRY, p, uint8_t(3 + len + 1));
+    }
+}
+
+/// PRESET_LOADED (0x17): [preset_id 2B, nombre].
+void bridge_preset_loaded() {
+    const uint8_t e = ui.engine(), i = preset_loaded[e];
+    if (i == 0xFF) return;
+    uint8_t p[2 + studio::PRESET_NAME_LEN + 1] = {i, 0};
+    const char* name = presets.name(e, i);
+    const size_t len = strnlen(name, studio::PRESET_NAME_LEN);
+    memcpy(p + 2, name, len);
+    bridge_send(GF_CMD_PRESET_LOADED, p, uint8_t(2 + len + 1));
+}
+
+/// Lleva un preset al engine `e`; si es el activo, también a las cadenas de FX y a la cabeza.
+void apply_preset(uint8_t e, const studio::Preset& p) {
+    patches[e] = p.patch;
+    cutoff[e] = constrain(p.cutoff_hz, GF_CUTOFF_RANGE[e].lo, GF_CUTOFF_RANGE[e].hi);
+    resonance[e] = gf_denorm(RESO_RANGE[e], p.reso_norm);
+    engine_osc(e);
+    engine_filter(e);
+    engine_patch(e);
+    if (e != ui.engine()) return;
+    apply_sfx(e);
+    if (!link_up) return;                           // al conectar, bridge_all() manda todo
+    bridge_filter();
+    bridge_patch();
+}
+
+void load_preset(uint8_t i) {
+    const uint8_t e = ui.engine();
+    studio::Preset p;
+    if (!presets.load(e, i, &p)) {
+        Serial.printf("[PRESET] %u no se pudo leer\n", i);
+        return;
+    }
+    preset_loaded[e] = i;
+    apply_preset(e, p);
+    bridge_preset_loaded();
+    Serial.printf("[PRESET] cargado %u %s\n", i, p.name);
+}
+
+void save_preset() {
+    const uint8_t e = ui.engine();
+    studio::Preset p;
+    p.patch = patches[e];
+    p.cutoff_hz = cutoff[e];
+    p.reso_norm = gf_norm(RESO_RANGE[e], resonance[e]);
+    const int i = presets.save_new(e, p);
+    ui.set_preset_count(presets.count(e));          // StudioUi ya sumó uno: si falló, vuelve al real
+    if (i < 0) {
+        Serial.println("[PRESET] no se pudo guardar (banco lleno o sin LittleFS)");
+        return;
+    }
+    preset_loaded[e] = uint8_t(i);
+    bridge_presets();
+    bridge_preset_loaded();
+    Serial.printf("[PRESET] guardado %d %s\n", i, presets.name(e, uint8_t(i)));
+}
+
 void bridge_bpm() {
     const uint16_t x10 = uint16_t(lroundf(bpm * 10.0f));
     const uint8_t p[3] = {uint8_t(x10 & 0xFF), uint8_t(x10 >> 8), 0};
@@ -438,6 +554,8 @@ void bridge_all() {
     bridge_filter();
     bridge_patch();
     bridge_bpm();
+    bridge_presets();
+    bridge_preset_loaded();
     bridge_ui_state();
 }
 
@@ -491,9 +609,12 @@ void activate_engine(uint8_t e) {
     engine_patch(e);
     engine_osc(e);
     apply_sfx(e);
+    ui.set_preset_count(presets.count(e));
     bridge_engine();
     bridge_filter();
     bridge_patch();
+    bridge_presets();
+    bridge_preset_loaded();
     Serial.printf("[ENGINE] %s\n", ENGINE_NAME[e]);
 }
 
@@ -561,6 +682,8 @@ void run_action(studio::Result r) {
             Serial.printf("[UI] FX %u del synth %s\n", r.arg, patch().sfx_on[r.arg] ? "ON" : "OFF");
             break;
         }
+        case studio::Action::LoadPreset: load_preset(r.arg); break;
+        case studio::Action::SavePreset: save_preset(); break;
         case studio::Action::LfoSync:
             Serial.printf("[UI] LFO SYNC %s (%.1f BPM)\n", r.arg ? "ON" : "OFF", bpm);
             break;
@@ -571,8 +694,10 @@ void run_action(studio::Result r) {
 
 void ui_control(studio::Control c, int8_t v) {
     if (c == studio::Control::Nav) nav_flash_ms = millis();
+    const uint8_t page_before = ui.state().page;
     run_action(ui.handle(c, v));
     const GF_UiState& u = ui.state();
+    if (u.page == studio::PRESETS && page_before != studio::PRESETS) bridge_presets();   // theory/06 §5
     Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", u.mode ? "FX" : "SYNTH",
                   u.page, u.cursor, u.shift, u.fx_hold, u.fx_slot);
 }
@@ -740,6 +865,19 @@ void setup() {
         engine_patch(e);
         if (e) engine_dsp(e, false);
     }
+
+    // Presets: banco de fábrica en el primer arranque; cada engine arranca con su preset 1 (INIT / E.PIANO)
+    preset_fs_ok = preset_fs.begin(512 * 1024);
+    Serial.printf("[PRESET] LittleFS %s\n", preset_fs_ok ? "OK (512 KB)" : "NO DISPONIBLE: presets solo de fábrica");
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; e++) {
+        presets.scan(e);
+        studio::Preset p;
+        if (presets.load(e, 0, &p)) {
+            preset_loaded[e] = 0;
+            apply_preset(e, p);
+        }
+    }
+    ui.set_preset_count(presets.count(0));
 
     Serial.println("[test] La 440 Hz durante 0.6 s (Moog) por LINE OUT");
     moog.noteOn(69, 1.0f);

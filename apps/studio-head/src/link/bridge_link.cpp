@@ -40,7 +40,7 @@ void note_name(char* out, size_t n, uint8_t midi) { std::snprintf(out, n, "%s%d"
 bool FrameParser::known_cmd(uint8_t c) {
     return c <= 0x07 || (c >= 0x10 && c <= 0x17) || (c >= 0x20 && c <= 0x24) || (c >= 0x30 && c <= 0x35) ||
            (c >= 0x40 && c <= 0x45) || (c >= 0x50 && c <= 0x57) || (c >= 0x60 && c <= 0x65) ||
-           (c >= 0x70 && c <= 0x72) || (c >= 0x80 && c <= 0x84) || (c >= 0xF0 && c <= 0xF2);
+           (c >= 0x70 && c <= 0x72) || (c >= 0x80 && c <= 0x84) || c == 0x90 || (c >= 0xF0 && c <= 0xF2);
 }
 
 void FrameParser::feed(const uint8_t* data, size_t n, uint32_t now_ms) {
@@ -270,6 +270,31 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
         }
         break;
     }
+    case GF_CMD_PRESET_ENTRY:   // 02 §2.10.1: [engine, index, count, name]
+        if (len >= 3 && p[0] < 6 && p[2] <= PRESET_MAX) {
+            const uint8_t e = p[0], i = p[1], n = p[2];
+            m_.preset_count[e] = n;
+            if (n && i < n) {
+                const size_t l = std::min<size_t>(len - 3, sizeof(m_.preset_names[e][i]) - 1);
+                std::memcpy(m_.preset_names[e][i], p + 3, l);
+                m_.preset_names[e][i][l] = '\0';
+            }
+            if (m_.preset_loaded[e] != 0xFF && m_.preset_loaded[e] >= n) m_.preset_loaded[e] = 0xFF;
+            m_.preset_dirty |= uint8_t(1u << e);
+        }
+        break;
+    case GF_CMD_PRESET_LOADED:  // 02 §2.2: [preset_id 2B, name] del engine activo
+        if (len >= 2 && p[0] < PRESET_MAX) {
+            const uint8_t e = m_.engine;
+            m_.preset_loaded[e] = p[0];
+            if (len > 2) {
+                const size_t l = std::min<size_t>(len - 2, sizeof(m_.preset_names[e][p[0]]) - 1);
+                std::memcpy(m_.preset_names[e][p[0]], p + 2, l);
+                m_.preset_names[e][p[0]][l] = '\0';
+            }
+            m_.preset_dirty |= uint8_t(1u << e);
+        }
+        break;
     case GF_CMD_UI_STATE:
         m_.ui = ui;
         m_.ui_dirty = true;
@@ -330,6 +355,7 @@ void BridgeLink::apply(StudioState& s) {
         m_.lfo_dirty |= uint8_t(1u << m_.engine);
         m_.sfx_dirty |= uint8_t(1u << m_.engine);
         m_.osc_dirty |= uint8_t(1u << m_.engine);
+        m_.preset_dirty |= uint8_t(1u << m_.engine);
     }
     const unsigned e = s.engine < GF_ENGINE_COUNT ? s.engine : 0;
     if (m_.filter_dirty & (1u << e)) {
@@ -389,7 +415,18 @@ void BridgeLink::apply(StudioState& s) {
             for (int k = 0; k < 3; ++k) s.sfx_p[i][k] = x[8 + i * 3 + k];
         }
     }
-    m_.filter_dirty = m_.env_dirty = m_.lfo_dirty = m_.sfx_dirty = m_.osc_dirty = 0;
+    if (m_.preset_dirty & (1u << e)) {
+        s.preset_count = m_.preset_count[e];
+        for (int i = 0; i < s.preset_count; ++i)
+            std::snprintf(s.preset_names[i], sizeof(s.preset_names[i]), "%s", m_.preset_names[e][i]);
+        const uint8_t l = m_.preset_loaded[e];
+        s.preset_loaded = l;
+        if (l < s.preset_count)
+            std::snprintf(s.preset, sizeof(s.preset), "A-%02d %s", l + 1, m_.preset_names[e][l]);
+        else
+            std::snprintf(s.preset, sizeof(s.preset), "—");
+    }
+    m_.filter_dirty = m_.env_dirty = m_.lfo_dirty = m_.sfx_dirty = m_.osc_dirty = m_.preset_dirty = 0;
 
     // La fase del LFO no viaja: se integra acá con la velocidad conocida (solo es para el punto animado).
     const float hz = s.lfo_sync ? s.bpm / 60.0f / GF_LFO_DIV_BEATS[s.lfo_div % GF_LFO_DIVS] : s.lfo_rate_hz;

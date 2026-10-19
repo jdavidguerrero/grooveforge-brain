@@ -53,7 +53,7 @@ public:
 
     /// El engine cambió por otra vía (MIDI CC 0, preset): OSC y ENGINE SELECT lo usan.
     void set_engine(uint8_t engine);
-    void set_preset_count(uint8_t n) { preset_count_ = n; }
+    void set_preset_count(uint8_t n) { preset_count_ = n; if (preset_cursor_ > n) preset_cursor_ = n; }
     uint8_t preset_count() const { return preset_count_; }
 
     const GF_UiState& state() const { return ui_; }

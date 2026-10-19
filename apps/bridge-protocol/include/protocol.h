@@ -112,6 +112,9 @@ typedef enum : uint8_t {
     GF_CMD_GROOVE_STATE     = 0x83,
     GF_CMD_GENRE_DETECTED   = 0x84,
 
+    /* Cabeza Studio (02 §2.10.1) */
+    GF_CMD_PRESET_ENTRY     = 0x90,
+
     /* 0xF0 — Multi-frame transfer */
     GF_CMD_BEGIN_TRANSFER   = 0xF0,
     GF_CMD_CHUNK            = 0xF1,

@@ -201,6 +201,17 @@ comandos se definen con la tarea 38 (hilo de I/O de la cabeza). Rango propuesto:
 Solo se envía el flujo de la vista visible (la cabeza informa la página activa), para no gastar
 ancho de banda del UART en lo que no se ve.
 
+#### 2.10.1 Comandos de la cabeza Studio ya definidos (normativo — enmienda 2026-10-18)
+
+Aprobado por Juan el 2026-10-18 ("haz las 6 implementaciones para la experiencia de synth físico", que incluye
+`variants/studio/theory/06-studio-presets.md` §5).
+
+| CMD | Nombre | Payload | Descripción |
+|---|---|---|---|
+| 0x90 | PRESET_ENTRY | [engine: 1B, index: 1B, count: 1B, name: string ≤16] | Teensy → cabeza: una entrada del banco del engine (`count` = tamaño del banco). Uno por preset al entrar a PRESETS, al cambiar de engine y al guardar. Con `count` = 0 el banco está vacío (`index` y `name` se ignoran) |
+
+`PRESET_LOADED` (0x17, §2.2) lo manda el Teensy al cargar o guardar, seguido de los `PARAM_CHANGED` del patch.
+
 ---
 
 ## 3. Communication Patterns
