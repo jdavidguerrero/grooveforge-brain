@@ -160,6 +160,12 @@ float cutoff[6], resonance[6];
 studio::Patch patches[GF_ENGINE_COUNT];  // uno por engine: al volver a un engine vuelve su LFO y su ENV
 dsp::Lfo lfo;
 float wheel = 0.0f;                      // CC 1, 0–1: suma vibrato como en los originales
+float bend_st = 0.0f;                    // pitch bend en semitonos (±2, theory/07 §2)
+float aftertouch = 0.0f;                 // presión de canal 0–1: cutoff +1 oct y vibrato
+bool sustain_pedal = false;              // CC 64
+uint32_t sustained[4] = {};              // notas soltadas con el pedal apretado (bit por nota)
+constexpr float BEND_RANGE_ST = 2.0f;
+constexpr uint8_t MIDI_OUT_CH = 1;
 float bpm = 120.0f;                      // MIDI clock del USB host; sin clock, 120
 uint32_t last_clock_us = 0, last_bpm_tx = 0;
 float clock_us_avg = 0.0f;
@@ -196,6 +202,7 @@ void engine_note_off(uint8_t e, uint8_t note) {
 }
 
 void all_notes_off() {
+    memset(sustained, 0, sizeof(sustained));
     moog.noteOff();
     moog_note = 255;
     for (uint8_t n = 0; n <= 127; n++) {
@@ -385,6 +392,12 @@ void bridge_param(uint16_t id, float norm) {
     bridge_send(GF_CMD_PARAM_CHANGED, p, 6);
 }
 
+/// Lo editado en el panel sale al computador por su CC (theory/07 §3) para que Ableton lo grabe.
+void cc_out(uint16_t id, float norm) {
+    const uint8_t cc = studio::param_cc(id, ui.engine());
+    if (cc != 0xFF) usbMIDI.sendControlChange(cc, uint8_t(lroundf(constrain(norm, 0.0f, 1.0f) * 127.0f)), MIDI_OUT_CH);
+}
+
 void bridge_engine() {
     const uint8_t e = ui.engine();
     uint8_t p[24] = {e};
@@ -501,11 +514,12 @@ void mod_tick() {
 
     auto amt = [&](uint8_t d) { return gf_lfo_dest_available(e, d) ? p.lfo_amt[d] : 0.0f; };
     LfoMod m;
-    m.cutoff_mul = exp2f(amt(GF_DEST_CUTOFF) * GF_LFO_CUT_OCT * v);
+    m.cutoff_mul = exp2f(amt(GF_DEST_CUTOFF) * GF_LFO_CUT_OCT * v + aftertouch);
     // En el Prophet la rueda hace lo que diga WHEEL-MOD (como el original), no suma vibrato genérico
     const float wheel_vib = e == 2 ? 0.0f : 0.3f * wheel;
     const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
-    m.pitch_ratio = exp2f((gf_lfo_pitch_st(fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib)) * v + wf_st) / 12.0f);
+    const float vib = fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib + 0.3f * aftertouch);
+    m.pitch_ratio = exp2f((gf_lfo_pitch_st(vib) * v + wf_st + bend_st) / 12.0f);
     m.pwm = amt(GF_DEST_PWM) * v;
     m.amp = 1.0f - amt(GF_DEST_AMP) * (1.0f + v) * 0.5f;
     m.lfo = v;
@@ -517,6 +531,7 @@ void page_encoder(uint8_t enc, int32_t steps) {
     studio::ParamChange c[1];
     if (!studio::edit_encoder(patch(), ui.state(), ui.engine(), enc, int8_t(constrain(steps, -8, 8)), c)) return;
     bridge_param(c[0].id, c[0].norm);
+    cc_out(c[0].id, c[0].norm);
     engine_patch(ui.engine());
     if (ui.state().page == studio::SYNTH_FX) apply_sfx(ui.engine());
     if (ui.state().page == studio::OSC || ui.state().page == studio::LFO) engine_osc(ui.engine());   // OSC y MOD
@@ -604,17 +619,46 @@ void leds_update() {
 
 // ── MIDI ────────────────────────────────────────────────────────────────────────────────────────
 
+void note_off(byte ch, byte note, byte vel);
+
 void note_on(byte ch, byte note, byte vel) {
-    if (vel == 0) { engine_note_off(ui.engine(), note); return; }
+    if (vel == 0) { note_off(ch, note, 0); return; }
+    sustained[note >> 5] &= ~(1u << (note & 31));
     engine_note_on(ui.engine(), note, vel / 127.0f);
     const uint8_t p[2] = {note, vel};
     bridge_send(GF_CMD_NOTE_ON, p, 2);
 }
 
-void note_off(byte ch, byte note, byte vel) { engine_note_off(ui.engine(), note); }
+void note_off(byte ch, byte note, byte vel) {
+    if (sustain_pedal) { sustained[note >> 5] |= 1u << (note & 31); return; }
+    engine_note_off(ui.engine(), note);
+}
+
+void pitch_bend(byte ch, int bend) { bend_st = BEND_RANGE_ST * bend / 8192.0f; }   // −8192…8191
+void after_touch(byte ch, byte pressure) { aftertouch = pressure / 127.0f; }
+
+void release_sustained() {
+    for (uint8_t n = 0; n < 128; ++n)
+        if (sustained[n >> 5] & (1u << (n & 31))) engine_note_off(ui.engine(), n);
+    memset(sustained, 0, sizeof(sustained));
+}
 
 void control_change(byte ch, byte cc, byte val) {
     const uint8_t e = ui.engine();
+    if (cc == 64) {
+        sustain_pedal = val >= 64;
+        if (!sustain_pedal) release_sustained();
+        return;
+    }
+    if (cc == 123) { all_notes_off(); return; }
+    studio::ParamChange pc[1];
+    if (studio::apply_cc(patch(), e, cc, val, pc)) {
+        bridge_param(pc[0].id, pc[0].norm);
+        engine_patch(e);
+        engine_osc(e);
+        apply_sfx(e);
+        return;
+    }
     if (cc == 74) { cutoff[e] = gf_denorm(GF_CUTOFF_RANGE[e], val / 127.0f); engine_filter(e); bridge_filter(); }
     if (cc == 71) { resonance[e] = gf_denorm(RESO_RANGE[e], val / 127.0f); engine_filter(e); bridge_filter(); }
     if (cc == 1) {
@@ -638,6 +682,16 @@ void host_note_off(byte ch, byte note, byte vel) {
 void host_control_change(byte ch, byte cc, byte val) {
     control_change(ch, cc, val);
     usbMIDI.sendControlChange(cc, val, ch);
+}
+
+void host_pitch_bend(byte ch, int bend) {
+    pitch_bend(ch, bend);
+    usbMIDI.sendPitchBend(bend, ch);
+}
+
+void host_after_touch(byte ch, byte pressure) {
+    after_touch(ch, pressure);
+    usbMIDI.sendAfterTouch(pressure, ch);
 }
 
 /// MIDI clock (24 ppq): promedio móvil del intervalo → BPM para el SYNC del LFO.
@@ -703,11 +757,15 @@ void setup() {
     midi.setHandleNoteOn(host_note_on);
     midi.setHandleNoteOff(host_note_off);
     midi.setHandleControlChange(host_control_change);
+    midi.setHandlePitchChange(host_pitch_bend);
+    midi.setHandleAfterTouchChannel(host_after_touch);
     midi.setHandleClock(clock_tick);
     // MIDI del computador por el USB de la Teensy (piano roll de Ableton, clock de la sesión)
     usbMIDI.setHandleNoteOn(note_on);
     usbMIDI.setHandleNoteOff(note_off);
     usbMIDI.setHandleControlChange(control_change);
+    usbMIDI.setHandlePitchChange(pitch_bend);
+    usbMIDI.setHandleAfterTouchChannel(after_touch);
     usbMIDI.setHandleClock(clock_tick);
     Serial.println("[host] USB host iniciado: conectar el teclado MIDI");
 }
@@ -758,6 +816,7 @@ void loop() {
         cutoff[e] = constrain(cutoff[e] * powf(1.06f, float(l - last_l)), cr.lo, cr.hi);
         engine_filter(e);
         bridge_filter();
+        cc_out(gf_param_id(e, GF_GROUP_FILTER, GF_FILTER_CUTOFF), gf_norm(cr, cutoff[e]));
         last_l = l;
     }
     if (r != last_r) {
@@ -765,6 +824,7 @@ void loop() {
         resonance[e] = constrain(resonance[e] + 0.05f * (rr.hi - rr.lo) * (r - last_r), rr.lo, rr.hi);
         engine_filter(e);
         bridge_filter();
+        cc_out(gf_param_id(e, GF_GROUP_FILTER, GF_FILTER_RESO), gf_norm(rr, resonance[e]));
         last_r = r;
     }
     if (p1 != last_p1) { page_encoder(0, p1 - last_p1); last_p1 = p1; }

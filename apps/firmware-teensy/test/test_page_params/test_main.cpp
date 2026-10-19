@@ -228,6 +228,59 @@ void test_synth_fx_encendido() {
     TEST_ASSERT_EQUAL_UINT8(0, toggle_sfx(p, 2, 9, c));
 }
 
+// theory/07 §3: mapa fijo de CC.
+void test_cc_entrada() {
+    Patch p;
+    patch_init(p, 2);
+    ParamChange c[1];
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 70, 127, c));          // sustain del AMP
+    TEST_ASSERT_EQUAL_HEX16(0x1212, c[0].id);
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 1.0f, p.sustain);
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 102, 0, c));           // attack del FILTER al mínimo
+    TEST_ASSERT_EQUAL_HEX16(0x1214, c[0].id);
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, GF_ATTACK_RANGE[2].lo, p.f_attack_ms);
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 91, 64, c));           // MIX del MODAL
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, 64.0f / 127.0f, p.sfx_mix[GF_SFX_MODAL]);
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 80, 127, c));          // forma del LFO: la última
+    TEST_ASSERT_EQUAL_UINT8(GF_LFO_SHAPES - 1, p.lfo_shape);
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 2, 54, 127, c));          // POLY-MOD, parada 1 de MOD
+    TEST_ASSERT_EQUAL_HEX16(0x1270, c[0].id);
+    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 2, 46, 64, c));           // el Prophet no tiene 4.ª parada de OSC
+    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 0, 54, 64, c));           // el Model D no tiene paradas de MOD
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 4, 46, 64, c));           // OP 4 del DX7
+    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 2, 9, 64, c));            // CC sin mapear
+    TEST_ASSERT_EQUAL_UINT8(0, apply_cc(p, 9, 70, 64, c));           // engine inválido
+}
+
+// Todo lo que el panel edita y tiene CC vuelve por apply_cc al mismo param_id (Ableton graba y reproduce).
+void test_cc_ida_y_vuelta() {
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        Patch p;
+        patch_init(p, e);
+        ParamChange all[PATCH_PARAM_COUNT];
+        const uint8_t n = patch_params(p, e, all);
+        uint8_t mapped = 0;
+        for (uint8_t i = 0; i < n; ++i) {
+            const uint8_t cc = param_cc(all[i].id, e);
+            if (cc == 0xFF || cc == 74 || cc == 71) continue;          // cutoff / reso los maneja el sketch
+            const uint8_t group = (all[i].id >> 4) & 0xF, idx = all[i].id & 0xF;
+            if (group == GF_GROUP_LFO && idx >= GF_LFO_AMT0) {
+                const uint8_t d = uint8_t(idx - GF_LFO_AMT0);
+                if (d != GF_DEST_CUTOFF && d != GF_DEST_PITCH && d != GF_LFO_THIRD_DEST[e]) continue;
+                if (!gf_lfo_dest_available(e, d)) continue;
+            }
+            Patch q = p;
+            ParamChange c[1];
+            const uint8_t v = uint8_t(lroundf(all[i].norm * 127.0f));
+            TEST_ASSERT_EQUAL_UINT8_MESSAGE(1, apply_cc(q, e, cc, v, c), "CC sin efecto");
+            TEST_ASSERT_EQUAL_HEX16(all[i].id, c[0].id);
+            ++mapped;
+        }
+        TEST_ASSERT_TRUE(mapped >= 12);
+    }
+    TEST_ASSERT_EQUAL_UINT8(0xFF, param_cc(0x1100, 2));                // param de otro engine
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_perform_p1_env_amt_p2_lfo_cutoff);
@@ -243,5 +296,7 @@ int main() {
     RUN_TEST(test_env_filter_y_osc);
     RUN_TEST(test_prophet_osc_shift_mod_y_shape);
     RUN_TEST(test_nuevos_slots_juno_ob6_arp);
+    RUN_TEST(test_cc_entrada);
+    RUN_TEST(test_cc_ida_y_vuelta);
     return UNITY_END();
 }

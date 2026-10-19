@@ -66,6 +66,13 @@ uint8_t step_lfo_shape(Patch& p, uint8_t engine, int8_t steps, ParamChange* out)
 /// NAV push en SYNTH FX: enciende / apaga el FX `slot` de la cadena.
 uint8_t toggle_sfx(Patch& p, uint8_t engine, uint8_t slot, ParamChange* out);
 
+/// CC absoluto (0–127) → parámetro del patch según el mapa de theory/07. @return 0 si el CC no está mapeado o el
+/// engine no tiene ese slot; 1 si escribió el cambio en `out`.
+uint8_t apply_cc(Patch& p, uint8_t engine, uint8_t cc, uint8_t value, ParamChange* out);
+
+/// CC que corresponde a un param_id (para mandar al computador lo editado en el panel). 0xFF = sin CC.
+uint8_t param_cc(uint16_t param_id, uint8_t engine);
+
 /// Todo el patch, para mandarlo al conectar o al cambiar de engine. `out` necesita PATCH_PARAM_COUNT lugares.
 uint8_t patch_params(const Patch& p, uint8_t engine, ParamChange* out);
 

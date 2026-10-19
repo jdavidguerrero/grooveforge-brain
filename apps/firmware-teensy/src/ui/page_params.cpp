@@ -185,6 +185,108 @@ uint8_t toggle_sfx(Patch& p, uint8_t e, uint8_t slot, ParamChange* out) {
     return 1;
 }
 
+namespace {
+
+constexpr uint8_t CC_AMP[4] = {73, 75, 70, 72};      // A · D · S · R (theory/07 §3)
+constexpr uint8_t CC_FLT[4] = {102, 103, 104, 105};
+constexpr uint8_t CC_OSC[GF_OSC_STOPS] = {20, 28, 36, 46};
+constexpr uint8_t CC_MOD[GF_MOD_STOPS_MAX] = {54, 110};
+constexpr uint8_t CC_SFX_MIX[GF_SFX_COUNT] = {95, 94, 93, 91};   // BIT · TAPE · CHORUS · MODAL
+
+/// Valor normalizado sobre un slot de plantilla (los discretos se redondean al índice más cercano).
+void set_slot_norm(float& v, const GF_OscSlot* s, float n) {
+    v = s->lo + n * (s->hi - s->lo);
+    if (s->count) v = s->lo + roundf(v - s->lo);
+}
+
+}  // namespace
+
+uint8_t apply_cc(Patch& p, uint8_t e, uint8_t cc, uint8_t value, ParamChange* out) {
+    if (e >= GF_ENGINE_COUNT || value > 127) return 0;
+    const float n = value / 127.0f;
+    for (uint8_t env = 0; env < 2; ++env)
+        for (uint8_t i = 0; i < 4; ++i) {
+            if (cc != (env == GF_ENV_FILTER ? CC_FLT[i] : CC_AMP[i])) continue;
+            const GF_Range r = i == 0 ? GF_ATTACK_RANGE[e] : i == 1 ? GF_DECAY_RANGE[e] : GF_RELEASE_RANGE[e];
+            *env_field(p, env, i) = i == 2 ? n : gf_denorm(r, n);
+            out[0] = env_change(p, e, env, i);
+            return 1;
+        }
+    switch (cc) {
+        case 106:
+            p.env_amt = n;
+            out[0] = {gf_param_id(e, GF_GROUP_FILTER, GF_FILTER_ENV_AMT), n};
+            return 1;
+        case 76:
+            p.lfo_rate_hz = gf_lfo_rate_hz(n);
+            out[0] = {gf_param_id(e, GF_GROUP_LFO, GF_LFO_RATE), n};
+            return 1;
+        case 80:
+            p.lfo_shape = gf_index_from_norm(n, GF_LFO_SHAPES);
+            out[0] = {gf_param_id(e, GF_GROUP_LFO, GF_LFO_SHAPE), gf_index_norm(p.lfo_shape, GF_LFO_SHAPES)};
+            return 1;
+        case 81:
+            p.lfo_div = gf_index_from_norm(n, GF_LFO_DIVS);
+            out[0] = {gf_param_id(e, GF_GROUP_LFO, GF_LFO_DIV), gf_index_norm(p.lfo_div, GF_LFO_DIVS)};
+            return 1;
+        case 77: case 78: case 79: {
+            const uint8_t d = cc == 77 ? GF_DEST_CUTOFF : cc == 78 ? GF_DEST_PITCH : GF_LFO_THIRD_DEST[e];
+            if (d == GF_DEST_NONE || !gf_lfo_dest_available(e, d)) return 0;
+            p.lfo_amt[d] = n;
+            out[0] = amt_change(p, e, d);
+            return 1;
+        }
+        default: break;
+    }
+    for (uint8_t fx = 0; fx < GF_SFX_COUNT; ++fx)
+        if (cc == CC_SFX_MIX[fx]) {
+            p.sfx_mix[fx] = n;
+            out[0] = {gf_param_id(e, GF_GROUP_SFX, uint8_t(GF_SFX_COUNT + fx)), n};
+            return 1;
+        }
+    for (uint8_t st = 0; st < GF_OSC_STOPS; ++st)
+        if (cc >= CC_OSC[st] && cc < CC_OSC[st] + GF_OSC_SLOTS) {
+            const uint8_t sl = uint8_t(cc - CC_OSC[st]);
+            const GF_OscSlot* s = &GF_OSC_SLOT[e][st][sl];
+            if (st >= GF_OSC_STOP_COUNT[e] || !gf_osc_used(s)) return 0;
+            set_slot_norm(p.osc[s->global ? 0 : st][sl], s, n);
+            out[0] = osc_change(p, e, st, sl);
+            return 1;
+        }
+    for (uint8_t st = 0; st < GF_MOD_STOPS[e]; ++st)
+        if (cc >= CC_MOD[st] && cc < CC_MOD[st] + GF_OSC_SLOTS) {
+            const uint8_t sl = uint8_t(cc - CC_MOD[st]);
+            const GF_OscSlot* s = &GF_MOD_SLOT[e][st][sl];
+            if (!gf_osc_used(s)) return 0;
+            set_slot_norm(p.mod[st][sl], s, n);
+            out[0] = mod_change(p, e, st, sl);
+            return 1;
+        }
+    return 0;
+}
+
+uint8_t param_cc(uint16_t id, uint8_t e) {
+    if (e >= GF_ENGINE_COUNT || (id >> 8) != 0x10u + e) return 0xFF;
+    const uint8_t group = (id >> 4) & 0xF, idx = id & 0xF;
+    switch (group) {
+        case GF_GROUP_ENV: return idx < 4 ? CC_AMP[idx] : idx < 8 ? CC_FLT[idx - 4] : 0xFF;
+        case GF_GROUP_FILTER:
+            return idx == GF_FILTER_CUTOFF ? 74 : idx == GF_FILTER_RESO ? 71 : idx == GF_FILTER_ENV_AMT ? 106 : 0xFF;
+        case GF_GROUP_LFO:
+            if (idx == GF_LFO_RATE) return 76;
+            if (idx == GF_LFO_SHAPE) return 80;
+            if (idx == GF_LFO_DIV) return 81;
+            if (idx == GF_LFO_AMT0 + GF_DEST_CUTOFF) return 77;
+            if (idx == GF_LFO_AMT0 + GF_DEST_PITCH) return 78;
+            return idx >= GF_LFO_AMT0 ? 79 : 0xFF;
+        case GF_GROUP_OSC: return uint8_t(CC_OSC[idx / 4] + idx % 4);
+        case GF_GROUP_OSC_SHIFT: return uint8_t(CC_OSC[idx / 4] + 4 + idx % 4);
+        case GF_GROUP_MOD: return idx / 8 < GF_MOD_STOPS_MAX ? uint8_t(CC_MOD[idx / 8] + idx % 8) : 0xFF;
+        case GF_GROUP_SFX: return idx >= GF_SFX_COUNT && idx < 2 * GF_SFX_COUNT ? CC_SFX_MIX[idx - GF_SFX_COUNT] : 0xFF;
+        default: return 0xFF;
+    }
+}
+
 void patch_init(Patch& p, uint8_t e) {
     float (&o)[GF_OSC_STOPS][GF_OSC_SLOTS] = p.osc;
     p.glide = 0.0f;
