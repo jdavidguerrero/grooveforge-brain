@@ -10,13 +10,15 @@
 #include "ui/screen_fx.h"
 #include "ui/screen_lfo.h"
 #include "ui/screen_osc.h"
+#include "ui/screen_panel.h"
 #include "ui/screen_perform.h"
 #include "ui/screen_presets.h"
 #include "ui/screen_sfx.h"
 #include "ui/screen_spectrum.h"
 
-/// Páginas de la UI. Las tres primeras son las vistas que recorre NAV en SYNTH.
-enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Count };
+/// Páginas de la UI (mismos ids que studio::Page del Teensy). Vistas que recorre NAV en SYNTH: PERFORM · AI ·
+/// SPECTRUM · PANEL (fidelidad §11.7).
+enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Count };
 
 /**
  * @brief Navegación de la UI v3 + FX Viz.
@@ -56,6 +58,7 @@ private:
     ScreenOsc _osc;
     ScreenLfo _lfo;
     ScreenSfx _sfx;
+    ScreenPanel _panel;
     Overlays _overlays;
     lv_obj_t* _roots[int(Page::Count)] = {};
     Page _page = Page::Perform;

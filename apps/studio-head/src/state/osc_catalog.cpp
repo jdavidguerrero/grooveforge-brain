@@ -67,7 +67,7 @@ const OscSlot FM_D4     = {"DETUNE 4", "", SlotKind::Number, -3, 3, 0, true, fal
 const OscSlot FM_KLVL   = {"KBD LEVEL", "", SlotKind::Number, 0, 99, 0, false, false};
 const OscSlot FM_KRATE  = {"KBD RATE", "", SlotKind::Choice, 0, 3, 0, false, false, L_KRATE};
 const OscSlot FM_D2R    = {"D2 RATE", "MS", SlotKind::Number, 0, 5000, 0, false, false};
-const OscSlot MD_MIX    = {"MOD MIX", "%", SlotKind::MixAB, 0, 100, 0, false, false};
+const OscSlot MD_MIX    = {"NOISE MIX", "%", SlotKind::Number, 0, 100, 0, false, false};   // 0 = VCO 3, 100 = ruido
 const OscSlot MD_OSC    = {"OSC MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_FLT    = {"FILTER MOD", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_NOISE  = {"NOISE", "", SlotKind::Choice, 0, 1, 0, false, false, L_NOISE};

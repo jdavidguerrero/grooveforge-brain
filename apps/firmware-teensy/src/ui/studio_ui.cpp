@@ -11,7 +11,15 @@ constexpr bool FX_AVAILABLE[GF_UI_FX_SLOTS] = {true, true, true, false, true, tr
 // Ruteo por defecto de cada FX (05 §1; capa del FX en el catálogo de la cabeza)
 constexpr uint8_t FX_ROUTE_DEFAULT[GF_UI_FX_SLOTS] = {0, 0, 1, 0, 2, 0, 1, 0, 0, 2, 0, 2};
 
-bool is_view(uint8_t p) { return p == PERFORM || p == AI || p == SPECTRUM; }
+bool is_view(uint8_t p) { return p == PERFORM || p == AI || p == SPECTRUM || p == PANEL; }
+
+/// Vistas de la home en el orden de NAV (fidelidad §11.7).
+constexpr uint8_t VIEWS[4] = {PERFORM, AI, SPECTRUM, PANEL};
+uint8_t next_view(uint8_t p, int dir) {
+    int i = 0;
+    while (i < 4 && VIEWS[i] != p) ++i;
+    return VIEWS[(i % 4 + dir + 4) % 4];
+}
 
 uint8_t next_fx_slot(uint8_t slot, int dir) {
     int i = slot;
@@ -201,7 +209,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
     switch (c) {
         case Control::Nav:
             if (is_view(ui_.page)) {
-                for (int n = v > 0 ? v : -v; n > 0; --n) show(uint8_t((ui_.page + (v > 0 ? 1 : 2)) % 3));
+                for (int n = v > 0 ? v : -v; n > 0; --n) show(next_view(ui_.page, v > 0 ? 1 : -1));
             }
             break;
         case Control::Key1: toggle_page(OSC); break;

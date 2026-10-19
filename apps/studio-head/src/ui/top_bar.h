@@ -19,7 +19,7 @@ private:
     lv_obj_t* _mode = nullptr;
     lv_obj_t* _mode_txt = nullptr;
     lv_obj_t* _title = nullptr;
-    lv_obj_t* _dots[3] = {};
+    lv_obj_t* _dots[4] = {};   ///< una por vista de la home
     lv_obj_t* _bypass = nullptr;
     lv_obj_t* _key_sq = nullptr;
     lv_obj_t* _key = nullptr;

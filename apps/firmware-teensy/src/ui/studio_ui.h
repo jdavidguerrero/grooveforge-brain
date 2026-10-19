@@ -18,7 +18,7 @@ namespace studio {
 
 /// Páginas: mismo enum que `Page` de la cabeza (7 = error, lo decide la cabeza y nunca viaja).
 enum Page : uint8_t { PERFORM = 0, AI = 1, SPECTRUM = 2, ENV = 3, FX = 4, ENGINE = 5, PRESETS = 6, OSC = 8, LFO = 9,
-                    SYNTH_FX = 10 };
+                    SYNTH_FX = 10, PANEL = 11 };   ///< PANEL: 4.ª vista de la home (fidelidad §11.7)
 
 /// Ids de control, compartidos con UI_INPUT (0x45). NAV lleva el paso del giro en `value`.
 /// Key1–Key4 = B1–B4 del panel (Arduino ya define B1, B2… como literales binarios).

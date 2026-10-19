@@ -29,7 +29,10 @@ void test_nav_por_pagina_y_fx() {
     u.page = AI;
     nav_position(u, 0, 9, &pos, &n);
     TEST_ASSERT_EQUAL_UINT8(1, pos);
-    TEST_ASSERT_EQUAL_UINT8(3, n);
+    TEST_ASSERT_EQUAL_UINT8(4, n);                    // PERFORM · AI · SPECTRUM · PANEL
+    u.page = PANEL;
+    nav_position(u, 0, 9, &pos, &n);
+    TEST_ASSERT_EQUAL_UINT8(3, pos);
     u.page = LFO;
     u.cursor = 2;
     nav_position(u, 2, 9, &pos, &n);          // Prophet: LFO · POLY-MOD · WHEEL-MOD

@@ -227,7 +227,7 @@ static inline size_t gf_frame_serialize(const GF_Frame* f, uint8_t* buf, size_t 
 /** @brief Estado de UI que el Teensy manda entero a la cabeza de Studio ("el último valor gana"). */
 typedef struct {
     uint8_t  mode;                      /* 0 SYNTH, 1 FX */
-    uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO */
+    uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO 10 SYNTH FX 11 PANEL */
     uint8_t  shift;                     /* 0/1 */
     uint8_t  fx_hold;                   /* 0/1 */
     uint8_t  cursor;                    /* ENGINE: tile · PRESETS: fila (0 = SAVE) · OSC: oscilador */

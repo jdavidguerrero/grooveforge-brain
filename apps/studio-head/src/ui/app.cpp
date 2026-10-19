@@ -13,7 +13,15 @@ namespace {
 constexpr uint8_t FAV_FX_SLOT = 2;  // B4 en FX: favorito (demo: GHOST ECHO; luego, configurable)
 constexpr float VOL_MIN = -60.0f, VOL_MAX = 6.0f, IN_MIN = -12.0f, IN_MAX = 12.0f, POT_STEP = 0.5f;
 
-bool is_view(Page p) { return p == Page::Perform || p == Page::Ai || p == Page::Spectrum; }
+bool is_view(Page p) { return p == Page::Perform || p == Page::Ai || p == Page::Spectrum || p == Page::Panel; }
+
+/// Vistas de la home en el orden de NAV.
+constexpr Page VIEWS[4] = {Page::Perform, Page::Ai, Page::Spectrum, Page::Panel};
+Page next_view(Page p, int dir) {
+    int i = 0;
+    while (i < 4 && VIEWS[i] != p) ++i;
+    return VIEWS[(i % 4 + dir + 4) % 4];
+}
 
 }  // namespace
 
@@ -30,6 +38,7 @@ Screen* App::screen(Page p) {
         case Page::Osc:      return &_osc;
         case Page::Lfo:      return &_lfo;
         case Page::SynthFx:  return &_sfx;
+        case Page::Panel:    return &_panel;
         default:             return &_perform;
     }
 }
@@ -210,10 +219,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
     switch (c) {
         case Ctl::NavNext:
         case Ctl::NavPrev:
-            if (is_view(_page)) {
-                const int step = c == Ctl::NavNext ? 1 : 2;  // +1 o −1 módulo 3
-                show(Page((int(_page) + step) % 3));
-            }
+            if (is_view(_page)) show(next_view(_page, c == Ctl::NavNext ? 1 : -1));
             break;
         case Ctl::B1: toggle_page(Page::Osc); break;
         case Ctl::B2: toggle_page(Page::Env); break;

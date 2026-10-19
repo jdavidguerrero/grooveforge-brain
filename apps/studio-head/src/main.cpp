@@ -38,13 +38,13 @@ constexpr uint32_t BOOT_MS = BootSplash::DURATION_MS;
 
 void usage() {
     std::printf("studio-head [--touch <evdev>] [--uart <tty>] [--snapshot <archivo.ppm> [--snapshot-ms N]\n"
-                "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|boot] [--shift]\n"
+                "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|sfx|panel|boot] [--shift]\n"
                 "            [--engine 0-5] [--fx-view wave|spectrum|signature] [--fx-slot 1-12] [--hold] [--bypass]\n"
                 "            [--overlay vol|in|toast|banner|clip]]\n");
 }
 
 Page parse_page(const char* p) {
-    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo", "sfx"};
+    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo", "sfx", "panel"};
     for (int i = 0; i < int(Page::Count); ++i)
         if (!std::strcmp(p, NAMES[i])) return Page(i);
     return Page::Perform;

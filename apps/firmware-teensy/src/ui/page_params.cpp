@@ -90,7 +90,7 @@ uint8_t edit_encoder(Patch& p, const GF_UiState& ui, uint8_t e, uint8_t enc, int
     if (sh && (ui.page == ENV || ui.page == SYNTH_FX)) return 0;
 
     switch (ui.page) {
-        case PERFORM: case SPECTRUM:                                     // SPECTRUM = igual que PERFORM (UI v3)
+        case PERFORM: case SPECTRUM: case PANEL:                         // SPECTRUM y PANEL = igual que PERFORM
             if (enc > 1) return 0;                                       // ENC L/R = filtro
             if (sh) {
                 if (enc == 0) {

@@ -24,9 +24,14 @@ void test_nav_recorre_las_vistas() {
     ui.handle(Control::Nav, 1);
     TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
     ui.handle(Control::Nav, 1);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);       // 4.ª vista (fidelidad §11.7)
+    ui.handle(Control::Nav, 1);
     TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
     ui.handle(Control::Nav, -1);
-    TEST_ASSERT_EQUAL_UINT8(SPECTRUM, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
+    ui.handle(Control::Key1);                              // B1 desde PANEL y vuelta: regresa a PANEL
+    ui.handle(Control::Key1);
+    TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
 }
 
 void test_b1_abre_osc_y_vuelve_a_la_ultima_vista() {

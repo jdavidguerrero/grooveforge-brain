@@ -985,6 +985,7 @@ void loop() {
     // Home (vistas) y modo FX: ENC L / R = filtro. Páginas de edición: ENC L / R = 3.er y 4.º control de la página.
     const uint8_t pg = ui.state().page;
     const bool enc_lr_filter = ui.state().mode || pg == studio::PERFORM || pg == studio::AI || pg == studio::SPECTRUM ||
+                               pg == studio::PANEL ||
                                pg == studio::ENGINE || pg == studio::PRESETS;   // páginas de selección: sin controles propios
     if (l != last_l && !enc_lr_filter) { page_encoder(2, l - last_l); last_l = l; }
     if (r != last_r && !enc_lr_filter) { page_encoder(3, r - last_r); last_r = r; }

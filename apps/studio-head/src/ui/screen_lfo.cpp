@@ -94,9 +94,17 @@ void ScreenLfo::draw_mod(const Painter& p, const StudioState& s) const {
     const ModStop& m = mod_stop(s.engine, _stop - 1);
     const float* v = s.mod_val[s.engine % 6][(_stop - 1) % MOD_STOPS];
     text_top(p, 24, 52, "SOURCES", MON, T12B);
-    text_top(p, 420, 52, "DESTINATIONS", MON, T12B);
-    int ys = 76, dx = 420, dy = 76;
-    char t[24];
+    // Fuentes (valores) en grilla: a la izquierda si hay destinos, en todo el ancho si no (DX7 WAVE / DETUNE)
+    int ns = 0, nt = 0;
+    for (int k = 0; k < OSC_SLOTS; ++k)
+        if (m.slot[k]) ++(m.slot[k]->kind == SlotKind::Toggle ? nt : ns);
+    if (nt) text_top(p, 420, 52, "DESTINATIONS", MON, T12B);
+    const int area_w = nt ? 356 : GW - 48;
+    const int cols = std::clamp((ns + 2) / 3, 1, 4), rows = std::max(1, (ns + cols - 1) / cols);
+    const int cell_w = area_w / cols, bar_w = cell_w - (cols > 1 ? 16 : 0);
+    const OscEngine& oe = osc_engine(s.engine);
+    int dx = 420, dy = 76, si = 0;
+    char t[32], val[20];
     for (int k = 0; k < OSC_SLOTS; ++k) {
         const OscSlot* sl = m.slot[k];
         if (!sl) continue;
@@ -108,13 +116,15 @@ void ScreenLfo::draw_mod(const Painter& p, const StudioState& s) const {
             text_top(p, dx + 12, dy + 9, sl->name, on ? WHITE : MON, T12B);
             dx += w + 12;
             if (dx > GW - 120) { dx = 420; dy += 44; }
-        } else {                                              // fuente: barra con su cantidad
-            text_top(p, 24, ys, sl->name, GRAY, T12B);
-            std::snprintf(t, sizeof(t), "%d %%", int(std::lround(v[k])));
-            text_top(p, 360 - text_width(t, T12), ys, t, WHITE, T12);
-            p.fill(24, ys + 20, 336, 10, TRACK);
-            p.fill(24, ys + 20, std::lround(336 * std::clamp(v[k] / 100.0f, 0.0f, 1.0f)), 10, TEAL_PLUS);
-            ys += 52;
+        } else {                                              // fuente: barra con su valor
+            const int x = 24 + (si / rows) * cell_w, y = 76 + (si % rows) * 52;
+            ++si;
+            text_top(p, x, y, sl->name, GRAY, T12B);
+            osc_format(oe, *sl, v[k], val, sizeof(val));
+            std::snprintf(t, sizeof(t), sl->unit[0] ? "%s %s" : "%s", val, sl->unit);
+            text_top(p, x + bar_w - text_width(t, T12), y, t, WHITE, T12);
+            p.fill(x, y + 20, bar_w, 10, TRACK);
+            p.fill(x, y + 20, std::lround(bar_w * osc_frac(oe, *sl, v[k])), 10, TEAL_PLUS);
         }
     }
 }

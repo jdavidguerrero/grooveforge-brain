@@ -85,7 +85,7 @@ void TopBar::update(const StudioState& s) {
         lv_label_set_text(_mode_txt, s.mode == Mode::Fx ? "FX" : "SYNTH");
         lv_obj_center(_mode_txt);
         lv_obj_set_style_border_color(_bar, lv_color_hex(mc.dim), 0);
-        for (int i = 0; i < 3; ++i) set_bg(_dots[i], i == _page_index ? mc.hi : mc.dim);
+        for (int i = 0; i < 4; ++i) set_bg(_dots[i], i == _page_index ? mc.hi : mc.dim);
     }
 
     if (int(s.filter_bypass) != _last_bypass) {
