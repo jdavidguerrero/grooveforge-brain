@@ -1,4 +1,4 @@
-# EP1 — "Construí el synth para mi live set" · guion para grabar
+# EP1 — "Construyo mi synth para encontrar mi sonido" · guion para grabar
 
 > Temporada 1, piloto. Duración objetivo: 11-12 min. Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
 > Todo lo que aparece aquí existe hoy en el banco (foto del 2026-10-22: protoboard con la Teensy 4.1 + Audio Shield,
@@ -31,18 +31,20 @@
 |---|---|---|
 | 0:00 | **[A]** macro de la mano en ENC L; la pantalla en PERFORM, el cutoff subiendo de 800 Hz y la onda abriéndose | Bajo del Model D sobre el loop, el filtro abriéndose **[E]** |
 | 0:04 | Plano general del banco (como la foto) | Sigue el loop |
-| 0:06 | **[F]** a cámara, el banco detrás | VO: *"Este es mi sintetizador. Lo construí yo, todavía vive en una protoboard…"* |
-| 0:11 | Vuelta al macro del encoder | VO: *"…y al final de esta temporada voy a tocar un live set con él."* |
+| 0:06 | **[F]** a cámara, el banco detrás | VO: *"Este es mi sintetizador. Lo estoy construyendo para encontrar mi sonido…"* |
+| 0:11 | Vuelta al macro del encoder | VO: *"…y cuando lo tenga, va a salir de esta protoboard, a mis tracks y a mi live set."* |
 
 ## 0:15-0:50 · La promesa
 
 **[F]** VO:
-> "Produzco música electrónica y toco en vivo. Y siempre me pasa lo mismo: el sonido está en la computadora y mis
-> manos están en un mouse. Así que me puse a construir el instrumento que quiero tener en el escenario.
+> "Produzco música electrónica. Y llevo tiempo buscando un sonido que sea mío, no el preset que usa todo el mundo.
+> Además, el sonido siempre está en la computadora y mis manos en un mouse. Así que decidí construir mi propio
+> instrumento: entenderlo por dentro y poder cambiarlo.
 >
-> En cada episodio de esta serie voy a construir una cosa que necesito para mi set o para producir un track, te voy a
-> mostrar cómo funciona por dentro, con el código y las mediciones, y la voy a usar en un track de verdad. Si algo
-> falla, también lo vas a ver. Hoy: qué es esta cosa y si de verdad sirve para tocar."
+> Esta serie es el proceso, completo y abierto. En cada episodio construyo una parte, te muestro cómo funciona por
+> dentro, con el código y las mediciones, y la uso en un track mío. Primero en el estudio, para encontrar mi sonido;
+> después, cuando esté terminado y en su caja, en mi live set. Si algo falla, también lo vas a ver. Hoy: qué es esta
+> cosa y si ya sirve para hacer música."
 
 **B-roll** (sobre la VO): [A] el anillo de LEDs girando con NAV · [A] las teclas del teclado MIDI · [C] Ableton
 con el loop.
@@ -50,12 +52,14 @@ con el loop.
 ## 0:50-3:00 · Por qué construirlo y no comprarlo
 
 **[F]** + B-roll. Puntos (con tus palabras):
-1. **Quiero perillas, no el mouse.** Un set en vivo es tocar: filtro, resonancia, envolventes, con las manos.
-2. **Quiero sonidos clásicos sin pagar lo que cuestan.** El Brain tiene 6 arquitecturas: un Model D, un Juno-106, un
-   Prophet-5, un OB-6, un DX7 y un ARP 2600. **[C]** `apps/firmware-teensy/src/engines/` (solo la lista de
+1. **Quiero un sonido mío.** Si lo construyo, lo puedo moldear hasta que suene como yo, no como un preset.
+2. **Quiero perillas, no el mouse.** Producir y tocar es usar las manos: filtro, resonancia, envolventes.
+3. **Quiero sonidos clásicos sin pagar lo que cuestan.** El Brain tiene 6 arquitecturas inspiradas en el Model D, el
+   Juno-106, el Prophet-5, el OB-6, el DX7 y el ARP 2600 ("inspiradas en": son marcas de otros, ADR-002 de contenido). **[C]** `apps/firmware-teensy/src/engines/` (solo la lista de
    archivos).
-3. **Quiero entender mi instrumento.** Si sé por qué suena así, lo puedo cambiar.
-4. **La honestidad:** "No suenan igual que los originales todavía. Lo medí, y lo vas a ver en el episodio 2."
+4. **Quiero entender mi instrumento.** Si sé por qué suena así, lo puedo cambiar. Y no lo hago para venderlo: lo
+   hago para mi música, y el proceso lo comparto completo.
+5. **La honestidad:** "No suenan igual que los originales todavía. Lo medí, y lo vas a ver en el episodio 2."
    **[C]** `apps/docs/theory/fidelidad-engines.md` §0, la tabla (2 s, sin detenerse).
 
 ## 3:00-6:00 · Tour del banco
@@ -99,7 +103,7 @@ Ritmo rápido: cada punto, 20-30 s, con sonido.
 5. **Habla con Ableton.** "Cada perilla sale por MIDI. Ableton la graba como automatización." **[C]** theory/07 §3,
    la tabla de CC.
 
-## 8:30-10:30 · Clímax: ¿sirve para tocar?
+## 8:30-10:30 · Clímax: ¿ya sirve para hacer música?
 
 **Variante A (si el clock y la automatización funcionaron en la prueba):**
 1. **[C]+[A]** pantalla partida: Ableton reproduce el loop; la clip MIDI toca el bajo en el Brain.
@@ -118,38 +122,41 @@ EP4.
 
 **[F]** VO (honesto, sin dramatizar):
 > "Esto es lo que todavía no está:
+> — La primera parte de la temporada es el estudio: encontrar mi sonido y meterlo en tracks.
 > — El **modo FX**, para meter todo mi set por los efectos del Brain en vivo: la página existe, el audio todavía no.
 > — La **placa y la caja**: los PCBs están diseñados, pero no los mandé a fabricar. Una revisión encontró que uno de
 >   los encoders está en un pin de la Teensy que tiene un LED, y eso puede hacer que falle. Te lo cuento en su
 >   episodio.
 > — Y los **tracks**: cada episodio deja una parte del set.
 >
-> El próximo episodio: los 6 synths, cuál va en mi primer track, y cuál todavía no suena como debería."
+> El próximo episodio: los 6 synths, cuál es el sonido de mi primer track, y cuál todavía no suena como debería."
 
 **[C]** la tabla de la temporada (§3 de la Biblia), los 9 episodios, 3 segundos.
 
 ## 11:45-12:00 · Cierre
 
-**[F]** CTA único: *"Si quieres probar el Brain cuando esté en su caja, el link para dejarme tu correo está abajo."*
+**[F]** CTA único: *"Si quieres seguir el proceso, abajo está el link para dejarme tu correo. Y cuéntame en los
+comentarios qué sonido quieres que construya."*
 Último plano: [A] la mano soltando ENC L, el bajo sigue sonando, corte.
 
 ---
 
 ## Packaging
 
-**Título principal:** *Construí el synth para mi live set*
+**Título principal:** *Construyo mi propio synth para encontrar mi sonido*
 **A/B:**
-1. *Mi synth para tocar en vivo está en una protoboard*
+1. *Estoy construyendo el synth de mis producciones (está en una protoboard)*
 2. *6 synths clásicos en una placa de 30 dólares (y los toco con Ableton)*
-3. *Le construí perillas a mi live set*
-4. *Construyo mi propio instrumento para el escenario: episodio 1*
+3. *Dejé de buscar presets: construyo mi propio synth*
+4. *Construyendo mi synth, episodio 1: encontrar mi sonido*
 
 **Miniatura:** encuadre cerrado de tu foto: la protoboard en primer plano (los cables y el anillo azul encendido) y la
 pantalla con PERFORM a la derecha, el "800 Hz" legible. Tu mano en ENC L. Fondo oscurecido para que el anillo y la
-pantalla brillen. Texto (máx. 3 palabras): **"MI SYNTH LIVE"**. Alternativa: **"HECHO A MANO"**.
+pantalla brillen. Texto (máx. 3 palabras): **"MI PROPIO SONIDO"**. Alternativa: **"HECHO A MANO"**.
 
-**Descripción (primeras 2 líneas):** "Estoy construyendo el instrumento para mi live set: un synth con 6 motores
-clásicos sobre una Teensy 4.1. Episodio 1: qué es, cómo funciona y si ya sirve para tocar con Ableton."
+**Descripción (primeras 2 líneas):** "Estoy construyendo mi propio synth para encontrar mi sonido: 6 motores
+inspirados en synths clásicos sobre una Teensy 4.1. Primero para mis producciones, después para mi live set.
+Episodio 1: qué es, cómo funciona y si ya sirve para hacer música con Ableton."
 
 ---
 
@@ -172,7 +179,7 @@ clásicos sobre una Teensy 4.1. Episodio 1: qué es, cómo funciona y si ya sirv
 
 ### Short 3 · Polémica — "¿Por qué no compro un Moog?" (40-50 s)
 - **0-3 s:** a cámara, la protoboard en la mano. VO: *"Me dicen: ¿por qué no te compras un Moog?"*
-- **3-35 s:** "Porque lo quiero tocar, entender y cambiar. Esta placa cuesta unos 30 dólares y tiene 6 synths clásicos
+- **3-35 s:** "Porque busco un sonido mío, y para eso lo quiero tocar, entender y cambiar. Esta placa cuesta unos 30 dólares y tiene 6 synths clásicos
   adentro. ¿Suena igual que un Moog? No. Lo medí: te enseño los números en el episodio 2."
 - **35-45 s:** el bajo del Model D sonando, filtro abriéndose.
 - **Archivos:** `theory/fidelidad-engines.md` §0.

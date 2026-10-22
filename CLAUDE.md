@@ -13,7 +13,9 @@
 3. **Phase gates** — cada fase tiene hito demostrable (audible/visible). Sin demo no se avanza.
 4. **One thing at a time** — nunca dos features en paralelo. Una termina, se valida, siguiente.
 5. **Vertical slices** — cada sprint entrega algo end-to-end (audio in → audio out).
-6. **Time budget honest** — Brain es prioridad #2 (GroovePilot es #1). 10-18h/semana.
+6. **Un device a la vez** — Brain Studio primero, hasta terminarlo en su enclosure y en uso; después GroovePush.
+   GroovePilot en segundo plano. Sin carga monetaria por ahora: comunidad y contenido primero
+   (`apps/docs/content/adr/ADR-002-comunidad-primero-un-device.md`). 10-18h/semana.
 
 ---
 

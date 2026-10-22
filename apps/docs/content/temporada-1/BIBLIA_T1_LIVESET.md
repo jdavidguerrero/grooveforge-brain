@@ -1,19 +1,27 @@
-# Temporada 1 — "Mi synth para el live set"
+# Temporada 1 — "Construyendo mi synth"
 
 > Biblia de producción, versión 2 (2026-10-22). Reemplaza el enfoque de
 > `groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md`: la Temporada 1 es **solo el GrooveForge Brain · Studio**.
 > El material de GroovePush (Push clone, PCBs del panel) pasa a la Temporada 2.
 > Guion completo del piloto: [`EP01_guion.md`](EP01_guion.md).
+> Decisiones de fondo: [`../adr/ADR-002-comunidad-primero-un-device.md`](../adr/ADR-002-comunidad-primero-un-device.md)
+> (comunidad primero, sin monetizar; un device a la vez; GroovePilot en segundo plano; sin IA en esta temporada).
 
 ---
 
 ## 1. La idea en una frase
 
-**"Acompáñame a construir el instrumento con el que voy a tocar mi live set y producir mis tracks."**
+**"Estoy construyendo mi propio synth para encontrar mi sonido: primero en mis producciones, después en mi live set."**
 
-No es un tutorial de electrónica ni un review de un synth. Es un productor que necesita algo para su música, lo
-construye y lo usa en un track de verdad, episodio tras episodio. **La música es la prueba de que la ingeniería
-funciona.**
+No es un tutorial de electrónica ni un review de un synth. Es un productor que busca su sonido, construye el
+instrumento para encontrarlo y lo usa en sus tracks, episodio tras episodio. **La música es la prueba de que la
+ingeniería funciona.** Nada se vende: es el proceso, abierto.
+
+**Dos actos:**
+- **Acto 1 · Encontrar mi sonido (EP1-EP6):** el Brain en el estudio. Cada episodio deja un sonido, un preset o una
+  toma en un track.
+- **Acto 2 · Llevarlo al escenario (EP7-EP9):** el modo FX, la caja y el live set. Termina con el Brain **terminado**:
+  en su enclosure y en uso.
 
 ### La fórmula de cada episodio
 
@@ -25,11 +33,11 @@ NECESIDAD musical       →  INGENIERÍA (cómo lo construí, qué falló)  → 
 
 - El **hook** muestra el resultado musical o el problema sonando.
 - El **clímax** es siempre musical: un loop, una toma, un fragmento de track hecho con el Brain.
-- Cada episodio deja una pieza del **live set final** (un sonido, una toma, un preset).
+- Cada episodio deja una pieza de **mi sonido** en un track (un sonido, una toma, un preset); en el Acto 2, del set.
 
 ### La regla que ordena la temporada
 
-El final es un **live set tocado con el Brain**. Cada episodio tiene su **deuda de ingeniería**: lo que hay que
+El final es el **Brain terminado** (en su caja, sin protoboard) y un **live set tocado con él**. Cada episodio tiene su **deuda de ingeniería**: lo que hay que
 terminar antes de grabarlo. Así, el calendario de publicación es también el plan de trabajo del Brain
 (`01-modelo-rampa-y-apertura.md` §1: "el contenido es el deadline").
 
@@ -65,8 +73,8 @@ errores: abiertos.
 
 | Ep | Título de trabajo | Necesidad musical | Ingeniería | Clímax musical | Deuda antes de grabar |
 |---|---|---|---|---|---|
-| 1 | Construí el synth para mi live set | "Quiero perillas, no el mouse" | El banco, la arquitectura, la regla del audio | Ableton con el beat + el Brain tocando el bajo con el LFO al tempo | Probar en banco el clock → LFO SYNC ✅ |
-| 2 | 6 synths: ¿cuál va en mi track? | Elegir el sonido de cada parte del track | Engines, fidelidad medida, tabla honesta | Un loop de 8 compases: bajo Model D, pad Juno, lead Prophet | — |
+| 1 | Construyo mi synth para encontrar mi sonido | "Quiero un sonido propio y tocarlo con las manos, no con el mouse" | El banco, la arquitectura, la regla del audio | Ableton con el beat + el Brain tocando el bajo con el LFO al tempo | Probar en banco el clock → LFO SYNC ✅ |
+| 2 | 6 synths: ¿cuál es mi sonido? | Encontrar el sonido de cada parte de mi track | Engines, fidelidad medida, tabla honesta | Un loop de 8 compases: bajo Model D, pad Juno, lead Prophet | — |
 | 3 | El filtro es mi instrumento | El barrido del drop | Ladder ZDF: −1913 ¢ → ±5 ¢; cutoff log; eco del DAW | Un build-up con el barrido del filtro | — |
 | 4 | Que Ableton lo grabe todo | Grabar una toma con su automatización | USB-MIDI, CC map, MIDI thru, clock | Toma grabada; Ableton la reproduce sola, las perillas "se mueven" en la pantalla | — |
 | 5 | Tocarlo como un instrumento | Que responda como un synth de verdad | Detents con histéresis, aceleración, aftertouch, sustain, velocity por engine | Una toma tocada a mano, con expresión | — |
@@ -86,10 +94,10 @@ también es una historia (y muy auténtica).
 Para cada episodio: hook (0-15 s), bloques con archivos en pantalla, clímax, 3 Shorts (Mind-blow · Build/ASMR ·
 Polémica). El EP1 tiene guion palabra por palabra en [`EP01_guion.md`](EP01_guion.md).
 
-### EP1 — Construí el synth para mi live set
+### EP1 — Construyo mi synth para encontrar mi sonido
 Ver `EP01_guion.md`.
 
-### EP2 — 6 synths: ¿cuál va en mi track? (13 min)
+### EP2 — 6 synths: ¿cuál es mi sonido? (13 min)
 - **Hook:** el mismo acorde por los 6 engines, 1 s cada uno, con el nombre en pantalla. VO: *"Seis synths clásicos en
   una placa de 30 dólares. Hoy elijo cuáles van en mi track, y te digo cuál todavía no suena como el original."*
 - **Bloques:** (1) el track del episodio: tempo, tonalidad, qué necesita cada parte. (2) La tabla de fidelidad
@@ -173,8 +181,8 @@ Ver `EP01_guion.md`.
 - **Intro de 15 s máximo**, sin logo ni saludo. Resultado o problema en el segundo 0.
 - **Segmento fijo "el track" (≈ 1 min, al final):** dónde va lo de hoy en el track/set. Construye la serie.
 - **Cierre:** qué falta y qué viene, con el estado real del repo.
-- **CTA único:** "si quieres probarlo cuando esté en caja, déjame tu correo" (playbook §6) o "comenta qué sonido
-  quieres que construya".
+- **CTA único** (nada de venta, ADR-002): "déjame tu correo para seguir el proceso" o "comenta qué sonido quieres
+  que construya".
 - **Grabación de audio:** LINE OUT del Brain → interfaz → Ableton, 48 kHz / 24 bit, en paralelo con todas las tomas.
 - **Pantalla:** ruta del archivo visible, fuente ≥ 20 pt.
 
