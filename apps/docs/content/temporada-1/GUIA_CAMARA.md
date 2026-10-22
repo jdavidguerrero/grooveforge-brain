@@ -201,3 +201,50 @@ El orden del video lo arma la edición. Cada toma tiene un número (**T1, T2, T3
 - [ ] Exposición y foco bloqueados en cada cámara.
 - [ ] Ableton grabando: LINE OUT del Brain + SM57 (voz a −12 dB). OBS listo para P6.
 - [ ] **Aplauso** al empezar cada bloque.
+
+---
+
+## 7. La mesa: qué dejar y dónde (escenografía)
+
+La regla: **tres capas, una cosa protagonista en cada una.** Así la imagen tiene profundidad y el ojo sabe dónde mirar.
+
+```
+            PARED / FONDO
+   ┌──────────────────────────────────────────────┐
+   │  fuente de banco   osciloscopio   pantalla del Brain   marco GrooveMakers │  ← capa 3: fondo (contexto, "taller")
+   │                                                                          │
+   │                    PROTOBOARD DEL BRAIN                                  │  ← capa 2: protagonista
+   │                                                                          │
+   │                    TECLADO MIDI                                          │  ← capa 1: primer plano (tus manos)
+   └──────────────────────────────────────────────┘
+                              TÚ
+```
+
+| Objeto | ¿Se queda? | Dónde | Por qué |
+|---|---|---|---|
+| **Protoboard del Brain** | Sí, protagonista | Centro de la mesa | Es el episodio |
+| **Teclado MIDI** | **Sí** | Delante de la protoboard, hacia ti | Se ve que el instrumento se toca. En el cenital, el borde de las teclas entra por abajo del cuadro con tus manos |
+| **Osciloscopio** | **Sí** | Fondo, cerca de la pantalla del Brain | Da "taller" y, si le conectas la punta al LINE OUT (acople AC), **la onda se mueve con la música**: un fondo vivo |
+| **Fuente de banco** | Sí, si cabe | Fondo, en una esquina | Da taller. Si el display distrae, apágalo o déjalo fuera del cuadro del cenital |
+| **Fuente conmutada grande (la plateada)** | No | Fuera del cuadro | No aporta y refleja la luz |
+| **Pantalla de 7" (la del Push)** | Opcional | Fondo, a un lado | Úsala como **marco digital con el logo de GrooveMakers** (§7b). No la presentes como parte del Push todavía |
+| **Papeles, tazas, cables sueltos** | No | Fuera | En cámara todo se ve más desordenado de lo que es |
+
+**El cenital (XR)** sigue encuadrando la protoboard, el osciloscopio y la pantalla del Brain. Si el teclado es muy
+largo, que solo entren las teclas centrales por el borde de abajo.
+
+### 7a. Qué enfoca el trípode (13 Pro), toma por toma
+
+| Posición | Dónde va el trípode | Qué entra en el cuadro | Enfoque y exposición |
+|---|---|---|---|
+| **P3** frontal 45° | Delante y un poco a un lado del teclado (izquierda o derecha, la que no tape la lámpara), a la altura de tu pecho, mirando hacia abajo | **Las tres capas**: teclado (abajo, desenfocado está bien), protoboard (al centro), pantalla del Brain + osciloscopio + marco (al fondo) | Foco en la protoboard; exposición bloqueada en el anillo de LEDs, −1 |
+| **P4** rasante | Trípode bajo o el teléfono apoyado en la mesa, al costado de la protoboard | El anillo de LEDs y los encoders en primer plano, la pantalla del Brain desenfocada atrás | Foco en el anillo |
+| **P5** a cámara | Frente a ti, a la altura de tus ojos, a ~1 m. Si la mesa está contra la pared, gira la silla de lado y pon el trípode en el costado libre | Tú de la cintura para arriba; **detrás o al lado: el osciloscopio, la pantalla del Brain o el marco del logo**, no una pared vacía | Foco en tu cara; exposición en tu cara |
+| **P7** pantalla del Brain | De frente a la pantalla, a su misma altura, a 30-40 cm (o con el 3× desde más lejos) | Solo la pantalla, llenando el cuadro | Foco y exposición en la pantalla, −0.5 si se ve lavada |
+| **M** macro | A 2-5 cm de la pieza | Un chip, el anillo, los pines | Foco tocando la pieza en la pantalla del teléfono |
+
+### 7b. El marco de GrooveMakers
+
+Un marco en la mesa con el logo (impreso o en la pantalla de 7") aparece en P3 y P5 en todos los episodios: es la
+firma visual del canal sin necesidad de intro. Prompt para diseñarlo junto con la marca:
+[`../marca/claude-design-prompt-groovemakers.md`](../marca/claude-design-prompt-groovemakers.md).
