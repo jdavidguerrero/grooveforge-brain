@@ -13208,7 +13208,7 @@
 		(uuid "834bc102-1512-4527-9c84-bc51d9b8baff")
 	)
 	(label "ENCR_A"
-		(at 219.70999999999998 80.01 0)
+		(at 160.02 64.77 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -14504,7 +14504,7 @@
 		(uuid "cf3dca2a-22f1-411a-96b6-561720ea96f1")
 	)
 	(no_connect
-		(at 160.01999999999998 64.77000000000001)
+		(at 219.71 80.01)
 		(uuid "b74efde9-ea28-4db8-aa87-7538ed67cf37")
 	)
 	(no_connect
@@ -14720,7 +14720,7 @@
 		)
 		(uuid "e85f5d0c-49f8-4637-8a86-9f377c76338e")
 	)
-	(text "NOTAS\n1. Teensy 4.1: CORTAR el puente VUSB–VIN. Todo se alimenta de J10 (JST-XH desde una placa USB-C de panel, solo 5 V, con sus 5.1 kΩ en CC); el USB de la Teensy queda solo para datos (y MIDI por USB).\n2. USB en la tapa trasera: USB-C de datos = extensión de panel a la micro-USB de la Teensy; USB-A host = extensión de panel a J3.\n   J1/J2 = las dos filas de la Teensy (vista superior, USB arriba). Izq: GND,0–12,3V3,24–32. Der: VIN,GND,3V3,23–13,GND,41–33.\n   Audio Shield Rev D LADO A LADO (no apilado), en sus zócalos J15 (fila 13–23,3V,G,5V) y J16 (fila 12–0,GND). Solo se cablean 7 (TX→DIN), 8 (RX←DOUT), 18 SDA, 19 SCL, 20 LRCLK, 21 BCLK, 23 MCLK, 3V3 y GND:\n   así 10–13 (ENC L/R) y 15 (push ENC R) no tocan el slot SD ni el MEM. MCLK (11.3 MHz) corta y sobre plano de GND.\n3. El slot microSD del Audio Shield NO se usa (sus pines 10–13 quedan sin conexión en J15/J16).\n4. LEDs: pin 28 (3.3 V) → U1 74AHCT1G125 (5 V) → JP1 → 330 Ω → J5.5. JP1 en 2–3 salta el buffer si hiciera falta.\n5. Entrada: jack → escalera 32.4k/12.4k/5.23k (recalculada con la carga de R10+R12, ver theory/03) → SW1 (palanca trasera DP3T: arriba 0 dB, centro −10 dB, abajo −20 dB, cableada a este header)\n   → 1 µF → 1 kΩ → BAT54S a 3V3/GND sobre VREF (1.65 V, 100 kΩ) → seguidor MCP6004 → 2.2 µF → LINE IN del Shield (J9).\n   La posición del pad no se lee (la palanca estéreo usa sus dos polos para L y R); la GUI oculta el chip de PAD.\n6. Salidas: LINE OUT del Shield → 10 µF + 47 kΩ → jacks 6.35 (anillo a GND = desbalanceado).\n7. PHONES (J13): el sleeve va a HP_VGND del SGTL5000 (tierra virtual ~1.5 V). NUNCA a GND ni al chasis: jack plástico y aislado.\n8. CV OUT: PWM del pin 29 (frecuencia alta, p. ej. 36.6 kHz) → RC 4.7k/100nF ×2 (1 % en 5 ms, ripple ~0.35 mVpp) → seguidor → 1 kΩ → J14. Rango 0–3.3 V.\n9. Pi (J6, header de la Pi pines 1–10): 5 V en 2 y 4, GND en 6 y 9, Teensy RX0 ← Pi TXD (GPIO14, pin 8), Teensy TX1 → Pi RXD (GPIO15, pin 10).\n   Hacer el cable con dos hilos por 5 V y por GND."
+	(text "NOTAS\n1. Teensy 4.1: CORTAR el puente VUSB–VIN. Todo se alimenta de J10 (JST-XH desde una placa USB-C de panel, solo 5 V, con sus 5.1 kΩ en CC); el USB de la Teensy queda solo para datos (y MIDI por USB).\n2. USB en la tapa trasera: USB-C de datos = extensión de panel a la micro-USB de la Teensy; USB-A host = extensión de panel a J3.\n   J1/J2 = las dos filas de la Teensy (vista superior, USB arriba). Izq: GND,0–12,3V3,24–32. Der: VIN,GND,3V3,23–13,GND,41–33.\n   Audio Shield Rev D LADO A LADO (no apilado), en sus zócalos J15 (fila 13–23,3V,G,5V) y J16 (fila 12–0,GND). Solo se cablean 7 (TX→DIN), 8 (RX←DOUT), 18 SDA, 19 SCL, 20 LRCLK, 21 BCLK, 23 MCLK, 3V3 y GND:\n   así 10–12, 14 (ENC L/R) y 15 (push ENC R) no tocan el slot SD; el MEM (6) del shield tampoco se cablea. MCLK (11.3 MHz) corta y sobre plano de GND.\n3. El slot microSD del Audio Shield NO se usa (sus pines 10–13 quedan sin conexión en J15/J16).\n   ENC R-A va al pin 6, no al 13: el 13 tiene el LED de la Teensy (470 Ω), incompatible con INPUT_PULLUP (auditoría 2026-10-22).\n4. LEDs: pin 28 (3.3 V) → U1 74AHCT1G125 (5 V) → JP1 → 330 Ω → J5.5. JP1 en 2–3 salta el buffer si hiciera falta.\n5. Entrada: jack → escalera 32.4k/12.4k/5.23k (recalculada con la carga de R10+R12, ver theory/03) → SW1 (palanca trasera DP3T: arriba 0 dB, centro −10 dB, abajo −20 dB, cableada a este header)\n   → 1 µF → 1 kΩ → BAT54S a 3V3/GND sobre VREF (1.65 V, 100 kΩ) → seguidor MCP6004 → 2.2 µF → LINE IN del Shield (J9).\n   La posición del pad no se lee (la palanca estéreo usa sus dos polos para L y R); la GUI oculta el chip de PAD.\n6. Salidas: LINE OUT del Shield → 10 µF + 47 kΩ → jacks 6.35 (anillo a GND = desbalanceado).\n7. PHONES (J13): el sleeve va a HP_VGND del SGTL5000 (tierra virtual ~1.5 V). NUNCA a GND ni al chasis: jack plástico y aislado.\n8. CV OUT: PWM del pin 29 (frecuencia alta, p. ej. 36.6 kHz) → RC 4.7k/100nF ×2 (1 % en 5 ms, ripple ~0.35 mVpp) → seguidor → 1 kΩ → J14. Rango 0–3.3 V.\n9. Pi (J6, header de la Pi pines 1–10): 5 V en 2 y 4, GND en 6 y 9, Teensy RX0 ← Pi TXD (GPIO14, pin 8), Teensy TX1 → Pi RXD (GPIO15, pin 10).\n   Hacer el cable con dos hilos por 5 V y por GND."
 		(exclude_from_sim no)
 		(at 20 325 0)
 		(effects

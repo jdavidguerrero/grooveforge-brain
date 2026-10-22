@@ -45,7 +45,7 @@ constexpr uint8_t FIRST_KEYCAP = 12;
 
 // Encoder guarda la dirección de su estado para la interrupción: no se puede copiar, así que
 // cada uno es un objeto propio y la tabla guarda punteros.
-Encoder enc_l(10, 11), enc_r(13, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
+Encoder enc_l(10, 11), enc_r(6, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
 
 struct EncDef {
     const char* name;

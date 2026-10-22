@@ -348,7 +348,7 @@ pasar de 3 A. **El firmware limita el brillo de los LEDs** para quedar dentro de
 | 2-5 | GPIO | 4 Kailh Choc V2 switches B1-B4 (pulled-up) |
 | 10-11 | GPIO | ENC L: A / B (rotary phases) |
 | 12 | GPIO | ENC L: SW (push — filter bypass toggle) |
-| 13 | GPIO | ENC R: A |
+| 6 | GPIO | ENC R: A (enmienda 2026-10-22, aprobada por Juan: antes pin 13, que tiene el LED de la Teensy + 470 Ω y no admite `INPUT_PULLUP`; ver auditoría de fabricación de Studio F1) |
 | 14 | GPIO | ENC R: B |
 | 15 | GPIO | ENC R: SW (push — resonance reset a 0) |
 | 16 | GPIO | ENC NAV: A |
@@ -372,6 +372,11 @@ pasar de 3 A. **El firmware limita el brillo de los LEDs** para quedar dentro de
 > **Nota I2S (Teensy 4.x):** los pines de datos I2S son 7 (`SAI1 OUT1A`, TX → DAC)
 > y 8 (`SAI1 IN1`, RX ← ADC) — los del Audio Shield Rev D2. La Rev C / Teensy 3.x
 > usaba 22/13; con este mapping los pines 13 y 22 quedan libres.
+>
+> **Nota pin 13 (2026-10-22):** el pin 13 tiene el LED de la placa y su resistencia; no se usa como entrada con
+> pull-up interno (PJRC). Queda libre (LED de estado). En el Audio Shield Rev D, el pin 6 es el CS de la memoria
+> opcional (MEMCS): en Studio el shield va lado a lado y esa línea no se cablea; en un diseño con el shield apilado
+> y la memoria montada, el pin 6 entraría en conflicto.
 
 **ESP32-S3 (Waveshare ESP32-S3-Touch-LCD-1.28):**
 

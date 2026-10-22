@@ -71,7 +71,7 @@ constexpr float FILT_OCT = 7.0f;         // octaveControl: la entrada ±1 mueve 
 USBHost usb_host;
 MIDIDevice midi(usb_host);
 
-Encoder enc_l(10, 11), enc_r(13, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
+Encoder enc_l(10, 11), enc_r(6, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
 // B1–B4, B5 MODE, B6 SHIFT/HOLD, NAV push, ENC L push
 constexpr uint8_t BTN_PINS[8] = {2, 3, 4, 5, 40, 41, 26, 12};
 Bounce btn[8];

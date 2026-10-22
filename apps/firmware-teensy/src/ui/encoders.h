@@ -74,7 +74,7 @@ public:
 private:
     // Encoder objects own their interrupt callbacks — constructed at declaration.
     Encoder _enc_l{10, 11};
-    Encoder _enc_r{13, 14};
+    Encoder _enc_r{6, 14};   // A en el 6: el 13 tiene el LED (auditoría 2026-10-22, 01 §3.3)
     Encoder _enc_nav{16, 17};
 
     // Last consumed absolute position (in raw pulses, multiple of PULSES_PER_DETENT).

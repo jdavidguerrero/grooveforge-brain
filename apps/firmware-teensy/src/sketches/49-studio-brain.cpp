@@ -152,7 +152,7 @@ MIDIDevice midi(usb_host);
 
 constexpr int ENC_PPD = 2;     ///< pulsos por detent: 2 = EC11 del prototipo (medido en el hardware, 2026-10-19)
 studio::DetentCounter det_l(ENC_PPD), det_r(ENC_PPD), det_nav(ENC_PPD), det_p1(ENC_PPD), det_p2(ENC_PPD);
-Encoder enc_l(10, 11), enc_r(13, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
+Encoder enc_l(10, 11), enc_r(6, 14), enc_nav(16, 17), enc_p1(30, 31), enc_p2(34, 35);
 // B1–B4, B5 MODE, B6 SHIFT/HOLD, NAV push, ENC L push
 constexpr uint8_t BTN_PINS[8] = {2, 3, 4, 5, 40, 41, 26, 12};
 Bounce btn[8];
