@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;f[]=general-sans@500,600&amp;display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;display=swap">
+<script src="./image-slot.js"></script>
+<style>
+body{margin:0;background:#101010;color:#F2F2F2;-webkit-font-smoothing:antialiased}
+a{color:#5DCAA5}a:hover{color:#F2F2F2}
+@keyframes gmspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+</helmet>
+<div style="background:#101010; min-height:100vh; color:#F2F2F2; padding:120px; display:flex; flex-direction:column; gap:96px; width:max-content; font-family:'Satoshi',sans-serif">
+
+<section data-screen-label="Turno 1" style="display:flex; flex-direction:column; gap:96px">
+
+  <header style="display:flex; flex-direction:column; gap:16px; max-width:1400px">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.08em; text-transform:uppercase; color:#8A8A8A">GrooveMakers · Identidad visual · v1 · Bogotá, oct 2026</div>
+    <h1 style="margin:0; font-weight:700; font-size:88px; letter-spacing:-0.035em; line-height:1">Tres direcciones de logo</h1>
+    <p style="margin:0; font-size:24px; line-height:1.45; color:#BDBDBD; text-wrap:pretty">Todas usan solo formas simples sacadas del banco: el anillo de LEDs, el surco y la pista con su vía. Recomiendo <a href="#1b">1b</a>: nace del nombre, es circular por naturaleza y se sostiene a 16 px quitando el surco interior.</p>
+  </header>
+
+  <div style="display:flex; gap:40px; align-items:flex-start">
+
+    <div id="1a" style="width:860px; background:#141414; border:1px solid #242424; padding:40px; display:flex; flex-direction:column; gap:24px">
+      <div style="display:flex; align-items:center; gap:14px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; color:#5DCAA5; border:1px solid #0E5040; padding:4px 10px">1a</div>
+        <div style="font-weight:700; font-size:34px; letter-spacing:-0.02em">El anillo</div>
+      </div>
+      <p style="margin:0; font-size:20px; line-height:1.45; color:#BDBDBD; text-wrap:pretty">Los 12 LEDs alrededor del encoder y la marca de la perilla: el instante en que giras y aparece tu sonido.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Isotipo</div>
+          <dc-import name="GM Logo" dir="a" layout="mark" size="180" hint-size="180px,180px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Apilada</div>
+          <dc-import name="GM Logo" dir="a" layout="stack" size="130" hint-size="260px,200px"></dc-import>
+        </div>
+        <div style="grid-column:span 2; position:relative; background:#0A0A0A; height:200px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Horizontal</div>
+          <dc-import name="GM Logo" dir="a" layout="h" size="96" hint-size="480px,96px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Mono · blanco sobre negro</div>
+          <dc-import name="GM Logo" dir="a" layout="h" size="56" fg="#F2F2F2" accent="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+        <div style="position:relative; background:#F2F2F2; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#555555">Mono · negro sobre blanco</div>
+          <dc-import name="GM Logo" dir="a" layout="h" size="56" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="a" size="32" hint-size="32px,32px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="a" size="16" simple="{{ true }}" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">16 px · simplificado</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><div style="width:32px; height:32px; border-radius:50%; background:#1C1C1C; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="a" size="24" simple="{{ true }}" hint-size="24px,24px"></dc-import></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px en círculo</div></div>
+        <div style="background:#F2F2F2; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="a" size="16" simple="{{ true }}" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#555555">16 px · favicon</div></div>
+      </div>
+    </div>
+
+    <div id="1b" style="width:860px; background:#141414; border:1px solid #1D9E75; padding:40px; display:flex; flex-direction:column; gap:24px">
+      <div style="display:flex; align-items:center; gap:14px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; color:#0A0A0A; background:#1D9E75; padding:5px 11px">1b</div>
+        <div style="font-weight:700; font-size:34px; letter-spacing:-0.02em">El surco</div>
+        <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#5DCAA5">Recomendada</div>
+      </div>
+      <p style="margin:0; font-size:20px; line-height:1.45; color:#BDBDBD; text-wrap:pretty">El surco del vinilo se vuelve pista de PCB y sale por una vía: la música y el circuito son la misma línea. También se lee como una perilla con su marca.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Isotipo</div>
+          <dc-import name="GM Logo" dir="b" layout="mark" size="180" hint-size="180px,180px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Apilada</div>
+          <dc-import name="GM Logo" dir="b" layout="stack" size="130" hint-size="260px,200px"></dc-import>
+        </div>
+        <div style="grid-column:span 2; position:relative; background:#0A0A0A; height:200px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Horizontal</div>
+          <dc-import name="GM Logo" dir="b" layout="h" size="96" hint-size="480px,96px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Mono · blanco sobre negro</div>
+          <dc-import name="GM Logo" dir="b" layout="h" size="56" fg="#F2F2F2" accent="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+        <div style="position:relative; background:#F2F2F2; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#555555">Mono · negro sobre blanco</div>
+          <dc-import name="GM Logo" dir="b" layout="h" size="56" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="b" size="32" hint-size="32px,32px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="b" size="16" simple="{{ true }}" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">16 px · simplificado</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><div style="width:32px; height:32px; border-radius:50%; background:#1C1C1C; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="b" size="26" simple="{{ true }}" hint-size="26px,26px"></dc-import></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px en círculo</div></div>
+        <div style="background:#F2F2F2; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="b" size="16" simple="{{ true }}" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#555555">16 px · favicon</div></div>
+      </div>
+    </div>
+
+    <div id="1c" style="width:860px; background:#141414; border:1px solid #242424; padding:40px; display:flex; flex-direction:column; gap:24px">
+      <div style="display:flex; align-items:center; gap:14px">
+        <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:15px; color:#5DCAA5; border:1px solid #0E5040; padding:4px 10px">1c</div>
+        <div style="font-weight:700; font-size:34px; letter-spacing:-0.02em">La traza</div>
+      </div>
+      <p style="margin:0; font-size:20px; line-height:1.45; color:#BDBDBD; text-wrap:pretty">Una G ruteada como pista de PCB, con chaflanes a 45° y una vía al final: la marca se construye, no se dibuja.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Isotipo</div>
+          <dc-import name="GM Logo" dir="c" layout="mark" size="180" hint-size="180px,180px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:300px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Apilada</div>
+          <dc-import name="GM Logo" dir="c" layout="stack" size="130" hint-size="260px,200px"></dc-import>
+        </div>
+        <div style="grid-column:span 2; position:relative; background:#0A0A0A; height:200px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Horizontal</div>
+          <dc-import name="GM Logo" dir="c" layout="h" size="96" hint-size="480px,96px"></dc-import>
+        </div>
+        <div style="position:relative; background:#0A0A0A; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Mono · blanco sobre negro</div>
+          <dc-import name="GM Logo" dir="c" layout="h" size="56" fg="#F2F2F2" accent="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+        <div style="position:relative; background:#F2F2F2; height:170px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; top:14px; left:16px; font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:#555555">Mono · negro sobre blanco</div>
+          <dc-import name="GM Logo" dir="c" layout="h" size="56" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="300px,56px"></dc-import>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px">
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="c" size="32" hint-size="32px,32px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="c" size="16" simple="{{ true }}" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">16 px · simplificado</div></div>
+        <div style="background:#0A0A0A; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><div style="width:32px; height:32px; border-radius:50%; background:#1C1C1C; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="c" size="24" simple="{{ true }}" hint-size="24px,24px"></dc-import></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">32 px en círculo</div></div>
+        <div style="background:#F2F2F2; height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px"><dc-import name="GM Logo" dir="c" size="16" simple="{{ true }}" fg="#0A0A0A" accent="#0A0A0A" bg="#F2F2F2" hint-size="16px,16px"></dc-import><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#555555">16 px · favicon</div></div>
+      </div>
+    </div>
+  </div>
+
+  <header style="display:flex; flex-direction:column; gap:16px; max-width:1400px; padding-top:40px; border-top:1px solid #242424">
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:16px; letter-spacing:.08em; text-transform:uppercase; color:#8A8A8A">Sistema · dirección <a href="#1b">1b</a> · Satoshi 700/500 + IBM Plex Mono 400/600</div>
+    <h2 style="margin:0; font-weight:700; font-size:72px; letter-spacing:-0.035em; line-height:1">El sistema completo</h2>
+  </header>
+
+  <div style="display:flex; flex-wrap:wrap; gap:64px; align-items:flex-start; max-width:2700px">
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Avatar · 800 × 800 · al 60 %</div>
+      <div style="display:flex; gap:32px; align-items:flex-end">
+        <div style="zoom:0.6; position:relative; width:800px; height:800px; background:#0A0A0A; display:flex; align-items:center; justify-content:center; overflow:hidden">
+          <dc-import name="GM Logo" dir="{{ sysDir }}" layout="mark" size="520" hint-size="520px,520px"></dc-import>
+          <sc-if value="{{ showGuides }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute; inset:0; border-radius:50%; border:3px dashed #7A6FE0; pointer-events:none"></div>
+          </sc-if>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:20px; align-items:center">
+          <div style="width:160px; height:160px; border-radius:50%; background:#0A0A0A; border:1px solid #242424; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="{{ sysDir }}" size="104" hint-size="104px,104px"></dc-import></div>
+          <div style="width:40px; height:40px; border-radius:50%; background:#0A0A0A; border:1px solid #242424; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="{{ sysDir }}" size="28" simple="{{ true }}" hint-size="28px,28px"></dc-import></div>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#8A8A8A">recorte real</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Banner de YouTube · 2560 × 1440 · al 50 % · área segura 1546 × 423</div>
+      <div style="zoom:0.5; position:relative; width:2560px; height:1440px; overflow:hidden; background:radial-gradient(circle at 774px 720px, #0A0A0A 0 340px, transparent 341px), repeating-radial-gradient(circle at 774px 720px, #0A0A0A 0 56px, #141414 57px 60px)">
+        <div style="position:absolute; left:507px; top:508px; width:1546px; height:423px; display:flex; align-items:center; justify-content:center">
+          <div style="display:flex; flex-direction:column; gap:22px">
+            <dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="220" hint-size="960px,220px"></dc-import>
+            <div style="margin-left:282px; display:flex; align-items:center; gap:18px; font-weight:500; font-size:46px; letter-spacing:-0.01em; color:#F2F2F2"><span style="width:14px; height:14px; border-radius:50%; background:#1D9E75; flex:none"></span>Construyendo instrumentos para hacer música</div>
+          </div>
+        </div>
+        <sc-if value="{{ showGuides }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute; left:507px; top:508px; width:1546px; height:423px; border:3px dashed #7A6FE0; pointer-events:none"></div>
+          <div style="position:absolute; left:507px; top:460px; font-family:'IBM Plex Mono',monospace; font-size:26px; color:#7A6FE0">área segura · todos los dispositivos</div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Miniatura · 1280 × 720 · al 50 % · carril Estudio y carril Taller</div>
+      <div style="display:flex; gap:24px">
+        <div style="zoom:0.5; position:relative; width:1280px; height:720px; background:#0A0A0A; overflow:hidden">
+          <div style="position:absolute; left:440px; top:0; right:0; bottom:0"><image-slot id="thumb-estudio" shape="rect" placeholder="Foto real del banco · Estudio"></image-slot></div>
+          <div style="position:absolute; left:440px; top:0; bottom:0; width:220px; background:linear-gradient(90deg, #0A0A0A, rgba(10,10,10,0)); pointer-events:none"></div>
+          <div style="position:absolute; left:64px; top:64px; bottom:64px; width:720px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none">
+            <div style="display:flex; gap:16px">
+              <div style="display:flex; align-items:center; gap:14px; background:#1D9E75; color:#0A0A0A; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:32px; padding:10px 20px"><span style="width:18px; height:18px; border-radius:50%; border:5px solid #0A0A0A"></span>ESTUDIO</div>
+              <div style="display:flex; align-items:center; border:3px solid #F2F2F2; color:#F2F2F2; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:32px; padding:7px 18px">T1 · EP02</div>
+            </div>
+            <div style="font-weight:900; font-size:168px; line-height:0.86; letter-spacing:-0.045em; text-transform:uppercase; color:#F2F2F2">Seis<br>motores</div>
+            <dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="56" hint-size="300px,56px"></dc-import>
+          </div>
+        </div>
+        <div style="zoom:0.5; position:relative; width:1280px; height:720px; background:#0A0A0A; overflow:hidden">
+          <div style="position:absolute; left:440px; top:0; right:0; bottom:0"><image-slot id="thumb-taller" shape="rect" placeholder="Foto real del banco · Taller"></image-slot></div>
+          <div style="position:absolute; left:440px; top:0; bottom:0; width:220px; background:linear-gradient(90deg, #0A0A0A, rgba(10,10,10,0)); pointer-events:none"></div>
+          <div style="position:absolute; left:64px; top:64px; bottom:64px; width:720px; display:flex; flex-direction:column; justify-content:space-between; pointer-events:none">
+            <div style="display:flex; gap:16px">
+              <div style="display:flex; align-items:center; gap:14px; background:#E8B84A; color:#0A0A0A; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:32px; padding:10px 20px"><span style="width:18px; height:18px; border:5px solid #0A0A0A"></span>TALLER</div>
+              <div style="display:flex; align-items:center; border:3px solid #F2F2F2; color:#F2F2F2; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:32px; padding:7px 18px">T1 · EP03</div>
+            </div>
+            <div style="font-weight:900; font-size:168px; line-height:0.86; letter-spacing:-0.045em; text-transform:uppercase; color:#F2F2F2">Primer<br>PCB</div>
+            <dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="56" hint-size="300px,56px"></dc-import>
+          </div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A; max-width:1300px; line-height:1.6">Título: máx. 3 palabras, Satoshi 900. Estudio = teal + anillo (el sonido). Taller = ámbar + pad cuadrado (el hardware). Logo abajo a la izquierda: YouTube tapa la esquina inferior derecha con la duración.</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Tercio inferior · 1920 × 1080 · al 50 % · fondo transparente</div>
+      <div style="zoom:0.5; position:relative; width:1920px; height:1080px; overflow:hidden; background:repeating-linear-gradient(135deg, #121212 0 24px, #161616 24px 48px)">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:28px; color:#555555">toma de cámara</div>
+        <div style="position:absolute; left:96px; bottom:96px; display:flex; align-items:center; gap:28px; background:rgba(10,10,10,0.9); border:1px solid #242424; padding:26px 40px 26px 28px">
+          <svg width="44" height="44" viewBox="0 0 100 100" style="display:block; flex:none"><circle cx="50" cy="50" r="44" fill="#1D9E75"></circle><circle cx="50" cy="50" r="17" fill="#0A0A0A"></circle></svg>
+          <div style="display:flex; flex-direction:column; gap:8px; font-family:'IBM Plex Mono',monospace">
+            <div style="font-weight:600; font-size:46px; color:#F2F2F2">fidelidad-engines.md §8</div>
+            <div style="font-weight:400; font-size:28px; color:#5DCAA5">GrooveForge Brain / docs</div>
+          </div>
+        </div>
+        <div style="position:absolute; right:96px; top:96px; display:flex; align-items:center; gap:16px; background:rgba(10,10,10,0.9); border:1px solid #242424; padding:16px 24px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:30px; color:#F2F2F2"><span style="width:14px; height:14px; border-radius:50%; background:#E8B84A"></span>Teensy 4.1 · 600 MHz</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A">Archivo abajo a la izquierda; dato técnico arriba a la derecha. Vía teal = archivo, punto ámbar = dato de estado.</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Pantalla final · 20 s · 1920 × 1080 · al 50 %</div>
+      <div style="zoom:0.5; position:relative; width:1920px; height:1080px; overflow:hidden; background:radial-gradient(circle at 1700px 1000px, #0A0A0A 0 120px, transparent 121px), repeating-radial-gradient(circle at 1700px 1000px, #0A0A0A 0 56px, #141414 57px 60px)">
+        <div style="position:absolute; left:120px; top:100px"><dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="72" hint-size="380px,72px"></dc-import></div>
+        <div style="position:absolute; left:120px; top:300px; width:800px; height:450px; border:3px dashed #3A3A3A; background:#0A0A0A; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:28px; color:#8A8A8A">video sugerido 1</div>
+        <div style="position:absolute; left:1000px; top:300px; width:800px; height:450px; border:3px dashed #3A3A3A; background:#0A0A0A; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:28px; color:#8A8A8A">video sugerido 2</div>
+        <div style="position:absolute; left:120px; top:830px; display:flex; align-items:center; gap:36px">
+          <div style="width:160px; height:160px; border-radius:50%; border:3px dashed #3A3A3A; background:#0A0A0A; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:20px; color:#8A8A8A">suscribir</div>
+          <div style="display:flex; flex-direction:column; gap:10px">
+            <div style="font-weight:700; font-size:56px; letter-spacing:-0.02em; color:#F2F2F2">Sigue construyendo con nosotros</div>
+            <div style="font-family:'IBM Plex Mono',monospace; font-size:26px; color:#5DCAA5">T1 · Construyendo mi synth</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Sello Reels / Shorts · 1080 × 1920 · al 40 %</div>
+      <div style="zoom:0.4; position:relative; width:1080px; height:1920px; overflow:hidden; background:repeating-linear-gradient(135deg, #121212 0 24px, #161616 24px 48px)">
+        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-size:32px; color:#555555">video vertical</div>
+        <sc-if value="{{ showGuides }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute; left:0; right:0; top:0; height:200px; border-bottom:4px dashed #7A6FE0; display:flex; align-items:center; padding-left:40px; font-family:'IBM Plex Mono',monospace; font-size:28px; color:#7A6FE0">UI de Instagram</div>
+          <div style="position:absolute; left:0; right:0; bottom:0; height:440px; border-top:4px dashed #7A6FE0; display:flex; align-items:center; padding-left:40px; font-family:'IBM Plex Mono',monospace; font-size:28px; color:#7A6FE0">UI de Instagram · texto y audio</div>
+          <div style="position:absolute; right:0; top:900px; width:160px; bottom:440px; border-left:4px dashed #7A6FE0"></div>
+        </sc-if>
+        <div style="position:absolute; left:56px; top:240px; display:flex; align-items:center; gap:16px; background:rgba(10,10,10,0.72); padding:14px 22px 14px 16px">
+          <dc-import name="GM Logo" dir="{{ sysDir }}" size="44" hint-size="44px,44px"></dc-import>
+          <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:28px; color:#F2F2F2">GrooveMakers · T1 EP02</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Marco de escritorio · impreso 13 × 18 cm</div>
+      <div style="background:#1C1C1C; padding:34px; border:1px solid #242424">
+        <div style="position:relative; width:520px; height:720px; background:#0A0A0A; display:flex; align-items:center; justify-content:center">
+          <dc-import name="GM Logo" dir="{{ sysDir }}" layout="stack" size="230" hint-size="300px,330px"></dc-import>
+          <div style="position:absolute; left:0; right:0; bottom:44px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.22em; color:#8A8A8A">BOGOTÁ · COLOMBIA</div>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A; max-width:590px; line-height:1.6">Papel mate, sangrado 3 mm. Negro enriquecido C60 M40 Y40 K100 para que no se vea gris en cámara. Logo centrado a 1/2 del ancho.</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Marco de escritorio · pantalla 7" · 1280 × 720 · al 50 %</div>
+      <div style="zoom:0.5; position:relative; width:1280px; height:720px; background:#0A0A0A; overflow:hidden; display:flex; align-items:center; justify-content:center">
+        <div style="position:relative; width:600px; height:600px; display:flex; align-items:center; justify-content:center">
+          <div style="position:absolute; inset:0">{{ ledRing }}</div>
+          <dc-import name="GM Logo" dir="{{ sysDir }}" size="320" fg="#CFCFCF" accent="#1D9E75" hint-size="320px,320px"></dc-import>
+        </div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A; max-width:640px; line-height:1.6">Un LED recorre el anillo exterior en 60 s. Gris máximo #CFCFCF, sin blancos grandes: no se quema en cámara.</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Prueba en contexto · foto del banco</div>
+      <div style="position:relative; width:1280px; height:720px; background:#0A0A0A; overflow:hidden">
+        <image-slot id="bench-photo" shape="rect" placeholder="Arrastra una foto real del banco: protoboard, cables, osciloscopio"></image-slot>
+        <div style="position:absolute; left:48px; bottom:48px; pointer-events:none"><dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="72" hint-size="380px,72px"></dc-import></div>
+        <div style="position:absolute; right:48px; top:48px; pointer-events:none; width:120px; height:120px; border-radius:50%; background:#0A0A0A; display:flex; align-items:center; justify-content:center"><dc-import name="GM Logo" dir="{{ sysDir }}" size="80" hint-size="80px,80px"></dc-import></div>
+      </div>
+    </div>
+
+    <div style="width:1600px; display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Arquitectura de marca</div>
+      <div style="background:#0A0A0A; border:1px solid #242424; padding:80px; display:flex; flex-direction:column; align-items:center">
+        <dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="96" hint-size="480px,96px"></dc-import>
+        <div style="margin-top:20px; font-family:'IBM Plex Mono',monospace; font-size:15px; letter-spacing:.1em; color:#8A8A8A">MARCA MADRE · CANAL Y COMUNIDAD</div>
+        <div style="width:2px; height:56px; background:#242424; margin-top:32px"></div>
+        <div style="align-self:stretch; height:2px; background:#242424; margin:0 16.66%"></div>
+        <div style="align-self:stretch; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:32px">
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0">
+            <div style="width:2px; height:40px; background:#242424"></div>
+            <div style="align-self:stretch; background:#141414; padding:40px; display:flex; flex-direction:column; gap:24px">
+              <div style="display:flex; align-items:center; gap:18px">
+                <svg width="52" height="52" viewBox="0 0 100 100" style="display:block; flex:none"><circle cx="50" cy="50" r="42" fill="#1D9E75"></circle><circle cx="50" cy="50" r="16" fill="#141414"></circle></svg>
+                <div style="font-weight:700; font-size:44px; letter-spacing:-0.025em">GrooveForge</div>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.08em; color:#5DCAA5">HARDWARE · INSTRUMENTOS ABIERTOS</div>
+              <div style="background:#0A0A0A; padding:28px; display:flex; flex-direction:column; gap:12px">
+                <div style="font-weight:700; font-size:32px; letter-spacing:-0.02em">GrooveForge Brain</div>
+                <div style="display:flex; align-items:center; gap:10px"><dc-import name="GM Logo" dir="{{ sysDir }}" size="20" simple="{{ true }}" fg="#9A9A9A" accent="#9A9A9A" hint-size="20px,20px"></dc-import><span style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#9A9A9A">un proyecto de GrooveMakers</span></div>
+              </div>
+              <div style="font-size:17px; line-height:1.5; color:#BDBDBD">La vía: donde la señal pasa al hardware. Teal. Cada producto se nombra GrooveForge + modelo.</div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center">
+            <div style="width:2px; height:40px; background:#242424"></div>
+            <div style="align-self:stretch; background:#141414; padding:40px; display:flex; flex-direction:column; gap:24px">
+              <div style="display:flex; align-items:center; gap:18px">
+                <svg width="52" height="52" viewBox="0 0 100 100" style="display:block; flex:none"><rect x="6" y="6" width="24" height="24" fill="#F2F2F2"></rect><rect x="38" y="6" width="24" height="24" fill="#F2F2F2"></rect><rect x="70" y="6" width="24" height="24" fill="#F2F2F2"></rect><rect x="6" y="38" width="24" height="24" fill="#F2F2F2"></rect><rect x="38" y="38" width="24" height="24" fill="#5DCAA5"></rect><rect x="70" y="38" width="24" height="24" fill="#F2F2F2"></rect><rect x="6" y="70" width="24" height="24" fill="#F2F2F2"></rect><rect x="38" y="70" width="24" height="24" fill="#F2F2F2"></rect><rect x="70" y="70" width="24" height="24" fill="#F2F2F2"></rect></svg>
+                <div style="font-weight:700; font-size:44px; letter-spacing:-0.025em">GroovePush</div>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.08em; color:#5DCAA5">CONTROLADOR HECHO A MANO · T2</div>
+              <div style="background:#0A0A0A; padding:28px; display:flex; flex-direction:column; gap:12px">
+                <div style="font-weight:700; font-size:32px; letter-spacing:-0.02em">GroovePush</div>
+                <div style="display:flex; align-items:center; gap:10px"><dc-import name="GM Logo" dir="{{ sysDir }}" size="20" simple="{{ true }}" fg="#9A9A9A" accent="#9A9A9A" hint-size="20px,20px"></dc-import><span style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#9A9A9A">un proyecto de GrooveMakers</span></div>
+              </div>
+              <div style="font-size:17px; line-height:1.5; color:#BDBDBD">La rejilla de pads, con el pad activo en teal claro. Entra en la temporada 2.</div>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center">
+            <div style="width:2px; height:40px; background:#242424"></div>
+            <div style="align-self:stretch; background:#141414; padding:40px; display:flex; flex-direction:column; gap:24px">
+              <div style="display:flex; align-items:center; gap:18px">
+                <svg width="52" height="52" viewBox="0 0 100 100" style="display:block; flex:none"><circle cx="50" cy="50" r="38" fill="none" stroke="#7A6FE0" stroke-width="9" pathLength="100" stroke-dasharray="90 10" stroke-dashoffset="7.5"></circle><line x1="50" y1="50" x2="72" y2="28" stroke="#7A6FE0" stroke-width="9" stroke-linecap="round"></line></svg>
+                <div style="font-weight:700; font-size:44px; letter-spacing:-0.025em">GroovePilot</div>
+              </div>
+              <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.08em; color:#7A6FE0">COPILOTO DE MEZCLA CON IA</div>
+              <div style="background:#0A0A0A; padding:28px; display:flex; flex-direction:column; gap:12px">
+                <div style="font-weight:700; font-size:32px; letter-spacing:-0.02em">GroovePilot</div>
+                <div style="display:flex; align-items:center; gap:10px"><dc-import name="GM Logo" dir="{{ sysDir }}" size="20" simple="{{ true }}" fg="#9A9A9A" accent="#9A9A9A" hint-size="20px,20px"></dc-import><span style="font-family:'IBM Plex Mono',monospace; font-size:15px; color:#9A9A9A">un proyecto de GrooveMakers</span></div>
+              </div>
+              <div style="font-size:17px; line-height:1.5; color:#BDBDBD">Un encoder sin centro: señala una dirección, tú decides. El único lugar donde vive el púrpura.</div>
+            </div>
+          </div>
+        </div>
+        <div style="align-self:stretch; margin-top:48px; padding-top:32px; border-top:1px solid #242424; font-family:'IBM Plex Mono',monospace; font-size:17px; line-height:1.7; color:#BDBDBD">Respaldo: <span style="color:#F2F2F2">[Submarca] [Modelo] · un proyecto de GrooveMakers</span>. La submarca lleva su propio glifo y el isotipo madre solo aparece pequeño en la firma, en gris.</div>
+      </div>
+    </div>
+
+    <div style="width:1600px; display:flex; flex-direction:column; gap:14px">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:#8A8A8A">Hoja de estilo · una página</div>
+      <div style="background:#0A0A0A; border:1px solid #242424; padding:72px; display:flex; flex-direction:column; gap:56px">
+        <div style="display:flex; align-items:center; justify-content:space-between">
+          <dc-import name="GM Logo" dir="{{ sysDir }}" layout="h" size="64" hint-size="340px,64px"></dc-import>
+          <div style="font-family:'IBM Plex Mono',monospace; font-size:14px; letter-spacing:.08em; color:#8A8A8A">HOJA DE ESTILO · V1</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:5fr 3fr 3fr 3fr; gap:28px">
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#8A8A8A">BASE</div>
+            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px">
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#0A0A0A; border:1px solid #242424"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">Fondo<br>#0A0A0A</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#141414; border:1px solid #242424"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">Sup. 1<br>#141414</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#1C1C1C"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">Sup. 2<br>#1C1C1C</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#242424"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">Líneas<br>#242424</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#F2F2F2"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">Texto<br>#F2F2F2</div></div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#5DCAA5">SONIDO / HARDWARE</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px">
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#1D9E75"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#1D9E75</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#5DCAA5"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#5DCAA5</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#0E5040"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#0E5040</div></div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#7A6FE0">IA · SOLO ACENTO</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px">
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#534AB7"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#534AB7</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#7A6FE0"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#7A6FE0</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#2B2758"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#2B2758</div></div>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:12px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#E8B84A">ESTADO</div>
+            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px">
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#E8B84A"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#E8B84A</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#FF6A35"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#FF6A35</div></div>
+              <div style="display:flex; flex-direction:column; gap:8px"><div style="height:72px; background:#E84A4A"></div><div style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:#BDBDBD">#E84A4A</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:5fr 4fr 4fr; gap:48px">
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#8A8A8A">TIPOGRAFÍA</div>
+            <div style="display:flex; flex-direction:column; gap:6px"><div style="font-weight:700; font-size:52px; letter-spacing:-0.03em; line-height:1">Satoshi 700</div><div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A">logotipo, títulos · tracking −2,5 %</div></div>
+            <div style="display:flex; flex-direction:column; gap:6px"><div style="font-weight:500; font-size:28px; line-height:1.2">Satoshi 500 · subtítulos y texto corrido</div><div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A">900 solo en miniaturas</div></div>
+            <div style="display:flex; flex-direction:column; gap:6px"><div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:24px">IBM Plex Mono 600 · T1 · EP02</div><div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A">etiquetas, episodios, carriles</div></div>
+            <div style="display:flex; flex-direction:column; gap:6px"><div style="font-family:'IBM Plex Mono',monospace; font-weight:400; font-size:24px">IBM Plex Mono 400 · engine_06.cpp</div><div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:#8A8A8A">datos, archivos, texto técnico</div></div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#8A8A8A">MARGEN DE PROTECCIÓN</div>
+            <div style="position:relative; width:300px; height:300px; border:1px dashed #5DCAA5; display:flex; align-items:center; justify-content:center">
+              <div style="border:1px dashed #3A3A3A"><dc-import name="GM Logo" dir="{{ sysDir }}" size="200" hint-size="200px,200px"></dc-import></div>
+              <div style="position:absolute; left:0; top:140px; width:50px; height:2px; background:#5DCAA5"></div>
+              <div style="position:absolute; left:18px; top:112px; font-family:'IBM Plex Mono',monospace; font-size:14px; color:#5DCAA5">x</div>
+            </div>
+            <div style="font-size:16px; line-height:1.5; color:#BDBDBD; max-width:420px">x = diámetro del círculo central (¼ del ancho del isotipo). Nada entra en ese margen.</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:20px">
+            <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#8A8A8A">TAMAÑOS MÍNIMOS</div>
+            <div style="display:flex; flex-direction:column; gap:14px; font-family:'IBM Plex Mono',monospace; font-size:16px; line-height:1.4; color:#F2F2F2">
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #242424; padding-bottom:12px"><span>Isotipo completo</span><span style="color:#5DCAA5">24 px · 8 mm</span></div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #242424; padding-bottom:12px"><span>Isotipo simplificado</span><span style="color:#5DCAA5">16 px · 5 mm</span></div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #242424; padding-bottom:12px"><span>Logotipo horizontal</span><span style="color:#5DCAA5">120 px · 30 mm</span></div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid #242424; padding-bottom:12px"><span>Plex Mono en pantalla</span><span style="color:#5DCAA5">12 px</span></div>
+              <div style="display:flex; justify-content:space-between"><span>Plex Mono impreso</span><span style="color:#5DCAA5">7 pt</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:20px">
+          <div style="font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13px; letter-spacing:.08em; color:#E84A4A">USOS INCORRECTOS</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px">
+            <div style="display:flex; flex-direction:column; gap:14px">
+              <div style="position:relative; height:220px; background:#141414; display:flex; align-items:center; justify-content:center; overflow:hidden"><div style="transform:scaleX(1.6)"><dc-import name="GM Logo" dir="{{ sysDir }}" size="120" hint-size="120px,120px"></dc-import></div><div style="position:absolute; top:12px; right:16px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:20px; color:#E84A4A">✕</div></div>
+              <div style="font-size:16px; color:#BDBDBD">No deformar, estirar ni rotar.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px">
+              <div style="position:relative; height:220px; background:#141414; display:flex; align-items:center; justify-content:center; overflow:hidden"><dc-import name="GM Logo" dir="{{ sysDir }}" size="120" fg="#7A6FE0" accent="#534AB7" bg="#141414" hint-size="120px,120px"></dc-import><div style="position:absolute; top:12px; right:16px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:20px; color:#E84A4A">✕</div></div>
+              <div style="font-size:16px; color:#BDBDBD">No usar púrpura en la marca madre: es el color de la IA.</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:14px">
+              <div style="position:relative; height:220px; background:#141414; display:flex; align-items:center; justify-content:center; overflow:hidden"><div style="filter:drop-shadow(0 0 14px #1D9E75) drop-shadow(0 0 36px #5DCAA5)"><dc-import name="GM Logo" dir="{{ sysDir }}" size="120" accent="#5DCAA5" bg="#141414" hint-size="120px,120px"></dc-import></div><div style="position:absolute; top:12px; right:16px; font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:20px; color:#E84A4A">✕</div></div>
+              <div style="font-size:16px; color:#BDBDBD">Sin brillos, sombras ni degradados neón.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;systemDir&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;],&quot;default&quot;:&quot;b&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sistema&quot;},&quot;showGuides&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sistema&quot;},&quot;animate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Pantalla 7\&quot;&quot;}}">
+class Component extends DCLogic {
+  ring(animate) {
+    const h = React.createElement, dots = [];
+    for (let i = 0; i < 24; i++) {
+      const a = i * Math.PI / 12;
+      dots.push(h('circle', { key: i, cx: 50 + 47 * Math.sin(a), cy: 50 - 47 * Math.cos(a), r: 0.9, fill: '#1C1C1C' }));
+    }
+    const lit = h('g', { style: { transformOrigin: '50px 50px', animation: 'gmspin 60s linear infinite', animationPlayState: animate ? 'running' : 'paused' } },
+      h('circle', { cx: 26.5, cy: 9.3, r: 0.9, fill: '#0E5040' }),
+      h('circle', { cx: 37.84, cy: 4.6, r: 1.1, fill: '#137A5B' }),
+      h('circle', { cx: 50, cy: 3, r: 1.4, fill: '#1D9E75' }));
+    return h('svg', { width: '100%', height: '100%', viewBox: '0 0 100 100', style: { display: 'block' } }, ...dots, lit);
+  }
+  renderVals() {
+    const p = this.props;
+    return { sysDir: p.systemDir || 'b', showGuides: p.showGuides ?? true, ledRing: this.ring(p.animate ?? true) };
+  }
+}
+</script>
+</body>
+</html>

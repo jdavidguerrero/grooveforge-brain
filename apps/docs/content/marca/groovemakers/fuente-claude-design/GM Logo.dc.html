@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div style="display:inline-flex; flex-direction:{{ flexDir }}; align-items:center; gap:{{ gap }}px; line-height:1">
+  <sc-if value="{{ isA }}" hint-placeholder-val="{{ false }}">
+    <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 100 100" style="display:block; flex:none">
+      <circle cx="50" cy="10" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="70" cy="15.36" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="84.64" cy="30" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="90" cy="50" r="{{ unlitR }}" fill="{{ fg }}"></circle>
+      <circle cx="84.64" cy="70" r="{{ unlitR }}" fill="{{ fg }}"></circle>
+      <circle cx="70" cy="84.64" r="{{ unlitR }}" fill="{{ fg }}"></circle>
+      <circle cx="50" cy="90" r="{{ unlitR }}" fill="{{ fg }}"></circle>
+      <circle cx="30" cy="84.64" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="15.36" cy="70" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="10" cy="50" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="15.36" cy="30" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="30" cy="15.36" r="{{ litR }}" fill="{{ accent }}"></circle>
+      <circle cx="50" cy="50" r="21" fill="none" stroke="{{ fg }}" stroke-width="{{ knobSw }}"></circle>
+      <line x1="50" y1="50" x2="63" y2="42.5" stroke="{{ fg }}" stroke-width="{{ knobSw }}" stroke-linecap="round"></line>
+    </svg>
+  </sc-if>
+  <sc-if value="{{ isB }}" hint-placeholder-val="{{ true }}">
+    <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 100 100" style="display:block; flex:none">
+      <circle cx="50" cy="50" r="38" fill="none" stroke="{{ fg }}" stroke-width="{{ sw }}" pathLength="100" stroke-dasharray="93 7" stroke-dashoffset="9"></circle>
+      <circle cx="50" cy="50" r="26" fill="none" stroke="{{ fg }}" stroke-width="{{ sw }}" pathLength="100" stroke-dasharray="90 10" stroke-dashoffset="7.5" opacity="{{ innerOp }}"></circle>
+      <line x1="50" y1="50" x2="76.87" y2="23.13" stroke="{{ accent }}" stroke-width="{{ sw }}" stroke-linecap="round"></line>
+      <circle cx="50" cy="50" r="{{ centerR }}" fill="{{ accent }}"></circle>
+      <circle cx="76.87" cy="23.13" r="{{ viaR }}" fill="{{ accent }}"></circle>
+      <circle cx="76.87" cy="23.13" r="{{ viaH }}" fill="{{ bg }}"></circle>
+    </svg>
+  </sc-if>
+  <sc-if value="{{ isC }}" hint-placeholder-val="{{ false }}">
+    <svg width="{{ size }}" height="{{ size }}" viewBox="0 0 100 100" style="display:block; flex:none">
+      <path d="M 80 28 L 38 28 L 24 42 L 24 58 L 38 72 L 62 72 L 76 58 L 76 50 L 58 50" fill="none" stroke="{{ fg }}" stroke-width="{{ swC }}" stroke-linejoin="miter"></path>
+      <circle cx="56" cy="50" r="{{ viaC }}" fill="{{ accent }}"></circle>
+      <circle cx="56" cy="50" r="{{ viaH }}" fill="{{ bg }}"></circle>
+    </svg>
+  </sc-if>
+  <sc-if value="{{ showWord }}" hint-placeholder-val="{{ false }}">
+    <div style="font-family:{{ font }}; font-weight:{{ weight }}; font-size:{{ wordPx }}px; letter-spacing:{{ ls }}; color:{{ fg }}; white-space:nowrap">{{ word }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:160},&quot;dir&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;a&quot;,&quot;b&quot;,&quot;c&quot;],&quot;default&quot;:&quot;b&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;mark&quot;,&quot;h&quot;,&quot;stack&quot;],&quot;default&quot;:&quot;h&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;size&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:64,&quot;tsType&quot;:&quot;number&quot;},&quot;simple&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;fg&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F2F2F2&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#1D9E75&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;bg&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#0A0A0A&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const dir = p.dir || 'b', layout = p.layout || 'mark';
+    const size = Number(p.size ?? 64);
+    const simple = p.simple === true || p.simple === 'true';
+    const stack = layout === 'stack';
+    const fonts = { a: "'General Sans', sans-serif", b: "'Satoshi', sans-serif", c: "'Satoshi', sans-serif" };
+    return {
+      isA: dir === 'a', isB: dir === 'b', isC: dir === 'c', size,
+      fg: p.fg || '#F2F2F2', accent: p.accent || '#1D9E75', bg: p.bg || '#0A0A0A',
+      sw: simple ? 8 : 5, swC: simple ? 12 : 8, innerOp: simple ? 0 : 1, centerR: simple ? 14 : 11,
+      viaR: simple ? 9 : 7.5, viaH: simple ? 3.5 : 3, viaC: simple ? 11 : 9.5,
+      unlitR: simple ? 0 : 2.8, litR: simple ? 7 : 5.5, knobSw: simple ? 8 : 5,
+      showWord: layout !== 'mark', flexDir: stack ? 'column' : 'row',
+      gap: Math.round(size * (stack ? 0.2 : 0.28)), wordPx: Math.round(size * (stack ? 0.34 : 0.46)),
+      font: fonts[dir], weight: { a: 600, b: 700, c: 900 }[dir],
+      word: dir === 'c' ? 'groovemakers' : 'GrooveMakers', ls: dir === 'c' ? '-0.045em' : '-0.025em'
+    };
+  }
+}
+</script>
+</body>
+</html>
