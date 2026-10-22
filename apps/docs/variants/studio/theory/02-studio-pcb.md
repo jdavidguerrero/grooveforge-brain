@@ -143,9 +143,13 @@ L = 20 mm desde el plano de montaje, buje roscado. Encaja en la huella `Alpha RD
 7.5 mm del eje, patas a ±4.75 mm; la RK09K no encaja). Diferencias con lo previsto:
 - **Knobs impresos y distintos de los de los EC11**, con **indicador de posición** (el pot es absoluto; el encoder
   no) y agujero para eje D de 6 mm. Ya no hace falta el mismo estriado del EC11.
-- **Al recibirlo:** confirmar la marca del cuerpo **B103 / B10K** (lineal; A sería logarítmico), medir la altura
-  total desde el plano de los pines hasta la punta (objetivo ~25 mm) y hasta el final del buje, y su rosca: si el
-  buje llega al aluminio, el agujero pasa de Ø7 a ~Ø7.4 en `panel-aluminio.dxf`.
+- **Medidas del vendedor:** 20 mm de la punta al plano de montaje, 12 mm de eje libre → **buje roscado de 8 mm**.
+  Con el cuerpo (5–7 mm), la punta queda a ~25–27 mm sobre PCB-A (como el EC11, 26.5) y el buje atraviesa el
+  aluminio (PCB-A a −12) y asoma ~1–3 mm. **Agujero del panel Ø7 → Ø7.5** (`panel-aluminio.dxf`, 2026-10-22) para
+  una rosca M7 con 0.25 mm por lado. El knob necesita un rebaje interior para tapar el buje que asoma. No apretar
+  la tuerca del pot contra el panel: el pot ya va soldado a PCB-A y la tuerca forzaría las soldaduras.
+- **Al recibirlo:** confirmar la marca **B103 / B10K** (lineal), medir la altura del cuerpo, cuánto asoma el buje y
+  su rosca real; con eso se modelan los knobs.
 
 ## 6. Conexiones entre placas
 
