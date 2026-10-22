@@ -25,6 +25,22 @@ VIA_D, VIA_DRILL, VIA_COST = 0.6, 0.3, 40.0
 LOCK = os.environ.get("GRID_LOCK", "0") == "1"
 
 
+
+def edge_segments(d):
+    """Straight pieces of an Edge.Cuts drawing: a segment, the four sides of a rectangle (rounded or not)
+    or an arc sampled every ~0.2 mm. (A rectangle used to be read as ONE start->end line: a diagonal
+    wall across the whole board.)"""
+    t = d.GetShape()
+    (sx, sy), (ex, ey) = pcbnew.ToMM(d.GetStart()), pcbnew.ToMM(d.GetEnd())
+    if t == pcbnew.SHAPE_T_RECT:
+        return [((sx, sy), (ex, sy)), ((ex, sy), (ex, ey)), ((ex, ey), (sx, ey)), ((sx, ey), (sx, sy))]
+    if t == pcbnew.SHAPE_T_ARC:
+        arc = pcbnew.SHAPE_ARC(d.GetStart(), d.GetArcMid(), d.GetEnd(), 0)
+        chain = arc.ConvertToPolyline(pcbnew.FromMM(0.05))
+        pts = [pcbnew.ToMM(chain.CPoint(i)) for i in range(chain.PointCount())]
+        return list(zip(pts, pts[1:]))
+    return [((sx, sy), (ex, ey))]
+
 def main():
     board_name, a_ref, b_ref = sys.argv[1:4]
     width = float(sys.argv[4]) if len(sys.argv) > 4 else 0.2
@@ -124,6 +140,11 @@ def main():
             if drill > 0:
                 (cx, cy) = pcbnew.ToMM(p.GetPosition())
                 mark_disk(via_blocked, cx, cy, drill + VIA_DRILL / 2 + 0.5)
+            elif same:
+                # Nunca una vía dentro (ni pegada) a un pad SMD, ni siquiera de su propia red: el barril se
+                # lleva la pasta de soldar (auditoría 2026-10-22, D01). Centro ≥ 0.5 mm del borde del pad.
+                # SAME_NET_VIA_MARGIN: via centre to pad edge (default 0.5; 0.4 still leaves the drill 0.25 mm out)
+                mark_rect(via_blocked, bx0, by0, bx1, by1, float(os.environ.get("SAME_NET_VIA_MARGIN", "0.5")))
             if same:
                 continue
             for k, layer in enumerate(layers):
@@ -140,10 +161,10 @@ def main():
                 mark_disk(blocked[k], cx, cy, r + EDGE + half)
             mark_disk(via_blocked, cx, cy, r + EDGE + VIA_D / 2)
         else:
-            (ax, ay), (bx, by) = pcbnew.ToMM(d.GetStart()), pcbnew.ToMM(d.GetEnd())
-            for k in range(2):
-                mark_seg(blocked[k], ax, ay, bx, by, EDGE + half)
-            mark_seg(via_blocked, ax, ay, bx, by, EDGE + VIA_D / 2)
+            for (ax, ay), (bx, by) in edge_segments(d):
+                for k in range(2):
+                    mark_seg(blocked[k], ax, ay, bx, by, EDGE + half)
+                mark_seg(via_blocked, ax, ay, bx, by, EDGE + VIA_D / 2)
 
     # Ventanas Edge.Cuts dentro de huellas (SK6812 de montaje inverso): el hueco entero bloquea.
     for fp in board.GetFootprints():

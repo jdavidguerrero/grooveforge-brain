@@ -54,6 +54,9 @@ assert bl.jst_opening(b, "J4")[0] < -0.9, "J4 must open towards -x"
 for ref, (x, y) in {"H1": (18.0, 114.0), "H2": (74.0, 111.0), "H3": (100.0, 111.0), "H4": (194.0, 64.0)}.items():
     bl.place(b, ref, x, y)
 
+# Audit D06: C1 as close as it gets to U1's VDD (pin 9) / VSS (pin 10), after everything else is placed.
+print("C1 decoupling distance to U1.9/U1.10: %.2f mm (sum of both)" % bl.place_decap(b, "C1", "U1"))
+
 bl.hide_refs(b, [f"C{n}" for n in range(10, 26)] + ["C1", "C2", "R1", "R2", "U1", "J1", "J2", "J3", "J4",
                                                     "H1", "H2", "H3", "H4"])
 bl.outline_poly(b, [(10, FRONT), (187, FRONT), (187, 50), (227, 50), (227, 119.6), (10, 119.6)])

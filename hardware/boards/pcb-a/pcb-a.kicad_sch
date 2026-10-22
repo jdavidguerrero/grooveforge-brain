@@ -3374,6 +3374,428 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "Device:RotaryEncoder_Switch_MP"
+			(pin_names
+				(offset 0.254)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(in_pos_files yes)
+			(duplicate_pin_numbers_are_jumpers no)
+			(property "Reference" "SW"
+				(at 0 8.89 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "RotaryEncoder_Switch_MP"
+				(at 0 6.35 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -3.81 4.064 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 -12.7 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+				(at 0 -15.24 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "rotary switch encoder switch push button"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_fp_filters" "RotaryEncoder*Switch*"
+				(at 0 0 0)
+				(show_name no)
+				(do_not_autoplace no)
+				(hide yes)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(symbol "RotaryEncoder_Switch_MP_0_1"
+				(rectangle
+					(start -5.08 5.08)
+					(end 5.08 -5.08)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(polyline
+					(pts
+						(xy -5.08 2.54) (xy -3.81 2.54) (xy -3.81 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -5.08 0) (xy -3.81 0) (xy -3.81 -1.016) (xy -3.302 -2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -5.08 -2.54) (xy -3.81 -2.54) (xy -3.81 -2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -4.318 0) (xy -3.81 0) (xy -3.81 1.016) (xy -3.302 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center -3.81 0)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.635 -1.778) (xy -0.635 1.778)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center -0.381 0)
+					(radius 1.905)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.381 -1.778) (xy -0.381 1.778)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -0.381 -2.794)
+					(mid -3.0988 -0.0635)
+					(end -0.381 2.667)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -0.127 1.778) (xy -0.127 -1.778)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 2.921) (xy -0.508 2.667) (xy 0.127 2.286)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0.254 -3.048) (xy -0.508 -2.794) (xy 0.127 -2.413)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 1.016) (xy 3.81 -1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 3.81 0) (xy 3.429 0)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 4.318 1.016)
+					(radius 0.127)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 4.318 -1.016)
+					(radius 0.127)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 2.54) (xy 4.318 2.54) (xy 4.318 1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 5.08 -2.54) (xy 4.318 -2.54) (xy 4.318 -1.016)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "RotaryEncoder_Switch_MP_1_1"
+				(pin passive line
+					(at -7.62 2.54 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 -2.54 0)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at -7.62 0 0)
+					(length 2.54)
+					(name "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -7.62 90)
+					(length 2.54)
+					(name "MP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "MP"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 2.54 180)
+					(length 2.54)
+					(name "S1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "S1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 7.62 -2.54 180)
+					(length 2.54)
+					(name "S2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "S2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_02x15_Odd_Even")
@@ -4225,7 +4647,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7k"
+		(property "Value" "2.2k"
 			(at 175.26 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4257,7 +4679,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C23162"
+		(property "LCSC" "C4190"
 			(at 175.26 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -4315,7 +4737,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7k"
+		(property "Value" "2.2k"
 			(at 190.5 113.03 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4347,7 +4769,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C23162"
+		(property "LCSC" "C4190"
 			(at 190.5 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -4379,94 +4801,6 @@
 			(project "pcb-a"
 				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
 					(reference "R2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 240.03 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "897b6e9a-ffac-43a1-b590-4dc466ae3e10")
-		(property "Reference" "RE1"
-			(at 240.03 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 240.03 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 236.22 63.754 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 240.03 66.294 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 240.03 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "986d1903-c11d-4320-a06b-102266e3d3e4")
-		)
-		(pin "B"
-			(uuid "15da3106-6c87-4d8d-b4e5-d00f7f882a0f")
-		)
-		(pin "C"
-			(uuid "3d56b1bc-17e8-43d1-9ac9-d47371bc8e4e")
-		)
-		(pin "S1"
-			(uuid "40be220e-6f4c-4209-8e3e-19bd2fb3acc0")
-		)
-		(pin "S2"
-			(uuid "9a55abef-474a-4097-b8a8-10e67f5c35d2")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE1")
 					(unit 1)
 				)
 			)
@@ -4657,94 +4991,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 284.48 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "a5925c5d-6820-4d9f-9a54-c479f5c757bc")
-		(property "Reference" "RE2"
-			(at 284.48 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 284.48 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 280.67 63.754 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 284.48 66.294 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 284.48 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "3d9ceab2-4c76-4b9b-8188-aab8830e7bfb")
-		)
-		(pin "B"
-			(uuid "1998a2d7-37fe-41a6-a047-9c406b3ea8a8")
-		)
-		(pin "C"
-			(uuid "8fe71695-9b54-45d6-8207-6d4419c7da28")
-		)
-		(pin "S1"
-			(uuid "e8f3934c-84b8-4fc6-9c82-f58f339ad490")
-		)
-		(pin "S2"
-			(uuid "bb87a92d-2690-4f3a-8cac-4a9192f4408c")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 276.86 90.17 0)
 		(unit 1)
@@ -4923,94 +5169,6 @@
 			(project "pcb-a"
 				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
 					(reference "C13")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 330.2 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c5a7d421-349d-41a0-b5d0-e2c118d4029d")
-		(property "Reference" "RE3"
-			(at 330.2 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 330.2 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 326.39 63.754 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 66.294 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 330.2 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "012de18a-0ca5-4488-8c12-3ebb2ab95cb0")
-		)
-		(pin "B"
-			(uuid "b0c45c44-2c31-48fb-8680-cb93da26c53d")
-		)
-		(pin "C"
-			(uuid "a8d546e0-2875-4f8f-b459-1d1bd911b931")
-		)
-		(pin "S1"
-			(uuid "63df094a-f25c-4cb5-aaca-347f8d3ef541")
-		)
-		(pin "S2"
-			(uuid "93b2987d-5a38-470d-8f16-040d30c67306")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE3")
 					(unit 1)
 				)
 			)
@@ -5201,94 +5359,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 374.65 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "5eff8213-2a25-43e0-9b21-74762efc7d17")
-		(property "Reference" "RE4"
-			(at 374.65 57.15 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 374.65 62.23 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 370.84 63.754 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 374.65 66.294 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 374.65 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "b15c8b6b-e93d-4ac8-a6b1-b10d05869b71")
-		)
-		(pin "B"
-			(uuid "f398c3ef-53e0-487a-9667-99b3e9228cf2")
-		)
-		(pin "C"
-			(uuid "b208832e-6bac-4b3e-b033-c8bca24a152f")
-		)
-		(pin "S1"
-			(uuid "b803386e-ba95-4c8f-9700-ce0822039500")
-		)
-		(pin "S2"
-			(uuid "299cab13-b486-47b4-a8c1-eab6e2ebcbce")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 367.03 90.17 0)
 		(unit 1)
@@ -5467,94 +5537,6 @@
 			(project "pcb-a"
 				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
 					(reference "C17")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 240.03 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "357912fc-35b0-4256-8b80-9cf81a1bb513")
-		(property "Reference" "RE5"
-			(at 240.03 127.0 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 240.03 132.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 236.22 133.604 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 240.03 136.144 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 240.03 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "ab37b125-5766-44e6-9a08-f210862367cc")
-		)
-		(pin "B"
-			(uuid "1a076f39-1705-4e82-ac83-cb9ef4874e56")
-		)
-		(pin "C"
-			(uuid "85391ad7-e7dc-4acf-bdf8-86cfdb11ce02")
-		)
-		(pin "S1"
-			(uuid "28c87182-3dd3-4a92-a492-1f12a144d651")
-		)
-		(pin "S2"
-			(uuid "07476299-4da4-4db5-9039-7bebc79809ed")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE5")
 					(unit 1)
 				)
 			)
@@ -5745,94 +5727,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 284.48 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "e5b14004-5f60-4140-bcdd-5998db68a749")
-		(property "Reference" "RE6"
-			(at 284.48 127.0 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 284.48 132.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 280.67 133.604 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 284.48 136.144 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 284.48 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "f3447b9c-3b73-40ee-bb91-ff4c1ecd8d73")
-		)
-		(pin "B"
-			(uuid "cd8495b2-faf2-4e0b-bbf9-9ca816f5b0d2")
-		)
-		(pin "C"
-			(uuid "ad8cfd3f-e592-4478-beac-41d17f13f19d")
-		)
-		(pin "S1"
-			(uuid "888c834c-82a3-4328-9ae9-b9fcbd5cf721")
-		)
-		(pin "S2"
-			(uuid "352bc97f-e2bb-48a8-aee5-0a8cc364713a")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 276.86 160.02 0)
 		(unit 1)
@@ -6017,94 +5911,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 330.2 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "c8b95b88-038a-44ca-9033-81fccc0763f9")
-		(property "Reference" "RE7"
-			(at 330.2 127.0 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 330.2 132.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 326.39 133.604 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 330.2 136.144 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 330.2 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "9443291f-93b0-4ce7-8dfe-3a098dc25fee")
-		)
-		(pin "B"
-			(uuid "23d4d46a-c6eb-4057-95a8-9d1170c9d0e0")
-		)
-		(pin "C"
-			(uuid "4bd01761-7175-40a6-86c7-3ab9f4ef6f77")
-		)
-		(pin "S1"
-			(uuid "462f43ec-3f51-45db-825e-32818c83b106")
-		)
-		(pin "S2"
-			(uuid "14b1a19a-9366-4d8f-8a55-7dfa4503c8cf")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 322.58 160.02 0)
 		(unit 1)
@@ -6283,94 +6089,6 @@
 			(project "pcb-a"
 				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
 					(reference "C23")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:RotaryEncoder_Switch")
-		(at 374.65 129.54 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "11288246-5c52-4e84-bcf4-5b67a2a8a3f1")
-		(property "Reference" "RE8"
-			(at 374.65 127.0 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "EC11"
-			(at 374.65 132.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
-			(at 370.84 133.604 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 374.65 136.144 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch"
-			(at 374.65 129.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "A"
-			(uuid "feb3cd68-606b-4ec6-adc4-a720ab4fbe34")
-		)
-		(pin "B"
-			(uuid "ec02910b-cc84-43e5-99b7-cf9be3b2e32c")
-		)
-		(pin "C"
-			(uuid "bc691856-f970-4735-bae8-50d7b0a88c9c")
-		)
-		(pin "S1"
-			(uuid "cfbec5a3-ecd4-4536-aaee-a2ba5c48e966")
-		)
-		(pin "S2"
-			(uuid "4f0c1969-f6e2-4088-a89a-9035c8ac1006")
-		)
-		(instances
-			(project "pcb-a"
-				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
-					(reference "RE8")
 					(unit 1)
 				)
 			)
@@ -8623,6 +8341,894 @@
 	(no_connect
 		(at 129.54 67.31)
 		(uuid "e0bcb73b-e5d7-4967-8ead-c31d9108e000")
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 240.03 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "25e022d6-0d4e-4e00-8df8-929250bd269e")
+		(property "Reference" "RE1"
+			(at 240.03 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 240.03 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 236.22 63.754 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 240.03 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 240.03 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "7c5a9d1f-87dc-4b09-ab56-1d780deb9ff4")
+		)
+		(pin "B"
+			(uuid "fa94e9d4-079a-40cf-a06d-eb9e5afc0373")
+		)
+		(pin "C"
+			(uuid "b045f27e-78a7-4f6a-957f-69ac32f294d5")
+		)
+		(pin "MP"
+			(uuid "86f7aa8f-1623-4fdd-bd9d-a137b4731df4")
+		)
+		(pin "S1"
+			(uuid "ce4ef781-b387-4288-b02e-a9ef2cca1555")
+		)
+		(pin "S2"
+			(uuid "1724aa8f-746a-41c3-9ff2-425369ef062b")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 284.48 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "2db73e60-d0d2-4c9d-9ca5-fb0e4be8a88f")
+		(property "Reference" "RE2"
+			(at 284.48 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 284.48 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 280.67 63.754 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 284.48 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 284.48 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "fa90fcb0-f2ca-4dc4-8551-58f1ded7fabd")
+		)
+		(pin "B"
+			(uuid "0e0b9d5b-992a-4989-bd4f-f750bbd55fd6")
+		)
+		(pin "C"
+			(uuid "3a4240a0-45a6-4cc4-929e-892c0083179b")
+		)
+		(pin "MP"
+			(uuid "f242bae9-fa92-4d90-bbdf-01c362b5925b")
+		)
+		(pin "S1"
+			(uuid "a11adbbf-0efb-4058-99b4-2251a4893a7c")
+		)
+		(pin "S2"
+			(uuid "d9274d4d-2f46-4cf7-b27e-a9fb259d4eae")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 330.2 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3e74e32c-8c56-4a59-aa37-8d54052bd5e0")
+		(property "Reference" "RE3"
+			(at 330.2 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 330.2 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 326.39 63.754 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 330.2 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 330.2 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "b2acb918-8f3c-4132-8dca-c5d3c8467f7c")
+		)
+		(pin "B"
+			(uuid "30e6b8a1-1e56-4e68-96ea-76af0e4d9ae2")
+		)
+		(pin "C"
+			(uuid "0a55c48f-751e-426e-afd5-3dcb81fa5dde")
+		)
+		(pin "MP"
+			(uuid "be1cb17e-9d2f-4bf4-8f02-a82d1dd92040")
+		)
+		(pin "S1"
+			(uuid "b5ea47d0-efb8-4cdd-b6d4-aa3023bfbf77")
+		)
+		(pin "S2"
+			(uuid "e4f18233-4f9f-481a-a0d8-237e3b698974")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 374.65 59.69 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "9e1f3ad9-fe77-414b-8854-7530c447eac9")
+		(property "Reference" "RE4"
+			(at 374.65 68.58 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 374.65 66.04 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 370.84 63.754 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 374.65 46.99 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 374.65 44.45 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "feb4fe98-1280-42a6-b1ab-3e1e81d1a341")
+		)
+		(pin "B"
+			(uuid "a9ca49e0-8e89-45a8-b2f1-0225ec8f5c37")
+		)
+		(pin "C"
+			(uuid "e765b603-6a8f-4ed8-80b6-71e1549b5dc3")
+		)
+		(pin "MP"
+			(uuid "bdef65b7-f0ab-490d-85b2-a62d90abc59f")
+		)
+		(pin "S1"
+			(uuid "d811a51e-07cf-4720-af09-ff15462833de")
+		)
+		(pin "S2"
+			(uuid "f872fbdc-619c-4d37-a70b-d38ec83513a2")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 240.03 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "23a30f2c-9d34-4d02-9ca1-770e0f926b3f")
+		(property "Reference" "RE5"
+			(at 240.03 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 240.03 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 236.22 133.604 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 240.03 116.84 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 240.03 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "5744282a-75c6-4615-a240-284df014823d")
+		)
+		(pin "B"
+			(uuid "9fda44c8-c1b1-4468-8a88-c948d9a113d6")
+		)
+		(pin "C"
+			(uuid "867c0224-b819-42db-ab5c-2ff55062b023")
+		)
+		(pin "MP"
+			(uuid "93a3405f-c15e-4743-bc10-cdab38467ac6")
+		)
+		(pin "S1"
+			(uuid "8d0f0ebc-3e06-4bd6-be50-8eacb0c4318c")
+		)
+		(pin "S2"
+			(uuid "833f56aa-b4df-4884-baa9-194a39ee1e16")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 284.48 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "333dbdf7-fa68-4686-8e78-316c611b0a15")
+		(property "Reference" "RE6"
+			(at 284.48 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 284.48 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 280.67 133.604 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 284.48 116.84 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 284.48 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "17050d9f-f0f8-473c-81d8-6560428c5fbd")
+		)
+		(pin "B"
+			(uuid "7768a053-866d-4a0e-92a9-62eb650aeeec")
+		)
+		(pin "C"
+			(uuid "2c1a9a3a-c3ba-4056-bc5c-d9d901058b33")
+		)
+		(pin "MP"
+			(uuid "ab5ecc83-1ab3-4704-95ee-69e059c0da64")
+		)
+		(pin "S1"
+			(uuid "b9f4fc25-37f8-4583-9919-3e2890ec2067")
+		)
+		(pin "S2"
+			(uuid "55cd63f0-c9d5-49e9-8c06-94bf78befade")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE6")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 330.2 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "3d03d636-bd3e-495f-92e7-524bbfe7805f")
+		(property "Reference" "RE7"
+			(at 330.2 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 330.2 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 326.39 133.604 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 330.2 116.84 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 330.2 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "c9614514-c84e-420d-8478-c6b422bd178c")
+		)
+		(pin "B"
+			(uuid "ab9b7fe5-d682-46c6-9e73-2f063891ea04")
+		)
+		(pin "C"
+			(uuid "e2673910-c486-4e2a-9f32-1fe951062915")
+		)
+		(pin "MP"
+			(uuid "67c6b96f-a613-4f73-b14a-8506a66a8425")
+		)
+		(pin "S1"
+			(uuid "a2bb521d-dc9a-4fd3-a8a0-1ec442f04194")
+		)
+		(pin "S2"
+			(uuid "67354252-e31a-47c8-a744-7d7634e7510a")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:RotaryEncoder_Switch_MP")
+		(at 374.65 129.54 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "baa64dc3-6f86-4f42-9f8b-81b88a11d630")
+		(property "Reference" "RE8"
+			(at 374.65 138.43 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "EC11"
+			(at 374.65 135.89 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+			(at 370.84 133.604 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 374.65 116.84 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"
+			(at 374.65 114.3 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "1ce759f7-7f06-41dc-9d4c-4e17661ea6ef")
+		)
+		(pin "B"
+			(uuid "afe5b37b-49a2-4d09-bd9b-3a1d666f7c4a")
+		)
+		(pin "C"
+			(uuid "f8cd6771-27af-4bd0-a036-cb797c02cb36")
+		)
+		(pin "MP"
+			(uuid "871b8c51-ae7b-41b5-8794-e03a1444caea")
+		)
+		(pin "S1"
+			(uuid "cfcd1d5c-9966-4081-80cd-a35776135583")
+		)
+		(pin "S2"
+			(uuid "b158a8a4-1c9e-4146-8179-a4f824859115")
+		)
+		(instances
+			(project "pcb-a"
+				(path "/57039f65-9670-49b0-ab0b-a5513df55d59"
+					(reference "RE8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(wire
+		(pts
+			(xy 240.03 67.31) (xy 240.03 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ecae32f1-48af-4f1f-b5c3-0e43b1111f7a")
+	)
+	(label "GND"
+		(at 240.03 69.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "afb72013-58eb-4239-a479-b04727950b25")
+	)
+	(wire
+		(pts
+			(xy 284.48 67.31) (xy 284.48 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82d216c2-594c-4241-89d0-d7c2b336078b")
+	)
+	(label "GND"
+		(at 284.48 69.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "c009643b-c8b0-48cc-a850-dfe4d9a85b91")
+	)
+	(wire
+		(pts
+			(xy 330.2 67.31) (xy 330.2 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "810524b8-07ce-4083-b0dd-b3d418c2d74f")
+	)
+	(label "GND"
+		(at 330.2 69.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0bd84939-9806-4a0d-9b03-b5b14269cdd4")
+	)
+	(wire
+		(pts
+			(xy 374.65 67.31) (xy 374.65 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "05421dc3-062d-461e-9bd2-3e87d2fb1f90")
+	)
+	(label "GND"
+		(at 374.65 69.85 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "337abda8-6705-4176-b7cf-d8b4f5762fb7")
+	)
+	(wire
+		(pts
+			(xy 240.03 137.16) (xy 240.03 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d5a2de7c-4f5b-423c-863c-1a05084dc201")
+	)
+	(label "GND"
+		(at 240.03 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "9ad56e30-2f26-446e-b8c9-a4478b79ded2")
+	)
+	(wire
+		(pts
+			(xy 284.48 137.16) (xy 284.48 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fec524d3-4d5b-4a52-8409-6ed20f77df9d")
+	)
+	(label "GND"
+		(at 284.48 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "f77c5ea5-c915-457e-87e6-6b22e7eaf208")
+	)
+	(wire
+		(pts
+			(xy 330.2 137.16) (xy 330.2 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "069f0b02-ee7a-4768-8b2e-267cba323f0f")
+	)
+	(label "GND"
+		(at 330.2 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "5e4047a4-67d5-4317-91c6-5f7f6256b610")
+	)
+	(wire
+		(pts
+			(xy 374.65 137.16) (xy 374.65 139.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4c27f301-454a-4f64-ad17-96a5417ae810")
+	)
+	(label "GND"
+		(at 374.65 139.7 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "73fb01c5-423b-46b2-bc90-e33cf3b89edb")
 	)
 	(sheet_instances
 		(path "/"

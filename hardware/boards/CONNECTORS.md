@@ -58,7 +58,7 @@ pin; no parts besides the connectors. Only these socket pins are used, the rest 
 |---|---|---|---|
 | GND | +3V3 | SDA | SCL |
 
-The 4.7 kΩ I2C pull-ups are on PCB-A (the carrier relies on the Audio Shield's, which GroovePush
+The 2.2 kΩ I2C pull-ups (R1/R2, 0603, C4190) are on PCB-A (the carrier relies on the Audio Shield's, which GroovePush
 doesn't fit).
 
 ## PCB-A J3 ↔ PCB-F J1 — JST-SH 6, faders
@@ -72,7 +72,7 @@ doesn't fit).
 J4 sits on PCB-A's tab, next to J1 (rev. 2026-10-20). At the strip's left end its six lines ran
 200 mm along the encoder strip and the board didn't route. The cable is therefore ~20–25 cm
 (pre-crimped JST-SH, 28 AWG): it leaves the tab towards the M4 and runs under PCB-A / the M4 to
-PCB-K1 J1 at the back of the edit block. At that length I2C (4.7 kΩ pull-ups on PCB-A) and the
+PCB-K1 J1 at the back of the edit block. At that length I2C (2.2 kΩ pull-ups on PCB-A) and the
 buffered 800 kHz LED data are fine; +5V uses two pins and GND three.
 
 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
@@ -108,3 +108,16 @@ open-drain (`IOCON.ODR = 1`); PCB-K1 has a 10 kΩ pull-up.
 back to PCB-K1 → edit block (5–9: QUANTIZE, DUPLICATE, DELETE, UNDO, NEW) → front row (10–19:
 SHIFT, PLAY, STOP, RECORD, LOOP, METRO, BANK_L, BANK_R, OCT_DN, OCT_UP). Cap brightness in
 firmware: 20 × 60 mA at full white is 1.2 A.
+
+## Power and handling contract (audit 2026-10-22, D03/D08)
+
+- **Power the panel off when connecting or disconnecting any cable.** There is no inrush limiter, reverse
+  block or hot-plug sequencing on these boards: the +5 V that feeds the key LEDs (20 × up to 60 mA, 1.2 A
+  worst case, firmware caps brightness) comes from the carrier's USB-C input through its 3 A polyfuse and
+  TVS; it is the only current limiter in the chain. Cables are 1:1 and polarised (JST-SH/PH are keyed).
+- **ESD path.** Every encoder (PCB-A RE1–RE8) and fader (PCB-F RV1–RV4) mounting pad (MP) is tied to GND with
+  a solid (non-thermal) zone connection; the metal shaft/frame of the part therefore drains into the GND
+  plane at the pad. The enclosure must still give the front panel a short, wide bond to that plane (via a
+  standoff) — to be measured on the first unit.
+- **I2C**: start at 100 kHz and raise to 400 kHz only after measuring rise time (30–70 %) with the final
+  harness; with the 2.2 kΩ pull-ups the bus tolerates ~160 pF at 400 kHz (300 ns).

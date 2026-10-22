@@ -146,11 +146,12 @@ def main():
     # Pads de GND de los conectores: unión sólida al plano. Entre pines de 1–2.54 mm las pistas vecinas
     # dejan los alivios térmicos con un solo radio (DRC "starved thermal"); el retorno de GND del cable
     # pasa por acá, así que conviene la unión llena.
+    # Same for the mounting pads (MP) of the encoders and faders: they are the ESD path from the metal
+    # shaft/frame to the plane (audit D03), so they get a solid connection too.
     for fp in board.GetFootprints():
-        if fp.GetReference().startswith("J"):
-            for p in fp.Pads():
-                if p.GetNetname() == "/GND":
-                    p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
+        for p in fp.Pads():
+            if p.GetNetname() == "/GND" and (fp.GetReference().startswith("J") or p.GetNumber() == "MP"):
+                p.SetLocalZoneConnection(pcbnew.ZONE_CONNECTION_FULL)
 
     bbox = board.GetBoardEdgesBoundingBox()
     for layer in layers:

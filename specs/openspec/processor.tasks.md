@@ -14,7 +14,7 @@
 | T-B0-5 — Narrow Phase 1 BOM/scope: drop piezo/IR/theremin (future e-drum) and capacitive buttons (replaced by MCP pushbuttons); defer LED strip to PCB | G-P11 | integration-architect | `PIN_MAP.md` "Phase 1 scope" section states it; user-confirmed | ☑ |
 | T-B0-6 — Fix MCP23017 button pin allocation (avoid GPA7/GPB7 erratum) + `NUM_ENCODER_BUTTONS` 4→8 | G-P12 | firmware-engineer | `ButtonManager.cpp`/`.h` use lib pins 0-6+8 only; matches `hardware/processor.kicad_sch` net lister output; `pio run -e teensy41` SUCCESS | ☑ |
 | T-B0-7 — Re-map to the GrooveForge Brain carrier: GUI on Serial1 (J6), NeoTrellis M4 on Serial5 (J15), encoders/faders on J5, LED data on 28; ports centralised in `Config.h`; fixes G-P14 | G-H10, G-P14 | firmware-engineer | `teensy41`, `test_encoders_teensy`, `neotrellis_m4` SUCCESS (2026-10-19); `PIN_MAP.md` J5 table matches the carrier netlist | ☑ |
-| T-B0-8 — Shield adapter **PCB-S** for J15/J16 (`hardware/boards/pcb-s`, DRC 0/0/0, ordered with the panel boards): keyed JST to the M4 (Serial5) and PCB-A J2 (I2C); the 4.7 kΩ pull-ups moved to PCB-A | G-H10 | hardware-engineer | M4 handshake + I2C scan finds 0x20/0x21 through the adapter | ☐ |
+| T-B0-8 — Shield adapter **PCB-S** for J15/J16 (`hardware/boards/pcb-s`, DRC 0/0/0, ordered with the panel boards): keyed JST to the M4 (Serial5) and PCB-A J2 (I2C); the pull-ups (now 2.2 kΩ) moved to PCB-A | G-H10 | hardware-engineer | M4 handshake + I2C scan finds 0x20/0x21 through the adapter | ☐ |
 | T-B0-9 — Order the Brain carrier with an assembly quantity that includes the GroovePush copy; cut the Teensy VUSB–VIN pads | G-H10 | user | carrier in hand, Teensy powered from J10 | ☐ |
 
 **Evidence (T-B0-1/3)**: `teensy41 SUCCESS 00:00:24` — FLASH 72976 B, RAM1 vars 22720 B.

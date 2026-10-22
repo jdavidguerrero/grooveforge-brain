@@ -27,7 +27,8 @@ if dx > -0.9:  # opening must point to -x
     bl.place(b, "J1", X0 + 3.5, 113.5, rot=270, back=True)
     dx, dy = bl.jst_opening(b, "J1")
 assert dx < -0.9, f"J1 opening points {dx, dy}"
-bl.place(b, "C5", X0 + 9.0, 113.5, rot=90, back=True)
+# Audit D04: the old spot (X0+9, 113.5) was 3.2 mm from H3 (M3 screw head up to ~5.2 mm on the same face)
+bl.place_free(b, "C5", [(x, y) for y in (105.0, 103.0, 101.0, 99.0) for x in (232.0, 233.5, 231.0)], rot=90)
 
 for ref, (x, y) in {"H1": (240.0, 30.5), "H2": (262.0, 30.5), "H3": (240.0, 114.5), "H4": (262.0, 114.5)}.items():
     bl.place(b, ref, x, y)

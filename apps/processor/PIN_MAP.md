@@ -30,7 +30,7 @@ nothing is wired for these on the bench right now.
 |---|---|---|---|
 | Serial1 ↔ Raspberry Pi 5 (GUI) | RX1 = **0**, TX1 = **1** | J6 (2×5 Dupont) | 115200; `TEENSY_GUI_SERIAL`. Connect **UART + GND only** — the Pi 5 has its own supply |
 | Serial5 ↔ NeoTrellis M4 | TX5 = **20**, RX5 = **21** | J15 (Shield socket) | 1 Mbps; `TEENSY_M4_SERIAL`. M4 side = its 4-pin JST port (`UART_CONNECTIONS.md`) |
-| I2C `Wire` (MCP23017 ×2) | SDA = **18**, SCL = **19** | J15 (Shield socket) | 4.7 kΩ pull-ups on PCB-A (R1/R2; the carrier has none) |
+| I2C `Wire` (MCP23017 ×2) | SDA = **18**, SCL = **19** | J15 (Shield socket) | 2.2 kΩ pull-ups on PCB-A (R1/R2; the carrier has none) |
 | LED chain data (Choc keys) | **28** | J5.26 (`LED_DIN`) | through the carrier's U1 buffer (JP1) + R3 |
 | Built-in LED | **13** | J5.18 | left free (spare) |
 | USB | native | panel-mount cable | class-compliant USB-MIDI to the host, or to the Brain's USB-A host |
@@ -149,7 +149,7 @@ Pins 2/4 carry +5 V: **leave them unconnected** in GroovePush (the Pi 5 has its 
 J15.8 = pin 20 (TX5), J15.9 = pin 21 (RX5), J15.11 = pin 23, J15.12 = +3.3 V, J15.13 = GND;
 J16.5 = pin 8, J16.6 = pin 7, J16.14 = GND. The two rows are 15.24 mm apart (6 × 2.54), so a
 **PCB-S, the GroovePush shield adapter** (`hardware/boards/pcb-s`) plugs into both and can't sit offset: it only re-wires them to
-keyed JST connectors, to the M4 (Serial5) and to PCB-A J2 (I2C). The 4.7 kΩ I2C pull-ups ended up
+keyed JST connectors, to the M4 (Serial5) and to PCB-A J2 (I2C). The 2.2 kΩ I2C pull-ups (4.7 kΩ in the first revision; changed after the 2026-10-22 audit, D07) ended up
 on PCB-A (rev. 2026-10-20).
 Pins 7, 8 and 23 stay as spares there.
 

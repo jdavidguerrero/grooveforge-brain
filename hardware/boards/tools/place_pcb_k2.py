@@ -17,7 +17,8 @@ for i, k in enumerate(KEYS):
     x, y = float(P[k]["x_mm"]), float(P[k]["y_mm"])
     bl.place(b, f"SW{i+1}", x, y)
     bl.place(b, f"D{i+1}", x, y + LED_OFFSET, back=True)
-    bl.place(b, f"C{10+i}", x - 7.5, y + LED_OFFSET, rot=90, back=True)
+    # Audit D04: long axis across the board (perpendicular to the bending axis) and >= 2.5 mm from the edge
+    bl.place_free(b, f"C{10+i}", [(x - dx, y + LED_OFFSET) for dx in (6.0, 6.5, 7.0, 7.5)], rot=0)
 
 X0, X1, Y0f, Y1 = 11.5, 30.0, 120.5, 224.0
 bl.place(b, "J1", 21.0, Y0f + 3.3, rot=0, back=True)

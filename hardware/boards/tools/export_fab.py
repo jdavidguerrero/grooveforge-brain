@@ -64,7 +64,7 @@ def part_center(fp):
 
 def bom_and_cpl(name, pcb, out):
     board = pcbnew.LoadBoard(pcb)
-    groups, rows = {}, []
+    groups, rows, alt_rows = {}, [], []
     for fp in board.GetFootprints():
         if not fp.HasField("LCSC") or not fp.GetFieldText("LCSC") or fp.IsExcludedFromBOM():
             continue
@@ -88,6 +88,11 @@ def bom_and_cpl(name, pcb, out):
         x, y = pcbnew.ToMM(part_center(fp))
         rows.append([ref, f"{x:.4f}mm", f"{-y:.4f}mm", "Bottom" if fp.IsFlipped() else "Top",
                      f"{rot % 360:.1f}"])
+        # Alternative bottom-side convention, from the community tool that tracks JLC's behaviour
+        # (JLCKicadTools, cpl_fix_rotations.py: "-rotation + 180" for bottom parts). It only differs from the
+        # file above for parts at 0 or 180 degrees (LEDs, some JSTs); 90/270 come out the same.
+        alt = (-rot + 180) % 360 if fp.IsFlipped() else rot % 360
+        alt_rows.append([ref, f"{x:.4f}mm", f"{-y:.4f}mm", "Bottom" if fp.IsFlipped() else "Top", f"{alt:.1f}"])
     natural = lambda r: [int(t) if t.isdigit() else t for t in re.split(r"(\d+)", r)]
     with open(os.path.join(out, f"{name}-bom.csv"), "w", newline="") as f:
         w = csv.writer(f)
@@ -98,6 +103,13 @@ def bom_and_cpl(name, pcb, out):
         w = csv.writer(f)
         w.writerow(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"])
         w.writerows(sorted(rows, key=lambda r: natural(r[0])))
+    with open(os.path.join(out, f"{name}-cpl-alt-bottom.csv"), "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["Designator", "Mid X", "Mid Y", "Layer", "Rotation"])
+        w.writerows(sorted(alt_rows, key=lambda r: natural(r[0])))
+    differ = sorted((a[0] for a, b in zip(alt_rows, rows) if a[4] != b[4]), key=natural)
+    if differ:
+        print(f"   {name}: {len(differ)} parts differ between the two CPL conventions: {', '.join(differ)}")
     return len(groups), len(rows), {r[3] for r in rows}
 
 

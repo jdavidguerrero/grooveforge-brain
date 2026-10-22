@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # Valor del símbolo → LCSC. El valor alcanza para distinguir porque cada valor usa un solo encapsulado.
 LCSC = {
     # GroovePush panel boards (checked with the JLCPCB MCP 2026-10-19: in stock, Economic assembly)
-    "4.7k": "C23162", "10k": "C25804",
+    "2.2k": "C4190", "4.7k": "C23162", "10k": "C25804",
     "10nF": "C57112", "100nF": "C14663", "10uF": "C15850", "47uF": "C96123",
     "MCP23017-E/SO": "C47023", "MCP23017T-E/SS": "C558584", "SK6812MINI-EA": "C5378731",
 }
