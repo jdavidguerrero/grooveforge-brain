@@ -1,201 +1,170 @@
 # EP1 — "Construyo mi synth para encontrar mi sonido" · guion para grabar
 
-> Temporada 1, piloto. Duración objetivo: 11-12 min. Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
-> Todo lo que aparece aquí existe hoy en el banco (foto del 2026-10-22: protoboard con la Teensy 4.1 + Audio Shield,
-> 5 encoders, anillo de 12 LEDs, cabeza Pi 3B + 5" en PERFORM con el Model D a 800 Hz / RES 15, teclado MIDI,
-> osciloscopio de kit, fuente de banco).
+> Temporada 1, piloto · 🎹 Estudio · 11-12 min. Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
+> **Posiciones de cámara (P1-P7) y cómo grabar:** [`GUIA_CAMARA.md`](GUIA_CAMARA.md).
 >
-> Convenciones: **VO** = voz (en off o a cámara). **[A]** cenital macro · **[B]** banco/medición · **[C]** pantalla
-> del computador · **[E]** audio directo · **[F]** a cámara · **[V]** vertical para Shorts.
-> Los textos de VO son una guía: dilos con tus palabras, mantén los números.
+> **Cómo leer este guion:** cada fila es una toma (**T1, T2…**). La columna **Posición** dice dónde va la cámara;
+> **Qué haces / qué se ve** es la imagen; **Qué dices** es tu texto (dilo con tus palabras, mantén los números).
+> "—" en "Qué dices" = no hablas, solo suena el Brain. **🔲V** = grábala también en vertical para los Shorts.
+> Al final está el **plan de sesión ordenado por posición**: graba en ese orden, no en el del video.
 
 ---
 
 ## Antes de grabar (15 min)
 
-- [ ] `pio run -e sketch49 -t upload` con el firmware del día; anotar el commit.
-- [ ] Probar **en este orden**: teclado → nota; ENC L mueve el cutoff en PERFORM; Ableton con External Instrument
-      (MIDI To = Teensy MIDI) toca el Brain; con el clock de Ableton, **LFO SYNC** sigue el tempo (en el monitor
-      serie aparece `[UI] LFO SYNC ON (xxx BPM)`); el cutoff que giras aparece como automatización en Ableton.
-- [ ] Si alguna de estas falla: **eso es contenido** (grábalo), pero el clímax se cambia por la variante B (§Clímax).
-- [ ] LINE OUT → interfaz → pista de audio en Ableton, armada y grabando durante toda la sesión.
-- [ ] Limpiar el banco solo lo justo: los cables quedan. La protoboard llena de cables **es** la imagen del canal.
-- [ ] Un loop de Ableton listo: kick + hats + un clap, 120-126 BPM, 8 compases, en la tonalidad del bajo que vas a
-      tocar. Una clip MIDI con una línea de bajo de 2 compases.
+- [ ] `pio run -e sketch49 -t upload`; anota el commit.
+- [ ] La pantalla del Brain en **PERFORM** (no el login de Debian).
+- [ ] Prueba, en este orden: teclado → nota; ENC L mueve el cutoff; Ableton toca el Brain (External Instrument,
+      MIDI To = Teensy MIDI); con el clock de Ableton, **LFO SYNC** sigue el tempo (en el monitor serie:
+      `[UI] LFO SYNC ON (xxx BPM)`); al girar el cutoff aparece la automatización en Ableton.
+- [ ] Si algo falla: grábalo igual (es contenido) y usa la **variante B** del clímax.
+- [ ] En Ableton: loop de batería de 8 compases (120-126 BPM), un clip MIDI con un bajo de 2 compases, pista de
+      audio grabando el LINE OUT del Brain.
 
 ---
 
-## 0:00-0:15 · Cold open
+## 1 · Cold open (0:00-0:15)
 
-| Tiempo | Imagen | Audio |
-|---|---|---|
-| 0:00 | **[A]** macro de la mano en ENC L; la pantalla en PERFORM, el cutoff subiendo de 800 Hz y la onda abriéndose | Bajo del Model D sobre el loop, el filtro abriéndose **[E]** |
-| 0:04 | Plano general del banco (como la foto) | Sigue el loop |
-| 0:06 | **[F]** a cámara, el banco detrás | VO: *"Este es mi sintetizador. Lo estoy construyendo para encontrar mi sonido…"* |
-| 0:11 | Vuelta al macro del encoder | VO: *"…y cuando lo tenga, va a salir de esta protoboard, a mis tracks y a mi live set."* |
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T1 🔲V | **P2** cenital cerrado | Tu mano gira ENC L despacio; suena el bajo del Model D sobre el loop y el filtro se abre | — |
+| T2 | **P7** pantalla del Brain | PERFORM: el cutoff sube desde 800 Hz y la onda se abre (mismo gesto que T1) | — |
+| T3 | **P1** cenital general | El banco completo, tu mano sale del encoder | — |
+| T4 | **P5** a cámara | Tú, el banco a un lado | "Este es mi sintetizador. Lo estoy construyendo para encontrar mi sonido…" |
+| T5 | **P3** frontal 45° | La protoboard con el anillo de LEDs encendido | "…y cuando esté listo, va a salir de esta protoboard: a mis tracks y a mi live set." |
 
-## 0:15-0:50 · La promesa
+## 2 · La promesa (0:15-0:50)
 
-**[F]** VO:
-> "Produzco música electrónica. Y llevo tiempo buscando un sonido que sea mío, no el preset que usa todo el mundo.
-> Además, el sonido siempre está en la computadora y mis manos en un mouse. Así que decidí construir mi propio
-> instrumento: entenderlo por dentro y poder cambiarlo.
->
-> Esta serie es el proceso, completo y abierto. En cada episodio construyo una parte, te muestro cómo funciona por
-> dentro, con el código y las mediciones, y la uso en un track mío. Primero en el estudio, para encontrar mi sonido;
-> después, cuando esté terminado y en su caja, en mi live set. Si algo falla, también lo vas a ver. Hoy: qué es esta
-> cosa y si ya sirve para hacer música."
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T6 | **P5** | A cámara | "Produzco música electrónica. Y llevo tiempo buscando un sonido que sea mío, no el preset que usa todo el mundo." |
+| T7 | **P5** | A cámara | "Además, el sonido siempre está en la computadora y mis manos en un mouse. Así que decidí construir mi propio instrumento: entenderlo por dentro y poder cambiarlo." |
+| T8 | **P5** | A cámara | "Esta serie es el proceso, completo. En cada episodio construyo una parte, te muestro cómo funciona por dentro y la uso en un track mío. Primero en el estudio; después, cuando esté en su caja, en vivo. Si algo falla, también lo vas a ver." |
+| T9 | **P5** | A cámara | "Hoy: qué es esta cosa, y si ya sirve para hacer música." |
+| B-roll (va encima de T6-T9) | **P2**, **P4**, **P6** | P2: NAV girando con el anillo · P4: el anillo de LEDs de cerca · P6: Ableton con el loop | — |
 
-**B-roll** (sobre la VO): [A] el anillo de LEDs girando con NAV · [A] las teclas del teclado MIDI · [C] Ableton
-con el loop.
+## 3 · Por qué construirlo (0:50-3:00)
 
-## 0:50-3:00 · Por qué construirlo y no comprarlo
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T10 | **P5** | A cámara | "¿Por qué no compro un synth y ya? Cinco razones." |
+| T11 | **P5** | A cámara (levanta un dedo por razón) | "Uno: quiero un sonido mío. Si lo construyo, lo puedo moldear hasta que suene como yo." |
+| T12 | **P5** | A cámara | "Dos: quiero perillas. Producir es usar las manos: filtro, resonancia, envolventes." |
+| T13 | **P6** pantalla del computador | La carpeta `apps/firmware-teensy/src/engines/` con los archivos de los 6 motores | "Tres: quiero sonidos clásicos sin pagar lo que cuestan. Adentro hay seis motores inspirados en el Model D, el Juno-106, el Prophet-5, el OB-6, el DX7 y el ARP 2600." |
+| T14 | **P5** | A cámara | "Cuatro: quiero entender mi instrumento. Si sé por qué suena así, lo puedo cambiar. Y no lo hago para venderlo: lo hago para mi música, y el proceso lo comparto completo." |
+| T15 | **P6** | `apps/docs/theory/fidelidad-engines.md` §0, la tabla, 3 segundos | "Y cinco, la honestidad: todavía no suenan igual que los originales. Lo medí, y lo vas a ver en esta serie." |
 
-**[F]** + B-roll. Puntos (con tus palabras):
-1. **Quiero un sonido mío.** Si lo construyo, lo puedo moldear hasta que suene como yo, no como un preset.
-2. **Quiero perillas, no el mouse.** Producir y tocar es usar las manos: filtro, resonancia, envolventes.
-3. **Quiero sonidos clásicos sin pagar lo que cuestan.** El Brain tiene 6 arquitecturas inspiradas en el Model D, el
-   Juno-106, el Prophet-5, el OB-6, el DX7 y el ARP 2600 ("inspiradas en": son marcas de otros, ADR-002 de contenido). **[C]** `apps/firmware-teensy/src/engines/` (solo la lista de
-   archivos).
-4. **Quiero entender mi instrumento.** Si sé por qué suena así, lo puedo cambiar. Y no lo hago para venderlo: lo
-   hago para mi música, y el proceso lo comparto completo.
-5. **La honestidad:** "No suenan igual que los originales todavía. Lo medí, y lo vas a ver en el episodio 2."
-   **[C]** `apps/docs/theory/fidelidad-engines.md` §0, la tabla (2 s, sin detenerse).
+## 4 · Tour del banco (3:00-6:00)
 
-## 3:00-6:00 · Tour del banco
+Toda esta sección es **P1** (cenital general) con tu dedo señalando, más un detalle en **P2** o **P3** de cada pieza
+para cortar encima. Graba primero la pasada completa en P1 hablando, y después los detalles sin hablar.
 
-**[A]/[B]**, señalando cada cosa. Hablar mientras se señala; una frase por pieza.
-
-| Señalas | VO (guía) | En pantalla [C] |
-|---|---|---|
-| La Teensy 4.1 | "El cerebro: un microcontrolador ARM Cortex-M7 a 600 MHz. Aquí corren los 6 synths y los efectos." | — |
-| El Audio Shield | "La tarjeta de sonido: un codec SGTL5000. Sale por esta salida de línea a mis monitores." | — |
-| ENC L / ENC R | "Cutoff y resonancia, siempre a mano. Es lo que más toco en vivo." | — |
-| P1 / P2 | "Dos perillas que cambian según la página: envolventes, LFO, osciladores." | — |
-| NAV + anillo | "Navegación. El anillo me dice dónde estoy sin mirar la pantalla." | — |
-| B1-B6 | "Botones de páginas, el modo y SHIFT." | `apps/docs/adr/ADR-004-panel-studio.md` tabla de mapeo |
-| La cabeza (Pi + 5") | "Y esta pantalla es una Raspberry Pi con Linux." | — |
-| — | **La regla:** "Pero el sonido no pasa por la Pi. Los controles y el audio van directo a la Teensy; la pantalla solo dibuja lo que la Teensy le cuenta. Si la Pi se cuelga, el synth sigue sonando." | ADR-004 §1 (frase subrayada) |
-| El cable USB-A | "Aquí entra el teclado MIDI, por el puerto USB host de la Teensy." | — |
-| El osciloscopio de kit | "Y esto lo voy a usar mucho: para ver lo que oímos." | — |
-
-Diagrama en pantalla (dibújalo o anímalo, sale del encabezado del sketch49):
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T16 | **P1** | Señalas la Teensy | "El cerebro: un microcontrolador ARM Cortex-M7 a 600 MHz. Aquí corren los seis synths y los efectos." |
+| T17 | **P1** | Señalas el Audio Shield | "La tarjeta de sonido. Sale por esta salida de línea a mis monitores." |
+| T18 | **P1** | Señalas ENC L y ENC R | "Cutoff y resonancia, siempre a mano. Es lo que más toco." |
+| T19 | **P1** | Señalas P1 y P2 | "Dos perillas que cambian según la página: envolventes, LFO, osciladores." |
+| T20 | **P1** | Señalas NAV y el anillo | "Navegación. El anillo me dice dónde estoy sin mirar la pantalla." |
+| T21 | **P1** | Señalas los botones B1-B6 | "Botones para las páginas, el modo y SHIFT." |
+| T22 | **P1** | Señalas la pantalla | "Y esta pantalla es una Raspberry Pi con Linux." |
+| T23 | **P1** | Pones la mano sobre la Teensy | "Pero el sonido no pasa por la Pi. Los controles y el audio van directo a la Teensy. La pantalla solo dibuja lo que la Teensy le cuenta: si la Pi se cuelga, el synth sigue sonando." |
+| T24 | **P1** | Señalas el cable USB del teclado | "Aquí entra el teclado MIDI." |
+| T25 | **P1** | Señalas el osciloscopio | "Y esto lo voy a usar mucho: para ver lo que oímos." |
+| T26-T31 | **P2** / **P3** | Detalles sin hablar: Teensy, shield, ENC L girando, P1/P2, anillo de NAV (P3, LEDs con brillo), botones apretándose | — |
+| T32 | **P6** | Diagrama (abajo) dibujado o animado, y el encabezado de `src/sketches/49-studio-brain.cpp` (líneas 1-35) | (se usa bajo T23) |
 
 ```
 teclado (USB host) ─┐
-Ableton (USB) ──────┼─► Teensy 4.1: engine activo → SYNTH FX → SGTL5000 → LINE OUT
-panel (encoders) ───┘            │
-                                 └─ UART 921600 ─► Pi 3B + 5" (solo dibuja)
+Ableton (USB) ──────┼─► Teensy 4.1: motor → efectos → tarjeta de sonido → LINE OUT
+panel (perillas) ───┘            │
+                                 └─ cable serie ─► Raspberry Pi + pantalla (solo dibuja)
 ```
-**[C]** `apps/firmware-teensy/src/sketches/49-studio-brain.cpp`, líneas 1-35 (el comentario de cabecera).
 
-## 6:00-8:30 · Lo que ya hace
+## 5 · Lo que ya hace (6:00-8:30)
 
-Ritmo rápido: cada punto, 20-30 s, con sonido.
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T33 | **P2** + **P7** | SHIFT + NAV push → ENGINE SELECT; mismo acorde en Model D → Juno → DX7 (graba P2 y P7 en dos pasadas) | "Puedo cambiar de motor. El mismo acorde: Moog… Juno… DX7." |
+| T34 | **P7** | PERFORM; giras ENC L y ENC R | "Esta onda se calcula con el cutoff y la resonancia que uso: si cierro el filtro, se redondea; si subo la resonancia, aparece el *ringing*. Es una ilustración, no el audio medido." |
+| T35 | **P2** | B4 → SYNTH FX, enciendes TAPE y REVERB | "Tiene cuatro efectos fijos, en el orden de un pedalboard. Los cuatro juntos usan alrededor del 6 % del procesador." |
+| T36 | **P7** | SHIFT + B4 → PRESETS, cargas uno | "Presets: dieciséis por motor, y sobreviven al apagado." |
+| T37 | **P6** | `variants/studio/theory/07-studio-midi-expresion.md` §3, la tabla de CC | "Y habla con Ableton: cada perilla sale por MIDI con su número, así que Ableton la puede grabar." |
 
-1. **Cambiar de synth.** SHIFT + NAV push → ENGINE SELECT; mismo acorde en Model D → Juno → DX7. **[E]**
-2. **La pantalla PERFORM.** "La onda que ves se calcula con el cutoff y la resonancia que estoy usando: si cierro el
-   filtro, se redondea; si subo la resonancia, aparece el ringing." Mover ENC L y ENC R. Aclarar: *"es una
-   ilustración, no el audio medido"* (theory/08 §3).
-3. **Efectos del synth.** B4 → SYNTH FX: tape y reverb encendidos. "Cuatro efectos fijos, en el orden de un
-   pedalboard, y entre los cuatro usan alrededor del 6 % del procesador." **[C]** theory/05 §2, la tabla.
-4. **Presets.** SHIFT + B4 → PRESETS, cargar uno. "16 por engine, y sobreviven al apagado."
-5. **Habla con Ableton.** "Cada perilla sale por MIDI. Ableton la graba como automatización." **[C]** theory/07 §3,
-   la tabla de CC.
+## 6 · Clímax: ¿ya sirve para hacer música? (8:30-10:30)
 
-## 8:30-10:30 · Clímax: ¿ya sirve para hacer música?
+**Variante A** (si en la prueba funcionaron el clock y la automatización). Aplaude al empezar (sincronización).
 
-**Variante A (si el clock y la automatización funcionaron en la prueba):**
-1. **[C]+[A]** pantalla partida: Ableton reproduce el loop; la clip MIDI toca el bajo en el Brain.
-2. VO: *"Ableton le manda el tempo, y el LFO del Brain se sincroniza solo."* Encender LFO SYNC, LFO → cutoff: el bajo
-   "respira" a tempo. **[E]**
-3. Grabar 8 compases tocando ENC L y ENC R a mano. **[E]**
-4. Soltar las manos y reproducir: en Ableton aparece la curva; en la pantalla del Brain el cutoff se mueve solo. VO:
-   *"Ya no lo estoy tocando yo."*
-5. 15 s de música sin voz.
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T38 | **P6** | Ableton reproduce el loop; el clip MIDI toca el bajo en el Brain | "Ableton toca el bajo en mi synth…" |
+| T39 | **P2** | Enciendes LFO SYNC con LFO → cutoff; el bajo "respira" a tempo | "…y le manda el tempo: el LFO se sincroniza solo." |
+| T40 🔲V | **P2** + **P6** a la vez | Grabas 8 compases girando ENC L y ENC R; en Ableton se dibuja la automatización. **En edición: pantalla partida** | "Ahora grabo ocho compases moviendo el filtro." |
+| T41 🔲V | **P7** + **P6** | Sueltas las manos; reproduces: el cutoff se mueve solo en la pantalla del Brain y en Ableton | "Y ya no lo estoy tocando yo." |
+| T42 | **P3** | 15 s de música, el banco con los LEDs, sin manos | — |
 
-**Variante B (si algo falló):** el loop de Ableton + el bajo tocado desde el teclado MIDI, filtro a mano. Y contarlo:
-*"La sincronización con Ableton no funcionó hoy: esto es lo que vi."* Mostrar el monitor serie. Eso se arregla en el
-EP4.
+**Variante B** (si algo falló): T38 con el bajo tocado desde el teclado y el filtro a mano (P2), y luego:
 
-## 10:30-11:45 · Lo que falta y lo que viene
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T43 | **P6** | El monitor serie con el error | "La sincronización con Ableton hoy no funcionó. Esto es lo que vi. Lo arreglo y te lo muestro más adelante." |
 
-**[F]** VO (honesto, sin dramatizar):
-> "Esto es lo que todavía no está:
-> — La primera parte de la temporada es el estudio: encontrar mi sonido y meterlo en tracks.
-> — El **modo FX**, para meter todo mi set por los efectos del Brain en vivo: la página existe, el audio todavía no.
-> — La **placa y la caja**: ya están diseñadas, y en la serie vas a ver cómo: el modelado de la caja, los
->   esquemáticos y las PCBs. [Elige la frase que sea verdad el día de grabar: "las placas ya vienen en camino" /
->   "todavía no las mandé a fabricar".] Una revisión encontró que uno de los encoders está en un pin de la Teensy
->   que tiene un LED, y eso puede hacer que falle. Te lo cuento en su episodio.
-> — Y los **tracks**: cada episodio deja una parte de mi sonido.
->
-> El próximo episodio: arranco desde un sonido vacío en el motor inspirado en el Juno y no paro hasta tener la
-> línea de bajo y los acordes de mi primer track."
+## 7 · Lo que falta (10:30-11:45)
 
-## 11:45-12:00 · Cierre
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T44 | **P5** | A cámara | "Esto es lo que todavía no está. La primera parte de la temporada es el estudio: encontrar mi sonido y meterlo en tracks." |
+| T45 | **P5** | A cámara | "El modo FX, para meter mi set por los efectos del Brain en vivo: la página existe, el audio todavía no." |
+| T46 | **P5** | A cámara | "La placa y la caja ya están diseñadas, y vas a ver cómo: el modelado, los esquemáticos, las PCB. [Elige la verdad del día: 'las placas vienen en camino' / 'todavía no las mandé a fabricar'.]" |
+| T47 | **P5** | A cámara | "Una revisión encontró que uno de los encoders está en un pin de la Teensy que tiene un LED, y eso puede hacer que falle. Te lo cuento en su episodio." |
+| T48 | **P5** | A cámara | "El próximo episodio arranco desde un sonido vacío en el motor del Juno, y no paro hasta tener el bajo y los acordes de mi primer track." |
+| T49 | **P6** | La tabla de la temporada (Biblia §3), 3 s | (bajo T48) |
 
-**[F]** CTA único: *"Si quieres seguir el proceso, abajo está el link para dejarme tu correo. Y cuéntame en los
-comentarios qué sonido quieres que construya."*
-Último plano: [A] la mano soltando ENC L, el bajo sigue sonando, corte.
+## 8 · Cierre (11:45-12:00)
+
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T50 | **P5** | A cámara | "Si quieres seguir el proceso, abajo está el link para dejarme tu correo. Y cuéntame en los comentarios qué sonido quieres que construya." |
+| T51 | **P2** | Tu mano suelta ENC L; el bajo sigue sonando; corte | — |
 
 ---
 
 ## Packaging
 
 **Título principal:** *Construyo mi propio synth para encontrar mi sonido*
-**A/B:**
-1. *Estoy construyendo el synth de mis producciones (está en una protoboard)*
-2. *6 synths clásicos en una placa de 30 dólares (y los toco con Ableton)*
-3. *Dejé de buscar presets: construyo mi propio synth*
-4. *Construyendo mi synth, episodio 1: encontrar mi sonido*
+**A/B:** *Estoy construyendo el synth de mis producciones (está en una protoboard)* · *6 synths clásicos en una placa
+de 30 dólares (y los toco con Ableton)* · *Dejé de buscar presets: construyo mi propio synth*
 
-**Miniatura:** encuadre cerrado de tu foto: la protoboard en primer plano (los cables y el anillo azul encendido) y la
-pantalla con PERFORM a la derecha, el "800 Hz" legible. Tu mano en ENC L. Fondo oscurecido para que el anillo y la
-pantalla brillen. Texto (máx. 3 palabras): **"MI PROPIO SONIDO"**. Alternativa: **"HECHO A MANO"**.
+**Miniatura:** toma **P3** (frontal 45°) con exposición baja: la protoboard con el anillo de LEDs brillando, la
+pantalla PERFORM legible al fondo, tu mano en ENC L. Texto: **"MI PROPIO SONIDO"**. (Saca una foto fija en P3
+durante la sesión, es más fácil que sacarla del video.)
 
-**Descripción (primeras 2 líneas):** "Estoy construyendo mi propio synth para encontrar mi sonido: 6 motores
-inspirados en synths clásicos sobre una Teensy 4.1. Primero para mis producciones, después para mi live set.
-Episodio 1: qué es, cómo funciona y si ya sirve para hacer música con Ableton."
+**Descripción:** "Estoy construyendo mi propio synth para encontrar mi sonido: 6 motores inspirados en synths
+clásicos sobre una Teensy 4.1. Primero para mis producciones, después para mi live set. Episodio 1: qué es, cómo
+funciona y si ya sirve para hacer música con Ableton."
 
 ---
 
-## Shorts del EP1 (grabar en [V] durante las mismas tomas)
+## Shorts (salen de las mismas tomas)
 
-### Short 1 · Mind-blow — "Mi synth graba su propia automatización" (35-45 s)
-- **0-3 s:** pantalla partida: mano en la perilla | curva dibujándose en Ableton. VO: *"Giro esta perilla y Ableton
-  la está escribiendo."*
-- **3-30 s:** cada control del Brain manda su número de CC por USB; Ableton lo graba como automatización y después se
-  lo devuelve. Truco: el Brain ignora su propio eco 150 ms, si no, el filtro se trababa en 83 Hz.
-- **30-40 s:** reproducción, manos fuera, la pantalla del Brain moviéndose sola.
-- **Archivos:** `variants/studio/theory/07-studio-midi-expresion.md` §3; commit `a3c588c`.
-- Depende de la variante A del clímax.
-
-### Short 2 · Build/ASMR — "El banco" (20-30 s, sin voz)
-- **0-3 s:** macro del anillo de LEDs azul girando con NAV, el primer golpe del bajo.
-- **3-25 s:** encoder → filtro abriéndose → pantalla PERFORM → teclas → plano general del banco. Solo el audio del
-  Brain sobre el loop.
-- Texto final: "Episodio 1 en el canal".
-
-### Short 3 · Polémica — "¿Por qué no compro un Moog?" (40-50 s)
-- **0-3 s:** a cámara, la protoboard en la mano. VO: *"Me dicen: ¿por qué no te compras un Moog?"*
-- **3-35 s:** "Porque busco un sonido mío, y para eso lo quiero tocar, entender y cambiar. Esta placa cuesta unos 30 dólares y tiene 6 synths clásicos
-  adentro. ¿Suena igual que un Moog? No. Lo medí: te enseño los números en el episodio 2."
-- **35-45 s:** el bajo del Model D sonando, filtro abriéndose.
-- **Archivos:** `theory/fidelidad-engines.md` §0.
-- **Ojo:** no afirmar precios de los originales sin la fuente del día; no decir "suena igual".
+| Short | Tomas | Cómo se arma | Qué dices (nuevo, grábalo en P5 o en off) |
+|---|---|---|---|
+| **1 · "Mi synth graba su propia automatización"** (40 s) | T40, T41 (verticales) | Pantalla partida vertical: mano arriba, Ableton abajo | Arranque: "Giro esta perilla… y Ableton la está escribiendo." Cierre: "Cada perilla sale por MIDI con su número. Ableton la graba y después la toca sola." |
+| **2 · "El banco" (ASMR)** (25 s) | T1, T26-T31, T42 | Sin voz, solo el audio del Brain; cortes cada 2-3 s | — |
+| **3 · "¿Por qué no compro un Moog?"** (45 s) | T10-T15 + T1 | Tú a cámara con cortes al banco | Arranque: "Me dicen: ¿por qué no te compras un Moog?" Cierre: "Porque busco un sonido mío. ¿Suena igual que un Moog? No. Lo medí: te enseño los números en la serie." |
 
 ---
 
-## Plan de sesión (≈ 2 h 15 min)
+## Plan de sesión, ordenado por posición (≈ 2 h 15)
 
-| # | Setup | Toma | Para | Min |
-|---|---|---|---|---|
-| 1 | — | Pruebas de "Antes de grabar" (grabar en [C] el monitor serie por si falla algo) | clímax B | 15 |
-| 2 | A+E+V | Mano en ENC L, cutoff abriendo, sobre el loop (5 tomas) | cold open, Short 2 | 10 |
-| 3 | A+V | Anillo de LEDs, teclas, NAV, B1-B6 | B-roll, Short 2 | 10 |
-| 4 | A+B | Tour señalando cada pieza (una pasada continua y otra por partes) | 3:00-6:00 | 20 |
-| 5 | A+E | Engines, PERFORM, SYNTH FX, presets | 6:00-8:30 | 15 |
-| 6 | C+A+E+V | Clímax: Ableton + Brain, grabar la toma, reproducir | clímax, Short 1 | 25 |
-| 7 | C | Capturas: sketch49 cabecera, ADR-004, theory/05, 07, 08, fidelidad §0, `src/engines/` | todos | 15 |
-| 8 | F+V | Cold open a cámara, promesa, por qué, lo que falta, cierre, Short 3 | todos | 25 |
+| Orden | Posición | Tomas | Min |
+|---|---|---|---|
+| 1 | — | Pruebas de "Antes de grabar" (graba P6 del monitor serie por si algo falla) | 15 |
+| 2 | **P6** (pantalla del computador) | T13, T15, T32, T37, T49 + el loop de Ableton para el B-roll | 15 |
+| 3 | **P1** (cenital general) | T3, T16-T25 (el tour, de corrido y por partes) | 20 |
+| 4 | **P2** (cenital cerrado) | T1, T26-T31 (detalles), T33, T35, T39, T51, B-roll de NAV | 20 |
+| 5 | **P2 + P6** a la vez | Aplauso, T38, T40 (y T43 si hace falta) | 15 |
+| 6 | **P7** (pantalla del Brain) | T2, T33, T34, T36, T41 | 15 |
+| 7 | **P3** (frontal 45°) | T5, T42, detalles con LEDs, **foto de la miniatura** | 15 |
+| 8 | **P4** (rasante) | B-roll del anillo y la Teensy | 10 |
+| 9 | **P5** (a cámara) | T4, T6-T12, T14, T44-T48, T50 + las frases nuevas de los Shorts | 25 |

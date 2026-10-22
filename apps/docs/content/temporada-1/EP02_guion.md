@@ -1,187 +1,174 @@
 # EP2 — "Del INIT al bajo: encontrando mi sonido en el Juno" · guion para grabar
 
-> Temporada 1 · 🎹 Estudio. Duración objetivo: 12-13 min. Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
+> Temporada 1 · 🎹 Estudio · 12-13 min. Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
+> **Posiciones de cámara (P1-P7):** [`GUIA_CAMARA.md`](GUIA_CAMARA.md). Formato igual al EP1: cada fila es una toma
+> (**T**), con su posición, lo que se ve y lo que dices. **🔲V** = también en vertical.
+>
 > Resultado: la **línea de bajo** y los **acordes** del primer track, hechos en el motor inspirado en el Juno-106 y
 > guardados como presets. Cameo de GroovePilot en los acordes (ADR-002, enmienda del 2026-10-22).
->
-> Convenciones: **VO** voz · **[A]** cenital macro · **[C]** pantalla del computador · **[E]** audio directo ·
-> **[F]** a cámara · **[V]** vertical. Lo que dice la VO es guía: dilo con tus palabras, mantén los datos.
 
 ---
 
-## Antes de grabar (20 min, fuera de cámara)
+## Antes de grabar (20 min, sin cámara)
 
-- [ ] **Prueba del Juno (5 min).** SHIFT + NAV push → ENGINE SELECT → Juno-106. Toca notas graves y acordes;
-      recorre WAVE, SUB, RANGE, CHORUS y HPF en la página OSC. Si algo falla, **anota el síntoma y el commit** (sirve
-      para el EP4) y usa el **plan B**: bajo en el Model D, acordes en el Prophet. El guion se mantiene igual.
-- [ ] Ableton: tempo y tonalidad del track decididos (por ejemplo 122 BPM, La menor), un loop de batería de
-      8 compases, una pista MIDI con External Instrument (MIDI To = Teensy MIDI) y **una pista de audio armada** con
-      la entrada del LINE OUT del Brain.
-- [ ] La línea de bajo de 2 compases escrita en el piano roll (o tocada en el teclado y grabada).
-- [ ] GroovePilot listo para pedirle progresiones de acordes, con la forma de uso que tengas hoy. Si no está
-      disponible, el **plan B de los acordes** es tocarlos a mano (el guion lo contempla).
-- [ ] Preset de partida: **INIT** del banco del Juno (se crea solo si el banco está vacío; si no, carga el de
-      fábrica más neutro y dilo en cámara).
+- [ ] **Prueba del Juno (5 min).** SHIFT + NAV push → ENGINE SELECT → Juno-106. Toca graves y acordes; recorre WAVE,
+      SUB, RANGE, CHORUS y HPF en la página OSC. Si falla, anota síntoma + commit (material para el EP4) y usa el
+      **plan B**: bajo en el Model D, acordes en el Prophet. El guion no cambia.
+- [ ] Ableton: tempo y tonalidad del track (ej. 122 BPM, La menor), loop de batería de 8 compases, pista MIDI con
+      External Instrument (MIDI To = Teensy MIDI), **pista de audio armada** con el LINE OUT del Brain.
+- [ ] La línea de bajo de 2 compases en el piano roll.
+- [ ] GroovePilot listo para pedir progresiones. Si no está disponible: **plan B de los acordes** (tocarlos tú).
+- [ ] Preset de partida: **INIT** del Juno (si no está, el de fábrica más neutro; dilo en cámara).
+- [ ] Pantalla del Brain en PERFORM.
 
-**Dato técnico que define el episodio:** el Brain toca **un motor a la vez** (solo el motor activo procesa audio,
-encabezado del sketch49). Así que el flujo es el de un synth de hardware real: **grabar el bajo como audio, después
-cambiar de sonido y grabar los acordes.** Eso se muestra, no se esconde.
+**Dato que define el episodio:** el Brain toca **un motor a la vez**. Por eso el bajo se graba como audio y después
+se hacen los acordes. Se muestra como el flujo de un synth de hardware real.
+
+**Truco para que se oiga cada cambio:** el loop de 2 compases del bajo queda en repetición en Ableton durante toda la
+sección del bajo. Haces **un cambio por toma** y dejas sonar 2 compases (≈ 4 s a 122 BPM) antes y después.
 
 ---
 
-## 0:00-0:15 · Cold open
+## 1 · Cold open (0:00-0:15)
 
-| Tiempo | Imagen | Audio |
-|---|---|---|
-| 0:00 | **[A]+[C]** el loop terminado: batería, bajo y acordes, la mano en ENC L | El resultado final **[E]** |
-| 0:05 | Corte seco a la pantalla del Brain en INIT | Una nota de diente de sierra plana, "de manual" |
-| 0:08 | **[F]** | VO: *"Así termina este episodio. Y así empieza: con un sonido vacío. Hoy busco el bajo y los acordes de mi primer track en un solo motor, el inspirado en el Juno-106."* |
-
-## 0:15-1:00 · El track
-
-**[F]+[C]** (Ableton en pantalla):
-> "El track va a 122 [tu tempo], en La menor [tu tonalidad]. Ya tengo la batería. Le falta lo que lo hace mío: un bajo
-> con cuerpo y unos acordes que respiren. Elegí este motor porque el Juno original es simple: un oscilador, un sub,
-> un filtro, un chorus. Con poco hay que tomar decisiones, y eso es lo que quiero mostrar."
-
-## 1:00-5:30 · El bajo, paso a paso
-
-Cada paso: **un cambio, 2 compases de sonido [E]**, la pantalla del Brain visible. El espectador tiene que *oír*
-cada decisión. Página OSC (B1 en el panel; los slots con SHIFT están marcados).
-
-| # | Cambio | Dónde | VO (guía) |
+| T | Posición | Qué haces / qué se ve | Qué dices |
 |---|---|---|---|
-| 1 | INIT tal cual | — | "Punto de partida: una sierra con el filtro abierto. Suena a manual." |
-| 2 | WAVE → SQR (o PULSE) | OSC, slot WAVE | "La cuadrada tiene menos armónicos que la sierra: más redonda, deja espacio arriba." |
-| 3 | RANGE → 16' | OSC, slot RANGE | "Una octava abajo, sin tocar el piano roll." |
-| 4 | SUB arriba | OSC, slot SUB | "El sub es una cuadrada una octava más abajo. Aquí está el peso." |
-| 5 | Cutoff abajo con ENC L, RES baja | home / ENC L-R | "Cierro el filtro hasta que el bajo deja de pelear con el kick." |
-| 6 | FLT ENV AMT arriba + decay corto | ENV (B2) | "El envelope abre el filtro un instante en cada nota: ese es el *pluck*." |
-| 7 | VCA → GATE | OSC, slot VCA | "El Juno tiene un truco: el volumen on/off como un órgano, sin envelope. Notas más cortas y secas." |
-| 8 | CHORUS OFF, HPF 0 | OSC con SHIFT | "En el bajo, chorus apagado: los graves, en mono y quietos. Y el HPF en 0 para no quitarle cuerpo." |
-| 9 | (opcional) LFO lento al cutoff, LFO SYNC | LFO (B3) | "Un movimiento lento, al tempo de Ableton." |
+| T1 🔲V | **P3** frontal 45° | El loop terminado (batería + bajo + acordes); tu mano en ENC L | — |
+| T2 | **P7** pantalla del Brain | Corte seco: la pantalla en INIT; suena una sierra plana | — |
+| T3 | **P5** a cámara | Tú | "Así termina este episodio. Y así empieza: con un sonido vacío. Hoy busco el bajo y los acordes de mi primer track en un solo motor: el inspirado en el Juno-106." |
 
-**Pausa de ingeniería (≈ 1 min, [C]):** por qué este bajo no suena "digital barato":
-- El oscilador usa **polyBLEP**: el aliasing de una sierra en C6 bajó de **−23 dB a −70 dB**
-  (`apps/docs/theory/fidelidad-engines.md` §8). Mostrar la tabla 3 s.
-- El filtro del Juno tiene su propio carácter (IR3109) dentro del ladder ZDF (§9.4, fila 6).
-- Snippet opcional ≤ 20 líneas de `src/dsp/polyblep_core.h` (política de apertura).
+## 2 · El track (0:15-1:00)
 
-**Grabar el bajo:** 8 compases a la pista de audio **[C]**. VO: *"El Brain toca un motor a la vez, como un synth de
-hardware de verdad. Así que el bajo lo grabo como audio, y el Brain queda libre para el siguiente sonido."*
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T4 | **P6** pantalla del computador | Ableton con la batería sonando | "El track va a 122, en La menor. [Tus datos.] Ya tengo la batería." |
+| T5 | **P5** | A cámara | "Le falta lo que lo hace mío: un bajo con cuerpo y unos acordes que respiren." |
+| T6 | **P5** | A cámara | "Elegí este motor porque el Juno original es simple: un oscilador, un sub, un filtro, un chorus. Con poco tienes que decidir, y eso es lo que quiero mostrar." |
 
-**Guardar el preset:** SHIFT + B4 → PRESETS → NAV push sobre SAVE. Queda como **USER nn**. VO honesto: *"Todavía no
-le puedo poner nombre desde el panel: está en la lista de pendientes."* (theory/06 §4, fase 2).
+## 3 · El bajo, paso a paso (1:00-5:30)
 
-## 5:30-9:30 · Los acordes
+Para cada paso graba **dos tomas**: **P2** (la mano haciendo el cambio, hablando) y **P7** (la pantalla del Brain
+mostrando el valor, sin hablar). En la edición se alternan. La página es OSC (B1); los marcados con SHIFT se ven
+manteniendo SHIFT.
 
-### 5:30-6:45 · La idea: cameo de GroovePilot
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T7 | **P2** + **P7** | INIT tal cual, 2 compases | "Punto de partida: una sierra con el filtro abierto. Suena a manual." |
+| T8 | **P2** + **P7** | WAVE → SQR (o PULSE) | "Cambio a onda cuadrada: tiene menos armónicos que la sierra. Más redonda, y deja espacio arriba." |
+| T9 | **P2** + **P7** | RANGE → 16' | "Una octava más abajo, sin tocar el piano roll." |
+| T10 | **P2** + **P7** | SUB arriba | "El sub es otra cuadrada, una octava más abajo. Aquí está el peso." |
+| T11 | **P2** + **P7** | En PERFORM: cierras el cutoff con ENC L, resonancia baja con ENC R | "Cierro el filtro hasta que el bajo deja de pelear con el kick." |
+| T12 | **P2** + **P7** | ENV (B2): FLT ENV AMT arriba, decay corto | "El envelope abre el filtro un instante en cada nota. Ese golpecito es el *pluck*." |
+| T13 | **P2** + **P7** | VCA → GATE | "El Juno tiene un truco: el volumen se prende y se apaga como un órgano, sin envelope. Las notas quedan más secas." |
+| T14 | **P2** + **P7** | SHIFT: CHORUS OFF, HPF 0 | "En el bajo, el chorus apagado: los graves quietos y en el centro. Y el filtro de graves en cero, para no quitarle cuerpo." |
+| T15 (opcional) | **P2** + **P7** | LFO (B3): LFO lento al cutoff, LFO SYNC | "Un movimiento lento, al tempo de Ableton." |
 
-**[C]** + VO:
-> "Para los acordes le pedí ideas a GroovePilot, el otro proyecto en el que trabajo. Le di la tonalidad y el tempo y
-> me propuso cuatro progresiones. Escucha."
+**Pausa de ingeniería (≈ 1 min)**
 
-- Pasar las 4 opciones rápido, 4 compases cada una, con un piano simple de Ableton (no con el Brain todavía).
-- Elegir una y **editarla en el piano roll**: cambiar un voicing, mover una nota, alargar un acorde. Que se vea la
-  mano.
-- Rótulo en pantalla durante todo el segmento: **"Idea MIDI: GroovePilot · Elección y edición: yo"**.
-- VO: *"Me quedé con esta, y le cambié esto y esto. La IA me dio un punto de partida; el sonido y la decisión son
-  míos. Y ahora los toco con mi synth."*
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T16 | **P5** | A cámara | "¿Por qué este bajo no suena a synth digital barato? Dos razones." |
+| T17 | **P6** | `apps/docs/theory/fidelidad-engines.md` §8, la fila de polyBLEP resaltada | "Uno: el oscilador está hecho para no generar *aliasing*, esos tonos falsos que aparecen en los agudos. Lo medí: bajó de menos 23 a menos 70 decibeles." |
+| T18 | **P6** | §9.4, la fila 6 (filtros Juno / Prophet) | "Dos: el filtro tiene el carácter del chip del Juno original, no el de un Moog." |
+| T19 (opcional) | **P6** | Snippet ≤ 20 líneas de `src/dsp/polyblep_core.h` | "Para los que les gusta el código: esta es la parte que corrige cada salto de la onda." |
 
-**Plan B (sin GroovePilot):** tocas los acordes en el teclado y grabas el MIDI. Quitas el rótulo. El resto igual.
+**Grabar y guardar el bajo**
 
-### 6:45-9:30 · El sonido del acorde
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T20 | **P6** | Ableton grabando 8 compases en la pista de audio | "El Brain toca un motor a la vez, como un synth de hardware de verdad. Así que el bajo lo grabo como audio, y el Brain queda libre para el siguiente sonido." |
+| T21 | **P2** + **P7** | SHIFT + B4 → PRESETS → NAV push sobre SAVE; aparece USER nn | "Lo guardo. Todavía no le puedo poner nombre desde el panel: está en la lista de pendientes." |
 
-Volver a INIT o duplicar el preset del bajo. Mismo método: un cambio, 2 compases.
+## 4 · Los acordes (5:30-9:30)
 
-| # | Cambio | VO (guía) |
-|---|---|---|
-| 1 | WAVE → SAW+PLS, RANGE 8' | "Sierra y pulso juntos: más ancho para acordes." |
-| 2 | Attack lento, release largo (ENV) | "El acorde entra despacio y se queda: que respire." |
-| 3 | Cutoff a la mitad, FLT ENV AMT bajo | "Que no tape al bajo de abajo ni al lead que vendrá arriba." |
-| 4 | HPF 1-2 | "Aquí sí le quito graves: el bajo ya los tiene." |
-| 5 | **CHORUS I → II → I+II** (2 compases cada uno) | "El sonido por el que el Juno es famoso." |
+**La idea: cameo de GroovePilot** (aplaude al empezar si grabas P6 y cámara a la vez)
 
-**Pausa de ingeniería del chorus (≈ 1 min, [C]):**
-- El original tiene **dos líneas de retardo BBD con el LFO invertido**, una a la izquierda y otra a la derecha. El
-  Brain hace lo mismo: dos lecturas de la misma línea, con el LFO en sentidos opuestos
-  (`fidelidad-engines.md` §9.3).
-- Al principio el chorus del Brain era **mono**, y lo medí: ahora es estéreo, con correlación L/R 0.78 (§9.4).
-- Velocidades I y II: 0.513 y 0.863 Hz (§8).
-- **Momento de audífonos:** pedirle al espectador que se ponga audífonos y alternar chorus OFF ↔ I+II.
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T22 | **P5** | A cámara | "Para los acordes le pedí ideas a GroovePilot, el otro proyecto en el que trabajo. Le di la tonalidad y el tempo, y me propuso cuatro progresiones." |
+| T23 🔲V | **P6** | Las 4 opciones, 4 compases cada una, con un piano de Ableton. **Rótulo en edición, todo el segmento: "Idea MIDI: GroovePilot · Elección y edición: yo"** | "Escucha. Uno… dos… tres… cuatro." |
+| T24 🔲V | **P6** | Eliges una y la editas en el piano roll: un voicing, una nota, un acorde más largo. Que se vea el mouse | "Me quedo con esta. Le cambio esto… y esto." |
+| T25 | **P5** | A cámara | "La IA me dio un punto de partida. El sonido y la decisión son míos. Y ahora los toco con mi synth." |
 
-**Efectos del synth (opcional, 30 s):** B4 → SYNTH FX: TAPE un poco y MODAL REVERB corto. *"Los cuatro efectos juntos
-usan alrededor del 6 % del procesador."* (theory/05 §2).
+**Plan B (sin GroovePilot):** T23-T25 se reemplazan por P2: tocas los acordes en el teclado y grabas el MIDI.
+Dices: *"Para los acordes, toco hasta encontrar algo."* Sin rótulo.
 
-Grabar los acordes como audio. Guardar el preset.
+**El sonido del acorde** (mismo método: P2 + P7 por paso; el MIDI de los acordes en repetición)
 
-## 9:30-11:30 · El loop
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T26 | **P2** + **P7** | INIT o duplicas el preset del bajo; WAVE → SAW+PLS, RANGE 8' | "Sierra y pulso juntos: más ancho para acordes." |
+| T27 | **P2** + **P7** | ENV: attack lento, release largo | "El acorde entra despacio y se queda. Que respire." |
+| T28 | **P2** + **P7** | Cutoff a la mitad, FLT ENV AMT bajo | "Que no tape al bajo de abajo ni al lead que va a venir arriba." |
+| T29 | **P2** + **P7** | SHIFT: HPF 1-2 | "Aquí sí le quito graves: el bajo ya los tiene." |
+| T30 🔲V | **P2** + **P7** | SHIFT: CHORUS OFF → I → II → I+II, 2 compases cada uno | "Y ahora, el sonido por el que el Juno es famoso: el chorus. Apagado… uno… dos… los dos." |
 
-- **[C]+[E]** las tres pistas juntas: batería, bajo, acordes. 8 compases sin voz.
-- **[A]** la mano moviendo ENC L sobre los acordes mientras suena el loop (si quieres, reproduce el MIDI de los
-  acordes en vivo en vez del audio, y toca el filtro).
-- VO corta: *"Dos sonidos, un motor, y ya suena a mí."*
+**Pausa de ingeniería del chorus (≈ 1 min)**
 
-## 11:30-12:30 · Cierre
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T31 | **P5** | A cámara | "Ponte audífonos para esto." |
+| T32 | **P6** | `fidelidad-engines.md` §9.3, o un dibujo simple: dos líneas de retardo, una a cada lado, con el LFO en sentidos opuestos | "El Juno original tiene dos líneas de retardo, una a la izquierda y otra a la derecha, y un LFO que las mueve en sentidos opuestos. Por eso el sonido se abre en estéreo." |
+| T33 | **P6** | §9.4, la fila del chorus (mono → estéreo, correlación 0.78) | "Al principio el mío era mono. Lo medí, lo arreglé, y ahora es estéreo." |
+| T34 | **P2** | CHORUS OFF ↔ I+II, alternando cada 2 compases | — |
+| T35 (opcional) | **P2** | B4 → SYNTH FX: un poco de TAPE y REVERB corto | "Un poco de cinta y de reverb. Los cuatro efectos juntos usan alrededor del 6 % del procesador." |
+| T36 | **P6** | Grabas los acordes como audio; SAVE del preset (P2 rápido) | "Grabo los acordes y los guardo." |
 
-**[F]**:
-> "Bajo y acordes del primer track, guardados como presets. Lo que aprendí hoy: con un motor simple decides más
-> rápido. Y que tocar un motor a la vez te obliga a trabajar como con un synth de verdad: grabas y sigues.
->
-> El próximo episodio salgo del estudio: te muestro cómo diseñé la caja de este synth, y por qué el primer diseño no
-> cerraba."
+## 5 · El loop (9:30-11:30)
 
-CTA: *"Si quieres seguir el proceso, déjame tu correo. Y dime en los comentarios qué motor quieres que pruebe
-después."*
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T37 | **P6** | Las tres pistas sonando juntas, 8 compases | — |
+| T38 🔲V | **P3** | Tu mano mueve ENC L sobre los acordes (reproduce el MIDI de los acordes en vivo, no el audio, para poder tocar el filtro) | — |
+| T39 | **P4** rasante | El anillo de LEDs y las perillas con el loop sonando | — |
+| T40 | **P5** | A cámara | "Dos sonidos, un motor, y ya suena a mí." |
+
+## 6 · Cierre (11:30-12:30)
+
+| T | Posición | Qué haces / qué se ve | Qué dices |
+|---|---|---|---|
+| T41 | **P5** | A cámara | "Bajo y acordes del primer track, guardados. Lo que aprendí: con un motor simple decides más rápido. Y tocar un motor a la vez te obliga a trabajar como con un synth de verdad: grabas y sigues." |
+| T42 | **P5** | A cámara | "El próximo episodio salgo del estudio: te muestro cómo diseñé la caja de este synth, y por qué el primer diseño no cerraba." |
+| T43 | **P5** | A cámara | "Si quieres seguir el proceso, déjame tu correo. Y dime en los comentarios qué motor quieres que pruebe después." |
 
 ---
 
 ## Packaging
 
 **Título principal:** *Del INIT al bajo: encontrando mi sonido en el Juno*
-**A/B:**
-1. *Hice el bajo y los acordes de mi track con UN solo motor*
-2. *El chorus que hizo famoso al Juno-106, en mi synth casero*
-3. *Diseño de sonido desde cero en un synth que construí yo*
-4. *Le pedí acordes a una IA. Me quedé con uno y lo cambié*
+**A/B:** *Hice el bajo y los acordes de mi track con UN solo motor* · *El chorus que hizo famoso al Juno-106, en mi
+synth casero* · *Le pedí acordes a una IA. Me quedé con uno y lo cambié*
 
-**Miniatura:** pantalla del Brain con la página OSC (WAVE, SUB, CHORUS) a la izquierda, onda de PERFORM a la derecha;
-mano en un encoder. Texto: **"DESDE CERO"**.
+**Miniatura:** foto en **P3**: la pantalla del Brain con la página OSC (WAVE, SUB, CHORUS) y tu mano en un encoder,
+exposición baja para que se lean los valores. Texto: **"DESDE CERO"**.
 
 ---
 
-## Shorts del EP2
+## Shorts (salen de las mismas tomas)
 
-### Short 1 · Mind-blow — "El chorus que hizo famoso al Juno" (40 s)
-- **0-3 s:** acorde seco → el mismo con CHORUS I+II. Texto: "🎧 con audífonos".
-- **3-35 s:** dos retardos, el LFO invertido entre izquierda y derecha; el mío era mono y lo arreglé (correlación
-  0.78). Alternar OFF ↔ ON.
-- **Archivos:** `fidelidad-engines.md` §9.3-9.4.
+| Short | Tomas | Cómo se arma | Qué dices (nuevo) |
+|---|---|---|---|
+| **1 · "El chorus que hizo famoso al Juno"** (40 s) | T30, T32-T34 | Texto "🎧 con audífonos" al inicio; acorde seco → con chorus | Arranque: "Escucha este acorde… y ahora con el chorus del Juno." Cierre: "Dos retardos, uno a cada lado, con el LFO al revés. El mío era mono. Ya no." |
+| **2 · "De INIT a bajo en 30 segundos"** (30 s, sin voz) | T7-T14 (verticales de P2) | 3 s por paso, el nombre del cambio escrito en pantalla, termina con el loop | — |
+| **3 · "Le pedí acordes a una IA"** (45 s) | T22-T25 + T30 | Tú a cámara, las 4 opciones, la edición, el resultado en el Brain | Arranque: "Le pedí los acordes de mi track a una IA… y esto es lo que hice." Cierre: "La IA da ideas, la decisión es tuya. ¿Tú la usarías para esto? Te leo." |
 
-### Short 2 · Build/ASMR — "De INIT a bajo en 30 segundos" (30 s, sin voz)
-- **0-3 s:** el INIT plano.
-- **3-30 s:** los 9 pasos del bajo, 3 s cada uno, con el nombre del cambio en pantalla y la mano en el encoder. Termina
-  con el loop.
-
-### Short 3 · Polémica — "Le pedí acordes a una IA" (45 s)
-- **0-3 s:** *"Le pedí los acordes de mi track a una IA."* (pausa) *"Y esto es lo que hice."*
-- **3-40 s:** las 4 propuestas, cuál elegí, qué le cambié a mano, y cómo suena en mi synth. Mensaje: la IA da ideas,
-  la decisión es tuya.
-- **40-45 s:** *"¿Usarías IA para esto o no? Te leo."*
-- **Ojo:** sin plan B (si no usaste GroovePilot), este Short se cambia por *"Mi synth solo toca un motor a la vez (y
-  está bien)"*: 28 filtros a la vez pasaban del 200 % de CPU (encabezado del sketch49).
+Sin GroovePilot, el Short 3 pasa a: **"Mi synth solo toca un motor a la vez (y está bien)"**, con T20 y la frase:
+*"Con todos los filtros encendidos a la vez, el procesador pasaba del 200 %."* (encabezado del sketch49).
 
 ---
 
-## Plan de sesión (≈ 2 h)
+## Plan de sesión, ordenado por posición (≈ 2 h)
 
-| # | Setup | Toma | Para | Min |
-|---|---|---|---|---|
-| 1 | — | Prueba del Juno y de GroovePilot (anotar todo) | plan A/B | 20 |
-| 2 | A+C+E+V | Bajo: los 9 pasos, 2 compases cada uno, grabando audio | 1:00-5:30, Short 2 | 25 |
-| 3 | C+E | Grabar el bajo como audio, guardar preset | 5:30 | 5 |
-| 4 | C+V | GroovePilot: 4 opciones, elegir, editar | 5:30-6:45, Short 3 | 10 |
-| 5 | A+C+E+V | Acordes: 5 pasos, chorus OFF / I / II / I+II | 6:45-9:30, Short 1 | 20 |
-| 6 | A+C+E | El loop completo + mano en el filtro | 9:30-11:30, cold open | 10 |
-| 7 | C | Capturas: fidelidad §8, §9.3-9.4, theory/05 §2, theory/06 §4, sketch49 encabezado | pausas | 10 |
-| 8 | F+V | Cold open, el track, cierre, Short 3 a cámara | todos | 20 |
+| Orden | Posición | Tomas | Min |
+|---|---|---|---|
+| 1 | — | Prueba del Juno y de GroovePilot | 20 |
+| 2 | **P2 + P7** (alternando por paso, con el loop sonando) | T7-T15, T21, T26-T30, T34-T35 | 40 |
+| 3 | **P6** (pantalla del computador) | T4, T17-T20, T23-T24, T32-T33, T36, T37 | 20 |
+| 4 | **P3** (frontal 45°) | T1, T38, **foto de la miniatura** | 10 |
+| 5 | **P4** (rasante) | T39 | 5 |
+| 6 | **P7** solo | T2 | 2 |
+| 7 | **P5** (a cámara) | T3, T5, T6, T16, T22, T25, T31, T40-T43 + frases de los Shorts | 20 |
+
+**Consejo para P2 + P7:** si tienes una sola cámara, haz primero **todos los pasos en P2** (el bajo completo, de INIT
+a T15), guarda el preset, vuelve a cargar INIT y repite **todos los pasos en P7**. Es más rápido que mover la cámara
+en cada paso.

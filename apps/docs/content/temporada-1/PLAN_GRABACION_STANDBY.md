@@ -1,7 +1,8 @@
 # Plan de grabación mientras llegan las piezas
 
 > 2026-10-22. Mientras esperas las PCBs y las piezas del Push, se puede grabar **todo el Acto 1** (EP1-EP9).
-> Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md).
+> Biblia: [`BIBLIA_T1_LIVESET.md`](BIBLIA_T1_LIVESET.md). Cámara: [`GUIA_CAMARA.md`](GUIA_CAMARA.md) (cada guion trae su plan
+> de sesión ordenado por posición).
 
 ## Principio: grabar en bloque, publicar espaciado
 

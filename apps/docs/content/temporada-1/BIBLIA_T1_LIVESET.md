@@ -6,7 +6,8 @@
 > Decisiones de fondo: [`../adr/ADR-002-comunidad-primero-un-device.md`](../adr/ADR-002-comunidad-primero-un-device.md).
 >
 > **Guiones listos para grabar:** [`EP01_guion.md`](EP01_guion.md) · [`EP02_guion.md`](EP02_guion.md) ·
-> [`EP03_guion.md`](EP03_guion.md). **Qué grabar mientras llegan las piezas:**
+> [`EP03_guion.md`](EP03_guion.md). **Cámara, posiciones y ángulos:** [`GUIA_CAMARA.md`](GUIA_CAMARA.md).
+> **Qué grabar mientras llegan las piezas:**
 > [`PLAN_GRABACION_STANDBY.md`](PLAN_GRABACION_STANDBY.md).
 
 ---
