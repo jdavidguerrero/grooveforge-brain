@@ -45,6 +45,13 @@ no existe".
    semana); conversación real en los comentarios; personas que construyen algo a partir del contenido. La lista de
    correo se abre igual: no es monetizar, es la audiencia propia.
 
+### Enmienda 2026-10-22 (punto 5): cameos de GroovePilot
+
+Juan pidió un guiño a GroovePilot en la Temporada 1 (acordes en el EP2). Se permite como **cameo**, no como tema
+del episodio: GroovePilot propone ideas MIDI (por ejemplo, progresiones de acordes); el músico elige, edita a mano y
+lo toca con el Brain; un rótulo en pantalla dice qué hizo la IA y qué hizo el músico. Si en un episodio la IA ocupa
+más que eso, deja de ser un cameo y espera a la temporada de IA.
+
 ## Options Considered
 
 ### A: Mantener ADR-001 (rampa hacia la venta)

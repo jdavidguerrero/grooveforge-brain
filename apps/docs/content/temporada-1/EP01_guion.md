@@ -124,14 +124,14 @@ EP4.
 > "Esto es lo que todavía no está:
 > — La primera parte de la temporada es el estudio: encontrar mi sonido y meterlo en tracks.
 > — El **modo FX**, para meter todo mi set por los efectos del Brain en vivo: la página existe, el audio todavía no.
-> — La **placa y la caja**: los PCBs están diseñados, pero no los mandé a fabricar. Una revisión encontró que uno de
->   los encoders está en un pin de la Teensy que tiene un LED, y eso puede hacer que falle. Te lo cuento en su
->   episodio.
-> — Y los **tracks**: cada episodio deja una parte del set.
+> — La **placa y la caja**: ya están diseñadas, y en la serie vas a ver cómo: el modelado de la caja, los
+>   esquemáticos y las PCBs. [Elige la frase que sea verdad el día de grabar: "las placas ya vienen en camino" /
+>   "todavía no las mandé a fabricar".] Una revisión encontró que uno de los encoders está en un pin de la Teensy
+>   que tiene un LED, y eso puede hacer que falle. Te lo cuento en su episodio.
+> — Y los **tracks**: cada episodio deja una parte de mi sonido.
 >
-> El próximo episodio: los 6 synths, cuál es el sonido de mi primer track, y cuál todavía no suena como debería."
-
-**[C]** la tabla de la temporada (§3 de la Biblia), los 9 episodios, 3 segundos.
+> El próximo episodio: arranco desde un sonido vacío en el motor inspirado en el Juno y no paro hasta tener la
+> línea de bajo y los acordes de mi primer track."
 
 ## 11:45-12:00 · Cierre
 
