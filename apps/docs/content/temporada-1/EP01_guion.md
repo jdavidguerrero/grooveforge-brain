@@ -56,8 +56,10 @@
 
 ## 4 · Tour del banco (3:00-6:00)
 
-Toda esta sección es **P1** (cenital general) con tu dedo señalando, más un detalle en **P2** o **P3** de cada pieza
-para cortar encima. Graba primero la pasada completa en P1 hablando, y después los detalles sin hablar.
+Toda esta sección es el **cenital** con tu dedo señalando. Los detalles en **P2** salen recortando esa misma
+grabación (guía §2b): no hace falta grabarlos aparte. Graba la pasada completa hablando, y después, sin mover el
+brazo, repite cada gesto sin hablar (girar ENC L, apretar botones) para tener detalles limpios. Los detalles con
+LEDs brillando van en **P3**.
 
 | T | Posición | Qué haces / qué se ve | Qué dices |
 |---|---|---|---|
@@ -155,16 +157,15 @@ funciona y si ya sirve para hacer música con Ableton."
 
 ---
 
-## Plan de sesión, ordenado por posición (≈ 2 h 15)
+## Plan de sesión, ordenado por posición (≈ 2 h 10)
 
 | Orden | Posición | Tomas | Min |
 |---|---|---|---|
 | 1 | — | Pruebas de "Antes de grabar" (graba P6 del monitor serie por si algo falla) | 15 |
 | 2 | **P6** (pantalla del computador) | T13, T15, T32, T37, T49 + el loop de Ableton para el B-roll | 15 |
-| 3 | **P1** (cenital general) | T3, T16-T25 (el tour, de corrido y por partes) | 20 |
-| 4 | **P2** (cenital cerrado) | T1, T26-T31 (detalles), T33, T35, T39, T51, B-roll de NAV | 20 |
-| 5 | **P2 + P6** a la vez | Aplauso, T38, T40 (y T43 si hace falta) | 15 |
-| 6 | **P7** (pantalla del Brain) | T2, T33, T34, T36, T41 | 15 |
-| 7 | **P3** (frontal 45°) | T5, T42, detalles con LEDs, **foto de la miniatura** | 15 |
-| 8 | **P4** (rasante) | B-roll del anillo y la Teensy | 10 |
-| 9 | **P5** (a cámara) | T4, T6-T12, T14, T44-T48, T50 + las frases nuevas de los Shorts | 25 |
+| 3 | **Cenital fijo** (P1 + P2 en la edición) | T3, T16-T25 (el tour, de corrido y por partes); después, sin hablar: T1, T26-T31, T33, T35, T39, T51, B-roll de NAV | 35 |
+| 4 | **Cenital fijo + P6** a la vez | Aplauso, T38, T40 (y T43 si hace falta) | 15 |
+| 5 | **P7** (pantalla del Brain) | T2, T33, T34, T36, T41 | 15 |
+| 6 | **P3** (frontal 45°) | T5, T42, detalles con LEDs, **foto de la miniatura** | 15 |
+| 7 | **P4** (rasante) | B-roll del anillo y la Teensy | 10 |
+| 8 | **P5** (a cámara) | T4, T6-T12, T14, T44-T48, T50 + las frases nuevas de los Shorts | 25 |

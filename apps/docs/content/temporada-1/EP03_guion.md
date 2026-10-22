@@ -4,7 +4,8 @@
 > **Posiciones de cámara (P1-P7):** [`GUIA_CAMARA.md`](GUIA_CAMARA.md). Formato igual al EP1.
 >
 > Casi todo es **P6** (grabación de la pantalla del computador: Claude Design, FreeCAD) y **P5** (a cámara). Las
-> piezas reales se graban en **P2** (cenital cerrado) sobre la mesa vacía, como en tu foto con el brazo.
+> piezas reales se graban con el **cenital fijo** sobre la mesa vacía, como en tu foto con el brazo; el **P2** es el
+> recorte 2× de esa toma en la edición (guía §2b).
 > Fuentes: `apps/docs/variants/studio/design/README.md`, `apps/docs/variants/studio/theory/02-studio-pcb.md`
 > (§1-§3, §10E), commits `d212df0`, `21ece79`, `2bc6abe`.
 
@@ -120,6 +121,5 @@ derecha, foto **P2** del encoder real en tu mano. Texto: **"NO CABÍA"**.
 |---|---|---|---|
 | 1 | **P6** navegador | T6-T10, T21 | 15 |
 | 2 | **P6** FreeCAD | T1, T13, T14, T17-T20, T22, T23, T25 | 25 |
-| 3 | **P2** piezas sobre la mesa | T2, T11, T12, T16 + B-roll de cada pieza | 15 |
-| 4 | **P1** | T4 | 5 |
-| 5 | **P5** (a cámara) | T3, T5, T15, T24, T26, T27 + frases de los Shorts | 20 |
+| 3 | **Cenital fijo** (P1 + P2 en la edición): piezas sobre la mesa | T2, T11, T12, T16, T4 + B-roll de cada pieza. Para el calibre en T11 (detalle chico), baja el brazo al final | 20 |
+| 4 | **P5** (a cámara) | T3, T5, T15, T24, T26, T27 + frases de los Shorts | 20 |

@@ -47,7 +47,8 @@ sección del bajo. Haces **un cambio por toma** y dejas sonar 2 compases (≈ 4 
 
 ## 3 · El bajo, paso a paso (1:00-5:30)
 
-Para cada paso graba **dos tomas**: **P2** (la mano haciendo el cambio, hablando) y **P7** (la pantalla del Brain
+Para cada paso graba **dos tomas**: **P2** (la mano haciendo el cambio, hablando; sale del cenital fijo con zoom en la
+edición) y **P7** (la pantalla del Brain
 mostrando el valor, sin hablar). En la edición se alternan. La página es OSC (B1); los marcados con SHIFT se ven
 manteniendo SHIFT.
 
@@ -162,13 +163,15 @@ Sin GroovePilot, el Short 3 pasa a: **"Mi synth solo toca un motor a la vez (y e
 | Orden | Posición | Tomas | Min |
 |---|---|---|---|
 | 1 | — | Prueba del Juno y de GroovePilot | 20 |
-| 2 | **P2 + P7** (alternando por paso, con el loop sonando) | T7-T15, T21, T26-T30, T34-T35 | 40 |
+| 2 | **Cenital fijo** (P2 en la edición), con el loop sonando | T7-T15, T21, T26-T30, T34-T35 | 20 |
+| 2b | **P7** (pantalla del Brain): se repiten los mismos pasos | T7-T15, T26-T30 | 20 |
 | 3 | **P6** (pantalla del computador) | T4, T17-T20, T23-T24, T32-T33, T36, T37 | 20 |
 | 4 | **P3** (frontal 45°) | T1, T38, **foto de la miniatura** | 10 |
 | 5 | **P4** (rasante) | T39 | 5 |
 | 6 | **P7** solo | T2 | 2 |
 | 7 | **P5** (a cámara) | T3, T5, T6, T16, T22, T25, T31, T40-T43 + frases de los Shorts | 20 |
 
-**Consejo para P2 + P7:** si tienes una sola cámara, haz primero **todos los pasos en P2** (el bajo completo, de INIT
-a T15), guarda el preset, vuelve a cargar INIT y repite **todos los pasos en P7**. Es más rápido que mover la cámara
-en cada paso.
+**Consejo para P2 + P7:** si tienes una sola cámara, haz primero **todos los pasos con el cenital fijo** (el bajo
+completo, de INIT a T15, y los acordes), guarda los presets, vuelve a cargar INIT y repite **todos los pasos en P7**.
+Es más rápido que mover la cámara en cada paso. Con dos cámaras (el celular en P7 y otra en el cenital), un solo
+paso basta.
