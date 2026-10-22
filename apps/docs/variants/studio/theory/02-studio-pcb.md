@@ -503,6 +503,11 @@ pedido hasta cerrar F1–F4. Cómo se cierra cada uno:
   conectado: ~0.4 V = 0.5–0.9 A por defecto, ~0.9 V = 1.5 A, **~1.7 V = 3 A** (Rp de la fuente sobre 5.1 kΩ).
   Verificar en las dos orientaciones del conector.
 - **TVS D1 (SMBJ5.0CA):** protege de transitorios; no regula ni hace segura una fuente de 9 V.
+- **Fuente elegida (Juan, 2026-10-22):** la **oficial de Raspberry Pi 4** (5.1 V · 3 A, USB-C, cable fijo). Una sola
+  fuente para todo: la portadora reparte a la Pi (J6), a la Teensy (VIN, con el puente VUSB–VIN cortado; de ahí
+  sale el 5 V del USB host) y a los LEDs. Los 5.1 V compensan ~0.1 V de caída hasta la Pi (pista + fusible +
+  hilos) y quedan ~5.0 V, sobre el umbral de undervoltage (4.63 V). El módulo consumidor con Rd sigue siendo
+  necesario: con Rd funciona con cualquier fuente USB-C, sin depender de cómo responda esta sin ellas.
 
 ### F3 — Camino de corriente: presupuesto, conectores y cable de la Pi
 
