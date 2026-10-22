@@ -138,6 +138,15 @@ Vertical, eje estriado de 6 mm con el mismo número de estrías que el EC11 (par
 1.5 mm por debajo de uno en reposo (con knobs iguales casi no se nota).
 El modelo exacto se elige en LCSC antes de comprar (y define el agujero del aluminio).
 
+**Modelo elegido (Juan, 2026-10-22): ALPS RK09L114001T**, vertical, 10 kΩ, eje metálico con cara plana (eje D),
+L = 20 mm desde el plano de montaje, buje roscado. Encaja en la huella `Alpha RD901F-40` de PCB-A (fila de pines a
+7.5 mm del eje, patas a ±4.75 mm; la RK09K no encaja). Diferencias con lo previsto:
+- **Knobs impresos y distintos de los de los EC11**, con **indicador de posición** (el pot es absoluto; el encoder
+  no) y agujero para eje D de 6 mm. Ya no hace falta el mismo estriado del EC11.
+- **Al recibirlo:** confirmar la marca del cuerpo **B103 / B10K** (lineal; A sería logarítmico), medir la altura
+  total desde el plano de los pines hasta la punta (objetivo ~25 mm) y hasta el final del buje, y su rosca: si el
+  buje llega al aluminio, el agujero pasa de Ø7 a ~Ø7.4 en `panel-aluminio.dxf`.
+
 ## 6. Conexiones entre placas
 
 ### 6.1 PCB-K ↔ PCB-A

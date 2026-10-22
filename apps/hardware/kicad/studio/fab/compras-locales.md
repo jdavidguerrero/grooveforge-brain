@@ -45,7 +45,7 @@ Con las medidas reales de jacks y conectores se ajustan los agujeros del cuerpo 
 
 | Cant. | Pieza | Verificar | Nota |
 |---|---|---|---|
-| 2 | **Potenciómetro 9 mm vertical B10K lineal** (Alpha RD901F-40 / "RV09 vertical") | 3 pines a **2.5 mm**, fila a **7.5 mm** del eje, patas de anclaje a **±4.8 mm** del eje; eje estriado Ø6, ~25 mm desde la base | IN y VOL. **Comprar antes del pedido de PCB:** si la geometría no coincide, se cambia la huella de PCB-A |
+| 2 | **Potenciómetro ALPS RK09L114001T** (vertical, 10 kΩ, eje D, L = 20 mm) — o Alpha RD901F-40; **no** RK09K | que sea **B103 / B10K lineal** (marca del cuerpo); altura total ~25 mm desde la base; rosca y alto del buje | IN y VOL. Knobs impresos con **indicador** y agujero para eje D de 6 mm (theory/02 §5) |
 | 15 | Condensador cerámico **10 nF 0603** | | antirrebote de los encoders. **Opcional**: el firmware puede filtrar el rebote |
 | 2 | Condensador **100 nF 0603** | | filtro de los pots. Opcional |
 | 1 | Condensador **10 µF 0805** | | desacople de 3V3 en PCB-A. Recomendado |
