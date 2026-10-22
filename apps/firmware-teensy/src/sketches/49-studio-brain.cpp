@@ -949,8 +949,14 @@ void setup() {
 
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, studio::PANEL_LEDS);
     FastLED.setBrightness(80);
-    // Tope de consumo de los 18 LEDs (theory/02 §7 y §10J F3): el presupuesto de la fuente USB-C es de 3 A
+    // Tope de consumo de los 18 LEDs (theory/02 §7 y §10J F3): el presupuesto de la fuente USB-C es de 3 A.
+    // Es un presupuesto de software, no una protección: la primera validación de alimentación se hace con los LEDs
+    // apagados (build_flags = -DSTUDIO_LEDS_OFF, theory/02 §10K D01) y se encienden después de medir.
     FastLED.setMaxPowerInVoltsAndMilliamps(5, 300);
+#ifdef STUDIO_LEDS_OFF
+    FastLED.setBrightness(0);
+    Serial.println("[LED] apagados (STUDIO_LEDS_OFF): validación de alimentación");
+#endif
 
     Serial1.begin(921600);                  // bridge con la Pi: TX1 (1) → GPIO15, RX1 (0) ← GPIO14
     usb_host.begin();

@@ -501,17 +501,21 @@ pedido hasta cerrar F1–F4. Cómo se cierra cada uno:
   Current). Los 4 A no existen a 5 V sin PD y cable de 5 A; el presupuesto (F3) se hace contra 3 A.
 - **Prueba:** con la fuente real, medir la tensión de CC (la que no esté en 0 V) contra GND con el módulo
   conectado: ~0.4 V = 0.5–0.9 A por defecto, ~0.9 V = 1.5 A, **~1.7 V = 3 A** (Rp de la fuente sobre 5.1 kΩ).
-  Verificar en las dos orientaciones del conector.
+  Son valores orientativos para identificar el anuncio de la fuente, no ventanas de aceptación. Verificar en las
+  dos orientaciones del conector.
 - **TVS D1 (SMBJ5.0CA):** protege de transitorios; no regula ni hace segura una fuente de 9 V.
 - **Fuente elegida (Juan, 2026-10-22):** la **oficial de Raspberry Pi 4** (5.1 V · 3 A, USB-C, cable fijo). Una sola
   fuente para todo: la portadora reparte a la Pi (J6), a la Teensy (VIN, con el puente VUSB–VIN cortado; de ahí
-  sale el 5 V del USB host) y a los LEDs. Los 5.1 V compensan ~0.1 V de caída hasta la Pi (pista + fusible +
-  hilos) y quedan ~5.0 V, sobre el umbral de undervoltage (4.63 V). El módulo consumidor con Rd sigue siendo
-  necesario: con Rd funciona con cualquier fuente USB-C, sin depender de cómo responda esta sin ellas.
+  sale el 5 V del USB host) y a los LEDs. Los 5.1 V dan margen para la caída hasta la Pi; **cuánto cae en
+  total no está demostrado** (los ~29 mΩ calculados son solo el cobre positivo: faltan F1, hilos, contactos,
+  retorno y temperatura): se mide (§10K, D01). El módulo con Rd hace que la fuente reconozca un consumidor; no
+  mide ni limita corriente, y solo sirve con fuentes que anuncien la corriente que el equipo necesita (corregido
+  según la auditoría delta).
 
 ### F3 — Camino de corriente: presupuesto, conectores y cable de la Pi
 
-**Presupuesto contra 3 A** (estimaciones por hoja de datos, a confirmar midiendo):
+**Presupuesto contra 3 A** (estimaciones por hoja de datos, a confirmar midiendo; la cifra de 2.0 A de la Pi depende
+de la regla de USB de §10K D01):
 
 | Carga | Típico | Pico considerado |
 |---|---|---|
@@ -555,6 +559,102 @@ pedido hasta cerrar F1–F4. Cómo se cierra cada uno:
 | F4 | Especificado; falta comprar y verificar las piezas (y ajustar huella / agujero si no coinciden) |
 
 Fabricación: gerbers, BOM y CPL de la portadora regenerados tras F1; PCB-A no cambió.
+
+## 10K. Auditoría delta del 2026-10-22 y vuelta de PCB-K (en curso)
+
+Auditoría: `apps/hardware/kicad/studio/docs/auditoria-delta-2026-10-22.md`. Decisión del owner el mismo día:
+**el pedido vuelve a las tres placas** (ADR-004 rev. 4): portadora con SMD, PCB-A sin ensamble y PCB-K con LEDs.
+
+### Correcciones de layout (hechas, verificadas)
+
+Cambios locales; el resto del ruteo verificado no se tocó. DRC 0 · pads sin conectar 0 · paridad 0 en las dos
+placas. Medición con el mismo `measure.py` de la auditoría:
+
+| ID | Corrección | Antes → después |
+|---|---|---|
+| D05 | Las dos vías dentro de C2.2 y U1.3 salían del ruteo de grilla U1.3 → C2.2 (empezaba en el centro del pad). Se borraron y la conexión sale de las vías de escape que esos pads ya tenían fuera | vías en pads SMD: **2 → 0** |
+| D06 | C7 movido a la izquierda de U2, junto al pin 4 (+3V3); GND por vía propia a ~1 mm | pista U2.4 → C7: **7.45 → 2.05 mm** |
+| D08 | C4 movido de la esquina a (179.5, 125.5), fuera de la envolvente de cabeza / arandela | cuerpo al borde del agujero: **~1.7 → 6.1 mm** |
+| D04 | `tools/stitch_returns.py`: vía de GND junto a la transición de LRCLK y 138 vías en los huecos del plano a lo largo del bus I2S (las islas sin conexión que KiCad borraba quedan unidas y se rellenan) | tramo más largo sin plano opuesto: MCLK **12.8 → 2.1**, BCLK 9.5 → 2.4, LRCLK 8.4 → 1.8, TX 16.1 → 4.1, RX 11.3 → 6.1 mm · GND junto a la vía de LRCLK: **11.47 → 0.90 mm** |
+| PCB-K | Agujeros de los separadores Ø6.5 → **Ø7.0**; 4 vías de costura quitadas para mantener 0.6 mm al borde | — |
+
+Los huecos de I2S que quedan están donde otra pista cruza por la cara opuesta: cerrarlos exige mover esas pistas
+(o cuatro capas). No se hizo: MCLK, la más rápida, quedó con 2.1 mm. Se mide en el prototipo (sobrepico y ringing
+en el receptor, §5 de la auditoría). **No se abrió separación AGND / DGND bajo el bus.**
+
+Bulk local de U2 (1–4.7 µF, "prever"): no se agregó en esta revisión. U2 consume < 1 mA; el riel de 3.3 V tiene el
+bulk del regulador de la Teensy y C10 (10 µF) en el divisor de VREF. Se decide con la medición de audio.
+
+### D01 — presupuesto de corriente (se corrige la cifra de §10J)
+
+La auditoría tiene razón: bajar la Pi de 2.5 A a 2.0 A sin medir no resolvía la contradicción con `01` §3.2 y
+§10D. Cómo se reconcilia:
+
+- Los **2.5 A** son la fuente que Raspberry Pi recomienda para la Pi 3B **incluyendo hasta 1.2 A de periféricos USB**
+  conectados a la Pi (documentación oficial de alimentación). En el Studio la Pi no alimenta periféricos: el
+  teclado MIDI va al USB host de la **Teensy**.
+- **Regla de uso:** los puertos USB de la Pi no se usan para dispositivos alimentados por bus. Con esa regla, la
+  reserva de la Pi + pantalla queda en **2.0 A**, que **sigue siendo una estimación hasta medir**.
+- Presupuesto con LEDs: 2.0 + 0.15 (Teensy + shield) + 0.30 (LEDs, tope de firmware) + 0.25 (teclado MIDI) =
+  **2.70 A** contra 3 A. Sin la regla (2.5 A) serían 3.20 A: no entra, y ahí habría que revisar fuente, entrada,
+  protección y conductores **juntos** (no solo poner una fuente mayor).
+- El tope de FastLED es un presupuesto de software, no una protección: si el firmware falla, 18 LEDs a blanco
+  pleno llegan a ~1 A. Por eso la **primera validación va con los LEDs apagados** (`-DSTUDIO_LEDS_OFF`, brillo 0) y se
+  encienden después de medir.
+- **Gate:** Pi + pantalla reales, arranque y carga máxima, con Teensy, shield y el teclado MIDI previsto. 10
+  arranques en frío, tensión **en la Pi** ≥ 4.85 V con osciloscopio, `get_throttled` = 0x0, temperatura de F1, hilos
+  y contactos. `01` §3.2 no se edita: su "~2.5 A en picos" sigue siendo el caso general.
+
+### D09 — sujeción mecánica de los hilos soldados
+
+- Mazo de J10, J6 y audio **amarrado al cuerpo** cerca de cada salida de PCB (base adhesiva o punto de amarre
+  impreso y precinto), con bucle de servicio, para que la tensión no llegue a la soldadura.
+- Del lado de la Pi: **terminales de crimpar con ficha del fabricante** y su corriente por contacto (no "Dupont"
+  sin marca); AWG22 no certifica el terminal. Verificar que el multifilar AWG20 entra en los taladros de Ø1 mm de
+  J10 antes de estañar.
+- Jacks en la pared PETG: arandela dentada o traba contra giro; no apretar de más (fluencia del PETG).
+- Conservar los seis apoyos de PCB-A y sus alturas: los controles no deben empujar la placa.
+
+### D11 — panel de proceso
+
+Portadora y PCB-K (ensambladas) se piden con **rieles y fiduciales agregados por JLC** (opción del pedido); no se
+agregan fiduciales locales (no hay QFN ni BGA). PCB-A no lleva ensamble.
+
+### PCB-K en el pedido
+
+- Ensamblada por JLC en la **cara inferior**: 18 SK6812MINI-EA (C5378731), 18 × 100 nF, 47 µF y el JST-SH
+  (C160409). Revisar en el visor la orientación de los LEDs invertidos y del JST-SH antes de pagar.
+- Las ventanas de los LEDs son las de la huella estándar de KiCad (`ReverseMount`), con alivios en las esquinas
+  para el radio de la fresa; la excepción de 0.2 mm al borde (`pcb-k.kicad_dru`) queda dentro de la capacidad
+  publicada de JLC. Confirmarlo en la revisión DFM del pedido.
+- Mide 156 × 62 mm: pasa la tarifa base de 100 × 100.
+
+### Para la versión comercial (no bloquean el prototipo)
+
+Propuestas de la auditoría que cambian arquitectura o BOM y se deciden con las medidas del prototipo:
+
+| ID | Tema | Dirección |
+|---|---|---|
+| D02 | ESD de los puertos (IN, OUT, PHONES, CV, USB) | Protección en la entrada física, antes del cable interno, con retorno corto; definir unión de shells / panel / GND. Candidatos de la auditoría: PESD12VL1BA (IN), PESD5V0S1BA (salidas), TPD2EUSB30 (USB) |
+| D03 | Clamps BAT54S a +3V3 con el equipo apagado; CV sin clamp externo | Descarga a un nodo que absorba corriente apagado o aislamiento del puerto; CV con protección coordinada |
+| D07 | MLCC en serie con el audio | Film en C5/C6 (y opcional C8/C9); con Rev D genuino, evaluar 0 Ω en C11/C12; medir THD+N a 20/100 Hz y 1 kHz |
+| D10 | Sin limitación de inrush, OVLO ni bloqueo de polaridad | eFuse (familia TPS25947) coordinada con fuente y cable |
+| BOM | TLV9064 en lugar de MCP6004, resistencias 0.1 % en divisores, C0G en el filtro de CV | Después de medir; ninguna sustitución automática |
+
+**Reglas del prototipo mientras tanto:**
+- No conectar fuentes de señal a IN con el equipo apagado (D03).
+- No conectar CV OUT a la salida de otro equipo (D03).
+- Verificar la polaridad de J10 antes de poner los módulos y medir el arranque (D10).
+
+### Estado
+
+| Punto | Estado |
+|---|---|
+| D04, D05, D06, D08, agujeros de PCB-K | Hecho en archivos; gerbers, BOM y CPL regenerados |
+| D01 | Presupuesto reconciliado con la regla de USB de la Pi; falta el gate de medición |
+| D09, D11 | Especificado (compras y pedido) |
+| F4 (pots, selector), prueba de ENC R en pin 6 | Pendiente físico (§10J) |
+| D02, D03, D07, D10 | Revisión comercial; reglas de uso para el prototipo |
 
 ## 11. Próximo paso
 
