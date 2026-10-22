@@ -50,11 +50,11 @@ PARTS = [
     # (con el bloque a la derecha eran 115 mm y una vía). J10 recibe el cable de la USB-C de panel
     # (pared trasera, x 22). El 100 µF queda a la derecha como reserva para los LEDs (J5).
     ("J10", 72.0, 66.5, 0), ("F1", 82.5, 64.8, 0), ("D1", 82.8, 69.6, 0), ("C3", 70.5, 71.6, 0),
-    ("C1", 128.0, 82.0, 0), ("C4", 136.0, 73.5, 0),
+    ("C1", 128.0, 82.0, 0), ("C4", 129.5, 74.5, 0),   # C4: ≥ 5 mm del agujero (138, 77), §10K D08
     # Buffer de LEDs bajo la Teensy, entre sus filas (pin 28 = fila delantera, X 99.6)
     ("U1", 98.0, 82.0, 0), ("C2", 98.0, 85.6, 0), ("JP1", 103.0, 82.0, 90), ("R3", 107.0, 82.0, 90),
     # Entrada analógica (L arriba, R abajo de U2) y VREF
-    ("U2", 118.0, 112.0, 0), ("C7", 118.0, 105.5, 0),
+    ("U2", 118.0, 112.0, 0), ("C7", 112.7, 112.0, 180),   # C7 junto a U2.4 (+3V3), §10K D06
     ("C5", 100.0, 121.0, 0), ("R10", 104.0, 121.0, 0), ("D2", 108.0, 121.0, 0), ("R12", 112.0, 121.0, 0),
     ("C6", 100.0, 103.0, 0), ("R11", 104.0, 103.0, 0), ("D3", 108.0, 103.0, 0), ("R13", 112.0, 103.0, 0),
     ("C8", 126.0, 118.0, 0), ("C9", 126.0, 106.0, 0),

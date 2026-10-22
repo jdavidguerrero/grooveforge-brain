@@ -38,6 +38,12 @@ run tools/clean_vias.py portadora
 run tools/grid_route.py portadora U1.3 C2.2 0.3 0.26        # GND de U1 (entre las filas de la Teensy)
 # 6. Planos de GND con costura, campos y DRC.
 run tools/add_gnd_pours.py portadora
+# 6b. Retorno del bus I2S: GND junto a cada cambio de capa y en los huecos del plano (§10K D04).
+run tools/stitch_returns.py portadora /I2S_MCLK,/I2S_BCLK,/I2S_LRCLK,/I2S_RX,/I2S_TX
 run tools/sync_fp_fields.py portadora
 "$KC" pcb drc --schematic-parity -o /tmp/portadora-drc.rpt portadora/portadora.kicad_pcb >/dev/null 2>&1 || true
 grep -E "Found" /tmp/portadora-drc.rpt
+# Sin vías dentro de pads SMD (§10K D05). Si falla, sacar la vía del pad con un cuello corto a mano.
+"$KPY" tools/check_via_in_pad.py portadora 2>&1 | grep -v -e assert -e leak | tail -3
+# Nota (2026-10-22): el ruteo entregado incluye ediciones locales de §10K (D05: GND de U1/C2 desde sus vías de
+# escape). Una corrida completa vuelve a rutear con Freerouting: repetir las comprobaciones de §10K.
