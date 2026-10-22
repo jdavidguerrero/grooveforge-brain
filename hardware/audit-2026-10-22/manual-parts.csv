@@ -1,0 +1,38 @@
+board,reference,value,footprint,assembly
+pcb-a,RE8,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1b49b0> >,manual
+pcb-a,RE2,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d14a970> >,manual
+pcb-a,RE7,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d14ac30> >,manual
+pcb-a,RE1,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d164d30> >,manual
+pcb-a,RE4,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10cd93470> >,manual
+pcb-a,RE3,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d173fb0> >,manual
+pcb-a,RE6,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10cd9ab30> >,manual
+pcb-a,RE5,EC11,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10cdb78f0> >,manual
+pcb-a,J1,to carrier J5 (IDC 2x15),<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1be530> >,manual
+pcb-f,RV3,RS6011 B50K,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1b48f0> >,manual
+pcb-f,RV4,RS6011 B50K,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1d6db0> >,manual
+pcb-f,RV2,RS6011 B50K,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1d99b0> >,manual
+pcb-f,RV1,RS6011 B50K,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1da6f0> >,manual
+pcb-k1,SW4,UNDO,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d6179b0> >,manual
+pcb-k1,SW2,DUPLICATE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d617830> >,manual
+pcb-k1,SW15,OCT_UP,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1d62b0> >,manual
+pcb-k1,SW6,SHIFT,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d6159f0> >,manual
+pcb-k1,SW1,QUANTIZE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d613bb0> >,manual
+pcb-k1,SW14,OCT_DN,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1eea30> >,manual
+pcb-k1,SW10,LOOP,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1e77b0> >,manual
+pcb-k1,SW12,BANK_L,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1e90f0> >,manual
+pcb-k1,SW13,BANK_R,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1eeb30> >,manual
+pcb-k1,SW7,PLAY,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1f46b0> >,manual
+pcb-k1,SW8,STOP,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1f81b0> >,manual
+pcb-k1,SW9,RECORD,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1f87f0> >,manual
+pcb-k1,SW11,METRO,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1f8d70> >,manual
+pcb-k1,SW5,NEW,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1fb330> >,manual
+pcb-k1,SW3,DELETE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1fb8b0> >,manual
+pcb-k2,SW4,NOTE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d617ab0> >,manual
+pcb-k2,SW2,MIX,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d1ee830> >,manual
+pcb-k2,SW1,BROWSE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10df36bb0> >,manual
+pcb-k2,SW3,DEVICE,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10df391b0> >,manual
+pcb-k2,SW5,SESSION,<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10df39430> >,manual
+pcb-s,J2,"to NeoTrellis M4 CONN1 (JST-PH 4, UART)",<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d76e630> >,manual
+pcb-s,J1,"to PCB-A J2 (JST-SH 4, I2C)",<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d76ea30> >,manual
+pcb-s,P1,to carrier J15 (Shield row 13-5V),<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d76ccb0> >,manual
+pcb-s,P2,to carrier J16 (Shield row 12-GND),<pcbnew.LIB_ID; proxy of <Swig Object of type 'LIB_ID *' at 0x10d76c6b0> >,manual
