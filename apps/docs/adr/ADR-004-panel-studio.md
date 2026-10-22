@@ -1,6 +1,6 @@
 # ADR-004: Panel de Studio — 5 encoders y 6 botones cableados al Teensy
 
-**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada · Revisión 2 (2026-10-09): posición de IN/VOL según el enclosure validado · Revisión 3 (2026-10-15): prototipo sin LEDs ni PCB-K
+**Status:** Accepted — Revisión 1 (2026-10-07): pot IN y pad de entrada · Revisión 2 (2026-10-09): posición de IN/VOL según el enclosure validado · Revisión 3 (2026-10-15): prototipo sin LEDs ni PCB-K · Revisión 4 (2026-10-22): vuelve PCB-K con LEDs ensamblados
 **Date:** 2026-10-07
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-002 (variante Studio), ADR-003 (add-on del ladder)
@@ -126,6 +126,26 @@ B4 = SYNTH FX y SHIFT + B4 = PRESETS (theory/05 de Studio). Detalle en theory/04
 
 `01` §3.3 sigue listando los 18 LEDs: no se edita sin autorización. Si el producto final vuelve a llevar
 LEDs, PCB-K está lista para pedirse.
+
+## Revisión 4 (2026-10-22): vuelve PCB-K con los LEDs ensamblados
+
+**Decisión del owner** (2026-10-22): el pedido se junta con las PCB de GroovePush, así que se vuelve al presupuesto
+original de **tres placas**: portadora (SMD ensamblado), PCB-A (sin ensamble) y **PCB-K con los 18 SK6812MINI-EA,
+los condensadores y el JST-SH ensamblados por JLC en su cara inferior**. Revierte la parte "sin PCB-K / sin LEDs"
+de la revisión 3.
+
+- **Cadena de LEDs sin cambios de firmware:** PCB-K encadena D1–D12 en el anillo (empieza arriba, sentido horario)
+  y D13–D18 bajo B1, B2, B3, B4, B5, B6: es el orden de `panel_leds` (anillo 0–11, teclas 12–17). Datos por el
+  pin 28 y el buffer 74AHCT1G125 de la portadora, como ya estaba.
+- **Cable PCB-K ↔ PCB-A:** PCB-K tiene el JST-SH SM10B (ensamblado); PCB-A conserva el header 1×10 acodado de la
+  revisión 3 (mismo pinout 1:1). Cable mixto: hilos JST-SH precrimpados de un lado, terminal Dupont del otro.
+  PCB-A no cambia.
+- **Choc V2:** se sueldan a PCB-K (ya no se cablean a mano a PCB-A).
+- **Quedan sin uso** las luces cableadas de la revisión 3: anillo WS2812 suelto, difusor como guía del anillo
+  suelto, soportes de tecla y WS2812 sueltos. El difusor del NAV sigue sirviendo sobre el anillo de PCB-K.
+- **Mecánica:** los 4 agujeros de PCB-K para los separadores de PCB-A pasan de Ø6.5 a **Ø7.0** (un hexagonal M3
+  de 5.5 mm mide 6.35 mm entre vértices). PCB-K queda a 1.4 mm de los postes (40, 8) y (140, 8) del panel.
+- Detalle y verificación: `variants/studio/theory/02-studio-pcb.md` §10K.
 
 ## Action Items
 

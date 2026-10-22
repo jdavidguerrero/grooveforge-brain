@@ -1,4 +1,4 @@
-# Studio · compras locales (prototipo de 2 placas)
+# Studio · compras locales (prototipo de 3 placas: portadora, PCB-A y PCB-K — ADR-004 rev. 4)
 
 > Todo lo que no ensambla JLC se compra en tiendas de electrónica de Bogotá. Reemplaza a
 > `lcsc-piezas-sueltas.csv` (que queda solo como referencia de part numbers). Lo que dice **verificar** define
@@ -18,7 +18,10 @@
 | 2 | **Espadín hembra 1×40** o 1×14 | paso 2.54, altura 8.5 mm | zócalos del shield (2 × 14) |
 | 1 | **Espadín macho recto 1×40** | paso 2.54 | J3 (1×5), J9 (1×9), SW1 (2 tiras de 4) |
 | 1 | **Espadín macho a 90° 1×40** | paso 2.54 | J1 de PCB-A (1×10) y LINE del shield |
-| 20 | **Cables Dupont hembra-hembra** de 10 cm | | Choc ↔ J1, J9 ↔ shield |
+| 10 | **Cables Dupont hembra-hembra** de 10 cm | | J9 ↔ shield |
+| 1 | **Kit de hilos JST-SH 1.0 mm precrimpados** (10 hilos, ~10 cm) + carcasa JST-SH 10 | paso **1.0 mm** | cable PCB-K J1 (JST-SH, ensamblado) ↔ PCB-A J1 (header 1×10): JST-SH de un lado, terminal Dupont del otro, pinout 1:1 |
+| 1 | **Terminales de crimpar con ficha** (corriente por contacto documentada) para el header de la Pi, y su carcasa 2×5 | paso 2.54; ficha con A por contacto | cable de la Pi, lado Pi (theory/02 §10K D09). No "Dupont" sin marca |
+| 1 | **Bases adhesivas para precinto** o puntos de amarre + precintos | | amarre de los mazos de J10, J6 y audio cerca de cada salida de PCB (§10K D09) |
 
 La altura de 8.5 mm de los zócalos es la que se usó para validar la caja (holgura con la Pi). Si solo hay más
 altos, avisar antes de soldar.
@@ -49,9 +52,16 @@ Con las medidas reales de jacks y conectores se ajustan los agujeros del cuerpo 
 
 Si no se consiguen los SMD 0603, PCB-A funciona sin ellos.
 
-## Cable PCB-K → ya no aplica
+## PCB-K (vuelve al pedido, 2026-10-22)
 
-Sin PCB-K no hace falta el JST-SH. Los Choc se cablean con Dupont a J1 de PCB-A.
+JLC ensambla en la cara inferior los 18 LEDs, los condensadores y el JST-SH. A mano:
+
+| Cant. | Pieza | Verificar | Nota |
+|---|---|---|---|
+| 6 | **Kailh Choc V2** | que se enganchen en el rebaje del aluminio (1.2 mm) | se **sueldan a PCB-K** |
+| 4 | **Separadores M3 × 10 mm** hexagonales de **5.5 mm** entre caras (o redondos ≤ Ø6.5) | 6.35 mm entre vértices: los agujeros de PCB-K son Ø7.0 | de los espárragos PEM del aluminio a PCB-A, pasan a través de PCB-K |
+
+Ya no hacen falta el anillo WS2812 suelto, los WS2812 de tecla ni los soportes de tecla impresos (§10G).
 
 ## 5 V de la Pi (corregido 2026-10-22, theory/02 §10J F3)
 
@@ -63,6 +73,6 @@ va con **hilos AWG22 soldados en J6** (2 × 5 V, 2 × GND, TX, RX) y carcasa Dup
 
 - **Panel de aluminio:** los 10 agujeros de los espárragos **PEM FH-M3** son de **Ø3.0** (`panel-aluminio.dxf` ya
   corregido). Pedir FH-M3-12 para la pantalla y FH-M3 del largo del separador para PCB-A.
-- **Choc:** los hilos de J1 se **sueldan** a las patas del switch; un Dupont enchufado ahí cuelga ~14 mm y toca PCB-A.
+- ~~**Choc:** hilos soldados a las patas~~: con PCB-K los Choc se sueldan a la placa (ADR-004 rev. 4).
 - **Pots RV09:** medir antes de cortar el aluminio que el eje quede a 7.5 mm de la fila de pines (footprint de PCB-A).
 - **Jacks de chasis:** cablear según la tabla de theory/02 §10I (las etiquetas del panel se leen L → R desde atrás).
