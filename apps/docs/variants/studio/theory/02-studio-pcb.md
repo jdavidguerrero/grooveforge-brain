@@ -468,6 +468,89 @@ cuerpos de los jacks eran aproximados y el GPIO de la Pi era una sola caja (el I
 pines). Desde ahora la verificación incluye una **revisión de herrajes contra hoja de datos** y una **lista de
 armado cable por cable**.
 
+## 10J. Cierre de la auditoría de fabricación del 2026-10-22 (en curso)
+
+Auditoría de Juan: `apps/hardware/kicad/studio/docs/auditoria-fabricacion-2026-10-22.md`. Dictamen: no liberar el
+pedido hasta cerrar F1–F4. Cómo se cierra cada uno:
+
+### F1 — ENC R-A sale del pin 13 → pin 6 (aprobado por Juan, 2026-10-22)
+
+- **Problema:** el pin 13 de la Teensy 4.1 tiene el LED de la placa con 470 Ω a GND. La biblioteca `Encoder`
+  pone `INPUT_PULLUP` (~22–100 kΩ, débil): el LED tira la línea hacia abajo y la fase A puede no llegar a HIGH
+  válido (cuentas perdidas o encoder inmóvil). Un pull-up externo de 1 kΩ deja ~2.3 V, en el umbral
+  (0.7 × 3.3 V): no es una corrección confiable.
+- **Elección:** el **pin 6** es el único que `01` §3.3 no reserva (25 PAD, 27 74HC4053, 33 CV 2, 36–38 Pogo,
+  39 selector de host). En Studio es el MEMCS del shield, que va lado a lado y no se cablea.
+- **Cambios:** `01` §3.3 enmendado; esquemático de la portadora (etiqueta `ENCR_A` en J1.8, J2.14 sin conexión);
+  PCB re-ruteada **solo en esa red** con `grid_route.py` (J5.18 → J1.8: 63.7 mm, 6 vías) sin tocar el resto;
+  DRC 0 · pads sin conectar 0 · paridad 0; ERC 0 errores (las 2 advertencias de siempre: `HOST_DM`/`HOST_DP`).
+  Firmware: `enc_r(6, 14)` en los sketches 46, 48, 49 y en `ui/encoders.h`. PCB-A no cambia (el IDC sigue igual).
+- **En la protoboard:** pasar el cable de la fase A de ENC R del pin 13 al pin 6 antes de cargar el firmware.
+- **Prueba de cierre:** con el sketch 46, las dos fases de ENC R en reposo (nivel alto estable) y al girar
+  (cuenta continua en los dos sentidos), igual que se midió ENC L el 2026-10-19.
+
+### F2 — Entrada USB-C: módulo consumidor con Rd, no un prolongador pasivo
+
+- **Contradicción que se cierra:** §7 y la nota 1 del esquemático piden "USB-C 5 V solo CC, 2 × 5.1 kΩ", pero
+  `compras-locales.md` pedía un **prolongador** USB-C de panel. Un prolongador pasivo no tiene las resistencias
+  Rd en CC1/CC2: una fuente USB-C (y un cable C–C) no habilita VBUS sin ellas.
+- **Corrección (solo compras, la placa no cambia):** placa **consumidora USB-C de 5 V** ("USB-C power breakout"
+  o "Type-C 5V sink") con **5.1 kΩ de CC1 a GND y otra de CC2 a GND** y salida VBUS/GND → hilos a J10. Nada de
+  disparadores PD de 9/12 V.
+- **Corriente:** con Rd y sin PD, el máximo que puede anunciar una fuente USB-C a 5 V es **3 A** (Type-C
+  Current). Los 4 A no existen a 5 V sin PD y cable de 5 A; el presupuesto (F3) se hace contra 3 A.
+- **Prueba:** con la fuente real, medir la tensión de CC (la que no esté en 0 V) contra GND con el módulo
+  conectado: ~0.4 V = 0.5–0.9 A por defecto, ~0.9 V = 1.5 A, **~1.7 V = 3 A** (Rp de la fuente sobre 5.1 kΩ).
+  Verificar en las dos orientaciones del conector.
+- **TVS D1 (SMBJ5.0CA):** protege de transitorios; no regula ni hace segura una fuente de 9 V.
+
+### F3 — Camino de corriente: presupuesto, conectores y cable de la Pi
+
+**Presupuesto contra 3 A** (estimaciones por hoja de datos, a confirmar midiendo):
+
+| Carga | Típico | Pico considerado |
+|---|---|---|
+| Pi 3B + pantalla DSI 5" | 0.8–1.2 A | 2.0 A (arranque, CPU al 100 %) |
+| Teensy 4.1 + Audio Shield | 0.12 A | 0.15 A |
+| 18 WS2812 (limitados por firmware) | 0.1 A | **0.3 A** (`setMaxPowerInVoltsAndMilliamps(5, 300)`) |
+| Teclado MIDI por el USB host | 0.05–0.1 A | 0.25 A (presupuesto; uno de 500 mA no entra) |
+| **Total** | ~1.3 A | **~2.7 A** (bajo 3 A, con poco margen) |
+
+- **LEDs:** el sketch49 no aplicaba el límite que pide §7. Se agrega el tope de 300 mA.
+- **J10:** no depender de un JST-XH genérico sin hoja de datos. Para el prototipo, **hilos AWG20 soldados directo
+  en los agujeros de J10** (sin conector), o un JST-XH original (3 A con AWG22).
+- **Pi (J6):** el IDC genérico de 1 A por contacto **no alcanza** (contradicción entre §10D y `compras-locales.md`,
+  se queda §10D). El cable de la Pi se hace con **hilos sueltos AWG22** soldados directo en los agujeros de J6 (sin
+  el IDC macho): dos de 5 V (2 y 4), dos de GND (6 y 9), TX y RX (8 y 10). Del lado de la Pi, terminales Dupont
+  en la carcasa 2×5.
+- **Cobre de la portadora:** 0.8 mm × 35 µm de J10 a J6: ~29 mΩ → ~73 mV a 2.5 A. Aceptable; no cambia.
+- **Prueba de carga (gate antes de dar el prototipo por bueno):** Pi + pantalla + Teensy + shield + teclado MIDI +
+  LEDs al tope, con `stress` o un video en la Pi: medir 5 V en el pin 2 de la Pi (≥ 4.85 V) y
+  `vcgencmd get_throttled` = `0x0` tras varios arranques.
+
+### F4 — Pots y selector PAD: comprar por ficha
+
+- **Pots (IN, VOL):** **B10K lineales** (son lecturas del ADC). El footprint es `Alpha RD901F-40-00D` vertical:
+  3 pines a 2.5 mm, fila a **7.5 mm** del eje, patas de anclaje a **±4.8 mm** del eje, eje estriado Ø6 de ~25 mm.
+  Comprar uno que coincida (Alpha RD901F-40 / "RV09 vertical"); si solo se consigue otra geometría, **cambiar la
+  huella antes del pedido** (PCB-A es solo PCB, el cambio es barato ahora).
+- **PAD:** el esquema necesita un selector **de 2 polos y 3 vías** (cada polo elige una de tres tomas). Un DPDT
+  ON-OFF-ON abre el circuito en el centro y un DPDT ON-ON-ON de 6 terminales no es dos selectores de 3 vías.
+  Opciones: **rotativo 2 polos × 6 posiciones con anillo de tope en 3** (fácil de conseguir; agujero M9 → cambia el
+  agujero del panel trasero de Ø6.2 a Ø9.6) o una **palanca DP3T real de 8 terminales**. Verificar con
+  continuidad la tabla de la auditoría (L: 3↔1 / 3↔2 / 3↔4 · R: 7↔5 / 7↔6 / 7↔8) antes de cablearlo a SW1.
+
+### Estado
+
+| Punto | Estado |
+|---|---|
+| F1 | Resuelto en diseño y firmware; falta la prueba con el encoder en el pin 6 |
+| F2 | Resuelto en compras; falta medir la fuente real (CC y ambas orientaciones) |
+| F3 | Resuelto en compras y firmware (LEDs); falta la prueba de carga |
+| F4 | Especificado; falta comprar y verificar las piezas (y ajustar huella / agujero si no coinciden) |
+
+Fabricación: gerbers, BOM y CPL de la portadora regenerados tras F1; PCB-A no cambió.
+
 ## 11. Próximo paso
 
 Proyecto KiCad en `apps/hardware/kicad/studio/` con un esquemático por placa (`pcb-k`, `pcb-a`,

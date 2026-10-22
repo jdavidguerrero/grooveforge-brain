@@ -949,6 +949,8 @@ void setup() {
 
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, studio::PANEL_LEDS);
     FastLED.setBrightness(80);
+    // Tope de consumo de los 18 LEDs (theory/02 §7 y §10J F3): el presupuesto de la fuente USB-C es de 3 A
+    FastLED.setMaxPowerInVoltsAndMilliamps(5, 300);
 
     Serial1.begin(921600);                  // bridge con la Pi: TX1 (1) → GPIO15, RX1 (0) ← GPIO14
     usb_host.begin();
