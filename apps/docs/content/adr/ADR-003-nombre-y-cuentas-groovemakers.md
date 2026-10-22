@@ -50,5 +50,6 @@
 
 1. [ ] Renovar groovemakers.co (comparar precio con otros registradores; transferir en la próxima renovación si
    conviene).
-2. [ ] Reservar `@groovemakers.co` (Instagram) y `@groovemakersco` (YouTube, TikTok).
+2. [x] Canal de YouTube `@groovemakersco` creado como cuenta de marca (nombre: GrooveMakers) y cuenta de
+   Instagram reservada. [ ] TikTok, pendiente.
 3. [x] Prompt de marca con el usuario y el dominio: `../marca/claude-design-prompt-groovemakers.md`.

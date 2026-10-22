@@ -7,6 +7,7 @@
 >
 > **Guiones listos para grabar:** [`EP01_guion.md`](EP01_guion.md) · [`EP02_guion.md`](EP02_guion.md) ·
 > [`EP03_guion.md`](EP03_guion.md). **Cámara, posiciones y ángulos:** [`GUIA_CAMARA.md`](GUIA_CAMARA.md).
+> **Primera tanda:** [`PLAN_DOMINGO_1.md`](PLAN_DOMINGO_1.md).
 > **Qué grabar mientras llegan las piezas:**
 > [`PLAN_GRABACION_STANDBY.md`](PLAN_GRABACION_STANDBY.md).
 
