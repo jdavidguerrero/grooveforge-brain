@@ -157,7 +157,7 @@ funciona y si ya sirve para hacer música con Ableton."
 
 ---
 
-## Plan de sesión, ordenado por posición (≈ 2 h 10)
+## Plan de sesión con solo el XR, ordenado por posición (≈ 2 h 10)
 
 | Orden | Posición | Tomas | Min |
 |---|---|---|---|
@@ -169,3 +169,18 @@ funciona y si ya sirve para hacer música con Ableton."
 | 6 | **P3** (frontal 45°) | T5, T42, detalles con LEDs, **foto de la miniatura** | 15 |
 | 7 | **P4** (rasante) | B-roll del anillo y la Teensy | 10 |
 | 8 | **P5** (a cámara) | T4, T6-T12, T14, T44-T48, T50 + las frases nuevas de los Shorts | 25 |
+
+## Con dos cámaras (≈ 2 h): XR en el cenital, 13 Pro en el trípode
+
+Aplauso al empezar cada bloque (guía §0e). Las frases de las tomas que no son P5 se pueden grabar después como voz
+en off con el SM57.
+
+| Bloque | XR (cenital, brazo) | 13 Pro (trípode) | OBS (P6) | Tomas | Min |
+|---|---|---|---|---|---|
+| 1 · Pruebas | — | — | Monitor serie | "Antes de grabar" | 15 |
+| 2 · Pantalla | — | — | ✅ | T13, T15, T32, T37, T49 | 15 |
+| 3 · Tour hablando | ✅ P1/P2 | **P3** (respaldo con LEDs, misma pasada) | — | T3, T16-T25 | 20 |
+| 4 · Gestos sin hablar | ✅ P1/P2 | **P7** (la pantalla del Brain reacciona a cada gesto) | — | T1, T2, T26-T31, T33-T36, T39, T51 | 20 |
+| 5 · Clímax con Ableton | ✅ P1/P2 | **P7** | ✅ Ableton | T38-T41 (o T43) | 15 |
+| 6 · LEDs y B-roll | (apagado) | **P3**, **P4** y **macro** (Teensy, anillo, botones) | — | T5, T42, B-roll, **foto de la miniatura** | 20 |
+| 7 · A cámara | (apagado) | **P5** | — | T4, T6-T12, T14, T44-T48, T50 + frases de los Shorts | 15 |

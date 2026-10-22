@@ -158,7 +158,7 @@ Sin GroovePilot, el Short 3 pasa a: **"Mi synth solo toca un motor a la vez (y e
 
 ---
 
-## Plan de sesión, ordenado por posición (≈ 2 h)
+## Plan de sesión con solo el XR, ordenado por posición (≈ 2 h)
 
 | Orden | Posición | Tomas | Min |
 |---|---|---|---|
@@ -171,7 +171,21 @@ Sin GroovePilot, el Short 3 pasa a: **"Mi synth solo toca un motor a la vez (y e
 | 6 | **P7** solo | T2 | 2 |
 | 7 | **P5** (a cámara) | T3, T5, T6, T16, T22, T25, T31, T40-T43 + frases de los Shorts | 20 |
 
-**Consejo para P2 + P7:** si tienes una sola cámara, haz primero **todos los pasos con el cenital fijo** (el bajo
+**Consejo para P2 + P7 con una sola cámara:** haz primero **todos los pasos con el cenital fijo** (el bajo
 completo, de INIT a T15, y los acordes), guarda los presets, vuelve a cargar INIT y repite **todos los pasos en P7**.
 Es más rápido que mover la cámara en cada paso. Con dos cámaras (el celular en P7 y otra en el cenital), un solo
 paso basta.
+
+## Con dos cámaras (≈ 1 h 40): XR en el cenital, 13 Pro en el trípode
+
+Aquí es donde más se gana: **cada paso del bajo y de los acordes se graba una sola vez**, con las manos desde arriba
+y la pantalla del Brain al mismo tiempo.
+
+| Bloque | XR (cenital, brazo) | 13 Pro (trípode) | OBS (P6) | Tomas | Min |
+|---|---|---|---|---|---|
+| 1 · Pruebas | — | — | — | Juno y GroovePilot | 20 |
+| 2 · El bajo y los acordes, paso a paso | ✅ P2 (las manos) | **P7** (los valores en la pantalla del Brain) | ✅ Ableton grabando | T7-T15, T21, T26-T30, T34-T35 | 25 |
+| 3 · Pantalla y GroovePilot | — | — | ✅ | T4, T17-T20, T23-T24, T32-T33, T36, T37 | 20 |
+| 4 · El loop | ✅ P1/P2 | **P3** (la mano en el filtro, LEDs) | — | T1, T38 | 10 |
+| 5 · B-roll y pantalla | (apagado) | **P4**, **P7** (T2) y **foto de la miniatura** | — | T2, T39 | 5 |
+| 6 · A cámara | (apagado) | **P5** | — | T3, T5, T6, T16, T22, T25, T31, T40-T43 + frases de los Shorts | 20 |

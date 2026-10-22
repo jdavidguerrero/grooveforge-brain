@@ -115,7 +115,7 @@ derecha, foto **P2** del encoder real en tu mano. Texto: **"NO CABÍA"**.
 
 ---
 
-## Plan de sesión, ordenado por posición (≈ 1 h 30)
+## Plan de sesión con solo el XR, ordenado por posición (≈ 1 h 30)
 
 | Orden | Posición | Tomas | Min |
 |---|---|---|---|
@@ -123,3 +123,12 @@ derecha, foto **P2** del encoder real en tu mano. Texto: **"NO CABÍA"**.
 | 2 | **P6** FreeCAD | T1, T13, T14, T17-T20, T22, T23, T25 | 25 |
 | 3 | **Cenital fijo** (P1 + P2 en la edición): piezas sobre la mesa | T2, T11, T12, T16, T4 + B-roll de cada pieza. Para el calibre en T11 (detalle chico), baja el brazo al final | 20 |
 | 4 | **P5** (a cámara) | T3, T5, T15, T24, T26, T27 + frases de los Shorts | 20 |
+
+## Con dos cámaras (≈ 1 h 15): XR en el cenital, 13 Pro en el trípode
+
+| Bloque | XR (cenital, brazo) | 13 Pro (trípode) | OBS (P6) | Tomas | Min |
+|---|---|---|---|---|---|
+| 1 · Navegador | — | — | ✅ | T6-T10, T21 | 15 |
+| 2 · FreeCAD | — | — | ✅ | T1, T13, T14, T17-T20, T22, T23, T25 | 25 |
+| 3 · Piezas sobre la mesa | ✅ P1/P2 | **Macro** (el calibre en el encoder, la tecla Choc, los pines) | — | T2, T4, T11, T12, T16 + B-roll | 15 |
+| 4 · A cámara | (apagado) | **P5** | — | T3, T5, T15, T24, T26, T27 + frases de los Shorts | 20 |
