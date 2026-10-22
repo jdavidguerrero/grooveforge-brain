@@ -3,6 +3,9 @@
 > 2026-10-22. Pegar en un chat nuevo de Claude Design. Los datos salen de `apps/docs/00-master-strategy.md` §8,
 > `apps/studio-head/src/ui/theme.h`, ADR-0003 de GroovePush y `content/adr/ADR-002-comunidad-primero-un-device.md`.
 >
+> **Nombre confirmado** (ADR-003 de contenido): GrooveMakers, web `groovemakers.co`, usuarios `@groovemakers.co`
+> (Instagram) y `@groovemakersco` (YouTube, TikTok).
+>
 > **Contradicción a decidir:** `00` §8.2 dice tipografía *Satoshi + General Sans*; las interfaces del Brain y de
 > GroovePush usan *IBM Plex Mono* (ADR-0003). El prompt pide una propuesta que combine las dos. Elige tú; si cambia
 > la regla, se registra en un ADR.
@@ -13,7 +16,7 @@
 
 Diseña la identidad visual de **GrooveMakers**, un canal de YouTube y una comunidad sobre **construir instrumentos
 electrónicos para hacer música**. Lo dirige Juan Guerrero, productor de música electrónica e ingeniero, desde Bogotá,
-Colombia.
+Colombia. Web: **groovemakers.co** · YouTube: **@groovemakersco** · la cuenta de Instagram es la personal de Juan.
 
 ### Qué es GrooveMakers
 
@@ -57,7 +60,7 @@ Colombia.
 2. De la dirección que recomiendes, el **sistema completo**:
    - **Avatar** 800 × 800 (se muestra recortado en círculo en YouTube e Instagram).
    - **Banner de YouTube** 2560 × 1440, con todo lo importante dentro del área segura de 1546 × 423 al centro.
-     Texto: "GrooveMakers · Construyendo instrumentos para hacer música".
+     Texto: "GrooveMakers · Construyendo instrumentos para hacer música" y "groovemakers.co".
    - **Plantilla de miniatura** 1280 × 720: zona para una foto real del banco, título de máximo 3 palabras en grande,
      etiqueta de episodio (por ejemplo "T1 · EP02") y etiqueta de carril (**Estudio** o **Taller**, con un color o
      ícono cada uno). El logo pequeño, en una esquina.
