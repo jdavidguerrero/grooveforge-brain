@@ -1,0 +1,67 @@
+[
+  [
+    "portadora",
+    {
+      "portadora-B_Cu.gbl": true,
+      "portadora-B_Mask.gbs": true,
+      "portadora-B_Paste.gbp": true,
+      "portadora-B_Silkscreen.gbo": true,
+      "portadora-Edge_Cuts.gm1": true,
+      "portadora-F_Cu.gtl": true,
+      "portadora-F_Mask.gts": true,
+      "portadora-F_Paste.gtp": true,
+      "portadora-F_Silkscreen.gto": true,
+      "portadora-NPTH.drl": true,
+      "portadora-PTH.drl": true
+    },
+    {
+      "bom_lines": 19,
+      "bom_parts": 38,
+      "cpl_parts": 38,
+      "set_equal": true,
+      "bom_mismatch": [],
+      "pos_mismatch": []
+    }
+  ],
+  [
+    "pcb-a",
+    {
+      "pcb-a-B_Cu.gbl": true,
+      "pcb-a-B_Mask.gbs": true,
+      "pcb-a-B_Paste.gbp": true,
+      "pcb-a-B_Silkscreen.gbo": true,
+      "pcb-a-Edge_Cuts.gm1": true,
+      "pcb-a-F_Cu.gtl": true,
+      "pcb-a-F_Mask.gts": true,
+      "pcb-a-F_Paste.gtp": true,
+      "pcb-a-F_Silkscreen.gto": true,
+      "pcb-a-NPTH.drl": true,
+      "pcb-a-PTH.drl": true
+    },
+    {}
+  ],
+  [
+    "pcb-k",
+    {
+      "pcb-k-B_Cu.gbl": true,
+      "pcb-k-B_Mask.gbs": true,
+      "pcb-k-B_Paste.gbp": true,
+      "pcb-k-B_Silkscreen.gbo": true,
+      "pcb-k-Edge_Cuts.gm1": true,
+      "pcb-k-F_Cu.gtl": true,
+      "pcb-k-F_Mask.gts": true,
+      "pcb-k-F_Paste.gtp": true,
+      "pcb-k-F_Silkscreen.gto": true,
+      "pcb-k-NPTH.drl": true,
+      "pcb-k-PTH.drl": true
+    },
+    {
+      "bom_lines": 4,
+      "bom_parts": 38,
+      "cpl_parts": 38,
+      "set_equal": true,
+      "bom_mismatch": [],
+      "pos_mismatch": []
+    }
+  ]
+]

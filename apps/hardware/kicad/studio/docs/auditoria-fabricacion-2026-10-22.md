@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-22. Alcance: los tres paquetes de `apps/hardware/kicad/studio/fab`, sus esquemas, PCB, BOM/CPL, conexiones entre placas y montaje documentado. KiCad 10.0.6.
 
+> **Actualización posterior a los cambios F1–F4:** ver [auditoría delta de EMC, DFM y fiabilidad](auditoria-delta-2026-10-22.md). F1 está corregido en diseño/firmware; F2 y F4 están mejor especificados. F3 conserva una discrepancia de presupuesto de corriente. La ampliación identifica vías en pads C2/U1, discontinuidades de referencia I2S, desacoplo C7, proximidad mecánica de C4 y protecciones de puertos pendientes. **El dictamen de liberación vigente es el de la auditoría delta.** El texto inferior se conserva como registro de la primera revisión y no describe todos los archivos posteriores a ella.
+
 ## Dictamen
 
 **NO liberar todavía el pedido conjunto de portadora + PCB-A.** Hay un problema funcional confirmado en la elección del pin del encoder derecho y quedan por cerrar la alimentación USB-C y las piezas de montaje. No encontré un cortocircuito, una pista sin conectar ni un desajuste entre los Gerbers y el diseño actual.

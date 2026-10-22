@@ -1,0 +1,21 @@
+{
+  "commit": "0d256bf8ba624d9731bbda3eee0e88c4f1f60b8a",
+  "files": {
+    "apps/hardware/kicad/studio/portadora/portadora.kicad_pcb": "c4dadabaa785b1fd52347d265ab5fea7a1a74ad17c347501eee411dfc09dd787",
+    "apps/hardware/kicad/studio/pcb-a/pcb-a.kicad_pcb": "f9dce8edc70eaed0642aece9dcca539c39535a61d304b4f8a068e435408f0f1f",
+    "apps/hardware/kicad/studio/pcb-k/pcb-k.kicad_pcb": "0ab7ee4f4d74f2a7f803833b95f58938efb428ff545198dc6b3799b76aa4b40c",
+    "apps/hardware/kicad/studio/portadora/portadora.kicad_sch": "caeb76b477f0979fa154c9d2c56517c47b36e738d4bc2c4db81c2969f3f3dbf5",
+    "apps/hardware/kicad/studio/pcb-a/pcb-a.kicad_sch": "0c6fb1c5b1a07d6df8b8c637b9c1853e18d0e549fa59efda44ed7b36b4e0497f",
+    "apps/hardware/kicad/studio/pcb-k/pcb-k.kicad_sch": "bb67f8e06bb494d79538ec555bf1dbd38fde3a9adb32dbe02f3b215982284d60",
+    "apps/hardware/kicad/studio/fab/pcb-a/pcb-a-gerbers.zip": "c49b0d004d2acacddd0ec4c24b00d091b5073d0dd4960df73c767a808958d1e3",
+    "apps/hardware/kicad/studio/fab/pcb-k/pcb-k-gerbers.zip": "61f6dae3708e096c61a791bdf7d687061a07902a921d6ff7ed2580ac55b270f6",
+    "apps/hardware/kicad/studio/fab/portadora/portadora-gerbers.zip": "3d13ef3f9349067458c255578ec613fcc2c7c830a3286cec7ef7e69cc6d8177e",
+    "apps/hardware/kicad/studio/fab/pcb-k/pcb-k-bom.csv": "971bd0711857e9b0130484b2b64d5a895402c26fb5c77425a49a31c28ba0bad0",
+    "apps/hardware/kicad/studio/fab/portadora/portadora-bom.csv": "d7a7170fd386e89af8bf47248c517c225854d65dff5ef4bfc22a312263cce085",
+    "apps/hardware/kicad/studio/fab/pcb-k/pcb-k-cpl.csv": "db707f35164f37eac4faa47b75f19b96d133508d9f324c93eff547f6d6ab7427",
+    "apps/hardware/kicad/studio/fab/portadora/portadora-cpl.csv": "03aadfd228988b0a13d8d457d55df57972ede2ff08278141ddddd51d370cdad9",
+    "apps/hardware/kicad/studio/fab/compras-locales.md": "a39aed83cf78d8efe7ae778c52eeab0af19857a4422ccf878131e46222db941d",
+    "apps/docs/variants/studio/theory/02-studio-pcb.md": "5707650c150c99cd17b16600dfd578d0be98625161bb0930dac2edc0afb72fb5",
+    "apps/docs/01-architecture.md": "f10e95d82bc7cdde9ae646f56316b4341b88bd39d6903228fc5ec81247ed972a"
+  }
+}
