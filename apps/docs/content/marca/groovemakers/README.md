@@ -86,8 +86,8 @@ fondos claros. **No** usar el púrpura en el logo, ni estirarlo, rotarlo o poner
 |---|---|
 | `marco-impreso-13x18cm-con-sangrado-3mm-300dpi.png` | Para la imprenta (portarretrato de la mesa). Pide **papel mate** y, si se puede, **negro enriquecido C60 M40 Y40 K100** para que no se vea gris en cámara |
 | `marco-impreso-13x18cm-sin-sangrado-300dpi.png` | Para imprimir en casa |
-| `marco-pantalla-7in-animado.html` | **Para la pantalla de 7"**: ábrelo en el navegador de la Pi en pantalla completa. Un LED recorre el anillo en 60 s. No necesita internet |
-| `marco-pantalla-7in-1280x720.png` | La versión fija, si prefieres una imagen |
+| `marco-pantalla-7in-animado.html` | **Para la pantalla de 7"**: ábrelo en el navegador de la Pi en pantalla completa. Símbolo, nombre y web; un LED recorre el anillo en 60 s. Fuentes incrustadas: no necesita internet. Opciones al final de la dirección: `?rot=180` (o 90 / 270) gira el marco sin tocar la pantalla; `?nombre=0` muestra solo el símbolo; se combinan: `?rot=180&nombre=0` |
+| `marco-pantalla-7in-1280x720.png`, `…-solo-simbolo-…` | Las versiones fijas, si prefieres una imagen |
 
 ---
 

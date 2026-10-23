@@ -276,10 +276,19 @@ const ledRing = (animated) => {
       <circle cx="26.5" cy="9.3" r="0.9" fill="${C.tealD}"/><circle cx="37.84" cy="4.6" r="1.1" fill="#137A5B"/><circle cx="50" cy="3" r="1.4" fill="${C.teal}"/>
     </g></svg>`;
 };
-const frame7 = (animated) => `<div style="position:relative;width:1280px;height:720px;background:${C.bg};display:flex;align-items:center;justify-content:center;overflow:hidden">
-  <div style="position:relative;width:600px;height:600px;display:flex;align-items:center;justify-content:center">
-    <div style="position:absolute;inset:0">${ledRing(animated)}</div>${mark({ size: 320, fg: C.frameGray })}</div></div>`;
+const frame7 = (animated, withName = true) => withName
+  ? `<div style="position:relative;width:1280px;height:720px;background:${C.bg};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;overflow:hidden">
+    <div style="position:relative;width:430px;height:430px;display:flex;align-items:center;justify-content:center">
+      <div style="position:absolute;inset:0">${ledRing(animated)}</div>${mark({ size: 230, fg: C.frameGray })}</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;line-height:1">
+      <div style="font-family:${SANS};font-weight:700;font-size:84px;letter-spacing:-0.025em;color:${C.frameGray}">GrooveMakers</div>
+      <div style="font-family:${MONO};font-size:22px;letter-spacing:.22em;color:${C.muted}">GROOVEMAKERS.CO</div>
+    </div></div>`
+  : `<div style="position:relative;width:1280px;height:720px;background:${C.bg};display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <div style="position:relative;width:600px;height:600px;display:flex;align-items:center;justify-content:center">
+      <div style="position:absolute;inset:0">${ledRing(animated)}</div>${mark({ size: 320, fg: C.frameGray })}</div></div>`;
 add('marco/marco-pantalla-7in-1280x720.png', 1280, 720, frame7(false));
+add('marco/marco-pantalla-7in-solo-simbolo-1280x720.png', 1280, 720, frame7(false, false));
 
 // ── Render ──────────────────────────────────────────────────────────────────────────────────────────────────
 const page = (body, transparent) => `<!doctype html><html><head><meta charset="utf-8"><style>
@@ -330,14 +339,30 @@ for (const a of assets) {
   console.log(preview ? '◌' : '✓', path.relative(OUT, p));
 }
 // El marco animado para la pantalla de 7": un HTML autónomo (sin fuentes externas) para abrir en pantalla completa.
+// Fuentes incrustadas en base64: la Pi del set no tiene Satoshi ni IBM Plex Mono instaladas y no necesita internet.
+const b64 = (rel) => fs.readFileSync(path.join(HERE, rel)).toString('base64');
+const embedFonts = [
+  satoshi[700] && `@font-face{font-family:'Satoshi';font-weight:700;src:url(data:font/${satoshi[700].ext};base64,${b64(satoshi[700].rel)}) format('${fmt[satoshi[700].ext]}')}`,
+  `@font-face{font-family:'IBM Plex Mono';font-weight:400;src:url(data:font/woff2;base64,${b64('fonts/plex-mono/ibm-plex-mono-latin-400-normal.woff2')}) format('woff2')}`,
+].filter(Boolean).join('\n');
 fs.writeFileSync(path.join(OUT, 'marco', 'marco-pantalla-7in-animado.html'), `<!doctype html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GrooveMakers</title>
-<style>@keyframes gmspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+<style>${embedFonts}
+@keyframes gmspin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 html,body{margin:0;height:100%;background:${C.bg};overflow:hidden;cursor:none}
 body{display:flex;align-items:center;justify-content:center}
 #f{width:1280px;height:720px;flex:none;transform-origin:center}</style></head>
-<body><div id="f">${frame7(true)}</div>
-<script>function fit(){var s=Math.min(innerWidth/1280,innerHeight/720);document.getElementById('f').style.transform='scale('+s+')'}addEventListener('resize',fit);fit();</script>
+<body><div id="f">${frame7(true)}</div><template id="solo">${frame7(true, false)}</template>
+<script>
+// ?rot=90 | 180 | 270 gira el marco sin tocar la configuración de la pantalla (marco.html?rot=180).
+// ?nombre=0 muestra solo el símbolo con el anillo, sin el nombre.
+var q=new URLSearchParams(location.search);
+if(q.get('nombre')==='0'){document.getElementById('f').innerHTML=document.getElementById('solo').innerHTML}
+var rot=(parseInt(q.get('rot'),10)||0)%360;
+function fit(){var side=rot===90||rot===270,w=side?innerHeight:innerWidth,h=side?innerWidth:innerHeight;
+var s=Math.min(w/1280,h/720);document.getElementById('f').style.transform='rotate('+rot+'deg) scale('+s+')'}
+addEventListener('resize',fit);fit();
+</script>
 </body></html>
 `);
 
