@@ -566,7 +566,7 @@ de la regla de USB de §10K D01):
 
 | Punto | Estado |
 |---|---|
-| F1 | Resuelto en diseño y firmware; falta la prueba con el encoder en el pin 6 |
+| F1 | Resuelto en diseño y firmware; **probado en la protoboard el 2026-10-23**: ENC R con A en el pin 6 (y los otros cuatro encoders con A y B) |
 | F2 | Resuelto en compras; falta medir la fuente real (CC y ambas orientaciones) |
 | F3 | Resuelto en compras y firmware (LEDs); falta la prueba de carga |
 | F4 | Especificado; falta comprar y verificar las piezas (y ajustar huella / agujero si no coinciden) |
@@ -666,7 +666,8 @@ Propuestas de la auditoría que cambian arquitectura o BOM y se deciden con las 
 | D04, D05, D06, D08, agujeros de PCB-K | Hecho en archivos; gerbers, BOM y CPL regenerados |
 | D01 | Presupuesto reconciliado con la regla de USB de la Pi; falta el gate de medición |
 | D09, D11 | Especificado (compras y pedido) |
-| F4 (pots, selector), prueba de ENC R en pin 6 | Pendiente físico (§10J) |
+| F4 (pots, selector) | Pots RK09L comprados; medir al recibirlos. Selector PAD opcional (sin él, puentes SW1.3–1 y SW1.7–5) |
+| Prueba de ENC R en pin 6 | **Hecha** (2026-10-23) |
 | D02, D03, D07, D10 | Revisión comercial; reglas de uso para el prototipo |
 
 ## 11. Próximo paso
