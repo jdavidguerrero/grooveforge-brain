@@ -224,6 +224,22 @@ void test_presets_del_track() {
     TEST_ASSERT_FLOAT_WITHIN(1e-6f, 0.35f, p.patch.drive);
 }
 
+void test_pilotos_signature() {
+    Preset p;
+    TEST_ASSERT_TRUE(find_factory(0, "GF POCKET BASS", &p) >= 0);
+    TEST_ASSERT_EQUAL_FLOAT(60.0f, p.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET]);
+    TEST_ASSERT_TRUE(find_factory(1, "GF PUMP PAD", &p) >= 0);
+    TEST_ASSERT_TRUE(p.patch.groove_on[GF_GROOVE_PUMP]);
+    TEST_ASSERT_TRUE(find_factory(2, "GF ORGANIC ARP", &p) >= 0);
+    TEST_ASSERT_TRUE(p.patch.groove_on[GF_GROOVE_ARP]);
+    TEST_ASSERT_EQUAL_FLOAT(4.0f, p.patch.groove[GF_GROOVE_ARP][GF_ARP_MODE]);   // SMART
+    TEST_ASSERT_TRUE(find_factory(3, "GF MELODIC LEAD", &p) >= 0);
+    TEST_ASSERT_TRUE(p.patch.groove_on[GF_GROOVE_UNISON]);
+    TEST_ASSERT_TRUE(find_factory(4, "GF FM DISCO STAB", &p) >= 0);
+    TEST_ASSERT_TRUE(p.patch.groove_on[GF_GROOVE_CHORD]);
+    TEST_ASSERT_FALSE(p.patch.groove_on[GF_GROOVE_ARP]);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -234,5 +250,6 @@ int main() {
     RUN_TEST(test_presets_del_track);
     RUN_TEST(test_migra_formato_2);
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
+    RUN_TEST(test_pilotos_signature);
     return UNITY_END();
 }

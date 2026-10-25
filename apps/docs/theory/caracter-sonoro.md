@@ -228,3 +228,16 @@ Signature (+ híbridos) → 6 ajuste con referencias.
 | **Polifonía de capas** | Se cuenta en **notas musicales**: dos capas de 3 voces dan **3 notas superpuestas**, no 6. Con el Prophet (5 voces) una capa 3 + 3 no existe: 3 + 2. Tabla de UNISON corregida en la fase 1. |
 | **Reloj en directo** | Transiciones definidas en theory/09 §1.1: al perder el MIDI se conserva fase y tempo; STOP detiene ARP y PUMP y no cae al reloj interno; al cambiar de fuente no hay salto de fase. |
 
+**Pilotos Signature (implementados, banco de fábrica, prefijo GF):**
+
+| Engine | Preset | Qué prueba |
+|---|---|---|
+| Model D | GF POCKET BASS | POCKET 60 % (velocity al brillo) + GRIT 15 %: bajo funk de house |
+| Juno-106 | GF PUMP PAD | PWM + CHORUS II con PUMP KICK 60 % a 1/4: el pad bombeando con el kick |
+| Prophet-5 | GF ORGANIC ARP | ARP SMART 1/16, swing 56 %, 2 octavas, DRIFT 30 %: arpegio orgánico / melódico |
+| OB-6 | GF MELODIC LEAD | UNISON ×3 a 18 ¢, DRIFT 25 %, GRIT 20 %, vibrato fino: lead de progressive |
+| DX7 | GF FM DISCO STAB | CHORD en tonalidad (A menor, 1.ª inversión, strum 15 ms) + PUMP 35 %: stab disco con una tecla |
+
+Al probarlos se anota qué le falta a cada uno: eso decide el trabajo de la fase 2 (engines) y qué pareja va primero en
+capas.
+

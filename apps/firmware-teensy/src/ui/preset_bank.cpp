@@ -85,6 +85,11 @@ const Factory MODEL_D[] = {
     {"JD RUN FUNKBASS", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.7f, 160, 0.25f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 6; o[2][1] = -12;
                     o[0][2] = 90; o[1][2] = 85; o[2][2] = 70; o[3][0] = 0; p.drive = 0.35f; }},
+    // Pilotos Signature (caracter-sonoro §9): POCKET devuelve la velocity al Model D
+    {"GF POCKET BASS", 1, 300, 0.3f, 120, 1, 250, 0.1f, 120, 0.6f, 250, 0.3f, 0.1f, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 5; o[2][1] = -12;
+                    o[0][2] = 90; o[1][2] = 80; o[2][2] = 60; o[3][0] = 0;
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 60; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 15; }},
 };
 
 const Factory JUNO[] = {
@@ -107,6 +112,12 @@ const Factory JUNO[] = {
     {"JD VELVET JUNO", 60, 800, 0.7f, 450, 60, 800, 0.5f, 450, 0.3f, 650, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 20; o[0][2] = 0; o[0][4] = 2; o[0][5] = 1;
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
+    // Piloto Signature: pad PWM bombeando con el reloj (PUMP KICK 60 %, 1/4)
+    {"GF PUMP PAD", 300, 1000, 0.85f, 900, 300, 1000, 0.6f, 900, 0.15f, 1600, 0.1f, 0, 0.5f, 1, 0, 0, 0.5f,
+     [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 30; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1;
+                    float* pu = p.groove[GF_GROOVE_PUMP];
+                    pu[GF_PUMP_DEPTH] = 60; pu[GF_PUMP_SHAPE] = 2; pu[GF_PUMP_RATE] = 0; pu[GF_PUMP_RELEASE] = 220;
+                    p.groove_on[GF_GROOVE_PUMP] = true; p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 30; }},
 };
 
 const Factory PROPHET[] = {
@@ -135,6 +146,13 @@ const Factory PROPHET[] = {
     {"JD RAP STAB P5", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 6; o[1][4] = 1; o[1][6] = 0;
                     o[2][0] = 70; o[2][1] = 70; }},
+    // Piloto Signature: arpegio SMART 1/16 con swing, 2 octavas
+    {"GF ORGANIC ARP", 1, 300, 0.0f, 250, 1, 250, 0.0f, 250, 0.45f, 1400, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 4; o[1][4] = 0; o[1][5] = 1;
+                    o[1][6] = 0; o[2][0] = 70; o[2][1] = 50;
+                    float* a = p.groove[GF_GROOVE_ARP];
+                    a[GF_ARP_MODE] = 4; a[GF_ARP_DIV] = 2; a[GF_ARP_GATE] = 50; a[GF_ARP_OCT] = 2; a[GF_ARP_SWING] = 56;
+                    p.groove_on[GF_GROOVE_ARP] = true; p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 30; }},
 };
 
 const Factory OB6[] = {
@@ -156,6 +174,13 @@ const Factory OB6[] = {
     {"JD HORIZON NOTCH", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 900, 0.2f, 0, 0.15f, 0, 0.35f, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 16; o[0][1] = 0; o[0][3] = 0;
                     o[0][2] = 80; o[1][2] = 80; o[0][6] = 50; o[0][7] = 0; }},
+    // Piloto Signature: lead UNISON ×3 (18 ¢) con DRIFT y un poco de GRIT
+    {"GF MELODIC LEAD", 5, 600, 0.7f, 400, 5, 600, 0.5f, 400, 0.35f, 2500, 0.25f, 0.05f, 5.5f, 0, 0, 0.08f, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 6; o[0][1] = 0; o[0][3] = 0;
+                    o[0][2] = 80; o[1][2] = 70;
+                    p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = 2; p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = 18;
+                    p.groove_on[GF_GROOVE_UNISON] = true;
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 25; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 20; }},
 };
 
 void dx7_ops(Patch& p, const float (&op)[4][8]) {
@@ -192,6 +217,14 @@ const Factory DX7[] = {
     {"JD ZAP PERC WOOD", 0, 100, 1.0f, 60, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 55, 0, 55}, {3.14f, 70, 0, 0, 0, 40, 0, 40},
                                 {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
+    // Piloto Signature: stab FM con CHORD en tonalidad (A menor, 1.ª inversión, strum 15 ms) y PUMP suave
+    {"GF FM DISCO STAB", 0, 500, 1.0f, 250, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 2, 0, 400, 0, 250}, {1, 70, 0, 0, 0, 200, 0, 150},
+                                {2, 85, 0, 0, 0, 350, 0, 250}, {3, 55, 0, 0, 0, 120, 0, 100}});
+                    float* c = p.groove[GF_GROOVE_CHORD];
+                    c[GF_CHORD_TYPE] = 1; c[GF_CHORD_INV] = 1; c[GF_CHORD_STRUM] = 15; c[GF_CHORD_KEY] = 21;
+                    p.groove_on[GF_GROOVE_CHORD] = true;
+                    p.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 35; p.groove_on[GF_GROOVE_PUMP] = true; }},
 };
 
 const Factory ARP[] = {
