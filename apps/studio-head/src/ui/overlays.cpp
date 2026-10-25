@@ -79,7 +79,7 @@ void Overlays::build_volume(lv_obj_t* top) {
     const char* const SIGN[2] = {"-", "+"};
     const Ctl CTL[2] = {Ctl::VolDown, Ctl::VolUp};
     for (int i = 0; i < 2; ++i) {
-        lv_obj_t* b = rect(_vol, 288 + i * 62, 40, 56, 56, SURFACE_2);   // a la derecha de "−60.0 DB"
+        lv_obj_t* b = rect(_vol, 276 + i * 62, 40, 56, 56, SURFACE_2);   // a la derecha de "−60.0 DB"
         lv_obj_set_style_border_color(b, lv_color_hex(GRAY), 0);
         lv_obj_set_style_border_width(b, 1, 0);
         lv_obj_center(label(b, T28, WHITE, SIGN[i]));
