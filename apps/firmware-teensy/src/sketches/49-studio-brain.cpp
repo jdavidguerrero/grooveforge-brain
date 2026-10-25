@@ -65,6 +65,7 @@
 #include "../fx/phase_chorus.h"
 #include "../fx/tape_saturate.h"
 #include "../ui/detent.h"
+#include "../ui/groove_macros.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/panel_leds.h"
@@ -190,6 +191,8 @@ float bpm = 120.0f;                      // BPM del reloj común (MIDI · IA · 
 uint32_t last_bpm_tx = 0;
 float bpm_sent = 0.0f;
 uint8_t moog_note = 255;                 // el Model D es monofónico: noteOff() sin nota
+dsp::Drift mono_drift;                   // DRIFT del Model D (los poly lo llevan por voz adentro)
+float mono_drift_pitch = 1.0f, mono_drift_cut = 1.0f;
 
 int32_t last_l = 0, last_r = 0, last_nav = 0, last_p1 = 0, last_p2 = 0;
 uint32_t last_stats = 0, last_ui_tx = 0, last_ui_beat = 0;
@@ -256,8 +259,15 @@ uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 void engine_note_on(uint8_t e, uint8_t note, float vel) {
     switch (e) {
         // El Model D y el Juno-106 originales no tienen velocity (fidelidad §11.6): suenan siempre a fondo
-        case 0: moog.noteOn(note, 1.0f); moog_note = note; break;
-        case 1: juno.noteOn(note, 1.0f); break;
+        // POCKET les devuelve la velocity (macro_velocity)
+        case 0:
+            mono_drift.amount = studio::macro_amount(patches[0], GF_MACRO_DRIFT);
+            mono_drift_pitch = mono_drift.pitch();
+            mono_drift_cut = mono_drift.cutoff();
+            moog.noteOn(note, studio::macro_velocity(vel, 0, patches[0]));
+            moog_note = note;
+            break;
+        case 1: juno.noteOn(note, studio::macro_velocity(vel, 1, patches[1])); break;
         case 2: prophet.noteOn(note, vel); break;
         case 3: ob6.noteOn(note, vel); break;
         case 4: dx7.noteOn(note, vel); break;
@@ -402,7 +412,13 @@ void groove_tick(uint32_t now) {
     const float* u = g[GF_GROOVE_UNISON];
     const uint8_t uni = engine_unison(ui.engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,
                                       u[GF_UNISON_DETUNE]);
-    gain *= dsp::unison_gain(uni);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
+    gain *= dsp::unison_gain(uni);
+    const float drift = studio::macro_amount(p, GF_MACRO_DRIFT);
+    juno.setDrift(drift);
+    prophet.setDrift(drift);
+    ob6.setDrift(drift);
+    dx7.setDrift(drift);
+    arp.setDrift(drift);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
     sfx_l.pump.set_gain(gain);
     sfx_r.pump.set_gain(gain);
 }
@@ -420,19 +436,21 @@ void engine_dsp(uint8_t e, bool on) {
 
 void engine_filter(uint8_t e) {
     const float hz = (ui.state().flags & GF_UI_FLAG_FILTER_BYPASS) ? GF_CUTOFF_RANGE[e].hi : cutoff[e];
+    const float res = gf_denorm(RESO_RANGE[e], studio::macro_resonance(gf_norm(RESO_RANGE[e], resonance[e]), patches[e]));
     switch (e) {
-        case 0: moog.setFilterCutoff(hz); moog.setFilterResonance(resonance[e]); break;
-        case 1: juno.setFilterCutoff(hz); juno.setFilterResonance(resonance[e]); break;
-        case 2: prophet.setFilterCutoff(hz); prophet.setFilterResonance(resonance[e]); break;
-        case 3: ob6.setFilterCutoff(hz); ob6.setFilterResonance(resonance[e]); break;
-        case 4: dx7.setFilterCutoff(hz); dx7.setFilterResonance(resonance[e]); break;
-        case 5: arp.setFilterCutoff(hz); arp.setFilterResonance(resonance[e]); break;
+        case 0: moog.setFilterCutoff(hz); moog.setFilterResonance(res); break;
+        case 1: juno.setFilterCutoff(hz); juno.setFilterResonance(res); break;
+        case 2: prophet.setFilterCutoff(hz); prophet.setFilterResonance(res); break;
+        case 3: ob6.setFilterCutoff(hz); ob6.setFilterResonance(res); break;
+        case 4: dx7.setFilterCutoff(hz); dx7.setFilterResonance(res); break;
+        case 5: arp.setFilterCutoff(hz); arp.setFilterResonance(res); break;
     }
 }
 
 /// Envelopes del amplificador y del filtro (la página ENV elige cuál con NAV), FLT ENV AMT, GLIDE y DRIVE del patch.
 void engine_patch(uint8_t e) {
-    const studio::Patch& p = patches[e];
+    const studio::Patch mp = studio::macro_patch(patches[e], e);   // con GRIT y POCKET
+    const studio::Patch& p = mp;
     const float glide_ms = p.glide * p.glide * 1500.0f;
     const float drv = 0.5f + 3.5f * p.drive;
     switch (e) {
@@ -465,11 +483,12 @@ void engine_patch(uint8_t e) {
 
 /// Página OSC del patch → setters del engine (plantilla GF_OSC_SLOT; niveles en % de la UI → 0–1).
 void engine_osc(uint8_t e) {
+    const studio::Patch mp = studio::macro_patch(patches[e], e);   // con GRIT (POLY-MOD, X-MOD, FM)
     static const uint16_t W4[4] = {WAVEFORM_SAWTOOTH, WAVEFORM_TRIANGLE, WAVEFORM_SQUARE, WAVEFORM_PULSE};
     static const uint16_t W_JUNO[4] = {WAVEFORM_SAWTOOTH, WAVEFORM_SQUARE, WAVEFORM_PULSE, AudioSynthPolyBlep::WAVEFORM_SAW_PULSE};
     static const uint16_t W_ARP[5] = {WAVEFORM_SAWTOOTH, WAVEFORM_TRIANGLE, WAVEFORM_SQUARE, WAVEFORM_PULSE,
                                       WAVEFORM_SINE};
-    const float (&o)[GF_OSC_STOPS][GF_OSC_SLOTS] = patches[e].osc;
+    const float (&o)[GF_OSC_STOPS][GF_OSC_SLOTS] = mp.osc;
     auto w = [&](const uint16_t* t, uint8_t n, float v) { return t[constrain(int(v), 0, n - 1)]; };
     switch (e) {
         case 0:
@@ -481,7 +500,7 @@ void engine_osc(uint8_t e) {
             moog.setPulseWidth(o[0][4] / 100.0f);
             moog.setVco3Detune(o[2][5]);
             {   // MODULATION: MOD MIX · OSC MOD · FILTER MOD · NOISE | VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD
-                const float (&md)[GF_OSC_SLOTS] = patches[0].mod[0];
+                const float (&md)[GF_OSC_SLOTS] = mp.mod[0];
                 moog.setModulation(md[0] / 100.0f, md[1] > 0.5f, md[2] > 0.5f);
                 moog.setVco3Control(md[4] > 0.5f, md[5] > 0.5f);
                 moog.setOverdrive(md[6] / 100.0f);
@@ -499,7 +518,7 @@ void engine_osc(uint8_t e) {
             juno.setVcaGate(o[0][7] > 0.5f);                                    // VCA ENV / GATE
             break;
         case 2: {  // theory/prophet-5-completo.md §3.1: OSC A · OSC B · MIXER
-            const studio::Patch& p = patches[2];
+            const studio::Patch& p = mp;
             prophet.setOscAFreq(o[0][0]);
             prophet.setOscAPw(o[0][1] / 100.0f);
             prophet.setOscAShape(o[0][2] > 0.5f, o[0][3] > 0.5f);
@@ -527,7 +546,7 @@ void engine_osc(uint8_t e) {
             ob6.setVco2Detune(o[1][5]);
             ob6.setFilterMorph(o[0][6] / 100.0f);
             ob6.setFilterBpMode(o[0][7] > 0.5f);
-            const float (&xm)[GF_OSC_SLOTS] = patches[3].mod[0];
+            const float (&xm)[GF_OSC_SLOTS] = mp.mod[0];
             ob6.setXMod(xm[0] / 100.0f, xm[1] / 100.0f, xm[2] > 0.5f, xm[3] > 0.5f, xm[4] > 0.5f);
             ob6.setSync(xm[5] > 0.5f);
             break;
@@ -542,7 +561,7 @@ void engine_osc(uint8_t e) {
             arp.setVco1Level(o[0][4] / 100.0f);
             arp.setVco2Level(o[1][4] / 100.0f);
             {   // PATCH (fidelidad §11.4): MONO · SYNC · VCO3 RATE · VCO3 → PITCH | VCO3 → CUTOFF · NOISE COLOR
-                const float (&pa)[GF_OSC_SLOTS] = patches[5].mod[0];
+                const float (&pa)[GF_OSC_SLOTS] = mp.mod[0];
                 arp.setMono(pa[0] > 0.5f);
                 arp.setSync(pa[1] > 0.5f);
                 arp.setVco3(pa[2], pa[3] / 100.0f, pa[4] / 100.0f);
@@ -557,7 +576,7 @@ void engine_osc(uint8_t e) {
                 dx7.setOpEnv(k, o[k][4], o[k][5], o[k][6] / 100.0f, o[k][7]);
             }
             {   // MOD: WAVE / DETUNE · KBD / EG (fidelidad §11.1)
-                const studio::Patch& p = patches[4];
+                const studio::Patch& p = mp;
                 for (uint8_t k = 0; k < 4; k++)
                     dx7.setOpWave(k, uint8_t(constrain(int(lroundf(p.mod[0][k])) - 1, 0, 7)),
                                   int8_t(lroundf(p.mod[0][4 + k])));
@@ -829,6 +848,10 @@ void mod_tick() {
     const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
     const float vib = fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib + 0.3f * aftertouch);
     m.pitch_ratio = exp2f((gf_lfo_pitch_st(vib) * v + wf_st + bend_st) / 12.0f);
+    if (e == 0) {   // DRIFT del Model D: desafinación y cutoff elegidos en cada nota
+        m.pitch_ratio *= mono_drift_pitch;
+        m.cutoff_mul *= mono_drift_cut;
+    }
     m.pwm = amt(GF_DEST_PWM) * v;
     m.amp = 1.0f - amt(GF_DEST_AMP) * (1.0f + v) * 0.5f;
     m.lfo = v;
@@ -844,6 +867,10 @@ void page_encoder(uint8_t enc, int32_t steps) {
     engine_patch(ui.engine());
     if (ui.state().page == studio::SYNTH_FX) apply_sfx(ui.engine());
     if (ui.state().page == studio::OSC || ui.state().page == studio::LFO) engine_osc(ui.engine());   // OSC y MOD
+    if (ui.state().page == studio::GROOVE && ui.state().cursor == GF_GROOVE_MACRO) {   // GRIT / POCKET
+        engine_osc(ui.engine());
+        engine_filter(ui.engine());
+    }
     static const char* const ENC_NAME[4] = {"P1", "P2", "ENC L", "ENC R"};
     Serial.printf("[%s] param 0x%04X = %.3f\n", ENC_NAME[enc], c[0].id, c[0].norm);
 }
@@ -1002,6 +1029,7 @@ void control_change(byte ch, byte cc, byte val) {
         bridge_param(pc[0].id, pc[0].norm);
         engine_patch(e);
         engine_osc(e);
+        engine_filter(e);   // GRIT (CC 15) mueve la resonancia
         apply_sfx(e);
         return;
     }

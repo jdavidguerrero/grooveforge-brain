@@ -113,6 +113,8 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
             _voices[0].targetHz = _midiToFreq(midi_note);
             _voices[0].midi_note = midi_note;
         } else {
+            _uni[0] = _drift.pitch();
+            _cutJit[0] = _drift.cutoff();
             _triggerVoice(0, midi_note, velocity);
         }
         return;
@@ -123,7 +125,8 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
         for (uint8_t k = 0; k < _unisonN; ++k) {
             int8_t v = _findFreeVoice();
             if (v < 0) v = _stealOldestVoice();
-            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents);
+            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents) * _drift.pitch();
+            _cutJit[v] = _drift.cutoff();
             _triggerVoice((uint8_t)v, midi_note, velocity);
         }
         return;
@@ -131,7 +134,8 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
-    _uni[voice] = 1.0f;
+    _uni[voice] = _drift.pitch();
+    _cutJit[voice] = _drift.cutoff();
     _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
@@ -313,7 +317,7 @@ void ARP2600::update() {
         const float velBright = 0.50f + 0.50f * _voices[i].velocity;
 
         float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul *
-                          _spread[i].cutoff * v3_cut;
+                          _spread[i].cutoff * _cutJit[i] * v3_cut;
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);

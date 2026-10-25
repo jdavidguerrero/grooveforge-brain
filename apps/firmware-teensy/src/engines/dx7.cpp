@@ -76,7 +76,7 @@ void DX7Engine::noteOn(uint8_t midi_note, float velocity) {
         if (_glideMs < 1.0f || s.midi_note == 255) s.currentHz = freq;
         s.midi_note = midi_note;
         s.age = ++_ageCounter;
-        _uni[v] = dsp::unison_ratio(k, n, _unisonCents);
+        _uni[v] = dsp::unison_ratio(k, n, _unisonCents) * _drift.pitch();
         _voice[v].note_on(s.currentHz * _lfo.pitch_ratio * _uni[v], velocity);
         _ampEnv[v].noteOn();
     }

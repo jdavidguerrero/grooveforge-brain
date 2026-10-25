@@ -50,3 +50,24 @@ inline float unison_ratio(uint8_t k, uint8_t n, float cents) {
 inline float unison_gain(uint8_t n) { return n <= 1 ? 1.0f : 1.0f / sqrtf(float(n)); }
 
 }  // namespace dsp
+
+namespace dsp {
+
+/// DRIFT (theory/09 de Studio §6): en cada nota, una desafinación aleatoria de hasta ±12 ¢ y un cutoff ±5 % por
+/// voz, escalados por `amount` 0–1. Distinto de VoiceSpread (fijo por voz): cambia nota a nota, como un VCO que
+/// todavía no se asentó.
+struct Drift {
+    float amount = 0.0f;
+    uint32_t state = 0x2545F491u;
+
+    float rnd() {   // [-1, 1)
+        state ^= state << 13;
+        state ^= state >> 17;
+        state ^= state << 5;
+        return float(int32_t(state)) * (1.0f / 2147483648.0f);
+    }
+    float pitch() { return amount > 0.0f ? powf(2.0f, rnd() * 12.0f * amount / 1200.0f) : 1.0f; }
+    float cutoff() { return amount > 0.0f ? 1.0f + rnd() * 0.05f * amount : 1.0f; }
+};
+
+}  // namespace dsp

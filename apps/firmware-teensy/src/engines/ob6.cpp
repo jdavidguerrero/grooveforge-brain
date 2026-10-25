@@ -137,7 +137,8 @@ void OB6::noteOn(uint8_t midi_note, float velocity) {
         for (uint8_t k = 0; k < _unisonN; ++k) {
             int8_t v = _findFreeVoice();
             if (v < 0) v = _stealOldestVoice();
-            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents);
+            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents) * _drift.pitch();
+            _cutJit[v] = _drift.cutoff();
             _triggerVoice((uint8_t)v, midi_note, velocity);
         }
         return;
@@ -145,7 +146,8 @@ void OB6::noteOn(uint8_t midi_note, float velocity) {
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
-    _uni[voice] = 1.0f;
+    _uni[voice] = _drift.pitch();
+    _cutJit[voice] = _drift.cutoff();
     _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
@@ -321,7 +323,7 @@ void OB6::update() {
         const float xmodSig = _xmEnv * envLevel + _xmVco2 * _lfo.lfo;
 
         // 1. Cutoff del filtro SEM 12 dB/oct
-        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul * _spread[i].cutoff;
+        float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul * _spread[i].cutoff * _cutJit[i];
         if (modulated < 20.0f)    modulated = 20.0f;
         if (modulated > 20000.0f) modulated = 20000.0f;
         _filter[i].frequency(modulated);

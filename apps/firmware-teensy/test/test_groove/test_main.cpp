@@ -7,6 +7,7 @@
 #include "dsp/groove_clock.h"
 #include "dsp/pump.h"
 #include "dsp/voice_spread.h"
+#include "ui/groove_macros.h"
 
 using dsp::GrooveClock;
 
@@ -321,6 +322,49 @@ void test_unison_symmetric_spread_and_gain() {
     TEST_ASSERT_EQUAL_FLOAT(1.0f, dsp::unison_gain(1));
 }
 
+// ── Macros ────────────────────────────────────────────────────────────────────
+
+void test_macros_neutral_at_zero() {
+    studio::Patch p;
+    studio::patch_init(p, 4);
+    const studio::Patch q = studio::macro_patch(p, 4);
+    TEST_ASSERT_EQUAL_FLOAT(p.decay_ms, q.decay_ms);
+    TEST_ASSERT_EQUAL_FLOAT(p.drive, q.drive);
+    TEST_ASSERT_EQUAL_FLOAT(p.osc[3][1], q.osc[3][1]);
+    TEST_ASSERT_EQUAL_FLOAT(0.4f, studio::macro_resonance(0.4f, p));
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, studio::macro_velocity(0.3f, 1, p));   // Juno sin POCKET: a fondo
+    TEST_ASSERT_EQUAL_FLOAT(0.3f, studio::macro_velocity(0.3f, 2, p));   // Prophet: siempre la velocity
+}
+
+void test_macro_pocket_and_grit() {
+    studio::Patch p;
+    studio::patch_init(p, 4);   // DX7 E.PIANO: algoritmo 5 (portadoras OP1 y OP3)
+    p.decay_ms = 1000.0f;
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 100;
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 50;
+    const studio::Patch q = studio::macro_patch(p, 4);
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, 200.0f, q.decay_ms);
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.8f, q.env_amt);
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, p.drive + 0.3f, q.drive);
+    TEST_ASSERT_EQUAL_FLOAT(p.osc[0][1], q.osc[0][1]);                 // portadora: igual
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, p.osc[1][1] + 10.0f, q.osc[1][1]);  // moduladora: +10
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.5f, studio::macro_resonance(0.4f, p));
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.3f, studio::macro_velocity(0.3f, 0, p));   // POCKET 100 %: la velocity entera
+    TEST_ASSERT_EQUAL_FLOAT(1000.0f, p.decay_ms);                       // el patch guardado no cambia
+}
+
+void test_drift_bounded() {
+    dsp::Drift d;
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, d.pitch());
+    d.amount = 1.0f;
+    for (int i = 0; i < 200; ++i) {
+        const float cents = 1200.0f * log2f(d.pitch());
+        TEST_ASSERT_TRUE(fabsf(cents) <= 12.0f);
+        const float c = d.cutoff();
+        TEST_ASSERT_TRUE(c >= 0.95f && c <= 1.05f);
+    }
+}
+
 int main(int, char**) {
     UNITY_BEGIN();
     RUN_TEST(test_clock_midi_bpm_and_position);
@@ -340,5 +384,8 @@ int main(int, char**) {
     RUN_TEST(test_chord_inversion);
     RUN_TEST(test_chord_key_triads);
     RUN_TEST(test_unison_symmetric_spread_and_gain);
+    RUN_TEST(test_macros_neutral_at_zero);
+    RUN_TEST(test_macro_pocket_and_grit);
+    RUN_TEST(test_drift_bounded);
     return UNITY_END();
 }

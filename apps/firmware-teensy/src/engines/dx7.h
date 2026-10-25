@@ -99,6 +99,8 @@ public:
         _unisonN = voices < 1 ? 1 : voices > DX7_VOICES ? DX7_VOICES : voices;
         _unisonCents = cents;
     }
+    /// DRIFT (theory/09 §6): 0–1; desafinación y cutoff aleatorios en cada nota.
+    void setDrift(float amount) { _drift.amount = amount; }
 
     void setFilterEnv(float a_ms, float d_ms, float s, float r_ms) {
         (void)a_ms; (void)d_ms; (void)s; (void)r_ms;
@@ -139,6 +141,7 @@ private:
     uint8_t    _unisonN = 1;
     float      _unisonCents = 0.0f;
     float      _uni[DX7_VOICES] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};   ///< razón de UNISON de cada voz
+    dsp::Drift _drift;
     uint32_t   _ageCounter   = 0;
     uint32_t   _lastUpdateMs = 0;
     float      _filterCutoff = 20000.0f;

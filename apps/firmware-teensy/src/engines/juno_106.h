@@ -75,6 +75,8 @@ public:
         _unisonN = voices < 1 ? 1 : voices > JUNO_VOICES ? JUNO_VOICES : voices;
         _unisonCents = cents;
     }
+    /// DRIFT (theory/09 §6): 0–1; desafinación y cutoff aleatorios en cada nota.
+    void setDrift(float amount) { _drift.amount = amount; }
 
     void setFilterEnv(float a_ms, float d_ms, float s, float r_ms) {
         for (uint8_t i = 0; i < JUNO_VOICES; i++) {
@@ -159,6 +161,8 @@ private:
     uint8_t    _unisonN = 1;
     float      _unisonCents = 0.0f;
     float      _uni[JUNO_VOICES] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};   ///< razón de UNISON de cada voz
+    dsp::Drift _drift;
+    float      _cutJit[JUNO_VOICES] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};   ///< cutoff de DRIFT de cada voz
     uint32_t   _ageCounter = 0;
 
     // ── Parámetros globales ───────────────────────────────────────────────────
