@@ -373,6 +373,7 @@ void groove_tick(uint32_t now) {
     const studio::Patch& p = patch();
     const float(&g)[GF_GROOVE_STOPS][GF_OSC_SLOTS] = p.groove;
     gclock.force_source(dsp::GrooveClock::Source(uint8_t(g[GF_GROOVE_PUMP][GF_PUMP_SOURCE])));
+    gclock.update(now);                  // re-fasa al cambiar de fuente (theory/09 §1.1)
     const double pos = gclock.position(now);
     const bool running = gclock.running(now);
     bpm = gclock.bpm(now);
@@ -398,6 +399,7 @@ void groove_tick(uint32_t now) {
         else arpeggio.pause();
     }
 
+    static float pump_out = 1.0f;
     float gain = 1.0f;
     if (p.groove_on[GF_GROOVE_PUMP] && running) {
         const float* q = g[GF_GROOVE_PUMP];
@@ -408,6 +410,10 @@ void groove_tick(uint32_t now) {
         pp.offset_ms = q[GF_PUMP_OFFSET];
         pp.release_ms = q[GF_PUMP_RELEASE];
         gain = dsp::pump_gain(pp, pos, bpm);
+        pump_out = gain;
+    } else {
+        pump_out += (1.0f - pump_out) * 0.05f;   // PUMP apagado o STOP: vuelve a 1 en ~20 ms, sin click
+        gain = pump_out;
     }
     const float* u = g[GF_GROOVE_UNISON];
     const uint8_t uni = engine_unison(ui.engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,

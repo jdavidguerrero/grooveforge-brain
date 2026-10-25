@@ -94,6 +94,52 @@ void test_clock_ai_position_continuous() {
     TEST_ASSERT_FLOAT_WITHIN(0.05, before, c.position(t2));
 }
 
+void test_clock_midi_lost_keeps_phase_and_tempo() {
+    GrooveClock c;
+    c.update(0);
+    c.midi_start();
+    const uint32_t last = send_ticks(c, 1000, TICK_120, 49);   // tick 49 = beat 2
+    for (uint32_t t = last; t <= last + 400000; t += 1000) c.update(t);   // el loop a 1 kHz
+    const uint32_t t = last + 400000;
+    TEST_ASSERT_EQUAL(int(GrooveClock::Source::Internal), int(c.source(t)));
+    TEST_ASSERT_FLOAT_WITHIN(0.5f, 120.0f, c.bpm(t));          // hereda el tempo
+    TEST_ASSERT_FLOAT_WITHIN(0.02, 2.0 + 0.8, c.position(t));  // 400 ms a 120 BPM = 0.8 beats después del tick
+    TEST_ASSERT_TRUE(c.running(t));
+}
+
+void test_clock_stop_stays_stopped() {
+    GrooveClock c;
+    c.midi_start();
+    const uint32_t last = send_ticks(c, 1000, TICK_120, 30);
+    c.midi_stop();
+    const double frozen = c.position(last);
+    for (uint32_t t = last; t <= last + 1500000; t += 1000) c.update(t);
+    const uint32_t t = last + 1500000;                           // ya no llegan clocks
+    TEST_ASSERT_EQUAL(int(GrooveClock::Source::Midi), int(c.source(t)));
+    TEST_ASSERT_FALSE(c.running(t));
+    TEST_ASSERT_FLOAT_WITHIN(1e-6, frozen, c.position(t));
+    c.tap(t);                                                     // TAP: pide el interno
+    c.update(t);
+    TEST_ASSERT_EQUAL(int(GrooveClock::Source::Internal), int(c.source(t)));
+    TEST_ASSERT_TRUE(c.running(t));
+}
+
+void test_clock_ai_to_internal_no_jump() {
+    GrooveClock c;
+    const uint32_t t0 = 1000000;
+    c.update(t0);
+    c.ai_beat(t0, 124.0f, 0.25f);
+    c.update(t0);
+    const uint32_t t1 = t0 + 2000000 - 1000;                    // justo antes del timeout de la IA
+    c.update(t1);
+    const double before = c.position(t1);
+    const uint32_t t2 = t1 + 2000;                              // la IA se cae: interno
+    c.update(t2);
+    TEST_ASSERT_EQUAL(int(GrooveClock::Source::Internal), int(c.source(t2)));
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 124.0f, c.bpm(t2));
+    TEST_ASSERT_FLOAT_WITHIN(0.01, before + 0.002 * 124.0 / 60.0, c.position(t2));
+}
+
 // ── PUMP ──────────────────────────────────────────────────────────────────────
 
 void test_pump_kick_curve() {
@@ -390,6 +436,9 @@ int main(int, char**) {
     RUN_TEST(test_clock_tap_sets_bpm_and_phase);
     RUN_TEST(test_clock_source_priority);
     RUN_TEST(test_clock_ai_position_continuous);
+    RUN_TEST(test_clock_midi_lost_keeps_phase_and_tempo);
+    RUN_TEST(test_clock_stop_stays_stopped);
+    RUN_TEST(test_clock_ai_to_internal_no_jump);
     RUN_TEST(test_pump_kick_curve);
     RUN_TEST(test_pump_offset_and_shapes);
     RUN_TEST(test_arp_up_and_division);
