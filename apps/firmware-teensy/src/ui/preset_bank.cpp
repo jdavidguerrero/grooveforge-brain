@@ -80,6 +80,10 @@ const Factory MODEL_D[] = {
     {"PLUCK", 1, 250, 0.0f, 200, 1, 200, 0.0f, 200, 0.6f, 250, 0.35f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[1][0] = 0; o[1][1] = 4; o[0][2] = 80; o[1][2] = 70; o[2][2] = 0;
                     o[3][0] = 0; }},
+    // Presets del track (variants/studio/presets-track-run.md): mitad A de GF_Run_FunkBass
+    {"RUN FUNKBASS", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.7f, 160, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 6; o[2][1] = -12;
+                    o[0][2] = 90; o[1][2] = 85; o[2][2] = 70; o[3][0] = 0; p.drive = 0.35f; }},
 };
 
 const Factory JUNO[] = {
@@ -94,6 +98,14 @@ const Factory JUNO[] = {
      [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 30; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1; }},
     {"PLUCK KEYS", 1, 600, 0.0f, 300, 1, 400, 0.0f, 300, 0.55f, 500, 0.2f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 30; o[0][2] = 0; o[0][4] = 1; o[0][5] = 1; }},
+    // Presets del track: mitad B de GF_Horizon_Pedal, mitad A de GF_Disco_RapStab y de GF_Vocal_VelvetPad
+    {"HORIZON CHORUS", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 1500, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
+     [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 0; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1; }},
+    {"RAP STAB JUNO", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 0; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1; }},
+    {"VELVET JUNO", 60, 800, 0.7f, 450, 60, 800, 0.5f, 450, 0.3f, 650, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 20; o[0][2] = 0; o[0][4] = 2; o[0][5] = 1;
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
 };
 
 const Factory PROPHET[] = {
@@ -114,6 +126,14 @@ const Factory PROPHET[] = {
     {"WARM KEYS", 2, 900, 0.4f, 400, 2, 600, 0.2f, 400, 0.4f, 700, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][1] = 40; o[0][2] = 0; o[0][3] = 1; o[1][0] = -12; o[1][4] = 1; o[1][6] = 0;
                     o[2][0] = 60; o[2][1] = 40; o[2][4] = 1; }},
+    // Presets del track: mitad B de GF_Run_HybridLead y de GF_Disco_RapStab
+    {"RUN LEAD BODY", 5, 350, 0.6f, 180, 5, 350, 0.4f, 180, 0.55f, 1200, 0.3f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][2] = 1; o[0][3] = 0; o[0][4] = 1;   // A +2 ST, esclava de B
+                    o[1][0] = 0; o[1][4] = 1; o[1][6] = 0; o[2][0] = 70; o[2][1] = 50;
+                    p.mod[0][0] = 15; p.mod[0][2] = 1; }},                             // POLY-MOD FILT ENV → FREQ A
+    {"RAP STAB P5", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 6; o[1][4] = 1; o[1][6] = 0;
+                    o[2][0] = 70; o[2][1] = 70; }},
 };
 
 const Factory OB6[] = {
@@ -131,6 +151,10 @@ const Factory OB6[] = {
     {"PULSE BASS", 1, 300, 0.6f, 100, 1, 250, 0.1f, 100, 0.5f, 300, 0.2f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 100; o[1][0] = 100; o[1][1] = -12; o[0][4] = 30; o[1][4] = 30;
                     o[0][1] = 60; }},
+    // Presets del track: mitad A de GF_Horizon_Pedal (MORPH 50 = notch)
+    {"HORIZON NOTCH", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 900, 0.2f, 0, 0.15f, 0, 0.35f, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 16; o[0][1] = 0; o[0][3] = 0;
+                    o[0][2] = 80; o[1][2] = 80; o[0][6] = 50; o[0][7] = 0; }},
 };
 
 void dx7_ops(Patch& p, const float (&op)[4][8]) {
@@ -155,6 +179,18 @@ const Factory DX7[] = {
     {"ORGAN", 5, 100, 1.0f, 80, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 6, 0, 0, 0.06f, 0,
      [](Patch& p) { dx7_ops(p, {{0.5f, 85, 8, 0, 5, 100, 100, 80}, {1, 99, 0, 0, 5, 100, 100, 80},
                                 {2, 80, 0, 0, 5, 100, 100, 80}, {3, 70, 0, 0, 5, 100, 100, 80}}); }},
+    // Presets del track: mitad A de GF_Run_HybridLead, B de GF_Vocal_VelvetPad y de GF_Tribal_ZapPerc.
+    // Algoritmo 1 (4 → 3 → 2 → 1) con OP3 y OP4 en 0 = par de 2 operadores
+    {"RUN LEAD PLUCK", 0, 120, 1.0f, 120, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 90, 0, 90}, {3, 75, 0, 0, 0, 45, 0, 45},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
+    {"VELVET RHODES", 60, 800, 0.7f, 450, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 60, 800, 70, 450}, {1, 40, 0, 0, 60, 600, 40, 400},
+                                {2, 75, 0, 0, 60, 800, 60, 450}, {1, 35, 0, 0, 60, 500, 30, 400}});
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
+    {"ZAP PERC WOOD", 0, 100, 1.0f, 60, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 55, 0, 55}, {3.14f, 70, 0, 0, 0, 40, 0, 40},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
 };
 
 const Factory ARP[] = {
@@ -174,13 +210,21 @@ const Factory ARP[] = {
     {"PERC BLIP", 0, 120, 0.0f, 120, 0, 100, 0.0f, 100, 0.7f, 300, 0.4f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 1; o[1][0] = 4; o[1][1] = 1.5f; o[0][2] = 30; o[0][3] = 0;
                     o[0][4] = 70; o[1][4] = 50; }},
+    // Presets del track: mitad B de GF_Run_FunkBass (la mordida en medios) y A de GF_Tribal_ZapPerc
+    {"RUN BASS BITE", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.5f, 1200, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 30; o[0][2] = 0; o[0][3] = 0; o[0][4] = 80; o[1][4] = 0; }},
+    {"ZAP PERC ARP", 0, 95, 0.0f, 60, 0, 95, 0.0f, 60, 0.85f, 1800, 0.75f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 4; o[0][2] = 0; o[0][3] = 60; o[0][4] = 70; o[1][4] = 0;
+                    p.mod[0][5] = 0; }},                                                 // ruido blanco
 };
 
 struct Bank {
     const Factory* v;
     uint8_t n;
 };
-const Bank BANKS[GF_ENGINE_COUNT] = {{MODEL_D, 6}, {JUNO, 6}, {PROPHET, 6}, {OB6, 6}, {DX7, 6}, {ARP, 6}};
+#define GF_BANK(v) {v, uint8_t(sizeof(v) / sizeof(v[0]))}
+const Bank BANKS[GF_ENGINE_COUNT] = {GF_BANK(MODEL_D), GF_BANK(JUNO), GF_BANK(PROPHET), GF_BANK(OB6), GF_BANK(DX7), GF_BANK(ARP)};
+#undef GF_BANK
 
 }  // namespace
 

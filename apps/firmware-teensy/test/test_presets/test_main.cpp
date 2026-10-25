@@ -1,4 +1,5 @@
 // Presets del Studio (variants/studio/theory/06-studio-presets.md §6): formato, banco y banco de fábrica.
+#include <stdio.h>
 #include <string.h>
 #include <unity.h>
 
@@ -76,7 +77,9 @@ void test_banco_vacio_escribe_fabrica() {
     PresetBank bank(s);
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
         bank.scan(e);
-        TEST_ASSERT_EQUAL_UINT8(6, bank.count(e));
+        Preset fac[PRESET_MAX];
+        TEST_ASSERT_EQUAL_UINT8(factory_presets(e, fac, PRESET_MAX), bank.count(e));
+        TEST_ASSERT_TRUE(bank.count(e) >= 6);
         Preset p;
         for (uint8_t i = 0; i < bank.count(e); ++i) TEST_ASSERT_TRUE(bank.load(e, i, &p));
     }
@@ -86,7 +89,7 @@ void test_banco_vacio_escribe_fabrica() {
     PresetBank again(s);                                                  // segundo arranque: no reescribe
     again.scan(2);
     TEST_ASSERT_EQUAL_INT(writes, s.writes);
-    TEST_ASSERT_EQUAL_UINT8(6, again.count(2));
+    TEST_ASSERT_EQUAL_UINT8(bank.count(2), again.count(2));
 }
 
 void test_save_new_hasta_16() {
@@ -95,10 +98,13 @@ void test_save_new_hasta_16() {
     bank.scan(0);
     Preset p;
     p.patch.drive = 0.8f;
-    TEST_ASSERT_EQUAL_INT(6, bank.save_new(0, p));
-    TEST_ASSERT_EQUAL_STRING("USER 07", bank.name(0, 6));
+    const uint8_t n0 = bank.count(0);                                   // 6 clásicos + los del track
+    TEST_ASSERT_EQUAL_INT(n0, bank.save_new(0, p));
+    char user[16];
+    snprintf(user, sizeof(user), "USER %02u", unsigned(n0 + 1));
+    TEST_ASSERT_EQUAL_STRING(user, bank.name(0, n0));
     Preset q;
-    TEST_ASSERT_TRUE(bank.load(0, 6, &q));
+    TEST_ASSERT_TRUE(bank.load(0, n0, &q));
     TEST_ASSERT_EQUAL_FLOAT(0.8f, q.patch.drive);
     while (bank.count(0) < PRESET_MAX) bank.save_new(0, p);
     TEST_ASSERT_EQUAL_INT(-1, bank.save_new(0, p));                       // lleno
@@ -139,6 +145,33 @@ void test_fabrica_dentro_de_rango() {
     }
 }
 
+/// Busca un preset de fábrica por nombre. @return su índice o -1.
+static int find_factory(uint8_t e, const char* name, Preset* out) {
+    Preset fac[PRESET_MAX];
+    const uint8_t n = factory_presets(e, fac, PRESET_MAX);
+    for (uint8_t i = 0; i < n; ++i)
+        if (strcmp(fac[i].name, name) == 0) { *out = fac[i]; return i; }
+    return -1;
+}
+
+void test_presets_del_track() {
+    static const struct { uint8_t e; const char* name; } TRACK[] = {
+        {0, "RUN FUNKBASS"},   {5, "RUN BASS BITE"}, {4, "RUN LEAD PLUCK"}, {2, "RUN LEAD BODY"},
+        {3, "HORIZON NOTCH"},  {1, "HORIZON CHORUS"}, {1, "RAP STAB JUNO"}, {2, "RAP STAB P5"},
+        {1, "VELVET JUNO"},    {4, "VELVET RHODES"}, {5, "ZAP PERC ARP"},  {4, "ZAP PERC WOOD"}};
+    Preset p;
+    for (const auto& t : TRACK) TEST_ASSERT_TRUE_MESSAGE(find_factory(t.e, t.name, &p) >= 0, t.name);
+    find_factory(4, "RUN LEAD PLUCK", &p);                 // par de 2 operadores: OP3 y OP4 callados
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, p.patch.osc[0][2]);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, p.patch.osc[2][1]);
+    TEST_ASSERT_EQUAL_FLOAT(3.0f, p.patch.osc[1][0]);
+    find_factory(1, "VELVET JUNO", &p);                    // DRIFT precargado al 60 %
+    TEST_ASSERT_EQUAL_FLOAT(60.0f, p.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT]);
+    find_factory(0, "RUN FUNKBASS", &p);
+    TEST_ASSERT_EQUAL_FLOAT(160.0f, p.cutoff_hz);
+    TEST_ASSERT_FLOAT_WITHIN(1e-6f, 0.35f, p.patch.drive);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -146,5 +179,6 @@ int main() {
     RUN_TEST(test_banco_vacio_escribe_fabrica);
     RUN_TEST(test_save_new_hasta_16);
     RUN_TEST(test_fabrica_dentro_de_rango);
+    RUN_TEST(test_presets_del_track);
     return UNITY_END();
 }
