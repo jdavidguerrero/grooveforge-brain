@@ -12,12 +12,12 @@ parte MIDI) y mezclarlas allá. Cuando lleguen las capas, cada par se junta en u
 
 | Preset | Mitad A (engine · nombre) | Mitad B (engine · nombre) | Mezcla A / B en Ableton |
 |---|---|---|---|
-| 01 GF_Run_FunkBass | MODEL D · RUN FUNKBASS | ARP 2600 · RUN BASS BITE | 75 / 25 → −2.5 dB / −12 dB |
-| 02 GF_Run_HybridLead | DX7 · RUN LEAD PLUCK | PROPHET-5 · RUN LEAD BODY | 40 / 60 → −8 dB / −4.4 dB |
-| 03 GF_Horizon_Pedal | OB-6 · HORIZON NOTCH | JUNO-106 · HORIZON CHORUS | 65 / 35 → −3.7 dB / −9.1 dB |
-| 04 GF_Disco_RapStab | JUNO-106 · RAP STAB JUNO | PROPHET-5 · RAP STAB P5 | 50 / 50 → −6 dB / −6 dB |
-| 05 GF_Vocal_VelvetPad | JUNO-106 · VELVET JUNO | DX7 · VELVET RHODES | 60 / 40 → −4.4 dB / −8 dB |
-| 06 GF_Tribal_ZapPerc | ARP 2600 · ZAP PERC ARP | DX7 · ZAP PERC WOOD | 60 / 40 → −4.4 dB / −8 dB |
+| 01 GF_Run_FunkBass | MODEL D · JD RUN FUNKBASS | ARP 2600 · JD RUN BASS BITE | 75 / 25 → −2.5 dB / −12 dB |
+| 02 GF_Run_HybridLead | DX7 · JD RUN PLUCK | PROPHET-5 · JD RUN LEAD BODY | 40 / 60 → −8 dB / −4.4 dB |
+| 03 GF_Horizon_Pedal | OB-6 · JD HORIZON NOTCH | JUNO-106 · JD HORIZON JUNO | 65 / 35 → −3.7 dB / −9.1 dB |
+| 04 GF_Disco_RapStab | JUNO-106 · JD RAP STAB JUNO | PROPHET-5 · JD RAP STAB P5 | 50 / 50 → −6 dB / −6 dB |
+| 05 GF_Vocal_VelvetPad | JUNO-106 · JD VELVET JUNO | DX7 · JD VELVET RHODES | 60 / 40 → −4.4 dB / −8 dB |
+| 06 GF_Tribal_ZapPerc | ARP 2600 · JD ZAP PERC ARP | DX7 · JD ZAP PERC WOOD | 60 / 40 → −4.4 dB / −8 dB |
 
 Las macros de la tabla original son las de GROOVE: INDIE GRIT = **GRIT** (CC 15), ORGANIC DRIFT = **DRIFT** (CC 14),
 HYBRID MORPH = **MORPH** (CC 17, sin efecto hasta las capas).
@@ -26,7 +26,7 @@ HYBRID MORPH = **MORPH** (CC 17, sin efecto hasta las capas).
 
 | Pedido | Qué quedó | Alternativa |
 |---|---|---|
-| ARP con HPF interno a 180 Hz (01) | El ARP no tiene HPF; la mitad B usa LP a 1.2 kHz | HPF 180 Hz en la pista de Ableton de RUN BASS BITE |
+| ARP con HPF interno a 180 Hz (01) | El ARP no tiene HPF; la mitad B usa LP a 1.2 kHz | HPF 180 Hz en la pista de Ableton de JD RUN BASS BITE |
 | Velocity → cutoff al 80 % en el Moog (01) | El Model D ignora la velocity, como el original | POCKET (CC 16) le devuelve la velocity, pero también acorta el release; si hace falta, un parámetro VEL → CUTOFF es trabajo nuevo |
 | Mezcla A/B dentro del preset | Volumen en Ableton (tabla de arriba) | Fase de capas |
 | DX7 de 2 operadores (02, 06) | Algoritmo 1 (4 → 3 → 2 → 1) con OP3 y OP4 en 0 | — |

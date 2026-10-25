@@ -145,6 +145,58 @@ void test_fabrica_dentro_de_rango() {
     }
 }
 
+/// Un preset de formato 2 = el de formato 3 sin el bloque GROOVE del final.
+static size_t encode_v2(const Preset& p, uint8_t e, uint8_t* buf) {
+    preset_encode(p, e, buf, PRESET_BYTES);
+    buf[3] = 2;
+    return PRESET_BYTES_V2;
+}
+
+void test_migra_formato_2() {
+    Preset p;
+    patch_init(p.patch, 1);
+    strcpy(p.name, "MI PAD VIEJO");
+    p.patch.attack_ms = 777.0f;
+    p.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 99;   // no viaja en el formato 2
+    p.patch.groove_on[GF_GROOVE_ARP] = true;
+    uint8_t buf[PRESET_BYTES];
+    const size_t len = encode_v2(p, 1, buf);
+    Preset q;
+    TEST_ASSERT_TRUE(preset_decode(buf, len, 1, &q));
+    TEST_ASSERT_EQUAL_STRING("MI PAD VIEJO", q.name);
+    TEST_ASSERT_EQUAL_FLOAT(777.0f, q.patch.attack_ms);
+    const Patch neutral;
+    TEST_ASSERT_EQUAL_FLOAT(neutral.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH], q.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH]);
+    TEST_ASSERT_FALSE(q.patch.groove_on[GF_GROOVE_ARP]);
+    TEST_ASSERT_FALSE(preset_decode(buf, PRESET_BYTES, 1, &q));   // formato 2 con largo de 3: corrupto
+    buf[3] = 1;
+    TEST_ASSERT_FALSE(preset_decode(buf, len, 1, &q));            // formato 1: no se migra
+}
+
+void test_banco_existente_conserva_y_agrega_fabrica() {
+    FakeStorage s;
+    Preset mine;
+    patch_init(mine.patch, 2);
+    strcpy(mine.name, "USER 01");
+    mine.patch.drive = 0.9f;
+    uint8_t buf[PRESET_BYTES];
+    s.write(2, 0, buf, encode_v2(mine, 2, buf));                // un banco viejo: un preset propio en formato 2
+    PresetBank bank(s);
+    bank.scan(2);
+    Preset fac[PRESET_MAX];
+    const uint8_t n = factory_presets(2, fac, PRESET_MAX);
+    TEST_ASSERT_EQUAL_UINT8(1 + n, bank.count(2));                // el propio queda primero, la fábrica detrás
+    TEST_ASSERT_EQUAL_STRING("USER 01", bank.name(2, 0));
+    Preset q;
+    TEST_ASSERT_TRUE(bank.load(2, 0, &q));
+    TEST_ASSERT_EQUAL_FLOAT(0.9f, q.patch.drive);
+    TEST_ASSERT_EQUAL_STRING(fac[0].name, bank.name(2, 1));
+    const int writes = s.writes;
+    PresetBank again(s);                                          // segundo arranque: ya están todos
+    again.scan(2);
+    TEST_ASSERT_EQUAL_INT(writes, s.writes);
+}
+
 /// Busca un preset de fábrica por nombre. @return su índice o -1.
 static int find_factory(uint8_t e, const char* name, Preset* out) {
     Preset fac[PRESET_MAX];
@@ -156,18 +208,18 @@ static int find_factory(uint8_t e, const char* name, Preset* out) {
 
 void test_presets_del_track() {
     static const struct { uint8_t e; const char* name; } TRACK[] = {
-        {0, "RUN FUNKBASS"},   {5, "RUN BASS BITE"}, {4, "RUN LEAD PLUCK"}, {2, "RUN LEAD BODY"},
-        {3, "HORIZON NOTCH"},  {1, "HORIZON CHORUS"}, {1, "RAP STAB JUNO"}, {2, "RAP STAB P5"},
-        {1, "VELVET JUNO"},    {4, "VELVET RHODES"}, {5, "ZAP PERC ARP"},  {4, "ZAP PERC WOOD"}};
+        {0, "JD RUN FUNKBASS"},   {5, "JD RUN BASS BITE"}, {4, "JD RUN PLUCK"}, {2, "JD RUN LEAD BODY"},
+        {3, "JD HORIZON NOTCH"},  {1, "JD HORIZON JUNO"}, {1, "JD RAP STAB JUNO"}, {2, "JD RAP STAB P5"},
+        {1, "JD VELVET JUNO"},    {4, "JD VELVET RHODES"}, {5, "JD ZAP PERC ARP"},  {4, "JD ZAP PERC WOOD"}};
     Preset p;
     for (const auto& t : TRACK) TEST_ASSERT_TRUE_MESSAGE(find_factory(t.e, t.name, &p) >= 0, t.name);
-    find_factory(4, "RUN LEAD PLUCK", &p);                 // par de 2 operadores: OP3 y OP4 callados
+    find_factory(4, "JD RUN PLUCK", &p);                 // par de 2 operadores: OP3 y OP4 callados
     TEST_ASSERT_EQUAL_FLOAT(1.0f, p.patch.osc[0][2]);
     TEST_ASSERT_EQUAL_FLOAT(0.0f, p.patch.osc[2][1]);
     TEST_ASSERT_EQUAL_FLOAT(3.0f, p.patch.osc[1][0]);
-    find_factory(1, "VELVET JUNO", &p);                    // DRIFT precargado al 60 %
+    find_factory(1, "JD VELVET JUNO", &p);                    // DRIFT precargado al 60 %
     TEST_ASSERT_EQUAL_FLOAT(60.0f, p.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT]);
-    find_factory(0, "RUN FUNKBASS", &p);
+    find_factory(0, "JD RUN FUNKBASS", &p);
     TEST_ASSERT_EQUAL_FLOAT(160.0f, p.cutoff_hz);
     TEST_ASSERT_FLOAT_WITHIN(1e-6f, 0.35f, p.patch.drive);
 }
@@ -180,5 +232,7 @@ int main() {
     RUN_TEST(test_save_new_hasta_16);
     RUN_TEST(test_fabrica_dentro_de_rango);
     RUN_TEST(test_presets_del_track);
+    RUN_TEST(test_migra_formato_2);
+    RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     return UNITY_END();
 }

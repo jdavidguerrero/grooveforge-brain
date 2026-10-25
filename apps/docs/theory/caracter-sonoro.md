@@ -76,14 +76,15 @@ con un porcentaje de fidelidad.
    opción "en tonalidad" con la tonalidad detectada.
 3. **ARP:** sacar SMART ARP del modo AI a la página de synth: UP / DOWN / UP-DOWN / RANDOM / SMART, divisiones con
    tresillos y puntillo, gate, octavas 1–3, **swing**, latch.
-4. **UNISON:** voces apiladas con detune y spread estéreo. **Cuesta polifonía** (6 voces en Juno / OB-6 / DX7):
+4. **UNISON:** voces apiladas con detune y spread estéreo. **Cuesta polifonía.** Lo que cuenta es cuántas **notas
+   musicales** suenan a la vez, no cuántas voces DSP (rev. 2: por engine; el Prophet tiene 5 voces y el ARP 4):
 
-   | Unison | Notas a la vez | Uso |
-   |---|---|---|
-   | ×1 | 6 | Pads y acordes |
-   | ×2 | 3 | Leads, stabs de 3 notas |
-   | ×3 | 2 | Leads gruesos |
-   | ×6 | 1 | Bajo / lead mono |
+   | Unison | Juno / OB-6 / DX7 (6 voces) | Prophet (5) | ARP 2600 poly (4) | Uso |
+   |---|---|---|---|---|
+   | ×1 | 6 notas | 5 | 4 | Pads y acordes |
+   | ×2 | 3 | 2 | 2 | Leads, stabs de 3 notas |
+   | ×3 | 2 | 1 | 1 | Leads gruesos |
+   | ×6 | 1 (6 voces) | 1 (5 voces) | 1 (4 voces) | Bajo / lead mono |
 
    Un acorde de 4 notas con unison ×2 necesitaría 8 voces: para **pads**, el ancho sale de las voice cards, el
    chorus estéreo y el detune por voz (sin apilar). Subir a 8 voces es posible solo si la CPU medida lo permite.
@@ -215,3 +216,15 @@ firmware actual:
 
 **Orden resultante:** 1 proceso (+ macros DRIFT / GRIT / POCKET) → 2 engines → 3 capas (+ MORPH) → 4 FX → 5 banco
 Signature (+ híbridos) → 6 ajuste con referencias.
+
+## 9. Revisión después de implementar la fase 1 (Juan, 2026-10-25)
+
+| Punto | Cambio al plan |
+|---|---|
+| **Signature llegaba demasiado tarde** | **5 sonidos piloto ya**, con lo implementado (GROOVE incluido), en el banco de fábrica. El banco completo sigue en la fase 5; los pilotos deciden qué mejoras de engine y qué capas merecen trabajo. |
+| **Las capas amplían mucho el alcance** | La fase de capas empieza con **una sola pareja y un propósito**: cuerpo sostenido en A + ataque percusivo en B (p. ej. Prophet + DX7, como JD RUN LEAD). Se mide con los SYNTH FX activos antes de generalizar a cualquier pareja. |
+| **Conservación de presets** | Antes del banco personal: el decodificador **migra** los presets de formato 2 (GROOVE en sus valores neutros) y los presets de fábrica nuevos se **agregan** a un banco existente sin pisar lo guardado (theory/09 §7). |
+| **Macros demasiado universales** | Nombres comunes, profundidad por preset: la capa SHIFT de la parada MACRO guarda cuánto GRIT va a la resonancia y a la modulación (POLY-MOD / X-MOD / FM) y cuánta velocity devuelve POCKET. POCKET solo acorta (no alarga un decay que ya era más corto que su destino). |
+| **Polifonía de capas** | Se cuenta en **notas musicales**: dos capas de 3 voces dan **3 notas superpuestas**, no 6. Con el Prophet (5 voces) una capa 3 + 3 no existe: 3 + 2. Tabla de UNISON corregida en la fase 1. |
+| **Reloj en directo** | Transiciones definidas en theory/09 §1.1: al perder el MIDI se conserva fase y tempo; STOP detiene ARP y PUMP y no cae al reloj interno; al cambiar de fuente no hay salto de fase. |
+

@@ -11,7 +11,7 @@ constexpr uint8_t MAGIC[3] = {'G', 'F', 'P'};
 
 /// Recorre los campos del preset en el orden del archivo; el mismo código escribe y lee (sin desfasajes).
 template <typename F, typename B>
-void visit(Preset& p, F&& f32, B&& u8) {
+void visit(Preset& p, uint8_t format, F&& f32, B&& u8) {
     Patch& t = p.patch;
     float* const scalars[12] = {&t.attack_ms, &t.decay_ms,   &t.sustain,   &t.release_ms, &t.f_attack_ms,
                                 &t.f_decay_ms, &t.f_sustain, &t.f_release_ms, &t.env_amt,   &t.glide,
@@ -34,6 +34,7 @@ void visit(Preset& p, F&& f32, B&& u8) {
         u8(b);
         on = b != 0;
     }
+    if (format < 3) return;                     // formato 2: GROOVE queda en los valores neutros de Patch
     for (auto& st : t.groove)
         for (float& v : st) f32(v);
     for (bool& on : t.groove_on) {
@@ -81,7 +82,7 @@ const Factory MODEL_D[] = {
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[1][0] = 0; o[1][1] = 4; o[0][2] = 80; o[1][2] = 70; o[2][2] = 0;
                     o[3][0] = 0; }},
     // Presets del track (variants/studio/presets-track-run.md): mitad A de GF_Run_FunkBass
-    {"RUN FUNKBASS", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.7f, 160, 0.25f, 0, 2, 1, 0, 0, 0,
+    {"JD RUN FUNKBASS", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.7f, 160, 0.25f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 6; o[2][1] = -12;
                     o[0][2] = 90; o[1][2] = 85; o[2][2] = 70; o[3][0] = 0; p.drive = 0.35f; }},
 };
@@ -99,11 +100,11 @@ const Factory JUNO[] = {
     {"PLUCK KEYS", 1, 600, 0.0f, 300, 1, 400, 0.0f, 300, 0.55f, 500, 0.2f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 30; o[0][2] = 0; o[0][4] = 1; o[0][5] = 1; }},
     // Presets del track: mitad B de GF_Horizon_Pedal, mitad A de GF_Disco_RapStab y de GF_Vocal_VelvetPad
-    {"HORIZON CHORUS", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 1500, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
+    {"JD HORIZON JUNO", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 1500, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 0; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1; }},
-    {"RAP STAB JUNO", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
+    {"JD RAP STAB JUNO", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 0; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1; }},
-    {"VELVET JUNO", 60, 800, 0.7f, 450, 60, 800, 0.5f, 450, 0.3f, 650, 0.15f, 0, 2, 1, 0, 0, 0,
+    {"JD VELVET JUNO", 60, 800, 0.7f, 450, 60, 800, 0.5f, 450, 0.3f, 650, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 20; o[0][2] = 0; o[0][4] = 2; o[0][5] = 1;
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
 };
@@ -127,11 +128,11 @@ const Factory PROPHET[] = {
      [](Patch& p) { O o = p.osc; o[0][1] = 40; o[0][2] = 0; o[0][3] = 1; o[1][0] = -12; o[1][4] = 1; o[1][6] = 0;
                     o[2][0] = 60; o[2][1] = 40; o[2][4] = 1; }},
     // Presets del track: mitad B de GF_Run_HybridLead y de GF_Disco_RapStab
-    {"RUN LEAD BODY", 5, 350, 0.6f, 180, 5, 350, 0.4f, 180, 0.55f, 1200, 0.3f, 0, 2, 1, 0, 0, 0,
+    {"JD RUN LEAD BODY", 5, 350, 0.6f, 180, 5, 350, 0.4f, 180, 0.55f, 1200, 0.3f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][2] = 1; o[0][3] = 0; o[0][4] = 1;   // A +2 ST, esclava de B
                     o[1][0] = 0; o[1][4] = 1; o[1][6] = 0; o[2][0] = 70; o[2][1] = 50;
                     p.mod[0][0] = 15; p.mod[0][2] = 1; }},                             // POLY-MOD FILT ENV → FREQ A
-    {"RAP STAB P5", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
+    {"JD RAP STAB P5", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 6; o[1][4] = 1; o[1][6] = 0;
                     o[2][0] = 70; o[2][1] = 70; }},
 };
@@ -152,7 +153,7 @@ const Factory OB6[] = {
      [](Patch& p) { O o = p.osc; o[0][0] = 100; o[1][0] = 100; o[1][1] = -12; o[0][4] = 30; o[1][4] = 30;
                     o[0][1] = 60; }},
     // Presets del track: mitad A de GF_Horizon_Pedal (MORPH 50 = notch)
-    {"HORIZON NOTCH", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 900, 0.2f, 0, 0.15f, 0, 0.35f, 0, 0,
+    {"JD HORIZON NOTCH", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 900, 0.2f, 0, 0.15f, 0, 0.35f, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 16; o[0][1] = 0; o[0][3] = 0;
                     o[0][2] = 80; o[1][2] = 80; o[0][6] = 50; o[0][7] = 0; }},
 };
@@ -181,14 +182,14 @@ const Factory DX7[] = {
                                 {2, 80, 0, 0, 5, 100, 100, 80}, {3, 70, 0, 0, 5, 100, 100, 80}}); }},
     // Presets del track: mitad A de GF_Run_HybridLead, B de GF_Vocal_VelvetPad y de GF_Tribal_ZapPerc.
     // Algoritmo 1 (4 → 3 → 2 → 1) con OP3 y OP4 en 0 = par de 2 operadores
-    {"RUN LEAD PLUCK", 0, 120, 1.0f, 120, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+    {"JD RUN PLUCK", 0, 120, 1.0f, 120, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 90, 0, 90}, {3, 75, 0, 0, 0, 45, 0, 45},
                                 {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
-    {"VELVET RHODES", 60, 800, 0.7f, 450, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+    {"JD VELVET RHODES", 60, 800, 0.7f, 450, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 60, 800, 70, 450}, {1, 40, 0, 0, 60, 600, 40, 400},
                                 {2, 75, 0, 0, 60, 800, 60, 450}, {1, 35, 0, 0, 60, 500, 30, 400}});
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
-    {"ZAP PERC WOOD", 0, 100, 1.0f, 60, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+    {"JD ZAP PERC WOOD", 0, 100, 1.0f, 60, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 55, 0, 55}, {3.14f, 70, 0, 0, 0, 40, 0, 40},
                                 {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
 };
@@ -211,9 +212,9 @@ const Factory ARP[] = {
      [](Patch& p) { O o = p.osc; o[0][0] = 1; o[1][0] = 4; o[1][1] = 1.5f; o[0][2] = 30; o[0][3] = 0;
                     o[0][4] = 70; o[1][4] = 50; }},
     // Presets del track: mitad B de GF_Run_FunkBass (la mordida en medios) y A de GF_Tribal_ZapPerc
-    {"RUN BASS BITE", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.5f, 1200, 0.25f, 0, 2, 1, 0, 0, 0,
+    {"JD RUN BASS BITE", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.5f, 1200, 0.25f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 30; o[0][2] = 0; o[0][3] = 0; o[0][4] = 80; o[1][4] = 0; }},
-    {"ZAP PERC ARP", 0, 95, 0.0f, 60, 0, 95, 0.0f, 60, 0.85f, 1800, 0.75f, 0, 2, 1, 0, 0, 0,
+    {"JD ZAP PERC ARP", 0, 95, 0.0f, 60, 0, 95, 0.0f, 60, 0.85f, 1800, 0.75f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 4; o[0][2] = 0; o[0][3] = 60; o[0][4] = 70; o[1][4] = 0;
                     p.mod[0][5] = 0; }},                                                 // ruido blanco
 };
@@ -238,17 +239,20 @@ size_t preset_encode(const Preset& src, uint8_t engine, uint8_t* buf, size_t cap
     memset(buf + 5, 0, PRESET_NAME_LEN);
     memcpy(buf + 5, p.name, strnlen(p.name, PRESET_NAME_LEN));
     n = 5 + PRESET_NAME_LEN;
-    visit(p, [&](float& v) { memcpy(buf + n, &v, 4); n += 4; }, [&](uint8_t& b) { buf[n++] = b; });
+    visit(p, PRESET_FORMAT, [&](float& v) { memcpy(buf + n, &v, 4); n += 4; }, [&](uint8_t& b) { buf[n++] = b; });
     return n;
 }
 
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out) {
-    if (len != PRESET_BYTES || memcmp(buf, MAGIC, 3) != 0 || buf[3] != PRESET_FORMAT || buf[4] != engine) return false;
+    if (len < 5 || memcmp(buf, MAGIC, 3) != 0 || buf[4] != engine) return false;
+    const uint8_t format = buf[3];
+    const size_t expect = format == PRESET_FORMAT ? PRESET_BYTES : format == 2 ? PRESET_BYTES_V2 : 0;
+    if (format < PRESET_FORMAT_MIN || format > PRESET_FORMAT || len != expect) return false;
     Preset p;
     memcpy(p.name, buf + 5, PRESET_NAME_LEN);
     p.name[PRESET_NAME_LEN] = '\0';
     size_t n = 5 + PRESET_NAME_LEN;
-    visit(p, [&](float& v) { memcpy(&v, buf + n, 4); n += 4; }, [&](uint8_t& b) { b = buf[n++]; });
+    visit(p, format, [&](float& v) { memcpy(&v, buf + n, 4); n += 4; }, [&](uint8_t& b) { b = buf[n++]; });
     p.patch.lfo_shape = p.patch.lfo_shape < GF_LFO_SHAPES ? p.patch.lfo_shape : 0;
     p.patch.lfo_div = p.patch.lfo_div < GF_LFO_DIVS ? p.patch.lfo_div : 0;
     *out = p;
@@ -298,12 +302,17 @@ void PresetBank::scan(uint8_t e) {
         set_name(names_[e][i], p.name);
         count_[e] = uint8_t(i + 1);
     }
-    if (count_[e]) return;
+    // Banco vacío: el de fábrica entero. Banco con presets: solo los de fábrica que falten, al final (un firmware nuevo
+    // trae presets nuevos sin borrar lo guardado)
     Preset fac[PRESET_MAX];
     const uint8_t n = factory_presets(e, fac, PRESET_MAX);
-    for (uint8_t i = 0; i < n; ++i) {
-        if (preset_encode(fac[i], e, buf, sizeof(buf)) == 0 || !storage_.write(e, i, buf, PRESET_BYTES)) break;
-        set_name(names_[e][i], fac[i].name);
+    for (uint8_t f = 0; f < n && count_[e] < PRESET_MAX; ++f) {
+        bool have = false;
+        for (uint8_t i = 0; i < count_[e] && !have; ++i) have = strcmp(names_[e][i], fac[f].name) == 0;
+        if (have) continue;
+        const uint8_t i = count_[e];
+        if (preset_encode(fac[f], e, buf, sizeof(buf)) == 0 || !storage_.write(e, i, buf, PRESET_BYTES)) break;
+        set_name(names_[e][i], fac[f].name);
         count_[e] = uint8_t(i + 1);
     }
 }

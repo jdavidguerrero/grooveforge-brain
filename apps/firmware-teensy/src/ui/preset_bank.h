@@ -18,6 +18,7 @@ namespace studio {
 constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
 constexpr uint8_t PRESET_FORMAT = 3;        ///< versión del formato (3: página GROOVE, 2026-10-25)
+constexpr uint8_t PRESET_FORMAT_MIN = 2;    ///< el más viejo que se migra al leer (2: sin GROOVE)
 
 /// Un sonido: el patch editable + el filtro de ENC L / R.
 struct Preset {
@@ -28,15 +29,17 @@ struct Preset {
 };
 
 /// Bytes de un preset serializado (cabecera + campos en orden fijo, little-endian).
-constexpr size_t PRESET_BYTES = 4 + 1 + PRESET_NAME_LEN + 4 * (12 + GF_DEST_COUNT + GF_OSC_STOPS * GF_OSC_SLOTS +
-                                GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2 +
-                                GF_GROOVE_STOPS * GF_OSC_SLOTS) +
-                                2 + GF_SFX_COUNT + GF_GROOVE_TOGGLES;
+constexpr size_t PRESET_BYTES_V2 = 4 + 1 + PRESET_NAME_LEN + 4 * (12 + GF_DEST_COUNT + GF_OSC_STOPS * GF_OSC_SLOTS +
+                                   GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2) +
+                                   2 + GF_SFX_COUNT;
+/// Formato 3 = el 2 + GROOVE (valores de las 5 paradas y los 4 encendidos) al final.
+constexpr size_t PRESET_BYTES = PRESET_BYTES_V2 + 4 * GF_GROOVE_STOPS * GF_OSC_SLOTS + GF_GROOVE_TOGGLES;
 
 /// Serializa `p` del engine `engine` en `buf`. @return bytes escritos, 0 si `cap` < PRESET_BYTES.
 size_t preset_encode(const Preset& p, uint8_t engine, uint8_t* buf, size_t cap);
 
-/// Lee un preset. @return false si la firma, la versión, el engine o el tamaño no coinciden.
+/// Lee un preset; los de formato 2 se migran (GROOVE en sus valores neutros de Patch).
+/// @return false si la firma, la versión, el engine o el tamaño no coinciden.
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out);
 
 /// Patches clásicos del engine (theory/06 §8). @return cuántos escribió en `out` (≤ cap).
@@ -56,7 +59,8 @@ class PresetBank {
 public:
     explicit PresetBank(PresetStorage& s) : storage_(s) {}
 
-    /// Lee los nombres del banco del engine; si está vacío, escribe el banco de fábrica.
+    /// Lee los nombres del banco del engine; si está vacío, escribe el banco de fábrica. Si ya tiene presets, agrega al
+    /// final los de fábrica que falten (por nombre) sin tocar lo guardado, mientras haya lugar.
     void scan(uint8_t engine);
 
     uint8_t count(uint8_t engine) const { return engine < GF_ENGINE_COUNT ? count_[engine] : 0; }

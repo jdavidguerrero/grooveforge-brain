@@ -18,6 +18,16 @@ Un solo reloj para PUMP, ARP, DELAY (fase 4) y el SYNC del LFO. Da **BPM** y **p
 - **TAP:** BPM = promedio de los últimos intervalos (2 a 4 toques, cada uno entre 0.25 y 2 s); un toque aislado solo
   re-fasa. El BPM interno arranca en 120.
 - El usuario puede forzar la fuente (AUTO / MIDI / IA / INTERNO) en la parada PUMP.
+
+### 1.1 Transiciones en directo (rev. 2, 2026-10-25)
+
+| Evento | Qué pasa |
+|---|---|
+| Se pierde el clock MIDI sin STOP (cable, Ableton se cuelga) | A los 300 ms pasa al reloj interno **con el último BPM y la posición extrapolada** desde el último tick: el ARP y el PUMP siguen en fase. |
+| STOP | ARP en pausa (suelta la nota que suena, conserva las sostenidas), PUMP vuelve a ganancia 1 en ~20 ms, la posición queda congelada. **No** cae al reloj interno aunque dejen de llegar clocks: sigue parado hasta START, CONTINUE, un TAP o forzar otra fuente. |
+| START / CONTINUE | Vuelve el MIDI: START = beat 0; CONTINUE = donde quedó (o el SONG POSITION recibido). |
+| Cambio de fuente (MIDI → IA → interno, o forzada) | La nueva fuente se re-fasa al beat entero más cercano a la posición que se traía: sin salto de fase. El interno además hereda el BPM. |
+| PUMP apagado o reloj parado | La ganancia sube a 1 con una rampa de ~20 ms (sin click). |
 - **Studio hoy:** el sketch49 no corre la IA, así que en la práctica usa MIDI e INTERNO. La fuente IA queda lista para
   cuando se integre.
 
@@ -54,8 +64,9 @@ Avanza con la posición del reloj (no con milisegundos propios): siempre en fase
 
 ## 5. UNISON (en cada engine polifónico)
 
-- VOCES ×1 / ×2 / ×3 / ×6 por nota con DETUNE 0–50 ¢ repartido simétrico. **Cuesta polifonía:** 6 voces / ×N (tabla
-  en caracter-sonoro §4). Al soltar la nota se liberan todas sus voces.
+- VOCES ×1 / ×2 / ×3 / ×6 por nota con DETUNE 0–50 ¢ repartido simétrico (ancho total entre la voz más grave y la
+  más aguda). **Cuesta polifonía:** notas a la vez = voces del engine / ×N, redondeado abajo (Prophet 5 voces, ARP 4;
+  tabla en caracter-sonoro §4). Al soltar la nota se liberan todas sus voces. El nivel se compensa 1/√N.
 - Engines: Juno, Prophet, OB-6, DX7, ARP (en poly). El Model D ya tiene 3 VCO en una voz: no aplica.
 - **Sin SPREAD estéreo en esta revisión:** los engines salen mono (salvo el chorus del Juno); repartir voces en
   estéreo exige mezclar por voz en L / R. Queda para la fase de capas.
@@ -69,6 +80,11 @@ Avanza con la posición del reloj (no con milisegundos propios): siempre en fase
 | **POCKET** (16) | Decay y release de AMP y FILTER hacia 150–250 ms, FLT ENV AMT hacia 0.8, y la velocity entra al brillo también en Juno / Model D (que la ignoran en neutro) |
 | **MORPH** (17) | Balance A / B de las capas: **sin efecto** hasta la fase de capas |
 
+**Profundidad por preset (rev. 2):** capa SHIFT de la parada MACRO, 0–100 % (100 % = lo de la tabla): SHIFT P1
+**GRIT RES** (cuánto sube la resonancia), SHIFT P2 **GRIT MOD** (POLY-MOD / X-MOD / FM), SHIFT ENC L **POCKET VEL**
+(cuánta velocity devuelve a Model D / Juno). POCKET **solo acorta**: un decay o release que ya era más corto que su
+destino no se alarga, y FLT ENV AMT solo sube.
+
 ## 7. Página GROOVE (SHIFT + B3) y protocolo
 
 Página 12 (`studio::GROOVE`, mismo id en la cabeza). NAV elige la parada, NAV push enciende / apaga (en CHORD, si
@@ -80,13 +96,14 @@ hay notas apretadas, las graba), los 4 encoders editan con capa SHIFT, **B4 = TA
 | ARP | MODE | DIV | GATE 5–100 % | OCT 1–3 | SWING 50–75 % | LATCH |
 | CHORD | TYPE (MEM/KEY) | INV 0–3 | STRUM 0–100 ms | KEY (C … B, mayor / menor) | — | — |
 | UNISON | VOICES (×1/×2/×3/×6) | DETUNE 0–50 ¢ | — | — | — | — |
-| MACRO | DRIFT | GRIT | POCKET | MORPH | — | — |
+| MACRO | DRIFT | GRIT | POCKET | MORPH | GRIT RES | GRIT MOD (SHIFT ENC L: POCKET VEL) |
 
 **Parámetros:** tres grupos nuevos de `gf_params.h` con la misma forma que MOD (parada · 8 + slot):
 `GF_GROUP_GROOVE_A` (8) = PUMP, ARP · `GF_GROUP_GROOVE_B` (9) = CHORD, UNISON · `GF_GROUP_GROOVE_C` (10) = MACRO
 (0–7) y encendidos (8 PUMP, 9 ARP, 10 CHORD, 11 UNISON). El param_id sigue siendo
 `((0x10 + engine) << 8) | (grupo << 4) | idx`. Los ajustes de GROOVE son **por engine** y van en el preset
-(`PRESET_FORMAT` 3: los presets de formato 2 se regeneran de fábrica, como en el cambio anterior).
+(`PRESET_FORMAT` 3; rev. 2: los presets de formato 2 **se migran** con GROOVE en sus valores neutros, y los presets de
+fábrica que falten se agregan al final del banco sin pisar lo guardado).
 
 **UI_STATE:** `page` = 12 y `cursor` = parada. **BPM a la cabeza:** el `BEAT_DETECTED` que ya se manda, ahora con el
 BPM del reloj común (cualquier fuente), una vez por segundo y al cambiar.
