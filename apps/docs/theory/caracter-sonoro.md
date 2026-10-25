@@ -1,6 +1,6 @@
 # Carácter sonoro GrooveForge: un instrumento enfocado en house melódico, orgánico y disco
 
-> **Fecha:** 2026-10-25 · **Estado:** PROPUESTO, espera aprobación de Juan · **Depende de:** `fidelidad-engines.md`
+> **Fecha:** 2026-10-25 (rev. 1 con la revisión crítica del mismo día) · **Estado:** PROPUESTO, espera aprobación de Juan · **Depende de:** `fidelidad-engines.md`
 > §12 (estado de los engines), `05-fx-architecture.md` (FX existentes), theory/04–07 de Studio (panel, SYNTH FX,
 > presets, MIDI).
 
@@ -46,11 +46,55 @@ Rasgos típicos del género (orientación de producción, no afirmaciones sobre 
 | Modo de acordes, unison, sidechain, filtro DJ, phaser | **Faltan** |
 | Banco de presets por estilo | **Falta** (hay uno de fábrica por engine, theory/06 §8) |
 
+## 3b. Identidad de cada engine (direcciones a validar de oído)
+
+| Engine | Rol en este estilo |
+|---|---|
+| Model D | Cuerpo y bajos: octava, slap sintético, leads gordos |
+| Prophet-5 | Plucks y brass articulados, cuerdas, POLY-MOD para campanas |
+| Juno-106 | Acordes y amplitud: stabs, pads, cuerdas con chorus |
+| OB-6 | Movimiento: pads y brass que respiran, X-MOD, filtro con morph |
+| DX7 (FM) | Madera, metal y percusión tonal: marimba, kalimba, campanas, órgano, pianos |
+| ARP 2600 | Color: ácido, S&H, ring mod, texturas de indie tech |
+
+Los presets Signature (fase 4) se diseñan dentro de estos roles; Juan los valida escuchando.
+
 ## 4. Plan por fases (una a la vez, cada una con demo audible)
 
-### Fase 1 — Núcleo al 85–90 % en lo que se oye en estos estilos
+Rev. 1: **las herramientas de proceso van primero** y el trabajo de engines se mide con criterios audibles, no
+con un porcentaje de fidelidad.
 
-Solo los puntos de `fidelidad-engines.md` §12 que pesan en esta música:
+### Fase 1 — Herramientas de proceso (performance) — primero
+
+0. **Reloj común con fase:** un solo módulo de tiempo (BPM + posición dentro del compás) que comparten PUMP, ARP,
+   DELAY y el SYNC del LFO. Fuentes: clock MIDI con START / SONG POSITION, BPM interno o tap tempo, y el beat
+   detectado por la IA (`BEAT_DETECTED`). Conocer el BPM no basta: PUMP tiene que bombear **en fase** con el kick,
+   así que necesita la posición del beat, no solo la velocidad.
+1. **PUMP:** ducking del VCA con forma y profundidad, anclado al reloj común. Es el "groove" del house sin
+   compresor externo.
+2. **CHORD:** memoria de acordes (tocar uno, grabar las notas, después cada tecla dispara el acorde transpuesto);
+   opción "en tonalidad" con la tonalidad detectada.
+3. **ARP:** sacar SMART ARP del modo AI a la página de synth: UP / DOWN / UP-DOWN / RANDOM / SMART, divisiones con
+   tresillos y puntillo, gate, octavas 1–3, **swing**, latch.
+4. **UNISON:** voces apiladas con detune y spread estéreo. **Cuesta polifonía** (6 voces en Juno / OB-6 / DX7):
+
+   | Unison | Notas a la vez | Uso |
+   |---|---|---|
+   | ×1 | 6 | Pads y acordes |
+   | ×2 | 3 | Leads, stabs de 3 notas |
+   | ×3 | 2 | Leads gruesos |
+   | ×6 | 1 | Bajo / lead mono |
+
+   Un acorde de 4 notas con unison ×2 necesitaría 8 voces: para **pads**, el ancho sale de las voice cards, el
+   chorus estéreo y el detune por voz (sin apilar). Subir a 8 voces es posible solo si la CPU medida lo permite.
+
+**Demo:** un loop con stab de acordes bombeando, arpegio con swing y pad en unison, solo desde el Brain.
+
+### Fase 2 — Engines: lo que se oye en estos estilos
+
+Puntos de `fidelidad-engines.md` §12 que pesan en esta música, con **criterios audibles** en vez de un porcentaje:
+ataque definido, graves estables al tocar en el registro bajo, modulación expresiva (filtro, LFO, X-MOD) y ausencia
+de artefactos molestos (aliasing, clicks, zipper):
 
 | Engine | Trabajo | Para qué sonidos |
 |---|---|---|
@@ -60,27 +104,18 @@ Solo los puntos de `fidelidad-engines.md` §12 que pesan en esta música:
 | Prophet-5 | Forma de saw / pulse; unison | Cuerdas, brass, plucks con POLY-MOD |
 | DX7 | Ajuste de timbres FM de madera / campana / órgano | Marimba, kalimba, órgano, pianos |
 
-ARP queda como color (indie tech, ácido); su matriz de patch espera. **Demo:** los presets de fábrica suenan mejor
-en un loop de house.
-
-### Fase 2 — Herramientas de proceso (performance)
-
-1. **PUMP:** ducking del VCA sincronizado al tempo (forma y profundidad), con el clock MIDI o el BPM interno. Es el
-   "groove" del house sin compresor externo.
-2. **CHORD:** memoria de acordes (tocar uno, grabar las notas, después cada tecla dispara el acorde transpuesto);
-   opción "en tonalidad" con la tonalidad detectada.
-3. **ARP:** sacar SMART ARP del modo AI a la página de synth: UP / DOWN / UP-DOWN / RANDOM / SMART, divisiones con
-   tresillos y puntillo, gate, octavas 1–3, **swing**, latch.
-4. **UNISON:** 2–4 voces apiladas con detune y spread estéreo en los engines polifónicos (pads, leads).
-
-**Demo:** un loop con stab de acordes bombeando, arpegio con swing y pad en unison, solo desde el Brain.
+ARP queda como color (indie tech, ácido); su matriz de patch espera. **Demo:** cada engine en su rol (§3b) dentro
+de un loop de house, sin los artefactos de la lista.
 
 ### Fase 3 — Efectos del estilo en la cadena del synth
 
-1. **DELAY** sincronizado (reusar GHOST ECHO): 1/8, 1/8 con punto, 1/4, ping-pong, filtro en la realimentación.
+1. **DELAY** sincronizado: 1/8, 1/8 con punto, 1/4, ping-pong, filtro en la realimentación. GHOST ECHO hoy es
+   **mono por dentro** (`getOutputL()` y `getOutputR()` devuelven el mismo mezclador): el ping-pong exige dos
+   líneas de delay cruzadas, memoria de delay doble y medir la CPU.
 2. **PHASER** de disco (nuevo, barato) o ensemble como modo del CHORUS.
 3. **FILTRO DJ maestro:** un solo control LP ← 0 → HP con resonancia, después de toda la cadena (French touch).
-4. **REVERB grande** (reusar SPRING + PLATE en modo plate / hall) junto a MODAL.
+4. **REVERB grande** junto a MODAL. SPRING + PLATE usa `AudioEffectFreeverb`, que es **mono**: una reverb estéreo
+   de verdad pasa a `AudioEffectFreeverbStereo` (Teensy Audio Library) o a una propia; más CPU que la actual.
 
 Cadena propuesta (orden fijo, cada una con on / off y MIX): BIT → TAPE → CHORUS / PHASER → DELAY → REVERB (MODAL o
 PLATE) → FILTRO DJ. Presupuesto de CPU a medir: objetivo ≤ 60 % total con 6 voces (`01` §5.2).
@@ -100,9 +135,10 @@ PLATE) → FILTRO DJ. Presupuesto de CPU a medir: objetivo ≤ 60 % total con 6 
 
 ### Fase 5 — Ajuste con las referencias (sin copiar)
 
-- **Perfil de balance tonal por estilo:** analizar las referencias de Juan **solo a nivel de género** (curva espectral
-  promedio, rango dinámico, ancho estéreo por banda) con `tools/offline`, para tener una curva objetivo; no se
-  extraen melodías, sonidos ni samples.
+- **Perfil de balance tonal por estilo, solo como contexto:** analizar las referencias de Juan a nivel de género
+  (curva espectral promedio, ancho estéreo por banda). **No es un objetivo para los presets:** el espectro de una
+  mezcla incluye kick, bajo, voces y mastering, y llevarlo a un synth aislado da decisiones equivocadas. Sirve para
+  ver en qué banda vive cada rol (bajo, stab, pad) dentro del mix. No se extraen melodías, sonidos ni samples.
 - **Sesiones de escucha** de Juan: cada sonido Signature dentro de un loop junto a una referencia, y ajuste de oído
   (calidez, ancho, pegada, brillo). El criterio es "encaja en el mismo mix", no "es igual".
 
@@ -113,8 +149,7 @@ patch del ARP. Se re-evalúan después de la fase 5.
 
 ## 6. Decisiones abiertas para Juan
 
-1. ¿Aprobar el orden de fases (1 → 5)? Alternativa: fase 2 antes que la 1 (las herramientas de proceso aportan más
-   a estos estilos que el último 5 % de fidelidad).
+1. ¿Aprobar el orden (rev. 1): proceso → engines → FX → banco Signature → ajuste con referencias?
 2. Cadena de FX: ¿filtro DJ al final de todo o antes de la reverb?
 3. PUMP: ¿solo con clock externo o también con BPM interno / tap tempo?
 4. Panel: dónde viven ARP, CHORD y PUMP (página nueva de PERFORM o la página LFO / MOD), sin romper el mapa de 4
