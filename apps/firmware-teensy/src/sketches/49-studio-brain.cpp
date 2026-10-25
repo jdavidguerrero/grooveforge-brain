@@ -1312,8 +1312,10 @@ void loop() {
 
     if (millis() - last_stats > 5000) {
         last_stats = millis();
-        Serial.printf("-- %s · cpu %.1f%% (máx %.1f%%) · memoria de audio %d (máx %d) · teclado %s · cabeza %s (%lu ACKs)\n",
+        // máx = pico de CPU del audio en estos 5 s (se reinicia): un pico cerca de 100 % pierde un bloque = click
+        Serial.printf("-- %s · cpu %.1f%% (máx 5 s %.1f%%) · memoria de audio %d (máx %d) · teclado %s · cabeza %s (%lu ACKs)\n",
                       ENGINE_NAME[e], AudioProcessorUsage(), AudioProcessorUsageMax(), AudioMemoryUsage(),
                       AudioMemoryUsageMax(), host_seen ? "sí" : "no", link_up ? "sí" : "no", (unsigned long)acks);
+        AudioProcessorUsageMaxReset();
     }
 }
