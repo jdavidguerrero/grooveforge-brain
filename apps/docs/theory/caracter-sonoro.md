@@ -177,3 +177,41 @@ editan (+ capa SHIFT). Respeta el mapa de 4 encoders de theory/04 §3.1.
 - TAP: B4 en la página GROOVE (como B4 → ENGINE en PRESETS) y tocando el BPM en la pantalla.
 - PERFORM: chips de estado (PUMP / ARP / CHORD activos y BPM).
 - Protocolo: GROOVE usa ids de página y grupos de parámetros nuevos en `gf_params.h`; los CC de theory/07 se amplían.
+
+## 8. Integración de la guía de híbridos y macros (Juan, 2026-10-25)
+
+Juan trajo una guía de diseño con capas de dos engines, 4 macros y 8 presets híbridos. Evaluación contra el
+firmware actual:
+
+**Se incorpora:**
+- **Macros con nombre** (reemplazan al "MOVE" genérico de la fase 4), sin necesitar capas; mueven parámetros que ya
+  existen, como desplazamiento sobre el patch (no lo pisan):
+  - **ORGANIC DRIFT:** desafinación aleatoria por nota (0 → ±12 ¢), variación de cutoff por nota (±5 %), variación
+    del decay por nota (−10 / +25 ms).
+  - **INDIE GRIT:** drive del filtro, cantidad de FM (DX7) / POLY-MOD (Prophet) / X-MOD (OB-6), resonancia con
+    compensación de ganancia.
+  - **DISCO POCKET:** de pad (decay largo, FLT ENV AMT ~30 %) a pluck funk (decay 150–250 ms, FLT ENV AMT ~80 %,
+    velocity → cutoff al máximo).
+  - **HYBRID MORPH:** balance A / B y retraso del ataque de B (0–35 ms); llega con las capas.
+- **Capas de dos engines** como fase nueva (abajo).
+- **Los 8 presets híbridos** al banco Signature, corregidos y con nombres propios.
+
+**Correcciones al documento:**
+- Los macros no van en "encoders físicos 1–4" (ya tienen función por página): parada **MACRO** en la página GROOVE
+  (P1 DRIFT · P2 GRIT · ENC L POCKET · ENC R MORPH) y CC **14–17** (libres en theory/07).
+- CC 19 (morph del OB-6) y CC 20 (chorus del Juno) ya existen como **CC 26** y **CC 24**; el CC 20 es el slot 1 de
+  la parada 1 de OSC y no se reasigna.
+- Selector de pareja (CC 18): por **preset**, no por perilla (cambiar de pareja carga dos engines).
+- Chorus del Juno: OFF / I / II / I+II. Prophet: POLY-MOD manda la envelope al **oscilador A** (sync: A esclavo de
+  B). Model D: sin sub-oscilador, se usa el **VCO 3 a −12**.
+- Nombres de presets sin artistas, sellos ni lugares de marca.
+
+**Fase nueva — Capas (va después de engines, antes de FX):**
+1. Medir la CPU de cada engine con 6 voces (pendiente desde §9 de fidelidad) y de dos engines a la vez.
+2. Dos engines activos con **reparto de voces** (p. ej. 3 + 3, o capa B mono para bajos), retraso de ataque,
+   transposición por capa y HYBRID MORPH.
+3. Preset con dos patches y los datos de la capa (`PRESET_FORMAT` nuevo).
+4. GUI: elegir la capa que se edita (A / B) y verla en PANEL.
+
+**Orden resultante:** 1 proceso (+ macros DRIFT / GRIT / POCKET) → 2 engines → 3 capas (+ MORPH) → 4 FX → 5 banco
+Signature (+ híbridos) → 6 ajuste con referencias.
