@@ -377,6 +377,7 @@ void groove_tick(uint32_t now) {
     const double pos = gclock.position(now);
     const bool running = gclock.running(now);
     bpm = gclock.bpm(now);
+    ui.set_clock(gclock.source(now) == dsp::GrooveClock::Source::Midi, running);   // MIDI / MIDI STOP / INT en la cabeza
 
     for (uint8_t i = 0; i < strum_n;) {
         if (int32_t(now - strum_q[i].at_us) >= 0) {

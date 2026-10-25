@@ -461,6 +461,8 @@ void BridgeLink::apply(StudioState& s) {
         if (u.fx_view < 3) s.fx_view = FxView(u.fx_view);
         s.filter_bypass = u.flags & GF_UI_FLAG_FILTER_BYPASS;
         s.lfo_sync = u.flags & GF_UI_FLAG_LFO_SYNC;
+        s.clock_midi = u.flags & GF_UI_FLAG_CLOCK_MIDI;
+        s.clock_run = u.flags & GF_UI_FLAG_CLOCK_RUN;
         s.fx_on = u.fx_on;
         for (int i = 0; i < FX_SLOTS; ++i) s.fx_route[i] = FxRoute(u.fx_route[i] < 3 ? u.fx_route[i] : 0);
         m_.ui_dirty = false;

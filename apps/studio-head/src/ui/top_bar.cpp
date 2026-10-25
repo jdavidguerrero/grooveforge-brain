@@ -102,9 +102,12 @@ void TopBar::update(const StudioState& s) {
     }
 
     const int bpm10 = int(std::lround(s.bpm * 10.0f));
-    if (bpm10 != _last_bpm10) {
+    const int clk = (s.clock_midi ? 2 : 0) | (s.clock_run ? 1 : 0);
+    if (bpm10 != _last_bpm10 || clk != _last_clock) {
         _last_bpm10 = bpm10;
-        lv_label_set_text_fmt(_bpm, "%d.%d BPM", bpm10 / 10, bpm10 % 10);
+        _last_clock = clk;
+        lv_label_set_text_fmt(_bpm, "%s %d.%d BPM", clock_label(s.clock_midi, s.clock_run), bpm10 / 10, bpm10 % 10);
+        set_text_color(_bpm, clock_color(s.clock_midi, s.clock_run));
     }
 
     if (int(s.link) != _last_link) {

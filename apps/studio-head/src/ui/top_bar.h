@@ -30,6 +30,6 @@ private:
     int _page_index = -1;
 
     // Último valor dibujado: solo se toca LVGL cuando algo cambia (theory doc §3.2).
-    int _last_mode = -1, _last_key = -1, _last_bpm10 = -1, _last_link = -1, _last_vol10 = 9999;
+    int _last_mode = -1, _last_key = -1, _last_bpm10 = -1, _last_clock = -1, _last_link = -1, _last_vol10 = 9999;
     int _last_bypass = -1;
 };

@@ -76,7 +76,7 @@ Lo que la cabeza necesita para dibujar la página correcta y que no sale de los 
 | `cursor` | u8 | ENGINE: tile 0–5 · PRESETS: fila (0 = SAVE) · OSC: oscilador 0–3 |
 | `fx_slot` | u8 | 0–11 |
 | `fx_view` | u8 | 0 ONDA, 1 ESPECTRO, 2 FIRMA |
-| `flags` | u8 | bit0 filter_bypass, bit1 lfo_sync |
+| `flags` | u8 | bit0 filter_bypass, bit1 lfo_sync, bit2 clock_midi (el reloj sigue al MIDI), bit3 clock_run (0 = parado por STOP); theory/09 §1.1 |
 | `fx_on` | u16 LE | bit n = slot n encendido |
 | `fx_route` | 12 × u8 | 0 INSERT, 1 SEND, 2 MASTER |
 

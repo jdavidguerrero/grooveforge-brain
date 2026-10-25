@@ -28,6 +28,9 @@ Un solo reloj para PUMP, ARP, DELAY (fase 4) y el SYNC del LFO. Da **BPM** y **p
 | START / CONTINUE | Vuelve el MIDI: START = beat 0; CONTINUE = donde quedó (o el SONG POSITION recibido). |
 | Cambio de fuente (MIDI → IA → interno, o forzada) | La nueva fuente se re-fasa al beat entero más cercano a la posición que se traía: sin salto de fase. El interno además hereda el BPM. |
 | PUMP apagado o reloj parado | La ganancia sube a 1 con una rampa de ~20 ms (sin click). |
+
+**En la cabeza:** UI_STATE lleva la fuente y el estado en `flags` (bit2 MIDI, bit3 corriendo). La barra superior, la
+parada PUMP y PERFORM muestran `MIDI` (teal), `MIDI STOP` (ámbar) o `INT` (gris) junto al BPM.
 - **Studio hoy:** el sketch49 no corre la IA, así que en la práctica usa MIDI e INTERNO. La fuente IA queda lista para
   cuando se integre.
 

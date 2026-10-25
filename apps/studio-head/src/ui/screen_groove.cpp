@@ -83,10 +83,12 @@ void ScreenGroove::draw(const Painter& p, const StudioState& s) const {
     text_top(p, BPM_X + text_width(t, T28) + 8, 82, "BPM", MON, T12);
     const int src = int(std::lround(s.groove_val[0][5])) & 3;
     std::snprintf(t, sizeof(t), "SOURCE %s", SRC_NAME[src]);
-    text_top(p, BPM_X, 112, t, GRAY, T12);
-    text_top(p, BPM_X, 136, "B4: TAP", MON, T12);
+    text_top(p, BPM_X, 108, t, MON, T12);
+    const char* st = s.clock_midi ? (s.clock_run ? "FOLLOWING MIDI" : "MIDI STOPPED") : "INTERNAL";
+    text_top(p, BPM_X, 122, st, clock_color(s.clock_midi, s.clock_run), T12B);
+    text_top(p, BPM_X, 140, "B4: TAP", MON, T12);
     const char* hint = _stop == 2 ? "PUSH + KEYS: LEARN" : has_toggle(_stop) ? "PUSH: ON / OFF" : "CC 14-17";
-    text_top(p, BPM_X, 156, hint, MON, T12);
+    text_top(p, BPM_X, 158, hint, MON, T12);
 }
 
 void ScreenGroove::update(const StudioState& s) {
@@ -116,7 +118,8 @@ void ScreenGroove::update(const StudioState& s) {
     _bottom.set_nav("STOP · ON");
 
     char key[160];
-    int n = std::snprintf(key, sizeof(key), "G%d|%d|%d|%.1f|", _stop, sh, s.engine, double(s.bpm));
+    int n = std::snprintf(key, sizeof(key), "G%d|%d|%d|%.1f|%d%d|", _stop, sh, s.engine, double(s.bpm), s.clock_midi,
+                          s.clock_run);
     for (int i = 0; i < GROOVE_TOGGLES; ++i) n += std::snprintf(key + n, sizeof(key) - n, "%d", s.groove_on[i]);
     for (int k = 0; k < OSC_SLOTS && n < int(sizeof(key)) - 8; ++k)
         n += std::snprintf(key + n, sizeof(key) - n, ",%.0f", double(v[k]));

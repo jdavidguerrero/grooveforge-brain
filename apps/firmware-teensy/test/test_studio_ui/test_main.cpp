@@ -308,6 +308,19 @@ void test_groove_shift_b3_nav_push_y_tap() {
     TEST_ASSERT_EQUAL_UINT8(LFO, ui.state().page);
 }
 
+void test_estado_del_reloj_en_flags() {
+    StudioUi ui;
+    ui.take_dirty();
+    ui.set_clock(true, true);
+    TEST_ASSERT_TRUE(ui.take_dirty());
+    TEST_ASSERT_EQUAL_HEX8(GF_UI_FLAG_CLOCK_MIDI | GF_UI_FLAG_CLOCK_RUN, ui.state().flags);
+    ui.set_clock(true, true);
+    TEST_ASSERT_FALSE(ui.take_dirty());                       // sin cambio, no se reenvía
+    ui.handle(Control::EncLPush);                             // el bypass convive con los bits del reloj
+    ui.set_clock(true, false);                                // STOP
+    TEST_ASSERT_EQUAL_HEX8(GF_UI_FLAG_FILTER_BYPASS | GF_UI_FLAG_CLOCK_MIDI, ui.state().flags);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -330,5 +343,6 @@ int main() {
     RUN_TEST(test_ui_state_roundtrip);
     RUN_TEST(test_detent_con_histeresis);
     RUN_TEST(test_groove_shift_b3_nav_push_y_tap);
+    RUN_TEST(test_estado_del_reloj_en_flags);
     return UNITY_END();
 }

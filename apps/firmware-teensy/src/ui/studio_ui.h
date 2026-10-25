@@ -68,6 +68,15 @@ public:
 
     /// El engine cambió por otra vía (MIDI CC 0, preset): OSC y ENGINE SELECT lo usan.
     void set_engine(uint8_t engine);
+    /// Estado del reloj común para la cabeza (flags CLOCK_MIDI / CLOCK_RUN). Marca cambio solo si cambió.
+    void set_clock(bool midi, bool running) {
+        const uint8_t f = uint8_t((ui_.flags & ~(GF_UI_FLAG_CLOCK_MIDI | GF_UI_FLAG_CLOCK_RUN)) |
+                                  (midi ? GF_UI_FLAG_CLOCK_MIDI : 0) | (running ? GF_UI_FLAG_CLOCK_RUN : 0));
+        if (f != ui_.flags) {
+            ui_.flags = f;
+            dirty_ = true;
+        }
+    }
     void set_preset_count(uint8_t n) { preset_count_ = n; if (preset_cursor_ > n) preset_cursor_ = n; }
     uint8_t preset_count() const { return preset_count_; }
 

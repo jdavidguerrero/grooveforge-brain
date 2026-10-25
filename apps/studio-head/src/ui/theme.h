@@ -40,6 +40,10 @@ uint32_t camelot(uint8_t n);
 struct ModeColors { uint32_t mc, hi, dim; };
 ModeColors mode_colors(bool fx);
 
+/// Reloj común (theory/09 §1.1): etiqueta y color de la fuente — MIDI (teal), MIDI STOP (ámbar), INT (gris).
+inline const char* clock_label(bool midi, bool run) { return midi ? (run ? "MIDI" : "MIDI STOP") : "INT"; }
+inline uint32_t clock_color(bool midi, bool run) { return midi ? (run ? TEAL_PLUS : AMBER) : GRAY; }
+
 // ── Tipografía ───────────────────────────────────────────────────────────────
 extern const lv_font_t* const T12;     ///< 12/16 · 400 — labels, unidades
 extern const lv_font_t* const T12B;    ///< 12 · 600 — tags
