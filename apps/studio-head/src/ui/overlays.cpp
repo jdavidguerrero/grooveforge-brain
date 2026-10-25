@@ -6,6 +6,9 @@
 #include <cstdio>
 #include <cstring>
 
+#include <gf_params.h>
+
+#include "ui/input.h"
 #include "ui/theme.h"
 
 using namespace gf;
@@ -13,7 +16,8 @@ using namespace gf;
 namespace {
 
 constexpr uint32_t POT_MS = 1500, TOAST_MS = 1500, BANNER_MS = 600, CLIP_MS = 2000;
-constexpr float VOL_LO = -42.0f, VOL_HI = 6.0f;   // escala de los 32 segmentos de VOL
+constexpr float VOL_LO = GF_VOL_DB_MIN, VOL_HI = 0.0f;   // escala de los 32 segmentos de VOL
+constexpr uint32_t VOL_TOUCH_MS = 4000;                 // panel abierto con los botones − / +
 constexpr float IN_PEAK_FALL_PER_MS = 10.0f / 1000.0f;  // segmentos por ms
 
 /// Panel con fondo SURFACE y marco interior de 2 px (outline: no corre el contenido).
@@ -71,6 +75,16 @@ void Overlays::build_volume(lv_obj_t* top) {
     lv_obj_t* u = label(_vol, T16R, GRAY, "DB");
     lv_obj_set_user_data(_vol_val, u);
     for (int i = 0; i < 32; ++i) _vol_seg[i] = rect(_vol, 24 + i * 11, 112, 8, 12, LINE);
+    // Mientras no estén conectados los pots: − / + táctiles (el Teensy cambia el volumen y lo devuelve)
+    const char* const SIGN[2] = {"-", "+"};
+    const Ctl CTL[2] = {Ctl::VolDown, Ctl::VolUp};
+    for (int i = 0; i < 2; ++i) {
+        lv_obj_t* b = rect(_vol, 288 + i * 62, 40, 56, 56, SURFACE_2);   // a la derecha de "−60.0 DB"
+        lv_obj_set_style_border_color(b, lv_color_hex(GRAY), 0);
+        lv_obj_set_style_border_width(b, 1, 0);
+        lv_obj_center(label(b, T28, WHITE, SIGN[i]));
+        input_attach_tap(b, CTL[i]);
+    }
 }
 
 void Overlays::build_input(lv_obj_t* top) {
@@ -220,9 +234,13 @@ void Overlays::update(const StudioState& s, uint32_t now) {
         paint_volume(s);
         paint_banner(s.mode == Mode::Fx);
     }
+    if (_vol_poke) {
+        _vol_poke = false;
+        _vol_until = now + VOL_TOUCH_MS;
+    }
     if (s.volume_db != _last_vol) {
         _last_vol = s.volume_db;
-        _vol_until = now + POT_MS;
+        if (_vol_until != UINT32_MAX) _vol_until = std::max(_vol_until, now + POT_MS);
         paint_volume(s);
     }
     if (s.in_gain_db != _last_gain || s.in_pad_db != _last_pad) {

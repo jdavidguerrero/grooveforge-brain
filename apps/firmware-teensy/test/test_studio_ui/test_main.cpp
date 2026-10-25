@@ -3,6 +3,8 @@
 #include <unity.h>
 
 #include "ui/detent.h"
+#include <gf_params.h>
+
 #include "ui/studio_ui.h"
 
 using namespace studio;
@@ -321,6 +323,19 @@ void test_estado_del_reloj_en_flags() {
     TEST_ASSERT_EQUAL_HEX8(GF_UI_FLAG_FILTER_BYPASS | GF_UI_FLAG_CLOCK_MIDI, ui.state().flags);
 }
 
+void test_volumen_desde_la_cabeza() {
+    StudioUi ui;
+    Result r = ui.handle(Control::VolUp);
+    TEST_ASSERT_EQUAL(int(Action::VolStep), int(r.action));
+    TEST_ASSERT_EQUAL_INT8(1, int8_t(r.arg));
+    ui.handle(Control::Mode);                                 // también en FX
+    r = ui.handle(Control::VolDown);
+    TEST_ASSERT_EQUAL(int(Action::VolStep), int(r.action));
+    TEST_ASSERT_EQUAL_INT8(-1, int8_t(r.arg));
+    TEST_ASSERT_EQUAL_FLOAT(-60.0f, gf_vol_db(0.0f));
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.9f, gf_vol_norm(-6.0f));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -344,5 +359,6 @@ int main() {
     RUN_TEST(test_detent_con_histeresis);
     RUN_TEST(test_groove_shift_b3_nav_push_y_tap);
     RUN_TEST(test_estado_del_reloj_en_flags);
+    RUN_TEST(test_volumen_desde_la_cabeza);
     return UNITY_END();
 }

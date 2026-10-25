@@ -111,7 +111,7 @@ const ModStop NO_MOD = {"", {}};
 // Página GROOVE (theory/09 de Studio §7), mismo orden y rangos que GF_GROOVE_SLOT
 const char* const L_PUMP_SHAPE[3] = {"SMOOTH", "EXP", "KICK"};
 const char* const L_PUMP_RATE[3] = {"1/4", "1/8", "1/2"};
-const char* const L_CLOCK_SRC[4] = {"AUTO", "MIDI", "AI", "INT"};
+const char* const L_CLOCK_SRC[3] = {"AUTO", "MIDI", "INT"};
 const char* const L_ARP_MODE[5] = {"UP", "DOWN", "UP-DN", "RANDOM", "SMART"};
 const char* const L_ARP_DIV[6] = {"1/4", "1/8", "1/16", "1/8T", "1/16T", "1/8."};
 const char* const L_CHORD_TYPE[2] = {"MEMORY", "KEY"};
@@ -124,7 +124,7 @@ const OscSlot G_SHAPE   = {"SHAPE", "", SlotKind::Choice, 0, 2, 0, false, false,
 const OscSlot G_RATE    = {"RATE", "", SlotKind::Choice, 0, 2, 0, false, false, L_PUMP_RATE};
 const OscSlot G_OFFSET  = {"OFFSET", "MS", SlotKind::Number, -50, 50, 0, true, false};
 const OscSlot G_RELEASE = {"RELEASE", "MS", SlotKind::Number, 30, 400, 0, false, false};
-const OscSlot G_SOURCE  = {"CLOCK", "", SlotKind::Choice, 0, 3, 0, false, false, L_CLOCK_SRC};
+const OscSlot G_SOURCE  = {"CLOCK", "", SlotKind::Choice, 0, 2, 0, false, false, L_CLOCK_SRC};
 const OscSlot G_MODE    = {"MODE", "", SlotKind::Choice, 0, 4, 0, false, false, L_ARP_MODE};
 const OscSlot G_DIV     = {"DIV", "", SlotKind::Choice, 0, 5, 0, false, false, L_ARP_DIV};
 const OscSlot G_GATE    = {"GATE", "%", SlotKind::Number, 5, 100, 0, false, false};

@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cstdio>
 
+#include <gf_params.h>
+
 #include "state/fx_catalog.h"
 #include "state/osc_catalog.h"
 #include "studio_tick.h"
@@ -11,7 +13,7 @@
 namespace {
 
 constexpr uint8_t FAV_FX_SLOT = 2;  // B4 en FX: favorito (demo: GHOST ECHO; luego, configurable)
-constexpr float VOL_MIN = -60.0f, VOL_MAX = 6.0f, IN_MIN = -12.0f, IN_MAX = 12.0f, POT_STEP = 0.5f;
+constexpr float VOL_MIN = GF_VOL_DB_MIN, VOL_MAX = 0.0f, IN_MIN = -12.0f, IN_MAX = 12.0f, POT_STEP = 0.5f;
 
 // Home de theory/08 de Studio: PERFORM y PANEL. AI y SPECTRUM quedan fuera de la rotación hasta GroovePilot.
 bool is_view(Page p) { return p == Page::Perform || p == Page::Panel; }
@@ -70,8 +72,9 @@ void App::load_engine(uint8_t id, StudioState& s) {
 void App::handle(Ctl c, StudioState& s) {
     // VOL y la simulación del enlace funcionan siempre, también con el error en pantalla (08d).
     switch (c) {
-        case Ctl::VolUp:   s.volume_db = std::min(VOL_MAX, s.volume_db + POT_STEP); return;
-        case Ctl::VolDown: s.volume_db = std::max(VOL_MIN, s.volume_db - POT_STEP); return;
+        case Ctl::VolUp:   s.volume_db = std::min(VOL_MAX, s.volume_db + GF_VOL_DB_STEP); return;   // demo
+        case Ctl::VolDown: s.volume_db = std::max(VOL_MIN, s.volume_db - GF_VOL_DB_STEP); return;
+        case Ctl::VolShow: _overlays.show_volume(); return;
         case Ctl::LinkToggle:
             s.link = s.link == LinkState::Lost ? LinkState::Demo : LinkState::Lost;
             return;

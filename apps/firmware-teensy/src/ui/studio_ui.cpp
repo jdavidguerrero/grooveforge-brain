@@ -91,6 +91,8 @@ Result StudioUi::handle(Control c, int8_t v) {
         if (!ui_.mode) show(PERFORM);
         return {};
     }
+    if (c == Control::VolUp || c == Control::VolDown)        // en SYNTH y en FX, en cualquier página
+        return {Action::VolStep, uint8_t(int8_t(c == Control::VolUp ? 1 : -1))};
     if (c == Control::Mode) {
         ui_.mode = ui_.mode ? 0 : 1;
         ui_.shift = 0;

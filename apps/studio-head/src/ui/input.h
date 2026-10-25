@@ -26,7 +26,8 @@ enum class Ctl : uint8_t {
     Pick0, Pick1, Pick2, Pick3, Pick4, Pick5,  ///< tap en una tile de ENGINE SELECT
     FxWave, FxSpectrum, FxSignature,  ///< tap en una pestaña de FX MAIN
     FxViewNext,   ///< tap en la gráfica de FX MAIN
-    VolUp, VolDown,   ///< pot VOL (en el demo, teclado)
+    VolUp, VolDown,   ///< volumen de salida: botones − / + del panel VOL (y el teclado en el demo)
+    VolShow,          ///< tocar VOL en la barra superior: abre el panel con − / + (local, no viaja al Teensy)
     InUp, InDown,     ///< pot IN
     PadCycle,         ///< switch INPUT PAD trasero: 0 → −10 → −20 dB
     LinkToggle,       ///< demo: simula la pérdida del enlace con el motor

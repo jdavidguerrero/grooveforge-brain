@@ -29,6 +29,7 @@ enum class Control : uint8_t {
     FxView0, FxView1, FxView2, FxViewNext, EngineCard, SwipeUp, SwipeDown,
     NavLong,                                     ///< NAV push ≥ 500 ms: vuelve a home (theory/04 §3.1)
     P1Push, P2Push,                              ///< pulsadores de P1 (pin 32) y P2 (pin 9), ADR-004
+    VolUp, VolDown,                              ///< volumen de salida desde la cabeza (táctil) mientras no hay pot VOL
 };
 
 /// Tarjetas de la vista PANEL en el orden en que NAV las recorre (la cabeza dibuja el mismo orden).
@@ -46,7 +47,7 @@ PanelItem panel_card(uint8_t engine, uint8_t i);
 /// GroovePush, la parada de GROOVE (el sketch decide: en CHORD con notas apretadas graba el acorde, si no enciende /
 /// apaga); Tap, B4 en GROOVE.
 enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle, FilterBypass, LfoSync, LfoShape,
-                              SfxToggle, GroovePush, Tap };
+                              SfxToggle, GroovePush, Tap, VolStep };   ///< VolStep: arg = +1 / −1 como int8_t
 
 struct Result {
     Action action = Action::None;

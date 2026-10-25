@@ -187,7 +187,8 @@ uint32_t lfo_delay_t0 = 0;               // nota nueva sin otras apretadas: arra
 uint32_t sustained[4] = {};              // notas soltadas con el pedal apretado (bit por nota)
 constexpr float BEND_RANGE_ST = 2.0f;
 constexpr uint8_t MIDI_OUT_CH = 1;
-float bpm = 120.0f;                      // BPM del reloj común (MIDI · IA · interno + TAP)
+float bpm = 120.0f;                      // BPM del reloj común (MIDI · interno + TAP)
+float master_vol_db = 0.0f;              // volumen de salida (DAC): 0 dB = el nivel de siempre; −60 a 0
 uint32_t last_bpm_tx = 0;
 float bpm_sent = 0.0f;
 uint8_t moog_note = 255;                 // el Model D es monofónico: noteOff() sin nota
@@ -372,7 +373,9 @@ uint8_t engine_unison(uint8_t e, uint8_t voices, float cents) {
 void groove_tick(uint32_t now) {
     const studio::Patch& p = patch();
     const float(&g)[GF_GROOVE_STOPS][GF_OSC_SLOTS] = p.groove;
-    gclock.force_source(dsp::GrooveClock::Source(uint8_t(g[GF_GROOVE_PUMP][GF_PUMP_SOURCE])));
+    static const dsp::GrooveClock::Source SRC[3] = {dsp::GrooveClock::Source::Auto, dsp::GrooveClock::Source::Midi,
+                                                    dsp::GrooveClock::Source::Internal};   // AUTO · MIDI · INT
+    gclock.force_source(SRC[uint8_t(g[GF_GROOVE_PUMP][GF_PUMP_SOURCE]) % 3]);
     gclock.update(now);                  // re-fasa al cambiar de fuente (theory/09 §1.1)
     const double pos = gclock.position(now);
     const bool running = gclock.running(now);
@@ -752,6 +755,11 @@ void bridge_bpm() {
     bpm_sent = bpm;
 }
 
+/// Volumen de salida en el DAC del SGTL5000 (afecta LINE OUT y auriculares; pasos de 0.5 dB: n = 1 + dB / 96).
+void apply_master_volume() { g_codec.dacVolume(1.0f + master_vol_db / 96.0f); }
+
+void bridge_master_volume() { bridge_param(GF_PARAM_MASTER_VOL, gf_vol_norm(master_vol_db)); }
+
 void bridge_ui_state() {
     uint8_t p[GF_UI_STATE_LEN];
     gf_ui_state_pack(&ui.state(), p);
@@ -764,6 +772,7 @@ void bridge_all() {
     bridge_filter();
     bridge_patch();
     bridge_bpm();
+    bridge_master_volume();
     bridge_presets();
     bridge_preset_loaded();
     bridge_ui_state();
@@ -930,6 +939,12 @@ void run_action(studio::Result r) {
             Serial.printf("[GROOVE] parada %u %s\n", r.arg, patch().groove_on[r.arg] ? "ON" : "OFF");
             break;
         }
+        case studio::Action::VolStep:
+            master_vol_db = constrain(master_vol_db + GF_VOL_DB_STEP * int8_t(r.arg), GF_VOL_DB_MIN, 0.0f);
+            apply_master_volume();
+            bridge_master_volume();
+            Serial.printf("[VOL] %.0f dB\n", master_vol_db);
+            break;
         case studio::Action::None: break;
         default: Serial.printf("[UI] acción %u (arg %u) sin audio en este sketch\n", unsigned(r.action), r.arg); break;
     }
@@ -1100,6 +1115,8 @@ void setup() {
     if (CrashReport) Serial.print(CrashReport);
 
     const bool codec_ok = audio_graph::init(0.5f);   // AudioMemory + codec + mixers (Moog activo)
+    g_codec.dacVolumeRamp();             // cambios de VOL sin zipper
+    apply_master_volume();
     Serial.printf("[codec] SGTL5000: %s\n", codec_ok ? "OK" : "FALLA (revisar I2C 18/19 y 3.3 V)");
     moog.begin();
     juno.begin();

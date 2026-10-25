@@ -84,6 +84,8 @@ private:
         uint8_t chord_root = 0xFF, chord_qual = 0xFF, chord_conf = 0;
         bool chord_dirty = false;
         uint16_t bpm_x10 = 0;
+        float vol = 1.0f;              ///< volumen de salida normalizado (GF_PARAM_MASTER_VOL)
+        bool vol_dirty = false;
         bool bpm_dirty = false;
         uint8_t chroma[12] = {};
         uint8_t snap_from = 0, snap_to = 0, beat_phase = 0;

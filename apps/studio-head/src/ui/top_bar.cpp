@@ -61,13 +61,17 @@ void TopBar::create(lv_obj_t* parent, const char* page, int page_index) {
     _key_sq = rect(key, 0, 0, 8, 8, camelot(8));
     _key = label(key, T12, GRAY, "8A");
 
+    lv_obj_add_flag(key, LV_OBJ_FLAG_HIDDEN);   // tonalidad: oculta hasta que la IA la detecte (GroovePilot)
+
     _bpm = label(_bar, T12, MON, "124.0 BPM");
+    lv_obj_add_flag(_bpm, LV_OBJ_FLAG_HIDDEN);   // solo con clock de Live (abajo)
 
     lv_obj_t* link = flex_row(_bar, 8);
     _link_sq = rect(link, 0, 0, 8, 8, MON);
     _link = label(link, T12, MON, "ENGINE OK");
 
-    _vol = label(_bar, T12, MON, "VOL -6.0");
+    _vol = label(_bar, T12, MON, "VOL 0.0");
+    input_attach_tap(_vol, Ctl::VolShow);   // tocar VOL abre el panel con − / +
 
     input_attach_tap(_bar, Ctl::NavNext);  // atajo táctil: tocar la barra = girar NAV
 }
@@ -108,6 +112,9 @@ void TopBar::update(const StudioState& s) {
         _last_clock = clk;
         lv_label_set_text_fmt(_bpm, "%s %d.%d BPM", clock_label(s.clock_midi, s.clock_run), bpm10 / 10, bpm10 % 10);
         set_text_color(_bpm, clock_color(s.clock_midi, s.clock_run));
+        // El BPM solo se muestra cuando viene de Live (el interno vive en la parada PUMP de GROOVE)
+        if (s.clock_midi) lv_obj_clear_flag(_bpm, LV_OBJ_FLAG_HIDDEN);
+        else lv_obj_add_flag(_bpm, LV_OBJ_FLAG_HIDDEN);
     }
 
     if (int(s.link) != _last_link) {

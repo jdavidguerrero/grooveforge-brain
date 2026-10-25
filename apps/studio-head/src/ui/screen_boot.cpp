@@ -188,7 +188,7 @@ void BootSplash::update(uint32_t ms) {
     if (t < 1.8f) st[0] = '\0';
     else if (t < 2.0f) std::snprintf(st, sizeof(st), "LINKING AUDIO ENGINE");
     else if (t < 4.1f) std::snprintf(st, sizeof(st), "LOADING ENGINE %d/6 · %s", ei + 1, engine_info(uint8_t(ei)).name);
-    else if (t < 4.35f) std::snprintf(st, sizeof(st), "AI MODELS · KEY · CHORD · GENRE");
+    else if (t < 4.35f) std::snprintf(st, sizeof(st), "GROOVE · CLOCK · PRESETS");
     else if (t < 4.6f) std::snprintf(st, sizeof(st), "FX RACK · 12 SLOTS");
     else std::snprintf(st, sizeof(st), "READY");
     if (std::strcmp(st, _last_status) != 0) {

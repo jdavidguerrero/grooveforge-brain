@@ -264,6 +264,15 @@ static inline float gf_sfx_decay(float n) { return 0.2f * powf(20.0f, gf_clamp01
 /** Profundidad de vibrato en semitonos para una cantidad PITCH (cuadrática: valores chicos = vibrato fino). */
 static inline float gf_lfo_pitch_st(float amt) { return GF_LFO_PITCH_ST * amt * amt; }
 
+/* ── Volumen de salida (DAC del SGTL5000: LINE OUT y auriculares) ── */
+
+/** param_id global (fuera del rango 0x10xx de los engines): volumen de salida, normalizado sobre GF_VOL_DB_MIN–0 dB. */
+#define GF_PARAM_MASTER_VOL 0x0001U
+#define GF_VOL_DB_MIN (-60.0f)
+#define GF_VOL_DB_STEP 1.0f
+static inline float gf_vol_norm(float db) { return gf_clamp01((db - GF_VOL_DB_MIN) / -GF_VOL_DB_MIN); }
+static inline float gf_vol_db(float n) { return GF_VOL_DB_MIN + gf_clamp01(n) * -GF_VOL_DB_MIN; }
+
 /* ── Página GROOVE (variants/studio/theory/09-studio-groove.md §7) ── */
 
 #define GF_GROUP_GROOVE_A 8U    /* PUMP, ARP: parada · 8 + slot */
@@ -283,7 +292,7 @@ static inline float gf_lfo_pitch_st(float amt) { return GF_LFO_PITCH_ST * amt * 
 #define GF_PUMP_RATE  2U        /* GF_PUMP_RATE_BEATS */
 #define GF_PUMP_OFFSET 3U
 #define GF_PUMP_RELEASE 4U
-#define GF_PUMP_SOURCE 5U       /* 0 AUTO · 1 MIDI · 2 IA · 3 INT */
+#define GF_PUMP_SOURCE 5U       /* 0 AUTO · 1 MIDI · 2 INT (la IA vuelve cuando se integre GroovePilot) */
 #define GF_ARP_MODE  0U         /* UP · DOWN · UP-DOWN · RANDOM · SMART */
 #define GF_ARP_DIV   1U         /* GF_ARP_DIV_BEATS */
 #define GF_ARP_GATE  2U
@@ -310,7 +319,7 @@ static const uint8_t GF_UNISON_COUNT[4] = {1, 2, 3, 6};
 
 static const GF_OscSlot GF_GROOVE_SLOT[GF_GROOVE_STOPS][GF_OSC_SLOTS] = {
     /* PUMP */ {GF_OSC_LEVEL, {0, 2, 1, 3, false}, {0, 2, 1, 3, false}, {-50, 50, 1, 0, false},
-                {30, 400, 5, 0, false}, {0, 3, 1, 4, false}, GF_OSC_NONE, GF_OSC_NONE},
+                {30, 400, 5, 0, false}, {0, 2, 1, 3, false}, GF_OSC_NONE, GF_OSC_NONE},
     /* ARP */ {{0, 4, 1, 5, false}, {0, 5, 1, 6, false}, {5, 100, 1, 0, false}, {1, 3, 1, 3, false},
                {50, 75, 1, 0, false}, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE},
     /* CHORD */ {GF_OSC_TOGGLE, {0, 3, 1, 4, false}, GF_OSC_LEVEL, {0, 23, 1, 24, false}, GF_OSC_NONE4},

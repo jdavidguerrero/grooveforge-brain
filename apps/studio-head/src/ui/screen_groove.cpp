@@ -18,7 +18,7 @@ constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
 constexpr int BPM_X = 568;                       // columna del reloj, a la derecha de los slots
 constexpr uint32_t TRACK = 0x1C1C1C;
 const char* const KEYS_GROOVE[4] = {"OSC", "ENV", "LFO / MOD", "TAP"};
-const char* const SRC_NAME[4] = {"AUTO", "MIDI", "AI", "INT"};
+const char* const SRC_NAME[3] = {"AUTO", "MIDI", "INT"};
 
 bool has_toggle(int stop) { return stop < GROOVE_TOGGLES; }
 
@@ -81,7 +81,7 @@ void ScreenGroove::draw(const Painter& p, const StudioState& s) const {
     std::snprintf(t, sizeof(t), "%.1f", double(s.bpm));
     text_top(p, BPM_X, 70, t, WHITE, T28);
     text_top(p, BPM_X + text_width(t, T28) + 8, 82, "BPM", MON, T12);
-    const int src = int(std::lround(s.groove_val[0][5])) & 3;
+    const int src = int(std::lround(s.groove_val[0][5])) % 3;
     std::snprintf(t, sizeof(t), "SOURCE %s", SRC_NAME[src]);
     text_top(p, BPM_X, 108, t, MON, T12);
     const char* st = s.clock_midi ? (s.clock_run ? "FOLLOWING MIDI" : "MIDI STOPPED") : "INTERNAL";

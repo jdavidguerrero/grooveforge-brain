@@ -198,6 +198,8 @@ void BridgeLink::send_ui_input(Ctl c, bool current_shift) {
         case Ctl::EngineCard:  id = 20; break;
         case Ctl::SwipeUp:     id = 21; break;
         case Ctl::SwipeDown:   id = 22; break;
+        case Ctl::VolUp:       id = 26; break;   // studio::Control::VolUp / VolDown (el Teensy es dueño del volumen)
+        case Ctl::VolDown:     id = 27; break;
         default: return;
     }
     const uint8_t payload[2] = {id, uint8_t(val)};
@@ -241,6 +243,11 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
         std::memcpy(&v, p + 2, 4);
         if (v < 0.0f) v = 0.0f;
         if (v > 1.0f) v = 1.0f;
+        if (id == GF_PARAM_MASTER_VOL) {                // volumen de salida (global, no es de un engine)
+            m_.vol = v;
+            m_.vol_dirty = true;
+            break;
+        }
         // Parámetros del synth: ((0x10 + engine) << 8) | (grupo << 4) | índice; grupo 1 = ENV, 2 = FILTER
         const unsigned hi = id >> 8, group = (id >> 4) & 0xF, idx = id & 0xF;
         if (hi >= 0x10 && hi < 0x16) {
@@ -482,6 +489,10 @@ void BridgeLink::apply(StudioState& s) {
             std::snprintf(s.chord, sizeof(s.chord), "---");
         s.chord_conf = m_.chord_conf;
         m_.chord_dirty = false;
+    }
+    if (m_.vol_dirty) {
+        s.volume_db = gf_vol_db(m_.vol);
+        m_.vol_dirty = false;
     }
     if (m_.bpm_dirty) {
         s.bpm = m_.bpm_x10 / 10.0f;

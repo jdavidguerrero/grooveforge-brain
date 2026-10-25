@@ -17,7 +17,8 @@ Un solo reloj para PUMP, ARP, DELAY (fase 4) y el SYNC del LFO. Da **BPM** y **p
 
 - **TAP:** BPM = promedio de los últimos intervalos (2 a 4 toques, cada uno entre 0.25 y 2 s); un toque aislado solo
   re-fasa. El BPM interno arranca en 120.
-- El usuario puede forzar la fuente (AUTO / MIDI / IA / INTERNO) en la parada PUMP.
+- El usuario puede forzar la fuente (AUTO / MIDI / INTERNO) en la parada PUMP. Rev. 3: la opción IA se quitó del
+  selector hasta que se integre GroovePilot (en AUTO tampoco se usa: el sketch49 no corre la IA).
 
 ### 1.1 Transiciones en directo (rev. 2, 2026-10-25)
 
@@ -30,7 +31,8 @@ Un solo reloj para PUMP, ARP, DELAY (fase 4) y el SYNC del LFO. Da **BPM** y **p
 | PUMP apagado o reloj parado | La ganancia sube a 1 con una rampa de ~20 ms (sin click). |
 
 **En la cabeza:** UI_STATE lleva la fuente y el estado en `flags` (bit2 MIDI, bit3 corriendo). La barra superior, la
-parada PUMP y PERFORM muestran `MIDI` (teal), `MIDI STOP` (ámbar) o `INT` (gris) junto al BPM.
+parada PUMP y PERFORM muestran `MIDI` (teal) o `MIDI STOP` (ámbar) junto al BPM. Rev. 3: con el reloj interno el BPM
+se oculta en la barra superior y en PERFORM (queda en la parada PUMP, donde está el TAP).
 - **Studio hoy:** el sketch49 no corre la IA, así que en la práctica usa MIDI e INTERNO. La fuente IA queda lista para
   cuando se integre.
 
@@ -95,7 +97,7 @@ hay notas apretadas, las graba), los 4 encoders editan con capa SHIFT, **B4 = TA
 
 | Parada | P1 | P2 | ENC L | ENC R | SHIFT P1 | SHIFT P2 |
 |---|---|---|---|---|---|---|
-| PUMP | DEPTH 0–100 % | SHAPE (SUAVE/EXP/KICK) | RATE (1/4, 1/8, 1/2) | OFFSET −50…+50 ms | RELEASE 30–400 ms | SOURCE (AUTO/MIDI/IA/INT) |
+| PUMP | DEPTH 0–100 % | SHAPE (SUAVE/EXP/KICK) | RATE (1/4, 1/8, 1/2) | OFFSET −50…+50 ms | RELEASE 30–400 ms | SOURCE (AUTO/MIDI/INT) |
 | ARP | MODE | DIV | GATE 5–100 % | OCT 1–3 | SWING 50–75 % | LATCH |
 | CHORD | TYPE (MEM/KEY) | INV 0–3 | STRUM 0–100 ms | KEY (C … B, mayor / menor) | — | — |
 | UNISON | VOICES (×1/×2/×3/×6) | DETUNE 0–50 ¢ | — | — | — | — |

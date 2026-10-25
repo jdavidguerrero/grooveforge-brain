@@ -24,6 +24,8 @@ public:
     void create();
     void update(const StudioState& s, uint32_t now);
     void force(Overlay o);
+    /// Tocar VOL en la barra superior: el panel queda abierto unos segundos con sus botones − / +.
+    void show_volume() { _vol_poke = true; }
 
 private:
     void build_volume(lv_obj_t* top);
@@ -55,5 +57,6 @@ private:
     float _in_peak[2] = {};
     uint32_t _last_ms = 0;
     int _vol_lit = -1;
+    bool _vol_poke = false;
     char _last_in_key[32] = {};
 };

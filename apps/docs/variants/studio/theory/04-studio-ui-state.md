@@ -148,3 +148,15 @@ los datos llegan a 5 V. Las luces salen del mismo estado de UI que se manda a la
   piano roll toca el Brain. Alternativa: teclado → PC y Ableton manda todo al Brain (sin riesgo de notas dobles,
   pero el Brain no suena sin el computador).
 - Audio de vuelta por el mismo USB (la Teensy como interfaz): fase siguiente, a verificar con el I2S en el hardware.
+
+## 6. Limpieza de la GUI y volumen de salida (2026-10-25)
+
+- **Oculto hasta que llegue GroovePilot:** la tonalidad de la barra superior, la página AI (ya fuera de la rotación) y el
+  paso "AI MODELS" del arranque. El BPM de la barra superior y de PERFORM solo aparece con clock de Live.
+- **Volumen de salida:** lo maneja el Teensy en el DAC del SGTL5000 (LINE OUT y auriculares), −60 a 0 dB en pasos de
+  1 dB, arranca en 0 dB (el nivel de siempre). Viaja como `PARAM_CHANGED` con el param_id global
+  `GF_PARAM_MASTER_VOL` (0x0001, fuera del rango 0x10xx de los engines), normalizado sobre −60–0 dB.
+- **Control táctil mientras no estén los pots:** tocar VOL en la barra superior abre el panel de volumen 4 s con
+  botones − / +; cada toque viaja como `UI_INPUT` con los controles nuevos **26 VOL_UP** y **27 VOL_DOWN**. Cuando se
+  conecte el pot VOL (pin 22) moverá el mismo valor.
+

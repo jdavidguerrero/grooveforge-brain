@@ -142,7 +142,7 @@ struct StudioState {
     float drive = 0.20f;             ///< PERFORM SHIFT+P2: DRIVE (0–1)
     bool shift = false;
 
-    float volume_db = -6.0f;
+    float volume_db = 0.0f;          ///< volumen de salida (DAC del Teensy), GF_VOL_DB_MIN–0 dB
 
     // Entrada estéreo (ADR-004 rev. 2: pot IN + pad trasero)
     float in_gain_db = 4.5f;

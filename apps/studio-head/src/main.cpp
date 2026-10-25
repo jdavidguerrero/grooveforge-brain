@@ -193,7 +193,7 @@ int main(int argc, char** argv) {
             // Con el Teensy conectado por UART, los gestos táctiles viajan como GF_CMD_UI_INPUT (0x45, theory/04 §5.2).
             Ctl c;
             while (input_poll(c)) {
-                if (use_link) link.send_ui_input(c, state.shift);
+                if (use_link && c != Ctl::VolShow) link.send_ui_input(c, state.shift);
                 else app.handle(c, state);
             }
             app.update(state);
