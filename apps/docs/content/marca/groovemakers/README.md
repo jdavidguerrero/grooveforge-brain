@@ -67,6 +67,13 @@ PNG transparentes de 1920 × 1080, **ya en su posición**: se ponen en una pista
 - `dato-…` (arriba a la derecha, punto ámbar): un dato técnico.
 - `ia-…` (punto **púrpura**): el rótulo del cameo de GroovePilot del EP2. El púrpura es solo para la IA.
 
+### Etiquetas para congelar la imagen (`media/video/etiquetas/`)
+
+PNG transparentes **del tamaño de la etiqueta** (no de pantalla completa): congelas la imagen del cenital, haces un
+acercamiento suave hacia la pieza, y colocas la etiqueta al lado, 2-3 s. Nombre en blanco, qué hace en teal. Las del
+EP1 están en `t1ep01/` (Teensy, shield, encoders, botones, pantalla, teclado, osciloscopio, motores, FX, presets).
+Agregar más: la lista `CALLOUTS_T1EP01` del generador.
+
 ### Logo (`media/logo/`)
 
 | Archivo | Para qué |

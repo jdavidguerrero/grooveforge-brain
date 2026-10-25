@@ -239,6 +239,34 @@ for (const [ep, d] of Object.entries(LOWER)) {
 add('video/tercios-inferiores/plantilla-archivo.png', 1920, 1080, fileChip('nombre-de-archivo.md §0', 'GrooveForge Brain / docs'), { transparent: true });
 add('video/tercios-inferiores/plantilla-dato.png', 1920, 1080, dataChip('Dato técnico · valor'), { transparent: true });
 
+// Etiquetas para el tour (congelar la imagen + zoom + etiqueta). PNG transparentes del tamaño de la etiqueta:
+// se colocan junto a la pieza en el editor. Nombres y funciones según ADR-004 y el encabezado del sketch49.
+const callout = (name, what, dot = C.teal) => `<div style="display:inline-flex;align-items:center;gap:22px;background:rgba(10,10,10,0.92);border:1px solid ${C.line};padding:22px 34px 22px 24px">
+  <span style="width:18px;height:18px;border-radius:50%;background:${dot};flex:none"></span>
+  <div style="display:flex;flex-direction:column;gap:8px;font-family:${MONO}">
+    <div style="font-weight:600;font-size:44px;color:${C.text};white-space:nowrap">${name}</div>
+    <div style="font-weight:400;font-size:28px;color:${C.tealL};white-space:nowrap">${what}</div>
+  </div></div>`;
+const CALLOUTS_T1EP01 = [
+  ['Teensy 4.1', 'el cerebro · ARM Cortex-M7 a 600 MHz'],
+  ['Audio Shield · SGTL5000', 'la tarjeta de sonido · sale por LINE OUT'],
+  ['ENC L', 'cutoff del filtro'],
+  ['ENC R', 'resonancia'],
+  ['P1 · P2', 'los parámetros de cada página'],
+  ['NAV + anillo de LEDs', 'navegar · el anillo dice dónde estás'],
+  ['B1 · B2 · B3', 'páginas OSC · ENV · LFO'],
+  ['B4', 'SYNTH FX · SHIFT + B4: presets'],
+  ['B5 · B6', 'MODE · SHIFT'],
+  ['Pantalla · Raspberry Pi', 'solo dibuja: el audio no pasa por aquí'],
+  ['Teclado MIDI', 'entra por el USB host de la Teensy'],
+  ['Osciloscopio', 'para ver lo que oímos'],
+  ['6 motores', 'Model D · Juno · Prophet · OB-6 · DX7 · ARP'],
+  ['SYNTH FX', 'bit · tape · chorus · reverb · ~6 % de CPU'],
+  ['Presets', '16 por motor · sobreviven al apagado'],
+];
+CALLOUTS_T1EP01.forEach(([n, w], i) => add(`video/etiquetas/t1ep01/${String(i + 1).padStart(2, '0')}-${slug(n)}.png`, 0, 0, callout(n, w), { transparent: true, element: true, pad: 0 }));
+add('video/etiquetas/plantilla-etiqueta.png', 0, 0, callout('Nombre de la pieza', 'qué hace, en una línea'), { transparent: true, element: true, pad: 0 });
+
 // Instagram / Reels / Shorts
 add('instagram/avatar-1080.png', 1080, 1080,
   `<div style="width:1080px;height:1080px;background:${C.bg};display:flex;align-items:center;justify-content:center">${mark({ size: 702 })}</div>`);
