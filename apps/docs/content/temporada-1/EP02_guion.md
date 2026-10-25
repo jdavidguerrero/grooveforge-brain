@@ -6,6 +6,9 @@
 >
 > Resultado: la **línea de bajo** y los **acordes** del primer track, hechos en el motor inspirado en el Juno-106 y
 > guardados como presets. Cameo de GroovePilot en los acordes (ADR-002, enmienda del 2026-10-22).
+>
+> **Grabado el 2026-10-25 solo con los acordes** (el bajo queda para otro episodio), sin cara: el texto en off por
+> bloques está en [`VOZ_EN_OFF_EP01_EP02.md`](VOZ_EN_OFF_EP01_EP02.md) §3.
 
 ---
 
