@@ -51,6 +51,11 @@ ParamChange mod_change(const Patch& p, uint8_t e, uint8_t stop, uint8_t slot) {
     return {gf_mod_param_id(e, stop, slot), (p.mod[stop][slot] - s->lo) / (s->hi - s->lo)};
 }
 
+ParamChange groove_change(const Patch& p, uint8_t e, uint8_t stop, uint8_t slot) {
+    const GF_OscSlot* s = &GF_GROOVE_SLOT[stop][slot];
+    return {gf_groove_param_id(e, stop, slot), (p.groove[stop][slot] - s->lo) / (s->hi - s->lo)};
+}
+
 /// Un detent sobre un slot de plantilla: los discretos avanzan de a un valor, los continuos `step` por paso.
 void step_slot(float& v, const GF_OscSlot* s, int8_t steps) {
     v = clamp(v + s->step * (s->count ? (steps > 0 ? 1 : -1) : steps), s->lo, s->hi);
@@ -166,8 +171,18 @@ uint8_t edit_encoder(Patch& p, const GF_UiState& ui, uint8_t e, uint8_t enc, int
             return 1;
         }
 
+        case GROOVE: {                                                   // el cursor es la parada
+            const uint8_t stop = ui.cursor < GF_GROOVE_STOPS ? ui.cursor : 0;
+            const uint8_t slot = uint8_t((sh ? 4 : 0) + enc);
+            const GF_OscSlot* s = &GF_GROOVE_SLOT[stop][slot];
+            if (!gf_osc_used(s)) return 0;
+            step_slot(p.groove[stop][slot], s, steps);
+            out[0] = groove_change(p, e, stop, slot);
+            return 1;
+        }
+
         default:
-            return 0;                                                    // AI (ARP), ENGINE, PRESETS: fase 2
+            return 0;                                                    // AI, ENGINE, PRESETS: sin encoders
     }
 }
 
@@ -185,8 +200,16 @@ uint8_t toggle_sfx(Patch& p, uint8_t e, uint8_t slot, ParamChange* out) {
     return 1;
 }
 
+uint8_t toggle_groove(Patch& p, uint8_t e, uint8_t stop, ParamChange* out) {
+    if (stop >= GF_GROOVE_TOGGLES) return 0;
+    p.groove_on[stop] = !p.groove_on[stop];
+    out[0] = {gf_groove_on_id(e, stop), p.groove_on[stop] ? 1.0f : 0.0f};
+    return 1;
+}
+
 namespace {
 
+constexpr uint8_t CC_MACRO = 14;                     // DRIFT · GRIT · POCKET · MORPH = 14–17 (theory/09 §6)
 constexpr uint8_t CC_AMP[4] = {73, 75, 70, 72};      // A · D · S · R (theory/07 §3)
 constexpr uint8_t CC_FLT[4] = {102, 103, 104, 105};
 constexpr uint8_t CC_OSC[GF_OSC_STOPS] = {20, 28, 36, 46};
@@ -238,6 +261,12 @@ uint8_t apply_cc(Patch& p, uint8_t e, uint8_t cc, uint8_t value, ParamChange* ou
         }
         default: break;
     }
+    if (cc >= CC_MACRO && cc < CC_MACRO + 4) {
+        const uint8_t sl = uint8_t(cc - CC_MACRO);
+        set_slot_norm(p.groove[GF_GROOVE_MACRO][sl], &GF_GROOVE_SLOT[GF_GROOVE_MACRO][sl], n);
+        out[0] = groove_change(p, e, GF_GROOVE_MACRO, sl);
+        return 1;
+    }
     for (uint8_t fx = 0; fx < GF_SFX_COUNT; ++fx)
         if (cc == CC_SFX_MIX[fx]) {
             p.sfx_mix[fx] = n;
@@ -283,6 +312,7 @@ uint8_t param_cc(uint16_t id, uint8_t e) {
         case GF_GROUP_OSC_SHIFT: return uint8_t(CC_OSC[idx / 4] + 4 + idx % 4);
         case GF_GROUP_MOD: return idx / 8 < GF_MOD_STOPS_MAX ? uint8_t(CC_MOD[idx / 8] + idx % 8) : 0xFF;
         case GF_GROUP_SFX: return idx >= GF_SFX_COUNT && idx < 2 * GF_SFX_COUNT ? CC_SFX_MIX[idx - GF_SFX_COUNT] : 0xFF;
+        case GF_GROUP_GROOVE_C: return idx < 4 ? uint8_t(CC_MACRO + idx) : 0xFF;
         default: return 0xFF;
     }
 }
@@ -362,6 +392,11 @@ uint8_t patch_params(const Patch& p, uint8_t e, ParamChange* out) {
         out[n++] = {gf_param_id(e, GF_GROUP_SFX, uint8_t(GF_SFX_COUNT + fx)), p.sfx_mix[fx]};
         for (uint8_t k = 0; k < GF_SFX_PARAMS; ++k) out[n++] = sfx_param_change(p, e, fx, k);
     }
+    for (uint8_t st = 0; st < GF_GROOVE_STOPS; ++st)
+        for (uint8_t sl = 0; sl < GF_OSC_SLOTS; ++sl)
+            if (gf_osc_used(&GF_GROOVE_SLOT[st][sl])) out[n++] = groove_change(p, e, st, sl);
+    for (uint8_t st = 0; st < GF_GROOVE_TOGGLES; ++st)
+        out[n++] = {gf_groove_on_id(e, st), p.groove_on[st] ? 1.0f : 0.0f};
     return n;
 }
 

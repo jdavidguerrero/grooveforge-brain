@@ -263,3 +263,65 @@ static inline float gf_sfx_decay(float n) { return 0.2f * powf(20.0f, gf_clamp01
 
 /** Profundidad de vibrato en semitonos para una cantidad PITCH (cuadrática: valores chicos = vibrato fino). */
 static inline float gf_lfo_pitch_st(float amt) { return GF_LFO_PITCH_ST * amt * amt; }
+
+/* ── Página GROOVE (variants/studio/theory/09-studio-groove.md §7) ── */
+
+#define GF_GROUP_GROOVE_A 8U    /* PUMP, ARP: parada · 8 + slot */
+#define GF_GROUP_GROOVE_B 9U    /* CHORD, UNISON: (parada − 2) · 8 + slot */
+#define GF_GROUP_GROOVE_C 10U   /* MACRO 0–7 · encendidos 8 + parada (PUMP, ARP, CHORD, UNISON) */
+#define GF_GROOVE_STOPS   5U
+#define GF_GROOVE_PUMP    0U
+#define GF_GROOVE_ARP     1U
+#define GF_GROOVE_CHORD   2U
+#define GF_GROOVE_UNISON  3U
+#define GF_GROOVE_MACRO   4U
+#define GF_GROOVE_TOGGLES 4U    /* paradas con encendido (MACRO no tiene) */
+
+/* Slots de cada parada (P1 · P2 · ENC L · ENC R | SHIFT P1 · SHIFT P2), en unidades de la UI */
+#define GF_PUMP_DEPTH 0U
+#define GF_PUMP_SHAPE 1U        /* 0 SUAVE · 1 EXP · 2 KICK */
+#define GF_PUMP_RATE  2U        /* GF_PUMP_RATE_BEATS */
+#define GF_PUMP_OFFSET 3U
+#define GF_PUMP_RELEASE 4U
+#define GF_PUMP_SOURCE 5U       /* 0 AUTO · 1 MIDI · 2 IA · 3 INT */
+#define GF_ARP_MODE  0U         /* UP · DOWN · UP-DOWN · RANDOM · SMART */
+#define GF_ARP_DIV   1U         /* GF_ARP_DIV_BEATS */
+#define GF_ARP_GATE  2U
+#define GF_ARP_OCT   3U
+#define GF_ARP_SWING 4U
+#define GF_ARP_LATCH 5U
+#define GF_CHORD_TYPE 0U        /* 0 MEMORIA · 1 EN TONALIDAD */
+#define GF_CHORD_INV  1U
+#define GF_CHORD_STRUM 2U
+#define GF_CHORD_KEY  3U        /* 0–11 C … B mayor · 12–23 C … B menor */
+#define GF_UNISON_VOICES 0U     /* GF_UNISON_COUNT */
+#define GF_UNISON_DETUNE 1U
+#define GF_MACRO_DRIFT  0U
+#define GF_MACRO_GRIT   1U
+#define GF_MACRO_POCKET 2U
+#define GF_MACRO_MORPH  3U
+
+static const float GF_PUMP_RATE_BEATS[3] = {1.0f, 0.5f, 2.0f};
+static const float GF_ARP_DIV_BEATS[6] = {1.0f, 0.5f, 0.25f, 1.0f / 3.0f, 1.0f / 6.0f, 0.75f};
+static const uint8_t GF_UNISON_COUNT[4] = {1, 2, 3, 6};
+
+static const GF_OscSlot GF_GROOVE_SLOT[GF_GROOVE_STOPS][GF_OSC_SLOTS] = {
+    /* PUMP */ {GF_OSC_LEVEL, {0, 2, 1, 3, false}, {0, 2, 1, 3, false}, {-50, 50, 1, 0, false},
+                {30, 400, 5, 0, false}, {0, 3, 1, 4, false}, GF_OSC_NONE, GF_OSC_NONE},
+    /* ARP */ {{0, 4, 1, 5, false}, {0, 5, 1, 6, false}, {5, 100, 1, 0, false}, {1, 3, 1, 3, false},
+               {50, 75, 1, 0, false}, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE},
+    /* CHORD */ {GF_OSC_TOGGLE, {0, 3, 1, 4, false}, GF_OSC_LEVEL, {0, 23, 1, 24, false}, GF_OSC_NONE4},
+    /* UNISON */ {{0, 3, 1, 4, false}, {0, 50, 1, 0, false}, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4},
+    /* MACRO */ {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_NONE4}};
+
+/** param_id de un slot de GROOVE. */
+static inline uint16_t gf_groove_param_id(uint8_t engine, uint8_t stop, uint8_t slot) {
+    if (stop < 2u) return gf_param_id(engine, GF_GROUP_GROOVE_A, (uint8_t)(stop * GF_OSC_SLOTS + slot));
+    if (stop < 4u) return gf_param_id(engine, GF_GROUP_GROOVE_B, (uint8_t)((stop - 2u) * GF_OSC_SLOTS + slot));
+    return gf_param_id(engine, GF_GROUP_GROOVE_C, slot);
+}
+
+/** param_id del encendido de una parada de GROOVE (PUMP, ARP, CHORD, UNISON). */
+static inline uint16_t gf_groove_on_id(uint8_t engine, uint8_t stop) {
+    return gf_param_id(engine, GF_GROUP_GROOVE_C, (uint8_t)(8u + stop));
+}

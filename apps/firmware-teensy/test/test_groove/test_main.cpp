@@ -28,10 +28,10 @@ void test_clock_midi_bpm_and_position() {
     const uint32_t t = send_ticks(c, 1000, TICK_120, 48);
     TEST_ASSERT_EQUAL(int(GrooveClock::Source::Midi), int(c.source(t)));
     TEST_ASSERT_FLOAT_WITHIN(0.5f, 120.0f, c.bpm(t));
-    // 48 ticks contados = 2 beats; START cuenta desde el primer tick
-    TEST_ASSERT_FLOAT_WITHIN(0.01, 2.0, c.position(t));
+    // El primer clock después de START es el beat 0: el tick 48 está en 47/24
+    TEST_ASSERT_FLOAT_WITHIN(0.001, 47.0 / 24.0, c.position(t));
     // Medio tick después: interpola
-    TEST_ASSERT_FLOAT_WITHIN(0.005, 2.0 + 0.5 / 24.0, c.position(t + TICK_120 / 2));
+    TEST_ASSERT_FLOAT_WITHIN(0.005, 47.5 / 24.0, c.position(t + TICK_120 / 2));
 }
 
 void test_clock_midi_start_stop_spp() {
@@ -45,8 +45,11 @@ void test_clock_midi_start_stop_spp() {
     TEST_ASSERT_FALSE(c.running(t));
     c.midi_song_position(8);   // 8 semicorcheas = 2 beats
     TEST_ASSERT_FLOAT_WITHIN(0.001, 2.0, c.position(t));
+    c.midi_continue();
+    c.midi_clock(t + TICK_120);                       // el primer clock después de SPP + CONTINUE = beat 2
+    TEST_ASSERT_FLOAT_WITHIN(0.001, 2.0, c.position(t + TICK_120));
     c.midi_start();
-    TEST_ASSERT_FLOAT_WITHIN(0.06, 0.0, c.position(t));
+    TEST_ASSERT_FLOAT_WITHIN(0.001, 0.0, c.position(t + TICK_120));
 }
 
 void test_clock_tap_sets_bpm_and_phase() {

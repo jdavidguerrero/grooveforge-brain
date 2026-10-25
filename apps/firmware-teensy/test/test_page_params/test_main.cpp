@@ -111,9 +111,46 @@ void test_forma_sin_dar_la_vuelta_y_patch_completo() {
     step_lfo_shape(p, 0, -10, c);
     TEST_ASSERT_EQUAL_UINT8(0, p.lfo_shape);
     const uint8_t n = patch_params(p, 3, c);
-    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6, n);                         // OB-6: 38 base + 12 OSC + 6 X-MOD (con SYNC)
+    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6 + 26, n);                    // OB-6: 38 base + 12 OSC + 6 X-MOD + 26 GROOVE
     for (uint8_t i = 0; i < n; ++i) TEST_ASSERT_EQUAL_HEX8(0x13, c[i].id >> 8);
     TEST_ASSERT_TRUE(patch_params(p, 2, c) <= PATCH_PARAM_COUNT);    // Prophet: 3 paradas × 8 + MOD
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) TEST_ASSERT_TRUE(patch_params(p, e, c) <= PATCH_PARAM_COUNT);
+}
+
+void test_groove_encoders_toggle_y_macros_cc() {
+    Patch p;
+    ParamChange c[1];
+    GF_UiState u = page(GROOVE);
+    u.cursor = GF_GROOVE_PUMP;
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, u, 0, 0, 5, c));      // P1 = DEPTH, 2 % por paso
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 60.0f, p.groove[0][GF_PUMP_DEPTH]);
+    TEST_ASSERT_EQUAL_HEX16(0x1080, c[0].id);
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.6f, c[0].norm);
+    u.cursor = GF_GROOVE_ARP;
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, u, 0, 1, 3, c));      // P2 = DIV: discreto, de a uno
+    TEST_ASSERT_EQUAL_FLOAT(3.0f, p.groove[1][GF_ARP_DIV]);
+    TEST_ASSERT_EQUAL_HEX16(0x1089, c[0].id);
+    u.shift = 1;
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, u, 0, 1, 1, c));      // SHIFT + P2 = LATCH
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, p.groove[1][GF_ARP_LATCH]);
+    u.cursor = GF_GROOVE_UNISON;
+    TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, u, 0, 0, 1, c));      // UNISON no tiene capa SHIFT
+    u.shift = 0;
+    u.cursor = GF_GROOVE_CHORD;
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, u, 2, 3, 1, c));      // ENC R = KEY
+    TEST_ASSERT_EQUAL_HEX16(0x1293, c[0].id);
+
+    TEST_ASSERT_EQUAL_UINT8(1, toggle_groove(p, 1, GF_GROOVE_ARP, c));
+    TEST_ASSERT_TRUE(p.groove_on[GF_GROOVE_ARP]);
+    TEST_ASSERT_EQUAL_HEX16(0x11A9, c[0].id);
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, c[0].norm);
+    TEST_ASSERT_EQUAL_UINT8(0, toggle_groove(p, 1, GF_GROOVE_MACRO, c));
+
+    TEST_ASSERT_EQUAL_UINT8(1, apply_cc(p, 3, 15, 127, c));           // CC 15 = GRIT
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 100.0f, p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT]);
+    TEST_ASSERT_EQUAL_HEX16(0x13A1, c[0].id);
+    TEST_ASSERT_EQUAL_UINT8(15, param_cc(c[0].id, 3));
+    TEST_ASSERT_EQUAL_UINT8(0xFF, param_cc(gf_groove_on_id(3, 0), 3));
 }
 
 void test_synth_fx_mix_principal_y_discretos() {
@@ -303,6 +340,7 @@ void test_cutoff_cc_logaritmico() {
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_perform_p1_env_amt_p2_lfo_cutoff);
+    RUN_TEST(test_groove_encoders_toggle_y_macros_cc);
     RUN_TEST(test_perform_shift_glide_y_drive);
     RUN_TEST(test_lfo_cutoff_es_el_mismo_valor_en_perform_y_lfo);
     RUN_TEST(test_lfo_shift_pitch_y_tercer_destino_por_engine);

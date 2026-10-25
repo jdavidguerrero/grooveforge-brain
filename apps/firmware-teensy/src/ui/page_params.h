@@ -40,6 +40,15 @@ struct Patch {
         {0.25f, 0.2f, 0.2f},                 ///< drive 3.25 · wow · flutter
         {0.5f, 0.35f, 0.2f},                 ///< depth · ~0.5 Hz · drift
         {0.45f, 1.0f / 3.0f, 0.5f}};         ///< decay ×0.8 · GUADUA · MEDIUM
+
+    /// Página GROOVE en unidades de la UI (GF_GROOVE_SLOT): [parada][slot]; por engine (theory/09 de Studio §7).
+    float groove[GF_GROOVE_STOPS][GF_OSC_SLOTS] = {
+        {50, 2, 0, 0, 180, 0, 0, 0},         ///< PUMP: 50 % · KICK · 1/4 · 0 ms · 180 ms · AUTO
+        {0, 2, 60, 1, 50, 0, 0, 0},          ///< ARP: UP · 1/16 · 60 % · 1 oct · recto · sin latch
+        {0, 0, 0, 21, 0, 0, 0, 0},           ///< CHORD: MEMORIA · sin inversión · sin strum · A menor
+        {0, 15, 0, 0, 0, 0, 0, 0},           ///< UNISON: ×1 · 15 ¢
+        {}};                                 ///< MACRO: todo en 0 (patch neutro)
+    bool groove_on[GF_GROOVE_TOGGLES] = {};
 };
 
 struct ParamChange {
@@ -47,8 +56,9 @@ struct ParamChange {
     float norm;
 };
 
-/// 8 ENV + 3 FILTER (ENV AMT, GLIDE, DRIVE) + RATE, SHAPE, DIV + 4 cantidades + cadena (4 + 4 + 12) + hasta 32 de OSC + 16 de MOD
-constexpr uint8_t PATCH_PARAM_COUNT = 86;
+/// 8 ENV + 3 FILTER (ENV AMT, GLIDE, DRIVE) + RATE, SHAPE, DIV + 4 cantidades + cadena (4 + 4 + 12) + hasta 32 de OSC
+/// + 16 de MOD + GROOVE (22 slots + 4 encendidos)
+constexpr uint8_t PATCH_PARAM_COUNT = 112;
 
 /// Valores de arranque de la página OSC de cada engine (los del diseño v3, osc_catalog.cpp de la cabeza).
 void patch_init(Patch& p, uint8_t engine);
@@ -65,6 +75,9 @@ uint8_t step_lfo_shape(Patch& p, uint8_t engine, int8_t steps, ParamChange* out)
 
 /// NAV push en SYNTH FX: enciende / apaga el FX `slot` de la cadena.
 uint8_t toggle_sfx(Patch& p, uint8_t engine, uint8_t slot, ParamChange* out);
+
+/// NAV push en GROOVE: enciende / apaga la parada `stop` (PUMP, ARP, CHORD, UNISON; MACRO no tiene).
+uint8_t toggle_groove(Patch& p, uint8_t engine, uint8_t stop, ParamChange* out);
 
 /// CC absoluto (0–127) → parámetro del patch según el mapa de theory/07. @return 0 si el CC no está mapeado o el
 /// engine no tiene ese slot; 1 si escribió el cambio en `out`.

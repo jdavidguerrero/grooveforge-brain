@@ -55,6 +55,11 @@ public:
         silence();
     }
     uint8_t held() const { return n_; }
+    /// El transporte se detuvo: apaga la nota que suena sin olvidar las sostenidas.
+    void pause() {
+        silence();
+        last_step_ = -1;
+    }
 
     /// Avanza a la posición `pos` (beats) del reloj.
     void update(double pos) {

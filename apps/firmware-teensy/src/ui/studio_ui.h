@@ -18,7 +18,8 @@ namespace studio {
 
 /// Páginas: mismo enum que `Page` de la cabeza (7 = error, lo decide la cabeza y nunca viaja).
 enum Page : uint8_t { PERFORM = 0, AI = 1, SPECTRUM = 2, ENV = 3, FX = 4, ENGINE = 5, PRESETS = 6, OSC = 8, LFO = 9,
-                    SYNTH_FX = 10, PANEL = 11 };   ///< PANEL: 4.ª vista de la home (fidelidad §11.7)
+                    SYNTH_FX = 10, PANEL = 11,     ///< PANEL: 4.ª vista de la home (fidelidad §11.7)
+                    GROOVE = 12 };                 ///< SHIFT + B3 (theory/09 de Studio §7)
 
 /// Ids de control, compartidos con UI_INPUT (0x45). NAV lleva el paso del giro en `value`.
 /// Key1–Key4 = B1–B4 del panel (Arduino ya define B1, B2… como literales binarios).
@@ -41,9 +42,11 @@ uint8_t panel_card_count(uint8_t engine);
 PanelItem panel_card(uint8_t engine, uint8_t i);
 
 /// Lo que el sketch tiene que hacer en el sonido después de un control.
-/// LfoShape lleva el paso de NAV como int8_t en `arg`; SfxToggle, el FX de la cadena del synth (0–3).
+/// LfoShape lleva el paso de NAV como int8_t en `arg`; SfxToggle, el FX de la cadena del synth (0–3);
+/// GroovePush, la parada de GROOVE (el sketch decide: en CHORD con notas apretadas graba el acorde, si no enciende /
+/// apaga); Tap, B4 en GROOVE.
 enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle, FilterBypass, LfoSync, LfoShape,
-                              SfxToggle };
+                              SfxToggle, GroovePush, Tap };
 
 struct Result {
     Action action = Action::None;
@@ -54,6 +57,7 @@ constexpr uint8_t ENGINE_COUNT = 6;
 constexpr uint8_t FAV_FX_SLOT = 2;               ///< B4 en FX: GHOST ECHO (como la cabeza)
 constexpr uint8_t PRESET_ROWS_VISIBLE = 6;       ///< paso del swipe en PRESETS
 constexpr uint8_t SFX_SLOTS = 4;                 ///< cadena de FX del synth (theory/05 de Studio)
+constexpr uint8_t GROOVE_STOPS = 5;              ///< PUMP · ARP · CHORD · UNISON · MACRO
 
 class StudioUi {
 public:
@@ -95,6 +99,7 @@ private:
     uint8_t osc_sel_[ENGINE_COUNT] = {};
     uint8_t lfo_stop_[ENGINE_COUNT] = {};         ///< LFO / MOD: 0 = LFO, 1… = paradas de MOD del engine
     uint8_t panel_cursor_ = 0;                   ///< PANEL: tarjeta (panel_card)
+    uint8_t groove_stop_ = 0;                    ///< GROOVE: parada (común a todos los engines)
     bool dirty_ = true;
 };
 

@@ -29,6 +29,7 @@ void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uin
         case LFO:      *pos = ui.cursor; *count = uint8_t(1 + GF_MOD_STOPS[engine]); break;
         case PRESETS:  *pos = ui.cursor; *count = preset_rows ? preset_rows : 1; break;
         case PANEL:    *pos = 1; *count = 2; break;
+        case GROOVE:   *pos = ui.cursor; *count = GROOVE_STOPS; break;
         default:       *pos = 0; *count = 2; break;                    // PERFORM · PANEL (theory/08)
     }
 }
@@ -38,7 +39,7 @@ void key_levels(const GF_UiState& ui, uint8_t out[KEY_LEDS]) {
     if (!ui.mode) {
         if (ui.page == OSC) out[0] = KEY_ON;
         if (ui.page == ENV) out[1] = KEY_ON;
-        if (ui.page == LFO) out[2] = KEY_ON;
+        if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;   // GROOVE = SHIFT + B3
         if (ui.page == SYNTH_FX || ui.page == PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
     }
     out[4] = KEY_ON;                                   // MODE siempre encendida: el color dice SYNTH o FX

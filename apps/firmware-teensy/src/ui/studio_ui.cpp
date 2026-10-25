@@ -80,6 +80,7 @@ void StudioUi::refresh_cursor() {
         case SYNTH_FX: ui_.cursor = sfx_cursor_; break;
         case ENV:     ui_.cursor = env_sel_; break;
         case PANEL:   ui_.cursor = panel_cursor_; break;
+        case GROOVE:  ui_.cursor = groove_stop_; break;
         default:      ui_.cursor = 0; break;
     }
 }
@@ -247,6 +248,16 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
         return {};
     }
     if (ui_.page == SYNTH_FX && c == Control::NavPush) return {Action::SfxToggle, sfx_cursor_};
+    if (ui_.page == GROOVE) {
+        if (c == Control::Nav) {                                       // NAV elige la parada
+            const int s = int(groove_stop_) + v;
+            groove_stop_ = uint8_t(s < 0 ? 0 : s >= GROOVE_STOPS ? GROOVE_STOPS - 1 : s);
+            refresh_cursor();
+            return {};
+        }
+        if (c == Control::NavPush) return {Action::GroovePush, groove_stop_};
+        if (c == Control::Key4 && !ui_.shift) return {Action::Tap, 0};   // B4 = TAP (SHIFT + B4 sigue en PRESETS)
+    }
     if (ui_.page == LFO && c == Control::Nav) {                        // NAV elige la parada: LFO y las de MOD
         const int s = int(lfo_stop_[engine_]) + v, n = 1 + GF_MOD_STOPS[engine_];
         lfo_stop_[engine_] = uint8_t(s < 0 ? 0 : s >= n ? n - 1 : s);
@@ -266,7 +277,9 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             break;
         case Control::Key1: toggle_page(OSC); break;
         case Control::Key2: toggle_page(ENV); break;
-        case Control::Key3: toggle_page(LFO); break;
+        case Control::Key3:                                 // B3: LFO / MOD · SHIFT + B3: GROOVE
+            toggle_page(ui_.shift ? GROOVE : LFO);
+            break;
         case Control::Key4:                                 // B4: SYNTH FX · SHIFT + B4: PRESETS
             if (ui_.shift) show(PRESETS);
             else toggle_page(SYNTH_FX);

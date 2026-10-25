@@ -48,6 +48,11 @@
 
 #include "../audio/audio_graph.h"
 #include "../audio/output_stage.h"
+#include "../audio/pump_stage.h"
+#include "../dsp/arp_core.h"
+#include "../dsp/chord_memory.h"
+#include "../dsp/groove_clock.h"
+#include "../dsp/pump.h"
 #include "../dsp/lfo.h"
 #include "../engines/arp2600.h"
 #include "../engines/dx7.h"
@@ -87,13 +92,14 @@ AudioConnection c_dx7_r(dx7.getOutput(), 0, g_engine_mix_rb, 0);
 AudioConnection c_arp_r(arp.getOutput(), 0, g_engine_mix_rb, 1);
 
 // Cadena de FX del synth: los 4 viven siempre en el grafo (apagar = bypass, sin recablear en vivo)
-/// Una cadena de SYNTH FX (BIT → TAPE → CHORUS → MODAL). Hay una por lado para no perder el estéreo del Juno.
+/// Una cadena de SYNTH FX (BIT → TAPE → CHORUS → MODAL → PUMP). Hay una por lado para no perder el estéreo del Juno.
 struct SfxChain {
     AudioOutputStage out;                    // acople AC + saturación de salida (fidelidad §11.6)
     BitSculpt bit;
     TapeSaturate tape;
     PhaseChorus chorus;
     ModalReverb modal;
+    AudioPumpStage pump;                     // al final: bombean también las colas (theory/09 de Studio §2)
 
     void begin(AudioStream& in, AudioMixer4& master) {
         new AudioConnection(in, 0, out, 0);
@@ -101,7 +107,8 @@ struct SfxChain {
         tape.begin(bit.getOutputL());
         chorus.begin(tape.getOutputL());
         modal.begin(chorus.getOutputL());
-        new AudioConnection(modal.getOutputL(), 0, master, 1);
+        new AudioConnection(modal.getOutputL(), 0, pump, 0);
+        new AudioConnection(pump, 0, master, 1);
     }
 
     void apply(const studio::Patch& p) {
@@ -179,9 +186,9 @@ uint32_t lfo_delay_t0 = 0;               // nota nueva sin otras apretadas: arra
 uint32_t sustained[4] = {};              // notas soltadas con el pedal apretado (bit por nota)
 constexpr float BEND_RANGE_ST = 2.0f;
 constexpr uint8_t MIDI_OUT_CH = 1;
-float bpm = 120.0f;                      // MIDI clock del USB host; sin clock, 120
-uint32_t last_clock_us = 0, last_bpm_tx = 0;
-float clock_us_avg = 0.0f;
+float bpm = 120.0f;                      // BPM del reloj común (MIDI · IA · interno + TAP)
+uint32_t last_bpm_tx = 0;
+float bpm_sent = 0.0f;
 uint8_t moog_note = 255;                 // el Model D es monofónico: noteOff() sin nota
 
 int32_t last_l = 0, last_r = 0, last_nav = 0, last_p1 = 0, last_p2 = 0;
@@ -189,6 +196,20 @@ uint32_t last_stats = 0, last_ui_tx = 0, last_ui_beat = 0;
 bool host_seen = false;
 
 studio::Patch& patch() { return patches[ui.engine()]; }
+
+// GROOVE (variants/studio/theory/09): reloj común, PUMP, ARP y CHORD
+dsp::GrooveClock gclock;
+dsp::ArpCore arpeggio;                   // `arp` es el ARP 2600
+dsp::ChordMemory chord;
+uint8_t keys_down[dsp::ArpCore::MAX_NOTES], keys_n = 0;   // teclas apretadas de verdad (NAV push graba el acorde)
+uint8_t chord_n[128], chord_notes[128][dsp::ChordMemory::MAX];   // lo que disparó cada tecla, para soltar lo mismo
+struct StrumNote {
+    uint8_t note, vel;
+    uint32_t at_us;
+};
+StrumNote strum_q[16];
+uint8_t strum_n = 0;
+void groove_reset();
 
 // ── Presets (variants/studio/theory/06): un archivo por preset en LittleFS sobre el flash del programa ──────────
 
@@ -256,6 +277,7 @@ void engine_note_off(uint8_t e, uint8_t note) {
 }
 
 void all_notes_off() {
+    groove_reset();
     memset(sustained, 0, sizeof(sustained));
     notes_held = 0;
     moog.noteOff();
@@ -267,6 +289,102 @@ void all_notes_off() {
         dx7.noteOff(n);
         arp.noteOff(n);
     }
+}
+
+// ── GROOVE: CHORD → ARP → engine (theory/09 de Studio §3–§4) ──────────────────────────────────────
+
+void groove_reset() {
+    arpeggio.clear();
+    strum_n = 0;
+    keys_n = 0;
+    memset(chord_n, 0, sizeof(chord_n));
+}
+
+void arp_note_on(uint8_t n, uint8_t v, void*) { engine_note_on(ui.engine(), n, v / 127.0f); }
+void arp_note_off(uint8_t n, void*) { engine_note_off(ui.engine(), n); }
+
+/// Una nota ya pasada por CHORD: con ARP la toma el arpegiador; si no, va al engine (con STRUM, a la cola).
+void voice_on(uint8_t note, uint8_t vel, uint32_t delay_us) {
+    if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_on(note, vel); return; }
+    if (delay_us == 0 || strum_n == 16) { engine_note_on(ui.engine(), note, vel / 127.0f); return; }
+    strum_q[strum_n++] = {note, vel, micros() + delay_us};
+}
+
+void voice_off(uint8_t note) {
+    if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_off(note); return; }
+    for (uint8_t i = 0; i < strum_n; ++i)
+        if (strum_q[i].note == note) {          // soltada antes de sonar: se cancela
+            strum_q[i] = strum_q[--strum_n];
+            return;
+        }
+    engine_note_off(ui.engine(), note);
+}
+
+void play_on(uint8_t note, uint8_t vel) {
+    const studio::Patch& p = patch();
+    if (!p.groove_on[GF_GROOVE_CHORD]) {
+        chord_n[note] = 0;
+        voice_on(note, vel, 0);
+        return;
+    }
+    const float* g = p.groove[GF_GROOVE_CHORD];
+    chord.set_type(dsp::ChordMemory::Type(uint8_t(g[GF_CHORD_TYPE])));
+    chord.set_inversion(uint8_t(g[GF_CHORD_INV]));
+    chord.set_key(uint8_t(g[GF_CHORD_KEY]));
+    const uint32_t strum_us = uint32_t(g[GF_CHORD_STRUM] * 1000.0f);
+    chord_n[note] = chord.notes(note, chord_notes[note]);
+    for (uint8_t i = 0; i < chord_n[note]; ++i) voice_on(chord_notes[note][i], vel, strum_us * i);
+}
+
+void play_off(uint8_t note) {
+    if (!chord_n[note]) { voice_off(note); return; }
+    for (uint8_t i = 0; i < chord_n[note]; ++i) voice_off(chord_notes[note][i]);
+    chord_n[note] = 0;
+}
+
+/// A 1 kHz: BPM y posición del reloj, notas del STRUM, pasos del ARP y ganancia del PUMP.
+void groove_tick(uint32_t now) {
+    const studio::Patch& p = patch();
+    const float(&g)[GF_GROOVE_STOPS][GF_OSC_SLOTS] = p.groove;
+    gclock.force_source(dsp::GrooveClock::Source(uint8_t(g[GF_GROOVE_PUMP][GF_PUMP_SOURCE])));
+    const double pos = gclock.position(now);
+    const bool running = gclock.running(now);
+    bpm = gclock.bpm(now);
+
+    for (uint8_t i = 0; i < strum_n;) {
+        if (int32_t(now - strum_q[i].at_us) >= 0) {
+            engine_note_on(ui.engine(), strum_q[i].note, strum_q[i].vel / 127.0f);
+            strum_q[i] = strum_q[--strum_n];
+        } else {
+            ++i;
+        }
+    }
+
+    const float* a = g[GF_GROOVE_ARP];
+    arpeggio.set_mode(dsp::ArpCore::Mode(uint8_t(a[GF_ARP_MODE])));
+    arpeggio.set_step_beats(GF_ARP_DIV_BEATS[uint8_t(a[GF_ARP_DIV])]);
+    arpeggio.set_gate(a[GF_ARP_GATE] * 0.01f);
+    arpeggio.set_octaves(uint8_t(a[GF_ARP_OCT]));
+    arpeggio.set_swing(a[GF_ARP_SWING] * 0.01f);
+    arpeggio.set_latch(a[GF_ARP_LATCH] > 0.5f);
+    if (p.groove_on[GF_GROOVE_ARP]) {
+        if (running) arpeggio.update(pos);
+        else arpeggio.pause();
+    }
+
+    float gain = 1.0f;
+    if (p.groove_on[GF_GROOVE_PUMP] && running) {
+        const float* q = g[GF_GROOVE_PUMP];
+        dsp::PumpParams pp;
+        pp.depth = q[GF_PUMP_DEPTH] * 0.01f;
+        pp.shape = dsp::PumpShape(uint8_t(q[GF_PUMP_SHAPE]));
+        pp.rate_beats = GF_PUMP_RATE_BEATS[uint8_t(q[GF_PUMP_RATE])];
+        pp.offset_ms = q[GF_PUMP_OFFSET];
+        pp.release_ms = q[GF_PUMP_RELEASE];
+        gain = dsp::pump_gain(pp, pos, bpm);
+    }
+    sfx_l.pump.set_gain(gain);
+    sfx_r.pump.set_gain(gain);
 }
 
 void engine_dsp(uint8_t e, bool on) {
@@ -583,6 +701,7 @@ void bridge_bpm() {
     const uint8_t p[3] = {uint8_t(x10 & 0xFF), uint8_t(x10 >> 8), 0};
     bridge_send(GF_CMD_BEAT_DETECTED, p, 3);
     last_bpm_tx = millis();
+    bpm_sent = bpm;
 }
 
 void bridge_ui_state() {
@@ -668,6 +787,7 @@ void mod_tick() {
     if (now - last_us < 1000) return;
     const float dt = (now - last_us) * 1e-6f;
     last_us = now;
+    groove_tick(now);
 
     const studio::Patch& p = patch();
     const uint8_t e = ui.engine();
@@ -735,6 +855,25 @@ void run_action(studio::Result r) {
         case studio::Action::LfoSync:
             Serial.printf("[UI] LFO SYNC %s (%.1f BPM)\n", r.arg ? "ON" : "OFF", bpm);
             break;
+        case studio::Action::Tap:
+            gclock.tap(micros());
+            bpm = gclock.bpm(micros());
+            bridge_bpm();
+            Serial.printf("[GROOVE] TAP · %.1f BPM\n", bpm);
+            break;
+        case studio::Action::GroovePush: {
+            if (r.arg == GF_GROOVE_CHORD && keys_n >= 2) {   // con el acorde apretado, NAV push lo graba
+                chord.learn(keys_down, keys_n);
+                Serial.printf("[GROOVE] acorde grabado (%u notas)\n", keys_n);
+                break;
+            }
+            studio::ParamChange c[1];
+            if (!studio::toggle_groove(patch(), ui.engine(), r.arg, c)) break;
+            bridge_param(c[0].id, c[0].norm);
+            if (r.arg == GF_GROOVE_ARP || r.arg == GF_GROOVE_CHORD) all_notes_off();   // cambia quién suelta cada nota
+            Serial.printf("[GROOVE] parada %u %s\n", r.arg, patch().groove_on[r.arg] ? "ON" : "OFF");
+            break;
+        }
         case studio::Action::None: break;
         default: Serial.printf("[UI] acción %u (arg %u) sin audio en este sketch\n", unsigned(r.action), r.arg); break;
     }
@@ -796,18 +935,27 @@ void note_off(byte ch, byte note, byte vel);
 
 void note_on(byte ch, byte note, byte vel) {
     if (vel == 0) { note_off(ch, note, 0); return; }
-    sustained[note >> 5] &= ~(1u << (note & 31));
+    if (sustained[note >> 5] & (1u << (note & 31))) {   // sostenida por el pedal: se suelta lo que disparó antes
+        sustained[note >> 5] &= ~(1u << (note & 31));
+        play_off(note);
+    }
     if (notes_held == 0) lfo_delay_t0 = millis();
     if (notes_held < 255) ++notes_held;
-    engine_note_on(ui.engine(), note, vel / 127.0f);
+    if (keys_n < dsp::ArpCore::MAX_NOTES) keys_down[keys_n++] = note;
+    play_on(note, vel);
     const uint8_t p[2] = {note, vel};
     bridge_send(GF_CMD_NOTE_ON, p, 2);
 }
 
 void note_off(byte ch, byte note, byte vel) {
     if (notes_held) --notes_held;
+    for (uint8_t i = 0; i < keys_n; ++i)
+        if (keys_down[i] == note) {
+            keys_down[i] = keys_down[--keys_n];
+            break;
+        }
     if (sustain_pedal) { sustained[note >> 5] |= 1u << (note & 31); return; }
-    engine_note_off(ui.engine(), note);
+    play_off(note);
 }
 
 void pitch_bend(byte ch, int bend) { bend_st = BEND_RANGE_ST * bend / 8192.0f; }   // −8192…8191
@@ -815,7 +963,7 @@ void after_touch(byte ch, byte pressure) { aftertouch = pressure / 127.0f; }
 
 void release_sustained() {
     for (uint8_t n = 0; n < 128; ++n)
-        if (sustained[n >> 5] & (1u << (n & 31))) engine_note_off(ui.engine(), n);
+        if (sustained[n >> 5] & (1u << (n & 31))) play_off(n);
     memset(sustained, 0, sizeof(sustained));
 }
 
@@ -878,15 +1026,12 @@ void host_after_touch(byte ch, byte pressure) {
     usbMIDI.sendAfterTouch(pressure, ch);
 }
 
-/// MIDI clock (24 ppq): promedio móvil del intervalo → BPM para el SYNC del LFO.
-void clock_tick() {
-    const uint32_t now = micros();
-    const uint32_t d = now - last_clock_us;
-    last_clock_us = now;
-    if (d > 100000) return;                               // primer pulso o reanudación: no promediar
-    clock_us_avg = clock_us_avg == 0.0f ? d : clock_us_avg + 0.05f * (d - clock_us_avg);
-    bpm = constrain(60e6f / (clock_us_avg * 24.0f), 30.0f, 300.0f);
-}
+/// Transporte MIDI (24 ppq) → reloj común: BPM y posición para LFO SYNC, PUMP y ARP.
+void clock_tick() { gclock.midi_clock(micros()); }
+void clock_start() { gclock.midi_start(); }
+void clock_continue() { gclock.midi_continue(); }
+void clock_stop() { gclock.midi_stop(); }
+void clock_song_position(uint16_t sixteenths) { gclock.midi_song_position(sixteenths); }
 
 // ── Arduino ─────────────────────────────────────────────────────────────────────────────────────
 
@@ -966,6 +1111,10 @@ void setup() {
     midi.setHandlePitchChange(host_pitch_bend);
     midi.setHandleAfterTouchChannel(host_after_touch);
     midi.setHandleClock(clock_tick);
+    midi.setHandleStart(clock_start);
+    midi.setHandleContinue(clock_continue);
+    midi.setHandleStop(clock_stop);
+    midi.setHandleSongPosition(clock_song_position);
     // MIDI del computador por el USB de la Teensy (piano roll de Ableton, clock de la sesión)
     usbMIDI.setHandleNoteOn(note_on);
     usbMIDI.setHandleNoteOff(note_off);
@@ -973,6 +1122,11 @@ void setup() {
     usbMIDI.setHandlePitchChange(pitch_bend);
     usbMIDI.setHandleAfterTouchChannel(after_touch);
     usbMIDI.setHandleClock(clock_tick);
+    usbMIDI.setHandleStart(clock_start);
+    usbMIDI.setHandleContinue(clock_continue);
+    usbMIDI.setHandleStop(clock_stop);
+    usbMIDI.setHandleSongPosition(clock_song_position);
+    arpeggio.set_callbacks(arp_note_on, arp_note_off, nullptr);
     Serial.println("[host] USB host iniciado: conectar el teclado MIDI");
 }
 
@@ -984,7 +1138,8 @@ void loop() {
     bridge_poll();
     if (millis() - last_hb >= 1000) { last_hb = millis(); bridge_send(GF_CMD_HEARTBEAT, nullptr, 0); }
     if (millis() - last_engine_tx >= 5000) bridge_engine();
-    if (last_clock_us && millis() - last_bpm_tx >= 1000) bridge_bpm();   // con clock, el BPM 1 vez por segundo
+    // BPM del reloj común a la cabeza: 1 vez por segundo y al cambiar (como mucho cada 100 ms)
+    if (millis() - last_bpm_tx >= 1000 || (fabsf(bpm - bpm_sent) >= 0.5f && millis() - last_bpm_tx >= 100)) bridge_bpm();
 
     mod_tick();
     {

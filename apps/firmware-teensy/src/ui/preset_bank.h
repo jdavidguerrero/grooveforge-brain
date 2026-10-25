@@ -17,7 +17,7 @@ namespace studio {
 
 constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
-constexpr uint8_t PRESET_FORMAT = 2;        ///< versión del formato (2: NOISE del Model D en su parada, 2026-10-19)
+constexpr uint8_t PRESET_FORMAT = 3;        ///< versión del formato (3: página GROOVE, 2026-10-25)
 
 /// Un sonido: el patch editable + el filtro de ENC L / R.
 struct Preset {
@@ -29,8 +29,9 @@ struct Preset {
 
 /// Bytes de un preset serializado (cabecera + campos en orden fijo, little-endian).
 constexpr size_t PRESET_BYTES = 4 + 1 + PRESET_NAME_LEN + 4 * (12 + GF_DEST_COUNT + GF_OSC_STOPS * GF_OSC_SLOTS +
-                                GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2) +
-                                2 + GF_SFX_COUNT;
+                                GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2 +
+                                GF_GROOVE_STOPS * GF_OSC_SLOTS) +
+                                2 + GF_SFX_COUNT + GF_GROOVE_TOGGLES;
 
 /// Serializa `p` del engine `engine` en `buf`. @return bytes escritos, 0 si `cap` < PRESET_BYTES.
 size_t preset_encode(const Preset& p, uint8_t engine, uint8_t* buf, size_t cap);

@@ -29,16 +29,22 @@ public:
             midi_interval_ = midi_interval_ > 0.0f ? 0.85f * midi_interval_ + 0.15f * dt : dt;
         }
         midi_last_ = t;
-        if (midi_running_) ++midi_ticks_;
+        if (!midi_running_) return;
+        if (midi_pending_) midi_pending_ = false;   // el primer clock después de START / SPP es la posición misma
+        else ++midi_ticks_;
     }
     void midi_start() {
         midi_running_ = true;
+        midi_pending_ = true;
         midi_ticks_ = 0;
     }
     void midi_continue() { midi_running_ = true; }
     void midi_stop() { midi_running_ = false; }
     /// SONG POSITION POINTER: posición en semicorcheas (6 ticks cada una).
-    void midi_song_position(uint16_t sixteenths) { midi_ticks_ = uint32_t(sixteenths) * 6u; }
+    void midi_song_position(uint16_t sixteenths) {
+        midi_ticks_ = uint32_t(sixteenths) * 6u;
+        midi_pending_ = true;
+    }
 
     // ── Beat de la IA ─────────────────────────────────────────────────────────
     /// `phase` 0–1 dentro del beat en el instante `t`.
@@ -92,7 +98,7 @@ public:
         switch (source(t)) {
             case Source::Midi: {
                 double pos = double(midi_ticks_) / 24.0;
-                if (midi_running_ && midi_interval_ > 0.0f && midi_last_) {
+                if (midi_running_ && !midi_pending_ && midi_interval_ > 0.0f && midi_last_) {
                     const float frac = fminf(1.0f, float(t - midi_last_) / midi_interval_);   // entre ticks
                     pos += double(frac) / 24.0;
                 }
@@ -114,7 +120,7 @@ private:
     Source forced_ = Source::Auto;
     uint32_t midi_last_ = 0, midi_ticks_ = 0;
     float midi_interval_ = 0.0f;
-    bool midi_running_ = false;
+    bool midi_running_ = false, midi_pending_ = false;
     uint32_t ai_t_ = 0;
     float ai_bpm_ = 120.0f, ai_phase_ = 0.0f;
     double ai_base_ = 0.0;

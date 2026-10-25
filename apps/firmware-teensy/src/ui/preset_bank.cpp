@@ -34,6 +34,13 @@ void visit(Preset& p, F&& f32, B&& u8) {
         u8(b);
         on = b != 0;
     }
+    for (auto& st : t.groove)
+        for (float& v : st) f32(v);
+    for (bool& on : t.groove_on) {
+        uint8_t b = on;
+        u8(b);
+        on = b != 0;
+    }
 }
 
 void set_name(char* dst, const char* src) {

@@ -285,6 +285,29 @@ void test_detent_con_histeresis() {
     TEST_ASSERT_EQUAL_INT32(-1, d.update(-2));
 }
 
+void test_groove_shift_b3_nav_push_y_tap() {
+    StudioUi ui;
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key3);                                   // SHIFT + B3 = GROOVE
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
+    ui.handle(Control::Nav, 2);
+    TEST_ASSERT_EQUAL_UINT8(2, ui.state().cursor);              // CHORD
+    ui.handle(Control::Nav, 9);
+    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);              // MACRO, sin dar la vuelta
+    Result r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::GroovePush), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(4, r.arg);
+    r = ui.handle(Control::Key4);
+    TEST_ASSERT_EQUAL(int(Action::Tap), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
+    ui.handle(Control::NavLong);
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
+    ui.handle(Control::Key3);                                   // B3 solo sigue siendo LFO
+    TEST_ASSERT_EQUAL_UINT8(LFO, ui.state().page);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -306,5 +329,6 @@ int main() {
     RUN_TEST(test_fx_slots_ruteo_hold_y_favorito);
     RUN_TEST(test_ui_state_roundtrip);
     RUN_TEST(test_detent_con_histeresis);
+    RUN_TEST(test_groove_shift_b3_nav_push_y_tap);
     return UNITY_END();
 }
