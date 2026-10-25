@@ -23,7 +23,7 @@ Rasgos típicos del género (orientación de producción, no afirmaciones sobre 
 |---|---|---|
 | **Stabs de acordes** (un dedo, un acorde) | disco house, house, ANOTR / PDM | Modo de acordes (chord memory), envelope corta, chorus |
 | **Bombeo con el kick** (sidechain) | todo el house | Ducking sincronizado al tempo, sin compresor externo |
-| **Filtro tipo "French touch"** (barrido LP / HP con resonancia sobre todo el sonido) | disco / French house, Bob Sinclar | Un filtro DJ maestro de un solo control, después de los engines |
+| **Filtro tipo "French touch"** (barrido LP / HP sobre todo el sonido) | disco / French house | **Fuera del Brain:** lo hace el filtro del GrooveMixer (decisión de Juan, 2026-10-25) |
 | **Arpegios y secuencias** sincronizados | melodic / progressive (Léger, Rosenfeld) | Arpegiador con divisiones, gate, octavas, swing; consciente de la tonalidad |
 | **Plucks** (ataque seco, decay corto, filtro que se cierra) | melodic, organic | Envelope de filtro rápida, velocity al brillo |
 | **Pads que evolucionan** anchos | progressive, melodic | Unison / detune, LFO lento al filtro, chorus estéreo, reverb grande |
@@ -43,7 +43,7 @@ Rasgos típicos del género (orientación de producción, no afirmaciones sobre 
 | Delay (GHOST ECHO), reverb SPRING + PLATE, BEAT SYNC | Existen en el **modo FX**, no en la cadena del synth |
 | Arpegiador SMART ARP (Markov, acordes, sincronía) | Existe en `ml/`, solo en modo AI |
 | Detección de tonalidad y acordes (Camelot) | Existe (Layer 1 AI) |
-| Modo de acordes, unison, sidechain, filtro DJ, phaser | **Faltan** |
+| Modo de acordes, unison, sidechain, phaser | **Faltan** (el filtro DJ lo pone el GrooveMixer) |
 | Banco de presets por estilo | **Falta** (hay uno de fábrica por engine, theory/06 §8) |
 
 ## 3b. Identidad de cada engine (direcciones a validar de oído)
@@ -113,14 +113,13 @@ de un loop de house, sin los artefactos de la lista.
    **mono por dentro** (`getOutputL()` y `getOutputR()` devuelven el mismo mezclador): el ping-pong exige dos
    líneas de delay cruzadas, memoria de delay doble y medir la CPU.
 2. **PHASER** de disco (nuevo, barato) o ensemble como modo del CHORUS.
-3. **FILTRO DJ maestro:** un solo control LP ← 0 → HP con resonancia, después de toda la cadena (French touch).
-4. **REVERB grande** junto a MODAL. SPRING + PLATE usa `AudioEffectFreeverb`, que es **mono**: una reverb estéreo
+3. **REVERB grande** junto a MODAL. SPRING + PLATE usa `AudioEffectFreeverb`, que es **mono**: una reverb estéreo
    de verdad pasa a `AudioEffectFreeverbStereo` (Teensy Audio Library) o a una propia; más CPU que la actual.
 
 Cadena propuesta (orden fijo, cada una con on / off y MIX): BIT → TAPE → CHORUS / PHASER → DELAY → REVERB (MODAL o
-PLATE) → FILTRO DJ. Presupuesto de CPU a medir: objetivo ≤ 60 % total con 6 voces (`01` §5.2).
+PLATE). El filtro DJ queda en el GrooveMixer. Presupuesto de CPU a medir: objetivo ≤ 60 % total con 6 voces (`01` §5.2).
 
-**Demo:** barrido de filtro DJ sobre un loop de disco; pluck con delay 1/8 con punto.
+**Demo:** pluck con delay 1/8 con punto en ping-pong y pad con plate estéreo.
 
 ### Fase 4 — Banco Signature por estilo y macros
 
@@ -150,7 +149,31 @@ patch del ARP. Se re-evalúan después de la fase 5.
 ## 6. Decisiones abiertas para Juan
 
 1. ¿Aprobar el orden (rev. 1): proceso → engines → FX → banco Signature → ajuste con referencias?
-2. Cadena de FX: ¿filtro DJ al final de todo o antes de la reverb?
+2. ~~Filtro DJ~~: resuelto, va en el GrooveMixer.
 3. PUMP: ¿solo con clock externo o también con BPM interno / tap tempo?
 4. Panel: dónde viven ARP, CHORD y PUMP (página nueva de PERFORM o la página LFO / MOD), sin romper el mapa de 4
    encoders (theory/04 §3.1).
+
+## 7. Propuesta de reloj y panel para la fase 1 (2026-10-25, a confirmar)
+
+**Reloj común (PUMP, ARP, DELAY, SYNC del LFO).** Prioridad automática de fuentes:
+1. Clock MIDI con START / SONG POSITION (Ableton, GroovePush): fase exacta del beat 1.
+2. Beat detectado por la IA (`BEAT_DETECTED`, trae fase): tocando sobre audio sin clock.
+3. BPM interno con tap tempo: tocando solo.
+
+PUMP tiene **OFFSET** (± ms) para calzar el bombeo con el kick y compensar la latencia del clock.
+
+**Página GROOVE (SHIFT + B3).** Igual que LFO / MOD: NAV elige la parada, NAV push la enciende / apaga, 4 encoders
+editan (+ capa SHIFT). Respeta el mapa de 4 encoders de theory/04 §3.1.
+
+| Parada | P1 | P2 | ENC L | ENC R | SHIFT |
+|---|---|---|---|---|---|
+| PUMP | Profundidad | Forma (suave / exp / kick) | Ritmo (1/4, 1/8, 1/2 compás) | OFFSET (ms) | Release · fuente del reloj |
+| ARP | Modo (UP, DOWN, UP-DOWN, RANDOM, SMART) | División (tresillos, puntillo) | Gate | Octavas 1–3 | Swing · latch |
+| CHORD | Tipo (memoria / en tonalidad) | Inversión | Strum | Tonalidad y escala | — |
+| UNISON | Voces (×1, ×2, ×3, ×6) | Detune | Spread estéreo | — | — |
+
+- CHORD: con el acorde apretado, NAV push lo graba.
+- TAP: B4 en la página GROOVE (como B4 → ENGINE en PRESETS) y tocando el BPM en la pantalla.
+- PERFORM: chips de estado (PUMP / ARP / CHORD activos y BPM).
+- Protocolo: GROOVE usa ids de página y grupos de parámetros nuevos en `gf_params.h`; los CC de theory/07 se amplían.
