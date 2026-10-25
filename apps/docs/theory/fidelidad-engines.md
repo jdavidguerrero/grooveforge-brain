@@ -318,3 +318,21 @@ PANEL en la misma tarjeta.
 | Forma continua: m = 0 igual a saw, m = 1 igual a pulse | test native |
 | Mono del ARP: prioridad última nota y vuelta a la anterior | test native (lógica de pila aparte del engine) |
 | Todo lo demás | A/B en el hardware, `tools/offline` para lo medible |
+
+## 12. Estado tras §11 y hoja de ruta al ~100 % (estimación, 2026-10-25)
+
+"100 %" = **indistinguible en un A/B a ciegas** contra una referencia (grabación del original o plugin de referencia);
+sin referencia el último tramo no es verificable. Cifras de sonido estimadas sin A/B.
+
+| Engine | 16-oct | Tras §9–§10 | Tras §11 | Qué falta para ~100 % | Esfuerzo / CPU |
+|---|---|---|---|---|---|
+| Prophet-5 | 65 % | ~80 % | ~82 % | A/B del filtro CEM3320 (drive, bass comp, curva de resonancia, amplitud de auto-oscilación); forma real de saw / pulse del CEM3340; ley de los knobs de envelope; profundidad de POLY-MOD; unison | Bajo en código, alto en escucha |
+| Juno-106 | 50 % | ~80 % | ~85 % | Voicing del IR3109; tabla de tiempos de envelope del 106 (generada por el MCU); ley de los faders DCO / SUB / NOISE; hiss del BBD; respuesta medida del HPF | Bajo · +2–3 % |
+| Model D | 60 % | ~80 % | ~85 % | 6 formas de onda del Minimoog (tri, tri-saw, saw inversa, cuadrada, pulso ancho / angosto); FM del VCO 3 a frecuencia de audio; contornos ADS con switch DECAY; lazo de realimentación del mixer | Medio · +3 % (mono) |
+| OB-6 | 35 % | ~75 % | ~80 % | X-MOD con el VCO 2 real a frecuencia de audio (hoy, LFO): VCO 1 + 2 en un objeto por voz; calibrar el SEM; unison; FX propios | Medio · +5–8 % |
+| DX7 (4 op) | 70 % | ~75 % | ~85 % (como TX81Z) | 6 operadores y 32 algoritmos; importar SysEx del DX7; tablas exactas de rate / level (Dexed / msfa); escalado de nivel por operador; pitch EG y LFO AMD / PMD; DAC de 12 bits | Alto · ~2× la voz actual (+8–10 %) |
+| ARP 2600 | 40 % | ~55 % | ~70 % | Matriz de patch semimodular; VCO 3 como audio; S&H con reloj y lag; procesadores de voltaje; voicing del 4072; reverb de resorte | Alto · +5 % · mucha interfaz |
+| Todos | — | — | — | Referencias para el A/B, scripts de medición en `tools/offline`, calibración de la ley de cada knob | Base del último tramo |
+
+**Prioridad (contenido):** DX7 de 6 operadores con SysEx → Model D (formas y FM de audio) → OB-6 (X-MOD real) → A/B de
+Prophet y Juno → ARP (matriz de patch). Cada paso: theory, implementación, tests, medición offline y A/B en el hardware.
