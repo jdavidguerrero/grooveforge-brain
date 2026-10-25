@@ -108,6 +108,47 @@ const ModStop ARP_MOD[1] = {
 };
 const ModStop NO_MOD = {"", {}};
 
+// Página GROOVE (theory/09 de Studio §7), mismo orden y rangos que GF_GROOVE_SLOT
+const char* const L_PUMP_SHAPE[3] = {"SMOOTH", "EXP", "KICK"};
+const char* const L_PUMP_RATE[3] = {"1/4", "1/8", "1/2"};
+const char* const L_CLOCK_SRC[4] = {"AUTO", "MIDI", "AI", "INT"};
+const char* const L_ARP_MODE[5] = {"UP", "DOWN", "UP-DN", "RANDOM", "SMART"};
+const char* const L_ARP_DIV[6] = {"1/4", "1/8", "1/16", "1/8T", "1/16T", "1/8."};
+const char* const L_CHORD_TYPE[2] = {"MEMORY", "KEY"};
+const char* const L_INV[4] = {"ROOT", "1ST", "2ND", "3RD"};
+const char* const L_KEY[24] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+                               "Cm", "C#m", "Dm", "D#m", "Em", "Fm", "F#m", "Gm", "G#m", "Am", "A#m", "Bm"};
+const char* const L_UNISON[4] = {"×1", "×2", "×3", "×6"};
+const OscSlot G_DEPTH   = {"DEPTH", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_SHAPE   = {"SHAPE", "", SlotKind::Choice, 0, 2, 0, false, false, L_PUMP_SHAPE};
+const OscSlot G_RATE    = {"RATE", "", SlotKind::Choice, 0, 2, 0, false, false, L_PUMP_RATE};
+const OscSlot G_OFFSET  = {"OFFSET", "MS", SlotKind::Number, -50, 50, 0, true, false};
+const OscSlot G_RELEASE = {"RELEASE", "MS", SlotKind::Number, 30, 400, 0, false, false};
+const OscSlot G_SOURCE  = {"CLOCK", "", SlotKind::Choice, 0, 3, 0, false, false, L_CLOCK_SRC};
+const OscSlot G_MODE    = {"MODE", "", SlotKind::Choice, 0, 4, 0, false, false, L_ARP_MODE};
+const OscSlot G_DIV     = {"DIV", "", SlotKind::Choice, 0, 5, 0, false, false, L_ARP_DIV};
+const OscSlot G_GATE    = {"GATE", "%", SlotKind::Number, 5, 100, 0, false, false};
+const OscSlot G_OCT     = {"OCT", "", SlotKind::Number, 1, 3, 0, false, false};
+const OscSlot G_SWING   = {"SWING", "%", SlotKind::Number, 50, 75, 0, false, false};
+const OscSlot G_LATCH   = {"LATCH", "", SlotKind::Toggle, 0, 1, 0, false, false};
+const OscSlot G_TYPE    = {"TYPE", "", SlotKind::Choice, 0, 1, 0, false, false, L_CHORD_TYPE};
+const OscSlot G_INV     = {"INV", "", SlotKind::Choice, 0, 3, 0, false, false, L_INV};
+const OscSlot G_STRUM   = {"STRUM", "MS", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_KEY     = {"KEY", "", SlotKind::Choice, 0, 23, 0, false, false, L_KEY};
+const OscSlot G_VOICES  = {"VOICES", "", SlotKind::Choice, 0, 3, 0, false, false, L_UNISON};
+const OscSlot G_DETUNE  = {"DETUNE", "CT", SlotKind::Number, 0, 50, 0, false, false};
+const OscSlot G_DRIFT   = {"DRIFT", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_GRIT    = {"GRIT", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_POCKET  = {"POCKET", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_MORPH   = {"MORPH", "%", SlotKind::Number, 0, 100, 0, false, false};
+const ModStop GROOVE_STOP[5] = {
+    {"PUMP", {&G_DEPTH, &G_SHAPE, &G_RATE, &G_OFFSET, &G_RELEASE, &G_SOURCE, nullptr, nullptr}},
+    {"ARP", {&G_MODE, &G_DIV, &G_GATE, &G_OCT, &G_SWING, &G_LATCH, nullptr, nullptr}},
+    {"CHORD", {&G_TYPE, &G_INV, &G_STRUM, &G_KEY}},
+    {"UNISON", {&G_VOICES, &G_DETUNE}},
+    {"MACRO", {&G_DRIFT, &G_GRIT, &G_POCKET, &G_MORPH}},
+};
+
 // Tabla "OSC SLOTS PER ENGINE · FROM FIRMWARE" sincronizada con GF_OSC_SLOT en gf_params.h.
 const OscEngine ENGINES[6] = {
     // MODEL D: 3 VCO + NOISE (parada propia: LEVEL · WHITE / PINK, como el MIXER del original). SHIFT: PW global y
@@ -149,6 +190,8 @@ const OscEngine ENGINES[6] = {
 uint8_t mod_stop_count(uint8_t engine_id) {
     return engine_id < GF_ENGINE_COUNT ? GF_MOD_STOPS[engine_id] : 0;
 }
+
+const ModStop& groove_stop(int stop) { return GROOVE_STOP[stop < 0 || stop > 4 ? 0 : stop]; }
 
 const ModStop& mod_stop(uint8_t engine_id, int stop) {
     if (stop < 0 || stop >= int(mod_stop_count(engine_id))) return NO_MOD;

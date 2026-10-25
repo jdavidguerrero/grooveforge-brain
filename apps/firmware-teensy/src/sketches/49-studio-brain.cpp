@@ -698,7 +698,9 @@ void save_preset() {
 
 void bridge_bpm() {
     const uint16_t x10 = uint16_t(lroundf(bpm * 10.0f));
-    const uint8_t p[3] = {uint8_t(x10 & 0xFF), uint8_t(x10 >> 8), 0};
+    const double pos = gclock.position(micros());
+    const uint8_t phase = uint8_t((pos - floor(pos)) * 256.0);   // 02 §2.9: fase dentro del beat, 0–255
+    const uint8_t p[3] = {uint8_t(x10 & 0xFF), uint8_t(x10 >> 8), phase};
     bridge_send(GF_CMD_BEAT_DETECTED, p, 3);
     last_bpm_tx = millis();
     bpm_sent = bpm;

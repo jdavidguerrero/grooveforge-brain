@@ -189,6 +189,20 @@ void ScreenPerform::draw(const Painter& p, const StudioState& s) const {
 
     // ── Onda filtrada ──────────────────────────────────────────────────────
     p.text(12, 16, "OUT \xC2\xB7 OSC \xE2\x86\x92 FILTER", MON, T12);
+    // GROOVE (theory/09 §7): chips de lo encendido y el BPM del reloj común, arriba a la derecha
+    {
+        static const char* const CHIP[3] = {"PUMP", "ARP", "CHORD"};
+        char bt[16];
+        std::snprintf(bt, sizeof(bt), "%d BPM", int(std::lround(s.bpm)));
+        float cx = GW - 12 - text_width(bt, T12);
+        p.text(cx, 16, bt, GRAY, T12);
+        for (int i = 2; i >= 0; --i) {
+            const int w = text_width(CHIP[i], T12B) + 12;
+            cx -= w + 8;
+            if (s.groove_on[i]) p.fill(cx, 2, w, 19, TEAL_DIM);
+            p.text(cx + 6, 16, CHIP[i], s.groove_on[i] ? WHITE : LINE, T12B);
+        }
+    }
     const int cy = SCOPE_Y + SCOPE_H / 2;
     p.fill(12, cy, GW - 24, 1, LINE);
     float wv[WAVE_PTS];

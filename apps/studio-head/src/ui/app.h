@@ -8,6 +8,7 @@
 #include "ui/screen_env.h"
 #include "ui/screen_error.h"
 #include "ui/screen_fx.h"
+#include "ui/screen_groove.h"
 #include "ui/screen_lfo.h"
 #include "ui/screen_osc.h"
 #include "ui/screen_panel.h"
@@ -18,7 +19,7 @@
 
 /// Páginas de la UI (mismos ids que studio::Page del Teensy). Vistas que recorre NAV en SYNTH: PERFORM · PANEL
 /// (theory/08 de Studio; AI y SPECTRUM vuelven con GroovePilot).
-enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Count };
+enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Groove, Count };
 
 /**
  * @brief Navegación de la UI v3 + FX Viz.
@@ -59,6 +60,7 @@ private:
     ScreenLfo _lfo;
     ScreenSfx _sfx;
     ScreenPanel _panel;
+    ScreenGroove _groove;
     Overlays _overlays;
     lv_obj_t* _roots[int(Page::Count)] = {};
     Page _page = Page::Perform;

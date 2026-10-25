@@ -26,6 +26,8 @@ constexpr int OSC_SLOTS = 8;      ///< P1 · P2 · ENC L · ENC R y los mismos c
 constexpr int MOD_STOPS = 2;      ///< paradas de MOD de la página LFO / MOD (Prophet: POLY-MOD, WHEEL-MOD)
 constexpr int LFO_DESTS = 4;      ///< CUTOFF · PITCH · AMP · PWM
 constexpr int SFX_SLOTS = 4;      ///< cadena de FX del synth: BIT · TAPE · CHORUS · MODAL
+constexpr int GROOVE_STOPS = 5;   ///< PUMP · ARP · CHORD · UNISON · MACRO (theory/09 de Studio)
+constexpr int GROOVE_TOGGLES = 4; ///< las paradas con encendido (MACRO no tiene)
 
 enum class LfoShape : uint8_t { Sine, Tri, Saw, Sqr, SampleHold };
 
@@ -111,6 +113,9 @@ struct StudioState {
     /// Cadena de FX del synth (B4, theory/05 de Studio): normalizado 0–1, conversiones en gf_params.h.
     bool sfx_on[SFX_SLOTS] = {false, true, true, false};
     float sfx_mix[SFX_SLOTS] = {0.5f, 0.6f, 0.5f, 0.3f};
+    /// Página GROOVE del engine activo en unidades de la UI (GF_GROOVE_SLOT) y encendidos de PUMP · ARP · CHORD · UNISON.
+    float groove_val[GROOVE_STOPS][OSC_SLOTS] = {{50, 2, 0, 0, 180, 0}, {0, 2, 60, 1, 50, 0}, {0, 0, 0, 21}, {0, 15}, {}};
+    bool groove_on[GROOVE_TOGGLES] = {};
     float sfx_p[SFX_SLOTS][3] = {{0.4f, 0.3f, 0.3f}, {0.25f, 0.2f, 0.2f}, {0.5f, 0.35f, 0.2f}, {0.45f, 1.0f / 3.0f, 0.5f}};
 
     // Envolvente del amplificador (página ENV, NAV → AMP)

@@ -266,6 +266,13 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
             } else if (group == GF_GROUP_SFX_P && idx < 12) {
                 m_.sfx[e][8 + idx] = v;
                 m_.sfx_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_GROOVE_A || group == GF_GROUP_GROOVE_B) {   // PUMP, ARP | CHORD, UNISON
+                m_.grv[e][(group == GF_GROUP_GROOVE_B ? 16 : 0) + idx] = v;
+                m_.grv_dirty |= uint8_t(1u << e);
+            } else if (group == GF_GROUP_GROOVE_C) {                                  // MACRO 0–7 · encendidos 8–11
+                if (idx < 8) m_.grv[e][32 + idx] = v;
+                else if (idx < 8 + GROOVE_TOGGLES) m_.grv_on[e][idx - 8] = v > 0.5f;
+                m_.grv_dirty |= uint8_t(1u << e);
             }
         }
         break;
@@ -356,6 +363,7 @@ void BridgeLink::apply(StudioState& s) {
         m_.sfx_dirty |= uint8_t(1u << m_.engine);
         m_.osc_dirty |= uint8_t(1u << m_.engine);
         m_.preset_dirty |= uint8_t(1u << m_.engine);
+        m_.grv_dirty |= uint8_t(1u << m_.engine);
     }
     const unsigned e = s.engine < GF_ENGINE_COUNT ? s.engine : 0;
     if (m_.filter_dirty & (1u << e)) {
@@ -415,6 +423,14 @@ void BridgeLink::apply(StudioState& s) {
             for (int k = 0; k < 3; ++k) s.sfx_p[i][k] = x[8 + i * 3 + k];
         }
     }
+    if (m_.grv_dirty & (1u << e)) {
+        for (int st = 0; st < GROOVE_STOPS; ++st)
+            for (int sl = 0; sl < OSC_SLOTS; ++sl) {
+                const GF_OscSlot* g = &GF_GROOVE_SLOT[st][sl];
+                if (gf_osc_used(g)) s.groove_val[st][sl] = g->lo + m_.grv[e][st * 8 + sl] * (g->hi - g->lo);
+            }
+        for (int i = 0; i < GROOVE_TOGGLES; ++i) s.groove_on[i] = m_.grv_on[e][i];
+    }
     if (m_.preset_dirty & (1u << e)) {
         s.preset_count = m_.preset_count[e];
         for (int i = 0; i < s.preset_count; ++i)
@@ -426,7 +442,7 @@ void BridgeLink::apply(StudioState& s) {
         else
             std::snprintf(s.preset, sizeof(s.preset), "—");
     }
-    m_.filter_dirty = m_.env_dirty = m_.lfo_dirty = m_.sfx_dirty = m_.osc_dirty = m_.preset_dirty = 0;
+    m_.filter_dirty = m_.env_dirty = m_.lfo_dirty = m_.sfx_dirty = m_.osc_dirty = m_.preset_dirty = m_.grv_dirty = 0;
 
     // La fase del LFO no viaja: se integra acá con la velocidad conocida (solo es para el punto animado).
     const float hz = s.lfo_sync ? s.bpm / 60.0f / GF_LFO_DIV_BEATS[s.lfo_div % GF_LFO_DIVS] : s.lfo_rate_hz;

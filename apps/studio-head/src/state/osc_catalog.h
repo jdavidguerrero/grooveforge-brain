@@ -65,6 +65,9 @@ struct ModStop {
 uint8_t mod_stop_count(uint8_t engine_id);
 const ModStop& mod_stop(uint8_t engine_id, int stop);
 
+/// Parada `stop` de la página GROOVE (PUMP · ARP · CHORD · UNISON · MACRO), sincronizada con GF_GROOVE_SLOT.
+const ModStop& groove_stop(int stop);
+
 /// Valores iniciales de la página OSC para los 6 engines (demo y primer arranque).
 void osc_load_defaults(StudioState& s);
 

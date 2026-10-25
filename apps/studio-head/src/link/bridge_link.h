@@ -75,7 +75,9 @@ private:
         float envp[6][8] = {};         ///< normalizado 0–1: [engine][A D S R del amplificador, A D S R del filtro]
         float osc[6][32] = {};         ///< normalizado 0–1: [engine][parada · 4 + slot] slots 0–3, +16 la capa SHIFT
         float mod[6][16] = {};         ///< normalizado 0–1: [engine][parada · 8 + slot] (GF_MOD_SLOT)
-        uint8_t filter_dirty = 0, env_dirty = 0, lfo_dirty = 0, sfx_dirty = 0, osc_dirty = 0;   ///< bit por engine
+        float grv[6][GROOVE_STOPS * 8] = {};   ///< GROOVE normalizado 0–1: [engine][parada · 8 + slot] (GF_GROOVE_SLOT)
+        bool grv_on[6][GROOVE_TOGGLES] = {};
+        uint8_t filter_dirty = 0, env_dirty = 0, lfo_dirty = 0, sfx_dirty = 0, osc_dirty = 0, grv_dirty = 0;   ///< bit por engine
         int16_t key_idx = -1;          ///< 0–11 mayor, 12–23 menor (KEY_DETECTED 0x80)
         uint8_t key_conf = 0;
         bool key_dirty = false;

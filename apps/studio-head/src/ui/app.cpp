@@ -41,6 +41,7 @@ Screen* App::screen(Page p) {
         case Page::Lfo:      return &_lfo;
         case Page::SynthFx:  return &_sfx;
         case Page::Panel:    return &_panel;
+        case Page::Groove:   return &_groove;
         default:             return &_perform;
     }
 }
@@ -200,6 +201,14 @@ void App::handle_synth(Ctl c, StudioState& s) {
         s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
         return;
     }
+    if (_page == Page::Groove && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige la parada
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, GROOVE_STOPS - 1));
+        return;
+    }
+    if (_page == Page::Groove && c == Ctl::NavPush) {
+        if (s.ui_cursor < GROOVE_TOGGLES) s.groove_on[s.ui_cursor] = !s.groove_on[s.ui_cursor];
+        return;
+    }
     if (_page == Page::Lfo && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige la parada (LFO / MOD)
         s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, int(mod_stop_count(s.engine))));
         return;
@@ -225,7 +234,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
             break;
         case Ctl::B1: toggle_page(Page::Osc); break;
         case Ctl::B2: toggle_page(Page::Env); break;
-        case Ctl::B3: toggle_page(Page::Lfo); break;
+        case Ctl::B3: toggle_page(s.shift ? Page::Groove : Page::Lfo); break;   // SHIFT + B3: GROOVE
         case Ctl::B4:  // B4: SYNTH FX · SHIFT + B4: PRESETS (theory/05 de Studio)
             if (s.shift) show(Page::Presets);
             else toggle_page(Page::SynthFx);
