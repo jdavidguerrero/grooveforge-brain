@@ -6,6 +6,7 @@
 #include "dsp/chord_memory.h"
 #include "dsp/groove_clock.h"
 #include "dsp/pump.h"
+#include "dsp/voice_spread.h"
 
 using dsp::GrooveClock;
 
@@ -306,6 +307,20 @@ void test_chord_key_triads() {
     TEST_ASSERT_EQUAL(60, out[0]);
 }
 
+// ── UNISON ────────────────────────────────────────────────────────────────────
+
+void test_unison_symmetric_spread_and_gain() {
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, dsp::unison_ratio(0, 1, 50.0f));
+    // ×2 con 20 ¢: −10 y +10 ¢
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, powf(2.0f, -10.0f / 1200.0f), dsp::unison_ratio(0, 2, 20.0f));
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, powf(2.0f, 10.0f / 1200.0f), dsp::unison_ratio(1, 2, 20.0f));
+    // ×3: la del medio queda afinada; las de los bordes, simétricas
+    TEST_ASSERT_FLOAT_WITHIN(1e-6f, 1.0f, dsp::unison_ratio(1, 3, 30.0f));
+    TEST_ASSERT_FLOAT_WITHIN(1e-6f, 1.0f, dsp::unison_ratio(0, 3, 30.0f) * dsp::unison_ratio(2, 3, 30.0f));
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, 0.408f, dsp::unison_gain(6));
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, dsp::unison_gain(1));
+}
+
 int main(int, char**) {
     UNITY_BEGIN();
     RUN_TEST(test_clock_midi_bpm_and_position);
@@ -324,5 +339,6 @@ int main(int, char**) {
     RUN_TEST(test_chord_default_learn_and_transpose);
     RUN_TEST(test_chord_inversion);
     RUN_TEST(test_chord_key_triads);
+    RUN_TEST(test_unison_symmetric_spread_and_gain);
     return UNITY_END();
 }

@@ -132,16 +132,25 @@ void OB6::noteOn(uint8_t midi_note, float velocity) {
     if (velocity < 0.0f) velocity = 0.0f;
     if (velocity > 1.0f) velocity = 1.0f;
 
+    if (_unisonN > 1) {   // UNISON: suelta las voces que tuviera la nota y dispara N desafinadas (theory/09 §5)
+        for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice((uint8_t)v);
+        for (uint8_t k = 0; k < _unisonN; ++k) {
+            int8_t v = _findFreeVoice();
+            if (v < 0) v = _stealOldestVoice();
+            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents);
+            _triggerVoice((uint8_t)v, midi_note, velocity);
+        }
+        return;
+    }
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
-
+    _uni[voice] = 1.0f;
     _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
 void OB6::noteOff(uint8_t midi_note) {
-    int8_t voice = _findVoiceForNote(midi_note);
-    if (voice >= 0) _releaseVoice((uint8_t)voice);
+    for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice((uint8_t)v);   // con UNISON, todas
 }
 
 void OB6::setVco1Waveform(uint16_t waveform) {
@@ -327,7 +336,7 @@ void OB6::update() {
 
         // 3. Glide + Pitch + VCO2 Fine Detune + X-MOD → Freq VCO1
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float fBase = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch;
+        const float fBase = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch * _uni[i];
         const float f1 = _xmFreq1 ? (fBase * _semitonesToRatio(24.0f * xmodSig)) : fBase;
         const float f2 = fBase * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
 

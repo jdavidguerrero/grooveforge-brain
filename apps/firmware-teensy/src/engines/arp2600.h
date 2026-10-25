@@ -76,6 +76,11 @@ public:
     void setRelease(float ms);
 
     void setLfoMod(const LfoMod& m) { _lfo = m; }
+    /// UNISON (theory/09 de Studio §5): `voices` voces por nota (se recorta a la polifonía), desafinadas en ±cents/2.
+    void setUnison(uint8_t voices, float cents) {
+        _unisonN = voices < 1 ? 1 : voices > ARP_VOICES ? ARP_VOICES : voices;
+        _unisonCents = cents;
+    }
 
     void setFilterEnv(float a_ms, float d_ms, float s, float r_ms) {
         for (uint8_t i = 0; i < ARP_VOICES; i++) {
@@ -134,6 +139,9 @@ private:
         float    velocity  = 1.0f;
     };
     VoiceState _voices[ARP_VOICES];
+    uint8_t    _unisonN = 1;
+    float      _unisonCents = 0.0f;
+    float      _uni[ARP_VOICES] = {1.0f, 1.0f, 1.0f, 1.0f};   ///< razón de UNISON de cada voz
     uint32_t   _ageCounter = 0;
 
     // ── Parámetros globales ──────────────────────────────────────────────────

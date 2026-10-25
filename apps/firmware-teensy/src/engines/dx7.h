@@ -7,6 +7,7 @@
 #include "dx7_core.h"
 #include "../audio/analog_vca.h"
 #include "lfo_mod.h"
+#include "../dsp/voice_spread.h"
 
 static constexpr uint8_t DX7_VOICES = 6;
 
@@ -93,6 +94,11 @@ public:
     void setRelease(float ms);
 
     void setLfoMod(const LfoMod& m) { _lfo = m; }
+    /// UNISON (theory/09 de Studio §5): `voices` voces por nota (se recorta a la polifonía), desafinadas en ±cents/2.
+    void setUnison(uint8_t voices, float cents) {
+        _unisonN = voices < 1 ? 1 : voices > DX7_VOICES ? DX7_VOICES : voices;
+        _unisonCents = cents;
+    }
 
     void setFilterEnv(float a_ms, float d_ms, float s, float r_ms) {
         (void)a_ms; (void)d_ms; (void)s; (void)r_ms;
@@ -130,6 +136,9 @@ private:
         float    currentHz = 440.0f;
     };
     VoiceState _voices[DX7_VOICES];
+    uint8_t    _unisonN = 1;
+    float      _unisonCents = 0.0f;
+    float      _uni[DX7_VOICES] = {1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f};   ///< razón de UNISON de cada voz
     uint32_t   _ageCounter   = 0;
     uint32_t   _lastUpdateMs = 0;
     float      _filterCutoff = 20000.0f;
@@ -138,5 +147,6 @@ private:
     int8_t _findVoiceForNote(uint8_t midi_note);
     int8_t _findFreeVoice();
     int8_t _stealOldestVoice();
+    void   _releaseVoice(uint8_t v);
     void   _syncAmpReleaseWithCarriers(float min_release_ms);
 };

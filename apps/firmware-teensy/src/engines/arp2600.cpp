@@ -118,10 +118,20 @@ void ARP2600::noteOn(uint8_t midi_note, float velocity) {
         return;
     }
 
+    if (_unisonN > 1) {   // UNISON: suelta las voces que tuviera la nota y dispara N desafinadas (theory/09 §5)
+        for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice((uint8_t)v);
+        for (uint8_t k = 0; k < _unisonN; ++k) {
+            int8_t v = _findFreeVoice();
+            if (v < 0) v = _stealOldestVoice();
+            _uni[v] = dsp::unison_ratio(k, _unisonN, _unisonCents);
+            _triggerVoice((uint8_t)v, midi_note, velocity);
+        }
+        return;
+    }
     int8_t voice = _findVoiceForNote(midi_note);
     if (voice < 0) voice = _findFreeVoice();
     if (voice < 0) voice = _stealOldestVoice();
-
+    _uni[voice] = 1.0f;
     _triggerVoice((uint8_t)voice, midi_note, velocity);
 }
 
@@ -137,8 +147,7 @@ void ARP2600::noteOff(uint8_t midi_note) {
         }
         return;
     }
-    int8_t voice = _findVoiceForNote(midi_note);
-    if (voice >= 0) _releaseVoice((uint8_t)voice);
+    for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice((uint8_t)v);   // con UNISON, todas
 }
 
 void ARP2600::setVco1Waveform(uint16_t waveform) {
@@ -310,7 +319,7 @@ void ARP2600::update() {
         _filter[i].frequency(modulated);
 
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch * v3_pitch;
+        const float f = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch * _uni[i] * v3_pitch;
         _vco1[i].frequency(f);
         _vco2[i].frequency(f * _vco2Ratio);
 

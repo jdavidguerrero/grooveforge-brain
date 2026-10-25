@@ -35,3 +35,18 @@ inline VoiceSpread voice_spread(uint32_t seed, float cents, float cutoff_frac) {
 }
 
 }  // namespace dsp
+
+namespace dsp {
+
+/// UNISON (theory/09 de Studio §5): razón de frecuencia de la voz `k` de `n`, repartidas simétricas en ±cents/2
+/// (el ancho total entre la más grave y la más aguda es `cents`). Con n = 1 no desafina.
+inline float unison_ratio(uint8_t k, uint8_t n, float cents) {
+    if (n <= 1) return 1.0f;
+    const float x = float(k) / float(n - 1) - 0.5f;   // −0.5 … +0.5
+    return powf(2.0f, x * cents / 1200.0f);
+}
+
+/// Ganancia para que N voces al unísono suenen parecido a una (suma incoherente: 1/√N).
+inline float unison_gain(uint8_t n) { return n <= 1 ? 1.0f : 1.0f / sqrtf(float(n)); }
+
+}  // namespace dsp

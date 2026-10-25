@@ -63,23 +63,30 @@ void DX7Engine::noteOn(uint8_t midi_note, float velocity) {
     if (velocity < 0.0f) velocity = 0.0f;
     if (velocity > 1.0f) velocity = 1.0f;
 
-    int8_t v = _findVoiceForNote(midi_note);
-    if (v < 0) v = _findFreeVoice();
-    if (v < 0) v = _stealOldestVoice();
-    VoiceState& s = _voices[v];
-    const float freq = 440.0f * powf(2.0f, (float(midi_note) - 69.0f) / 12.0f);
-    s.targetHz = freq;
-    if (_glideMs < 1.0f || s.midi_note == 255) s.currentHz = freq;
-    s.midi_note = midi_note;
-    s.age = ++_ageCounter;
-
-    _voice[v].note_on(s.currentHz * _lfo.pitch_ratio, velocity);
-    _ampEnv[v].noteOn();
+    const uint8_t n = _unisonN;   // UNISON (theory/09 §5): N voces por nota, desafinadas simétricas
+    if (n > 1)
+        for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice(uint8_t(v));
+    for (uint8_t k = 0; k < n; ++k) {
+        int8_t v = n > 1 ? -1 : _findVoiceForNote(midi_note);
+        if (v < 0) v = _findFreeVoice();
+        if (v < 0) v = _stealOldestVoice();
+        VoiceState& s = _voices[v];
+        const float freq = 440.0f * powf(2.0f, (float(midi_note) - 69.0f) / 12.0f);
+        s.targetHz = freq;
+        if (_glideMs < 1.0f || s.midi_note == 255) s.currentHz = freq;
+        s.midi_note = midi_note;
+        s.age = ++_ageCounter;
+        _uni[v] = dsp::unison_ratio(k, n, _unisonCents);
+        _voice[v].note_on(s.currentHz * _lfo.pitch_ratio * _uni[v], velocity);
+        _ampEnv[v].noteOn();
+    }
 }
 
 void DX7Engine::noteOff(uint8_t midi_note) {
-    const int8_t v = _findVoiceForNote(midi_note);
-    if (v < 0) return;
+    for (int8_t v; (v = _findVoiceForNote(midi_note)) >= 0;) _releaseVoice(uint8_t(v));   // con UNISON, todas
+}
+
+void DX7Engine::_releaseVoice(uint8_t v) {
     _voice[v].note_off();
     _ampEnv[v].noteOff();
     _voices[v].midi_note = 255;
@@ -178,7 +185,7 @@ void DX7Engine::update() {
 
     for (uint8_t i = 0; i < DX7_VOICES; i++) {
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
-        _voice[i].set_freq(_voices[i].currentHz * _lfo.pitch_ratio);
+        _voice[i].set_freq(_voices[i].currentHz * _lfo.pitch_ratio * _uni[i]);
     }
     _finalMix.gain(0, _lfo.amp);
     _finalMix.gain(1, _lfo.amp);

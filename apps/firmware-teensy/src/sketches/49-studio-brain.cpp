@@ -342,6 +342,22 @@ void play_off(uint8_t note) {
     chord_n[note] = 0;
 }
 
+/// UNISON del engine `e` (el Model D no tiene: ya son 3 VCO en una voz). @return voces que suenan por nota.
+uint8_t engine_unison(uint8_t e, uint8_t voices, float cents) {
+    static const uint8_t POLY[GF_ENGINE_COUNT] = {1, JUNO_VOICES, PROPHET_VOICES, OB6_VOICES, DX7_VOICES, ARP_VOICES};
+    if (e == 5 && patches[5].mod[0][0] > 0.5f) voices = 1;   // ARP 2600 en MONO: una voz
+    const uint8_t n = voices < POLY[e] ? voices : POLY[e];
+    switch (e) {
+        case 1: juno.setUnison(n, cents); break;
+        case 2: prophet.setUnison(n, cents); break;
+        case 3: ob6.setUnison(n, cents); break;
+        case 4: dx7.setUnison(n, cents); break;
+        case 5: arp.setUnison(n, cents); break;
+        default: break;
+    }
+    return n;
+}
+
 /// A 1 kHz: BPM y posición del reloj, notas del STRUM, pasos del ARP y ganancia del PUMP.
 void groove_tick(uint32_t now) {
     const studio::Patch& p = patch();
@@ -383,6 +399,10 @@ void groove_tick(uint32_t now) {
         pp.release_ms = q[GF_PUMP_RELEASE];
         gain = dsp::pump_gain(pp, pos, bpm);
     }
+    const float* u = g[GF_GROOVE_UNISON];
+    const uint8_t uni = engine_unison(ui.engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,
+                                      u[GF_UNISON_DETUNE]);
+    gain *= dsp::unison_gain(uni);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
     sfx_l.pump.set_gain(gain);
     sfx_r.pump.set_gain(gain);
 }
@@ -872,7 +892,7 @@ void run_action(studio::Result r) {
             studio::ParamChange c[1];
             if (!studio::toggle_groove(patch(), ui.engine(), r.arg, c)) break;
             bridge_param(c[0].id, c[0].norm);
-            if (r.arg == GF_GROOVE_ARP || r.arg == GF_GROOVE_CHORD) all_notes_off();   // cambia quién suelta cada nota
+            if (r.arg != GF_GROOVE_PUMP) all_notes_off();   // ARP / CHORD / UNISON cambian quién suelta cada nota
             Serial.printf("[GROOVE] parada %u %s\n", r.arg, patch().groove_on[r.arg] ? "ON" : "OFF");
             break;
         }
