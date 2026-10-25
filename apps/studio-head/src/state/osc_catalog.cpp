@@ -141,12 +141,15 @@ const OscSlot G_DRIFT   = {"DRIFT", "%", SlotKind::Number, 0, 100, 0, false, fal
 const OscSlot G_GRIT    = {"GRIT", "%", SlotKind::Number, 0, 100, 0, false, false};
 const OscSlot G_POCKET  = {"POCKET", "%", SlotKind::Number, 0, 100, 0, false, false};
 const OscSlot G_MORPH   = {"MORPH", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_GRES    = {"GRIT RES", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_GMOD    = {"GRIT MOD", "%", SlotKind::Number, 0, 100, 0, false, false};
+const OscSlot G_PVEL    = {"POCKET VEL", "%", SlotKind::Number, 0, 100, 0, false, false};
 const ModStop GROOVE_STOP[5] = {
     {"PUMP", {&G_DEPTH, &G_SHAPE, &G_RATE, &G_OFFSET, &G_RELEASE, &G_SOURCE, nullptr, nullptr}},
     {"ARP", {&G_MODE, &G_DIV, &G_GATE, &G_OCT, &G_SWING, &G_LATCH, nullptr, nullptr}},
     {"CHORD", {&G_TYPE, &G_INV, &G_STRUM, &G_KEY}},
     {"UNISON", {&G_VOICES, &G_DETUNE}},
-    {"MACRO", {&G_DRIFT, &G_GRIT, &G_POCKET, &G_MORPH}},
+    {"MACRO", {&G_DRIFT, &G_GRIT, &G_POCKET, &G_MORPH, &G_GRES, &G_GMOD, &G_PVEL, nullptr}},
 };
 
 // Tabla "OSC SLOTS PER ENGINE · FROM FIRMWARE" sincronizada con GF_OSC_SLOT en gf_params.h.

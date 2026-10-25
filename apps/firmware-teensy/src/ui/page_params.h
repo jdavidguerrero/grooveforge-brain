@@ -47,7 +47,7 @@ struct Patch {
         {0, 2, 60, 1, 50, 0, 0, 0},          ///< ARP: UP · 1/16 · 60 % · 1 oct · recto · sin latch
         {0, 0, 0, 21, 0, 0, 0, 0},           ///< CHORD: MEMORIA · sin inversión · sin strum · A menor
         {0, 15, 0, 0, 0, 0, 0, 0},           ///< UNISON: ×1 · 15 ¢
-        {}};                                 ///< MACRO: todo en 0 (patch neutro)
+        {0, 0, 0, 0, 100, 100, 100, 0}};    ///< MACRO: en 0 (patch neutro); profundidades de GRIT y POCKET al 100 %
     bool groove_on[GF_GROOVE_TOGGLES] = {};
 };
 
@@ -57,8 +57,8 @@ struct ParamChange {
 };
 
 /// 8 ENV + 3 FILTER (ENV AMT, GLIDE, DRIVE) + RATE, SHAPE, DIV + 4 cantidades + cadena (4 + 4 + 12) + hasta 32 de OSC
-/// + 16 de MOD + GROOVE (22 slots + 4 encendidos)
-constexpr uint8_t PATCH_PARAM_COUNT = 112;
+/// + 16 de MOD + GROOVE (25 slots + 4 encendidos)
+constexpr uint8_t PATCH_PARAM_COUNT = 115;
 
 /// Valores de arranque de la página OSC de cada engine (los del diseño v3, osc_catalog.cpp de la cabeza).
 void patch_init(Patch& p, uint8_t engine);

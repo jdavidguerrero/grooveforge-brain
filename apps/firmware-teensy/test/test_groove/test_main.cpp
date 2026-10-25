@@ -353,6 +353,24 @@ void test_macro_pocket_and_grit() {
     TEST_ASSERT_EQUAL_FLOAT(1000.0f, p.decay_ms);                       // el patch guardado no cambia
 }
 
+void test_macro_depths_and_pocket_only_shortens() {
+    studio::Patch p;
+    studio::patch_init(p, 2);
+    p.decay_ms = 90.0f;                                      // ya más corto que el destino de POCKET
+    p.env_amt = 0.9f;                                        // ya más alto que 0.8
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 100;
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 100;
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT_RES] = 0;       // este preset no quiere más resonancia
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT_MOD] = 50;
+    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET_VEL] = 50;
+    const studio::Patch q = studio::macro_patch(p, 2);
+    TEST_ASSERT_EQUAL_FLOAT(90.0f, q.decay_ms);
+    TEST_ASSERT_EQUAL_FLOAT(0.9f, q.env_amt);
+    TEST_ASSERT_EQUAL_FLOAT(0.4f, studio::macro_resonance(0.4f, p));
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, p.mod[0][1] + 20.0f, q.mod[0][1]);   // POLY-MOD +40 × 50 %
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.65f, studio::macro_velocity(0.3f, 1, p));   // Juno: la mitad de la velocity
+}
+
 void test_drift_bounded() {
     dsp::Drift d;
     TEST_ASSERT_EQUAL_FLOAT(1.0f, d.pitch());
@@ -386,6 +404,7 @@ int main(int, char**) {
     RUN_TEST(test_unison_symmetric_spread_and_gain);
     RUN_TEST(test_macros_neutral_at_zero);
     RUN_TEST(test_macro_pocket_and_grit);
+    RUN_TEST(test_macro_depths_and_pocket_only_shortens);
     RUN_TEST(test_drift_bounded);
     return UNITY_END();
 }

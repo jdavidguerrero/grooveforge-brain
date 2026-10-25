@@ -25,26 +25,29 @@ inline Patch macro_patch(const Patch& p, uint8_t e) {
     auto add = [](float v, float d, float hi) { return v + d > hi ? hi : v + d; };
     const float pocket = macro_amount(p, GF_MACRO_POCKET);
     if (pocket > 0.0f) {   // tiempos cortos y FLT ENV AMT alto: notas que se apagan solas, el "pocket" de un bajo
-        q.decay_ms = toward(p.decay_ms, 200.0f, pocket);
-        q.release_ms = toward(p.release_ms, 250.0f, pocket);
-        q.f_decay_ms = toward(p.f_decay_ms, 150.0f, pocket);
-        q.f_release_ms = toward(p.f_release_ms, 200.0f, pocket);
-        q.env_amt = toward(p.env_amt, 0.8f, pocket);
+        // Solo acorta: un tiempo que ya era más corto que el destino queda igual; FLT ENV AMT solo sube
+        auto shorter = [&](float v, float target) { return v > target ? toward(v, target, pocket) : v; };
+        q.decay_ms = shorter(p.decay_ms, 200.0f);
+        q.release_ms = shorter(p.release_ms, 250.0f);
+        q.f_decay_ms = shorter(p.f_decay_ms, 150.0f);
+        q.f_release_ms = shorter(p.f_release_ms, 200.0f);
+        if (p.env_amt < 0.8f) q.env_amt = toward(p.env_amt, 0.8f, pocket);
     }
     const float grit = macro_amount(p, GF_MACRO_GRIT);
+    const float gmod = grit * macro_amount(p, GF_MACRO_GRIT_MOD);   // profundidad por preset
     if (grit > 0.0f) {
         q.drive = add(p.drive, 0.6f * grit, 1.0f);
         switch (e) {
             case 2:   // Prophet POLY-MOD: FILT ENV y OSC B (suenan en los destinos que estén encendidos)
             case 3:   // OB-6 X-MOD: FILT ENV y VCO 2
-                q.mod[0][0] = add(p.mod[0][0], 40.0f * grit, 100.0f);
-                q.mod[0][1] = add(p.mod[0][1], 40.0f * grit, 100.0f);
+                q.mod[0][0] = add(p.mod[0][0], 40.0f * gmod, 100.0f);
+                q.mod[0][1] = add(p.mod[0][1], 40.0f * gmod, 100.0f);
                 break;
             case 4: {  // DX7: más FM = moduladores más fuertes y más feedback (las portadoras no cambian el nivel)
                 const int alg = int(p.osc[0][2] + 0.5f);
                 for (int k = 0; k < 4; ++k)
-                    if (!dx7_is_carrier(alg, k)) q.osc[k][1] = add(p.osc[k][1], 20.0f * grit, 99.0f);
-                q.osc[0][3] = add(p.osc[0][3], float(int(3.0f * grit + 0.5f)), 7.0f);
+                    if (!dx7_is_carrier(alg, k)) q.osc[k][1] = add(p.osc[k][1], 20.0f * gmod, 99.0f);
+                q.osc[0][3] = add(p.osc[0][3], float(int(3.0f * gmod + 0.5f)), 7.0f);
                 break;
             }
             default: break;
@@ -53,16 +56,16 @@ inline Patch macro_patch(const Patch& p, uint8_t e) {
     return q;
 }
 
-/// Resonancia normalizada 0–1 con GRIT (+20 % del rango).
+/// Resonancia normalizada 0–1 con GRIT (+20 % del rango × GRIT RES).
 inline float macro_resonance(float reso_norm, const Patch& p) {
-    const float r = reso_norm + 0.2f * macro_amount(p, GF_MACRO_GRIT);
+    const float r = reso_norm + 0.2f * macro_amount(p, GF_MACRO_GRIT) * macro_amount(p, GF_MACRO_GRIT_RES);
     return r > 1.0f ? 1.0f : r;
 }
 
 /// Velocity que llega al engine: el Model D y el Juno la ignoran (como los originales) salvo con POCKET.
 inline float macro_velocity(float vel, uint8_t e, const Patch& p) {
     if (e > 1) return vel;
-    const float pocket = macro_amount(p, GF_MACRO_POCKET);
+    const float pocket = macro_amount(p, GF_MACRO_POCKET) * macro_amount(p, GF_MACRO_POCKET_VEL);
     return 1.0f + (vel - 1.0f) * pocket;
 }
 

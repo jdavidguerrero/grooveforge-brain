@@ -300,6 +300,9 @@ static inline float gf_lfo_pitch_st(float amt) { return GF_LFO_PITCH_ST * amt * 
 #define GF_MACRO_GRIT   1U
 #define GF_MACRO_POCKET 2U
 #define GF_MACRO_MORPH  3U
+#define GF_MACRO_GRIT_RES   4U   /* SHIFT P1: cuánto de GRIT va a la resonancia (100 = +20 % del rango) */
+#define GF_MACRO_GRIT_MOD   5U   /* SHIFT P2: cuánto va a POLY-MOD / X-MOD / FM */
+#define GF_MACRO_POCKET_VEL 6U   /* SHIFT ENC L: cuánta velocity devuelve POCKET a Model D / Juno */
 
 static const float GF_PUMP_RATE_BEATS[3] = {1.0f, 0.5f, 2.0f};
 static const float GF_ARP_DIV_BEATS[6] = {1.0f, 0.5f, 0.25f, 1.0f / 3.0f, 1.0f / 6.0f, 0.75f};
@@ -312,7 +315,8 @@ static const GF_OscSlot GF_GROOVE_SLOT[GF_GROOVE_STOPS][GF_OSC_SLOTS] = {
                {50, 75, 1, 0, false}, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE},
     /* CHORD */ {GF_OSC_TOGGLE, {0, 3, 1, 4, false}, GF_OSC_LEVEL, {0, 23, 1, 24, false}, GF_OSC_NONE4},
     /* UNISON */ {{0, 3, 1, 4, false}, {0, 50, 1, 0, false}, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4},
-    /* MACRO */ {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_NONE4}};
+    /* MACRO */ {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_LEVEL,
+                GF_OSC_NONE}};
 
 /** param_id de un slot de GROOVE. */
 static inline uint16_t gf_groove_param_id(uint8_t engine, uint8_t stop, uint8_t slot) {

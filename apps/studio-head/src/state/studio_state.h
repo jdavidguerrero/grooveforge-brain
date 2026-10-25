@@ -114,7 +114,7 @@ struct StudioState {
     bool sfx_on[SFX_SLOTS] = {false, true, true, false};
     float sfx_mix[SFX_SLOTS] = {0.5f, 0.6f, 0.5f, 0.3f};
     /// Página GROOVE del engine activo en unidades de la UI (GF_GROOVE_SLOT) y encendidos de PUMP · ARP · CHORD · UNISON.
-    float groove_val[GROOVE_STOPS][OSC_SLOTS] = {{50, 2, 0, 0, 180, 0}, {0, 2, 60, 1, 50, 0}, {0, 0, 0, 21}, {0, 15}, {}};
+    float groove_val[GROOVE_STOPS][OSC_SLOTS] = {{50, 2, 0, 0, 180, 0}, {0, 2, 60, 1, 50, 0}, {0, 0, 0, 21}, {0, 15}, {0, 0, 0, 0, 100, 100, 100}};
     bool groove_on[GROOVE_TOGGLES] = {};
     float sfx_p[SFX_SLOTS][3] = {{0.4f, 0.3f, 0.3f}, {0.25f, 0.2f, 0.2f}, {0.5f, 0.35f, 0.2f}, {0.45f, 1.0f / 3.0f, 0.5f}};
 
