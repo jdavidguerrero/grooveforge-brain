@@ -42,7 +42,7 @@ inline size_t hex_decode(const char* s, uint8_t* out, size_t cap) {
 }
 
 struct LinkCmd {
-    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc } kind = None;
+    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs } kind = None;
     uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda
     const char* hex = nullptr;       ///< PUT: el preset en hex (apunta dentro de la línea)
 };
@@ -72,6 +72,7 @@ inline LinkCmd parse_link_cmd(char* line) {
     };
     if (!strcmp(tok[0], "HELLO") && nt == 1) c.kind = LinkCmd::Hello;
     else if (!strcmp(tok[0], "EXPORT") && nt == 1) c.kind = LinkCmd::Export;
+    else if (!strcmp(tok[0], "FS") && nt == 1) c.kind = LinkCmd::Fs;
     else if (!strcmp(tok[0], "PUT") && nt == 4 && num(tok[1], &c.engine) && num(tok[2], &c.index)) {
         c.kind = LinkCmd::Put;
         c.hex = tok[3];

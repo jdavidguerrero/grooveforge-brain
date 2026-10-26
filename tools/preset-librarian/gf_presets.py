@@ -260,6 +260,14 @@ def cmd_bank(a):
     print(f"banco de {a.engine}: {len(entries)} presets")
 
 
+def cmd_fs(a):
+    parts = Brain(a.port).request("@GF FS", lambda l: l.startswith("@GF FS"))[-1].split()
+    used, total = int(parts[2]), int(parts[3])
+    print(f"flash de presets: {used} de {total} bytes ({100 * used / max(total, 1):.0f} %)")
+    for name, n in zip(ENGINES, parts[4:]):
+        print(f"{name:10} {n} presets")
+
+
 def cmd_list(a):
     for e, i, raw in Brain(a.port).export():
         print(f"{ENGINES[e]:10} {i:2}  {decode(raw)['name']}")
@@ -279,6 +287,7 @@ def main(argv=None):
     s.add_argument("files", nargs="+")
     s.set_defaults(fn=cmd_bank)
     sub.add_parser("list", help="listar los presets del Brain").set_defaults(fn=cmd_list)
+    sub.add_parser("fs", help="espacio del flash de presets y tamaño de cada banco").set_defaults(fn=cmd_fs)
     a = p.parse_args(argv)
     a.fn(a)
 

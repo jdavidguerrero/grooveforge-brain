@@ -242,9 +242,14 @@ public:
         path_of(e, i, path);
         preset_fs.remove(path);                   // FILE_WRITE agrega al final: se reescribe desde cero
         File f = preset_fs.open(path, FILE_WRITE);
-        if (!f) return false;
+        if (!f) {
+            Serial.printf("[PRESET] no se pudo crear %s (usado %lu de %lu bytes)\n", path,
+                          (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
+            return false;
+        }
         const size_t n = f.write(buf, len);
         f.close();
+        if (n != len) Serial.printf("[PRESET] escritura incompleta %s: %u de %u bytes\n", path, unsigned(n), unsigned(len));
         return n == len;
     }
 
@@ -1168,6 +1173,9 @@ void setup() {
         }
     }
     ui.set_preset_count(presets.count(0));
+    Serial.printf("[PRESET] bancos: %u %u %u %u %u %u · LittleFS usado %lu de %lu bytes\n", presets.count(0),
+                  presets.count(1), presets.count(2), presets.count(3), presets.count(4), presets.count(5),
+                  (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
 
     Serial.println("[test] La 440 Hz durante 0.6 s (Moog) por LINE OUT");
     moog.noteOn(69, 1.0f);
@@ -1268,6 +1276,11 @@ void librarian_command(char* line) {
             } else {
                 Serial.println("@GF ERR ESCRITURA");
             }
+            break;
+        case studio::LinkCmd::Fs:   // diagnóstico: espacio del flash de presets y tamaño de cada banco
+            Serial.printf("@GF FS %lu %lu %u %u %u %u %u %u\n", (unsigned long)preset_fs.usedSize(),
+                          (unsigned long)preset_fs.totalSize(), presets.count(0), presets.count(1), presets.count(2),
+                          presets.count(3), presets.count(4), presets.count(5));
             break;
         case studio::LinkCmd::None: break;
     }
