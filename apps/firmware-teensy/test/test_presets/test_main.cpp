@@ -5,6 +5,7 @@
 
 #include "ui/preset_bank.h"
 #include "ui/preset_link.h"
+#include "ui/layers.h"
 
 using namespace studio;
 
@@ -323,6 +324,34 @@ void test_hibridos_en_pares() {
     }
 }
 
+void test_capas_apuntan_a_sus_mitades() {
+    Preset p;
+    for (uint8_t i = 0; i < LAYER_COUNT; ++i) {
+        const LayerDef& d = layer_def(i);
+        TEST_ASSERT_TRUE_MESSAGE(find_factory(d.eng_a, d.preset_a, &p) >= 0, d.preset_a);
+        TEST_ASSERT_TRUE_MESSAGE(find_factory(d.eng_b, d.preset_b, &p) >= 0, d.preset_b);
+        TEST_ASSERT_NOT_EQUAL(d.eng_a, d.eng_b);
+    }
+}
+
+void test_morph_igual_potencia_y_cc18() {
+    const LayerDef& d = layer_def(1);                          // KALIMBA: A 0 dB, B −6 dB
+    float ga, gb;
+    layer_gains(d, 0.0f, &ga, &gb);
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 1.0f, ga);
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.0f, gb);
+    layer_gains(d, 0.5f, &ga, &gb);                            // las dos a su ganancia base
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 1.0f, ga);
+    TEST_ASSERT_FLOAT_WITHIN(1e-3f, 0.501f, gb);
+    layer_gains(d, 1.0f, &ga, &gb);
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.0f, ga);
+    TEST_ASSERT_EQUAL_UINT8(0, layer_from_cc(0));
+    TEST_ASSERT_EQUAL_UINT8(1, layer_from_cc(1));
+    TEST_ASSERT_EQUAL_UINT8(LAYER_COUNT, layer_from_cc(127));
+    TEST_ASSERT_EQUAL_UINT8(48, layer_b_note(60, -12));
+    TEST_ASSERT_EQUAL_UINT8(127, layer_b_note(120, 12));
+}
+
 void test_tamanos_iguales_al_script_de_la_mac() {
     // tools/preset-librarian/gf_presets.py SIZE = {2: 355, 3: 519, 4: 527}: si cambia el formato, cambiar los dos
     TEST_ASSERT_EQUAL_UINT32(355, PRESET_BYTES_V2);
@@ -414,6 +443,8 @@ int main() {
     RUN_TEST(test_fabrica_de_a_uno_y_se_retoma);
     RUN_TEST(test_trunc_durante_la_escritura_de_fabrica);
     RUN_TEST(test_hibridos_en_pares);
+    RUN_TEST(test_capas_apuntan_a_sus_mitades);
+    RUN_TEST(test_morph_igual_potencia_y_cc18);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);

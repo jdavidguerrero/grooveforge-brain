@@ -278,7 +278,10 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             }
             break;
         case Control::Key1: toggle_page(OSC); break;
-        case Control::Key2: toggle_page(ENV); break;
+        case Control::Key2:                                 // B2: ENV · SHIFT + B2: siguiente capa híbrida (theory/12)
+            if (ui_.shift) return {Action::LayerNext, 0};
+            toggle_page(ENV);
+            break;
         case Control::Key3:                                 // B3: LFO / MOD · SHIFT + B3: GROOVE
             toggle_page(ui_.shift ? GROOVE : LFO);
             break;

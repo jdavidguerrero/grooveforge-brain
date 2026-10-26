@@ -66,6 +66,7 @@
 #include "../fx/tape_saturate.h"
 #include "../ui/detent.h"
 #include "../ui/groove_macros.h"
+#include "../ui/layers.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/preset_link.h"
@@ -208,13 +209,19 @@ dsp::ArpCore arpeggio;                   // `arp` es el ARP 2600
 dsp::ChordMemory chord;
 uint8_t keys_down[dsp::ArpCore::MAX_NOTES], keys_n = 0;   // teclas apretadas de verdad (NAV push graba el acorde)
 uint8_t chord_n[128], chord_notes[128][dsp::ChordMemory::MAX];   // lo que disparó cada tecla, para soltar lo mismo
-struct StrumNote {
-    uint8_t note, vel;
+struct StrumNote {                       // notas que esperan su momento: STRUM y el retraso del ataque de la capa B
+    uint8_t eng, note, vel;
     uint32_t at_us;
 };
 StrumNote strum_q[16];
 uint8_t strum_n = 0;
 void groove_reset();
+
+// Capas híbridas (variants/studio/theory/12): A = ui.engine(), B = layer_b mientras layer_idx >= 0
+int8_t layer_idx = -1;
+uint8_t layer_b = 0xFF;
+float layer_morph_applied = -1.0f;
+dsp::Lfo lfo_b;                          // el LFO de la capa B, con su propio patch
 
 // ── Presets (variants/studio/theory/06): un archivo por preset en LittleFS sobre el flash del programa ──────────
 
@@ -337,24 +344,48 @@ void groove_reset() {
     memset(chord_n, 0, sizeof(chord_n));
 }
 
-void arp_note_on(uint8_t n, uint8_t v, void*) { engine_note_on(ui.engine(), n, v / 127.0f); }
-void arp_note_off(uint8_t n, void*) { engine_note_off(ui.engine(), n); }
+/// Toca `note` en el engine `e` ya o dentro de `delay_us` (a la cola).
+void engine_note_at(uint8_t e, uint8_t note, uint8_t vel, uint32_t delay_us) {
+    if (delay_us == 0 || strum_n == 16) { engine_note_on(e, note, vel / 127.0f); return; }
+    strum_q[strum_n++] = {e, note, vel, micros() + delay_us};
+}
 
-/// Una nota ya pasada por CHORD: con ARP la toma el arpegiador; si no, va al engine (con STRUM, a la cola).
+/// Suelta `note` en `e`; si todavía esperaba en la cola, se cancela sin sonar.
+void engine_note_release(uint8_t e, uint8_t note) {
+    for (uint8_t i = 0; i < strum_n; ++i)
+        if (strum_q[i].eng == e && strum_q[i].note == note) {
+            strum_q[i] = strum_q[--strum_n];
+            return;
+        }
+    engine_note_off(e, note);
+}
+
+/// El último paso antes de los engines: A siempre; con capa, también B (transpuesta y con su retraso de ataque).
+void sound_on(uint8_t note, uint8_t vel, uint32_t delay_us) {
+    engine_note_at(ui.engine(), note, vel, delay_us);
+    if (layer_idx < 0) return;
+    const studio::LayerDef& d = studio::layer_def(uint8_t(layer_idx));
+    engine_note_at(layer_b, studio::layer_b_note(note, d.transpose_b), vel, delay_us + d.delay_b_ms * 1000u);
+}
+
+void sound_off(uint8_t note) {
+    engine_note_release(ui.engine(), note);
+    if (layer_idx < 0) return;
+    engine_note_release(layer_b, studio::layer_b_note(note, studio::layer_def(uint8_t(layer_idx)).transpose_b));
+}
+
+void arp_note_on(uint8_t n, uint8_t v, void*) { sound_on(n, v, 0); }
+void arp_note_off(uint8_t n, void*) { sound_off(n); }
+
+/// Una nota ya pasada por CHORD: con ARP la toma el arpegiador; si no, va a los engines (con STRUM, a la cola).
 void voice_on(uint8_t note, uint8_t vel, uint32_t delay_us) {
     if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_on(note, vel); return; }
-    if (delay_us == 0 || strum_n == 16) { engine_note_on(ui.engine(), note, vel / 127.0f); return; }
-    strum_q[strum_n++] = {note, vel, micros() + delay_us};
+    sound_on(note, vel, delay_us);
 }
 
 void voice_off(uint8_t note) {
     if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_off(note); return; }
-    for (uint8_t i = 0; i < strum_n; ++i)
-        if (strum_q[i].note == note) {          // soltada antes de sonar: se cancela
-            strum_q[i] = strum_q[--strum_n];
-            return;
-        }
-    engine_note_off(ui.engine(), note);
+    sound_off(note);
 }
 
 void play_on(uint8_t note, uint8_t vel) {
@@ -410,7 +441,7 @@ void groove_tick(uint32_t now) {
 
     for (uint8_t i = 0; i < strum_n;) {
         if (int32_t(now - strum_q[i].at_us) >= 0) {
-            engine_note_on(ui.engine(), strum_q[i].note, strum_q[i].vel / 127.0f);
+            engine_note_on(strum_q[i].eng, strum_q[i].note, strum_q[i].vel / 127.0f);
             strum_q[i] = strum_q[--strum_n];
         } else {
             ++i;
@@ -448,7 +479,16 @@ void groove_tick(uint32_t now) {
     const float* u = g[GF_GROOVE_UNISON];
     const uint8_t uni = engine_unison(ui.engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,
                                       u[GF_UNISON_DETUNE]);
-    gain *= dsp::unison_gain(uni);
+    gain *= dsp::unison_gain(uni);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
+    if (layer_idx >= 0) {            // MORPH (CC 17, parada MACRO) mueve el balance A / B de la capa
+        const float morph = g[GF_GROOVE_MACRO][GF_MACRO_MORPH] * 0.01f;
+        if (fabsf(morph - layer_morph_applied) > 0.001f) {
+            float ga, gb;
+            studio::layer_gains(studio::layer_def(uint8_t(layer_idx)), morph, &ga, &gb);
+            audio_graph::set_engine_gains(ui.engine(), ga, layer_b, gb);
+            layer_morph_applied = morph;
+        }
+    }
     const float drift = studio::macro_amount(p, GF_MACRO_DRIFT);
     juno.setDrift(drift);
     prophet.setDrift(drift);
@@ -747,7 +787,11 @@ void apply_preset(uint8_t e, const studio::Preset& p) {
     bridge_patch();
 }
 
+void layer_select(int8_t idx);
+void activate_engine(uint8_t e);
+
 void load_preset(uint8_t i) {
+    if (layer_idx >= 0) layer_select(-1);            // un preset normal sale de la capa
     const uint8_t e = ui.engine();
     studio::Preset p;
     if (!presets.load(e, i, &p)) {
@@ -758,6 +802,74 @@ void load_preset(uint8_t i) {
     apply_preset(e, p);
     bridge_preset_loaded();
     Serial.printf("[PRESET] cargado %u %s\n", i, p.name);
+}
+
+// ── Capas híbridas (variants/studio/theory/12) ─────────────────────────────────────────────────────────
+
+/// Lleva al engine `e` el preset `name` de su banco (o el de fábrica, si lo borraste).
+bool layer_load_half(uint8_t e, const char* name) {
+    studio::Preset p;
+    for (uint8_t i = 0; i < presets.count(e); ++i)
+        if (!strcmp(presets.name(e, i), name) && presets.load(e, i, &p)) {
+            preset_loaded[e] = i;
+            apply_preset(e, p);
+            return true;
+        }
+    for (uint8_t f = 0; f < studio::factory_count(e); ++f)
+        if (studio::factory_preset(e, f, &p) && !strcmp(p.name, name)) {
+            apply_preset(e, p);
+            return true;
+        }
+    Serial.printf("[CAPA] no encuentro el preset %s\n", name);
+    return false;
+}
+
+/// Elige la capa `idx` (0…7) o sale de la capa (−1). A pasa a ser el engine activo; B suena a la par.
+void layer_select(int8_t idx) {
+    const uint8_t prev_b = layer_b;
+    layer_idx = -1;
+    layer_b = 0xFF;
+    layer_morph_applied = -1.0f;
+    if (idx < 0 || idx >= int8_t(studio::LAYER_COUNT)) {
+        all_notes_off();
+        if (prev_b != 0xFF && prev_b != ui.engine()) {
+            engine_dsp(prev_b, false);
+            engine_lfo(prev_b, LfoMod{});
+        }
+        audio_graph::set_active_engine(ui.engine());
+        ui.set_layer(false);
+        Serial.println("[CAPA] OFF");
+        return;
+    }
+    const studio::LayerDef& d = studio::layer_def(uint8_t(idx));
+    if (ui.engine() != d.eng_a) {
+        ui.set_engine(d.eng_a);
+        activate_engine(d.eng_a);                    // apaga el resto (incluida la B anterior)
+    } else if (prev_b != 0xFF && prev_b != d.eng_b) {
+        engine_dsp(prev_b, false);
+        engine_lfo(prev_b, LfoMod{});
+    }
+    layer_load_half(d.eng_a, d.preset_a);            // suelta las notas (apply_preset del engine activo)
+    engine_dsp(d.eng_b, true);
+    layer_load_half(d.eng_b, d.preset_b);
+    engine_unison(d.eng_b, 1, 0.0f);
+    patches[d.eng_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH] = 50;   // las dos capas a su mezcla base
+    layer_b = d.eng_b;
+    layer_idx = idx;                                 // groove_tick aplica las ganancias de MORPH
+    ui.set_layer(true);
+    bridge_patch();
+    bridge_preset_loaded();
+    Serial.printf("[CAPA] %d %s: A %s + B %s\n", idx + 1, d.name, ENGINE_NAME[d.eng_a], ENGINE_NAME[d.eng_b]);
+}
+
+/// Con capa, el filtro de B sigue al de A: el cutoff en la misma proporción y la resonancia con el mismo paso.
+void layer_follow_filter(float cutoff_ratio, float reso_step_norm) {
+    if (layer_idx < 0) return;
+    const uint8_t b = layer_b;
+    cutoff[b] = constrain(cutoff[b] * cutoff_ratio, GF_CUTOFF_RANGE[b].lo, GF_CUTOFF_RANGE[b].hi);
+    const float rn = constrain(gf_norm(RESO_RANGE[b], resonance[b]) + reso_step_norm, 0.0f, 1.0f);
+    resonance[b] = gf_denorm(RESO_RANGE[b], rn);
+    engine_filter(b);
 }
 
 void save_preset() {
@@ -870,21 +982,12 @@ void activate_engine(uint8_t e) {
     Serial.printf("[ENGINE] %s\n", ENGINE_NAME[e]);
 }
 
-/// LFO a 1 kHz: una evaluación y las cantidades del engine activo (theory/lfo-modulacion.md §5).
-void mod_tick() {
-    static uint32_t last_us = micros();
-    const uint32_t now = micros();
-    if (now - last_us < 1000) return;
-    const float dt = (now - last_us) * 1e-6f;
-    last_us = now;
-    groove_tick(now);
-
-    const studio::Patch& p = patch();
-    const uint8_t e = ui.engine();
-    lfo.set_shape(dsp::LfoShape(p.lfo_shape));
-    lfo.set_rate_hz(p.lfo_rate_hz);
-    lfo.set_sync(ui.state().flags & GF_UI_FLAG_LFO_SYNC, bpm, GF_LFO_DIV_BEATS[p.lfo_div]);
-    const float v = lfo.tick(dt);
+/// Modulación de un engine con su propio patch y su LFO (theory/lfo-modulacion.md §5).
+LfoMod engine_mod(uint8_t e, const studio::Patch& p, dsp::Lfo& l, float dt) {
+    l.set_shape(dsp::LfoShape(p.lfo_shape));
+    l.set_rate_hz(p.lfo_rate_hz);
+    l.set_sync(ui.state().flags & GF_UI_FLAG_LFO_SYNC, bpm, GF_LFO_DIV_BEATS[p.lfo_div]);
+    const float v = l.tick(dt);
 
     // LFO DELAY del Juno (fidelidad §11.5): la profundidad sube en rampa tras una nota nueva
     float ramp = 1.0f;
@@ -904,7 +1007,19 @@ void mod_tick() {
     m.pwm = amt(GF_DEST_PWM) * v;
     m.amp = 1.0f - amt(GF_DEST_AMP) * (1.0f + v) * 0.5f;
     m.lfo = v;
-    engine_lfo(e, m);
+    return m;
+}
+
+/// LFO a 1 kHz: una evaluación por engine que suena (A y, con capa, B).
+void mod_tick() {
+    static uint32_t last_us = micros();
+    const uint32_t now = micros();
+    if (now - last_us < 1000) return;
+    const float dt = (now - last_us) * 1e-6f;
+    last_us = now;
+    groove_tick(now);
+    engine_lfo(ui.engine(), engine_mod(ui.engine(), patch(), lfo, dt));
+    if (layer_idx >= 0) engine_lfo(layer_b, engine_mod(layer_b, patches[layer_b], lfo_b, dt));
 }
 
 /// P1 (0) o P2 (1) giró: edita lo que diga la página y avisa a la cabeza.
@@ -927,7 +1042,13 @@ void page_encoder(uint8_t enc, int32_t steps) {
 /// Ejecuta en el sonido lo que pidió la navegación.
 void run_action(studio::Result r) {
     switch (r.action) {
-        case studio::Action::LoadEngine: activate_engine(r.arg); break;
+        case studio::Action::LoadEngine:
+            if (layer_idx >= 0) layer_select(-1);    // elegir un engine sale de la capa
+            activate_engine(r.arg);
+            break;
+        case studio::Action::LayerNext:               // SHIFT + B2: OFF → 1 … 8 → OFF
+            layer_select(layer_idx + 1 < int8_t(studio::LAYER_COUNT) ? int8_t(layer_idx + 1) : int8_t(-1));
+            break;
         case studio::Action::FilterBypass:
             engine_filter(ui.engine());
             Serial.printf("[UI] bypass del filtro %s\n", r.arg ? "ON" : "OFF");
@@ -1079,6 +1200,11 @@ void control_change(byte ch, byte cc, byte val) {
         return;
     }
     if (cc == 123) { all_notes_off(); return; }
+    if (cc == 18) {                                  // CC 18: capa híbrida desde Live (0 = OFF, theory/12)
+        const int8_t idx = int8_t(studio::layer_from_cc(val)) - 1;
+        if (idx != layer_idx) layer_select(idx);
+        return;
+    }
     studio::ParamChange pc[1];
     if (studio::apply_cc(patch(), e, cc, val, pc)) {
         bridge_param(pc[0].id, pc[0].norm);
@@ -1088,8 +1214,20 @@ void control_change(byte ch, byte cc, byte val) {
         apply_sfx(e);
         return;
     }
-    if (cc == 74) { cutoff[e] = gf_cutoff_from_cc_norm(e, val / 127.0f); engine_filter(e); bridge_filter(); }
-    if (cc == 71) { resonance[e] = gf_denorm(RESO_RANGE[e], val / 127.0f); engine_filter(e); bridge_filter(); }
+    if (cc == 74) {
+        const float old = cutoff[e];
+        cutoff[e] = gf_cutoff_from_cc_norm(e, val / 127.0f);
+        engine_filter(e);
+        layer_follow_filter(cutoff[e] / old, 0.0f);
+        bridge_filter();
+    }
+    if (cc == 71) {
+        const float old = gf_norm(RESO_RANGE[e], resonance[e]);
+        resonance[e] = gf_denorm(RESO_RANGE[e], val / 127.0f);
+        engine_filter(e);
+        layer_follow_filter(1.0f, val / 127.0f - old);
+        bridge_filter();
+    }
     if (cc == 1) {
         wheel = val / 127.0f;
         prophet.setWheel(wheel);
@@ -1402,16 +1540,20 @@ void loop() {
         last_cut_ms = millis();
         const float accel = dir != last_cut_dir ? 1.0f : dt_cut < 40 ? 4.0f : dt_cut < 90 ? 2.0f : 1.0f;
         last_cut_dir = dir;
+        const float old_cut = cutoff[e];
         cutoff[e] = constrain(cutoff[e] * powf(1.06f, accel * float(l - last_l)), cr.lo, cr.hi);
         engine_filter(e);
+        layer_follow_filter(cutoff[e] / old_cut, 0.0f);
         bridge_filter();
         cc_out(gf_param_id(e, GF_GROUP_FILTER, GF_FILTER_CUTOFF), gf_norm(cr, cutoff[e]));
         last_l = l;
     }
     if (r != last_r) {
         const GF_Range rr = RESO_RANGE[e];
+        const float old_res = gf_norm(rr, resonance[e]);
         resonance[e] = constrain(resonance[e] + 0.05f * (rr.hi - rr.lo) * (r - last_r), rr.lo, rr.hi);
         engine_filter(e);
+        layer_follow_filter(1.0f, gf_norm(rr, resonance[e]) - old_res);
         bridge_filter();
         cc_out(gf_param_id(e, GF_GROUP_FILTER, GF_FILTER_RESO), gf_norm(rr, resonance[e]));
         last_r = r;

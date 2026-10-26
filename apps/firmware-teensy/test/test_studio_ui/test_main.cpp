@@ -336,6 +336,21 @@ void test_volumen_desde_la_cabeza() {
     TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.9f, gf_vol_norm(-6.0f));
 }
 
+void test_shift_b2_capa_siguiente() {
+    StudioUi ui;
+    ui.handle(Control::B6Down);
+    Result r = ui.handle(Control::Key2);
+    TEST_ASSERT_EQUAL(int(Action::LayerNext), int(r.action));
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);          // no abre ENV
+    ui.take_dirty();
+    ui.set_layer(true);
+    TEST_ASSERT_TRUE(ui.take_dirty());
+    TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_LAYER);
+    ui.handle(Control::Key2);                                   // B2 solo sigue siendo ENV
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -360,5 +375,6 @@ int main() {
     RUN_TEST(test_groove_shift_b3_nav_push_y_tap);
     RUN_TEST(test_estado_del_reloj_en_flags);
     RUN_TEST(test_volumen_desde_la_cabeza);
+    RUN_TEST(test_shift_b2_capa_siguiente);
     return UNITY_END();
 }

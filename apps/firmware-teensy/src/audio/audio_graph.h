@@ -133,6 +133,12 @@ void set_master_gain(uint8_t ch, float gain);
 void set_active_engine(uint8_t engine_id);
 
 /**
+ * @brief Capas híbridas (variants/studio/theory/12): suenan dos engines con ganancias 0–1 (× ENGINE_ACTIVE_GAIN);
+ *        el resto queda en silencio. `engine_b` = 0xFF deja solo A.
+ */
+void set_engine_gains(uint8_t engine_a, float gain_a, uint8_t engine_b, float gain_b);
+
+/**
  * @brief Retorna el engine activo actual.
  */
 uint8_t get_active_engine();

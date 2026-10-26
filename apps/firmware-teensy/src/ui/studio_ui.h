@@ -47,7 +47,7 @@ PanelItem panel_card(uint8_t engine, uint8_t i);
 /// GroovePush, la parada de GROOVE (el sketch decide: en CHORD con notas apretadas graba el acorde, si no enciende /
 /// apaga); Tap, B4 en GROOVE.
 enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle, FilterBypass, LfoSync, LfoShape,
-                              SfxToggle, GroovePush, Tap, VolStep };   ///< VolStep: arg = +1 / −1 como int8_t
+                              SfxToggle, GroovePush, Tap, VolStep, LayerNext };   ///< VolStep: arg = +1 / −1 como int8_t; LayerNext: SHIFT + B2
 
 struct Result {
     Action action = Action::None;
@@ -73,6 +73,14 @@ public:
     void set_clock(bool midi, bool running) {
         const uint8_t f = uint8_t((ui_.flags & ~(GF_UI_FLAG_CLOCK_MIDI | GF_UI_FLAG_CLOCK_RUN)) |
                                   (midi ? GF_UI_FLAG_CLOCK_MIDI : 0) | (running ? GF_UI_FLAG_CLOCK_RUN : 0));
+        if (f != ui_.flags) {
+            ui_.flags = f;
+            dirty_ = true;
+        }
+    }
+    /// Capa híbrida sonando (flag LAYER para la cabeza).
+    void set_layer(bool on) {
+        const uint8_t f = uint8_t(on ? ui_.flags | GF_UI_FLAG_LAYER : ui_.flags & ~GF_UI_FLAG_LAYER);
         if (f != ui_.flags) {
             ui_.flags = f;
             dirty_ = true;

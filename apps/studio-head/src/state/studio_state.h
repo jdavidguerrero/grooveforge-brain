@@ -106,6 +106,7 @@ struct StudioState {
     bool lfo_sync = false;
     bool clock_midi = false;         ///< el reloj común sigue al clock MIDI (UI_STATE flags, theory/09 §1.1)
     bool clock_run = true;           ///< false = parado por STOP
+    bool layer = false;              ///< suena una capa híbrida de dos engines (UI_STATE flags, theory/12)
     uint8_t lfo_div = 1;             ///< índice en 1/4 · 1/8 · 1/16 · 1/8T
     /// Cantidad por destino, 0–1 (CUTOFF · PITCH · AMP · PWM, mismo orden que GF_DEST_*). CUTOFF no se guarda
     /// acá: es p2 de PERFORM (un solo valor por destino). PITCH en semitonos = gf_lfo_pitch_st(cantidad).

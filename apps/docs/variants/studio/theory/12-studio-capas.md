@@ -1,7 +1,7 @@
 # Studio · Capas de dos engines (HYBRID) — diseño
 
-> **Fecha:** 2026-10-26 · **Estado:** PROPUESTO (falta medir la CPU en el hardware y elegir la primera pareja probando
-> los HY) · **Depende de:** `docs/theory/caracter-sonoro.md` §8–9 · paleta-v1 §6 (híbridos HY) · theory/09 (MORPH,
+> **Fecha:** 2026-10-26 · **Estado:** v1 APROBADA por Juan ("implementa todas las capas híbridas para empezar a probar",
+> aceptando el riesgo de CPU; se mide en el hardware) · **Depende de:** `docs/theory/caracter-sonoro.md` §8–9 · paleta-v1 §6 (híbridos HY) · theory/09 (MORPH,
 > CC 17) · theory/10 (velocity).
 
 ## 1. Qué es
@@ -26,6 +26,22 @@ Juan). Hoy se imita grabando las dos mitades HY en Live; esto lo lleva al Brain.
 | **MORPH** (CC 17, parada MACRO) | 0 % = solo A, 50 % = las dos, 100 % = solo B; hacia la derecha suma el retraso del ataque de B (guía de Juan). |
 | **Edición** | Las páginas OSC / ENV / LFO / SYNTH FX editan la capa **enfocada** (A o B); un control la cambia (a definir con la cabeza, p. ej. SHIFT + B1). La cabeza muestra `A · PROPHET-5` / `B · DX7`. |
 | **Preset de capa** | Un banco aparte de 16 capas: nombre, engine y preset de A, engine y preset de B (por **nombre**, para sobrevivir a reordenar), MORPH, transposición y retraso de B. Los patches siguen en el banco de su engine. El bibliotecario exporta también las capas. |
+
+## 3b. Versión 1 implementada (2026-10-26)
+
+Juan pidió las **8 capas de su guía** para probar, sin esperar la medición. Diferencias con §2–3:
+
+| Pieza | v1 |
+|---|---|
+| Parejas | Las 8 de la guía (paleta-v1 §6), cada una apunta a sus mitades HY **por nombre** (si borraste una del banco, se usa la de fábrica) |
+| Elegir capa | **SHIFT + B2** recorre OFF → 1 … 8 → OFF; **CC 18** la elige desde Live (0 = OFF, después 8 tramos iguales). Cambiar de engine o cargar un preset normal sale de la capa |
+| Mezcla | Ganancia base A / B de la tabla de paleta-v1 §6; **MORPH** (CC 17 o ENC R en la parada MACRO) hace un crossfade de igual potencia: 0 % solo A, 50 % las dos a su ganancia base, 100 % solo B. Al cargar la capa MORPH queda en 50 % |
+| B | Transposición y retraso del ataque fijos por capa (0–20 ms); su patch es el de su preset HY (no se edita en v1: las páginas editan A) |
+| Filtro | ENC L / R mueven A y B juntos (el cutoff de B sigue a A en proporción, la resonancia con el mismo paso) |
+| LFO | Cada capa con su propio LFO (el de su patch) |
+| GROOVE | ARP / CHORD / UNISON / PUMP del patch de A; el ARP y el CHORD disparan las dos capas |
+| Cabeza | Chip **LAYER** en PERFORM (bit 4 de `flags` en UI_STATE) |
+| CPU | Riesgo aceptado: se mide en el hardware. Si el pico pasa de ~85 % aparecen clicks; se baja la polifonía de B |
 
 ## 4. Cómo se prueba
 

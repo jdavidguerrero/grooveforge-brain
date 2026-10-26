@@ -233,7 +233,7 @@ typedef struct {
     uint8_t  cursor;                    /* ENGINE: tile · PRESETS: fila (0 = SAVE) · OSC: oscilador */
     uint8_t  fx_slot;                   /* 0-11 */
     uint8_t  fx_view;                   /* 0 ONDA, 1 ESPECTRO, 2 FIRMA */
-    uint8_t  flags;                     /* bit0 filter_bypass, bit1 lfo_sync, bit2 clock_midi, bit3 clock_run */
+    uint8_t  flags;                     /* bit0 filter_bypass, bit1 lfo_sync, bit2 clock_midi, bit3 clock_run, bit4 layer */
     uint16_t fx_on;                     /* bit n = slot n encendido */
     uint8_t  fx_route[GF_UI_FX_SLOTS];  /* 0 INSERT, 1 SEND, 2 MASTER */
 } GF_UiState;
@@ -242,6 +242,7 @@ typedef struct {
 #define GF_UI_FLAG_LFO_SYNC      0x02U
 #define GF_UI_FLAG_CLOCK_MIDI    0x04U   /* el reloj común sigue al clock MIDI (variants/studio/theory/09 §1.1) */
 #define GF_UI_FLAG_CLOCK_RUN     0x08U   /* el reloj corre (0 = parado por STOP) */
+#define GF_UI_FLAG_LAYER         0x10U   /* suena una capa híbrida de dos engines (variants/studio/theory/12) */
 
 /** @brief Serializa a los 22 bytes del payload (little-endian). @return GF_UI_STATE_LEN. */
 static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {
