@@ -17,7 +17,7 @@ namespace studio {
 
 constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
-constexpr uint8_t PRESET_FORMAT = 3;        ///< versión del formato (3: página GROOVE, 2026-10-25)
+constexpr uint8_t PRESET_FORMAT = 4;        ///< versión del formato (4: velocity por preset, theory/10, 2026-10-26)
 constexpr uint8_t PRESET_FORMAT_MIN = 2;    ///< el más viejo que se migra al leer (2: sin GROOVE)
 
 /// Un sonido: el patch editable + el filtro de ENC L / R.
@@ -33,12 +33,14 @@ constexpr size_t PRESET_BYTES_V2 = 4 + 1 + PRESET_NAME_LEN + 4 * (12 + GF_DEST_C
                                    GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2) +
                                    2 + GF_SFX_COUNT;
 /// Formato 3 = el 2 + GROOVE (valores de las 5 paradas y los 4 encendidos) al final.
-constexpr size_t PRESET_BYTES = PRESET_BYTES_V2 + 4 * GF_GROOVE_STOPS * GF_OSC_SLOTS + GF_GROOVE_TOGGLES;
+constexpr size_t PRESET_BYTES_V3 = PRESET_BYTES_V2 + 4 * GF_GROOVE_STOPS * GF_OSC_SLOTS + GF_GROOVE_TOGGLES;
+/// Formato 4 = el 3 + VEL → AMP y VEL → FILTER al final.
+constexpr size_t PRESET_BYTES = PRESET_BYTES_V3 + 4 * 2;
 
 /// Serializa `p` del engine `engine` en `buf`. @return bytes escritos, 0 si `cap` < PRESET_BYTES.
 size_t preset_encode(const Preset& p, uint8_t engine, uint8_t* buf, size_t cap);
 
-/// Lee un preset; los de formato 2 se migran (GROOVE en sus valores neutros de Patch).
+/// Lee un preset; los de formato 2 y 3 se migran (GROOVE neutro, velocity por defecto del engine).
 /// @return false si la firma, la versión, el engine o el tamaño no coinciden.
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out);
 

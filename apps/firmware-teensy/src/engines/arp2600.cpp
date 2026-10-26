@@ -228,7 +228,7 @@ void ARP2600::setNoiseColor(float color) {
 }
 
 void ARP2600::_applyVoiceMix(uint8_t v) {
-    const float vel = 0.35f + 0.65f * _voices[v].velocity;
+    const float vel = 1.0f - _velAmp * (1.0f - _voices[v].velocity);
     const float sum = _ringMixAmt + _vco1Level + _vco2Level + _noiseLevel * 0.5f;
     const float norm = (sum > 1.15f) ? (1.15f / sum) : 1.0f;
     const float g = vel * norm;
@@ -314,7 +314,7 @@ void ARP2600::update() {
 
     for (uint8_t i = 0; i < ARP_VOICES; i++) {
         const float envLevel  = _filterEnv[i].update((float)dt);
-        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+        const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
 
         float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 6000.0f) * _lfo.cutoff_mul *
                           _spread[i].cutoff * _cutJit[i] * v3_cut;

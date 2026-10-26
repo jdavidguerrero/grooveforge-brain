@@ -171,8 +171,8 @@ void Prophet5::update() {
 
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
         const float env = _filterEnv[i].update((float)dt);
-        const float velGain = 0.35f + 0.65f * _voices[i].velocity;
-        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+        const float velGain = 1.0f - _velAmp * (1.0f - _voices[i].velocity);
+        const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
 
         _currentHz[i] += (_targetHz[i] - _currentHz[i]) * glide_k;
         const float f = _currentHz[i] * _lfo.pitch_ratio * _spread[i].pitch * _uni[i];

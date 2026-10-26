@@ -62,11 +62,13 @@ inline float macro_resonance(float reso_norm, const Patch& p) {
     return r > 1.0f ? 1.0f : r;
 }
 
-/// Velocity que llega al engine: el Model D y el Juno la ignoran (como los originales) salvo con POCKET.
-inline float macro_velocity(float vel, uint8_t e, const Patch& p) {
-    if (e > 1) return vel;
+/// Profundidades de velocity que recibe el engine (theory/10 §2): las del preset + POCKET (tope 1).
+/// POCKET suma 65 % al volumen y 50 % al filtro: en el Model D y el Juno (0 % por defecto) devuelve la velocity.
+inline void macro_vel_depths(const Patch& p, float* amp, float* filter) {
     const float pocket = macro_amount(p, GF_MACRO_POCKET) * macro_amount(p, GF_MACRO_POCKET_VEL);
-    return 1.0f + (vel - 1.0f) * pocket;
+    const float a = p.vel_amp * 0.01f + 0.65f * pocket, f = p.vel_cut * 0.01f + 0.5f * pocket;
+    *amp = a > 1.0f ? 1.0f : a;
+    *filter = f > 1.0f ? 1.0f : f;
 }
 
 }  // namespace studio

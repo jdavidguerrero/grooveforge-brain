@@ -75,8 +75,8 @@ void MoogModelD::noteOn(uint8_t midi_note, float velocity) {
         _noteStack[MONO_STACK_MAX - 1] = midi_note;
     }
 
-    _velGain       = 0.35f + 0.65f * velocity;
-    _velBrightness = 0.50f + 0.50f * velocity;
+    _velGain       = 1.0f - _velAmp * (1.0f - velocity);   // theory/10: 0.65 / 0.5 = la curva de siempre
+    _velBrightness = 1.0f - _velCut * (1.0f - velocity);
     _applyMixerGains();
 
     _targetFreq = _midiToFreq(midi_note);

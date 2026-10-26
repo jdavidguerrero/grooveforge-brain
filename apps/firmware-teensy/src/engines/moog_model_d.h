@@ -37,6 +37,8 @@ public:
      * En modo legato (default true), si ya hay una nota presionada, desliza la frecuencia
      * sin re-disparar los envelopes desde cero (single-trigger auténtico del Minimoog).
      */
+    /// Velocity por preset (theory/10 de Studio): profundidad 0–1 al volumen y al barrido de la envolvente del filtro.
+    void setVelocityDepth(float amp, float filter) { _velAmp = amp; _velCut = filter; }
     void noteOn(uint8_t midi_note, float velocity = 1.0f);
 
     /**
@@ -160,4 +162,5 @@ private:
     float _centsToRatio(float cents);
     float _semitonesToRatio(float semitones);
     float _vco3Freq();
+    float _velAmp = 0.65f, _velCut = 0.5f;   ///< theory/10: 0.65 / 0.5 = la curva de siempre
 };

@@ -261,7 +261,7 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
             } else if (group == GF_GROUP_MOD) {
                 m_.mod[e][idx] = v;
                 m_.osc_dirty |= uint8_t(1u << e);
-            } else if (group == GF_GROUP_ENV && idx < 8) {
+            } else if (group == GF_GROUP_ENV && idx < 10) {
                 m_.envp[e][idx] = v;
                 m_.env_dirty |= uint8_t(1u << e);
             } else if (group == GF_GROUP_LFO && idx < 7) {
@@ -390,6 +390,8 @@ void BridgeLink::apply(StudioState& s) {
         s.env_decay_ms = gf_denorm(GF_DECAY_RANGE[e], v[5]);
         s.env_sustain = v[6];
         s.env_release_ms = gf_denorm(GF_RELEASE_RANGE[e], v[7]);
+        s.vel_amp = v[GF_ENV_VEL_AMP];
+        s.vel_cut = v[GF_ENV_VEL_CUT];
     }
     if (m_.osc_dirty & (1u << e)) {   // los slots globales viven en el oscilador 0, igual que en osc_catalog
         for (int st = 0; st < int(GF_OSC_STOPS); ++st)

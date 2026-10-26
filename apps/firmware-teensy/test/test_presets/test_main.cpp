@@ -145,11 +145,29 @@ void test_fabrica_dentro_de_rango() {
     }
 }
 
-/// Un preset de formato 2 = el de formato 3 sin el bloque GROOVE del final.
+/// Un preset de formato 2 = el actual sin GROOVE ni velocity al final; el 3, sin la velocity.
 static size_t encode_v2(const Preset& p, uint8_t e, uint8_t* buf) {
     preset_encode(p, e, buf, PRESET_BYTES);
     buf[3] = 2;
     return PRESET_BYTES_V2;
+}
+
+void test_migra_formato_3_con_velocity_del_engine() {
+    Preset p;
+    patch_init(p.patch, 1);
+    p.patch.vel_amp = 90.0f;                                            // no viaja en el formato 3
+    p.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 77;                 // sí viaja
+    uint8_t buf[PRESET_BYTES];
+    preset_encode(p, 1, buf, PRESET_BYTES);
+    buf[3] = 3;
+    Preset q;
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES_V3, 1, &q));
+    TEST_ASSERT_EQUAL_FLOAT(77.0f, q.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH]);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, q.patch.vel_amp);                     // Juno: sin velocity, como sonaba
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES_V3, 1, &q));
+    buf[3] = 4;
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES, 1, &q));
+    TEST_ASSERT_EQUAL_FLOAT(90.0f, q.patch.vel_amp);
 }
 
 void test_migra_formato_2() {
@@ -222,6 +240,7 @@ void test_presets_del_track() {
     find_factory(0, "JD RUN FUNKBASS", &p);
     TEST_ASSERT_EQUAL_FLOAT(160.0f, p.cutoff_hz);
     TEST_ASSERT_FLOAT_WITHIN(1e-6f, 0.35f, p.patch.drive);
+    TEST_ASSERT_EQUAL_FLOAT(80.0f, p.patch.vel_cut);                 // velocity → filtro al 80 %, el pedido original
 }
 
 void test_pilotos_signature() {
@@ -249,6 +268,7 @@ int main() {
     RUN_TEST(test_fabrica_dentro_de_rango);
     RUN_TEST(test_presets_del_track);
     RUN_TEST(test_migra_formato_2);
+    RUN_TEST(test_migra_formato_3_con_velocity_del_engine);
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     RUN_TEST(test_pilotos_signature);
     return UNITY_END();

@@ -16,7 +16,9 @@
 #define GF_ENGINE_COUNT 6U
 
 #define GF_GROUP_OSC    0U   /* oscilador · 4 + slot (ver GF_OSC_SLOT) */
-#define GF_GROUP_ENV    1U   /* 0–3 A D S R del amplificador · 4–7 A D S R del filtro */
+#define GF_GROUP_ENV    1U   /* 0–3 A D S R del amplificador · 4–7 A D S R del filtro · 8 VEL→AMP · 9 VEL→FILTER */
+#define GF_ENV_VEL_AMP  8U   /* velocity al volumen, 0–1 = 0–100 % (variants/studio/theory/10) */
+#define GF_ENV_VEL_CUT  9U   /* velocity al barrido de la envolvente del filtro */
 #define GF_GROUP_FILTER 2U   /* 0 cutoff · 1 resonancia · 2 FLT ENV AMT · 3 GLIDE · 4 DRIVE */
 #define GF_GROUP_LFO    3U   /* ver GF_LFO_* */
 #define GF_GROUP_SFX    4U   /* cadena de FX del synth: 0–3 encendido · 4–7 MIX */

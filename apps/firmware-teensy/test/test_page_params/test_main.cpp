@@ -111,7 +111,7 @@ void test_forma_sin_dar_la_vuelta_y_patch_completo() {
     step_lfo_shape(p, 0, -10, c);
     TEST_ASSERT_EQUAL_UINT8(0, p.lfo_shape);
     const uint8_t n = patch_params(p, 3, c);
-    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6 + 29, n);                    // OB-6: 38 base + 12 OSC + 6 X-MOD + 29 GROOVE
+    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6 + 29 + 2, n);                // OB-6: 38 base + 12 OSC + 6 X-MOD + 29 GROOVE + VEL
     for (uint8_t i = 0; i < n; ++i) TEST_ASSERT_EQUAL_HEX8(0x13, c[i].id >> 8);
     TEST_ASSERT_TRUE(patch_params(p, 2, c) <= PATCH_PARAM_COUNT);    // Prophet: 3 paradas × 8 + MOD
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) TEST_ASSERT_TRUE(patch_params(p, e, c) <= PATCH_PARAM_COUNT);
@@ -337,10 +337,31 @@ void test_cutoff_cc_logaritmico() {
     TEST_ASSERT_EQUAL_INT(1, int(lroundf(gf_cutoff_cc_norm(0, 21.0f) * 127.0f)));
 }
 
+void test_env_shift_velocity() {
+    Patch p;
+    patch_init(p, 0);                                                 // Model D: sin velocity por defecto
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, p.vel_amp);
+    ParamChange c[1];
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, page(ENV, true), 0, 0, 10, c));   // SHIFT + P1 = VEL → AMP
+    TEST_ASSERT_EQUAL_FLOAT(20.0f, p.vel_amp);
+    TEST_ASSERT_EQUAL_HEX16(0x1018, c[0].id);
+    TEST_ASSERT_FLOAT_WITHIN(1e-6f, 0.2f, c[0].norm);
+    TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, page(ENV, true), 0, 1, 100, c));  // SHIFT + P2 = VEL → FILTER, tope 100
+    TEST_ASSERT_EQUAL_FLOAT(100.0f, p.vel_cut);
+    TEST_ASSERT_EQUAL_HEX16(0x1019, c[0].id);
+    TEST_ASSERT_EQUAL_UINT8(0, edit_encoder(p, page(ENV, true), 0, 2, 1, c));    // ENC L / R sin capa SHIFT
+    Patch q;
+    patch_init(q, 2);
+    TEST_ASSERT_EQUAL_FLOAT(65.0f, q.vel_amp);                        // Prophet: la curva de siempre
+    TEST_ASSERT_EQUAL_FLOAT(50.0f, q.vel_cut);
+    TEST_ASSERT_EQUAL_UINT8(0xFF, param_cc(0x1018, 0));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_perform_p1_env_amt_p2_lfo_cutoff);
     RUN_TEST(test_groove_encoders_toggle_y_macros_cc);
+    RUN_TEST(test_env_shift_velocity);
     RUN_TEST(test_perform_shift_glide_y_drive);
     RUN_TEST(test_lfo_cutoff_es_el_mismo_valor_en_perform_y_lfo);
     RUN_TEST(test_lfo_shift_pitch_y_tercer_destino_por_engine);

@@ -53,6 +53,8 @@ public:
 
     void begin(float volume = 0.5f);
 
+    /// Velocity por preset (theory/10 de Studio): profundidad 0–1 al volumen y al barrido de la envolvente del filtro.
+    void setVelocityDepth(float amp, float filter) { _velAmp = amp; _velCut = filter; }
     void noteOn(uint8_t midi_note, float velocity = 1.0f);
     void noteOff(uint8_t midi_note);
 
@@ -192,4 +194,5 @@ private:
     void   _triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity);
     void   _releaseVoice(uint8_t voice_idx);
     float  _midiToFreq(uint8_t midi_note);
+    float _velAmp = 0.65f, _velCut = 0.5f;   ///< theory/10: 0.65 / 0.5 = la curva de siempre
 };

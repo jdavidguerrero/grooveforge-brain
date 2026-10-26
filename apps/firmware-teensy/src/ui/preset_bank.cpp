@@ -42,6 +42,9 @@ void visit(Preset& p, uint8_t format, F&& f32, B&& u8) {
         u8(b);
         on = b != 0;
     }
+    if (format < 4) return;                     // formato 3: velocity por defecto del engine (preset_decode)
+    f32(t.vel_amp);
+    f32(t.vel_cut);
 }
 
 void set_name(char* dst, const char* src) {
@@ -84,12 +87,14 @@ const Factory MODEL_D[] = {
     // Presets del track (variants/studio/presets-track-run.md): mitad A de GF_Run_FunkBass
     {"JD RUN FUNKBASS", 0, 220, 0.15f, 80, 0, 220, 0.15f, 80, 0.7f, 160, 0.25f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 6; o[2][1] = -12;
-                    o[0][2] = 90; o[1][2] = 85; o[2][2] = 70; o[3][0] = 0; p.drive = 0.35f; }},
-    // Pilotos Signature (caracter-sonoro §9): POCKET devuelve la velocity al Model D
+                    o[0][2] = 90; o[1][2] = 85; o[2][2] = 70; o[3][0] = 0; p.drive = 0.35f;
+                    p.vel_amp = 60; p.vel_cut = 80; }},   // ghost notes: murmullo a 45–53, mordida a 74–81
+    // Pilotos Signature (caracter-sonoro §9): velocity propia + POCKET
     {"GF POCKET BASS", 1, 300, 0.3f, 120, 1, 250, 0.1f, 120, 0.6f, 250, 0.3f, 0.1f, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 5; o[2][1] = -12;
                     o[0][2] = 90; o[1][2] = 80; o[2][2] = 60; o[3][0] = 0;
-                    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 60; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 15; }},
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 60; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 15;
+                    p.vel_amp = 30; p.vel_cut = 50; }},
 };
 
 const Factory JUNO[] = {
@@ -108,7 +113,8 @@ const Factory JUNO[] = {
     {"JD HORIZON JUNO", 120, 1000, 0.85f, 600, 120, 1000, 0.6f, 600, 0.15f, 1500, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 0; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1; }},
     {"JD RAP STAB JUNO", 2, 220, 0.0f, 110, 12, 160, 0.0f, 110, 0.8f, 450, 0.35f, 0, 2, 1, 0, 0, 0,
-     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 0; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1; }},
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 0; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1;
+                    p.vel_amp = 40; p.vel_cut = 50; }},
     {"JD VELVET JUNO", 60, 800, 0.7f, 450, 60, 800, 0.5f, 450, 0.3f, 650, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 20; o[0][2] = 0; o[0][4] = 2; o[0][5] = 1;
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 60; }},
@@ -279,9 +285,10 @@ size_t preset_encode(const Preset& src, uint8_t engine, uint8_t* buf, size_t cap
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out) {
     if (len < 5 || memcmp(buf, MAGIC, 3) != 0 || buf[4] != engine) return false;
     const uint8_t format = buf[3];
-    const size_t expect = format == PRESET_FORMAT ? PRESET_BYTES : format == 2 ? PRESET_BYTES_V2 : 0;
+    const size_t expect = format == 4 ? PRESET_BYTES : format == 3 ? PRESET_BYTES_V3 : format == 2 ? PRESET_BYTES_V2 : 0;
     if (format < PRESET_FORMAT_MIN || format > PRESET_FORMAT || len != expect) return false;
     Preset p;
+    patch_vel_defaults(p.patch, engine);        // lo que no traen los formatos 2 y 3
     memcpy(p.name, buf + 5, PRESET_NAME_LEN);
     p.name[PRESET_NAME_LEN] = '\0';
     size_t n = 5 + PRESET_NAME_LEN;

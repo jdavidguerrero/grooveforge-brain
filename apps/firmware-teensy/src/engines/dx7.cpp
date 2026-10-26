@@ -62,6 +62,7 @@ void DX7Engine::begin(float volume) {
 void DX7Engine::noteOn(uint8_t midi_note, float velocity) {
     if (velocity < 0.0f) velocity = 0.0f;
     if (velocity > 1.0f) velocity = 1.0f;
+    velocity = 1.0f - _velAmp * (1.0f - velocity);   // VEL → AMP (theory/10); 1.0 = la velocity tal cual
 
     const uint8_t n = _unisonN;   // UNISON (theory/09 §5): N voces por nota, desafinadas simétricas
     if (n > 1)

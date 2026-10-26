@@ -260,15 +260,15 @@ uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 void engine_note_on(uint8_t e, uint8_t note, float vel) {
     switch (e) {
         // El Model D y el Juno-106 originales no tienen velocity (fidelidad §11.6): suenan siempre a fondo
-        // POCKET les devuelve la velocity (macro_velocity)
+        // La respuesta a la velocity la decide cada preset (theory/10): 0 % en el Model D y el Juno por defecto
         case 0:
             mono_drift.amount = studio::macro_amount(patches[0], GF_MACRO_DRIFT);
             mono_drift_pitch = mono_drift.pitch();
             mono_drift_cut = mono_drift.cutoff();
-            moog.noteOn(note, studio::macro_velocity(vel, 0, patches[0]));
+            moog.noteOn(note, vel);
             moog_note = note;
             break;
-        case 1: juno.noteOn(note, studio::macro_velocity(vel, 1, patches[1])); break;
+        case 1: juno.noteOn(note, vel); break;
         case 2: prophet.noteOn(note, vel); break;
         case 3: ob6.noteOn(note, vel); break;
         case 4: dx7.noteOn(note, vel); break;
@@ -463,6 +463,8 @@ void engine_patch(uint8_t e) {
     const studio::Patch& p = mp;
     const float glide_ms = p.glide * p.glide * 1500.0f;
     const float drv = 0.5f + 3.5f * p.drive;
+    float va, vf;
+    studio::macro_vel_depths(p, &va, &vf);   // VEL → AMP / FILTER del preset + POCKET (theory/10)
     switch (e) {
         case 0:
             moog.setVCAAttack(p.attack_ms); moog.setVCADecay(p.decay_ms);
@@ -472,13 +474,15 @@ void engine_patch(uint8_t e) {
             moog.setFilterEnvAmount(p.env_amt);
             moog.setGlide(glide_ms);
             moog.setDrive(drv);
+            moog.setVelocityDepth(va, vf);
             break;
 #define POLY_PATCH(eng)                                                                                  \
     eng.setAmpEnv(p.attack_ms, p.decay_ms, p.sustain, p.release_ms);                                  \
     eng.setFilterEnv(p.f_attack_ms, p.f_decay_ms, p.f_sustain, p.f_release_ms);                       \
     eng.setFilterEnvAmount(p.env_amt);                                                                \
     eng.setGlide(glide_ms);                                                                           \
-    eng.setDrive(drv);
+    eng.setDrive(drv);                                                                                \
+    eng.setVelocityDepth(va, vf);
         case 1: POLY_PATCH(juno) break;
         case 2:
             POLY_PATCH(prophet)

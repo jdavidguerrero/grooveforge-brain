@@ -161,7 +161,7 @@ void Juno106::setPulseWidth(float pw) {
 void Juno106::setSubLevel(float level) {
     _subLevel = level;
     for (uint8_t i = 0; i < JUNO_VOICES; i++) {
-        const float vel = 0.35f + 0.65f * _voices[i].velocity;
+        const float vel = 1.0f - _velAmp * (1.0f - _voices[i].velocity);
         _voiceMix[i].gain(1, _subLevel * vel);
     }
 }
@@ -169,7 +169,7 @@ void Juno106::setSubLevel(float level) {
 void Juno106::setNoiseLevel(float level) {
     _noiseLevel = level;
     for (uint8_t i = 0; i < JUNO_VOICES; i++) {
-        const float vel = 0.35f + 0.65f * _voices[i].velocity;
+        const float vel = 1.0f - _velAmp * (1.0f - _voices[i].velocity);
         _voiceMix[i].gain(2, _noiseLevel * 0.5f * vel);
     }
 }
@@ -263,7 +263,7 @@ void Juno106::update() {
 
     for (uint8_t i = 0; i < JUNO_VOICES; i++) {
         const float envLevel = _filterEnv[i].update((float)dt);
-        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+        const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
 
         float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 8000.0f) * _lfo.cutoff_mul * _spread[i].cutoff * _cutJit[i];
         if (modulated < 20.0f)    modulated = 20.0f;
@@ -287,7 +287,7 @@ void Juno106::_triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity
     }
     _voices[voice_idx].velocity = velocity;
 
-    const float velGain = 0.35f + 0.65f * velocity;
+    const float velGain = 1.0f - _velAmp * (1.0f - velocity);
     _voiceMix[voice_idx].gain(0, 0.60f * velGain);
     _voiceMix[voice_idx].gain(1, _subLevel * velGain);
     _voiceMix[voice_idx].gain(2, _noiseLevel * 0.5f * velGain);

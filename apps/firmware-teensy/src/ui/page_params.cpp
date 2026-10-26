@@ -40,6 +40,10 @@ ParamChange env_change(const Patch& p, uint8_t e, uint8_t env, uint8_t idx) {
     }
 }
 
+ParamChange vel_change(const Patch& p, uint8_t e, uint8_t idx) {
+    return {gf_param_id(e, GF_GROUP_ENV, idx), (idx == GF_ENV_VEL_AMP ? p.vel_amp : p.vel_cut) * 0.01f};
+}
+
 ParamChange osc_change(const Patch& p, uint8_t e, uint8_t stop, uint8_t slot) {
     const GF_OscSlot* s = &GF_OSC_SLOT[e][stop][slot];
     const float v = p.osc[s->global ? 0 : stop][slot];
@@ -92,7 +96,14 @@ uint8_t edit_encoder(Patch& p, const GF_UiState& ui, uint8_t e, uint8_t enc, int
     if (enc > 3) return 0;
     // Páginas de edición: los 4 encoders (P1 · P2 · ENC L · ENC R). La capa SHIFT existe en OSC y LFO / MOD
     // (plantillas de 8 slots); en ENV y SYNTH FX está vacía.
-    if (sh && (ui.page == ENV || ui.page == SYNTH_FX)) return 0;
+    if (sh && ui.page == SYNTH_FX) return 0;
+    if (sh && ui.page == ENV) {                                          // SHIFT P1 / P2: VEL → AMP / FILTER (theory/10)
+        if (enc > 1) return 0;
+        float& v = enc == 0 ? p.vel_amp : p.vel_cut;
+        v = clamp(v + 2.0f * steps, 0.0f, 100.0f);
+        out[0] = vel_change(p, e, enc == 0 ? GF_ENV_VEL_AMP : GF_ENV_VEL_CUT);
+        return 1;
+    }
 
     switch (ui.page) {
         case PERFORM: case SPECTRUM: case PANEL:                         // SPECTRUM y PANEL = igual que PERFORM
@@ -317,10 +328,17 @@ uint8_t param_cc(uint16_t id, uint8_t e) {
     }
 }
 
+void patch_vel_defaults(Patch& p, uint8_t e) {
+    // Model D y Juno sin velocity, como los originales; el DX7 la pasa tal cual a sus operadores
+    p.vel_amp = (e == 0 || e == 1) ? 0.0f : e == 4 ? 100.0f : 65.0f;
+    p.vel_cut = (e == 0 || e == 1) ? 0.0f : 50.0f;
+}
+
 void patch_init(Patch& p, uint8_t e) {
     float (&o)[GF_OSC_STOPS][GF_OSC_SLOTS] = p.osc;
     p.glide = 0.0f;
     p.drive = 0.2f;
+    patch_vel_defaults(p, e);
     switch (e) {
         case 0:  // MODEL D: SAW / SAW / SQR, +7 CT, −12 ST, niveles 80 / 72 / 50, ruido 12 blanco, PW 50%, FINE 0 CT
             o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 7; o[2][1] = -12;
@@ -372,6 +390,8 @@ uint8_t patch_params(const Patch& p, uint8_t e, ParamChange* out) {
     uint8_t n = 0;
     for (uint8_t env = 0; env < 2; ++env)
         for (uint8_t i = 0; i < 4; ++i) out[n++] = env_change(p, e, env, i);
+    out[n++] = vel_change(p, e, GF_ENV_VEL_AMP);
+    out[n++] = vel_change(p, e, GF_ENV_VEL_CUT);
     for (uint8_t st = 0; st < GF_OSC_STOPS; ++st)
         for (uint8_t sl = 0; sl < GF_OSC_SLOTS; ++sl) {
             const GF_OscSlot* s = &GF_OSC_SLOT[e][st][sl];

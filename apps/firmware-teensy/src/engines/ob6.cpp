@@ -202,7 +202,7 @@ void OB6::setOscMix(float vco1, float vco2, float sub, float noise) {
     _lvlSub   = sub;
     _lvlNoise = noise;
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
-        const float vel = 0.35f + 0.65f * _voices[i].velocity;
+        const float vel = 1.0f - _velAmp * (1.0f - _voices[i].velocity);
         _voiceMix[i].gain(0, _lvl1 * vel);
         _voiceMix[i].gain(1, _lvl2 * vel);
         _voiceMix[i].gain(2, _lvlSub * vel);
@@ -317,7 +317,7 @@ void OB6::update() {
 
     for (uint8_t i = 0; i < OB6_VOICES; i++) {
         const float envLevel  = _filterEnv[i].update((float)dt);
-        const float velBright = 0.50f + 0.50f * _voices[i].velocity;
+        const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
 
         // X-MOD combinada: Filter Env (unipolar) + VCO2/LFO
         const float xmodSig = _xmEnv * envLevel + _xmVco2 * _lfo.lfo;
@@ -361,7 +361,7 @@ void OB6::_triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity) {
     }
     _voices[voice_idx].velocity = velocity;
 
-    const float vel = 0.35f + 0.65f * velocity;
+    const float vel = 1.0f - _velAmp * (1.0f - velocity);
     _voiceMix[voice_idx].gain(0, _lvl1 * vel);
     _voiceMix[voice_idx].gain(1, _lvl2 * vel);
     _voiceMix[voice_idx].gain(2, _lvlSub * vel);

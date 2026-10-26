@@ -211,12 +211,13 @@ void ScreenEnv::update(const StudioState& s) {
     const char* ur = ev.r >= 1000.0f ? "S" : "MS";
 
     char key[64];
-    std::snprintf(key, sizeof(key), "%s|%s|%s|%s|%d|%d", a, d, sus, r, s.shift, ev.filter);
+    std::snprintf(key, sizeof(key), "%s|%s|%s|%s|%d|%d|%d|%d", a, d, sus, r, s.shift, ev.filter,
+                  int(std::lround(s.vel_amp * 100)), int(std::lround(s.vel_cut * 100)));
     if (std::strcmp(key, _last_key) != 0) {
         std::snprintf(_last_key, sizeof(_last_key), "%s", key);
         draw_graph(s);
         const bool sh = s.shift;
-        paint_cell(_cells[0], !sh, false, a, ua);       // los 4 encoders editan A · D · S · R; SHIFT: capa vacía
+        paint_cell(_cells[0], !sh, false, a, ua);       // los 4 encoders editan A · D · S · R; SHIFT: velocity abajo
         paint_cell(_cells[1], !sh, false, d, ud);
         paint_cell(_cells[2], !sh, false, sus, "%");
         paint_cell(_cells[3], !sh, false, r, ur);
@@ -225,9 +226,19 @@ void ScreenEnv::update(const StudioState& s) {
     _bottom.set_mode(s.mode == Mode::Fx, s.shift);
     static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, 1);
-    _bottom.set_page_control(0, "ATTACK", a, ua, ev.a / 200.0f);
-    _bottom.set_page_control(1, "DECAY", d, ud, ev.d / 1200.0f);
-    _bottom.set_page_control(2, "SUSTAIN", sus, "%", ev.s);
-    _bottom.set_page_control(3, "RELEASE", r, ur, ev.r / 1200.0f);
+    if (s.shift) {   // SHIFT + P1 / P2: VEL → AMP y VEL → FILTER del preset (theory/10)
+        char va[8], vf[8];
+        std::snprintf(va, sizeof(va), "%d", int(std::lround(s.vel_amp * 100)));
+        std::snprintf(vf, sizeof(vf), "%d", int(std::lround(s.vel_cut * 100)));
+        _bottom.set_page_control(0, "VEL\xE2\x86\x92" "AMP", va, "%", s.vel_amp);
+        _bottom.set_page_control(1, "VEL\xE2\x86\x92" "FILTER", vf, "%", s.vel_cut);
+        _bottom.set_page_control(2, "NO FUNCTION", "\xE2\x80\x94", "", 0.0f);
+        _bottom.set_page_control(3, "NO FUNCTION", "\xE2\x80\x94", "", 0.0f);
+    } else {
+        _bottom.set_page_control(0, "ATTACK", a, ua, ev.a / 200.0f);
+        _bottom.set_page_control(1, "DECAY", d, ud, ev.d / 1200.0f);
+        _bottom.set_page_control(2, "SUSTAIN", sus, "%", ev.s);
+        _bottom.set_page_control(3, "RELEASE", r, ur, ev.r / 1200.0f);
+    }
     _bottom.set_nav(ev.filter ? "AMP \xE2\x80\xB9 FILTER" : "AMP \xE2\x80\xBA FILTER");
 }

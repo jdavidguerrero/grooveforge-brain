@@ -378,8 +378,15 @@ void test_macros_neutral_at_zero() {
     TEST_ASSERT_EQUAL_FLOAT(p.drive, q.drive);
     TEST_ASSERT_EQUAL_FLOAT(p.osc[3][1], q.osc[3][1]);
     TEST_ASSERT_EQUAL_FLOAT(0.4f, studio::macro_resonance(0.4f, p));
-    TEST_ASSERT_EQUAL_FLOAT(1.0f, studio::macro_velocity(0.3f, 1, p));   // Juno sin POCKET: a fondo
-    TEST_ASSERT_EQUAL_FLOAT(0.3f, studio::macro_velocity(0.3f, 2, p));   // Prophet: siempre la velocity
+    float va, vf;
+    studio::macro_vel_depths(p, &va, &vf);                                // DX7: la velocity tal cual al volumen
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, va);
+    TEST_ASSERT_EQUAL_FLOAT(0.5f, vf);
+    studio::Patch juno;
+    studio::patch_init(juno, 1);
+    studio::macro_vel_depths(juno, &va, &vf);                             // Juno sin POCKET: sin velocity
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, va);
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, vf);
 }
 
 void test_macro_pocket_and_grit() {
@@ -395,7 +402,10 @@ void test_macro_pocket_and_grit() {
     TEST_ASSERT_EQUAL_FLOAT(p.osc[0][1], q.osc[0][1]);                 // portadora: igual
     TEST_ASSERT_FLOAT_WITHIN(1e-3f, p.osc[1][1] + 10.0f, q.osc[1][1]);  // moduladora: +10
     TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.5f, studio::macro_resonance(0.4f, p));
-    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.3f, studio::macro_velocity(0.3f, 0, p));   // POCKET 100 %: la velocity entera
+    float va, vf;
+    studio::macro_vel_depths(p, &va, &vf);                                // POCKET 100 % suma, con tope 1
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, va);
+    TEST_ASSERT_FLOAT_WITHIN(1e-6f, 1.0f, vf);
     TEST_ASSERT_EQUAL_FLOAT(1000.0f, p.decay_ms);                       // el patch guardado no cambia
 }
 
@@ -414,7 +424,10 @@ void test_macro_depths_and_pocket_only_shortens() {
     TEST_ASSERT_EQUAL_FLOAT(0.9f, q.env_amt);
     TEST_ASSERT_EQUAL_FLOAT(0.4f, studio::macro_resonance(0.4f, p));
     TEST_ASSERT_FLOAT_WITHIN(1e-3f, p.mod[0][1] + 20.0f, q.mod[0][1]);   // POLY-MOD +40 × 50 %
-    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.65f, studio::macro_velocity(0.3f, 1, p));   // Juno: la mitad de la velocity
+    float va, vf;
+    studio::macro_vel_depths(p, &va, &vf);                                // Prophet 65 / 50 + POCKET a la mitad
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.975f, va);
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 0.75f, vf);
 }
 
 void test_drift_bounded() {

@@ -126,6 +126,10 @@ struct StudioState {
     float amp_sustain = 0.7f;
     float amp_release_ms = 300.0f;
 
+    // Velocity por preset (theory/10 de Studio): capa SHIFT de la página ENV, 0–1 = 0–100 %
+    float vel_amp = 0.65f;
+    float vel_cut = 0.5f;
+
     // Envolvente del filtro de la página ENV (NAV → FILTER)
     float env_attack_ms = 12.0f;
     float env_decay_ms = 340.0f;

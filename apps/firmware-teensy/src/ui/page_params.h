@@ -20,6 +20,7 @@ struct Patch {
     float attack_ms = 5.0f, decay_ms = 300.0f, sustain = 0.7f, release_ms = 300.0f;     ///< envelope del amplificador
     float f_attack_ms = 5.0f, f_decay_ms = 400.0f, f_sustain = 0.3f, f_release_ms = 300.0f;  ///< envelope del filtro
     float env_amt = 0.3f;                    ///< FLT ENV AMT, 0–1 = 0 a +5 oct
+    float vel_amp = 65.0f, vel_cut = 50.0f;  ///< VEL → AMP y VEL → FILTER, 0–100 % (theory/10); 65 / 50 = curva de siempre
     float glide = 0.0f;                      ///< GLIDE (SHIFT+P1 en PERFORM/SPECTRUM), 0–1
     float drive = 0.2f;                      ///< DRIVE del filtro (SHIFT+P2 en PERFORM/SPECTRUM), 0–1
     float lfo_rate_hz = 2.0f;                ///< RATE libre
@@ -57,11 +58,14 @@ struct ParamChange {
 };
 
 /// 8 ENV + 3 FILTER (ENV AMT, GLIDE, DRIVE) + RATE, SHAPE, DIV + 4 cantidades + cadena (4 + 4 + 12) + hasta 32 de OSC
-/// + 16 de MOD + GROOVE (25 slots + 4 encendidos)
-constexpr uint8_t PATCH_PARAM_COUNT = 115;
+/// + 16 de MOD + GROOVE (25 slots + 4 encendidos) + VEL → AMP / FILTER
+constexpr uint8_t PATCH_PARAM_COUNT = 117;
 
 /// Valores de arranque de la página OSC de cada engine (los del diseño v3, osc_catalog.cpp de la cabeza).
 void patch_init(Patch& p, uint8_t engine);
+
+/// Velocity por defecto del engine (theory/10 §2): Model D y Juno 0 / 0, DX7 100, el resto 65 / 50.
+void patch_vel_defaults(Patch& p, uint8_t engine);
 
 /**
  * @brief Un encoder de página giró `steps` pasos: `enc` 0 = P1, 1 = P2, 2 = ENC L, 3 = ENC R (theory/04 §3.1).
