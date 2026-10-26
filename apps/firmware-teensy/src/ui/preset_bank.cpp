@@ -346,8 +346,17 @@ void PresetBank::scan(uint8_t e) {
     // trae presets nuevos sin borrar lo guardado)
     Preset fac[PRESET_MAX];
     const uint8_t n = factory_presets(e, fac, PRESET_MAX);
+    // Presets de fábrica ya ofrecidos en este banco: nombres de PRESET_NAME_LEN bytes seguidos
+    const size_t seen_len = storage_.read(e, FACTORY_SLOT, buf, sizeof(buf));
+    auto offered = [&](const char* name) {
+        for (size_t k = 0; k + PRESET_NAME_LEN <= seen_len; k += PRESET_NAME_LEN)
+            if (strncmp(reinterpret_cast<const char*>(buf + k), name, PRESET_NAME_LEN) == 0) return true;
+        return false;
+    };
+    bool seen[PRESET_MAX] = {};
+    for (uint8_t f = 0; f < n; ++f) seen[f] = offered(fac[f].name);
     for (uint8_t f = 0; f < n && count_[e] < PRESET_MAX; ++f) {
-        bool have = false;
+        bool have = seen[f];
         for (uint8_t i = 0; i < count_[e] && !have; ++i) have = strcmp(names_[e][i], fac[f].name) == 0;
         if (have) continue;
         const uint8_t i = count_[e];
@@ -355,12 +364,39 @@ void PresetBank::scan(uint8_t e) {
         set_name(names_[e][i], fac[f].name);
         count_[e] = uint8_t(i + 1);
     }
+    // Anota todos los de fábrica de este firmware como ofrecidos (solo si cambió algo)
+    bool all_seen = true;
+    for (uint8_t f = 0; f < n; ++f) all_seen &= seen[f];
+    if (all_seen) return;
+    uint8_t mark[PRESET_MAX * PRESET_NAME_LEN] = {};
+    for (uint8_t f = 0; f < n; ++f) strncpy(reinterpret_cast<char*>(mark + f * PRESET_NAME_LEN), fac[f].name, PRESET_NAME_LEN);
+    storage_.write(e, FACTORY_SLOT, mark, size_t(n) * PRESET_NAME_LEN);
 }
 
 bool PresetBank::load(uint8_t e, uint8_t i, Preset* out) {
     if (e >= GF_ENGINE_COUNT || i >= count_[e]) return false;
     uint8_t buf[PRESET_BYTES];
     return preset_decode(buf, storage_.read(e, i, buf, sizeof(buf)), e, out);
+}
+
+PutResult PresetBank::put(uint8_t e, uint8_t i, const uint8_t* buf, size_t len) {
+    if (e >= GF_ENGINE_COUNT) return PutResult::Engine;
+    if (i > count_[e] || i >= PRESET_MAX) return PutResult::Index;   // reemplaza o agrega, nunca deja hueco
+    Preset p;
+    if (!preset_decode(buf, len, e, &p)) return PutResult::Format;
+    uint8_t out[PRESET_BYTES];
+    if (preset_encode(p, e, out, sizeof(out)) == 0 || !storage_.write(e, i, out, PRESET_BYTES)) return PutResult::Write;
+    set_name(names_[e][i], p.name);
+    if (i == count_[e]) count_[e] = uint8_t(i + 1);
+    return PutResult::Ok;
+}
+
+bool PresetBank::truncate(uint8_t e, uint8_t n) {
+    if (e >= GF_ENGINE_COUNT) return false;
+    bool ok = true;
+    for (uint8_t i = n; i < count_[e]; ++i) ok &= storage_.remove(e, i);
+    if (n < count_[e]) count_[e] = n;
+    return ok;
 }
 
 int PresetBank::save_new(uint8_t e, Preset p) {

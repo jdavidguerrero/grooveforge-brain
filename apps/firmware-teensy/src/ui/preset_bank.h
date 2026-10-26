@@ -16,6 +16,8 @@
 namespace studio {
 
 constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
+/// Lugar del almacenamiento donde cada banco anota qué presets de fábrica ya se ofrecieron (no es un preset).
+constexpr uint8_t FACTORY_SLOT = PRESET_MAX;
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
 constexpr uint8_t PRESET_FORMAT = 4;        ///< versión del formato (4: velocity por preset, theory/10, 2026-10-26)
 constexpr uint8_t PRESET_FORMAT_MIN = 2;    ///< el más viejo que se migra al leer (2: sin GROOVE)
@@ -54,7 +56,12 @@ public:
     /// @return bytes leídos (0 si no existe).
     virtual size_t read(uint8_t engine, uint8_t index, uint8_t* buf, size_t cap) = 0;
     virtual bool write(uint8_t engine, uint8_t index, const uint8_t* buf, size_t len) = 0;
+    /// Borra el archivo (bibliotecario, theory/11). @return false si no se pudo.
+    virtual bool remove(uint8_t engine, uint8_t index) = 0;
 };
+
+/// Resultado de subir un preset por el bibliotecario (theory/11 §2).
+enum class PutResult : uint8_t { Ok, Format, Engine, Index, Write };
 
 /// Banco de cada engine: nombres en RAM, patches en el almacenamiento.
 class PresetBank {
@@ -62,7 +69,8 @@ public:
     explicit PresetBank(PresetStorage& s) : storage_(s) {}
 
     /// Lee los nombres del banco del engine; si está vacío, escribe el banco de fábrica. Si ya tiene presets, agrega al
-    /// final los de fábrica que falten (por nombre) sin tocar lo guardado, mientras haya lugar.
+    /// final los de fábrica que falten (por nombre) sin tocar lo guardado, mientras haya lugar. Un preset de fábrica
+    /// que ya se ofreció una vez (anotado en FACTORY_SLOT) no vuelve: si lo borraste con el bibliotecario, queda borrado.
     void scan(uint8_t engine);
 
     uint8_t count(uint8_t engine) const { return engine < GF_ENGINE_COUNT ? count_[engine] : 0; }
@@ -73,6 +81,13 @@ public:
 
     /// Guarda `p` en el próximo lugar libre como `USER nn`. @return el índice, o -1 si el banco está lleno.
     int save_new(uint8_t engine, Preset p);
+
+    /// Bibliotecario: escribe el preset binario `buf` (cualquier formato que se pueda leer) en el lugar `index`,
+    /// reemplazando o agregando al final (sin huecos). Se guarda en el formato actual.
+    PutResult put(uint8_t engine, uint8_t index, const uint8_t* buf, size_t len);
+
+    /// Bibliotecario: deja el banco con `n` presets (borra del `n` en adelante).
+    bool truncate(uint8_t engine, uint8_t n);
 
 private:
     PresetStorage& storage_;

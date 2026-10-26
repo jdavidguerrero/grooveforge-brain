@@ -4,6 +4,7 @@
 #include <unity.h>
 
 #include "ui/preset_bank.h"
+#include "ui/preset_link.h"
 
 using namespace studio;
 
@@ -26,8 +27,12 @@ public:
         ++writes;
         return true;
     }
-    uint8_t data[GF_ENGINE_COUNT][PRESET_MAX][PRESET_BYTES] = {};
-    size_t len[GF_ENGINE_COUNT][PRESET_MAX] = {};
+    bool remove(uint8_t e, uint8_t i) override {
+        len[e][i] = 0;
+        return true;
+    }
+    uint8_t data[GF_ENGINE_COUNT][PRESET_MAX + 1][PRESET_BYTES] = {};   // + FACTORY_SLOT
+    size_t len[GF_ENGINE_COUNT][PRESET_MAX + 1] = {};
     int writes = 0;
     bool fail = false;
 };
@@ -259,6 +264,82 @@ void test_pilotos_signature() {
     TEST_ASSERT_FALSE(p.patch.groove_on[GF_GROOVE_ARP]);
 }
 
+// ── Bibliotecario (theory/11) ─────────────────────────────────────────────────
+
+void test_tamanos_iguales_al_script_de_la_mac() {
+    // tools/preset-librarian/gf_presets.py SIZE = {2: 355, 3: 519, 4: 527}: si cambia el formato, cambiar los dos
+    TEST_ASSERT_EQUAL_UINT32(355, PRESET_BYTES_V2);
+    TEST_ASSERT_EQUAL_UINT32(519, PRESET_BYTES_V3);
+    TEST_ASSERT_EQUAL_UINT32(527, PRESET_BYTES);
+}
+
+void test_hex_ida_y_vuelta() {
+    const uint8_t in[4] = {0x00, 0x7F, 0xA5, 0xFF};
+    char hex[9];
+    hex_encode(in, 4, hex);
+    TEST_ASSERT_EQUAL_STRING("007FA5FF", hex);
+    uint8_t out[4];
+    TEST_ASSERT_EQUAL_UINT32(4, hex_decode("007fa5ff", out, 4));
+    TEST_ASSERT_EQUAL_MEMORY(in, out, 4);
+    TEST_ASSERT_EQUAL_UINT32(0, hex_decode("ABC", out, 4));       // impar
+    TEST_ASSERT_EQUAL_UINT32(0, hex_decode("ZZ", out, 4));        // inválido
+    TEST_ASSERT_EQUAL_UINT32(0, hex_decode("0011223344", out, 4));   // no cabe
+}
+
+void test_parseo_de_comandos() {
+    char l1[] = "@GF HELLO\r";
+    TEST_ASSERT_EQUAL(int(LinkCmd::Hello), int(parse_link_cmd(l1).kind));
+    char l2[] = "@GF PUT 3 7 47465004";
+    LinkCmd c = parse_link_cmd(l2);
+    TEST_ASSERT_EQUAL(int(LinkCmd::Put), int(c.kind));
+    TEST_ASSERT_EQUAL_UINT8(3, c.engine);
+    TEST_ASSERT_EQUAL_UINT8(7, c.index);
+    TEST_ASSERT_EQUAL_STRING("47465004", c.hex);
+    char l3[] = "@GF TRUNC 1 9";
+    c = parse_link_cmd(l3);
+    TEST_ASSERT_EQUAL(int(LinkCmd::Trunc), int(c.kind));
+    TEST_ASSERT_EQUAL_UINT8(9, c.index);
+    char l4[] = "[UI] modo SYNTH";
+    TEST_ASSERT_EQUAL(int(LinkCmd::None), int(parse_link_cmd(l4).kind));
+    char l5[] = "@GF PUT 3 x 00";
+    TEST_ASSERT_EQUAL(int(LinkCmd::None), int(parse_link_cmd(l5).kind));
+    char l6[] = "@GF EXPORT";
+    TEST_ASSERT_EQUAL(int(LinkCmd::Export), int(parse_link_cmd(l6).kind));
+}
+
+void test_put_y_trunc_del_banco() {
+    FakeStorage s;
+    PresetBank bank(s);
+    bank.scan(2);
+    const uint8_t n = bank.count(2);
+    Preset p;
+    patch_init(p.patch, 2);
+    strcpy(p.name, "MI STAB");
+    uint8_t buf[PRESET_BYTES];
+    preset_encode(p, 2, buf, sizeof(buf));
+    TEST_ASSERT_EQUAL(int(PutResult::Ok), int(bank.put(2, 1, buf, PRESET_BYTES)));     // reemplaza el 1
+    TEST_ASSERT_EQUAL_STRING("MI STAB", bank.name(2, 1));
+    TEST_ASSERT_EQUAL_UINT8(n, bank.count(2));
+    TEST_ASSERT_EQUAL(int(PutResult::Ok), int(bank.put(2, n, buf, PRESET_BYTES)));     // agrega al final
+    TEST_ASSERT_EQUAL_UINT8(n + 1, bank.count(2));
+    TEST_ASSERT_EQUAL(int(PutResult::Index), int(bank.put(2, n + 5, buf, PRESET_BYTES)));   // hueco
+    TEST_ASSERT_EQUAL(int(PutResult::Format), int(bank.put(1, 0, buf, PRESET_BYTES)));      // es de otro engine
+    TEST_ASSERT_EQUAL(int(PutResult::Engine), int(bank.put(9, 0, buf, PRESET_BYTES)));
+    buf[3] = 2;                                                                          // formato 2: se migra
+    TEST_ASSERT_EQUAL(int(PutResult::Ok), int(bank.put(2, 0, buf, PRESET_BYTES_V2)));
+    Preset q;
+    TEST_ASSERT_TRUE(bank.load(2, 0, &q));
+    TEST_ASSERT_EQUAL_STRING("MI STAB", q.name);
+    TEST_ASSERT_EQUAL_UINT32(PRESET_BYTES, s.len[2][0]);                                // guardado en el formato actual
+    TEST_ASSERT_TRUE(bank.truncate(2, 2));
+    TEST_ASSERT_EQUAL_UINT8(2, bank.count(2));
+    TEST_ASSERT_EQUAL_UINT32(0, s.len[2][2]);
+    PresetBank again(s);                                    // otro arranque: lo borrado de fábrica no vuelve
+    again.scan(2);
+    TEST_ASSERT_EQUAL_UINT8(2, again.count(2));
+    TEST_ASSERT_EQUAL_STRING("MI STAB", again.name(2, 1));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -271,5 +352,9 @@ int main() {
     RUN_TEST(test_migra_formato_3_con_velocity_del_engine);
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     RUN_TEST(test_pilotos_signature);
+    RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
+    RUN_TEST(test_hex_ida_y_vuelta);
+    RUN_TEST(test_parseo_de_comandos);
+    RUN_TEST(test_put_y_trunc_del_banco);
     return UNITY_END();
 }

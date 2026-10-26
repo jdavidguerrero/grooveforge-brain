@@ -68,6 +68,7 @@
 #include "../ui/groove_macros.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
+#include "../ui/preset_link.h"
 #include "../ui/panel_leds.h"
 #include "../ui/studio_ui.h"
 
@@ -245,6 +246,13 @@ public:
         const size_t n = f.write(buf, len);
         f.close();
         return n == len;
+    }
+
+    bool remove(uint8_t e, uint8_t i) override {
+        if (!preset_fs_ok) return false;
+        char path[32];
+        path_of(e, i, path);
+        return preset_fs.remove(path) || !preset_fs.exists(path);
     }
 
 private:
@@ -1208,8 +1216,86 @@ void setup() {
     Serial.println("[host] USB host iniciado: conectar el teclado MIDI");
 }
 
+// ── Bibliotecario de presets por el USB serie (variants/studio/theory/11) ──────────────────────────────────
+
+/// Después de cambiar un banco desde la Mac: si es el del engine activo, la cabeza recibe la lista nueva.
+void librarian_bank_changed(uint8_t e) {
+    if (e != ui.engine()) return;
+    ui.set_preset_count(presets.count(e));
+    if (preset_loaded[e] != 0xFF && preset_loaded[e] >= presets.count(e)) preset_loaded[e] = 0xFF;
+    bridge_presets();
+    bridge_preset_loaded();
+}
+
+void librarian_command(char* line) {
+    static char hex[2 * studio::PRESET_BYTES + 1];
+    static uint8_t bin[studio::PRESET_BYTES];
+    const studio::LinkCmd c = studio::parse_link_cmd(line);
+    switch (c.kind) {
+        case studio::LinkCmd::Hello:
+            Serial.printf("@GF HELLO %u %u %u\n", studio::PRESET_FORMAT, GF_ENGINE_COUNT, studio::PRESET_MAX);
+            break;
+        case studio::LinkCmd::Export: {
+            unsigned total = 0;
+            for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) total += presets.count(e);
+            Serial.printf("@GF BEGIN %u\n", total);
+            for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)
+                for (uint8_t i = 0; i < presets.count(e); ++i) {
+                    studio::Preset p;   // se lee migrado y sale siempre en el formato actual
+                    if (!presets.load(e, i, &p) || !studio::preset_encode(p, e, bin, sizeof(bin))) continue;
+                    studio::hex_encode(bin, studio::PRESET_BYTES, hex);
+                    Serial.printf("@GF P %u %u %s\n", e, i, hex);
+                }
+            Serial.println("@GF END");
+            break;
+        }
+        case studio::LinkCmd::Put: {
+            const size_t n = studio::hex_decode(c.hex, bin, sizeof(bin));
+            const studio::PutResult r = n ? presets.put(c.engine, c.index, bin, n) : studio::PutResult::Format;
+            static const char* const ERR[] = {"", "FORMATO", "ENGINE", "INDICE", "ESCRITURA"};
+            if (r == studio::PutResult::Ok) {
+                Serial.printf("@GF OK PUT %u %u\n", c.engine, c.index);
+                librarian_bank_changed(c.engine);
+            } else {
+                Serial.printf("@GF ERR %s\n", ERR[uint8_t(r)]);
+            }
+            break;
+        }
+        case studio::LinkCmd::Trunc:
+            if (c.engine < GF_ENGINE_COUNT && presets.truncate(c.engine, c.index)) {
+                Serial.printf("@GF OK TRUNC %u %u\n", c.engine, c.index);
+                librarian_bank_changed(c.engine);
+            } else {
+                Serial.println("@GF ERR ESCRITURA");
+            }
+            break;
+        case studio::LinkCmd::None: break;
+    }
+}
+
+/// Lee líneas del USB serie sin bloquear; una línea demasiado larga se descarta entera.
+void librarian_poll() {
+    static char line[2 * studio::PRESET_BYTES + 64];
+    static size_t len = 0;
+    static bool overflow = false;
+    while (Serial.available()) {
+        const char ch = char(Serial.read());
+        if (ch == '\n') {
+            line[len] = '\0';
+            if (!overflow) librarian_command(line);
+            len = 0;
+            overflow = false;
+        } else if (len + 1 < sizeof(line)) {
+            line[len++] = ch;
+        } else {
+            overflow = true;
+        }
+    }
+}
+
 void loop() {
     usb_host.Task();
+    librarian_poll();
     midi.read();
     while (usbMIDI.read()) {
     }
