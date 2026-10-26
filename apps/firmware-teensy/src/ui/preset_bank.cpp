@@ -95,6 +95,16 @@ const Factory MODEL_D[] = {
                     o[0][2] = 90; o[1][2] = 80; o[2][2] = 60; o[3][0] = 0;
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 60; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 15;
                     p.vel_amp = 30; p.vel_cut = 50; }},
+    // Híbridos de la guía de Juan (paleta-v1 §6): mitades B (peso) de WOODBASS y ACID ARP, A de ROLLER SUB
+    {"HY WOODBASS B", 0, 300, 0.4f, 100, 0, 300, 0.05f, 100, 0.75f, 180, 0.2f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 4; o[2][1] = -12;
+                    o[0][2] = 85; o[1][2] = 80; o[2][2] = 75; o[3][0] = 0; p.drive = 0.4f;
+                    p.vel_amp = 50; p.vel_cut = 70; }},
+    {"HY ACID ARP B", 1, 200, 0.6f, 100, 1, 200, 0.2f, 100, 0.3f, 140, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[2][0] = 1; o[2][1] = -12; o[0][2] = 0; o[1][2] = 0; o[2][2] = 90; o[3][0] = 0; }},
+    {"HY ROLLER SUB A", 0, 200, 0.3f, 80, 0, 200, 0.05f, 80, 0.55f, 120, 0.2f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 5; o[0][2] = 85; o[1][2] = 85; o[2][2] = 0;
+                    o[3][0] = 0; p.drive = 0.7f; p.vel_amp = 40; p.vel_cut = 60; }},
 };
 
 const Factory JUNO[] = {
@@ -124,6 +134,15 @@ const Factory JUNO[] = {
                     float* pu = p.groove[GF_GROOVE_PUMP];
                     pu[GF_PUMP_DEPTH] = 60; pu[GF_PUMP_SHAPE] = 2; pu[GF_PUMP_RATE] = 0; pu[GF_PUMP_RELEASE] = 220;
                     p.groove_on[GF_GROOVE_PUMP] = true; p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 30; }},
+    // Híbridos: A de FRENCH STAB; B de ROLLER SUB (casi solo el SUB) y de RETRO BRASS (PWM a 4', CHORUS II)
+    {"HY FRENCH STAB A", 1, 250, 0.5f, 150, 1, 250, 0.3f, 150, 0.4f, 1800, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 0; o[0][2] = 0; o[0][3] = 40; o[0][4] = 1; o[0][5] = 1;
+                    p.vel_amp = 40; p.vel_cut = 50; }},
+    {"HY ROLLER SUB B", 1, 300, 0.8f, 80, 1, 200, 0.1f, 80, 0.1f, 200, 0.0f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 1; o[0][1] = 100; o[0][2] = 0; o[0][4] = 0; o[0][5] = 1; }},
+    {"HY RETRO BRASS B", 40, 800, 0.8f, 500, 40, 800, 0.5f, 500, 0.2f, 3000, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
+     [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 0; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1;
+                    o[0][6] = 2; }},
 };
 
 const Factory PROPHET[] = {
@@ -159,6 +178,16 @@ const Factory PROPHET[] = {
                     float* a = p.groove[GF_GROOVE_ARP];
                     a[GF_ARP_MODE] = 4; a[GF_ARP_DIV] = 2; a[GF_ARP_GATE] = 50; a[GF_ARP_OCT] = 2; a[GF_ARP_SWING] = 56;
                     p.groove_on[GF_GROOVE_ARP] = true; p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 30; }},
+    // Híbridos: B de FRENCH STAB (barrido de 15 ms) y de DESERT LEAD (sync), A de RETRO BRASS
+    {"HY FRENCH STAB B", 2, 300, 0.6f, 180, 15, 250, 0.2f, 180, 0.75f, 600, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 6; o[1][4] = 1; o[1][6] = 0;
+                    o[2][0] = 70; o[2][1] = 70; }},
+    {"HY DESERT LEAD B", 3, 500, 0.75f, 350, 3, 400, 0.3f, 300, 0.45f, 2200, 0.2f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][2] = 1; o[0][3] = 0; o[0][4] = 1; o[1][0] = 0; o[1][4] = 1;
+                    o[1][6] = 0; o[2][0] = 80; o[2][1] = 30; p.mod[0][0] = 20; p.mod[0][2] = 1; }},
+    {"HY RETRO BRASS A", 30, 600, 0.75f, 300, 60, 700, 0.4f, 300, 0.5f, 500, 0.1f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 7; o[1][4] = 1; o[1][6] = 0;
+                    o[2][0] = 70; o[2][1] = 70; }},
 };
 
 const Factory OB6[] = {
@@ -187,6 +216,13 @@ const Factory OB6[] = {
                     p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = 2; p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = 18;
                     p.groove_on[GF_GROOVE_UNISON] = true;
                     p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 25; p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 20; }},
+    // Híbridos: B de KALIMBA (BP con brisa de LFO), A de DESERT LEAD (notch barriendo lento)
+    {"HY KALIMBA B", 50, 800, 0.7f, 600, 50, 800, 0.5f, 600, 0.15f, 1500, 0.3f, 0, 0.3f, 0, 0.25f, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 6; o[0][1] = 0; o[0][3] = 0;
+                    o[0][7] = 1; }},
+    {"HY DESERT LEAD A", 5, 600, 0.8f, 400, 5, 600, 0.5f, 400, 0.3f, 1800, 0.25f, 0, 0.2f, 0, 0.3f, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 5; o[0][1] = 0; o[0][3] = 0;
+                    o[0][2] = 80; o[1][2] = 70; o[0][6] = 50; }},
 };
 
 void dx7_ops(Patch& p, const float (&op)[4][8]) {
@@ -231,6 +267,17 @@ const Factory DX7[] = {
                     c[GF_CHORD_TYPE] = 1; c[GF_CHORD_INV] = 1; c[GF_CHORD_STRUM] = 15; c[GF_CHORD_KEY] = 21;
                     p.groove_on[GF_GROOVE_CHORD] = true;
                     p.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 35; p.groove_on[GF_GROOVE_PUMP] = true; }},
+    // Híbridos: A de WOODBASS y de KALIMBA (golpe de madera / uña), B de SHAKER ZAP (campana sorda corta).
+    // Algoritmo 1 con OP3 y OP4 en 0 = par de 2 operadores
+    {"HY WOODBASS A", 0, 60, 1.0f, 45, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 2, 0, 45, 0, 45}, {1, 75, 0, 0, 0, 30, 0, 30},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
+    {"HY KALIMBA A", 0, 400, 1.0f, 300, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 350, 0, 300}, {4, 70, 0, 0, 0, 30, 0, 30},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
+    {"HY SHAKER ZAP B", 0, 150, 1.0f, 120, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 3, 0, 150, 0, 120}, {3.5f, 60, 0, 0, 0, 100, 0, 80},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
 };
 
 const Factory ARP[] = {
@@ -256,6 +303,12 @@ const Factory ARP[] = {
     {"JD ZAP PERC ARP", 0, 95, 0.0f, 60, 0, 95, 0.0f, 60, 0.85f, 1800, 0.75f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 4; o[0][2] = 0; o[0][3] = 60; o[0][4] = 70; o[1][4] = 0;
                     p.mod[0][5] = 0; }},                                                 // ruido blanco
+    // Híbridos: A de ACID ARP (pulso estrecho con PWM) y de SHAKER ZAP (ruido blanco, filtro por velocity)
+    {"HY ACID ARP A", 1, 180, 0.0f, 100, 1, 150, 0.0f, 100, 0.5f, 900, 0.65f, 0, 0.8f, 1, 0, 0, 0.4f,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 15; o[0][2] = 0; o[0][3] = 0; o[0][4] = 80; o[1][4] = 0; }},
+    {"HY SHAKER ZAP A", 0, 80, 0.0f, 60, 0, 80, 0.0f, 60, 0.7f, 3000, 0.6f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 0; o[0][3] = 80; o[0][4] = 0; o[1][4] = 0; p.mod[0][5] = 0;
+                    p.vel_cut = 100; }},
 };
 
 struct Bank {

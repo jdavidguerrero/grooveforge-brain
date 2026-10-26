@@ -266,6 +266,20 @@ void test_pilotos_signature() {
 
 // ── Bibliotecario (theory/11) ─────────────────────────────────────────────────
 
+void test_hibridos_en_pares() {
+    static const struct { uint8_t e; const char* name; } HY[] = {
+        {4, "HY WOODBASS A"},    {0, "HY WOODBASS B"},    {4, "HY KALIMBA A"},     {3, "HY KALIMBA B"},
+        {1, "HY FRENCH STAB A"}, {2, "HY FRENCH STAB B"}, {5, "HY ACID ARP A"},    {0, "HY ACID ARP B"},
+        {3, "HY DESERT LEAD A"}, {2, "HY DESERT LEAD B"}, {5, "HY SHAKER ZAP A"},  {4, "HY SHAKER ZAP B"},
+        {0, "HY ROLLER SUB A"},  {1, "HY ROLLER SUB B"},  {2, "HY RETRO BRASS A"}, {1, "HY RETRO BRASS B"}};
+    Preset p;
+    for (const auto& h : HY) TEST_ASSERT_TRUE_MESSAGE(find_factory(h.e, h.name, &p) >= 0, h.name);
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {                     // ningún banco pasa de 16
+        Preset fac[PRESET_MAX + 4];
+        TEST_ASSERT_TRUE(factory_presets(e, fac, PRESET_MAX + 4) <= PRESET_MAX);
+    }
+}
+
 void test_tamanos_iguales_al_script_de_la_mac() {
     // tools/preset-librarian/gf_presets.py SIZE = {2: 355, 3: 519, 4: 527}: si cambia el formato, cambiar los dos
     TEST_ASSERT_EQUAL_UINT32(355, PRESET_BYTES_V2);
@@ -352,6 +366,7 @@ int main() {
     RUN_TEST(test_migra_formato_3_con_velocity_del_engine);
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     RUN_TEST(test_pilotos_signature);
+    RUN_TEST(test_hibridos_en_pares);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);
