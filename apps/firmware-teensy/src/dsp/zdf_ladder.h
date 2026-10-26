@@ -43,11 +43,21 @@ public:
         if (hz < 10.0f) hz = 10.0f;
         if (hz > 0.45f * fs) hz = 0.45f * fs;
         const float g = tanf(3.14159265359f * hz / fs);
-        G_ = g / (1.0f + g);
+        Gt_ = g / (1.0f + g);
+        if (!g_set_) {                      // el primer valor va directo; después se suaviza en tick() (sin zipper)
+            G_ = Gt_;
+            g_set_ = true;
+        }
     }
 
     /// Resonancia k ∈ [0, 4.5]: con el límite del lazo, auto-oscila desde ~4.05 (MoogLadder4P lleva el tope a 4.4).
-    void set_k(float k) { k_ = k < 0.0f ? 0.0f : k > 4.5f ? 4.5f : k; }
+    void set_k(float k) {
+        kt_ = k < 0.0f ? 0.0f : k > 4.5f ? 4.5f : k;
+        if (!k_set_) {
+            k_ = kt_;
+            k_set_ = true;
+        }
+    }
 
     void set_character(LadderCharacter c) {
         const LadderVoicing v = ladder_voicing(c);
@@ -61,8 +71,15 @@ public:
 
     void reset() { s_[0] = s_[1] = s_[2] = s_[3] = 0.0f; }
 
+    /// Coeficiente G actual (suavizado) y el pedido: para tests.
+    float coeff() const { return G_; }
+    float coeff_target() const { return Gt_; }
+
     /// Una muestra (entrada y salida en ±1 nominal).
     float tick(float x) {
+        // Suavizado de un polo (~1 ms a 44.1 kHz): una perilla o un CC no producen escalones audibles
+        G_ += SMOOTH * (Gt_ - G_);
+        k_ += SMOOTH * (kt_ - k_);
         const float G = G_, k = k_;
         const float H = 1.0f - G;
         // Contribución de los estados a la salida (y4 = G⁴·u + Σ)
@@ -84,7 +101,9 @@ public:
     }
 
 private:
-    float G_ = 0.1f, k_ = 0.0f;
+    static constexpr float SMOOTH = 0.0224f;   // 1 − e^(−1 / (1 ms · 44.1 kHz))
+    float G_ = 0.1f, k_ = 0.0f, Gt_ = 0.1f, kt_ = 0.0f;
+    bool g_set_ = false, k_set_ = false;
     float drive_ = 1.6f, inv_drive_ = 1.0f / 1.6f, comp_ = 0.0f;
     float limit_ = 3.5f, inv_limit_ = 1.0f / 3.5f;
     float stage_sat_ = 0.05f;

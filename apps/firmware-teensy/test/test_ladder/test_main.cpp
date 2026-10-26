@@ -92,8 +92,21 @@ void test_estable_con_barrido_y_senal_fuerte() {
     TEST_ASSERT_TRUE(mx < 2.0f);
 }
 
+void test_cutoff_suavizado_sin_zipper() {
+    dsp::ZdfLadder f;
+    f.set_cutoff(500.0f, 44100.0f);                       // el primer valor va directo
+    TEST_ASSERT_EQUAL_FLOAT(f.coeff_target(), f.coeff());
+    const float g0 = f.coeff();
+    f.set_cutoff(4000.0f, 44100.0f);                      // salto grande de perilla
+    f.tick(0.0f);
+    TEST_ASSERT_TRUE(f.coeff() < g0 + 0.05f * (f.coeff_target() - g0));   // no salta en una muestra
+    for (int i = 0; i < 441; ++i) f.tick(0.0f);           // 10 ms después ya llegó
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, f.coeff_target(), f.coeff());
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_cutoff_suavizado_sin_zipper);
     RUN_TEST(test_pade_contra_tanhf);
     RUN_TEST(test_resonancia_afinada_en_todo_el_rango);
     RUN_TEST(test_pendiente_24db_y_corte);
