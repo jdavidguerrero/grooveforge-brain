@@ -59,6 +59,16 @@ también, así el script ignora el resto del log.
 - `patch` se decodifica del binario con el mismo orden que `visit()` de `preset_bank.cpp`. Para editar parámetros se
   usa el Brain; el JSON es para leer y fichar (y para la IA). Subir siempre usa `raw`.
 
+## 3b. Robustez del flash de presets (rev. 2, 2026-10-26)
+
+- **Escritura atómica:** cada preset se escribe en `NN.gfp.tmp` y se renombra a `NN.gfp` (LittleFS reemplaza el
+  destino en un paso). Si se corta la corriente a mitad, queda el preset anterior entero.
+- **Presets de fábrica fuera del arranque:** al arrancar solo se lee el banco (`read_bank`); los de fábrica que falten
+  se escriben **de a uno cada 25 ms desde el loop** (`seed_one`). El audio, el USB y la cabeza no esperan al flash, y
+  si se interrumpe, el próximo arranque sigue donde quedó. La anotación de ofrecidos se escribe al terminar el banco.
+- **Diagnóstico:** el log de arranque muestra el tamaño de cada banco y el espacio usado; `@GF FS` (o
+  `gf_presets.py fs`) lo da a pedido, y una escritura fallida queda en el log con el espacio que quedaba.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |

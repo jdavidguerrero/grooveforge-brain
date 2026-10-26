@@ -266,6 +266,32 @@ void test_pilotos_signature() {
 
 // ── Bibliotecario (theory/11) ─────────────────────────────────────────────────
 
+void test_fabrica_de_a_uno_y_se_retoma() {
+    FakeStorage s;
+    PresetBank bank(s);
+    bank.read_bank(3);                                          // el arranque solo lee: no escribe nada
+    TEST_ASSERT_EQUAL_INT(0, s.writes);
+    TEST_ASSERT_EQUAL_UINT8(0, bank.count(3));
+    TEST_ASSERT_TRUE(bank.seeding(3));
+    TEST_ASSERT_TRUE(bank.seed_one(3));                         // de a un preset por llamada
+    TEST_ASSERT_EQUAL_INT(1, s.writes);
+    TEST_ASSERT_TRUE(bank.seed_one(3));
+    TEST_ASSERT_EQUAL_UINT8(2, bank.count(3));
+    PresetBank after_cut(s);                                    // se cortó la corriente: el próximo arranque sigue
+    after_cut.read_bank(3);
+    TEST_ASSERT_EQUAL_UINT8(2, after_cut.count(3));
+    while (after_cut.seed_one(3)) {
+    }
+    TEST_ASSERT_FALSE(after_cut.seeding(3));
+    TEST_ASSERT_EQUAL_UINT8(factory_count(3), after_cut.count(3));
+    TEST_ASSERT_TRUE(s.len[3][FACTORY_SLOT] > 0);              // anotados al terminar
+    const int writes = s.writes;
+    PresetBank again(s);
+    again.read_bank(3);
+    TEST_ASSERT_FALSE(again.seeding(3));                        // nada pendiente: no vuelve a escribir
+    TEST_ASSERT_EQUAL_INT(writes, s.writes);
+}
+
 void test_hibridos_en_pares() {
     static const struct { uint8_t e; const char* name; } HY[] = {
         {4, "HY WOODBASS A"},    {0, "HY WOODBASS B"},    {4, "HY KALIMBA A"},     {3, "HY KALIMBA B"},
@@ -368,6 +394,7 @@ int main() {
     RUN_TEST(test_migra_formato_3_con_velocity_del_engine);
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     RUN_TEST(test_pilotos_signature);
+    RUN_TEST(test_fabrica_de_a_uno_y_se_retoma);
     RUN_TEST(test_hibridos_en_pares);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);

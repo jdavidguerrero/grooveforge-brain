@@ -352,30 +352,34 @@ bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out) 
     return true;
 }
 
+uint8_t factory_count(uint8_t e) { return e < GF_ENGINE_COUNT ? BANKS[e].n : 0; }
+
+bool factory_preset(uint8_t e, uint8_t index, Preset* out) {
+    if (e >= GF_ENGINE_COUNT || index >= BANKS[e].n) return false;
+    const Factory& f = BANKS[e].v[index];
+    Preset& p = *out;
+    p = Preset{};
+    patch_init(p.patch, e);
+    set_name(p.name, f.name);
+    Patch& t = p.patch;
+    t.attack_ms = f.a; t.decay_ms = f.d; t.sustain = f.s; t.release_ms = f.r;
+    t.f_attack_ms = f.fa; t.f_decay_ms = f.fd; t.f_sustain = f.fs; t.f_release_ms = f.fr;
+    t.env_amt = f.env_amt;
+    t.glide = f.glide;
+    t.lfo_rate_hz = f.lfo_hz;
+    t.lfo_shape = f.lfo_shape;
+    t.lfo_amt[GF_DEST_CUTOFF] = f.amt_cut;
+    t.lfo_amt[GF_DEST_PITCH] = f.amt_pitch;
+    if (GF_LFO_THIRD_DEST[e] != GF_DEST_NONE) t.lfo_amt[GF_LFO_THIRD_DEST[e]] = f.amt_third;
+    p.cutoff_hz = f.cutoff_hz;
+    p.reso_norm = f.reso;
+    if (f.osc) f.osc(t);
+    return true;
+}
+
 uint8_t factory_presets(uint8_t e, Preset* out, uint8_t cap) {
-    if (e >= GF_ENGINE_COUNT) return 0;
-    const Bank& b = BANKS[e];
     uint8_t n = 0;
-    for (; n < b.n && n < cap; ++n) {
-        const Factory& f = b.v[n];
-        Preset& p = out[n];
-        p = Preset{};
-        patch_init(p.patch, e);
-        set_name(p.name, f.name);
-        Patch& t = p.patch;
-        t.attack_ms = f.a; t.decay_ms = f.d; t.sustain = f.s; t.release_ms = f.r;
-        t.f_attack_ms = f.fa; t.f_decay_ms = f.fd; t.f_sustain = f.fs; t.f_release_ms = f.fr;
-        t.env_amt = f.env_amt;
-        t.glide = f.glide;
-        t.lfo_rate_hz = f.lfo_hz;
-        t.lfo_shape = f.lfo_shape;
-        t.lfo_amt[GF_DEST_CUTOFF] = f.amt_cut;
-        t.lfo_amt[GF_DEST_PITCH] = f.amt_pitch;
-        if (GF_LFO_THIRD_DEST[e] != GF_DEST_NONE) t.lfo_amt[GF_LFO_THIRD_DEST[e]] = f.amt_third;
-        p.cutoff_hz = f.cutoff_hz;
-        p.reso_norm = f.reso;
-        if (f.osc) f.osc(t);
-    }
+    while (n < cap && factory_preset(e, n, &out[n])) ++n;
     return n;
 }
 
@@ -383,7 +387,7 @@ const char* PresetBank::name(uint8_t e, uint8_t i) const {
     return e < GF_ENGINE_COUNT && i < count_[e] ? names_[e][i] : "";
 }
 
-void PresetBank::scan(uint8_t e) {
+void PresetBank::read_bank(uint8_t e) {
     if (e >= GF_ENGINE_COUNT) return;
     uint8_t buf[PRESET_BYTES];
     Preset p;
@@ -395,35 +399,62 @@ void PresetBank::scan(uint8_t e) {
         set_name(names_[e][i], p.name);
         count_[e] = uint8_t(i + 1);
     }
-    // Banco vacío: el de fábrica entero. Banco con presets: solo los de fábrica que falten, al final (un firmware nuevo
-    // trae presets nuevos sin borrar lo guardado)
-    Preset fac[PRESET_MAX];
-    const uint8_t n = factory_presets(e, fac, PRESET_MAX);
     // Presets de fábrica ya ofrecidos en este banco: nombres de PRESET_NAME_LEN bytes seguidos
     const size_t seen_len = storage_.read(e, FACTORY_SLOT, buf, sizeof(buf));
-    auto offered = [&](const char* name) {
-        for (size_t k = 0; k + PRESET_NAME_LEN <= seen_len; k += PRESET_NAME_LEN)
-            if (strncmp(reinterpret_cast<const char*>(buf + k), name, PRESET_NAME_LEN) == 0) return true;
-        return false;
-    };
-    bool seen[PRESET_MAX] = {};
-    for (uint8_t f = 0; f < n; ++f) seen[f] = offered(fac[f].name);
-    for (uint8_t f = 0; f < n && count_[e] < PRESET_MAX; ++f) {
-        bool have = seen[f];
-        for (uint8_t i = 0; i < count_[e] && !have; ++i) have = strcmp(names_[e][i], fac[f].name) == 0;
-        if (have) continue;
-        const uint8_t i = count_[e];
-        if (preset_encode(fac[f], e, buf, sizeof(buf)) == 0 || !storage_.write(e, i, buf, PRESET_BYTES)) break;
-        set_name(names_[e][i], fac[f].name);
-        count_[e] = uint8_t(i + 1);
+    pending_n_[e] = pending_i_[e] = 0;
+    offered_dirty_[e] = false;
+    const uint8_t n = factory_count(e);
+    for (uint8_t f = 0; f < n; ++f) {
+        Preset fac;
+        factory_preset(e, f, &fac);
+        bool seen = false;
+        for (size_t k = 0; k + PRESET_NAME_LEN <= seen_len && !seen; k += PRESET_NAME_LEN)
+            seen = strncmp(reinterpret_cast<const char*>(buf + k), fac.name, PRESET_NAME_LEN) == 0;
+        if (seen) continue;
+        offered_dirty_[e] = true;
+        bool have = false;
+        for (uint8_t i = 0; i < count_[e] && !have; ++i) have = strcmp(names_[e][i], fac.name) == 0;
+        if (!have) pending_[e][pending_n_[e]++] = f;
     }
-    // Anota todos los de fábrica de este firmware como ofrecidos (solo si cambió algo)
-    bool all_seen = true;
-    for (uint8_t f = 0; f < n; ++f) all_seen &= seen[f];
-    if (all_seen) return;
+}
+
+bool PresetBank::seed_one(uint8_t e) {
+    if (e >= GF_ENGINE_COUNT) return false;
+    if (pending_i_[e] < pending_n_[e] && count_[e] < PRESET_MAX) {
+        Preset fac;
+        uint8_t buf[PRESET_BYTES];
+        const uint8_t i = count_[e];
+        if (factory_preset(e, pending_[e][pending_i_[e]], &fac) && preset_encode(fac, e, buf, sizeof(buf)) &&
+            storage_.write(e, i, buf, PRESET_BYTES)) {
+            set_name(names_[e][i], fac.name);
+            count_[e] = uint8_t(i + 1);
+            ++pending_i_[e];
+            return true;
+        }
+        pending_n_[e] = pending_i_[e];   // falló la escritura: se reintenta en el próximo arranque, sin anotar
+        offered_dirty_[e] = false;
+        return false;
+    }
+    pending_i_[e] = pending_n_[e];       // banco lleno: lo que no entró queda como ofrecido
+    if (offered_dirty_[e]) write_offered(e);
+    return false;
+}
+
+bool PresetBank::seeding(uint8_t e) const {
+    return e < GF_ENGINE_COUNT && (pending_i_[e] < pending_n_[e] || offered_dirty_[e]);
+}
+
+void PresetBank::write_offered(uint8_t e) {
+    // Anota todos los de fábrica de este firmware como ofrecidos
     uint8_t mark[PRESET_MAX * PRESET_NAME_LEN] = {};
-    for (uint8_t f = 0; f < n; ++f) strncpy(reinterpret_cast<char*>(mark + f * PRESET_NAME_LEN), fac[f].name, PRESET_NAME_LEN);
-    storage_.write(e, FACTORY_SLOT, mark, size_t(n) * PRESET_NAME_LEN);
+    const uint8_t n = factory_count(e);
+    for (uint8_t f = 0; f < n; ++f) {
+        Preset fac;
+        factory_preset(e, f, &fac);
+        strncpy(reinterpret_cast<char*>(mark + f * PRESET_NAME_LEN), fac.name, PRESET_NAME_LEN);
+    }
+    storage_.write(e, FACTORY_SLOT, mark, size_t(n) * PRESET_NAME_LEN);   // si falla, read_bank lo repite al arrancar
+    offered_dirty_[e] = false;
 }
 
 bool PresetBank::load(uint8_t e, uint8_t i, Preset* out) {

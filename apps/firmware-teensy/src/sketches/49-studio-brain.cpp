@@ -240,17 +240,30 @@ public:
         preset_fs.mkdir("/presets");
         preset_fs.mkdir(dir);
         path_of(e, i, path);
-        preset_fs.remove(path);                   // FILE_WRITE agrega al final: se reescribe desde cero
-        File f = preset_fs.open(path, FILE_WRITE);
+        // Atómica: se escribe un temporal y se renombra (LittleFS reemplaza el destino en un paso). Si se corta la
+        // corriente a mitad, queda el preset viejo entero, nunca uno a medias ni ninguno.
+        char tmp[36];
+        snprintf(tmp, sizeof(tmp), "%s.tmp", path);
+        preset_fs.remove(tmp);                    // FILE_WRITE agrega al final: el temporal arranca vacío
+        File f = preset_fs.open(tmp, FILE_WRITE);
         if (!f) {
-            Serial.printf("[PRESET] no se pudo crear %s (usado %lu de %lu bytes)\n", path,
+            Serial.printf("[PRESET] no se pudo crear %s (usado %lu de %lu bytes)\n", tmp,
                           (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
             return false;
         }
         const size_t n = f.write(buf, len);
         f.close();
-        if (n != len) Serial.printf("[PRESET] escritura incompleta %s: %u de %u bytes\n", path, unsigned(n), unsigned(len));
-        return n == len;
+        if (n != len) {
+            Serial.printf("[PRESET] escritura incompleta %s: %u de %u bytes\n", tmp, unsigned(n), unsigned(len));
+            preset_fs.remove(tmp);
+            return false;
+        }
+        if (!preset_fs.rename(tmp, path)) {
+            Serial.printf("[PRESET] no se pudo renombrar %s\n", tmp);
+            preset_fs.remove(tmp);
+            return false;
+        }
+        return true;
     }
 
     bool remove(uint8_t e, uint8_t i) override {
@@ -1165,7 +1178,7 @@ void setup() {
     preset_fs_ok = preset_fs.begin(512 * 1024);
     Serial.printf("[PRESET] LittleFS %s\n", preset_fs_ok ? "OK (512 KB)" : "NO DISPONIBLE: presets solo de fábrica");
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; e++) {
-        presets.scan(e);
+        presets.read_bank(e);   // solo lee: los de fábrica que falten se escriben después, desde el loop
         studio::Preset p;
         if (presets.load(e, 0, &p)) {
             preset_loaded[e] = 0;
@@ -1306,9 +1319,35 @@ void librarian_poll() {
     }
 }
 
+/// Presets de fábrica que faltan: uno cada 25 ms desde el loop, para que el arranque (audio, USB, cabeza) no espere al
+/// flash. Si un banco estaba vacío, su primer preset se carga apenas existe (como antes en el arranque).
+void preset_seed_tick() {
+    static uint32_t last = 0;
+    if (millis() - last < 25) return;
+    last = millis();
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        if (!presets.seeding(e)) continue;
+        if (presets.seed_one(e)) {
+            if (preset_loaded[e] == 0xFF && presets.count(e) == 1) {
+                studio::Preset p;
+                if (presets.load(e, 0, &p)) {
+                    preset_loaded[e] = 0;
+                    apply_preset(e, p);
+                }
+            }
+            if (e == ui.engine()) {
+                ui.set_preset_count(presets.count(e));
+                if (!presets.seeding(e)) bridge_presets();   // la lista completa a la cabeza al terminar el banco
+            }
+        }
+        return;   // un engine por vez
+    }
+}
+
 void loop() {
     usb_host.Task();
     librarian_poll();
+    preset_seed_tick();
     midi.read();
     while (usbMIDI.read()) {
     }
