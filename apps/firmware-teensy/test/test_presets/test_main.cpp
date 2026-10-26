@@ -292,6 +292,23 @@ void test_fabrica_de_a_uno_y_se_retoma() {
     TEST_ASSERT_EQUAL_INT(writes, s.writes);
 }
 
+void test_trunc_durante_la_escritura_de_fabrica() {
+    FakeStorage s;
+    PresetBank bank(s);
+    bank.read_bank(1);
+    bank.seed_one(1);
+    bank.seed_one(1);
+    bank.seed_one(1);
+    TEST_ASSERT_TRUE(bank.truncate(1, 1));                      // desde la Mac, a mitad del primer arranque
+    while (bank.seed_one(1)) {
+    }
+    TEST_ASSERT_EQUAL_UINT8(1, bank.count(1));                  // no vuelve a crecer
+    PresetBank again(s);
+    again.read_bank(1);
+    TEST_ASSERT_FALSE(again.seeding(1));
+    TEST_ASSERT_EQUAL_UINT8(1, again.count(1));
+}
+
 void test_hibridos_en_pares() {
     static const struct { uint8_t e; const char* name; } HY[] = {
         {4, "HY WOODBASS A"},    {0, "HY WOODBASS B"},    {4, "HY KALIMBA A"},     {3, "HY KALIMBA B"},
@@ -395,6 +412,7 @@ int main() {
     RUN_TEST(test_banco_existente_conserva_y_agrega_fabrica);
     RUN_TEST(test_pilotos_signature);
     RUN_TEST(test_fabrica_de_a_uno_y_se_retoma);
+    RUN_TEST(test_trunc_durante_la_escritura_de_fabrica);
     RUN_TEST(test_hibridos_en_pares);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);

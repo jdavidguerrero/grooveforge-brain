@@ -477,6 +477,7 @@ PutResult PresetBank::put(uint8_t e, uint8_t i, const uint8_t* buf, size_t len) 
 
 bool PresetBank::truncate(uint8_t e, uint8_t n) {
     if (e >= GF_ENGINE_COUNT) return false;
+    pending_i_[e] = pending_n_[e];   // si todavía se escribían presets de fábrica, se dejan: el banco queda como se pidió
     bool ok = true;
     for (uint8_t i = n; i < count_[e]; ++i) ok &= storage_.remove(e, i);
     if (n < count_[e]) count_[e] = n;

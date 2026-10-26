@@ -731,6 +731,9 @@ void bridge_preset_loaded() {
 
 /// Lleva un preset al engine `e`; si es el activo, también a las cadenas de FX y a la cabeza.
 void apply_preset(uint8_t e, const studio::Preset& p) {
+    // El preset trae sus encendidos de ARP / CHORD / UNISON: si cambian con notas sonando, quién suelta cada nota
+    // cambia y alguna quedaría colgada (como al encenderlos con NAV push)
+    if (e == ui.engine()) all_notes_off();
     patches[e] = p.patch;
     cutoff[e] = constrain(p.cutoff_hz, GF_CUTOFF_RANGE[e].lo, GF_CUTOFF_RANGE[e].hi);
     resonance[e] = gf_denorm(RESO_RANGE[e], p.reso_norm);
