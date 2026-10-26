@@ -72,9 +72,9 @@ propone ideas MIDI; el músico elige, edita y decide, y se dice en cámara. Nunc
 | Ep | Carril | Título de trabajo | Resultado | Grabable |
 |---|---|---|---|---|
 | 1 | 🎹 | Construyo mi synth para encontrar mi sonido | Bajo con el LFO al tempo de Ableton | ✅ hoy |
-| 2 | 🎹 | Del INIT al bajo: encontrando mi sonido en el Juno | Bajo + acordes del primer track, guardados como presets | ✅ hoy |
+| 2 | 🎹 | Del INIT al acorde: encontrando mi sonido en el Juno | Los acordes del primer track, guardados como preset (grabado 2026-10-25) | ✅ grabado |
 | 3 | 🛠️ | Diseñando la caja de mi synth | La caja en 3D, validada pieza por pieza | ✅ hoy |
-| 4 | 🎹 | Los 6 motores: primera vuelta | Un sonido útil de cada motor (y los que fallaron) | ✅ hoy |
+| 4 | 🎹 | Los 6 motores: primera vuelta | El bajo del track (en el Model D) y un sonido útil de cada motor (y los que fallaron) | ✅ hoy |
 | 5 | 🛠️ | Del circuito al esquemático | La etapa de entrada simulada antes de fabricar | ✅ hoy |
 | 6 | 🎹 | El filtro es mi instrumento | El build-up del primer track | ✅ hoy |
 | 7 | 🛠️ | Mi PCB la colocó un script | 3 placas con DRC 0/0/0 y la auditoría que frenó el pedido | ✅ hoy |
@@ -84,7 +84,7 @@ propone ideas MIDI; el músico elige, edita y decide, y se dice en cámara. Nunc
 | 11 | 🎹 | El modo FX: procesar en vivo | Un drop procesado en vivo | ⏳ audio del modo FX |
 | 12 | 🎹 | Mi primer live set con el Brain | El Brain en su caja, tocando un set | ⏳ todo lo anterior |
 
-**El primer track** atraviesa el Acto 1: el EP2 pone el bajo y los acordes, el EP4 suma capas, el EP6 el build-up,
+**El primer track** atraviesa el Acto 1: el EP2 pone los acordes, el EP4 el bajo y las capas, el EP6 el build-up,
 el EP8 la automatización y el EP9 el lead. Al final del Acto 1 el track está terminado y se publica completo.
 
 ---
@@ -94,8 +94,9 @@ el EP8 la automatización y el EP9 el lead. Al final del Acto 1 el track está t
 ### EP1 — Construyo mi synth para encontrar mi sonido
 Guion: [`EP01_guion.md`](EP01_guion.md).
 
-### EP2 — Del INIT al bajo: encontrando mi sonido en el Juno
-Guion: [`EP02_guion.md`](EP02_guion.md).
+### EP2 — Del INIT al acorde: encontrando mi sonido en el Juno
+Guion: [`EP02_guion.md`](EP02_guion.md). Se grabó solo con los acordes; la voz en off está en
+[`VOZ_EN_OFF_EP01_EP02.md`](VOZ_EN_OFF_EP01_EP02.md) §3. El bajo pasa al EP4.
 
 ### EP3 — Diseñando la caja de mi synth
 Guion: [`EP03_guion.md`](EP03_guion.md).
@@ -106,7 +107,8 @@ Guion: [`EP03_guion.md`](EP03_guion.md).
 - **Hook:** el mismo acorde por los 6 motores, 1 s cada uno. VO: *"Programé seis synths. Algunos nunca los había
   tocado de verdad. Hoy los pruebo todos, y no todos van a pasar."*
 - **Bloques:** (1) las reglas del juego: 90 s por motor, partir del banco de fábrica, un sonido para el track. (2)
-  Model D, Prophet, OB-6, DX7, ARP (el Juno ya fue en el EP2). (3) Lo que falló y por qué, con el monitor serie o la
+  Model D (que da el **bajo del track**, el que no entró en el EP2), Prophet, OB-6, DX7, ARP (el Juno ya fue en el
+  EP2). (3) Lo que falló y por qué, con el monitor serie o la
   tabla de `fidelidad-engines.md` §0 / §8. (4) Las capas que entran al track.
 - **Clímax:** el loop del EP2 con las capas nuevas.
 - **Shorts:** Mind-blow *"Mi Model D ignora la velocity, como el original"* (commit `27b0361`) · ASMR: el acorde por
