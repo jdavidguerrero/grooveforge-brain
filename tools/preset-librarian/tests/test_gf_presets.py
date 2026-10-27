@@ -70,10 +70,11 @@ def test_lugares_de_banco():
 
 
 def test_preset_de_capa_ida_y_vuelta():
-    assert gp.LAYER_SIZE == 1077                      # LAYER_BYTES de layer_bank.h
+    assert gp.LAYER_SIZE == 1111                      # LAYER_BYTES de layer_bank.h (formato 2)
+    assert gp.LAYER_SIZE_V1 == 1077
     half_a = gp.encode(4, "HY WOODBASS A", sample_patch())
     half_b = gp.encode(0, "HY WOODBASS B", sample_patch())
-    raw = (gp.LAYER_MAGIC + bytes([1]) + b"WOODBASS".ljust(12, b"\0") + bytes([4, 0, 50, 10]) +
+    raw = (gp.LAYER_MAGIC + bytes([2]) + b"WOODBASS".ljust(12, b"\0") + bytes([4, 0, 50, 10]) +
            struct.pack("<bbb", -12, -6, 0) + half_a + half_b)
     d = gp.decode_layer(raw)
     assert (d["name"], d["engine_a"], d["engine_b"], d["delay_b_ms"], d["transpose_b"]) == ("WOODBASS", "dx7", "model_d", 10, -12)

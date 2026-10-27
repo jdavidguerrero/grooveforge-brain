@@ -29,14 +29,15 @@ from pathlib import Path
 ENGINES = ["model_d", "juno_106", "prophet_5", "ob_6", "dx7", "arp_2600"]
 MAGIC = b"GFP"
 NAME_LEN = 16
-FORMAT = 4
-# Tamaño del binario por formato: tiene que coincidir con PRESET_BYTES_V2 / _V3 / PRESET_BYTES de preset_bank.h
-SIZE = {2: 355, 3: 519, 4: 527}
+FORMAT = 5
+# Tamaño del binario por formato: tiene que coincidir con PRESET_BYTES_V2 … _V4 / PRESET_BYTES de preset_bank.h
+SIZE = {2: 355, 3: 519, 4: 527, 5: 544}
 # Presets de capa de HYBRID SYNTH (theory/12 §3d): LAYER_BYTES de layer_bank.h
 LAYER_MAGIC = b"GFL"
-LAYER_FORMAT = 1
+LAYER_FORMAT = 2
 LAYER_NAME_LEN = 12
 LAYER_SIZE = 4 + LAYER_NAME_LEN + 7 + 2 * SIZE[FORMAT]
+LAYER_SIZE_V1 = 4 + LAYER_NAME_LEN + 7 + 2 * SIZE[4]       # capas de formato 1: mitades en formato 4
 LAYER_MAX = 32
 META_KEYS = ["role", "tags", "key_range", "pairs_with", "notes", "origin", "permissions", "rating"]
 ORIGINS = ["propio", "fabrica-brain", "tribe-instruments", "kick3", "splice", "loopcloud", "otro"]
@@ -58,6 +59,8 @@ def _layout(fmt: int):
         out += [("groove", "f", (5, 8)), ("groove_on", "B", (4,))]
     if fmt >= 4:
         out += [("vel_amp", "f", ()), ("vel_cut", "f", ())]
+    if fmt >= 5:   # lugar DELAY de la cadena (theory/fase3-fx.md §3); sfx_* de arriba = DRIVE · TAPE · CHORUS · REVERB
+        out += [("delay_mix", "f", ()), ("delay_p", "f", (3,)), ("delay_on", "B", ())]
     return out
 
 
@@ -100,7 +103,7 @@ def decode(raw: bytes) -> dict:
         pos += size * n
         if typ == "f":
             vals = [round(v, 6) for v in vals]
-        if key in ("sfx_on", "groove_on"):
+        if key in ("sfx_on", "groove_on", "delay_on"):
             vals = [bool(v) for v in vals]
         patch[key] = vals[0] if shape == () else _nest(vals, shape)
     return {"format": fmt, "engine": engine, "name": name, "patch": patch}
@@ -126,14 +129,14 @@ def rename(raw: bytes, name: str) -> bytes:
 
 def decode_layer(raw: bytes) -> dict:
     """Binario de un preset de capa → nombre, engines, MORPH, B (retraso, transposición), mezcla y las dos mitades."""
-    if len(raw) != LAYER_SIZE or raw[:3] != LAYER_MAGIC or raw[3] != LAYER_FORMAT:
+    if raw[:3] != LAYER_MAGIC or (raw[3], len(raw)) not in ((LAYER_FORMAT, LAYER_SIZE), (1, LAYER_SIZE_V1)):
         raise ValueError("no es un preset de capa del Brain")
     name = raw[4:4 + LAYER_NAME_LEN].split(b"\0", 1)[0].decode("ascii", "replace")
     p = 4 + LAYER_NAME_LEN
     ea, eb, morph, delay = raw[p], raw[p + 1], raw[p + 2], raw[p + 3]
     tr, ga, gb = struct.unpack_from("<bbb", raw, p + 4)
     p += 7
-    half = SIZE[FORMAT]
+    half = SIZE[FORMAT] if raw[3] == LAYER_FORMAT else SIZE[4]
     return {"name": name, "engine_a": ENGINES[ea], "engine_b": ENGINES[eb], "morph": morph, "delay_b_ms": delay,
             "transpose_b": tr, "gain_a_db": ga, "gain_b_db": gb,
             "a": decode(raw[p:p + half]), "b": decode(raw[p + half:p + 2 * half])}
