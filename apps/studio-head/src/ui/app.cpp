@@ -1,5 +1,7 @@
 #include "ui/app.h"
 
+#include "ui/theme.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -29,25 +31,42 @@ Page next_view(Page p, int dir) {
 
 }  // namespace
 
-Screen* App::screen(Page p) {
+Screen* App::pick(Screens& s, Page p) {
     switch (p) {
-        case Page::Perform:  return &_perform;
-        case Page::Ai:       return &_ai;
-        case Page::Spectrum: return &_spectrum;
-        case Page::Env:      return &_env;
-        case Page::Fx:       return &_fx;
-        case Page::Engine:   return &_engine;
-        case Page::Presets:  return &_presets;
-        case Page::Error:    return &_error;
-        case Page::Osc:      return &_osc;
-        case Page::Lfo:      return &_lfo;
-        case Page::SynthFx:  return &_sfx;
-        case Page::Panel:    return &_panel;
-        case Page::Groove:   return &_groove;
-        case Page::Hybrid:   return &_hybrid;
-        case Page::LayerPresets: return &_layer_presets;
-        default:             return &_perform;
+        case Page::Perform:  return &s.perform;
+        case Page::Ai:       return &s.ai;
+        case Page::Spectrum: return &s.spectrum;
+        case Page::Env:      return &s.env;
+        case Page::Fx:       return &s.fx;
+        case Page::Engine:   return &s.engine;
+        case Page::Presets:  return &s.presets;
+        case Page::Error:    return &s.error;
+        case Page::Osc:      return &s.osc;
+        case Page::Lfo:      return &s.lfo;
+        case Page::SynthFx:  return &s.sfx;
+        case Page::Panel:    return &s.panel;
+        case Page::Groove:   return &s.groove;
+        case Page::Hybrid:   return &s.hybrid;
+        case Page::LayerPresets: return &s.layer_presets;
+        default:             return &s.perform;
     }
+}
+
+Screen* App::screen(Page p) { return pick(*_s, p); }
+
+// Nuevo juego de pantallas con el acento del modo; se carga antes de borrar el viejo (no se borra la pantalla activa).
+void App::rebuild(bool hybrid_accent) {
+    _accent_hybrid = hybrid_accent;
+    gf::set_hybrid_accent(hybrid_accent);
+    auto fresh = std::make_unique<Screens>();
+    lv_obj_t* roots[int(Page::Count)];
+    for (int i = 0; i < int(Page::Count); ++i) roots[i] = pick(*fresh, Page(i))->create();
+    lv_scr_load(roots[int(_page)]);
+    for (int i = 0; i < int(Page::Count); ++i) {
+        lv_obj_del(_roots[i]);
+        _roots[i] = roots[i];
+    }
+    _s = std::move(fresh);
 }
 
 void App::create() {
@@ -110,7 +129,7 @@ void App::handle_fx(Ctl c, StudioState& s) {
         case Ctl::NavNext:
         case Ctl::NavPrev:
             s.fx_slot = fx_next_slot(s.fx_slot, c == Ctl::NavNext ? 1 : -1);
-            _fx.show_list();
+            _s->fx.show_list();
             break;
         case Ctl::NavPush:    s.fx_on ^= uint16_t(1u << s.fx_slot); break;
         case Ctl::B1:         s.fx_route[s.fx_slot] = FxRoute::Insert; break;
@@ -136,16 +155,16 @@ void App::handle_synth(Ctl c, StudioState& s) {
     }
 
     if (c == Ctl::NavPush && s.shift) {   // SHIFT + NAV push: ENGINE SELECT desde cualquier página
-        _engine.set_cursor(s.engine);
+        _s->engine.set_cursor(s.engine);
         show(Page::Engine);
         return;
     }
 
     if (_page == Page::Engine) {
         switch (c) {
-            case Ctl::NavNext: _engine.move_cursor(1); break;
-            case Ctl::NavPrev: _engine.move_cursor(-1); break;
-            case Ctl::NavPush: load_engine(uint8_t(_engine.cursor()), s); break;
+            case Ctl::NavNext: _s->engine.move_cursor(1); break;
+            case Ctl::NavPrev: _s->engine.move_cursor(-1); break;
+            case Ctl::NavPush: load_engine(uint8_t(_s->engine.cursor()), s); break;
             case Ctl::B4:      show(Page::Perform); break;
             case Ctl::B1:      show(Page::Osc); break;
             case Ctl::B2:      show(Page::Env); break;
@@ -159,28 +178,28 @@ void App::handle_synth(Ctl c, StudioState& s) {
 
     if (_page == Page::Presets) {
         switch (c) {
-            case Ctl::NavNext: _presets.move_cursor(1, s); break;
-            case Ctl::NavPrev: _presets.move_cursor(-1, s); break;
-            case Ctl::SwipeUp:   _presets.move_cursor(ScreenPresets::ROWS_VISIBLE, s); break;
-            case Ctl::SwipeDown: _presets.move_cursor(-ScreenPresets::ROWS_VISIBLE, s); break;
+            case Ctl::NavNext: _s->presets.move_cursor(1, s); break;
+            case Ctl::NavPrev: _s->presets.move_cursor(-1, s); break;
+            case Ctl::SwipeUp:   _s->presets.move_cursor(ScreenPresets::ROWS_VISIBLE, s); break;
+            case Ctl::SwipeDown: _s->presets.move_cursor(-ScreenPresets::ROWS_VISIBLE, s); break;
             case Ctl::Pick0: case Ctl::Pick1: case Ctl::Pick2:
             case Ctl::Pick3: case Ctl::Pick4: case Ctl::Pick5:
-                if (_presets.tap_row(int(c) - int(Ctl::Pick0), s)) handle_synth(Ctl::NavPush, s);
+                if (_s->presets.tap_row(int(c) - int(Ctl::Pick0), s)) handle_synth(Ctl::NavPush, s);
                 break;
             case Ctl::NavPush:
-                if (_presets.cursor() == 0) {  // guardar en el próximo slot libre
+                if (_s->presets.cursor() == 0) {  // guardar en el próximo slot libre
                     if (s.preset_count < PRESET_MAX) {
                         std::snprintf(s.preset_names[s.preset_count], sizeof(s.preset_names[0]), "USER %02d", s.preset_count + 1);
                         s.preset_loaded = s.preset_count++;
                     }
                 } else {
-                    s.preset_loaded = uint8_t(_presets.cursor() - 1);
+                    s.preset_loaded = uint8_t(_s->presets.cursor() - 1);
                 }
                 { char slot[8]; preset_slot(slot, sizeof(slot), s.preset_loaded); std::snprintf(s.preset, sizeof(s.preset), "%s %s", slot, s.preset_names[s.preset_loaded]); }
                 break;
             case Ctl::B1: case Ctl::B2: case Ctl::B3: case Ctl::B4: {   // demo: saltar al banco A–D (theory/13)
                 const int bank = int(c) - int(Ctl::B1);
-                _presets.move_cursor(1 + bank * 16 - _presets.cursor(), s);
+                _s->presets.move_cursor(1 + bank * 16 - _s->presets.cursor(), s);
                 break;
             }
             default: break;
@@ -189,7 +208,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
     }
 
     if (_page == Page::Osc && (c == Ctl::NavNext || c == Ctl::NavPrev)) {
-        _osc.move_selection(c == Ctl::NavNext ? 1 : -1, s);
+        _s->osc.move_selection(c == Ctl::NavNext ? 1 : -1, s);
         return;
     }
     if (_page == Page::Env && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige AMP / FILTER
@@ -209,7 +228,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
         return;
     }
     if (_page == Page::LayerPresets && (c == Ctl::NavNext || c == Ctl::NavPrev)) {
-        _layer_presets.move_cursor(c == Ctl::NavNext ? 1 : -1, s);
+        _s->layer_presets.move_cursor(c == Ctl::NavNext ? 1 : -1, s);
         return;
     }
     if (_page == Page::Hybrid && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV recorre las capas
@@ -259,7 +278,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
             else toggle_page(Page::SynthFx);
             break;
         case Ctl::EngineCard:
-            _engine.set_cursor(s.engine);
+            _s->engine.set_cursor(s.engine);
             show(Page::Engine);
             break;
         default:
@@ -268,13 +287,14 @@ void App::handle_synth(Ctl c, StudioState& s) {
 }
 
 void App::update(const StudioState& s) {
+    if ((s.mode == Mode::Hybrid) != _accent_hybrid) rebuild(s.mode == Mode::Hybrid);
     // Con el Teensy conectado, la página y los cursores los decide él (theory/04); la de error, la cabeza.
     if (s.ui_remote && _page != Page::Error && s.ui_page < uint8_t(Page::Count) && s.ui_page != uint8_t(Page::Error)) {
         const Page target = Page(s.ui_page);
-        if (target == Page::Engine) _engine.set_cursor(s.ui_cursor);
-        else if (target == Page::Presets) _presets.set_cursor(s.ui_cursor);
-        else if (target == Page::LayerPresets) _layer_presets.set_cursor(s.ui_cursor);
-        else if (target == Page::Osc) _osc.set_selection(s.engine, s.ui_cursor);
+        if (target == Page::Engine) _s->engine.set_cursor(s.ui_cursor);
+        else if (target == Page::Presets) _s->presets.set_cursor(s.ui_cursor);
+        else if (target == Page::LayerPresets) _s->layer_presets.set_cursor(s.ui_cursor);
+        else if (target == Page::Osc) _s->osc.set_selection(s.engine, s.ui_cursor);
         if (target != _page) show(target);
     }
     if (s.link == LinkState::Lost && _page != Page::Error) {

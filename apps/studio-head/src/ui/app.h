@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "state/studio_state.h"
 #include "ui/input.h"
 #include "ui/overlays.h"
@@ -51,21 +53,28 @@ private:
     void load_engine(uint8_t id, StudioState& s);
     void toggle_page(Page p);
 
-    ScreenPerform _perform;
-    ScreenAi _ai;
-    ScreenSpectrum _spectrum;
-    ScreenEnv _env;
-    ScreenFx _fx;
-    ScreenEngine _engine;
-    ScreenPresets _presets;
-    ScreenError _error;
-    ScreenOsc _osc;
-    ScreenLfo _lfo;
-    ScreenSfx _sfx;
-    ScreenPanel _panel;
-    ScreenGroove _groove;
-    ScreenHybrid _hybrid;
-    ScreenPresets _layer_presets{true};
+    /// Todas las pantallas: se reconstruyen al entrar o salir de HYBRID SYNTH para cambiar el acento (teal ↔ cyan).
+    struct Screens {
+        ScreenPerform perform;
+        ScreenAi ai;
+        ScreenSpectrum spectrum;
+        ScreenEnv env;
+        ScreenFx fx;
+        ScreenEngine engine;
+        ScreenPresets presets;
+        ScreenError error;
+        ScreenOsc osc;
+        ScreenLfo lfo;
+        ScreenSfx sfx;
+        ScreenPanel panel;
+        ScreenGroove groove;
+        ScreenHybrid hybrid;
+        ScreenPresets layer_presets{true};
+    };
+    static Screen* pick(Screens& s, Page p);
+    void rebuild(bool hybrid_accent);
+    std::unique_ptr<Screens> _s = std::make_unique<Screens>();
+    bool _accent_hybrid = false;
     Overlays _overlays;
     lv_obj_t* _roots[int(Page::Count)] = {};
     Page _page = Page::Perform;

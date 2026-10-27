@@ -16,12 +16,14 @@ namespace gf {
 
 // ── Colores ──────────────────────────────────────────────────────────────────
 constexpr uint32_t BG            = 0x0A0A0A;
-constexpr uint32_t TEAL          = 0x1D9E75;
-constexpr uint32_t TEAL_PLUS     = 0x5DCAA5;
-constexpr uint32_t TEAL_DIM      = 0x0E5040;
+// Acento de SYNTH. En HYBRID SYNTH pasa a cyan (set_hybrid_accent): variables, no constantes, para que todas las
+// pantallas compartidas (tarjetas, celdas, barras) cambien al reconstruirse (theory/12 §3d rev. 5).
+inline uint32_t TEAL             = 0x1D9E75;
+inline uint32_t TEAL_PLUS        = 0x5DCAA5;
+inline uint32_t TEAL_DIM         = 0x0E5040;
 constexpr uint32_t PURPLE        = 0x534AB7;
 constexpr uint32_t PURPLE_BRIGHT = 0x7A6FE0;
-constexpr uint32_t GRAY          = 0x9FE1CB;
+inline uint32_t GRAY             = 0x9FE1CB;   ///< texto secundario, teñido del acento
 constexpr uint32_t WHITE         = 0xF2F2F2;
 constexpr uint32_t MON           = 0x5A5A6E;
 constexpr uint32_t RED           = 0xE84A4A;
@@ -42,6 +44,13 @@ ModeColors mode_colors(bool fx);
 /// HYBRID SYNTH (theory/12 §3d): cyan, entre el teal de SYNTH y el púrpura de FX (como las luces del panel).
 constexpr uint32_t HYB = 0x1E90C0, HYB_HI = 0x6CC4EA, HYB_DIM = 0x0E3F55;
 inline ModeColors mode_colors_hybrid() { return ModeColors{HYB, HYB_HI, HYB_DIM}; }
+/// Cambia el acento teal ↔ cyan. Solo afecta a lo que se pinte después: App reconstruye las pantallas.
+inline void set_hybrid_accent(bool on) {
+    TEAL = on ? HYB : 0x1D9E75;
+    TEAL_PLUS = on ? HYB_HI : 0x5DCAA5;
+    TEAL_DIM = on ? HYB_DIM : 0x0E5040;
+    GRAY = on ? 0xA6D9EC : 0x9FE1CB;
+}
 
 /// Reloj común (theory/09 §1.1): etiqueta y color de la fuente — MIDI (teal), MIDI STOP (ámbar), INT (gris).
 inline const char* clock_label(bool midi, bool run) { return midi ? (run ? "MIDI" : "MIDI STOP") : "INT"; }
