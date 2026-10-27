@@ -166,7 +166,10 @@ private:
     AudioConnection* _cIn2 = nullptr;   // inputStream → _dryWetMix ch0 (dry path)
 
     // ── Tabla del waveshaper (código custom) ──────────────────────────────────────
-    float _waveshapeTable[257];
+    static constexpr int TABLE = 1025;   ///< 2^10 + 1: con 257 la interpolación granulaba (fase3-fx, TAPE)
+    float _waveshapeTable[TABLE];
+    float _tableDrive = -1.0f;           ///< DRIVE de la tabla actual (no se rehace si no cambia)
+    float _lpApplied = -1.0f;            ///< último corte del pasabajos de cinta
 
     // ── Estado LFO Wow/Flutter ────────────────────────────────────────────────────
     float _wowPhase      = 0.0f;
@@ -190,7 +193,7 @@ private:
      * @brief Regenera la tabla tanh del waveshaper con el drive dado.
      *
      * f(x) = tanh(drive * x) / tanh(drive), normalizada a [-1.0, 1.0].
-     * Costo: ~257 llamadas a tanhf() → <1ms en Teensy 4.1. Safe desde loop().
+     * Costo: ~1025 llamadas a tanhf() (< 1 ms en Teensy 4.1), solo si el DRIVE cambia. Safe desde loop().
      *
      * Ref: Zölzer, "DAFX" Cap. 5.1 "Clipping and Saturation", pp. 108-118.
      *

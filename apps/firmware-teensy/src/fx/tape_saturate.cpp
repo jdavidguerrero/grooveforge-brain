@@ -53,6 +53,7 @@ void TapeSaturate::begin(AudioStream& inputStream) {
 void TapeSaturate::setDrive(float drive) {
     if (drive < 1.0f)  drive = 1.0f;
     if (drive > 10.0f) drive = 10.0f;
+    if (fabsf(drive - _tableDrive) < 1e-4f) return;   // apply() lo llama seguido: la tabla solo si cambió
     _buildWaveshapeTable(drive);
 }
 
@@ -136,10 +137,14 @@ void TapeSaturate::update(float dt_ms) {
     // Modulación de azimut de cabezal sobre el filtro de cinta (Age LP)
     const float baseCutoff = 20000.0f * powf(0.3f, _ageAmount);
     const float azMod = 1.0f + 0.12f * (_wowDepth * wow_lfo + 0.5f * _flutterDepth * flutter_lfo);
-    float f = baseCutoff * azMod;
+    float f = (_wowDepth > 0.0f || _flutterDepth > 0.0f) ? baseCutoff * azMod : baseCutoff;
     if (f < 2500.0f)  f = 2500.0f;
     if (f > 20000.0f) f = 20000.0f;
-    _lpFilter.frequency(f);
+    // Cambiar el corte del SVF en cada vuelta del loop, en saltos, metía un zipper fino: solo si cambia > 2 %
+    if (_lpApplied < 0.0f || fabsf(f - _lpApplied) > 0.02f * _lpApplied) {
+        _lpApplied = f;
+        _lpFilter.frequency(f);
+    }
 }
 
 // ── getWowFlutterMod() ────────────────────────────────────────────────────────────
@@ -149,19 +154,17 @@ float TapeSaturate::getWowFlutterMod() const {
 
 // ── _buildWaveshapeTable() ────────────────────────────────────────────────────────
 void TapeSaturate::_buildWaveshapeTable(float drive) {
-    // f(x) = tanh(drive * x) / tanh(drive)
-    // Normalización por tanh(drive): garantiza f(1.0) = 1.0 para cualquier drive.
-    // Sin normalización, la salida máxima sería tanh(drive) < 1.0 para drive < ∞.
-    // Ref: Zölzer, "DAFX" Cap. 5.1, pp. 108-118
-    float norm = tanhf(drive);
-    // Evitar división por cero para drive muy pequeño (no debería ocurrir con clamp a 1.0)
-    if (norm < 0.001f) norm = 0.001f;
-
-    for (int i = 0; i < 257; i++) {
-        float x = (float)i / 128.0f - 1.0f;    // mapea índice 0–256 → x en [-1.0, +1.0]
+    // f(x) = tanh(drive · x) / √drive (Zölzer, "DAFX" cap. 5.1). Antes se dividía por tanh(drive) (pico = 1): la
+    // pendiente en cero valía drive / tanh(drive) y la señal limpia salía ×drive, con todo su piso de ruido. Con √drive
+    // la pendiente es ≈ √drive y la saturación queda en los picos (theory/fase3-fx.md, TAPE).
+    const float norm = sqrtf(drive);
+    const float half = float(TABLE - 1) / 2.0f;
+    for (int i = 0; i < TABLE; i++) {
+        const float x = (float)i / half - 1.0f;   // índice 0…TABLE−1 → x en [−1, +1]
         _waveshapeTable[i] = tanhf(drive * x) / norm;
     }
+    _tableDrive = drive;
 
     // AudioEffectWaveshaper aplica la tabla por lookup + interpolación lineal, O(1)/muestra
-    _waveshaper.shape(_waveshapeTable, 257);
+    _waveshaper.shape(_waveshapeTable, TABLE);
 }

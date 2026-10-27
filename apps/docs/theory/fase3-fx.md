@@ -65,6 +65,18 @@ DECAY → *roomsize*; SIZE → amortiguación (SMALL más oscura, LARGE más bri
 mezclador por canal elige cuál sale. Cuando la PLATE no está elegida, el objeto se **desactiva** (no corre su update):
 no gasta CPU.
 
+### TAPE: menos ruido (rev. 2026-10-27)
+
+Juan probó la cadena: el ruido que notaba venía del TAPE, no del BIT. Causas en `fx/tape_saturate.cpp`:
+
+1. Tabla del waveshaper de **257 puntos**: con DRIVE alto la curva tanh es muy empinada cerca de cero y la
+   interpolación lineal entre puntos tan separados agrega un granulado. → **1025 puntos** (paso 1/512).
+2. Normalización `tanh(d·x) / tanh(d)` (pico = 1): la pendiente en cero vale `d / tanh(d)`, así que con DRIVE 3.25 la
+   señal limpia salía ×3.25 (+10 dB) y con ella el piso de ruido. → `tanh(d·x) / √d`: pendiente ≈ √d (×1.8 con el
+   DRIVE por defecto) y los picos se saturan sin inflar el ruido.
+3. El "azimut" cambiaba la frecuencia del pasabajos en cada vuelta del loop, en saltos (zipper). → Solo con WOW o
+   FLUTTER encendidos y cuando el corte cambia más de un 2 %.
+
 ## 3. Presets: formato 5 sin perder nada
 
 - **Formato 5 = el 4 + el lugar DELAY al final** (on, MIX y 3 parámetros: 17 bytes). Los cuatro lugares viejos quedan
