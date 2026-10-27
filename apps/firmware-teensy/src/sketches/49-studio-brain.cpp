@@ -1432,7 +1432,8 @@ void control_change(byte ch, byte cc, byte val) {
         return;
     }
     if (cc == 123) { all_notes_off(); return; }
-    if (cc == 18) {                                  // CC 18: preset de capa desde Live (0 = sale a SYNTH, theory/12 §3d)
+    if (cc == 18) {
+        Serial.printf("[MIDI] CC 18 = %u (preset de capa)\n", val);                                  // CC 18: preset de capa desde Live (0 = sale a SYNTH, theory/12 §3d)
         const int8_t idx = int8_t(studio::layer_from_cc(val, layers.count())) - 1;
         if (idx != layer_idx) layer_select(idx);
         return;
