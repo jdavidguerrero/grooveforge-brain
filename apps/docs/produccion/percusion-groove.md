@@ -1,0 +1,100 @@
+# Percusión y top loops: mapa común, kits y biblioteca de patrones
+
+> **Fecha:** 2026-10-27 · **Estado:** propuesta de trabajo para Juan · **Depende de:** `ia-local-refinamiento.md` §3 y §6,
+> `protocolo-captura.md`.
+
+La percusión colombiana y sudamericana puede ser el sello de Juan. Este documento define cómo trabajarla para que los
+patrones se puedan variar, cambiar de instrumento y, más adelante, generar loops nuevos.
+
+## 1. Dónde va en el laboratorio
+
+Sesión B, **justo después del bajo**: el groove es kick + bajo + percusión y se arma junto.
+
+1. Bajo → 2. **Groove kit** (kick de Kick 3 + percusión + top loops) → 3. Chords → plucks → lead → pad → percusión tonal del
+Brain → textura.
+
+## 2. Fuentes
+
+| Fuente | Qué es | Qué trae | Cómo entra a Live |
+|---|---|---|---|
+| **Tribe Instruments**, South America Series | Plugin VST/AU (motor Tribe Core) | Colombian Percussion (Tambores de San Jacinto): bombo del Pacífico, tambora, alegre, llamador, maracón, guache, caja vallenata · Andean Percussion: bombo legüero, caja andina, tambores chamánicos, chajchas, panderetas · marimba de chonta y más | Instrumento por pista; **trae ritmos con MIDI** (San Jacinto; carnavalito, huayno, guabina…) |
+| Percusión brasileña | Samples | (surdo, repique, caixa, agogô, ganzá… según la carpeta) | Drum Rack con el mapa común |
+| Djembes y dun duns | Samples | Djembe (bass, tone, slap), dundunba / sangban / kenkeni y sus campanas | Drum Rack con el mapa común |
+| 808 | Samples o Drum Rack | Congas, bongos, cowbell, rimshot, maracas | Drum Rack con el mapa común |
+| Kick 3 | Plugin | Kicks (2–3 elegidos) | Su pista, fuera del mapa |
+
+La licencia de Tribe no está en su página de producto (remite a una página de licencia aparte): **revisarla** antes de
+samplear sus sonidos o usarlos para entrenar. Los MIDI de ritmos que trae Tribe son contenido de Tribe: sirven de
+**referencia**, no son material propio.
+
+## 3. El mapa común ("GF Perc Map")
+
+Cada nota es un **rol rítmico**, no un instrumento: un patrón escrito sobre el mapa suena con cualquier kit. Notas en la
+convención de Live (C1 = MIDI 36).
+
+| Nota | Rol | Colombia (Tribe) | Brasil | África | 808 |
+|---|---|---|---|---|---|
+| C1 (36) | Grave abierto | Tambora (parche) · bombo del Pacífico | Surdo | Dundunba · djembe bass | — |
+| C#1 (37) | Grave apagado | Tambora apagada | Surdo apagado | Dundun apagado | — |
+| D1 (38) | Medio abierto | Alegre | Atabaque / timbal | Sangban · djembe tone | Conga low |
+| D#1 (39) | Medio apagado / slap | Alegre tapado | — | — | — |
+| E1 (40) | Agudo abierto | Llamador | Repique | Kenkeni | Conga high · bongo |
+| F1 (41) | Agudo slap | Llamador seco | Repique (rim) | Djembe slap | Bongo high |
+| F#1 (42) | Aro / madera | Tambora (aro) | Caixa (aro) | — | Rimshot |
+| G1 (43) | Sacudido corto | Guache · maracón | Ganzá | Shekere | Maraca |
+| G#1 (44) | Sacudido largo | Guache (arrastre) | Chocalho | — | — |
+| A1 (45) | Raspado | Guacharaca | Reco-reco | — | — |
+| A#1 (46) | Campana grave | Cencerro | Agogô (grave) | Campana del dundun | Cowbell |
+| B1 (47) | Campana aguda | — | Agogô (aguda) | Gankogui | — |
+| C2 (48) | Caja / tarola | Caja vallenata · caja andina | Caixa | — | Snare |
+| C#2 (49) | Pandereta | Pandereta andina | Pandeiro | — | Tambourine |
+| D2 (50) | Efecto | Tambores chamánicos | Cuíca | — | — |
+
+Los instrumentos de cada columna son ejemplos: el archivo de cada kit (§4) dice qué suena de verdad en cada rol.
+
+## 4. Kits
+
+Un **kit** dice qué toca cada rol en una fuente concreta (`GrooveForge_Dataset_v1/kits/<kit>.json`):
+
+- **Samples (Brasil, djembes, 808):** un Drum Rack en Live con cada pad en la nota del mapa. No hace falta convertir nada:
+  el patrón suena directo.
+- **Tribe:** cada instrumento tiene su propio teclado (qué tecla toca qué golpe). El archivo del kit anota esas teclas y una
+  herramienta convierte un patrón del mapa a las notas de Tribe (por pista: tambora, alegre, llamador, guache…). Para
+  completarlo hay que leer el teclado de cada instrumento en Tribe Core.
+- **Extraer los golpes de Tribe** a one-shots solo hace falta para un kit unificado (Tribe + djembes + 808 en un solo Drum
+  Rack), y después de revisar la licencia. Tocar Tribe por MIDI conserva sus articulaciones, capas de velocity y
+  variaciones.
+
+## 5. Biblioteca de patrones (lo que después genera loops nuevos)
+
+`GrooveForge_Dataset_v1/midi/perc/<patron>.mid` sobre el mapa común, cada uno con su ficha:
+
+```json
+{
+  "patron": "cumbia_base_01",
+  "estilo": "cumbia", "bpm": 124, "compases": 2,
+  "roles": ["grave", "medio", "agudo", "sacudido_corto"],
+  "swing": {"agudo": "+6 ms en contratiempos", "sacudido_corto": "56 %"},
+  "densidad": "media",
+  "origen": "propio",              // propio · ritmo tradicional (dominio público) · referencia (MIDI de Tribe u otra librería)
+  "version_cuantizada": "cumbia_base_01_q.mid",
+  "kits_probados": ["tribe_colombia", "brasil_samples"],
+  "notas": ""
+}
+```
+
+- **Microtiming por instrumento** (ia-local-refinamiento §2): patrones repetibles (por ejemplo, el llamador siempre un poco
+  adelante), siempre con su versión cuantizada para comparar.
+- **Top loop** = el patrón completo renderizado con un kit, en `renders/` junto a su MIDI y su ficha. Así cada loop se puede
+  volver a generar con otro kit o con variaciones.
+- **Generar loops nuevos, más adelante:** primero con **reglas** sobre tus patrones (densidad, acentos, pregunta y respuesta
+  entre tambores, remates cada 8 compases, cambio de kit). Un modelo solo si supera a esas reglas (ia-local-refinamiento §8).
+
+## 6. Sesión del groove kit
+
+1. `gf_session.py new perc` con el kit o los patrones candidatos.
+2. Elegir el kick (Kick 3) que va con el bajo elegido.
+3. Partir de un ritmo de referencia (los MIDI de Tribe, un ritmo tradicional) y **hacerlo tuyo**: quitar, mover, acentuar,
+   cambiar el kit. Lo que queda es un patrón `propio`.
+4. Probar el mismo patrón con 2 kits (por ejemplo Tribe Colombia y djembes) y anotar la decisión.
+5. Renderizar el top loop seco y en contexto (con kick y bajo), y guardar el MIDI con su ficha.
