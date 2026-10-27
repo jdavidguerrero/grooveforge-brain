@@ -77,6 +77,12 @@ Juan probó la cadena: el ruido que notaba venía del TAPE, no del BIT. Causas e
 3. El "azimut" cambiaba la frecuencia del pasabajos en cada vuelta del loop, en saltos (zipper). → Solo con WOW o
    FLUTTER encendidos y cuando el corte cambia más de un 2 %.
 
+**Rev. 2 (en el hardware seguía el ruido con cada nota):** el camino mojado usaba objetos de la Audio Library en enteros
+(waveshaper con tabla int16 y dos `AudioFilterStateVariable` en punto fijo; el pasaaltos de 20 Hz pierde precisión a
+frecuencias tan bajas). Se reemplazó por un núcleo en coma flotante (`dsp/tape_core.h`): tanh(d·x)/√d → bloqueador de DC
+de un polo → pasabajos de un polo con el corte suavizado por muestra, y la mezcla seco / mojado adentro. Vale también
+para el TAPE del modo FX (misma clase `TapeSaturate`). Test: silencio entra, silencio sale (exacto).
+
 ## 3. Presets: formato 5 sin perder nada
 
 - **Formato 5 = el 4 + el lugar DELAY al final** (on, MIX y 3 parámetros: 17 bytes). Los cuatro lugares viejos quedan

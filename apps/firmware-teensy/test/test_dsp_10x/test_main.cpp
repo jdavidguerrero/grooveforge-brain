@@ -8,6 +8,7 @@
 #include "dsp/pingpong_delay_core.h"
 #include "dsp/phaser_core.h"
 #include "dsp/drive_core.h"
+#include "dsp/tape_core.h"
 #include "dsp/sem_svf_core.h"
 #include "engines/dx7_core.h"
 
@@ -360,8 +361,36 @@ void test_drive_tres_tipos_acotados() {
     for (float v : o) TEST_ASSERT_FLOAT_WITHIN(1e-3f, roundf(v * 128.0f) / 128.0f, v);
 }
 
+void test_tape_silencio_limpio_y_ganancia_moderada() {
+    dsp::TapeCore t;
+    t.set_drive(3.25f);
+    t.set_cutoff(18000.0f, 44100.0f);
+    t.set_mix(1.0f);
+    float z[256] = {}, out[256];
+    for (int k = 0; k < 10; ++k) {
+        t.render(z, out, 256);
+        for (float v : out) TEST_ASSERT_EQUAL_FLOAT(0.0f, v);        // silencio entra, silencio sale: sin ruido propio
+    }
+    float in[2048], o[2048];
+    for (int i = 0; i < 2048; ++i) in[i] = 0.05f * sinf(6.2831853f * 440.0f * i / 44100.0f);   // nota suave
+    t.render(in, o, 2048);
+    float pk_in = 0, pk_out = 0;
+    for (int i = 1024; i < 2048; ++i) {
+        pk_in = fmaxf(pk_in, fabsf(in[i]));
+        pk_out = fmaxf(pk_out, fabsf(o[i]));
+    }
+    TEST_ASSERT_TRUE(pk_out / pk_in < 2.0f);                         // ≈ √3.25 = 1.8, no ×3.25
+    for (int i = 0; i < 2048; ++i) in[i] = 0.9f * sinf(6.2831853f * 440.0f * i / 44100.0f);
+    t.render(in, o, 2048);
+    for (float v : o) {
+        TEST_ASSERT_FALSE(isnan(v));
+        TEST_ASSERT_TRUE(fabsf(v) < 1.0f);
+    }
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_tape_silencio_limpio_y_ganancia_moderada);
     RUN_TEST(test_drive_tres_tipos_acotados);
     RUN_TEST(test_pingpong_alterna_l_r_con_feedback);
     RUN_TEST(test_pingpong_tone_oscuro_baja_los_agudos);

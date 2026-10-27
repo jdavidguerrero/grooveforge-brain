@@ -7,55 +7,21 @@
 #include "tape_saturate.h"
 #include <math.h>
 
-// ── Constructor ──────────────────────────────────────────────────────────────────
-// Las AudioConnections que no dependen de inputStream se inicializan aquí.
-// _cIn1 y _cIn2 dependen de inputStream (desconocido en tiempo de compilación)
-// y se crean en begin() con new AudioConnection.
-TapeSaturate::TapeSaturate()
-    : _cWaveLp(_waveshaper,  0, _lpFilter,  0)   // waveshaper out → lpFilter in
-    , _cLpHp  (_lpFilter,    0, _hpFilter,  0)   // lpFilter lowpass(out0) → hpFilter in
-    , _cHpWet (_hpFilter,    2, _dryWetMix, 1)   // hpFilter highpass(out2) → wet channel
-{}
+TapeSaturate::TapeSaturate() {}
 
-// ── Destructor ───────────────────────────────────────────────────────────────────
-TapeSaturate::~TapeSaturate() {
-    delete _cIn1;
-    delete _cIn2;
-}
+TapeSaturate::~TapeSaturate() { delete _cIn; }
 
 // ── begin() ──────────────────────────────────────────────────────────────────────
 // AudioMemory y codec son responsabilidad del sketch.
 void TapeSaturate::begin(AudioStream& inputStream) {
-    // Drive inicial: saturación sutil (curva casi lineal, apenas colorea el sonido)
-    _buildWaveshapeTable(2.0f);
-
-    // LP: cinta nueva — rolloff a 18 kHz (apenas audible, actúa como suavizante)
-    _lpFilter.frequency(18000.0f);
-    _lpFilter.resonance(0.7f);   // Q=0.7 ≈ Butterworth: sin pico de resonancia
-
-    // HP: subsónico fijo — elimina contenido <20 Hz que el waveshaper puede generar
-    // como offset o por acumulación numérica en el LFO de wow/flutter
-    _hpFilter.frequency(20.0f);
-    _hpFilter.resonance(0.7f);
-
-    // Wet 70% / dry 30% por defecto — mezcla paralela que preserva transientes
-    _dryWetMix.gain(0, 1.0f - _mix);   // ch0 = dry
-    _dryWetMix.gain(1, _mix);           // ch1 = wet
-    _dryWetMix.gain(2, 0.0f);
-    _dryWetMix.gain(3, 0.0f);
-
-    // Conexiones dinámicas: inputStream no era conocido en el constructor
-    _cIn1 = new AudioConnection(inputStream, 0, _waveshaper, 0);  // → wet path
-    _cIn2 = new AudioConnection(inputStream, 0, _dryWetMix,  0);  // → dry path
+    _stage.set_drive(2.0f);              // saturación sutil hasta que el preset diga otra cosa
+    _stage.set_mix(_mix);
+    _stage.set_bypass(_bypass);
+    _cIn = new AudioConnection(inputStream, 0, _stage, 0);
 }
 
 // ── setDrive() ───────────────────────────────────────────────────────────────────
-void TapeSaturate::setDrive(float drive) {
-    if (drive < 1.0f)  drive = 1.0f;
-    if (drive > 10.0f) drive = 10.0f;
-    if (fabsf(drive - _tableDrive) < 1e-4f) return;   // apply() lo llama seguido: la tabla solo si cambió
-    _buildWaveshapeTable(drive);
-}
+void TapeSaturate::setDrive(float drive) { _stage.set_drive(drive); }
 
 // ── setWow() ─────────────────────────────────────────────────────────────────────
 void TapeSaturate::setWow(float depth) {
@@ -78,8 +44,8 @@ void TapeSaturate::setAge(float amount) {
     _ageAmount = amount;
 
     // Escala logarítmica: f = 20000 × 0.3^amount
-    float cutoff = 20000.0f * powf(0.3f, amount);
-    _lpFilter.frequency(cutoff);
+    _lpApplied = 20000.0f * powf(0.3f, amount);
+    _stage.set_cutoff(_lpApplied);
 }
 
 // ── setMix() ─────────────────────────────────────────────────────────────────────
@@ -87,23 +53,14 @@ void TapeSaturate::setMix(float wet) {
     if (wet < 0.0f) wet = 0.0f;
     if (wet > 1.0f) wet = 1.0f;
     _mix = wet;
-    if (!_bypass) {
-        _dryWetMix.gain(0, 1.0f - _mix);
-        _dryWetMix.gain(1, _mix);
-    }
+    _stage.set_mix(_mix);
 }
 
 // ── setBypass() ──────────────────────────────────────────────────────────────────
 void TapeSaturate::setBypass(bool bypass) {
     _bypass = bypass;
-    if (_bypass) {
-        _dryWetMix.gain(0, 1.0f);
-        _dryWetMix.gain(1, 0.0f);
-        _currentMod = 0.0f;
-    } else {
-        _dryWetMix.gain(0, 1.0f - _mix);
-        _dryWetMix.gain(1, _mix);
-    }
+    _stage.set_bypass(bypass);
+    if (_bypass) _currentMod = 0.0f;
 }
 
 // ── update() ─────────────────────────────────────────────────────────────────────
@@ -140,31 +97,14 @@ void TapeSaturate::update(float dt_ms) {
     float f = (_wowDepth > 0.0f || _flutterDepth > 0.0f) ? baseCutoff * azMod : baseCutoff;
     if (f < 2500.0f)  f = 2500.0f;
     if (f > 20000.0f) f = 20000.0f;
-    // Cambiar el corte del SVF en cada vuelta del loop, en saltos, metía un zipper fino: solo si cambia > 2 %
-    if (_lpApplied < 0.0f || fabsf(f - _lpApplied) > 0.02f * _lpApplied) {
+    // El stage suaviza el corte por muestra; solo se le manda si cambió (> 1 %)
+    if (_lpApplied < 0.0f || fabsf(f - _lpApplied) > 0.01f * _lpApplied) {
         _lpApplied = f;
-        _lpFilter.frequency(f);
+        _stage.set_cutoff(f);
     }
 }
 
 // ── getWowFlutterMod() ────────────────────────────────────────────────────────────
 float TapeSaturate::getWowFlutterMod() const {
     return _currentMod;
-}
-
-// ── _buildWaveshapeTable() ────────────────────────────────────────────────────────
-void TapeSaturate::_buildWaveshapeTable(float drive) {
-    // f(x) = tanh(drive · x) / √drive (Zölzer, "DAFX" cap. 5.1). Antes se dividía por tanh(drive) (pico = 1): la
-    // pendiente en cero valía drive / tanh(drive) y la señal limpia salía ×drive, con todo su piso de ruido. Con √drive
-    // la pendiente es ≈ √drive y la saturación queda en los picos (theory/fase3-fx.md, TAPE).
-    const float norm = sqrtf(drive);
-    const float half = float(TABLE - 1) / 2.0f;
-    for (int i = 0; i < TABLE; i++) {
-        const float x = (float)i / half - 1.0f;   // índice 0…TABLE−1 → x en [−1, +1]
-        _waveshapeTable[i] = tanhf(drive * x) / norm;
-    }
-    _tableDrive = drive;
-
-    // AudioEffectWaveshaper aplica la tabla por lookup + interpolación lineal, O(1)/muestra
-    _waveshaper.shape(_waveshapeTable, TABLE);
 }

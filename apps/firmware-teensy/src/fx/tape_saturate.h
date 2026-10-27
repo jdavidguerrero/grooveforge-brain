@@ -3,21 +3,20 @@
 // Teensy Audio Library (oficial — PaulStoffregen/Audio, incluida con Teensyduino)
 #include <Audio.h>
 
+#include "../audio/tape_stage.h"
+
 /**
  * @brief FX Tape Saturate — Master Layer, Sprint 2.3.
  *
- * Modela saturación de cinta magnética con:
- *   - Waveshaper tanh (soft-clip, armónicos impares — calidez vintage)
- *   - LP filter para degradación de alta frecuencia (Age rolloff)
- *   - HP filter subsónico fijo a 20 Hz (higiene de señal)
- *   - Dry/wet mixer paralelo
+ * Modela saturación de cinta magnética con (rev. 2026-10-27, theory/fase3-fx.md, TAPE):
+ *   - tanh(d·x)/√d en coma flotante (dsp::TapeCore): sin la tabla int16 ni los SVF en punto fijo, que metían ruido
+ *     con cada nota
+ *   - bloqueador de DC (~20 Hz) y pasabajos de un polo para la edad de la cinta, con el corte suavizado (sin zipper)
+ *   - mezcla seco / mojado dentro del mismo objeto
  *   - LFOs de Wow y Flutter que modulan pitch (calculados en loop(), no en ISR)
  *
  * Signal flow:
- *   input ──┬──→ [Waveshaper tanh] → [LP Age] → [HP 20Hz] ─→ wetDryMix(ch1)
- *           └──────────────────────────────────────────────→ wetDryMix(ch0)
- *                                                                   ↓
- *                                                           AudioOutputI2S L+R
+ *   input → [AudioTapeStage: tanh → DC block → LP edad · seco / mojado] → salida
  *
  * CPU estimado: ~3.7% adicional sobre el engine (05-fx-architecture.md §1.5)
  * AudioMemory: 80 bloques recomendados con Prophet-5 — el sketch es responsable de llamar AudioMemory().
@@ -48,7 +47,7 @@ public:
      *
      * @return Referencia al AudioMixer4 de salida (output port 0).
      */
-    AudioStream& getOutputL() { return _dryWetMix; }
+    AudioStream& getOutputL() { return _stage; }
 
     /**
      * @brief Retorna el último nodo del grafo de audio — canal derecho.
@@ -57,7 +56,7 @@ public:
      *
      * @return Referencia al AudioMixer4 de salida (output port 0).
      */
-    AudioStream& getOutputR() { return _dryWetMix; }
+    AudioStream& getOutputR() { return _stage; }
 
     /**
      * @brief Drive de saturación — controla la compresión de la curva tanh.
@@ -148,28 +147,9 @@ public:
     float getWowFlutterMod() const;
 
 private:
-    // ── Audio objects internos (Teensy Audio Library oficial) ─────────────────────
-    AudioEffectWaveshaper   _waveshaper;    // curva tanh — custom, código propio
-    AudioFilterStateVariable _lpFilter;    // Age rolloff (6–20 kHz LP)
-    AudioFilterStateVariable _hpFilter;    // subsonic cut fija 20 Hz HP
-    AudioMixer4             _dryWetMix;    // último nodo — expuesto via getOutputL/R()
-
-    // ── Conexiones estáticas (inicializadas en constructor) ───────────────────────
-    // AudioFilterStateVariable: out0=lowpass, out1=bandpass, out2=highpass
-    AudioConnection _cWaveLp;     // waveshaper      → _lpFilter (in0)
-    AudioConnection _cLpHp;       // _lpFilter(out0) → _hpFilter (in0)
-    AudioConnection _cHpWet;      // _hpFilter(out2=highpass) → _dryWetMix (ch1, wet)
-
-    // ── Conexiones dinámicas (creadas en begin(), dependen de inputStream) ────────
-    // Se asignan con new porque inputStream es desconocido en tiempo de compilación.
-    AudioConnection* _cIn1 = nullptr;   // inputStream → _waveshaper (wet path)
-    AudioConnection* _cIn2 = nullptr;   // inputStream → _dryWetMix ch0 (dry path)
-
-    // ── Tabla del waveshaper (código custom) ──────────────────────────────────────
-    static constexpr int TABLE = 1025;   ///< 2^10 + 1: con 257 la interpolación granulaba (fase3-fx, TAPE)
-    float _waveshapeTable[TABLE];
-    float _tableDrive = -1.0f;           ///< DRIVE de la tabla actual (no se rehace si no cambia)
-    float _lpApplied = -1.0f;            ///< último corte del pasabajos de cinta
+    AudioTapeStage _stage;               // último nodo — expuesto via getOutputL/R()
+    AudioConnection* _cIn = nullptr;     // inputStream → _stage (creada en begin())
+    float _lpApplied = -1.0f;            ///< último corte enviado (el stage lo suaviza por muestra)
 
     // ── Estado LFO Wow/Flutter ────────────────────────────────────────────────────
     float _wowPhase      = 0.0f;
@@ -188,16 +168,4 @@ private:
     float _ageAmount = 0.0f;
     bool  _bypass    = false;
 
-    // ── Helpers (código custom) ───────────────────────────────────────────────────
-    /**
-     * @brief Regenera la tabla tanh del waveshaper con el drive dado.
-     *
-     * f(x) = tanh(drive * x) / tanh(drive), normalizada a [-1.0, 1.0].
-     * Costo: ~1025 llamadas a tanhf() (< 1 ms en Teensy 4.1), solo si el DRIVE cambia. Safe desde loop().
-     *
-     * Ref: Zölzer, "DAFX" Cap. 5.1 "Clipping and Saturation", pp. 108-118.
-     *
-     * @param drive Factor de compresión [1.0, 10.0].
-     */
-    void _buildWaveshapeTable(float drive);
 };
