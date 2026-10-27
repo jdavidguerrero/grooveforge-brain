@@ -66,12 +66,15 @@ public:
     /**
      * @brief X-MOD del OB-6: Filter Env y VCO2 modulan Freq VCO1, Morph del filtro SEM y PW VCO1.
      */
+    /// X-MOD: FILTER ENV a tasa de control; VCO 2 → FREQ 1 / PW 1 a tasa de audio (theory/fase2-engines.md §1).
     void setXMod(float filt_env, float vco2, bool freq1, bool morph, bool pw1) {
         _xmEnv   = filt_env;
         _xmVco2  = vco2;
         _xmFreq1 = freq1;
         _xmMorph = morph;
         _xmPw1   = pw1;
+        for (uint8_t i = 0; i < OB6_VOICES; i++)
+            _vco1[i].xmodFrom(&_vco2[i], freq1 ? 2.0f * vco2 : 0.0f, pw1 ? 0.40f * vco2 : 0.0f);
     }
 
     float filterMorph() const { return _filterMorph; }
@@ -120,8 +123,10 @@ private:
     LfoMod _lfo;
 
     // ── Audio objects — 6 voces estáticas ────────────────────────────────────
-    AudioSynthPolyBlep       _vco1[OB6_VOICES];
+    // VCO2 antes que VCO1: la Audio Library corre los update() en orden de construcción y VCO2 es el maestro del
+    // sync y la fuente del X-MOD de audio (theory/fase2-engines.md §1)
     AudioSynthPolyBlep       _vco2[OB6_VOICES];
+    AudioSynthPolyBlep       _vco1[OB6_VOICES];
     AudioSynthPolyBlep       _sub[OB6_VOICES];
     AudioSynthNoiseWhite     _noise[OB6_VOICES];
     AudioMixer4              _voiceMix[OB6_VOICES];
@@ -180,6 +185,7 @@ private:
     float   _xmEnv           = 0.0f;
     float   _xmVco2          = 0.0f;
     bool    _xmFreq1         = false;
+    bool _sync = false;              ///< VCO1 esclavo de VCO2 (el intervalo pasa a ser el barrido de VCO1)
     bool    _xmMorph         = false;
     bool    _xmPw1           = false;
 

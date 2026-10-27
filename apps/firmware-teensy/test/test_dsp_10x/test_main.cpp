@@ -168,8 +168,56 @@ void test_dx7_velocity_mod_index() {
     TEST_ASSERT_TRUE(pk_loud > pk_soft * 1.8f);
 }
 
+// ── Fase 2, OB-6: X-MOD de audio (theory/fase2-engines.md §1) ──
+
+void test_fast_exp2_precision() {
+    for (float x = -3.0f; x <= 3.0f; x += 0.013f)
+        TEST_ASSERT_FLOAT_WITHIN(1e-5f * exp2f(x), exp2f(x), dsp::fast_exp2(x));
+}
+
+static int count_wraps(dsp::SyncEvents& ev, dsp::PolyBlepCore& c, const float* mod, float fm_oct, int blocks) {
+    float out[128];
+    int wraps = 0;
+    for (int b = 0; b < blocks; ++b) {
+        c.render(dsp::WAVE_SAWTOOTH, 0.01f, 0.5f, 1.0f, out, 128, 0.0f, &ev, nullptr, mod, fm_oct, 0.0f);
+        wraps += ev.n;
+    }
+    return wraps;
+}
+
+void test_xmod_fm_de_audio_dobla_la_frecuencia() {
+    float one[128];
+    for (float& v : one) v = 1.0f;
+    dsp::PolyBlepCore a, b;
+    a.reset(1);
+    b.reset(1);
+    a.set_drift(0.0f);
+    b.set_drift(0.0f);
+    dsp::SyncEvents ea, eb;
+    const int plain = count_wraps(ea, a, nullptr, 0.0f, 20);    // 0.01 × 2560 muestras ≈ 25 vueltas
+    const int fm = count_wraps(eb, b, one, 1.0f, 20);           // mod = 1 a 1 octava: el doble
+    TEST_ASSERT_INT_WITHIN(1, 2 * plain, fm);
+}
+
+void test_xmod_pwm_en_rango_y_sin_nan() {
+    float mod[128], out[128];
+    for (int i = 0; i < 128; ++i) mod[i] = (i & 1) ? 1.0f : -1.0f;   // modulación extrema
+    dsp::PolyBlepCore c;
+    c.reset(3);
+    for (int b = 0; b < 8; ++b) {
+        c.render(dsp::WAVE_PULSE, 0.02f, 0.5f, 1.0f, out, 128, 0.0f, nullptr, nullptr, mod, 3.0f, 2.0f);
+        for (float v : out) {
+            TEST_ASSERT_FALSE(isnan(v));
+            TEST_ASSERT_TRUE(fabsf(v) < 2.5f);
+        }
+    }
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_fast_exp2_precision);
+    RUN_TEST(test_xmod_fm_de_audio_dobla_la_frecuencia);
+    RUN_TEST(test_xmod_pwm_en_rango_y_sin_nan);
     RUN_TEST(test_polyblep_waves_bounded_and_zero_dc);
     RUN_TEST(test_analog_env_release_sin_salto_y_legato);
     RUN_TEST(test_sem_svf_lp_notch_hp_bp);

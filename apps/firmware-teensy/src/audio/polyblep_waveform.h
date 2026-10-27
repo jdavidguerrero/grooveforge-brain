@@ -84,6 +84,21 @@ public:
     /// Vueltas del último bloque (las lee el esclavo de sync).
     const dsp::SyncEvents& syncEvents() const { return _events; }
 
+    /**
+     * @brief X-MOD a tasa de audio (theory/fase2-engines.md §1): FM exponencial y PWM con el último bloque de `src`.
+     *
+     * Como en syncTo, `src` tiene que estar construido antes que este objeto (su bloque ya está calculado).
+     */
+    void xmodFrom(const AudioSynthPolyBlep* src, float fm_oct, float pw_depth) {
+        __disable_irq();
+        _xsrc = src;
+        _fm_oct = fm_oct;
+        _pw_mod = pw_depth;
+        __enable_irq();
+    }
+    /// Último bloque normalizado (−1…1), para el X-MOD de otro oscilador.
+    const float* lastBlock() const { return _last; }
+
     /// Semilla del ruido de deriva: una distinta por voz para que no deriven todas igual.
     void setSeed(uint32_t seed) {
         __disable_irq();
@@ -101,18 +116,25 @@ public:
     void update() override {
         if (!_enabled || _amp <= 0.0f) {
             _events.n = 0;                 // sin vueltas: un esclavo de sync no repite las del bloque anterior
+            for (float& v : _last) v = 0.0f;
             return;
         }
         audio_block_t* block = allocate();
         if (!block) {
             _events.n = 0;
+            for (float& v : _last) v = 0.0f;
             return;
         }
 
         uint16_t wf;
         float inc, pw, amp, shape;
         const AudioSynthPolyBlep* master;
+        const AudioSynthPolyBlep* xsrc;
+        float fm_oct, pw_mod;
         __disable_irq();
+        xsrc = _xsrc;
+        fm_oct = _fm_oct;
+        pw_mod = _pw_mod;
         wf = _waveform;
         inc = _inc;
         pw = _pw;
@@ -122,8 +144,11 @@ public:
         __enable_irq();
 
         float tmp[AUDIO_BLOCK_SAMPLES];
+        const bool xm = xsrc && (fm_oct != 0.0f || pw_mod != 0.0f);
         _core.render(wf, inc, pw, amp, tmp, AUDIO_BLOCK_SAMPLES, shape, &_events,
-                     master ? &master->syncEvents() : nullptr);
+                     master ? &master->syncEvents() : nullptr, xm ? xsrc->lastBlock() : nullptr, fm_oct, pw_mod);
+        const float inv = 1.0f / amp;
+        for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) _last[i] = tmp[i] * inv;
         for (int i = 0; i < AUDIO_BLOCK_SAMPLES; ++i) {
             int32_t v = int32_t(tmp[i] * 32767.0f);
             if (v > 32767) v = 32767;
@@ -142,6 +167,9 @@ private:
     float _amp = 1.0f;
     float _shape = 0.0f;
     const AudioSynthPolyBlep* _master = nullptr;
+    const AudioSynthPolyBlep* _xsrc = nullptr;
+    float _fm_oct = 0.0f, _pw_mod = 0.0f;
+    float _last[AUDIO_BLOCK_SAMPLES] = {};
     dsp::SyncEvents _events;
     volatile bool _enabled = true;
 };

@@ -170,7 +170,12 @@ void OB6::setVcoShape(uint8_t vco, float shape) {
 }
 
 void OB6::setSync(bool on) {
-    for (uint8_t i = 0; i < OB6_VOICES; i++) _vco2[i].syncTo(on ? &_vco1[i] : nullptr);
+    // En el OB-6 VCO1 es el esclavo de VCO2 (manual, Oscillators; revisión de fidelidad 2026-10-25)
+    _sync = on;
+    for (uint8_t i = 0; i < OB6_VOICES; i++) {
+        _vco2[i].syncTo(nullptr);
+        _vco1[i].syncTo(on ? &_vco2[i] : nullptr);
+    }
 }
 
 void OB6::setVco2Waveform(uint16_t waveform) {
@@ -319,8 +324,8 @@ void OB6::update() {
         const float envLevel  = _filterEnv[i].update((float)dt);
         const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
 
-        // X-MOD combinada: Filter Env (unipolar) + VCO2/LFO
-        const float xmodSig = _xmEnv * envLevel + _xmVco2 * _lfo.lfo;
+        // X-MOD a tasa de control: FILTER ENV (el VCO 2 entra a tasa de audio en el VCO 1, setXMod)
+        const float xmodSig = _xmEnv * envLevel;
 
         // 1. Cutoff del filtro SEM 12 dB/oct
         float modulated = (_filterCutoff + _filterEnvAmt * velBright * envLevel * 7500.0f) * _lfo.cutoff_mul * _spread[i].cutoff * _cutJit[i];
@@ -339,8 +344,11 @@ void OB6::update() {
         // 3. Glide + Pitch + VCO2 Fine Detune + X-MOD → Freq VCO1
         _voices[i].currentHz += (_voices[i].targetHz - _voices[i].currentHz) * glide_k;
         const float fBase = _voices[i].currentHz * _lfo.pitch_ratio * _spread[i].pitch * _uni[i];
-        const float f1 = _xmFreq1 ? (fBase * _semitonesToRatio(24.0f * xmodSig)) : fBase;
-        const float f2 = fBase * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
+        // Con SYNC, VCO2 (maestro) suena en la nota y el intervalo barre VCO1 (esclavo) por encima
+        const float interval = _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
+        const float f1raw = _sync ? fBase * interval : fBase;
+        const float f1 = _xmFreq1 ? (f1raw * _semitonesToRatio(24.0f * xmodSig)) : f1raw;
+        const float f2 = _sync ? fBase : fBase * interval;
 
         _vco1[i].frequency(f1);
         _vco2[i].frequency(f2);
@@ -368,9 +376,10 @@ void OB6::_triggerVoice(uint8_t voice_idx, uint8_t midi_note, float velocity) {
     _voiceMix[voice_idx].gain(3, _lvlNoise * 0.5f * vel);
 
     const float f = _voices[voice_idx].currentHz;
-    _vco1[voice_idx].frequency(f);
-    _vco2[voice_idx].frequency(f * _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f));
-    _sub[voice_idx].frequency(f * 0.5f);
+    const float interval = _semitonesToRatio(_vco2Semitones + _vco2DetuneCents / 100.0f);
+    _vco1[voice_idx].frequency(_sync ? f * interval : f);
+    _vco2[voice_idx].frequency(_sync ? f : f * interval);
+    _sub[voice_idx].frequency((_sync ? f * interval : f) * 0.5f);
 
     _ampEnv[voice_idx].noteOn();
     _filterEnv[voice_idx].noteOn(false);

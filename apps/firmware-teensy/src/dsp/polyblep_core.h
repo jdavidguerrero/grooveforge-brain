@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdint.h>
 
+#include "fast_math.h"
+
 /**
  * @file polyblep_core.h
  * @brief Oscilador virtual-analog con corrección PolyBLEP (Välimäki & Huovilainen, IEEE SPM 2007).
@@ -70,9 +72,13 @@ public:
      * @param shape   mezcla de WAVE_SHAPE_MORPH (0 = saw, 1 = pulse)
      * @param record  si no es nulo, anota las vueltas de este oscilador (maestro de sync)
      * @param sync    si no es nulo, reinicia la fase en cada vuelta del maestro (hard sync, BLEP de un lado)
+     * @param mod     si no es nulo, señal de audio (−1…1) por muestra para la FM y el PWM (X-MOD del OB-6)
+     * @param fm_oct  profundidad de la FM exponencial: dt[i] = dt · 2^(fm_oct · mod[i])
+     * @param pw_mod  profundidad del PWM: pw[i] = pw + pw_mod · mod[i]
      */
     void render(uint16_t waveform, float inc, float pw, float amp, float* out, int n, float shape = 0.0f,
-                SyncEvents* record = nullptr, const SyncEvents* sync = nullptr) {
+                SyncEvents* record = nullptr, const SyncEvents* sync = nullptr, const float* mod = nullptr,
+                float fm_oct = 0.0f, float pw_mod = 0.0f) {
         if (record) record->n = 0;
         if (amp <= 0.0f || inc <= 0.0f) {
             for (int i = 0; i < n; ++i) out[i] = 0.0f;
@@ -89,12 +95,23 @@ public:
         const float white = float(int32_t(_rng)) * (1.0f / 2147483648.0f);
         _drift = 0.995f * _drift + 0.0999f * white;
 
-        float dt = inc * (1.0f + _drift_depth * _drift);
-        if (dt > 0.48f) dt = 0.48f;
-        if (pw < 0.05f) pw = 0.05f;
-        if (pw > 0.95f) pw = 0.95f;
+        float dt0 = inc * (1.0f + _drift_depth * _drift);
+        if (dt0 > 0.48f) dt0 = 0.48f;
+        float pw0 = pw < 0.05f ? 0.05f : pw > 0.95f ? 0.95f : pw;
+        const bool fm = mod && fm_oct != 0.0f, pwm = mod && pw_mod != 0.0f;
+        float dt = dt0;
+        pw = pw0;
 
         for (int i = 0; i < n; ++i) {
+            if (fm) {
+                dt = dt0 * fast_exp2(fm_oct * mod[i]);
+                if (dt > 0.48f) dt = 0.48f;
+                if (dt < 1e-6f) dt = 1e-6f;
+            }
+            if (pwm) {
+                pw = pw0 + pw_mod * mod[i];
+                pw = pw < 0.05f ? 0.05f : pw > 0.95f ? 0.95f : pw;
+            }
             _phase += dt;
             if (_phase >= 1.0f) {
                 _phase -= floorf(_phase);
