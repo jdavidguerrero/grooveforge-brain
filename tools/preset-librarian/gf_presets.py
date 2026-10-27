@@ -278,6 +278,14 @@ def cmd_fs(a):
         print(f"{name:10} {n} presets")
 
 
+def cmd_format(a):
+    if not a.si:
+        sys.exit("Esto BORRA todos los presets guardados en el Brain (los de fábrica vuelven solos). "
+                 "Exportar antes con `export` y repetir con --si para confirmar.")
+    Brain(a.port).request("@GF FORMAT YES", lambda l: l.startswith("@GF OK FORMAT"), timeout=30.0)
+    print("área de presets formateada: el Brain está escribiendo los de fábrica (unos segundos)")
+
+
 def slot(i: int) -> str:
     """Lugar en los bancos A–D de 16 (theory/13): 0 → A-01, 63 → D-16."""
     return f"{chr(ord('A') + i // 16)}-{i % 16 + 1:02d}"
@@ -303,6 +311,9 @@ def main(argv=None):
     s.set_defaults(fn=cmd_bank)
     sub.add_parser("list", help="listar los presets del Brain").set_defaults(fn=cmd_list)
     sub.add_parser("fs", help="espacio del flash de presets y tamaño de cada banco").set_defaults(fn=cmd_fs)
+    s = sub.add_parser("format", help="BORRA todos los presets del Brain y regenera los de fábrica")
+    s.add_argument("--si", action="store_true", help="confirmar")
+    s.set_defaults(fn=cmd_format)
     a = p.parse_args(argv)
     a.fn(a)
 

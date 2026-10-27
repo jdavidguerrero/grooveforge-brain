@@ -407,6 +407,10 @@ void test_parseo_de_comandos() {
     TEST_ASSERT_EQUAL(int(LinkCmd::Export), int(parse_link_cmd(l6).kind));
     char l7[] = "@GF FS";
     TEST_ASSERT_EQUAL(int(LinkCmd::Fs), int(parse_link_cmd(l7).kind));
+    char l8[] = "@GF FORMAT YES";
+    TEST_ASSERT_EQUAL(int(LinkCmd::Format), int(parse_link_cmd(l8).kind));
+    char l9[] = "@GF FORMAT";                                  // sin YES no borra
+    TEST_ASSERT_EQUAL(int(LinkCmd::None), int(parse_link_cmd(l9).kind));
 }
 
 void test_put_y_trunc_del_banco() {

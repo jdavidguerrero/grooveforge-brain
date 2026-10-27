@@ -24,6 +24,11 @@ Si se corta la corriente a mitad, el próximo arranque ve `/presets` en la nueva
 que falte vuelve como preset de fábrica. Nunca se vuelve a montar el área vieja cuando la nueva ya tiene datos (montar
 una área inválida la formatea y podría pisar bloques de la nueva).
 
+**Rev. 2 (2026-10-27, en el hardware):** el área vieja de 512 KB estaba **corrupta** (sus metadatos apuntaban fuera
+del flash: leerla en la migración colgó la Teensy con un bus fault en `0x608B0000`; explica también el banco que
+quedaba en 2 presets). Se quitó la migración: el área de 2 MB arranca limpia y se regeneran los de fábrica. Para
+dejarla limpia de una vez: `@GF FORMAT YES` (`gf_presets.py format --si`), que borra todo y regenera los de fábrica.
+
 **Bancos A–D:** 64 presets por engine, guardados en orden (`00.gfp` … `63.gfp`, la anotación de fábrica pasa a `64`).
 Un banco son 16 lugares seguidos: A = 1–16, B = 17–32, C = 33–48, D = 49–64.
 
