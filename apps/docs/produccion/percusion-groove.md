@@ -175,3 +175,10 @@ En cada género (y en `raices/`) los patrones salen en dos carpetas, para mezcla
 Nombre: `<patron>_<version>_<rack>.mid`, con `<version>` = `intro` · `main` · `peak` · `main_q` y `<rack>` =
 `djembe` (GF Djembe Dunun) · `brazilian` (GF Brasil) · `808` (GF 808 Perc) · `tribe` (Tribe Colombian Percussion, ya
 convertido a su teclado). Así top y perc de patrones distintos se combinan libremente.
+
+### Idea para después (no ahora: primero la recolección)
+
+`gf_toploops.py "<track>" --genero … --estructura "intro:16 groove:16 build:8 drop:32 break:16 …"`: top y perc del
+largo del track, cada sección en su nivel (intro → `intro`, groove → `main`, build → `main` subiendo, drop → `peak`,
+break → top `intro` o nada), remates cada 8 / 16 compases, A/B entre patrones del género, mutaciones con semilla y
+varias propuestas para elegir. Las elecciones anotadas en las fichas son el dato para la IA local más adelante.
