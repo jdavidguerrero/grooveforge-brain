@@ -13,7 +13,7 @@ constexpr uint8_t FX_ROUTE_DEFAULT[GF_UI_FX_SLOTS] = {0, 0, 1, 0, 2, 0, 1, 0, 0,
 
 // Home de theory/08 de Studio: PERFORM y PANEL. AI y SPECTRUM siguen en el enum (ids del protocolo) pero fuera de la
 // rotación hasta que lleguen los datos de GroovePilot y el comando de espectro.
-bool is_view(uint8_t p) { return p == PERFORM || p == PANEL; }
+bool is_view(uint8_t p) { return p == PERFORM || p == PANEL || p == HYBRID; }
 
 /// Vistas de la home en el orden de NAV.
 constexpr int N_VIEWS = 2;
@@ -81,14 +81,15 @@ void StudioUi::refresh_cursor() {
         case ENV:     ui_.cursor = env_sel_; break;
         case PANEL:   ui_.cursor = panel_cursor_; break;
         case GROOVE:  ui_.cursor = groove_stop_; break;
+        case HYBRID:  ui_.cursor = layer_cursor_; break;
         default:      ui_.cursor = 0; break;
     }
 }
 
 Result StudioUi::handle(Control c, int8_t v) {
     dirty_ = true;
-    if (c == Control::NavLong) {                            // home = PERFORM, también desde PANEL (en FX, FX es su home)
-        if (!ui_.mode) show(PERFORM);
+    if (c == Control::NavLong) {                            // home = PERFORM (HYBRID en el modo híbrido); en FX, FX
+        if (!ui_.mode) show(hybrid_ ? HYBRID : PERFORM);
         return {};
     }
     if (c == Control::VolUp || c == Control::VolDown)        // en SYNTH y en FX, en cualquier página
@@ -151,7 +152,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
                 break;
             case Control::NavPush:
                 engine_ = engine_cursor_;
-                show(PERFORM);
+                show(hybrid_ ? HYBRID : PERFORM);
                 return {Action::LoadEngine, engine_};
             case Control::Key4: show(PERFORM); break;
             case Control::Key1: show(OSC); break;
@@ -160,7 +161,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             default:
                 if (c >= Control::Pick0 && c <= Control::Pick5) {
                     engine_ = engine_cursor_ = uint8_t(uint8_t(c) - uint8_t(Control::Pick0));
-                    show(PERFORM);
+                    show(hybrid_ ? HYBRID : PERFORM);
                     return {Action::LoadEngine, engine_};
                 }
                 break;
@@ -197,6 +198,20 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
         return {};
     }
 
+    if (ui_.page == HYBRID) {                                // home del modo HYBRID (theory/12 §3c)
+        switch (c) {
+            case Control::Nav: {
+                const int i = int(layer_cursor_) + v;
+                layer_cursor_ = uint8_t(i < 0 ? 0 : i >= HYBRID_LAYERS ? HYBRID_LAYERS - 1 : i);
+                refresh_cursor();
+                return {};
+            }
+            case Control::NavPush: return {Action::LayerLoad, layer_cursor_};
+            case Control::P1Push: return {Action::LayerFocus, 0};
+            case Control::P2Push: return {Action::LayerFocus, 1};
+            default: break;
+        }
+    }
     if (ui_.page == PERFORM && c == Control::NavPush) {     // NAV push en PERFORM: entra a PANEL (theory/08 §4)
         show(PANEL);
         return {};
@@ -278,8 +293,19 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             }
             break;
         case Control::Key1: toggle_page(OSC); break;
-        case Control::Key2:                                 // B2: ENV · SHIFT + B2: siguiente capa híbrida (theory/12)
-            if (ui_.shift) return {Action::LayerNext, 0};
+        case Control::Key2:                                 // B2: ENV · SHIFT + B2: entra / sale del modo HYBRID
+            if (ui_.shift) {
+                if (hybrid_) {
+                    hybrid_ = false;
+                    last_view_ = PERFORM;
+                    show(PERFORM);
+                    return {Action::HybridExit, 0};
+                }
+                hybrid_ = true;
+                last_view_ = HYBRID;
+                show(HYBRID);
+                return {Action::HybridEnter, layer_cursor_};
+            }
             toggle_page(ENV);
             break;
         case Control::Key3:                                 // B3: LFO / MOD · SHIFT + B3: GROOVE

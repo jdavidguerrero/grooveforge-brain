@@ -200,6 +200,8 @@ void BridgeLink::send_ui_input(Ctl c, bool current_shift) {
         case Ctl::SwipeDown:   id = 22; break;
         case Ctl::VolUp:       id = 26; break;   // studio::Control::VolUp / VolDown (el Teensy es dueño del volumen)
         case Ctl::VolDown:     id = 27; break;
+        case Ctl::FocusA:      id = 24; break;   // P1 push: foco en A en la página HYBRID
+        case Ctl::FocusB:      id = 25; break;   // P2 push: foco en B
         default: return;
     }
     const uint8_t payload[2] = {id, uint8_t(val)};
@@ -312,6 +314,9 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
     case GF_CMD_UI_STATE:
         m_.ui = ui;
         m_.ui_dirty = true;
+        break;
+    case GF_CMD_LAYER_STATE:   // capa híbrida (theory/12 §3c)
+        if (gf_layer_state_unpack(p, len, &m_.layer)) m_.layer_dirty = true;
         break;
     case GF_CMD_KEY_DETECTED:
         if (len >= 1 && p[0] < 24) {
@@ -496,6 +501,20 @@ void BridgeLink::apply(StudioState& s) {
     if (m_.vol_dirty) {
         s.volume_db = gf_vol_db(m_.vol);
         m_.vol_dirty = false;
+    }
+    if (m_.layer_dirty) {
+        const GF_LayerState& l = m_.layer;
+        s.hybrid.layer = l.layer;
+        s.hybrid.engine_a = l.engine_a < 6 ? l.engine_a : 0;
+        s.hybrid.engine_b = l.engine_b < 6 ? l.engine_b : 0;
+        s.hybrid.focus = l.focus;
+        s.hybrid.morph = l.morph;
+        s.hybrid.delay_b_ms = l.delay_b_ms;
+        s.hybrid.transpose_b = l.transpose_b;
+        std::snprintf(s.hybrid.name, sizeof(s.hybrid.name), "%s", l.name);
+        std::snprintf(s.hybrid.preset_a, sizeof(s.hybrid.preset_a), "%s", l.preset_a);
+        std::snprintf(s.hybrid.preset_b, sizeof(s.hybrid.preset_b), "%s", l.preset_b);
+        m_.layer_dirty = false;
     }
     if (m_.bpm_dirty) {
         s.bpm = m_.bpm_x10 / 10.0f;

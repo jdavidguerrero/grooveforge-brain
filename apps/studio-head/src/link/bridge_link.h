@@ -92,6 +92,8 @@ private:
         bool groove_dirty = false, snap_dirty = false;
         GF_UiState ui{};
         bool ui_dirty = false;
+        GF_LayerState layer{};         ///< LAYER_STATE 0x46 (theory/12 §3c)
+        bool layer_dirty = false;
         char preset_names[6][PRESET_MAX][20] = {};   ///< banco por engine (PRESET_ENTRY 0x90)
         uint8_t preset_count[6] = {};
         uint8_t preset_loaded[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};   ///< PRESET_LOADED 0x17

@@ -28,6 +28,7 @@ enum class Ctl : uint8_t {
     FxViewNext,   ///< tap en la gráfica de FX MAIN
     VolUp, VolDown,   ///< volumen de salida: botones − / + del panel VOL (y el teclado en el demo)
     VolShow,          ///< tocar VOL en la barra superior: abre el panel con − / + (local, no viaja al Teensy)
+    FocusA, FocusB,   ///< tocar la tarjeta A / B en la página HYBRID (= P1 push / P2 push, theory/12 §3c)
     InUp, InDown,     ///< pot IN
     PadCycle,         ///< switch INPUT PAD trasero: 0 → −10 → −20 dB
     LinkToggle,       ///< demo: simula la pérdida del enlace con el motor

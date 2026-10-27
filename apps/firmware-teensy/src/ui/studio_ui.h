@@ -19,7 +19,8 @@ namespace studio {
 /// Páginas: mismo enum que `Page` de la cabeza (7 = error, lo decide la cabeza y nunca viaja).
 enum Page : uint8_t { PERFORM = 0, AI = 1, SPECTRUM = 2, ENV = 3, FX = 4, ENGINE = 5, PRESETS = 6, OSC = 8, LFO = 9,
                     SYNTH_FX = 10, PANEL = 11,     ///< PANEL: 4.ª vista de la home (fidelidad §11.7)
-                    GROOVE = 12 };                 ///< SHIFT + B3 (theory/09 de Studio §7)
+                    GROOVE = 12,                   ///< SHIFT + B3 (theory/09 de Studio §7)
+                    HYBRID = 13 };                 ///< home del modo HYBRID (theory/12 §3c)
 
 /// Ids de control, compartidos con UI_INPUT (0x45). NAV lleva el paso del giro en `value`.
 /// Key1–Key4 = B1–B4 del panel (Arduino ya define B1, B2… como literales binarios).
@@ -47,7 +48,11 @@ PanelItem panel_card(uint8_t engine, uint8_t i);
 /// GroovePush, la parada de GROOVE (el sketch decide: en CHORD con notas apretadas graba el acorde, si no enciende /
 /// apaga); Tap, B4 en GROOVE.
 enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle, FilterBypass, LfoSync, LfoShape,
-                              SfxToggle, GroovePush, Tap, VolStep, LayerNext };   ///< VolStep: arg = +1 / −1 como int8_t; LayerNext: SHIFT + B2
+                              SfxToggle, GroovePush, Tap, VolStep,
+                              HybridEnter,   ///< SHIFT + B2 sin capa: arg = capa a cargar (theory/12 §3c)
+                              HybridExit,    ///< SHIFT + B2 en el modo
+                              LayerLoad,     ///< NAV push en HYBRID: arg = capa
+                              LayerFocus };  ///< P1 / P2 push en HYBRID: arg = 0 (A) o 1 (B)
 
 struct Result {
     Action action = Action::None;
@@ -59,6 +64,7 @@ constexpr uint8_t FAV_FX_SLOT = 2;               ///< B4 en FX: GHOST ECHO (como
 constexpr uint8_t PRESET_ROWS_VISIBLE = 6;       ///< paso del swipe en PRESETS
 constexpr uint8_t SFX_SLOTS = 4;                 ///< cadena de FX del synth (theory/05 de Studio)
 constexpr uint8_t GROOVE_STOPS = 5;              ///< PUMP · ARP · CHORD · UNISON · MACRO
+constexpr uint8_t HYBRID_LAYERS = 8;             ///< capas de la lista (layers.h)
 
 class StudioUi {
 public:
@@ -78,6 +84,19 @@ public:
             dirty_ = true;
         }
     }
+    /// Modo HYBRID (theory/12 §3c): el sketch lo enciende al cargar una capa por CC 18, sin cambiar de página.
+    void set_hybrid(bool on) {
+        if (on == hybrid_) return;
+        hybrid_ = on;
+        if (on) last_view_ = HYBRID;
+        else if (ui_.page == HYBRID) show(PERFORM);
+        else last_view_ = PERFORM;
+        dirty_ = true;
+    }
+    bool hybrid() const { return hybrid_; }
+    uint8_t layer_cursor() const { return layer_cursor_; }
+    void set_layer_cursor(uint8_t i) { layer_cursor_ = i < HYBRID_LAYERS ? i : 0; if (ui_.page == HYBRID) refresh_cursor(); }
+
     /// Capa híbrida sonando (flag LAYER para la cabeza).
     void set_layer(bool on) {
         const uint8_t f = uint8_t(on ? ui_.flags | GF_UI_FLAG_LAYER : ui_.flags & ~GF_UI_FLAG_LAYER);
@@ -118,6 +137,8 @@ private:
     uint8_t lfo_stop_[ENGINE_COUNT] = {};         ///< LFO / MOD: 0 = LFO, 1… = paradas de MOD del engine
     uint8_t panel_cursor_ = 0;                   ///< PANEL: tarjeta (panel_card)
     uint8_t groove_stop_ = 0;                    ///< GROOVE: parada (común a todos los engines)
+    bool hybrid_ = false;                        ///< modo HYBRID: NAV largo y las teclas vuelven a la página HYBRID
+    uint8_t layer_cursor_ = 0;                   ///< HYBRID: capa resaltada en la lista
     bool dirty_ = true;
 };
 

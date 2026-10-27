@@ -77,6 +77,7 @@ typedef enum : uint8_t {
     /* Studio (02 §2.5, theory/04): estado de UI del Teensy y gestos de la cabeza */
     GF_CMD_UI_STATE         = 0x44,
     GF_CMD_UI_INPUT         = 0x45,
+    GF_CMD_LAYER_STATE      = 0x46,   /* Studio: capa híbrida (variants/studio/theory/12 §3c) */
 
     /* 0x50 — Cloud (ESP32 ↔ Teensy) */
     GF_CMD_CLOUD_STATUS         = 0x50,
@@ -227,7 +228,7 @@ static inline size_t gf_frame_serialize(const GF_Frame* f, uint8_t* buf, size_t 
 /** @brief Estado de UI que el Teensy manda entero a la cabeza de Studio ("el último valor gana"). */
 typedef struct {
     uint8_t  mode;                      /* 0 SYNTH, 1 FX */
-    uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO 10 SYNTH FX 11 PANEL */
+    uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO 10 SYNTH FX 11 PANEL 12 GROOVE 13 HYBRID */
     uint8_t  shift;                     /* 0/1 */
     uint8_t  fx_hold;                   /* 0/1 */
     uint8_t  cursor;                    /* ENGINE: tile · PRESETS: fila (0 = SAVE) · OSC: oscilador */
@@ -252,6 +253,57 @@ static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {
     out[9] = (uint8_t)(u->fx_on >> 8);
     memcpy(out + 10, u->fx_route, GF_UI_FX_SLOTS);
     return GF_UI_STATE_LEN;
+}
+
+/* ── LAYER_STATE (0x46): capa híbrida de dos engines (variants/studio/theory/12 §3c) ── */
+
+#define GF_LAYER_NAME_LEN   12U
+#define GF_LAYER_PRESET_LEN 16U
+#define GF_LAYER_STATE_LEN  (8U + GF_LAYER_NAME_LEN + 2U * GF_LAYER_PRESET_LEN)
+
+typedef struct {
+    int8_t  layer;                           /* −1 = sin capa; 0–7 de la lista; 8 = CUSTOM */
+    uint8_t cursor;                          /* capa resaltada en la lista de la página HYBRID */
+    uint8_t engine_a, engine_b;
+    uint8_t focus;                           /* 0 = A, 1 = B */
+    uint8_t morph;                           /* 0–100 % */
+    uint8_t delay_b_ms;                      /* retraso del ataque de B */
+    int8_t  transpose_b;                     /* semitonos */
+    char    name[GF_LAYER_NAME_LEN + 1];
+    char    preset_a[GF_LAYER_PRESET_LEN + 1];
+    char    preset_b[GF_LAYER_PRESET_LEN + 1];
+} GF_LayerState;
+
+static inline void gf_put_str(uint8_t* out, const char* s, size_t n) {
+    size_t i = 0;
+    for (; i < n && s[i]; ++i) out[i] = (uint8_t)s[i];
+    for (; i < n; ++i) out[i] = 0;
+}
+
+static inline void gf_get_str(char* dst, const uint8_t* in, size_t n) {
+    memcpy(dst, in, n);
+    dst[n] = '\0';
+}
+
+/** @brief Serializa LAYER_STATE. @return GF_LAYER_STATE_LEN. */
+static inline size_t gf_layer_state_pack(const GF_LayerState* l, uint8_t* out) {
+    out[0] = (uint8_t)l->layer;  out[1] = l->cursor;  out[2] = l->engine_a;   out[3] = l->engine_b;
+    out[4] = l->focus;           out[5] = l->morph;   out[6] = l->delay_b_ms; out[7] = (uint8_t)l->transpose_b;
+    gf_put_str(out + 8, l->name, GF_LAYER_NAME_LEN);
+    gf_put_str(out + 8 + GF_LAYER_NAME_LEN, l->preset_a, GF_LAYER_PRESET_LEN);
+    gf_put_str(out + 8 + GF_LAYER_NAME_LEN + GF_LAYER_PRESET_LEN, l->preset_b, GF_LAYER_PRESET_LEN);
+    return GF_LAYER_STATE_LEN;
+}
+
+/** @brief Deserializa LAYER_STATE. @return false si len no es GF_LAYER_STATE_LEN. */
+static inline bool gf_layer_state_unpack(const uint8_t* in, size_t len, GF_LayerState* l) {
+    if (len != GF_LAYER_STATE_LEN) return false;
+    l->layer = (int8_t)in[0];  l->cursor = in[1];  l->engine_a = in[2];   l->engine_b = in[3];
+    l->focus = in[4];          l->morph = in[5];   l->delay_b_ms = in[6]; l->transpose_b = (int8_t)in[7];
+    gf_get_str(l->name, in + 8, GF_LAYER_NAME_LEN);
+    gf_get_str(l->preset_a, in + 8 + GF_LAYER_NAME_LEN, GF_LAYER_PRESET_LEN);
+    gf_get_str(l->preset_b, in + 8 + GF_LAYER_NAME_LEN + GF_LAYER_PRESET_LEN, GF_LAYER_PRESET_LEN);
+    return true;
 }
 
 /** @brief Deserializa el payload. @return false si len no es GF_UI_STATE_LEN (→ NACK INVALID_LEN). */

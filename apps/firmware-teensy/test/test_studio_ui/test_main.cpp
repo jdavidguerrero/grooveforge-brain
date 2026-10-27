@@ -1,3 +1,4 @@
+#include <string.h>
 // Tests de la máquina de páginas de Studio (theory/04 §3 y §6): secuencias de controles → estado de UI.
 // El comportamiento esperado es el de App::handle de apps/studio-head.
 #include <unity.h>
@@ -336,19 +337,65 @@ void test_volumen_desde_la_cabeza() {
     TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.9f, gf_vol_norm(-6.0f));
 }
 
-void test_shift_b2_capa_siguiente() {
+void test_modo_hybrid() {
     StudioUi ui;
     ui.handle(Control::B6Down);
-    Result r = ui.handle(Control::Key2);
-    TEST_ASSERT_EQUAL(int(Action::LayerNext), int(r.action));
+    Result r = ui.handle(Control::Key2);                        // SHIFT + B2 entra
     ui.handle(Control::B6Up);
-    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);          // no abre ENV
-    ui.take_dirty();
+    TEST_ASSERT_EQUAL(int(Action::HybridEnter), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    TEST_ASSERT_TRUE(ui.hybrid());
+    ui.handle(Control::Nav, 3);                                 // NAV recorre la lista de capas
+    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+    r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::LayerLoad), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(3, r.arg);
+    r = ui.handle(Control::P2Push);                             // foco en B
+    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(1, r.arg);
+    ui.handle(Control::Key1);                                   // B1 = OSC de la capa en foco
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    ui.handle(Control::Key1);                                   // la misma tecla vuelve a HYBRID
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    ui.handle(Control::Key2);
+    ui.handle(Control::NavLong);                                // NAV largo = home del modo
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    ui.handle(Control::B6Down);
+    r = ui.handle(Control::Key2);                               // SHIFT + B2 sale
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL(int(Action::HybridExit), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
+    TEST_ASSERT_FALSE(ui.hybrid());
     ui.set_layer(true);
-    TEST_ASSERT_TRUE(ui.take_dirty());
     TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_LAYER);
-    ui.handle(Control::Key2);                                   // B2 solo sigue siendo ENV
-    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+}
+
+void test_layer_state_ida_y_vuelta() {
+    GF_LayerState l{};
+    l.layer = 1;
+    l.cursor = 1;
+    l.engine_a = 4;
+    l.engine_b = 3;
+    l.focus = 1;
+    l.morph = 50;
+    l.delay_b_ms = 10;
+    l.transpose_b = -12;
+    strcpy(l.name, "KALIMBA");
+    strcpy(l.preset_a, "HY KALIMBA A");
+    strcpy(l.preset_b, "HY KALIMBA B");
+    uint8_t buf[GF_LAYER_STATE_LEN];
+    TEST_ASSERT_EQUAL_UINT32(GF_LAYER_STATE_LEN, gf_layer_state_pack(&l, buf));
+    GF_LayerState r{};
+    TEST_ASSERT_TRUE(gf_layer_state_unpack(buf, GF_LAYER_STATE_LEN, &r));
+    TEST_ASSERT_EQUAL_INT8(1, r.layer);
+    TEST_ASSERT_EQUAL_INT8(-12, r.transpose_b);
+    TEST_ASSERT_EQUAL_UINT8(1, r.focus);
+    TEST_ASSERT_EQUAL_STRING("HY KALIMBA B", r.preset_b);
+    TEST_ASSERT_FALSE(gf_layer_state_unpack(buf, GF_LAYER_STATE_LEN - 1, &r));
+    l.layer = -1;
+    gf_layer_state_pack(&l, buf);
+    gf_layer_state_unpack(buf, GF_LAYER_STATE_LEN, &r);
+    TEST_ASSERT_EQUAL_INT8(-1, r.layer);
 }
 
 int main() {
@@ -375,6 +422,7 @@ int main() {
     RUN_TEST(test_groove_shift_b3_nav_push_y_tap);
     RUN_TEST(test_estado_del_reloj_en_flags);
     RUN_TEST(test_volumen_desde_la_cabeza);
-    RUN_TEST(test_shift_b2_capa_siguiente);
+    RUN_TEST(test_modo_hybrid);
+    RUN_TEST(test_layer_state_ida_y_vuelta);
     return UNITY_END();
 }

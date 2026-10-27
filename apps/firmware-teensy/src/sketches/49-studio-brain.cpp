@@ -217,9 +217,19 @@ StrumNote strum_q[16];
 uint8_t strum_n = 0;
 void groove_reset();
 
-// Capas híbridas (variants/studio/theory/12): A = ui.engine(), B = layer_b mientras layer_idx >= 0
-int8_t layer_idx = -1;
-uint8_t layer_b = 0xFF;
+// Capas híbridas (variants/studio/theory/12): suenan A y B; ui.engine() es la capa en FOCO (la que se edita)
+int8_t layer_idx = -1;                   // −1 sin capa · 0–7 de la lista · LAYER_CUSTOM con un engine cambiado
+constexpr int8_t LAYER_CUSTOM = 8;
+uint8_t layer_a = 0, layer_b = 0xFF, layer_focus = 0;
+float layer_gain_a_db = 0.0f, layer_gain_b_db = 0.0f;
+int8_t layer_transpose = 0;
+uint8_t layer_delay_ms = 0;
+char layer_name[13] = "";
+bool layered() { return layer_idx >= 0; }
+void bridge_layer();
+/// GROOVE (ARP / CHORD / PUMP / MORPH) y SYNTH FX son de la capa entera: los del patch de A.
+studio::Patch& groove_patch() { return layered() ? patches[layer_a] : patch(); }
+uint8_t groove_engine() { return layered() ? layer_a : ui.engine(); }
 float layer_morph_applied = -1.0f;
 dsp::Lfo lfo_b;                          // el LFO de la capa B, con su propio patch
 
@@ -362,16 +372,15 @@ void engine_note_release(uint8_t e, uint8_t note) {
 
 /// El último paso antes de los engines: A siempre; con capa, también B (transpuesta y con su retraso de ataque).
 void sound_on(uint8_t note, uint8_t vel, uint32_t delay_us) {
-    engine_note_at(ui.engine(), note, vel, delay_us);
-    if (layer_idx < 0) return;
-    const studio::LayerDef& d = studio::layer_def(uint8_t(layer_idx));
-    engine_note_at(layer_b, studio::layer_b_note(note, d.transpose_b), vel, delay_us + d.delay_b_ms * 1000u);
+    if (!layered()) { engine_note_at(ui.engine(), note, vel, delay_us); return; }
+    engine_note_at(layer_a, note, vel, delay_us);
+    engine_note_at(layer_b, studio::layer_b_note(note, layer_transpose), vel, delay_us + layer_delay_ms * 1000u);
 }
 
 void sound_off(uint8_t note) {
-    engine_note_release(ui.engine(), note);
-    if (layer_idx < 0) return;
-    engine_note_release(layer_b, studio::layer_b_note(note, studio::layer_def(uint8_t(layer_idx)).transpose_b));
+    if (!layered()) { engine_note_release(ui.engine(), note); return; }
+    engine_note_release(layer_a, note);
+    engine_note_release(layer_b, studio::layer_b_note(note, layer_transpose));
 }
 
 void arp_note_on(uint8_t n, uint8_t v, void*) { sound_on(n, v, 0); }
@@ -379,17 +388,17 @@ void arp_note_off(uint8_t n, void*) { sound_off(n); }
 
 /// Una nota ya pasada por CHORD: con ARP la toma el arpegiador; si no, va a los engines (con STRUM, a la cola).
 void voice_on(uint8_t note, uint8_t vel, uint32_t delay_us) {
-    if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_on(note, vel); return; }
+    if (groove_patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_on(note, vel); return; }
     sound_on(note, vel, delay_us);
 }
 
 void voice_off(uint8_t note) {
-    if (patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_off(note); return; }
+    if (groove_patch().groove_on[GF_GROOVE_ARP]) { arpeggio.note_off(note); return; }
     sound_off(note);
 }
 
 void play_on(uint8_t note, uint8_t vel) {
-    const studio::Patch& p = patch();
+    const studio::Patch& p = groove_patch();
     if (!p.groove_on[GF_GROOVE_CHORD]) {
         chord_n[note] = 0;
         voice_on(note, vel, 0);
@@ -428,7 +437,7 @@ uint8_t engine_unison(uint8_t e, uint8_t voices, float cents) {
 
 /// A 1 kHz: BPM y posición del reloj, notas del STRUM, pasos del ARP y ganancia del PUMP.
 void groove_tick(uint32_t now) {
-    const studio::Patch& p = patch();
+    const studio::Patch& p = groove_patch();
     const float(&g)[GF_GROOVE_STOPS][GF_OSC_SLOTS] = p.groove;
     static const dsp::GrooveClock::Source SRC[3] = {dsp::GrooveClock::Source::Auto, dsp::GrooveClock::Source::Midi,
                                                     dsp::GrooveClock::Source::Internal};   // AUTO · MIDI · INT
@@ -477,16 +486,21 @@ void groove_tick(uint32_t now) {
         gain = pump_out;
     }
     const float* u = g[GF_GROOVE_UNISON];
-    const uint8_t uni = engine_unison(ui.engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,
+    const uint8_t uni = engine_unison(groove_engine(), p.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[uint8_t(u[GF_UNISON_VOICES])] : 1,
                                       u[GF_UNISON_DETUNE]);
     gain *= dsp::unison_gain(uni);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
-    if (layer_idx >= 0) {            // MORPH (CC 17, parada MACRO) mueve el balance A / B de la capa
+    if (layered()) {                 // MORPH (CC 17, P1 en HYBRID) mueve el balance A / B de la capa
         const float morph = g[GF_GROOVE_MACRO][GF_MACRO_MORPH] * 0.01f;
         if (fabsf(morph - layer_morph_applied) > 0.001f) {
+            studio::LayerDef d = studio::layer_def(0);
+            d.gain_a_db = layer_gain_a_db;
+            d.gain_b_db = layer_gain_b_db;
             float ga, gb;
-            studio::layer_gains(studio::layer_def(uint8_t(layer_idx)), morph, &ga, &gb);
-            audio_graph::set_engine_gains(ui.engine(), ga, layer_b, gb);
+            studio::layer_gains(d, morph, &ga, &gb);
+            audio_graph::set_engine_gains(layer_a, ga, layer_b, gb);
+            const bool changed = layer_morph_applied >= 0.0f;
             layer_morph_applied = morph;
+            if (changed) bridge_layer();
         }
     }
     const float drift = studio::macro_amount(p, GF_MACRO_DRIFT);
@@ -781,7 +795,7 @@ void apply_preset(uint8_t e, const studio::Preset& p) {
     engine_filter(e);
     engine_patch(e);
     if (e != ui.engine()) return;
-    apply_sfx(e);
+    apply_sfx(groove_engine());                     // en capa, los SYNTH FX son los de A
     if (!link_up) return;                           // al conectar, bridge_all() manda todo
     bridge_filter();
     bridge_patch();
@@ -791,8 +805,7 @@ void layer_select(int8_t idx);
 void activate_engine(uint8_t e);
 
 void load_preset(uint8_t i) {
-    if (layer_idx >= 0) layer_select(-1);            // un preset normal sale de la capa
-    const uint8_t e = ui.engine();
+    const uint8_t e = ui.engine();                   // en capa: la mitad en foco, sin salir de la capa
     studio::Preset p;
     if (!presets.load(e, i, &p)) {
         Serial.printf("[PRESET] %u no se pudo leer\n", i);
@@ -801,6 +814,7 @@ void load_preset(uint8_t i) {
     preset_loaded[e] = i;
     apply_preset(e, p);
     bridge_preset_loaded();
+    if (layered()) bridge_layer();
     Serial.printf("[PRESET] cargado %u %s\n", i, p.name);
 }
 
@@ -824,20 +838,38 @@ bool layer_load_half(uint8_t e, const char* name) {
     return false;
 }
 
-/// Elige la capa `idx` (0…7) o sale de la capa (−1). A pasa a ser el engine activo; B suena a la par.
+/// La cabeza ve la capa en foco como el engine de siempre (páginas, presets, filtro) y la capa en LAYER_STATE.
+void focus_engine(uint8_t e) {
+    ui.set_engine(e);
+    ui.set_preset_count(presets.count(e));
+    bridge_engine();
+    bridge_filter();
+    bridge_patch();
+    bridge_presets();
+    bridge_preset_loaded();
+    bridge_layer();
+}
+
+/// Elige la capa `idx` (0…7) o sale de la capa (−1). A y B suenan; el foco arranca en A.
 void layer_select(int8_t idx) {
-    const uint8_t prev_b = layer_b;
+    const bool was = layered();
+    const uint8_t prev_a = layer_a, prev_b = layer_b;
     layer_idx = -1;
-    layer_b = 0xFF;
     layer_morph_applied = -1.0f;
     if (idx < 0 || idx >= int8_t(studio::LAYER_COUNT)) {
         all_notes_off();
-        if (prev_b != 0xFF && prev_b != ui.engine()) {
-            engine_dsp(prev_b, false);
-            engine_lfo(prev_b, LfoMod{});
+        if (was) {
+            if (ui.engine() != prev_a) ui.set_engine(prev_a);   // queda A sola
+            if (prev_b != prev_a) {
+                engine_dsp(prev_b, false);
+                engine_lfo(prev_b, LfoMod{});
+            }
         }
+        layer_b = 0xFF;
         audio_graph::set_active_engine(ui.engine());
         ui.set_layer(false);
+        ui.set_hybrid(false);
+        if (was) focus_engine(ui.engine());
         Serial.println("[CAPA] OFF");
         return;
     }
@@ -845,27 +877,85 @@ void layer_select(int8_t idx) {
     if (ui.engine() != d.eng_a) {
         ui.set_engine(d.eng_a);
         activate_engine(d.eng_a);                    // apaga el resto (incluida la B anterior)
-    } else if (prev_b != 0xFF && prev_b != d.eng_b) {
+    } else if (was && prev_b != 0xFF && prev_b != d.eng_b) {
         engine_dsp(prev_b, false);
         engine_lfo(prev_b, LfoMod{});
     }
+    layer_a = d.eng_a;
+    layer_b = d.eng_b;
+    layer_focus = 0;
+    layer_gain_a_db = d.gain_a_db;
+    layer_gain_b_db = d.gain_b_db;
+    layer_transpose = d.transpose_b;
+    layer_delay_ms = d.delay_b_ms;
+    snprintf(layer_name, sizeof(layer_name), "%s", d.name);
     layer_load_half(d.eng_a, d.preset_a);            // suelta las notas (apply_preset del engine activo)
     engine_dsp(d.eng_b, true);
     layer_load_half(d.eng_b, d.preset_b);
     engine_unison(d.eng_b, 1, 0.0f);
+    for (uint8_t i = 0; i < GF_ENGINE_COUNT; ++i)    // de una capa a otra: lo que no suena, apagado (CPU)
+        if (i != d.eng_a && i != d.eng_b) {
+            engine_dsp(i, false);
+            engine_lfo(i, LfoMod{});
+        }
     patches[d.eng_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH] = 50;   // las dos capas a su mezcla base
-    layer_b = d.eng_b;
     layer_idx = idx;                                 // groove_tick aplica las ganancias de MORPH
     ui.set_layer(true);
-    bridge_patch();
-    bridge_preset_loaded();
+    ui.set_hybrid(true);
+    ui.set_layer_cursor(uint8_t(idx));
+    focus_engine(d.eng_a);
     Serial.printf("[CAPA] %d %s: A %s + B %s\n", idx + 1, d.name, ENGINE_NAME[d.eng_a], ENGINE_NAME[d.eng_b]);
 }
 
-/// Con capa, el filtro de B sigue al de A: el cutoff en la misma proporción y la resonancia con el mismo paso.
+/// P1 / P2 push en HYBRID: la capa en foco pasa a ser la que editan las páginas, PRESETS y ENGINE SELECT.
+void layer_set_focus(uint8_t f) {
+    if (!layered()) return;
+    layer_focus = f ? 1 : 0;
+    focus_engine(layer_focus ? layer_b : layer_a);
+    Serial.printf("[CAPA] foco en %c (%s)\n", layer_focus ? 'B' : 'A', ENGINE_NAME[ui.engine()]);
+}
+
+/// ENGINE SELECT en el modo HYBRID: cambia el engine de la capa en foco (capa CUSTOM).
+void layer_replace_engine(uint8_t e) {
+    const uint8_t other = layer_focus ? layer_a : layer_b, old = layer_focus ? layer_b : layer_a;
+    if (e == other || e == old) {                    // no puede ser el de la otra capa
+        ui.set_engine(old);
+        focus_engine(old);
+        return;
+    }
+    all_notes_off();
+    engine_dsp(old, false);
+    engine_lfo(old, LfoMod{});
+    engine_dsp(e, true);
+    if (layer_focus) layer_b = e;
+    else {
+        // MORPH vive en el patch de A: pasa al engine nuevo
+        patches[e].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH] = patches[old].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH];
+        layer_a = e;
+    }
+    studio::Preset p;
+    if (presets.load(e, 0, &p)) {
+        preset_loaded[e] = 0;
+        apply_preset(e, p);
+    } else {
+        engine_osc(e);
+        engine_filter(e);
+        engine_patch(e);
+    }
+    engine_unison(layer_b, 1, 0.0f);
+    layer_idx = LAYER_CUSTOM;
+    layer_gain_a_db = layer_gain_b_db = 0.0f;
+    snprintf(layer_name, sizeof(layer_name), "CUSTOM");
+    layer_morph_applied = -1.0f;
+    apply_sfx(layer_a);
+    focus_engine(e);
+    Serial.printf("[CAPA] CUSTOM: A %s + B %s\n", ENGINE_NAME[layer_a], ENGINE_NAME[layer_b]);
+}
+
+/// Con capa, el filtro de la otra mitad sigue al de la capa en foco: cutoff en proporción, resonancia con el mismo paso.
 void layer_follow_filter(float cutoff_ratio, float reso_step_norm) {
-    if (layer_idx < 0) return;
-    const uint8_t b = layer_b;
+    if (!layered()) return;
+    const uint8_t b = ui.engine() == layer_a ? layer_b : layer_a;
     cutoff[b] = constrain(cutoff[b] * cutoff_ratio, GF_CUTOFF_RANGE[b].lo, GF_CUTOFF_RANGE[b].hi);
     const float rn = constrain(gf_norm(RESO_RANGE[b], resonance[b]) + reso_step_norm, 0.0f, 1.0f);
     resonance[b] = gf_denorm(RESO_RANGE[b], rn);
@@ -912,6 +1002,26 @@ void bridge_ui_state() {
     last_ui_tx = last_ui_beat = millis();
 }
 
+/// LAYER_STATE (0x46, theory/12 §3c): la capa, el foco, MORPH y los presets de las dos mitades.
+void bridge_layer() {
+    GF_LayerState l{};
+    l.layer = layer_idx;
+    l.cursor = ui.layer_cursor();
+    l.engine_a = layer_a;
+    l.engine_b = layer_b == 0xFF ? layer_a : layer_b;
+    l.focus = layer_focus;
+    l.morph = uint8_t(lroundf(patches[layer_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH]));
+    l.delay_b_ms = layer_delay_ms;
+    l.transpose_b = layer_transpose;
+    snprintf(l.name, sizeof(l.name), "%s", layered() ? layer_name : "");
+    const uint8_t pa = preset_loaded[layer_a], pb = layered() ? preset_loaded[layer_b] : 0xFF;
+    snprintf(l.preset_a, sizeof(l.preset_a), "%s", pa != 0xFF ? presets.name(layer_a, pa) : "");
+    snprintf(l.preset_b, sizeof(l.preset_b), "%s", layered() && pb != 0xFF ? presets.name(layer_b, pb) : "");
+    uint8_t p[GF_LAYER_STATE_LEN];
+    gf_layer_state_pack(&l, p);
+    bridge_send(GF_CMD_LAYER_STATE, p, GF_LAYER_STATE_LEN);
+}
+
 void bridge_all() {
     bridge_engine();
     bridge_filter();
@@ -921,6 +1031,7 @@ void bridge_all() {
     bridge_presets();
     bridge_preset_loaded();
     bridge_ui_state();
+    bridge_layer();
 }
 
 /// Lee las respuestas de la cabeza: cuenta ACKs y procesa gestos táctiles UI_INPUT (0x45).
@@ -1018,18 +1129,41 @@ void mod_tick() {
     const float dt = (now - last_us) * 1e-6f;
     last_us = now;
     groove_tick(now);
-    engine_lfo(ui.engine(), engine_mod(ui.engine(), patch(), lfo, dt));
-    if (layer_idx >= 0) engine_lfo(layer_b, engine_mod(layer_b, patches[layer_b], lfo_b, dt));
+    if (!layered()) {
+        engine_lfo(ui.engine(), engine_mod(ui.engine(), patch(), lfo, dt));
+        return;
+    }
+    engine_lfo(layer_a, engine_mod(layer_a, patches[layer_a], lfo, dt));
+    engine_lfo(layer_b, engine_mod(layer_b, patches[layer_b], lfo_b, dt));
 }
 
 /// P1 (0) o P2 (1) giró: edita lo que diga la página y avisa a la cabeza.
+/// Página HYBRID (theory/12 §3c): P1 MORPH · P2 retraso del ataque de B · SHIFT + P2 transposición de B.
+void hybrid_encoder(uint8_t enc, int32_t steps) {
+    if (!layered() || enc > 1) return;
+    if (enc == 0) {
+        float& m = patches[layer_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH];
+        m = constrain(m + 2.0f * steps, 0.0f, 100.0f);
+        const uint16_t id = gf_groove_param_id(layer_a, GF_GROOVE_MACRO, GF_MACRO_MORPH);
+        bridge_param(id, m * 0.01f);
+        cc_out(id, m * 0.01f);
+    } else if (ui.state().shift) {
+        layer_transpose = int8_t(constrain(layer_transpose + (steps > 0 ? 12 : -12), -24, 24));
+        all_notes_off();                             // las notas de B que suenan quedarían en la altura vieja
+    } else {
+        layer_delay_ms = uint8_t(constrain(int(layer_delay_ms) + int(steps), 0, 35));
+    }
+    bridge_layer();
+}
+
 void page_encoder(uint8_t enc, int32_t steps) {
+    if (ui.state().page == studio::HYBRID) { hybrid_encoder(enc, steps); return; }
     studio::ParamChange c[1];
     if (!studio::edit_encoder(patch(), ui.state(), ui.engine(), enc, int8_t(constrain(steps, -8, 8)), c)) return;
     bridge_param(c[0].id, c[0].norm);
     cc_out(c[0].id, c[0].norm);
     engine_patch(ui.engine());
-    if (ui.state().page == studio::SYNTH_FX) apply_sfx(ui.engine());
+    if (ui.state().page == studio::SYNTH_FX) apply_sfx(groove_engine());
     if (ui.state().page == studio::OSC || ui.state().page == studio::LFO) engine_osc(ui.engine());   // OSC y MOD
     if (ui.state().page == studio::GROOVE && ui.state().cursor == GF_GROOVE_MACRO) {   // GRIT / POCKET
         engine_osc(ui.engine());
@@ -1043,12 +1177,15 @@ void page_encoder(uint8_t enc, int32_t steps) {
 void run_action(studio::Result r) {
     switch (r.action) {
         case studio::Action::LoadEngine:
-            if (layer_idx >= 0) layer_select(-1);    // elegir un engine sale de la capa
-            activate_engine(r.arg);
+            if (layered()) layer_replace_engine(r.arg);   // en HYBRID cambia el engine de la capa en foco
+            else activate_engine(r.arg);
             break;
-        case studio::Action::LayerNext:               // SHIFT + B2: OFF → 1 … 8 → OFF
-            layer_select(layer_idx + 1 < int8_t(studio::LAYER_COUNT) ? int8_t(layer_idx + 1) : int8_t(-1));
+        case studio::Action::HybridEnter:             // SHIFT + B2: entra con la capa del cursor
+            layer_select(int8_t(r.arg));
             break;
+        case studio::Action::HybridExit: layer_select(-1); break;
+        case studio::Action::LayerLoad: layer_select(int8_t(r.arg)); break;
+        case studio::Action::LayerFocus: layer_set_focus(r.arg); break;
         case studio::Action::FilterBypass:
             engine_filter(ui.engine());
             Serial.printf("[UI] bypass del filtro %s\n", r.arg ? "ON" : "OFF");
@@ -1109,6 +1246,9 @@ void ui_control(studio::Control c, int8_t v) {
     const uint8_t page_before = ui.state().page;
     run_action(ui.handle(c, v));
     const GF_UiState& u = ui.state();
+    // SYNTH FX y GROOVE son de la capa entera (los de A): abrirlos pasa el foco a A
+    if (layered() && layer_focus && (u.page == studio::SYNTH_FX || u.page == studio::GROOVE)) layer_set_focus(0);
+    if (u.page == studio::HYBRID && page_before != studio::HYBRID) bridge_layer();
     if (u.page == studio::PRESETS && page_before != studio::PRESETS) bridge_presets();   // theory/06 §5
     Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", u.mode ? "FX" : "SYNTH",
                   u.page, u.cursor, u.shift, u.fx_hold, u.fx_slot);
@@ -1206,12 +1346,13 @@ void control_change(byte ch, byte cc, byte val) {
         return;
     }
     studio::ParamChange pc[1];
-    if (studio::apply_cc(patch(), e, cc, val, pc)) {
+    const uint8_t ce = (layered() && cc >= 14 && cc <= 17) ? layer_a : e;   // las macros (y MORPH) son de A
+    if (studio::apply_cc(patches[ce], ce, cc, val, pc)) {
         bridge_param(pc[0].id, pc[0].norm);
-        engine_patch(e);
-        engine_osc(e);
-        engine_filter(e);   // GRIT (CC 15) mueve la resonancia
-        apply_sfx(e);
+        engine_patch(ce);
+        engine_osc(ce);
+        engine_filter(ce);  // GRIT (CC 15) mueve la resonancia
+        apply_sfx(groove_engine());
         return;
     }
     if (cc == 74) {
@@ -1525,7 +1666,7 @@ void loop() {
     // Home (vistas) y modo FX: ENC L / R = filtro. Páginas de edición: ENC L / R = 3.er y 4.º control de la página.
     const uint8_t pg = ui.state().page;
     const bool enc_lr_filter = ui.state().mode || pg == studio::PERFORM || pg == studio::AI || pg == studio::SPECTRUM ||
-                               pg == studio::PANEL ||
+                               pg == studio::PANEL || pg == studio::HYBRID ||
                                pg == studio::ENGINE || pg == studio::PRESETS;   // páginas de selección: sin controles propios
     if (l != last_l && !enc_lr_filter) { page_encoder(2, l - last_l); last_l = l; }
     if (r != last_r && !enc_lr_filter) { page_encoder(3, r - last_r); last_r = r; }

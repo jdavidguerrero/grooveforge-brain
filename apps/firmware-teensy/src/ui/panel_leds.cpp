@@ -30,6 +30,7 @@ void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uin
         case PRESETS:  *pos = ui.cursor; *count = preset_rows ? preset_rows : 1; break;
         case PANEL:    *pos = 1; *count = 2; break;
         case GROOVE:   *pos = ui.cursor; *count = GROOVE_STOPS; break;
+        case HYBRID:   *pos = ui.cursor; *count = HYBRID_LAYERS; break;
         default:       *pos = 0; *count = 2; break;                    // PERFORM · PANEL (theory/08)
     }
 }
@@ -38,7 +39,7 @@ void key_levels(const GF_UiState& ui, uint8_t out[KEY_LEDS]) {
     for (uint8_t i = 0; i < KEY_LEDS; ++i) out[i] = KEY_DIM;
     if (!ui.mode) {
         if (ui.page == OSC) out[0] = KEY_ON;
-        if (ui.page == ENV) out[1] = KEY_ON;
+        if (ui.page == ENV || ui.page == HYBRID || (ui.flags & GF_UI_FLAG_LAYER)) out[1] = KEY_ON;   // B2: ENV · HYBRID
         if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;   // GROOVE = SHIFT + B3
         if (ui.page == SYNTH_FX || ui.page == PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
     }

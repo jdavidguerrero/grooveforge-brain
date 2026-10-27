@@ -107,6 +107,15 @@ struct StudioState {
     bool clock_midi = false;         ///< el reloj común sigue al clock MIDI (UI_STATE flags, theory/09 §1.1)
     bool clock_run = true;           ///< false = parado por STOP
     bool layer = false;              ///< suena una capa híbrida de dos engines (UI_STATE flags, theory/12)
+    /// Modo HYBRID (LAYER_STATE 0x46, theory/12 §3c). En el demo arranca con la capa KALIMBA.
+    struct {
+        int8_t layer = 1;            ///< −1 sin capa · 0–7 de la lista · 8 CUSTOM
+        uint8_t engine_a = 4, engine_b = 3, focus = 0, morph = 50, delay_b_ms = 0;
+        int8_t transpose_b = 0;
+        char name[13] = "KALIMBA";
+        char preset_a[17] = "HY KALIMBA A";
+        char preset_b[17] = "HY KALIMBA B";
+    } hybrid;
     uint8_t lfo_div = 1;             ///< índice en 1/4 · 1/8 · 1/16 · 1/8T
     /// Cantidad por destino, 0–1 (CUTOFF · PITCH · AMP · PWM, mismo orden que GF_DEST_*). CUTOFF no se guarda
     /// acá: es p2 de PERFORM (un solo valor por destino). PITCH en semitonos = gf_lfo_pitch_st(cantidad).

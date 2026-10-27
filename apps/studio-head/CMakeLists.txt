@@ -102,6 +102,7 @@ add_executable(studio-head
   src/ui/screen_panel.cpp
   src/ui/screen_lfo.cpp
   src/ui/screen_groove.cpp
+  src/ui/screen_hybrid.cpp
   src/ui/screen_sfx.cpp
   src/ui/input.cpp
   src/ui/app.cpp

@@ -160,3 +160,10 @@ los datos llegan a 5 V. Las luces salen del mismo estado de UI que se manda a la
   botones − / +; cada toque viaja como `UI_INPUT` con los controles nuevos **26 VOL_UP** y **27 VOL_DOWN**. Cuando se
   conecte el pot VOL (pin 22) moverá el mismo valor.
 
+## 7. `0x46 LAYER_STATE` (Teensy → cabeza, 2026-10-27)
+
+Estado del modo HYBRID (capas de dos engines, theory/12 §3c): capa, cursor, engines A y B, foco, MORPH, retraso y
+transposición de B, nombre de la capa y presets de las dos mitades (52 bytes, `gf_layer_state_pack` en
+`protocol.h`). Se manda al cambiar algo y al conectar. La página HYBRID es la 13 de UI_STATE y el flag bit 4 indica
+que suena una capa. Los toques en las tarjetas A / B viajan como `UI_INPUT` 24 / 25 (P1 / P2 push).
+

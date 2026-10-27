@@ -44,6 +44,7 @@ Screen* App::screen(Page p) {
         case Page::SynthFx:  return &_sfx;
         case Page::Panel:    return &_panel;
         case Page::Groove:   return &_groove;
+        case Page::Hybrid:   return &_hybrid;
         default:             return &_perform;
     }
 }
@@ -202,6 +203,14 @@ void App::handle_synth(Ctl c, StudioState& s) {
     }
     if (_page == Page::SynthFx && c == Ctl::NavPush) {
         s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
+        return;
+    }
+    if (_page == Page::Hybrid && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV recorre las capas
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, 7));
+        return;
+    }
+    if (_page == Page::Hybrid && (c == Ctl::FocusA || c == Ctl::FocusB)) {
+        s.hybrid.focus = c == Ctl::FocusB ? 1 : 0;
         return;
     }
     if (_page == Page::Groove && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV elige la parada

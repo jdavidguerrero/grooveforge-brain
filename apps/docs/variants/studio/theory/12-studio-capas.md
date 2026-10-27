@@ -43,11 +43,48 @@ Juan pidió las **8 capas de su guía** para probar, sin esperar la medición. D
 | Cabeza | Chip **LAYER** en PERFORM (bit 4 de `flags` en UI_STATE) |
 | CPU | Riesgo aceptado: se mide en el hardware. Si el pico pasa de ~85 % aparecen clicks; se baja la polifonía de B |
 
+## 3c. Modo HYBRID: entrar, elegir la capa y editar las dos (rev. 3, 2026-10-27)
+
+Juan pidió una forma de **entrar** al modo híbrido con un flujo propio donde se editen **las dos capas**.
+
+**Entrar y salir:** **SHIFT + B2** entra al modo HYBRID (carga la última capa, la primera vez la 1) y abre su página
+de inicio; SHIFT + B2 otra vez sale (queda A sola). CC 18 desde Live también carga una capa y entra al modo, sin
+cambiar de página.
+
+**Página HYBRID** (página 13, la "home" del modo; NAV largo vuelve acá en lugar de PERFORM):
+
+```
+[ WOODBASS · KALIMBA · FRENCH STAB · ACID ARP · DESERT LEAD · SHAKER ZAP · ROLLER SUB · RETRO BRASS ]  ← NAV elige, push carga
+┌─ A · DX7 ─────────────┐   MORPH ▮▮▮▮▯ 50 %    ┌─ B · OB-6 ────────────┐
+│ HY KALIMBA A   (foco) │   B +0 ST · 0 MS      │ HY KALIMBA B          │
+└───────────────────────┘                       └───────────────────────┘
+```
+
+| Control | En la página HYBRID |
+|---|---|
+| NAV / NAV push | Elegir capa / cargarla |
+| **P1 push / P2 push** | **Foco en A / foco en B** |
+| P1 | MORPH (balance A / B, CC 17) |
+| P2 · SHIFT + P2 | Retraso del ataque de B (0–35 ms) · transposición de B (−24 … +24, de a octava) |
+| ENC L / R | Cutoff / resonancia de las dos capas (la otra sigue a la del foco) |
+| B1 … B4 | OSC · ENV · LFO · SYNTH FX **de la capa en foco** (las páginas de siempre) |
+| SHIFT + B4 | PRESETS **de la capa en foco**: cargar un preset cambia esa mitad sin salir de la capa; SAVE guarda esa mitad en el banco de su engine |
+| SHIFT + NAV push | ENGINE SELECT: cambia el engine **de la capa en foco** (capa CUSTOM); no puede ser el mismo que el de la otra capa |
+
+- **SYNTH FX y GROOVE son de la capa entera** (los toma de A): abrir esas páginas pasa el foco a A.
+- La transposición, el retraso y el engine elegido valen para la sesión; al cargar una capa de la lista vuelven a los de
+  la tabla. Guardar capas propias llega con el banco de capas.
+- **Protocolo:** `0x46 LAYER_STATE` (Teensy → cabeza, rango de UI de theory/04 §5): `[capa i8 (−1 = sin capa),
+  cursor, engine A, engine B, foco, MORPH %, retraso ms, transposición i8, nombre de la capa (12), preset A (16),
+  preset B (16)]`. Se manda al cambiar algo y al conectar.
+- **Luces:** el anillo muestra la capa del cursor (8 posiciones) y B2 queda encendida en el modo.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |
 |---|---|
 | Ruteo de notas a A y B (transposición, retraso, soltar), crossfade de MORPH, preset de capa ida y vuelta | test native |
+| Modo HYBRID: entrar / salir, NAV y push, foco con P1 / P2 push, NAV largo vuelve a HYBRID, LAYER_STATE ida y vuelta | test native |
 | CPU de la pareja con 6 voces + FX; sin xruns | en el hardware (`[stats]`) |
 | La pareja suena como la versión grabada en Live con los HY | en el hardware |
 
