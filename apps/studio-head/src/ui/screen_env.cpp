@@ -84,7 +84,6 @@ lv_obj_t* ScreenEnv::create() {
 void ScreenEnv::draw_graph(const StudioState& s) {
     const EnvView ev = env_view(s);
     const bool sh = s.shift;
-    lv_canvas_fill_bg(_canvas, lv_color_hex(SURFACE), LV_OPA_COVER);
 
     // Reparto horizontal: sustain fijo; attack, decay y release proporcionales a su tiempo.
     const float a = std::max(ev.a, 1.0f), d = std::max(ev.d, 1.0f),
@@ -112,28 +111,25 @@ void ScreenEnv::draw_graph(const StudioState& s) {
         pts[k++] = {lv_coord_t(xs + (X1 - xs) * t), lv_coord_t(ys + (Y_BASE - ys) * e / (1.0f - std::exp(-4.0f)))};
     }
 
-    // Relleno bajo la curva: trapecios convexos por tramo.
-    lv_draw_rect_dsc_t area;
-    lv_draw_rect_dsc_init(&area);
-    area.bg_color = lv_color_hex(AREA);
-    for (int i = 0; i + 1 < k; ++i) {
-        const lv_point_t q[4] = {pts[i], pts[i + 1], {pts[i + 1].x, Y_BASE}, {pts[i].x, Y_BASE}};
-        lv_canvas_draw_polygon(_canvas, q, 4, &area);
+    // Fondo, relleno bajo la curva, grilla y borde escritos directo en el buffer: con lv_canvas_draw_polygon (34
+    // trapecios con máscaras) y lv_canvas_fill_bg, cada redibujo tardaba tanto en la Pi 3B que el hilo del enlace no
+    // alcanzaba a contestar y el Teensy veía "cabeza sin respuesta" al girar P1 / P2 en ENV (2026-10-27).
+    const lv_color_t c_bg = lv_color_hex(SURFACE), c_area = lv_color_hex(AREA), c_line = lv_color_hex(LINE);
+    for (int i = 0; i < GW * GH; ++i) canvas_buf[i] = c_bg;
+    int seg_i = 0;
+    for (int x = X0; x <= X1; ++x) {
+        while (seg_i + 2 < k && pts[seg_i + 1].x < x) ++seg_i;
+        const lv_point_t p0 = pts[seg_i], p1 = pts[seg_i + 1];
+        const int y = p1.x == p0.x ? p1.y : p0.y + (p1.y - p0.y) * (x - p0.x) / (p1.x - p0.x);
+        for (int yy = std::clamp(y, 0, GH - 1); yy < Y_BASE; ++yy) canvas_buf[yy * GW + x] = c_area;
     }
-
-    // Grilla: línea base y divisiones punteadas entre etapas.
-    lv_draw_line_dsc_t grid;
-    lv_draw_line_dsc_init(&grid);
-    grid.color = lv_color_hex(LINE);
-    grid.width = 1;
-    const lv_point_t base[2] = {{X0, Y_BASE}, {X1, Y_BASE}};
-    lv_canvas_draw_line(_canvas, base, 2, &grid);
-    grid.dash_width = 4;
-    grid.dash_gap = 4;
-    for (int x : {xa, xd, xs}) {
-        const lv_point_t v[2] = {{lv_coord_t(x), 16}, {lv_coord_t(x), 192}};
-        lv_canvas_draw_line(_canvas, v, 2, &grid);
-    }
+    for (int x = X0; x <= X1; ++x) canvas_buf[Y_BASE * GW + x] = c_line;           // línea base
+    for (int x : {xa, xd, xs})                                                       // divisiones punteadas 4 / 4
+        if (x >= 0 && x < GW)
+            for (int y = 16; y <= 192; ++y)
+                if ((y - 16) % 8 < 4) canvas_buf[y * GW + x] = c_line;
+    for (int x = 0; x < GW; ++x) canvas_buf[x] = canvas_buf[(GH - 1) * GW + x] = c_line;   // borde
+    for (int y = 0; y < GH; ++y) canvas_buf[y * GW] = canvas_buf[y * GW + GW - 1] = c_line;
 
     // Tramos: los que se editan en 4 px TEAL_PLUS, el resto en 2 px TEAL.
     lv_draw_line_dsc_t seg;
@@ -158,13 +154,7 @@ void ScreenEnv::draw_graph(const StudioState& s) {
         lv_canvas_draw_rect(_canvas, nodes[i].x - 4, nodes[i].y - 4, 8, 8, &node);
     }
 
-    // Borde del recuadro
-    lv_draw_rect_dsc_t border;
-    lv_draw_rect_dsc_init(&border);
-    border.bg_opa = LV_OPA_TRANSP;
-    border.border_color = lv_color_hex(LINE);
-    border.border_width = 1;
-    lv_canvas_draw_rect(_canvas, 0, 0, GW, GH, &border);
+    lv_obj_invalidate(_canvas);
 
     // Letras de etapa centradas en su tramo
     const int centers[4] = {(X0 + xa) / 2, (xa + xd) / 2, (xd + xs) / 2, (xs + X1) / 2};
@@ -240,5 +230,5 @@ void ScreenEnv::update(const StudioState& s) {
         _bottom.set_page_control(2, "SUSTAIN", sus, "%", ev.s);
         _bottom.set_page_control(3, "RELEASE", r, ur, ev.r / 1200.0f);
     }
-    _bottom.set_nav(ev.filter ? "AMP \xE2\x80\xB9 FILTER" : "AMP \xE2\x80\xBA FILTER");
+    _bottom.set_nav(ev.filter ? "AMP \xE2\x86\x94 [FILTER]" : "[AMP] \xE2\x86\x94 FILTER");   // ‹ › no están en la fuente
 }
