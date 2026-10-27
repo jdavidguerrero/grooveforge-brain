@@ -4,6 +4,16 @@
 > §12 (estado de los engines), `05-fx-architecture.md` (FX existentes), theory/04–07 de Studio (panel, SYNTH FX,
 > presets, MIDI).
 
+## Estado de las fases (2026-10-27)
+
+| Fase | Estado | Dónde |
+|---|---|---|
+| 1 · Proceso (GROOVE, macros, velocity) | ✅ hecha | theory/09–10 de Studio |
+| 2 · Engines | ✅ hecha (Prophet: A/B del CEM3340 pasa a la fase 5) | `fase2-engines.md` |
+| 3 · FX de la cadena | ✅ hecha: DRIVE · TAPE · CHORUS/PHASER · DELAY ping-pong · REVERB MODAL/PLATE; CPU pico 40 % con capa | `fase3-fx.md` |
+| 4 · Banco Signature y MOVE | ✅ implementada, a validar de oído | `fase4-signature.md` |
+| 5 · Ajuste con referencias | operacional: es la recolección de sonidos (`produccion/protocolo-captura.md`) | — |
+
 ## 1. Objetivo
 
 No una réplica perfecta de cada synth (no hay A/B ni se busca), sino un instrumento cuyo **proceso** lleve rápido a
