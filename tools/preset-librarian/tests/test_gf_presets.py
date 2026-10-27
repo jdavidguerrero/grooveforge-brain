@@ -51,9 +51,13 @@ def test_renombrar_y_slug():
 
 def test_export_conserva_la_ficha(tmp_path):
     raw = gp.encode(1, "MI STAB", sample_patch())
-    old = {"role": "chords", "tags": ["disco"], "notes": "con la tambora"}
+    old = {"role": "chords", "tags": ["disco"], "notes": "con la tambora", "rating": 4,
+           "permissions": {"train": False, "publish": True}}
     e = gp.entry_from_raw(raw, old)
     assert e["role"] == "chords" and e["tags"] == ["disco"] and e["engine"] == "juno_106"
+    assert e["rating"] == 4 and e["permissions"]["train"] is False          # la ficha se conserva entera
+    assert gp.entry_from_raw(gp.encode(1, "USER 03", sample_patch()))["origin"] == "propio"
+    assert gp.entry_from_raw(gp.encode(1, "JD VELVET JUNO", sample_patch()))["origin"] == "fabrica-brain"
     f = tmp_path / "mi-stab.json"
     f.write_text(json.dumps({**e, "name": "MI STAB 2"}))
     engine, raw2 = gp.load_entry(str(f))                   # el nombre del JSON manda al subir

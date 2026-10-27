@@ -9,7 +9,8 @@ vuelta. Correr con el Python de PlatformIO, que ya trae pyserial:
     ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py bank juno_106 <archivo.json> …
     ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py list
 
-La librería va en $GF_LIBRARY o, si no está definida, en ~/GROOVEFORGE/sound-library.
+La librería va en $GF_LIBRARY o, si no está definida, en ~/GROOVEFORGE/GrooveForge_Dataset_v1/patches (el dataset de la
+paleta, apps/docs/produccion/protocolo-captura.md §4).
 """
 from __future__ import annotations
 
@@ -29,7 +30,8 @@ NAME_LEN = 16
 FORMAT = 4
 # Tamaño del binario por formato: tiene que coincidir con PRESET_BYTES_V2 / _V3 / PRESET_BYTES de preset_bank.h
 SIZE = {2: 355, 3: 519, 4: 527}
-META_KEYS = ["role", "tags", "key_range", "pairs_with", "notes"]
+META_KEYS = ["role", "tags", "key_range", "pairs_with", "notes", "origin", "permissions", "rating"]
+ORIGINS = ["propio", "fabrica-brain", "tribe-instruments", "kick3", "splice", "loopcloud", "otro"]
 ROLES = ["bass", "chords", "pad", "lead", "pluck", "perc", "fx"]
 
 SCALARS = ["attack_ms", "decay_ms", "sustain", "release_ms", "f_attack_ms", "f_decay_ms", "f_sustain",
@@ -122,7 +124,7 @@ def slug(name: str) -> str:
 # ── Librería ────────────────────────────────────────────────────────────────────────────────────────────
 
 def library_dir(arg: str | None) -> Path:
-    return Path(arg or os.environ.get("GF_LIBRARY") or Path.home() / "GROOVEFORGE" / "sound-library")
+    return Path(arg or os.environ.get("GF_LIBRARY") or Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1" / "patches")
 
 
 def find_by_name(folder: Path, name: str) -> Path | None:
@@ -135,10 +137,18 @@ def find_by_name(folder: Path, name: str) -> Path | None:
     return None
 
 
+def is_factory_name(name: str) -> bool:
+    """Los presets de fábrica del Brain: clásicos y los prefijos JD, GF y HY del firmware."""
+    return not name.startswith("USER ")
+
+
 def entry_from_raw(raw: bytes, old: dict | None = None) -> dict:
     d = decode(raw)
+    # Un preset del Brain es material propio (o de fábrica del Brain): se puede entrenar y publicar
+    origin = "fabrica-brain" if is_factory_name(d["name"]) else "propio"
     entry = {"name": d["name"], "engine": ENGINES[d["engine"]], "role": "", "tags": [], "key_range": "",
-             "pairs_with": [], "notes": "", "format": d["format"], "patch": d["patch"], "raw": raw.hex().upper()}
+             "pairs_with": [], "notes": "", "origin": origin, "permissions": {"train": True, "publish": True},
+             "rating": None, "format": d["format"], "patch": d["patch"], "raw": raw.hex().upper()}
     if old:
         for k in META_KEYS:
             if k in old:

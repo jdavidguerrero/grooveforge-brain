@@ -56,7 +56,8 @@ Ejemplo: `renders/20261028/bass_jd-run-funkbass_seco_t1.wav`.
 
 ## 5. Ficha de sesión y decisiones
 
-Al terminar la sesión: `gf_presets.py export` (guarda los presets tal como sonaron) y una ficha:
+Al empezar, `tools/paleta-lab/gf_session.py new <rol> <candidatos…>` crea la ficha; durante la escucha, `decide`, `reject` y
+`permiso` la completan; al terminar, `gf_presets.py export` guarda los presets tal como sonaron. La ficha queda así:
 
 ```json
 {
