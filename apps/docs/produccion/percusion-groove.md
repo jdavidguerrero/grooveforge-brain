@@ -135,5 +135,29 @@ partida para hacerlos tuyos (§6), no transcripciones.
 | `organic_shaker_wood` | propio | sacudidos, raspado y aro de madera, sin graves: para encima de cualquier groove |
 | `tribal_toms` | propio | toms medios y agudos con remate al final del compás 2: indie tech |
 
-Herramienta: `tools/paleta-lab/make_perc_patterns.py` (patrones en el mapa, fichas y las versiones convertidas a
-Tribe en `midi/perc/tribe_colombia/`).
+### Rev. 2: top loops por género y Drum Racks GF (2026-10-27)
+
+Los ritmos de arriba quedan en `midi/perc/raices/` como **referencia**. Los top loops se arman **por género** en
+`midi/perc/<genero>/`, pensados para ir encima del kick 4/4:
+
+- **4 compases** en tres versiones: `intro` (solo sacudidos / campanas), `main` (con remate en el compás 4) y `peak`
+  (main + una capa más de densidad). `main_q` = la main cuantizada.
+- Los graves evitan las semicorcheas 1, 5, 9 y 13 (el kick de Kick 3). Excepción a propósito: `samba_house_top`
+  (de Juan), con el surdo en 2 y 4 reforzando el kick.
+- Cada patrón trae su **kit sugerido**.
+
+| Género | Patrones |
+|---|---|
+| afro house | `djembe_sang_top` (Juan), `afro_house_top`, `afro_dunun_roll` |
+| organic house | `cumbia_afro_top` (Juan, Tribe), `organic_shaker_wood`, `organic_soft_conga` |
+| melodic / progressive | `prog_rolling16`, `prog_offbeat_rim` |
+| disco / house | `house_top_conga`, `samba_house_top` (Juan), `disco_tamb_cowbell` |
+| indie tech | `tribal_toms`, `indie_metal_rim` |
+
+**Drum Racks GF** (`tools/paleta-lab/make_gf_racks.py`): toma los racks de Juan (*Djembe Assembly*, *Brazilian
+Percussion Rack*, *808 Core Kit*), pone cada sample en la nota de su rol y lo que no tiene rol de 51 hacia arriba, y
+guarda racks nuevos en la User Library: **GF Djembe Dunun** (con slap, xeke, tchekere, long y bass con xeke, que no
+estaban), **GF Brasil** (los 48 one-shots) y **GF 808 Perc**. Los racks de Juan no se modifican.
+
+Herramientas: `tools/paleta-lab/make_perc_patterns.py` (patrones, fichas y versiones para Tribe en
+`midi/perc/tribe_colombia/`) y `make_gf_racks.py`.

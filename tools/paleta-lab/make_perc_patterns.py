@@ -54,23 +54,26 @@ TRIBE_ROLES = {
     "campana_aguda": ["Llamador Bajoneo"],
 }
 
-# Drum Racks: el sample de cada rol (nombres como los tiene Juan; los vacíos quedan para completar)
-DJEMBE = {"grave_abierto": "Dundumba ab", "grave_apagado": "Djembe bass", "medio_abierto": "Sangban ab",
-          "medio_apagado": "Sangban pres", "agudo_abierto": "Kenke ab", "agudo_slap": "Djembe slap seco",
-          "aro_madera": "Kenke pres", "sacudido_corto": "Xeke Xeke", "sacudido_largo": "Tchekere cabaz",
-          "raspado": "", "campana_grave": "Campana dun", "campana_aguda": "Campana kenke", "caja": "Djembe tono",
+# Drum Racks: el sample de cada rol, los mismos que pone make_gf_racks.py en "GF Djembe Dunun", "GF Brasil" y
+# "GF 808 Perc" (vacío = ese kit no tiene sample para el rol)
+DJEMBE = {"grave_abierto": "dundumba ab", "grave_apagado": "Djembe bass", "medio_abierto": "Sangban ab",
+          "medio_apagado": "Sangban pres", "agudo_abierto": "kenke ab", "agudo_slap": "Djembe slap seco",
+          "aro_madera": "kenke pres", "sacudido_corto": "Xeke Xeke", "sacudido_largo": "Tchekere cabaz",
+          "raspado": "", "campana_grave": "campana sang", "campana_aguda": "campana kenke", "caja": "Djembe tono",
           "pandereta": "Djembe agudo", "efecto": "Djembe long"}
-BRASIL = {"grave_abierto": "Surdo marcação", "grave_apagado": "Surdo abafado", "medio_abierto": "Atabaque",
-          "medio_apagado": "Alfaia", "agudo_abierto": "Repinique", "agudo_slap": "Timbal",
-          "aro_madera": "Caixa rim", "sacudido_corto": "Ganzá", "sacudido_largo": "Chocalho",
-          "raspado": "Reco-reco", "campana_grave": "Agogô (grave)", "campana_aguda": "Agogô (aguda)",
-          "caja": "Caixa", "pandereta": "Pandeiro", "efecto": "Cuíca"}
-TR808 = {"grave_abierto": "", "grave_apagado": "", "medio_abierto": "Conga low", "medio_apagado": "Conga mid",
-         "agudo_abierto": "Conga high", "agudo_slap": "Bongo high", "aro_madera": "Rimshot",
-         "sacudido_corto": "Maracas", "sacudido_largo": "", "raspado": "", "campana_grave": "Cowbell",
-         "campana_aguda": "Claves", "caja": "Snare", "pandereta": "Tambourine", "efecto": "Bongo low"}
+BRASIL = {"grave_abierto": "Surdo", "grave_apagado": "Surdo (2)", "medio_abierto": "Atabaque",
+          "medio_apagado": "Zabumba", "agudo_abierto": "Repinique", "agudo_slap": "Tamborim", "aro_madera": "Coco",
+          "sacudido_corto": "Caxixi", "sacudido_largo": "Ganza", "raspado": "Reco reco",
+          "campana_grave": "Agogo", "campana_aguda": "Agogo (whistle) (2)", "caja": "Caixa (snare)",
+          "pandereta": "Pandeiro", "efecto": "Apito (whistle)"}
+TR808 = {"grave_abierto": "Tom 808 Low", "grave_apagado": "Tom 808 Mid", "medio_abierto": "Conga 808 Low",
+         "medio_apagado": "Conga 808 Mid", "agudo_abierto": "Conga 808 Hi", "agudo_slap": "Tom 808 Hi",
+         "aro_madera": "Rim 808", "sacudido_corto": "Maracas 808", "sacudido_largo": "", "raspado": "",
+         "campana_grave": "Cowbell 808", "campana_aguda": "Clave 808", "caja": "Snare 808", "pandereta": "Clap 808",
+         "efecto": "Cymbal 808"}
 
-# Patrones: rol → [compás 1, compás 2] en semicorcheas. X acento (112) · x normal (88) · g ghost (52) · . silencio.
+# Raíces: ritmos tradicionales (dominio público) como referencia; rol → [compás 1, compás 2] en semicorcheas.
+# X acento (112) · x normal (88) · o suave (70) · g ghost (52) · . silencio.
 # swing: % del contratiempo de semicorchea (50 = recto) · micro: ms de adelanto (−) o atraso (+) por rol.
 PATTERNS = {
     "cumbia_base": dict(estilo="cumbia", origen="ritmo tradicional", densidad="media", swing=53,
@@ -125,35 +128,149 @@ PATTERNS = {
         "grave_abierto": ["X..x....X..x....", "X..x....X..x..x."],
         "aro_madera":    ["....x.......x...", "....x.......x..."],
         "campana_aguda": ["xgxXxgxXxgxXxgxX", "xgxXxgxXxgxXxgxX"]}),
-    "afro_house_top": dict(estilo="afro house", origen="propio", densidad="media", swing=56,
-                           micro={"sacudido_corto": 0, "agudo_slap": -5, "medio_abierto": 3}, roles={
-        "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
-        "medio_abierto":  ["..x.....x.x.....", "..x.....x.x..x.."],
-        "agudo_slap":     ["......x.......x.", "......x....x.xx."],
-        "grave_abierto":  ["..x.......x.....", "..x.......x....x"],
-        "campana_grave":  ["..x...x...x...x.", "..x...x...x...x."]}),
-    "house_top_conga": dict(estilo="house", origen="propio", densidad="media", swing=56,
-                            micro={"agudo_abierto": 4, "pandereta": -2}, roles={
-        "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
-        "agudo_abierto":  ["......x..x....x.", "..x...x..x..x..."],
-        "medio_abierto":  ["x.........x.....", "x.........x...x."],
-        "aro_madera":     ["....x.......x..x", "....x.......x..."],
-        "pandereta":      ["..x...x...x...x.", "..x...x...x...x."]}),
-    "organic_shaker_wood": dict(estilo="orgánico", origen="propio", densidad="baja", swing=57,
-                                micro={"raspado": -4, "aro_madera": 3}, roles={
-        "sacudido_largo": ["x.......x.......", "x.......x......."],
-        "sacudido_corto": ["..x...x...x...xg", "..x...x...x..gxg"],
-        "raspado":        ["....x.......x...", "....x.......x.x."],
-        "aro_madera":     ["...x.....x...x..", "...x.....x..x..."]}),
-    "tribal_toms": dict(estilo="indie tech", origen="propio", densidad="media", swing=51,
-                        micro={"agudo_abierto": -3}, roles={
-        "medio_abierto": ["x..x..x.x..x..x.", "x..x..x.x..x.xxx"],
-        "agudo_abierto": ["..x.....x.x.....", "..x.....x.x.x..."],
-        "grave_abierto": ["x.......x.......", "x.......x...x.xx"],
-        "efecto":        ["................", "...............x"]}),
 }
 
-VEL = {"X": 112, "x": 88, "g": 52}
+VEL = {"X": 112, "x": 88, "o": 70, "g": 52}
+
+# Top loops por género (percusion-groove.md §7): núcleo de 1 compás (o 2) que se arma en 4 compases en tres versiones.
+# Los graves evitan las semicorcheas 1, 5, 9 y 13: ahí va el kick (Kick 3, en su pista).
+#   intro: solo esos roles · fill: rol → compás 4 (remate) · peak: rol → línea que se suma (más densidad)
+GENRES = {
+    "afro_house": {
+        "djembe_sang_top": dict(kit="GF Djembe Dunun", origen="propio (Juan)", swing=56,
+                                micro={"agudo_slap": -5, "sacudido_corto": 2}, roles={
+            "medio_abierto":  ["X.....o...X....."],
+            "campana_grave":  ["X.o..X.o..X.o.X."],
+            "caja":           ["...o...o.o...o.."],
+            "agudo_slap":     ["......X....X..Xo"],
+            "sacudido_corto": [".oX..oX..oX..oX."]},
+            intro=["campana_grave", "sacudido_corto"], fill={"agudo_slap": "......X....XxxXX"},
+            peak={"grave_abierto": "......x...x....."}),
+        "afro_house_top": dict(kit="GF Djembe Dunun", origen="propio", swing=56,
+                               micro={"agudo_slap": -5, "medio_abierto": 3}, roles={
+            "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
+            "medio_abierto":  ["..x.....x.x.....", "..x.....x.x..x.."],
+            "agudo_slap":     ["......x.......x.", "......x....x.xx."],
+            "grave_abierto":  ["..x.......x.....", "..x.......x....x"],
+            "campana_grave":  ["..x...x...x...x.", "..x...x...x...x."]},
+            intro=["sacudido_corto", "campana_grave"], fill={"medio_abierto": "..x.....x.x.xxXX"},
+            peak={"campana_aguda": "x...x...x...x..."}),
+        "afro_dunun_roll": dict(kit="GF Djembe Dunun", origen="propio", swing=55,
+                                micro={"medio_abierto": -3}, roles={
+            "grave_abierto":  ["......x...x....."],
+            "medio_abierto":  ["..x.x...x.....x."],
+            "campana_grave":  ["x.x.x.x.x.x.x.x."],
+            "sacudido_corto": ["goXogoXogoXogoXo"],
+            "agudo_slap":     ["...........x..x."]},
+            intro=["campana_grave", "sacudido_corto"], fill={"medio_abierto": "..x.x...x.xxXxXX"},
+            peak={"agudo_abierto": "..o...o...o...o."}),
+    },
+    "organic_house": {
+        "cumbia_afro_top": dict(kit="tribe_colombia", origen="propio (Juan)", swing=55,
+                                micro={"agudo_abierto": 5, "medio_abierto": -4}, roles={
+            "campana_aguda":  ["o...o...o...o..."],            # Llamador Bajoneo
+            "agudo_abierto":  ["..X...X...X...X."],            # Llamador Abierto
+            "aro_madera":     ["X..o..X.X..o.oX."],            # Tambora Cáscara
+            "medio_abierto":  ["...X...o...X.X.."],            # Alegre Abierto
+            "agudo_slap":     [".....X......X..o"],            # Alegre Quemao
+            "sacudido_largo": ["o.Xoo.Xoo.Xoo.Xo"]},           # Maracón
+            intro=["sacudido_largo", "agudo_abierto"], fill={"medio_abierto": "...X...o...XxXXX"},
+            peak={"sacudido_corto": "gogogogogogogogo"}),
+        "organic_shaker_wood": dict(kit="GF Brasil", origen="propio", swing=57,
+                                    micro={"raspado": -4, "aro_madera": 3}, roles={
+            "sacudido_largo": ["x.......x.......", "x.......x......."],
+            "sacudido_corto": ["..x...x...x...xg", "..x...x...x..gxg"],
+            "raspado":        ["....x.......x...", "....x.......x.x."],
+            "aro_madera":     ["...x.....x...x..", "...x.....x..x..."]},
+            intro=["sacudido_largo", "sacudido_corto"], fill={"aro_madera": "...x.....x.xxxXx"},
+            peak={"campana_aguda": "......x.......x."}),
+        "organic_soft_conga": dict(kit="GF 808 Perc", origen="propio", swing=58,
+                                   micro={"agudo_abierto": 4}, roles={
+            "medio_abierto":  ["x.....g...x..g.."],
+            "agudo_abierto":  ["....g.x.....g.x."],
+            "sacudido_corto": ["..o...o...o...og"],
+            "aro_madera":     ["...........x...."]},
+            intro=["sacudido_corto"], fill={"agudo_abierto": "....g.x.....xxXx"},
+            peak={"medio_apagado": "..g.......g....."}),
+    },
+    "melodic_progressive": {
+        "prog_rolling16": dict(kit="GF Brasil", origen="propio", swing=52, micro={"pandereta": -2}, roles={
+            "sacudido_corto": ["goXogoXogoXogoXo"],
+            "pandereta":      ["..x...x...x...x."],
+            "agudo_abierto":  ["...g......g...g."],
+            "medio_apagado":  ["......g.......g."]},
+            intro=["sacudido_corto"], fill={"agudo_abierto": "...g......g.xxXX"},
+            peak={"campana_aguda": "x.......x......."}),
+        "prog_offbeat_rim": dict(kit="GF 808 Perc", origen="propio", swing=53, micro={"aro_madera": 3}, roles={
+            "aro_madera":     ["..x...x...x...x."],
+            "agudo_abierto":  [".....x.......x.."],
+            "sacudido_corto": ["gogogogogogogogo"],
+            "medio_abierto":  ["..........x....."]},
+            intro=["sacudido_corto", "aro_madera"], fill={"agudo_abierto": ".....x.....xxxXX"},
+            peak={"campana_grave": "......x.......x."}),
+    },
+    "disco_house": {
+        "house_top_conga": dict(kit="GF 808 Perc", origen="propio", swing=56,
+                                micro={"agudo_abierto": 4, "pandereta": -2}, roles={
+            "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
+            "agudo_abierto":  ["......x..x....x.", "..x...x..x..x..."],
+            "medio_abierto":  ["x.........x.....", "x.........x...x."],
+            "aro_madera":     ["....x.......x..x", "....x.......x..."],
+            "pandereta":      ["..x...x...x...x.", "..x...x...x...x."]},
+            intro=["sacudido_corto", "pandereta"], fill={"agudo_abierto": "..x...x..x.xxxXX"},
+            peak={"campana_grave": "..x.......x....."}),
+        "samba_house_top": dict(kit="GF Brasil", origen="propio (Juan)", swing=54,
+                                micro={"agudo_slap": -3, "sacudido_corto": 2}, roles={
+            "grave_apagado":  ["....X.......X..o"],            # Surdo abafado
+            "agudo_slap":     ["...X..X..X....X."],            # Tamborim
+            "campana_grave":  ["X..o....X..o...."],            # Agogô grave
+            "campana_aguda":  [".....X.o.....X.X"],            # Agogô agudo
+            "aro_madera":     [".........o.....o"],            # Caixa rim / ghost
+            "sacudido_corto": ["Xo.oXo.oXo.oXoXo"]},           # Caxixi
+            intro=["sacudido_corto", "campana_grave"], fill={"agudo_slap": "...X..X..X.xxxXX"},
+            peak={"pandereta": "..x...x...x...x."}),
+        "disco_tamb_cowbell": dict(kit="GF 808 Perc", origen="propio", swing=53, micro={"campana_grave": 2}, roles={
+            "pandereta":      ["XgxgXgxgXgxgXgxg"],
+            "campana_grave":  ["..x...x...x.x.x."],
+            "agudo_abierto":  [".x....x..x....x."],
+            "medio_abierto":  ["........x......."]},
+            intro=["pandereta"], fill={"agudo_abierto": ".x....x..x.xxxXX"},
+            peak={"sacudido_corto": "gogogogogogogogo"}),
+    },
+    "indie_tech": {
+        "tribal_toms": dict(kit="GF 808 Perc", origen="propio", swing=51, micro={"agudo_abierto": -3}, roles={
+            "medio_abierto": ["x..x..x.x..x..x.", "x..x..x.x..x.xxx"],
+            "agudo_abierto": ["..x.....x.x.....", "..x.....x.x.x..."],
+            "grave_abierto": ["......x.......x.", "......x.......xx"],
+            "efecto":        ["................", "...............x"]},
+            intro=["agudo_abierto"], fill={"medio_abierto": "x..x..x.x..xxxXX"},
+            peak={"aro_madera": "..x...x...x...x."}),
+        "indie_metal_rim": dict(kit="GF 808 Perc", origen="propio", swing=50, micro={"aro_madera": -2}, roles={
+            "aro_madera":    ["x..x..x.x..x..x."],             # 3-3-2
+            "campana_aguda": ["..x..x....x..x.."],
+            "campana_grave": ["......x.......x."],
+            "agudo_slap":    [".x......x......."]},
+            intro=["aro_madera"], fill={"agudo_slap": ".x......x...xxXX"},
+            peak={"sacudido_corto": "xgxgxgxgxgxgxgxg"}),
+    },
+}
+VERSIONS = ("intro", "main", "peak")
+
+
+def arrange(p: dict, version: str) -> dict:
+    """4 compases del núcleo: intro (solo sus roles) · main (remate en el compás 4) · peak (main + densidad)."""
+    roles = {}
+    for role, core in p["roles"].items():
+        if version == "intro" and role not in p["intro"]:
+            continue
+        bars = [core[i % len(core)] for i in range(4)]
+        if version != "intro" and role in p["fill"]:
+            bars[3] = p["fill"][role]
+        roles[role] = bars
+    if version == "peak":
+        for role, line in p["peak"].items():
+            roles[role] = [line] * 3 + [roles.get(role, [line] * 4)[3] if role in p["fill"] else line]
+    return {**p, "roles": roles}
 
 
 def notes_of(p: dict, bpm: float, micro: bool, seed: int) -> list[tuple[int, int, str, int]]:
@@ -165,7 +282,7 @@ def notes_of(p: dict, bpm: float, micro: bool, seed: int) -> list[tuple[int, int
     for role, bars in p["roles"].items():
         shift = int(p["micro"].get(role, 0) * ms) if micro else 0
         for b, line in enumerate(bars):
-            assert len(line) == 16, (role, line)
+            assert len(line) == 16 and set(line) <= set(VEL) | {"."}, (role, line)
             for step, ch in enumerate(line):
                 if ch == ".":
                     continue
@@ -229,26 +346,50 @@ def main(argv=None):
         path.write_text(json.dumps(k, indent=2, ensure_ascii=False) + "\n")
     perc = root / "midi" / "perc"
     octave = kit_files()["tribe_colombia"]["octava"]
-    for i, (name, p) in enumerate(PATTERNS.items()):
-        micro = notes_of(p, a.bpm, True, seed=i + 1)
-        quant = notes_of(p, a.bpm, False, seed=i + 1)
-        write_mid(perc / f"{name}.mid", [(t, d, ROLES[r], v) for t, d, r, v in micro], a.bpm, name)
-        write_mid(perc / f"{name}_q.mid", [(t, d, ROLES[r], v) for t, d, r, v in quant], a.bpm, name + " q")
-        tribe, missing = to_tribe(micro, octave)
-        write_mid(perc / "tribe_colombia" / f"{name}.mid", tribe, a.bpm, name + " tribe")
-        ficha = {"patron": name, "estilo": p["estilo"], "bpm": a.bpm, "compases": 2, "roles": list(p["roles"]),
-                 "swing": f"{p['swing']} %", "microtiming_ms": p["micro"], "densidad": p["densidad"],
-                 "origen": p["origen"], "version_cuantizada": f"{name}_q.mid",
-                 "tribe": {"archivo": f"tribe_colombia/{name}.mid", "roles_sin_tribe": missing},
-                 "kits_probados": [], "notas": ""}
-        fpath = perc / f"{name}.json"
-        if fpath.exists():                                  # conservar lo que Juan anotó
-            old = json.loads(fpath.read_text())
+
+    def ficha(path: Path, base: dict):
+        if path.exists():                                   # conservar lo que Juan anotó
+            old = json.loads(path.read_text())
             for key in ("kits_probados", "notas"):
-                ficha[key] = old.get(key, ficha[key])
-        fpath.write_text(json.dumps(ficha, indent=2, ensure_ascii=False) + "\n")
-        print(f"{name:22} {len(micro):3} golpes · {p['origen']}")
-    print(f"{len(PATTERNS)} patrones en {perc}")
+                base[key] = old.get(key, base[key])
+        path.write_text(json.dumps(base, indent=2, ensure_ascii=False) + "\n")
+
+    n = 0
+    for i, (name, p) in enumerate(PATTERNS.items()):          # raíces: 2 compases, como referencia
+        micro = notes_of(p, a.bpm, True, seed=i + 1)
+        write_mid(perc / "raices" / f"{name}.mid", [(t, d, ROLES[r], v) for t, d, r, v in micro], a.bpm, name)
+        write_mid(perc / "raices" / f"{name}_q.mid",
+                  [(t, d, ROLES[r], v) for t, d, r, v in notes_of(p, a.bpm, False, seed=i + 1)], a.bpm, name + " q")
+        tribe, missing = to_tribe(micro, octave)
+        write_mid(perc / "tribe_colombia" / "raices" / f"{name}.mid", tribe, a.bpm, name + " tribe")
+        ficha(perc / "raices" / f"{name}.json",
+              {"patron": name, "estilo": p["estilo"], "bpm": a.bpm, "compases": 2, "roles": list(p["roles"]),
+               "swing": f"{p['swing']} %", "microtiming_ms": p["micro"], "densidad": p["densidad"],
+               "origen": p["origen"], "version_cuantizada": f"{name}_q.mid", "kits_probados": [], "notas": ""})
+        n += 1
+    for genre, pats in GENRES.items():                        # top loops por género: 4 compases × 3 versiones
+        for j, (name, p) in enumerate(pats.items()):
+            seed = 100 + 10 * n + j
+            for v in VERSIONS:
+                arr = arrange(p, v)
+                micro = notes_of(arr, a.bpm, True, seed=seed)
+                write_mid(perc / genre / f"{name}_{v}.mid", [(t, d, ROLES[r], vel) for t, d, r, vel in micro], a.bpm,
+                          f"{name} {v}")
+                if p["kit"] == "tribe_colombia":
+                    tribe, _ = to_tribe(micro, octave)
+                    write_mid(perc / "tribe_colombia" / genre / f"{name}_{v}.mid", tribe, a.bpm, f"{name} {v} tribe")
+            q = notes_of(arrange(p, "main"), a.bpm, False, seed=seed)
+            write_mid(perc / genre / f"{name}_main_q.mid", [(t, d, ROLES[r], vel) for t, d, r, vel in q], a.bpm,
+                      f"{name} main q")
+            ficha(perc / genre / f"{name}.json",
+                  {"patron": name, "genero": genre, "bpm": a.bpm, "compases": 4, "versiones": list(VERSIONS),
+                   "kit_sugerido": p["kit"], "roles": list(p["roles"]), "intro": p["intro"],
+                   "remate_compas_4": list(p["fill"]), "peak_suma": list(p["peak"]), "swing": f"{p['swing']} %",
+                   "microtiming_ms": p["micro"], "origen": p["origen"], "version_cuantizada": f"{name}_main_q.mid",
+                   "kits_probados": [], "notas": ""})
+            n += 1
+            print(f"{genre:20} {name:22} kit: {p['kit']}")
+    print(f"{n} patrones en {perc}")
 
 
 if __name__ == "__main__":
