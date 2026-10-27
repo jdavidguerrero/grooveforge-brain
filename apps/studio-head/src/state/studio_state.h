@@ -113,6 +113,8 @@ struct StudioState {
     bool clock_midi = false;         ///< el reloj común sigue al clock MIDI (UI_STATE flags, theory/09 §1.1)
     bool clock_run = true;           ///< false = parado por STOP
     bool layer = false;              ///< suena una capa híbrida de dos engines (UI_STATE flags, theory/12)
+    bool custom_pick = false;        ///< HYBRID SYNTH: ENGINE SELECT de + CUSTOM (flag PICK, theory/12 §3d rev. 5)
+    bool focus_b = false;            ///< HYBRID SYNTH: la capa en foco es B (flag FOCUS_B)
     /// HYBRID SYNTH (LAYER_STATE 0x46, theory/12 §3d). En el demo arranca con la capa KALIMBA.
     struct {
         int8_t layer = 1;            ///< −1 sin capa · 0–31 preset de capa · 127 CUSTOM

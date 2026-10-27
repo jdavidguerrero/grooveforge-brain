@@ -359,41 +359,46 @@ void test_modo_hybrid() {
     TEST_ASSERT_TRUE(ui.hybrid());
     ui.handle(Control::Nav, 3);                                 // NAV recorre los presets de capa
     TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
-    ui.handle(Control::Nav, 20);                                // no pasa del último
-    TEST_ASSERT_EQUAL_UINT8(7, ui.state().cursor);
-    ui.handle(Control::Nav, -4);
+    ui.handle(Control::Nav, 20);                                // no pasa de la fila + CUSTOM
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    ui.handle(Control::Nav, -5);
     r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(int(Action::LayerLoad), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(3, r.arg);
 
-    r = ui.handle(Control::Key2);                               // B2 = editar B: OSC con foco en B
+    ui.handle(Control::Key1);                                   // B1 = OSC (teclas de SYNTH, rev. 5)
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    r = ui.handle(Control::Key1);                               // otra vez: cambia a la capa B, sigue en OSC
     TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(1, r.arg);
     TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
     TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_FOCUS_B);
-    ui.handle(Control::Key2);
-    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
-    r = ui.handle(Control::Key1);                               // B1 = editar A: vuelve a OSC con foco en A
-    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    r = ui.handle(Control::Key1);                               // y vuelve a A
     TEST_ASSERT_EQUAL_UINT8(0, r.arg);
-    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
-    ui.handle(Control::Key1);
-    ui.handle(Control::Key1);
+    r = ui.handle(Control::Key2);                               // B2 = ENV de la capa en foco (A)
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+    r = ui.handle(Control::Key2);
+    TEST_ASSERT_EQUAL_UINT8(1, r.arg);                          // ENV de B
+    ui.handle(Control::Key3);
     TEST_ASSERT_EQUAL_UINT8(LFO, ui.state().page);
-    ui.handle(Control::Key1);                                   // OSC → ENV → LFO → home
+    ui.handle(Control::NavLong);                                // home con NAV largo
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
 
-    ui.handle(Control::P2Push);
-    r = ui.handle(Control::Key3);                               // GROOVE: de la capa entera, foco en A
+    ui.handle(Control::B6Down);                                 // SHIFT + B3: GROOVE, foco en A
+    r = ui.handle(Control::Key3);
+    ui.handle(Control::B6Up);
     TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
     TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(0, r.arg);
-    ui.handle(Control::Key3);
+    ui.handle(Control::Key4);                                   // B4: SYNTH FX · otra vez: home
     TEST_ASSERT_EQUAL_UINT8(SYNTH_FX, ui.state().page);
-    ui.handle(Control::Key3);
+    ui.handle(Control::Key4);
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
 
-    ui.handle(Control::Key4);                                   // presets de capa: cursor en el cargado
+    ui.handle(Control::B6Down);                                 // SHIFT + B4: presets de capa (cursor en el cargado)
+    ui.handle(Control::Key4);
+    ui.handle(Control::B6Up);
     TEST_ASSERT_EQUAL_UINT8(LAYER_PRESETS, ui.state().page);
     TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
     ui.handle(Control::Key1);                                   // banco A = fila 1
@@ -405,6 +410,7 @@ void test_modo_hybrid() {
     TEST_ASSERT_EQUAL(int(Action::LayerSave), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(8, r.arg);
     TEST_ASSERT_EQUAL_UINT8(9, ui.layer_count());
+    ui.handle(Control::NavLong);
 
     ui.handle(Control::B6Down);                                 // SHIFT + NAV push: ENGINE de la capa en foco
     ui.handle(Control::NavPush);
@@ -424,6 +430,40 @@ void test_modo_hybrid() {
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
     ui.set_layer(true);
     TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_LAYER);
+}
+
+void test_hybrid_custom() {
+    StudioUi ui;
+    ui.set_hybrid(true);
+    ui.handle(Control::Nav, 20);                                // la última fila: + CUSTOM
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    Result r = ui.handle(Control::NavPush);                     // ENGINE SELECT de A
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
+    TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_PICK);
+    TEST_ASSERT_FALSE(ui.state().flags & GF_UI_FLAG_FOCUS_B);
+    ui.handle(Control::Pick4);                                  // A = DX7 → ahora B
+    TEST_ASSERT_EQUAL_UINT8(2, ui.custom_step());
+    TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_FOCUS_B);
+    r = ui.handle(Control::Pick4);                              // B no puede repetir el engine de A
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    r = ui.handle(Control::Pick1);                              // B = Juno: arma la capa y abre OSC de A
+    TEST_ASSERT_EQUAL(int(Action::LayerCustom), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(4 | (1 << 4), r.arg);
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    TEST_ASSERT_FALSE(ui.state().flags & (GF_UI_FLAG_PICK | GF_UI_FLAG_FOCUS_B));
+    ui.handle(Control::NavLong);                                // NAV largo cancela a mitad
+    ui.handle(Control::Nav, 20);
+    ui.handle(Control::NavPush);
+    ui.handle(Control::NavLong);
+    TEST_ASSERT_EQUAL_UINT8(0, ui.custom_step());
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    TEST_ASSERT_FALSE(ui.state().flags & GF_UI_FLAG_PICK);
+    ui.handle(Control::Mode);                                   // entrar al modo nunca carga la fila CUSTOM
+    ui.handle(Control::Mode);
+    r = ui.handle(Control::Mode);
+    TEST_ASSERT_EQUAL(int(Action::HybridEnter), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(0, r.arg);
 }
 
 void test_layer_state_ida_y_vuelta() {
@@ -497,6 +537,7 @@ int main() {
     RUN_TEST(test_estado_del_reloj_en_flags);
     RUN_TEST(test_volumen_desde_la_cabeza);
     RUN_TEST(test_modo_hybrid);
+    RUN_TEST(test_hybrid_custom);
     RUN_TEST(test_layer_state_ida_y_vuelta);
     RUN_TEST(test_presets_saltos_de_banco);
     return UNITY_END();

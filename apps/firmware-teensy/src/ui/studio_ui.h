@@ -54,7 +54,8 @@ enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle
                               HybridExit,    ///< MODE sale de HYBRID SYNTH (queda A sola en SYNTH)
                               LayerLoad,     ///< NAV push en la home o en LAYER_PRESETS: arg = preset de capa
                               LayerSave,     ///< SAVE en LAYER_PRESETS: arg = lugar nuevo
-                              LayerFocus };  ///< B1 / B2 / B3 / P1 / P2 push: arg = 0 (A) o 1 (B)
+                              LayerFocus,    ///< B1 / B2 / B3 otra vez, P1 / P2 push: arg = 0 (A) o 1 (B)
+                              LayerCustom }; ///< CUSTOM elegido: arg = engine A | engine B << 4
 
 struct Result {
     Action action = Action::None;
@@ -107,9 +108,11 @@ public:
     bool hybrid() const { return ui_.mode == MODE_HYBRID; }
     uint8_t layer_cursor() const { return layer_cursor_; }
     void set_layer_cursor(uint8_t i) { layer_cursor_ = i < layer_count_ ? i : 0; refresh_cursor(); }
+    /// Preset de capa para entrar al modo (la fila + CUSTOM del final no es un preset).
+    uint8_t layer_to_load() const { return layer_cursor_ < layer_count_ ? layer_cursor_ : 0; }
     void set_layer_count(uint8_t n) {
         layer_count_ = n > LAYER_SLOTS ? LAYER_SLOTS : n;
-        if (layer_cursor_ >= layer_count_) layer_cursor_ = layer_count_ ? uint8_t(layer_count_ - 1) : 0;
+        if (layer_cursor_ > layer_count_) layer_cursor_ = layer_count_;   // = layer_count_: la fila + CUSTOM
         if (layer_row_ > layer_count_) layer_row_ = layer_count_;
         refresh_cursor();
         dirty_ = true;
@@ -124,6 +127,8 @@ public:
         }
     }
     uint8_t focus() const { return ui_.flags & GF_UI_FLAG_FOCUS_B ? 1 : 0; }
+    /// 0 = sin CUSTOM · 1 eligiendo el engine de A · 2 el de B (theory/12 §3d rev. 5).
+    uint8_t custom_step() const { return custom_step_; }
 
     /// Capa híbrida sonando (flag LAYER para la cabeza).
     void set_layer(bool on) {
@@ -154,6 +159,8 @@ private:
     Result handle_synth(Control c, int8_t v);
     Result handle_hybrid(Control c, int8_t v);
     Result focus_to(uint8_t f);
+    Result custom_pick(uint8_t engine);
+    void custom_cancel();
 
     GF_UiState ui_{};
     uint8_t last_view_ = PERFORM;
@@ -171,6 +178,7 @@ private:
     uint8_t layer_cursor_ = 0;                   ///< HYBRID: preset de capa resaltado en la home
     uint8_t layer_row_ = 0;                      ///< LAYER_PRESETS: fila (0 = SAVE)
     uint8_t layer_count_ = 8;
+    uint8_t custom_step_ = 0, custom_a_ = 0, custom_focus_ = 0;
     bool dirty_ = true;
 };
 

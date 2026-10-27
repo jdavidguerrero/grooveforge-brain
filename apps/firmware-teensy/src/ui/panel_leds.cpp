@@ -43,11 +43,11 @@ void key_levels(const GF_UiState& ui, uint8_t out[KEY_LEDS]) {
         if (ui.page == ENV) out[1] = KEY_ON;
         if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;   // GROOVE = SHIFT + B3
         if (ui.page == SYNTH_FX || ui.page == PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
-    } else if (ui.mode == MODE_HYBRID) {                // B1 edita A · B2 edita B · B3 GROOVE / FX · B4 presets de capa
-        const bool editing = ui.page == OSC || ui.page == ENV || ui.page == LFO;
-        if (editing) out[ui.flags & GF_UI_FLAG_FOCUS_B ? 1 : 0] = KEY_ON;
-        if (ui.page == GROOVE || ui.page == SYNTH_FX) out[2] = KEY_ON;
-        if (ui.page == LAYER_PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
+    } else if (ui.mode == MODE_HYBRID) {                // las teclas de SYNTH (theory/12 §3d rev. 5)
+        if (ui.page == OSC) out[0] = KEY_ON;
+        if (ui.page == ENV) out[1] = KEY_ON;
+        if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;
+        if (ui.page == SYNTH_FX || ui.page == LAYER_PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
     }
     out[4] = KEY_ON;                                   // MODE siempre encendida: el color dice SYNTH, FX o HYBRID SYNTH
     out[5] = (ui.shift || ui.fx_hold) ? KEY_ON : KEY_DIM;

@@ -246,6 +246,7 @@ typedef struct {
 #define GF_UI_FLAG_CLOCK_RUN     0x08U   /* el reloj corre (0 = parado por STOP) */
 #define GF_UI_FLAG_LAYER         0x10U   /* suena una capa híbrida de dos engines (variants/studio/theory/12) */
 #define GF_UI_FLAG_FOCUS_B       0x20U   /* HYBRID SYNTH: se edita la capa B (0 = A) */
+#define GF_UI_FLAG_PICK          0x40U   /* HYBRID SYNTH: ENGINE SELECT de CUSTOM (A o B según FOCUS_B, theory/12 §3d rev. 5) */
 
 /** @brief Serializa a los 22 bytes del payload (little-endian). @return GF_UI_STATE_LEN. */
 static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {

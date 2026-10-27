@@ -15,7 +15,7 @@ namespace {
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
 const char* const KEYS_PRESET[4] = {"BANK A", "BANK B", "BANK C", "BANK D"};  // B1–B4 saltan de banco (theory/13)
-const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "GROOVE / FX", "HOME"};  // HYBRID SYNTH (theory/12 §3d)
+const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "LFO / MOD", "SYNTH FX"};  // HYBRID SYNTH (theory/12 §3d)
 
 }  // namespace
 

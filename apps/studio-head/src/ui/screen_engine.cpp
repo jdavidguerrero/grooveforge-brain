@@ -77,6 +77,10 @@ void ScreenEngine::set_cursor(int i) {
 
 void ScreenEngine::update(const StudioState& s) {
     _top.update(s);
+    // HYBRID SYNTH: qué capa elige (theory/12 §3d rev. 5)
+    if (s.mode != Mode::Hybrid) _top.set_page("ENGINE SELECT");
+    else if (s.custom_pick) _top.set_page(s.focus_b ? "CUSTOM \xC2\xB7 ENGINE B" : "CUSTOM \xC2\xB7 ENGINE A");
+    else _top.set_page(s.focus_b ? "ENGINE \xC2\xB7 CAPA B" : "ENGINE \xC2\xB7 CAPA A");
     _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
     _bottom.set_keys(KEYS_ENGINE, 3);

@@ -107,6 +107,24 @@ engine. Un archivo (`/layers.gfl`, ~35 KB, un bloque). SAVE guarda la capa tal c
 cambia con el bibliotecario (`gf_presets.py layers` / `layer-import`, en `patches/brain/layers/`). De fábrica: las 8 de la
 guía, armadas con sus mitades HY. CC 18 carga el preset de capa N (0 = sale a SYNTH).
 
+**Rev. 5 (2026-10-27, probado en el hardware): teclas convencionales y CUSTOM.** Juan esperaba las teclas de SYNTH:
+con "B1 = editar A, otra vez = siguiente página" el segundo toque saltaba a ENV en lugar de cambiar de engine. Ahora
+las páginas son las de SYNTH y **la misma tecla otra vez alterna A ↔ B** sin salir de la página (la home vuelve con
+NAV largo). Reemplaza B1–B4 de la tabla de arriba:
+
+| Control | En HYBRID SYNTH (rev. 5) |
+|---|---|
+| **B1 / B2 / B3** | OSC / ENV / LFO-MOD de la capa en foco · la misma tecla otra vez: **cambia a la otra capa** |
+| **SHIFT + B3** · **B4** | GROOVE · SYNTH FX (de la capa entera: foco en A) · otra vez: home |
+| **SHIFT + B4** | Presets de capa (SAVE y bancos A / B con B1 / B2) · otra vez: home |
+| NAV largo | Home de HYBRID SYNTH |
+
+**CUSTOM:** al final de la lista de la home está **+ CUSTOM**. NAV push abre ENGINE SELECT dos veces (primero la capa A,
+después la B, que no puede repetir el engine de A); al elegir B arma la capa con las dos mitades en INIT (MORPH 50 %,
+sin retraso ni transposición) y abre OSC de A para empezar a editar. NAV largo cancela. SAVE (SHIFT + B4) la guarda
+como `LAYER nn`. La cabeza titula ENGINE SELECT "CUSTOM · ENGINE A / B" (flag `PICK` = 0x40 de UI_STATE; A o B
+con `FOCUS_B`).
+
 **Protocolo:** `0x47 LAYER_ENTRY` (Teensy → cabeza): `[índice, cantidad, nombre]`, como `PRESET_ENTRY`. La página de
 presets de capa es la **14** de UI_STATE.
 

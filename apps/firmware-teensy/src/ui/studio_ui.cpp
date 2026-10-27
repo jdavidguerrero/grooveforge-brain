@@ -90,6 +90,7 @@ void StudioUi::refresh_cursor() {
 Result StudioUi::handle(Control c, int8_t v) {
     dirty_ = true;
     if (c == Control::NavLong) {                            // home: PERFORM en SYNTH, HYBRID en HYBRID SYNTH; en FX, FX
+        custom_cancel();
         if (ui_.mode == MODE_SYNTH) show(PERFORM);
         else if (ui_.mode == MODE_HYBRID) show(HYBRID);
         return {};
@@ -97,6 +98,7 @@ Result StudioUi::handle(Control c, int8_t v) {
     if (c == Control::VolUp || c == Control::VolDown)        // en todos los modos, en cualquier página
         return {Action::VolStep, uint8_t(int8_t(c == Control::VolUp ? 1 : -1))};
     if (c == Control::Mode) {                               // SYNTH → FX → HYBRID SYNTH → SYNTH (theory/12 §3d)
+        custom_cancel();
         ui_.shift = 0;
         ui_.fx_hold = 0;
         if (ui_.mode == MODE_SYNTH) {
@@ -108,7 +110,7 @@ Result StudioUi::handle(Control c, int8_t v) {
         if (ui_.mode == MODE_FX) {
             ui_.mode = MODE_HYBRID;
             show(HYBRID);
-            return {Action::HybridEnter, layer_cursor_};
+            return {Action::HybridEnter, layer_to_load()};
         }
         ui_.mode = MODE_SYNTH;
         last_view_ = synth_view_;
@@ -125,40 +127,85 @@ Result StudioUi::focus_to(uint8_t f) {
     return {Action::LayerFocus, f};
 }
 
+void StudioUi::custom_cancel() {
+    if (!custom_step_) return;
+    custom_step_ = 0;
+    ui_.flags = uint8_t(ui_.flags & ~GF_UI_FLAG_PICK);
+    set_focus(custom_focus_);
+}
+
+// ENGINE SELECT de CUSTOM: primero A, después B (distinto de A); al elegir B se arma la capa y se abre OSC de A.
+Result StudioUi::custom_pick(uint8_t e) {
+    if (e >= ENGINE_COUNT) return {};
+    if (custom_step_ == 1) {
+        custom_a_ = e;
+        custom_step_ = 2;
+        set_focus(1);
+        engine_cursor_ = uint8_t((e + 1) % ENGINE_COUNT);
+        refresh_cursor();
+        return {};
+    }
+    if (e == custom_a_) return {};                          // B no puede repetir el engine de A
+    custom_step_ = 0;
+    ui_.flags = uint8_t(ui_.flags & ~GF_UI_FLAG_PICK);
+    set_focus(0);
+    show(OSC);
+    return {Action::LayerCustom, uint8_t(custom_a_ | (e << 4))};
+}
+
 Result StudioUi::handle_hybrid(Control c, int8_t v) {
     const uint8_t pg = ui_.page;
+    if (custom_step_ && pg == ENGINE) {                     // eligiendo los engines de CUSTOM
+        switch (c) {
+            case Control::Nav:
+                engine_cursor_ = uint8_t((engine_cursor_ + v % ENGINE_COUNT + ENGINE_COUNT) % ENGINE_COUNT);
+                refresh_cursor();
+                return {};
+            case Control::NavPush: return custom_pick(engine_cursor_);
+            default:
+                if (c >= Control::Pick0 && c <= Control::Pick5)
+                    return custom_pick(uint8_t(uint8_t(c) - uint8_t(Control::Pick0)));
+                if (c == Control::B6Down || c == Control::B6Up) break;
+                custom_cancel();                            // cualquier otra tecla cancela y sigue su camino
+                break;
+        }
+    }
     switch (c) {
         case Control::P1Push:                               // en la parada LFO sigue cambiando la forma
             if (pg == LFO && lfo_stop_[engine_] == 0) break;
             return focus_to(0);
         case Control::P2Push: return focus_to(1);
         case Control::Key1:
-        case Control::Key2: {
-            const uint8_t bank = uint8_t(uint8_t(c) - uint8_t(Control::Key1));
-            if (pg == LAYER_PRESETS) {                      // B1 / B2 saltan al banco A / B de presets de capa
-                const int row = 1 + bank * PRESET_BANK;
+        case Control::Key2:
+        case Control::Key3: {
+            if (pg == LAYER_PRESETS && c != Control::Key3 && !ui_.shift) {   // B1 / B2: banco A / B de presets de capa
+                const int row = 1 + int(uint8_t(c) - uint8_t(Control::Key1)) * PRESET_BANK;
                 layer_row_ = uint8_t(row > layer_count_ ? layer_count_ : row);
                 refresh_cursor();
                 return {};
             }
-            // Editar A (B1) o B (B2): OSC → ENV → LFO → home; con la otra capa en foco, empieza en OSC
-            const uint8_t f = bank;
-            const bool editing = pg == OSC || pg == ENV || pg == LFO;
-            if (f != focus() || !editing) show(OSC);
-            else show(pg == OSC ? ENV : pg == ENV ? LFO : HYBRID);
-            return focus_to(f);
-        }
-        case Control::Key3:                                 // GROOVE → SYNTH FX → home: son de la capa entera (de A)
-            show(pg == GROOVE ? SYNTH_FX : pg == SYNTH_FX ? HYBRID : GROOVE);
-            return focus_to(0);
-        case Control::Key4:                                 // presets de capa (y vuelta a la home)
-            if (pg == LAYER_PRESETS) {
-                show(HYBRID);
-            } else {
-                layer_row_ = uint8_t(layer_cursor_ + 1 <= layer_count_ ? layer_cursor_ + 1 : 0);
-                show(LAYER_PRESETS);
+            if (c == Control::Key3 && ui_.shift) {          // SHIFT + B3: GROOVE (de la capa entera) · otra vez: home
+                show(pg == GROOVE ? HYBRID : GROOVE);
+                return focus_to(0);
             }
+            // Páginas de SYNTH (theory/12 §3d rev. 5): la misma tecla otra vez cambia a la otra capa
+            const uint8_t target = c == Control::Key1 ? OSC : c == Control::Key2 ? ENV : LFO;
+            if (pg == target) return focus_to(uint8_t(focus() ^ 1));
+            show(target);
             return {};
+        }
+        case Control::Key4:
+            if (ui_.shift) {                                // SHIFT + B4: presets de capa · otra vez: home
+                if (pg == LAYER_PRESETS) {
+                    show(HYBRID);
+                } else {
+                    layer_row_ = uint8_t(layer_cursor_ < layer_count_ ? layer_cursor_ + 1 : 0);
+                    show(LAYER_PRESETS);
+                }
+                return {};
+            }
+            show(pg == SYNTH_FX ? HYBRID : SYNTH_FX);       // B4: SYNTH FX (de la capa entera) · otra vez: home
+            return focus_to(0);
         case Control::EngineCard:
             engine_cursor_ = engine_;
             show(ENGINE);
@@ -166,14 +213,22 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
         default: break;
     }
     if (pg == HYBRID) {
-        if (c == Control::Nav) {
+        if (c == Control::Nav) {                            // los presets de capa y, al final, + CUSTOM
             const int i = int(layer_cursor_) + v, n = layer_count_;
-            layer_cursor_ = uint8_t(n == 0 ? 0 : i < 0 ? 0 : i >= n ? n - 1 : i);
+            layer_cursor_ = uint8_t(i < 0 ? 0 : i > n ? n : i);
             refresh_cursor();
             return {};
         }
-        if (c == Control::NavPush && !ui_.shift)
-            return layer_count_ ? Result{Action::LayerLoad, layer_cursor_} : Result{};
+        if (c == Control::NavPush && !ui_.shift) {
+            if (layer_cursor_ < layer_count_) return {Action::LayerLoad, layer_cursor_};
+            custom_step_ = 1;                               // + CUSTOM: ENGINE SELECT de A, después el de B
+            custom_focus_ = focus();
+            ui_.flags = uint8_t(ui_.flags | GF_UI_FLAG_PICK);
+            set_focus(0);
+            engine_cursor_ = engine_;
+            show(ENGINE);
+            return {};
+        }
     }
     if (pg == LAYER_PRESETS && !(ui_.shift && c == Control::NavPush)) {
         const int rows = layer_count_ + 1;                  // la fila 0 es SAVE

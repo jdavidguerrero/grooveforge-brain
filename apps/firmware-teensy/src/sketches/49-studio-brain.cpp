@@ -945,6 +945,24 @@ void layer_select(int8_t idx) {
     layer_apply(l, idx);
 }
 
+/// + CUSTOM (theory/12 §3d rev. 5): los dos engines elegidos, con sus mitades en INIT, para empezar a editar.
+void layer_custom(uint8_t ea, uint8_t eb) {
+    if (ea >= GF_ENGINE_COUNT || eb >= GF_ENGINE_COUNT || ea == eb) return;
+    studio::LayerPreset l;
+    snprintf(l.name, sizeof(l.name), "CUSTOM");
+    l.eng_a = ea;
+    l.eng_b = eb;
+    const uint8_t half[2] = {ea, eb};
+    studio::Preset* out[2] = {&l.a, &l.b};
+    for (uint8_t k = 0; k < 2; ++k) {
+        studio::patch_init(out[k]->patch, half[k]);
+        out[k]->cutoff_hz = CUTOFF_DEFAULT[half[k]];
+        out[k]->reso_norm = 0.15f;
+        snprintf(out[k]->name, sizeof(out[k]->name), "INIT %c", k ? 'B' : 'A');
+    }
+    layer_apply(l, LAYER_CUSTOM);
+}
+
 /// SAVE en LAYER_PRESETS: guarda la capa tal como suena (las dos mitades, MORPH, retraso, transposición, mezcla).
 void layer_save() {
     if (!layered()) {
@@ -1269,6 +1287,7 @@ void run_action(studio::Result r) {
         case studio::Action::HybridExit: layer_off(); break;
         case studio::Action::LayerLoad: layer_select(int8_t(r.arg)); break;
         case studio::Action::LayerSave: layer_save(); break;
+        case studio::Action::LayerCustom: layer_custom(r.arg & 0x0F, r.arg >> 4); break;
         case studio::Action::LayerFocus: layer_set_focus(r.arg); break;
         case studio::Action::FilterBypass:
             engine_filter(ui.engine());
@@ -1344,7 +1363,7 @@ void ui_control(studio::Control c, int8_t v) {
 void leds_update() {
     const GF_UiState& u = ui.state();
     uint8_t pos, count, keys[studio::KEY_LEDS];
-    const uint8_t rows = u.page == studio::HYBRID          ? layers.count()
+    const uint8_t rows = u.page == studio::HYBRID          ? uint8_t(layers.count() + 1)   // + CUSTOM
                          : u.page == studio::LAYER_PRESETS ? uint8_t(layers.count() + 1)
                                                            : uint8_t(ui.preset_count() + 1);
     studio::nav_position(u, ui.engine(), rows, &pos, &count);
