@@ -182,3 +182,15 @@ convertido a su teclado). Así top y perc de patrones distintos se combinan libr
 largo del track, cada sección en su nivel (intro → `intro`, groove → `main`, build → `main` subiendo, drop → `peak`,
 break → top `intro` o nada), remates cada 8 / 16 compases, A/B entre patrones del género, mutaciones con semilla y
 varias propuestas para elegir. Las elecciones anotadas en las fichas son el dato para la IA local más adelante.
+
+### Rev. 4: lo elegido genera más, y Tribe en todos los géneros (2026-10-27)
+
+- **Favoritos:** Juan escuchó y eligió (sobre todo las versiones **peak**): los 13 patrones por género, con detalle de
+  versión / parte / rack en varios (p. ej. `afro_dunun_roll` peak top y perc en djembe, `cumbia_afro` peak top en
+  tribe, `organic_soft_conga` peak top en 808). Quedan en el campo `favoritos` de cada ficha, que el generador
+  conserva.
+- **Variaciones:** cada patrón con `favoritos` genera `_v2`, `_v3` y `_v4` (`mutate()`, semilla fija): mueve algún
+  golpe una semicorchea, cambia acentos, suma o quita ghosts; mismos roles; ningún grave nuevo en los tiempos del kick.
+- **Tribe en todos los géneros:** cada patrón sale también con `_tribe` (convertido al teclado de Colombian
+  Percussion), y cada género tiene un patrón colombiano propio: `tambora_afro` (afro house), `bullerengue_organic`
+  (organic), `guache_rolling` (melodic / progressive), `cumbia_disco` (disco / house), `mapale_tech` (indie tech).

@@ -138,6 +138,15 @@ VEL = {"X": 112, "x": 88, "o": 70, "g": 52}
 #   intro: solo esos roles · fill: rol → compás 4 (remate) · peak: rol → línea que se suma (más densidad)
 GENRES = {
     "afro_house": {
+        "tambora_afro": dict(kit="tribe_colombia", origen="propio", swing=56,
+                             micro={"agudo_abierto": 5, "agudo_slap": -4}, roles={
+            "aro_madera":     ["..x.x...x.x..x.."],            # Tambora Cáscara
+            "grave_abierto":  ["......x...x....."],            # Tambora Open
+            "agudo_abierto":  ["..X...X...X...X."],            # Llamador Abierto
+            "sacudido_corto": ["goXogoXogoXogoXo"],            # Guache
+            "agudo_slap":     ["...........x..x."]},           # Alegre Quemao
+            intro=["sacudido_corto", "agudo_abierto"], fill={"agudo_slap": "...........xxxXX"},
+            peak={"medio_abierto": "...x.....x...x.."}),
         "djembe_sang": dict(kit="GF Djembe Dunun", origen="propio (Juan)", swing=56,
                                 micro={"agudo_slap": -5, "sacudido_corto": 2}, roles={
             "medio_abierto":  ["X.....o...X....."],
@@ -167,6 +176,15 @@ GENRES = {
             peak={"agudo_abierto": "..o...o...o...o."}),
     },
     "organic_house": {
+        "bullerengue_organic": dict(kit="tribe_colombia", origen="propio", swing=57,
+                                    micro={"medio_abierto": -4, "sacudido_largo": 3}, roles={
+            "campana_aguda":  ["o...o...o...o..."],            # Llamador Bajoneo
+            "medio_abierto":  ["...x...x.x..x..."],            # Alegre Abierto
+            "sacudido_largo": ["x.......x......."],            # Maracón
+            "agudo_slap":     [".....x.......x.."],            # Alegre Quemao
+            "grave_apagado":  ["......x.......x."]},           # Tambora Damped
+            intro=["sacudido_largo", "campana_aguda"], fill={"medio_abierto": "...x...x.x.xxxXX"},
+            peak={"sacudido_corto": "..g...g...g...g."}),
         "cumbia_afro": dict(kit="tribe_colombia", origen="propio (Juan)", swing=55,
                                 micro={"agudo_abierto": 5, "medio_abierto": -4}, roles={
             "campana_aguda":  ["o...o...o...o..."],            # Llamador Bajoneo
@@ -195,6 +213,14 @@ GENRES = {
             peak={"medio_apagado": "..g.......g....."}),
     },
     "melodic_progressive": {
+        "guache_rolling": dict(kit="tribe_colombia", origen="propio", swing=52,
+                               micro={"agudo_abierto": 3}, roles={
+            "sacudido_corto": ["gxXxgxXxgxXxgxXx"],            # Guache
+            "agudo_abierto":  ["..x...x...x...x."],            # Llamador Abierto
+            "medio_apagado":  ["...g......g...g."],            # Alegre Bajoneo
+            "aro_madera":     [".......x.......x"]},           # Tambora Cáscara
+            intro=["sacudido_corto"], fill={"aro_madera": ".......x....xxXX"},
+            peak={"raspado": "..x...x...x...x."}),
         "prog_rolling16": dict(kit="GF Brasil", origen="propio", swing=52, micro={"pandereta": -2}, roles={
             "sacudido_corto": ["goXogoXogoXogoXo"],
             "pandereta":      ["..x...x...x...x."],
@@ -211,6 +237,15 @@ GENRES = {
             peak={"campana_grave": "......x.......x."}),
     },
     "disco_house": {
+        "cumbia_disco": dict(kit="tribe_colombia", origen="propio", swing=54,
+                             micro={"agudo_abierto": 4, "raspado": -2}, roles={
+            "agudo_abierto":  ["..X...X...X...X."],            # Llamador Abierto (como un hat abierto)
+            "raspado":        ["xgxgxgxgxgxgxgxg"],            # Guacharaca
+            "sacudido_largo": ["....x.......x..."],            # Maracón
+            "medio_abierto":  [".x....x..x....x."],            # Alegre Abierto
+            "grave_abierto":  ["..........x....."]},           # Tambora Open
+            intro=["raspado", "agudo_abierto"], fill={"medio_abierto": ".x....x..x.xxxXX"},
+            peak={"pandereta": "....x.......x..."}),
         "house_conga": dict(kit="GF 808 Perc", origen="propio", swing=56,
                                 micro={"agudo_abierto": 4, "pandereta": -2}, roles={
             "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
@@ -239,6 +274,15 @@ GENRES = {
             peak={"sacudido_corto": "gogogogogogogogo"}),
     },
     "indie_tech": {
+        "mapale_tech": dict(kit="tribe_colombia", origen="propio", swing=50,
+                            micro={"agudo_slap": -3}, roles={
+            "medio_abierto":  ["x.x.xx.x.x.xx.x."],            # Alegre Abierto
+            "agudo_slap":     ["...x..x....x..x."],            # Alegre Quemao
+            "caja":           ["..x...x...x...x."],            # Caja Fondo
+            "grave_apagado":  ["......x.......x."],            # Tambora Damped
+            "efecto":         ["................"]},           # Alegre Latigazo (en el remate)
+            intro=["caja"], fill={"agudo_slap": "...x..x....xxxXX", "efecto": "...............X"},
+            peak={"sacudido_corto": "x.x.x.x.x.x.x.x."}),
         "tribal_toms": dict(kit="GF 808 Perc", origen="propio", swing=51, micro={"agudo_abierto": -3}, roles={
             "medio_abierto": ["x..x..x.x..x..x.", "x..x..x.x..x.xxx"],
             "agudo_abierto": ["..x.....x.x.....", "..x.....x.x.x..."],
@@ -267,6 +311,45 @@ RACK_TAG = {"GF Djembe Dunun": "djembe", "GF Brasil": "brazilian", "GF 808 Perc"
 RAICES_KIT = {"cumbia_base": "tribe_colombia", "puya_vallenata": "tribe_colombia", "bullerengue": "tribe_colombia",
               "mapale": "tribe_colombia", "kuku_afro": "GF Djembe Dunun", "samba_reggae": "GF Brasil",
               "maracatu": "GF Brasil", "baiao": "GF Brasil"}
+
+
+KICK_STEPS = (0, 4, 8, 12)
+GRAVES = ("grave_abierto", "grave_apagado")
+
+
+def mutate(p: dict, seed: int) -> dict:
+    """Variación con semilla de un patrón (para los que Juan eligió): mueve algún golpe una semicorchea, cambia
+    acentos y suma o quita ghosts; los graves nunca entran en los tiempos del kick."""
+    rnd = random.Random(seed)
+
+    def vary(role: str, line: str) -> str:
+        c = list(line)
+        hits = [i for i, ch in enumerate(c) if ch != "."]
+        if hits and rnd.random() < 0.7:                                   # mover un golpe
+            i = rnd.choice(hits)
+            j = i + rnd.choice((-1, 1))
+            if 0 <= j < 16 and c[j] == "." and not (role in GRAVES and j in KICK_STEPS):
+                c[i], c[j] = ".", c[i]
+        if rnd.random() < 0.6:                                            # acentos
+            xs = [i for i, ch in enumerate(c) if ch == "x"]
+            if xs:
+                c[rnd.choice(xs)] = "X"
+            big = [i for i, ch in enumerate(c) if ch == "X"]
+            if len(big) > 1:
+                c[rnd.choice(big)] = "x"
+        if role not in GRAVES and rnd.random() < 0.6:                     # un ghost que entra o sale
+            free = [i for i in range(1, 16, 2) if c[i] == "."]
+            ghosts = [i for i, ch in enumerate(c) if ch == "g"]
+            if free and (not ghosts or rnd.random() < 0.5):
+                c[rnd.choice(free)] = "g"
+            elif ghosts:
+                c[rnd.choice(ghosts)] = "."
+        return "".join(c)
+
+    q = dict(p)
+    q["roles"] = {role: [vary(role, l) for l in bars] for role, bars in p["roles"].items()}
+    q["peak"] = {role: vary(role, l) for role, l in p["peak"].items()}
+    return q
 
 
 def arrange(p: dict, version: str) -> dict:
@@ -362,8 +445,8 @@ def main(argv=None):
     def ficha(path: Path, base: dict):
         if path.exists():                                   # conservar lo que Juan anotó
             old = json.loads(path.read_text())
-            for key in ("kits_probados", "notas"):
-                base[key] = old.get(key, base[key])
+            for key in ("kits_probados", "notas", "favoritos"):
+                base[key] = old.get(key, base.get(key, []))
         path.write_text(json.dumps(base, indent=2, ensure_ascii=False) + "\n")
 
     def write_split(folder: Path, stem: str, notes: list, kit: str, title: str) -> list[str]:
@@ -393,21 +476,35 @@ def main(argv=None):
                "microtiming_ms": p["micro"], "densidad": p["densidad"], "origen": p["origen"],
                "kits_probados": [], "notas": ""})
         n += 1
-    for genre, pats in GENRES.items():                        # top loops por género: 4 compases × 3 versiones
+    # Lo que Juan eligió (campo "favoritos" de las fichas) genera 3 variaciones: _v2, _v3, _v4
+    plan = {}
+    for genre, pats in GENRES.items():
+        plan[genre] = dict(pats)
+        for name, p in pats.items():
+            f = perc / genre / f"{name}.json"
+            if f.exists() and json.loads(f.read_text()).get("favoritos"):
+                for k in (2, 3, 4):
+                    v = mutate(p, seed=sum(map(ord, name)) * 10 + k)   # semilla fija: la misma variación siempre
+                    v["origen"] = f"variación de {name}" + (" (Juan)" if p["origen"].endswith("(Juan)") else "")
+                    v["variacion_de"] = name
+                    plan[genre][f"{name}_v{k}"] = v
+    for genre, pats in plan.items():                          # top loops por género: 4 compases × 3 versiones
         for j, (name, p) in enumerate(pats.items()):
             seed = 100 + 10 * n + j
             files = []
-            for v in VERSIONS:
-                files += write_split(perc / genre, f"{name}_{v}", notes_of(arrange(p, v), a.bpm, True, seed=seed),
-                                     p["kit"], f"{name} {v}")
-            files += write_split(perc / genre, f"{name}_main_q", notes_of(arrange(p, "main"), a.bpm, False, seed=seed),
-                                 p["kit"], f"{name} main q")
+            # Su rack y, para ver la parte colombiana en todos los géneros, también Tribe
+            for kit in (p["kit"],) if p["kit"] == "tribe_colombia" else (p["kit"], "tribe_colombia"):
+                for v in VERSIONS:
+                    files += write_split(perc / genre, f"{name}_{v}", notes_of(arrange(p, v), a.bpm, True, seed=seed),
+                                         kit, f"{name} {v}")
+                files += write_split(perc / genre, f"{name}_main_q",
+                                     notes_of(arrange(p, "main"), a.bpm, False, seed=seed), kit, f"{name} main q")
             ficha(perc / genre / f"{name}.json",
                   {"patron": name, "genero": genre, "bpm": a.bpm, "compases": 4, "versiones": list(VERSIONS),
                    "rack": RACK_TAG[p["kit"]], "kit": p["kit"], "archivos": files, "roles": list(p["roles"]),
                    "intro": p["intro"], "remate_compas_4": list(p["fill"]), "peak_suma": list(p["peak"]),
                    "swing": f"{p['swing']} %", "microtiming_ms": p["micro"], "origen": p["origen"],
-                   "kits_probados": [], "notas": ""})
+                   "variacion_de": p.get("variacion_de", ""), "kits_probados": [], "notas": "", "favoritos": []})
             n += 1
             print(f"{genre:20} {name:22} rack: {RACK_TAG[p['kit']]}")
     print(f"{n} patrones en {perc}")

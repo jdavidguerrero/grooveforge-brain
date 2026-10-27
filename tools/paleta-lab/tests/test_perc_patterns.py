@@ -93,6 +93,8 @@ def test_midis_top_perc_y_rack_en_el_nombre(tmp_path):
                 check(perc / genre, f"{name}_{v}", p["kit"])
             f = json.loads((perc / genre / f"{name}.json").read_text())
             assert f["rack"] == mp.RACK_TAG[p["kit"]] and f["archivos"]
+            if p["kit"] != "tribe_colombia":                                  # todos también en Tribe
+                check(perc / genre, f"{name}_main", "tribe_colombia")
     # El top no lleva graves ni medios; el perc no lleva sacudidos ni campanas
     top = read_notes(perc / "afro_house" / "top" / "djembe_sang_main_djembe.mid")
     assert all(n not in (36, 37, 38, 39) for _, n, _ in top)
@@ -100,6 +102,25 @@ def test_midis_top_perc_y_rack_en_el_nombre(tmp_path):
     assert all(n not in (43, 44, 46, 47) for _, n, _ in pc)
     kits = {p.stem for p in (tmp_path / "kits").glob("*.json")}
     assert kits == {"tribe_colombia", "djembe_dundun", "brasil_samples", "808_perc"}
+
+
+def test_variaciones_cambian_y_respetan_el_kick():
+    for genre, pats in mp.GENRES.items():
+        for name, p in pats.items():
+            vs = [mp.mutate(p, seed=sum(map(ord, name)) * 10 + k) for k in (2, 3, 4)]
+            assert any(v["roles"] != p["roles"] for v in vs), (genre, name)    # alguna cambia de verdad
+            for v in vs:
+                assert set(v["roles"]) == set(p["roles"])                       # misma idea: mismos roles
+                for role in mp.GRAVES:
+                    for i, bar in enumerate(v["roles"].get(role, [])):
+                        orig = p["roles"][role][i]
+                        # ningún grave nuevo en un tiempo del kick (los de Juan conservan los suyos)
+                        assert all(bar[k] == "." or orig[k] != "." for k in mp.KICK_STEPS), (genre, name, bar)
+
+
+def test_colombia_en_todos_los_generos():
+    for genre, pats in mp.GENRES.items():
+        assert any(p["kit"] == "tribe_colombia" for p in pats.values()), genre
 
 
 def test_tribe_alterna_manos_y_guache():
