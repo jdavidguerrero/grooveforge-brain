@@ -209,8 +209,8 @@ void Overlays::paint_input(const StudioState& s, uint32_t now) {
 void Overlays::paint_banner(Mode m) {
     const bool fx = m == Mode::Fx, hyb = m == Mode::Hybrid;
     set_bg(_banner, fx ? PURPLE : hyb ? HYB : TEAL);
-    set_text_color(_banner_big, hyb ? BG : WHITE);
-    set_text_color(_banner_hint, hyb ? BG : WHITE);
+    set_text_color(_banner_big, WHITE);
+    set_text_color(_banner_hint, WHITE);
     lv_label_set_text(_banner_big, fx ? "FX" : hyb ? "HYBRID SYNTH" : "SYNTH");
     lv_label_set_text(_banner_hint, fx    ? "ENC L DRY/WET · ENC R · P1 · P2 FX PARAMS · B6 HOLD · MODE: HYBRID SYNTH"
                                     : hyb ? "NAV CAPAS · B1 EDIT A · B2 EDIT B · B3 GROOVE / FX · B4 PRESETS · MODE: SYNTH"

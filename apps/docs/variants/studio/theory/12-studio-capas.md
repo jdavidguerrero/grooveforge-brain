@@ -84,8 +84,8 @@ cambiar de página.
 Probado en el hardware: entrar con SHIFT + B2 y llegar a los presets con SHIFT + B4 resultaba escondido y lento. Juan
 pidió un **modo propio**, con navegación dedicada y **sus propios presets**. Reemplaza la entrada de §3c.
 
-**MODE (B5)** recorre **SYNTH → FX → HYBRID SYNTH → SYNTH** (`mode` 2 en UI_STATE). Color ámbar en la pantalla y en las
-luces; banner "HYBRID SYNTH" al entrar. Al entrar se carga el último preset de capa; al salir queda sonando A sola.
+**MODE (B5)** recorre **SYNTH → FX → HYBRID SYNTH → SYNTH** (`mode` 2 en UI_STATE). Color azul en la pantalla y en las
+luces (rev. 5: era ámbar; el azul gasta ~34 % menos corriente por LED, que importa con el aislador USB); banner "HYBRID SYNTH" al entrar. Al entrar se carga el último preset de capa; al salir queda sonando A sola.
 SHIFT + B2 vuelve a no tener función.
 
 | Control | En HYBRID SYNTH |

@@ -168,7 +168,7 @@ void BottomBar::set_mode(bool fx, bool shift, bool hybrid) {
 
     // MODE muestra el modo al que se pasa: SYNTH → FX → HYBRID SYNTH → SYNTH (theory/12 §3d).
     set_bg(_mode_pill, fx ? HYB : _hyb ? TEAL : PURPLE);
-    set_text_color(_mode_next, fx || _hyb ? BG : WHITE);
+    set_text_color(_mode_next, _hyb ? BG : WHITE);
     lv_label_set_text(_mode_next, fx ? "HYBRID" : _hyb ? "SYNTH" : "FX");
 
     lv_label_set_text(_b6_lbl, fx ? "HOLD" : "SHIFT");
