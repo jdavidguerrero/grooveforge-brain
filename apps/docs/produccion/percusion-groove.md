@@ -98,3 +98,42 @@ Un **kit** dice qué toca cada rol en una fuente concreta (`GrooveForge_Dataset_
    cambiar el kit. Lo que queda es un patrón `propio`.
 4. Probar el mismo patrón con 2 kits (por ejemplo Tribe Colombia y djembes) y anotar la decisión.
 5. Renderizar el top loop seco y en contexto (con kick y bajo), y guardar el MIDI con su ficha.
+
+## 7. Kits reales y primera biblioteca de patrones (2026-10-27)
+
+### Kits
+
+| Kit | Qué es | Cómo se toca el mapa |
+|---|---|---|
+| `tribe_colombia` | **Colombian Percussion** de Tribe: un instrumento con bombo, tambora, llamador, alegre, guache, maracón, caja y guacharaca en un solo teclado (C1 Bombo Open … D5 Guacharaca Longer) | `make_perc_patterns.py` convierte cada rol a la nota de Tribe. Las articulaciones L / R se alternan por semicorchea (par = L, impar = R); el guache usa Down en las pares y Up en las impares, como la mano |
+| `djembe_dundun` | Samples: 6 djembe, 7 dununs (sangban, kenke, dundumba), 4 campanas, xeke y tchekere | Drum Rack con cada sample en la nota de su rol (el archivo del kit dice cuál) |
+| `brasil_samples` | Samples: surdo, alfaia, zabumba, atabaque, rum/rumpi/le, timbal, caixa, repinique, tamborim, pandeiro, agogô, triángulo, ganzá, chocalho, caxixi, reco-reco, cuíca… | Drum Rack con el mapa |
+| `808_perc` | Congas, bongos, rimshot, maracas, cowbell, claves, tambourine de la 808 | Drum Rack con el mapa |
+
+**A verificar en Live (una vez):** que Tribe use la misma numeración que Live (C1 = MIDI 36). Se prueba tocando C1:
+si suena el **Bombo Open**, está bien; si suena una octava corrida, se cambia `"octava"` en el archivo del kit.
+
+### Patrones (`midi/perc/`)
+
+Cada patrón son 2 compases a 124 BPM sobre el mapa común, con su versión **cuantizada** (`_q`) y la versión con
+**microtiming** (swing por rol y adelantos / atrasos en ms, que es lo que hace sonar humano un top loop). Los ritmos
+tradicionales son de dominio público y van como `origen: ritmo tradicional`; adaptados a 4/4 y 124 BPM son puntos de
+partida para hacerlos tuyos (§6), no transcripciones.
+
+| Patrón | Origen | Idea |
+|---|---|---|
+| `cumbia_base` | tradicional (Caribe colombiano) | llamador en los contratiempos, tambora con cáscara, alegre que dialoga, guache en semicorcheas |
+| `puya_vallenata` | tradicional (vallenato) | caja vallenata y guacharaca rápida: la energía del raspado |
+| `bullerengue` | tradicional (Caribe colombiano) | llamador en el pulso, frases de alegre, maracón |
+| `mapale` | tradicional (Caribe colombiano) | alegre denso y tambora empujando: el más intenso |
+| `kuku_afro` | tradicional (Guinea, adaptado a 4/4) | dunun, campana, sangban, kenke, djembe y xeke |
+| `samba_reggae` | tradicional (Bahía) | surdo de dos golpes, timbal, caixa |
+| `maracatu` | tradicional (Pernambuco) | alfaia, agogô en dos alturas y caixa redoblando |
+| `baiao` | tradicional (Nordeste) | zabumba con bacalhau y triángulo |
+| `afro_house_top` | propio | shaker con swing, djembe pregunta y respuesta, dunun en los contratiempos, campana |
+| `house_top_conga` | propio | shaker 16 con swing 56 %, congas, rim y pandereta: el top loop clásico de house |
+| `organic_shaker_wood` | propio | sacudidos, raspado y aro de madera, sin graves: para encima de cualquier groove |
+| `tribal_toms` | propio | toms medios y agudos con remate al final del compás 2: indie tech |
+
+Herramienta: `tools/paleta-lab/make_perc_patterns.py` (patrones en el mapa, fichas y las versiones convertidas a
+Tribe en `midi/perc/tribe_colombia/`).

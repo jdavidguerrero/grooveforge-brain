@@ -24,3 +24,14 @@ python3 tools/paleta-lab/gf_session.py show
 
 Las fichas van en `~/GROOVEFORGE/GrooveForge_Dataset_v1/metadata/sesiones/` (o `$GF_DATASET`). Tests:
 `python3 -m pytest tools/paleta-lab/tests`.
+
+## Percusión y top loops (`make_perc_patterns.py`)
+
+```bash
+python3 tools/paleta-lab/make_perc_patterns.py            # 124 BPM
+```
+
+Escribe los kits (`kits/*.json`: Tribe Colombian, djembes/dununs, Brasil, 808) y 12 patrones de 2 compases en
+`midi/perc/` sobre el GF Perc Map (C1 = 36), cada uno con su versión cuantizada `_q`, su ficha `.json` y la versión
+para Tribe en `midi/perc/tribe_colombia/`. Volver a correrlo conserva lo que anotaste en `kits_probados` y `notas`.
+Diseño: `apps/docs/produccion/percusion-groove.md` §7.
