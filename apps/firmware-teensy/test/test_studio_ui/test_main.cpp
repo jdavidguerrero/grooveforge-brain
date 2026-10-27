@@ -481,6 +481,24 @@ void test_shift_b4_sale_de_presets() {
     TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
 }
 
+void test_cada_modo_vuelve_a_su_pagina() {
+    StudioUi ui;
+    ui.handle(Control::Key1);                                   // SYNTH: OSC
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    ui.handle(Control::Mode);                                   // → FX
+    ui.handle(Control::Mode);                                   // → HYBRID SYNTH: home la primera vez
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    ui.handle(Control::Key2);                                   // HYBRID: ENV
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+    ui.handle(Control::Mode);                                   // → SYNTH: vuelve a OSC
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    ui.handle(Control::Mode);
+    ui.handle(Control::Mode);                                   // → HYBRID SYNTH: vuelve a ENV
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+    ui.set_hybrid(false);                                       // CC 18 = 0: SYNTH en OSC
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+}
+
 void test_layer_state_ida_y_vuelta() {
     GF_LayerState l{};
     l.layer = 1;
@@ -554,6 +572,7 @@ int main() {
     RUN_TEST(test_modo_hybrid);
     RUN_TEST(test_hybrid_custom);
     RUN_TEST(test_shift_b4_sale_de_presets);
+    RUN_TEST(test_cada_modo_vuelve_a_su_pagina);
     RUN_TEST(test_layer_state_ida_y_vuelta);
     RUN_TEST(test_presets_saltos_de_banco);
     return UNITY_END();

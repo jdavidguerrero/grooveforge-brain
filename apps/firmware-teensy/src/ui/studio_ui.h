@@ -95,13 +95,13 @@ public:
         if (on == hybrid()) return;
         ui_.shift = ui_.fx_hold = 0;
         if (on) {
-            if (ui_.mode == MODE_SYNTH) synth_view_ = last_view_;
+            if (ui_.mode == MODE_SYNTH) keep_synth_page();
             ui_.mode = MODE_HYBRID;
-            show(HYBRID);
+            show(hybrid_page_);
         } else {
+            keep_hybrid_page();
             ui_.mode = MODE_SYNTH;
-            last_view_ = synth_view_;
-            show(synth_view_);
+            restore_synth_page();
         }
         dirty_ = true;
     }
@@ -160,11 +160,25 @@ private:
     Result handle_hybrid(Control c, int8_t v);
     Result focus_to(uint8_t f);
     Result custom_pick(uint8_t engine);
+    /// Cada modo vuelve a la página donde lo dejaste (theory/14 de Studio §2); ENGINE SELECT no, es de paso.
+    void keep_synth_page() {
+        synth_view_ = last_view_;
+        synth_page_ = ui_.page == ENGINE ? last_view_ : ui_.page;
+    }
+    void keep_hybrid_page() {
+        hybrid_page_ = (ui_.page == ENGINE || custom_step_) ? uint8_t(HYBRID) : ui_.page;
+    }
+    void restore_synth_page() {
+        last_view_ = synth_view_;
+        show(synth_page_);
+    }
     void custom_cancel();
 
     GF_UiState ui_{};
     uint8_t last_view_ = PERFORM;
     uint8_t synth_view_ = PERFORM;               ///< vista de SYNTH al pasar a FX: vuelve al salir de HYBRID SYNTH
+    uint8_t synth_page_ = PERFORM;               ///< página de SYNTH al salir del modo (vuelve ahí)
+    uint8_t hybrid_page_ = HYBRID;               ///< página de HYBRID SYNTH al salir del modo
     uint8_t engine_ = 0;
     uint8_t engine_cursor_ = 0;
     uint8_t preset_cursor_ = 0;

@@ -9,6 +9,7 @@
 #include "ui/bank_file_storage.h"
 #include "ui/layer_bank.h"
 #include "ui/groove_macros.h"
+#include "ui/session.h"
 
 using namespace studio;
 
@@ -705,6 +706,48 @@ void test_move_solo_en_los_fx_encendidos() {
     TEST_ASSERT_EQUAL_FLOAT(1.0f, move_resonance(0.95f, 1.0f));                       // tope 1
 }
 
+// ── Sesión para el reinicio (variants/studio/theory/14 §3) ──
+
+void test_sesion_ida_y_vuelta() {
+    static Session s, r;
+    s = Session{};
+    s.mode = 2;
+    s.engine = 3;
+    s.volume_db = -12.0f;
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        patch_init(s.synth[e].patch, e);
+        s.synth[e].cutoff_hz = 500.0f + 100.0f * e;
+        s.preset_loaded[e] = uint8_t(e + 1);
+    }
+    s.synth[2].patch.attack_ms = 777.0f;                                // lo editado sin guardar
+    s.has_layer = true;
+    factory_layer(1, &s.layer);
+    s.layer.morph = 80;
+    s.layer_idx = 1;
+    s.layer_focus = 1;
+    static uint8_t buf[SESSION_BYTES_MAX];
+    const size_t n = session_encode(s, buf, sizeof(buf));
+    TEST_ASSERT_EQUAL_UINT32(SESSION_BYTES_MAX, n);
+    TEST_ASSERT_TRUE(session_decode(buf, n, &r));
+    TEST_ASSERT_EQUAL_UINT8(2, r.mode);
+    TEST_ASSERT_EQUAL_UINT8(3, r.engine);
+    TEST_ASSERT_EQUAL_FLOAT(-12.0f, r.volume_db);
+    TEST_ASSERT_EQUAL_FLOAT(777.0f, r.synth[2].patch.attack_ms);
+    TEST_ASSERT_EQUAL_FLOAT(800.0f, r.synth[3].cutoff_hz);
+    TEST_ASSERT_EQUAL_UINT8(6, r.preset_loaded[5]);
+    TEST_ASSERT_TRUE(r.has_layer);
+    TEST_ASSERT_EQUAL_UINT8(80, r.layer.morph);
+    TEST_ASSERT_EQUAL_STRING("KALIMBA", r.layer.name);
+    TEST_ASSERT_EQUAL_UINT8(1, r.layer_focus);
+    s.has_layer = false;                                                // sin capa: más corta y en SYNTH
+    const size_t m = session_encode(s, buf, sizeof(buf));
+    TEST_ASSERT_EQUAL_UINT32(SESSION_BYTES_MAX - LAYER_BYTES, m);
+    TEST_ASSERT_TRUE(session_decode(buf, m, &r));
+    TEST_ASSERT_EQUAL_UINT8(0, r.mode);
+    buf[3] = 9;                                                         // otra versión: no se usa
+    TEST_ASSERT_FALSE(session_decode(buf, m, &r));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -725,6 +768,7 @@ int main() {
     RUN_TEST(test_banco_de_64_y_anotacion_en_64);
     RUN_TEST(test_un_archivo_por_engine);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
+    RUN_TEST(test_sesion_ida_y_vuelta);
     RUN_TEST(test_signature_en_el_banco_de_fabrica);
     RUN_TEST(test_move_solo_en_los_fx_encendidos);
     RUN_TEST(test_migra_formato_4_a_5_fx);

@@ -71,6 +71,7 @@
 #include "../ui/groove_macros.h"
 #include "../ui/layers.h"
 #include "../ui/layer_bank.h"
+#include "../ui/session.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/preset_link.h"
@@ -1041,13 +1042,9 @@ void layer_custom(uint8_t ea, uint8_t eb) {
 }
 
 /// SAVE en LAYER_PRESETS: guarda la capa tal como suena (las dos mitades, MORPH, retraso, transposición, mezcla).
-void layer_save() {
-    if (!layered()) {
-        ui.set_layer_count(layers.count());
-        Serial.println("[CAPA] no hay capa sonando: nada que guardar");
-        return;
-    }
-    studio::LayerPreset l;
+/// La capa tal como suena (las dos mitades editadas, MORPH, retraso, transposición, mezcla).
+void layer_capture(studio::LayerPreset& l) {
+    snprintf(l.name, sizeof(l.name), "%s", layer_name);
     l.eng_a = layer_a;
     l.eng_b = layer_b;
     const uint8_t half[2] = {layer_a, layer_b};
@@ -1065,6 +1062,16 @@ void layer_save() {
     l.transpose_b = layer_transpose;
     l.gain_a_db = int8_t(lroundf(layer_gain_a_db));
     l.gain_b_db = int8_t(lroundf(layer_gain_b_db));
+}
+
+void layer_save() {
+    if (!layered()) {
+        ui.set_layer_count(layers.count());
+        Serial.println("[CAPA] no hay capa sonando: nada que guardar");
+        return;
+    }
+    static studio::LayerPreset l;
+    layer_capture(l);
     const int i = layers.save_new(l);
     ui.set_layer_count(layers.count());              // StudioUi ya sumó uno: si falló, vuelve al real
     if (i < 0) {
@@ -1077,6 +1084,156 @@ void layer_save() {
     bridge_layers();
     bridge_layer();
     Serial.printf("[CAPA] guardada %d %s\n", i, layer_name);
+}
+
+void apply_master_volume();
+
+// ── Cada modo guarda su estado (variants/studio/theory/14 §2) ─────────────────────────────────────────
+
+struct SynthState {
+    bool valid = false;
+    uint8_t engine = 0;
+    studio::Patch patch[GF_ENGINE_COUNT];
+    float cut[GF_ENGINE_COUNT], res[GF_ENGINE_COUNT];
+    uint8_t loaded[GF_ENGINE_COUNT];
+};
+DMAMEM SynthState g_synth;                        // SYNTH mientras se está en HYBRID SYNTH
+DMAMEM studio::LayerPreset g_hyb;                 // HYBRID SYNTH mientras se está en SYNTH
+bool g_hyb_valid = false;
+int8_t g_hyb_idx = -1;
+uint8_t g_hyb_focus = 0;
+
+void synth_snapshot() {
+    g_synth.engine = ui.engine();
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        g_synth.patch[e] = patches[e];
+        g_synth.cut[e] = cutoff[e];
+        g_synth.res[e] = resonance[e];
+        g_synth.loaded[e] = preset_loaded[e];
+    }
+    g_synth.valid = true;
+}
+
+void synth_restore() {
+    if (!g_synth.valid) return;
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        patches[e] = g_synth.patch[e];
+        cutoff[e] = g_synth.cut[e];
+        resonance[e] = g_synth.res[e];
+        preset_loaded[e] = g_synth.loaded[e];
+        engine_osc(e);
+        engine_filter(e);
+        engine_patch(e);
+    }
+    ui.set_engine(g_synth.engine);
+    activate_engine(g_synth.engine);
+    focus_engine(g_synth.engine);
+}
+
+void layer_set_focus(uint8_t f);
+
+/// Entra a HYBRID SYNTH: guarda SYNTH y vuelve a la capa que tenías (o carga la `idx` del banco la primera vez).
+void hybrid_enter(int8_t idx) {
+    synth_snapshot();
+    if (g_hyb_valid) {
+        layer_apply(g_hyb, g_hyb_idx);
+        if (g_hyb_focus) layer_set_focus(1);
+    } else if (layers.count()) {
+        layer_select(idx);
+    }
+}
+
+/// Sale de HYBRID SYNTH: guarda la capa como suena y vuelve SYNTH tal cual estaba.
+void hybrid_exit() {
+    if (layered()) {
+        layer_capture(g_hyb);
+        g_hyb_idx = layer_idx;
+        g_hyb_focus = layer_focus;
+        g_hyb_valid = true;
+    }
+    layer_off();
+    synth_restore();
+}
+
+// ── Sesión en el flash para el reinicio (theory/14 §3) ────────────────────────────────────────────────
+
+DMAMEM studio::Session g_sess;
+DMAMEM uint8_t session_buf[studio::SESSION_BYTES_MAX];
+uint32_t session_dirty_ms = 0;                    // último cambio sin guardar (0 = nada pendiente)
+constexpr uint32_t SESSION_DELAY_MS = 10000;
+
+void session_mark() { session_dirty_ms = millis() | 1u; }
+
+void session_save() {
+    studio::Session& s = g_sess;
+    const bool hyb = ui.hybrid() && layered();
+    const bool from_snapshot = ui.hybrid() && g_synth.valid;   // en HYBRID SYNTH, SYNTH es lo guardado al entrar
+    s.mode = hyb ? 2 : 0;
+    s.engine = from_snapshot ? g_synth.engine : ui.engine();
+    s.volume_db = master_vol_db;
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        studio::Preset& p = s.synth[e];
+        p.patch = from_snapshot ? g_synth.patch[e] : patches[e];
+        p.cutoff_hz = from_snapshot ? g_synth.cut[e] : cutoff[e];
+        p.reso_norm = gf_norm(RESO_RANGE[e], from_snapshot ? g_synth.res[e] : resonance[e]);
+        snprintf(p.name, sizeof(p.name), "SESSION");
+        s.preset_loaded[e] = from_snapshot ? g_synth.loaded[e] : preset_loaded[e];
+    }
+    s.has_layer = hyb || g_hyb_valid;
+    if (hyb) {
+        layer_capture(s.layer);
+        s.layer_idx = layer_idx;
+        s.layer_focus = layer_focus;
+    } else if (g_hyb_valid) {
+        s.layer = g_hyb;
+        s.layer_idx = g_hyb_idx;
+        s.layer_focus = g_hyb_focus;
+    }
+    s.layer_cursor = ui.layer_cursor();
+    const size_t n = studio::session_encode(s, session_buf, sizeof(session_buf));
+    if (n && preset_files.write_file("/session.gfs", session_buf, n))
+        Serial.printf("[SESION] guardada (%u bytes)\n", unsigned(n));
+}
+
+/// 10 s después del último cambio y sin notas sonando (cada escritura borra un bloque de 64 KB).
+void session_tick() {
+    if (!session_dirty_ms || notes_held || millis() - session_dirty_ms < SESSION_DELAY_MS) return;
+    session_dirty_ms = 0;
+    session_save();
+}
+
+/// Al arrancar: vuelve a la última sesión si el archivo es válido.
+void session_restore() {
+    const size_t n = preset_files.read_file("/session.gfs", session_buf, sizeof(session_buf));
+    studio::Session& s = g_sess;
+    if (!n || !studio::session_decode(session_buf, n, &s)) return;
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        const studio::Preset& p = s.synth[e];
+        patches[e] = p.patch;
+        cutoff[e] = constrain(p.cutoff_hz, GF_CUTOFF_RANGE[e].lo, GF_CUTOFF_RANGE[e].hi);
+        resonance[e] = gf_denorm(RESO_RANGE[e], p.reso_norm);
+        preset_loaded[e] = s.preset_loaded[e] < presets.count(e) ? s.preset_loaded[e] : 0xFF;
+        engine_osc(e);
+        engine_filter(e);
+        engine_patch(e);
+    }
+    master_vol_db = s.volume_db;
+    apply_master_volume();
+    ui.set_engine(s.engine);
+    activate_engine(s.engine);
+    ui.set_preset_count(presets.count(s.engine));
+    if (s.has_layer) {
+        g_hyb = s.layer;
+        g_hyb_idx = s.layer_idx;
+        g_hyb_focus = s.layer_focus;
+        g_hyb_valid = true;
+    }
+    ui.set_layer_cursor(s.layer_cursor);
+    if (s.mode == 2 && s.has_layer) {
+        ui.set_hybrid(true);
+        hybrid_enter(-1);
+    }
+    Serial.printf("[SESION] restaurada: %s · %s\n", s.mode == 2 ? "HYBRID SYNTH" : "SYNTH", ENGINE_NAME[s.engine]);
 }
 
 /// P1 / P2 push en HYBRID: la capa en foco pasa a ser la que editan las páginas, PRESETS y ENGINE SELECT.
@@ -1331,6 +1488,7 @@ void hybrid_encoder(uint8_t enc, int32_t steps) {
 }
 
 void page_encoder(uint8_t enc, int32_t steps) {
+    session_mark();
     if (ui.state().page == studio::HYBRID || ui.state().page == studio::LAYER_PRESETS) {
         hybrid_encoder(enc, steps);
         return;
@@ -1359,11 +1517,11 @@ void run_action(studio::Result r) {
             if (layered()) layer_replace_engine(r.arg);   // en HYBRID cambia el engine de la capa en foco
             else activate_engine(r.arg);
             break;
-        case studio::Action::HybridEnter:             // MODE → HYBRID SYNTH: entra con el último preset de capa
-            if (layers.count()) layer_select(int8_t(r.arg));
+        case studio::Action::HybridEnter:             // MODE → HYBRID SYNTH: la capa que tenías (theory/14 §2)
+            hybrid_enter(int8_t(r.arg));
             bridge_layers();
             break;
-        case studio::Action::HybridExit: layer_off(); break;
+        case studio::Action::HybridExit: hybrid_exit(); break;   // SYNTH vuelve tal cual estaba
         case studio::Action::LayerLoad: layer_select(int8_t(r.arg)); break;
         case studio::Action::LayerSave: layer_save(); break;
         case studio::Action::LayerCustom: layer_custom(r.arg & 0x0F, r.arg >> 4); break;
@@ -1426,6 +1584,7 @@ void run_action(studio::Result r) {
 void ui_control(studio::Control c, int8_t v) {
     if (c == studio::Control::Nav) nav_flash_ms = millis();
     const uint8_t page_before = ui.state().page;
+    session_mark();
     run_action(ui.handle(c, v));
     const GF_UiState& u = ui.state();
     // SYNTH FX y GROOVE son de la capa entera (los de A): abrirlos pasa el foco a A
@@ -1524,6 +1683,7 @@ void release_sustained() {
 }
 
 void control_change(byte ch, byte cc, byte val) {
+    session_mark();
     const uint8_t e = ui.engine();
     if (cc == 64) {
         sustain_pedal = val >= 64;
@@ -1534,7 +1694,13 @@ void control_change(byte ch, byte cc, byte val) {
     if (cc == 18) {
         Serial.printf("[MIDI] CC 18 = %u (preset de capa)\n", val);                                  // CC 18: preset de capa desde Live (0 = sale a SYNTH, theory/12 §3d)
         const int8_t idx = int8_t(studio::layer_from_cc(val, layers.count())) - 1;
-        if (idx != layer_idx) layer_select(idx);
+        if (idx < 0) {
+            if (ui.hybrid()) hybrid_exit();           // vuelve SYNTH tal cual estaba (theory/14 §2)
+        } else if (idx != layer_idx) {
+            if (!ui.hybrid()) synth_snapshot();
+            layer_select(idx);
+        }
+        session_mark();
         return;
     }
     studio::ParamChange pc[1];
@@ -1666,6 +1832,7 @@ void setup() {
     layers.load();                                   // sin archivo: las 8 capas de fábrica (una escritura)
     ui.set_layer_count(layers.count());
     Serial.printf("[CAPA] %u presets de capa\n", layers.count());
+    session_restore();                               // vuelve a donde estabas (theory/14 §3)
     Serial.printf("[PRESET] bancos: %u %u %u %u %u %u · LittleFS usado %lu de %lu bytes\n", presets.count(0),
                   presets.count(1), presets.count(2), presets.count(3), presets.count(4), presets.count(5),
                   (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
@@ -1880,6 +2047,7 @@ void loop() {
     usb_host.Task();
     librarian_poll();
     preset_seed_tick();
+    session_tick();
     midi.read();
     while (usbMIDI.read()) {
     }
@@ -1926,6 +2094,7 @@ void loop() {
                                pg == studio::ENGINE || pg == studio::PRESETS;   // páginas de selección: sin controles propios
     if (l != last_l && !enc_lr_filter) { page_encoder(2, l - last_l); last_l = l; }
     if (r != last_r && !enc_lr_filter) { page_encoder(3, r - last_r); last_r = r; }
+    if (l != last_l || r != last_r) session_mark();
     if (l != last_l) {
         const GF_Range cr = GF_CUTOFF_RANGE[e];
         // Aceleración: detents seguidos (< 40 ms) en el mismo sentido avanzan 4×, < 90 ms 2×; al cambiar de sentido

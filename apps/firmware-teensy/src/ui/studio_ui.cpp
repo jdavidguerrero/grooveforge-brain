@@ -102,19 +102,19 @@ Result StudioUi::handle(Control c, int8_t v) {
         ui_.shift = 0;
         ui_.fx_hold = 0;
         if (ui_.mode == MODE_SYNTH) {
-            synth_view_ = last_view_;
+            keep_synth_page();
             ui_.mode = MODE_FX;
             show(FX);
             return {};
         }
         if (ui_.mode == MODE_FX) {
             ui_.mode = MODE_HYBRID;
-            show(HYBRID);
+            show(hybrid_page_);                             // la página de HYBRID SYNTH donde lo dejaste
             return {Action::HybridEnter, layer_to_load()};
         }
+        keep_hybrid_page();
         ui_.mode = MODE_SYNTH;
-        last_view_ = synth_view_;
-        show(synth_view_);                                  // la vista de SYNTH que tenías al salir
+        restore_synth_page();                               // la página de SYNTH que tenías al salir
         return {Action::HybridExit, 0};
     }
     if (ui_.mode == MODE_FX) return handle_fx(c, v);
