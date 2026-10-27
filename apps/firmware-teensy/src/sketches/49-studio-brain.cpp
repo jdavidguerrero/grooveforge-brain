@@ -205,6 +205,10 @@ bool host_seen = false;
 
 studio::Patch& patch() { return patches[ui.engine()]; }
 
+/// Logs de alta frecuencia (cada detent de un encoder): solo con un programa leyendo el puerto y lugar en el buffer.
+/// Por el aislador USB, escribir sin lector frenaba el loop al girar P1 / P2 (2026-10-27).
+bool log_ok() { return Serial.dtr() && Serial.availableForWrite() > 120; }
+
 // GROOVE (variants/studio/theory/09): reloj común, PUMP, ARP y CHORD
 dsp::GrooveClock gclock;
 dsp::ArpCore arpeggio;                   // `arp` es el ARP 2600
@@ -1270,7 +1274,7 @@ void page_encoder(uint8_t enc, int32_t steps) {
         engine_filter(ui.engine());
     }
     static const char* const ENC_NAME[4] = {"P1", "P2", "ENC L", "ENC R"};
-    Serial.printf("[%s] param 0x%04X = %.3f\n", ENC_NAME[enc], c[0].id, c[0].norm);
+    if (log_ok()) Serial.printf("[%s] param 0x%04X = %.3f\n", ENC_NAME[enc], c[0].id, c[0].norm);
 }
 
 /// Ejecuta en el sonido lo que pidió la navegación.
@@ -1355,7 +1359,7 @@ void ui_control(studio::Control c, int8_t v) {
     if (u.page == studio::LAYER_PRESETS && page_before != studio::LAYER_PRESETS) bridge_layers();
     if (u.page == studio::PRESETS && page_before != studio::PRESETS) bridge_presets();   // theory/06 §5
     static const char* const MODE_NAME[3] = {"SYNTH", "FX", "HYBRID SYNTH"};
-    Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", MODE_NAME[u.mode % 3],
+    if (log_ok()) Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", MODE_NAME[u.mode % 3],
                   u.page, u.cursor, u.shift, u.fx_hold, u.fx_slot);
 }
 
