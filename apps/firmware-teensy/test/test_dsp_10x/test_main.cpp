@@ -5,6 +5,8 @@
 #include "dsp/analog_env.h"
 #include "dsp/juno_chorus_core.h"
 #include "dsp/polyblep_core.h"
+#include "dsp/pingpong_delay_core.h"
+#include "dsp/phaser_core.h"
 #include "dsp/sem_svf_core.h"
 #include "engines/dx7_core.h"
 
@@ -270,8 +272,74 @@ void test_juno_hiss_apagado_igual_y_encendido_acotado() {
     TEST_ASSERT_TRUE(diff > 0.0);                                            // L y R descorrelacionados
 }
 
+// ── Fase 3: delay ping-pong y phaser (theory/fase3-fx.md §2) ──
+
+static int16_t g_dl[4096], g_dr[4096];
+
+void test_pingpong_alterna_l_r_con_feedback() {
+    dsp::PingPongDelayCore d;
+    d.init(g_dl, g_dr, 4096, 1000.0f);
+    d.set_time(0.1f);                                   // 100 muestras a 1 kHz
+    d.set_feedback(0.5f);
+    d.set_tone(0.5f);                                   // plano
+    d.set_mix(1.0f);
+    static float in[600], z[600], ol[600], or_[600];
+    for (int i = 0; i < 600; ++i) in[i] = z[i] = 0.0f;
+    in[0] = 0.8f;                                       // impulso en L
+    d.render(in, z, ol, or_, 600);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.4f, ol[100]);     // L a T: la mitad de la suma L+R
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, or_[100]);
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.4f, or_[200]);    // R a 2T
+    TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, ol[200]);
+    TEST_ASSERT_FLOAT_WITHIN(0.02f, 0.2f, ol[300]);     // L a 3T × feedback
+}
+
+void test_pingpong_tone_oscuro_baja_los_agudos() {
+    auto energy_hf = [](float tone) {
+        dsp::PingPongDelayCore d;
+        d.init(g_dl, g_dr, 4096, 44100.0f);
+        d.set_time(0.01f);
+        d.set_feedback(0.8f);
+        d.set_tone(tone);
+        d.set_mix(1.0f);
+        static float in[4096], z[4096], ol[4096], or_[4096];
+        for (int i = 0; i < 4096; ++i) { in[i] = (i & 1) ? 0.5f : -0.5f; z[i] = 0.0f; }   // Nyquist
+        d.render(in, z, ol, or_, 4096);
+        double e = 0;
+        for (int i = 2000; i < 4096; ++i) e += (ol[i] - in[i]) * (ol[i] - in[i]);
+        return e;
+    };
+    TEST_ASSERT_TRUE(energy_hf(0.0f) < 0.2 * energy_hf(0.5f));
+}
+
+void test_phaser_quieto_con_depth_0_y_acotado() {
+    dsp::PhaserCore a, b;
+    a.set_depth(0.0f);
+    b.set_depth(0.0f);
+    b.set_phase(0.37f);                                 // otra fase del LFO: con DEPTH 0 da lo mismo
+    float in[512], oa[512], ob[512];
+    for (int i = 0; i < 512; ++i) in[i] = sinf(0.07f * i);
+    a.render(in, oa, 512, 44100.0f);
+    b.render(in, ob, 512, 44100.0f);
+    for (int i = 0; i < 512; ++i) TEST_ASSERT_FLOAT_WITHIN(1e-5f, oa[i], ob[i]);
+    dsp::PhaserCore c;
+    c.set_depth(1.0f);
+    c.set_rate(5.0f);
+    float out[512];
+    for (int k = 0; k < 20; ++k) {
+        c.render(in, out, 512, 44100.0f);
+        for (float v : out) {
+            TEST_ASSERT_FALSE(isnan(v));
+            TEST_ASSERT_TRUE(fabsf(v) < 2.0f);
+        }
+    }
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_pingpong_alterna_l_r_con_feedback);
+    RUN_TEST(test_pingpong_tone_oscuro_baja_los_agudos);
+    RUN_TEST(test_phaser_quieto_con_depth_0_y_acotado);
     RUN_TEST(test_juno_hiss_apagado_igual_y_encendido_acotado);
     RUN_TEST(test_model_d_shark_y_rev_saw);
     RUN_TEST(test_fast_exp2_precision);
