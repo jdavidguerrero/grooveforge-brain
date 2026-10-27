@@ -632,6 +632,7 @@ void engine_osc(uint8_t e) {
             juno.setHpf(uint8_t(constrain(int(lroundf(o[0][5])), 0, 3)));
             juno.setRange(uint8_t(constrain(int(lroundf(o[0][6])), 0, 2)));   // 16' / 8' / 4'
             juno.setVcaGate(o[0][7] > 0.5f);                                    // VCA ENV / GATE
+            juno.setHiss(mp.mod[0][1] / 100.0f);                                // HISS del BBD (fase2 §3)
             break;
         case 2: {  // theory/prophet-5-completo.md §3.1: OSC A · OSC B · MIXER
             const studio::Patch& p = mp;

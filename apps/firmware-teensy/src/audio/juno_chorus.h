@@ -21,6 +21,12 @@ public:
         __enable_irq();
     }
 
+    void set_hiss(float h) {
+        __disable_irq();
+        _core.setHiss(h);
+        __enable_irq();
+    }
+
     void set_hpf(uint8_t hpf) {
         __disable_irq();
         _core.setHpf(hpf);

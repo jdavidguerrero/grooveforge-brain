@@ -77,6 +77,7 @@ const OscSlot MD_ODRIVE = {"OVERDRIVE", "%", SlotKind::Number, 0, 100, 0, false,
 const OscSlot MD_FKBD   = {"FILTER KBD", "", SlotKind::Choice, 0, 3, 0, false, false, L_FKBD4};
 const OscSlot MD_DECAY  = {"DECAY", "", SlotKind::Toggle, 0, 1, 0, false, false};   // RELEASE = DECAY (fase2 §2)
 const OscSlot JU_DELAY  = {"LFO DELAY", "MS", SlotKind::Number, 0, 3000, 0, false, false};
+const OscSlot JU_HISS   = {"BBD HISS", "%", SlotKind::Number, 0, 100, 0, false, false};   // fase2-engines §3
 const OscSlot JU_RANGE  = {"RANGE", "", SlotKind::Choice, 0, 2, 0, false, true, L_RANGE};
 const OscSlot JU_VCA    = {"VCA", "", SlotKind::Choice, 0, 1, 0, false, true, L_VCA};
 const OscSlot OB_SHAPE  = {"SHAPE", "%", SlotKind::Number, 0, 100, 0, false, false};
@@ -98,7 +99,7 @@ const ModStop MOOG_MOD[1] = {
     {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, &MD_DECAY, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
 };
 const ModStop JUNO_MOD[1] = {
-    {"LFO", {&JU_DELAY, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
+    {"LFO", {&JU_DELAY, &JU_HISS, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
 };
 const ModStop DX7_MOD[2] = {
     {"WAVE / DETUNE", {&FM_W1, &FM_W2, &FM_W3, &FM_W4, &FM_D1, &FM_D2, &FM_D3, &FM_D4}},

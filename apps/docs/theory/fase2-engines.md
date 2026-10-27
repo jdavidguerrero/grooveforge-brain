@@ -97,3 +97,31 @@ ahora: no se cambia el sonido de los presets guardados.
 | Las formas 0–3 de los presets guardados no cambian | los índices del panel quedan iguales (test de la plantilla) |
 | FM de audio: OSC MOD con la rueda y el VCO 3 en audio da bandas laterales (growl), con LO sigue siendo vibrato | en el hardware |
 | DECAY encendido: al soltar, la nota cae con el tiempo de DECAY | en el hardware |
+
+## 3. Juno-106: tiempos de envolvente del 106 y hiss del BBD
+
+### Qué faltaba
+
+- Rangos de envolvente genéricos (0–5 s de ataque, 10 ms–5 s de decay y release). El 106 va de **1.5 ms a 3 s** de
+  ataque y de **1.5 ms a 12 s** de decay y release (Roland Juno-106 Service Notes, sección ENV). Los pads largos y los
+  *swells* del 106 piden esos 12 s; el ataque de 1.5 ms es el "click" de sus stabs.
+- El chorus (MN3009) no tenía el **hiss** del BBD, parte del sonido del original con el chorus encendido.
+
+### Diseño
+
+- **Rangos** del Juno en `gf_params.h`: ATTACK 1.5–3000 ms, DECAY 1.5–12000 ms, RELEASE 1.5–12000 ms. Los presets
+  guardan milisegundos: no cambian, solo el recorrido de la perilla. La curva sigue siendo la RC de `AnalogEnv`.
+- **HISS** (0–100 %, por defecto 0 = apagado) en la parada LFO del Juno, que tenía lugares libres. Ruido blanco
+  descorrelacionado L / R sumado a la señal retardada **antes** del pasabajos de 10 kHz del BBD (como en el circuito:
+  el ruido sale del BBD y lo filtra el reconstructor). 100 % ≈ −50 dBFS: se oye en silencio, se pierde en la mezcla.
+  Solo suena con el chorus encendido.
+
+**Qué no cubre:** la envolvente única del 106 (VCF y VCA comparten una ADSR en el original); el Brain conserva dos
+páginas (AMP y FILTER) para no cambiar los presets.
+
+### Cómo se prueba
+
+| Qué | Cómo |
+|---|---|
+| HISS 0 = salida idéntica a la de antes; HISS 100 con entrada en silencio da ruido acotado y estéreo | test native |
+| Pad con RELEASE de 12 s y stab con ATTACK de 1.5 ms | en el hardware |

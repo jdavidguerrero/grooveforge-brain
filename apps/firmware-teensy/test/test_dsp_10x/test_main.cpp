@@ -240,8 +240,39 @@ void test_model_d_shark_y_rev_saw() {
     TEST_ASSERT_FLOAT_WITHIN(1e-5f, 1.0f, dsp::PolyBlepCore::naive(dsp::WAVE_REV_SAW, 0.0f, 0.5f, 0.0f));
 }
 
+// ── Fase 2, Juno: hiss del BBD (theory/fase2-engines.md §3) ──
+
+void test_juno_hiss_apagado_igual_y_encendido_acotado() {
+    dsp::JunoChorusCore a, b;
+    a.setMode(1);
+    b.setMode(1);
+    b.setHiss(0.0f);
+    float in[128], la[128], ra[128], lb[128], rb[128];
+    for (int i = 0; i < 128; ++i) in[i] = 0.3f * sinf(0.05f * i);
+    a.render_stereo(in, la, ra, 128, 44100.0f);
+    b.render_stereo(in, lb, rb, 128, 44100.0f);
+    for (int i = 0; i < 128; ++i) TEST_ASSERT_EQUAL_FLOAT(la[i], lb[i]);   // HISS 0 = como antes
+
+    dsp::JunoChorusCore h;
+    h.setMode(1);
+    h.setHiss(1.0f);
+    float zero[128] = {}, l[128], r[128];
+    double el = 0, diff = 0;
+    for (int k = 0; k < 20; ++k) {
+        h.render_stereo(zero, l, r, 128, 44100.0f);
+        for (int i = 0; i < 128; ++i) {
+            TEST_ASSERT_TRUE(fabsf(l[i]) < 0.01f);
+            el += l[i] * l[i];
+            diff += (l[i] - r[i]) * (l[i] - r[i]);
+        }
+    }
+    TEST_ASSERT_TRUE(el > 0.0);                                              // se oye en silencio
+    TEST_ASSERT_TRUE(diff > 0.0);                                            // L y R descorrelacionados
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_juno_hiss_apagado_igual_y_encendido_acotado);
     RUN_TEST(test_model_d_shark_y_rev_saw);
     RUN_TEST(test_fast_exp2_precision);
     RUN_TEST(test_xmod_fm_de_audio_dobla_la_frecuencia);

@@ -58,11 +58,11 @@ typedef struct { float lo, hi; } GF_Range;
 static const GF_Range GF_CUTOFF_RANGE[GF_ENGINE_COUNT] = {
     {20, 8000}, {20, 8000}, {20, 8000}, {20, 20000}, {500, 20000}, {20, 20000}};
 static const GF_Range GF_ATTACK_RANGE[GF_ENGINE_COUNT] = {
-    {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}};
+    {0, 5000}, {1.5f, 3000}, {0, 5000}, {0, 5000}, {0, 5000}, {0, 5000}};   /* Juno: los del 106 (fase2-engines §3) */
 static const GF_Range GF_DECAY_RANGE[GF_ENGINE_COUNT] = {
-    {10, 5000}, {10, 5000}, {10, 5000}, {10, 5000}, {5, 3000}, {10, 5000}};
+    {10, 5000}, {1.5f, 12000}, {10, 5000}, {10, 5000}, {5, 3000}, {10, 5000}};
 static const GF_Range GF_RELEASE_RANGE[GF_ENGINE_COUNT] = {
-    {10, 5000}, {10, 5000}, {10, 5000}, {10, 5000}, {5, 5000}, {10, 5000}};
+    {10, 5000}, {1.5f, 12000}, {10, 5000}, {10, 5000}, {5, 5000}, {10, 5000}};
 
 /** Tercer destino del LFO de cada engine (theory §3.1); CUTOFF y PITCH se ven aparte. */
 static const uint8_t GF_LFO_THIRD_DEST[GF_ENGINE_COUNT] = {
@@ -207,8 +207,8 @@ static const GF_OscSlot GF_MOD_SLOT[GF_ENGINE_COUNT][GF_MOD_STOPS_MAX][GF_OSC_SL
      {GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE,
       GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_LEVEL, {0, 3, 1, 4, false}},
      GF_OSC_EMPTY},
-    {/* JUNO-106 LFO: DELAY (ms, fidelidad §11.5) */
-     {{0, 3000, 20, 0, false}, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4},
+    {/* JUNO-106 LFO: DELAY (ms, fidelidad §11.5) · HISS del BBD (%, fase2-engines §3) */
+     {{0, 3000, 20, 0, false}, GF_OSC_LEVEL, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE4},
      GF_OSC_EMPTY},
     {/* POLY-MOD: FILT ENV · OSC B · FREQ A · PW A | FILTER */
      {GF_OSC_LEVEL, GF_OSC_LEVEL, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_TOGGLE, GF_OSC_NONE, GF_OSC_NONE, GF_OSC_NONE},

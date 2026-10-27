@@ -62,6 +62,8 @@ public:
 
     /** @brief Modo de Chorus BBD MN3009: 0=OFF, 1=Chorus I, 2=Chorus II, 3=Chorus I+II. */
     void setChorusMode(uint8_t mode);
+    /// Hiss del BBD del chorus 0–1 (fase2-engines §3).
+    void setHiss(float h) { _chorus.set_hiss(h); }
 
     /** @brief Compatibilidad legacy con setChorus(bool, uint8_t). */
     void setChorus(bool enabled, uint8_t mode = 1);

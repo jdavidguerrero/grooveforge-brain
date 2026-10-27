@@ -42,6 +42,8 @@ public:
     uint8_t mode() const { return _mode; }
 
     void setHpf(uint8_t hpf) { _hpf = hpf > 3 ? 3 : hpf; }
+    /// Hiss del BBD 0–1 (fase2-engines §3): ruido L / R antes del pasabajos del BBD; 1 ≈ −50 dBFS. 0 = apagado.
+    void setHiss(float h) { _hiss = (h < 0.0f ? 0.0f : h > 1.0f ? 1.0f : h) * 0.0032f; }
     uint8_t hpf() const { return _hpf; }
 
     void render(const float* in, float* out, int n, float fs) {
@@ -150,8 +152,12 @@ public:
             _lfoPhase += lfo_inc;
             if (_lfoPhase >= 1.0f) _lfoPhase -= 1.0f;
             const float tri = 1.0f - 4.0f * fabsf(_lfoPhase - 0.5f);
-            const float wl = read_interp(center_samp + depth_samp * tri);
-            const float wr = read_interp(center_samp - depth_samp * tri);
+            float wl = read_interp(center_samp + depth_samp * tri);
+            float wr = read_interp(center_samp - depth_samp * tri);
+            if (_hiss > 0.0f) {                  // el ruido sale del BBD y lo filtra el reconstructor
+                wl += _hiss * white();
+                wr += _hiss * white();
+            }
             _lpState += g_bbd * (wl - _lpState);
             _lpStateR += g_bbd * (wr - _lpStateR);
             _wr = (_wr + 1) & BUF_MASK;
@@ -162,6 +168,13 @@ public:
     }
 
 private:
+    float white() {
+        _rng ^= _rng << 13;
+        _rng ^= _rng >> 17;
+        _rng ^= _rng << 5;
+        return float(int32_t(_rng)) * (1.0f / 2147483648.0f);
+    }
+
     float read_interp(float delay_samples) const {
         if (delay_samples < 1.0f) delay_samples = 1.0f;
         if (delay_samples > float(BUF_LEN - 2)) delay_samples = float(BUF_LEN - 2);
@@ -181,6 +194,8 @@ private:
     float _bassState = 0.0f;
     uint8_t _mode = 1;  // Default: Chorus I
     uint8_t _hpf = 1;   // Default: Flat (posición 1)
+    float _hiss = 0.0f;
+    uint32_t _rng = 0xB8DD1A55u;
 };
 
 }  // namespace dsp
