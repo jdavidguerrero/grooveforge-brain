@@ -339,7 +339,13 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
                     return {Action::SavePreset, uint8_t(preset_count_ - 1)};
                 }
                 return {Action::LoadPreset, uint8_t(preset_cursor_ - 1)};
-            case Control::Key1: case Control::Key2: case Control::Key3: case Control::Key4: {
+            case Control::Key4:
+                if (ui_.shift) {                            // SHIFT + B4 otra vez: vuelve a la vista de antes
+                    show(last_view_);
+                    break;
+                }
+                [[fallthrough]];
+            case Control::Key1: case Control::Key2: case Control::Key3: {
                 // B1–B4 saltan al banco A–D (theory/13): al primer preset del banco (fila 1 + 16·banco)
                 const int bank = int(uint8_t(c) - uint8_t(Control::Key1));
                 move(1 + bank * PRESET_BANK - preset_cursor_);

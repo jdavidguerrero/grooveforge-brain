@@ -466,6 +466,21 @@ void test_hybrid_custom() {
     TEST_ASSERT_EQUAL_UINT8(0, r.arg);
 }
 
+void test_shift_b4_sale_de_presets() {
+    StudioUi ui;
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                   // SHIFT + B4: PRESETS
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.handle(Control::Key4);                                   // otra vez (SHIFT sigue apretado): PERFORM
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);
+    ui.handle(Control::B6Up);
+    ui.handle(Control::Key4);                                   // B4 sin SHIFT: banco D (no sale)
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+}
+
 void test_layer_state_ida_y_vuelta() {
     GF_LayerState l{};
     l.layer = 1;
@@ -538,6 +553,7 @@ int main() {
     RUN_TEST(test_volumen_desde_la_cabeza);
     RUN_TEST(test_modo_hybrid);
     RUN_TEST(test_hybrid_custom);
+    RUN_TEST(test_shift_b4_sale_de_presets);
     RUN_TEST(test_layer_state_ida_y_vuelta);
     RUN_TEST(test_presets_saltos_de_banco);
     return UNITY_END();
