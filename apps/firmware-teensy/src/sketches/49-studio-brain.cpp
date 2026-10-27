@@ -1162,7 +1162,12 @@ DMAMEM uint8_t session_buf[studio::SESSION_BYTES_MAX];
 uint32_t session_dirty_ms = 0;                    // último cambio sin guardar (0 = nada pendiente)
 constexpr uint32_t SESSION_DELAY_MS = 10000;
 
-void session_mark() { session_dirty_ms = millis() | 1u; }
+// Nunca 0 (0 = nada pendiente) y nunca en el futuro: con millis() | 1 la marca quedaba 1 ms adelante, la resta sin signo
+// daba un número enorme y la sesión se guardaba sin esperar
+void session_mark() {
+    const uint32_t now = millis();
+    session_dirty_ms = now ? now : 1u;
+}
 
 void session_save() {
     studio::Session& s = g_sess;
