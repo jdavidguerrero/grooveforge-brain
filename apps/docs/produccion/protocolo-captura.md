@@ -15,16 +15,20 @@
 | Reloj | Live manda clock al Brain (Sync en la salida GrooveForge) para que PUMP y ARP caigan en fase |
 | Tempo | **124 BPM** salvo que el estudio pida otro |
 
-## 2. MIDI de prueba por rol (siempre el mismo clip, sale de "Run")
+## 2. MIDI de prueba por rol (clips neutros, siempre los mismos)
+
+Son patrones de **medición**, como un tono de prueba: no son música ni material de identidad (rev. 2026-10-27: ya no
+salen de "Run", que es un remix sobre la melodía de otra canción). Los genera `tools/paleta-lab/make_test_clips.py`
+en `GrooveForge_Dataset_v1/midi/<rol>/`, en La menor a 124 BPM (`--key` los transpone).
 
 | Rol | Clip | Por qué ese |
 |---|---|---|
-| `bass` | Línea de bajo de "Run" (F1 → Ab1), notas fuertes 74–81 y ghost 45–53 | Mide bounce y respuesta a la velocity |
-| `chords` | Fm7 → Dbmaj7 → Abmaj7 → Eb, 1 compás cada uno; y los stabs cortos del rap | Sostenido y articulado en el mismo sonido |
-| `pluck` | Motivo del lead (Db4 – C4 – Bb3 – F3) en semicorcheas + la F4 larga | Ataque en notas cortas y cola en la larga |
-| `pad` | C4 sostenido 4 compases + el acorde Fm7 4 compases | Movimiento sin tocar nada |
-| `perc` | Un golpe por compás en F3 y C4 a velocity 40, 80 y 120 | Ataque y rango dinámico |
-| `fx` / textura | 8 compases libres | — |
+| `bass` | `bass_ghost_notes`: 2 compases, notas fuertes 78–84, ghost notes 44–52 y un salto de octava | Mide bounce y respuesta a la velocity |
+| `chords` | `chords_sostenido_y_stabs`: i–VI–III–VII sostenidos (1 compás cada uno) y después stabs sincopados | Sostenido y articulado en el mismo sonido |
+| `pluck` | `pluck_motivo_y_nota_larga`: motivo de 4 notas en semicorcheas, una octava arriba y una nota larga | Ataque en notas cortas y cola en la larga |
+| `pad` | `pad_nota_y_acorde`: La3 sostenido 4 compases y el acorde i 4 compases | Movimiento sin tocar nada |
+| `perc` | `perc_dinamica`: un golpe por compás en dos alturas a velocity 40, 80 y 120 | Ataque y rango dinámico |
+| registro | `registro_la1_la5`: una nota por negra de La1 a La5 | Dónde suena bien cada sonido (`key_range` de la ficha) |
 | Capa híbrida | El clip del rol de la capa, tres veces: MORPH 0 %, 50 % y 100 % | Qué aporta cada mitad |
 
 Los clips viven en un set plantilla (`GF_Paleta_Lab.als`) para no rehacerlos cada vez.
@@ -52,7 +56,7 @@ GrooveForge_Dataset_v1/
   metadata/sesiones/<AAAAMMDD>.json         ← montaje, ganancia y decisiones de la sesión (§5)
 ```
 
-Ejemplo: `renders/20261028/bass_jd-run-funkbass_seco_t1.wav`.
+Ejemplo: `renders/20261028/bass_gf-pocket-bass_seco_t1.wav`.
 
 ## 5. Ficha de sesión y decisiones
 

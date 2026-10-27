@@ -31,3 +31,14 @@ def test_dos_sesiones_del_mismo_rol_el_mismo_dia(tmp_path, monkeypatch):
     gs.main(["new", "pad", "--fecha", "2026-10-28"])
     names = sorted(f.name for f in (tmp_path / "metadata" / "sesiones").glob("*.json"))
     assert names == ["2026-10-28_pad.json", "2026-10-28_pad_2.json"]
+
+
+def test_clips_de_prueba_son_midi_validos(tmp_path):
+    import make_test_clips as mc
+    mc.main(["--out", str(tmp_path)])
+    files = sorted(p.relative_to(tmp_path).as_posix() for p in tmp_path.rglob("*.mid"))
+    assert "bass/bass_ghost_notes.mid" in files and len(files) == 6
+    data = (tmp_path / "bass" / "bass_ghost_notes.mid").read_bytes()
+    assert data[:4] == b"MThd" and b"MTrk" in data
+    vels = [n[3] for n in mc.clips(0)["bass/bass_ghost_notes"][1]]
+    assert min(vels) < 55 and max(vels) > 75          # hay ghost notes y notas fuertes
