@@ -82,26 +82,124 @@ void StudioUi::refresh_cursor() {
         case PANEL:   ui_.cursor = panel_cursor_; break;
         case GROOVE:  ui_.cursor = groove_stop_; break;
         case HYBRID:  ui_.cursor = layer_cursor_; break;
+        case LAYER_PRESETS: ui_.cursor = layer_row_; break;
         default:      ui_.cursor = 0; break;
     }
 }
 
 Result StudioUi::handle(Control c, int8_t v) {
     dirty_ = true;
-    if (c == Control::NavLong) {                            // home = PERFORM (HYBRID en el modo híbrido); en FX, FX
-        if (!ui_.mode) show(hybrid_ ? HYBRID : PERFORM);
+    if (c == Control::NavLong) {                            // home: PERFORM en SYNTH, HYBRID en HYBRID SYNTH; en FX, FX
+        if (ui_.mode == MODE_SYNTH) show(PERFORM);
+        else if (ui_.mode == MODE_HYBRID) show(HYBRID);
         return {};
     }
-    if (c == Control::VolUp || c == Control::VolDown)        // en SYNTH y en FX, en cualquier página
+    if (c == Control::VolUp || c == Control::VolDown)        // en todos los modos, en cualquier página
         return {Action::VolStep, uint8_t(int8_t(c == Control::VolUp ? 1 : -1))};
-    if (c == Control::Mode) {
-        ui_.mode = ui_.mode ? 0 : 1;
+    if (c == Control::Mode) {                               // SYNTH → FX → HYBRID SYNTH → SYNTH (theory/12 §3d)
         ui_.shift = 0;
         ui_.fx_hold = 0;
-        show(ui_.mode ? FX : last_view_);
-        return {};
+        if (ui_.mode == MODE_SYNTH) {
+            synth_view_ = last_view_;
+            ui_.mode = MODE_FX;
+            show(FX);
+            return {};
+        }
+        if (ui_.mode == MODE_FX) {
+            ui_.mode = MODE_HYBRID;
+            show(HYBRID);
+            return {Action::HybridEnter, layer_cursor_};
+        }
+        ui_.mode = MODE_SYNTH;
+        last_view_ = synth_view_;
+        show(synth_view_);                                  // la vista de SYNTH que tenías al salir
+        return {Action::HybridExit, 0};
     }
-    return ui_.mode ? handle_fx(c, v) : handle_synth(c, v);
+    if (ui_.mode == MODE_FX) return handle_fx(c, v);
+    return ui_.mode == MODE_HYBRID ? handle_hybrid(c, v) : handle_synth(c, v);
+}
+
+Result StudioUi::focus_to(uint8_t f) {
+    if (f == focus()) return {};
+    set_focus(f);
+    return {Action::LayerFocus, f};
+}
+
+Result StudioUi::handle_hybrid(Control c, int8_t v) {
+    const uint8_t pg = ui_.page;
+    switch (c) {
+        case Control::P1Push:                               // en la parada LFO sigue cambiando la forma
+            if (pg == LFO && lfo_stop_[engine_] == 0) break;
+            return focus_to(0);
+        case Control::P2Push: return focus_to(1);
+        case Control::Key1:
+        case Control::Key2: {
+            const uint8_t bank = uint8_t(uint8_t(c) - uint8_t(Control::Key1));
+            if (pg == LAYER_PRESETS) {                      // B1 / B2 saltan al banco A / B de presets de capa
+                const int row = 1 + bank * PRESET_BANK;
+                layer_row_ = uint8_t(row > layer_count_ ? layer_count_ : row);
+                refresh_cursor();
+                return {};
+            }
+            // Editar A (B1) o B (B2): OSC → ENV → LFO → home; con la otra capa en foco, empieza en OSC
+            const uint8_t f = bank;
+            const bool editing = pg == OSC || pg == ENV || pg == LFO;
+            if (f != focus() || !editing) show(OSC);
+            else show(pg == OSC ? ENV : pg == ENV ? LFO : HYBRID);
+            return focus_to(f);
+        }
+        case Control::Key3:                                 // GROOVE → SYNTH FX → home: son de la capa entera (de A)
+            show(pg == GROOVE ? SYNTH_FX : pg == SYNTH_FX ? HYBRID : GROOVE);
+            return focus_to(0);
+        case Control::Key4:                                 // presets de capa (y vuelta a la home)
+            if (pg == LAYER_PRESETS) {
+                show(HYBRID);
+            } else {
+                layer_row_ = uint8_t(layer_cursor_ + 1 <= layer_count_ ? layer_cursor_ + 1 : 0);
+                show(LAYER_PRESETS);
+            }
+            return {};
+        case Control::EngineCard:
+            engine_cursor_ = engine_;
+            show(ENGINE);
+            return {};
+        default: break;
+    }
+    if (pg == HYBRID) {
+        if (c == Control::Nav) {
+            const int i = int(layer_cursor_) + v, n = layer_count_;
+            layer_cursor_ = uint8_t(n == 0 ? 0 : i < 0 ? 0 : i >= n ? n - 1 : i);
+            refresh_cursor();
+            return {};
+        }
+        if (c == Control::NavPush && !ui_.shift)
+            return layer_count_ ? Result{Action::LayerLoad, layer_cursor_} : Result{};
+    }
+    if (pg == LAYER_PRESETS && !(ui_.shift && c == Control::NavPush)) {
+        const int rows = layer_count_ + 1;                  // la fila 0 es SAVE
+        auto move = [&](int d) {
+            const int r = layer_row_ + d;
+            layer_row_ = uint8_t(r < 0 ? 0 : r >= rows ? rows - 1 : r);
+            refresh_cursor();
+        };
+        switch (c) {
+            case Control::Nav: move(v); return {};
+            case Control::SwipeUp: move(PRESET_ROWS_VISIBLE); return {};
+            case Control::SwipeDown: move(-PRESET_ROWS_VISIBLE); return {};
+            case Control::NavPush:
+                if (layer_row_ == 0) {
+                    if (layer_count_ >= LAYER_SLOTS) return {};
+                    ++layer_count_;
+                    layer_cursor_ = uint8_t(layer_count_ - 1);
+                    return {Action::LayerSave, layer_cursor_};
+                }
+                layer_cursor_ = uint8_t(layer_row_ - 1);
+                return {Action::LayerLoad, layer_cursor_};
+            default: break;
+        }
+        if (c >= Control::Pick0 && c <= Control::Pick5) return {};
+    }
+    return handle_synth(c, v);                              // páginas de edición, ENGINE SELECT, SHIFT, ENC L push
 }
 
 Result StudioUi::handle_fx(Control c, int8_t v) {
@@ -152,7 +250,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
                 break;
             case Control::NavPush:
                 engine_ = engine_cursor_;
-                show(hybrid_ ? HYBRID : PERFORM);
+                show(hybrid() ? HYBRID : PERFORM);
                 return {Action::LoadEngine, engine_};
             case Control::Key4: show(PERFORM); break;
             case Control::Key1: show(OSC); break;
@@ -161,7 +259,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             default:
                 if (c >= Control::Pick0 && c <= Control::Pick5) {
                     engine_ = engine_cursor_ = uint8_t(uint8_t(c) - uint8_t(Control::Pick0));
-                    show(hybrid_ ? HYBRID : PERFORM);
+                    show(hybrid() ? HYBRID : PERFORM);
                     return {Action::LoadEngine, engine_};
                 }
                 break;
@@ -197,20 +295,6 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
         return {};
     }
 
-    if (ui_.page == HYBRID) {                                // home del modo HYBRID (theory/12 §3c)
-        switch (c) {
-            case Control::Nav: {
-                const int i = int(layer_cursor_) + v;
-                layer_cursor_ = uint8_t(i < 0 ? 0 : i >= HYBRID_LAYERS ? HYBRID_LAYERS - 1 : i);
-                refresh_cursor();
-                return {};
-            }
-            case Control::NavPush: return {Action::LayerLoad, layer_cursor_};
-            case Control::P1Push: return {Action::LayerFocus, 0};
-            case Control::P2Push: return {Action::LayerFocus, 1};
-            default: break;
-        }
-    }
     if (ui_.page == PERFORM && c == Control::NavPush) {     // NAV push en PERFORM: entra a PANEL (theory/08 §4)
         show(PANEL);
         return {};
@@ -292,21 +376,7 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             }
             break;
         case Control::Key1: toggle_page(OSC); break;
-        case Control::Key2:                                 // B2: ENV · SHIFT + B2: entra / sale del modo HYBRID
-            if (ui_.shift) {
-                if (hybrid_) {
-                    hybrid_ = false;
-                    last_view_ = PERFORM;
-                    show(PERFORM);
-                    return {Action::HybridExit, 0};
-                }
-                hybrid_ = true;
-                last_view_ = HYBRID;
-                show(HYBRID);
-                return {Action::HybridEnter, layer_cursor_};
-            }
-            toggle_page(ENV);
-            break;
+        case Control::Key2: toggle_page(ENV); break;
         case Control::Key3:                                 // B3: LFO / MOD · SHIFT + B3: GROOVE
             toggle_page(ui_.shift ? GROOVE : LFO);
             break;

@@ -67,6 +67,7 @@
 #include "../ui/detent.h"
 #include "../ui/groove_macros.h"
 #include "../ui/layers.h"
+#include "../ui/layer_bank.h"
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/preset_link.h"
@@ -219,13 +220,14 @@ uint8_t strum_n = 0;
 void groove_reset();
 
 // Capas híbridas (variants/studio/theory/12): suenan A y B; ui.engine() es la capa en FOCO (la que se edita)
-int8_t layer_idx = -1;                   // −1 sin capa · 0–7 de la lista · LAYER_CUSTOM con un engine cambiado
-constexpr int8_t LAYER_CUSTOM = 8;
+int8_t layer_idx = -1;                   // −1 sin capa · 0–31 preset de capa · LAYER_CUSTOM con un engine cambiado
+constexpr int8_t LAYER_CUSTOM = 127;
 uint8_t layer_a = 0, layer_b = 0xFF, layer_focus = 0;
 float layer_gain_a_db = 0.0f, layer_gain_b_db = 0.0f;
 int8_t layer_transpose = 0;
 uint8_t layer_delay_ms = 0;
 char layer_name[13] = "";
+char layer_half_a[studio::PRESET_NAME_LEN + 1] = "", layer_half_b[studio::PRESET_NAME_LEN + 1] = "";   // para la cabeza
 bool layered() { return layer_idx >= 0; }
 void bridge_layer();
 /// GROOVE (ARP / CHORD / PUMP / MORPH) y SYNTH FX son de la capa entera: los del patch de A.
@@ -308,6 +310,10 @@ bool preset_fs_mount() {
     return true;
 }
 studio::PresetBank presets(preset_store);
+
+/// Presets de capa de HYBRID SYNTH (theory/12 §3d): un archivo con las dos mitades completas de cada capa.
+DMAMEM uint8_t layer_bank_buf[studio::LayerBank::FILE_BYTES];          // ~35 KB en RAM2
+studio::LayerBank layers(preset_files, layer_bank_buf);
 uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 // ── Engines ─────────────────────────────────────────────────────────────────────────────────────
@@ -832,24 +838,6 @@ void load_preset(uint8_t i) {
 
 // ── Capas híbridas (variants/studio/theory/12) ─────────────────────────────────────────────────────────
 
-/// Lleva al engine `e` el preset `name` de su banco (o el de fábrica, si lo borraste).
-bool layer_load_half(uint8_t e, const char* name) {
-    studio::Preset p;
-    for (uint8_t i = 0; i < presets.count(e); ++i)
-        if (!strcmp(presets.name(e, i), name) && presets.load(e, i, &p)) {
-            preset_loaded[e] = i;
-            apply_preset(e, p);
-            return true;
-        }
-    for (uint8_t f = 0; f < studio::factory_count(e); ++f)
-        if (studio::factory_preset(e, f, &p) && !strcmp(p.name, name)) {
-            apply_preset(e, p);
-            return true;
-        }
-    Serial.printf("[CAPA] no encuentro el preset %s\n", name);
-    return false;
-}
-
 /// La cabeza ve la capa en foco como el engine de siempre (páginas, presets, filtro) y la capa en LAYER_STATE.
 void focus_engine(uint8_t e) {
     ui.set_engine(e);
@@ -862,67 +850,145 @@ void focus_engine(uint8_t e) {
     bridge_layer();
 }
 
-/// Elige la capa `idx` (0…7) o sale de la capa (−1). A y B suenan; el foco arranca en A.
-void layer_select(int8_t idx) {
+/// Lista de presets de capa a la cabeza: un LAYER_ENTRY (0x47) por preset, como PRESET_ENTRY.
+void bridge_layers() {
+    const uint8_t n = layers.count();
+    if (n == 0) {
+        const uint8_t p[3] = {0, 0, 0};
+        bridge_send(GF_CMD_LAYER_ENTRY, p, 3);
+        return;
+    }
+    for (uint8_t i = 0; i < n; ++i) {
+        uint8_t p[3 + studio::LAYER_NAME_LEN + 1] = {i, n, 0};   // [índice, cantidad, (reservado), nombre]
+        const char* name = layers.name(i);
+        const size_t len = strnlen(name, studio::LAYER_NAME_LEN);
+        memcpy(p + 3, name, len);
+        bridge_send(GF_CMD_LAYER_ENTRY, p, uint8_t(3 + len + 1));
+    }
+}
+
+/// Sale de la capa: queda A sola en SYNTH.
+void layer_off() {
     const bool was = layered();
     const uint8_t prev_a = layer_a, prev_b = layer_b;
     layer_idx = -1;
     layer_morph_applied = -1.0f;
-    if (idx < 0 || idx >= int8_t(studio::LAYER_COUNT)) {
-        all_notes_off();
-        if (was) {
-            if (ui.engine() != prev_a) ui.set_engine(prev_a);   // queda A sola
-            if (prev_b != prev_a) {
-                engine_dsp(prev_b, false);
-                engine_lfo(prev_b, LfoMod{});
-            }
+    all_notes_off();
+    if (was) {
+        if (ui.engine() != prev_a) ui.set_engine(prev_a);
+        if (prev_b != prev_a && prev_b != 0xFF) {
+            engine_dsp(prev_b, false);
+            engine_lfo(prev_b, LfoMod{});
         }
-        layer_b = 0xFF;
-        audio_graph::set_active_engine(ui.engine());
-        ui.set_layer(false);
-        ui.set_hybrid(false);
-        if (was) focus_engine(ui.engine());
-        Serial.println("[CAPA] OFF");
-        return;
     }
-    const studio::LayerDef& d = studio::layer_def(uint8_t(idx));
-    if (ui.engine() != d.eng_a) {
-        ui.set_engine(d.eng_a);
-        activate_engine(d.eng_a);                    // apaga el resto (incluida la B anterior)
-    } else if (was && prev_b != 0xFF && prev_b != d.eng_b) {
+    layer_b = 0xFF;
+    layer_focus = 0;
+    ui.set_focus(0);
+    audio_graph::set_active_engine(ui.engine());
+    ui.set_layer(false);
+    ui.set_hybrid(false);
+    if (was) focus_engine(ui.engine());
+    Serial.println("[CAPA] OFF");
+}
+
+/// Hace sonar el preset de capa `l` (índice `idx` del banco). A y B suenan; el foco arranca en A.
+void layer_apply(const studio::LayerPreset& l, int8_t idx) {
+    const bool was = layered();
+    const uint8_t prev_b = layer_b;
+    layer_idx = -1;
+    layer_morph_applied = -1.0f;
+    if (ui.engine() != l.eng_a) {
+        ui.set_engine(l.eng_a);
+        activate_engine(l.eng_a);                    // apaga el resto (incluida la B anterior)
+    } else if (was && prev_b != 0xFF && prev_b != l.eng_b) {
         engine_dsp(prev_b, false);
         engine_lfo(prev_b, LfoMod{});
     }
-    layer_a = d.eng_a;
-    layer_b = d.eng_b;
+    layer_a = l.eng_a;
+    layer_b = l.eng_b;
     layer_focus = 0;
-    layer_gain_a_db = d.gain_a_db;
-    layer_gain_b_db = d.gain_b_db;
-    layer_transpose = d.transpose_b;
-    layer_delay_ms = d.delay_b_ms;
-    snprintf(layer_name, sizeof(layer_name), "%s", d.name);
-    layer_load_half(d.eng_a, d.preset_a);            // suelta las notas (apply_preset del engine activo)
-    engine_dsp(d.eng_b, true);
-    layer_load_half(d.eng_b, d.preset_b);
-    engine_unison(d.eng_b, 1, 0.0f);
+    ui.set_focus(0);
+    layer_gain_a_db = l.gain_a_db;
+    layer_gain_b_db = l.gain_b_db;
+    layer_transpose = l.transpose_b;
+    layer_delay_ms = l.delay_b_ms;
+    snprintf(layer_name, sizeof(layer_name), "%s", l.name);
+    snprintf(layer_half_a, sizeof(layer_half_a), "%s", l.a.name);
+    snprintf(layer_half_b, sizeof(layer_half_b), "%s", l.b.name);
+    preset_loaded[l.eng_a] = preset_loaded[l.eng_b] = 0xFF;   // las mitades viven en el preset de capa
+    apply_preset(l.eng_a, l.a);                      // suelta las notas (apply_preset del engine activo)
+    engine_dsp(l.eng_b, true);
+    apply_preset(l.eng_b, l.b);
+    engine_unison(l.eng_b, 1, 0.0f);
     for (uint8_t i = 0; i < GF_ENGINE_COUNT; ++i)    // de una capa a otra: lo que no suena, apagado (CPU)
-        if (i != d.eng_a && i != d.eng_b) {
+        if (i != l.eng_a && i != l.eng_b) {
             engine_dsp(i, false);
             engine_lfo(i, LfoMod{});
         }
-    patches[d.eng_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH] = 50;   // las dos capas a su mezcla base
+    patches[l.eng_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH] = l.morph;
     layer_idx = idx;                                 // groove_tick aplica las ganancias de MORPH
     ui.set_layer(true);
     ui.set_hybrid(true);
-    ui.set_layer_cursor(uint8_t(idx));
-    focus_engine(d.eng_a);
-    Serial.printf("[CAPA] %d %s: A %s + B %s\n", idx + 1, d.name, ENGINE_NAME[d.eng_a], ENGINE_NAME[d.eng_b]);
+    if (idx >= 0 && idx < int8_t(studio::LAYER_MAX)) ui.set_layer_cursor(uint8_t(idx));
+    focus_engine(l.eng_a);
+    Serial.printf("[CAPA] %d %s: A %s + B %s\n", idx + 1, l.name, ENGINE_NAME[l.eng_a], ENGINE_NAME[l.eng_b]);
+}
+
+/// Carga el preset de capa `idx` del banco, o sale de la capa (−1).
+void layer_select(int8_t idx) {
+    studio::LayerPreset l;
+    if (idx < 0 || !layers.get(uint8_t(idx), &l)) {
+        if (idx >= 0) Serial.printf("[CAPA] preset de capa %d no se pudo leer\n", idx);
+        layer_off();
+        return;
+    }
+    layer_apply(l, idx);
+}
+
+/// SAVE en LAYER_PRESETS: guarda la capa tal como suena (las dos mitades, MORPH, retraso, transposición, mezcla).
+void layer_save() {
+    if (!layered()) {
+        ui.set_layer_count(layers.count());
+        Serial.println("[CAPA] no hay capa sonando: nada que guardar");
+        return;
+    }
+    studio::LayerPreset l;
+    l.eng_a = layer_a;
+    l.eng_b = layer_b;
+    const uint8_t half[2] = {layer_a, layer_b};
+    studio::Preset* out[2] = {&l.a, &l.b};
+    const char* names[2] = {layer_half_a, layer_half_b};
+    for (uint8_t k = 0; k < 2; ++k) {
+        const uint8_t e = half[k];
+        out[k]->patch = patches[e];
+        out[k]->cutoff_hz = cutoff[e];
+        out[k]->reso_norm = gf_norm(RESO_RANGE[e], resonance[e]);
+        snprintf(out[k]->name, sizeof(out[k]->name), "%s", names[k][0] ? names[k] : ENGINE_NAME[e]);
+    }
+    l.morph = uint8_t(lroundf(patches[layer_a].groove[GF_GROOVE_MACRO][GF_MACRO_MORPH]));
+    l.delay_b_ms = layer_delay_ms;
+    l.transpose_b = layer_transpose;
+    l.gain_a_db = int8_t(lroundf(layer_gain_a_db));
+    l.gain_b_db = int8_t(lroundf(layer_gain_b_db));
+    const int i = layers.save_new(l);
+    ui.set_layer_count(layers.count());              // StudioUi ya sumó uno: si falló, vuelve al real
+    if (i < 0) {
+        Serial.println("[CAPA] no se pudo guardar (banco de capas lleno o sin LittleFS)");
+        return;
+    }
+    layer_idx = int8_t(i);
+    snprintf(layer_name, sizeof(layer_name), "%s", layers.name(uint8_t(i)));
+    ui.set_layer_cursor(uint8_t(i));
+    bridge_layers();
+    bridge_layer();
+    Serial.printf("[CAPA] guardada %d %s\n", i, layer_name);
 }
 
 /// P1 / P2 push en HYBRID: la capa en foco pasa a ser la que editan las páginas, PRESETS y ENGINE SELECT.
 void layer_set_focus(uint8_t f) {
     if (!layered()) return;
     layer_focus = f ? 1 : 0;
+    ui.set_focus(layer_focus);
     focus_engine(layer_focus ? layer_b : layer_a);
     Serial.printf("[CAPA] foco en %c (%s)\n", layer_focus ? 'B' : 'A', ENGINE_NAME[ui.engine()]);
 }
@@ -949,6 +1015,7 @@ void layer_replace_engine(uint8_t e) {
     if (presets.load(e, 0, &p)) {
         preset_loaded[e] = 0;
         apply_preset(e, p);
+        snprintf(layer_focus ? layer_half_b : layer_half_a, sizeof(layer_half_a), "%s", p.name);
     } else {
         engine_osc(e);
         engine_filter(e);
@@ -1026,9 +1093,8 @@ void bridge_layer() {
     l.delay_b_ms = layer_delay_ms;
     l.transpose_b = layer_transpose;
     snprintf(l.name, sizeof(l.name), "%s", layered() ? layer_name : "");
-    const uint8_t pa = preset_loaded[layer_a], pb = layered() ? preset_loaded[layer_b] : 0xFF;
-    snprintf(l.preset_a, sizeof(l.preset_a), "%s", pa != 0xFF ? presets.name(layer_a, pa) : "");
-    snprintf(l.preset_b, sizeof(l.preset_b), "%s", layered() && pb != 0xFF ? presets.name(layer_b, pb) : "");
+    snprintf(l.preset_a, sizeof(l.preset_a), "%s", layered() ? layer_half_a : "");
+    snprintf(l.preset_b, sizeof(l.preset_b), "%s", layered() ? layer_half_b : "");
     uint8_t p[GF_LAYER_STATE_LEN];
     gf_layer_state_pack(&l, p);
     bridge_send(GF_CMD_LAYER_STATE, p, GF_LAYER_STATE_LEN);
@@ -1043,6 +1109,7 @@ void bridge_all() {
     bridge_presets();
     bridge_preset_loaded();
     bridge_ui_state();
+    bridge_layers();
     bridge_layer();
 }
 
@@ -1150,7 +1217,7 @@ void mod_tick() {
 }
 
 /// P1 (0) o P2 (1) giró: edita lo que diga la página y avisa a la cabeza.
-/// Página HYBRID (theory/12 §3c): P1 MORPH · P2 retraso del ataque de B · SHIFT + P2 transposición de B.
+/// Home de HYBRID SYNTH y sus presets (theory/12 §3d): P1 MORPH · P2 retraso del ataque de B · SHIFT + P2 transposición de B.
 void hybrid_encoder(uint8_t enc, int32_t steps) {
     if (!layered() || enc > 1) return;
     if (enc == 0) {
@@ -1169,7 +1236,10 @@ void hybrid_encoder(uint8_t enc, int32_t steps) {
 }
 
 void page_encoder(uint8_t enc, int32_t steps) {
-    if (ui.state().page == studio::HYBRID) { hybrid_encoder(enc, steps); return; }
+    if (ui.state().page == studio::HYBRID || ui.state().page == studio::LAYER_PRESETS) {
+        hybrid_encoder(enc, steps);
+        return;
+    }
     studio::ParamChange c[1];
     if (!studio::edit_encoder(patch(), ui.state(), ui.engine(), enc, int8_t(constrain(steps, -8, 8)), c)) return;
     bridge_param(c[0].id, c[0].norm);
@@ -1192,11 +1262,13 @@ void run_action(studio::Result r) {
             if (layered()) layer_replace_engine(r.arg);   // en HYBRID cambia el engine de la capa en foco
             else activate_engine(r.arg);
             break;
-        case studio::Action::HybridEnter:             // SHIFT + B2: entra con la capa del cursor
-            layer_select(int8_t(r.arg));
+        case studio::Action::HybridEnter:             // MODE → HYBRID SYNTH: entra con el último preset de capa
+            if (layers.count()) layer_select(int8_t(r.arg));
+            bridge_layers();
             break;
-        case studio::Action::HybridExit: layer_select(-1); break;
+        case studio::Action::HybridExit: layer_off(); break;
         case studio::Action::LayerLoad: layer_select(int8_t(r.arg)); break;
+        case studio::Action::LayerSave: layer_save(); break;
         case studio::Action::LayerFocus: layer_set_focus(r.arg); break;
         case studio::Action::FilterBypass:
             engine_filter(ui.engine());
@@ -1261,8 +1333,10 @@ void ui_control(studio::Control c, int8_t v) {
     // SYNTH FX y GROOVE son de la capa entera (los de A): abrirlos pasa el foco a A
     if (layered() && layer_focus && (u.page == studio::SYNTH_FX || u.page == studio::GROOVE)) layer_set_focus(0);
     if (u.page == studio::HYBRID && page_before != studio::HYBRID) bridge_layer();
+    if (u.page == studio::LAYER_PRESETS && page_before != studio::LAYER_PRESETS) bridge_layers();
     if (u.page == studio::PRESETS && page_before != studio::PRESETS) bridge_presets();   // theory/06 §5
-    Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", u.mode ? "FX" : "SYNTH",
+    static const char* const MODE_NAME[3] = {"SYNTH", "FX", "HYBRID SYNTH"};
+    Serial.printf("[UI] modo %s · página %u · cursor %u · shift %u · hold %u · fx %u\n", MODE_NAME[u.mode % 3],
                   u.page, u.cursor, u.shift, u.fx_hold, u.fx_slot);
 }
 
@@ -1270,7 +1344,10 @@ void ui_control(studio::Control c, int8_t v) {
 void leds_update() {
     const GF_UiState& u = ui.state();
     uint8_t pos, count, keys[studio::KEY_LEDS];
-    studio::nav_position(u, ui.engine(), uint8_t(ui.preset_count() + 1), &pos, &count);
+    const uint8_t rows = u.page == studio::HYBRID          ? layers.count()
+                         : u.page == studio::LAYER_PRESETS ? uint8_t(layers.count() + 1)
+                                                           : uint8_t(ui.preset_count() + 1);
+    studio::nav_position(u, ui.engine(), rows, &pos, &count);
     studio::key_levels(u, keys);
     const uint32_t now = millis();
     const bool flash = now - nav_flash_ms < 300;
@@ -1284,13 +1361,16 @@ void leds_update() {
     }
 
     static uint32_t last_sig = 0xFFFFFFFF, last_show = 0;
-    uint32_t sig = pos | (count << 5) | (u.mode << 10) | (flash << 11);
+    uint32_t sig = pos | (count << 6) | (u.mode << 12) | (flash << 14);
     for (uint8_t i = 0; i < studio::KEY_LEDS; ++i) sig = sig * 31 + keys[i];
     if (sig == last_sig || (animating && now - last_show < 16)) return;   // animación a ~60 cuadros/s
     last_sig = sig;
     last_show = now;
 
-    const CRGB base = u.mode ? CRGB(0x53, 0x4A, 0xB7) : CRGB(0x1D, 0x9E, 0x75);   // púrpura FX · teal SYNTH
+    // teal SYNTH · púrpura FX · ámbar HYBRID SYNTH (theory/12 §3d)
+    const CRGB base = u.mode == studio::MODE_FX       ? CRGB(0x53, 0x4A, 0xB7)
+                      : u.mode == studio::MODE_HYBRID ? CRGB(0xEF, 0x9F, 0x27)
+                                                      : CRGB(0x1D, 0x9E, 0x75);
     const studio::RingArc arc = studio::ring_arc(pos, count);
     fill_solid(ring, studio::RING_LEDS, CRGB::Black);
     for (uint8_t i = 0; i < arc.len; ++i) {
@@ -1352,8 +1432,8 @@ void control_change(byte ch, byte cc, byte val) {
         return;
     }
     if (cc == 123) { all_notes_off(); return; }
-    if (cc == 18) {                                  // CC 18: capa híbrida desde Live (0 = OFF, theory/12)
-        const int8_t idx = int8_t(studio::layer_from_cc(val)) - 1;
+    if (cc == 18) {                                  // CC 18: preset de capa desde Live (0 = sale a SYNTH, theory/12 §3d)
+        const int8_t idx = int8_t(studio::layer_from_cc(val, layers.count())) - 1;
         if (idx != layer_idx) layer_select(idx);
         return;
     }
@@ -1480,6 +1560,9 @@ void setup() {
         }
     }
     ui.set_preset_count(presets.count(0));
+    layers.load();                                   // sin archivo: las 8 capas de fábrica (una escritura)
+    ui.set_layer_count(layers.count());
+    Serial.printf("[CAPA] %u presets de capa\n", layers.count());
     Serial.printf("[PRESET] bancos: %u %u %u %u %u %u · LittleFS usado %lu de %lu bytes\n", presets.count(0),
                   presets.count(1), presets.count(2), presets.count(3), presets.count(4), presets.count(5),
                   (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
@@ -1543,12 +1626,13 @@ void librarian_bank_changed(uint8_t e) {
 }
 
 void librarian_command(char* line) {
-    static char hex[2 * studio::PRESET_BYTES + 1];
-    static uint8_t bin[studio::PRESET_BYTES];
+    static char hex[2 * studio::LAYER_BYTES + 1];      // el preset de capa es el binario más largo
+    static uint8_t bin[studio::LAYER_BYTES];
     const studio::LinkCmd c = studio::parse_link_cmd(line);
     switch (c.kind) {
         case studio::LinkCmd::Hello:
-            Serial.printf("@GF HELLO %u %u %u\n", studio::PRESET_FORMAT, GF_ENGINE_COUNT, studio::PRESET_MAX);
+            Serial.printf("@GF HELLO %u %u %u %u %u\n", studio::PRESET_FORMAT, GF_ENGINE_COUNT, studio::PRESET_MAX,
+                          studio::LAYER_FORMAT, studio::LAYER_MAX);
             break;
         case studio::LinkCmd::Export: {
             unsigned total = 0;
@@ -1557,7 +1641,7 @@ void librarian_command(char* line) {
             for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)
                 for (uint8_t i = 0; i < presets.count(e); ++i) {
                     studio::Preset p;   // se lee migrado y sale siempre en el formato actual
-                    if (!presets.load(e, i, &p) || !studio::preset_encode(p, e, bin, sizeof(bin))) continue;
+                    if (!presets.load(e, i, &p) || !studio::preset_encode(p, e, bin, studio::PRESET_BYTES)) continue;
                     studio::hex_encode(bin, studio::PRESET_BYTES, hex);
                     Serial.printf("@GF P %u %u %s\n", e, i, hex);
                 }
@@ -1565,7 +1649,7 @@ void librarian_command(char* line) {
             break;
         }
         case studio::LinkCmd::Put: {
-            const size_t n = studio::hex_decode(c.hex, bin, sizeof(bin));
+            const size_t n = studio::hex_decode(c.hex, bin, studio::PRESET_BYTES);
             const studio::PutResult r = n ? presets.put(c.engine, c.index, bin, n) : studio::PutResult::Format;
             static const char* const ERR[] = {"", "FORMATO", "ENGINE", "INDICE", "ESCRITURA"};
             if (r == studio::PutResult::Ok) {
@@ -1584,6 +1668,40 @@ void librarian_command(char* line) {
                 Serial.println("@GF ERR ESCRITURA");
             }
             break;
+        case studio::LinkCmd::LayerExport:
+            Serial.printf("@GF BEGIN %u\n", layers.count());
+            for (uint8_t i = 0; i < layers.count(); ++i) {
+                const size_t n = layers.raw(i, bin, sizeof(bin));
+                if (!n) continue;
+                studio::hex_encode(bin, n, hex);
+                Serial.printf("@GF L %u %s\n", i, hex);
+            }
+            Serial.println("@GF END");
+            break;
+        case studio::LinkCmd::LayerPut: {
+            const size_t n = studio::hex_decode(c.hex, bin, sizeof(bin));
+            const studio::PutResult r = n ? layers.put(c.index, bin, n) : studio::PutResult::Format;
+            static const char* const ERR[] = {"", "FORMATO", "ENGINE", "INDICE", "ESCRITURA"};
+            if (r == studio::PutResult::Ok) {
+                layers.flush();
+                ui.set_layer_count(layers.count());
+                bridge_layers();
+                Serial.printf("@GF OK LPUT %u\n", c.index);
+            } else {
+                Serial.printf("@GF ERR %s\n", ERR[uint8_t(r)]);
+            }
+            break;
+        }
+        case studio::LinkCmd::LayerTrunc:
+            if (layers.truncate(c.index)) {
+                layers.flush();
+                ui.set_layer_count(layers.count());
+                bridge_layers();
+                Serial.printf("@GF OK LTRUNC %u\n", c.index);
+            } else {
+                Serial.println("@GF ERR ESCRITURA");
+            }
+            break;
         case studio::LinkCmd::Fs:   // diagnóstico: espacio del flash de presets y tamaño de cada banco
             Serial.printf("@GF FS %lu %lu %u %u %u %u %u %u\n", (unsigned long)preset_fs.usedSize(),
                           (unsigned long)preset_fs.totalSize(), presets.count(0), presets.count(1), presets.count(2),
@@ -1598,6 +1716,9 @@ void librarian_command(char* line) {
                     preset_loaded[e] = 0xFF;
                 }
                 librarian_bank_changed(ui.engine());
+                layers.reset();                     // vuelven las capas de fábrica
+                ui.set_layer_count(layers.count());
+                bridge_layers();
                 Serial.println("@GF OK FORMAT");
             } else {
                 Serial.println("@GF ERR ESCRITURA");
@@ -1609,7 +1730,7 @@ void librarian_command(char* line) {
 
 /// Lee líneas del USB serie sin bloquear; una línea demasiado larga se descarta entera.
 void librarian_poll() {
-    static char line[2 * studio::PRESET_BYTES + 64];
+    static char line[2 * studio::LAYER_BYTES + 64];
     static size_t len = 0;
     static bool overflow = false;
     while (Serial.available()) {
@@ -1691,8 +1812,8 @@ void loop() {
     const int32_t p1 = det_p1.update(enc_p1.read()), p2 = det_p2.update(enc_p2.read());
     // Home (vistas) y modo FX: ENC L / R = filtro. Páginas de edición: ENC L / R = 3.er y 4.º control de la página.
     const uint8_t pg = ui.state().page;
-    const bool enc_lr_filter = ui.state().mode || pg == studio::PERFORM || pg == studio::AI || pg == studio::SPECTRUM ||
-                               pg == studio::PANEL || pg == studio::HYBRID ||
+    const bool enc_lr_filter = ui.state().mode == studio::MODE_FX || pg == studio::PERFORM || pg == studio::AI || pg == studio::SPECTRUM ||
+                               pg == studio::PANEL || pg == studio::HYBRID || pg == studio::LAYER_PRESETS ||
                                pg == studio::ENGINE || pg == studio::PRESETS;   // páginas de selección: sin controles propios
     if (l != last_l && !enc_lr_filter) { page_encoder(2, l - last_l); last_l = l; }
     if (r != last_r && !enc_lr_filter) { page_encoder(3, r - last_r); last_r = r; }

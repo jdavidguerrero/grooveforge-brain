@@ -78,6 +78,7 @@ typedef enum : uint8_t {
     GF_CMD_UI_STATE         = 0x44,
     GF_CMD_UI_INPUT         = 0x45,
     GF_CMD_LAYER_STATE      = 0x46,   /* Studio: capa híbrida (variants/studio/theory/12 §3c) */
+    GF_CMD_LAYER_ENTRY      = 0x47,   /* Studio: un preset de capa [índice, cantidad, nombre] (theory/12 §3d) */
 
     /* 0x50 — Cloud (ESP32 ↔ Teensy) */
     GF_CMD_CLOUD_STATUS         = 0x50,
@@ -227,7 +228,7 @@ static inline size_t gf_frame_serialize(const GF_Frame* f, uint8_t* buf, size_t 
 
 /** @brief Estado de UI que el Teensy manda entero a la cabeza de Studio ("el último valor gana"). */
 typedef struct {
-    uint8_t  mode;                      /* 0 SYNTH, 1 FX */
+    uint8_t  mode;                      /* 0 SYNTH, 1 FX, 2 HYBRID SYNTH (variants/studio/theory/12 §3d) */
     uint8_t  page;                      /* 0 PERFORM 1 AI 2 SPECTRUM 3 ENV 4 FX 5 ENGINE 6 PRESETS 8 OSC 9 LFO 10 SYNTH FX 11 PANEL 12 GROOVE 13 HYBRID */
     uint8_t  shift;                     /* 0/1 */
     uint8_t  fx_hold;                   /* 0/1 */
@@ -244,6 +245,7 @@ typedef struct {
 #define GF_UI_FLAG_CLOCK_MIDI    0x04U   /* el reloj común sigue al clock MIDI (variants/studio/theory/09 §1.1) */
 #define GF_UI_FLAG_CLOCK_RUN     0x08U   /* el reloj corre (0 = parado por STOP) */
 #define GF_UI_FLAG_LAYER         0x10U   /* suena una capa híbrida de dos engines (variants/studio/theory/12) */
+#define GF_UI_FLAG_FOCUS_B       0x20U   /* HYBRID SYNTH: se edita la capa B (0 = A) */
 
 /** @brief Serializa a los 22 bytes del payload (little-endian). @return GF_UI_STATE_LEN. */
 static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {
@@ -262,8 +264,8 @@ static inline size_t gf_ui_state_pack(const GF_UiState* u, uint8_t* out) {
 #define GF_LAYER_STATE_LEN  (8U + GF_LAYER_NAME_LEN + 2U * GF_LAYER_PRESET_LEN)
 
 typedef struct {
-    int8_t  layer;                           /* −1 = sin capa; 0–7 de la lista; 8 = CUSTOM */
-    uint8_t cursor;                          /* capa resaltada en la lista de la página HYBRID */
+    int8_t  layer;                           /* −1 = sin capa; 0–31 preset de capa; 127 = CUSTOM (theory/12 §3d) */
+    uint8_t cursor;                          /* preset de capa resaltado en la home de HYBRID SYNTH */
     uint8_t engine_a, engine_b;
     uint8_t focus;                           /* 0 = A, 1 = B */
     uint8_t morph;                           /* 0–100 % */

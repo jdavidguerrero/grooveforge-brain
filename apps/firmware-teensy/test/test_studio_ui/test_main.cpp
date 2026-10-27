@@ -172,7 +172,10 @@ void test_mode_fx_y_vuelta() {
     TEST_ASSERT_EQUAL_UINT8(1, ui.state().mode);
     TEST_ASSERT_EQUAL_UINT8(FX, ui.state().page);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().shift);
-    ui.handle(Control::Mode);
+    ui.handle(Control::Mode);                // FX → HYBRID SYNTH (theory/12 §3d)
+    TEST_ASSERT_EQUAL_UINT8(2, ui.state().mode);
+    ui.handle(Control::Mode);                // → SYNTH, en la vista que tenía
+    TEST_ASSERT_EQUAL_UINT8(0, ui.state().mode);
     TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
 }
 
@@ -342,32 +345,83 @@ void test_volumen_desde_la_cabeza() {
 void test_modo_hybrid() {
     StudioUi ui;
     ui.handle(Control::B6Down);
-    Result r = ui.handle(Control::Key2);                        // SHIFT + B2 entra
+    Result r = ui.handle(Control::Key2);                        // SHIFT + B2 ya no entra (theory/12 §3d)
     ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    TEST_ASSERT_FALSE(ui.hybrid());
+    ui.handle(Control::NavLong);
+    ui.handle(Control::Mode);                                   // SYNTH → FX
+    TEST_ASSERT_EQUAL_UINT8(MODE_FX, ui.state().mode);
+    r = ui.handle(Control::Mode);                               // FX → HYBRID SYNTH
     TEST_ASSERT_EQUAL(int(Action::HybridEnter), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(MODE_HYBRID, ui.state().mode);
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
     TEST_ASSERT_TRUE(ui.hybrid());
-    ui.handle(Control::Nav, 3);                                 // NAV recorre la lista de capas
+    ui.handle(Control::Nav, 3);                                 // NAV recorre los presets de capa
     TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+    ui.handle(Control::Nav, 20);                                // no pasa del último
+    TEST_ASSERT_EQUAL_UINT8(7, ui.state().cursor);
+    ui.handle(Control::Nav, -4);
     r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(int(Action::LayerLoad), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(3, r.arg);
-    r = ui.handle(Control::P2Push);                             // foco en B
+
+    r = ui.handle(Control::Key2);                               // B2 = editar B: OSC con foco en B
     TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(1, r.arg);
-    ui.handle(Control::Key1);                                   // B1 = OSC de la capa en foco
     TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
-    ui.handle(Control::Key1);                                   // la misma tecla vuelve a HYBRID
-    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_FOCUS_B);
     ui.handle(Control::Key2);
+    TEST_ASSERT_EQUAL_UINT8(ENV, ui.state().page);
+    r = ui.handle(Control::Key1);                               // B1 = editar A: vuelve a OSC con foco en A
+    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(0, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(OSC, ui.state().page);
+    ui.handle(Control::Key1);
+    ui.handle(Control::Key1);
+    TEST_ASSERT_EQUAL_UINT8(LFO, ui.state().page);
+    ui.handle(Control::Key1);                                   // OSC → ENV → LFO → home
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+
+    ui.handle(Control::P2Push);
+    r = ui.handle(Control::Key3);                               // GROOVE: de la capa entera, foco en A
+    TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
+    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(0, r.arg);
+    ui.handle(Control::Key3);
+    TEST_ASSERT_EQUAL_UINT8(SYNTH_FX, ui.state().page);
+    ui.handle(Control::Key3);
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+
+    ui.handle(Control::Key4);                                   // presets de capa: cursor en el cargado
+    TEST_ASSERT_EQUAL_UINT8(LAYER_PRESETS, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
+    ui.handle(Control::Key1);                                   // banco A = fila 1
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
+    ui.handle(Control::Key2);                                   // banco B sin presets: el último
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    ui.handle(Control::Nav, -20);                               // SAVE
+    r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::LayerSave), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(8, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(9, ui.layer_count());
+
+    ui.handle(Control::B6Down);                                 // SHIFT + NAV push: ENGINE de la capa en foco
+    ui.handle(Control::NavPush);
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
+    r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::LoadEngine), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    ui.handle(Control::Key1);
     ui.handle(Control::NavLong);                                // NAV largo = home del modo
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
-    ui.handle(Control::B6Down);
-    r = ui.handle(Control::Key2);                               // SHIFT + B2 sale
-    ui.handle(Control::B6Up);
+    r = ui.handle(Control::Mode);                               // HYBRID SYNTH → SYNTH
     TEST_ASSERT_EQUAL(int(Action::HybridExit), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(MODE_SYNTH, ui.state().mode);
     TEST_ASSERT_EQUAL_UINT8(PERFORM, ui.state().page);
-    TEST_ASSERT_FALSE(ui.hybrid());
+    ui.set_hybrid(true);                                        // CC 18
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
     ui.set_layer(true);
     TEST_ASSERT_TRUE(ui.state().flags & GF_UI_FLAG_LAYER);
 }

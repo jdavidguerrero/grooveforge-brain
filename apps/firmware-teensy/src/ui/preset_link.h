@@ -42,9 +42,10 @@ inline size_t hex_decode(const char* s, uint8_t* out, size_t cap) {
 }
 
 struct LinkCmd {
-    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format } kind = None;
-    uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda
-    const char* hex = nullptr;       ///< PUT: el preset en hex (apunta dentro de la línea)
+    /// LEXPORT / LPUT / LTRUNC: presets de capa de HYBRID SYNTH (theory/12 §3d)
+    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc } kind = None;
+    uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda · LPUT / LTRUNC: index
+    const char* hex = nullptr;       ///< PUT / LPUT: el binario en hex (apunta dentro de la línea)
 };
 
 /// Parsea una línea (sin el '\n'; se modifica: los espacios pasan a '\0'). Lo que no es "@GF …" da None.
@@ -79,6 +80,13 @@ inline LinkCmd parse_link_cmd(char* line) {
         c.hex = tok[3];
     } else if (!strcmp(tok[0], "TRUNC") && nt == 3 && num(tok[1], &c.engine) && num(tok[2], &c.index)) {
         c.kind = LinkCmd::Trunc;
+    } else if (!strcmp(tok[0], "LEXPORT") && nt == 1) {
+        c.kind = LinkCmd::LayerExport;
+    } else if (!strcmp(tok[0], "LPUT") && nt == 3 && num(tok[1], &c.index)) {
+        c.kind = LinkCmd::LayerPut;
+        c.hex = tok[2];
+    } else if (!strcmp(tok[0], "LTRUNC") && nt == 2 && num(tok[1], &c.index)) {
+        c.kind = LinkCmd::LayerTrunc;
     }
     return c;
 }

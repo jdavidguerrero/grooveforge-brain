@@ -56,11 +56,11 @@ inline uint8_t layer_b_note(uint8_t note, int8_t transpose) {
     return uint8_t(n < 0 ? 0 : n > 127 ? 127 : n);
 }
 
-/// CC 18 → capa: 0 = sin capa, 1…LAYER_COUNT = la capa (valor 0 apaga; el resto en tramos iguales).
-inline uint8_t layer_from_cc(uint8_t value) {
-    if (value == 0) return 0;
-    const unsigned i = 1u + (unsigned(value) - 1u) * LAYER_COUNT / 127u;
-    return uint8_t(i > LAYER_COUNT ? LAYER_COUNT : i);
+/// CC 18 → preset de capa: 0 = sin capa (sale a SYNTH), 1…count = el preset (el resto de 1–127 en tramos iguales).
+inline uint8_t layer_from_cc(uint8_t value, uint8_t count = LAYER_COUNT) {
+    if (value == 0 || count == 0) return 0;
+    const unsigned i = 1u + (unsigned(value) - 1u) * count / 127u;
+    return uint8_t(i > count ? count : i);
 }
 
 }  // namespace studio

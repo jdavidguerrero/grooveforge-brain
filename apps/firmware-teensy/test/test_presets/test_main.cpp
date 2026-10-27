@@ -7,6 +7,7 @@
 #include "ui/preset_link.h"
 #include "ui/layers.h"
 #include "ui/bank_file_storage.h"
+#include "ui/layer_bank.h"
 
 using namespace studio;
 
@@ -471,11 +472,13 @@ public:
         return true;
     }
     char name[8][16] = {};
-    uint8_t data[8][BankFileStorage::FILE_BYTES] = {};
+    uint8_t data[8][LayerBank::FILE_BYTES > BankFileStorage::FILE_BYTES ? LayerBank::FILE_BYTES
+                                                                         : BankFileStorage::FILE_BYTES] = {};
     size_t len[8] = {};
     int n = 0, writes = 0;
 };
 uint8_t g_bank_buf[BankFileStorage::FILE_BYTES];
+uint8_t g_layer_buf[LayerBank::FILE_BYTES];
 }  // namespace
 
 void test_un_archivo_por_engine() {
@@ -510,6 +513,65 @@ void test_un_archivo_por_engine() {
     TEST_ASSERT_EQUAL_UINT8(3, third.count(2));
 }
 
+// ── Presets de capa de HYBRID SYNTH (theory/12 §3d) ──────────────────────────
+
+void test_presets_de_capa() {
+    TEST_ASSERT_TRUE(LayerBank::FILE_BYTES < 65536);           // un bloque de 64 KB
+    static FakeFiles files;
+    LayerBank bank(files, g_layer_buf);
+    bank.load();                                                // sin archivo: las 8 de fábrica, una escritura
+    TEST_ASSERT_EQUAL_UINT8(LAYER_COUNT, bank.count());
+    TEST_ASSERT_EQUAL_INT(1, files.writes);
+    TEST_ASSERT_EQUAL_STRING("/layers.gfl", files.name[0]);
+    TEST_ASSERT_EQUAL_STRING("WOODBASS", bank.name(0));
+    LayerPreset l;
+    TEST_ASSERT_TRUE(bank.get(0, &l));                          // las dos mitades completas, de su engine
+    TEST_ASSERT_EQUAL_UINT8(4, l.eng_a);
+    TEST_ASSERT_EQUAL_UINT8(0, l.eng_b);
+    TEST_ASSERT_EQUAL_STRING("HY WOODBASS A", l.a.name);
+    TEST_ASSERT_EQUAL_STRING("HY WOODBASS B", l.b.name);
+    TEST_ASSERT_EQUAL_UINT8(10, l.delay_b_ms);
+    TEST_ASSERT_EQUAL_INT8(-6, l.gain_a_db);
+
+    l.morph = 80;
+    l.transpose_b = -12;
+    l.b.cutoff_hz = 777.0f;
+    TEST_ASSERT_EQUAL_INT(8, bank.save_new(l));
+    TEST_ASSERT_EQUAL_STRING("LAYER 09", bank.name(8));
+
+    LayerBank again(files, g_layer_buf);                        // otro arranque: lee el archivo
+    again.load();
+    TEST_ASSERT_EQUAL_UINT8(9, again.count());
+    LayerPreset r;
+    TEST_ASSERT_TRUE(again.get(8, &r));
+    TEST_ASSERT_EQUAL_UINT8(80, r.morph);
+    TEST_ASSERT_EQUAL_INT8(-12, r.transpose_b);
+    TEST_ASSERT_EQUAL_FLOAT(777.0f, r.b.cutoff_hz);
+
+    uint8_t raw[LAYER_BYTES];                                   // bibliotecario: exportar, subir y recortar
+    TEST_ASSERT_EQUAL_UINT32(LAYER_BYTES, again.raw(8, raw, sizeof(raw)));
+    TEST_ASSERT_EQUAL(int(PutResult::Ok), int(again.put(0, raw, LAYER_BYTES)));
+    TEST_ASSERT_EQUAL_STRING("LAYER 09", again.name(0));
+    TEST_ASSERT_EQUAL(int(PutResult::Index), int(again.put(11, raw, LAYER_BYTES)));
+    raw[4 + LAYER_NAME_LEN] = raw[5 + LAYER_NAME_LEN];          // A y B del mismo engine: no se acepta
+    TEST_ASSERT_EQUAL(int(PutResult::Format), int(again.put(9, raw, LAYER_BYTES)));
+    TEST_ASSERT_TRUE(again.truncate(2));
+    again.flush();
+    LayerBank third(files, g_layer_buf);
+    third.load();
+    TEST_ASSERT_EQUAL_UINT8(2, third.count());
+    TEST_ASSERT_EQUAL_UINT8(5, layer_from_cc(127, 5));          // CC 18 sigue al tamaño del banco
+    char l1[] = "@GF LPUT 3 0A0B", l2[] = "@GF LTRUNC 8", l3[] = "@GF LEXPORT";
+    LinkCmd c = parse_link_cmd(l1);
+    TEST_ASSERT_EQUAL(int(LinkCmd::LayerPut), int(c.kind));
+    TEST_ASSERT_EQUAL_UINT8(3, c.index);
+    TEST_ASSERT_EQUAL_STRING("0A0B", c.hex);
+    c = parse_link_cmd(l2);
+    TEST_ASSERT_EQUAL(int(LinkCmd::LayerTrunc), int(c.kind));
+    TEST_ASSERT_EQUAL_UINT8(8, c.index);
+    TEST_ASSERT_EQUAL(int(LinkCmd::LayerExport), int(parse_link_cmd(l3).kind));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -533,5 +595,6 @@ int main() {
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);
     RUN_TEST(test_put_y_trunc_del_banco);
+    RUN_TEST(test_presets_de_capa);
     return UNITY_END();
 }

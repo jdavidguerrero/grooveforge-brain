@@ -20,7 +20,7 @@ RingArc ring_arc(uint8_t pos, uint8_t count) {
 
 void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uint8_t* pos, uint8_t* count) {
     if (engine >= GF_ENGINE_COUNT) engine = 0;
-    if (ui.mode) { *pos = ui.fx_slot; *count = GF_UI_FX_SLOTS; return; }
+    if (ui.mode == MODE_FX) { *pos = ui.fx_slot; *count = GF_UI_FX_SLOTS; return; }
     switch (ui.page) {
         case ENGINE:   *pos = ui.cursor; *count = 6; break;
         case SYNTH_FX: *pos = ui.cursor; *count = SFX_SLOTS; break;
@@ -30,20 +30,26 @@ void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uin
         case PRESETS:  *pos = ui.cursor; *count = preset_rows ? preset_rows : 1; break;
         case PANEL:    *pos = 1; *count = 2; break;
         case GROOVE:   *pos = ui.cursor; *count = GROOVE_STOPS; break;
-        case HYBRID:   *pos = ui.cursor; *count = HYBRID_LAYERS; break;
+        case HYBRID:                                                   // `preset_rows`: presets de capa
+        case LAYER_PRESETS: *pos = ui.cursor; *count = preset_rows ? preset_rows : 1; break;
         default:       *pos = 0; *count = 2; break;                    // PERFORM · PANEL (theory/08)
     }
 }
 
 void key_levels(const GF_UiState& ui, uint8_t out[KEY_LEDS]) {
     for (uint8_t i = 0; i < KEY_LEDS; ++i) out[i] = KEY_DIM;
-    if (!ui.mode) {
+    if (ui.mode == MODE_SYNTH) {
         if (ui.page == OSC) out[0] = KEY_ON;
-        if (ui.page == ENV || ui.page == HYBRID || (ui.flags & GF_UI_FLAG_LAYER)) out[1] = KEY_ON;   // B2: ENV · HYBRID
+        if (ui.page == ENV) out[1] = KEY_ON;
         if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;   // GROOVE = SHIFT + B3
         if (ui.page == SYNTH_FX || ui.page == PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
+    } else if (ui.mode == MODE_HYBRID) {                // B1 edita A · B2 edita B · B3 GROOVE / FX · B4 presets de capa
+        const bool editing = ui.page == OSC || ui.page == ENV || ui.page == LFO;
+        if (editing) out[ui.flags & GF_UI_FLAG_FOCUS_B ? 1 : 0] = KEY_ON;
+        if (ui.page == GROOVE || ui.page == SYNTH_FX) out[2] = KEY_ON;
+        if (ui.page == LAYER_PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
     }
-    out[4] = KEY_ON;                                   // MODE siempre encendida: el color dice SYNTH o FX
+    out[4] = KEY_ON;                                   // MODE siempre encendida: el color dice SYNTH, FX o HYBRID SYNTH
     out[5] = (ui.shift || ui.fx_hold) ? KEY_ON : KEY_DIM;
 }
 

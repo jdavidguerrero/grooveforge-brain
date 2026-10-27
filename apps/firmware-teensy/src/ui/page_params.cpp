@@ -91,7 +91,7 @@ uint8_t edit_amt(Patch& p, uint8_t e, uint8_t dest, int8_t steps, ParamChange* o
 }  // namespace
 
 uint8_t edit_encoder(Patch& p, const GF_UiState& ui, uint8_t e, uint8_t enc, int8_t steps, ParamChange* out) {
-    if (ui.mode != 0 || steps == 0 || e >= GF_ENGINE_COUNT) return 0;   // en FX los encoders de página son del FX (fase 2)
+    if (ui.mode == 1 || steps == 0 || e >= GF_ENGINE_COUNT) return 0;   // en FX los encoders de página son del FX (fase 2)
     const bool sh = ui.shift != 0;
     if (enc > 3) return 0;
     // Páginas de edición: los 4 encoders (P1 · P2 · ENC L · ENC R). La capa SHIFT existe en OSC y LFO / MOD

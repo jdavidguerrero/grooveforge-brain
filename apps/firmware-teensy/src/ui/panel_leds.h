@@ -24,7 +24,7 @@ struct RingArc {
 RingArc ring_arc(uint8_t pos, uint8_t count);
 
 /// Posición y cantidad de opciones que recorre NAV en la página visible (paradas de OSC y de LFO / MOD por engine).
-/// @param preset_rows filas de PRESETS (SAVE + presets)
+/// @param preset_rows filas de PRESETS (SAVE + presets); en HYBRID, los presets de capa; en LAYER_PRESETS, SAVE + esos
 void nav_position(const GF_UiState& ui, uint8_t engine, uint8_t preset_rows, uint8_t* pos, uint8_t* count);
 
 /// Brillo de estado 0–255 de cada tecla B1–B6 (el destello al apretarla lo suma el sketch).

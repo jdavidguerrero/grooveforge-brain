@@ -79,6 +79,37 @@ cambiar de página.
   preset B (16)]`. Se manda al cambiar algo y al conectar.
 - **Luces:** el anillo muestra la capa del cursor (8 posiciones) y B2 queda encendida en el modo.
 
+## 3d. HYBRID SYNTH como tercer modo con presets de capa (rev. 4, 2026-10-27)
+
+Probado en el hardware: entrar con SHIFT + B2 y llegar a los presets con SHIFT + B4 resultaba escondido y lento. Juan
+pidió un **modo propio**, con navegación dedicada y **sus propios presets**. Reemplaza la entrada de §3c.
+
+**MODE (B5)** recorre **SYNTH → FX → HYBRID SYNTH → SYNTH** (`mode` 2 en UI_STATE). Color ámbar en la pantalla y en las
+luces; banner "HYBRID SYNTH" al entrar. Al entrar se carga el último preset de capa; al salir queda sonando A sola.
+SHIFT + B2 vuelve a no tener función.
+
+| Control | En HYBRID SYNTH |
+|---|---|
+| NAV · NAV push | Recorre los presets de capa (los muestra) · carga el resaltado |
+| **B1** | **Editar A**: OSC de A → ENV de A → LFO de A → home (cada toque avanza) |
+| **B2** | **Editar B**: lo mismo con B |
+| **B3** | **GROOVE → SYNTH FX** de la capa entera (son de A) → home |
+| **B4** | **PRESETS de capa** (fila 0 = SAVE; ahí B1 / B2 saltan al banco A / B) |
+| P1 / P2 · SHIFT + P2 | MORPH / retraso de B · transposición de B |
+| P1 push / P2 push | Foco en A / B sin cambiar de página |
+| ENC L / R | Filtro de las dos capas |
+| NAV largo | Home de HYBRID SYNTH desde cualquier página |
+| SHIFT + NAV push | ENGINE SELECT de la capa en foco (pareja propia) |
+
+**Presets de capa** (banco propio, hasta 32): cada uno guarda **las dos mitades completas** (preset entero de A y de B,
+con su filtro), los engines, MORPH, el retraso y la transposición de B y la mezcla base. No depende de los bancos de cada
+engine. Un archivo (`/layers.gfl`, ~35 KB, un bloque). SAVE guarda la capa tal como suena como `LAYER nn`; el nombre se
+cambia con el bibliotecario (`gf_presets.py layers` / `layer-import`, en `patches/brain/layers/`). De fábrica: las 8 de la
+guía, armadas con sus mitades HY. CC 18 carga el preset de capa N (0 = sale a SYNTH).
+
+**Protocolo:** `0x47 LAYER_ENTRY` (Teensy → cabeza): `[índice, cantidad, nombre]`, como `PRESET_ENTRY`. La página de
+presets de capa es la **14** de UI_STATE.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |
