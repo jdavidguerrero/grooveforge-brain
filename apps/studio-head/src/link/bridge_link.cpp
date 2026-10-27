@@ -39,7 +39,7 @@ void note_name(char* out, size_t n, uint8_t midi) { std::snprintf(out, n, "%s%d"
 
 bool FrameParser::known_cmd(uint8_t c) {
     return c <= 0x07 || (c >= 0x10 && c <= 0x17) || (c >= 0x20 && c <= 0x24) || (c >= 0x30 && c <= 0x35) ||
-           (c >= 0x40 && c <= 0x45) || (c >= 0x50 && c <= 0x57) || (c >= 0x60 && c <= 0x65) ||
+           (c >= 0x40 && c <= 0x47) || (c >= 0x50 && c <= 0x57) || (c >= 0x60 && c <= 0x65) ||
            (c >= 0x70 && c <= 0x72) || (c >= 0x80 && c <= 0x84) || c == 0x90 || (c >= 0xF0 && c <= 0xF2);
 }
 
