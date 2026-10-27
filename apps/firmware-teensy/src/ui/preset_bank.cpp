@@ -74,6 +74,20 @@ struct Factory {
 
 using O = float (&)[GF_OSC_STOPS][GF_OSC_SLOTS];
 
+/// Enciende un FX de la cadena con sus 3 parámetros y MIX (normalizados, gf_params.h). Para el banco Signature.
+void fx(Patch& p, uint8_t slot, float a, float b, float c, float mix) {
+    p.sfx_on[slot] = true;
+    p.sfx_p[slot][0] = a;
+    p.sfx_p[slot][1] = b;
+    p.sfx_p[slot][2] = c;
+    p.sfx_mix[slot] = mix;
+}
+// Valores normalizados de los parámetros discretos de la cadena (fase3-fx §2)
+constexpr float DRV_OVER = 0.0f, DRV_DIST = 0.5f, DRV_CRUSH = 1.0f;
+constexpr float CH_CHORUS = 0.0f, CH_PHASER = 1.0f;
+constexpr float DL_16 = 0.0f, DL_8 = 0.25f, DL_8D = 0.5f, DL_4 = 0.75f, DL_4D = 1.0f;
+constexpr float RV_GUADUA = 0.25f, RV_GLASS = 0.5f, RV_WOOD = 0.75f, RV_PLATE = 1.0f;
+
 // theory/06 §8. Waves: MODEL D 0 SAW 1 TRI 2 SQR 3 PULSE · OB-6 SHAPE 0 (saw) – 100 (pulse) · JUNO 0 SAW 1 SQR 2 PULSE 3 SAW+PLS ·
 // ARP 0 SAW 1 TRI 2 SQR 3 PULSE 4 SINE. DX7 por operador: RATIO · LEVEL · ALG · FB | A · D · S % · R.
 const Factory MODEL_D[] = {
@@ -113,6 +127,28 @@ const Factory MODEL_D[] = {
     {"HY ROLLER SUB A", 0, 200, 0.3f, 80, 0, 200, 0.05f, 80, 0.55f, 120, 0.2f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 5; o[0][2] = 85; o[1][2] = 85; o[2][2] = 0;
                     o[3][0] = 0; p.drive = 0.7f; p.vel_amp = 40; p.vel_cut = 60; }},
+    // ── Banco Signature (theory/fase4-signature.md §2) ──
+    {"GF AFRO SUB", 2, 400, 0.6f, 150, 2, 300, 0.2f, 150, 0.35f, 400, 0.1f, 0.05f, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 1; o[1][0] = 4; o[2][0] = 1; o[1][1] = 3; o[2][1] = -12;
+                    o[0][2] = 90; o[1][2] = 35; o[2][2] = 70; o[3][0] = 0;
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 45; p.vel_amp = 25; p.vel_cut = 35; }},
+    {"GF ROLLING BASS", 1, 220, 0.0f, 90, 1, 180, 0.0f, 90, 0.65f, 320, 0.35f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[2][0] = 2; o[1][1] = 7; o[2][1] = -12;
+                    o[0][2] = 85; o[1][2] = 75; o[2][2] = 55; o[3][0] = 0;
+                    fx(p, GF_SFX_DRIVE, 0.3f, 0.55f, DRV_OVER, 0.8f);
+                    p.vel_amp = 30; p.vel_cut = 55; }},
+    {"GF OCTAVE BASS", 1, 250, 0.2f, 100, 1, 200, 0.0f, 100, 0.6f, 500, 0.3f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 3; o[2][0] = 0; o[1][1] = 4; o[2][1] = -12;
+                    o[0][2] = 85; o[1][2] = 60; o[2][2] = 50; o[0][4] = 35;
+                    float* a = p.groove[GF_GROOVE_ARP];
+                    a[GF_ARP_MODE] = 0; a[GF_ARP_DIV] = 2; a[GF_ARP_GATE] = 55; a[GF_ARP_OCT] = 2; a[GF_ARP_SWING] = 54;
+                    p.groove_on[GF_GROOVE_ARP] = true; p.vel_amp = 30; p.vel_cut = 50; }},
+    {"GF GRIT BASS", 1, 350, 0.4f, 120, 1, 300, 0.1f, 120, 0.55f, 600, 0.45f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 4; o[1][0] = 0; o[2][0] = 1; o[1][1] = -6; o[2][1] = 7;
+                    o[0][2] = 90; o[1][2] = 70; o[2][2] = 40;
+                    p.mod[0][0] = 0; p.mod[0][1] = 1; p.mod[0][4] = 1; p.mod[0][6] = 35;   // VCO 3 → OSC a audio
+                    fx(p, GF_SFX_DRIVE, 0.45f, 0.5f, DRV_OVER, 0.9f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 25; }},
 };
 
 const Factory JUNO[] = {
@@ -151,6 +187,31 @@ const Factory JUNO[] = {
     {"HY RETRO BRASS B", 40, 800, 0.8f, 500, 40, 800, 0.5f, 500, 0.2f, 3000, 0.1f, 0, 0.6f, 1, 0, 0, 0.5f,
      [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 0; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1;
                     o[0][6] = 2; }},
+    // ── Banco Signature (theory/fase4-signature.md §2) ──
+    {"GF BAMBOO PAD", 500, 1500, 0.8f, 2500, 500, 1500, 0.5f, 2500, 0.15f, 2200, 0.1f, 0, 0.35f, 0, 0, 0, 0.35f,
+     [](Patch& p) { O o = p.osc; o[0][0] = 2; o[0][1] = 20; o[0][2] = 8; o[0][3] = 45; o[0][4] = 1; o[0][5] = 2;
+                    o[0][6] = 1; o[0][7] = 0;
+                    p.mod[0][1] = 20;                                                   // BBD HISS
+                    fx(p, GF_SFX_REVERB, 0.6f, RV_GUADUA, 1.0f, 0.35f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 35; }},
+    {"GF STRING SWELL", 900, 2000, 0.85f, 5000, 900, 2000, 0.6f, 5000, 0.1f, 3200, 0.05f, 0, 0.3f, 0, 0, 0.02f, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 30; o[0][2] = 0; o[0][3] = 50; o[0][4] = 2; o[0][5] = 1;
+                    o[0][6] = 1; o[0][7] = 0;
+                    fx(p, GF_SFX_REVERB, 0.75f, RV_PLATE, 1.0f, 0.3f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 25; }},
+    {"GF DISCO STRINGS", 250, 900, 0.9f, 900, 250, 900, 0.7f, 900, 0.1f, 4500, 0.05f, 0, 0.3f, 0, 0, 0.02f, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 25; o[0][2] = 0; o[0][3] = 50; o[0][4] = 1; o[0][5] = 2;
+                    o[0][6] = 1; o[0][7] = 0;
+                    fx(p, GF_SFX_CHORUS, 0.7f, 0.3f, CH_PHASER, 0.6f);                 // PHASER de disco
+                    fx(p, GF_SFX_REVERB, 0.5f, RV_PLATE, 0.5f, 0.25f); }},
+    {"GF FILTER STAB", 2, 350, 0.0f, 250, 2, 300, 0.0f, 250, 0.55f, 900, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 35; o[0][2] = 0; o[0][3] = 45; o[0][4] = 1; o[0][5] = 1;
+                    o[0][6] = 1; o[0][7] = 0;
+                    float* c = p.groove[GF_GROOVE_CHORD];
+                    c[GF_CHORD_TYPE] = 1; c[GF_CHORD_INV] = 2; c[GF_CHORD_STRUM] = 0; c[GF_CHORD_KEY] = 21;
+                    p.groove_on[GF_GROOVE_CHORD] = true;
+                    p.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 55; p.groove_on[GF_GROOVE_PUMP] = true;
+                    fx(p, GF_SFX_DELAY, DL_8D, 0.3f, 0.35f, 0.2f); }},
 };
 
 const Factory PROPHET[] = {
@@ -196,6 +257,31 @@ const Factory PROPHET[] = {
     {"HY RETRO BRASS A", 30, 600, 0.75f, 300, 60, 700, 0.4f, 300, 0.5f, 500, 0.1f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 7; o[1][4] = 1; o[1][6] = 0;
                     o[2][0] = 70; o[2][1] = 70; }},
+    // ── Banco Signature (theory/fase4-signature.md §2) ──
+    {"GF TALKING PLUCK", 1, 260, 0.0f, 200, 1, 220, 0.0f, 200, 0.55f, 700, 0.45f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 5; o[1][4] = 0; o[1][5] = 0;
+                    o[1][6] = 1; o[1][2] = 40; o[2][0] = 80; o[2][1] = 45;
+                    p.mod[0][0] = 35; p.mod[0][1] = 0; p.mod[0][4] = 1;                  // POLY-MOD → FILTER
+                    fx(p, GF_SFX_REVERB, 0.35f, RV_WOOD, 0.5f, 0.2f); }},
+    {"GF SUNRISE PLUCK", 1, 380, 0.0f, 300, 1, 300, 0.0f, 300, 0.5f, 1100, 0.25f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 12; o[1][1] = 4; o[1][4] = 1; o[1][5] = 0;
+                    o[1][6] = 0; o[2][0] = 75; o[2][1] = 40;
+                    fx(p, GF_SFX_DELAY, DL_8D, 0.45f, 0.4f, 0.35f);                    // 1/8. ping-pong
+                    fx(p, GF_SFX_REVERB, 0.65f, RV_PLATE, 1.0f, 0.3f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 20; }},
+    {"GF ANTHEM SAW", 8, 500, 0.8f, 600, 8, 500, 0.6f, 600, 0.3f, 3000, 0.15f, 0.08f, 5.5f, 0, 0, 0.06f, 0,
+     [](Patch& p) { O o = p.osc; o[0][2] = 1; o[0][3] = 0; o[1][0] = 0; o[1][1] = 9; o[1][4] = 1; o[1][5] = 0;
+                    o[1][6] = 0; o[2][0] = 80; o[2][1] = 75;
+                    p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = 2; p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = 22;
+                    p.groove_on[GF_GROOVE_UNISON] = true;
+                    fx(p, GF_SFX_DELAY, DL_4, 0.35f, 0.4f, 0.2f);
+                    fx(p, GF_SFX_REVERB, 0.6f, RV_PLATE, 1.0f, 0.25f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 35; }},
+    {"GF TAPE LEAD", 5, 600, 0.75f, 400, 5, 500, 0.5f, 400, 0.4f, 2200, 0.3f, 0.1f, 5.5f, 0, 0, 0.08f, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 7; o[0][2] = 1; o[0][3] = 0; o[0][4] = 1; o[1][0] = 0; o[1][4] = 1;
+                    o[1][5] = 0; o[1][6] = 0; o[2][0] = 80; o[2][1] = 50;                // sync, A una quinta arriba
+                    fx(p, GF_SFX_TAPE, 0.35f, 0.25f, 0.15f, 0.7f);
+                    fx(p, GF_SFX_DELAY, DL_4, 0.4f, 0.3f, 0.25f); }},
 };
 
 const Factory OB6[] = {
@@ -231,6 +317,25 @@ const Factory OB6[] = {
     {"HY DESERT LEAD A", 5, 600, 0.8f, 400, 5, 600, 0.5f, 400, 0.3f, 1800, 0.25f, 0, 0.2f, 0, 0.3f, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 5; o[0][1] = 0; o[0][3] = 0;
                     o[0][2] = 80; o[1][2] = 70; o[0][6] = 50; }},
+    // ── Banco Signature (theory/fase4-signature.md §2) ──
+    {"GF NOCTURNE PAD", 700, 1500, 0.85f, 2500, 700, 1500, 0.6f, 2500, 0.15f, 1800, 0.15f, 0, 0.25f, 0, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 10; o[1][0] = 40; o[1][1] = 0; o[1][5] = 8; o[0][1] = 0; o[0][3] = 0;
+                    o[0][2] = 75; o[1][2] = 70; o[0][6] = 20; o[0][7] = 0;
+                    p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = 1; p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = 14;
+                    p.groove_on[GF_GROOVE_UNISON] = true;
+                    fx(p, GF_SFX_CHORUS, 0.45f, 0.1f, CH_PHASER, 0.4f);
+                    fx(p, GF_SFX_REVERB, 0.8f, RV_PLATE, 1.0f, 0.4f); }},
+    {"GF BRASS HIT", 15, 450, 0.3f, 250, 20, 400, 0.2f, 250, 0.5f, 900, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[1][0] = 0; o[1][1] = 0; o[1][5] = 7; o[0][1] = 0; o[0][3] = 0;
+                    o[0][2] = 80; o[1][2] = 80; o[0][6] = 0; o[0][7] = 0;
+                    p.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 45; p.groove_on[GF_GROOVE_PUMP] = true;
+                    fx(p, GF_SFX_TAPE, 0.3f, 0.1f, 0.1f, 0.6f); }},
+    {"GF DARK DRONE", 1500, 2000, 0.9f, 3000, 1500, 2000, 0.7f, 3000, 0.2f, 1200, 0.3f, 0, 0.1f, 1, 0.2f, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 30; o[1][0] = 60; o[1][1] = -5; o[1][5] = 3; o[0][1] = 30; o[0][3] = 5;
+                    o[0][2] = 70; o[1][2] = 60; o[0][6] = 50; o[0][7] = 0;                // NOTCH
+                    p.mod[0][1] = 25; p.mod[0][2] = 1;                                      // X-MOD del VCO 2 a audio
+                    fx(p, GF_SFX_DELAY, DL_4D, 0.55f, 0.2f, 0.3f);
+                    fx(p, GF_SFX_REVERB, 0.85f, RV_PLATE, 1.0f, 0.45f); }},
 };
 
 void dx7_ops(Patch& p, const float (&op)[4][8]) {
@@ -286,6 +391,37 @@ const Factory DX7[] = {
     {"HY SHAKER ZAP B", 0, 150, 1.0f, 120, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { dx7_ops(p, {{1, 99, 1, 3, 0, 150, 0, 120}, {3.5f, 60, 0, 0, 0, 100, 0, 80},
                                 {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}}); }},
+    // ── Banco Signature (theory/fase4-signature.md §2): timbres afro / orgánicos y del resto de los estilos ──
+    {"GF LOG DRUM", 0, 260, 0.0f, 200, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 0, 0, 260, 0, 200}, {1.5f, 72, 0, 0, 0, 90, 0, 80},
+                                {1, 0, 0, 0, 0, 100, 0, 100}, {1, 0, 0, 0, 0, 100, 0, 100}});
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 15; p.vel_amp = 70; }},
+    {"GF CHONTA", 0, 420, 0.0f, 300, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 0, 420, 0, 300}, {3.5f, 74, 0, 0, 0, 60, 0, 60},
+                                {1, 80, 0, 0, 0, 300, 0, 200}, {7, 45, 0, 0, 0, 35, 0, 35}});
+                    fx(p, GF_SFX_DELAY, DL_8D, 0.3f, 0.35f, 0.18f);
+                    fx(p, GF_SFX_REVERB, 0.4f, RV_WOOD, 0.5f, 0.2f); }},
+    {"GF KALIMBA TINE", 0, 900, 0.0f, 700, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 0, 900, 0, 700}, {5, 60, 0, 0, 0, 40, 0, 40},
+                                {2, 70, 0, 0, 0, 600, 0, 500}, {1, 30, 0, 0, 0, 30, 0, 30}});
+                    fx(p, GF_SFX_REVERB, 0.35f, RV_PLATE, 0.0f, 0.25f); }},
+    {"GF GLASS ARP", 0, 600, 0.0f, 500, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 0, 600, 0, 500}, {3.5f, 62, 0, 0, 0, 400, 0, 400},
+                                {1, 85, 0, 0, 0, 500, 0, 400}, {14, 40, 0, 0, 0, 120, 0, 100}});
+                    float* a = p.groove[GF_GROOVE_ARP];
+                    a[GF_ARP_MODE] = 2; a[GF_ARP_DIV] = 2; a[GF_ARP_GATE] = 45; a[GF_ARP_OCT] = 2; a[GF_ARP_SWING] = 52;
+                    p.groove_on[GF_GROOVE_ARP] = true;
+                    fx(p, GF_SFX_DELAY, DL_8D, 0.45f, 0.45f, 0.3f); }},
+    {"GF HOUSE KEYS", 0, 1400, 0.4f, 500, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 5, 0, 0, 1400, 40, 500}, {1, 58, 0, 0, 0, 900, 20, 400},
+                                {1, 85, 0, 0, 0, 1200, 35, 500}, {14, 30, 0, 0, 0, 150, 0, 100}});
+                    fx(p, GF_SFX_CHORUS, 0.5f, 0.3f, CH_CHORUS, 0.4f);
+                    p.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 25; p.groove_on[GF_GROOVE_PUMP] = true; }},
+    {"GF METAL PERC", 0, 180, 0.0f, 150, 5, 400, 0.3f, 300, 0.3f, 15000, 0.15f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { dx7_ops(p, {{1, 99, 1, 3, 0, 180, 0, 150}, {1.41f, 80, 0, 0, 0, 120, 0, 100},
+                                {3.17f, 60, 0, 0, 0, 80, 0, 60}, {1, 0, 0, 0, 0, 100, 0, 100}});
+                    fx(p, GF_SFX_DRIVE, 0.25f, 0.7f, DRV_DIST, 0.5f);
+                    fx(p, GF_SFX_DELAY, DL_16, 0.25f, 0.7f, 0.15f); }},
 };
 
 const Factory ARP[] = {
@@ -317,6 +453,24 @@ const Factory ARP[] = {
     {"HY SHAKER ZAP A", 0, 80, 0.0f, 60, 0, 80, 0.0f, 60, 0.7f, 3000, 0.6f, 0, 2, 1, 0, 0, 0,
      [](Patch& p) { O o = p.osc; o[0][2] = 0; o[0][3] = 80; o[0][4] = 0; o[1][4] = 0; p.mod[0][5] = 0;
                     p.vel_cut = 100; }},
+    // ── Banco Signature (theory/fase4-signature.md §2) ──
+    {"GF CLAV FUNK", 1, 180, 0.2f, 120, 1, 150, 0.0f, 120, 0.6f, 1300, 0.35f, 0, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 3; o[0][1] = 15; o[1][0] = 3; o[1][1] = 2.0f; o[0][2] = 0; o[0][3] = 0;
+                    o[0][4] = 80; o[1][4] = 35;
+                    fx(p, GF_SFX_CHORUS, 0.6f, 0.45f, CH_PHASER, 0.5f);
+                    p.vel_amp = 60; p.vel_cut = 60; }},
+    {"GF ACID LINE", 1, 300, 0.3f, 120, 1, 250, 0.0f, 120, 0.7f, 450, 0.75f, 0.12f, 2, 1, 0, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][1] = 50; o[1][0] = 0; o[1][1] = 1.0f; o[0][2] = 0; o[0][3] = 0;
+                    o[0][4] = 85; o[1][4] = 0;
+                    p.mod[0][0] = 1;                                                       // MONO (glide de 303)
+                    fx(p, GF_SFX_DRIVE, 0.5f, 0.45f, DRV_DIST, 0.7f);
+                    fx(p, GF_SFX_DELAY, DL_8D, 0.35f, 0.3f, 0.15f); }},
+    {"GF NOISE RISER", 3000, 1000, 1.0f, 2000, 3000, 1000, 1.0f, 2000, 0.4f, 500, 0.5f, 0, 0.2f, 1, 0.3f, 0, 0,
+     [](Patch& p) { O o = p.osc; o[0][0] = 0; o[0][3] = 90; o[0][4] = 15; o[1][4] = 0; o[0][2] = 0;
+                    p.mod[0][5] = 40;                                                      // ruido algo rosa
+                    fx(p, GF_SFX_DELAY, DL_8, 0.55f, 0.6f, 0.3f);
+                    fx(p, GF_SFX_REVERB, 0.9f, RV_PLATE, 1.0f, 0.5f);
+                    p.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 0; }},
 };
 
 struct Bank {

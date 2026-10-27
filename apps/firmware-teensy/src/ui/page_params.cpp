@@ -221,6 +221,7 @@ uint8_t toggle_groove(Patch& p, uint8_t e, uint8_t stop, ParamChange* out) {
 namespace {
 
 constexpr uint8_t CC_MACRO = 14;                     // DRIFT · GRIT · POCKET · MORPH = 14–17 (theory/09 §6)
+constexpr uint8_t CC_MOVE = 19;                      // MOVE (theory/fase4-signature.md §1); 18 es el preset de capa
 constexpr uint8_t CC_AMP[4] = {73, 75, 70, 72};      // A · D · S · R (theory/07 §3)
 constexpr uint8_t CC_FLT[4] = {102, 103, 104, 105};
 constexpr uint8_t CC_OSC[GF_OSC_STOPS] = {20, 28, 36, 46};
@@ -272,8 +273,8 @@ uint8_t apply_cc(Patch& p, uint8_t e, uint8_t cc, uint8_t value, ParamChange* ou
         }
         default: break;
     }
-    if (cc >= CC_MACRO && cc < CC_MACRO + 4) {
-        const uint8_t sl = uint8_t(cc - CC_MACRO);
+    if ((cc >= CC_MACRO && cc < CC_MACRO + 4) || cc == CC_MOVE) {
+        const uint8_t sl = cc == CC_MOVE ? uint8_t(GF_MACRO_MOVE) : uint8_t(cc - CC_MACRO);
         set_slot_norm(p.groove[GF_GROOVE_MACRO][sl], &GF_GROOVE_SLOT[GF_GROOVE_MACRO][sl], n);
         out[0] = groove_change(p, e, GF_GROOVE_MACRO, sl);
         return 1;
@@ -323,7 +324,7 @@ uint8_t param_cc(uint16_t id, uint8_t e) {
         case GF_GROUP_OSC_SHIFT: return uint8_t(CC_OSC[idx / 4] + 4 + idx % 4);
         case GF_GROUP_MOD: return idx / 8 < GF_MOD_STOPS_MAX ? uint8_t(CC_MOD[idx / 8] + idx % 8) : 0xFF;
         case GF_GROUP_SFX: return idx >= GF_SFX_COUNT && idx < 2 * GF_SFX_COUNT ? CC_SFX_MIX[idx - GF_SFX_COUNT] : 0xFF;
-        case GF_GROUP_GROOVE_C: return idx < 4 ? uint8_t(CC_MACRO + idx) : 0xFF;
+        case GF_GROUP_GROOVE_C: return idx < 4 ? uint8_t(CC_MACRO + idx) : idx == GF_MACRO_MOVE ? CC_MOVE : 0xFF;
         default: return 0xFF;
     }
 }

@@ -8,6 +8,7 @@
 #include "ui/layers.h"
 #include "ui/bank_file_storage.h"
 #include "ui/layer_bank.h"
+#include "ui/groove_macros.h"
 
 using namespace studio;
 
@@ -343,8 +344,8 @@ void test_hibridos_en_pares() {
         {0, "HY ROLLER SUB A"},  {1, "HY ROLLER SUB B"},  {2, "HY RETRO BRASS A"}, {1, "HY RETRO BRASS B"}};
     Preset p;
     for (const auto& h : HY) TEST_ASSERT_TRUE_MESSAGE(find_factory(h.e, h.name, &p) >= 0, h.name);
-    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)                       // los de fábrica entran en el banco A
-        TEST_ASSERT_TRUE(factory_count(e) <= PRESET_BANK_SIZE);
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)                       // los de fábrica caben en A y B: C y D son tuyos
+        TEST_ASSERT_TRUE(factory_count(e) <= 2 * PRESET_BANK_SIZE);
 }
 
 void test_capas_apuntan_a_sus_mitades() {
@@ -659,6 +660,51 @@ void test_archivos_viejos_se_leen_enteros() {
     TEST_ASSERT_EQUAL_UINT32(LAYER_BYTES, lb.raw(0, out, sizeof(out)));   // exporta en el formato nuevo
 }
 
+// ── Fase 4: banco Signature y MOVE (theory/fase4-signature.md) ──
+
+void test_signature_en_el_banco_de_fabrica() {
+    static const struct { uint8_t e; const char* name; } SG[] = {
+        {4, "GF LOG DRUM"}, {4, "GF CHONTA"}, {4, "GF KALIMBA TINE"}, {0, "GF AFRO SUB"}, {1, "GF BAMBOO PAD"},
+        {2, "GF TALKING PLUCK"}, {2, "GF SUNRISE PLUCK"}, {3, "GF NOCTURNE PAD"}, {2, "GF ANTHEM SAW"},
+        {0, "GF ROLLING BASS"}, {4, "GF GLASS ARP"}, {1, "GF STRING SWELL"}, {1, "GF DISCO STRINGS"},
+        {1, "GF FILTER STAB"}, {0, "GF OCTAVE BASS"}, {5, "GF CLAV FUNK"}, {3, "GF BRASS HIT"}, {4, "GF HOUSE KEYS"},
+        {5, "GF ACID LINE"}, {3, "GF DARK DRONE"}, {0, "GF GRIT BASS"}, {4, "GF METAL PERC"}, {2, "GF TAPE LEAD"},
+        {5, "GF NOISE RISER"}};
+    Preset p;
+    for (const auto& g : SG) {
+        TEST_ASSERT_TRUE_MESSAGE(find_factory(g.e, g.name, &p) >= 0, g.name);
+        TEST_ASSERT_TRUE_MESSAGE(strlen(g.name) <= PRESET_NAME_LEN, g.name);
+        uint8_t buf[PRESET_BYTES];                                       // ida y vuelta en el formato actual
+        TEST_ASSERT_EQUAL_UINT32(PRESET_BYTES, preset_encode(p, g.e, buf, PRESET_BYTES));
+        Preset q;
+        TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES, g.e, &q));
+    }
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)                       // sin nombres repetidos en un banco
+        for (uint8_t i = 0; i < factory_count(e); ++i)
+            for (uint8_t j = uint8_t(i + 1); j < factory_count(e); ++j) {
+                Preset a, b;
+                factory_preset(e, i, &a);
+                factory_preset(e, j, &b);
+                TEST_ASSERT_TRUE_MESSAGE(strcmp(a.name, b.name) != 0, a.name);
+            }
+}
+
+void test_move_solo_en_los_fx_encendidos() {
+    Patch p;
+    patch_init(p, 2);
+    p.sfx_on[GF_SFX_DELAY] = true;
+    p.sfx_on[GF_SFX_REVERB] = false;
+    const Patch same = move_sfx(p, 0.0f);
+    TEST_ASSERT_EQUAL_FLOAT(p.sfx_mix[GF_SFX_DELAY], same.sfx_mix[GF_SFX_DELAY]);   // MOVE 0: nada
+    const Patch q = move_sfx(p, 1.0f);
+    TEST_ASSERT_TRUE(q.sfx_mix[GF_SFX_DELAY] > p.sfx_mix[GF_SFX_DELAY]);             // DELAY encendido: sube
+    TEST_ASSERT_TRUE(q.sfx_p[GF_SFX_DELAY][1] > p.sfx_p[GF_SFX_DELAY][1]);
+    TEST_ASSERT_EQUAL_FLOAT(p.sfx_mix[GF_SFX_REVERB], q.sfx_mix[GF_SFX_REVERB]);     // REVERB apagada: igual
+    TEST_ASSERT_FLOAT_WITHIN(1e-4f, 2.828427f, move_cutoff_mul(1.0f));               // una octava y media
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, move_cutoff_mul(0.0f));
+    TEST_ASSERT_EQUAL_FLOAT(1.0f, move_resonance(0.95f, 1.0f));                       // tope 1
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -679,6 +725,8 @@ int main() {
     RUN_TEST(test_banco_de_64_y_anotacion_en_64);
     RUN_TEST(test_un_archivo_por_engine);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
+    RUN_TEST(test_signature_en_el_banco_de_fabrica);
+    RUN_TEST(test_move_solo_en_los_fx_encendidos);
     RUN_TEST(test_migra_formato_4_a_5_fx);
     RUN_TEST(test_archivos_viejos_se_leen_enteros);
     RUN_TEST(test_hex_ida_y_vuelta);

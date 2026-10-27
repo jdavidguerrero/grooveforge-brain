@@ -111,7 +111,7 @@ void test_forma_sin_dar_la_vuelta_y_patch_completo() {
     step_lfo_shape(p, 0, -10, c);
     TEST_ASSERT_EQUAL_UINT8(0, p.lfo_shape);
     const uint8_t n = patch_params(p, 3, c);
-    TEST_ASSERT_EQUAL_UINT8(43 + 12 + 6 + 29 + 2, n);                // OB-6: 43 base (5 FX) + 12 OSC + 6 X-MOD + 29 GROOVE + VEL
+    TEST_ASSERT_EQUAL_UINT8(43 + 12 + 6 + 30 + 2, n);                // OB-6: 43 base (5 FX) + 12 OSC + 6 X-MOD + 30 GROOVE (MOVE) + VEL
     for (uint8_t i = 0; i < n; ++i) TEST_ASSERT_EQUAL_HEX8(0x13, c[i].id >> 8);
     TEST_ASSERT_TRUE(patch_params(p, 2, c) <= PATCH_PARAM_COUNT);    // Prophet: 3 paradas × 8 + MOD
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) TEST_ASSERT_TRUE(patch_params(p, e, c) <= PATCH_PARAM_COUNT);

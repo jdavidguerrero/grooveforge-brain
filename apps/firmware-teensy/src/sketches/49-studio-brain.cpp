@@ -601,8 +601,13 @@ void engine_dsp(uint8_t e, bool on) {
 }
 
 void engine_filter(uint8_t e) {
-    const float hz = (ui.state().flags & GF_UI_FLAG_FILTER_BYPASS) ? GF_CUTOFF_RANGE[e].hi : cutoff[e];
-    const float res = gf_denorm(RESO_RANGE[e], studio::macro_resonance(gf_norm(RESO_RANGE[e], resonance[e]), patches[e]));
+    const float move = studio::macro_amount(groove_patch(), GF_MACRO_MOVE);   // en capa, el MOVE de A mueve las dos
+    const GF_Range cr = GF_CUTOFF_RANGE[e];
+    const float hz = (ui.state().flags & GF_UI_FLAG_FILTER_BYPASS)
+                         ? cr.hi
+                         : constrain(cutoff[e] * studio::move_cutoff_mul(move), cr.lo, cr.hi);
+    const float res = gf_denorm(RESO_RANGE[e], studio::move_resonance(studio::macro_resonance(
+                                                   gf_norm(RESO_RANGE[e], resonance[e]), patches[e]), move));
     switch (e) {
         case 0: moog.setFilterCutoff(hz); moog.setFilterResonance(res); break;
         case 1: juno.setFilterCutoff(hz); juno.setFilterResonance(res); break;
@@ -771,7 +776,7 @@ void engine_lfo(uint8_t e, const LfoMod& m) {
 
 /// Lleva al motor las dos cadenas de FX (L y R) con el patch del engine `e` (rangos de gf_params.h).
 void apply_sfx(uint8_t e) {
-    const studio::Patch& p = patches[e];
+    const studio::Patch p = studio::move_sfx(patches[e], studio::macro_amount(patches[e], GF_MACRO_MOVE));
     sfx_front_l.apply(p);
     sfx_front_r.apply(p);
     const float (&dl)[GF_SFX_PARAMS] = p.sfx_p[GF_SFX_DELAY];
@@ -1337,9 +1342,11 @@ void page_encoder(uint8_t enc, int32_t steps) {
     engine_patch(ui.engine());
     if (ui.state().page == studio::SYNTH_FX) apply_sfx(groove_engine());
     if (ui.state().page == studio::OSC || ui.state().page == studio::LFO) engine_osc(ui.engine());   // OSC y MOD
-    if (ui.state().page == studio::GROOVE && ui.state().cursor == GF_GROOVE_MACRO) {   // GRIT / POCKET
+    if (ui.state().page == studio::GROOVE && ui.state().cursor == GF_GROOVE_MACRO) {   // GRIT / POCKET / MOVE
         engine_osc(ui.engine());
         engine_filter(ui.engine());
+        if (layered()) engine_filter(ui.engine() == layer_a ? layer_b : layer_a);
+        apply_sfx(groove_engine());
     }
     static const char* const ENC_NAME[4] = {"P1", "P2", "ENC L", "ENC R"};
     if (log_ok()) Serial.printf("[%s] param 0x%04X = %.3f\n", ENC_NAME[enc], c[0].id, c[0].norm);
@@ -1536,7 +1543,8 @@ void control_change(byte ch, byte cc, byte val) {
         bridge_param(pc[0].id, pc[0].norm);
         engine_patch(ce);
         engine_osc(ce);
-        engine_filter(ce);  // GRIT (CC 15) mueve la resonancia
+        engine_filter(ce);  // GRIT (CC 15) mueve la resonancia; MOVE (CC 19), cutoff y resonancia
+        if (layered()) engine_filter(ce == layer_a ? layer_b : layer_a);
         apply_sfx(groove_engine());
         return;
     }

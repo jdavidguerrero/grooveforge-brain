@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include <stdint.h>
 
 #include <gf_params.h>
@@ -60,6 +61,29 @@ inline Patch macro_patch(const Patch& p, uint8_t e) {
 inline float macro_resonance(float reso_norm, const Patch& p) {
     const float r = reso_norm + 0.2f * macro_amount(p, GF_MACRO_GRIT) * macro_amount(p, GF_MACRO_GRIT_RES);
     return r > 1.0f ? 1.0f : r;
+}
+
+// ── MOVE (theory/fase4-signature.md §1): el control de builds ──────────────────────────────────────────
+
+/// Multiplicador del cutoff con MOVE (hasta una octava y media arriba).
+inline float move_cutoff_mul(float move) { return powf(2.0f, 1.5f * move); }
+/// Resonancia normalizada con MOVE (+10 % del rango a fondo).
+inline float move_resonance(float reso_norm, float move) {
+    const float r = reso_norm + 0.10f * move;
+    return r > 1.0f ? 1.0f : r;
+}
+/// FX con MOVE: solo los encendidos en el preset (así el mismo MOVE suena distinto en cada sonido).
+inline Patch move_sfx(const Patch& p, float move) {
+    Patch q = p;
+    if (move <= 0.0f) return q;
+    auto up = [](float v, float d) { return v + d > 1.0f ? 1.0f : v + d; };
+    if (p.sfx_on[GF_SFX_DELAY]) {
+        q.sfx_p[GF_SFX_DELAY][1] = up(p.sfx_p[GF_SFX_DELAY][1], 0.35f / 0.9f * move);   // FEEDBACK (0.9 × n)
+        q.sfx_mix[GF_SFX_DELAY] = up(p.sfx_mix[GF_SFX_DELAY], 0.30f * move);
+    }
+    if (p.sfx_on[GF_SFX_REVERB]) q.sfx_mix[GF_SFX_REVERB] = up(p.sfx_mix[GF_SFX_REVERB], 0.35f * move);
+    if (p.sfx_on[GF_SFX_CHORUS]) q.sfx_p[GF_SFX_CHORUS][0] = up(p.sfx_p[GF_SFX_CHORUS][0], 0.30f * move);
+    return q;
 }
 
 /// Profundidades de velocity que recibe el engine (theory/10 §2): las del preset + POCKET (tope 1).
