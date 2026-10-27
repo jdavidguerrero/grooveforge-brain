@@ -125,3 +125,26 @@ páginas (AMP y FILTER) para no cambiar los presets.
 |---|---|
 | HISS 0 = salida idéntica a la de antes; HISS 100 con entrada en silencio da ruido acotado y estéreo | test native |
 | Pad con RELEASE de 12 s y stab con ATTACK de 1.5 ms | en el hardware |
+
+## 4. Prophet-5 y DX7: lo que no se cierra con código
+
+- **Prophet-5.** El UNISON ya está (`0572ecb`). La "forma real de saw / pulse del CEM3340" de `fidelidad-engines.md`
+  §12 no se puede ajustar sin una **grabación de referencia** de un Prophet real: la revisión de fidelidad lo marca
+  como "bajo en código, alto en escucha". Cambiar la forma sin medirla es inventar. Pasa a la **fase 5** (A/B con
+  nivel igualado, si se consigue la referencia).
+- **DX7.** El banco ya cubre madera, campana y órgano (MARIMBA, BELLS, ORGAN, JD ZAP PERC WOOD). Afinarlos es de oído
+  (fase 5). Los timbres nuevos del estilo (log drum afro, marimba de chonta, kalimba) se hacen como presets del
+  **banco Signature** (fase 4).
+
+## 5. Estado de la fase 2
+
+| Engine | Hecho | Pasa a |
+|---|---|---|
+| OB-6 | Sync en el sentido real, X-MOD del VCO 2 a tasa de audio (§1) | — |
+| Model D | 6 formas, FM de audio del VCO 3, DECAY (§2) | — |
+| Juno-106 | Tiempos del 106, hiss del BBD (§3) | — |
+| Prophet-5 | UNISON (antes) | Fase 5: A/B de la forma del CEM3340 |
+| DX7 | Timbres de madera / campana / órgano (antes) | Fase 4: timbres afro / orgánicos · fase 5: afinarlos |
+
+**Demo de la fase** (en el hardware, con el aislador): XMOD LEAD del OB-6 con X-MOD → FREQ 1; un bajo del Model D con
+OSC MOD y el VCO 3 en audio; un pad del Juno con RELEASE largo y HISS al 40 %.
