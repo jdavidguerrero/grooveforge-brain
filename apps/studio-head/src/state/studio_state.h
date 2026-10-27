@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstdio>
 
 /**
  * @file studio_state.h
@@ -19,7 +20,12 @@ constexpr int FX_SLOTS = 12;
 constexpr int FX_COLS = 120;     ///< columnas del osciloscopio (FX Viz C1)
 constexpr int FX_BANDS = 32;
 constexpr int FX_GRAINS = 24;
-constexpr int PRESET_MAX = 16;
+constexpr int PRESET_MAX = 64;    ///< bancos A–D de 16 (theory/13)
+
+/// Nombre del lugar de un preset (theory/13): índice 0–63 → "A-01" … "D-16".
+inline void preset_slot(char* out, int n, int index) {
+    std::snprintf(out, size_t(n), "%c-%02d", 'A' + index / 16, index % 16 + 1);
+}
 
 constexpr int OSC_STOPS = 4;      ///< osciladores u operadores que NAV puede elegir
 constexpr int OSC_SLOTS = 8;      ///< P1 · P2 · ENC L · ENC R y los mismos con SHIFT (theory/04 §3.1)
@@ -64,7 +70,7 @@ struct StudioState {
 
     uint8_t engine = 0;              ///< engine_id 0x00–0x05 (02 §2.2)
     char preset[24] = "A-07 BASS FOUNDRY";
-    char preset_names[PRESET_MAX][20] = {};  ///< banco del engine activo; el slot es A-(i+1)
+    char preset_names[PRESET_MAX][20] = {};  ///< presets del engine activo; el lugar i es banco 'A' + i / 16, número i % 16 + 1
     uint8_t preset_count = 0;
     uint8_t preset_loaded = 6;
 

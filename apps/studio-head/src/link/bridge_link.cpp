@@ -452,7 +452,11 @@ void BridgeLink::apply(StudioState& s) {
         const uint8_t l = m_.preset_loaded[e];
         s.preset_loaded = l;
         if (l < s.preset_count)
-            std::snprintf(s.preset, sizeof(s.preset), "A-%02d %s", l + 1, m_.preset_names[e][l]);
+        {
+            char slot[8];
+            preset_slot(slot, sizeof(slot), l);
+            std::snprintf(s.preset, sizeof(s.preset), "%s %s", slot, m_.preset_names[e][l]);
+        }
         else
             std::snprintf(s.preset, sizeof(s.preset), "—");
     }

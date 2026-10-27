@@ -175,15 +175,13 @@ void App::handle_synth(Ctl c, StudioState& s) {
                 } else {
                     s.preset_loaded = uint8_t(_presets.cursor() - 1);
                 }
-                std::snprintf(s.preset, sizeof(s.preset), "A-%02d %s", s.preset_loaded + 1, s.preset_names[s.preset_loaded]);
+                { char slot[8]; preset_slot(slot, sizeof(slot), s.preset_loaded); std::snprintf(s.preset, sizeof(s.preset), "%s %s", slot, s.preset_names[s.preset_loaded]); }
                 break;
-            case Ctl::B4:
-                _engine.set_cursor(s.engine);
-                show(Page::Engine);
+            case Ctl::B1: case Ctl::B2: case Ctl::B3: case Ctl::B4: {   // demo: saltar al banco A–D (theory/13)
+                const int bank = int(c) - int(Ctl::B1);
+                _presets.move_cursor(1 + bank * 16 - _presets.cursor(), s);
                 break;
-            case Ctl::B1: show(Page::Osc); break;
-            case Ctl::B2: show(Page::Env); break;
-            case Ctl::B3: show(Page::Lfo); break;
+            }
             default: break;
         }
         return;

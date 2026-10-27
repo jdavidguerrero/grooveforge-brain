@@ -94,7 +94,9 @@ void test_b4_presets_engine_perform_y_carga_engine() {
     StudioUi ui;
     open_presets(ui);
     TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
-    ui.handle(Control::Key4);
+    ui.handle(Control::B6Down);                           // desde PRESETS (B1–B4 son bancos, theory/13): SHIFT + NAV push
+    ui.handle(Control::NavPush);
+    ui.handle(Control::B6Up);
     TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
     ui.handle(Control::Nav, 1);
@@ -398,6 +400,24 @@ void test_layer_state_ida_y_vuelta() {
     TEST_ASSERT_EQUAL_INT8(-1, r.layer);
 }
 
+void test_presets_saltos_de_banco() {
+    StudioUi ui;
+    ui.set_preset_count(40);                                   // bancos A y B llenos, C con 8
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                  // SHIFT + B4 = PRESETS
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.handle(Control::Key2);                                  // B2 = banco B: fila 17
+    TEST_ASSERT_EQUAL_UINT8(17, ui.state().cursor);
+    ui.handle(Control::Key3);                                  // banco C: fila 33
+    TEST_ASSERT_EQUAL_UINT8(33, ui.state().cursor);
+    ui.handle(Control::Key4);                                  // banco D no existe todavía: se queda en el último
+    TEST_ASSERT_EQUAL_UINT8(40, ui.state().cursor);
+    ui.handle(Control::Key1);
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);         // sigue en PRESETS
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -424,5 +444,6 @@ int main() {
     RUN_TEST(test_volumen_desde_la_cabeza);
     RUN_TEST(test_modo_hybrid);
     RUN_TEST(test_layer_state_ida_y_vuelta);
+    RUN_TEST(test_presets_saltos_de_banco);
     return UNITY_END();
 }

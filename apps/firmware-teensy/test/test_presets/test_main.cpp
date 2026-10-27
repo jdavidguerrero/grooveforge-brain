@@ -318,10 +318,8 @@ void test_hibridos_en_pares() {
         {0, "HY ROLLER SUB A"},  {1, "HY ROLLER SUB B"},  {2, "HY RETRO BRASS A"}, {1, "HY RETRO BRASS B"}};
     Preset p;
     for (const auto& h : HY) TEST_ASSERT_TRUE_MESSAGE(find_factory(h.e, h.name, &p) >= 0, h.name);
-    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {                     // ningún banco pasa de 16
-        Preset fac[PRESET_MAX + 4];
-        TEST_ASSERT_TRUE(factory_presets(e, fac, PRESET_MAX + 4) <= PRESET_MAX);
-    }
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)                       // los de fábrica entran en el banco A
+        TEST_ASSERT_TRUE(factory_count(e) <= PRESET_BANK_SIZE);
 }
 
 void test_capas_apuntan_a_sus_mitades() {
@@ -350,6 +348,22 @@ void test_morph_igual_potencia_y_cc18() {
     TEST_ASSERT_EQUAL_UINT8(LAYER_COUNT, layer_from_cc(127));
     TEST_ASSERT_EQUAL_UINT8(48, layer_b_note(60, -12));
     TEST_ASSERT_EQUAL_UINT8(127, layer_b_note(120, 12));
+}
+
+void test_banco_de_64_y_anotacion_en_64() {
+    TEST_ASSERT_EQUAL_UINT8(64, PRESET_MAX);
+    TEST_ASSERT_EQUAL_UINT8(64, FACTORY_SLOT);
+    FakeStorage s;
+    PresetBank bank(s);
+    bank.scan(1);
+    Preset p;
+    patch_init(p.patch, 1);
+    while (bank.count(1) < PRESET_MAX) TEST_ASSERT_TRUE(bank.save_new(1, p) >= 0);   // hasta D-16
+    TEST_ASSERT_EQUAL_INT(-1, bank.save_new(1, p));
+    TEST_ASSERT_TRUE(s.len[1][FACTORY_SLOT] > 0);
+    PresetBank again(s);
+    again.read_bank(1);
+    TEST_ASSERT_EQUAL_UINT8(64, again.count(1));
 }
 
 void test_tamanos_iguales_al_script_de_la_mac() {
@@ -445,6 +459,7 @@ int main() {
     RUN_TEST(test_hibridos_en_pares);
     RUN_TEST(test_capas_apuntan_a_sus_mitades);
     RUN_TEST(test_morph_igual_potencia_y_cc18);
+    RUN_TEST(test_banco_de_64_y_anotacion_en_64);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);

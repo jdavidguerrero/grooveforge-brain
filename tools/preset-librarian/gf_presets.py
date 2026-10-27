@@ -250,8 +250,8 @@ def cmd_bank(a):
     entries = [load_entry(f) for f in a.files]
     if any(x[0] != e for x in entries):
         sys.exit(f"todos los archivos tienen que ser de {a.engine}")
-    if len(entries) > 16:
-        sys.exit("un banco tiene 16 presets como máximo")
+    if len(entries) > 64:
+        sys.exit("un engine tiene 64 presets como máximo (bancos A–D de 16)")
     brain = Brain(a.port)
     for i, (_, raw) in enumerate(entries):
         brain.put(e, i, raw)
@@ -268,9 +268,14 @@ def cmd_fs(a):
         print(f"{name:10} {n} presets")
 
 
+def slot(i: int) -> str:
+    """Lugar en los bancos A–D de 16 (theory/13): 0 → A-01, 63 → D-16."""
+    return f"{chr(ord('A') + i // 16)}-{i % 16 + 1:02d}"
+
+
 def cmd_list(a):
     for e, i, raw in Brain(a.port).export():
-        print(f"{ENGINES[e]:10} {i:2}  {decode(raw)['name']}")
+        print(f"{ENGINES[e]:10} {slot(i)}  {decode(raw)['name']}")
 
 
 def main(argv=None):
@@ -282,7 +287,7 @@ def main(argv=None):
     s = sub.add_parser("import", help="subir archivos al final del banco de su engine")
     s.add_argument("files", nargs="+")
     s.set_defaults(fn=cmd_import)
-    s = sub.add_parser("bank", help="reescribir un banco completo en este orden")
+    s = sub.add_parser("bank", help="reescribir los presets de un engine en este orden (hasta 64: A-01 … D-16)")
     s.add_argument("engine", choices=ENGINES)
     s.add_argument("files", nargs="+")
     s.set_defaults(fn=cmd_bank)

@@ -15,7 +15,8 @@
 
 namespace studio {
 
-constexpr uint8_t PRESET_MAX = 16;          ///< presets por engine (el tope de la cabeza)
+constexpr uint8_t PRESET_BANK_SIZE = 16;    ///< un banco (A, B, C, D) son 16 lugares seguidos (theory/13)
+constexpr uint8_t PRESET_MAX = 64;          ///< presets por engine: bancos A–D
 /// Lugar del almacenamiento donde cada banco anota qué presets de fábrica ya se ofrecieron (no es un preset).
 constexpr uint8_t FACTORY_SLOT = PRESET_MAX;
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador

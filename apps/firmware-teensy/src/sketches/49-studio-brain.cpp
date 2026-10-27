@@ -295,6 +295,44 @@ private:
 };
 
 FlashPresetStorage preset_store;
+
+/// Área de presets de 2 MB (theory/13). La de 512 KB de antes queda dentro de su final: si la nueva está vacía, se
+/// copian a la RAM todos los archivos de la vieja antes de escribir nada y después se pasan a la nueva.
+constexpr uint32_t PRESET_FS_BYTES = 2u * 1024u * 1024u, PRESET_FS_OLD_BYTES = 512u * 1024u;
+constexpr uint8_t OLD_FACTORY_SLOT = 16;   // la anotación de fábrica del área vieja (16 presets por engine)
+
+bool preset_fs_mount() {
+    if (!preset_fs.begin(PRESET_FS_BYTES)) return false;
+    if (preset_fs.exists("/presets")) return true;          // ya migrada o en uso: nunca se vuelve a tocar la vieja
+    LittleFS_Program old;
+    if (!old.begin(PRESET_FS_OLD_BYTES) || !old.exists("/presets")) return true;   // nada que migrar
+    struct Blob {
+        uint8_t e, i;
+        uint16_t len;
+        uint8_t data[studio::PRESET_BYTES];
+    };
+    const size_t cap = size_t(GF_ENGINE_COUNT) * (OLD_FACTORY_SLOT + 1);
+    Blob* blobs = static_cast<Blob*>(malloc(cap * sizeof(Blob)));   // ~55 KB en RAM2
+    if (!blobs) return true;
+    size_t n = 0;
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e)
+        for (uint8_t i = 0; i <= OLD_FACTORY_SLOT; ++i) {
+            char path[32];
+            snprintf(path, sizeof(path), "/presets/%u/%02u.gfp", e, i);
+            File f = old.open(path, FILE_READ);
+            if (!f) continue;
+            blobs[n].e = e;
+            blobs[n].i = i == OLD_FACTORY_SLOT ? studio::FACTORY_SLOT : i;
+            blobs[n].len = uint16_t(f.read(blobs[n].data, sizeof(blobs[n].data)));
+            f.close();
+            if (blobs[n].len) ++n;
+        }
+    size_t ok = 0;
+    for (size_t k = 0; k < n; ++k) ok += preset_store.write(blobs[k].e, blobs[k].i, blobs[k].data, blobs[k].len);
+    free(blobs);
+    Serial.printf("[PRESET] migrados %u de %u archivos del área de 512 KB a la de 2 MB\n", unsigned(ok), unsigned(n));
+    return true;
+}
 studio::PresetBank presets(preset_store);
 uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -1457,8 +1495,8 @@ void setup() {
     }
 
     // Presets: banco de fábrica en el primer arranque; cada engine arranca con su preset 1 (INIT / E.PIANO)
-    preset_fs_ok = preset_fs.begin(512 * 1024);
-    Serial.printf("[PRESET] LittleFS %s\n", preset_fs_ok ? "OK (512 KB)" : "NO DISPONIBLE: presets solo de fábrica");
+    preset_fs_ok = preset_fs_mount();
+    Serial.printf("[PRESET] LittleFS %s\n", preset_fs_ok ? "OK (2 MB)" : "NO DISPONIBLE: presets solo de fábrica");
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; e++) {
         presets.read_bank(e);   // solo lee: los de fábrica que falten se escriben después, desde el loop
         studio::Preset p;

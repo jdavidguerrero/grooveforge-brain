@@ -58,3 +58,7 @@ def test_export_conserva_la_ficha(tmp_path):
     f.write_text(json.dumps({**e, "name": "MI STAB 2"}))
     engine, raw2 = gp.load_entry(str(f))                   # el nombre del JSON manda al subir
     assert engine == 1 and gp.decode(raw2)["name"] == "MI STAB 2"
+
+
+def test_lugares_de_banco():
+    assert gp.slot(0) == "A-01" and gp.slot(15) == "A-16" and gp.slot(16) == "B-01" and gp.slot(63) == "D-16"

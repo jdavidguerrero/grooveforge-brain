@@ -10,7 +10,7 @@ por el USB. Diseño: `apps/docs/variants/studio/theory/11-studio-preset-libraria
 # subir archivos al final del banco de su engine (el "name" del JSON es el nombre en el Brain)
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import ruta/al/preset.json
 
-# reescribir un banco completo en este orden (lo que no esté en la lista sale del Brain)
+# reescribir los presets de un engine en este orden, hasta 64 = bancos A–D (lo que no esté en la lista sale del Brain)
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py bank juno_106 a.json b.json c.json
 
 # listar lo que hay en el Brain

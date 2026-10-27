@@ -182,17 +182,16 @@ Result StudioUi::handle_synth(Control c, int8_t v) {
             case Control::SwipeDown: move(-PRESET_ROWS_VISIBLE); break;
             case Control::NavPush:
                 if (preset_cursor_ == 0) {
-                    if (preset_count_ < 16) ++preset_count_;
+                    if (preset_count_ < PRESET_SLOTS) ++preset_count_;
                     return {Action::SavePreset, uint8_t(preset_count_ - 1)};
                 }
                 return {Action::LoadPreset, uint8_t(preset_cursor_ - 1)};
-            case Control::Key4:
-                engine_cursor_ = engine_;
-                show(ENGINE);
+            case Control::Key1: case Control::Key2: case Control::Key3: case Control::Key4: {
+                // B1–B4 saltan al banco A–D (theory/13): al primer preset del banco (fila 1 + 16·banco)
+                const int bank = int(uint8_t(c) - uint8_t(Control::Key1));
+                move(1 + bank * PRESET_BANK - preset_cursor_);
                 break;
-            case Control::Key1: show(OSC); break;
-            case Control::Key2: show(ENV); break;
-            case Control::Key3: show(LFO); break;
+            }
             default: break;
         }
         return {};

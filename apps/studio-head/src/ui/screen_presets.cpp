@@ -14,7 +14,7 @@ namespace {
 
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
-const char* const KEYS_PRESET[4] = {"OSC", "ENV", "LFO / MOD", "ENGINE"};  // en PRESETS, B4 abre ENGINE SELECT
+const char* const KEYS_PRESET[4] = {"BANK A", "BANK B", "BANK C", "BANK D"};  // B1–B4 saltan de banco (theory/13)
 
 }  // namespace
 
@@ -103,7 +103,7 @@ void ScreenPresets::update(const StudioState& s) {
     _top.update(s);
     _bottom.set_mode(s.mode == Mode::Fx, s.shift);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
-    _bottom.set_keys(KEYS_PRESET, 3);
+    _bottom.set_keys(KEYS_PRESET, _cursor > 0 ? std::min(3, (_cursor - 1) / 16) : 0);
 
     if (_cursor < 0) _cursor = s.preset_loaded + 1;
     const int rows = s.preset_count + 1;
@@ -132,7 +132,7 @@ void ScreenPresets::update(const StudioState& s) {
         const bool save = idx == 0, cur = idx == _cursor;
         const bool loaded = !save && idx - 1 == s.preset_loaded;
         char slot[16] = "";
-        if (!save) std::snprintf(slot, sizeof(slot), "A-%02d", idx);
+        if (!save) preset_slot(slot, sizeof(slot), idx - 1);
         lv_label_set_text(r.slot, slot);
         lv_label_set_text(r.name, save ? "+ SAVE CURRENT AS NEW" : s.preset_names[idx - 1]);
         lv_obj_set_style_text_font(r.name, cur || save ? T16 : T16R, 0);
@@ -155,13 +155,13 @@ void ScreenPresets::update(const StudioState& s) {
     lv_label_set_text(_d_info, info);
     if (_cursor == 0) {
         char slot[16];
-        std::snprintf(slot, sizeof(slot), "A-%02d", s.preset_count + 1);
+        preset_slot(slot, sizeof(slot), s.preset_count);
         lv_label_set_text(_d_slot, slot);
         lv_label_set_text(_d_name, "NEW PRESET");
         lv_label_set_text(_d_action, "SAVE");
     } else {
         char slot[16];
-        std::snprintf(slot, sizeof(slot), "A-%02d", _cursor);
+        preset_slot(slot, sizeof(slot), _cursor - 1);
         lv_label_set_text(_d_slot, slot);
         lv_label_set_text(_d_name, s.preset_names[_cursor - 1]);
         lv_label_set_text(_d_action, "LOAD");

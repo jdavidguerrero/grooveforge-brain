@@ -62,6 +62,8 @@ struct Result {
 constexpr uint8_t ENGINE_COUNT = 6;
 constexpr uint8_t FAV_FX_SLOT = 2;               ///< B4 en FX: GHOST ECHO (como la cabeza)
 constexpr uint8_t PRESET_ROWS_VISIBLE = 6;       ///< paso del swipe en PRESETS
+constexpr uint8_t PRESET_SLOTS = 64;             ///< presets por engine: bancos A–D de 16 (theory/13)
+constexpr uint8_t PRESET_BANK = 16;
 constexpr uint8_t SFX_SLOTS = 4;                 ///< cadena de FX del synth (theory/05 de Studio)
 constexpr uint8_t GROOVE_STOPS = 5;              ///< PUMP · ARP · CHORD · UNISON · MACRO
 constexpr uint8_t HYBRID_LAYERS = 8;             ///< capas de la lista (layers.h)
@@ -105,7 +107,7 @@ public:
             dirty_ = true;
         }
     }
-    void set_preset_count(uint8_t n) { preset_count_ = n; if (preset_cursor_ > n) preset_cursor_ = n; }
+    void set_preset_count(uint8_t n) { preset_count_ = n; if (preset_cursor_ > n) preset_cursor_ = n; refresh_cursor(); }
     uint8_t preset_count() const { return preset_count_; }
 
     const GF_UiState& state() const { return ui_; }
