@@ -22,17 +22,19 @@ void visit(Preset& p, uint8_t format, F&& f32, B&& u8) {
         for (float& v : st) f32(v);
     for (auto& st : t.mod)
         for (float& v : st) f32(v);
-    for (float& m : t.sfx_mix) f32(m);
-    for (auto& fx : t.sfx_p)
-        for (float& v : fx) f32(v);
+    // Los lugares de FX de los formatos 2–4 en su posición de siempre; el DELAY (formato 5) va al final
+    static const uint8_t V4[PRESET_SFX_V4] = {GF_SFX_BIT, GF_SFX_TAPE, GF_SFX_CHORUS, GF_SFX_REVERB};
+    for (uint8_t fx : V4) f32(t.sfx_mix[fx]);
+    for (uint8_t fx : V4)
+        for (float& v : t.sfx_p[fx]) f32(v);
     f32(p.cutoff_hz);
     f32(p.reso_norm);
     u8(t.lfo_shape);
     u8(t.lfo_div);
-    for (bool& on : t.sfx_on) {
-        uint8_t b = on;
+    for (uint8_t fx : V4) {
+        uint8_t b = t.sfx_on[fx];
         u8(b);
-        on = b != 0;
+        t.sfx_on[fx] = b != 0;
     }
     if (format < 3) return;                     // formato 2: GROOVE queda en los valores neutros de Patch
     for (auto& st : t.groove)
@@ -45,6 +47,12 @@ void visit(Preset& p, uint8_t format, F&& f32, B&& u8) {
     if (format < 4) return;                     // formato 3: velocity por defecto del engine (preset_decode)
     f32(t.vel_amp);
     f32(t.vel_cut);
+    if (format < 5) return;                     // formato 4: DELAY apagado con sus valores neutros
+    f32(t.sfx_mix[GF_SFX_DELAY]);
+    for (float& v : t.sfx_p[GF_SFX_DELAY]) f32(v);
+    uint8_t b = t.sfx_on[GF_SFX_DELAY];
+    u8(b);
+    t.sfx_on[GF_SFX_DELAY] = b != 0;
 }
 
 void set_name(char* dst, const char* src) {
@@ -338,7 +346,11 @@ size_t preset_encode(const Preset& src, uint8_t engine, uint8_t* buf, size_t cap
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out) {
     if (len < 5 || memcmp(buf, MAGIC, 3) != 0 || buf[4] != engine) return false;
     const uint8_t format = buf[3];
-    const size_t expect = format == 4 ? PRESET_BYTES : format == 3 ? PRESET_BYTES_V3 : format == 2 ? PRESET_BYTES_V2 : 0;
+    const size_t expect = format == 5   ? PRESET_BYTES
+                          : format == 4 ? PRESET_BYTES_V4
+                          : format == 3 ? PRESET_BYTES_V3
+                          : format == 2 ? PRESET_BYTES_V2
+                                        : 0;
     if (format < PRESET_FORMAT_MIN || format > PRESET_FORMAT || len != expect) return false;
     Preset p;
     patch_vel_defaults(p.patch, engine);        // lo que no traen los formatos 2 y 3
@@ -346,6 +358,14 @@ bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out) 
     p.name[PRESET_NAME_LEN] = '\0';
     size_t n = 5 + PRESET_NAME_LEN;
     visit(p, format, [&](float& v) { memcpy(&v, buf + n, 4); n += 4; }, [&](uint8_t& b) { b = buf[n++]; });
+    if (format < 5) {                           // theory/fase3-fx.md §3
+        float (&dr)[GF_SFX_PARAMS] = p.patch.sfx_p[GF_SFX_DRIVE];   // era BIT: DRIVE en CRUSH con la misma reducción
+        dr[1] = 0.5f;
+        dr[2] = 1.0f;
+        p.patch.sfx_p[GF_SFX_CHORUS][2] = 0.0f;  // era DRIFT: ahora TYPE = CHORUS
+        float& ty = p.patch.sfx_p[GF_SFX_REVERB][1];   // el material, de 4 a 5 pasos
+        ty = float(gf_index_from_norm(ty, PRESET_SFX_V4)) / float(GF_SFX_STEPS[GF_SFX_REVERB][1] - 1);
+    }
     p.patch.lfo_shape = p.patch.lfo_shape < GF_LFO_SHAPES ? p.patch.lfo_shape : 0;
     p.patch.lfo_div = p.patch.lfo_div < GF_LFO_DIVS ? p.patch.lfo_div : 0;
     *out = p;

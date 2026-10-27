@@ -46,7 +46,11 @@ size_t layer_encode(const LayerPreset& l, uint8_t* buf, size_t cap) {
 }
 
 bool layer_decode(const uint8_t* buf, size_t len, LayerPreset* out) {
-    if (len != LAYER_BYTES || memcmp(buf, MAGIC, 3) != 0 || buf[3] != LAYER_FORMAT) return false;
+    if (len < 4 || memcmp(buf, MAGIC, 3) != 0) return false;
+    size_t half;                                   // tamaño de cada mitad según la versión
+    if (buf[3] == LAYER_FORMAT && len == LAYER_BYTES) half = PRESET_BYTES;
+    else if (buf[3] == 1 && len == LAYER_BYTES_V1) half = PRESET_BYTES_V4;
+    else return false;
     LayerPreset l;
     memcpy(l.name, buf + 4, LAYER_NAME_LEN);
     l.name[LAYER_NAME_LEN] = '\0';
@@ -60,8 +64,7 @@ bool layer_decode(const uint8_t* buf, size_t len, LayerPreset* out) {
     l.gain_a_db = int8_t(p[5]);
     l.gain_b_db = int8_t(p[6]);
     p += 7;
-    if (!preset_decode(p, PRESET_BYTES, l.eng_a, &l.a) || !preset_decode(p + PRESET_BYTES, PRESET_BYTES, l.eng_b, &l.b))
-        return false;
+    if (!preset_decode(p, half, l.eng_a, &l.a) || !preset_decode(p + half, half, l.eng_b, &l.b)) return false;
     *out = l;
     return true;
 }
@@ -90,7 +93,7 @@ void LayerBank::rescan() {
     while (count_ < LAYER_MAX) {
         const uint8_t* s = slot(count_);
         const size_t len = size_t(s[0] | (s[1] << 8));
-        if (len != LAYER_BYTES) break;
+        if (len != LAYER_BYTES && len != LAYER_BYTES_V1) break;
         set_name(names_[count_], reinterpret_cast<const char*>(s + 2 + 4));
         ++count_;
     }
@@ -100,13 +103,26 @@ void LayerBank::load() {
     if (loaded_) return;
     loaded_ = true;
     const size_t n = files_.read_file("/layers.gfl", buf_, FILE_BYTES);
-    if (n == FILE_BYTES && !memcmp(buf_, FILE_MAGIC, 3) && buf_[3] == 1) {
+    const bool gfk = n >= HEADER && !memcmp(buf_, FILE_MAGIC, 3);
+    if (gfk && buf_[3] == 2 && n == FILE_BYTES) {
+        rescan();
+        return;
+    }
+    if (gfk && buf_[3] == 1 && n == FILE_BYTES_V1) {
+        // Archivo de la versión 1 (capas con mitades en formato 4): los lugares se reubican al paso nuevo y las capas
+        // se leen migradas; al guardar se escribe la versión 2 (theory/fase3-fx.md §3)
+        for (int i = LAYER_MAX - 1; i >= 0; --i) {
+            uint8_t* dst = buf_ + HEADER + size_t(i) * SLOT;
+            memmove(dst, buf_ + HEADER + size_t(i) * SLOT_V1, SLOT_V1);
+            memset(dst + SLOT_V1, 0, SLOT - SLOT_V1);
+        }
+        buf_[3] = 2;
         rescan();
         return;
     }
     memset(buf_, 0, FILE_BYTES);                     // no existe o es de otra versión: las de fábrica
     memcpy(buf_, FILE_MAGIC, 3);
-    buf_[3] = 1;
+    buf_[3] = 2;
     count_ = 0;
     LayerPreset l;
     for (uint8_t i = 0; i < factory_layer_count(); ++i)
@@ -128,7 +144,8 @@ bool LayerBank::write_slot(uint8_t i, const LayerPreset& l) {
 
 bool LayerBank::get(uint8_t i, LayerPreset* out) const {
     if (i >= count_) return false;
-    return layer_decode(slot(i) + 2, LAYER_BYTES, out);
+    const uint8_t* s = slot(i);
+    return layer_decode(s + 2, size_t(s[0] | (s[1] << 8)), out);
 }
 
 int LayerBank::save_new(LayerPreset l) {
@@ -151,9 +168,9 @@ PutResult LayerBank::put(uint8_t i, const uint8_t* buf, size_t len) {
 }
 
 size_t LayerBank::raw(uint8_t i, uint8_t* out, size_t cap) const {
-    if (i >= count_ || cap < LAYER_BYTES) return 0;
-    memcpy(out, slot(i) + 2, LAYER_BYTES);
-    return LAYER_BYTES;
+    LayerPreset l;                                   // sale siempre en el formato actual (migrada si era vieja)
+    if (i >= count_ || cap < LAYER_BYTES || !get(i, &l)) return 0;
+    return layer_encode(l, out, cap);
 }
 
 bool LayerBank::truncate(uint8_t n) {

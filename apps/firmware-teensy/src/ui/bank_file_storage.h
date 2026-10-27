@@ -30,6 +30,9 @@ public:
     static constexpr uint8_t SLOTS = PRESET_MAX + 1;                 ///< + FACTORY_SLOT
     static constexpr size_t HEADER = 4;                              ///< "GFB" + versión
     static constexpr size_t FILE_BYTES = HEADER + SLOT * SLOTS;
+    static constexpr uint8_t VERSION = 2;                            ///< 2: lugares del formato 5 (theory/fase3-fx §3)
+    static constexpr size_t SLOT_V1 = 2 + PRESET_BYTES_V4;            ///< versión 1: lugares del formato 4
+    static constexpr size_t FILE_BYTES_V1 = HEADER + SLOT_V1 * SLOTS;
 
     /// `buffer` necesita FILE_BYTES (en la Teensy va en RAM2).
     BankFileStorage(FileBackend& files, uint8_t* buffer) : files_(files), buf_(buffer) {}
@@ -92,12 +95,22 @@ private:
         char path[16];
         path_of(e, path);
         const size_t n = files_.read_file(path, buf_, FILE_BYTES);
-        if (n != FILE_BYTES || buf_[0] != 'G' || buf_[1] != 'F' || buf_[2] != 'B' || buf_[3] != 1) {
+        const bool gfb = n >= HEADER && buf_[0] == 'G' && buf_[1] == 'F' && buf_[2] == 'B';
+        if (gfb && buf_[3] == 1 && n == FILE_BYTES_V1) {
+            // Banco de la versión 1: los lugares se reubican al paso nuevo (de atrás para adelante, sin pisarse); los
+            // presets siguen en formato 4 y se leen migrados. Al guardar se escribe la versión 2.
+            for (int i = SLOTS - 1; i >= 0; --i) {
+                uint8_t* dst = buf_ + HEADER + size_t(i) * SLOT;
+                memmove(dst, buf_ + HEADER + size_t(i) * SLOT_V1, SLOT_V1);
+                memset(dst + SLOT_V1, 0, SLOT - SLOT_V1);
+            }
+            buf_[3] = VERSION;
+        } else if (!gfb || buf_[3] != VERSION || n != FILE_BYTES) {
             memset(buf_, 0, FILE_BYTES);              // no existe o es de otra versión: banco vacío
             buf_[0] = 'G';
             buf_[1] = 'F';
             buf_[2] = 'B';
-            buf_[3] = 1;
+            buf_[3] = VERSION;
         }
         loaded_ = int8_t(e);
         return true;

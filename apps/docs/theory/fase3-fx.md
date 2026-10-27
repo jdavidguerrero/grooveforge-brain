@@ -14,16 +14,28 @@ La cadena del synth es **BIT → TAPE → CHORUS → MODAL** en dos copias mono 
 
 ## 2. La cadena nueva
 
-**BIT → TAPE → CHORUS / PHASER → DELAY → REVERB (MODAL / PLATE) → PUMP.** Cinco lugares; cada uno con on / off, MIX
+**DRIVE → TAPE → CHORUS / PHASER → DELAY → REVERB (MODAL / PLATE) → PUMP.** Cinco lugares; cada uno con on / off, MIX
 y tres parámetros (P1 · SHIFT P1 · SHIFT P2, como hasta ahora).
 
 | Lugar | P1 | SHIFT P1 | SHIFT P2 | MIX |
 |---|---|---|---|---|
-| BIT | BITS | SAMPLE RATE | SCULPT | dry / wet |
+| **DRIVE** (antes BIT) | AMOUNT | TONE | **TYPE: OVERDRIVE · DIST · CRUSH** | dry / wet |
 | TAPE | DRIVE | WOW | FLUTTER | dry / wet |
 | CHORUS | DEPTH | RATE | **TYPE: CHORUS · PHASER** (antes DRIFT, que queda fijo) | dry / wet |
 | **DELAY** (nuevo) | **TIME: 1/16 · 1/8 · 1/8. · 1/4 · 1/4.** (al tempo del reloj común) | **FEEDBACK** 0–90 % | **TONE**: oscuro ← plano → fino | nivel del eco |
 | REVERB | DECAY | **TYPE: CAMPANA · GUADUA · CRISTAL · MADERA · PLATE** | SIZE | dry / wet |
+
+### DRIVE (reemplaza al BIT)
+
+Juan probó el BIT y mete demasiado ruido; para su música sirve más la saturación (2026-10-27). TAPE ya cubre la cinta,
+así que DRIVE cubre lo que falta:
+
+- **OVERDRIVE**: tanh suave con un poco de asimetría (armónicos pares, carácter de tubo). Bajos funk y leads melódicos.
+- **DIST**: más ganancia y recorte asimétrico más duro. Indie tech, ácido, bajos con mordida.
+- **CRUSH**: el bitcrusher **domado** (como mucho 8 bits y 11 kHz): textura lo-fi ocasional sin el ruido del BIT.
+
+TONE = pasabajos de un polo después del recorte (2 → 18 kHz). El nivel se compensa con AMOUNT. El BIT sigue existiendo
+como FX del modo FX (BIT SCULPT); solo sale de la cadena del synth.
 
 ### DELAY ping-pong
 
@@ -58,7 +70,8 @@ no gasta CPU.
 - **Formato 5 = el 4 + el lugar DELAY al final** (on, MIX y 3 parámetros: 17 bytes). Los cuatro lugares viejos quedan
   en su posición del archivo; el índice del DELAY en el patch es el 4 (la UI lo dibuja en el orden de la cadena:
   0 · 1 · 2 · 4 · 3).
-- **Migración al leer un preset de formato 2–4:** DELAY apagado con valores neutros; el 3.er parámetro del CHORUS
+- **Migración al leer un preset de formato 2–4:** el lugar BIT pasa a DRIVE en TYPE CRUSH con AMOUNT = la reducción de
+  bits que tenía (TONE plano); DELAY apagado con valores neutros; el 3.er parámetro del CHORUS
   (DRIFT) pasa a TYPE = CHORUS; el TYPE de la REVERB se vuelve a normalizar de 4 a 5 pasos (el material no cambia).
 - **Archivos de los bancos (`/bank<e>.gfb`) y de las capas (`/layers.gfl`):** el lugar crece, así que el archivo
   también. Al cargar un archivo del tamaño viejo, los lugares se reubican en RAM al nuevo paso; los presets adentro
@@ -77,6 +90,7 @@ reverbs. Si la PLATE no entra con una capa, se queda solo para un engine (se doc
 |---|---|
 | Ping-pong: un impulso sale en L a T, en R a 2T, en L a 3T, cada vez × FEEDBACK | test native |
 | TONE oscuro baja la energía de alta frecuencia de cada eco; plano no la cambia | test native |
+| DRIVE: los tres tipos acotados y sin NaN; CRUSH no baja de 8 bits | test native |
 | Phaser: con DEPTH 0 las muescas quedan quietas (la salida no cambia con el tiempo); con DEPTH > 0, acotada y sin NaN | test native |
 | Formato 4 → 5: un preset viejo se lee con DELAY apagado, CHORUS en TYPE CHORUS y la misma REVERB | test native |
 | Banco y capas del tamaño viejo se leen enteros y se guardan en el nuevo | test native |

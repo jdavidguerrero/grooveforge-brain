@@ -67,7 +67,7 @@ constexpr uint8_t FAV_FX_SLOT = 2;               ///< B4 en FX: GHOST ECHO (como
 constexpr uint8_t PRESET_ROWS_VISIBLE = 6;       ///< paso del swipe en PRESETS
 constexpr uint8_t PRESET_SLOTS = 64;             ///< presets por engine: bancos A–D de 16 (theory/13)
 constexpr uint8_t PRESET_BANK = 16;
-constexpr uint8_t SFX_SLOTS = 4;                 ///< cadena de FX del synth (theory/05 de Studio)
+constexpr uint8_t SFX_SLOTS = 5;                 ///< cadena de FX del synth (theory/fase3-fx.md §2)
 constexpr uint8_t GROOVE_STOPS = 5;              ///< PUMP · ARP · CHORD · UNISON · MACRO
 constexpr uint8_t LAYER_SLOTS = 32;              ///< presets de capa: bancos A y B de 16 (layer_bank.h)
 constexpr uint8_t MODE_SYNTH = 0, MODE_FX = 1, MODE_HYBRID = 2;

@@ -71,7 +71,7 @@ private:
         bool engine_dirty = false;
         float filter[6][5] = {};       ///< normalizado 0–1: [engine][cutoff, resonancia, FLT ENV AMT, GLIDE, DRIVE]
         float lfo[6][7] = {};          ///< normalizado 0–1: [engine][RATE, SHAPE, DIV, cantidad ×4] (gf_params.h)
-        float sfx[6][20] = {};         ///< cadena de FX: [engine][4 encendidos, 4 MIX, 12 parámetros]
+        float sfx[6][25] = {};         ///< cadena de FX: [engine][5 encendidos, 5 MIX, 15 parámetros]
         float envp[6][10] = {};        ///< normalizado 0–1: [engine][A D S R amp, A D S R filtro, VEL→AMP, VEL→FILTER]
         float osc[6][32] = {};         ///< normalizado 0–1: [engine][parada · 4 + slot] slots 0–3, +16 la capa SHIFT
         float mod[6][16] = {};         ///< normalizado 0–1: [engine][parada · 8 + slot] (GF_MOD_SLOT)

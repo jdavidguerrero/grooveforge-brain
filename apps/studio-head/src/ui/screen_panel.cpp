@@ -127,9 +127,9 @@ void ScreenPanel::update(const StudioState& s) {
                   int(std::lround(s.lfo_amt[2] * 100)), int(std::lround(s.lfo_amt[3] * 100)));
     if (n < CARDS) set_card(n++, "LFO", t, false);
     // SYNTH FX
-    static const char* const SFX[4] = {"BIT", "TAPE", "CHORUS", "MODAL"};
+    static const char* const SFX[5] = {"DRIVE", "TAPE", "CHORUS", "DELAY", "REVERB"};
     std::string fx;
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 5; ++i) {
         std::snprintf(t, sizeof(t), "%-7s%s  MIX %d%%\n", SFX[i], s.sfx_on[i] ? "ON " : "OFF",
                       int(std::lround(s.sfx_mix[i] * 100)));
         fx += t;

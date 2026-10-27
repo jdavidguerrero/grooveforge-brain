@@ -174,8 +174,31 @@ void test_migra_formato_3_con_velocity_del_engine() {
     TEST_ASSERT_EQUAL_FLOAT(0.0f, q.patch.vel_amp);                     // Juno: sin velocity, como sonaba
     TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES_V3, 1, &q));
     buf[3] = 4;
-    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES, 1, &q));
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES_V4, 1, &q));
     TEST_ASSERT_EQUAL_FLOAT(90.0f, q.patch.vel_amp);
+}
+
+void test_migra_formato_4_a_5_fx() {
+    Preset p;
+    patch_init(p.patch, 2);
+    p.patch.sfx_p[GF_SFX_REVERB][1] = 2.0f / 3.0f;                     // CRISTAL en 4 pasos
+    p.patch.sfx_p[GF_SFX_CHORUS][2] = 0.9f;                             // era DRIFT
+    p.patch.sfx_p[GF_SFX_DRIVE][0] = 0.6f;                              // era BITS
+    p.patch.sfx_on[GF_SFX_REVERB] = true;
+    p.patch.sfx_on[GF_SFX_DELAY] = true;                                // no existe en el formato 4
+    uint8_t buf[PRESET_BYTES];
+    TEST_ASSERT_EQUAL_UINT32(PRESET_BYTES, preset_encode(p, 2, buf, PRESET_BYTES));
+    Preset q;
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES, 2, &q));          // formato 5: ida y vuelta
+    TEST_ASSERT_TRUE(q.patch.sfx_on[GF_SFX_DELAY]);
+    buf[3] = 4;                                                         // el mismo, leído como formato 4
+    TEST_ASSERT_TRUE(preset_decode(buf, PRESET_BYTES_V4, 2, &q));
+    TEST_ASSERT_FALSE(q.patch.sfx_on[GF_SFX_DELAY]);                    // DELAY apagado
+    TEST_ASSERT_TRUE(q.patch.sfx_on[GF_SFX_REVERB]);
+    TEST_ASSERT_EQUAL_UINT8(2, gf_index_from_norm(q.patch.sfx_p[GF_SFX_REVERB][1], 5));   // sigue en CRISTAL
+    TEST_ASSERT_EQUAL_FLOAT(0.0f, q.patch.sfx_p[GF_SFX_CHORUS][2]);    // TYPE = CHORUS
+    TEST_ASSERT_EQUAL_UINT8(2, gf_index_from_norm(q.patch.sfx_p[GF_SFX_DRIVE][2], 3));    // DRIVE en CRUSH
+    TEST_ASSERT_EQUAL_FLOAT(0.6f, q.patch.sfx_p[GF_SFX_DRIVE][0]);
 }
 
 void test_migra_formato_2() {
@@ -369,10 +392,13 @@ void test_banco_de_64_y_anotacion_en_64() {
 }
 
 void test_tamanos_iguales_al_script_de_la_mac() {
-    // tools/preset-librarian/gf_presets.py SIZE = {2: 355, 3: 519, 4: 527}: si cambia el formato, cambiar los dos
+    // tools/preset-librarian/gf_presets.py SIZE = {2: 355, 3: 519, 4: 527, 5: 544}: si cambia el formato, cambiar los dos
     TEST_ASSERT_EQUAL_UINT32(355, PRESET_BYTES_V2);
     TEST_ASSERT_EQUAL_UINT32(519, PRESET_BYTES_V3);
-    TEST_ASSERT_EQUAL_UINT32(527, PRESET_BYTES);
+    TEST_ASSERT_EQUAL_UINT32(527, PRESET_BYTES_V4);
+    TEST_ASSERT_EQUAL_UINT32(544, PRESET_BYTES);
+    TEST_ASSERT_EQUAL_UINT32(1077, LAYER_BYTES_V1);
+    TEST_ASSERT_EQUAL_UINT32(1111, LAYER_BYTES);
 }
 
 void test_hex_ida_y_vuelta() {
@@ -572,6 +598,67 @@ void test_presets_de_capa() {
     TEST_ASSERT_EQUAL(int(LinkCmd::LayerExport), int(parse_link_cmd(l3).kind));
 }
 
+// Bancos y capas del tamaño viejo (formato 4 adentro) se leen enteros (theory/fase3-fx.md §3)
+void test_archivos_viejos_se_leen_enteros() {
+    static FakeFiles files;
+    files = FakeFiles{};
+    // Banco v1: "GFB"+1 y lugares de 2 + 527 con un preset de formato 4
+    static uint8_t old[BankFileStorage::FILE_BYTES_V1];
+    memset(old, 0, sizeof(old));
+    old[0] = 'G'; old[1] = 'F'; old[2] = 'B'; old[3] = 1;
+    Preset p;
+    patch_init(p.patch, 3);
+    strcpy(p.name, "VIEJO");
+    uint8_t enc[PRESET_BYTES];
+    preset_encode(p, 3, enc, PRESET_BYTES);
+    enc[3] = 4;                                                         // el prefijo del formato 5 es el formato 4
+    for (int i = 0; i < 3; ++i) {
+        uint8_t* s = old + BankFileStorage::HEADER + i * BankFileStorage::SLOT_V1;
+        s[0] = uint8_t(PRESET_BYTES_V4 & 0xFF);
+        s[1] = uint8_t(PRESET_BYTES_V4 >> 8);
+        memcpy(s + 2, enc, PRESET_BYTES_V4);
+    }
+    files.write_file("/bank3.gfb", old, sizeof(old));
+    BankFileStorage st(files, g_bank_buf);
+    PresetBank bank(st);
+    bank.read_bank(3);
+    TEST_ASSERT_EQUAL_UINT8(3, bank.count(3));
+    Preset q;
+    TEST_ASSERT_TRUE(bank.load(3, 2, &q));
+    TEST_ASSERT_EQUAL_STRING("VIEJO", q.name);
+
+    // Capas v1: "GFK"+1 y una capa de formato 1 (mitades en formato 4)
+    static uint8_t oldl[LayerBank::FILE_BYTES_V1];
+    memset(oldl, 0, sizeof(oldl));
+    oldl[0] = 'G'; oldl[1] = 'F'; oldl[2] = 'K'; oldl[3] = 1;
+    LayerPreset l;
+    factory_layer(0, &l);
+    uint8_t le[LAYER_BYTES];
+    layer_encode(l, le, LAYER_BYTES);
+    uint8_t v1[LAYER_BYTES_V1];                                         // re-armada con mitades de formato 4
+    memcpy(v1, le, 4 + LAYER_NAME_LEN + 7);
+    v1[3] = 1;
+    uint8_t* h = v1 + 4 + LAYER_NAME_LEN + 7;
+    memcpy(h, le + 4 + LAYER_NAME_LEN + 7, PRESET_BYTES_V4);
+    h[3] = 4;
+    memcpy(h + PRESET_BYTES_V4, le + 4 + LAYER_NAME_LEN + 7 + PRESET_BYTES, PRESET_BYTES_V4);
+    h[PRESET_BYTES_V4 + 3] = 4;
+    uint8_t* s = oldl + LayerBank::HEADER;
+    s[0] = uint8_t(LAYER_BYTES_V1 & 0xFF);
+    s[1] = uint8_t(LAYER_BYTES_V1 >> 8);
+    memcpy(s + 2, v1, LAYER_BYTES_V1);
+    files.write_file("/layers.gfl", oldl, sizeof(oldl));
+    LayerBank lb(files, g_layer_buf);
+    lb.load();
+    TEST_ASSERT_EQUAL_UINT8(1, lb.count());
+    LayerPreset r;
+    TEST_ASSERT_TRUE(lb.get(0, &r));
+    TEST_ASSERT_EQUAL_STRING("WOODBASS", r.name);
+    TEST_ASSERT_EQUAL_STRING("HY WOODBASS B", r.b.name);
+    uint8_t out[LAYER_BYTES];
+    TEST_ASSERT_EQUAL_UINT32(LAYER_BYTES, lb.raw(0, out, sizeof(out)));   // exporta en el formato nuevo
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -592,6 +679,8 @@ int main() {
     RUN_TEST(test_banco_de_64_y_anotacion_en_64);
     RUN_TEST(test_un_archivo_por_engine);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
+    RUN_TEST(test_migra_formato_4_a_5_fx);
+    RUN_TEST(test_archivos_viejos_se_leen_enteros);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);
     RUN_TEST(test_put_y_trunc_del_banco);

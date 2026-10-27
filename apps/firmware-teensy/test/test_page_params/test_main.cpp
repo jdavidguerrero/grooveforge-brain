@@ -111,7 +111,7 @@ void test_forma_sin_dar_la_vuelta_y_patch_completo() {
     step_lfo_shape(p, 0, -10, c);
     TEST_ASSERT_EQUAL_UINT8(0, p.lfo_shape);
     const uint8_t n = patch_params(p, 3, c);
-    TEST_ASSERT_EQUAL_UINT8(38 + 12 + 6 + 29 + 2, n);                // OB-6: 38 base + 12 OSC + 6 X-MOD + 29 GROOVE + VEL
+    TEST_ASSERT_EQUAL_UINT8(43 + 12 + 6 + 29 + 2, n);                // OB-6: 43 base (5 FX) + 12 OSC + 6 X-MOD + 29 GROOVE + VEL
     for (uint8_t i = 0; i < n; ++i) TEST_ASSERT_EQUAL_HEX8(0x13, c[i].id >> 8);
     TEST_ASSERT_TRUE(patch_params(p, 2, c) <= PATCH_PARAM_COUNT);    // Prophet: 3 paradas × 8 + MOD
     for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) TEST_ASSERT_TRUE(patch_params(p, e, c) <= PATCH_PARAM_COUNT);
@@ -159,18 +159,18 @@ void test_synth_fx_mix_principal_y_discretos() {
     GF_UiState u = page(SYNTH_FX);
     u.cursor = GF_SFX_TAPE;
     TEST_ASSERT_EQUAL_UINT8(1, edit_encoder(p, u, 1, 2, 5, c));      // ENC L = MIX del TAPE (como el modo FX)
-    TEST_ASSERT_EQUAL_HEX16(0x1145, c[0].id);
+    TEST_ASSERT_EQUAL_HEX16(0x1146, c[0].id);                        // MIX = 5 + lugar
     TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.7f, c[0].norm);
     edit_encoder(p, u, 1, 3, 50, c);                                 // ENC R = DRIVE al máximo
     TEST_ASSERT_EQUAL_HEX16(0x1153, c[0].id);
     TEST_ASSERT_FLOAT_WITHIN(1e-5f, 10.0f, gf_sfx_drive(c[0].norm));
     u.cursor = GF_SFX_MODAL;
-    edit_encoder(p, u, 1, 0, 1, c);                                  // P1 = MATERIAL: GUADUA → CRISTAL
-    TEST_ASSERT_EQUAL_HEX16(0x115A, c[0].id);
-    TEST_ASSERT_EQUAL_UINT8(2, gf_index_from_norm(c[0].norm, 4));
-    u.cursor = GF_SFX_BIT;
-    edit_encoder(p, u, 1, 3, -100, c);                               // ENC R = BITS: un valor por paso
-    TEST_ASSERT_EQUAL_UINT8(16 - 6 + 1, gf_sfx_bits(c[0].norm));
+    edit_encoder(p, u, 1, 0, 1, c);                                  // P1 = TYPE: GUADUA → CRISTAL (5 tipos)
+    TEST_ASSERT_EQUAL_HEX16(0x115D, c[0].id);                        // REVERB es el lugar 4: 4 · 3 + 1
+    TEST_ASSERT_EQUAL_UINT8(2, gf_index_from_norm(c[0].norm, 5));
+    u.cursor = GF_SFX_DRIVE;
+    edit_encoder(p, u, 1, 1, 1, c);                                  // P2 = TYPE: OVERDRIVE → DIST
+    TEST_ASSERT_EQUAL_UINT8(1, gf_index_from_norm(c[0].norm, 3));
 }
 
 void test_env_filter_y_osc() {

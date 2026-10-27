@@ -33,14 +33,15 @@ struct Patch {
     /// Paradas de MOD de la página LFO / MOD (GF_MOD_SLOT), p. ej. POLY-MOD y WHEEL-MOD del Prophet.
     float mod[GF_MOD_STOPS_MAX][GF_OSC_SLOTS] = {};
 
-    /// Cadena de FX del synth (BIT · TAPE · CHORUS · MODAL), todo normalizado 0–1 (gf_params.h).
+    /// Cadena de FX del synth (BIT · TAPE · CHORUS · DELAY · REVERB), todo normalizado 0–1 (gf_params.h).
     bool sfx_on[GF_SFX_COUNT] = {};
-    float sfx_mix[GF_SFX_COUNT] = {0.5f, 0.6f, 0.5f, 0.3f};
+    float sfx_mix[GF_SFX_COUNT] = {0.5f, 0.6f, 0.5f, 0.3f, 0.3f};
     float sfx_p[GF_SFX_COUNT][GF_SFX_PARAMS] = {
-        {0.4f, 0.3f, 0.3f},                  ///< 10 bits · ~15 kHz · sculpt
+        {0.35f, 0.6f, 0.0f},                 ///< DRIVE: amount · tono ~7 kHz · OVERDRIVE
         {0.25f, 0.2f, 0.2f},                 ///< drive 3.25 · wow · flutter
-        {0.5f, 0.35f, 0.2f},                 ///< depth · ~0.5 Hz · drift
-        {0.45f, 1.0f / 3.0f, 0.5f}};         ///< decay ×0.8 · GUADUA · MEDIUM
+        {0.5f, 0.35f, 0.0f},                 ///< depth · ~0.5 Hz · CHORUS
+        {0.5f, 0.4f, 0.5f},                  ///< 1/8. · feedback 36 % · TONE plano
+        {0.45f, 0.25f, 0.5f}};               ///< decay ×0.8 · GUADUA · MEDIUM
 
     /// Página GROOVE en unidades de la UI (GF_GROOVE_SLOT): [parada][slot]; por engine (theory/09 de Studio §7).
     float groove[GF_GROOVE_STOPS][GF_OSC_SLOTS] = {

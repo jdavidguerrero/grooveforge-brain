@@ -15,29 +15,39 @@ using namespace gf;
 namespace {
 
 constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
-constexpr int CARD_X = 16, CARD_Y = 20, CARD_W = 166, CARD_H = 168, CARD_STEP = 188;
+constexpr int CARD_X = 16, CARD_Y = 20, CARD_W = 132, CARD_H = 168, CARD_STEP = 147;   // 5 lugares (fase3-fx §2)
 constexpr uint32_t TRACK = 0x1C1C1C;
 const char* const KEYS_SYNTH[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
-const char* const NAME[GF_SFX_COUNT] = {"BIT", "TAPE", "CHORUS", "REVERB"};   // caben junto al ON/OFF
-const char* const MATERIAL[4] = {"BELL", "GUADUA", "GLASS", "WOOD"};
+const char* const NAME[GF_SFX_COUNT] = {"DRIVE", "TAPE", "CHORUS", "DELAY", "REVERB"};   // caben junto al ON/OFF
+const char* const REV_TYPE[5] = {"BELL", "GUADUA", "GLASS", "WOOD", "PLATE"};
+const char* const DRIVE_TYPE[3] = {"OVERDRV", "DIST", "CRUSH"};
+const char* const CHORUS_TYPE[2] = {"CHORUS", "PHASER"};
+const char* const DELAY_DIV[5] = {"1/16", "1/8", "1/8.", "1/4", "1/4."};
 const char* const SIZE[3] = {"S", "M", "L"};
 
 }  // namespace
 
 void sfx_format(int fx, int k, float n, char* val, size_t sz, const char** label, const char** unit) {
     static const char* const LBL[GF_SFX_COUNT][GF_SFX_PARAMS] = {
-        {"BITS", "SR", "SCULPT"}, {"DRIVE", "WOW", "FLUTTER"}, {"DEPTH", "RATE", "DRIFT"}, {"DECAY", "MATERIAL", "SIZE"}};
+        {"AMOUNT", "TONE", "TYPE"}, {"DRIVE", "WOW", "FLUTTER"}, {"DEPTH", "RATE", "TYPE"},
+        {"TIME", "FEEDBACK", "TONE"}, {"DECAY", "TYPE", "SIZE"}};
     *label = LBL[fx][k];
     *unit = "%";
     const int pct = int(std::lround(n * 100));
     switch (fx * 3 + k) {
-        case 0: std::snprintf(val, sz, "%d", gf_sfx_bits(n)); *unit = ""; break;
-        case 1: std::snprintf(val, sz, "%.1f", double(gf_sfx_sample_rate(n) / 1000.0f)); *unit = "KHZ"; break;
+        case 2: std::snprintf(val, sz, "%s", DRIVE_TYPE[gf_index_from_norm(n, 3)]); *unit = ""; break;
         case 3: std::snprintf(val, sz, "%.1f", double(gf_sfx_drive(n))); *unit = ""; break;
         case 7: std::snprintf(val, sz, "%.2f", double(gf_sfx_chorus_rate(n))); *unit = "HZ"; break;
-        case 9: std::snprintf(val, sz, "x%.1f", double(gf_sfx_decay(n))); *unit = ""; break;
-        case 10: std::snprintf(val, sz, "%s", MATERIAL[gf_index_from_norm(n, 4)]); *unit = ""; break;
-        case 11: std::snprintf(val, sz, "%s", SIZE[gf_index_from_norm(n, 3)]); *unit = ""; break;
+        case 8: std::snprintf(val, sz, "%s", CHORUS_TYPE[gf_index_from_norm(n, 2)]); *unit = ""; break;
+        case 9: std::snprintf(val, sz, "%s", DELAY_DIV[gf_index_from_norm(n, 5)]); *unit = ""; break;
+        case 10: std::snprintf(val, sz, "%d", int(std::lround(90.0f * n))); break;
+        case 11:
+            std::snprintf(val, sz, "%s", n < 0.48f ? "DARK" : n > 0.52f ? "THIN" : "FLAT");
+            *unit = "";
+            break;
+        case 12: std::snprintf(val, sz, "x%.1f", double(gf_sfx_decay(n))); *unit = ""; break;
+        case 13: std::snprintf(val, sz, "%s", REV_TYPE[gf_index_from_norm(n, 5)]); *unit = ""; break;
+        case 14: std::snprintf(val, sz, "%s", SIZE[gf_index_from_norm(n, 3)]); *unit = ""; break;
         default: std::snprintf(val, sz, "%d", pct); break;
     }
 }
@@ -74,11 +84,12 @@ void ScreenSfx::draw(const Painter& p, const StudioState& s) const {
         }
         std::snprintf(t, sizeof(t), "%d", i + 1);
         text_top(p, x + 12, CARD_Y + 12, t, on ? TEAL_PLUS : MON, T12B);
-        text_top(p, x + 28, CARD_Y + 10, NAME[i], on ? WHITE : GRAY, T16);
-
-        // ON / OFF
+        // ON / OFF (el nombre se achica si no cabe al lado)
         const char* st = on ? "ON" : "OFF";
         const int sw = text_width(st, T12B) + 12;
+        const bool fits = text_width(NAME[i], T16) <= CARD_W - 28 - sw - 14;
+        text_top(p, x + 28, CARD_Y + (fits ? 10 : 14), NAME[i], on ? WHITE : GRAY, fits ? T16 : T12B);
+
         if (on) p.fill(x + CARD_W - sw - 10, CARD_Y + 10, sw, 20, TEAL_PLUS);
         else draw_box(p, x + CARD_W - sw - 10, CARD_Y + 10, sw, 20, MON, SURFACE_2, 1);
         text_top(p, x + CARD_W - sw - 4, CARD_Y + 14, st, on ? BG : MON, T12B);
@@ -87,8 +98,8 @@ void ScreenSfx::draw(const Painter& p, const StudioState& s) const {
         const char *lbl, *unit;
         sfx_format(i, 0, s.sfx_p[i][0], v, sizeof(v), &lbl, &unit);
         text_top(p, x + 12, CARD_Y + 48, lbl, MON, T12);
-        text_top(p, x + 12, CARD_Y + 66, v, on ? WHITE : MON, T28);
-        if (*unit) text_top(p, x + 16 + text_width(v, T28), CARD_Y + 84, unit, MON, T12);
+        text_top(p, x + 12, CARD_Y + 66, v, on ? WHITE : MON, text_width(v, T28) > CARD_W - 40 ? T20 : T28);
+        if (*unit) text_top(p, x + 16 + text_width(v, text_width(v, T28) > CARD_W - 40 ? T20 : T28), CARD_Y + 84, unit, MON, T12);
 
         // MIX
         text_top(p, x + 12, CARD_Y + 122, "MIX", MON, T12);

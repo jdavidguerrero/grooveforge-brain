@@ -18,9 +18,10 @@ namespace studio {
 
 constexpr uint8_t LAYER_MAX = 32;               ///< presets de capa: bancos A y B de 16
 constexpr uint8_t LAYER_NAME_LEN = 12;          ///< = GF_LAYER_NAME_LEN
-constexpr uint8_t LAYER_FORMAT = 1;
+constexpr uint8_t LAYER_FORMAT = 2;            ///< 2: mitades en formato de preset 5 (theory/fase3-fx §3)
 /// Serializado: "GFL" + versión, nombre, engines, morph, retraso, transposición, ganancias y las dos mitades.
 constexpr size_t LAYER_BYTES = 4 + LAYER_NAME_LEN + 7 + 2 * PRESET_BYTES;
+constexpr size_t LAYER_BYTES_V1 = 4 + LAYER_NAME_LEN + 7 + 2 * PRESET_BYTES_V4;   ///< formato 1: mitades en formato 4
 
 struct LayerPreset {
     char name[LAYER_NAME_LEN + 1] = "LAYER";
@@ -34,7 +35,7 @@ struct LayerPreset {
 
 /// @return LAYER_BYTES, o 0 si `cap` no alcanza.
 size_t layer_encode(const LayerPreset& l, uint8_t* buf, size_t cap);
-/// @return false si la firma, la versión, los engines o alguna mitad no se pueden leer.
+/// Lee los formatos 1 y 2. @return false si la firma, la versión, los engines o alguna mitad no se pueden leer.
 bool layer_decode(const uint8_t* buf, size_t len, LayerPreset* out);
 
 /// Las capas de fábrica: las 8 parejas de layers.h armadas con sus mitades HY de fábrica.
@@ -46,6 +47,8 @@ public:
     static constexpr size_t SLOT = 2 + LAYER_BYTES;
     static constexpr size_t HEADER = 4;                              ///< "GFK" + versión
     static constexpr size_t FILE_BYTES = HEADER + SLOT * LAYER_MAX;
+    static constexpr size_t SLOT_V1 = 2 + LAYER_BYTES_V1;
+    static constexpr size_t FILE_BYTES_V1 = HEADER + SLOT_V1 * LAYER_MAX;
 
     /// `buffer` necesita FILE_BYTES (en la Teensy va en RAM2).
     LayerBank(FileBackend& files, uint8_t* buffer) : files_(files), buf_(buffer) {}

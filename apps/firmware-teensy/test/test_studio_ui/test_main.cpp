@@ -237,11 +237,11 @@ void test_b4_abre_synth_fx_cursor_y_encendido() {
     TEST_ASSERT_EQUAL_UINT8(0, ui.state().cursor);
     ui.handle(Control::Nav, 2);
     TEST_ASSERT_EQUAL_UINT8(2, ui.state().cursor);
-    ui.handle(Control::Nav, 9);              // no pasa del último FX
-    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+    ui.handle(Control::Nav, 9);              // no pasa del último FX (REVERB, 5 lugares desde la fase 3)
+    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
     const Result r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(Action::SfxToggle, r.action);
-    TEST_ASSERT_EQUAL_UINT8(3, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(4, r.arg);
     ui.handle(Control::Key4);                // B4 otra vez: vuelve a la última vista
     TEST_ASSERT_EQUAL_UINT8(PANEL, ui.state().page);
 }

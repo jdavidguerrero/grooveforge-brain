@@ -269,11 +269,11 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
             } else if (group == GF_GROUP_LFO && idx < 7) {
                 m_.lfo[e][idx] = v;
                 m_.lfo_dirty |= uint8_t(1u << e);
-            } else if (group == GF_GROUP_SFX && idx < 8) {
+            } else if (group == GF_GROUP_SFX && idx < 2 * GF_SFX_COUNT) {
                 m_.sfx[e][idx] = v;
                 m_.sfx_dirty |= uint8_t(1u << e);
-            } else if (group == GF_GROUP_SFX_P && idx < 12) {
-                m_.sfx[e][8 + idx] = v;
+            } else if (group == GF_GROUP_SFX_P && idx < GF_SFX_COUNT * GF_SFX_PARAMS) {
+                m_.sfx[e][2 * GF_SFX_COUNT + idx] = v;
                 m_.sfx_dirty |= uint8_t(1u << e);
             } else if (group == GF_GROUP_GROOVE_A || group == GF_GROUP_GROOVE_B) {   // PUMP, ARP | CHORD, UNISON
                 m_.grv[e][(group == GF_GROUP_GROOVE_B ? 16 : 0) + idx] = v;
@@ -445,8 +445,8 @@ void BridgeLink::apply(StudioState& s) {
         const float* x = m_.sfx[e];
         for (int i = 0; i < SFX_SLOTS; ++i) {
             s.sfx_on[i] = x[i] > 0.5f;
-            s.sfx_mix[i] = x[4 + i];
-            for (int k = 0; k < 3; ++k) s.sfx_p[i][k] = x[8 + i * 3 + k];
+            s.sfx_mix[i] = x[GF_SFX_COUNT + i];
+            for (int k = 0; k < 3; ++k) s.sfx_p[i][k] = x[2 * GF_SFX_COUNT + i * 3 + k];
         }
     }
     if (m_.grv_dirty & (1u << e)) {

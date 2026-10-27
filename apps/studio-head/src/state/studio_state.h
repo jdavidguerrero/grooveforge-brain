@@ -31,7 +31,7 @@ constexpr int OSC_STOPS = 4;      ///< osciladores u operadores que NAV puede el
 constexpr int OSC_SLOTS = 8;      ///< P1 · P2 · ENC L · ENC R y los mismos con SHIFT (theory/04 §3.1)
 constexpr int MOD_STOPS = 2;      ///< paradas de MOD de la página LFO / MOD (Prophet: POLY-MOD, WHEEL-MOD)
 constexpr int LFO_DESTS = 4;      ///< CUTOFF · PITCH · AMP · PWM
-constexpr int SFX_SLOTS = 4;      ///< cadena de FX del synth: BIT · TAPE · CHORUS · MODAL
+constexpr int SFX_SLOTS = 5;      ///< cadena de FX del synth: DRIVE · TAPE · CHORUS · DELAY · REVERB
 constexpr int GROOVE_STOPS = 5;   ///< PUMP · ARP · CHORD · UNISON · MACRO (theory/09 de Studio)
 constexpr int GROOVE_TOGGLES = 4; ///< las paradas con encendido (MACRO no tiene)
 
@@ -136,12 +136,14 @@ struct StudioState {
     float lfo_phase = 0.0f;          ///< en ciclos, 0–8 (la ventana muestra 2 u 8 ciclos)
 
     /// Cadena de FX del synth (B4, theory/05 de Studio): normalizado 0–1, conversiones en gf_params.h.
-    bool sfx_on[SFX_SLOTS] = {false, true, true, false};
-    float sfx_mix[SFX_SLOTS] = {0.5f, 0.6f, 0.5f, 0.3f};
+    bool sfx_on[SFX_SLOTS] = {false, true, true, false, false};
+    float sfx_mix[SFX_SLOTS] = {0.5f, 0.6f, 0.5f, 0.3f, 0.3f};
     /// Página GROOVE del engine activo en unidades de la UI (GF_GROOVE_SLOT) y encendidos de PUMP · ARP · CHORD · UNISON.
     float groove_val[GROOVE_STOPS][OSC_SLOTS] = {{50, 2, 0, 0, 180, 0}, {0, 2, 60, 1, 50, 0}, {0, 0, 0, 21}, {0, 15}, {0, 0, 0, 0, 100, 100, 100}};
     bool groove_on[GROOVE_TOGGLES] = {};
-    float sfx_p[SFX_SLOTS][3] = {{0.4f, 0.3f, 0.3f}, {0.25f, 0.2f, 0.2f}, {0.5f, 0.35f, 0.2f}, {0.45f, 1.0f / 3.0f, 0.5f}};
+    /// DRIVE · TAPE · CHORUS · DELAY · REVERB (theory/fase3-fx.md §2)
+    float sfx_p[SFX_SLOTS][3] = {{0.35f, 0.6f, 0.0f}, {0.25f, 0.2f, 0.2f}, {0.5f, 0.35f, 0.0f}, {0.5f, 0.4f, 0.5f},
+                                 {0.45f, 0.25f, 0.5f}};
 
     // Envolvente del amplificador (página ENV, NAV → AMP)
     float amp_attack_ms = 5.0f;

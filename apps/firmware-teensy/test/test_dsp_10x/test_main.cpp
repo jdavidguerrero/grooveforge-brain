@@ -7,6 +7,7 @@
 #include "dsp/polyblep_core.h"
 #include "dsp/pingpong_delay_core.h"
 #include "dsp/phaser_core.h"
+#include "dsp/drive_core.h"
 #include "dsp/sem_svf_core.h"
 #include "engines/dx7_core.h"
 
@@ -335,8 +336,33 @@ void test_phaser_quieto_con_depth_0_y_acotado() {
     }
 }
 
+void test_drive_tres_tipos_acotados() {
+    float in[256], out[256];
+    for (int i = 0; i < 256; ++i) in[i] = 0.9f * sinf(0.05f * i);
+    for (uint8_t t = 0; t < 3; ++t) {
+        dsp::DriveCore d;
+        d.set_type(t);
+        d.set_amount(1.0f);
+        d.set_tone(1.0f, 44100.0f);
+        d.render(in, out, 256);
+        for (float v : out) {
+            TEST_ASSERT_FALSE(isnan(v));
+            TEST_ASSERT_TRUE(fabsf(v) < 1.6f);
+        }
+    }
+    dsp::DriveCore c;                                   // CRUSH a fondo: 8 bits, pasos de 1/128
+    c.set_type(dsp::DriveCore::CRUSH);
+    c.set_amount(1.0f);
+    c.set_tone(1.0f, 44100.0f);
+    float ramp[64], o[64];
+    for (int i = 0; i < 64; ++i) ramp[i] = 0.001f * i;
+    c.render(ramp, o, 64);
+    for (float v : o) TEST_ASSERT_FLOAT_WITHIN(1e-3f, roundf(v * 128.0f) / 128.0f, v);
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_drive_tres_tipos_acotados);
     RUN_TEST(test_pingpong_alterna_l_r_con_feedback);
     RUN_TEST(test_pingpong_tone_oscuro_baja_los_agudos);
     RUN_TEST(test_phaser_quieto_con_depth_0_y_acotado);

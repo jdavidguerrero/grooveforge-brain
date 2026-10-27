@@ -243,19 +243,24 @@ static inline uint16_t gf_mod_param_id(uint8_t engine, uint8_t stop, uint8_t slo
 
 /* ── Cadena de FX del synth (variants/studio/theory/05-studio-synth-fx.md) ── */
 
-#define GF_SFX_COUNT 4U      /* orden fijo: BIT · TAPE · CHORUS · MODAL */
-#define GF_SFX_BIT    0U
+#define GF_SFX_COUNT 5U      /* orden de la cadena: DRIVE · TAPE · CHORUS · DELAY · REVERB (theory/fase3-fx.md §2) */
+#define GF_SFX_DRIVE  0U     /* antes BIT (formatos 2–4): OVERDRIVE · DIST · CRUSH */
+#define GF_SFX_BIT    GF_SFX_DRIVE
 #define GF_SFX_TAPE   1U
 #define GF_SFX_CHORUS 2U
-#define GF_SFX_MODAL  3U
+#define GF_SFX_DELAY  3U     /* nuevo en el formato 5 de preset: en el archivo va al final */
+#define GF_SFX_REVERB 4U     /* MODAL (4 materiales) o PLATE estéreo */
+#define GF_SFX_MODAL  GF_SFX_REVERB
 #define GF_SFX_PARAMS 3U     /* principal + 2 de usuario por FX */
 
 /** Cantidad de pasos de cada parámetro de la cadena: 0 = continuo, n = discreto con n valores. */
 static const uint8_t GF_SFX_STEPS[GF_SFX_COUNT][GF_SFX_PARAMS] = {
-    {16, 0, 0},   /* BITS 16–1 · SAMPLE RATE · SCULPT */
+    {0, 0, 3},    /* AMOUNT · TONE · TYPE (OVERDRIVE · DIST · CRUSH) */
     {0, 0, 0},    /* DRIVE · WOW · FLUTTER */
-    {0, 0, 0},    /* DEPTH · RATE · DRIFT */
-    {0, 4, 3}};   /* DECAY · MATERIAL · SIZE */
+    {0, 0, 2},    /* DEPTH · RATE · TYPE (CHORUS · PHASER) */
+    {5, 0, 0},    /* TIME (1/16 · 1/8 · 1/8. · 1/4 · 1/4.) · FEEDBACK · TONE */
+    {0, 5, 3}};   /* DECAY · TYPE (CAMPANA · GUADUA · CRISTAL · MADERA · PLATE) · SIZE */
+#define GF_SFX_PLATE 4U      /* TYPE de la REVERB que es la PLATE estéreo */
 
 static inline uint8_t gf_sfx_bits(float n) { return (uint8_t)(16 - gf_index_from_norm(n, 16)); }
 static inline float gf_sfx_sample_rate(float n) { return 48000.0f * powf(1000.0f / 48000.0f, gf_clamp01(n)); }

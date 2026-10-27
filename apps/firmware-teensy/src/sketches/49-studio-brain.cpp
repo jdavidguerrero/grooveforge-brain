@@ -60,7 +60,10 @@
 #include "../engines/moog_model_d.h"
 #include "../engines/ob6.h"
 #include "../engines/prophet_5.h"
-#include "../fx/bit_sculpt.h"
+#include "../audio/drive_stage.h"
+#include "../audio/phaser_stage.h"
+#include "../audio/pingpong_delay.h"
+#include "../audio/plate_reverb.h"
 #include "../fx/modal_reverb.h"
 #include "../fx/phase_chorus.h"
 #include "../fx/tape_saturate.h"
@@ -98,56 +101,106 @@ AudioConnection c_arp_r(arp.getOutput(), 0, g_engine_mix_rb, 1);
 
 // Cadena de FX del synth: los 4 viven siempre en el grafo (apagar = bypass, sin recablear en vivo)
 /// Una cadena de SYNTH FX (BIT → TAPE → CHORUS → MODAL → PUMP). Hay una por lado para no perder el estéreo del Juno.
-struct SfxChain {
+// Cadena de FX del synth (theory/fase3-fx.md §2): DRIVE → TAPE → CHORUS / PHASER → DELAY → REVERB → PUMP.
+// El DELAY ping-pong y la PLATE son estéreo y los comparten L y R. La Audio Library procesa los objetos en el orden en
+// que se construyen: frente (L, R) → delay → toma de cada canal → plate → fondo (L, R), sin bloques de latencia extra.
+struct SfxFront {
     AudioOutputStage out;                    // acople AC + saturación de salida (fidelidad §11.6)
-    BitSculpt bit;
+    AudioDriveStage drive;
     TapeSaturate tape;
     PhaseChorus chorus;
-    ModalReverb modal;
-    AudioPumpStage pump;                     // al final: bombean también las colas (theory/09 de Studio §2)
+    AudioPhaserStage phaser;                 // el TYPE PHASER del lugar CHORUS
 
-    void begin(AudioStream& in, AudioMixer4& master) {
+    void begin(AudioStream& in, AudioStream& delay, uint8_t ch) {
         new AudioConnection(in, 0, out, 0);
-        bit.begin(out);
-        tape.begin(bit.getOutputL());
+        new AudioConnection(out, 0, drive, 0);
+        tape.begin(drive);
         chorus.begin(tape.getOutputL());
-        modal.begin(chorus.getOutputL());
-        new AudioConnection(modal.getOutputL(), 0, pump, 0);
-        new AudioConnection(pump, 0, master, 1);
+        new AudioConnection(chorus.getOutputL(), 0, phaser, 0);
+        new AudioConnection(phaser, 0, delay, ch);
+        phaser.begin(ch ? 0.25f : 0.0f);     // R con el LFO desfasado 90°: el phaser se abre en estéreo
     }
-
     void apply(const studio::Patch& p) {
-        bit.setBits(gf_sfx_bits(p.sfx_p[GF_SFX_BIT][0]));
-        bit.setSampleRate(gf_sfx_sample_rate(p.sfx_p[GF_SFX_BIT][1]));
-        bit.setSculpt(p.sfx_p[GF_SFX_BIT][2]);
+        const float (&dr)[GF_SFX_PARAMS] = p.sfx_p[GF_SFX_DRIVE];
+        drive.set(gf_index_from_norm(dr[2], 3), dr[0], dr[1], p.sfx_mix[GF_SFX_DRIVE]);
+        drive.set_bypass(!p.sfx_on[GF_SFX_DRIVE]);
         tape.setDrive(gf_sfx_drive(p.sfx_p[GF_SFX_TAPE][0]));
         tape.setWow(p.sfx_p[GF_SFX_TAPE][1]);
         tape.setFlutter(p.sfx_p[GF_SFX_TAPE][2]);
-        chorus.setDepth(p.sfx_p[GF_SFX_CHORUS][0]);
-        chorus.setRate(gf_sfx_chorus_rate(p.sfx_p[GF_SFX_CHORUS][1]));
-        chorus.setDrift(p.sfx_p[GF_SFX_CHORUS][2]);
-        modal.setDecay(gf_sfx_decay(p.sfx_p[GF_SFX_MODAL][0]));
-        modal.setMaterial(ModalReverb::Material(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][1], 4)));
-        modal.setSize(ModalReverb::Size(gf_index_from_norm(p.sfx_p[GF_SFX_MODAL][2], 3)));
-        // MIX antes que bypass: setMix() reescribe las ganancias del dry/wet
-        bit.setMix(p.sfx_mix[GF_SFX_BIT]);
         tape.setMix(p.sfx_mix[GF_SFX_TAPE]);
-        chorus.setMix(p.sfx_mix[GF_SFX_CHORUS]);
-        modal.setMix(p.sfx_mix[GF_SFX_MODAL]);
-        bit.setBypass(!p.sfx_on[GF_SFX_BIT]);
         tape.setBypass(!p.sfx_on[GF_SFX_TAPE]);
-        chorus.setBypass(!p.sfx_on[GF_SFX_CHORUS]);
-        modal.setBypass(!p.sfx_on[GF_SFX_MODAL]);
+        const float (&ch)[GF_SFX_PARAMS] = p.sfx_p[GF_SFX_CHORUS];
+        const bool on = p.sfx_on[GF_SFX_CHORUS], phase = gf_index_from_norm(ch[2], 2) == 1;
+        chorus.setDepth(ch[0]);
+        chorus.setRate(gf_sfx_chorus_rate(ch[1]));
+        chorus.setDrift(0.2f);               // el DRIFT del CHORUS queda fijo (su lugar es el TYPE)
+        chorus.setMix(p.sfx_mix[GF_SFX_CHORUS]);
+        chorus.setBypass(!on || phase);
+        phaser.set(ch[0], gf_sfx_chorus_rate(ch[1]), p.sfx_mix[GF_SFX_CHORUS]);
+        phaser.set_bypass(!on || !phase);
     }
-
     void update(float dt_ms) {
         tape.update(dt_ms);
         chorus.update(dt_ms);
-        bit.update();
-        modal.update();
     }
 };
-SfxChain sfx_l, sfx_r;
+
+struct SfxBack {
+    ModalReverb modal;
+    AudioMixer4 rev_mix;                     // 0 MODAL · 1 PLATE (mojado) · 2 seco para la PLATE
+    AudioPumpStage pump;                     // al final: bombean también las colas (theory/09 de Studio §2)
+
+    void begin(AudioStream& tap, AudioStream& plate, uint8_t ch, AudioMixer4& master) {
+        modal.begin(tap);
+        new AudioConnection(modal.getOutputL(), 0, rev_mix, 0);
+        new AudioConnection(plate, ch, rev_mix, 1);
+        new AudioConnection(tap, 0, rev_mix, 2);
+        new AudioConnection(rev_mix, 0, pump, 0);
+        new AudioConnection(pump, 0, master, 1);
+    }
+    void apply(const studio::Patch& p, bool plate) {
+        const float (&rv)[GF_SFX_PARAMS] = p.sfx_p[GF_SFX_REVERB];
+        const bool on = p.sfx_on[GF_SFX_REVERB];
+        modal.setDecay(gf_sfx_decay(rv[0]));
+        if (!plate) modal.setMaterial(ModalReverb::Material(gf_index_from_norm(rv[1], 5)));
+        modal.setSize(ModalReverb::Size(gf_index_from_norm(rv[2], 3)));
+        modal.setMix(p.sfx_mix[GF_SFX_REVERB]);
+        modal.setBypass(!on || plate);
+        // MODAL: sale por el 0 (con su seco); PLATE: seco por el 2 y la plate por el 1
+        rev_mix.gain(0, plate && on ? 0.0f : 1.0f);
+        rev_mix.gain(1, plate && on ? p.sfx_mix[GF_SFX_REVERB] : 0.0f);
+        rev_mix.gain(2, plate && on ? 1.0f - 0.4f * p.sfx_mix[GF_SFX_REVERB] : 0.0f);
+    }
+    void update() { modal.update(); }
+};
+
+SfxFront sfx_front_l, sfx_front_r;
+AudioPingPongDelay sfx_delay;
+AudioMixer4 sfx_tap_l, sfx_tap_r, sfx_plate_in;   // salida del delay de cada canal · (L + R) / 2 para la plate
+DMAMEM AudioPlateReverb sfx_plate;                // ~50 KB de líneas: en RAM2 (el constructor las pone en cero)
+SfxBack sfx_back_l, sfx_back_r;
+
+void sfx_begin() {
+    sfx_front_l.begin(g_engine_bus, sfx_delay, 0);
+    sfx_front_r.begin(g_engine_bus_r, sfx_delay, 1);
+    new AudioConnection(sfx_delay, 0, sfx_tap_l, 0);
+    new AudioConnection(sfx_delay, 1, sfx_tap_r, 0);
+    new AudioConnection(sfx_tap_l, 0, sfx_plate_in, 0);
+    new AudioConnection(sfx_tap_r, 0, sfx_plate_in, 1);
+    sfx_plate_in.gain(0, 0.5f);
+    sfx_plate_in.gain(1, 0.5f);
+    new AudioConnection(sfx_plate_in, 0, sfx_plate, 0);
+    sfx_back_l.begin(sfx_tap_l, sfx_plate, 0, g_master_mix);
+    sfx_back_r.begin(sfx_tap_r, sfx_plate, 1, g_master_mix_r);
+    if (!sfx_delay.begin(1.0f)) Serial.println("[FX] sin memoria para el DELAY: queda apagado");
+    sfx_plate.set_active(false);
+}
+
+/// Tiempo del DELAY al tempo del reloj común (TIME del preset × 60 / BPM).
+float sfx_delay_seconds(const studio::Patch& p, float tempo) {
+    const uint8_t div = gf_index_from_norm(p.sfx_p[GF_SFX_DELAY][0], 5);
+    return dsp::PINGPONG_DIV_BEATS[div] * 60.0f / (tempo > 20.0f ? tempo : 120.0f);
+}
 
 // Luces del panel (theory/04 §8)
 constexpr uint8_t LED_PIN = 28;
@@ -192,6 +245,7 @@ uint32_t sustained[4] = {};              // notas soltadas con el pedal apretado
 constexpr float BEND_RANGE_ST = 2.0f;
 constexpr uint8_t MIDI_OUT_CH = 1;
 float bpm = 120.0f;                      // BPM del reloj común (MIDI · interno + TAP)
+float sfx_tempo_applied = 0.0f;          // BPM con el que se calculó el tiempo del DELAY
 float master_vol_db = 0.0f;              // volumen de salida (DAC): 0 dB = el nivel de siempre; −60 a 0
 uint32_t last_bpm_tx = 0;
 float bpm_sent = 0.0f;
@@ -531,8 +585,8 @@ void groove_tick(uint32_t now) {
     ob6.setDrift(drift);
     dx7.setDrift(drift);
     arp.setDrift(drift);   // N voces suman más fuerte: se compensa en la misma etapa del PUMP
-    sfx_l.pump.set_gain(gain);
-    sfx_r.pump.set_gain(gain);
+    sfx_back_l.pump.set_gain(gain);
+    sfx_back_r.pump.set_gain(gain);
 }
 
 void engine_dsp(uint8_t e, bool on) {
@@ -717,8 +771,21 @@ void engine_lfo(uint8_t e, const LfoMod& m) {
 
 /// Lleva al motor las dos cadenas de FX (L y R) con el patch del engine `e` (rangos de gf_params.h).
 void apply_sfx(uint8_t e) {
-    sfx_l.apply(patches[e]);
-    sfx_r.apply(patches[e]);
+    const studio::Patch& p = patches[e];
+    sfx_front_l.apply(p);
+    sfx_front_r.apply(p);
+    const float (&dl)[GF_SFX_PARAMS] = p.sfx_p[GF_SFX_DELAY];
+    sfx_delay.set(sfx_delay_seconds(p, bpm), 0.9f * dl[1], dl[2], p.sfx_mix[GF_SFX_DELAY]);
+    sfx_delay.set_bypass(!p.sfx_on[GF_SFX_DELAY]);
+    const bool plate = gf_index_from_norm(p.sfx_p[GF_SFX_REVERB][1], 5) == GF_SFX_PLATE;
+    if (plate) {
+        sfx_plate.roomsize(0.3f + 0.68f * p.sfx_p[GF_SFX_REVERB][0]);                    // DECAY
+        sfx_plate.damping(0.7f - 0.25f * gf_index_from_norm(p.sfx_p[GF_SFX_REVERB][2], 3));   // SIZE: más grande, más brillo
+    }
+    sfx_plate.set_active(plate && p.sfx_on[GF_SFX_REVERB]);   // sin elegir, no gasta CPU
+    sfx_back_l.apply(p, plate);
+    sfx_back_r.apply(p, plate);
+    sfx_tempo_applied = bpm;
 }
 
 // ── Bridge (master) ────────────────────────────────────────────────────────────────────────────
@@ -1210,7 +1277,7 @@ LfoMod engine_mod(uint8_t e, const studio::Patch& p, dsp::Lfo& l, float dt) {
     m.cutoff_mul = exp2f(amt(GF_DEST_CUTOFF) * GF_LFO_CUT_OCT * v + aftertouch);
     // En el Prophet (WHEEL-MOD) y el Model D (MODULATION) la rueda hace lo del original, no un vibrato genérico
     const float wheel_vib = (e == 2 || e == 0) ? 0.0f : 0.3f * wheel;
-    const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
+    const float wf_st = p.sfx_on[GF_SFX_TAPE] ? sfx_front_l.tape.getWowFlutterMod() * 0.5f : 0.0f;
     const float vib = fminf(1.0f, amt(GF_DEST_PITCH) + wheel_vib + 0.3f * aftertouch);
     m.pitch_ratio = exp2f((gf_lfo_pitch_st(vib) * v + wf_st + bend_st) / 12.0f);
     if (e == 0) {   // DRIFT del Model D: desafinación y cutoff elegidos en cada nota
@@ -1559,8 +1626,7 @@ void setup() {
     for (uint8_t e = 1; e < GF_ENGINE_COUNT; e++) engine_dsp(e, false);
 
     // Cadena de FX: engines → BIT → TAPE → CHORUS → MODAL → master ch1; el camino directo (ch0) queda mudo
-    sfx_l.begin(g_engine_bus, g_master_mix);
-    sfx_r.begin(g_engine_bus_r, g_master_mix_r);
+    sfx_begin();
     audio_graph::set_master_gain(0, 0.0f);   // el camino directo queda mudo: todo pasa por las cadenas
     audio_graph::set_master_gain(1, 1.0f);
     apply_sfx(0);
@@ -1819,8 +1885,14 @@ void loop() {
     {
         static uint32_t last_fx_ms = millis();
         const uint32_t now = millis();
-        sfx_l.update(float(now - last_fx_ms));
-        sfx_r.update(float(now - last_fx_ms));
+        sfx_front_l.update(float(now - last_fx_ms));
+        sfx_front_r.update(float(now - last_fx_ms));
+        sfx_back_l.update();
+        sfx_back_r.update();
+        if (fabsf(bpm - sfx_tempo_applied) > 0.05f) {     // el DELAY sigue al tempo del reloj común
+            sfx_tempo_applied = bpm;
+            sfx_delay.set_time(sfx_delay_seconds(groove_patch(), bpm));
+        }
         last_fx_ms = now;
     }
     moog.update();                          // solo el activo suena, pero todos avanzan sus envelopes

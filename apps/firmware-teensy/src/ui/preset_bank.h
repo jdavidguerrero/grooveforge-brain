@@ -20,7 +20,7 @@ constexpr uint8_t PRESET_MAX = 64;          ///< presets por engine: bancos A–
 /// Lugar del almacenamiento donde cada banco anota qué presets de fábrica ya se ofrecieron (no es un preset).
 constexpr uint8_t FACTORY_SLOT = PRESET_MAX;
 constexpr uint8_t PRESET_NAME_LEN = 16;     ///< sin el terminador
-constexpr uint8_t PRESET_FORMAT = 4;        ///< versión del formato (4: velocity por preset, theory/10, 2026-10-26)
+constexpr uint8_t PRESET_FORMAT = 5;        ///< versión del formato (5: lugar DELAY de la cadena, theory/fase3-fx §3)
 constexpr uint8_t PRESET_FORMAT_MIN = 2;    ///< el más viejo que se migra al leer (2: sin GROOVE)
 
 /// Un sonido: el patch editable + el filtro de ENC L / R.
@@ -32,18 +32,22 @@ struct Preset {
 };
 
 /// Bytes de un preset serializado (cabecera + campos en orden fijo, little-endian).
+constexpr uint8_t PRESET_SFX_V4 = 4;        ///< lugares de FX en los formatos 2–4 (BIT · TAPE · CHORUS · REVERB)
 constexpr size_t PRESET_BYTES_V2 = 4 + 1 + PRESET_NAME_LEN + 4 * (12 + GF_DEST_COUNT + GF_OSC_STOPS * GF_OSC_SLOTS +
-                                   GF_MOD_STOPS_MAX * GF_OSC_SLOTS + GF_SFX_COUNT + GF_SFX_COUNT * GF_SFX_PARAMS + 2) +
-                                   2 + GF_SFX_COUNT;
+                                   GF_MOD_STOPS_MAX * GF_OSC_SLOTS + PRESET_SFX_V4 + PRESET_SFX_V4 * GF_SFX_PARAMS + 2) +
+                                   2 + PRESET_SFX_V4;
 /// Formato 3 = el 2 + GROOVE (valores de las 5 paradas y los 4 encendidos) al final.
 constexpr size_t PRESET_BYTES_V3 = PRESET_BYTES_V2 + 4 * GF_GROOVE_STOPS * GF_OSC_SLOTS + GF_GROOVE_TOGGLES;
 /// Formato 4 = el 3 + VEL → AMP y VEL → FILTER al final.
-constexpr size_t PRESET_BYTES = PRESET_BYTES_V3 + 4 * 2;
+constexpr size_t PRESET_BYTES_V4 = PRESET_BYTES_V3 + 4 * 2;
+/// Formato 5 = el 4 + el lugar DELAY (MIX, 3 parámetros y encendido) al final.
+constexpr size_t PRESET_BYTES = PRESET_BYTES_V4 + 4 * (1 + GF_SFX_PARAMS) + 1;
 
 /// Serializa `p` del engine `engine` en `buf`. @return bytes escritos, 0 si `cap` < PRESET_BYTES.
 size_t preset_encode(const Preset& p, uint8_t engine, uint8_t* buf, size_t cap);
 
-/// Lee un preset; los de formato 2 y 3 se migran (GROOVE neutro, velocity por defecto del engine).
+/// Lee un preset; los de formato 2–4 se migran (GROOVE neutro, velocity por defecto del engine, DELAY apagado,
+/// CHORUS en TYPE CHORUS y el TYPE de la REVERB llevado de 4 a 5 pasos).
 /// @return false si la firma, la versión, el engine o el tamaño no coinciden.
 bool preset_decode(const uint8_t* buf, size_t len, uint8_t engine, Preset* out);
 

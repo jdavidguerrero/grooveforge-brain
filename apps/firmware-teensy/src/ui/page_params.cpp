@@ -225,7 +225,7 @@ constexpr uint8_t CC_AMP[4] = {73, 75, 70, 72};      // A · D · S · R (theory
 constexpr uint8_t CC_FLT[4] = {102, 103, 104, 105};
 constexpr uint8_t CC_OSC[GF_OSC_STOPS] = {20, 28, 36, 46};
 constexpr uint8_t CC_MOD[GF_MOD_STOPS_MAX] = {54, 110};
-constexpr uint8_t CC_SFX_MIX[GF_SFX_COUNT] = {95, 94, 93, 91};   // BIT · TAPE · CHORUS · MODAL
+constexpr uint8_t CC_SFX_MIX[GF_SFX_COUNT] = {95, 94, 93, 92, 91};   // BIT · TAPE · CHORUS · DELAY · REVERB
 
 /// Valor normalizado sobre un slot de plantilla (los discretos se redondean al índice más cercano).
 void set_slot_norm(float& v, const GF_OscSlot* s, float n) {
