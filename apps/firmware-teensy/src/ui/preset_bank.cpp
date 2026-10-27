@@ -433,6 +433,7 @@ bool PresetBank::seed_one(uint8_t e) {
         }
         pending_n_[e] = pending_i_[e];   // falló la escritura: se reintenta en el próximo arranque, sin anotar
         offered_dirty_[e] = false;
+        storage_.flush();                // lo que sí se escribió queda guardado
         return false;
     }
     pending_i_[e] = pending_n_[e];       // banco lleno: lo que no entró queda como ofrecido
@@ -455,6 +456,7 @@ void PresetBank::write_offered(uint8_t e) {
     }
     storage_.write(e, FACTORY_SLOT, mark, size_t(n) * PRESET_NAME_LEN);   // si falla, read_bank lo repite al arrancar
     offered_dirty_[e] = false;
+    storage_.flush();                    // el banco entero de una vez (theory/13 rev. 3)
 }
 
 bool PresetBank::load(uint8_t e, uint8_t i, Preset* out) {
@@ -472,6 +474,7 @@ PutResult PresetBank::put(uint8_t e, uint8_t i, const uint8_t* buf, size_t len) 
     if (preset_encode(p, e, out, sizeof(out)) == 0 || !storage_.write(e, i, out, PRESET_BYTES)) return PutResult::Write;
     set_name(names_[e][i], p.name);
     if (i == count_[e]) count_[e] = uint8_t(i + 1);
+    storage_.flush();
     return PutResult::Ok;
 }
 
@@ -481,6 +484,7 @@ bool PresetBank::truncate(uint8_t e, uint8_t n) {
     bool ok = true;
     for (uint8_t i = n; i < count_[e]; ++i) ok &= storage_.remove(e, i);
     if (n < count_[e]) count_[e] = n;
+    storage_.flush();
     return ok;
 }
 
@@ -492,6 +496,7 @@ int PresetBank::save_new(uint8_t e, Preset p) {
     if (preset_encode(p, e, buf, sizeof(buf)) == 0 || !storage_.write(e, i, buf, PRESET_BYTES)) return -1;
     set_name(names_[e][i], p.name);
     count_[e] = uint8_t(i + 1);
+    storage_.flush();
     return i;
 }
 

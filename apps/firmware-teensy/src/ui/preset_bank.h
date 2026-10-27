@@ -63,6 +63,8 @@ public:
     virtual bool write(uint8_t engine, uint8_t index, const uint8_t* buf, size_t len) = 0;
     /// Borra el archivo (bibliotecario, theory/11). @return false si no se pudo.
     virtual bool remove(uint8_t engine, uint8_t index) = 0;
+    /// Guarda lo pendiente (el almacenamiento por banco junta escrituras en RAM, theory/13 rev. 3).
+    virtual void flush() {}
 };
 
 /// Resultado de subir un preset por el bibliotecario (theory/11 §2).

@@ -70,6 +70,7 @@
 #include "../ui/page_params.h"
 #include "../ui/preset_bank.h"
 #include "../ui/preset_link.h"
+#include "../ui/bank_file_storage.h"
 #include "../ui/panel_leds.h"
 #include "../ui/studio_ui.h"
 
@@ -238,28 +239,21 @@ dsp::Lfo lfo_b;                          // el LFO de la capa B, con su propio p
 LittleFS_Program preset_fs;
 bool preset_fs_ok = false;
 
-class FlashPresetStorage : public studio::PresetStorage {
+/// Archivos enteros en el flash de presets; la escritura es atómica: temporal + renombrar (LittleFS reemplaza el
+/// destino en un paso), así un corte a mitad deja el banco anterior entero.
+class FlashFileBackend : public studio::FileBackend {
 public:
-    size_t read(uint8_t e, uint8_t i, uint8_t* buf, size_t cap) override {
+    size_t read_file(const char* path, uint8_t* buf, size_t cap) override {
         if (!preset_fs_ok) return 0;
-        char path[32];
-        path_of(e, i, path);
         File f = preset_fs.open(path, FILE_READ);
         if (!f) return 0;
         const size_t n = f.read(buf, cap);
         f.close();
         return n;
     }
-    bool write(uint8_t e, uint8_t i, const uint8_t* buf, size_t len) override {
+    bool write_file(const char* path, const uint8_t* buf, size_t len) override {
         if (!preset_fs_ok) return false;
-        char dir[16], path[32];
-        snprintf(dir, sizeof(dir), "/presets/%u", e);
-        preset_fs.mkdir("/presets");
-        preset_fs.mkdir(dir);
-        path_of(e, i, path);
-        // Atómica: se escribe un temporal y se renombra (LittleFS reemplaza el destino en un paso). Si se corta la
-        // corriente a mitad, queda el preset viejo entero, nunca uno a medias ni ninguno.
-        char tmp[36];
+        char tmp[24];
         snprintf(tmp, sizeof(tmp), "%s.tmp", path);
         preset_fs.remove(tmp);                    // FILE_WRITE agrega al final: el temporal arranca vacío
         File f = preset_fs.open(tmp, FILE_WRITE);
@@ -270,37 +264,49 @@ public:
         }
         const size_t n = f.write(buf, len);
         f.close();
-        if (n != len) {
-            Serial.printf("[PRESET] escritura incompleta %s: %u de %u bytes\n", tmp, unsigned(n), unsigned(len));
-            preset_fs.remove(tmp);
-            return false;
-        }
-        if (!preset_fs.rename(tmp, path)) {
-            Serial.printf("[PRESET] no se pudo renombrar %s\n", tmp);
+        if (n != len || !preset_fs.rename(tmp, path)) {
+            Serial.printf("[PRESET] no se pudo guardar %s (%u de %u bytes)\n", path, unsigned(n), unsigned(len));
             preset_fs.remove(tmp);
             return false;
         }
         return true;
     }
-
-    bool remove(uint8_t e, uint8_t i) override {
-        if (!preset_fs_ok) return false;
-        char path[32];
-        path_of(e, i, path);
-        return preset_fs.remove(path) || !preset_fs.exists(path);
-    }
-
-private:
-    static void path_of(uint8_t e, uint8_t i, char* out) { snprintf(out, 32, "/presets/%u/%02u.gfp", e, i); }
 };
 
-FlashPresetStorage preset_store;
+/// Un archivo por engine con sus 64 lugares (theory/13 rev. 3): con bloques de 64 KB, un archivo por preset llenaba
+/// el área con ~23 presets.
+FlashFileBackend preset_files;
+DMAMEM uint8_t preset_bank_buf[studio::BankFileStorage::FILE_BYTES];   // ~34 KB en RAM2
+
+studio::BankFileStorage preset_store(preset_files, preset_bank_buf);
 
 /// Área de presets de 2 MB (theory/13). Sin migración: el área de 512 KB anterior resultó corrupta (sus metadatos
 /// apuntaban fuera del flash y leerla colgó la Teensy, 2026-10-27); los presets de fábrica se regeneran solos.
 constexpr uint32_t PRESET_FS_BYTES = 2u * 1024u * 1024u;
 
-bool preset_fs_mount() { return preset_fs.begin(PRESET_FS_BYTES); }
+/// Monta el área y borra los archivos del formato anterior (un archivo por preset en /presets/<engine>/), que
+/// ocupaban un bloque de 64 KB cada uno; los presets de fábrica se regeneran en el formato nuevo.
+bool preset_fs_mount() {
+    if (!preset_fs.begin(PRESET_FS_BYTES)) return false;
+    if (!preset_fs.exists("/presets")) return true;
+    unsigned n = 0;
+    for (uint8_t e = 0; e <= 9; ++e)
+        for (uint8_t i = 0; i <= 64; ++i) {
+            char path[32];
+            snprintf(path, sizeof(path), "/presets/%u/%02u.gfp", e, i);
+            if (preset_fs.remove(path)) ++n;
+            snprintf(path, sizeof(path), "/presets/%u/%02u.gfp.tmp", e, i);
+            preset_fs.remove(path);
+        }
+    for (uint8_t e = 0; e <= 9; ++e) {
+        char dir[16];
+        snprintf(dir, sizeof(dir), "/presets/%u", e);
+        preset_fs.rmdir(dir);
+    }
+    preset_fs.rmdir("/presets");
+    Serial.printf("[PRESET] formato anterior borrado (%u archivos): se regeneran los de fábrica\n", n);
+    return true;
+}
 studio::PresetBank presets(preset_store);
 uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -1585,6 +1591,7 @@ void librarian_command(char* line) {
             break;
         case studio::LinkCmd::Format:   // borra el área de presets y vuelve a escribir los de fábrica (pide "YES")
             if (preset_fs_ok && preset_fs.quickFormat()) {
+                preset_store.reset();               // el banco en RAM ya no existe en el flash
                 all_notes_off();
                 for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
                     presets.read_bank(e);           // vacío: los de fábrica se escriben desde el loop

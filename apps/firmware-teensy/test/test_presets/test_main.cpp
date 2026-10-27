@@ -6,6 +6,7 @@
 #include "ui/preset_bank.h"
 #include "ui/preset_link.h"
 #include "ui/layers.h"
+#include "ui/bank_file_storage.h"
 
 using namespace studio;
 
@@ -446,6 +447,69 @@ void test_put_y_trunc_del_banco() {
     TEST_ASSERT_EQUAL_STRING("MI STAB", again.name(2, 1));
 }
 
+// ── Un archivo por engine (theory/13 rev. 3) ──────────────────────────────────
+
+namespace {
+class FakeFiles : public FileBackend {
+public:
+    size_t read_file(const char* path, uint8_t* buf, size_t cap) override {
+        for (int k = 0; k < n; ++k)
+            if (!strcmp(name[k], path)) {
+                const size_t l = len[k] < cap ? len[k] : cap;
+                memcpy(buf, data[k], l);
+                return l;
+            }
+        return 0;
+    }
+    bool write_file(const char* path, const uint8_t* buf, size_t l) override {
+        ++writes;
+        int k = 0;
+        while (k < n && strcmp(name[k], path)) ++k;
+        if (k == n) { strcpy(name[n], path); ++n; }
+        memcpy(data[k], buf, l);
+        len[k] = l;
+        return true;
+    }
+    char name[8][16] = {};
+    uint8_t data[8][BankFileStorage::FILE_BYTES] = {};
+    size_t len[8] = {};
+    int n = 0, writes = 0;
+};
+uint8_t g_bank_buf[BankFileStorage::FILE_BYTES];
+}  // namespace
+
+void test_un_archivo_por_engine() {
+    TEST_ASSERT_TRUE(BankFileStorage::FILE_BYTES < 65536);     // entra en un bloque de 64 KB de la Teensy 4.1
+    FakeFiles files;
+    BankFileStorage st(files, g_bank_buf);
+    PresetBank bank(st);
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) bank.scan(e);
+    TEST_ASSERT_EQUAL_INT(GF_ENGINE_COUNT, files.n);            // 6 archivos para todos los presets de fábrica
+    TEST_ASSERT_EQUAL_INT(GF_ENGINE_COUNT, files.writes);       // una escritura por banco, no una por preset
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) TEST_ASSERT_EQUAL_UINT8(factory_count(e), bank.count(e));
+    TEST_ASSERT_EQUAL_STRING("/bank3.gfb", files.name[3]);
+
+    BankFileStorage st2(files, g_bank_buf);                     // otro arranque: lee lo guardado
+    PresetBank again(st2);
+    for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) {
+        again.read_bank(e);
+        TEST_ASSERT_EQUAL_UINT8(factory_count(e), again.count(e));
+        TEST_ASSERT_FALSE(again.seeding(e));
+    }
+    Preset p;
+    TEST_ASSERT_TRUE(again.load(4, 0, &p));
+    TEST_ASSERT_EQUAL_STRING("E.PIANO", p.name);
+    patch_init(p.patch, 2);
+    const int w = files.writes;
+    TEST_ASSERT_TRUE(again.save_new(2, p) >= 0);                // guardar = una escritura del banco de ese engine
+    TEST_ASSERT_EQUAL_INT(w + 1, files.writes);
+    TEST_ASSERT_TRUE(again.truncate(2, 3));
+    BankFileStorage st3(files, g_bank_buf);
+    PresetBank third(st3);
+    third.read_bank(2);
+    TEST_ASSERT_EQUAL_UINT8(3, third.count(2));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_roundtrip_completo);
@@ -464,6 +528,7 @@ int main() {
     RUN_TEST(test_capas_apuntan_a_sus_mitades);
     RUN_TEST(test_morph_igual_potencia_y_cc18);
     RUN_TEST(test_banco_de_64_y_anotacion_en_64);
+    RUN_TEST(test_un_archivo_por_engine);
     RUN_TEST(test_tamanos_iguales_al_script_de_la_mac);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);

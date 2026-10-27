@@ -29,6 +29,14 @@ del flash: leerla en la migración colgó la Teensy con un bus fault en `0x608B0
 quedaba en 2 presets). Se quitó la migración: el área de 2 MB arranca limpia y se regeneran los de fábrica. Para
 dejarla limpia de una vez: `@GF FORMAT YES` (`gf_presets.py format --si`), que borra todo y regenera los de fábrica.
 
+**Rev. 3 (2026-10-27): la causa raíz.** En la Teensy 4.1 `LittleFS_Program` usa **bloques de 64 KB**
+(`SECTOR_SIZE 65536`) y cada archivo ocupa al menos uno: con un archivo por preset, cada uno gastaba 64 KB. El área de
+512 KB (8 bloques) admitía ~2 presets y terminó corrupta al quedarse sin bloques; la de 2 MB (32 bloques) se llenaba con
+~23. Ahora hay **un archivo por engine** (`/bank<e>.gfb`, ~34 KB con los 65 lugares, entra en un bloque;
+`ui/bank_file_storage.h`): el banco se carga en RAM, las escrituras lo cambian ahí y se guarda **una vez por banco**
+(un borrado de bloque en lugar de uno por preset, que además frenaba el USB y el audio). Al arrancar se borran los
+archivos del formato anterior (`/presets/`) y se regeneran los de fábrica.
+
 **Bancos A–D:** 64 presets por engine, guardados en orden (`00.gfp` … `63.gfp`, la anotación de fábrica pasa a `64`).
 Un banco son 16 lugares seguidos: A = 1–16, B = 17–32, C = 33–48, D = 49–64.
 
