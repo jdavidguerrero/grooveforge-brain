@@ -1390,10 +1390,10 @@ void leds_update() {
     last_sig = sig;
     last_show = now;
 
-    // teal SYNTH · púrpura FX · azul HYBRID SYNTH (theory/12 §3d). Azul y no ámbar: R+G+B 288 contra 437, menos
+    // teal SYNTH · púrpura FX · cyan HYBRID SYNTH (theory/12 §3d). Cyan y no ámbar: R+G+B 290 contra 437, menos
     // corriente por LED; por el aislador USB el destello de NAV en ámbar hundía la alimentación (2026-10-27)
     const CRGB base = u.mode == studio::MODE_FX       ? CRGB(0x53, 0x4A, 0xB7)
-                      : u.mode == studio::MODE_HYBRID ? CRGB(0x10, 0x48, 0xC8)
+                      : u.mode == studio::MODE_HYBRID ? CRGB(0x10, 0x7A, 0xA8)
                                                       : CRGB(0x1D, 0x9E, 0x75);
     const studio::RingArc arc = studio::ring_arc(pos, count);
     fill_solid(ring, studio::RING_LEDS, CRGB::Black);

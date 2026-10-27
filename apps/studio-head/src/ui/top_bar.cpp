@@ -89,7 +89,6 @@ void TopBar::update(const StudioState& s) {
         set_bg(_mode, mc.mc);
         lv_obj_set_width(_mode, hyb ? 128 : 72);
         lv_label_set_text(_mode_txt, hyb ? "HYBRID SYNTH" : s.mode == Mode::Fx ? "FX" : "SYNTH");
-        set_text_color(_mode_txt, hyb ? WHITE : BG);
         lv_obj_center(_mode_txt);
         lv_obj_set_style_border_color(_bar, lv_color_hex(mc.dim), 0);
         for (int i = 0; i < 2; ++i) set_bg(_dots[i], i == _page_index ? mc.hi : mc.dim);

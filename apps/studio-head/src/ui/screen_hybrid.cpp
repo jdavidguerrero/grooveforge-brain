@@ -77,7 +77,7 @@ void ScreenHybrid::draw(const Painter& p, const StudioState& s) const {
         const bool c = i == cur, loaded = i == h.layer;
         if (c) p.fill(x, 10, w, 24, HYB);
         else draw_box(p, x, 10, w, 24, loaded ? HYB : LINE, loaded ? HYB_DIM : SURFACE, 1);
-        text_top(p, x + 10, 16, chip_name(i), c ? WHITE : loaded ? WHITE : i == n ? HYB_HI : GRAY, T12B);
+        text_top(p, x + 10, 16, chip_name(i), c ? BG : loaded ? WHITE : i == n ? HYB_HI : GRAY, T12B);
         x += w + 4;
     }
 
