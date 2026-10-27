@@ -1554,6 +1554,9 @@ void setup() {
     ob6.begin();
     dx7.begin();
     arp.begin();
+    // Los 6 engines encendidos a la vez llevan el audio al 99 % de CPU y el setup no avanza (2026-10-27, tras la
+    // fase 2): se apagan ya los que no suenan; en uso nunca hay más de dos (capa híbrida)
+    for (uint8_t e = 1; e < GF_ENGINE_COUNT; e++) engine_dsp(e, false);
 
     // Cadena de FX: engines → BIT → TAPE → CHORUS → MODAL → master ch1; el camino directo (ch0) queda mudo
     sfx_l.begin(g_engine_bus, g_master_mix);
