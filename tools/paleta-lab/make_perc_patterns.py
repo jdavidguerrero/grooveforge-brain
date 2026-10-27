@@ -3,10 +3,11 @@
 
 Escribe en $GF_DATASET (por defecto ~/GROOVEFORGE/GrooveForge_Dataset_v1):
   kits/<kit>.json                     qué toca cada rol en cada kit (Tribe Colombian, djembes/dununs, Brasil, 808)
-  midi/perc/<patron>.mid              patrón en el mapa común, con microtiming
-  midi/perc/<patron>_q.mid            el mismo, cuantizado (para comparar)
-  midi/perc/<patron>.json             ficha (§5)
-  midi/perc/tribe_colombia/<patron>.mid   convertido al teclado de Tribe Colombian Percussion
+  midi/perc/<genero>/top/<patron>_<version>_<rack>.mid    top loop (sacudidos, campanas, aros, agudos)
+  midi/perc/<genero>/perc/<patron>_<version>_<rack>.mid   loop de percusión (graves, medios, caja, efectos)
+  midi/perc/<genero>/<patron>.json                        ficha (§5)
+  versiones: intro · main · peak · main_q (cuantizada); rack: djembe · brazilian · 808 · tribe (ya convertido)
+  midi/perc/raices/…                                      los ritmos tradicionales, igual, de referencia
 
     python3 tools/paleta-lab/make_perc_patterns.py
     python3 tools/paleta-lab/make_perc_patterns.py --bpm 122
@@ -137,7 +138,7 @@ VEL = {"X": 112, "x": 88, "o": 70, "g": 52}
 #   intro: solo esos roles · fill: rol → compás 4 (remate) · peak: rol → línea que se suma (más densidad)
 GENRES = {
     "afro_house": {
-        "djembe_sang_top": dict(kit="GF Djembe Dunun", origen="propio (Juan)", swing=56,
+        "djembe_sang": dict(kit="GF Djembe Dunun", origen="propio (Juan)", swing=56,
                                 micro={"agudo_slap": -5, "sacudido_corto": 2}, roles={
             "medio_abierto":  ["X.....o...X....."],
             "campana_grave":  ["X.o..X.o..X.o.X."],
@@ -146,7 +147,7 @@ GENRES = {
             "sacudido_corto": [".oX..oX..oX..oX."]},
             intro=["campana_grave", "sacudido_corto"], fill={"agudo_slap": "......X....XxxXX"},
             peak={"grave_abierto": "......x...x....."}),
-        "afro_house_top": dict(kit="GF Djembe Dunun", origen="propio", swing=56,
+        "afro_house_groove": dict(kit="GF Djembe Dunun", origen="propio", swing=56,
                                micro={"agudo_slap": -5, "medio_abierto": 3}, roles={
             "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
             "medio_abierto":  ["..x.....x.x.....", "..x.....x.x..x.."],
@@ -166,7 +167,7 @@ GENRES = {
             peak={"agudo_abierto": "..o...o...o...o."}),
     },
     "organic_house": {
-        "cumbia_afro_top": dict(kit="tribe_colombia", origen="propio (Juan)", swing=55,
+        "cumbia_afro": dict(kit="tribe_colombia", origen="propio (Juan)", swing=55,
                                 micro={"agudo_abierto": 5, "medio_abierto": -4}, roles={
             "campana_aguda":  ["o...o...o...o..."],            # Llamador Bajoneo
             "agudo_abierto":  ["..X...X...X...X."],            # Llamador Abierto
@@ -210,7 +211,7 @@ GENRES = {
             peak={"campana_grave": "......x.......x."}),
     },
     "disco_house": {
-        "house_top_conga": dict(kit="GF 808 Perc", origen="propio", swing=56,
+        "house_conga": dict(kit="GF 808 Perc", origen="propio", swing=56,
                                 micro={"agudo_abierto": 4, "pandereta": -2}, roles={
             "sacudido_corto": ["gxXxgxXxgxXxgxXx", "gxXxgxXxgxXxgxXx"],
             "agudo_abierto":  ["......x..x....x.", "..x...x..x..x..."],
@@ -219,7 +220,7 @@ GENRES = {
             "pandereta":      ["..x...x...x...x.", "..x...x...x...x."]},
             intro=["sacudido_corto", "pandereta"], fill={"agudo_abierto": "..x...x..x.xxxXX"},
             peak={"campana_grave": "..x.......x....."}),
-        "samba_house_top": dict(kit="GF Brasil", origen="propio (Juan)", swing=54,
+        "samba_house": dict(kit="GF Brasil", origen="propio (Juan)", swing=54,
                                 micro={"agudo_slap": -3, "sacudido_corto": 2}, roles={
             "grave_apagado":  ["....X.......X..o"],            # Surdo abafado
             "agudo_slap":     ["...X..X..X....X."],            # Tamborim
@@ -255,6 +256,17 @@ GENRES = {
     },
 }
 VERSIONS = ("intro", "main", "peak")
+
+# Top loop vs loop de percusión (percusion-groove.md §7 rev. 3): el top va arriba de ~300 Hz (brillo, encima de todo);
+# el perc lleva los tambores medios y graves, la zona del kick y del bajo (otra mezcla: HPF ~90 Hz, sidechain, afinar)
+TOP = {"agudo_abierto", "agudo_slap", "aro_madera", "sacudido_corto", "sacudido_largo", "raspado", "campana_grave",
+       "campana_aguda", "pandereta"}
+PERC = {"grave_abierto", "grave_apagado", "medio_abierto", "medio_apagado", "caja", "efecto"}
+# Rack de cada kit, para el nombre del archivo
+RACK_TAG = {"GF Djembe Dunun": "djembe", "GF Brasil": "brazilian", "GF 808 Perc": "808", "tribe_colombia": "tribe"}
+RAICES_KIT = {"cumbia_base": "tribe_colombia", "puya_vallenata": "tribe_colombia", "bullerengue": "tribe_colombia",
+              "mapale": "tribe_colombia", "kuku_afro": "GF Djembe Dunun", "samba_reggae": "GF Brasil",
+              "maracatu": "GF Brasil", "baiao": "GF Brasil"}
 
 
 def arrange(p: dict, version: str) -> dict:
@@ -354,41 +366,50 @@ def main(argv=None):
                 base[key] = old.get(key, base[key])
         path.write_text(json.dumps(base, indent=2, ensure_ascii=False) + "\n")
 
+    def write_split(folder: Path, stem: str, notes: list, kit: str, title: str) -> list[str]:
+        """Un MIDI para top/ y otro para perc/ (si hay golpes); el rack en el nombre; Tribe ya convertido."""
+        tag, files = RACK_TAG[kit], []
+        for part, roles in (("top", TOP), ("perc", PERC)):
+            sel = [nt for nt in notes if nt[2] in roles]
+            if not sel:
+                continue
+            if kit == "tribe_colombia":
+                out, _ = to_tribe(sel, octave)
+            else:
+                out = [(t, d, ROLES[r], v) for t, d, r, v in sel]
+            fname = f"{stem}_{tag}.mid"
+            write_mid(folder / part / fname, out, a.bpm, f"{title} {part} {tag}")
+            files.append(f"{part}/{fname}")
+        return files
+
     n = 0
     for i, (name, p) in enumerate(PATTERNS.items()):          # raíces: 2 compases, como referencia
-        micro = notes_of(p, a.bpm, True, seed=i + 1)
-        write_mid(perc / "raices" / f"{name}.mid", [(t, d, ROLES[r], v) for t, d, r, v in micro], a.bpm, name)
-        write_mid(perc / "raices" / f"{name}_q.mid",
-                  [(t, d, ROLES[r], v) for t, d, r, v in notes_of(p, a.bpm, False, seed=i + 1)], a.bpm, name + " q")
-        tribe, missing = to_tribe(micro, octave)
-        write_mid(perc / "tribe_colombia" / "raices" / f"{name}.mid", tribe, a.bpm, name + " tribe")
+        kit = RAICES_KIT[name]
+        files = write_split(perc / "raices", name, notes_of(p, a.bpm, True, seed=i + 1), kit, name)
+        files += write_split(perc / "raices", f"{name}_q", notes_of(p, a.bpm, False, seed=i + 1), kit, name + " q")
         ficha(perc / "raices" / f"{name}.json",
-              {"patron": name, "estilo": p["estilo"], "bpm": a.bpm, "compases": 2, "roles": list(p["roles"]),
-               "swing": f"{p['swing']} %", "microtiming_ms": p["micro"], "densidad": p["densidad"],
-               "origen": p["origen"], "version_cuantizada": f"{name}_q.mid", "kits_probados": [], "notas": ""})
+              {"patron": name, "estilo": p["estilo"], "bpm": a.bpm, "compases": 2, "rack": RACK_TAG[kit],
+               "roles": list(p["roles"]), "archivos": files, "swing": f"{p['swing']} %",
+               "microtiming_ms": p["micro"], "densidad": p["densidad"], "origen": p["origen"],
+               "kits_probados": [], "notas": ""})
         n += 1
     for genre, pats in GENRES.items():                        # top loops por género: 4 compases × 3 versiones
         for j, (name, p) in enumerate(pats.items()):
             seed = 100 + 10 * n + j
+            files = []
             for v in VERSIONS:
-                arr = arrange(p, v)
-                micro = notes_of(arr, a.bpm, True, seed=seed)
-                write_mid(perc / genre / f"{name}_{v}.mid", [(t, d, ROLES[r], vel) for t, d, r, vel in micro], a.bpm,
-                          f"{name} {v}")
-                if p["kit"] == "tribe_colombia":
-                    tribe, _ = to_tribe(micro, octave)
-                    write_mid(perc / "tribe_colombia" / genre / f"{name}_{v}.mid", tribe, a.bpm, f"{name} {v} tribe")
-            q = notes_of(arrange(p, "main"), a.bpm, False, seed=seed)
-            write_mid(perc / genre / f"{name}_main_q.mid", [(t, d, ROLES[r], vel) for t, d, r, vel in q], a.bpm,
-                      f"{name} main q")
+                files += write_split(perc / genre, f"{name}_{v}", notes_of(arrange(p, v), a.bpm, True, seed=seed),
+                                     p["kit"], f"{name} {v}")
+            files += write_split(perc / genre, f"{name}_main_q", notes_of(arrange(p, "main"), a.bpm, False, seed=seed),
+                                 p["kit"], f"{name} main q")
             ficha(perc / genre / f"{name}.json",
                   {"patron": name, "genero": genre, "bpm": a.bpm, "compases": 4, "versiones": list(VERSIONS),
-                   "kit_sugerido": p["kit"], "roles": list(p["roles"]), "intro": p["intro"],
-                   "remate_compas_4": list(p["fill"]), "peak_suma": list(p["peak"]), "swing": f"{p['swing']} %",
-                   "microtiming_ms": p["micro"], "origen": p["origen"], "version_cuantizada": f"{name}_main_q.mid",
+                   "rack": RACK_TAG[p["kit"]], "kit": p["kit"], "archivos": files, "roles": list(p["roles"]),
+                   "intro": p["intro"], "remate_compas_4": list(p["fill"]), "peak_suma": list(p["peak"]),
+                   "swing": f"{p['swing']} %", "microtiming_ms": p["micro"], "origen": p["origen"],
                    "kits_probados": [], "notas": ""})
             n += 1
-            print(f"{genre:20} {name:22} kit: {p['kit']}")
+            print(f"{genre:20} {name:22} rack: {RACK_TAG[p['kit']]}")
     print(f"{n} patrones en {perc}")
 
 

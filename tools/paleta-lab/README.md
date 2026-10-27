@@ -31,7 +31,7 @@ Las fichas van en `~/GROOVEFORGE/GrooveForge_Dataset_v1/metadata/sesiones/` (o `
 python3 tools/paleta-lab/make_perc_patterns.py            # 124 BPM
 ```
 
-Escribe los kits (`kits/*.json`: Tribe Colombian, djembes/dununs, Brasil, 808) y 12 patrones de 2 compases en
-`midi/perc/` sobre el GF Perc Map (C1 = 36), cada uno con su versión cuantizada `_q`, su ficha `.json` y la versión
-para Tribe en `midi/perc/tribe_colombia/`. Volver a correrlo conserva lo que anotaste en `kits_probados` y `notas`.
+Escribe los kits (`kits/*.json`) y los patrones en `midi/perc/<genero>/top/` y `.../perc/` (y `raices/`), con el rack
+en el nombre: `<patron>_<intro|main|peak|main_q>_<djembe|brazilian|808|tribe>.mid`. Volver a correrlo conserva lo que
+anotaste en `kits_probados` y `notas`. Los Drum Racks GF salen de `make_gf_racks.py`.
 Diseño: `apps/docs/produccion/percusion-groove.md` §7.

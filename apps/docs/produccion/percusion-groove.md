@@ -130,8 +130,8 @@ partida para hacerlos tuyos (§6), no transcripciones.
 | `samba_reggae` | tradicional (Bahía) | surdo de dos golpes, timbal, caixa |
 | `maracatu` | tradicional (Pernambuco) | alfaia, agogô en dos alturas y caixa redoblando |
 | `baiao` | tradicional (Nordeste) | zabumba con bacalhau y triángulo |
-| `afro_house_top` | propio | shaker con swing, djembe pregunta y respuesta, dunun en los contratiempos, campana |
-| `house_top_conga` | propio | shaker 16 con swing 56 %, congas, rim y pandereta: el top loop clásico de house |
+| `afro_house_groove` | propio | shaker con swing, djembe pregunta y respuesta, dunun en los contratiempos, campana |
+| `house_conga` | propio | shaker 16 con swing 56 %, congas, rim y pandereta: el top loop clásico de house |
 | `organic_shaker_wood` | propio | sacudidos, raspado y aro de madera, sin graves: para encima de cualquier groove |
 | `tribal_toms` | propio | toms medios y agudos con remate al final del compás 2: indie tech |
 
@@ -142,16 +142,16 @@ Los ritmos de arriba quedan en `midi/perc/raices/` como **referencia**. Los top 
 
 - **4 compases** en tres versiones: `intro` (solo sacudidos / campanas), `main` (con remate en el compás 4) y `peak`
   (main + una capa más de densidad). `main_q` = la main cuantizada.
-- Los graves evitan las semicorcheas 1, 5, 9 y 13 (el kick de Kick 3). Excepción a propósito: `samba_house_top`
+- Los graves evitan las semicorcheas 1, 5, 9 y 13 (el kick de Kick 3). Excepción a propósito: `samba_house`
   (de Juan), con el surdo en 2 y 4 reforzando el kick.
 - Cada patrón trae su **kit sugerido**.
 
 | Género | Patrones |
 |---|---|
-| afro house | `djembe_sang_top` (Juan), `afro_house_top`, `afro_dunun_roll` |
-| organic house | `cumbia_afro_top` (Juan, Tribe), `organic_shaker_wood`, `organic_soft_conga` |
+| afro house | `djembe_sang` (Juan), `afro_house_groove`, `afro_dunun_roll` |
+| organic house | `cumbia_afro` (Juan, Tribe), `organic_shaker_wood`, `organic_soft_conga` |
 | melodic / progressive | `prog_rolling16`, `prog_offbeat_rim` |
-| disco / house | `house_top_conga`, `samba_house_top` (Juan), `disco_tamb_cowbell` |
+| disco / house | `house_conga`, `samba_house` (Juan), `disco_tamb_cowbell` |
 | indie tech | `tribal_toms`, `indie_metal_rim` |
 
 **Drum Racks GF** (`tools/paleta-lab/make_gf_racks.py`): toma los racks de Juan (*Djembe Assembly*, *Brazilian
@@ -161,3 +161,17 @@ estaban), **GF Brasil** (los 48 one-shots) y **GF 808 Perc**. Los racks de Juan 
 
 Herramientas: `tools/paleta-lab/make_perc_patterns.py` (patrones, fichas y versiones para Tribe en
 `midi/perc/tribe_colombia/`) y `make_gf_racks.py`.
+
+### Rev. 3: top loop y loop de percusión por separado, el rack en el nombre (2026-10-27)
+
+En cada género (y en `raices/`) los patrones salen en dos carpetas, para mezclarlos aparte:
+
+- **`top/`**: sacudidos, campanas, aros, agudos (slap, quemao, kenke, tamborim, conga aguda), raspado y pandereta. Vive
+  arriba de ~300 Hz: filtro pasaaltos alto, bajo de nivel, ancho.
+- **`perc/`**: graves y medios (dundunba, sangban, tambora, bombo, surdo, atabaque, congas bajas, toms), caja y efectos.
+  Es la zona del kick y del bajo: pasaaltos ~80–100 Hz para dejarle el sub al bajo, sidechain al kick, afinar a la
+  tonalidad. La dundunba y el bombo van acá, no en el top.
+
+Nombre: `<patron>_<version>_<rack>.mid`, con `<version>` = `intro` · `main` · `peak` · `main_q` y `<rack>` =
+`djembe` (GF Djembe Dunun) · `brazilian` (GF Brasil) · `808` (GF 808 Perc) · `tribe` (Tribe Colombian Percussion, ya
+convertido a su teclado). Así top y perc de patrones distintos se combinan libremente.

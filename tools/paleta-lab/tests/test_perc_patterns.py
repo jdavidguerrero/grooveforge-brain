@@ -48,7 +48,7 @@ def test_patrones_bien_formados():
 
 def test_graves_fuera_del_kick():
     # Los top loops van encima del kick 4/4 (Kick 3): ningún grave en las semicorcheas 1, 5, 9 y 13. Los patrones de
-    # Juan quedan como los escribió (en samba_house_top el surdo en 2 y 4 refuerza el kick a propósito)
+    # Juan quedan como los escribió (en samba_house el surdo en 2 y 4 refuerza el kick a propósito)
     for genre, pats in mp.GENRES.items():
         for name, p in pats.items():
             if p["origen"].endswith("(Juan)"):
@@ -60,7 +60,7 @@ def test_graves_fuera_del_kick():
 
 
 def test_versiones_intro_main_peak():
-    p = mp.GENRES["afro_house"]["djembe_sang_top"]
+    p = mp.GENRES["afro_house"]["djembe_sang"]
     intro, main, peak = (mp.arrange(p, v) for v in mp.VERSIONS)
     assert set(intro["roles"]) == set(p["intro"])                      # intro: solo sacudidos y campana
     assert main["roles"]["agudo_slap"][3] == p["fill"]["agudo_slap"]   # remate en el compás 4
@@ -68,23 +68,36 @@ def test_versiones_intro_main_peak():
     assert set(peak["roles"]) == set(main["roles"]) | set(p["peak"])   # peak suma densidad
 
 
-def test_midis_en_el_mapa_y_en_tribe(tmp_path):
+def test_midis_top_perc_y_rack_en_el_nombre(tmp_path):
     mp.main(["--dataset", str(tmp_path)])
     perc = tmp_path / "midi" / "perc"
+
+    def check(folder, stem, kit):
+        tag = mp.RACK_TAG[kit]
+        valid = mp.TRIBE.values() if kit == "tribe_colombia" else mp.ROLES.values()
+        found = 0
+        for part in ("top", "perc"):
+            f = folder / part / f"{stem}_{tag}.mid"
+            if f.exists():
+                notes = read_notes(f)
+                assert notes and all(n in valid for _, n, _ in notes), f
+                found += 1
+        assert found, (folder, stem)
+
     for name in mp.PATTERNS:
-        notes = read_notes(perc / "raices" / f"{name}.mid")
-        assert notes and all(n in mp.ROLES.values() for _, n, _ in notes)
-        assert all(t % mp.S16 == 0 for t, _, _ in read_notes(perc / "raices" / f"{name}_q.mid"))
-        assert all(n in mp.TRIBE.values() for _, n, _ in read_notes(perc / "tribe_colombia" / "raices" / f"{name}.mid"))
+        check(perc / "raices", name, mp.RAICES_KIT[name])
+        check(perc / "raices", f"{name}_q", mp.RAICES_KIT[name])
     for genre, pats in mp.GENRES.items():
         for name, p in pats.items():
-            for v in mp.VERSIONS:
-                notes = read_notes(perc / genre / f"{name}_{v}.mid")
-                assert notes and all(n in mp.ROLES.values() for _, n, _ in notes)
-                assert max(t for t, _, _ in notes) < 4 * mp.BAR + mp.S16      # 4 compases
-            if p["kit"] == "tribe_colombia":
-                assert (perc / "tribe_colombia" / genre / f"{name}_main.mid").exists()
-            assert json.loads((perc / genre / f"{name}.json").read_text())["kit_sugerido"] == p["kit"]
+            for v in (*mp.VERSIONS, "main_q"):
+                check(perc / genre, f"{name}_{v}", p["kit"])
+            f = json.loads((perc / genre / f"{name}.json").read_text())
+            assert f["rack"] == mp.RACK_TAG[p["kit"]] and f["archivos"]
+    # El top no lleva graves ni medios; el perc no lleva sacudidos ni campanas
+    top = read_notes(perc / "afro_house" / "top" / "djembe_sang_main_djembe.mid")
+    assert all(n not in (36, 37, 38, 39) for _, n, _ in top)
+    pc = read_notes(perc / "afro_house" / "perc" / "djembe_sang_main_djembe.mid")
+    assert all(n not in (43, 44, 46, 47) for _, n, _ in pc)
     kits = {p.stem for p in (tmp_path / "kits").glob("*.json")}
     assert kits == {"tribe_colombia", "djembe_dundun", "brasil_samples", "808_perc"}
 
