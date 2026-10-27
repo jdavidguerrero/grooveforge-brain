@@ -53,6 +53,11 @@ public:
     void noteOff();
 
     void setWaveform(uint8_t osc_idx, uint16_t waveform);
+    /// Forma del panel (theory/fase2-engines.md §2): 0 SAW · 1 TRI · 2 SQR · 3 PULSE (PW) · 4 SHARK (VCO 3: saw
+    /// inversa) · 5 NARROW (pulso del 10 %).
+    void setWave(uint8_t osc_idx, uint8_t index);
+    /// Interruptor DECAY del original: el RELEASE de las dos envolventes toma su DECAY.
+    void setDecaySwitch(bool on);
     void setDetune(float cents);
     void setVco3Interval(float semitones);
     void setVco3Detune(float cents);
@@ -102,9 +107,10 @@ private:
     float  _appliedPitchRatio = 1.0f;
 
     // ── Audio objects ─────────────────────────────────────────────────────────
+    // VCO 3 antes que VCO 1-2: les entrega su bloque para la FM de audio (orden de update, fase2-engines §2)
+    AudioSynthPolyBlep       _osc3;
     AudioSynthPolyBlep       _osc1;
     AudioSynthPolyBlep       _osc2;
-    AudioSynthPolyBlep       _osc3;
     AudioSynthColorNoise     _noise;
     AudioMixer4              _mixer;
     MoogLadder4P             _filter;
@@ -147,6 +153,10 @@ private:
     uint32_t _modRng = 0x5EED1234u;
     float    _drive = 1.35f, _overdrive = 0.0f;
     uint16_t _v3Wave = WAVEFORM_SAWTOOTH;
+    bool     _narrow[3] = {};                ///< forma NARROW: pulso fijo del 10 % en ese VCO
+    float    _fmOct = 0.0f;                  ///< FM de audio VCO 3 → VCO 1-2 aplicada
+    bool     _decaySw = false;
+    float    _vcaDecay = 300.0f, _vcaRelease = 300.0f, _fltDecay = 300.0f, _fltRelease = 300.0f;
 
     // ── Estado general ────────────────────────────────────────────────────────
     bool     _noteActive   = false;

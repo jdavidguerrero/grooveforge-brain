@@ -213,8 +213,36 @@ void test_xmod_pwm_en_rango_y_sin_nan() {
     }
 }
 
+// ── Fase 2, Model D: SHARK y saw inversa (theory/fase2-engines.md §2) ──
+
+void test_model_d_shark_y_rev_saw() {
+    const uint16_t W[2] = {dsp::WAVE_SHARK, dsp::WAVE_REV_SAW};
+    for (uint16_t wf : W) {
+        dsp::PolyBlepCore c;
+        c.reset(7);
+        c.set_drift(0.0f);
+        float out[128];
+        double sum = 0.0;
+        int n = 0;
+        for (int b = 0; b < 40; ++b) {                       // 0.01 → 51.2 ciclos enteros en 40 bloques ≈ sin resto
+            c.render(wf, 0.0125f, 0.5f, 1.0f, out, 128);
+            for (float v : out) {
+                TEST_ASSERT_FALSE(isnan(v));
+                TEST_ASSERT_TRUE(fabsf(v) <= 1.2f);
+                sum += v;
+                ++n;
+            }
+        }
+        TEST_ASSERT_FLOAT_WITHIN(0.02f, 0.0f, float(sum / n));   // sin DC
+    }
+    // SHARK sube hasta ½ en la mitad del ciclo (½ saw + ½ triángulo)
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 0.5f, dsp::PolyBlepCore::naive(dsp::WAVE_SHARK, 0.5f, 0.5f, 0.0f));
+    TEST_ASSERT_FLOAT_WITHIN(1e-5f, 1.0f, dsp::PolyBlepCore::naive(dsp::WAVE_REV_SAW, 0.0f, 0.5f, 0.0f));
+}
+
 int main() {
     UNITY_BEGIN();
+    RUN_TEST(test_model_d_shark_y_rev_saw);
     RUN_TEST(test_fast_exp2_precision);
     RUN_TEST(test_xmod_fm_de_audio_dobla_la_frecuencia);
     RUN_TEST(test_xmod_pwm_en_rango_y_sin_nan);

@@ -135,6 +135,22 @@ void MoogModelD::setWaveform(uint8_t osc_idx, uint16_t waveform) {
     }
 }
 
+void MoogModelD::setWave(uint8_t osc_idx, uint8_t index) {
+    if (osc_idx > 2) return;
+    static const uint16_t W[6] = {WAVEFORM_SAWTOOTH, WAVEFORM_TRIANGLE, WAVEFORM_SQUARE, WAVEFORM_PULSE,
+                                  AudioSynthPolyBlep::WAVEFORM_SHARK, WAVEFORM_PULSE};
+    uint16_t wf = W[index < 6 ? index : 0];
+    if (osc_idx == 2 && index == 4) wf = AudioSynthPolyBlep::WAVEFORM_REV_SAW;   // el VCO 3 tiene saw inversa
+    _narrow[osc_idx] = index == 5;
+    setWaveform(osc_idx, wf);
+}
+
+void MoogModelD::setDecaySwitch(bool on) {
+    _decaySw = on;
+    _vcaEnv.release(on ? _vcaDecay : _vcaRelease);
+    _filterEnv.setRelease(on ? _fltDecay : _fltRelease);
+}
+
 void MoogModelD::setDetune(float cents) {
     _detuneCents = cents;
     _updateOscFreqs();
@@ -210,14 +226,28 @@ void MoogModelD::setVco3Control(bool keyboard, bool lo) {
 }
 
 void MoogModelD::setFilterAttack(float ms)     { _filterEnv.setAttack(ms); }
-void MoogModelD::setFilterDecay(float ms)      { _filterEnv.setDecay(ms); }
+void MoogModelD::setFilterDecay(float ms) {
+    _fltDecay = ms;
+    _filterEnv.setDecay(ms);
+    if (_decaySw) _filterEnv.setRelease(ms);
+}
 void MoogModelD::setFilterSustain(float level) { _filterEnv.setSustain(level); }
-void MoogModelD::setFilterRelease(float ms)    { _filterEnv.setRelease(ms); }
+void MoogModelD::setFilterRelease(float ms) {
+    _fltRelease = ms;
+    if (!_decaySw) _filterEnv.setRelease(ms);
+}
 
 void MoogModelD::setVCAAttack(float ms)     { _vcaEnv.attack(ms); }
-void MoogModelD::setVCADecay(float ms)      { _vcaEnv.decay(ms); }
+void MoogModelD::setVCADecay(float ms) {
+    _vcaDecay = ms;
+    _vcaEnv.decay(ms);
+    if (_decaySw) _vcaEnv.release(ms);
+}
 void MoogModelD::setVCASustain(float level) { _vcaEnv.sustain(level); }
-void MoogModelD::setVCARelease(float ms)    { _vcaEnv.release(ms); }
+void MoogModelD::setVCARelease(float ms) {
+    _vcaRelease = ms;
+    if (!_decaySw) _vcaEnv.release(ms);
+}
 
 void MoogModelD::setGlide(float ms) {
     _glideMs = ms;
@@ -260,14 +290,23 @@ void MoogModelD::update() {
         _v3Phase -= floorf(_v3Phase);
         float v3 = 1.0f - 4.0f * fabsf(_v3Phase - 0.5f);        // TRI
         if (_v3Wave == WAVEFORM_SAWTOOTH) v3 = 2.0f * _v3Phase - 1.0f;
-        else if (_v3Wave == WAVEFORM_SQUARE || _v3Wave == WAVEFORM_PULSE) v3 = _v3Phase < _pulseWidth ? 1.0f : -1.0f;
+        else if (_v3Wave == AudioSynthPolyBlep::WAVEFORM_REV_SAW) v3 = 1.0f - 2.0f * _v3Phase;
+        else if (_v3Wave == WAVEFORM_SQUARE || _v3Wave == WAVEFORM_PULSE)
+            v3 = _v3Phase < (_narrow[2] ? 0.10f : _pulseWidth) ? 1.0f : -1.0f;
         _modRng ^= _modRng << 13;
         _modRng ^= _modRng >> 17;
         _modRng ^= _modRng << 5;
         _noiseSmooth += 0.3f * (float(int32_t(_modRng)) * (1.0f / 2147483648.0f) - _noiseSmooth);
         modSrc = _wheel * (v3 + _modMix * (2.0f * _noiseSmooth - v3));
     }
-    const float oscModRatio = _oscMod ? exp2f(modSrc) : 1.0f;    // ±12 st con la rueda a fondo
+    // OSC MOD: la parte del VCO 3 va a tasa de audio (FM por muestra en VCO 1-2, fase2-engines §2); el ruido, acá
+    const float fm_oct = (_oscMod && _wheel > 0.0f) ? _wheel * (1.0f - _modMix) : 0.0f;
+    if (fm_oct != _fmOct) {
+        _fmOct = fm_oct;
+        _osc1.xmodFrom(&_osc3, fm_oct, 0.0f);
+        _osc2.xmodFrom(&_osc3, fm_oct, 0.0f);
+    }
+    const float oscModRatio = (_oscMod && _wheel > 0.0f) ? exp2f(_wheel * _modMix * 2.0f * _noiseSmooth) : 1.0f;
     if (oscModRatio != _oscModRatio) {
         _oscModRatio = oscModRatio;
         _updateOscFreqs();
@@ -279,9 +318,9 @@ void MoogModelD::update() {
         _updateOscFreqs();
     }
     const float pw = _pulseWidth + 0.40f * _lfo.pwm;
-    _osc1.pulseWidth(pw);
-    _osc2.pulseWidth(pw);
-    _osc3.pulseWidth(pw);
+    _osc1.pulseWidth(_narrow[0] ? 0.10f : pw);
+    _osc2.pulseWidth(_narrow[1] ? 0.10f : pw);
+    _osc3.pulseWidth(_narrow[2] ? 0.10f : pw);
 
     // 4. Aplicar cutoff + modulación del envelope + sensibilidad a velocidad
     float modulated = (_filterCutoff + _filterEnvAmt * _velBrightness * envLevel * 8000.0f) * _lfo.cutoff_mul;

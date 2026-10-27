@@ -15,6 +15,8 @@ public:
     static constexpr uint16_t WAVEFORM_SAW_PULSE = dsp::WAVE_SAW_AND_PULSE;
     /// Forma continua saw → pulse (OB-6): la mezcla la fija setShape().
     static constexpr uint16_t WAVEFORM_SHAPE = dsp::WAVE_SHAPE_MORPH;
+    static constexpr uint16_t WAVEFORM_SHARK = dsp::WAVE_SHARK;
+    static constexpr uint16_t WAVEFORM_REV_SAW = dsp::WAVE_REV_SAW;
 
     AudioSynthPolyBlep() : AudioStream(0, nullptr) {
         static uint32_t s_seed = 0x2468ACE1u;

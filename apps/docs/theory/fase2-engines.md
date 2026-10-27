@@ -56,3 +56,44 @@ FILTER ENV); la forma triangular del VCO 2 (no está en el panel del Brain y cam
 | `fast_exp2` contra `exp2f` en −3…3 | test native |
 | Sync: XMOD LEAD suena en la misma altura y el barrido de X-MOD → FREQ 1 se oye como sync | en el hardware |
 | CPU del OB-6 con 6 voces y X-MOD | `[stats]` en el hardware |
+
+## 2. Model D: las 6 formas, FM de audio del VCO 3 y DECAY
+
+### Qué faltaba
+
+- El Minimoog tiene **6 formas** por VCO: triángulo, *shark tooth* (tri-saw), diente de sierra, cuadrada, pulso ancho y
+  pulso angosto; en el VCO 3 la segunda posición es **diente de sierra inverso** (útil como LFO de rampa hacia abajo).
+  El Brain tenía 4 (SAW · TRI · SQR · PULSE con el PW global).
+- La rueda de MODULATION seguía al VCO 3 a tasa de control: exacto como LFO, pero sin la **FM de audio** de
+  VCO 3 → VCO 1-2 que da los bajos metálicos y los leads "growl" del Model D.
+- Los contornos del original son **ADS con interruptor DECAY**: encendido, al soltar la tecla la envolvente cae con el
+  tiempo de DECAY; apagado, se corta.
+
+### Diseño
+
+**Formas, sin romper los presets:** los índices 0–3 siguen siendo SAW · TRI · SQR · PULSE (PW global). Se agregan
+**4 = SHARK** (en el VCO 3: saw inversa) y **5 = NARROW** (pulso fijo del 10 %, como el pulso angosto del original).
+
+- *Shark tooth* = ½ (saw + triángulo): sube en dos pendientes y cae de golpe a la mitad del salto de un saw. El salto
+  lleva PolyBLEP (½ del del saw); el quiebre del triángulo es solo de pendiente.
+- *Saw inversa* = −saw, con el BLEP con el signo invertido.
+
+**FM de audio del VCO 3:** el VCO 3 se construye antes que los VCO 1-2 y les entrega su último bloque, como el VCO 2
+del OB-6 (§1). La parte VCO 3 de la mezcla de MODULATION va a la FM exponencial por muestra
+(`fm_oct = rueda · (1 − NOISE MIX)`, ±1 octava a fondo, la misma escala que ya tenía); la parte de ruido sigue a tasa de
+control (es ruido filtrado lento). El destino FILTER MOD sigue a tasa de control.
+
+**DECAY:** la parada MODULATION tenía un lugar libre: **DECAY** (toggle). Encendido, el RELEASE de las dos envolventes
+toma el valor de su DECAY (el comportamiento del original). Apagado, las envolventes siguen siendo ADSR como hasta
+ahora: no se cambia el sonido de los presets guardados.
+
+**Qué no cubre:** FILTER MOD a tasa de audio (el ladder recibe el cutoff por bloque).
+
+### Cómo se prueba
+
+| Qué | Cómo |
+|---|---|
+| SHARK y REV SAW acotadas, sin DC y sin NaN | test native (`polyblep_core`) |
+| Las formas 0–3 de los presets guardados no cambian | los índices del panel quedan iguales (test de la plantilla) |
+| FM de audio: OSC MOD con la rueda y el VCO 3 en audio da bandas laterales (growl), con LO sigue siendo vibrato | en el hardware |
+| DECAY encendido: al soltar, la nota cae con el tiempo de DECAY | en el hardware |

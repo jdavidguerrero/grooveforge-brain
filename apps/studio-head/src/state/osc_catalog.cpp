@@ -75,6 +75,7 @@ const OscSlot MD_V3KBD  = {"VCO3 KBD", "", SlotKind::Toggle, 0, 1, 0, false, fal
 const OscSlot MD_V3LO   = {"VCO3 LO", "", SlotKind::Toggle, 0, 1, 0, false, false};
 const OscSlot MD_ODRIVE = {"OVERDRIVE", "%", SlotKind::Number, 0, 100, 0, false, false};
 const OscSlot MD_FKBD   = {"FILTER KBD", "", SlotKind::Choice, 0, 3, 0, false, false, L_FKBD4};
+const OscSlot MD_DECAY  = {"DECAY", "", SlotKind::Toggle, 0, 1, 0, false, false};   // RELEASE = DECAY (fase2 §2)
 const OscSlot JU_DELAY  = {"LFO DELAY", "MS", SlotKind::Number, 0, 3000, 0, false, false};
 const OscSlot JU_RANGE  = {"RANGE", "", SlotKind::Choice, 0, 2, 0, false, true, L_RANGE};
 const OscSlot JU_VCA    = {"VCA", "", SlotKind::Choice, 0, 1, 0, false, true, L_VCA};
@@ -94,7 +95,7 @@ const ModStop OB6_MOD[1] = {
     {"X-MOD", {&PM_ENV, &XM_VCO2, &D_FREQ1, &D_FMODE, &D_PW1, &SYNC_D, nullptr, nullptr}},
 };
 const ModStop MOOG_MOD[1] = {
-    {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, nullptr, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
+    {"MODULATION", {&MD_MIX, &MD_OSC, &MD_FLT, &MD_DECAY, &MD_V3KBD, &MD_V3LO, &MD_ODRIVE, &MD_FKBD}},
 };
 const ModStop JUNO_MOD[1] = {
     {"LFO", {&JU_DELAY, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
@@ -161,7 +162,7 @@ const OscEngine ENGINES[6] = {
       {&WAVE, &DETUNE, &LEVEL, nullptr, &PW_G, nullptr, nullptr, nullptr},
       {&WAVE, &INTERVAL, &LEVEL, nullptr, &PW_G, &FINE, nullptr, nullptr},
       {&LEVEL, &MD_NOISE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr}},
-     {Wave::Saw, Wave::Tri, Wave::Sqr, Wave::Pulse}, 4, false},
+     {Wave::Saw, Wave::Tri, Wave::Sqr, Wave::Pulse, Wave::Shark, Wave::Narrow}, 6, false},   // SHARK en VCO 3 = saw inversa
     // JUNO-106: 1 DCO (SAW/SQR/PULSE/SAW+PLS) + SUB + NOISE + PW | SHIFT: CHORUS (OFF/I/II/I+II) · HPF (0..3).
     {1, 3, {{"DCO", true}, {"SUB", false}, {"NOISE", false}},
      {{&WAVE, &SUB, &NOISE, &PW, &CHORUS_M, &HPF_M, &JU_RANGE, &JU_VCA}},
@@ -210,7 +211,7 @@ const ModStop& mod_stop(uint8_t engine_id, int stop) {
 }
 
 const char* wave_name(Wave w) {
-    static const char* const N[] = {"SAW", "TRI", "SQR", "PULSE", "SINE", "S&H", "NOISE", "SAW+PLS"};
+    static const char* const N[] = {"SAW", "TRI", "SQR", "PULSE", "SINE", "S&H", "NOISE", "SAW+PLS", "SHARK", "NARROW"};
     return N[int(w)];
 }
 

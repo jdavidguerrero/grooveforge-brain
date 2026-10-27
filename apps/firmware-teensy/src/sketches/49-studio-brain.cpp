@@ -600,7 +600,6 @@ void engine_patch(uint8_t e) {
 /// Página OSC del patch → setters del engine (plantilla GF_OSC_SLOT; niveles en % de la UI → 0–1).
 void engine_osc(uint8_t e) {
     const studio::Patch mp = studio::macro_patch(patches[e], e);   // con GRIT (POLY-MOD, X-MOD, FM)
-    static const uint16_t W4[4] = {WAVEFORM_SAWTOOTH, WAVEFORM_TRIANGLE, WAVEFORM_SQUARE, WAVEFORM_PULSE};
     static const uint16_t W_JUNO[4] = {WAVEFORM_SAWTOOTH, WAVEFORM_SQUARE, WAVEFORM_PULSE, AudioSynthPolyBlep::WAVEFORM_SAW_PULSE};
     static const uint16_t W_ARP[5] = {WAVEFORM_SAWTOOTH, WAVEFORM_TRIANGLE, WAVEFORM_SQUARE, WAVEFORM_PULSE,
                                       WAVEFORM_SINE};
@@ -608,7 +607,7 @@ void engine_osc(uint8_t e) {
     auto w = [&](const uint16_t* t, uint8_t n, float v) { return t[constrain(int(v), 0, n - 1)]; };
     switch (e) {
         case 0:
-            for (uint8_t i = 0; i < 3; i++) moog.setWaveform(i, w(W4, 4, o[i][0]));
+            for (uint8_t i = 0; i < 3; i++) moog.setWave(i, uint8_t(constrain(int(o[i][0]), 0, 5)));   // 6 formas
             moog.setDetune(o[1][1]);
             moog.setVco3Interval(o[2][1]);
             moog.setOscLevels(o[0][2] / 100.0f, o[1][2] / 100.0f, o[2][2] / 100.0f, o[3][0] / 100.0f);   // NOISE: 4.ª parada
@@ -618,6 +617,7 @@ void engine_osc(uint8_t e) {
             {   // MODULATION: MOD MIX · OSC MOD · FILTER MOD · NOISE | VCO3 KBD · VCO3 LO · OVERDRIVE · FILTER KBD
                 const float (&md)[GF_OSC_SLOTS] = mp.mod[0];
                 moog.setModulation(md[0] / 100.0f, md[1] > 0.5f, md[2] > 0.5f);
+                moog.setDecaySwitch(md[3] > 0.5f);
                 moog.setVco3Control(md[4] > 0.5f, md[5] > 0.5f);
                 moog.setOverdrive(md[6] / 100.0f);
                 moog.setFilterKeyboard(uint8_t(lroundf(md[7])));

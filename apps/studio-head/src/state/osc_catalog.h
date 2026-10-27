@@ -6,7 +6,7 @@
 #include "state/studio_state.h"
 
 /// Formas de onda que conoce la UI (íconos y trazas de la página OSC / LFO).
-enum class Wave : uint8_t { Saw, Tri, Sqr, Pulse, Sine, SampleHold, Noise, SawPulse };
+enum class Wave : uint8_t { Saw, Tri, Sqr, Pulse, Sine, SampleHold, Noise, SawPulse, Shark, Narrow };
 
 const char* wave_name(Wave w);
 
@@ -48,7 +48,7 @@ struct OscEngine {
     uint8_t sources;
     OscSource src[5];
     const OscSlot* slot[OSC_STOPS][OSC_SLOTS];
-    Wave waves[5];
+    Wave waves[6];
     uint8_t wave_count;
     bool fm;            ///< DX7: página de operadores (ADR-005)
 };

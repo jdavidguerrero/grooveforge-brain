@@ -25,6 +25,8 @@ constexpr uint16_t WAVE_PULSE         = 5;
 constexpr uint16_t WAVE_TRI_VARIABLE  = 8;
 constexpr uint16_t WAVE_SAW_AND_PULSE = 100;  ///< DCO Juno-106 con SAW y PULSE encendidos a la vez
 constexpr uint16_t WAVE_SHAPE_MORPH   = 101;  ///< (1 − m)·saw + m·pulse, m = shape (OB-6)
+constexpr uint16_t WAVE_SHARK         = 102;  ///< shark tooth del Minimoog: ½ (saw + triángulo) (fase2-engines §2)
+constexpr uint16_t WAVE_REV_SAW       = 103;  ///< diente de sierra inverso (VCO 3 del Minimoog)
 
 /// Vueltas de un oscilador maestro dentro de un bloque: muestra y fracción de muestra pasada desde la vuelta.
 struct SyncEvents {
@@ -162,6 +164,12 @@ public:
                 case WAVE_TRI_VARIABLE:
                     s = 1.0f - 4.0f * fabsf(_phase - 0.5f);
                     break;
+                case WAVE_SHARK:
+                    s = 0.5f * (2.0f * _phase - 1.0f - poly_blep(_phase, dt)) + 0.5f * (1.0f - 4.0f * fabsf(_phase - 0.5f));
+                    break;
+                case WAVE_REV_SAW:
+                    s = 1.0f - 2.0f * _phase + poly_blep(_phase, dt);
+                    break;
                 case WAVE_SINE:
                 default:
                     s = fast_sine01(_phase);
@@ -185,6 +193,8 @@ public:
             }
             case WAVE_TRIANGLE:
             case WAVE_TRI_VARIABLE: return 1.0f - 4.0f * fabsf(ph - 0.5f);
+            case WAVE_SHARK: return 0.5f * (2.0f * ph - 1.0f) + 0.5f * (1.0f - 4.0f * fabsf(ph - 0.5f));
+            case WAVE_REV_SAW: return 1.0f - 2.0f * ph;
             default: return fast_sine01(ph);
         }
     }

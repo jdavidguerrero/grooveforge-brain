@@ -46,9 +46,10 @@ float osc_sample(const StudioState& s, float p, float pw) {
     const float tri = 1.0f - 4.0f * std::fabs(ph - 0.5f);
     const float (&o)[OSC_STOPS][OSC_SLOTS] = s.osc_val[s.engine % 6];
     switch (s.engine) {
-        case 0: {   // MODEL D: SAW · TRI · SQR · PULSE
+        case 0: {   // MODEL D: SAW · TRI · SQR · PULSE · SHARK · NARROW
             const int w = int(std::lround(o[0][0]));
-            return w == 1 ? tri : w == 2 ? sqr : w == 3 ? pulse : saw;
+            const float narrow = ph < 0.10f ? 1.0f : -1.0f;
+            return w == 1 ? tri : w == 2 ? sqr : w == 3 ? pulse : w == 4 ? 0.5f * (saw + tri) : w == 5 ? narrow : saw;
         }
         case 1: {   // JUNO-106: SAW · SQR · PULSE · SAW+PULSE, más el SUB una octava abajo
             const int w = int(std::lround(o[0][0]));
