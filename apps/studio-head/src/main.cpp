@@ -38,13 +38,13 @@ constexpr uint32_t BOOT_MS = BootSplash::DURATION_MS;
 
 void usage() {
     std::printf("studio-head [--touch <evdev>] [--uart <tty>] [--snapshot <archivo.ppm> [--snapshot-ms N]\n"
-                "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|sfx|panel|groove|hybrid|boot] [--shift]\n"
+                "            [--page perform|ai|spectrum|env|fx|engine|presets|error|osc|lfo|sfx|panel|groove|hybrid|layers|boot] [--shift]\n"
                 "            [--engine 0-5] [--fx-view wave|spectrum|signature] [--fx-slot 1-12] [--hold] [--bypass]\n"
                 "            [--overlay vol|in|toast|banner|clip]]\n");
 }
 
 Page parse_page(const char* p) {
-    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo", "sfx", "panel", "groove", "hybrid"};
+    static const char* const NAMES[] = {"perform", "ai", "spectrum", "env", "fx", "engine", "presets", "error", "osc", "lfo", "sfx", "panel", "groove", "hybrid", "layers"};
     for (int i = 0; i < int(Page::Count); ++i)
         if (!std::strcmp(p, NAMES[i])) return Page(i);
     return Page::Perform;
@@ -148,6 +148,7 @@ int main(int argc, char** argv) {
     state.shift = start_shift;
     if (start_cursor >= 0) state.ui_cursor = uint8_t(start_cursor);
     if (start_page == Page::Fx) state.mode = Mode::Fx;
+    if (start_page == Page::Hybrid || start_page == Page::LayerPresets) state.mode = Mode::Hybrid;
     if (start_page == Page::Error) state.link = LinkState::Lost;
     state.fx_hold = start_hold;
     if (fx_view >= 0) state.fx_view = FxView(fx_view);

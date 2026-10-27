@@ -35,7 +35,7 @@ private:
     void build_clip(lv_obj_t* top);
     void paint_volume(const StudioState& s);
     void paint_input(const StudioState& s, uint32_t now);
-    void paint_banner(bool fx);
+    void paint_banner(Mode m);
     static void show(lv_obj_t* o, bool on);
 
     lv_obj_t *_vol = nullptr, *_vol_val = nullptr;

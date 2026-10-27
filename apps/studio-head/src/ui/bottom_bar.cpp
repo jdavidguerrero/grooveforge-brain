@@ -151,24 +151,25 @@ void BottomBar::build_param(Param& p, lv_obj_t* c, int n) {
     p.last_fw = -1;
 }
 
-void BottomBar::set_mode(bool fx, bool shift) {
-    const int m = (fx ? 1 : 0) | (shift ? 2 : 0);
+void BottomBar::set_mode(bool fx, bool shift, bool hybrid) {
+    const int m = (fx ? 1 : 0) | (shift ? 2 : 0) | (hybrid ? 4 : 0);
     if (m == _last_mode) return;
     _last_mode = m;
     _fx = fx;
+    _hyb = hybrid && !fx;
     _shift = !fx && shift;
     if (!fx) _hold = false;
-    const ModeColors mc = mode_colors(fx);
+    const ModeColors mc = _hyb ? mode_colors_hybrid() : mode_colors(fx);
 
     lv_obj_set_style_border_color(_bar, lv_color_hex(mc.dim), 0);
     paint_encs();
     for (Key& k : _keys) set_bg(k.bar, BG);
     _last_active = -2;
 
-    // MODE muestra el modo al que se pasa.
-    set_bg(_mode_pill, fx ? TEAL : PURPLE);
-    set_text_color(_mode_next, fx ? BG : WHITE);
-    lv_label_set_text(_mode_next, fx ? "SYNTH" : "FX");
+    // MODE muestra el modo al que se pasa: SYNTH → FX → HYBRID SYNTH → SYNTH (theory/12 §3d).
+    set_bg(_mode_pill, fx ? HYB : _hyb ? TEAL : PURPLE);
+    set_text_color(_mode_next, fx || _hyb ? BG : WHITE);
+    lv_label_set_text(_mode_next, fx ? "HYBRID" : _hyb ? "SYNTH" : "FX");
 
     lv_label_set_text(_b6_lbl, fx ? "HOLD" : "SHIFT");
     paint_b6();
@@ -176,7 +177,7 @@ void BottomBar::set_mode(bool fx, bool shift) {
 }
 
 void BottomBar::paint_encs() {
-    const ModeColors mc = mode_colors(_fx);
+    const ModeColors mc = (_hyb ? mode_colors_hybrid() : mode_colors(_fx));
     for (Enc& e : _enc) {
         set_text_color(e.tag, mc.mc);
         set_text_color(e.val, _dim ? MON : WHITE);
@@ -188,7 +189,7 @@ void BottomBar::paint_encs() {
 // B6: HOLD en FX (HERO_WHITE mientras se aprieta), SHIFT en SYNTH.
 void BottomBar::paint_b6() {
     const bool on = _fx ? _hold : _shift;
-    set_bg(_b6_cell, on ? (_fx ? WHITE : mode_colors(_fx).hi) : BG);
+    set_bg(_b6_cell, on ? (_fx ? WHITE : (_hyb ? mode_colors_hybrid() : mode_colors(_fx)).hi) : BG);
     set_text_color(_b6_lbl, on ? BG : GRAY);
     set_text_color(_b6_state, on ? BG : MON);
     lv_label_set_text(_b6_state, on ? (_fx ? "HELD" : "ON") : "OFF");
@@ -215,7 +216,7 @@ void BottomBar::set_dim(bool dim) {
 }
 
 void BottomBar::paint_params() {
-    const ModeColors mc = mode_colors(_fx);
+    const ModeColors mc = (_hyb ? mode_colors_hybrid() : mode_colors(_fx));
     for (int i = 0; i < 2; ++i) {
         Param& p = _p[i];
         p.last[0] = '\0';  // fuerza a set_param a reescribir el texto
@@ -283,7 +284,7 @@ void BottomBar::set_keys(const char* const labels[4], int active) {
     }
     if (active == _last_active) return;
     _last_active = active;
-    const ModeColors mc = mode_colors(_fx);
+    const ModeColors mc = (_hyb ? mode_colors_hybrid() : mode_colors(_fx));
     for (int i = 0; i < 4; ++i) {
         const bool on = i == active;
         set_bg(_keys[i].cell, on ? mc.dim : BG);

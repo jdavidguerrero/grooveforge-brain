@@ -13,6 +13,8 @@
  */
 class ScreenPresets : public Screen {
 public:
+    /// @param layers true = presets de capa de HYBRID SYNTH (theory/12 §3d): bancos A y B, SAVE guarda la capa.
+    explicit ScreenPresets(bool layers = false) : _layers(layers) {}
     lv_obj_t* create() override;
     void update(const StudioState& s) override;
 
@@ -27,6 +29,12 @@ public:
 
 private:
     static constexpr int VISIBLE = ROWS_VISIBLE;
+    int count(const StudioState& s) const { return _layers ? s.layer_count : s.preset_count; }
+    const char* name(const StudioState& s, int i) const { return _layers ? s.layer_names[i] : s.preset_names[i]; }
+    int loaded(const StudioState& s) const {
+        return _layers ? (s.hybrid.layer >= 0 && s.hybrid.layer < s.layer_count ? s.hybrid.layer : -1) : s.preset_loaded;
+    }
+    bool _layers = false;
     struct Row { lv_obj_t *box, *slot, *name, *loaded; };
 
     lv_obj_t* _scr = nullptr;

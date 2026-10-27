@@ -15,7 +15,7 @@ class BottomBar {
 public:
     void create(lv_obj_t* parent);
 
-    void set_mode(bool fx, bool shift);
+    void set_mode(bool fx, bool shift, bool hybrid = false);
     void set_enc(bool right, const char* lbl, const char* val, const char* unit, float frac);
     /// ENC L / R en SYNTH: CUTOFF (escala log 20 Hz–20 kHz) y RES.
     void set_filter_encs(float cutoff_hz, float resonance);
@@ -53,7 +53,7 @@ private:
     lv_obj_t *_nav_val = nullptr;
     lv_obj_t *_b6_cell = nullptr, *_b6_lbl = nullptr, *_b6_state = nullptr;
 
-    bool _fx = false, _shift = false, _hold = false, _p_off = false, _dim = false;
+    bool _fx = false, _hyb = false, _shift = false, _hold = false, _p_off = false, _dim = false;
     int _last_mode = -1, _last_active = -2;
     char _last_keys[64] = {};
     char _last_nav[24] = {};

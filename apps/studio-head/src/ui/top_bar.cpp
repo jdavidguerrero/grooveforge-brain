@@ -35,7 +35,7 @@ void TopBar::create(lv_obj_t* parent, const char* page, int page_index) {
     lv_obj_set_style_pad_column(_bar, 16, 0);
 
     _mode = rect(_bar, 0, 0, 72, 24, TEAL);
-    input_attach_tap(_mode, Ctl::Mode);  // atajo táctil: tocar SYNTH / FX = B5 MODE
+    input_attach_tap(_mode, Ctl::Mode);  // atajo táctil: tocar el modo = B5 MODE
     _mode_txt = label(_mode, T12B, BG, "SYNTH");
     lv_obj_set_style_text_letter_space(_mode_txt, 2, 0);
     lv_obj_center(_mode_txt);
@@ -84,9 +84,11 @@ void TopBar::update(const StudioState& s) {
     const int mode = int(s.mode);
     if (mode != _last_mode) {
         _last_mode = mode;
-        const ModeColors mc = mode_colors(s.mode == Mode::Fx);
+        const bool hyb = s.mode == Mode::Hybrid;
+        const ModeColors mc = hyb ? mode_colors_hybrid() : mode_colors(s.mode == Mode::Fx);
         set_bg(_mode, mc.mc);
-        lv_label_set_text(_mode_txt, s.mode == Mode::Fx ? "FX" : "SYNTH");
+        lv_obj_set_width(_mode, hyb ? 128 : 72);
+        lv_label_set_text(_mode_txt, hyb ? "HYBRID SYNTH" : s.mode == Mode::Fx ? "FX" : "SYNTH");
         lv_obj_center(_mode_txt);
         lv_obj_set_style_border_color(_bar, lv_color_hex(mc.dim), 0);
         for (int i = 0; i < 2; ++i) set_bg(_dots[i], i == _page_index ? mc.hi : mc.dim);

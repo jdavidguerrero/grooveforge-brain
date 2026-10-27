@@ -331,7 +331,7 @@ void ScreenOsc::update(const StudioState& s) {
         _top.set_page(t);
     }
 
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_SYNTH, 0);
     _bottom.set_nav(e.fm ? "OP" : e.stops > 1 ? "OSC" : "NONE");
 

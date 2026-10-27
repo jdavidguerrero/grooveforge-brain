@@ -235,7 +235,7 @@ void ScreenLfo::update_mod(const StudioState& s) {
         _cells.set(k, true, sl->name, val, sl->unit);
         _bottom.set_page_control(k, sl->name, val, sl->unit, osc_frac(e, *sl, v[slot]));
     }
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_SYNTH, 2);
     _bottom.set_nav("STOP");
     char key[160];
@@ -292,7 +292,7 @@ void ScreenLfo::update(const StudioState& s) {
         }
     }
 
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_SYNTH, 2);
     _bottom.set_nav(nmod ? "STOP · SYNC" : "PUSH SYNC");
     auto bottom_amt = [&](int k, uint8_t d) {

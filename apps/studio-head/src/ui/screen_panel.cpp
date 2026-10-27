@@ -140,7 +140,7 @@ void ScreenPanel::update(const StudioState& s) {
     const int sel = s.ui_remote ? int(s.ui_cursor) : -1;
     for (int i = 0; i < CARDS; ++i) lv_obj_set_style_outline_width(_cards[i].box, i == sel ? 2 : 0, 0);
 
-    _bottom.set_mode(s.mode == Mode::Fx, s.shift);
+    _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, -1);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);

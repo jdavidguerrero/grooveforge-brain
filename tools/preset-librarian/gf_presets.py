@@ -8,6 +8,8 @@ vuelta. Correr con el Python de PlatformIO, que ya trae pyserial:
     ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import <archivo.json> …
     ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py bank juno_106 <archivo.json> …
     ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py list
+    ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layers            # presets de capa (HYBRID SYNTH)
+    ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import <capa.json> …
 
 La librería va en $GF_LIBRARY o, si no está definida, en ~/GROOVEFORGE/GrooveForge_Dataset_v1/patches (el dataset de la
 paleta, apps/docs/produccion/protocolo-captura.md §4).
@@ -30,6 +32,12 @@ NAME_LEN = 16
 FORMAT = 4
 # Tamaño del binario por formato: tiene que coincidir con PRESET_BYTES_V2 / _V3 / PRESET_BYTES de preset_bank.h
 SIZE = {2: 355, 3: 519, 4: 527}
+# Presets de capa de HYBRID SYNTH (theory/12 §3d): LAYER_BYTES de layer_bank.h
+LAYER_MAGIC = b"GFL"
+LAYER_FORMAT = 1
+LAYER_NAME_LEN = 12
+LAYER_SIZE = 4 + LAYER_NAME_LEN + 7 + 2 * SIZE[FORMAT]
+LAYER_MAX = 32
 META_KEYS = ["role", "tags", "key_range", "pairs_with", "notes", "origin", "permissions", "rating"]
 ORIGINS = ["propio", "fabrica-brain", "tribe-instruments", "kick3", "splice", "loopcloud", "otro"]
 ROLES = ["bass", "chords", "pad", "lead", "pluck", "perc", "fx"]
@@ -116,6 +124,26 @@ def rename(raw: bytes, name: str) -> bytes:
     return raw[:5] + clean + raw[5 + NAME_LEN:]
 
 
+def decode_layer(raw: bytes) -> dict:
+    """Binario de un preset de capa → nombre, engines, MORPH, B (retraso, transposición), mezcla y las dos mitades."""
+    if len(raw) != LAYER_SIZE or raw[:3] != LAYER_MAGIC or raw[3] != LAYER_FORMAT:
+        raise ValueError("no es un preset de capa del Brain")
+    name = raw[4:4 + LAYER_NAME_LEN].split(b"\0", 1)[0].decode("ascii", "replace")
+    p = 4 + LAYER_NAME_LEN
+    ea, eb, morph, delay = raw[p], raw[p + 1], raw[p + 2], raw[p + 3]
+    tr, ga, gb = struct.unpack_from("<bbb", raw, p + 4)
+    p += 7
+    half = SIZE[FORMAT]
+    return {"name": name, "engine_a": ENGINES[ea], "engine_b": ENGINES[eb], "morph": morph, "delay_b_ms": delay,
+            "transpose_b": tr, "gain_a_db": ga, "gain_b_db": gb,
+            "a": decode(raw[p:p + half]), "b": decode(raw[p + half:p + 2 * half])}
+
+
+def rename_layer(raw: bytes, name: str) -> bytes:
+    clean = name.encode("ascii", "replace")[:LAYER_NAME_LEN].ljust(LAYER_NAME_LEN, b"\0")
+    return raw[:4] + clean + raw[4 + LAYER_NAME_LEN:]
+
+
 def slug(name: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
     return s or "preset"
@@ -149,6 +177,21 @@ def entry_from_raw(raw: bytes, old: dict | None = None) -> dict:
     entry = {"name": d["name"], "engine": ENGINES[d["engine"]], "role": "", "tags": [], "key_range": "",
              "pairs_with": [], "notes": "", "origin": origin, "permissions": {"train": True, "publish": True},
              "rating": None, "format": d["format"], "patch": d["patch"], "raw": raw.hex().upper()}
+    if old:
+        for k in META_KEYS:
+            if k in old:
+                entry[k] = old[k]
+    return entry
+
+
+def layer_entry_from_raw(raw: bytes, old: dict | None = None) -> dict:
+    d = decode_layer(raw)
+    origin = "propio" if d["name"].startswith("LAYER ") else "fabrica-brain"
+    entry = {"name": d["name"], "engine_a": d["engine_a"], "engine_b": d["engine_b"],
+             "half_a": d["a"]["name"], "half_b": d["b"]["name"], "morph": d["morph"], "delay_b_ms": d["delay_b_ms"],
+             "transpose_b": d["transpose_b"], "gain_a_db": d["gain_a_db"], "gain_b_db": d["gain_b_db"],
+             "role": "", "tags": [], "key_range": "", "pairs_with": [], "notes": "", "origin": origin,
+             "permissions": {"train": True, "publish": True}, "rating": None, "raw": raw.hex().upper()}
     if old:
         for k in META_KEYS:
             if k in old:
@@ -212,6 +255,16 @@ class Brain:
 
     def trunc(self, engine: int, n: int):
         self.request(f"@GF TRUNC {engine} {n}", lambda l: l.startswith("@GF OK TRUNC"))
+
+    def layer_export(self) -> list[tuple[int, bytes]]:
+        lines = self.request("@GF LEXPORT", lambda l: l == "@GF END", timeout=30.0)
+        return [(int(l.split()[2]), bytes.fromhex(l.split()[3])) for l in lines if l.startswith("@GF L ")]
+
+    def layer_put(self, index: int, raw: bytes):
+        self.request(f"@GF LPUT {index} {raw.hex().upper()}", lambda l: l.startswith("@GF OK LPUT"))
+
+    def layer_trunc(self, n: int):
+        self.request(f"@GF LTRUNC {n}", lambda l: l.startswith("@GF OK LTRUNC"))
 
 
 # ── Comandos ────────────────────────────────────────────────────────────────────────────────────────────
@@ -296,6 +349,41 @@ def cmd_list(a):
         print(f"{ENGINES[e]:10} {slot(i)}  {decode(raw)['name']}")
 
 
+def cmd_layers(a):
+    """Baja los presets de capa a <librería>/brain/layers/, conservando la ficha de los que ya estaban."""
+    folder = library_dir(a.lib) / "brain" / "layers"
+    folder.mkdir(parents=True, exist_ok=True)
+    items = Brain(a.port).layer_export()
+    for i, raw in items:
+        name = decode_layer(raw)["name"]
+        path = find_by_name(folder, name)
+        old = json.loads(path.read_text()) if path else None
+        path = path or folder / f"{slug(name)}.json"
+        path.write_text(json.dumps(layer_entry_from_raw(raw, old), indent=2, ensure_ascii=False) + "\n")
+        print(f"{slot(i)}  {name:12}  → {path}")
+    print(f"{len(items)} presets de capa exportados a {folder}")
+
+
+def load_layer(path: str) -> bytes:
+    d = json.loads(Path(path).read_text())
+    raw = bytes.fromhex(d["raw"])
+    return rename_layer(raw, d["name"]) if decode_layer(raw)["name"] != d["name"] else raw   # el nombre del JSON manda
+
+
+def cmd_layer_import(a):
+    raws = [load_layer(f) for f in a.files]
+    brain = Brain(a.port)
+    start = 0 if a.reemplazar else len(brain.layer_export())
+    if start + len(raws) > LAYER_MAX:
+        sys.exit(f"entran {LAYER_MAX} presets de capa como máximo (bancos A y B de 16)")
+    for k, raw in enumerate(raws):
+        brain.layer_put(start + k, raw)
+        print(f"{slot(start + k)}  {decode_layer(raw)['name']}")
+    if a.reemplazar:
+        brain.layer_trunc(len(raws))
+    print(f"{len(raws)} presets de capa subidos")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Bibliotecario de presets del GrooveForge Brain")
     p.add_argument("--port", help="puerto serie (por defecto el primer /dev/cu.usbmodem*)")
@@ -311,6 +399,11 @@ def main(argv=None):
     s.set_defaults(fn=cmd_bank)
     sub.add_parser("list", help="listar los presets del Brain").set_defaults(fn=cmd_list)
     sub.add_parser("fs", help="espacio del flash de presets y tamaño de cada banco").set_defaults(fn=cmd_fs)
+    sub.add_parser("layers", help="bajar los presets de capa (HYBRID SYNTH) a brain/layers/").set_defaults(fn=cmd_layers)
+    s = sub.add_parser("layer-import", help="subir presets de capa al final (o en este orden con --reemplazar)")
+    s.add_argument("files", nargs="+")
+    s.add_argument("--reemplazar", action="store_true", help="reescribir todos los presets de capa en este orden")
+    s.set_defaults(fn=cmd_layer_import)
     s = sub.add_parser("format", help="BORRA todos los presets del Brain y regenera los de fábrica")
     s.add_argument("--si", action="store_true", help="confirmar")
     s.set_defaults(fn=cmd_format)

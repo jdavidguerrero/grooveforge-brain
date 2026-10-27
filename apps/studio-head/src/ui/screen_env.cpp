@@ -223,7 +223,7 @@ void ScreenEnv::update(const StudioState& s) {
         paint_cell(_cells[3], !sh, false, r, ur);
     }
 
-    _bottom.set_mode(s.mode == Mode::Fx, s.shift);
+    _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
     _bottom.set_keys(KEYS, 1);
     if (s.shift) {   // SHIFT + P1 / P2: VEL → AMP y VEL → FILTER del preset (theory/10)

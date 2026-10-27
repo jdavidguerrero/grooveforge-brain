@@ -15,12 +15,13 @@ namespace {
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
 const char* const KEYS_PRESET[4] = {"BANK A", "BANK B", "BANK C", "BANK D"};  // B1–B4 saltan de banco (theory/13)
+const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "GROOVE / FX", "HOME"};  // HYBRID SYNTH (theory/12 §3d)
 
 }  // namespace
 
 lv_obj_t* ScreenPresets::create() {
     _scr = screen_root();
-    _top.create(_scr, "PRESETS", -1);
+    _top.create(_scr, _layers ? "LAYER PRESETS" : "PRESETS", -1);
 
     // ── Cabecera: engine activo ──────────────────────────────────────────────
     lv_obj_t* head = rect(_scr, 16, 48, 768, 48, BG);
@@ -30,12 +31,12 @@ lv_obj_t* ScreenPresets::create() {
     lv_obj_set_flex_flow(head, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(head, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(head, 16, 0);
-    lv_obj_t* el = label(head, T12, GRAY, "ENGINE");
+    lv_obj_t* el = label(head, T12, GRAY, _layers ? "LAYER" : "ENGINE");
     lv_obj_set_style_text_letter_space(el, 1, 0);
     _eng_name = label(head, T20, WHITE, "");
     _eng_tag = label(head, T12, GRAY, "");
     lv_obj_set_flex_grow(_eng_tag, 1);
-    label(head, T12, MON, "B4 · ENGINE SELECT");
+    label(head, T12, MON, _layers ? "A + B · LAS DOS MITADES" : "SHIFT + NAV PUSH · ENGINE");
 
     // ── Lista: 6 filas de 40 ─────────────────────────────────────────────────
     for (int i = 0; i < VISIBLE; ++i) {
@@ -88,12 +89,12 @@ lv_obj_t* ScreenPresets::create() {
 }
 
 void ScreenPresets::move_cursor(int dir, const StudioState& s) {
-    const int rows = s.preset_count + 1;
+    const int rows = count(s) + 1;
     _cursor = std::clamp(_cursor + dir, 0, rows - 1);
 }
 
 bool ScreenPresets::tap_row(int i, const StudioState& s) {
-    const int row = std::clamp(_top_row + i, 0, int(s.preset_count));
+    const int row = std::clamp(_top_row + i, 0, count(s));
     if (row == _cursor) return true;
     _cursor = row;
     return false;
@@ -101,23 +102,39 @@ bool ScreenPresets::tap_row(int i, const StudioState& s) {
 
 void ScreenPresets::update(const StudioState& s) {
     _top.update(s);
-    _bottom.set_mode(s.mode == Mode::Fx, s.shift);
+    _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
-    _bottom.set_keys(KEYS_PRESET, _cursor > 0 ? std::min(3, (_cursor - 1) / 16) : 0);
+    const int n = count(s), ld = loaded(s);
+    if (_layers) {                                   // como en la home: P1 MORPH · P2 retraso de B (theory/12 §3d)
+        char m[8], d[8];
+        std::snprintf(m, sizeof(m), "%d", int(s.hybrid.morph));
+        std::snprintf(d, sizeof(d), "%d", int(s.hybrid.delay_b_ms));
+        _bottom.set_params_off(false);
+        _bottom.set_page_control(0, "MORPH", m, "%", s.hybrid.morph / 100.0f);
+        _bottom.set_page_control(1, "B DELAY", d, "MS", s.hybrid.delay_b_ms / 35.0f);
+    }
+    _bottom.set_keys(_layers ? KEYS_LAYER : KEYS_PRESET, _cursor > 0 ? std::min(_layers ? 1 : 3, (_cursor - 1) / 16) : 0);
 
-    if (_cursor < 0) _cursor = s.preset_loaded + 1;
-    const int rows = s.preset_count + 1;
+    if (_cursor < 0) _cursor = ld + 1;
+    const int rows = n + 1;
     _cursor = std::clamp(_cursor, 0, rows - 1);
 
-    char key[48];
-    std::snprintf(key, sizeof(key), "%d|%d|%d|%d|%s", _cursor, s.engine, s.preset_loaded, s.preset_count,
-                  s.preset_count ? s.preset_names[s.preset_count - 1] : "");
+    char key[64];
+    std::snprintf(key, sizeof(key), "%d|%d|%d|%d|%d|%s", _cursor, s.engine, ld, n, s.hybrid.engine_a,
+                  n ? name(s, n - 1) : "");
     if (std::strcmp(key, _last_key) == 0) return;
     std::snprintf(_last_key, sizeof(_last_key), "%s", key);
 
-    const EngineInfo& e = engine_info(s.engine);
-    lv_label_set_text(_eng_name, e.name);
-    lv_label_set_text(_eng_tag, e.tag);
+    const EngineInfo& e = engine_info(_layers ? s.hybrid.engine_a : s.engine);
+    if (_layers) {
+        char t[48];
+        std::snprintf(t, sizeof(t), "%s + %s", engine_info(s.hybrid.engine_a).name, engine_info(s.hybrid.engine_b).name);
+        lv_label_set_text(_eng_name, ld >= 0 ? name(s, ld) : "SIN CAPA");
+        lv_label_set_text(_eng_tag, ld >= 0 ? t : "");
+    } else {
+        lv_label_set_text(_eng_name, e.name);
+        lv_label_set_text(_eng_tag, e.tag);
+    }
 
     // Ventana de 6 filas que sigue al cursor.
     if (_cursor < _top_row) _top_row = _cursor;
@@ -130,16 +147,16 @@ void ScreenPresets::update(const StudioState& s) {
         if (idx >= rows) { lv_obj_add_flag(r.box, LV_OBJ_FLAG_HIDDEN); continue; }
         lv_obj_clear_flag(r.box, LV_OBJ_FLAG_HIDDEN);
         const bool save = idx == 0, cur = idx == _cursor;
-        const bool loaded = !save && idx - 1 == s.preset_loaded;
+        const bool is_loaded = !save && idx - 1 == ld;
         char slot[16] = "";
         if (!save) preset_slot(slot, sizeof(slot), idx - 1);
         lv_label_set_text(r.slot, slot);
-        lv_label_set_text(r.name, save ? "+ SAVE CURRENT AS NEW" : s.preset_names[idx - 1]);
+        lv_label_set_text(r.name, save ? (_layers ? "+ SAVE LAYER AS NEW" : "+ SAVE CURRENT AS NEW") : name(s, idx - 1));
         lv_obj_set_style_text_font(r.name, cur || save ? T16 : T16R, 0);
         set_text_color(r.name, save ? TEAL_PLUS : cur ? WHITE : GRAY);
         set_bg(r.box, cur ? TEAL_DIM : BG);
         set_bg(static_cast<lv_obj_t*>(lv_obj_get_user_data(r.box)), cur ? TEAL_PLUS : BG);
-        if (loaded) lv_obj_clear_flag(r.loaded, LV_OBJ_FLAG_HIDDEN);
+        if (is_loaded) lv_obj_clear_flag(r.loaded, LV_OBJ_FLAG_HIDDEN);
         else lv_obj_add_flag(r.loaded, LV_OBJ_FLAG_HIDDEN);
     }
 
@@ -149,21 +166,22 @@ void ScreenPresets::update(const StudioState& s) {
     lv_obj_set_height(_thumb, th);
     lv_obj_set_y(_thumb, ty);
 
-    engine_art_set(_d_art, s.engine);
+    engine_art_set(_d_art, _layers ? s.hybrid.engine_a : s.engine);
     char info[48];
-    std::snprintf(info, sizeof(info), "%s · %s", e.name, e.tag);
+    if (_layers) std::snprintf(info, sizeof(info), "HYBRID SYNTH · MITADES A + B");
+    else std::snprintf(info, sizeof(info), "%s · %s", e.name, e.tag);
     lv_label_set_text(_d_info, info);
     if (_cursor == 0) {
         char slot[16];
-        preset_slot(slot, sizeof(slot), s.preset_count);
+        preset_slot(slot, sizeof(slot), n);
         lv_label_set_text(_d_slot, slot);
-        lv_label_set_text(_d_name, "NEW PRESET");
+        lv_label_set_text(_d_name, _layers ? "NEW LAYER" : "NEW PRESET");
         lv_label_set_text(_d_action, "SAVE");
     } else {
         char slot[16];
         preset_slot(slot, sizeof(slot), _cursor - 1);
         lv_label_set_text(_d_slot, slot);
-        lv_label_set_text(_d_name, s.preset_names[_cursor - 1]);
+        lv_label_set_text(_d_name, name(s, _cursor - 1));
         lv_label_set_text(_d_action, "LOAD");
     }
 }

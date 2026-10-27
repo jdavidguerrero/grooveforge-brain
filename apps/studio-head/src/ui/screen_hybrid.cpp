@@ -17,9 +17,7 @@ namespace {
 constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
 constexpr int CARD_Y = 56, CARD_W = 300, CARD_H = 104, CARD_A_X = 16, CARD_B_X = GW - 16 - CARD_W;
 constexpr uint32_t TRACK = 0x1C1C1C;
-const char* const KEYS_HYBRID[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};
-const char* const LAYERS[8] = {"WOODBASS", "KALIMBA", "FRENCH STAB", "ACID ARP",
-                               "DESERT LEAD", "SHAKER ZAP", "ROLLER SUB", "RETRO BRASS"};
+const char* const KEYS_HYBRID[4] = {"EDIT A", "EDIT B", "GROOVE / FX", "PRESETS"};   // theory/12 §3d
 
 /// Una tarjeta de capa: letra, engine, preset; la del foco con borde teal y fondo marcado.
 void draw_card(const Painter& p, int x, char letter, uint8_t engine, const char* preset, bool focus) {
@@ -29,14 +27,15 @@ void draw_card(const Painter& p, int x, char letter, uint8_t engine, const char*
     text_top(p, x + 14, CARD_Y + 10, t, focus ? WHITE : GRAY, T28);
     text_top(p, x + 52, CARD_Y + 14, engine_info(engine).name, focus ? WHITE : GRAY, T20);
     text_top(p, x + 52, CARD_Y + 46, preset[0] ? preset : "\xE2\x80\x94", focus ? GRAY : MON, T12);
-    text_top(p, x + 14, CARD_Y + CARD_H - 22, focus ? "FOCO \xC2\xB7 B1-B4 EDITAN" : "PUSH / TOCAR: FOCO", MON, T12);
+    text_top(p, x + 14, CARD_Y + CARD_H - 22, letter == 'A' ? "B1 EDITA \xC2\xB7 P1 PUSH FOCO" : "B2 EDITA \xC2\xB7 P2 PUSH FOCO",
+             MON, T12);
 }
 
 }  // namespace
 
 lv_obj_t* ScreenHybrid::create() {
     _scr = screen_root();
-    _top.create(_scr, "HYBRID", -1);
+    _top.create(_scr, "HYBRID SYNTH", -1);
     _graph = draw_area(_scr, GX, GY, GW, GH, on_graph_draw, this);
     // Tocar una tarjeta = P1 / P2 push (foco en A / B)
     _tap_a = lv_obj_create(_scr);
@@ -64,19 +63,25 @@ void ScreenHybrid::draw(const Painter& p, const StudioState& s) const {
     p.frame(0, 0, GW, GH, 1, LINE);
     const auto& h = s.hybrid;
 
-    // Lista de capas: el cursor (NAV) en teal, la que suena con punto
+    // Presets de capa (hasta 32): ventana que sigue al cursor de NAV (ámbar); la que suena, con borde
+    const int n = s.layer_count, cur = std::min<int>(s.ui_cursor, std::max(0, n - 1));
+    auto chip_w = [&](int i) { return text_width(s.layer_names[i], T12B) + 20 + 4; };
+    int first = cur, used = chip_w(cur);
+    while (first > 0 && used + chip_w(first - 1) < GW / 3) used += chip_w(--first);   // un tercio de contexto atrás
     int x = 12;
-    for (int i = 0; i < 8; ++i) {
-        const int w = text_width(LAYERS[i], T12B) + 20;
-        const bool cur = i == s.ui_cursor, loaded = i == h.layer;
-        if (cur) p.fill(x, 10, w, 24, TEAL_PLUS);
-        else draw_box(p, x, 10, w, 24, loaded ? TEAL_PLUS : LINE, loaded ? TEAL_DIM : SURFACE, 1);
-        text_top(p, x + 10, 16, LAYERS[i], cur ? BG : loaded ? WHITE : GRAY, T12B);
+    for (int i = first; i < n; ++i) {
+        const int w = chip_w(i) - 4;
+        if (x + w > GW - 12) break;
+        const bool c = i == cur, loaded = i == h.layer;
+        if (c) p.fill(x, 10, w, 24, HYB);
+        else draw_box(p, x, 10, w, 24, loaded ? HYB : LINE, loaded ? HYB_DIM : SURFACE, 1);
+        text_top(p, x + 10, 16, s.layer_names[i], c ? BG : loaded ? WHITE : GRAY, T12B);
         x += w + 4;
     }
+    if (n == 0) text_top(p, 12, 16, "SIN PRESETS DE CAPA \xC2\xB7 B4 \xE2\x86\x92 SAVE", GRAY, T12B);
 
     if (h.layer < 0) {
-        text_top(p, 24, 90, "SIN CAPA \xC2\xB7 NAV PUSH CARGA LA CAPA RESALTADA", GRAY, T16);
+        text_top(p, 24, 90, "SIN CAPA \xC2\xB7 NAV PUSH CARGA EL PRESET DE CAPA RESALTADO", GRAY, T16);
         return;
     }
     draw_card(p, CARD_A_X, 'A', h.engine_a, h.preset_a, h.focus == 0);
@@ -96,8 +101,8 @@ void ScreenHybrid::draw(const Painter& p, const StudioState& s) const {
     std::snprintf(t, sizeof(t), "B %+d ST \xC2\xB7 %d MS", int(h.transpose_b), int(h.delay_b_ms));
     text_top(p, cx + (cw - text_width(t, T12)) / 2, CARD_Y + 86, t, GRAY, T12);
 
-    text_top(p, 24, CARD_Y + CARD_H + 18, "NAV: CAPA \xC2\xB7 PUSH: CARGAR \xC2\xB7 P1 / P2 PUSH: FOCO A / B \xC2\xB7 SHIFT + B2: SALIR",
-             MON, T12);
+    text_top(p, 24, CARD_Y + CARD_H + 18,
+             "NAV: CAPA \xC2\xB7 PUSH: CARGAR \xC2\xB7 B1 / B2: EDITAR A / B \xC2\xB7 B4: PRESETS \xC2\xB7 MODE: SALIR", MON, T12);
 }
 
 void ScreenHybrid::update(const StudioState& s) {
@@ -122,17 +127,18 @@ void ScreenHybrid::update(const StudioState& s) {
     else _bottom.set_page_control(1, "B DELAY", delay, "MS", h.delay_b_ms / 35.0f);
     _bottom.set_page_control(2, "CUTOFF", cut, "HZ", 0.0f);
     _bottom.set_page_control(3, "RES", res, "%", s.resonance);
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_HYBRID, -1);
     _bottom.set_nav("CAPA \xC2\xB7 PUSH CARGA");
 
     char key[192];
-    std::snprintf(key, sizeof(key), "%d|%d|%d|%d|%d|%d|%d|%d|%s|%s|%s", h.layer, s.ui_cursor, h.engine_a, h.engine_b,
-                  h.focus, h.morph, h.delay_b_ms, h.transpose_b, h.name, h.preset_a, h.preset_b);
+    std::snprintf(key, sizeof(key), "%d|%d|%d|%d|%d|%d|%d|%d|%d|%s|%s|%s|%s", h.layer, s.ui_cursor, s.layer_count,
+                  h.engine_a, h.engine_b, h.focus, h.morph, h.delay_b_ms, h.transpose_b, h.name, h.preset_a, h.preset_b,
+                  s.layer_count ? s.layer_names[s.layer_count - 1] : "");
     if (std::strcmp(key, _last_key) != 0) {
         std::snprintf(_last_key, sizeof(_last_key), "%s", key);
         char t[40];
-        std::snprintf(t, sizeof(t), "HYBRID \xC2\xB7 %s", h.layer >= 0 ? h.name : "SIN CAPA");
+        std::snprintf(t, sizeof(t), "%s", h.layer >= 0 ? h.name : "SIN CAPA");
         _top.set_page(t);
         lv_obj_invalidate(_graph);
     }

@@ -315,6 +315,18 @@ void BridgeLink::on_frame(uint8_t cmd, uint8_t seq, const uint8_t* p, uint8_t le
         m_.ui = ui;
         m_.ui_dirty = true;
         break;
+    case GF_CMD_LAYER_ENTRY:   // theory/12 §3d: [índice, cantidad, (reservado), nombre]
+        if (len >= 3 && p[1] <= 32) {
+            const uint8_t i = p[0], n = p[1];
+            m_.layer_count = n;
+            if (n && i < n && len > 3) {
+                const size_t l = std::min<size_t>(len - 3, sizeof(m_.layer_names[i]) - 1);
+                std::memcpy(m_.layer_names[i], p + 3, l);
+                m_.layer_names[i][l] = '\0';
+            }
+            m_.layer_list_dirty = true;
+        }
+        break;
     case GF_CMD_LAYER_STATE:   // capa híbrida (theory/12 §3c)
         if (gf_layer_state_unpack(p, len, &m_.layer)) m_.layer_dirty = true;
         break;
@@ -470,7 +482,7 @@ void BridgeLink::apply(StudioState& s) {
     if (m_.ui_dirty) {
         const GF_UiState& u = m_.ui;
         s.ui_remote = true;
-        s.mode = u.mode ? Mode::Fx : Mode::Synth;
+        s.mode = u.mode == 1 ? Mode::Fx : u.mode == 2 ? Mode::Hybrid : Mode::Synth;
         s.ui_page = u.page;
         s.ui_cursor = u.cursor;
         s.shift = u.shift != 0;
@@ -505,6 +517,11 @@ void BridgeLink::apply(StudioState& s) {
     if (m_.vol_dirty) {
         s.volume_db = gf_vol_db(m_.vol);
         m_.vol_dirty = false;
+    }
+    if (m_.layer_list_dirty) {
+        s.layer_count = std::min<uint8_t>(m_.layer_count, StudioState::LAYER_MAX);
+        for (int i = 0; i < s.layer_count; ++i) std::memcpy(s.layer_names[i], m_.layer_names[i], 13);
+        m_.layer_list_dirty = false;
     }
     if (m_.layer_dirty) {
         const GF_LayerState& l = m_.layer;

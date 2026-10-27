@@ -129,7 +129,7 @@ void ScreenSfx::update(const StudioState& s) {
         _bottom.set_page_control(c, lbl, v, unit, s.sfx_p[fx][k]);
     }
 
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_SYNTH, 3);
     _bottom.set_nav(s.sfx_on[fx] ? "SELECT · OFF" : "SELECT · ON");
 

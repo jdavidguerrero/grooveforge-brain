@@ -113,7 +113,7 @@ void ScreenGroove::update(const StudioState& s) {
         _cells.set(k, true, sl->name, val, sl->unit);
         _bottom.set_page_control(k, sl->name, val, sl->unit, osc_frac(e, *sl, v[slot]));
     }
-    _bottom.set_mode(s.mode == Mode::Fx, sh);
+    _bottom.set_mode(s.mode == Mode::Fx, sh, s.mode == Mode::Hybrid);
     _bottom.set_keys(KEYS_GROOVE, 2);
     _bottom.set_nav("STOP · ON");
 

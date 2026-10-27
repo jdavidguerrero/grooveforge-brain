@@ -77,7 +77,7 @@ void ScreenEngine::set_cursor(int i) {
 
 void ScreenEngine::update(const StudioState& s) {
     _top.update(s);
-    _bottom.set_mode(s.mode == Mode::Fx, s.shift);
+    _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
     _bottom.set_keys(KEYS_ENGINE, 3);
 

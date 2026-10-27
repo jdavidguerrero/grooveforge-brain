@@ -15,6 +15,11 @@ por el USB. Diseño: `apps/docs/variants/studio/theory/11-studio-preset-libraria
 
 # listar lo que hay en el Brain
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py list
+
+# presets de capa de HYBRID SYNTH (theory/12 §3d) → patches/brain/layers/<nombre>.json
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layers
+# subirlos al final (o reescribir los 32 en este orden con --reemplazar); el "name" del JSON renombra la capa
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import capa.json [--reemplazar]
 ```
 
 - Usa el Python de PlatformIO porque ya trae `pyserial`. La librería va en `$GF_LIBRARY` o en el dataset de la paleta

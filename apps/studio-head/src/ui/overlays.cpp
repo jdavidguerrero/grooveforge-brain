@@ -206,11 +206,15 @@ void Overlays::paint_input(const StudioState& s, uint32_t now) {
     }
 }
 
-void Overlays::paint_banner(bool fx) {
-    set_bg(_banner, fx ? PURPLE : TEAL);
-    lv_label_set_text(_banner_big, fx ? "FX" : "SYNTH");
-    lv_label_set_text(_banner_hint, fx ? "ENC L DRY/WET · ENC R · P1 · P2 FX PARAMS · B6 HOLD · MODE BACK"
-                                       : "ENC L CUTOFF · ENC R RES · B6 SHIFT · MODE BACK");
+void Overlays::paint_banner(Mode m) {
+    const bool fx = m == Mode::Fx, hyb = m == Mode::Hybrid;
+    set_bg(_banner, fx ? PURPLE : hyb ? HYB : TEAL);
+    set_text_color(_banner_big, hyb ? BG : WHITE);
+    set_text_color(_banner_hint, hyb ? BG : WHITE);
+    lv_label_set_text(_banner_big, fx ? "FX" : hyb ? "HYBRID SYNTH" : "SYNTH");
+    lv_label_set_text(_banner_hint, fx    ? "ENC L DRY/WET · ENC R · P1 · P2 FX PARAMS · B6 HOLD · MODE: HYBRID SYNTH"
+                                    : hyb ? "NAV CAPAS · B1 EDIT A · B2 EDIT B · B3 GROOVE / FX · B4 PRESETS · MODE: SYNTH"
+                                          : "ENC L CUTOFF · ENC R RES · B6 SHIFT · MODE: FX");
 }
 
 void Overlays::force(Overlay o) {
@@ -232,7 +236,7 @@ void Overlays::update(const StudioState& s, uint32_t now) {
         _last_bypass = s.filter_bypass;
         _last_mode = s.mode;
         paint_volume(s);
-        paint_banner(s.mode == Mode::Fx);
+        paint_banner(s.mode);
     }
     if (_vol_poke) {
         _vol_poke = false;
@@ -254,7 +258,7 @@ void Overlays::update(const StudioState& s, uint32_t now) {
     }
     if (s.mode != _last_mode) {
         _last_mode = s.mode;
-        paint_banner(s.mode == Mode::Fx);
+        paint_banner(s.mode);
         _banner_until = now + BANNER_MS;
     }
     for (int j = 0; j < 2; ++j)

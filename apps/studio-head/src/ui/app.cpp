@@ -45,6 +45,7 @@ Screen* App::screen(Page p) {
         case Page::Panel:    return &_panel;
         case Page::Groove:   return &_groove;
         case Page::Hybrid:   return &_hybrid;
+        case Page::LayerPresets: return &_layer_presets;
         default:             return &_perform;
     }
 }
@@ -92,11 +93,11 @@ void App::handle(Ctl c, StudioState& s) {
         case Ctl::PadCycle:
             s.in_pad_db = s.in_pad_db == 0 ? -10 : s.in_pad_db == -10 ? -20 : 0;
             return;
-        case Ctl::Mode:
-            s.mode = s.mode == Mode::Fx ? Mode::Synth : Mode::Fx;
+        case Ctl::Mode:   // SYNTH → FX → HYBRID SYNTH → SYNTH (theory/12 §3d)
+            s.mode = s.mode == Mode::Synth ? Mode::Fx : s.mode == Mode::Fx ? Mode::Hybrid : Mode::Synth;
             s.shift = false;
             s.fx_hold = false;
-            show(s.mode == Mode::Fx ? Page::Fx : _last_view);
+            show(s.mode == Mode::Fx ? Page::Fx : s.mode == Mode::Hybrid ? Page::Hybrid : Page::Perform);
             return;
         default: break;
     }
@@ -203,8 +204,16 @@ void App::handle_synth(Ctl c, StudioState& s) {
         s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
         return;
     }
+    if (s.mode == Mode::Hybrid && c == Ctl::B4) {   // demo: presets de capa y vuelta a la home
+        show(_page == Page::LayerPresets ? Page::Hybrid : Page::LayerPresets);
+        return;
+    }
+    if (_page == Page::LayerPresets && (c == Ctl::NavNext || c == Ctl::NavPrev)) {
+        _layer_presets.move_cursor(c == Ctl::NavNext ? 1 : -1, s);
+        return;
+    }
     if (_page == Page::Hybrid && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV recorre las capas
-        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, 7));
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, std::max(0, s.layer_count - 1)));
         return;
     }
     if (_page == Page::Hybrid && (c == Ctl::FocusA || c == Ctl::FocusB)) {
@@ -264,6 +273,7 @@ void App::update(const StudioState& s) {
         const Page target = Page(s.ui_page);
         if (target == Page::Engine) _engine.set_cursor(s.ui_cursor);
         else if (target == Page::Presets) _presets.set_cursor(s.ui_cursor);
+        else if (target == Page::LayerPresets) _layer_presets.set_cursor(s.ui_cursor);
         else if (target == Page::Osc) _osc.set_selection(s.engine, s.ui_cursor);
         if (target != _page) show(target);
     }

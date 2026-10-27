@@ -39,6 +39,9 @@ uint32_t camelot(uint8_t n);
 /// Color principal / brillante / apagado según el modo (SYNTH teal, FX púrpura).
 struct ModeColors { uint32_t mc, hi, dim; };
 ModeColors mode_colors(bool fx);
+/// HYBRID SYNTH (theory/12 §3d): ámbar, el mismo color que las luces del panel.
+constexpr uint32_t HYB = 0xEF9F27, HYB_DIM = 0x4A3210;
+inline ModeColors mode_colors_hybrid() { return ModeColors{HYB, AMBER, HYB_DIM}; }
 
 /// Reloj común (theory/09 §1.1): etiqueta y color de la fuente — MIDI (teal), MIDI STOP (ámbar), INT (gris).
 inline const char* clock_label(bool midi, bool run) { return midi ? (run ? "MIDI" : "MIDI STOP") : "INT"; }

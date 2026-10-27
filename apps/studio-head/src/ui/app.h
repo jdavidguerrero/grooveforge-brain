@@ -20,7 +20,9 @@
 
 /// Páginas de la UI (mismos ids que studio::Page del Teensy). Vistas que recorre NAV en SYNTH: PERFORM · PANEL
 /// (theory/08 de Studio; AI y SPECTRUM vuelven con GroovePilot).
-enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Groove, Hybrid, Count };
+enum class Page : uint8_t { Perform, Ai, Spectrum, Env, Fx, Engine, Presets, Error, Osc, Lfo, SynthFx, Panel, Groove, Hybrid,
+                            LayerPresets,   ///< presets de capa de HYBRID SYNTH (theory/12 §3d)
+                            Count };
 
 /**
  * @brief Navegación de la UI v3 + FX Viz.
@@ -63,6 +65,7 @@ private:
     ScreenPanel _panel;
     ScreenGroove _groove;
     ScreenHybrid _hybrid;
+    ScreenPresets _layer_presets{true};
     Overlays _overlays;
     lv_obj_t* _roots[int(Page::Count)] = {};
     Page _page = Page::Perform;

@@ -263,7 +263,7 @@ void ScreenPerform::update(const StudioState& s) {
         lv_obj_invalidate(_graph);
     }
 
-    _bottom.set_mode(s.mode == Mode::Fx, s.shift);
+    _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_enc(false, "CUTOFF", buf, "HZ", cut_frac);
     _bottom.set_enc(true, "RES", rbuf, "%", s.resonance);
     static const char* const KEYS[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};

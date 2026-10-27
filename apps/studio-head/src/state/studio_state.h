@@ -11,7 +11,7 @@
  * con los frames del bridge (02-bridge-protocol.md).
  */
 
-enum class Mode : uint8_t { Synth, Fx };
+enum class Mode : uint8_t { Synth, Fx, Hybrid };   ///< Hybrid = HYBRID SYNTH (theory/12 §3d)
 enum class LinkState : uint8_t { Demo, Connecting, Up, Lost };
 enum class FxView : uint8_t { Wave, Spectrum, Signature };   ///< ONDA · ESPECTRO · FIRMA
 enum class FxRoute : uint8_t { Insert, Send, Master };       ///< B1–B3 en FX (05 §0.2)
@@ -113,15 +113,20 @@ struct StudioState {
     bool clock_midi = false;         ///< el reloj común sigue al clock MIDI (UI_STATE flags, theory/09 §1.1)
     bool clock_run = true;           ///< false = parado por STOP
     bool layer = false;              ///< suena una capa híbrida de dos engines (UI_STATE flags, theory/12)
-    /// Modo HYBRID (LAYER_STATE 0x46, theory/12 §3c). En el demo arranca con la capa KALIMBA.
+    /// HYBRID SYNTH (LAYER_STATE 0x46, theory/12 §3d). En el demo arranca con la capa KALIMBA.
     struct {
-        int8_t layer = 1;            ///< −1 sin capa · 0–7 de la lista · 8 CUSTOM
+        int8_t layer = 1;            ///< −1 sin capa · 0–31 preset de capa · 127 CUSTOM
         uint8_t engine_a = 4, engine_b = 3, focus = 0, morph = 50, delay_b_ms = 0;
         int8_t transpose_b = 0;
         char name[13] = "KALIMBA";
         char preset_a[17] = "HY KALIMBA A";
         char preset_b[17] = "HY KALIMBA B";
     } hybrid;
+    /// Presets de capa (LAYER_ENTRY 0x47): hasta 32, bancos A y B de 16. El demo arranca con las 8 de fábrica.
+    static constexpr int LAYER_MAX = 32;
+    uint8_t layer_count = 8;
+    char layer_names[LAYER_MAX][13] = {"WOODBASS",   "KALIMBA",    "FRENCH STAB", "ACID ARP",
+                                       "DESERT LEAD", "SHAKER ZAP", "ROLLER SUB",  "RETRO BRASS"};
     uint8_t lfo_div = 1;             ///< índice en 1/4 · 1/8 · 1/16 · 1/8T
     /// Cantidad por destino, 0–1 (CUTOFF · PITCH · AMP · PWM, mismo orden que GF_DEST_*). CUTOFF no se guarda
     /// acá: es p2 de PERFORM (un solo valor por destino). PITCH en semitonos = gf_lfo_pitch_st(cantidad).

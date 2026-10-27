@@ -1,5 +1,6 @@
 """Tests del bibliotecario (sin Brain conectado): formato binario, ida y vuelta, renombrar y fichas."""
 import json
+import struct
 import sys
 from pathlib import Path
 
@@ -66,3 +67,17 @@ def test_export_conserva_la_ficha(tmp_path):
 
 def test_lugares_de_banco():
     assert gp.slot(0) == "A-01" and gp.slot(15) == "A-16" and gp.slot(16) == "B-01" and gp.slot(63) == "D-16"
+
+
+def test_preset_de_capa_ida_y_vuelta():
+    assert gp.LAYER_SIZE == 1077                      # LAYER_BYTES de layer_bank.h
+    half_a = gp.encode(4, "HY WOODBASS A", sample_patch())
+    half_b = gp.encode(0, "HY WOODBASS B", sample_patch())
+    raw = (gp.LAYER_MAGIC + bytes([1]) + b"WOODBASS".ljust(12, b"\0") + bytes([4, 0, 50, 10]) +
+           struct.pack("<bbb", -12, -6, 0) + half_a + half_b)
+    d = gp.decode_layer(raw)
+    assert (d["name"], d["engine_a"], d["engine_b"], d["delay_b_ms"], d["transpose_b"]) == ("WOODBASS", "dx7", "model_d", 10, -12)
+    assert d["b"]["name"] == "HY WOODBASS B"
+    assert gp.decode_layer(gp.rename_layer(raw, "MI CAPA"))["name"] == "MI CAPA"
+    e = gp.layer_entry_from_raw(raw, {"notes": "para el bajo", "rating": 4})
+    assert e["notes"] == "para el bajo" and e["half_a"] == "HY WOODBASS A" and e["origin"] == "fabrica-brain"

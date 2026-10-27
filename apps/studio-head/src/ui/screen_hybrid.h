@@ -7,9 +7,9 @@
 #include "ui/top_bar.h"
 
 /**
- * @brief HYBRID (SHIFT + B2): home del modo de capas de dos engines (variants/studio/theory/12 §3c).
+ * @brief Home de HYBRID SYNTH (tercer modo de MODE, variants/studio/theory/12 §3d).
  *
- * Lista de las 8 capas (NAV elige, push carga), las tarjetas A y B con su engine y preset (la capa en foco resaltada;
+ * Presets de capa (NAV elige, push carga), las tarjetas A y B con su engine y preset (la capa en foco resaltada;
  * tocar una tarjeta cambia el foco), la barra de MORPH y el retraso / transposición de B.
  */
 class ScreenHybrid : public Screen {
