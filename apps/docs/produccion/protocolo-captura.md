@@ -35,6 +35,11 @@ Los clips viven en un set plantilla (`GF_Paleta_Lab.als`) para no rehacerlos cad
 
 ## 3. Qué se graba por sonido
 
+> **Rev. 2026-10-28 (Juan):** las sesiones de elección **no se graban**: se elige de oído y la ficha guarda el preset,
+> el MIDI, el commit del firmware y la decisión (con eso el Brain reproduce el sonido). Al final de la paleta, **una
+> sola sesión de grabación** con todos los ganadores, cada uno **seco (individual) y en contexto**, como se describe
+> abajo. Si el firmware cambia el sonido antes de esa sesión, se graban antes los ganadores afectados.
+
 1. **Seco:** solo el clip, el Brain sin procesamiento de Live (8 compases).
 2. **En contexto:** el mismo clip sonando con el loop de prueba (kick de Kick 3, percusión de Tribe Instruments, hat).
    Se graba solo la pista del Brain, sin mezclarla con el loop.
