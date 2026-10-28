@@ -164,7 +164,7 @@ Paleta de variación por sección (propuesta, a probar en un track): **abierto e
 **Sonido:** "definitivamente los presets del DX7 no me gustaron". Se buscan presets más parecidos al Electric en
 otros motores (§8). La ronda 4 (ritmos) se carga cuando haya preset.
 
-## 8. Presets tipo Electric (propuesta, espera visto bueno)
+## 8. Presets tipo Electric (hechos y subidos al Brain, 2026-10-28)
 
 **Qué es el Electric de Live.** Un modelo físico de piano eléctrico (Ableton, *Live Reference Manual*, cap.
 "Electric"): un martillo golpea una lengüeta de metal (la *tine*, como un diapasón) y una pastilla magnética recoge la
@@ -206,3 +206,8 @@ antes de 200 ms.
 **Cómo se escuchan:** en `GF_Acordes_Lab.als`, sobre un abierto en tresillo y un quebrado (por ejemplo kumoi
 décimas · tresillo y lidia arco · corcheas): Electric → JD KEYS JUNO → JD KEYS PROPHET → JD KEYS CAPA. Si alguno
 se acerca, se afina desde ahí.
+
+**Hecho (2026-10-28):** `tools/paleta-lab/make_jd_keys.py` (tests en `tests/test_jd_keys.py`) escribió
+`juno_106/jd-keys-juno.json`, `prophet_5/jd-keys-prophet.json` y `layers/jd-keys-capa.json` (mitades JD KEYS BODY /
+JD KEYS TINE) y se subieron con `gf_presets.py import` / `layer-import`: al final de los bancos Juno y Prophet
+(índice 17) y la capa en **A-11**. No se borró ningún preset. Falta la escucha de Juan contra el Electric.

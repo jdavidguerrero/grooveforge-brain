@@ -128,3 +128,15 @@ python3 tools/paleta-lab/fill_lab_set.py --acordes GF_Acordes_Lab.als
 ```
 
 El set queda con el kit afro y la dosis de Tribe, sin lead; los acordes van en ACORDES (el Electric de Live).
+
+## Presets JD KEYS (`make_jd_keys.py`)
+
+Pianos eléctricos parecidos al Electric de Live (`apps/docs/produccion/lab-acordes.md` §8): JD KEYS JUNO (de PLUCK
+KEYS), JD KEYS PROPHET (de WARM KEYS) y la capa JD KEYS CAPA (JD KEYS JUNO + E.PIANO reducido al golpe). Lee la
+librería y escribe los JSON; no toca el Brain.
+
+```bash
+~/.platformio/penv/bin/python tools/paleta-lab/make_jd_keys.py
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import <lib>/juno_106/jd-keys-juno.json <lib>/prophet_5/jd-keys-prophet.json
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import <lib>/layers/jd-keys-capa.json
+```
