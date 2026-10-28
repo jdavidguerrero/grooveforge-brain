@@ -40,45 +40,78 @@ El disco / house pide otra cosa (stabs, octavas, brillo) y se trata como matiz d
   acordes → pads y texturas (material de break e intro, no de pista) → build / riser.
 - Para más adelante (arreglo): frases de 8 / 16 / 32 compases, intro y outro mezclables por un DJ.
 
-## 2. Tres contextos de escucha (los mismos para todos los sonidos)
+## 1c. ADN y dialectos (Juan, 2026-10-28, fase 2)
 
-Cada uno junta dos géneros de la selección de percusión de Juan (`midi/perc/seleccion/`), todo en Tribe, con un kick
-4/4 de Kick 3:
+Juan se mueve entre subgéneros con una sola marca, pero hay cosas que funcionan en afro y no en melodic o indie. Eso
+no es un defecto del patrón: es que cada subgénero es un **dialecto** del mismo ADN (la versión práctica de "un núcleo
+y varias direcciones", `ia-local-refinamiento.md` §2). Como una persona que habla igual de voz y de acento, pero no
+habla igual en una fiesta que en una reunión.
 
-| Contexto | Perc (cuerpo) | Top (brillo) | Cruce |
+| | Qué es | Ejemplos | Regla |
+|---|---|---|---|
+| **ADN** | lo que se queda en todos los subgéneros | el **sonido** (presets y capas), la manera de tocar (cortas y largas, ghost notes, silencios, registro), el color exótico como puntuación, la percusión Tribe como hilo | tiene que **cruzar** contextos (§2) |
+| **Dialecto** | lo que cambia con el subgénero | escala y progresión, densidad, largo de la frase (afro: 1–2 compases que conversan con la percusión; melodic: un motivo que evoluciona en 8–16), cuánto color, qué patrón de bajo o de acordes | puede ganar en **un solo** dialecto; se marca con él |
+
+Dialectos: **afro**, **organic**, **melodic** (melodic / progressive), **indie** (indie tech) y **disco** (disco /
+house). Se aplica a **todos los roles**, no solo a los leads: un bajo `rodante` puede ser de indie y melodic, y un
+`cumbia`, de afro y organic, y los dos son de Juan.
+
+Lo que sale de la fase 2 es un **mapa** (filas: patrones o escalas; columnas: dialectos; ✓ donde funcionó). Lo que
+aparece en varias columnas es ADN de patrón; lo que aparece en una sola es dialecto. Las dos cosas son material propio.
+
+## 2. Contextos de escucha (los mismos para todos los sonidos)
+
+Cada uno usa la selección de percusión de Juan (`midi/perc/seleccion/` o `favoritos/`), todo en Tribe, con un kick
+4/4 de Kick 3. A–C cruzan dos dialectos; D–F (fase 2) aíslan uno:
+
+| Contexto | Perc (cuerpo) | Top (brillo) | Dialectos |
 |---|---|---|---|
 | **A · tierra** | `cumbia_afro_v4` peak (organic) | `afro_house_groove_v2` peak (afro) | organic + afro |
-| **B · noche** | `tribal_toms_v2` peak (indie tech) | `prog_rolling16_v3` peak (progressive) | indie + progressive |
+| **B · noche** | `tribal_toms_v2` peak (indie tech) | `prog_rolling16_v3` peak (progressive) | indie + melodic |
 | **C · fiesta** | `djembe_sang_v2` main_q (afro) | `samba_house_v4` peak (disco) | afro + disco |
+| **D · orgánico suave** | — | `organic_shaker_wood_v4` peak | organic |
+| **E · hipnótico** | `tambora_hipnotica` main (`favoritos/indie_tech`) | poco o nada | indie |
+| **F · melódico** | `prog_offbeat_rim_v3` peak (un top de la selección, como cuerpo) | `prog_rolling16_v4` peak | melodic |
 
-**Regla de elección:** un candidato pasa si encaja en **al menos dos contextos, y uno de ellos es B** (el más
-oscuro, el que más filtra). Lo que solo funciona en uno queda como color, no como ADN.
+Antes, melodic quedaba encerrado en B junto con indie; con F cada dialecto tiene al menos un contexto propio o
+compartido (afro: A, C · organic: A, D · indie: B, E · melodic: B, F · disco: C).
+
+**Reglas de elección (rev. 2026-10-28, fase 2):**
+
+- **Sonidos** (presets, capas): sin cambios. Pasan si encajan en **al menos dos contextos, y uno de ellos es B** (el
+  más oscuro, el que más filtra). Un sonido que solo funciona en un dialecto queda como **color de ese dialecto**,
+  marcado, no como ADN.
+- **Patrones** (ritmo, escala, progresión): pasan **por dialecto**. Un patrón que funciona en un contexto de un
+  dialecto queda en la paleta con esa marca; si funciona en dos o más dialectos, es ADN de patrón.
+
+(La regla de "dos contextos y uno es B" se escribió para la Sesión B, cuando se elegía todo junto; en la fase 2 se
+separa porque un patrón puede ser de un solo dialecto sin dejar de ser de Juan.)
 
 ## 3. Patrones a tocar (MIDI)
 
 La menor, 124 BPM, **una sola progresión para todos los roles**: Am – F – C – G (i – VI – III – VII), un compás por
 acorde, 4 compases que se repiten. Son puntos de partida para tocar y variar, no partes cerradas.
 
-| Rol | Patrón | Matices que junta |
-|---|---|---|
-| bass | `bass_adn_tambora` | síncopa afro / colombiana, deja libre el 1 para el kick, ghost notes |
-| | `bass_adn_octavas` | rebote de octavas de disco con empujes a contratiempo |
-| | `bass_adn_rodante` | semicorcheas rodantes de indie / progressive, fuera de los tiempos del kick |
-| | `bass_adn_cumbia` | el bajo de la cumbia (1 y 3 con anticipación) llevado al 4/4 |
-| chords | `chords_adn_contratiempo` | stab francés / disco en los contratiempos, con un ghost |
-| | `chords_adn_respiro` | acorde largo que respira (deja lugar al PUMP / sidechain), melódico |
-| | `chords_adn_llamada` | llamada 3-3-2 de la percusión afro llevada a los acordes |
-| pluck | `pluck_adn_marimba` | arpegio en 3-3-2 como marimba de chonta |
-| | `pluck_adn_motivo` | motivo de 4 notas que se desarrolla (progressive / organic) |
-| | `pluck_adn_arp16` | arpegio de semicorcheas progresivo con acentos 3-3-2 |
-| perc tonal | `perc_adn_logdrum` | log drum de afro house, grave y sincopado |
-| | `perc_adn_madera` | tresillo / clave en dos alturas (madera, metal) |
-| pad / textura | `pad_adn_progresion` | la progresión en acordes enteros |
-| | `pad_adn_dron` | La + Mi sostenidos 8 compases: movimiento sin tocar nada (textura) |
-| lead | `lead_adn_frase` | frase pentatónica con notas largas, pregunta y respuesta |
-| | `lead_adn_hook` | hook de 2 compases que se repite (el gancho del drop) |
-| | `lead_adn_profunda` | melodía profunda: novenas y séptimas sobre la progresión, notas largas, descenso |
-| build | `build_adn_move` | 8 compases: una nota sostenida con **MOVE (CC 19)** de 0 a 100 % (filtro, ecos, reverb), para GF NOISE RISER o cualquier pad |
+| Rol | Patrón | Matices que junta | Dialecto esperado |
+|---|---|---|---|
+| bass | `bass_adn_tambora` | síncopa afro / colombiana, deja libre el 1 para el kick, ghost notes | afro, organic |
+| | `bass_adn_octavas` | rebote de octavas de disco con empujes a contratiempo | disco, afro |
+| | `bass_adn_rodante` | semicorcheas rodantes de indie / progressive, fuera de los tiempos del kick | indie, melodic |
+| | `bass_adn_cumbia` | el bajo de la cumbia (1 y 3 con anticipación) llevado al 4/4 | organic, afro |
+| chords | `chords_adn_contratiempo` | stab francés / disco en los contratiempos, con un ghost | disco |
+| | `chords_adn_respiro` | acorde largo que respira (deja lugar al PUMP / sidechain), melódico | melodic |
+| | `chords_adn_llamada` | llamada 3-3-2 de la percusión afro llevada a los acordes | afro |
+| pluck | `pluck_adn_marimba` | arpegio en 3-3-2 como marimba de chonta | organic, afro |
+| | `pluck_adn_motivo` | motivo de 4 notas que se desarrolla (progressive / organic) | melodic, organic |
+| | `pluck_adn_arp16` | arpegio de semicorcheas progresivo con acentos 3-3-2 | melodic, indie |
+| perc tonal | `perc_adn_logdrum` | log drum de afro house, grave y sincopado | afro |
+| | `perc_adn_madera` | tresillo / clave en dos alturas (madera, metal) | organic, afro |
+| pad / textura | `pad_adn_progresion` | la progresión en acordes enteros | melodic |
+| | `pad_adn_dron` | La + Mi sostenidos 8 compases: movimiento sin tocar nada (textura) | indie, organic |
+| lead | `lead_adn_frase` | frase pentatónica con notas largas, pregunta y respuesta | — (reemplazado por el lab) |
+| | `lead_adn_hook` | hook de 2 compases que se repite (el gancho del drop) | — (reemplazado por el lab) |
+| | `lead_adn_profunda` | melodía profunda: novenas y séptimas sobre la progresión, notas largas, descenso | — (reemplazado por el lab) |
+| build | `build_adn_move` | 8 compases: una nota sostenida con **MOVE (CC 19)** de 0 a 100 % (filtro, ecos, reverb), para GF NOISE RISER o cualquier pad | melodic, indie |
 
 Siguen existiendo los clips **neutros** de medición (`midi/<rol>/`, protocolo §2): esos miden; estos se tocan.
 
@@ -133,6 +166,10 @@ para grabar) y una escena por contexto. Se guarda como `GF_Paleta_Lab.als` y se 
 
 En la ficha de sesión (`gf_session.py`), cada decisión lleva el **contexto** (`A tierra`, `B noche`, `C fiesta`) y,
 al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qué es ADN y qué es color.
+
+Fase 2: el dialecto sale del contexto (tabla de §2), así que basta con anotar el contexto en cada decisión. Al final de
+cada rol se arma el mapa de §1c (patrón × dialecto). El "dialecto esperado" de la tabla de §3 es una hipótesis para
+comparar con lo que oiga Juan, no una regla.
 
 ## 7. Cómo se prueba
 

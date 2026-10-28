@@ -1,10 +1,10 @@
 # Lab de leads: escalas, ritmos y sonido
 
-> **Fecha:** 2026-10-28 (rev. 2 con las respuestas de Juan) · **Estado:** propuesta para Juan; el generador, los
+> **Fecha:** 2026-10-28 (rev. 3: dialectos) · **Estado:** propuesta para Juan; el generador, los
 > presets y los contextos D / E esperan su visto bueno · **Depende de:** `sesion-paleta-adn.md` §1b y §8,
 > `protocolo-captura.md` §3 y §5, `ia-local-refinamiento.md` §2 · **Ficha:** `metadata/sesiones/2026-10-28_lead.json`
 
-## 0. Lo que decidiste (rev. 2)
+## 0. Lo que decidiste
 
 | Tema | Decisión de Juan |
 |---|---|
@@ -12,6 +12,7 @@
 | Ritmo | Las rítmicas de §4 sí gustan. Melodías con notas **cortas, largas y mixtas** |
 | "Notas largas" | No es una regla del ADN (venía de los referentes): se corrige en `sesion-paleta-adn.md` §1b |
 | Sonido | Revisar otros presets de Prophet y OB-6 además de DESERT LEAD y GF MELODIC LEAD |
+| ADN y dialectos (rev. 3) | El sonido tiene que cruzar subgéneros; escalas y rítmicas pueden ser de un solo dialecto. Melodic se separa de organic e indie con su propio contexto (F). Aplica a todos los roles (`sesion-paleta-adn.md` §1c) |
 
 Consecuencia: en este lab **cada escala trae su propia progresión** (siempre con La como centro, 124 BPM, 4 compases).
 Una escala solo se oye bien encima de acordes que la sostienen. El resto de la paleta sigue sobre Am – F – C – G.
@@ -166,20 +167,43 @@ DESERT LEAD. Los presets nuevos **JD LEAD …** (paso 3) se derivan de los ganad
 arriba, sin borrar ningún preset. Límite conocido: el panel aún no carga un preset de engine dentro de una mitad de un
 híbrido; una capa nueva se arma con `gf_presets.py` (`layers` / `layer-import`), con el puerto serie libre.
 
-## 6. Orden de la sesión (sin grabar; máximo tres candidatos por decisión)
+## 6. ADN y dialectos en los leads
+
+`sesion-paleta-adn.md` §1c separa el **ADN** (lo que cruza subgéneros) de los **dialectos** (afro, organic, melodic,
+indie, disco). En los leads queda así:
+
+- **ADN:** el sonido (el preset que gane la ronda 1 tiene que servir en varios dialectos), la mezcla de cortas y
+  largas, el registro medio, el color exótico como puntuación (la dosis).
+- **Dialecto:** la escala con su progresión y la rítmica. Una escala que solo funciona en indie no se descarta: queda
+  como "escala de indie".
+
+Lo que espero que pase, **para comparar con lo que oigas** (tendencias, no reglas; los contextos de cada dialecto
+están en `sesion-paleta-adn.md` §2):
+
+| Dialecto | Contextos | Escalas que espero | Rítmicas que espero |
+|---|---|---|---|
+| afro | A, C | dórica, eólica, mixolidia | corta, mixta A (conversan con la percusión) |
+| organic | A, D | hirajōshi, kumoi, frigia | larga, mixta A |
+| melodic | B, F | eólica, lidia, menor con E prestado | larga, mixta B (pregunta-respuesta) |
+| indie | B, E | frigia, in sen, frigia dominante | corta |
+| disco | C | mixolidia, mayor con Dm prestado, dórica | corta, mixta A |
+
+El resultado de las rondas 2–4 es un **mapa** (escala o rítmica × dialecto, con ✓ donde funcionó), no un único
+ganador. Lo que tenga ✓ en varios dialectos es ADN de patrón.
+
+## 7. Orden de la sesión (sin grabar; máximo tres candidatos por decisión)
 
 | Ronda | Qué se decide | Con qué |
 |---|---|---|
-| 1 · sonido | el preset base | §5, con mixta A en eólica |
-| 2 · escala por familia | una escala por familia (4 decisiones de 3) | mixta A, con el preset ganador, sobre su progresión |
-| 3 · final de escalas | 1 o 2 escalas para el ADN | ganadores de las familias 1–3; después, contra el ganador de la familia 4 |
-| 4 · ritmo | **no se elimina**: se marca qué rítmicas sirven (un track puede usar corta, mixta y larga) | las 4 rítmicas en la escala ganadora |
-| 5 · dosis | completa · solo en el remate · de paso | §4, en la escala ganadora |
+| 1 · sonido | el preset base (es ADN: tiene que pasar en dos contextos, uno B) | §5, con mixta A en eólica |
+| 2 · mapa de escalas | por familia, las 3 escalas en cada contexto: ✓ o ✗ (no se elimina) | mixta A, con el preset ganador, sobre su progresión |
+| 3 · favorita por dialecto | entre las que tienen ✓ en ese dialecto, la favorita (máximo 3 a la vez) | el contexto propio del dialecto (D, E, F; A o C para afro y disco) |
+| 4 · ritmo | qué rítmicas sirven en cada escala favorita: ✓ o ✗ | las 4 rítmicas |
+| 5 · dosis | completa · solo en el remate · de paso, por escala favorita | §4 |
 
-Cada ronda se escucha en los contextos A–C y en los nuevos D · orgánico suave y E · hipnótico. Los ganadores se
-graban todos al final (`protocolo-captura.md` §3).
+Los ganadores se graban todos al final (`protocolo-captura.md` §3).
 
-## 7. Cómo se prueba (paso 2)
+## 8. Cómo se prueba (paso 2)
 
 | Qué | Cómo |
 |---|---|
@@ -192,15 +216,15 @@ graban todos al final (`protocolo-captura.md` §3).
 | Dosis "remate": la nota que distingue a la escala aparece una sola vez por vuelta, en el último compás; "de paso": dura ≤ 2 semicorcheas, en tiempo débil y resuelve por grado | test |
 | Que suene groovero, profundo y con la dosis justa de color | tú, en los contextos |
 
-## 8. Lo que viene después de tu visto bueno
+## 9. Lo que viene después de tu visto bueno
 
 1. **Generador** `tools/paleta-lab/make_lead_lab.py` (aparte de `make_adn_clips.py`, cuyo test exige La menor natural
    en todo): 12 escalas × 4 rítmicas = 48 clips de lead, más **un clip de acordes por escala** (su progresión, para un
-   instrumento de Live, porque el Brain toca el lead), en `midi/adn/lead/lab/<familia>/`. Las dosis se generan después
+   instrumento de Live, porque el Brain toca el lead), en `midi/adn/lead/lab/<familia>/`; el nombre de cada clip lleva sus dialectos esperados (§6). Las dosis se generan después
    de la ronda 3, solo para la escala ganadora. Tests con pytest. Luego `fill_lab_set.py` sobre una **copia nueva** de
    tu set (`GFExploration Project/`), sin tocar el que tienes abierto.
 2. **Presets JD LEAD** (§5), subidos con `gf_presets.py`, sin borrar ninguno.
-3. **Contextos D · orgánico suave** (`organic_shaker_wood`, solo top) y **E · hipnótico** (`tambora_hipnotica`, poco
-   top; está en `perc/favoritos/`, no en `seleccion/`).
+3. **Contextos D · orgánico suave, E · hipnótico y F · melódico** (`sesion-paleta-adn.md` §2) en el set, con el
+   dialecto en el nombre de la escena.
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.
