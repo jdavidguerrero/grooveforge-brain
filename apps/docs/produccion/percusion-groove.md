@@ -198,3 +198,13 @@ varias propuestas para elegir. Las elecciones anotadas en las fichas son el dato
 **Carpetas por versión y variación (rev. 5):** `midi/perc/<genero>/<top|perc>/<intro|main|peak|main_q>/<v1…v4>/`
 (`v1` = el patrón original, `v2`–`v4` = las variaciones de los elegidos); `favoritos/` sigue la misma estructura. Las
 raíces quedan en `raices/<top|perc>/`.
+
+### Rev. 6: ronda 2 de escucha (2026-10-27)
+
+Juan filtró las variaciones: **37 elecciones** (`favoritos` con `"ronda": 2` en la ficha de cada variación), copiadas
+a `midi/perc/seleccion/` con la misma estructura. Lo que dicen:
+
+- **Tribe gana en todos los géneros** (34 de 37): la percusión colombiana encaja también en afro, progressive e indie.
+- **Peak** casi siempre; en afro house, además, el **perc cuantizado** (`main_q`): el cuerpo de tambores recto y el
+  top con swing.
+- Cobertura: afro house 14, organic 10, indie tech 8, melodic / progressive 4 (sin perc), disco / house 1 (sin perc).

@@ -445,6 +445,8 @@ def build_favorites(perc: Path) -> int:
                 continue
             base = d["patron"]
             for fav in d["favoritos"]:
+                if fav.get("ronda", 1) != 1:
+                    continue
                 versions = [fav["version"]] if fav.get("version") else list(VERSIONS)
                 parts = [fav["parte"]] if fav.get("parte") else ["top", "perc"]
                 rack = fav.get("rack", d["rack"])
@@ -457,6 +459,28 @@ def build_favorites(perc: Path) -> int:
                                 dst.parent.mkdir(parents=True, exist_ok=True)
                                 shutil.copy2(src, dst)
                                 count += 1
+    return count
+
+
+def build_selection(perc: Path) -> int:
+    """Ronda 2: lo que Juan filtró de las variaciones (favoritos con "ronda": 2), el archivo exacto, en
+    midi/perc/seleccion/<genero>/<top|perc>/<version>/<v1…v4>/. Copias; se rearma en cada corrida."""
+    root = perc / "seleccion"
+    if root.exists():
+        shutil.rmtree(root)
+    count = 0
+    for genre in GENRES:
+        for f in sorted((perc / genre).glob("*.json")):
+            d = json.loads(f.read_text())
+            var = d["patron"].rsplit("_", 1)[1] if d.get("variacion_de") else "v1"
+            for fav in d.get("favoritos", []):
+                if fav.get("ronda") != 2:
+                    continue
+                rel = Path(genre) / fav["parte"] / fav["version"] / var / f"{d['patron']}_{fav['version']}_{fav['rack']}.mid"
+                if (perc / rel).exists():
+                    (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(perc / rel, root / rel)
+                    count += 1
     return count
 
 
@@ -545,6 +569,7 @@ def main(argv=None):
             print(f"{genre:20} {name:22} rack: {RACK_TAG[p['kit']]}")
     print(f"{n} patrones en {perc}")
     print(f"favoritos: {build_favorites(perc)} archivos en {perc / 'favoritos'}")
+    print(f"selección (ronda 2): {build_selection(perc)} archivos en {perc / 'seleccion'}")
 
 
 if __name__ == "__main__":
