@@ -84,6 +84,21 @@ trae *Closed Hi Hat 808* y *Open Hi Hat 808* (en las notas 51+, sin rol), y GF B
 y cerrado (un "hat" orgánico). Agregar roles de hat al mapa es un cambio de `percusion-groove.md` §3: queda propuesto,
 no hecho.
 
+**Tribe en todos, en dosis (Juan, 2026-10-28: "probar algo de Tribe en todos, en menor dosis, pero mantenerlo").**
+Cada dialecto suena con su kit y **un** elemento de Tribe encima, suave (ghost, velocity baja), elegido para que haga
+lo que ese dialecto ya pide del top. En organic Tribe sigue siendo el kit entero.
+
+| Dialecto | Kit (cuerpo · top) | Dosis de Tribe | Por qué ese |
+|---|---|---|---|
+| afro | Djembe: `djembe_sang` · `afro_house_groove` | **llamador** en los contratiempos | es el que lleva el pulso en la cumbia; en afro house ese lugar es la conga abierta |
+| organic | Tribe: `cumbia_afro` · `organic_shaker_wood` | (todo Tribe) | — |
+| melodic | 808 `prog_offbeat_rim` · Brasil `prog_rolling16` | **maracón** largo en los contratiempos | aire, sin sumar otra semicorchea al ganzá que ya rueda |
+| indie | 808: `tribal_toms` · `indie_metal_rim` | **cáscara de tambora** cada 3 semicorcheas | polirritmo seco y de madera, hipnótico (`tambora_hipnotica`) |
+| disco | 808 `house_conga` · Brasil `samba_house` | **guacharaca** en semicorcheas, con ghosts | raspa como un hat con swing: el disco colombiano |
+
+En la ronda cada dialecto va **dos veces**: kit solo y kit + dosis de Tribe, con el mismo lead. Así se decide de oído
+si la firma suma o estorba en cada uno.
+
 ## 2. Contextos de escucha (los mismos para todos los sonidos)
 
 Cada uno usa la selección de percusión de Juan (`midi/perc/seleccion/` o `favoritos/`), todo en Tribe, con un kick
