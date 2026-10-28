@@ -545,6 +545,48 @@ void test_presets_saltos_de_banco() {
     TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);         // sigue en PRESETS
 }
 
+void test_hybrid_presets_de_la_mitad_en_foco() {   // theory/12 §3d rev. 6
+    StudioUi ui;
+    ui.set_hybrid(true);
+    ui.set_preset_count(20);                                   // banco del engine en foco: A lleno y 4 en B
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                  // SHIFT + B4: presets de capa
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(LAYER_PRESETS, ui.state().page);
+    Result r = ui.handle(Control::Key3);                       // B3: PRESETS de la mitad en foco
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_TRUE(ui.hybrid());
+    ui.handle(Control::Key2);                                  // B2 = banco B del engine: fila 17, no ENV
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(17, ui.state().cursor);
+    ui.handle(Control::Nav, 2);
+    r = ui.handle(Control::NavPush);                           // carga en la mitad en foco, sin salir de la capa
+    TEST_ASSERT_EQUAL(int(Action::LoadPreset), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(18, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_TRUE(ui.hybrid());
+    r = ui.handle(Control::P2Push);                            // P2 push: foco en B, sigue en PRESETS
+    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(1, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.set_preset_count(8);                                    // el sketch manda el banco del engine de B
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    ui.handle(Control::Nav, -20);                              // SAVE guarda esa mitad en el banco de su engine
+    r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::SavePreset), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(8, r.arg);
+    ui.handle(Control::Key4);                                  // B4 sin SHIFT: banco D, no SYNTH FX
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                  // SHIFT + B4: vuelve a los presets de capa
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(LAYER_PRESETS, ui.state().page);
+    ui.handle(Control::Key3);
+    ui.handle(Control::NavLong);                               // NAV largo: home del modo
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -575,5 +617,6 @@ int main() {
     RUN_TEST(test_cada_modo_vuelve_a_su_pagina);
     RUN_TEST(test_layer_state_ida_y_vuelta);
     RUN_TEST(test_presets_saltos_de_banco);
+    RUN_TEST(test_hybrid_presets_de_la_mitad_en_foco);
     return UNITY_END();
 }

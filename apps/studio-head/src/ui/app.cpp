@@ -223,6 +223,10 @@ void App::handle_synth(Ctl c, StudioState& s) {
         s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
         return;
     }
+    if (_page == Page::LayerPresets && c == Ctl::B3) {   // demo: presets de la mitad en foco (theory/12 §3d rev. 6)
+        show(Page::Presets);
+        return;
+    }
     if (s.mode == Mode::Hybrid && c == Ctl::B4) {   // demo: presets de capa y vuelta a la home
         show(_page == Page::LayerPresets ? Page::Hybrid : Page::LayerPresets);
         return;

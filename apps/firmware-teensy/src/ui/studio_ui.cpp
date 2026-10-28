@@ -175,10 +175,26 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
             if (pg == LFO && lfo_stop_[engine_] == 0) break;
             return focus_to(0);
         case Control::P2Push: return focus_to(1);
+        default: break;
+    }
+    // PRESETS del engine de la mitad en foco (theory/12 §3d rev. 6): B1–B4 bancos como en SYNTH; SHIFT + B4 vuelve a
+    // los presets de capa. Load / SAVE ya van a la mitad en foco (el sketch usa ui.engine()).
+    if (pg == PRESETS && c >= Control::Key1 && c <= Control::Key4) {
+        if (c == Control::Key4 && ui_.shift) {
+            show(LAYER_PRESETS);
+            return {};
+        }
+        if (!ui_.shift) return handle_synth(c, v);
+    }
+    if (pg == LAYER_PRESETS && c == Control::Key3 && !ui_.shift) {   // B3: PRESETS de la mitad en foco
+        show(PRESETS);
+        return {};
+    }
+    switch (c) {
         case Control::Key1:
         case Control::Key2:
         case Control::Key3: {
-            if (pg == LAYER_PRESETS && c != Control::Key3 && !ui_.shift) {   // B1 / B2: banco A / B de presets de capa
+            if (pg == LAYER_PRESETS && !ui_.shift) {        // B1 / B2: banco A / B de presets de capa
                 const int row = 1 + int(uint8_t(c) - uint8_t(Control::Key1)) * PRESET_BANK;
                 layer_row_ = uint8_t(row > layer_count_ ? layer_count_ : row);
                 refresh_cursor();

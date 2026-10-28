@@ -128,6 +128,34 @@ con `FOCUS_B`).
 **Protocolo:** `0x47 LAYER_ENTRY` (Teensy → cabeza): `[índice, cantidad, nombre]`, como `PRESET_ENTRY`. La página de
 presets de capa es la **14** de UI_STATE.
 
+**Rev. 6 (2026-10-28, aprobada por Juan): presets del engine de la mitad en foco.** Probado
+en el hardware: con la rev. 5 no hay camino del panel para cargar un preset **del engine** (p. ej. GF AFRO SUB del banco
+del Model D) en una mitad de la capa. La tabla de §3c lo tenía ("SHIFT + B4 = PRESETS de la capa en foco… SAVE guarda esa
+mitad en el banco de su engine"), pero la rev. 5 le dio SHIFT + B4 a los presets de capa y la función se perdió; hoy se
+compuso la capa con `gf_presets.py`. El firmware ya lo soporta: `load_preset()` / `save_preset()` usan `ui.engine()`, que
+en capa es la mitad en foco, y `focus_engine()` manda a la cabeza la lista del engine en foco al cambiar el foco.
+
+Propuesta (B3 de LAYER_PRESETS hoy abre LFO / MOD, que ya está en B3 desde la home):
+
+| Control | En LAYER_PRESETS (rev. 6) |
+|---|---|
+| **B3** | **PRESETS de la mitad en foco** (página 6 de siempre, la lista del engine de esa mitad) |
+
+| Control | En PRESETS dentro de HYBRID SYNTH (rev. 6) |
+|---|---|
+| NAV · NAV push | Recorre · carga el preset en la mitad en foco sin salir de la capa (fila 0 = SAVE: guarda esa mitad en el banco de su engine) |
+| B1 … B4 | Banco A … D del engine (como PRESETS de SYNTH, theory/13) |
+| P1 push / P2 push | Foco en A / B: la lista cambia al engine de esa mitad, sin salir de la página |
+| **SHIFT + B4** | Vuelve a LAYER_PRESETS (de donde vino) |
+| NAV largo | Home de HYBRID SYNTH |
+
+- Se guarda como mitad, no como capa: el preset de capa sigue sonando con la mitad cambiada hasta que SAVE de
+  LAYER_PRESETS la guarda como `LAYER nn` (o se carga otra capa).
+- **Cabeza:** PRESETS titula "PRESETS · CAPA A" / "PRESETS · CAPA B" en el modo (como ENGINE SELECT) (flags `mode` 2 y `FOCUS_B` de UI_STATE, que ya
+  viajan); en LAYER_PRESETS la etiqueta de B3 pasa de "LFO / MOD" a "PRESETS A / B". Sin cambios de protocolo.
+- **Alternativa descartada:** que SHIFT + B4 recorra capa → mitad → home. Ahorra la tecla B3, pero rompe "SHIFT + B4 otra
+  vez: home" de la rev. 5 y no se ve en ninguna etiqueta.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |
