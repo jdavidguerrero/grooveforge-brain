@@ -46,14 +46,20 @@ LAYERS = [("woodbass", "bass/bass_adn_tambora", 0), ("kalimba", "pluck/pluck_adn
           ("desert_lead", "lead/lead_adn_frase", 0), ("shaker_zap", "perc/perc_adn_madera", 0),
           ("roller_sub", "bass/bass_adn_rodante", 0), ("retro_brass", "chords/chords_adn_respiro", 0)]
 CC_MORPH, CC_LAYER, CC_MOVE = 17, 18, 19
-# Contextos de escucha (sesion-paleta-adn.md §2): (perc, top) de midi/perc/seleccion/
+# Contextos de escucha (sesion-paleta-adn.md §2): (perc, top) de midi/perc/; None = esa parte no suena.
+# A–C cruzan dos dialectos; D–F aíslan uno (organic, indie, melodic).
 CONTEXTS = {
-    "A_tierra": ("organic_house/perc/peak/v4/cumbia_afro_v4_peak_tribe.mid",
-                 "afro_house/top/peak/v2/afro_house_groove_v2_peak_tribe.mid"),
-    "B_noche": ("indie_tech/perc/peak/v2/tribal_toms_v2_peak_tribe.mid",
-                "melodic_progressive/top/peak/v3/prog_rolling16_v3_peak_tribe.mid"),
-    "C_fiesta": ("afro_house/perc/main_q/v2/djembe_sang_v2_main_q_tribe.mid",
-                 "disco_house/top/peak/v4/samba_house_v4_peak_tribe.mid"),
+    "A_tierra": ("seleccion/organic_house/perc/peak/v4/cumbia_afro_v4_peak_tribe.mid",
+                 "seleccion/afro_house/top/peak/v2/afro_house_groove_v2_peak_tribe.mid"),
+    "B_noche": ("seleccion/indie_tech/perc/peak/v2/tribal_toms_v2_peak_tribe.mid",
+                "seleccion/melodic_progressive/top/peak/v3/prog_rolling16_v3_peak_tribe.mid"),
+    "C_fiesta": ("seleccion/afro_house/perc/main_q/v2/djembe_sang_v2_main_q_tribe.mid",
+                 "seleccion/disco_house/top/peak/v4/samba_house_v4_peak_tribe.mid"),
+    "D_organico_suave": (None, "seleccion/organic_house/top/peak/v4/organic_shaker_wood_v4_peak_tribe.mid"),
+    "E_hipnotico": ("favoritos/indie_tech/perc/main/v1/tambora_hipnotica_main_tribe.mid",
+                    "favoritos/indie_tech/top/intro/v1/tambora_hipnotica_intro_tribe.mid"),
+    "F_melodico": ("seleccion/melodic_progressive/top/peak/v3/prog_offbeat_rim_v3_peak_tribe.mid",
+                   "seleccion/melodic_progressive/top/peak/v4/prog_rolling16_v4_peak_tribe.mid"),
 }
 
 
@@ -150,12 +156,15 @@ def main(argv=None):
     for i, (name, rel, shift) in enumerate(LAYERS):
         notes, ccs = layer_clip(i, pats[rel], shift)
         write_mid(root / "capas" / f"capa_{i + 1}_{name}.mid", notes, a.bpm, f"capa {i + 1} {name}", ccs)
-    sel = Path(a.dataset) / "midi" / "perc" / "seleccion"
+    perc_dir = Path(a.dataset) / "midi" / "perc"
     for ctx, (perc, top) in CONTEXTS.items():
         for part, src in (("perc", perc), ("top", top)):
             dst = root / "contexto" / ctx / f"{part}_tribe.mid"
             dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(sel / src, dst)
+            if src:
+                shutil.copy2(perc_dir / src, dst)
+            else:
+                dst.unlink(missing_ok=True)
     # Build: La sostenido 8 compases y MOVE (CC 19) de 0 a 127, un paso por negra
     write_mid(root / "build" / "build_adn_move.mid", [(0, 8 * BAR - 20, A1 + 24 + a.key, 90)], a.bpm,
               "build adn move", [(q * BAR // 4, CC_MOVE, round(127 * q / 31)) for q in range(32)])

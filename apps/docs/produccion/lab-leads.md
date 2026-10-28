@@ -220,7 +220,7 @@ Los ganadores se graban todos al final (`protocolo-captura.md` §3).
 
 **Hecho (2026-10-28):** `tools/paleta-lab/make_lead_lab.py` genera 48 leads (12 escalas × 4 rítmicas) y 12 clips de
 acordes en `midi/adn/lead/lab/<familia>/<escala>__<rítmica>__<dialectos>.mid` (y `<escala>__acordes.mid`), con
-`tests/test_lead_lab.py`. `fill_lab_set.py --leads` los carga en un set con pista **ACORDES**: escenas 1–3 los
+`tests/test_lead_lab.py`. `fill_lab_set.py --leads` los carga en un set con pista **ACORDES**: escenas 1–6 los
 contextos, después la mixta A de las 12 escalas (eólica primero: ronda 1) y luego las demás rítmicas por escala.
 
 Detalles del generador que conviene saber al escuchar:
@@ -237,7 +237,8 @@ Pendiente:
 1. **Juan arma `GF_Lead_Lab.als`** (paso a paso en el README de `tools/paleta-lab/`) y se llena con
    `fill_lab_set.py --leads`.
 2. **Presets JD LEAD** (§5), subidos con `gf_presets.py`, sin borrar ninguno.
-3. **Contextos D · orgánico suave, E · hipnótico y F · melódico** (`sesion-paleta-adn.md` §2) en los dos sets.
+3. ~~Contextos D · orgánico suave, E · hipnótico y F · melódico~~ — hechos: `make_adn_clips.py` los copia y
+   `fill_lab_set.py` los pone en las escenas 4–6 (`GF_Paleta_Lab_v2.als`; el lab de leads los trae al llenarse).
 4. **Dosis** (§4) de la escala ganadora, después de la ronda 3.
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.

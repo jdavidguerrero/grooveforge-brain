@@ -152,7 +152,7 @@ Meta de la Sesión B (sin cambios): unos 10 sonidos al final. Una sesión por ro
 `tools/paleta-lab/make_adn_clips.py` escribe todo en `GrooveForge_Dataset_v1/midi/adn/`:
 
 ```
-midi/adn/contexto/<A_tierra|B_noche|C_fiesta>/{perc,top}_tribe.mid   (copias de la selección)
+midi/adn/contexto/<A_tierra|…|F_melodico>/{perc,top}_tribe.mid       (copias de la selección; D sin perc)
 midi/adn/contexto/kick_4x4.mid                                        (C1 en las negras, para Kick 3)
 midi/adn/<bass|chords|pluck|perc|pad|lead>/<patron>.mid
 midi/adn/capas/capa_<n>_<nombre>.mid                                  (CC 18 + CC 17 + notas)
@@ -161,6 +161,8 @@ midi/adn/capas/capa_<n>_<nombre>.mid                                  (CC 18 + C
 El `.als` lo arma Juan una vez (Live no tiene una forma estable de generarlo desde afuera), siguiendo el README de
 esa carpeta: pistas KICK (Kick 3), PERC y TOP (Tribe), BRAIN MIDI (salida a la Teensy), BRAIN AUDIO (entradas 1/2,
 para grabar) y una escena por contexto. Se guarda como `GF_Paleta_Lab.als` y se reutiliza en todas las sesiones.
+Con los contextos D–F (fase 2) el set lleno es `GF_Paleta_Lab_v2.als` (copia de `GF_Paleta_Lab_clips.als`, que
+queda como estaba): escenas 1–6 los contextos, desde la 7 los patrones.
 
 ## 6. Qué se anota
 
@@ -179,7 +181,7 @@ comparar con lo que oiga Juan, no una regla.
 | Los graves de los bajos `tambora` y `rodante` no caen en las negras (el kick) | test |
 | `build_adn_move` sube MOVE (CC 19) de 0 a 127 en 8 compases | test |
 | Cada clip de capa elige su capa: CC 18 al tick 0 con el valor que `layer_from_cc` lleva a esa capa; MORPH 0 / 64 / 127 | test |
-| Los contextos copian los archivos de la selección | test |
+| Los contextos (A–F) copian los archivos de la selección o de favoritos; D no tiene perc | test |
 | Que suenen bien juntos | Juan, en la sesión |
 
 ## 8. Fase 2: refinamiento (lo que dejó el check general, 2026-10-28)

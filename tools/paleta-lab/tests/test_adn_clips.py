@@ -60,9 +60,9 @@ def test_bajos_fuera_del_kick():
 def test_capas_eligen_su_capa_y_morph(tmp_path):
     for i in range(len(ma.LAYERS)):
         assert layer_from_cc(ma.layer_cc(i), len(ma.LAYERS)) == i + 1
-    sel = tmp_path / "ds" / "midi" / "perc" / "seleccion"
+    sel = tmp_path / "ds" / "midi" / "perc"
     for perc, top in ma.CONTEXTS.values():
-        for rel in (perc, top):
+        for rel in filter(None, (perc, top)):
             (sel / rel).parent.mkdir(parents=True, exist_ok=True)
             (sel / rel).write_bytes(b"MThd-" + rel.encode())
     ma.main(["--dataset", str(tmp_path / "ds")])
@@ -72,9 +72,12 @@ def test_capas_eligen_su_capa_y_morph(tmp_path):
         assert ccs[0] == (0, ma.CC_LAYER, ma.layer_cc(i))
         assert [(t, v) for t, c, v in ccs if c == ma.CC_MORPH] == [(0, 0), (4 * BAR, 64), (8 * BAR, 127)]
         assert notes and max(t for t, *_ in notes) < 12 * BAR
+    assert len(ma.CONTEXTS) == 6
     for ctx, (perc, top) in ma.CONTEXTS.items():
-        assert (root / "contexto" / ctx / "perc_tribe.mid").read_bytes() == (sel / perc).read_bytes()
-        assert (root / "contexto" / ctx / "top_tribe.mid").read_bytes() == (sel / top).read_bytes()
+        for part, rel in (("perc", perc), ("top", top)):
+            dst = root / "contexto" / ctx / f"{part}_tribe.mid"
+            assert dst.read_bytes() == (sel / rel).read_bytes() if rel else not dst.exists(), (ctx, part)
+    assert ma.CONTEXTS["D_organico_suave"][0] is None               # D: solo top
     build, ccs = read_events(root / "build" / "build_adn_move.mid")
     moves = [v for t, c, v in ccs if c == ma.CC_MOVE]
     assert len(build) == 1 and moves[0] == 0 and moves[-1] == 127 and moves == sorted(moves)

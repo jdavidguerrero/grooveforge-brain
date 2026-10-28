@@ -2,9 +2,9 @@
 """Carga los clips de midi/adn/ en el set de Live de Juan (apps/docs/produccion/sesion-paleta-adn.md §5).
 
 Toma el .als que Juan creó con las pistas KICK, PERC, TOP, BRAIN MIDI y BRAIN AUDIO (así el archivo es de su versión
-de Live) y llena los clip slots: escenas 1–3 = contextos A tierra · B noche · C fiesta (KICK, PERC, TOP); desde la
-escena 4, un patrón del Brain por escena en BRAIN MIDI. Agrega escenas si faltan, pone el tempo en 124 y guarda una
-copia del original (.als.bak) la primera vez. Los CC de las capas no van en el .als (son envolventes con referencias
+de Live) y llena los clip slots: escenas 1–6 = contextos A tierra · B noche · C fiesta · D orgánico suave ·
+E hipnótico · F melódico (KICK, PERC, TOP); desde la escena 7, un patrón del Brain por escena en BRAIN MIDI. Agrega
+escenas si faltan, pone el tempo en 124 y guarda una copia del original (.als.bak) la primera vez. Los CC de las capas no van en el .als (son envolventes con referencias
 internas de Live): para MORPH y CC 18 se arrastra el .mid de capas/ o se elige la capa en el Brain.
 
     python3 tools/paleta-lab/fill_lab_set.py "<ruta>/GF_Paleta_Lab.als"
@@ -29,7 +29,8 @@ from pathlib import Path
 from make_lead_lab import SCALES
 
 TPQ = 480
-CONTEXTS = [("A_tierra", "A · tierra"), ("B_noche", "B · noche"), ("C_fiesta", "C · fiesta")]
+CONTEXTS = [("A_tierra", "A · tierra"), ("B_noche", "B · noche"), ("C_fiesta", "C · fiesta"),
+            ("D_organico_suave", "D · orgánico suave"), ("E_hipnotico", "E · hipnótico"), ("F_melodico", "F · melódico")]
 ROLE_ORDER = ("bass", "perc", "lead", "pluck", "chords", "pad", "build", "capas")   # el orden de la sesión (§1b)
 COLORS = {"bass": 14, "perc": 2, "lead": 25, "pluck": 20, "chords": 9, "pad": 17, "build": 5, "capas": 22,
           "KICK": 69, "PERC": 26, "TOP": 26}
@@ -140,7 +141,8 @@ def ensure_scenes(ls: ET.Element, count: int):
 def put(track: ET.Element, row: int, clip: ET.Element):
     value = track.find(".//MainSequencer/ClipSlotList")[row].find("ClipSlot/Value")
     value.clear()
-    value.append(clip)
+    if clip is not None:
+        value.append(clip)
 
 
 def brain_clips(adn: Path) -> list[tuple[str, str, Path]]:
@@ -187,9 +189,15 @@ def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
     for row, (folder, label) in enumerate(CONTEXTS):
         scenes[row].find("Name").set("Value", label)
         put(tracks["KICK"], row, make_clip(kick, "kick 4x4", COLORS["KICK"], cid)); cid += 1
+        for t in ("BRAIN MIDI", "ACORDES"):                       # las escenas de contexto no llevan Brain
+            if t in tracks:
+                put(tracks[t], row, None)
         for part, track in (("perc", "PERC"), ("top", "TOP")):
-            notes = read_mid(adn / "contexto" / folder / f"{part}_tribe.mid")
-            put(tracks[track], row, make_clip(notes, f"{label} {part}", COLORS[track], cid)); cid += 1
+            src = adn / "contexto" / folder / f"{part}_tribe.mid"
+            if not src.exists():                                  # D · orgánico suave no tiene perc
+                put(tracks[track], row, None)
+                continue
+            put(tracks[track], row, make_clip(read_mid(src), f"{label} {part}", COLORS[track], cid)); cid += 1
     for k, row_clips in enumerate(brain):
         row = len(CONTEXTS) + k
         if leads:
