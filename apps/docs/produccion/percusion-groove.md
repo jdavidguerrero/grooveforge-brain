@@ -209,25 +209,23 @@ a `midi/perc/seleccion/` con la misma estructura. Lo que dicen:
   top con swing.
 - Cobertura: afro house 14, organic 10, indie tech 8, melodic / progressive 4 (sin perc), disco / house 1 (sin perc).
 
-### Rev. 7: indie dance con Tribe; el 808 latino queda pendiente (2026-10-27)
+### Rev. 7: más Tribe en indie tech, el lado oscuro; el 808 latino queda pendiente (2026-10-27)
 
 Juan confirma la idea de fondo: **los patrones son roles** (graves, medios, agudos, sacudidos, campanas…) y el rack solo
 cambia el acento (africano, brasileño, colombiano). Tribe es su sello: suena natural (alterna manos) y es marca
-colombiana. Quiere ver cómo encaja en **indie dance**.
+colombiana. Quiere ver cómo encaja en **indie tech**, porque es más oscuro.
 
-**Indie dance** (vecino del indie tech, pero con raíz disco-punk / nu-disco): más groove de banda que de máquina, el
-pandero en los backbeats, el cencerro y las congas de disco, swing leve. La idea de los patrones nuevos es que los
-instrumentos colombianos hagan los papeles de esa batería:
+Lo oscuro del indie tech en percusión: casi recto (swing 50–51 %), hipnótico (polirritmos que se repiten), tonos
+**apagados** y graves más que abiertos y brillantes, pocos golpes y bien puestos, el brillo solo en el peak. Junto a
+`mapale_tech` (que es más festivo), tres patrones en Tribe:
 
-| Patrón | Idea | Lo colombiano haciendo de… |
-|---|---|---|
-| `guache_disco_punk` | semicorcheas de guache acentuadas en los contratiempos, como el hi-hat disco-punk | guache = hi-hat; caja quemao en 2 y 4 = pandero; aro del bombo = cencerro; peak con guacharaca en corcheas |
-| `alegre_funk` | línea de conga funk de 2 compases en el alegre, slaps en el remate | alegre = congas de disco; maracón = shaker; peak con llamador en los contratiempos |
-| `llamador_offbeat` | el llamador de la cumbia ya vive en el contratiempo: es el hi-hat abierto del house | llamador = open hat; tambora cáscara en 3-3-2; tambora abierta en el perc |
+| Patrón | Idea |
+|---|---|
+| `tambora_hipnotica` | cáscara de tambora cada 3 semicorcheas (un ciclo de 3 sobre el 4/4 que se corre), tambora apagada, maracón suave a contratiempo; peak con guacharaca en los backbeats |
+| `quemao_oscuro` | alegre en bajoneo (apagado) en 2 compases, quemaos secos y escasos, caja fondo en 2 y 4, guacharaca; peak con guache en corcheas |
+| `bombo_cascara_drone` | el aro del bombo en semicorcheas como un pulso de madera continuo, tambora abierta y alegre escasos, latigazo en el remate; peak con caja quemao a contratiempo |
 
-Los tres en Tribe, con las mismas reglas: graves fuera de las semicorcheas del kick, versiones intro / main / peak /
-main_q, top y perc por separado. El generador sigue a 124 BPM; el indie dance suele ir a 118–122 y en Live el MIDI
-sigue al tempo del proyecto (solo el microtiming en ms cambia un poco).
+Mismas reglas: graves fuera de las semicorcheas del kick, versiones intro / main / peak / main_q, top y perc aparte.
 
 **Pendiente:** cambiar el GF 808 Perc por un rack **GF Latin** con samples reales (tumba, congas, bongó, güiro,
 maracas, cencerro, clave, timbal) cuando Juan los consiga, con el mismo mapa de roles: todos los patrones salen con ese
