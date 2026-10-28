@@ -143,3 +143,17 @@ al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qu
 | Cada clip de capa elige su capa: CC 18 al tick 0 con el valor que `layer_from_cc` lleva a esa capa; MORPH 0 / 64 / 127 | test |
 | Los contextos copian los archivos de la selección | test |
 | Que suenen bien juntos | Juan, en la sesión |
+
+## 8. Fase 2: refinamiento (lo que dejó el check general, 2026-10-28)
+
+| Rol | Resultado del check | Para la fase 2 |
+|---|---|---|
+| bass | JD SUB MID (capa: GF AFRO SUB + Juno de ROLLER SUB), `bass_adn_octavas`; pasa en A, B y C | variaciones sobre JD SUB MID (sonido y patrón) |
+| perc tonal | GF METAL PERC ("super étnico"), con KALIMBA TINE y SHAKER ZAP; `perc_adn_madera` | variaciones sobre METAL PERC |
+| pluck | GF TALKING PLUCK + `arp16`; SUNRISE + `motivo` (organic suave) y KALIMBA (hipnótico) | menos brillo, ataque más suave, más cuerpo; contextos D y E |
+| lead | ninguno: "muy orientales y extendidos"; base que interesa: DESERT LEAD y GF MELODIC LEAD | **lab dedicado de leads** (abajo) |
+
+**Lab de leads** (Juan: de lo más importante). No se trata de sacar lo "oriental" sino de **manejarlo**: escalas como
+la pentatónica y la menor húngara combinadas con la base menor natural (por ejemplo, la segunda aumentada solo en el
+remate de una frase), frases cortas que funcionen como gancho de pista, y presets que partan de DESERT LEAD y
+GF MELODIC LEAD. Contextos nuevos para probar: D · orgánico suave y E · hipnótico.
