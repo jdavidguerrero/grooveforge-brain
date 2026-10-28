@@ -62,12 +62,16 @@ esperados: `hungara_menor__mixta_a__melodic_organic.mid`. Diseño: `apps/docs/pr
 python3 tools/paleta-lab/make_lead_lab.py            # La, 124 BPM
 ```
 
-Para escucharlos en Live (una vez):
+Para escucharlos en Live (una vez), sobre la sesión de siempre:
 
-1. Abre `GF_Paleta_Lab.als` (el set base, sin clips) y agrega una pista MIDI llamada **ACORDES** con un instrumento de
-   Live suave (por ejemplo Drift o Electric), a volumen bajo: es la referencia armónica, no parte del sonido.
+1. Abre `GF_Paleta_Lab_clips.als` y agrega una pista MIDI llamada **ACORDES** con un instrumento de Live suave (por
+   ejemplo Drift o Electric), a volumen bajo: es la referencia armónica, no parte del sonido.
 2. *Save Live Set As…* → `GF_Lead_Lab.als`, en la misma carpeta. Cierra ese set (abre otro) antes del paso 3.
 3. `python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"` y vuelve a abrirlo.
+
+`--leads` **agrega** 48 escenas debajo de las que ya hay (no toca nada de arriba): en cada una el kick, el lead en
+BRAIN MIDI y los acordes de su escala en ACORDES. Se corre una sola vez por set. El Brain toca un sonido a la vez:
+mientras suena el lead no suena el bajo del Brain.
 
 ## Presets JD LEAD (`make_jd_leads.py`)
 

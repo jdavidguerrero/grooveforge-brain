@@ -4,14 +4,16 @@
 Toma el .als que Juan creó con las pistas KICK, PERC, TOP, BRAIN MIDI y BRAIN AUDIO (así el archivo es de su versión
 de Live) y llena los clip slots: escenas 1–6 = contextos A tierra · B noche · C fiesta · D orgánico suave ·
 E hipnótico · F melódico (KICK, PERC, TOP); desde la escena 7, un patrón del Brain por escena en BRAIN MIDI. Agrega
-escenas si faltan, pone el tempo en 124 y guarda una copia del original (.als.bak) la primera vez. Los CC de las capas no van en el .als (son envolventes con referencias
-internas de Live): para MORPH y CC 18 se arrastra el .mid de capas/ o se elige la capa en el Brain.
+escenas si faltan, pone el tempo en 124 y guarda una copia del original (.als.bak) la primera vez. Los CC de las
+capas no van en el .als (son envolventes con referencias internas de Live): para MORPH y CC 18 se arrastra el .mid de
+capas/ o se elige la capa en el Brain.
 
     python3 tools/paleta-lab/fill_lab_set.py "<ruta>/GF_Paleta_Lab.als"
 
-Con --leads carga el lab de leads (lab-leads.md §7) en un set que además tenga una pista ACORDES (un instrumento de
-Live): después de los contextos, primero la mixta A de las 12 escalas por familia (rondas 1–3) y luego las otras
-rítmicas de cada escala (ronda 4); en cada escena, el lead en BRAIN MIDI y la progresión de su escala en ACORDES.
+Con --leads **agrega** el lab de leads (lab-leads.md §7) debajo de lo que ya tiene el set, sin tocarlo; el set
+necesita además una pista ACORDES (un instrumento de Live). Primero la mixta A de las 12 escalas (eólica primero:
+rondas 1–3) y luego las otras rítmicas de cada escala (ronda 4); en cada escena, el kick, el lead en BRAIN MIDI y la
+progresión de su escala en ACORDES. Volver a correrlo agrega otra vez: se corre una sola vez por set.
 
     python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
@@ -182,10 +184,23 @@ def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
     missing = ({"KICK", "PERC", "TOP", "BRAIN MIDI"} | ({"ACORDES"} if leads else set())) - set(tracks)
     if missing:
         raise SystemExit(f"faltan pistas en el set: {', '.join(sorted(missing))}")
-    brain = lead_lab_rows(adn / "lead" / "lab") if leads else brain_clips(adn)
-    ensure_scenes(ls, len(CONTEXTS) + len(brain))
-    scenes, cid = ls.find("Scenes"), 1
+    scenes = ls.find("Scenes")
+    cid = 1 + max((int(c.get("Id")) for c in root.iter("MidiClip")), default=0)   # sin chocar con los que ya hay
+    cid0 = cid
     kick = read_mid(adn / "contexto" / "kick_4x4.mid")
+    if leads:
+        start = first_free_row(ls)
+        rows = lead_lab_rows(adn / "lead" / "lab")
+        ensure_scenes(ls, start + len(rows))
+        for k, (scene, f, chords) in enumerate(rows):
+            row = start + k
+            scenes[row].find("Name").set("Value", scene)
+            put(tracks["KICK"], row, make_clip(kick, "kick 4x4", COLORS["KICK"], cid)); cid += 1
+            put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
+            put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
+        return save(als, root, ls, bpm, cid - cid0)
+    brain = brain_clips(adn)
+    ensure_scenes(ls, len(CONTEXTS) + len(brain))
     for row, (folder, label) in enumerate(CONTEXTS):
         scenes[row].find("Name").set("Value", label)
         put(tracks["KICK"], row, make_clip(kick, "kick 4x4", COLORS["KICK"], cid)); cid += 1
@@ -198,17 +213,25 @@ def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
                 put(tracks[track], row, None)
                 continue
             put(tracks[track], row, make_clip(read_mid(src), f"{label} {part}", COLORS[track], cid)); cid += 1
-    for k, row_clips in enumerate(brain):
+    for k, (role, name, f) in enumerate(brain):
         row = len(CONTEXTS) + k
-        if leads:
-            scene, f, chords = row_clips
-            scenes[row].find("Name").set("Value", scene)
-            put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
-            put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
-            continue
-        role, name, f = row_clips
         scenes[row].find("Name").set("Value", role)
         put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), name, COLORS[role], cid)); cid += 1
+    return save(als, root, ls, bpm, cid - cid0)
+
+
+def first_free_row(ls: ET.Element) -> int:
+    """La primera escena debajo del último clip de cualquier pista."""
+    last = -1
+    for tr in ls.find("Tracks"):
+        slots = tr.find(".//MainSequencer/ClipSlotList")
+        for i, slot in enumerate(slots if slots is not None else []):
+            if len(slot.find("ClipSlot/Value")):
+                last = max(last, i)
+    return last + 1
+
+
+def save(als: Path, root: ET.Element, ls: ET.Element, bpm: float, count: int) -> int:
     tempo = ls.find(".//MainTrack//Tempo/Manual")
     if tempo is not None:
         tempo.set("Value", f"{bpm:g}")
@@ -217,7 +240,7 @@ def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
         shutil.copy2(als, bak)
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding="unicode")
     als.write_bytes(gzip.compress(xml.encode("utf-8")))
-    return cid - 1
+    return count
 
 
 def main(argv=None):

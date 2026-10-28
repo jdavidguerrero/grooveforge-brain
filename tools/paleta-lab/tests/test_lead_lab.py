@@ -95,3 +95,15 @@ def test_orden_de_escenas_del_lab(tmp_path):
     for scene, lead, chords in rows:
         assert chords.exists() and chords.stem == lead.stem.split("__")[0] + "__acordes"
         assert scene.startswith(lead.parent.name.split("_")[0])
+
+
+def test_agrega_debajo_del_ultimo_clip():
+    import xml.etree.ElementTree as ET
+    import fill_lab_set as fl
+    slot = '<ClipSlot><ClipSlot><Value>{}</Value></ClipSlot></ClipSlot>'
+    track = '<MidiTrack><DeviceChain><MainSequencer><ClipSlotList>{}</ClipSlotList></MainSequencer></DeviceChain></MidiTrack>'
+    ls = ET.fromstring('<LiveSet><Tracks>'
+                       + track.format(slot.format('<MidiClip Id="1"/>') + slot.format('') * 3)
+                       + track.format(slot.format('') * 2 + slot.format('<MidiClip Id="2"/>') + slot.format(''))
+                       + '</Tracks></LiveSet>')
+    assert fl.first_free_row(ls) == 3

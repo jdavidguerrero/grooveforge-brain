@@ -233,8 +233,11 @@ Los ganadores se graban todos al final (`protocolo-captura.md` §3).
 
 **Hecho (2026-10-28):** `tools/paleta-lab/make_lead_lab.py` genera 48 leads (12 escalas × 4 rítmicas) y 12 clips de
 acordes en `midi/adn/lead/lab/<familia>/<escala>__<rítmica>__<dialectos>.mid` (y `<escala>__acordes.mid`), con
-`tests/test_lead_lab.py`. `fill_lab_set.py --leads` los carga en un set con pista **ACORDES**: escenas 1–6 los
-contextos, después la mixta A de las 12 escalas (eólica primero: ronda 1) y luego las demás rítmicas por escala.
+`tests/test_lead_lab.py`. `fill_lab_set.py --leads` los **agrega** debajo de lo que ya tiene la sesión de Juan
+(`GF_Paleta_Lab_clips.als` guardada como `GF_Lead_Lab.als` con una pista **ACORDES**): en cada escena el kick, el
+lead y los acordes de su escala; primero la mixta A de las 12 escalas (eólica primero: ronda 1) y luego las demás
+rítmicas. Juan los escucha con el kick (decisión 2026-10-28: sin bajo debajo; el Brain toca un sonido a la vez, así
+que el bajo del Brain no suena junto con el lead).
 
 Detalles del generador que conviene saber al escuchar:
 
