@@ -15,6 +15,12 @@ necesita además una pista ACORDES (un instrumento de Live). Primero la mixta A 
 rondas 1–3) y luego las otras rítmicas de cada escala (ronda 4); en cada escena, el kick, el lead en BRAIN MIDI y la
 progresión de su escala en ACORDES. Volver a correrlo agrega otra vez: se corre una sola vez por set.
 
+Con --dialectos <ficha.json> agrega la ronda de dialectos (lab-leads.md §7, ronda 3): los clips que le gustaron a Juan
+(campo lab_leads.clips_que_gustan de la ficha) sobre la percusión de cada dialecto, un bloque por dialecto; en cada
+escena kick, perc, top, lead y acordes.
+
+    python3 tools/paleta-lab/fill_lab_set.py --dialectos <ficha.json> "<ruta>/GF_Lead_Dialectos.als"
+
     python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
 from __future__ import annotations
@@ -22,6 +28,7 @@ from __future__ import annotations
 import argparse
 import copy
 import gzip
+import json
 import os
 import shutil
 import struct
@@ -177,17 +184,55 @@ def lead_lab_rows(lab: Path) -> list[tuple[str, Path, Path]]:
     return rows
 
 
-def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
+# Percusión de cada dialecto, armada con los contextos de midi/adn/contexto/: (de dónde sale la perc, de dónde el top).
+# afro y organic se arman puros cruzando A y C / A y D; disco no tiene perc propia en la selección y usa C (afro + disco).
+DIALECTS = {"afro": ("C_fiesta", "A_tierra"), "organic": ("A_tierra", "D_organico_suave"),
+            "melodic": ("F_melodico", "F_melodico"), "indie": ("E_hipnotico", "E_hipnotico"),
+            "disco": ("C_fiesta", "C_fiesta")}
+
+
+def dialect_rows(lab: Path, liked: list[str]) -> list[tuple[str, str, Path, Path]]:
+    """(dialecto, nombre de escena, lead, acordes): un bloque por dialecto con todos los clips que gustaron, en el orden
+    de las escalas (familias 1–4) y de las rítmicas."""
+    files = {f.stem: f for f in lab.glob("*/*.mid")}
+    missing = [c for c in liked if c not in files]
+    if missing:
+        raise SystemExit(f"no encuentro en {lab}: {', '.join(missing)}")
+    key = lambda c: (ORDER.get(c.split("__")[0], 99), LEAD_RHYTHMS.index(c.split("__")[1]))   # noqa: E731
+    rows = []
+    for dialect in DIALECTS:
+        for c in sorted(liked, key=key):
+            scale, rhythm = c.split("__")[:2]
+            rows.append((dialect, f"{dialect} · {scale} · {rhythm}", files[c], files[c].parent / f"{scale}__acordes.mid"))
+    return rows
+
+
+def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False, liked: list[str] | None = None) -> int:
     root = ET.fromstring(gzip.decompress(als.read_bytes()))
     ls = root.find("LiveSet")
     tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
-    missing = ({"KICK", "PERC", "TOP", "BRAIN MIDI"} | ({"ACORDES"} if leads else set())) - set(tracks)
+    missing = ({"KICK", "PERC", "TOP", "BRAIN MIDI"} | ({"ACORDES"} if leads or liked else set())) - set(tracks)
     if missing:
         raise SystemExit(f"faltan pistas en el set: {', '.join(sorted(missing))}")
     scenes = ls.find("Scenes")
     cid = 1 + max((int(c.get("Id")) for c in root.iter("MidiClip")), default=0)   # sin chocar con los que ya hay
     cid0 = cid
     kick = read_mid(adn / "contexto" / "kick_4x4.mid")
+    if liked:
+        start = first_free_row(ls)
+        rows = dialect_rows(adn / "lead" / "lab", liked)
+        ensure_scenes(ls, start + len(rows))
+        for k, (dialect, scene, f, chords) in enumerate(rows):
+            row = start + k
+            perc_ctx, top_ctx = DIALECTS[dialect]
+            scenes[row].find("Name").set("Value", scene)
+            put(tracks["KICK"], row, make_clip(kick, "kick 4x4", COLORS["KICK"], cid)); cid += 1
+            for part, track, ctx in (("perc", "PERC", perc_ctx), ("top", "TOP", top_ctx)):
+                src = adn / "contexto" / ctx / f"{part}_tribe.mid"
+                put(tracks[track], row, make_clip(read_mid(src), f"{dialect} {part}", COLORS[track], cid)); cid += 1
+            put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
+            put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
+        return save(als, root, ls, bpm, cid - cid0)
     if leads:
         start = first_free_row(ls)
         rows = lead_lab_rows(adn / "lead" / "lab")
@@ -247,10 +292,12 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("als")
     ap.add_argument("--leads", action="store_true", help="cargar el lab de leads (necesita la pista ACORDES)")
+    ap.add_argument("--dialectos", metavar="FICHA", help="agregar la ronda de dialectos con los clips de la ficha")
     ap.add_argument("--dataset", default=os.environ.get("GF_DATASET",
                                                         str(Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1")))
     a = ap.parse_args(argv)
-    n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads)
+    liked = json.loads(Path(a.dialectos).read_text())["lab_leads"]["clips_que_gustan"] if a.dialectos else None
+    n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads, liked=liked)
     print(f"{n} clips cargados en {a.als} (original en .als.bak)")
 
 

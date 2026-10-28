@@ -73,6 +73,9 @@ Para escucharlos en Live (una vez), sobre la sesión de siempre:
 BRAIN MIDI y los acordes de su escala en ACORDES. Se corre una sola vez por set. El Brain toca un sonido a la vez:
 mientras suena el lead no suena el bajo del Brain.
 
+`--dialectos <ficha.json>` agrega la ronda de dialectos: los clips de `lab_leads.clips_que_gustan` de la ficha sobre la
+percusión de cada dialecto (afro, organic, melodic, indie, disco), un bloque por dialecto (`lab-leads.md` §10).
+
 ## Presets JD LEAD (`make_jd_leads.py`)
 
 Deriva JD LEAD MELODIC (de GF MELODIC LEAD), JD LEAD BODY (de JD RUN LEAD BODY) y la capa JD DESERT LD (de DESERT

@@ -107,3 +107,17 @@ def test_agrega_debajo_del_ultimo_clip():
                        + track.format(slot.format('') * 2 + slot.format('<MidiClip Id="2"/>') + slot.format(''))
                        + '</Tracks></LiveSet>')
     assert fl.first_free_row(ls) == 3
+
+
+def test_ronda_de_dialectos(tmp_path):
+    import fill_lab_set as fl
+    ml.main(["--dataset", str(tmp_path)])
+    liked = ["kumoi__corta__organic", "eolica__mixta_b__afro_melodic", "eolica__mixta_a__afro_melodic"]
+    rows = fl.dialect_rows(tmp_path / "midi" / "adn" / "lead" / "lab", liked)
+    assert len(rows) == len(liked) * len(fl.DIALECTS)
+    assert [d for d, *_ in rows[::len(liked)]] == list(fl.DIALECTS)              # un bloque por dialecto
+    assert [f.stem for _, _, f, _ in rows[:3]] == [liked[2], liked[1], liked[0]]  # eólica antes que kumoi; mixta A antes que B
+    for _, _, f, chords in rows:
+        assert chords.exists()
+    for perc, top in fl.DIALECTS.values():
+        assert {perc, top} <= {c for c, _ in fl.CONTEXTS}

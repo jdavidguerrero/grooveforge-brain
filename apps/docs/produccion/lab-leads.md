@@ -297,3 +297,21 @@ Lo que dice el mapa:
   mayor con el Dm prestado (en corta).
 - Faltan los **dialectos**: se escuchó solo con kick, así que las etiquetas del nombre siguen siendo hipótesis. La
   ronda 3 (§7) los confirma escuchando los clips que gustaron sobre los contextos de cada dialecto.
+
+### Ronda de dialectos (ronda 3, preparada 2026-10-28)
+
+`GF_Lead_Dialectos.als` (copia de `GF_Paleta_Lab_clips.als`; `fill_lab_set.py --dialectos <ficha>`): los 16 clips que
+gustaron sobre la percusión de cada dialecto, 16 escenas por bloque, cada una con kick, perc, top, lead y acordes.
+
+| Escenas | Dialecto | Perc (cuerpo) | Top |
+|---|---|---|---|
+| 4–19 | afro | `djembe_sang_v2` (de C) | `afro_house_groove_v2` (de A) |
+| 20–35 | organic | `cumbia_afro_v4` (de A) | `organic_shaker_wood_v4` (de D) |
+| 36–51 | melodic | `prog_offbeat_rim_v3` (F) | `prog_rolling16_v4` (F) |
+| 52–67 | indie | `tambora_hipnotica` main (E) | `tambora_hipnotica` intro (E) |
+| 68–83 | disco | `djembe_sang_v2` (C) | `samba_house_v4` (C) |
+
+Afro y organic se arman **puros** cruzando los contextos A, C y D (cuerpo y top del mismo dialecto). Disco no tiene
+perc propia en la selección: su bloque usa C (afro + disco), así que un ✓ ahí puede deberse al afro. Preset de la
+ronda: JD LEAD BODY (el primero de Juan), el mismo en los cinco bloques. En cada bloque se marca ✓ / ✗ por clip; con
+eso se completa la columna de dialectos del mapa de §10.
