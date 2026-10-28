@@ -152,6 +152,8 @@ al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qu
 | perc tonal | GF METAL PERC ("super étnico"), con KALIMBA TINE y SHAKER ZAP; `perc_adn_madera` | variaciones sobre METAL PERC |
 | pluck | GF TALKING PLUCK + `arp16`; SUNRISE + `motivo` (organic suave) y KALIMBA (hipnótico) | menos brillo, ataque más suave, más cuerpo; contextos D y E |
 | chords | GF HOUSE KEYS (con los tres patrones), GF FILTER STAB (`respiro`, `contratiempo`), FRENCH STAB | variaciones sobre HOUSE KEYS |
+| pad | GF NOCTURNE PAD y GF DARK DRONE (OB-6) con `pad_adn_dron`: algo oscuros; los del Juno, muy brillantes | un brillo intermedio entre OB-6 y Juno |
+| build | GF NOISE RISER (ARP 2600) con `build_adn_move` | refinar desde ahí |
 | lead | ninguno: "muy orientales y extendidos"; sin percusión, "notas demasiado largas y estridentes"; base que interesa: DESERT LEAD y GF MELODIC LEAD | **lab dedicado de leads** (abajo) |
 
 **Lab de leads** (Juan: de lo más importante). No se trata de sacar lo "oriental" sino de **manejarlo**: escalas como
