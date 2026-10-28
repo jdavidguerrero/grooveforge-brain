@@ -315,3 +315,21 @@ Afro y organic se arman **puros** cruzando los contextos A, C y D (cuerpo y top 
 perc propia en la selección: su bloque usa C (afro + disco), así que un ✓ ahí puede deberse al afro. Preset de la
 ronda: JD LEAD BODY (el primero de Juan), el mismo en los cinco bloques. En cada bloque se marca ✓ / ✗ por clip; con
 eso se completa la columna de dialectos del mapa de §10.
+
+### Ronda de dialectos con kits (rev. 2026-10-28, reemplaza a la de arriba para escuchar)
+
+Juan: Tribe vuelve organic / afro todos los bloques; cada dialecto con su kit y Tribe en dosis
+(`sesion-paleta-adn.md` §1d). `GF_Lead_Dialectos_kits.als` (copia de `GF_Lead_Dialectos.als` con las pistas KIT
+DJEMBE, KIT BRASIL y KIT 808; `fill_lab_set.py --dialectos <ficha> --kits`; dosis de `make_tribe_dosis.py`):
+
+| Escenas | Dialecto | Kit | Dosis de Tribe (en PERC) |
+|---|---|---|---|
+| 4–21 | afro | KIT DJEMBE: `djembe_sang` + `afro_house_groove` | llamador |
+| 22–37 | organic | PERC / TOP Tribe: `cumbia_afro` + `organic_shaker_wood` | (todo Tribe) |
+| 38–55 | melodic | KIT BRASIL `prog_rolling16` + rim de KIT 808 (`prog_offbeat_rim`) | maracón |
+| 56–73 | indie | KIT 808: `tribal_toms` + `indie_metal_rim` | cáscara de tambora |
+| 74–91 | disco | KIT BRASIL `samba_house` + KIT 808 `house_conga` | guacharaca |
+
+Cada bloque (menos organic) abre con **REF kit solo** y **REF kit + tribe** (eólica mixta A): ahí se decide si la
+firma suma en ese dialecto. Los clips usan el mapa común: KIT BRASIL y KIT 808 tienen que tener los racks **GF Brasil**
+y **GF 808 Perc** (`kits/racks/`), no los originales.

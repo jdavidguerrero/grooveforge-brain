@@ -21,6 +21,13 @@ escena kick, perc, top, lead y acordes.
 
     python3 tools/paleta-lab/fill_lab_set.py --dialectos <ficha.json> "<ruta>/GF_Lead_Dialectos.als"
 
+Con --kits además, cada dialecto suena con su kit (pistas KIT DJEMBE, KIT BRASIL, KIT 808 con los racks GF) y una
+dosis de Tribe en PERC (sesion-paleta-adn.md §1d); organic sigue todo en Tribe. Cada bloque abre con dos escenas de
+referencia (kit solo · kit + Tribe) con el mismo lead. Reemplaza la ronda de dialectos que ya tuviera el set (desde
+la primera escena "afro · …") y deja intacto lo de arriba.
+
+    python3 tools/paleta-lab/fill_lab_set.py --dialectos <ficha.json> --kits "<ruta>/GF_Lead_Dialectos_kits.als"
+
     python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
 from __future__ import annotations
@@ -207,6 +214,80 @@ def dialect_rows(lab: Path, liked: list[str]) -> list[tuple[str, str, Path, Path
     return rows
 
 
+# Kit de cada dialecto: (pista, archivo desde midi/, notas que se dejan o None = todas). Varias filas en la misma pista
+# van juntas en un clip. Notas del mapa común (percusion-groove.md §3): 42 = aro_madera (rim).
+DIALECT_KITS = {
+    "afro": [("KIT DJEMBE", "perc/afro_house/perc/main_q/v2/djembe_sang_v2_main_q_djembe.mid", None),
+             ("KIT DJEMBE", "perc/afro_house/top/peak/v2/afro_house_groove_v2_peak_djembe.mid", None)],
+    "organic": [("PERC", "adn/contexto/A_tierra/perc_tribe.mid", None),
+                ("TOP", "adn/contexto/D_organico_suave/top_tribe.mid", None)],
+    "melodic": [("KIT BRASIL", "perc/melodic_progressive/top/peak/v4/prog_rolling16_v4_peak_brazilian.mid", None),
+                ("KIT BRASIL", "perc/melodic_progressive/perc/peak/v4/prog_rolling16_v4_peak_brazilian.mid", None),
+                ("KIT 808", "perc/melodic_progressive/top/peak/v3/prog_offbeat_rim_v3_peak_808.mid", {42})],
+    "indie": [("KIT 808", "perc/indie_tech/perc/peak/v2/tribal_toms_v2_peak_808.mid", None),
+              ("KIT 808", "perc/indie_tech/top/peak/v3/indie_metal_rim_v3_peak_808.mid", None)],
+    "disco": [("KIT BRASIL", "perc/disco_house/top/peak/v4/samba_house_v4_peak_brazilian.mid", None),
+              ("KIT BRASIL", "perc/disco_house/perc/peak/v4/samba_house_v4_peak_brazilian.mid", None),
+              ("KIT 808", "perc/disco_house/perc/peak/v2/house_conga_v2_peak_808.mid", None)],
+}
+KIT_TRACKS = ("KIT DJEMBE", "KIT BRASIL", "KIT 808")
+REFERENCE = "eolica__mixta_a__afro_melodic"
+
+
+def kit_rows(lab: Path, liked: list[str]) -> list[tuple[str, str, bool, Path, Path]]:
+    """(dialecto, escena, con dosis de Tribe, lead, acordes): por dialecto, dos referencias (kit solo · kit + Tribe)
+    con el mismo lead y después los clips que gustaron con kit + Tribe. Organic no tiene referencias: es todo Tribe."""
+    rows = []
+    by_dialect = {}
+    for dialect, scene, f, chords in dialect_rows(lab, liked):
+        by_dialect.setdefault(dialect, []).append((scene, f, chords))
+    for dialect, clips in by_dialect.items():
+        if dialect != "organic":
+            ref = next((c for c in clips if c[1].stem == REFERENCE), clips[0])
+            rows.append((dialect, f"{dialect} · REF kit solo", False, ref[1], ref[2]))
+            rows.append((dialect, f"{dialect} · REF kit + tribe", True, ref[1], ref[2]))
+        rows += [(dialect, scene, dialect != "organic", f, chords) for scene, f, chords in clips]
+    return rows
+
+
+def fill_kits(als: Path, midi: Path, liked: list[str], bpm: float = 124.0) -> int:
+    root = ET.fromstring(gzip.decompress(als.read_bytes()))
+    ls = root.find("LiveSet")
+    tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
+    missing = {"KICK", "PERC", "TOP", "BRAIN MIDI", "ACORDES", *KIT_TRACKS} - set(tracks)
+    if missing:
+        raise SystemExit(f"faltan pistas en el set: {', '.join(sorted(missing))}")
+    scenes = ls.find("Scenes")
+    names = [sc.find("Name").get("Value") for sc in scenes]
+    start = next((i for i, n in enumerate(names) if n.startswith("afro · ")), first_free_row(ls))
+    for row in range(start, len(scenes)):                         # la ronda vieja sale; lo de arriba no se toca
+        scenes[row].find("Name").set("Value", "")
+        for tr in ls.find("Tracks"):
+            slots = tr.find(".//MainSequencer/ClipSlotList")
+            if slots is not None and row < len(slots):
+                put(tr, row, None)
+    rows = kit_rows(midi / "adn" / "lead" / "lab", liked)
+    ensure_scenes(ls, start + len(rows))
+    cid = 1 + max((int(c.get("Id")) for c in root.iter("MidiClip")), default=0)
+    cid0 = cid
+    kick = read_mid(midi / "adn" / "contexto" / "kick_4x4.mid")
+    for k, (dialect, scene, dose, f, chords) in enumerate(rows):
+        row = start + k
+        scenes[row].find("Name").set("Value", scene)
+        parts = {}
+        for track, rel, keep in DIALECT_KITS[dialect]:
+            parts.setdefault(track, []).extend(n for n in read_mid(midi / rel) if keep is None or n[2] in keep)
+        if dose:
+            parts.setdefault("PERC", []).extend(read_mid(midi / "perc" / "dosis_tribe" / f"{dialect}_tribe.mid"))
+        put(tracks["KICK"], row, make_clip(kick, "kick 4x4", COLORS["KICK"], cid)); cid += 1
+        for track, notes in parts.items():
+            label = f"{dialect} tribe" if track in ("PERC", "TOP") else f"{dialect} {track.split()[-1].lower()}"
+            put(tracks[track], row, make_clip(sorted(notes), label, COLORS.get(track, COLORS["PERC"]), cid)); cid += 1
+        put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
+        put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
+    return save(als, root, ls, bpm, cid - cid0)
+
+
 def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False, liked: list[str] | None = None) -> int:
     root = ET.fromstring(gzip.decompress(als.read_bytes()))
     ls = root.find("LiveSet")
@@ -293,11 +374,17 @@ def main(argv=None):
     ap.add_argument("als")
     ap.add_argument("--leads", action="store_true", help="cargar el lab de leads (necesita la pista ACORDES)")
     ap.add_argument("--dialectos", metavar="FICHA", help="agregar la ronda de dialectos con los clips de la ficha")
+    ap.add_argument("--kits", action="store_true", help="con --dialectos: kit por dialecto + dosis de Tribe")
     ap.add_argument("--dataset", default=os.environ.get("GF_DATASET",
                                                         str(Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1")))
     a = ap.parse_args(argv)
     liked = json.loads(Path(a.dialectos).read_text())["lab_leads"]["clips_que_gustan"] if a.dialectos else None
-    n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads, liked=liked)
+    if a.kits:
+        if not liked:
+            raise SystemExit("--kits va con --dialectos <ficha.json>")
+        n = fill_kits(Path(a.als), Path(a.dataset) / "midi", liked)
+    else:
+        n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads, liked=liked)
     print(f"{n} clips cargados en {a.als} (original en .als.bak)")
 
 

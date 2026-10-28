@@ -89,3 +89,13 @@ antes) y escribe los JSON; no toca el Brain.
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import <lib>/ob_6/jd-lead-melodic.json <lib>/prophet_5/jd-lead-body.json
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import <lib>/layers/jd-desert-ld.json
 ```
+
+## Dosis de Tribe y ronda con kits (`make_tribe_dosis.py`)
+
+Un elemento de Tribe, suave, por dialecto (`apps/docs/produccion/sesion-paleta-adn.md` §1d) en
+`midi/perc/dosis_tribe/<dialecto>_tribe.mid`. `fill_lab_set.py --dialectos <ficha> --kits` arma la ronda de dialectos
+con un kit por dialecto (pistas KIT DJEMBE, KIT BRASIL y KIT 808 con los racks GF) y la dosis en PERC.
+
+```bash
+python3 tools/paleta-lab/make_tribe_dosis.py
+```

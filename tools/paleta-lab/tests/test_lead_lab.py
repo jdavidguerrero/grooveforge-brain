@@ -121,3 +121,35 @@ def test_ronda_de_dialectos(tmp_path):
         assert chords.exists()
     for perc, top in fl.DIALECTS.values():
         assert {perc, top} <= {c for c, _ in fl.CONTEXTS}
+
+
+def test_ronda_con_kits_y_dosis_de_tribe(tmp_path):
+    import fill_lab_set as fl
+    import make_tribe_dosis as td
+    ml.main(["--dataset", str(tmp_path)])
+    liked = ["kumoi__corta__organic", fl.REFERENCE]
+    rows = fl.kit_rows(tmp_path / "midi" / "adn" / "lead" / "lab", liked)
+    assert len(rows) == len(fl.DIALECTS) * len(liked) + 2 * (len(fl.DIALECTS) - 1)    # organic sin referencias
+    for dialect in fl.DIALECTS:
+        block = [r for r in rows if r[0] == dialect]
+        if dialect == "organic":
+            assert not any(dose for _, _, dose, _, _ in block)
+            continue
+        assert [(s.split(" · ")[1], dose) for _, s, dose, _, _ in block[:2]] == [("REF kit solo", False),
+                                                                                  ("REF kit + tribe", True)]
+        assert block[0][3].stem == block[1][3].stem == fl.REFERENCE
+        assert all(dose for _, _, dose, _, _ in block[2:])
+        assert dialect in td.DOSIS
+    assert set(fl.DIALECT_KITS) == set(fl.DIALECTS)
+    for parts in fl.DIALECT_KITS.values():
+        assert {t for t, _, _ in parts} <= {"PERC", "TOP", *fl.KIT_TRACKS}
+
+
+def test_dosis_de_tribe_es_un_elemento_suave():
+    import make_tribe_dosis as td
+    from make_perc_patterns import TRIBE, TRIBE_ROLES
+    for dialect, (role, line, *_ ) in td.DOSIS.items():
+        notes = td.dosis_notes(dialect)
+        assert {n for _, _, n, _ in notes} <= {TRIBE[a] for a in TRIBE_ROLES[role]}, dialect   # un solo instrumento
+        assert max(v for *_, v in notes) <= 80 and set(line) <= {".", "g", "o"}, dialect
+        assert max(t for t, *_ in notes) < 4 * BAR and len(notes) == 4 * sum(c != "." for c in line)
