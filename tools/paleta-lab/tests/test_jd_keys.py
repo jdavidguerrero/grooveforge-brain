@@ -77,7 +77,7 @@ def test_capas_por_familia(tmp_path):
         assert family in e["tags"]
         d = g.decode_layer(bytes.fromhex(e["raw"]))
         assert (d["name"], d["engine_a"], d["engine_b"], d["gain_a_db"], d["gain_b_db"]) == (name, "juno_106", "dx7", ga, gb)
-        assert max(ga, gb) == 0 and min(ga, gb) <= -4                       # uno de los dos manda
+        assert max(ga, gb) == 0 and min(ga, gb) <= -3                       # uno de los dos manda
         a, b = d["a"]["patch"], d["b"]["patch"]
         assert a["vel_cut"] >= 60 and b["vel_amp"] == 100 and b["osc"][0][2] == 5
         assert b["osc"][3][0] == mk.TINE_RATIO and b["osc"][3][1] > 0 and b["osc"][3][5] <= 200   # siempre hay tine
@@ -87,4 +87,17 @@ def test_capas_por_familia(tmp_path):
         else:
             assert a["decay_ms"] >= 2500 or a["sustain"] >= 0.25
             assert a["sustain"] >= 0.25 and a["release_ms"] >= 400
-    assert families == {"pluck": 3, "sostenido": 3}                      # máximo 3 candidatos por decisión
+    assert families == {"pluck": 5, "sostenido": 5}
+    by = {name: (ga, gb, ja, db) for name, _, ga, gb, ja, db in mk.LAYERS}
+    for base, variants in mk.VARIATIONS.items():
+        assert len(variants) + 1 <= 3                                       # máximo 3 candidatos por decisión
+        for v in variants:
+            assert v in by and v.startswith(base)
+    wood, wood2, wood3 = (by[n] for n in ("JD PLK WOOD", "JD PLK WOOD2", "JD PLK WOOD3"))
+    assert wood2[2]["decay"] < wood[2]["decay"] < wood3[2]["decay"] and wood2[1] > wood[1]   # seco / redondo
+    dark = by["JD SUS DARK"][2]
+    for n in ("JD SUS DARK2", "JD SUS DARK3"):
+        j = by[n][2]
+        assert j["sub"] < dark["sub"] and j["cutoff"] > dark["cutoff"] and j.get("hpf", 1) > 1   # menos grave
+        assert by[n][1] > by["JD SUS DARK"][1]                                                    # más tine
+    assert by["JD SUS DARK3"][2]["cutoff"] > by["JD SUS DARK2"][2]["cutoff"]

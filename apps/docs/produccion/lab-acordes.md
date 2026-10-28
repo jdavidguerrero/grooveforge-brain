@@ -250,3 +250,21 @@ hay forma de grabar el Brain desde los scripts; eso es la escucha de Juan.
 **Hecho (2026-10-28):** las seis capas están en `make_jd_keys.py` (`LAYERS`) y se subieron al Brain: JD PLK KEYS
 **A-12**, JD PLK WOOD **A-13**, JD PLK BELL **A-14**, JD SUS KEYS **A-15**, JD SUS RHODE **A-16** y JD SUS DARK
 **B-01**. Leídas de vuelta del Brain, las seis (y las tres JD KEYS de §8) son idénticas byte a byte a la librería.
+
+**Escucha (2026-10-28):** pluck → **JD PLK WOOD** ("me gustó, hagamos variaciones"); sostenida → **JD SUS DARK** ("va
+por ahí, pero un poco grave, le falta brillo").
+
+### Variaciones (ronda 2 de sonido; 3 candidatos por decisión: la original + 2)
+
+| Capa | Desde | Cambio | Busca |
+|---|---|---|---|
+| **JD PLK WOOD2** | WOOD | más golpe y más seco: env del filtro más fuerte y corta (0,7 · 120 ms), D 300 ms, tine más presente (B −3 dB) | lo percusivo, tipo marimba de madera |
+| **JD PLK WOOD3** | WOOD | más cuerpo: filtro 650 Hz, D 650 ms, env 200 ms y chorus I (abre en estéreo) | lo redondo, más cerca de un piano |
+| **JD SUS DARK2** | DARK | menos grave y algo más claro: SUB 15 (era 30), HPF 2, filtro 850 Hz, tine −7 dB | brillo moderado |
+| **JD SUS DARK3** | DARK | más brillo: sierra + pulso, SUB 10, HPF 2, filtro 1,1 kHz con más env, tine −6 dB | el más claro de los tres |
+
+"Grave" se arregla quitando abajo (menos SUB y el HPF del Juno más alto) antes que subiendo el filtro: así gana
+claridad sin volverse estridente. El brillo lo suman el filtro y la tine, en ese orden.
+
+Generadas en `make_jd_keys.py` (`LAYERS`, `VARIATIONS`) con sus tests. **Falta subirlas:** el 2026-10-28 el serial de
+la Teensy estaba ocupado por otro programa (`cap3.py teensy.log`) y la subida se detuvo antes de escribir nada.

@@ -76,17 +76,18 @@ def tine(src: dict) -> dict:
 
 
 # Capas Juno + DX7 por familia de patrón (lab-acordes.md §9)
-JUNO_WAVE_SQR, JUNO_WAVE_SAW, JUNO_CHORUS_II, JUNO_CHORUS_I_II = 1, 0, 2, 3
+JUNO_WAVE_SQR, JUNO_WAVE_SAW, JUNO_WAVE_SAW_PLS, JUNO_CHORUS_II, JUNO_CHORUS_I_II = 1, 0, 3, 2, 3
 
 
 def juno_half(src: dict, wave: int, sub: float, cutoff: float, env_amt: float, f_decay: float, decay: float,
-              sustain: float, release: float, chorus: int, attack: float = 2.0, pw: float = 35.0) -> dict:
+              sustain: float, release: float, chorus: int, attack: float = 2.0, pw: float = 35.0,
+              hpf: float = 1.0) -> dict:
     p = copy.deepcopy(src)
     keys_env(p, decay=decay, cutoff=cutoff, env_amt=env_amt, f_decay=f_decay)
     p.update(attack_ms=attack, sustain=sustain, release_ms=release, f_release_ms=release)
     o = p["osc"][0]
     o[0], o[1], o[2], o[3] = wave, sub, 0.0, pw
-    o[4], o[5], o[6], o[7] = chorus, 1.0, 1.0, 0.0
+    o[4], o[5], o[6], o[7] = chorus, hpf, 1.0, 0.0
     return p
 
 
@@ -135,7 +136,25 @@ LAYERS = [
      dict(wave=JUNO_WAVE_SAW, sub=30.0, cutoff=550.0, env_amt=0.3, f_decay=700.0, decay=4000.0, sustain=0.4,
           release=600.0, chorus=JUNO_CHORUS_I_II, attack=12.0),
      dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=50.0, tine_mod=40.0, tine_decay=140.0)),
+    # Variaciones de la escucha 2026-10-28 (§9, ronda 2): WOOD gustó; DARK va, pero grave y sin brillo
+    ("JD PLK WOOD2", "pluck", 0, -3,
+     dict(wave=JUNO_WAVE_SQR, sub=50.0, cutoff=500.0, env_amt=0.7, f_decay=120.0, decay=300.0, sustain=0.0,
+          release=100.0, chorus=0),
+     dict(body=0.0, body_mod=0.0, body_decay=100.0, mod_decay=100.0, tine=80.0, tine_mod=70.0, tine_decay=90.0)),
+    ("JD PLK WOOD3", "pluck", 0, -6,
+     dict(wave=JUNO_WAVE_SQR, sub=50.0, cutoff=650.0, env_amt=0.6, f_decay=200.0, decay=650.0, sustain=0.0,
+          release=200.0, chorus=JUNO_CHORUS_I),
+     dict(body=0.0, body_mod=0.0, body_decay=100.0, mod_decay=100.0, tine=75.0, tine_mod=65.0, tine_decay=100.0)),
+    ("JD SUS DARK2", "sostenido", 0, -7,
+     dict(wave=JUNO_WAVE_SAW, sub=15.0, cutoff=850.0, env_amt=0.3, f_decay=700.0, decay=4000.0, sustain=0.4,
+          release=600.0, chorus=JUNO_CHORUS_I_II, attack=12.0, hpf=2.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=55.0, tine_mod=45.0, tine_decay=140.0)),
+    ("JD SUS DARK3", "sostenido", 0, -6,
+     dict(wave=JUNO_WAVE_SAW_PLS, sub=10.0, cutoff=1100.0, env_amt=0.4, f_decay=700.0, decay=4000.0, sustain=0.4,
+          release=600.0, chorus=JUNO_CHORUS_I_II, attack=12.0, hpf=2.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=60.0, tine_mod=50.0, tine_decay=150.0)),
 ]
+VARIATIONS = {"JD PLK WOOD": ("JD PLK WOOD2", "JD PLK WOOD3"), "JD SUS DARK": ("JD SUS DARK2", "JD SUS DARK3")}
 
 
 def layer_raw(name: str, gain_a: int, gain_b: int, a: dict, b: dict) -> bytes:
