@@ -45,7 +45,7 @@ LAYERS = [("woodbass", "bass/bass_adn_tambora", 0), ("kalimba", "pluck/pluck_adn
           ("french_stab", "chords/chords_adn_contratiempo", 0), ("acid_arp", "pluck/pluck_adn_arp16", -12),
           ("desert_lead", "lead/lead_adn_frase", 0), ("shaker_zap", "perc/perc_adn_madera", 0),
           ("roller_sub", "bass/bass_adn_rodante", 0), ("retro_brass", "chords/chords_adn_respiro", 0)]
-CC_MORPH, CC_LAYER = 17, 18
+CC_MORPH, CC_LAYER, CC_MOVE = 17, 18, 19
 # Contextos de escucha (sesion-paleta-adn.md §2): (perc, top) de midi/perc/seleccion/
 CONTEXTS = {
     "A_tierra": ("organic_house/perc/peak/v4/cumbia_afro_v4_peak_tribe.mid",
@@ -115,6 +115,16 @@ def clips(k: int) -> dict[str, list]:
     lead = [(0, 0, 6, 96), (6, 3, 2, 84), (8, 5, 8, 92), (16, 7, 4, 96), (20, 10, 4, 84), (24, 7, 8, 90),
             (32, 12, 6, 98), (38, 10, 2, 84), (40, 7, 8, 90), (48, 5, 4, 88), (52, 3, 4, 82), (56, 0, 8, 92)]
     out["lead/lead_adn_frase"] = [(s * S16, d * S16 - 10, L + n, v) for s, n, d, v in lead]
+    # Hook: 2 compases que se repiten (el gancho del drop); pentatónica, síncopa en el 2.º compás
+    hook = [(0, 0, 2, 96), (3, 3, 1, 80), (4, 5, 2, 90), (7, 3, 1, 70), (10, 7, 3, 94), (16, 5, 2, 90),
+            (19, 3, 2, 82), (22, 0, 2, 88), (26, -2, 4, 92)]
+    out["lead/lead_adn_hook"] = [(rep * 2 * BAR + s * S16, d * S16 - 10, L + n, v)
+                                 for rep in range(2) for s, n, d, v in hook]
+    # Profunda: por compás la novena y la séptima del acorde (en la escala), notas largas que descienden
+    deep = [(0, 14, 6, 90), (6, 10, 10, 80), (16, 11, 6, 88), (22, 7, 10, 78), (32, 14, 6, 90), (38, 11, 10, 80),
+            (48, 9, 8, 86), (56, 5, 8, 80)]
+    out["lead/lead_adn_profunda"] = [(s * S16, d * S16 - 10, L - 12 + PROG[s // 16][0] + iv, v)
+                                     for s, iv, d, v in deep]
     return out
 
 
@@ -146,8 +156,11 @@ def main(argv=None):
             dst = root / "contexto" / ctx / f"{part}_tribe.mid"
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(sel / src, dst)
+    # Build: La sostenido 8 compases y MOVE (CC 19) de 0 a 127, un paso por negra
+    write_mid(root / "build" / "build_adn_move.mid", [(0, 8 * BAR - 20, A1 + 24 + a.key, 90)], a.bpm,
+              "build adn move", [(q * BAR // 4, CC_MOVE, round(127 * q / 31)) for q in range(32)])
     write_mid(root / "contexto" / "kick_4x4.mid", [(q * BAR // 4, S16, 36, 110) for q in range(16)], a.bpm, "kick 4x4")
-    print(f"{len(pats)} patrones, {len(LAYERS)} capas y {len(CONTEXTS)} contextos en {root}")
+    print(f"{len(pats) + 1} patrones, {len(LAYERS)} capas y {len(CONTEXTS)} contextos en {root}")
 
 
 if __name__ == "__main__":

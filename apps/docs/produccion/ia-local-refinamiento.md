@@ -31,7 +31,10 @@ La identidad puede residir en tres hábitos: cómo articulas el bajo, cómo resp
 
 ### Cambios al manifiesto
 
-- **122–126 BPM:** conservar como zona inicial opcional, no filtro que descarte ideas de los demás estilos.
+- **122–126 BPM:** ~~conservar como zona inicial opcional~~ → **zona principal** (rev. 2026-10-28: los tracks son de
+  club, bailables en su mayoría; lo que salga de ahí se marca como excepción). Núcleo: bajo groovy, percusión étnica
+  muy nativa y melodías profundas encima; el disco / house es un matiz del mismo ADN. Detalle en
+  `sesion-paleta-adn.md` §1b.
 - **Microtiming de 5–15 ms:** sustituir el desplazamiento indiscriminado por patrones repetibles por instrumento y posición. Mantener una versión cuantizada como comparación. Un pulso estable puede convivir con percusión expresiva.
 - **Pitch drift, cinta y vinilo:** recursos opcionales por sonido. La limpieza y el silencio también forman parte del carácter.
 - **Referentes:** describir qué interesa de cada fragmento — articulación, espacio, tensión, densidad — sin convertir nombres de artistas en el criterio automático de calidad.

@@ -16,6 +16,29 @@ suenan a una sola persona. Por eso:
   francés con llamada 3-3-2, un arpegio progresivo acentuado como marimba de chonta.
 - **Tribe (lo colombiano) es el hilo común** de los tres contextos: fue lo que Juan eligió en 34 de 37 percusiones.
 
+## 1b. Función: club (Juan, 2026-10-28)
+
+Los tracks son **de club, bailables en su mayoría**. Lo que más pesa, en este orden:
+
+1. **Un bajo groovy**: articulado, con ghost notes y síncopa, que se lleve con el kick. Es el centro del ADN.
+2. **Percusión étnica muy nativa**: Tribe (lo colombiano) primero, djembes y Brasil como acentos; tocada, no
+   programada en rejilla (microtiming y manos que alternan).
+3. **Melodías profundas** encima de ese groove: motivos menores, notas largas, novenas y séptimas, espacio; hooks
+   cortos que se repiten.
+
+El disco / house pide otra cosa (stabs, octavas, brillo) y se trata como matiz del mismo ADN, no como otra paleta.
+
+**Qué cambia en la escucha:**
+
+- La pregunta deja de ser solo "¿encaja en el mix?": **"¿empuja la pista?"**. Se escucha también a volumen alto, con
+  el kick y el bajo adelante.
+- **Bajo para un sistema de club:** grave limpio y mono por debajo de ~100 Hz (sin chorus ni reverb en el sub), que
+  se lea fuerte y deje lugar al kick (sidechain o notas fuera de las negras).
+- **Tempo:** 122–126 BPM es la zona principal; lo que salga de ahí se marca como excepción.
+- **Orden de las sesiones:** bajos → percusión tonal / étnica → melodías profundas (plucks, leads, hooks) → stabs y
+  acordes → pads y texturas (material de break e intro, no de pista) → build / riser.
+- Para más adelante (arreglo): frases de 8 / 16 / 32 compases, intro y outro mezclables por un DJ.
+
 ## 2. Tres contextos de escucha (los mismos para todos los sonidos)
 
 Cada uno junta dos géneros de la selección de percusión de Juan (`midi/perc/seleccion/`), todo en Tribe, con un kick
@@ -52,6 +75,9 @@ acorde, 4 compases que se repiten. Son puntos de partida para tocar y variar, no
 | pad / textura | `pad_adn_progresion` | la progresión en acordes enteros |
 | | `pad_adn_dron` | La + Mi sostenidos 8 compases: movimiento sin tocar nada (textura) |
 | lead | `lead_adn_frase` | frase pentatónica con notas largas, pregunta y respuesta |
+| | `lead_adn_hook` | hook de 2 compases que se repite (el gancho del drop) |
+| | `lead_adn_profunda` | melodía profunda: novenas y séptimas sobre la progresión, notas largas, descenso |
+| build | `build_adn_move` | 8 compases: una nota sostenida con **MOVE (CC 19)** de 0 a 100 % (filtro, ecos, reverb), para GF NOISE RISER o cualquier pad |
 
 Siguen existiendo los clips **neutros** de medición (`midi/<rol>/`, protocolo §2): esos miden; estos se tocan.
 
@@ -82,8 +108,10 @@ solo B.
 | perc tonal | GF LOG DRUM, GF KALIMBA TINE, GF METAL PERC | SHAKER ZAP |
 | pad / textura | GF BAMBOO PAD, GF NOCTURNE PAD, GF STRING SWELL, GF DARK DRONE, GF NOISE RISER | — |
 | lead | GF ANTHEM SAW, GF TAPE LEAD | DESERT LEAD |
+| build | GF NOISE RISER (y pads con MOVE) | — |
 
-Meta de la Sesión B (sin cambios): unos 10 sonidos al final. Una sesión por rol, empezando por **bass**.
+Meta de la Sesión B (sin cambios): unos 10 sonidos al final. Una sesión por rol, en el orden de §1b, empezando por
+**bass**.
 
 ## 5. El set de Live
 
@@ -111,6 +139,7 @@ al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qu
 |---|---|
 | Patrones en La menor sobre la progresión, dentro de su largo, sin notas fuera de rango MIDI | test (pytest) |
 | Los graves de los bajos `tambora` y `rodante` no caen en las negras (el kick) | test |
+| `build_adn_move` sube MOVE (CC 19) de 0 a 127 en 8 compases | test |
 | Cada clip de capa elige su capa: CC 18 al tick 0 con el valor que `layer_from_cc` lleva a esa capa; MORPH 0 / 64 / 127 | test |
 | Los contextos copian los archivos de la selección | test |
 | Que suenen bien juntos | Juan, en la sesión |

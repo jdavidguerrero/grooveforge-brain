@@ -75,5 +75,8 @@ def test_capas_eligen_su_capa_y_morph(tmp_path):
     for ctx, (perc, top) in ma.CONTEXTS.items():
         assert (root / "contexto" / ctx / "perc_tribe.mid").read_bytes() == (sel / perc).read_bytes()
         assert (root / "contexto" / ctx / "top_tribe.mid").read_bytes() == (sel / top).read_bytes()
+    build, ccs = read_events(root / "build" / "build_adn_move.mid")
+    moves = [v for t, c, v in ccs if c == ma.CC_MOVE]
+    assert len(build) == 1 and moves[0] == 0 and moves[-1] == 127 and moves == sorted(moves)
     kick, _ = read_events(root / "contexto" / "kick_4x4.mid")
     assert [t for t, *_ in kick] == [q * BAR // 4 for q in range(16)]
