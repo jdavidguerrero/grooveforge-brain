@@ -226,6 +226,7 @@ Lo oscuro del indie tech en percusión: casi recto (swing 50–51 %), hipnótico
 | `bombo_cascara_drone` | el aro del bombo en semicorcheas como un pulso de madera continuo, tambora abierta y alegre escasos, latigazo en el remate; peak con caja quemao a contratiempo |
 
 Mismas reglas: graves fuera de las semicorcheas del kick, versiones intro / main / peak / main_q, top y perc aparte.
+A Juan le gustaron los tres: quedan en `favoritos` (ronda 1) y generan sus variaciones `_v2`–`_v4`.
 
 **Pendiente:** cambiar el GF 808 Perc por un rack **GF Latin** con samples reales (tumba, congas, bongó, güiro,
 maracas, cencerro, clave, timbal) cuando Juan los consiga, con el mismo mapa de roles: todos los patrones salen con ese
