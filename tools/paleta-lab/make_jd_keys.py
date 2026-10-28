@@ -7,6 +7,8 @@ JSON nuevos al lado, con su ficha. No toca el Brain: después se suben con gf_pr
     JD KEYS JUNO     (Juno-106)          ← PLUCK KEYS
     JD KEYS PROPHET  (Prophet-5)         ← WARM KEYS
     JD KEYS CAPA     (capa Juno + DX7)   ← JD KEYS JUNO + E.PIANO reducido al golpe (mitades JD KEYS BODY / JD KEYS TINE)
+    JD PLK KEYS · JD PLK WOOD · JD PLK BELL · JD SUS KEYS · JD SUS RHODE · JD SUS DARK: capas Juno + DX7 por familia de
+    patrón (§9: pluck para corcheas y tresillo, sostenidas para respiro y bloque largo)
 
     ~/.platformio/penv/bin/python tools/paleta-lab/make_jd_keys.py
 """
@@ -73,6 +75,76 @@ def tine(src: dict) -> dict:
     return p
 
 
+# Capas Juno + DX7 por familia de patrón (lab-acordes.md §9)
+JUNO_WAVE_SQR, JUNO_WAVE_SAW, JUNO_CHORUS_II, JUNO_CHORUS_I_II = 1, 0, 2, 3
+
+
+def juno_half(src: dict, wave: int, sub: float, cutoff: float, env_amt: float, f_decay: float, decay: float,
+              sustain: float, release: float, chorus: int, attack: float = 2.0, pw: float = 35.0) -> dict:
+    p = copy.deepcopy(src)
+    keys_env(p, decay=decay, cutoff=cutoff, env_amt=env_amt, f_decay=f_decay)
+    p.update(attack_ms=attack, sustain=sustain, release_ms=release, f_release_ms=release)
+    o = p["osc"][0]
+    o[0], o[1], o[2], o[3] = wave, sub, 0.0, pw
+    o[4], o[5], o[6], o[7] = chorus, 1.0, 1.0, 0.0
+    return p
+
+
+def dx7_half(src: dict, body: float, body_mod: float, body_decay: float, mod_decay: float, tine: float,
+             tine_mod: float, tine_decay: float, sustain: float = 0.0, release: float = 150.0, fb: float = 0.0) -> dict:
+    """Algoritmo 5: pila 2 → 1 = cuerpo (el índice decae en mod_decay: brillo al golpe, redondo después); pila 4 → 3 =
+    tine (modulador a 14:1). LEVEL 0 apaga una pila."""
+    p = copy.deepcopy(src)
+    longest = max(body_decay, tine_decay)
+    keys_env(p, decay=longest, cutoff=15000.0, env_amt=0.0, f_decay=150.0)
+    p.update(sustain=sustain, release_ms=release, vel_amp=100.0)
+    s = sustain * 100
+    #           RATIO       LEVEL     ALG  FB  A    D           S  R
+    p["osc"] = [[1.0,        body,     5.0, fb,  0.0, body_decay, s, release],
+                [1.0,        body_mod, 0.0, 0.0, 0.0, mod_decay,  0.0, release],
+                [1.0,        tine,     0.0, 0.0, 0.0, tine_decay, 0.0, min(release, 100.0)],
+                [TINE_RATIO, tine_mod, 0.0, 0.0, 0.0, tine_decay * 0.7, 0.0, min(release, 80.0)]]
+    return p
+
+
+# (nombre, familia, ganancia A dB, ganancia B dB, mitad Juno, mitad DX7)
+LAYERS = [
+    ("JD PLK KEYS", "pluck", 0, -4,
+     dict(wave=JUNO_WAVE_PULSE, sub=40.0, cutoff=700.0, env_amt=0.55, f_decay=220.0, decay=600.0, sustain=0.0,
+          release=180.0, chorus=JUNO_CHORUS_I),
+     dict(body=85.0, body_mod=45.0, body_decay=500.0, mod_decay=250.0, tine=70.0, tine_mod=60.0, tine_decay=150.0)),
+    ("JD PLK WOOD", "pluck", 0, -6,
+     dict(wave=JUNO_WAVE_SQR, sub=50.0, cutoff=500.0, env_amt=0.6, f_decay=160.0, decay=450.0, sustain=0.0,
+          release=150.0, chorus=0),
+     dict(body=0.0, body_mod=0.0, body_decay=100.0, mod_decay=100.0, tine=75.0, tine_mod=65.0, tine_decay=100.0)),
+    ("JD PLK BELL", "pluck", -6, 0,
+     dict(wave=JUNO_WAVE_SAW, sub=35.0, cutoff=400.0, env_amt=0.4, f_decay=200.0, decay=500.0, sustain=0.0,
+          release=200.0, chorus=JUNO_CHORUS_II),
+     dict(body=99.0, body_mod=60.0, body_decay=700.0, mod_decay=300.0, tine=65.0, tine_mod=70.0, tine_decay=180.0,
+          fb=2.0)),
+    ("JD SUS KEYS", "sostenido", 0, -9,
+     dict(wave=JUNO_WAVE_PULSE, sub=30.0, cutoff=900.0, env_amt=0.35, f_decay=600.0, decay=3500.0, sustain=0.35,
+          release=500.0, chorus=JUNO_CHORUS_I, attack=3.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=60.0, tine_mod=50.0, tine_decay=150.0)),
+    ("JD SUS RHODE", "sostenido", -4, 0,
+     dict(wave=JUNO_WAVE_PULSE, sub=45.0, cutoff=600.0, env_amt=0.3, f_decay=500.0, decay=3000.0, sustain=0.3,
+          release=450.0, chorus=JUNO_CHORUS_I),
+     dict(body=95.0, body_mod=50.0, body_decay=3000.0, mod_decay=1500.0, tine=60.0, tine_mod=55.0, tine_decay=150.0,
+          sustain=0.3, release=450.0)),
+    ("JD SUS DARK", "sostenido", 0, -10,
+     dict(wave=JUNO_WAVE_SAW, sub=30.0, cutoff=550.0, env_amt=0.3, f_decay=700.0, decay=4000.0, sustain=0.4,
+          release=600.0, chorus=JUNO_CHORUS_I_II, attack=12.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=50.0, tine_mod=40.0, tine_decay=140.0)),
+]
+
+
+def layer_raw(name: str, gain_a: int, gain_b: int, a: dict, b: dict) -> bytes:
+    ea, eb = g.ENGINES.index("juno_106"), g.ENGINES.index("dx7")
+    head = (g.LAYER_MAGIC + bytes([g.LAYER_FORMAT]) + name.encode().ljust(g.LAYER_NAME_LEN, b"\0")
+            + bytes([ea, eb, 50, 0]) + struct.pack("<bbb", 0, gain_a, gain_b))
+    return head + g.encode(ea, f"{name} A", a) + g.encode(eb, f"{name} B", b)
+
+
 NOTES = {
     "JD KEYS JUNO": "de PLUCK KEYS: pulso 35 % + SUB 45, pasabajos 800 Hz con env corta, decae en 2,6 s (S 0,12), "
                     "VEL -> filtro 70, chorus I (lab-acordes.md §8)",
@@ -109,6 +181,12 @@ def build(lib: Path) -> dict[str, dict]:
     le = g.layer_entry_from_raw(raw)
     le.update(role="chords", origin="propio", tags=["lab-acordes", "fase2", "electric"], notes=NOTES["JD KEYS CAPA"])
     out[f"layers/{g.slug('JD KEYS CAPA')}.json"] = le
+    juno_src, dx7_src = src("juno_106", "PLUCK KEYS"), src("dx7", "E.PIANO")
+    for name, family, ga, gb, ja, db in LAYERS:
+        le = g.layer_entry_from_raw(layer_raw(name, ga, gb, juno_half(juno_src, **ja), dx7_half(dx7_src, **db)))
+        le.update(role="chords", origin="propio", tags=["lab-acordes", "fase2", family],
+                  notes=f"capa Juno + DX7, familia {family} (lab-acordes.md §9)")
+        out[f"layers/{g.slug(name)}.json"] = le
     return out
 
 

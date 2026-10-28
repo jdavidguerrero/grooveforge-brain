@@ -45,8 +45,11 @@ def test_build_escribe_presets_y_capa(tmp_path):
         raw = g.encode(g.ENGINES.index(engine), name, blank())
         (lib / engine / f"{g.slug(name)}.json").write_text(json.dumps(g.entry_from_raw(raw)))
     out = mk.build(lib)
-    assert set(out) == {"juno_106/jd-keys-juno.json", "prophet_5/jd-keys-prophet.json", "layers/jd-keys-capa.json"}
+    assert {"juno_106/jd-keys-juno.json", "prophet_5/jd-keys-prophet.json", "layers/jd-keys-capa.json"} <= set(out)
+    assert len(out) == 3 + len(mk.LAYERS)
     for rel, e in out.items():
+        if rel.startswith(("layers/jd-plk", "layers/jd-sus")):
+            continue                                                         # test_capas_por_familia
         assert e["role"] == "chords" and e["origin"] == "propio"
         if rel.startswith("layers/"):
             d = g.decode_layer(bytes.fromhex(e["raw"]))
@@ -57,3 +60,31 @@ def test_build_escribe_presets_y_capa(tmp_path):
             d = g.decode(bytes.fromhex(e["raw"]))
             assert d["name"] == e["name"] and d["format"] == g.FORMAT
             keys_traits(d["patch"])
+
+
+def test_capas_por_familia(tmp_path):
+    lib = tmp_path / "brain"
+    for engine, name in (("juno_106", "PLUCK KEYS"), ("prophet_5", "WARM KEYS"), ("dx7", "E.PIANO")):
+        (lib / engine).mkdir(parents=True)
+        raw = g.encode(g.ENGINES.index(engine), name, blank())
+        (lib / engine / f"{g.slug(name)}.json").write_text(json.dumps(g.entry_from_raw(raw)))
+    out = mk.build(lib)
+    families = {}
+    for name, family, ga, gb, _, _ in mk.LAYERS:
+        assert len(name) <= g.LAYER_NAME_LEN
+        families[family] = families.get(family, 0) + 1
+        e = out[f"layers/{g.slug(name)}.json"]
+        assert family in e["tags"]
+        d = g.decode_layer(bytes.fromhex(e["raw"]))
+        assert (d["name"], d["engine_a"], d["engine_b"], d["gain_a_db"], d["gain_b_db"]) == (name, "juno_106", "dx7", ga, gb)
+        assert max(ga, gb) == 0 and min(ga, gb) <= -4                       # uno de los dos manda
+        a, b = d["a"]["patch"], d["b"]["patch"]
+        assert a["vel_cut"] >= 60 and b["vel_amp"] == 100 and b["osc"][0][2] == 5
+        assert b["osc"][3][0] == mk.TINE_RATIO and b["osc"][3][1] > 0 and b["osc"][3][5] <= 200   # siempre hay tine
+        if family == "pluck":
+            assert a["sustain"] == 0 and a["decay_ms"] <= 800 and a["release_ms"] <= 250
+            assert b["sustain"] == 0 and all(op[6] == 0 and op[5] <= 800 for op in b["osc"])
+        else:
+            assert a["decay_ms"] >= 2500 or a["sustain"] >= 0.25
+            assert a["sustain"] >= 0.25 and a["release_ms"] >= 400
+    assert families == {"pluck": 3, "sostenido": 3}                      # máximo 3 candidatos por decisión

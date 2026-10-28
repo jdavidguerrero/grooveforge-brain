@@ -211,3 +211,42 @@ se acerca, se afina desde ahí.
 `juno_106/jd-keys-juno.json`, `prophet_5/jd-keys-prophet.json` y `layers/jd-keys-capa.json` (mitades JD KEYS BODY /
 JD KEYS TINE) y se subieron con `gf_presets.py import` / `layer-import`: al final de los bancos Juno y Prophet
 (índice 17) y la capa en **A-11**. No se borró ningún preset. Falta la escucha de Juan contra el Electric.
+
+**Escucha (2026-10-28):** "realmente no se acercan". Juan propone capas Juno + DX7 y separar por patrón (§9).
+
+## 9. Capas Juno + DX7 por familia de patrón (rev. 2026-10-28)
+
+**Por qué separar.** Lo que ganó (§7) son casi todos patrones de notas **cortas**: en corcheas y en tresillo cada
+golpe dura 2–3 semicorcheas (240–360 ms a 124 BPM). Ahí un piano que decae en 2,6 s se monta sobre sí mismo y
+emborrona; lo que funciona es un **pluck**: golpe claro y cola que se apaga antes del golpe siguiente. Los patrones
+**sostenidos** (respiro, bloque largo) piden lo contrario: cola larga, sustain y chorus para que el acorde respire.
+Un solo preset no hace las dos cosas.
+
+**Por qué capas Juno + DX7.** Cada motor pone lo que el otro no tiene (§8): el **Juno** da el cuerpo cálido y el
+chorus; el **DX7** da el golpe metálico (la *tine*, modulador a 14:1) y, en las de cuerpo FM, el brillo que se apaga
+mientras la nota sigue (algoritmo 5: pila 2 → 1 para el cuerpo con el índice de modulación que decae, pila 4 → 3 para
+la tine). Variar cuál de los dos manda da carácter distinto con la misma receta.
+
+| Familia | Capa | Juno (A) | DX7 (B) | Mezcla | Para |
+|---|---|---|---|---|---|
+| pluck | **JD PLK KEYS** | pulso 35 % + SUB 40, filtro 700 Hz con env de 220 ms, D 600 ms, chorus I | cuerpo FM + tine, todo se apaga en ~0,5 s | parejos (B −4 dB) | Alberti, arpegio, arco |
+| pluck | **JD PLK WOOD** | cuadrada + SUB 50, filtro 500 Hz con env de 160 ms, D 450 ms, sin chorus | solo tine (0,1 s) | Juno manda (B −6 dB) | tresillo: 1-5-8, décimas |
+| pluck | **JD PLK BELL** | sierra + SUB, filtro 400 Hz, D 500 ms, chorus II | cuerpo FM con feedback + tine, ~0,7 s | DX7 manda (A −6 dB) | arco, arpegio en lidia |
+| sostenido | **JD SUS KEYS** | pulso, filtro 900 Hz, D 3,5 s · S 0,35, chorus I | solo tine suave | Juno manda (B −9 dB) | respiro, bloque |
+| sostenido | **JD SUS RHODE** | pulso + SUB, filtro 600 Hz, D 3 s · S 0,3, chorus I | cuerpo FM con brillo que decae en 1,5 s + tine, S 0,3 | DX7 manda (A −4 dB) | respiro |
+| sostenido | **JD SUS DARK** | sierra, filtro 550 Hz, ataque 12 ms, D 4 s · S 0,4, chorus I+II | tine muy suave | Juno manda (B −10 dB) | bloque largo, pads cortos |
+
+Todas con VEL → filtro alto en el Juno y VEL → volumen en el DX7: tocadas fuerte, más golpe.
+
+**Escucha (máximo 3 por decisión):** las tres pluck sobre **kumoi · décimas · tresillo** y **lidia · arco ·
+corcheas**; las tres sostenidas sobre **lidia · bloque · respiro**. La ganadora de cada familia se compara con el
+Electric.
+
+**Verificación:** tests de la receta (`tests/test_jd_keys.py`: pluck sin sustain y apagada antes de ~0,8 s; sostenidas
+con cola ≥ 2,5 s o sustain ≥ 0,25; nombres y motores) y, después de subirlas, se leen de vuelta del Brain
+(`layer_export`) y se comparan byte a byte con la librería. Lo que no se puede verificar desde aquí es cómo suenan: no
+hay forma de grabar el Brain desde los scripts; eso es la escucha de Juan.
+
+**Hecho (2026-10-28):** las seis capas están en `make_jd_keys.py` (`LAYERS`) y se subieron al Brain: JD PLK KEYS
+**A-12**, JD PLK WOOD **A-13**, JD PLK BELL **A-14**, JD SUS KEYS **A-15**, JD SUS RHODE **A-16** y JD SUS DARK
+**B-01**. Leídas de vuelta del Brain, las seis (y las tres JD KEYS de §8) son idénticas byte a byte a la librería.
