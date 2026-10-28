@@ -3,8 +3,9 @@
 
 Escribe en $GF_DATASET (por defecto ~/GROOVEFORGE/GrooveForge_Dataset_v1):
   kits/<kit>.json                     qué toca cada rol en cada kit (Tribe Colombian, djembes/dununs, Brasil, 808)
-  midi/perc/<genero>/top/<version>/<patron>_<version>_<rack>.mid    top loop (sacudidos, campanas, aros, agudos)
-  midi/perc/<genero>/perc/<version>/<patron>_<version>_<rack>.mid   loop de percusión (graves, medios, caja, efectos)
+  midi/perc/<genero>/top/<version>/<v1…v4>/<patron>_<version>_<rack>.mid    top loop (sacudidos, campanas, aros…)
+  midi/perc/<genero>/perc/<version>/<v1…v4>/<patron>_<version>_<rack>.mid   loop de percusión (graves, medios…)
+  v1 = el patrón original; v2–v4 = las variaciones de los elegidos
   midi/perc/<genero>/<patron>.json                        ficha (§5)
   versiones: intro · main · peak · main_q (cuantizada); rack: djembe · brazilian · 808 · tribe (ya convertido)
   midi/perc/raices/…                                      los ritmos tradicionales, igual, de referencia
@@ -447,12 +448,12 @@ def build_favorites(perc: Path) -> int:
                 versions = [fav["version"]] if fav.get("version") else list(VERSIONS)
                 parts = [fav["parte"]] if fav.get("parte") else ["top", "perc"]
                 rack = fav.get("rack", d["rack"])
-                for name in (base, f"{base}_v2", f"{base}_v3", f"{base}_v4"):
+                for var, name in (("v1", base), ("v2", f"{base}_v2"), ("v3", f"{base}_v3"), ("v4", f"{base}_v4")):
                     for v in versions:
                         for part in parts:
-                            src = perc / genre / part / v / f"{name}_{v}_{rack}.mid"
+                            src = perc / genre / part / v / var / f"{name}_{v}_{rack}.mid"
                             if src.exists():
-                                dst = fav_root / genre / part / v / src.name
+                                dst = fav_root / genre / part / v / var / src.name
                                 dst.parent.mkdir(parents=True, exist_ok=True)
                                 shutil.copy2(src, dst)
                                 count += 1
@@ -480,7 +481,8 @@ def main(argv=None):
                 base[key] = old.get(key, base.get(key, []))
         path.write_text(json.dumps(base, indent=2, ensure_ascii=False) + "\n")
 
-    def write_split(folder: Path, stem: str, notes: list, kit: str, title: str, version: str = "") -> list[str]:
+    def write_split(folder: Path, stem: str, notes: list, kit: str, title: str, version: str = "",
+                    variant: str = "") -> list[str]:
         """Un MIDI para top/ y otro para perc/ (si hay golpes); el rack en el nombre; Tribe ya convertido."""
         tag, files = RACK_TAG[kit], []
         for part, roles in (("top", TOP), ("perc", PERC)):
@@ -492,7 +494,7 @@ def main(argv=None):
             else:
                 out = [(t, d, ROLES[r], v) for t, d, r, v in sel]
             fname = f"{stem}_{tag}.mid"
-            rel = Path(part) / version / fname                # <top|perc>/<intro|main|peak|main_q>/
+            rel = Path(part) / version / variant / fname      # <top|perc>/<intro|main|peak|main_q>/<v1…v4>/
             write_mid(folder / rel, out, a.bpm, f"{title} {part} {tag}")
             files.append(str(rel))
         return files
@@ -523,15 +525,16 @@ def main(argv=None):
     for genre, pats in plan.items():                          # top loops por género: 4 compases × 3 versiones
         for j, (name, p) in enumerate(pats.items()):
             seed = 100 + 10 * n + j
+            var = name.rsplit("_", 1)[1] if p.get("variacion_de") else "v1"   # el original es v1
             files = []
             # Su rack y, para ver la parte colombiana en todos los géneros, también Tribe
             for kit in (p["kit"],) if p["kit"] == "tribe_colombia" else (p["kit"], "tribe_colombia"):
                 for v in VERSIONS:
                     files += write_split(perc / genre, f"{name}_{v}", notes_of(arrange(p, v), a.bpm, True, seed=seed),
-                                         kit, f"{name} {v}", v)
+                                         kit, f"{name} {v}", v, var)
                 files += write_split(perc / genre, f"{name}_main_q",
                                      notes_of(arrange(p, "main"), a.bpm, False, seed=seed), kit, f"{name} main q",
-                                     "main_q")
+                                     "main_q", var)
             ficha(perc / genre / f"{name}.json",
                   {"patron": name, "genero": genre, "bpm": a.bpm, "compases": 4, "versiones": list(VERSIONS),
                    "rack": RACK_TAG[p["kit"]], "kit": p["kit"], "archivos": files, "roles": list(p["roles"]),

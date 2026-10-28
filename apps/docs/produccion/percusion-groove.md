@@ -195,5 +195,6 @@ varias propuestas para elegir. Las elecciones anotadas en las fichas son el dato
   Percussion), y cada género tiene un patrón colombiano propio: `tambora_afro` (afro house), `bullerengue_organic`
   (organic), `guache_rolling` (melodic / progressive), `cumbia_disco` (disco / house), `mapale_tech` (indie tech).
 
-**Carpetas por versión (rev. 5):** `midi/perc/<genero>/<top|perc>/<intro|main|peak|main_q>/`, con el original y sus
-variaciones adentro; `favoritos/` sigue la misma estructura. Las raíces quedan en `raices/<top|perc>/`.
+**Carpetas por versión y variación (rev. 5):** `midi/perc/<genero>/<top|perc>/<intro|main|peak|main_q>/<v1…v4>/`
+(`v1` = el patrón original, `v2`–`v4` = las variaciones de los elegidos); `favoritos/` sigue la misma estructura. Las
+raíces quedan en `raices/<top|perc>/`.
