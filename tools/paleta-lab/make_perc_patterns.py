@@ -300,6 +300,33 @@ GENRES = {
             intro=["aro_madera"], fill={"agudo_slap": ".x......x...xxXX"},
             peak={"sacudido_corto": "xgxgxgxgxgxgxgxg"}),
     },
+    # Indie dance (rev. 7): la batería disco-punk tocada con instrumentos colombianos
+    "indie_dance": {
+        "guache_disco_punk": dict(kit="tribe_colombia", origen="propio", swing=54,
+                                  micro={"sacudido_corto": -3, "pandereta": 4}, roles={
+            "sacudido_corto": ["gxXxgxXxgxXxgxXx"],            # Guache, el hi-hat
+            "pandereta":      ["....X.......X..."],            # Caja Quemao en 2 y 4, el pandero
+            "campana_grave":  ["..x...x...x...x."],            # aro del bombo, el cencerro
+            "grave_apagado":  ["...x......x..x.."]},           # Tambora Damped
+            intro=["sacudido_corto"], fill={"grave_apagado": "...x......x..xXX"},
+            peak={"raspado": "x.x.x.x.x.x.x.x."}),            # Guacharaca
+        "alegre_funk": dict(kit="tribe_colombia", origen="propio", swing=55,
+                            micro={"medio_abierto": 3, "agudo_slap": -4}, roles={
+            "medio_abierto":  ["..x..x.x..x...x.", "..x..x.x..x.x.x."],   # Alegre, las congas de disco
+            "medio_apagado":  ["x.......x.......", "x.......x......."],   # Alegre Bajoneo
+            "agudo_slap":     ["......X.......X.", "......X.....X.X."],   # Alegre Quemao
+            "sacudido_largo": ["xgxgxgxgxgxgxgxg", "xgxgxgxgxgxgxgxg"]},  # Maracón, el shaker
+            intro=["sacudido_largo"], fill={"agudo_slap": "......X...x.xxXX"},
+            peak={"campana_aguda": "..x...x...x...x."}),          # Llamador Bajoneo
+        "llamador_offbeat": dict(kit="tribe_colombia", origen="propio", swing=52,
+                                 micro={"agudo_abierto": 2}, roles={
+            "agudo_abierto":  ["..X...X...X...X."],            # Llamador, el open hat del house
+            "sacudido_corto": ["xgx.xgx.xgx.xgx."],            # Guache
+            "aro_madera":     ["x..x..x...x..x.."],            # Tambora Cáscara en 3-3-2
+            "grave_abierto":  ["......x.......x."]},           # Tambora Open
+            intro=["agudo_abierto", "sacudido_corto"], fill={"aro_madera": "x..x..x...x.xxXX"},
+            peak={"pandereta": "....x.......x..."}),
+    },
 }
 VERSIONS = ("intro", "main", "peak")
 
