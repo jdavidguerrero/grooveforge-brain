@@ -1221,6 +1221,9 @@ void session_restore() {
         engine_osc(e);
         engine_filter(e);
         engine_patch(e);
+        // Configurar un engine lo vuelve a encender: con los 6 a la vez el audio llega al 99 % y el arranque no
+        // avanza (como en el setup)
+        if (e != s.engine) engine_dsp(e, false);
     }
     master_vol_db = s.volume_db;
     apply_master_volume();
