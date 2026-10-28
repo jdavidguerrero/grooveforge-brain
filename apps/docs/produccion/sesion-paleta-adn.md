@@ -23,8 +23,9 @@ Los tracks son **de club, bailables en su mayoría**. Lo que más pesa, en este 
 1. **Un bajo groovy**: articulado, con ghost notes y síncopa, que se lleve con el kick. Es el centro del ADN.
 2. **Percusión étnica muy nativa**: Tribe (lo colombiano) primero, djembes y Brasil como acentos; tocada, no
    programada en rejilla (microtiming y manos que alternan).
-3. **Melodías profundas** encima de ese groove: motivos menores, notas largas, novenas y séptimas, espacio; hooks
-   cortos que se repiten.
+3. **Melodías profundas** encima de ese groove: motivos (menores o mayores, con acordes prestados), notas cortas,
+   largas y mixtas, novenas y séptimas, espacio; hooks cortos que se repiten. (Rev. 2026-10-28: "notas largas" no es
+   regla; las escalas se exploran en `lab-leads.md`.)
 
 El disco / house pide otra cosa (stabs, octavas, brillo) y se trata como matiz del mismo ADN, no como otra paleta.
 
@@ -159,4 +160,6 @@ al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qu
 **Lab de leads** (Juan: de lo más importante). No se trata de sacar lo "oriental" sino de **manejarlo**: escalas como
 la pentatónica y la menor húngara combinadas con la base menor natural (por ejemplo, la segunda aumentada solo en el
 remate de una frase), frases cortas que **mezclen notas largas y cortas** y sean más grooveras (que funcionen como gancho de pista), menos estridentes, y presets que partan de DESERT LEAD y
-GF MELODIC LEAD. Contextos nuevos para probar: D · orgánico suave y E · hipnótico.
+GF MELODIC LEAD. Contextos nuevos para probar: D · orgánico suave y E · hipnótico. Diseño del lab (rev. 2: doce
+escalas en cuatro familias, cada una con su progresión, acordes prestados, rítmicas corta / mixta / larga y otros
+presets de Prophet y OB-6): `lab-leads.md`.
