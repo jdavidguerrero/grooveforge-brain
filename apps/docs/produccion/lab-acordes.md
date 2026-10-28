@@ -138,3 +138,71 @@ Al final quedan 2–3 patrones "de la casa" para variar por sección, y ya con e
   aparte, después de elegir los patrones, porque el patrón cambia qué sonido funciona (un arco pide sustain; un stab,
   ataque).
 - Progresiones nuevas (tercera picarda, ♭VI – ♭VII – I de `lab-leads.md` §3): para después, si estas se quedan cortas.
+
+## 7. Primera escucha (2026-10-28, `GF_Acordes_Lab.als`, con el Electric de Live)
+
+Anotado en la ficha `metadata/sesiones/2026-10-28_lead.json` (campo `lab_acordes`). 16 de 21 escenas gustaron:
+
+| Progresión | bloque · respiro | Alberti | arpegio | arco | bloque · tresillo | 1-5-8 · tresillo | décimas · tresillo |
+|---|---|---|---|---|---|---|---|
+| Am – F – C – E (V prestado) | | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Am – D – Am – D (kumoi) | | ✓ | ✓ | | ✓ | ✓ | ✓ |
+| A – B – F#m – B (lidia) | ✓ | | | ✓ | ✓ | ✓ | ✓ |
+
+Lo que dice:
+
+- **Las tres progresiones se quedan**: cada una tiene 4–6 patrones que gustaron. No hubo que escoger una.
+- **Los abiertos en tresillo pasan todos (9 de 9)**: el 3-3-2 en los acordes es de la casa, igual que en el bajo y la
+  marimba del ADN. Es la familia "groove".
+- **Los quebrados dependen de la progresión**: la lidia pide **arco** (flota, como la escala); kumoi pide Alberti o
+  arpegio (movimiento sobre un vamp quieto); el V prestado acepta los tres.
+- **En respiro casi no**: solo la lidia. El acorde largo y quieto no es lo que Juan busca en los acordes.
+
+Paleta de variación por sección (propuesta, a probar en un track): **abierto en tresillo** para el groove +
+**quebrado** de la progresión para el break (arco en lidia, Alberti en kumoi).
+
+**Sonido:** "definitivamente los presets del DX7 no me gustaron". Se buscan presets más parecidos al Electric en
+otros motores (§8). La ronda 4 (ritmos) se carga cuando haya preset.
+
+## 8. Presets tipo Electric (propuesta, espera visto bueno)
+
+**Qué es el Electric de Live.** Un modelo físico de piano eléctrico (Ableton, *Live Reference Manual*, cap.
+"Electric"): un martillo golpea una lengüeta de metal (la *tine*, como un diapasón) y una pastilla magnética recoge la
+vibración. De ahí salen cuatro rasgos (Reid, *Synth Secrets*, Sound On Sound, partes sobre pianos eléctricos):
+
+1. **Cuerpo casi senoidal**: la lengüeta vibra con pocos armónicos; el sonido es redondo y grave.
+2. **Golpe brillante y corto**: el martillo da un clic metálico en los primeros ~100 ms y se apaga rápido.
+3. **"Bark" con la fuerza**: si se toca fuerte, la pastilla satura y aparecen armónicos (más brillo y un gruñido).
+   Tocado suave, casi no hay.
+4. **Se apaga solo, lento**: no hay sustain plano; la nota decae durante segundos y se corta al soltar (el apagador).
+
+**Por qué no gustó el DX7.** El FM de 4 operadores hace muy bien el rasgo 2 (la campanita), pero el cuerpo le queda
+fino y el brillo no cambia con la fuerza como en el Electric. Los tres presets también tenían sustain plano (0,4–0,7).
+
+**Lo que tiene cada motor del Brain para esto** (`gf_params.h`):
+
+| Motor | Cuerpo | Golpe | Bark | Extra |
+|---|---|---|---|---|
+| **Juno-106** | pulso + SUB, pasabajos con envolvente | env del filtro corta | VEL → filtro | **chorus I/II** propio (el sonido "keys" del house), HPF |
+| **Prophet-5** | **triángulo** en OSC B (lo más cercano al seno) | OSC A en pulso dos octavas arriba, bajito; POLY-MOD de la env del filtro | VEL → filtro, drive | WARM KEYS ya gustó como lead |
+| **DX7** | — (no gustó) | la *tine* clásica (relación 14:1, decae en ~100 ms) | — | solo como capa de golpe |
+
+**Tres candidatos** (máximo tres):
+
+| Preset | Cómo | Qué rasgo busca |
+|---|---|---|
+| **JD KEYS JUNO** (Juno-106) | pulso ancho + SUB 40 %, HPF 1, pasabajos ~900 Hz con env corta, amp A 2 · D 2,5 s · S 0,15 · R 300 ms, VEL → filtro 70, **chorus I** | el piano eléctrico "de house": redondo y con chorus |
+| **JD KEYS PROPHET** (Prophet-5, desde WARM KEYS) | triángulo en B + pulso en A a +24 semitonos al 15 %, filtro ~1,1 kHz con env corta, misma amp que arriba, VEL → filtro 70, drive leve | el más fiel al cuerpo senoidal con un clic de brillo |
+| **JD KEYS CAPA** (capa: JD KEYS JUNO + DX7 solo golpe) | la mitad A es el Juno de arriba; la B, un DX7 con un solo operador modulado a 14:1 que decae en ~120 ms, B a −8 dB | cuerpo + *tine*: el esquema de un Rhodes de verdad |
+
+Las tres con **sustain bajo** (decaen solas, rasgo 4) y **VEL → filtro alto** (rasgo 3): tocadas suave son oscuras,
+fuertes brillan. En el lab se tocan con velocity 72–100 (§3), así que el bark ya aparece en los acentos.
+
+**Cómo se hacen:** igual que los JD LEAD (`make_jd_leads.py`): un script escribe los JSON en la librería a partir de
+presets que ya existen (PLUCK KEYS en el Juno, WARM KEYS en el Prophet) y Juan los sube con `gf_presets.py`. Tests:
+sustain ≤ 0,2, decay ≥ 2 s, VEL → filtro ≥ 60, chorus encendido en el Juno, y en la capa, que la mitad B se apague
+antes de 200 ms.
+
+**Cómo se escuchan:** en `GF_Acordes_Lab.als`, sobre un abierto en tresillo y un quebrado (por ejemplo kumoi
+décimas · tresillo y lidia arco · corcheas): Electric → JD KEYS JUNO → JD KEYS PROPHET → JD KEYS CAPA. Si alguno
+se acerca, se afina desde ahí.
