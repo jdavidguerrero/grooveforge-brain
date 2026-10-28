@@ -68,3 +68,17 @@ Para escucharlos en Live (una vez):
    Live suave (por ejemplo Drift o Electric), a volumen bajo: es la referencia armónica, no parte del sonido.
 2. *Save Live Set As…* → `GF_Lead_Lab.als`, en la misma carpeta. Cierra ese set (abre otro) antes del paso 3.
 3. `python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"` y vuelve a abrirlo.
+
+## Presets JD LEAD (`make_jd_leads.py`)
+
+Deriva JD LEAD MELODIC (de GF MELODIC LEAD), JD LEAD BODY (de JD RUN LEAD BODY) y la capa JD DESERT LD (de DESERT
+LEAD) con los cambios contra la estridencia de `apps/docs/produccion/lab-leads.md` §5. Lee la librería (exportarla
+antes) y escribe los JSON; no toca el Brain.
+
+```bash
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py export && \
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layers
+~/.platformio/penv/bin/python tools/paleta-lab/make_jd_leads.py
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import <lib>/ob_6/jd-lead-melodic.json <lib>/prophet_5/jd-lead-body.json
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import <lib>/layers/jd-desert-ld.json
+```

@@ -163,9 +163,22 @@ Leídos de `preset_bank.cpp` (A = ataque de amplitud, S / R = sustain y release,
 
 Prefiltro sin grabar, máximo tres a la vez, con **mixta A en eólica**: (1) Prophet: JD RUN LEAD BODY · WARM KEYS ·
 POLY BRASS; (2) OB-6: JUMP BRASS · GF BRASS HIT · GF MELODIC LEAD; (3) final: ganador Prophet · ganador OB-6 ·
-DESERT LEAD. Los presets nuevos **JD LEAD …** (paso 3) se derivan de los ganadores con los cambios de la tabla de
-arriba, sin borrar ningún preset. Límite conocido: el panel aún no carga un preset de engine dentro de una mitad de un
-híbrido; una capa nueva se arma con `gf_presets.py` (`layers` / `layer-import`), con el puerto serie libre.
+DESERT LEAD.
+
+**Presets JD LEAD (hechos 2026-10-28, antes del prefiltro).** `tools/paleta-lab/make_jd_leads.py` toma los originales
+de la librería, aplica la tabla de arriba y escribe los JSON; se subieron con `gf_presets.py` sin borrar ninguno:
+
+| Preset | Lugar | Parte de | Cambios |
+|---|---|---|---|
+| JD LEAD MELODIC | OB-6 A-14 | GF MELODIC LEAD | sin vibrato; unison ×2 con 10 ¢ (era ×3, 18 ¢); cutoff 1,2 kHz (2,5) con env 0,55 y decay 220 ms; reso 0,15; ataque 12 ms, sustain 0,55, release 200 ms; DRIFT 15, GRIT 30; `vel_cut` 65 |
+| JD LEAD BODY | Prophet B-01 | JD RUN LEAD BODY | sin sync ni POLY-MOD a FREQ A (A en unísono con B, B +7 ¢); cutoff 1,1 kHz con env 0,55 y decay 250 ms; ataque 10 ms; `vel_cut` 65 |
+| JD DESERT LD (capa) | capas A-10 | DESERT LEAD | A (OB-6): FLT MORPH 15 (era 50, el notch nasal), barrido del LFO 0,1 (0,3), cutoff 1,3 kHz; B (Prophet): sin sync ni POLY-MOD, mezcla 70 / 40; las dos con ataque 12 ms y release ~200 ms. MORPH 50 y B −3 dB como la original |
+
+Entran al prefiltro como cuarta opción de su ronda (Prophet, OB-6, final con DESERT LEAD), cambiando por uno de los
+de fábrica para seguir en tres: JD LEAD BODY en lugar de POLY BRASS, JD LEAD MELODIC en lugar de GF MELODIC LEAD y
+JD DESERT LD contra DESERT LEAD en la final. Del ganador del prefiltro se derivan más versiones si hace falta.
+Límite conocido: el panel aún no carga un preset de engine dentro de una mitad de un híbrido; una capa nueva se arma
+con `gf_presets.py` (`layers` / `layer-import`), con el puerto serie libre.
 
 ## 6. ADN y dialectos en los leads
 
@@ -236,7 +249,7 @@ Pendiente:
 
 1. **Juan arma `GF_Lead_Lab.als`** (paso a paso en el README de `tools/paleta-lab/`) y se llena con
    `fill_lab_set.py --leads`.
-2. **Presets JD LEAD** (§5), subidos con `gf_presets.py`, sin borrar ninguno.
+2. ~~Presets JD LEAD~~ — hechos (§5): JD LEAD MELODIC, JD LEAD BODY y la capa JD DESERT LD.
 3. ~~Contextos D · orgánico suave, E · hipnótico y F · melódico~~ — hechos: `make_adn_clips.py` los copia y
    `fill_lab_set.py` los pone en las escenas 4–6 (`GF_Paleta_Lab_v2.als`; el lab de leads los trae al llenarse).
 4. **Dosis** (§4) de la escala ganadora, después de la ronda 3.
