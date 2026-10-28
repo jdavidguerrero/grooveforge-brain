@@ -153,3 +153,55 @@ def test_dosis_de_tribe_es_un_elemento_suave():
         assert {n for _, _, n, _ in notes} <= {TRIBE[a] for a in TRIBE_ROLES[role]}, dialect   # un solo instrumento
         assert max(v for *_, v in notes) <= 80 and set(line) <= {".", "g", "o"}, dialect
         assert max(t for t, *_ in notes) < 4 * BAR and len(notes) == 4 * sum(c != "." for c in line)
+
+
+def color_notes(sc, notes):
+    return [(t, d, n) for t, d, n, _ in notes if pc(n) in ml.color_pcs(sc, t // BAR)]
+
+
+def test_dosis_de_color():
+    by_name = {sc.name: sc for sc in ml.SCALES}
+    for scale, rhythm, dialect in ml.DOSE_TESTS:
+        sc = by_name[scale]
+        assert dialect in DIALECTS
+        assert not color_notes(sc, ml.lead(ml.without_color(sc), rhythm))                 # sin color: ninguna
+        full = ml.dose(sc, rhythm, "completa")
+        assert full == ml.lead(sc, rhythm)
+        low, high = ml.RANGE[rhythm]
+        for kind in ml.DOSES[1:]:
+            notes = ml.dose(sc, rhythm, kind)
+            assert [(t, d, v) for t, d, _, v in notes] == [(t, d, v) for t, d, _, v in full], kind   # misma rítmica
+            for t, _, n, _ in notes:
+                assert pc(n) in sc.bar_notes(t // BAR), (scale, kind, n)
+            (t, d, n), = color_notes(sc, notes)                                            # una sola
+            bar, step = t // BAR, (t % BAR) // S16
+            if kind == "remate":
+                assert bar == 3 and pc(n) in ml.chord_pcs(sc.prog[3]) and low - 2 <= n <= high
+            else:
+                assert d < 2 * S16 and not ml.is_strong(step, 1) and low <= n <= high
+        assert ml.dose(sc, rhythm, "remate") != ml.dose(sc, rhythm, "de_paso"), scale
+
+
+def test_escenas_de_dosis(tmp_path):
+    import fill_lab_set as fl
+    ml.main(["--dataset", str(tmp_path)])
+    rows = fl.dose_rows(tmp_path / "midi" / "adn" / "lead" / "lab")
+    assert len(rows) == len(ml.DOSE_TESTS) * len(ml.DOSES)
+    for k, (dialect, scene, tribe, f, chords) in enumerate(rows):
+        scale, rhythm, d = ml.DOSE_TESTS[k // len(ml.DOSES)]
+        assert dialect == d and scene.endswith(ml.DOSES[k % len(ml.DOSES)].replace("_", " "))
+        assert tribe and f.exists() and chords.exists() and f.stem.startswith(f"{scale}__{rhythm}")
+
+
+def test_recorta_escenas_vacias_de_abajo():
+    import xml.etree.ElementTree as ET
+    import fill_lab_set as fl
+    slot = '<ClipSlot Id="{}"><ClipSlot><Value>{}</Value></ClipSlot></ClipSlot>'
+    lst = lambda full: '<ClipSlotList>' + ''.join(slot.format(i, '<MidiClip/>' if i in full else '')   # noqa: E731
+                                                  for i in range(5)) + '</ClipSlotList>'
+    scene = '<Scene Id="{}"><Name Value="{}"/></Scene>'
+    ls = ET.fromstring('<LiveSet><Scenes>' + ''.join(scene.format(i, 'x' if i == 1 else '') for i in range(5))
+                       + '</Scenes><Tracks><MidiTrack>' + lst({0, 2}) + lst(set()) + '</MidiTrack></Tracks></LiveSet>')
+    fl.trim_scenes(ls, 1)
+    assert len(ls.find("Scenes")) == 3                                  # la 3.ª tiene clip: no se toca de ahí para arriba
+    assert all(len(l) == 3 for l in ls.iter("ClipSlotList"))

@@ -24,9 +24,14 @@ escena kick, perc, top, lead y acordes.
 Con --kits además, cada dialecto suena con su kit (pistas KIT DJEMBE, KIT BRASIL, KIT 808 con los racks GF) y una
 dosis de Tribe en PERC (sesion-paleta-adn.md §1d); organic sigue todo en Tribe. Cada bloque abre con dos escenas de
 referencia (kit solo · kit + Tribe) con el mismo lead. Reemplaza la ronda de dialectos que ya tuviera el set (desde
-la primera escena "afro · …") y deja intacto lo de arriba.
+la primera escena "<dialecto> · …") y deja intacto lo de arriba.
 
     python3 tools/paleta-lab/fill_lab_set.py --dialectos <ficha.json> --kits "<ruta>/GF_Lead_Dialectos_kits.als"
+
+Con --dosis pone las dosis de color (lab-leads.md §4, rev. 4) igual que --kits, en el lugar de la ronda de
+dialectos: por cada prueba, completa · remate · de paso con el kit de su dialecto y la dosis de Tribe.
+
+    python3 tools/paleta-lab/fill_lab_set.py --dosis "<ruta>/GF_Lead_Dosis.als"
 
     python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
@@ -42,7 +47,7 @@ import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from make_lead_lab import SCALES
+from make_lead_lab import DOSE_TESTS, DOSES, SCALES, dose_name
 
 TPQ = 480
 CONTEXTS = [("A_tierra", "A · tierra"), ("B_noche", "B · noche"), ("C_fiesta", "C · fiesta"),
@@ -154,6 +159,18 @@ def ensure_scenes(ls: ET.Element, count: int):
                     lst.append(slot)
 
 
+def trim_scenes(ls: ET.Element, count: int):
+    """Quita las escenas vacías de abajo hasta dejar `count` (lo contrario de ensure_scenes)."""
+    scenes = ls.find("Scenes")
+    lists = [lst for tr in ls.find("Tracks") for lst in clip_lists(tr)]
+    while len(scenes) > count and not scenes[-1].find("Name").get("Value") \
+            and all(len(lst) < len(scenes) or not len(lst[-1].find("ClipSlot/Value")) for lst in lists):
+        for lst in lists:
+            if len(lst) == len(scenes):
+                lst.remove(lst[-1])
+        scenes.remove(scenes[-1])
+
+
 def put(track: ET.Element, row: int, clip: ET.Element):
     value = track.find(".//MainSequencer/ClipSlotList")[row].find("ClipSlot/Value")
     value.clear()
@@ -176,7 +193,7 @@ LEAD_RHYTHMS = ("mixta_a", "corta", "mixta_b", "larga")
 def lead_lab_rows(lab: Path) -> list[tuple[str, Path, Path]]:
     """(nombre de escena, lead, acordes): la mixta A de todas las escalas y después las demás rítmicas por escala."""
     by_scale = {}
-    for f in sorted(lab.glob("*/*.mid")):
+    for f in sorted(lab.glob("f*/*.mid")):                                # las familias; dosis/ va aparte
         scale, rhythm, *dial = f.stem.split("__")
         if rhythm != "acordes":
             by_scale.setdefault((f.parent.name, scale), {})[rhythm] = (f, dial[0].replace("_", " ") if dial else "")
@@ -201,7 +218,7 @@ DIALECTS = {"afro": ("C_fiesta", "A_tierra"), "organic": ("A_tierra", "D_organic
 def dialect_rows(lab: Path, liked: list[str]) -> list[tuple[str, str, Path, Path]]:
     """(dialecto, nombre de escena, lead, acordes): un bloque por dialecto con todos los clips que gustaron, en el orden
     de las escalas (familias 1–4) y de las rítmicas."""
-    files = {f.stem: f for f in lab.glob("*/*.mid")}
+    files = {f.stem: f for f in lab.glob("f*/*.mid")}
     missing = [c for c in liked if c not in files]
     if missing:
         raise SystemExit(f"no encuentro en {lab}: {', '.join(missing)}")
@@ -250,7 +267,24 @@ def kit_rows(lab: Path, liked: list[str]) -> list[tuple[str, str, bool, Path, Pa
     return rows
 
 
-def fill_kits(als: Path, midi: Path, liked: list[str], bpm: float = 124.0) -> int:
+def dose_rows(lab: Path) -> list[tuple[str, str, bool, Path, Path]]:
+    """(dialecto, escena, con dosis de Tribe, lead, acordes): las dosis de color (lab-leads.md §4, rev. 4), tres
+    escenas por prueba (completa · remate · de paso) en el dialecto de la prueba."""
+    by_name = {sc.name: sc for sc in SCALES}
+    rows = []
+    for scale, rhythm, dialect in DOSE_TESTS:
+        sc = by_name[scale]
+        chords = lab / sc.family / f"{scale}__acordes.mid"
+        for kind in DOSES:
+            f = lab / (sc.family if kind == "completa" else "dosis") / f"{dose_name(sc, rhythm, kind)}.mid"
+            if not f.exists():
+                raise SystemExit(f"no encuentro {f}: correr antes make_lead_lab.py")
+            rows.append((dialect, f"{dialect} · {scale} · {rhythm} · {kind.replace('_', ' ')}", dialect != "organic",
+                         f, chords))
+    return rows
+
+
+def fill_kits(als: Path, midi: Path, rows: list[tuple[str, str, bool, Path, Path]], bpm: float = 124.0) -> int:
     root = ET.fromstring(gzip.decompress(als.read_bytes()))
     ls = root.find("LiveSet")
     tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
@@ -259,14 +293,13 @@ def fill_kits(als: Path, midi: Path, liked: list[str], bpm: float = 124.0) -> in
         raise SystemExit(f"faltan pistas en el set: {', '.join(sorted(missing))}")
     scenes = ls.find("Scenes")
     names = [sc.find("Name").get("Value") for sc in scenes]
-    start = next((i for i, n in enumerate(names) if n.startswith("afro · ")), first_free_row(ls))
+    start = next((i for i, n in enumerate(names) if n.split(" · ")[0] in DIALECTS), first_free_row(ls))
     for row in range(start, len(scenes)):                         # la ronda vieja sale; lo de arriba no se toca
         scenes[row].find("Name").set("Value", "")
         for tr in ls.find("Tracks"):
             slots = tr.find(".//MainSequencer/ClipSlotList")
             if slots is not None and row < len(slots):
                 put(tr, row, None)
-    rows = kit_rows(midi / "adn" / "lead" / "lab", liked)
     ensure_scenes(ls, start + len(rows))
     cid = 1 + max((int(c.get("Id")) for c in root.iter("MidiClip")), default=0)
     cid0 = cid
@@ -285,6 +318,7 @@ def fill_kits(als: Path, midi: Path, liked: list[str], bpm: float = 124.0) -> in
             put(tracks[track], row, make_clip(sorted(notes), label, COLORS.get(track, COLORS["PERC"]), cid)); cid += 1
         put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
         put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
+    trim_scenes(ls, start + len(rows))
     return save(als, root, ls, bpm, cid - cid0)
 
 
@@ -375,14 +409,18 @@ def main(argv=None):
     ap.add_argument("--leads", action="store_true", help="cargar el lab de leads (necesita la pista ACORDES)")
     ap.add_argument("--dialectos", metavar="FICHA", help="agregar la ronda de dialectos con los clips de la ficha")
     ap.add_argument("--kits", action="store_true", help="con --dialectos: kit por dialecto + dosis de Tribe")
+    ap.add_argument("--dosis", action="store_true", help="las dosis de color con el kit de su dialecto")
     ap.add_argument("--dataset", default=os.environ.get("GF_DATASET",
                                                         str(Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1")))
     a = ap.parse_args(argv)
     liked = json.loads(Path(a.dialectos).read_text())["lab_leads"]["clips_que_gustan"] if a.dialectos else None
-    if a.kits:
+    midi = Path(a.dataset) / "midi"
+    if a.dosis:
+        n = fill_kits(Path(a.als), midi, dose_rows(midi / "adn" / "lead" / "lab"))
+    elif a.kits:
         if not liked:
             raise SystemExit("--kits va con --dialectos <ficha.json>")
-        n = fill_kits(Path(a.als), Path(a.dataset) / "midi", liked)
+        n = fill_kits(Path(a.als), midi, kit_rows(midi / "adn" / "lead" / "lab", liked))
     else:
         n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads, liked=liked)
     print(f"{n} clips cargados en {a.als} (original en .als.bak)")

@@ -126,6 +126,48 @@ comparar dos escalas, lo único que cambia es el color.
 distingue a la escala aparece una vez, al cerrar la vuelta) y **de paso** (corta, en tiempo débil, resuelve a la nota
 de al lado). Es lo que propuse en la rev. 1 para la húngara, ahora aplicable a cualquier escala.
 
+### Dosis de color: cómo se arman (rev. 4, 2026-10-28, después de la ronda de dialectos)
+
+**Nota de color** = la que la escala tiene y La menor natural no (eólica es la referencia: el ADN de siempre):
+
+| Escala | Notas de color | La frase sin color usa… |
+|---|---|---|
+| Frigia dominante | Si♭ y Do# | La Re Mi Fa Sol |
+| Menor con V prestado | Sol# (solo en el compás del E) | la eólica sin Sol: La Si Do Re Mi Fa |
+| Menor húngara | Re# y Sol# | La Si Do Mi Fa: **la hirajōshi**, que sí te gustó |
+
+Las tres dosis, con la misma rítmica, el mismo contorno y los mismos acordes:
+
+- **Completa**: el clip del lab tal cual (la referencia).
+- **Remate**: toda la frase sin color y **una sola** nota de color en el compás 4, convertida en **tono del acorde**
+  (Do# sobre el A, Sol# sobre el E): la última nota fuerte o larga que esté a 3 semitonos o menos, y si ninguna, la
+  última que pueda. El color llega consonante, como pide §3. La sensible (Sol#) puede caer un tono debajo del registro.
+- **De paso**: toda la frase sin color y **una sola** nota de color **corta, en tiempo débil**, la que quede más cerca
+  de la nota siguiente (por grado cuando la frase lo permite). Es un adorno, no un apoyo.
+
+"3 semitonos o menos" porque en estas escalas la segunda aumentada (Fa → Sol#) es un paso de la escala. La dosis es
+**de la melodía**: los acordes no cambian.
+
+**Lo que mostró contar el color (2026-10-28).** Antes de armar las dosis conté cuántas notas de color tiene cada clip
+completo del lab. Los que más dialectos cruzaron casi no tienen: **la menor con V prestado en mixta B no tiene ni un
+Sol#** en la melodía (el color está solo en el acorde de E) y la frigia dominante en mixta B tiene 1 de 14. La lidia,
+en cambio, tiene 8–14 notas de color y gustó en tres dialectos: lo que molesta no es "el color", es **la segunda
+aumentada repetida en la melodía**. Por eso las pruebas van en las dos direcciones:
+
+| Escala · rítmica | Dialecto | Notas de color (completa) | Qué se prueba |
+|---|---|---|---|
+| menor con V prestado · mixta B | indie | 0 de 14 | **sumar** color: ¿una sensible (Sol#) mejora al ganador? |
+| frigia dominante · corta | afro | 3 de 24 | **quitar**: pasó en cuatro dialectos, no en afro |
+| menor húngara · mixta A | melodic | 6 de 20 | **quitar**: con todo su color no pasó en ninguna |
+
+En la primera, "completa" es el clip ganador tal cual (sin color): las dosis le **agregan** una nota.
+
+Cada escena con el kit del dialecto y la dosis de Tribe (aprobada). `make_lead_lab.py` escribe además los clips en
+`midi/adn/lead/lab/dosis/<escala>__<rítmica>__<dosis>.mid`; `fill_lab_set.py --dosis` los pone en un set nuevo,
+`GF_Lead_Dosis.als` (copia de `GF_Lead_Dialectos_kits.als`, reemplaza la ronda de dialectos). Tests: una sola nota de
+color en remate y de paso, en su compás y con su forma; la frase sin color no tiene ninguna; todas las notas en la
+escala del compás.
+
 ## 5. Sonido: menos estridencia, y qué presets probar
 
 "Estridente" es casi siempre **demasiada energía entre 2 y 5 kHz** sostenida en el tiempo: ahí el oído es más
@@ -256,8 +298,8 @@ Pendiente:
 3. ~~Contextos D · orgánico suave, E · hipnótico y F · melódico~~ — hechos: `make_adn_clips.py` los copia y
    `fill_lab_set.py` los pone en las escenas 4–6 (`GF_Paleta_Lab_v2.als`; el lab de leads los trae al llenarse).
 4. ~~Ronda 3 de dialectos~~ — hecha (§10, resultado de la ronda de dialectos).
-5. **Dosis** (§4) de las ganadoras: frigia dominante (completa en corta, remate o de paso en mixta) y el V
-   prestado; la lidia y la eólica van completas.
+5. **Dosis** (§4, rev. 4): armadas en `GF_Lead_Dosis.als` (escenas 4–12: V prestado en indie, frigia dominante en
+   afro, húngara en melodic; completa · remate · de paso). Falta la escucha de Juan.
 6. **Refinar el sonido** por dialecto (JD LEAD BODY / WARM KEYS), después de las dosis.
 7. **Preset de piano eléctrico para los acordes** (como el Electric de Live), del motor DX7 (FM).
 

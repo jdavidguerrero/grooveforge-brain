@@ -4,7 +4,8 @@
 Todas con La como centro, 124 BPM, 4 compases (un acorde por compás). La rítmica y el contorno son los mismos en todas
 las escalas; las alturas salen de la escala del compás, y las notas en la negra o largas se ajustan al tono del acorde
 más cercano. Cada escala trae un clip de acordes (para un instrumento de Live: el Brain toca el lead). Escribe en
-$GF_DATASET/midi/adn/lead/lab/<familia>/<escala>__<ritmica>__<dialectos>.mid y <escala>__acordes.mid.
+$GF_DATASET/midi/adn/lead/lab/<familia>/<escala>__<ritmica>__<dialectos>.mid y <escala>__acordes.mid, y las dosis
+de color (remate y de paso, §4 rev. 4) en lab/dosis/<escala>__<ritmica>__<dosis>.mid.
 
     python3 tools/paleta-lab/make_lead_lab.py
     python3 tools/paleta-lab/make_lead_lab.py --key 2     # transpuesto (semitonos desde La)
@@ -148,6 +149,52 @@ def chords(sc: Scale, k: int = 0) -> list[tuple[int, int, int, int]]:
     return out
 
 
+# Dosis de color (lab-leads.md §4, rev. 4): (escala, rítmica, dialecto donde se prueba). Color = lo que no es eólico.
+DOSES = ("completa", "remate", "de_paso")
+DOSE_TESTS = [("menor_v_prestado", "mixta_b", "indie"), ("frigia_dominante", "corta", "afro"),
+              ("hungara_menor", "mixta_a", "melodic")]
+
+
+def color_pcs(sc: Scale, bar: int) -> set[int]:
+    return set(sc.bar_notes(bar)) - set(EOLICA)
+
+
+def without_color(sc: Scale) -> Scale:
+    """La misma escala sin sus notas de color en ningún compás (los acordes no cambian)."""
+    plain = lambda b: tuple(n for n in sc.bar_notes(b) if n in EOLICA)                     # noqa: E731
+    return Scale(sc.name, sc.family, plain(0), sc.prog, sc.dialects, sc.parent,
+                 {b: (plain(b), sc.bar_parent(b)) for b in range(len(sc.prog))})
+
+
+def dose(sc: Scale, rhythm: str, kind: str, k: int = 0) -> list[tuple[int, int, int, int]]:
+    """remate: una nota de color en el compás 4, que pueda volverse tono del acorde de color (a 3 semitonos o menos):
+    la última nota fuerte o larga que pueda, y si ninguna puede, la última. de_paso: una nota de color corta en tiempo débil (a 3 semitonos o menos de la original), la que quede más
+    cerca de la siguiente (por grado si la frase lo permite; en empate, la más tardía)."""
+    if kind == "completa":
+        return lead(sc, rhythm, k)
+    notes = lead(without_color(sc), rhythm, k)
+    low, high = (r + k for r in RANGE[rhythm])
+    cands = []                                            # (orden, índice, nota de color)
+    for i, (t, d, n, _) in enumerate(notes):
+        bar, step = t // BAR, (t % BAR) // S16
+        floor = low - 2 if kind == "remate" else low                  # la sensible puede caer bajo el registro
+        for c in pitches(color_pcs(sc, bar), max(n - 3, floor), min(n + 3, high), k):  # hasta una 2.ª aum.
+            if kind == "remate" and bar == 3 and (c - A3 - k) % 12 in chord_pcs(sc.prog[bar]):
+                cands.append(((not is_strong(step, d // S16 + 1), -i, abs(c - n)), i, c))
+            elif kind == "de_paso" and i + 1 < len(notes) and d < 2 * S16 and not is_strong(step, 1):
+                cands.append(((abs(notes[i + 1][2] - c) or 99, -i, abs(c - n)), i, c))
+    if not cands:
+        raise ValueError(f"{sc.name} {rhythm}: no hay dónde poner la dosis {kind}")
+    _, i, c = min(cands)
+    t, d, _, v = notes[i]
+    notes[i] = (t, d, c, v)
+    return notes
+
+
+def dose_name(sc: Scale, rhythm: str, kind: str) -> str:
+    return clip_name(sc, rhythm) if kind == "completa" else f"{sc.name}__{rhythm}__{kind}"
+
+
 def clip_name(sc: Scale, rhythm: str) -> str:
     return f"{sc.name}__{rhythm}__{'_'.join(sc.dialects)}"
 
@@ -166,6 +213,12 @@ def main(argv=None):
             write_mid(root / sc.family / f"{name}.mid", lead(sc, rhythm, a.key), a.bpm, name)
         write_mid(root / sc.family / f"{sc.name}__acordes.mid", chords(sc, a.key), a.bpm, f"{sc.name} acordes")
     print(f"{len(SCALES) * len(RHYTHMS)} leads y {len(SCALES)} clips de acordes en {root}")
+    by_name = {sc.name: sc for sc in SCALES}
+    for scale, rhythm, _ in DOSE_TESTS:
+        for kind in DOSES[1:]:
+            name = dose_name(by_name[scale], rhythm, kind)
+            write_mid(root / "dosis" / f"{name}.mid", dose(by_name[scale], rhythm, kind, a.key), a.bpm, name)
+    print(f"{len(DOSE_TESTS) * (len(DOSES) - 1)} dosis de color en {root / 'dosis'}")
 
 
 if __name__ == "__main__":

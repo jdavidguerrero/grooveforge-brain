@@ -99,3 +99,18 @@ con un kit por dialecto (pistas KIT DJEMBE, KIT BRASIL y KIT 808 con los racks G
 ```bash
 python3 tools/paleta-lab/make_tribe_dosis.py
 ```
+
+## Dosis de color (`make_lead_lab.py` + `fill_lab_set.py --dosis`)
+
+`make_lead_lab.py` escribe también `midi/adn/lead/lab/dosis/<escala>__<rítmica>__{remate,de_paso}.mid`: la frase
+sin notas de color y una sola nota de color, al cierre (remate) o de adorno (de paso) (`lab-leads.md` §4, rev. 4).
+Las pruebas están en `DOSE_TESTS` (escala, rítmica, dialecto). Para escucharlas, sobre una copia nueva del set con
+kits (con Live cerrado o sin ese archivo abierto):
+
+```bash
+cp GF_Lead_Dialectos_kits.als GF_Lead_Dosis.als
+python3 tools/paleta-lab/fill_lab_set.py --dosis GF_Lead_Dosis.als
+```
+
+Reemplaza la ronda de dialectos por las escenas de dosis (completa · remate · de paso por prueba, con el kit del
+dialecto y la dosis de Tribe) y quita las escenas vacías de abajo.
