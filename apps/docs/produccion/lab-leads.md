@@ -258,3 +258,42 @@ Pendiente:
 4. **Dosis** (§4) de la escala ganadora, después de la ronda 3.
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.
+
+## 10. Primera escucha (2026-10-28, `GF_Lead_Lab.als`, solo con kick)
+
+Anotado en la ficha `metadata/sesiones/2026-10-28_lead.json` (campo `lab_leads`).
+
+**Sonido.** Todos los del prefiltro le gustaron a Juan, en este orden ("buen inicio para explorar"):
+1. JD LEAD BODY · 2. JUMP BRASS · 3. GF BRASS HIT, WARM KEYS y JD RUN LEAD BODY (empate) · 4. JD DESERT LD.
+Los dos primeros son de la familia "redondo, filtro bajo": uno derivado (§5) y uno de fábrica sin vibrato ni sync.
+
+**Ritmo.** "El patrón definitivamente es mixto, aunque hay algunas cortas y largas": 4 mixta A y 8 mixta B de 16
+clips; 3 cortas y 2 largas.
+
+**Mapa escala × rítmica** (✓ = le gustó; † = escuchado por error con GF SUNRISE PLUCK, no con un lead):
+
+| Familia | Escala | corta | mixta A | mixta B | larga | Dialecto esperado (§6) |
+|---|---|---|---|---|---|---|
+| 1 · menores | eólica | | ✓ | ✓ | | afro, melodic |
+| | dórica | | | ✓ | ✓ | afro, disco |
+| | menor con V prestado | | | ✓ | ✓ | melodic |
+| 2 · exóticas | frigia | | | ✓ | | organic, indie |
+| | frigia dominante | ✓ † | | ✓ | | indie |
+| | menor húngara | | | | | melodic, organic |
+| 3 · japonesas | hirajōshi | | ✓ | | | organic |
+| | in sen | | | ✓ | | indie |
+| | kumoi | ✓ | ✓ | ✓ | | organic |
+| 4 · mayores | lidia | | ✓ | | | melodic |
+| | mixolidia | | | | | afro, disco |
+| | mayor con iv prestado | ✓ | | | | disco |
+
+Lo que dice el mapa:
+
+- **Kumoi** es la que más rítmicas aguanta (3 de 4); las **japonesas** pasan las tres. Juntas con la eólica y las
+  menores con acordes de la familia 1, son el núcleo más probable.
+- **La menor húngara no pasó en ninguna rítmica**, aunque fue el punto de partida del lab: su color completo es
+  demasiado. Queda para la **dosis** (§4: solo en el remate o de paso), no como escala de una frase entera.
+- **La mixolidia tampoco**: lo "mayor con calle" no es de Juan por ahora; lo mayor que pasa es lidio (flotante) y la
+  mayor con el Dm prestado (en corta).
+- Faltan los **dialectos**: se escuchó solo con kick, así que las etiquetas del nombre siguen siendo hipótesis. La
+  ronda 3 (§7) los confirma escuchando los clips que gustaron sobre los contextos de cada dialecto.
