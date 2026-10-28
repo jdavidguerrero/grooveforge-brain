@@ -39,6 +39,14 @@ flash: cuidar su vida útil y no frenar el audio). Si se corta la luz dentro de 
 **Al arrancar:** si el archivo es válido, se restaura todo (en HYBRID SYNTH, la capa con lo editado). Si no existe o
 es de otra versión, el arranque de siempre. `@GF FORMAT YES` también lo borra.
 
+**Salida de emergencia:** con **SHIFT (B6) apretado al conectar**, arranca sin restaurar (la sesión no se borra; se
+reemplaza con el próximo guardado). Por si una sesión guardada llegara a colgar el arranque.
+
+**Lo que se aprendió en el hardware (2026-10-28):** el arranque con sesión se colgaba en dos lugares. (1) Restaurar
+configura los 6 engines y eso los vuelve a encender: se apagan los que no suenan, como en el arranque normal. (2) La
+restauración le avisa a la cabeza por el bridge y `Serial1.begin` estaba más abajo en el `setup`: escribir en un
+puerto sin abrir se queda esperando para siempre. El bridge ahora se abre al comienzo del `setup`.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |

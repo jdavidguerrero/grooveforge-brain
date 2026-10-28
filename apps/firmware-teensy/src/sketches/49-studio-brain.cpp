@@ -1843,7 +1843,11 @@ void setup() {
     layers.load();                                   // sin archivo: las 8 capas de fábrica (una escritura)
     ui.set_layer_count(layers.count());
     Serial.printf("[CAPA] %u presets de capa\n", layers.count());
-    session_restore();                               // vuelve a donde estabas (theory/14 §3)
+    // SHIFT (B6) apretado al conectar: arranca sin la sesión guardada (salida si la restauración se cuelga)
+    pinMode(BTN_PINS[5], INPUT_PULLUP);
+    delay(2);
+    if (digitalRead(BTN_PINS[5]) == LOW) Serial.println("[SESION] SHIFT al arrancar: sin restaurar");
+    else session_restore();                          // vuelve a donde estabas (theory/14 §3)
     Serial.printf("[PRESET] bancos: %u %u %u %u %u %u · LittleFS usado %lu de %lu bytes\n", presets.count(0),
                   presets.count(1), presets.count(2), presets.count(3), presets.count(4), presets.count(5),
                   (unsigned long)preset_fs.usedSize(), (unsigned long)preset_fs.totalSize());
