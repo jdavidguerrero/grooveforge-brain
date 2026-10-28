@@ -255,7 +255,10 @@ Pendiente:
 2. ~~Presets JD LEAD~~ — hechos (§5): JD LEAD MELODIC, JD LEAD BODY y la capa JD DESERT LD.
 3. ~~Contextos D · orgánico suave, E · hipnótico y F · melódico~~ — hechos: `make_adn_clips.py` los copia y
    `fill_lab_set.py` los pone en las escenas 4–6 (`GF_Paleta_Lab_v2.als`; el lab de leads los trae al llenarse).
-4. **Dosis** (§4) de la escala ganadora, después de la ronda 3.
+4. ~~Ronda 3 de dialectos~~ — hecha (§10, resultado de la ronda de dialectos).
+5. **Dosis** (§4) de las ganadoras: frigia dominante (completa en corta, remate o de paso en mixta) y el V
+   prestado; la lidia y la eólica van completas.
+6. **Refinar el sonido** por dialecto (JD LEAD BODY / WARM KEYS), después de las dosis.
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.
 
@@ -333,3 +336,40 @@ DJEMBE, KIT BRASIL y KIT 808; `fill_lab_set.py --dialectos <ficha> --kits`; dosi
 Cada bloque (menos organic) abre con **REF kit solo** y **REF kit + tribe** (eólica mixta A): ahí se decide si la
 firma suma en ese dialecto. Los clips usan el mapa común: KIT BRASIL y KIT 808 tienen que tener los racks **GF Brasil**
 y **GF 808 Perc** (`kits/racks/`), no los originales.
+
+### Resultado de la ronda de dialectos (2026-10-28, `GF_Lead_Dialectos_kits.als`)
+
+Anotado en la ficha (`lab_leads.ronda_dialectos`). ✓ = pasa en ese dialecto. Juan alternó el sonido (JD LEAD BODY en
+unos, WARM KEYS en otros: "es un tema de refinar"), así que el mapa es de **escala y rítmica**, no de preset.
+
+| Clip | afro | organic | melodic | indie | disco | Dialectos |
+|---|---|---|---|---|---|---|
+| menor con V prestado · mixta B | ✓ | ✓ | ✓ | ✓ | ✓ | **5** |
+| frigia dominante · corta | | ✓ | ✓ | ✓ | ✓ | 4 |
+| frigia dominante · mixta B | ✓ | ✓ | ✓ | ✓ | | 4 |
+| eólica · mixta A | ✓ | ✓ | ✓ | | | 3 |
+| eólica · mixta B | ✓ | ✓ | ✓ | | | 3 |
+| menor con V prestado · larga | ✓ | ✓ | ✓ | | | 3 |
+| hirajōshi · mixta A | ✓ | ✓ | ✓ | | | 3 |
+| **lidia · mixta A** | ✓ | ✓ | ✓ | | | 3 |
+| mayor con iv prestado · corta | ✓ | ✓ | ✓ | | | 3 |
+| kumoi · mixta A | ✓ | | ✓ | | | 2 |
+| kumoi · corta | ✓ | | | ✓ | | 2 |
+| dórica · mixta B | ✓ | | ✓ | | | 2 |
+| dórica · larga | | ✓ | | | | 1 |
+| frigia · mixta B · in sen · mixta B · kumoi · mixta B | | | | | | 0 |
+
+Lo que dice:
+
+- **Afro, organic y melodic aceptan casi lo mismo** (10–11 de 16): con la base de Juan, esos tres dialectos son una
+  sola zona armónica. Lo que los separa es el kit, no la escala.
+- **Indie y disco son exigentes** y piden **tensión**: el Sol# del V prestado y la frigia dominante (la segunda
+  aumentada), mejor en corta. El color "oriental" que molestaba en frases largas **sí sirve ahí**, en notas cortas.
+  Disco sigue usando la perc de C (afro + disco), así que sus 2 ✓ son la lectura más débil.
+- **ADN de leads**: la **menor con V prestado en mixta B** cruza los cinco dialectos; la **frigia dominante** (corta
+  y mixta B) cruza cuatro. Son el hilo común de la marca en lo melódico.
+- **Lidia** (Juan: "me gustó mucho en casi todos") pasa en afro, organic y melodic, no en indie ni disco: es el color
+  **brillante** de la paleta, el contrapeso de las menores.
+- **Kumoi bajó** (de 3 rítmicas con kick a 2 dialectos parciales) y la **frigia** y la **in sen** no pasan con
+  percusión: con kick solo sonaban bien, con kit se pierden.
+- Sin respuesta todavía sobre **Tribe en dosis** (REF kit solo / kit + tribe).
