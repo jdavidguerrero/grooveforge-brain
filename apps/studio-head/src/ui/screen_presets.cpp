@@ -15,9 +15,7 @@ namespace {
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
 const char* const KEYS_PRESET[4] = {"BANK A", "BANK B", "BANK C", "BANK D"};  // B1–B4 saltan de banco (theory/13)
-// HYBRID SYNTH (theory/12 §3d rev. 6): B3 abre los presets del engine de la mitad en foco
-const char* const KEYS_LAYER_A[4] = {"BANK A", "BANK B", "PRESETS A", "SYNTH FX"};
-const char* const KEYS_LAYER_B[4] = {"BANK A", "BANK B", "PRESETS B", "SYNTH FX"};
+const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "LFO / MOD", "SYNTH FX"};  // fuera de la navegación (theory/12 §3e)
 
 }  // namespace
 
@@ -104,7 +102,7 @@ bool ScreenPresets::tap_row(int i, const StudioState& s) {
 
 void ScreenPresets::update(const StudioState& s) {
     _top.update(s);
-    if (!_layers)                                    // en HYBRID SYNTH, el banco es el de la mitad en foco (rev. 6)
+    if (!_layers)                                    // en HYBRID SYNTH, el banco es el de la mitad en foco (theory/12 §3e)
         _top.set_page(s.mode != Mode::Hybrid ? "PRESETS" : s.focus_b ? "PRESETS \xC2\xB7 CAPA B" : "PRESETS \xC2\xB7 CAPA A");
     _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
@@ -117,7 +115,7 @@ void ScreenPresets::update(const StudioState& s) {
         _bottom.set_page_control(0, "MORPH", m, "%", s.hybrid.morph / 100.0f);
         _bottom.set_page_control(1, "B DELAY", d, "MS", s.hybrid.delay_b_ms / 35.0f);
     }
-    _bottom.set_keys(_layers ? (s.focus_b ? KEYS_LAYER_B : KEYS_LAYER_A) : KEYS_PRESET, _cursor > 0 ? std::min(_layers ? 1 : 3, (_cursor - 1) / 16) : 0);
+    _bottom.set_keys(_layers ? KEYS_LAYER : KEYS_PRESET, _cursor > 0 ? std::min(_layers ? 1 : 3, (_cursor - 1) / 16) : 0);
 
     if (_cursor < 0) _cursor = ld + 1;
     const int rows = n + 1;

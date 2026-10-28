@@ -223,12 +223,8 @@ void App::handle_synth(Ctl c, StudioState& s) {
         s.sfx_on[s.ui_cursor % SFX_SLOTS] = !s.sfx_on[s.ui_cursor % SFX_SLOTS];
         return;
     }
-    if (_page == Page::LayerPresets && c == Ctl::B3) {   // demo: presets de la mitad en foco (theory/12 §3d rev. 6)
-        show(Page::Presets);
-        return;
-    }
-    if (s.mode == Mode::Hybrid && c == Ctl::B4) {   // demo: presets de capa y vuelta a la home
-        show(_page == Page::LayerPresets ? Page::Hybrid : Page::LayerPresets);
+    if (s.mode == Mode::Hybrid && c == Ctl::B4 && s.shift) {   // demo: PRESETS de la mitad en foco (theory/12 §3e rev. 7)
+        show(_page == Page::Presets ? Page::Hybrid : Page::Presets);
         return;
     }
     if (_page == Page::LayerPresets && (c == Ctl::NavNext || c == Ctl::NavPrev)) {
@@ -236,7 +232,7 @@ void App::handle_synth(Ctl c, StudioState& s) {
         return;
     }
     if (_page == Page::Hybrid && (c == Ctl::NavNext || c == Ctl::NavPrev)) {   // demo: NAV recorre las capas
-        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, std::max(0, s.layer_count - 1)));
+        s.ui_cursor = uint8_t(std::clamp(int(s.ui_cursor) + (c == Ctl::NavNext ? 1 : -1), 0, s.layer_count + 1));   // + SAVE, + CUSTOM
         return;
     }
     if (_page == Page::Hybrid && (c == Ctl::FocusA || c == Ctl::FocusB)) {

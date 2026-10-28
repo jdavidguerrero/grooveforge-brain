@@ -82,7 +82,6 @@ void StudioUi::refresh_cursor() {
         case PANEL:   ui_.cursor = panel_cursor_; break;
         case GROOVE:  ui_.cursor = groove_stop_; break;
         case HYBRID:  ui_.cursor = layer_cursor_; break;
-        case LAYER_PRESETS: ui_.cursor = layer_row_; break;
         default:      ui_.cursor = 0; break;
     }
 }
@@ -153,14 +152,32 @@ Result StudioUi::custom_pick(uint8_t e) {
     return {Action::LayerCustom, uint8_t(custom_a_ | (e << 4))};
 }
 
+// NAV en ENGINE SELECT: en HYBRID SYNTH salta el engine bloqueado (el de la otra mitad, theory/12 §3e rev. 7).
+void StudioUi::step_engine_cursor(int v) {
+    const uint8_t blocked = hybrid() ? blocked_engine() : 0xFF;
+    const int dir = v > 0 ? 1 : -1;
+    for (int n = v > 0 ? v : -v; n > 0; --n) {
+        do {
+            engine_cursor_ = uint8_t((engine_cursor_ + dir + ENGINE_COUNT) % ENGINE_COUNT);
+        } while (engine_cursor_ == blocked);
+    }
+    refresh_cursor();
+}
+
+// ENGINE SELECT de la mitad en foco: el engine de la otra no se puede; elegir abre los PRESETS de esa mitad.
+Result StudioUi::hybrid_pick_engine(uint8_t e) {
+    if (e >= ENGINE_COUNT || e == blocked_engine()) return {};
+    if (e != engine_) preset_cursor_ = 1;                  // engine nuevo: el sketch le carga el preset 0
+    engine_ = engine_cursor_ = e;
+    show(PRESETS);
+    return {Action::LoadEngine, e};
+}
+
 Result StudioUi::handle_hybrid(Control c, int8_t v) {
     const uint8_t pg = ui_.page;
     if (custom_step_ && pg == ENGINE) {                     // eligiendo los engines de CUSTOM
         switch (c) {
-            case Control::Nav:
-                engine_cursor_ = uint8_t((engine_cursor_ + v % ENGINE_COUNT + ENGINE_COUNT) % ENGINE_COUNT);
-                refresh_cursor();
-                return {};
+            case Control::Nav: step_engine_cursor(v); return {};
             case Control::NavPush: return custom_pick(engine_cursor_);
             default:
                 if (c >= Control::Pick0 && c <= Control::Pick5)
@@ -177,29 +194,20 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
         case Control::P2Push: return focus_to(1);
         default: break;
     }
-    // PRESETS del engine de la mitad en foco (theory/12 §3d rev. 6): B1–B4 bancos como en SYNTH; SHIFT + B4 vuelve a
-    // los presets de capa. Load / SAVE ya van a la mitad en foco (el sketch usa ui.engine()).
-    if (pg == PRESETS && c >= Control::Key1 && c <= Control::Key4) {
-        if (c == Control::Key4 && ui_.shift) {
-            show(LAYER_PRESETS);
+    // PRESETS de la mitad en foco: B1–B4 saltan de banco como en SYNTH; load / SAVE van a esa mitad (ui.engine()).
+    if (pg == PRESETS && c >= Control::Key1 && c <= Control::Key4 && !ui_.shift) return handle_synth(c, v);
+    if (pg == ENGINE && !ui_.shift) {
+        if (c == Control::Nav) {
+            step_engine_cursor(v);
             return {};
         }
-        if (!ui_.shift) return handle_synth(c, v);
-    }
-    if (pg == LAYER_PRESETS && c == Control::Key3 && !ui_.shift) {   // B3: PRESETS de la mitad en foco
-        show(PRESETS);
-        return {};
+        if (c == Control::NavPush) return hybrid_pick_engine(engine_cursor_);
+        if (c >= Control::Pick0 && c <= Control::Pick5) return hybrid_pick_engine(uint8_t(uint8_t(c) - uint8_t(Control::Pick0)));
     }
     switch (c) {
         case Control::Key1:
         case Control::Key2:
         case Control::Key3: {
-            if (pg == LAYER_PRESETS && !ui_.shift) {        // B1 / B2: banco A / B de presets de capa
-                const int row = 1 + int(uint8_t(c) - uint8_t(Control::Key1)) * PRESET_BANK;
-                layer_row_ = uint8_t(row > layer_count_ ? layer_count_ : row);
-                refresh_cursor();
-                return {};
-            }
             if (c == Control::Key3 && ui_.shift) {          // SHIFT + B3: GROOVE (de la capa entera) · otra vez: home
                 show(pg == GROOVE ? HYBRID : GROOVE);
                 return focus_to(0);
@@ -211,13 +219,13 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
             return {};
         }
         case Control::Key4:
-            if (ui_.shift) {                                // SHIFT + B4: presets de capa · otra vez: home
-                if (pg == LAYER_PRESETS) {
-                    show(HYBRID);
-                } else {
-                    layer_row_ = uint8_t(layer_cursor_ < layer_count_ ? layer_cursor_ + 1 : 0);
-                    show(LAYER_PRESETS);
-                }
+            if (ui_.shift) {                                // SHIFT + B4: PRESETS de la mitad en foco · otra vez: home
+                show(pg == PRESETS ? HYBRID : PRESETS);
+                return {};
+            }
+            if (pg == GROOVE) return {Action::Tap, 0};      // B4 en GROOVE: TAP, como en SYNTH
+            if (pg == ENGINE) {                             // B4 en ENGINE SELECT: home, como en SYNTH
+                show(HYBRID);
                 return {};
             }
             show(pg == SYNTH_FX ? HYBRID : SYNTH_FX);       // B4: SYNTH FX (de la capa entera) · otra vez: home
@@ -229,14 +237,21 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
         default: break;
     }
     if (pg == HYBRID) {
-        if (c == Control::Nav) {                            // los presets de capa y, al final, + CUSTOM
-            const int i = int(layer_cursor_) + v, n = layer_count_;
+        if (c == Control::Nav) {                            // los presets de capa y, al final, + SAVE LAYER y + CUSTOM
+            const int i = int(layer_cursor_) + v, n = layer_custom_row();
             layer_cursor_ = uint8_t(i < 0 ? 0 : i > n ? n : i);
             refresh_cursor();
             return {};
         }
         if (c == Control::NavPush && !ui_.shift) {
             if (layer_cursor_ < layer_count_) return {Action::LayerLoad, layer_cursor_};
+            if (layer_cursor_ == layer_save_row()) {        // + SAVE LAYER: la capa tal como suena, en un lugar nuevo
+                if (layer_count_ >= LAYER_SLOTS) return {};
+                ++layer_count_;
+                layer_cursor_ = uint8_t(layer_count_ - 1);
+                refresh_cursor();
+                return {Action::LayerSave, layer_cursor_};
+            }
             custom_step_ = 1;                               // + CUSTOM: ENGINE SELECT de A, después el de B
             custom_focus_ = focus();
             ui_.flags = uint8_t(ui_.flags | GF_UI_FLAG_PICK);
@@ -246,31 +261,7 @@ Result StudioUi::handle_hybrid(Control c, int8_t v) {
             return {};
         }
     }
-    if (pg == LAYER_PRESETS && !(ui_.shift && c == Control::NavPush)) {
-        const int rows = layer_count_ + 1;                  // la fila 0 es SAVE
-        auto move = [&](int d) {
-            const int r = layer_row_ + d;
-            layer_row_ = uint8_t(r < 0 ? 0 : r >= rows ? rows - 1 : r);
-            refresh_cursor();
-        };
-        switch (c) {
-            case Control::Nav: move(v); return {};
-            case Control::SwipeUp: move(PRESET_ROWS_VISIBLE); return {};
-            case Control::SwipeDown: move(-PRESET_ROWS_VISIBLE); return {};
-            case Control::NavPush:
-                if (layer_row_ == 0) {
-                    if (layer_count_ >= LAYER_SLOTS) return {};
-                    ++layer_count_;
-                    layer_cursor_ = uint8_t(layer_count_ - 1);
-                    return {Action::LayerSave, layer_cursor_};
-                }
-                layer_cursor_ = uint8_t(layer_row_ - 1);
-                return {Action::LayerLoad, layer_cursor_};
-            default: break;
-        }
-        if (c >= Control::Pick0 && c <= Control::Pick5) return {};
-    }
-    return handle_synth(c, v);                              // páginas de edición, ENGINE SELECT, SHIFT, ENC L push
+    return handle_synth(c, v);                              // páginas de edición, PRESETS, SHIFT, ENC L push
 }
 
 Result StudioUi::handle_fx(Control c, int8_t v) {

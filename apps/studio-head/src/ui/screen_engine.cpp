@@ -58,6 +58,9 @@ lv_obj_t* ScreenEngine::create() {
         t.active = rect(t.box, 14 + 120 - 8, 104, 8, 8, TEAL_PLUS);
         t.tag = label(t.box, T12, GRAY, e.tag);
         lv_obj_set_pos(t.tag, 14, 120);
+        t.used = label(t.box, T12B, WHITE, "");          // "EN A" / "EN B": el engine de la otra mitad (theory/12 §3e)
+        lv_obj_set_pos(t.used, 14, 138);
+        lv_obj_add_flag(t.used, LV_OBJ_FLAG_HIDDEN);
         input_attach_tap(t.box, static_cast<Ctl>(int(Ctl::Pick0) + i));
     }
 
@@ -85,7 +88,10 @@ void ScreenEngine::update(const StudioState& s) {
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
     _bottom.set_keys(KEYS_ENGINE, 3);
 
-    if (_cursor == _last_cursor && s.engine == _last_active) return;
+    // HYBRID SYNTH: el engine de la otra mitad no se puede elegir (el Teensy lo salta); en CUSTOM no se conoce acá
+    const bool hyb = s.mode == Mode::Hybrid && !s.custom_pick && s.hybrid.layer >= 0;
+    const int blocked = hyb ? (s.focus_b ? s.hybrid.engine_a : s.hybrid.engine_b) : -1;
+    if (_cursor == _last_cursor && s.engine == _last_active && blocked == _last_blocked) return;
     const EngineInfo& e = engine_info(uint8_t(_cursor));
     engine_art_set(_focus_art, uint8_t(_cursor));
     lv_label_set_text(_name, e.name);
@@ -97,7 +103,17 @@ void ScreenEngine::update(const StudioState& s) {
         lv_obj_set_style_border_color(_tiles[i].box, lv_color_hex(cur ? TEAL_PLUS : LINE), 0);
         if (i == s.engine) lv_obj_clear_flag(_tiles[i].active, LV_OBJ_FLAG_HIDDEN);
         else lv_obj_add_flag(_tiles[i].active, LV_OBJ_FLAG_HIDDEN);
+        const bool used = i == blocked;
+        lv_obj_set_style_opa(_tiles[i].art, used ? LV_OPA_30 : LV_OPA_COVER, 0);
+        set_text_color(_tiles[i].name, used ? GRAY : WHITE);
+        if (used) {
+            lv_label_set_text(_tiles[i].used, s.focus_b ? "EN A" : "EN B");
+            lv_obj_clear_flag(_tiles[i].used, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_add_flag(_tiles[i].used, LV_OBJ_FLAG_HIDDEN);
+        }
     }
     _last_cursor = _cursor;
     _last_active = s.engine;
+    _last_blocked = blocked;
 }

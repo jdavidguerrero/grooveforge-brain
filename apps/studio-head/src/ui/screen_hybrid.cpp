@@ -18,6 +18,7 @@ constexpr int GX = 16, GY = 48, GW = 768, GH = 208;
 constexpr int CARD_Y = 56, CARD_W = 300, CARD_H = 104, CARD_A_X = 16, CARD_B_X = GW - 16 - CARD_W;
 constexpr uint32_t TRACK = 0x1C1C1C;
 const char* const KEYS_HYBRID[4] = {"OSC", "ENV", "LFO / MOD", "SYNTH FX"};   // las de SYNTH (theory/12 §3d rev. 5)
+const char* const SAVE_CHIP = "+ SAVE LAYER";   // filas después de las capas (theory/12 §3e rev. 7)
 const char* const CUSTOM_CHIP = "+ CUSTOM";
 
 /// Una tarjeta de capa: letra, engine, preset; la del foco con borde teal y fondo marcado.
@@ -63,21 +64,21 @@ void ScreenHybrid::draw(const Painter& p, const StudioState& s) const {
     p.frame(0, 0, GW, GH, 1, LINE);
     const auto& h = s.hybrid;
 
-    // Presets de capa (hasta 32): ventana que sigue al cursor de NAV (ámbar); la que suena, con borde
-    // Presets de capa y, al final, + CUSTOM (fila n)
-    const int n = s.layer_count, cur = std::min<int>(s.ui_cursor, n);
-    auto chip_name = [&](int i) { return i < n ? s.layer_names[i] : CUSTOM_CHIP; };
+    // Presets de capa (hasta 32): ventana que sigue al cursor de NAV (ámbar); la que suena, con borde.
+    // Al final, + SAVE LAYER (fila n) y + CUSTOM (fila n + 1).
+    const int n = s.layer_count, cur = std::min<int>(s.ui_cursor, n + 1);
+    auto chip_name = [&](int i) { return i < n ? s.layer_names[i] : i == n ? SAVE_CHIP : CUSTOM_CHIP; };
     auto chip_w = [&](int i) { return text_width(chip_name(i), T12B) + 20 + 4; };
     int first = cur, used = chip_w(cur);
     while (first > 0 && used + chip_w(first - 1) < GW / 3) used += chip_w(--first);   // un tercio de contexto atrás
     int x = 12;
-    for (int i = first; i <= n; ++i) {
+    for (int i = first; i <= n + 1; ++i) {
         const int w = chip_w(i) - 4;
         if (x + w > GW - 12) break;
         const bool c = i == cur, loaded = i == h.layer;
         if (c) p.fill(x, 10, w, 24, HYB);
         else draw_box(p, x, 10, w, 24, loaded ? HYB : LINE, loaded ? HYB_DIM : SURFACE, 1);
-        text_top(p, x + 10, 16, chip_name(i), c ? BG : loaded ? WHITE : i == n ? HYB_HI : GRAY, T12B);
+        text_top(p, x + 10, 16, chip_name(i), c ? BG : loaded ? WHITE : i >= n ? HYB_HI : GRAY, T12B);
         x += w + 4;
     }
 
@@ -103,7 +104,7 @@ void ScreenHybrid::draw(const Painter& p, const StudioState& s) const {
     text_top(p, cx + (cw - text_width(t, T12)) / 2, CARD_Y + 86, t, GRAY, T12);
 
     text_top(p, 24, CARD_Y + CARD_H + 18,
-             "B1-B3 OTRA VEZ: A \xE2\x86\x94 B \xC2\xB7 SHIFT+B4: PRESETS \xC2\xB7 NAV LARGO: HOME \xC2\xB7 MODE: SALIR", MON, T12);
+             "B1-B3 OTRA VEZ: A \xE2\x86\x94 B \xC2\xB7 SHIFT+B4: PRESETS DE LA MITAD \xC2\xB7 P1/P2 PUSH: FOCO \xC2\xB7 MODE: SALIR", MON, T12);
 }
 
 void ScreenHybrid::update(const StudioState& s) {

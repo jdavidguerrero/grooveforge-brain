@@ -21,7 +21,7 @@ enum Page : uint8_t { PERFORM = 0, AI = 1, SPECTRUM = 2, ENV = 3, FX = 4, ENGINE
                     SYNTH_FX = 10, PANEL = 11,     ///< PANEL: 4.ª vista de la home (fidelidad §11.7)
                     GROOVE = 12,                   ///< SHIFT + B3 (theory/09 de Studio §7)
                     HYBRID = 13,                   ///< home del modo HYBRID SYNTH (theory/12 §3d)
-                    LAYER_PRESETS = 14 };          ///< presets de capa (B4 en HYBRID SYNTH)
+                    LAYER_PRESETS = 14 };          ///< presets de capa: fuera de la navegación desde la rev. 7 (theory/12 §3e)
 
 /// Ids de control, compartidos con UI_INPUT (0x45). NAV lleva el paso del giro en `value`.
 /// Key1–Key4 = B1–B4 del panel (Arduino ya define B1, B2… como literales binarios).
@@ -52,8 +52,8 @@ enum class Action : uint8_t { None, LoadEngine, LoadPreset, SavePreset, FxToggle
                               SfxToggle, GroovePush, Tap, VolStep,
                               HybridEnter,   ///< MODE entra a HYBRID SYNTH: arg = preset de capa (theory/12 §3d)
                               HybridExit,    ///< MODE sale de HYBRID SYNTH (queda A sola en SYNTH)
-                              LayerLoad,     ///< NAV push en la home o en LAYER_PRESETS: arg = preset de capa
-                              LayerSave,     ///< SAVE en LAYER_PRESETS: arg = lugar nuevo
+                              LayerLoad,     ///< NAV push en la home de HYBRID SYNTH: arg = preset de capa
+                              LayerSave,     ///< + SAVE LAYER en la home: arg = lugar nuevo
                               LayerFocus,    ///< B1 / B2 / B3 otra vez, P1 / P2 push: arg = 0 (A) o 1 (B)
                               LayerCustom }; ///< CUSTOM elegido: arg = engine A | engine B << 4
 
@@ -108,15 +108,17 @@ public:
     bool hybrid() const { return ui_.mode == MODE_HYBRID; }
     uint8_t layer_cursor() const { return layer_cursor_; }
     void set_layer_cursor(uint8_t i) { layer_cursor_ = i < layer_count_ ? i : 0; refresh_cursor(); }
-    /// Preset de capa para entrar al modo (la fila + CUSTOM del final no es un preset).
+    /// Preset de capa para entrar al modo (las filas + SAVE LAYER y + CUSTOM del final no son presets).
     uint8_t layer_to_load() const { return layer_cursor_ < layer_count_ ? layer_cursor_ : 0; }
     void set_layer_count(uint8_t n) {
         layer_count_ = n > LAYER_SLOTS ? LAYER_SLOTS : n;
-        if (layer_cursor_ > layer_count_) layer_cursor_ = layer_count_;   // = layer_count_: la fila + CUSTOM
-        if (layer_row_ > layer_count_) layer_row_ = layer_count_;
+        if (layer_cursor_ > layer_custom_row()) layer_cursor_ = layer_custom_row();
         refresh_cursor();
         dirty_ = true;
     }
+    /// Filas de la home después de las capas (theory/12 §3e rev. 7): + SAVE LAYER y + CUSTOM.
+    uint8_t layer_save_row() const { return layer_count_; }
+    uint8_t layer_custom_row() const { return uint8_t(layer_count_ + 1); }
     uint8_t layer_count() const { return layer_count_; }
     /// Capa en foco (flag FOCUS_B): la que editan B1 / B2 y ENGINE SELECT.
     void set_focus(uint8_t f) {
@@ -127,6 +129,8 @@ public:
         }
     }
     uint8_t focus() const { return ui_.flags & GF_UI_FLAG_FOCUS_B ? 1 : 0; }
+    /// Engine de la otra mitad de la capa (0xFF = sin capa): ENGINE SELECT lo salta (theory/12 §3e rev. 7).
+    void set_other_engine(uint8_t e) { other_engine_ = e; }
     /// 0 = sin CUSTOM · 1 eligiendo el engine de A · 2 el de B (theory/12 §3d rev. 5).
     uint8_t custom_step() const { return custom_step_; }
 
@@ -159,6 +163,10 @@ private:
     Result handle_synth(Control c, int8_t v);
     Result handle_hybrid(Control c, int8_t v);
     Result focus_to(uint8_t f);
+    Result hybrid_pick_engine(uint8_t e);
+    /// Engine que ENGINE SELECT no deja elegir en HYBRID SYNTH: el de la otra mitad (o el de A al elegir B de CUSTOM).
+    uint8_t blocked_engine() const { return custom_step_ == 2 ? custom_a_ : custom_step_ == 1 ? 0xFF : other_engine_; }
+    void step_engine_cursor(int v);
     Result custom_pick(uint8_t engine);
     /// Cada modo vuelve a la página donde lo dejaste (theory/14 de Studio §2); ENGINE SELECT no, es de paso.
     void keep_synth_page() {
@@ -166,7 +174,7 @@ private:
         synth_page_ = ui_.page == ENGINE ? last_view_ : ui_.page;
     }
     void keep_hybrid_page() {
-        hybrid_page_ = (ui_.page == ENGINE || custom_step_) ? uint8_t(HYBRID) : ui_.page;
+        hybrid_page_ = (ui_.page == ENGINE || ui_.page == LAYER_PRESETS || custom_step_) ? uint8_t(HYBRID) : ui_.page;
     }
     void restore_synth_page() {
         last_view_ = synth_view_;
@@ -190,9 +198,9 @@ private:
     uint8_t panel_cursor_ = 0;                   ///< PANEL: tarjeta (panel_card)
     uint8_t groove_stop_ = 0;                    ///< GROOVE: parada (común a todos los engines)
     uint8_t layer_cursor_ = 0;                   ///< HYBRID: preset de capa resaltado en la home
-    uint8_t layer_row_ = 0;                      ///< LAYER_PRESETS: fila (0 = SAVE)
     uint8_t layer_count_ = 8;
     uint8_t custom_step_ = 0, custom_a_ = 0, custom_focus_ = 0;
+    uint8_t other_engine_ = 0xFF;
     bool dirty_ = true;
 };
 

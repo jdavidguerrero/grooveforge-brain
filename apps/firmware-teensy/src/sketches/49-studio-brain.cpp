@@ -919,6 +919,7 @@ void load_preset(uint8_t i) {
 /// La cabeza ve la capa en foco como el engine de siempre (páginas, presets, filtro) y la capa en LAYER_STATE.
 void focus_engine(uint8_t e) {
     ui.set_engine(e);
+    ui.set_other_engine(layered() ? (e == layer_a ? layer_b : layer_a) : 0xFF);   // ENGINE SELECT lo salta (§3e)
     ui.set_preset_count(presets.count(e));
     bridge_engine();
     bridge_filter();
@@ -962,6 +963,7 @@ void layer_off() {
     layer_b = 0xFF;
     layer_focus = 0;
     ui.set_focus(0);
+    ui.set_other_engine(0xFF);
     audio_graph::set_active_engine(ui.engine());
     ui.set_layer(false);
     ui.set_hybrid(false);
@@ -1041,7 +1043,7 @@ void layer_custom(uint8_t ea, uint8_t eb) {
     layer_apply(l, LAYER_CUSTOM);
 }
 
-/// SAVE en LAYER_PRESETS: guarda la capa tal como suena (las dos mitades, MORPH, retraso, transposición, mezcla).
+/// + SAVE LAYER en la home de HYBRID SYNTH (theory/12 §3e rev. 7): guarda la capa tal como suena (las dos mitades, MORPH, retraso, transposición, mezcla).
 /// La capa tal como suena (las dos mitades editadas, MORPH, retraso, transposición, mezcla).
 void layer_capture(studio::LayerPreset& l) {
     snprintf(l.name, sizeof(l.name), "%s", layer_name);
@@ -1609,7 +1611,7 @@ void ui_control(studio::Control c, int8_t v) {
 void leds_update() {
     const GF_UiState& u = ui.state();
     uint8_t pos, count, keys[studio::KEY_LEDS];
-    const uint8_t rows = u.page == studio::HYBRID          ? uint8_t(layers.count() + 1)   // + CUSTOM
+    const uint8_t rows = u.page == studio::HYBRID          ? uint8_t(layers.count() + 2)   // + SAVE LAYER, + CUSTOM
                          : u.page == studio::LAYER_PRESETS ? uint8_t(layers.count() + 1)
                                                            : uint8_t(ui.preset_count() + 1);
     studio::nav_position(u, ui.engine(), rows, &pos, &count);
