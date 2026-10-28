@@ -35,3 +35,5 @@ Escribe los kits (`kits/*.json`) y los patrones en `midi/perc/<genero>/top/` y `
 en el nombre: `<patron>_<intro|main|peak|main_q>_<djembe|brazilian|808|tribe>.mid`. Volver a correrlo conserva lo que
 anotaste en `kits_probados` y `notas`. Los Drum Racks GF salen de `make_gf_racks.py`.
 Diseño: `apps/docs/produccion/percusion-groove.md` §7.
+
+Lo que elijas (campo `favoritos` de la ficha) genera variaciones `_v2…_v4` y se copia a `midi/perc/favoritos/`.

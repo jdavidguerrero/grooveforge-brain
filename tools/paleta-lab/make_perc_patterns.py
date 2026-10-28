@@ -18,6 +18,7 @@ import argparse
 import json
 import os
 import random
+import shutil
 from pathlib import Path
 
 from make_test_clips import BAR, S16, TPQ, write_mid
@@ -428,6 +429,36 @@ def kit_files() -> dict[str, dict]:
     }
 
 
+def build_favorites(perc: Path) -> int:
+    """Copias de lo que Juan eligió (campo "favoritos" de las fichas) en midi/perc/favoritos/<genero>/<top|perc>/:
+    el archivo exacto si dio versión / parte / rack, si no las tres versiones en las dos partes con el rack del
+    patrón; y lo mismo de sus variaciones _v2…_v4. Se rearma en cada corrida (son copias: el resto no se toca)."""
+    fav_root = perc / "favoritos"
+    if fav_root.exists():
+        shutil.rmtree(fav_root)
+    count = 0
+    for genre in GENRES:
+        for f in sorted((perc / genre).glob("*.json")):
+            d = json.loads(f.read_text())
+            if not d.get("favoritos") or d.get("variacion_de"):
+                continue
+            base = d["patron"]
+            for fav in d["favoritos"]:
+                versions = [fav["version"]] if fav.get("version") else list(VERSIONS)
+                parts = [fav["parte"]] if fav.get("parte") else ["top", "perc"]
+                rack = fav.get("rack", d["rack"])
+                for name in (base, f"{base}_v2", f"{base}_v3", f"{base}_v4"):
+                    for v in versions:
+                        for part in parts:
+                            src = perc / genre / part / f"{name}_{v}_{rack}.mid"
+                            if src.exists():
+                                dst = fav_root / genre / part / src.name
+                                dst.parent.mkdir(parents=True, exist_ok=True)
+                                shutil.copy2(src, dst)
+                                count += 1
+    return count
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--bpm", type=float, default=124.0)
@@ -508,6 +539,7 @@ def main(argv=None):
             n += 1
             print(f"{genre:20} {name:22} rack: {RACK_TAG[p['kit']]}")
     print(f"{n} patrones en {perc}")
+    print(f"favoritos: {build_favorites(perc)} archivos en {perc / 'favoritos'}")
 
 
 if __name__ == "__main__":

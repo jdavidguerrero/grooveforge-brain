@@ -123,6 +123,19 @@ def test_colombia_en_todos_los_generos():
         assert any(p["kit"] == "tribe_colombia" for p in pats.values()), genre
 
 
+def test_favoritos_solo_lo_elegido(tmp_path):
+    mp.main(["--dataset", str(tmp_path)])
+    perc = tmp_path / "midi" / "perc"
+    f = perc / "afro_house" / "djembe_sang.json"
+    d = json.loads(f.read_text())
+    d["favoritos"] = [{"version": "peak", "parte": "perc", "rack": "djembe"}]
+    f.write_text(json.dumps(d))
+    assert mp.build_favorites(perc) == 4                                  # el peak perc y sus 3 variaciones
+    got = sorted(p.name for p in (perc / "favoritos" / "afro_house" / "perc").iterdir())
+    assert got == [f"djembe_sang{v}_peak_djembe.mid" for v in ("", "_v2", "_v3", "_v4")]
+    assert not (perc / "favoritos" / "afro_house" / "top").exists()
+
+
 def test_tribe_alterna_manos_y_guache():
     notes = [(0, 100, "grave_abierto", 90), (mp.S16, 100, "grave_abierto", 90),
              (0, 100, "sacudido_corto", 90), (mp.S16, 100, "sacudido_corto", 90), (0, 100, "campana_grave", 9)]
