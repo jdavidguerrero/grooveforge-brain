@@ -1,6 +1,6 @@
 # Lab de acordes: qué tienen en común las progresiones que gustaron, y cómo variarlas
 
-> **Fecha:** 2026-10-28 · **Estado:** propuesta para Juan; el generador espera su visto bueno · **Depende de:**
+> **Fecha:** 2026-10-28 · **Estado:** aprobado por Juan; generador y set hechos (§5) · **Depende de:**
 > `lab-leads.md` §2, §3 y §10 (escalas, progresiones y ronda de dialectos), `sesion-paleta-adn.md` §1c y §8 ·
 > **Ficha:** `metadata/sesiones/2026-10-28_lead.json` (`lab_leads.ronda_dialectos.acordes`)
 
@@ -60,7 +60,7 @@ bloque salta. Un pianista hace otra cosa: **mantiene las notas comunes y mueve l
 (inversiones). Así Am → F es solo Mi → Fa (un semitono), y el empuje del rasgo 3 se oye **dentro** del acorde.
 
 - **Voicing base**: tres notas entre Do3 y Mi4, conducidas a la más cercana desde el acorde anterior.
-- **Bajo aparte**: la fundamental, sola, una octava abajo (Do2–Sol#2) **solo en los patrones que la piden**
+- **Bajo aparte**: la fundamental, sola, una octava abajo (Re2–Do#3) **solo en los patrones que la piden**
   (1–5–8, décimas). Con el bajo del Brain sonando (JD SUB MID) esa nota se quita: los dos pelearían por el mismo
   registro.
 - **Techo Mi4**: el lead se mueve alrededor de Mi4 (`lab-leads.md` §4). Los patrones quebrados (arpegio, arco) no
@@ -116,15 +116,21 @@ los acordes.
 
 Al final quedan 2–3 patrones "de la casa" para variar por sección, y ya con eso se prueba con el lead encima.
 
-## 5. Implementación propuesta (espera visto bueno)
+## 5. Implementación (hecha, 2026-10-28)
 
 - `tools/paleta-lab/make_chord_lab.py`: progresiones (las 3 del §1, reusando `Scale.prog` de `make_lead_lab.py`),
   `voice_lead()` (la inversión más cercana), `ORDERS` y `RHYTHMS` del §3; escribe
-  `midi/adn/chords/lab/<progresion>__<orden>__<ritmo>.mid` (con y sin bajo).
-- `fill_lab_set.py --acordes`: un set nuevo, `GF_Acordes_Lab.als` (copia de `GF_Lead_Dialectos_kits.als`), con las
-  rondas 1–4 en escenas.
-- Tests: voicing entre Do3 y Mi4 y cada cambio mueve como mucho dos notas; todas las notas del acorde del compás; el
-  bajo solo en 1–5–8 y décimas; los golpes en los pasos del ritmo; el 4.º compás anticipa.
+  `midi/adn/chords/lab/<progresion>__<orden>__<ritmo>.mid`: las 72 combinaciones (3 × 6 × 4), para la ronda 4.
+- `fill_lab_set.py --acordes`: un set nuevo, `GF_Acordes_Lab.als` (copia de `GF_Lead_Dialectos_kits.als`), con el
+  kit **afro** (las tres progresiones pasaron en afro) y la dosis de Tribe, sin lead. Escenas 4–6: ronda 1; 7–12
+  menor con V prestado, 13–18 kumoi, 19–24 lidia (en cada bloque, ronda 2: Alberti · arpegio · arco en corcheas;
+  ronda 3: bloque · 1-5-8 · décimas en tresillo). Se escucha solo el bloque de la progresión que gane. La ronda 4
+  (ritmos del ganador) se carga después, con los ganadores.
+- Tests (`tests/test_chord_lab.py`): voicing entre Do3 y Mi4; con notas comunes cada cambio mueve como mucho dos
+  notas (y nunca más de 6 semitonos en total); Sol# → La dentro del acorde en la tensión; todas las notas del acorde
+  del compás; el bajo solo en 1–5–8 y décimas; los golpes en los pasos del ritmo; el 4.º compás anticipa.
+- Detalle: si en el arpegio o el arco la octava de la 1 pasaría de Mi4, los cuatro pasos arrancan con la nota de
+  arriba del voicing una octava abajo (mismo dibujo, sin invadir al lead).
 
 ## 6. Lo que no cubre
 

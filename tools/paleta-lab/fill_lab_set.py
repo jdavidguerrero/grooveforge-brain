@@ -33,6 +33,11 @@ dialectos: por cada prueba, completa · remate · de paso con el kit de su diale
 
     python3 tools/paleta-lab/fill_lab_set.py --dosis "<ruta>/GF_Lead_Dosis.als"
 
+Con --acordes, igual, el lab de acordes (lab-acordes.md §4) sin lead, con el kit afro: primero las tres progresiones
+en bloque y respiro, y luego por progresión los quebrados (Alberti, arpegio, arco) y los abiertos en tresillo.
+
+    python3 tools/paleta-lab/fill_lab_set.py --acordes "<ruta>/GF_Acordes_Lab.als"
+
     python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
 from __future__ import annotations
@@ -47,6 +52,7 @@ import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from make_chord_lab import PROGRESSIONS as CHORD_PROGRESSIONS, clip_name as chord_clip
 from make_lead_lab import DOSE_TESTS, DOSES, SCALES, dose_name
 
 TPQ = 480
@@ -284,7 +290,25 @@ def dose_rows(lab: Path) -> list[tuple[str, str, bool, Path, Path]]:
     return rows
 
 
-def fill_kits(als: Path, midi: Path, rows: list[tuple[str, str, bool, Path, Path]], bpm: float = 124.0) -> int:
+CHORD_DIALECT = "afro"           # las tres progresiones del lab de acordes pasaron en afro (lab-leads.md §10)
+CHORD_ROUNDS = [("bloque", "respiro"), ("alberti", "corcheas"), ("arpegio", "corcheas"), ("arco", "corcheas"),
+                ("bloque", "tresillo"), ("158", "tresillo"), ("decimas", "tresillo")]
+
+
+def chord_rows(lab: Path) -> list[tuple[str, str, bool, Path | None, Path]]:
+    """(dialecto, escena, con dosis de Tribe, lead, acordes) del lab de acordes (lab-acordes.md §4), sin lead: ronda 1
+    (las tres progresiones en bloque y respiro) y, por progresión, las rondas 2 (quebrados) y 3 (abiertos)."""
+    def row(p, o, r):
+        f = lab / f"{chord_clip(p, o, r)}.mid"
+        if not f.exists():
+            raise SystemExit(f"no encuentro {f}: correr antes make_chord_lab.py")
+        label = {"158": "1-5-8", "decimas": "décimas"}.get(o, o)
+        return CHORD_DIALECT, f"{CHORD_DIALECT} · {p} · {label} · {r}", True, None, f
+    rows = [row(p, *CHORD_ROUNDS[0]) for p in CHORD_PROGRESSIONS]
+    return rows + [row(p, o, r) for p in CHORD_PROGRESSIONS for o, r in CHORD_ROUNDS[1:]]
+
+
+def fill_kits(als: Path, midi: Path, rows: list[tuple[str, str, bool, Path | None, Path]], bpm: float = 124.0) -> int:
     root = ET.fromstring(gzip.decompress(als.read_bytes()))
     ls = root.find("LiveSet")
     tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
@@ -316,7 +340,8 @@ def fill_kits(als: Path, midi: Path, rows: list[tuple[str, str, bool, Path, Path
         for track, notes in parts.items():
             label = f"{dialect} tribe" if track in ("PERC", "TOP") else f"{dialect} {track.split()[-1].lower()}"
             put(tracks[track], row, make_clip(sorted(notes), label, COLORS.get(track, COLORS["PERC"]), cid)); cid += 1
-        put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
+        if f is not None:
+            put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
         put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
     trim_scenes(ls, start + len(rows))
     return save(als, root, ls, bpm, cid - cid0)
@@ -410,12 +435,15 @@ def main(argv=None):
     ap.add_argument("--dialectos", metavar="FICHA", help="agregar la ronda de dialectos con los clips de la ficha")
     ap.add_argument("--kits", action="store_true", help="con --dialectos: kit por dialecto + dosis de Tribe")
     ap.add_argument("--dosis", action="store_true", help="las dosis de color con el kit de su dialecto")
+    ap.add_argument("--acordes", action="store_true", help="el lab de acordes (sin lead) con el kit afro")
     ap.add_argument("--dataset", default=os.environ.get("GF_DATASET",
                                                         str(Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1")))
     a = ap.parse_args(argv)
     liked = json.loads(Path(a.dialectos).read_text())["lab_leads"]["clips_que_gustan"] if a.dialectos else None
     midi = Path(a.dataset) / "midi"
-    if a.dosis:
+    if a.acordes:
+        n = fill_kits(Path(a.als), midi, chord_rows(midi / "adn" / "chords" / "lab"))
+    elif a.dosis:
         n = fill_kits(Path(a.als), midi, dose_rows(midi / "adn" / "lead" / "lab"))
     elif a.kits:
         if not liked:

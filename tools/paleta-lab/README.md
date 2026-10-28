@@ -114,3 +114,17 @@ python3 tools/paleta-lab/fill_lab_set.py --dosis GF_Lead_Dosis.als
 
 Reemplaza la ronda de dialectos por las escenas de dosis (completa · remate · de paso por prueba, con el kit del
 dialecto y la dosis de Tribe) y quita las escenas vacías de abajo.
+
+## Lab de acordes (`make_chord_lab.py` + `fill_lab_set.py --acordes`)
+
+Tres progresiones (menor con V prestado, kumoi, lidia) × seis órdenes (bloque, Alberti, arpegio, arco, 1-5-8,
+décimas) × cuatro ritmos (corcheas, tresillo, contratiempo, respiro), con los acordes conducidos a la inversión más
+cercana (`apps/docs/produccion/lab-acordes.md`). Escribe `midi/adn/chords/lab/<progresion>__<orden>__<ritmo>.mid`.
+
+```bash
+python3 tools/paleta-lab/make_chord_lab.py
+cp GF_Lead_Dialectos_kits.als GF_Acordes_Lab.als
+python3 tools/paleta-lab/fill_lab_set.py --acordes GF_Acordes_Lab.als
+```
+
+El set queda con el kit afro y la dosis de Tribe, sin lead; los acordes van en ACORDES (el Electric de Live).
