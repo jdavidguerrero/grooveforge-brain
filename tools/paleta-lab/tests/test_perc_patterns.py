@@ -130,6 +130,7 @@ def test_favoritos_solo_lo_elegido(tmp_path):
     d = json.loads(f.read_text())
     d["favoritos"] = [{"version": "peak", "parte": "perc", "rack": "djembe"}]
     f.write_text(json.dumps(d))
+    mp.main(["--dataset", str(tmp_path)])                                 # elegir genera las variaciones
     assert mp.build_favorites(perc) == 4                                  # el peak perc y sus 3 variaciones
     got = sorted(p.name for p in (perc / "favoritos" / "afro_house" / "perc").iterdir())
     assert got == [f"djembe_sang{v}_peak_djembe.mid" for v in ("", "_v2", "_v3", "_v4")]
