@@ -151,9 +151,10 @@ al final, en qué contextos pasó cada elegido. Ese cruce es el dato que dice qu
 | bass | JD SUB MID (capa: GF AFRO SUB + Juno de ROLLER SUB), `bass_adn_octavas`; pasa en A, B y C | variaciones sobre JD SUB MID (sonido y patrón) |
 | perc tonal | GF METAL PERC ("super étnico"), con KALIMBA TINE y SHAKER ZAP; `perc_adn_madera` | variaciones sobre METAL PERC |
 | pluck | GF TALKING PLUCK + `arp16`; SUNRISE + `motivo` (organic suave) y KALIMBA (hipnótico) | menos brillo, ataque más suave, más cuerpo; contextos D y E |
-| lead | ninguno: "muy orientales y extendidos"; base que interesa: DESERT LEAD y GF MELODIC LEAD | **lab dedicado de leads** (abajo) |
+| chords | GF HOUSE KEYS (con los tres patrones), GF FILTER STAB (`respiro`, `contratiempo`), FRENCH STAB | variaciones sobre HOUSE KEYS |
+| lead | ninguno: "muy orientales y extendidos"; sin percusión, "notas demasiado largas y estridentes"; base que interesa: DESERT LEAD y GF MELODIC LEAD | **lab dedicado de leads** (abajo) |
 
 **Lab de leads** (Juan: de lo más importante). No se trata de sacar lo "oriental" sino de **manejarlo**: escalas como
 la pentatónica y la menor húngara combinadas con la base menor natural (por ejemplo, la segunda aumentada solo en el
-remate de una frase), frases cortas que funcionen como gancho de pista, y presets que partan de DESERT LEAD y
+remate de una frase), frases cortas que **mezclen notas largas y cortas** y sean más grooveras (que funcionen como gancho de pista), menos estridentes, y presets que partan de DESERT LEAD y
 GF MELODIC LEAD. Contextos nuevos para probar: D · orgánico suave y E · hipnótico.
