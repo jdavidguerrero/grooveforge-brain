@@ -99,6 +99,10 @@ lo que ese dialecto ya pide del top. En organic Tribe sigue siendo el kit entero
 En la ronda cada dialecto va **dos veces**: kit solo y kit + dosis de Tribe, con el mismo lead. Así se decide de oído
 si la firma suma o estorba en cada uno.
 
+**Resultado (2026-10-28, `GF_Lead_Dialectos_kits.als`): la dosis queda en los cuatro dialectos.** Juan: "le dio
+un groove con un toque sutil, era lo que quería". Tribe es la firma: kit entero en organic y un elemento suave en los
+demás, con la tabla de arriba.
+
 ## 2. Contextos de escucha (los mismos para todos los sonidos)
 
 Cada uno usa la selección de percusión de Juan (`midi/perc/seleccion/` o `favoritos/`), todo en Tribe, con un kick

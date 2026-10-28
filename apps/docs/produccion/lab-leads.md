@@ -259,6 +259,7 @@ Pendiente:
 5. **Dosis** (§4) de las ganadoras: frigia dominante (completa en corta, remate o de paso en mixta) y el V
    prestado; la lidia y la eólica van completas.
 6. **Refinar el sonido** por dialecto (JD LEAD BODY / WARM KEYS), después de las dosis.
+7. **Preset de piano eléctrico para los acordes** (como el Electric de Live), del motor DX7 (FM).
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.
 
@@ -372,4 +373,7 @@ Lo que dice:
   **brillante** de la paleta, el contrapeso de las menores.
 - **Kumoi bajó** (de 3 rítmicas con kick a 2 dialectos parciales) y la **frigia** y la **in sen** no pasan con
   percusión: con kick solo sonaban bien, con kit se pierden.
-- Sin respuesta todavía sobre **Tribe en dosis** (REF kit solo / kit + tribe).
+- **Tribe en dosis** suma en todos los dialectos (Juan: "un groove con un toque sutil"): queda
+  (`sesion-paleta-adn.md` §1d).
+- **Acordes**: le gustaron mucho las progresiones de cada escala, tocadas con el **Electric** de Live (piano
+  eléctrico). Pide un preset del Brain que lo replique; pendiente saber qué progresiones combinaron mejor.
