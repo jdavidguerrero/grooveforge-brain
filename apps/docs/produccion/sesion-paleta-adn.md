@@ -15,6 +15,7 @@ suenan a una sola persona. Por eso:
 - **Los patrones mezclan matices**: un bajo con la síncopa de la tambora y el rebote de octavas de disco, un stab
   francés con llamada 3-3-2, un arpegio progresivo acentuado como marimba de chonta.
 - **Tribe (lo colombiano) es el hilo común** de los tres contextos: fue lo que Juan eligió en 34 de 37 percusiones.
+  (Rev. 2026-10-28, §1d: Tribe es firma de marca; cada dialecto puede tener su kit.)
 
 ## 1b. Función: club (Juan, 2026-10-28)
 
@@ -49,7 +50,7 @@ habla igual en una fiesta que en una reunión.
 
 | | Qué es | Ejemplos | Regla |
 |---|---|---|---|
-| **ADN** | lo que se queda en todos los subgéneros | el **sonido** (presets y capas), la manera de tocar (cortas y largas, ghost notes, silencios, registro), el color exótico como puntuación, la percusión Tribe como hilo | tiene que **cruzar** contextos (§2) |
+| **ADN** | lo que se queda en todos los subgéneros | el **sonido** (presets y capas), la manera de tocar (cortas y largas, ghost notes, silencios, registro), el color exótico como puntuación, Tribe como firma de marca (§1d) | tiene que **cruzar** contextos (§2) |
 | **Dialecto** | lo que cambia con el subgénero | escala y progresión, densidad, largo de la frase (afro: 1–2 compases que conversan con la percusión; melodic: un motivo que evoluciona en 8–16), cuánto color, qué patrón de bajo o de acordes | puede ganar en **un solo** dialecto; se marca con él |
 
 Dialectos: **afro**, **organic**, **melodic** (melodic / progressive), **indie** (indie tech) y **disco** (disco /
@@ -58,6 +59,30 @@ house). Se aplica a **todos los roles**, no solo a los leads: un bajo `rodante` 
 
 Lo que sale de la fase 2 es un **mapa** (filas: patrones o escalas; columnas: dialectos; ✓ donde funcionó). Lo que
 aparece en varias columnas es ADN de patrón; lo que aparece en una sola es dialecto. Las dos cosas son material propio.
+
+## 1d. Kits por dialecto (Juan, 2026-10-28)
+
+Juan: Tribe "era como un tema más de marca mía a nivel Colombia", y no sabe qué tanto sus instrumentos aplican a los
+tops de indie dance o progressive; el 808 se queda. Escuchar todo en Tribe vuelve organic / afro cualquier dialecto,
+así que **el kit también es dialecto**. Tribe pasa a ser **firma de marca**: en organic y afro puede ser el kit
+entero; en los demás entra como **dosis** (un elemento: guache, cáscara de tambora, maracón), igual que el color
+exótico en los leads (`lab-leads.md` §4).
+
+Revisión de los kits que hay (`kits/*.json`, `make_perc_patterns.py`, `make_gf_racks.py`):
+
+| Dialecto | Qué pide el top (tendencia, no regla) | Kit propuesto | Patrones que ya existen en ese kit |
+|---|---|---|---|
+| afro | congas / djembes que conversan, shaker, llamada 3-3-2 | **GF Djembe Dunun** (+ Tribe) | `djembe_sang`, `afro_house_groove`, `afro_dunun_roll` |
+| organic | madera, shakers suaves, congas tocadas | **Tribe** (+ congas / bongos más adelante) | `cumbia_afro`, `organic_shaker_wood`, `organic_soft_conga` |
+| melodic / progressive | semicorcheas que ruedan (shaker o hat cerrado), algo abierto en el contratiempo, rim o perc escasa, aire | **GF Brasil** arriba (ganzá / caxixi rodando, pandeiro y triángulo en el contratiempo) + **GF 808 Perc** (rim) | `prog_rolling16` (Brasil), `prog_offbeat_rim` (808) |
+| indie (dance / tech) | más seco y recto (swing 50–52), toms, cowbell, rim, clap, hats electrónicos | **GF 808 Perc** | `tribal_toms`, `indie_metal_rim` |
+| disco / house | pandereta y conga en el contratiempo, cowbell, shaker con swing | **GF Brasil** + **GF 808 Perc** | `samba_house` (Brasil), `house_conga`, `disco_tamb_cowbell` (808) |
+
+**Hueco encontrado: los hats.** El mapa común (`percusion-groove.md` §3, notas 36–50) no tiene hat cerrado, hat
+abierto ni ride, que son la base del top en progressive e indie dance. Los samples sí están: el rack **GF 808 Perc**
+trae *Closed Hi Hat 808* y *Open Hi Hat 808* (en las notas 51+, sin rol), y GF Brasil trae el **triángulo** abierto
+y cerrado (un "hat" orgánico). Agregar roles de hat al mapa es un cambio de `percusion-groove.md` §3: queda propuesto,
+no hecho.
 
 ## 2. Contextos de escucha (los mismos para todos los sonidos)
 
