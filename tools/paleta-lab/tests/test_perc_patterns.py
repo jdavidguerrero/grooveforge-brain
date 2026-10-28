@@ -146,3 +146,23 @@ def test_tribe_alterna_manos_y_guache():
     assert got[:2] == [mp.TRIBE["Tambora Open L"], mp.TRIBE["Tambora Open R"]]
     assert got[2:4] == [mp.TRIBE["Guache Down"], mp.TRIBE["Guache Up"]]
     assert missing == []
+
+
+def test_fills_de_las_raices(tmp_path):
+    p = mp.PATTERNS["mapale"]
+    for tipo, largos in mp.FILL_LARGOS.items():
+        for largo, steps in largos.items():
+            f = mp.make_fill(p, tipo, steps)
+            notes = mp.notes_of(f, 124.0, False, seed=1)
+            assert notes and max(t for t, *_ in notes) < steps * mp.S16    # arranca en 0, mide lo que el fill
+            if tipo == "break":
+                assert not set(f["roles"]) & set(mp.GRAVES)
+    entrada = mp.make_fill(p, "entrada", 16)
+    assert all(not any(c != "." for c in entrada["roles"][g][0][:8]) for g in mp.GRAVES if g in entrada["roles"])
+    assert any(bars[0].endswith("xxXX") for bars in entrada["roles"].values())   # redoble al final
+    mp.main(["--dataset", str(tmp_path)])
+    fills = tmp_path / "midi" / "perc" / "afro_house" / "fills"
+    assert (fills / "remate" / "perc" / "samba_reggae_remate_1beat_brazilian.mid").exists()
+    assert (fills / "break" / "top" / "cumbia_base_break_2bar_tribe.mid").exists()
+    assert list((fills / "entrada").rglob("*_djembe.mid"))
+    assert not list((tmp_path / "midi" / "perc" / "organic_house" / "fills").rglob("*_djembe.mid"))

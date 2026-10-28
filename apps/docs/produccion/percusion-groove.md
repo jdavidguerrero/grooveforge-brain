@@ -231,3 +231,30 @@ A Juan le gustaron los tres: quedan en `favoritos` (ronda 1) y generan sus varia
 **Pendiente:** cambiar el GF 808 Perc por un rack **GF Latin** con samples reales (tumba, congas, bongó, güiro,
 maracas, cencerro, clave, timbal) cuando Juan los consiga, con el mismo mapa de roles: todos los patrones salen con ese
 sabor sin reescribirlos.
+
+### Rev. 8: fills a partir de las raíces, para afro y organic (2026-10-27)
+
+A Juan le gustaron las raíces **colombianas** (cumbia, puya, bullerengue, mapalé) y **brasileñas** (samba reggae,
+maracatu, baião), y `mapale_tech` (a favoritos). Las raíces quedan marcadas en su ficha como fuente de fills.
+
+**Por qué salen de las raíces:** cada raíz es una frase tradicional de 2 compases que ya termina en su remate (el
+compás 2 cierra con el redoble: `XXXX`, `Xxxx`…). El final de una frase es justamente lo que hace un fill.
+
+**Para qué géneros:** afro house y organic house, donde la percusión es protagonista y un fill tribal es parte del
+track. En melodic / progressive, indie tech y disco el fill es otra cosa (más sutil, seco o de congas): después, si
+hace falta.
+
+**Tres tipos, cada uno en largos que caen justo antes del cambio de sección:**
+
+| Tipo | Largos | Qué es |
+|---|---|---|
+| **remate** | 1 tiempo · 2 tiempos · 1 compás · 2 compases | la cola de la frase (sus últimas semicorcheas): cierra cada 8 / 16 compases |
+| **entrada** | 1 compás · 2 compases | el pickup al drop: la cola de la frase en crescendo (la velocity sube un escalón cada mitad), los graves solo en la segunda mitad y un redoble `xxXX` en el último tiempo del tambor que lleva la frase; termina antes del 1 |
+| **break** | 1 compás · 2 compases | la llamada sin graves, desde el comienzo de la frase: para cuando se cae el kick |
+
+- Cada fill arranca en el tiempo 0 del clip, así el clip mide lo que el fill.
+- Racks: el de la raíz y Tribe; en afro house también djembe.
+- Top y perc por separado, como el resto. Con swing y microtiming de la raíz.
+- Carpetas: `midi/perc/<afro_house|organic_house>/fills/<remate|entrada|break>/<top|perc>/`, nombre
+  `<raiz>_<tipo>_<largo>_<rack>.mid` con largo `1beat` · `2beat` · `1bar` · `2bar`. Una ficha por raíz en `fills/`
+  (con `favoritos`, para filtrar escuchando).

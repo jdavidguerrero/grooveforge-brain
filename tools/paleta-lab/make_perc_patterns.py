@@ -508,6 +508,35 @@ def build_selection(perc: Path) -> int:
     return count
 
 
+# Fills (percusion-groove.md §7 rev. 8): de las raíces que Juan eligió, para afro y organic
+FILL_RAICES = ("cumbia_base", "puya_vallenata", "bullerengue", "mapale", "samba_reggae", "maracatu", "baiao")
+FILL_LARGOS = {"remate": {"1beat": 4, "2beat": 8, "1bar": 16, "2bar": 32},
+               "entrada": {"1bar": 16, "2bar": 32}, "break": {"1bar": 16, "2bar": 32}}
+FILL_RACKS = {"afro_house": ("tribe_colombia", "GF Djembe Dunun"), "organic_house": ("tribe_colombia",)}
+LEVELS = "gox X".replace(" ", "")                    # escalones de velocity, de ghost a acento
+
+
+def make_fill(p: dict, tipo: str, steps: int) -> dict:
+    """Un fill de `steps` semicorcheas desde la frase de 2 compases de una raíz; arranca en el tiempo 0."""
+    phrase = {r: "".join(bars) for r, bars in p["roles"].items()}
+    if tipo == "break":                                                # la llamada sin graves, desde el comienzo
+        lines = {r: s[:steps] for r, s in phrase.items() if r not in GRAVES}
+    else:                                                              # la cola de la frase
+        lines = {r: s[-steps:] for r, s in phrase.items()}
+    if tipo == "entrada":
+        half = steps // 2
+        for r, s in lines.items():
+            s = "." * half + s[half:] if r in GRAVES else s
+            lines[r] = "".join(c if c == "." else LEVELS[max(0, min(3, LEVELS.index(c) + (i >= half) * 2 - 1))]
+                               for i, c in enumerate(s))
+        lead = max((r for r in lines if r not in GRAVES), key=lambda r: sum(c != "." for c in lines[r]))
+        lines[lead] = lines[lead][:-4] + "xxXX"
+    lines = {r: s for r, s in lines.items() if s.strip(".")}
+    pad = -steps % 16
+    roles = {r: [(s + "." * pad)[i:i + 16] for i in range(0, steps + pad, 16)] for r, s in lines.items()}
+    return {**p, "roles": roles}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--bpm", type=float, default=124.0)
@@ -591,7 +620,25 @@ def main(argv=None):
                    "variacion_de": p.get("variacion_de", ""), "kits_probados": [], "notas": "", "favoritos": []})
             n += 1
             print(f"{genre:20} {name:22} rack: {RACK_TAG[p['kit']]}")
+    nf = 0
+    for genre, racks in FILL_RACKS.items():                   # fills de las raíces elegidas
+        fills = perc / genre / "fills"
+        for i, name in enumerate(FILL_RAICES):
+            p, files = PATTERNS[name], []
+            kits = dict.fromkeys((RAICES_KIT[name], *racks))       # el de la raíz primero, sin repetir
+            for tipo, largos in FILL_LARGOS.items():
+                for largo, steps in largos.items():
+                    notes = notes_of(make_fill(p, tipo, steps), a.bpm, True, seed=500 + i)
+                    for kit in kits:
+                        files += [f"{tipo}/{f}" for f in write_split(fills / tipo, f"{name}_{tipo}_{largo}", notes,
+                                                                     kit, f"{name} {tipo} {largo}")]
+            nf += len(files)
+            ficha(fills / f"{name}.json",
+                  {"fill_de": name, "genero": genre, "bpm": a.bpm, "estilo": p["estilo"],
+                   "racks": [RACK_TAG[k] for k in kits], "archivos": files, "kits_probados": [], "notas": "",
+                   "favoritos": []})
     print(f"{n} patrones en {perc}")
+    print(f"fills: {nf} archivos en {perc}/<afro_house|organic_house>/fills")
     print(f"favoritos: {build_favorites(perc)} archivos en {perc / 'favoritos'}")
     print(f"selección (ronda 2): {build_selection(perc)} archivos en {perc / 'seleccion'}")
 
