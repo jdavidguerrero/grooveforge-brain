@@ -299,7 +299,10 @@ Pendiente:
    `fill_lab_set.py` los pone en las escenas 4–6 (`GF_Paleta_Lab_v2.als`; el lab de leads los trae al llenarse).
 4. ~~Ronda 3 de dialectos~~ — hecha (§10, resultado de la ronda de dialectos).
 5. **Dosis** (§4, rev. 4): armadas en `GF_Lead_Dosis.als` (escenas 4–12: V prestado en indie, frigia dominante en
-   afro, húngara en melodic; completa · remate · de paso). Falta la escucha de Juan.
+   afro, húngara en melodic; completa · remate · de paso). **Escuchadas: ninguna pasó** (Juan: "no sé si es por el
+   sonido del lead"). La completa del V prestado en mixta B es el mismo clip que pasó en los cinco dialectos, así que
+   el problema no son las notas: es el sonido, el oído cansado o el contexto. Las dosis quedan cerradas: las escalas
+   se usan como pasaron en la ronda de dialectos (§10), sin dosis.
 6. **Refinar el sonido** por dialecto (JD LEAD BODY / WARM KEYS), después de las dosis.
 7. **Preset de piano eléctrico para los acordes** (como el Electric de Live), del motor DX7 (FM).
 
