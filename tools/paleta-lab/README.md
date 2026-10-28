@@ -47,3 +47,7 @@ contextos de percusión que cruzan estilos, en `GrooveForge_Dataset_v1/midi/adn/
 ```bash
 python3 tools/paleta-lab/make_adn_clips.py            # La menor, 124 BPM
 ```
+
+`fill_lab_set.py "<ruta>/GF_Paleta_Lab.als"` carga esos clips en el set que Juan creó en Live (escenas 1–3 =
+contextos; desde la 4, un patrón del Brain por escena; tempo 124). Copia el original a `.als.bak`. Los CC de las capas
+no van en el .als: se arrastra el `.mid` de `capas/` o se elige la capa en el Brain.
