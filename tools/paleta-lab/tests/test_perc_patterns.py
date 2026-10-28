@@ -72,12 +72,12 @@ def test_midis_top_perc_y_rack_en_el_nombre(tmp_path):
     mp.main(["--dataset", str(tmp_path)])
     perc = tmp_path / "midi" / "perc"
 
-    def check(folder, stem, kit):
+    def check(folder, stem, kit, version=""):
         tag = mp.RACK_TAG[kit]
         valid = mp.TRIBE.values() if kit == "tribe_colombia" else mp.ROLES.values()
         found = 0
         for part in ("top", "perc"):
-            f = folder / part / f"{stem}_{tag}.mid"
+            f = folder / part / version / f"{stem}_{tag}.mid"
             if f.exists():
                 notes = read_notes(f)
                 assert notes and all(n in valid for _, n, _ in notes), f
@@ -90,15 +90,15 @@ def test_midis_top_perc_y_rack_en_el_nombre(tmp_path):
     for genre, pats in mp.GENRES.items():
         for name, p in pats.items():
             for v in (*mp.VERSIONS, "main_q"):
-                check(perc / genre, f"{name}_{v}", p["kit"])
+                check(perc / genre, f"{name}_{v}", p["kit"], v)
             f = json.loads((perc / genre / f"{name}.json").read_text())
             assert f["rack"] == mp.RACK_TAG[p["kit"]] and f["archivos"]
             if p["kit"] != "tribe_colombia":                                  # todos también en Tribe
-                check(perc / genre, f"{name}_main", "tribe_colombia")
+                check(perc / genre, f"{name}_main", "tribe_colombia", "main")
     # El top no lleva graves ni medios; el perc no lleva sacudidos ni campanas
-    top = read_notes(perc / "afro_house" / "top" / "djembe_sang_main_djembe.mid")
+    top = read_notes(perc / "afro_house" / "top" / "main" / "djembe_sang_main_djembe.mid")
     assert all(n not in (36, 37, 38, 39) for _, n, _ in top)
-    pc = read_notes(perc / "afro_house" / "perc" / "djembe_sang_main_djembe.mid")
+    pc = read_notes(perc / "afro_house" / "perc" / "main" / "djembe_sang_main_djembe.mid")
     assert all(n not in (43, 44, 46, 47) for _, n, _ in pc)
     kits = {p.stem for p in (tmp_path / "kits").glob("*.json")}
     assert kits == {"tribe_colombia", "djembe_dundun", "brasil_samples", "808_perc"}
@@ -132,7 +132,7 @@ def test_favoritos_solo_lo_elegido(tmp_path):
     f.write_text(json.dumps(d))
     mp.main(["--dataset", str(tmp_path)])                                 # elegir genera las variaciones
     assert mp.build_favorites(perc) == 4                                  # el peak perc y sus 3 variaciones
-    got = sorted(p.name for p in (perc / "favoritos" / "afro_house" / "perc").iterdir())
+    got = sorted(p.name for p in (perc / "favoritos" / "afro_house" / "perc" / "peak").iterdir())
     assert got == [f"djembe_sang{v}_peak_djembe.mid" for v in ("", "_v2", "_v3", "_v4")]
     assert not (perc / "favoritos" / "afro_house" / "top").exists()
 

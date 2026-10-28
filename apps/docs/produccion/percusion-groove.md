@@ -194,3 +194,6 @@ varias propuestas para elegir. Las elecciones anotadas en las fichas son el dato
 - **Tribe en todos los géneros:** cada patrón sale también con `_tribe` (convertido al teclado de Colombian
   Percussion), y cada género tiene un patrón colombiano propio: `tambora_afro` (afro house), `bullerengue_organic`
   (organic), `guache_rolling` (melodic / progressive), `cumbia_disco` (disco / house), `mapale_tech` (indie tech).
+
+**Carpetas por versión (rev. 5):** `midi/perc/<genero>/<top|perc>/<intro|main|peak|main_q>/`, con el original y sus
+variaciones adentro; `favoritos/` sigue la misma estructura. Las raíces quedan en `raices/<top|perc>/`.
