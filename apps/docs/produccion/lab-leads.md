@@ -76,7 +76,7 @@ y las versiones varían entre fuentes; uso la versión más común en la teoría
 |---|---|---|---|---|
 | Lidia | La Si Do# **Re#** Mi Fa# Sol# | 1 2 3 **♯4** 5 6 7 | A – **B** – F#m – B | flotante, de sueño (progressive, melodic) |
 | Mixolidia | La Si Do# Re Mi Fa# **Sol** | 1 2 3 4 5 6 **♭7** | A – **G** – D – A | mayor con calle: disco, funk, house |
-| Mayor con **iv prestado** | jónica, y **Fa** natural sobre el Dm | — | A – D – **Dm** – A | alegre que se vuelve nostálgica en un compás |
+| Mayor con **iv prestado** | jónica; sobre el Dm, la menor paralela (con **Fa** natural) | — | A – D – **Dm** – A | alegre que se vuelve nostálgica en un compás |
 
 Truco que no necesita progresión nueva: dentro de Am – F – C – G, si la melodía apoya un **Si sobre el acorde de F**,
 ese compás suena **lidio** (Fa lidio tiene las mismas notas que La menor). Un modo también es *dónde* pones el acento.
@@ -183,8 +183,8 @@ están en `sesion-paleta-adn.md` §2):
 | Dialecto | Contextos | Escalas que espero | Rítmicas que espero |
 |---|---|---|---|
 | afro | A, C | dórica, eólica, mixolidia | corta, mixta A (conversan con la percusión) |
-| organic | A, D | hirajōshi, kumoi, frigia | larga, mixta A |
-| melodic | B, F | eólica, lidia, menor con E prestado | larga, mixta B (pregunta-respuesta) |
+| organic | A, D | hirajōshi, kumoi, frigia, menor húngara | larga, mixta A |
+| melodic | B, F | eólica, lidia, menor con E prestado, menor húngara | larga, mixta B (pregunta-respuesta) |
 | indie | B, E | frigia, in sen, frigia dominante | corta |
 | disco | C | mixolidia, mayor con Dm prestado, dórica | corta, mixta A |
 
@@ -210,21 +210,34 @@ Los ganadores se graban todos al final (`protocolo-captura.md` §3).
 | Cada clip dura 4 compases, notas en rango MIDI, registro La3–Mi5 (Do3–Mi4 en la larga) | test (pytest) |
 | Cada nota está en la escala del clip, salvo las del compás del acorde prestado, que están en ese acorde / su escala | test |
 | Notas en la negra y notas largas (≥ 4 semicorcheas) son tonos del acorde de su compás | test |
-| Las progresiones solo usan acordes cuyas notas están en la escala (o el prestado declarado) | test |
+| Las progresiones solo usan acordes de la escala **madre** (en las pentatónicas: hirajōshi → eólica, in sen → frigia, kumoi → dórica; en el compás prestado, la escala de donde viene) y cada acorde comparte al menos dos notas con la melodía | test |
 | Silencio: la suma de duraciones ≤ 45 % (corta), ≤ 60 % (mixtas), ≤ 75 % (larga) de la vuelta | test |
 | Misma rítmica en todas las escalas (mismos tiempos y duraciones; cambian solo las alturas) | test |
-| Dosis "remate": la nota que distingue a la escala aparece una sola vez por vuelta, en el último compás; "de paso": dura ≤ 2 semicorcheas, en tiempo débil y resuelve por grado | test |
+| Dosis "remate": la nota que distingue a la escala aparece una sola vez por vuelta, en el último compás; "de paso": dura ≤ 2 semicorcheas, en tiempo débil y resuelve por grado | test (cuando se generen, después de la ronda 3) |
 | Que suene groovero, profundo y con la dosis justa de color | tú, en los contextos |
 
-## 9. Lo que viene después de tu visto bueno
+## 9. Estado y lo que sigue
 
-1. **Generador** `tools/paleta-lab/make_lead_lab.py` (aparte de `make_adn_clips.py`, cuyo test exige La menor natural
-   en todo): 12 escalas × 4 rítmicas = 48 clips de lead, más **un clip de acordes por escala** (su progresión, para un
-   instrumento de Live, porque el Brain toca el lead), en `midi/adn/lead/lab/<familia>/`; el nombre de cada clip lleva sus dialectos esperados (§6). Las dosis se generan después
-   de la ronda 3, solo para la escala ganadora. Tests con pytest. Luego `fill_lab_set.py` sobre una **copia nueva** de
-   tu set (`GFExploration Project/`), sin tocar el que tienes abierto.
+**Hecho (2026-10-28):** `tools/paleta-lab/make_lead_lab.py` genera 48 leads (12 escalas × 4 rítmicas) y 12 clips de
+acordes en `midi/adn/lead/lab/<familia>/<escala>__<rítmica>__<dialectos>.mid` (y `<escala>__acordes.mid`), con
+`tests/test_lead_lab.py`. `fill_lab_set.py --leads` los carga en un set con pista **ACORDES**: escenas 1–3 los
+contextos, después la mixta A de las 12 escalas (eólica primero: ronda 1) y luego las demás rítmicas por escala.
+
+Detalles del generador que conviene saber al escuchar:
+
+- La rítmica y el contorno son idénticos en todas las escalas; el ancla de cada compás es el tono del acorde más
+  cercano a Mi4 (Fa#3 en la larga). Si una nota fuerte repetiría la anterior, toma el siguiente tono del acorde (hasta
+  una tercera mayor) para que la frase no se quede pegada.
+- En la mayor con iv prestado, el compás del Dm usa La menor (Fa y Do naturales); en la menor con V prestado, el
+  compás del E usa la menor armónica (Sol#).
+- La menor húngara no estaba en la tabla de §6: queda con dialectos melodic y organic (hipótesis).
+
+Pendiente:
+
+1. **Juan arma `GF_Lead_Lab.als`** (paso a paso en el README de `tools/paleta-lab/`) y se llena con
+   `fill_lab_set.py --leads`.
 2. **Presets JD LEAD** (§5), subidos con `gf_presets.py`, sin borrar ninguno.
-3. **Contextos D · orgánico suave, E · hipnótico y F · melódico** (`sesion-paleta-adn.md` §2) en el set, con el
-   dialecto en el nombre de la escena.
+3. **Contextos D · orgánico suave, E · hipnótico y F · melódico** (`sesion-paleta-adn.md` §2) en los dos sets.
+4. **Dosis** (§4) de la escala ganadora, después de la ronda 3.
 
 Los tres leads viejos (`lead_adn_frase`, `hook`, `profunda`) quedan como están, de referencia.

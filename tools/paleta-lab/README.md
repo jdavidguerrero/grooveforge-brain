@@ -51,3 +51,20 @@ python3 tools/paleta-lab/make_adn_clips.py            # La menor, 124 BPM
 `fill_lab_set.py "<ruta>/GF_Paleta_Lab.als"` carga esos clips en el set que Juan creó en Live (escenas 1–3 =
 contextos; desde la 4, un patrón del Brain por escena; tempo 124). Copia el original a `.als.bak`. Los CC de las capas
 no van en el .als: se arrastra el `.mid` de `capas/` o se elige la capa en el Brain.
+
+## Lab de leads (`make_lead_lab.py`)
+
+12 escalas en 4 familias, cada una con su progresión (La como centro, 124 BPM), × 4 rítmicas (corta, mixta A, mixta
+B, larga), más un clip de acordes por escala, en `midi/adn/lead/lab/<familia>/`. El nombre lleva los dialectos
+esperados: `hungara_menor__mixta_a__melodic_organic.mid`. Diseño: `apps/docs/produccion/lab-leads.md`.
+
+```bash
+python3 tools/paleta-lab/make_lead_lab.py            # La, 124 BPM
+```
+
+Para escucharlos en Live (una vez):
+
+1. Abre `GF_Paleta_Lab.als` (el set base, sin clips) y agrega una pista MIDI llamada **ACORDES** con un instrumento de
+   Live suave (por ejemplo Drift o Electric), a volumen bajo: es la referencia armónica, no parte del sonido.
+2. *Save Live Set As…* → `GF_Lead_Lab.als`, en la misma carpeta. Cierra ese set (abre otro) antes del paso 3.
+3. `python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"` y vuelve a abrirlo.

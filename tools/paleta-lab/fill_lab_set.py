@@ -8,6 +8,12 @@ copia del original (.als.bak) la primera vez. Los CC de las capas no van en el .
 internas de Live): para MORPH y CC 18 se arrastra el .mid de capas/ o se elige la capa en el Brain.
 
     python3 tools/paleta-lab/fill_lab_set.py "<ruta>/GF_Paleta_Lab.als"
+
+Con --leads carga el lab de leads (lab-leads.md §7) en un set que además tenga una pista ACORDES (un instrumento de
+Live): después de los contextos, primero la mixta A de las 12 escalas por familia (rondas 1–3) y luego las otras
+rítmicas de cada escala (ronda 4); en cada escena, el lead en BRAIN MIDI y la progresión de su escala en ACORDES.
+
+    python3 tools/paleta-lab/fill_lab_set.py --leads "<ruta>/GF_Lead_Lab.als"
 """
 from __future__ import annotations
 
@@ -19,6 +25,8 @@ import shutil
 import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
+
+from make_lead_lab import SCALES
 
 TPQ = 480
 CONTEXTS = [("A_tierra", "A · tierra"), ("B_noche", "B · noche"), ("C_fiesta", "C · fiesta")]
@@ -143,14 +151,36 @@ def brain_clips(adn: Path) -> list[tuple[str, str, Path]]:
     return out
 
 
-def fill(als: Path, adn: Path, bpm: float = 124.0) -> int:
+ORDER = {sc.name: i for i, sc in enumerate(SCALES)}                     # eólica primero (ronda 1)
+LEAD_RHYTHMS = ("mixta_a", "corta", "mixta_b", "larga")
+
+
+def lead_lab_rows(lab: Path) -> list[tuple[str, Path, Path]]:
+    """(nombre de escena, lead, acordes): la mixta A de todas las escalas y después las demás rítmicas por escala."""
+    by_scale = {}
+    for f in sorted(lab.glob("*/*.mid")):
+        scale, rhythm, *dial = f.stem.split("__")
+        if rhythm != "acordes":
+            by_scale.setdefault((f.parent.name, scale), {})[rhythm] = (f, dial[0].replace("_", " ") if dial else "")
+    rows = []
+    for rhythms in (LEAD_RHYTHMS[:1], LEAD_RHYTHMS[1:]):
+        for (family, scale), clips in sorted(by_scale.items(), key=lambda kv: (kv[0][0], ORDER.get(kv[0][1], 99))):
+            for r in rhythms:
+                if r in clips:
+                    f, dial = clips[r]
+                    name = f"{family.split('_')[0]} {scale} · {r} · {dial}"
+                    rows.append((name, f, f.parent / f"{scale}__acordes.mid"))
+    return rows
+
+
+def fill(als: Path, adn: Path, bpm: float = 124.0, leads: bool = False) -> int:
     root = ET.fromstring(gzip.decompress(als.read_bytes()))
     ls = root.find("LiveSet")
     tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
-    missing = {"KICK", "PERC", "TOP", "BRAIN MIDI"} - set(tracks)
+    missing = ({"KICK", "PERC", "TOP", "BRAIN MIDI"} | ({"ACORDES"} if leads else set())) - set(tracks)
     if missing:
         raise SystemExit(f"faltan pistas en el set: {', '.join(sorted(missing))}")
-    brain = brain_clips(adn)
+    brain = lead_lab_rows(adn / "lead" / "lab") if leads else brain_clips(adn)
     ensure_scenes(ls, len(CONTEXTS) + len(brain))
     scenes, cid = ls.find("Scenes"), 1
     kick = read_mid(adn / "contexto" / "kick_4x4.mid")
@@ -160,8 +190,15 @@ def fill(als: Path, adn: Path, bpm: float = 124.0) -> int:
         for part, track in (("perc", "PERC"), ("top", "TOP")):
             notes = read_mid(adn / "contexto" / folder / f"{part}_tribe.mid")
             put(tracks[track], row, make_clip(notes, f"{label} {part}", COLORS[track], cid)); cid += 1
-    for k, (role, name, f) in enumerate(brain):
+    for k, row_clips in enumerate(brain):
         row = len(CONTEXTS) + k
+        if leads:
+            scene, f, chords = row_clips
+            scenes[row].find("Name").set("Value", scene)
+            put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), f.stem, COLORS["lead"], cid)); cid += 1
+            put(tracks["ACORDES"], row, make_clip(read_mid(chords), chords.stem, COLORS["chords"], cid)); cid += 1
+            continue
+        role, name, f = row_clips
         scenes[row].find("Name").set("Value", role)
         put(tracks["BRAIN MIDI"], row, make_clip(read_mid(f), name, COLORS[role], cid)); cid += 1
     tempo = ls.find(".//MainTrack//Tempo/Manual")
@@ -178,10 +215,11 @@ def fill(als: Path, adn: Path, bpm: float = 124.0) -> int:
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("als")
+    ap.add_argument("--leads", action="store_true", help="cargar el lab de leads (necesita la pista ACORDES)")
     ap.add_argument("--dataset", default=os.environ.get("GF_DATASET",
                                                         str(Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1")))
     a = ap.parse_args(argv)
-    n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn")
+    n = fill(Path(a.als), Path(a.dataset) / "midi" / "adn", leads=a.leads)
     print(f"{n} clips cargados en {a.als} (original en .als.bak)")
 
 
