@@ -1792,6 +1792,9 @@ void setup() {
     }
     Serial.println("\n=== sketch49 — Studio Brain: engines reales + panel + cabeza Pi ===");
     if (CrashReport) Serial.print(CrashReport);
+    // El bridge se abre antes que todo: restaurar la sesión ya le avisa a la cabeza, y escribir en Serial1 sin
+    // begin() se queda esperando para siempre (el arranque se colgaba con una sesión guardada)
+    Serial1.begin(921600);                  // bridge con la Pi: TX1 (1) → GPIO15, RX1 (0) ← GPIO14
 
     const bool codec_ok = audio_graph::init(0.5f);   // AudioMemory + codec + mixers (Moog activo)
     g_codec.dacVolumeRamp();             // cambios de VOL sin zipper
@@ -1865,7 +1868,6 @@ void setup() {
     Serial.println("[LED] apagados (STUDIO_LEDS_OFF): validación de alimentación");
 #endif
 
-    Serial1.begin(921600);                  // bridge con la Pi: TX1 (1) → GPIO15, RX1 (0) ← GPIO14
     usb_host.begin();
     midi.setHandleNoteOn(host_note_on);
     midi.setHandleNoteOff(host_note_off);
