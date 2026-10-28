@@ -37,3 +37,13 @@ anotaste en `kits_probados` y `notas`. Los Drum Racks GF salen de `make_gf_racks
 Diseño: `apps/docs/produccion/percusion-groove.md` §7.
 
 Lo que elijas (campo `favoritos` de la ficha) genera variaciones `_v2…_v4` y se copia a `midi/perc/favoritos/`.
+
+## Sesión de paleta por ADN (`make_adn_clips.py`)
+
+Patrones para tocar (no para medir) sobre una sola progresión, clips de las 8 capas híbridas (CC 18 + MORPH) y tres
+contextos de percusión que cruzan estilos, en `GrooveForge_Dataset_v1/midi/adn/` con un README para armar
+`GF_Paleta_Lab.als`. Plan: `apps/docs/produccion/sesion-paleta-adn.md`.
+
+```bash
+python3 tools/paleta-lab/make_adn_clips.py            # La menor, 124 BPM
+```

@@ -28,9 +28,10 @@ def vlq(n: int) -> bytes:
     return bytes(reversed(out))
 
 
-def write_mid(path: Path, notes: list[tuple[int, int, int, int]], bpm: float, name: str):
-    """notes: (inicio en ticks, duración en ticks, nota, velocity)."""
-    events = []
+def write_mid(path: Path, notes: list[tuple[int, int, int, int]], bpm: float, name: str,
+              ccs: list[tuple[int, int, int]] = ()):
+    """notes: (inicio en ticks, duración en ticks, nota, velocity); ccs: (tick, CC, valor), antes que las notas del tick."""
+    events = [(t, 0, bytes([0xB0, cc, val])) for t, cc, val in ccs]
     for start, dur, note, vel in notes:
         events.append((start, 1, bytes([0x90, note, vel])))
         events.append((start + dur, 0, bytes([0x80, note, 0])))   # los NOTE OFF antes que un NOTE ON en el mismo tick
