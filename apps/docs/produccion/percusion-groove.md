@@ -301,3 +301,16 @@ Referencias: el llamador como marcador del contratiempo en la cumbia y el 6/8 de
 Ochoa, *Gaita Colombiana: método de aprendizaje* (Ministerio de Cultura, 2007), y Ochoa, *Músicas locales en tiempos
 de globalización* (2003). La polirritmia de ciclos impares sobre 4/4 está en Toussaint, *The Geometry of Musical
 Rhythm* (2013, cap. sobre ritmos euclidianos).
+
+**Rev. 10b (misma fecha).** Juan declaró una regla: "mantener el 3-3-2 de la música africana o latina, con claves o
+toms: estilo tribal" (regla `20261029T170541-ra0ae45`). De la primera tanda, solo `bullerengue_tech` lo cumplía. La
+audición quedó sin respuesta (`missing`) y se reemplazó por una tanda en la que **las tres opciones llevan el 3-3-2** y
+solo cambia qué instrumento lo toca:
+
+| Patrón | Quién lleva el 3-3-2 |
+|---|---|
+| `bullerengue_tech` | Alegre bajoneo (tom medio apagado), en semicorcheas por medio compás |
+| `cascara_332` | La **clave**: tambora cáscara, en semicorcheas por medio compás. La tambora apagada cierra cada ciclo |
+| `toms_332_largo` | Alegre abierto (tom medio), en **corcheas** sobre todo el compás (3+3+2 corcheas). El llamador abierto le responde |
+
+Los acordes en tresillo del caso 1 ya llevaban el mismo 3-3-2, así que la base y la armonía quedan en el mismo idioma.

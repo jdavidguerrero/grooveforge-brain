@@ -197,6 +197,14 @@ def test_bases_indie_graves_fuera_del_kick_y_reproducibles():
     import make_perc_patterns as mp
     graves = {mp.TRIBE[a] for r in ("grave_abierto", "grave_apagado") for a in mp.TRIBE_ROLES[r]}
     a, b = mec.indie_perc(), mec.indie_perc()
-    assert a == b and len(a) == 6
+    assert a == b and len(a) == 2 * len(mec.INDIE_PERC)
     for notes in a.values():
         assert notes and all(round(t / 120) % 4 != 0 for t, _, n, _ in notes if n in graves)   # 120 ticks = 1/16
+
+
+def test_las_bases_332_llevan_el_3_3_2():
+    import make_estudio_clips as mec
+    for name in mec.PERC_332:
+        lines = [l for bars in mec.INDIE_PERC[name]["roles"].values() for l in bars]
+        steps = [{i for i, c in enumerate(l) if c != "."} for l in lines]
+        assert any({0, 3, 6} <= s or {0, 6, 12} <= s for s in steps), name     # 3-3-2 en semicorcheas o en corcheas

@@ -72,7 +72,22 @@ INDIE_PERC = {
         "caja":          ["................", "........x......."]},    # Caja Fondo en el 3 del compás 2 y 4
         intro=["medio_apagado"], fill={"medio_apagado": "x..x..x.x..xxxXX"},
         peak={"raspado": "x.x.x.x.x.x.x.x."}),                         # Guacharaca en corcheas
+    # Rev. 10b: Juan pide el 3-3-2 en toda base (claves o toms, estilo tribal). Las tres opciones lo llevan; cambia quién.
+    "cascara_332": dict(kit="tribe_colombia", swing=50, micro={"aro_madera": -2}, roles={
+        "aro_madera":    ["x..x..x.x..x..x."],                         # la clave: Tambora Cáscara en 3-3-2 por medio compás
+        "grave_apagado": [".......x.......x", ".......x......x."],     # Tambora Damped en la "a" que cierra cada 3-3-2
+        "campana_aguda": ["..x.......x....."]},                        # Llamador Bajoneo a contratiempo, escaso
+        intro=["aro_madera"], fill={"grave_apagado": ".......x...x.xXX"},
+        peak={"sacudido_corto": "gxgxgxgxgxgxgxgx"}),                  # Guache
+    "toms_332_largo": dict(kit="tribe_colombia", swing=50, micro={"medio_abierto": 2}, roles={
+        "medio_abierto": ["x.....x.....x...", "x.....x.....x.x."],     # Alegre Abierto (tom medio) en 3-3-2 de corcheas
+        "grave_apagado": ["...x.....x......", "...x.....x....x."],     # Tambora Damped respondiendo entre los toms
+        "agudo_abierto": ["..........x.....", ".........x....x."]},    # Llamador Abierto (tom agudo), pregunta y respuesta
+        intro=["medio_abierto"], fill={"grave_apagado": "...x.....x.x.xXX"},
+        peak={"raspado": "x.x.x.x.x.x.x.x."}),                         # Guacharaca en corcheas
 }
+
+PERC_332 = ("bullerengue_tech", "cascara_332", "toms_332_largo")       # la audición 2 del caso 2
 
 
 def indie_perc(bpm: float = 124.0) -> dict[str, list]:
