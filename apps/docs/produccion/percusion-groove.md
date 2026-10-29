@@ -258,3 +258,18 @@ hace falta.
 - Carpetas: `midi/perc/<afro_house|organic_house>/fills/<remate|entrada|break>/<top|perc>/`, nombre
   `<raiz>_<tipo>_<largo>_<rack>.mid` con largo `1beat` · `2beat` · `1bar` · `2bar`. Una ficha por raíz en `fills/`
   (con `favoritos`, para filtrar escuchando).
+
+### Rev. 9: roll acelerado de 8 compases para el break (2026-10-29)
+
+Juan usa siempre riser + snare roll en las transiciones (regla declarada, `motor-asistencia.md` §8) y pidió el roll con
+instrumentos nativos y de **8 compases que aceleren**: negras → corcheas → semicorcheas → fusas, dos compases cada una
+(8 · 16 · 32 · 64 golpes). Es la figura clásica del *build* de house: la densidad sube al doble cada dos compases, así
+la tensión crece sin cambiar de tempo.
+
+- **Voz principal:** el rol `caja` — en Tribe, **Caja Fondo L / R alternando por golpe** (las manos alternan de verdad:
+  en un roll continuo la paridad de semicorchea de `to_tribe` no sirve, con fusas dos golpes caen en la misma); en el
+  kit brasileño, la **caixa**.
+- **Peso:** desde el compás 5, el rol `grave_abierto` en negras (tambora / surdo), que empuja hacia la vuelta del groove.
+- **Dinámica:** crescendo lineal de velocity 40 → 120 a lo largo de los 8 compases, con acento en cada tiempo.
+- Archivos: `midi/adn/estudio/roll_acelerado_{tribe,brasil}.mid` (`tools/paleta-lab/make_estudio_clips.py`). Es
+  humanización programada (auditoría §7): un patrón del generador, no una interpretación tocada.

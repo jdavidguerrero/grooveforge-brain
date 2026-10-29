@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 import make_adn_clips as ma
+import make_perc_patterns as mp
 from make_test_clips import BAR, S16, write_mid
 
 ROOTS = (0, 5, 0, 5)                       # La, Re, La, Re (kumoi: Am – D)
@@ -30,7 +31,25 @@ def clips() -> dict[str, list]:
         for s in range(16):
             arp.append((b * BAR + s * S16, S16 - 10, seq[s % 8], 100 if s in (0, 3, 6, 8, 11, 14) else 66))
     out["pluck_arp16_kumoi"] = arp
+    out.update(roll_acelerado())
     return out
+
+
+def roll_acelerado() -> dict[str, list]:
+    """8 compases: negras, corcheas, semicorcheas y fusas, dos compases cada una (percusion-groove.md rev. 9)."""
+    hits = []                                             # (tick, duración, velocity)
+    for pair, sub in enumerate((1, 2, 4, 8)):             # golpes por negra
+        step = BAR // 4 // sub
+        for t in range(pair * 2 * BAR, (pair + 1) * 2 * BAR, step):
+            v = 40 + 80 * t / (8 * BAR)
+            hits.append((t, max(step - 10, 20), int(min(127, v + (12 if t % (BAR // 4) == 0 else 0)))))
+    grave = [(t, BAR // 4 - 20, int(60 + 60 * t / (8 * BAR))) for t in range(4 * BAR, 8 * BAR, BAR // 4)]
+    caja = mp.TRIBE_ROLES["caja"]
+    tribe = [(t, d, mp.TRIBE[caja[i % 2]], v) for i, (t, d, v) in enumerate(hits)]          # manos alternando por golpe
+    tambora = mp.TRIBE_ROLES["grave_abierto"]
+    tribe += [(t, d, mp.TRIBE[tambora[i % 2]], v) for i, (t, d, v) in enumerate(grave)]
+    brasil = [(t, d, mp.ROLES["caja"], v) for t, d, v in hits] + [(t, d, mp.ROLES["grave_abierto"], v) for t, d, v in grave]
+    return {"roll_acelerado_tribe": sorted(tribe), "roll_acelerado_brasil": sorted(brasil)}
 
 
 def main(argv=None):

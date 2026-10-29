@@ -124,3 +124,16 @@ def test_capa_solo_suena_solo_a():
     with pytest.raises(ValueError):
         msl.solo_layer(pre, pre, "S MAL")
     assert lay["a"]["patch"] == gp.decode(pre)["patch"]
+
+
+def test_roll_acelerado_dobla_la_densidad_cada_dos_compases():
+    import make_estudio_clips as mec
+    import make_perc_patterns as mp
+    roll = mec.roll_acelerado()["roll_acelerado_brasil"]
+    caja = [t for t, _, n, _ in roll if n == mp.ROLES["caja"]]
+    bar = 4 * 480
+    assert [sum(1 for t in caja if 2 * k * bar <= t < 2 * (k + 1) * bar) for k in range(4)] == [8, 16, 32, 64]
+    vels = [v for t, _, n, v in roll if n == mp.ROLES["caja"]]
+    assert vels[0] < vels[-1] <= 127
+    tribe = [n for _, _, n, _ in mec.roll_acelerado()["roll_acelerado_tribe"] if n in (71, 72)]
+    assert all(a != b for a, b in zip(tribe, tribe[1:]))                    # manos alternando golpe a golpe
