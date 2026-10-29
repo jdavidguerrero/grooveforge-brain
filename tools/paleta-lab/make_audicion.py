@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Prepara una audición a ciegas de capas del Brain sobre una copia de un set de Live (motor-asistencia.md §3, §10).
 
-Cada opción es un preset de capa: la escena A / B / C toca el mismo clip en BRAIN MIDI con una envolvente de CC 18 que
-elige esa capa (firmware: studio::layer_from_cc), sobre el kit de un dialecto. El orden se baraja; la correspondencia
+Cada opción es un preset de capa: la escena A / B / C lleva el kit de un dialecto, y el clip de BRAIN MIDI se arrastra
+desde <salida>_midi/A.mid … (el mismo clip con un CC 18 al inicio que elige esa capa; firmware: studio::layer_from_cc). El orden se baraja; la correspondencia
 letra → capa queda en metadata/audiciones/<id>.json, junto con el hash del raw que el Brain tiene en ese slot (lo que
 de verdad suena). La opción marcada con --dejar es "conservar lo que hay".
 
@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "preset-librarian"))
 import fill_lab_set as fls  # noqa: E402
 import gf_log  # noqa: E402
+import make_test_clips as mtc  # noqa: E402
 
 CC_LAYER = 18
 LETTERS = "ABC"
@@ -37,24 +38,6 @@ def cc_for_layer(slot: int, count: int) -> int:
         if min(count, 1 + (v - 1) * count // 127) == slot:
             return v
     raise ValueError(slot)
-
-
-def cc_target_id(track: ET.Element, cc: int) -> str:
-    t = track.find(f".//MidiControllers/ControllerTargets.{cc}")
-    if t is None:
-        raise SystemExit(f"la pista no tiene ControllerTargets.{cc}")
-    return t.get("Id")
-
-
-def add_cc_envelope(clip: ET.Element, pointee: str, value: int):
-    """Envolvente de clip constante (el evento en -63072000 es el valor de base de Live)."""
-    env = ET.fromstring(
-        f'<ClipEnvelope Id="0"><EnvelopeTarget><PointeeId Value="{pointee}" /></EnvelopeTarget><Automation><Events>'
-        f'<FloatEvent Id="0" Time="-63072000" Value="{value}" /><FloatEvent Id="1" Time="0" Value="{value}" /></Events><AutomationTransformViewState>'
-        '<IsTransformPending Value="false" /><TimeAndValueTransforms /></AutomationTransformViewState></Automation>'
-        '<LoopSlot><Value /></LoopSlot><ScrollerTimePreserver><LeftTime Value="0" /><RightTime Value="0" />'
-        '</ScrollerTimePreserver></ClipEnvelope>')     # Live 12 cae si faltan LoopSlot / ScrollerTimePreserver
-    clip.find("Envelopes/Envelopes").append(env)
 
 
 def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: list[str], keep: str,
@@ -93,7 +76,8 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
     if dose.exists():
         parts.setdefault("PERC", []).extend(fls.read_mid(dose))
     chords = fls.read_mid(midi / clip_rel)
-    pointee = cc_target_id(tracks["BRAIN MIDI"], CC_LAYER)
+    mid_dir = out.parent / f"{out.stem}_midi"
+    mid_dir.mkdir(exist_ok=True)
     snapshot = gf_log.latest_snapshot()
     opts = []
     for row, label in enumerate(rows):
@@ -106,9 +90,10 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
             continue
         name = order[row - 1]
         slot = names.index(name) + 1
-        clip = fls.make_clip(chords, label, fls.COLORS["chords"], cid); cid += 1
-        add_cc_envelope(clip, pointee, cc_for_layer(slot, len(names)))
-        fls.put(tracks["BRAIN MIDI"], row, clip)
+        # el clip con CC 18 va como .mid para arrastrar: Live 12 (beta) se cae en el hilo de audio con una envolvente
+        # de CC escrita a mano en el .als; al importar un .mid, Live arma la envolvente él mismo
+        mtc.write_mid(mid_dir / f"{label}.mid", [(round(t * mtc.TPQ), round(d * mtc.TPQ), n, v) for t, d, n, v in chords],
+                      bpm, label, ccs=[(0, CC_LAYER, cc_for_layer(slot, len(names)))])
         raw = layers[slot - 1][1]
         opts.append({"letter": label, "id": f"opt{row}", "kind": "keep_current" if name == keep else "option",
                      "patch": {"name": name, "slot": slot, "sha256_brain_raw": hashlib.sha256(raw).hexdigest(),
@@ -123,7 +108,7 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
     aid = gf_log.new_id("a", pending)
     prep = {"audicion_id": aid, "pendiente_id": pending, "pieza": None,
             "context": {"als_template": str(template), "als_copy": str(out),
-                        "als_copy_sha256": hashlib.sha256(out.read_bytes()).hexdigest(),
+                        "als_copy_sha256": hashlib.sha256(out.read_bytes()).hexdigest(), "midi_dir": str(mid_dir),
                         "section": {"name": "groove", "scene": "contexto + A/B/C"}, "bpm": bpm, "dialect": dialect,
                         "backing": {"kick": gf_log.asset("midi/adn/contexto/kick_4x4.mid", snapshot),
                                     "kit": [gf_log.asset(f"midi/{r}", snapshot) for _, r, _ in fls.DIALECT_KITS[dialect]]
