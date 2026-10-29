@@ -41,10 +41,10 @@ def cc_for_layer(slot: int, count: int) -> int:
     raise ValueError(slot)
 
 
-def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str, layers: list[tuple[str, bytes]],
+def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str | None, layers: list[tuple[str, bytes]],
             pending: str, context: dict, seed: int | None = None, bpm: float = 124.0) -> dict:
-    if not 1 <= len(options) <= 3 or keep not in options:
-        raise SystemExit("hasta 3 opciones, y --dejar tiene que ser una de ellas")
+    if not 1 <= len(options) <= 3 or (keep is not None and keep not in options):
+        raise SystemExit("hasta 3 opciones, y --dejar (si va) tiene que ser una de ellas")
     names = [n for n, _ in layers]
     for o in options:
         if o != NONE and o not in names:
@@ -99,7 +99,7 @@ def main(argv=None):
     ap.add_argument("--escenas", required=True, help="las escenas donde van A/B/C, p. ej. 16-18")
     ap.add_argument("--backing", required=True, help="lo que suena con las opciones")
     ap.add_argument("--seccion", default="groove")
-    ap.add_argument("--dejar", required=True, help="la opción que es conservar lo que hay")
+    ap.add_argument("--dejar", help="la opción que es conservar lo que hay (sin ella: todas son propuestas nuevas)")
     ap.add_argument("--semilla", type=int)
     ap.add_argument("--port")
     ap.add_argument("opciones", nargs="+")
