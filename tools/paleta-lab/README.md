@@ -150,7 +150,11 @@ exporta además los presets **del Brain** y anota qué difiere de la librería. 
 
     python3 tools/paleta-lab/gf_snapshot.py --brain --firmware "<lo que se sabe>"
 
-## Registro v2 y audición a ciegas (`gf_log.py`, `make_audicion.py`)
+## Registro v2 y audición a ciegas (`gf_log.py`, `make_audicion.py`, `migrate_v1.py`)
+
+Tipos: `pendiente`, `audicion`, `revision`, `presencia`, `uso`, `edicion`, `regla` / `regla-estado`; `stats` da los
+conteos de `motor-asistencia.md` §11. `migrate_v1.py` pasa las fichas del 28-oct a eventos (idempotente; sin
+`--escribir` solo muestra el plan).
 
 `gf_log.py` agrega eventos (pendientes, audiciones) a `metadata/eventos/<fecha>.jsonl`, solo agregando; `show` lista
 los pendientes abiertos. `make_audicion.py` arma una copia de un set con escenas **A / B / C** que eligen la capa del

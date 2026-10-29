@@ -137,3 +137,43 @@ def test_roll_acelerado_dobla_la_densidad_cada_dos_compases():
     assert vels[0] < vels[-1] <= 127
     tribe = [n for _, _, n, _ in mec.roll_acelerado()["roll_acelerado_tribe"] if n in (71, 72)]
     assert all(a != b for a, b in zip(tribe, tribe[1:]))                    # manos alternando golpe a golpe
+
+
+def ficha(ds):
+    (ds / "metadata" / "sesiones").mkdir(parents=True)
+    (ds / "metadata" / "sesiones" / "2026-10-28_bass.json").write_text(json.dumps({
+        "rol": "bass", "decisiones": [{"a": "GF AFRO SUB", "b": "ROLLER SUB", "elegido": "ambos (papeles distintos)",
+                                       "por_que": "uno sub, otro mid"}],
+        "prefiltro": {"probados": ["GF AFRO SUB", "WOODBASS (capa)"], "pasan": {"preset": "GF AFRO SUB"}},
+        "elegidos": [{"sonido": "GF AFRO SUB", "ganador": True}, {"sonido": "ROLLER SUB"}],
+        "rechazados": [{"sonido": "WOODBASS", "por_que": "flojo"}]}))
+
+
+def test_migracion_idempotente_y_sin_inventar(ds):
+    import migrate_v1 as mv
+    ficha(ds)
+    _, new = mv.migrate(write=True)
+    assert len(new) == 3
+    _, again = mv.migrate(write=True)
+    assert again == [] and len(gf_log.load_events()) == 3
+    dec = {e["migrated"]["source"].split("#")[1]: e for e in gf_log.load_events()}
+    assert dec["decisiones[0]"]["decision"]["state"] == "multiple_useful"            # "ambos" no es preferencia
+    assert dec["elegidos"]["decision"]["state"] == "prefer"
+    for e in gf_log.load_events():
+        assert all(o["patch"]["match"] in ("name_match_only", "unknown") for o in e["options"])   # nunca exact
+        assert "not_auditioned" not in {o["listen"] for o in e["options"]}
+    assert gf_log.preferences(gf_log.load_events()) == [("opt1", "opt2"), ("opt1", "opt3")]
+
+
+def test_quitar_no_es_rechazo_y_las_reglas_las_confirma_juan(ds):
+    u = gf_log.record_use("p", "removed", "pad")
+    assert u["reason"] == "missing"
+    r = gf_log.record_rule("ganan los que dejan espacio", "tendencia_observada", "mezcla completa", [])
+    assert r["status"] == "hypothesis"
+    with pytest.raises(SystemExit):
+        gf_log.set_rule(r["event_id"], "confirmed", "")
+    with pytest.raises(SystemExit):
+        gf_log.record_rule("riser + roll", "preferencia_declarada", "breaks", [])
+    gf_log.set_rule(r["event_id"], "confirmed", "sí, así lo siento")
+    assert gf_log.rule_state(gf_log.load_events())[r["event_id"]]["status"] == "confirmed"
+    assert gf_log.stats(gf_log.load_events())["reglas"]["confirmed"] == 1

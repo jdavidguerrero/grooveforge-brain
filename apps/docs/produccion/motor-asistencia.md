@@ -2,8 +2,9 @@
 
 > **Fecha:** 2026-10-29 · **Rev. 2** (misma fecha): se incorpora la revisión de Juan. Cambios: decisiones pendientes
 > en vez de huecos; estados en tres dimensiones; migración con grado de certeza; presencia distinta de uso; contrato
-> v1 más pequeño; criterio de resolución; métricas de progreso; límites a las reglas. **Estado:** aprobado como
-> dirección; falta implementar (§9).
+> v1 más pequeño; criterio de resolución; métricas de progreso; límites a las reglas.
+> **Rev. 3** (misma fecha): lecciones del primer caso (§9.1); registro completo en `gf_log.py` y las 7 fichas
+> migradas (§7.1). **Estado:** en uso.
 >
 > No modifica los specs `00–06` ni el firmware. Los presets se suben al Brain con el bibliotecario existente.
 >
@@ -210,6 +211,22 @@ Las demás reglas:
 - Las interpretaciones de los docs del lab pasan a `regla` con estado `hypothesis`.
 - **Idempotente:** cada evento migrado tiene un ID derivado de su `source`. Correrla dos veces no duplica decisiones.
 
+### 7.1 Resultado (2026-10-29)
+
+`migrate_v1.py --escribir` dejó **27 eventos**: 26 audiciones y 1 regla en `hypothesis`. Una segunda corrida escribe
+0. Detalle:
+- **Coincidencias:** todos los presets y clips quedan `name_match_only` o `unknown`, porque no se regeneró nada en el
+  commit histórico. Los clips de la ronda de dialectos con nombre ambiguo quedan `unknown` y con sus candidatos.
+- **Escucha:** `confirmed` solo donde la ficha dice que se probaron (prefiltro, `decisiones`, `elegidos`) o la
+  opción fue elegida. Los clips no elegidos de los labs quedan en `unknown`.
+- **Lo que pasa como qué:**
+  - el prefiltro, "ambos" y los clips que gustan → `multiple_useful`;
+  - un único `ganador` y el orden de presets de lead → `prefer`; el orden completo queda en `ranking`;
+  - los presets DX7, JD KEYS y las dosis de color → `neither`.
+- **No se migró:** los `refinamiento_fase2`, que ya estaban abiertos como pendientes el 29. Lo demás de la ficha
+  (`notas`, `ideas`) sigue en la ficha original.
+- **Regla derivada:** clips de lead que pasaron en ≥4 de 5 dialectos. Es `hypothesis` hasta que Juan la confirme.
+
 ## 8. Reglas: qué convierte una hipótesis en confirmada
 
 Una regla tiene:
@@ -241,6 +258,25 @@ Hay dos clases distintas:
    - `missing` ≠ `uncertain`, y `unknown` ≠ `not_auditioned`;
    - la migración es idempotente y no inventa campos;
    - el linaje no cruza entrenamiento y prueba.
+
+### 9.1 Estado y lecciones del primer caso (rev. 3)
+
+Hecho:
+- `gf_log.py` registra los siete tipos (`pendiente`, `audicion`, `revision`, `presencia`, `uso`, `edicion`,
+  `regla` y `regla-estado`) y además saca `stats`.
+- `migrate_v1.py` migra las fichas (§7.1).
+- `make_audicion.py` prepara las audiciones.
+
+Lecciones del 29:
+- **Ningún `.als` generado.** Live 12.4 beta se cayó con todas las copias generadas. El punto 3 de arriba se cambia
+  por `.mid` A/B/C con CC 18 que Juan arrastra a un set suyo.
+- **Synths individuales:** se escuchan como "capa solo" (MORPH 0 y la mitad B de otro engine a −60 dB), porque el
+  firmware exige dos engines distintos.
+- **Snapshot después de cada clip nuevo.** Si no, su `midi.match` queda `unknown`.
+- **Una frase por audición** alcanzó para registrar sin fricción. El orden se baraja con una semilla que queda
+  guardada.
+- **El audio procesado** (stems y mezcla exportados de Live) se guarda tal cual con su hash y se enlaza a la pieza.
+  No se intenta reproducir fuera de Live.
 
 ## 10. Primer caso: una sola decisión del estudio de acordes
 
