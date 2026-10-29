@@ -57,16 +57,11 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
     tracks = {t.find("Name/EffectiveName").get("Value"): t for t in ls.find("Tracks")}
     order = options[:]
     random.Random(seed).shuffle(order)
-    for row in range(len(ls.find("Scenes"))):                      # la copia arranca sin clips (el bajo sigue abierto)
-        ls.find("Scenes")[row].find("Name").set("Value", "")
-        for tr in ls.find("Tracks"):
-            if tr.tag in ("MidiTrack", "AudioTrack"):
-                slots = tr.find(".//MainSequencer/ClipSlotList")
-                if slots is not None and row < len(slots):
-                    fls.put(tr, row, None)
+    # Las escenas van debajo de lo que ya tiene el set, sin borrar ni recortar nada: es el camino que ya abrió bien en
+    # Live (fill_lab_set). Vaciar clips de audio y recortar escenas en la copia hizo caer a Live 12 beta al cargarla.
     rows = ["contexto"] + [f"{LETTERS[i]}" for i in range(len(order))]
-    fls.ensure_scenes(ls, len(rows))
-    fls.trim_scenes(ls, len(rows))
+    start = fls.first_free_row(ls)
+    fls.ensure_scenes(ls, start + len(rows))
     cid = 1 + max((int(c.get("Id")) for c in root.iter("MidiClip")), default=0)
     kick = fls.read_mid(midi / "adn" / "contexto" / "kick_4x4.mid")
     parts = {}
@@ -80,22 +75,23 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
     mid_dir.mkdir(exist_ok=True)
     snapshot = gf_log.latest_snapshot()
     opts = []
-    for row, label in enumerate(rows):
+    for k, label in enumerate(rows):
+        row = start + k
         ls.find("Scenes")[row].find("Name").set("Value", label)
         fls.put(tracks["KICK"], row, fls.make_clip(kick, "kick", fls.COLORS["KICK"], cid)); cid += 1
         for track, notes in parts.items():
             fls.put(tracks[track], row, fls.make_clip(sorted(notes), f"{dialect}", fls.COLORS.get(track, 26), cid))
             cid += 1
-        if row == 0:
+        if k == 0:
             continue
-        name = order[row - 1]
+        name = order[k - 1]
         slot = names.index(name) + 1
         # el clip con CC 18 va como .mid para arrastrar: Live 12 (beta) se cae en el hilo de audio con una envolvente
         # de CC escrita a mano en el .als; al importar un .mid, Live arma la envolvente él mismo
         mtc.write_mid(mid_dir / f"{label}.mid", [(round(t * mtc.TPQ), round(d * mtc.TPQ), n, v) for t, d, n, v in chords],
                       bpm, label, ccs=[(0, CC_LAYER, cc_for_layer(slot, len(names)))])
         raw = layers[slot - 1][1]
-        opts.append({"letter": label, "id": f"opt{row}", "kind": "keep_current" if name == keep else "option",
+        opts.append({"letter": label, "id": f"opt{k}", "kind": "keep_current" if name == keep else "option",
                      "patch": {"name": name, "slot": slot, "sha256_brain_raw": hashlib.sha256(raw).hexdigest(),
                                "match": "exact"},
                      "midi": gf_log.asset(f"midi/{clip_rel}", snapshot), "origin": "generator_proposal",
@@ -109,7 +105,7 @@ def prepare(template: Path, out: Path, clip_rel: str, dialect: str, options: lis
     prep = {"audicion_id": aid, "pendiente_id": pending, "pieza": None,
             "context": {"als_template": str(template), "als_copy": str(out),
                         "als_copy_sha256": hashlib.sha256(out.read_bytes()).hexdigest(), "midi_dir": str(mid_dir),
-                        "section": {"name": "groove", "scene": "contexto + A/B/C"}, "bpm": bpm, "dialect": dialect,
+                        "section": {"name": "groove", "scenes": f"{start + 1}–{start + len(rows)} (contexto, A/B/C)"}, "bpm": bpm, "dialect": dialect,
                         "backing": {"kick": gf_log.asset("midi/adn/contexto/kick_4x4.mid", snapshot),
                                     "kit": [gf_log.asset(f"midi/{r}", snapshot) for _, r, _ in fls.DIALECT_KITS[dialect]]
                                     + ([gf_log.asset(f"midi/perc/dosis_tribe/{dialect}_tribe.mid", snapshot)]
