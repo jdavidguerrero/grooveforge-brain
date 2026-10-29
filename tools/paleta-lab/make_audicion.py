@@ -85,21 +85,25 @@ def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str | None, 
     return prep
 
 
-def prepare_clips(out_dir: Path, clip_rels: list[str], layer: str, layers: list[tuple[str, bytes]], pending: str,
+def prepare_clips(out_dir: Path, clip_rels: list[str], layer: str | None, layers: list[tuple[str, bytes]], pending: str,
                   context: dict, keep: str | None = None, seed: int | None = None, bpm: float = 124.0,
                   exploration: tuple[str, ...] = ()) -> dict:
-    """Variante para decisiones de patrón: las opciones son clips distintos y todas suenan con la misma capa."""
+    """Variante para decisiones de patrón: las opciones son clips distintos y todas suenan con la misma capa. Sin capa
+    (layer None) son clips para un instrumento de Live, como Tribe: sin CC y sin patch."""
     if not 1 <= len(clip_rels) <= 3 or (keep is not None and keep not in clip_rels):
         raise SystemExit("hasta 3 clips, y --dejar (si va) tiene que ser uno de ellos")
     names = [n for n, _ in layers]
-    if layer not in names:
+    if layer is not None and layer not in names:
         raise SystemExit(f"{layer} no está en el Brain")
     if out_dir.exists() and any(out_dir.iterdir()):
         raise SystemExit(f"{out_dir} ya tiene archivos: cada audición va en una carpeta nueva")
     out_dir.mkdir(parents=True, exist_ok=True)
-    slot = names.index(layer) + 1
-    patch = {"name": layer, "slot": slot, "sha256_brain_raw": hashlib.sha256(layers[slot - 1][1]).hexdigest(),
-             "match": "exact"}
+    patch, ccs = None, []
+    if layer is not None:
+        slot = names.index(layer) + 1
+        patch = {"name": layer, "slot": slot, "sha256_brain_raw": hashlib.sha256(layers[slot - 1][1]).hexdigest(),
+                 "match": "exact"}
+        ccs = [(0, CC_LAYER, cc_for_layer(slot, len(names)))]
     order = clip_rels[:]
     random.Random(seed).shuffle(order)
     snapshot = gf_log.latest_snapshot()
@@ -108,7 +112,7 @@ def prepare_clips(out_dir: Path, clip_rels: list[str], layer: str, layers: list[
         label = LETTERS[k]
         notes = fls.read_mid(gf_log.dataset_dir() / "midi" / rel)
         mtc.write_mid(out_dir / f"{label}.mid", [(round(t * mtc.TPQ), round(d * mtc.TPQ), n, v) for t, d, n, v in notes],
-                      bpm, label, ccs=[(0, CC_LAYER, cc_for_layer(slot, len(names)))])
+                      bpm, label, ccs=ccs)
         opts.append({"id": f"opt{k + 1}", "letter": label, "kind": "keep_current" if rel == keep else "option",
                      "patch": patch, "midi": gf_log.asset(f"midi/{rel}", snapshot), "origin": "generator_proposal",
                      "exploration": rel in exploration})

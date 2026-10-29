@@ -10,6 +10,7 @@ octavas, fundamentales La y Re.
 from __future__ import annotations
 
 import argparse
+import zlib
 import os
 from pathlib import Path
 
@@ -45,6 +46,46 @@ def indie_progresiones() -> dict[str, list]:
     return {f"acordes_{p}__decimas__tresillo": mcl.pattern(p, "decimas", "tresillo") for p in INDIE_PROGRESSIONS}
 
 
+def _cycle(period: int, offset: int = 0, bars: int = 4, ch: str = "x") -> list[str]:
+    """Un golpe cada `period` semicorcheas, corriéndose sobre los compases (polirritmo de ciclo impar)."""
+    steps = {s for s in range(offset, 16 * bars, period)}
+    return ["".join(ch if b * 16 + i in steps else "." for i in range(16)) for b in range(bars)]
+
+
+# percusion-groove.md rev. 10: tres bases nuevas en Tribe para el caso 2 (swing 50 %, graves fuera del kick)
+INDIE_PERC = {
+    "quintillo_cascara": dict(kit="tribe_colombia", swing=50, micro={"aro_madera": -2}, roles={
+        "aro_madera":    _cycle(5),                                     # Tambora Cáscara cada 5: vuelve en 5 compases
+        "grave_apagado": ["......x.......x."],                         # Tambora Damped en la "a" del 2 y del 4
+        "medio_apagado": ["...........o....", "...o.......o...."]},    # Alegre Bajoneo, escaso
+        intro=["aro_madera"], fill={"grave_apagado": "......x....x.xXX"},
+        peak={"raspado": "..x...x...x...x."}),                         # Guacharaca a contratiempo
+    "llamador_seco": dict(kit="tribe_colombia", swing=50, micro={"campana_aguda": -3}, roles={
+        "campana_aguda": ["..x...x...x...x."],                         # Llamador Bajoneo: el contratiempo cumbiero
+        "grave_apagado": ["...x.......x....", "...x.......x..x."],     # Tambora Damped sincopada
+        "agudo_slap":    ["................", "..............X."]},    # un Alegre Quemao cada 2 compases
+        intro=["campana_aguda"], fill={"grave_apagado": "...x.......x.xXX"},
+        peak={"sacudido_corto": "gxgxgxgxgxgxgxgx"}),                  # Guache
+    "bullerengue_tech": dict(kit="tribe_colombia", swing=50, micro={"medio_apagado": 2}, roles={
+        "medio_apagado": ["x..x..x.x..x..x."],                         # Alegre Bajoneo en 3-3-2
+        "grave_apagado": ["...x.......x....", "...x......x....."],     # Tambora Damped en las síncopas
+        "caja":          ["................", "........x......."]},    # Caja Fondo en el 3 del compás 2 y 4
+        intro=["medio_apagado"], fill={"medio_apagado": "x..x..x.x..xxxXX"},
+        peak={"raspado": "x.x.x.x.x.x.x.x."}),                         # Guacharaca en corcheas
+}
+
+
+def indie_perc(bpm: float = 124.0) -> dict[str, list]:
+    import make_perc_patterns as mp
+    out = {}
+    for name, p in INDIE_PERC.items():
+        for version in ("main", "peak"):
+            notes, missing = mp.to_tribe(mp.notes_of(mp.arrange(p, version), bpm, micro=True, seed=zlib.crc32(name.encode())))
+            assert not missing, missing
+            out[f"perc_{name}_{version}_tribe"] = sorted(notes)
+    return out
+
+
 def roll_acelerado() -> dict[str, list]:
     """8 compases: negras, corcheas, semicorcheas y fusas, dos compases cada una (percusion-groove.md rev. 9)."""
     hits = []                                             # (tick, duración, velocity)
@@ -74,7 +115,7 @@ def main(argv=None):
         print(out / f"{name}.mid")
     indie = Path(a.dataset) / "midi" / "adn" / "estudio_indie"
     indie.mkdir(parents=True, exist_ok=True)
-    for name, notes in indie_progresiones().items():
+    for name, notes in {**indie_progresiones(), **indie_perc()}.items():
         write_mid(indie / f"{name}.mid", notes, 124, name)
         print(indie / f"{name}.mid")
 

@@ -273,3 +273,31 @@ la tensión crece sin cambiar de tempo.
 - **Dinámica:** crescendo lineal de velocity 40 → 120 a lo largo de los 8 compases, con acento en cada tiempo.
 - Archivos: `midi/adn/estudio/roll_acelerado_{tribe,brasil}.mid` (`tools/paleta-lab/make_estudio_clips.py`). Es
   humanización programada (auditoría §7): un patrón del generador, no una interpretación tocada.
+
+### Rev. 10: base nueva para el caso 2 (est-indie) (2026-10-29)
+
+Juan quiere que el caso 2 arme su **propia base**: patrones nuevos y no los kits del lab. El orden sigue su ADN:
+percusión, después bajo y después melodías. Se mantienen las reglas de la Rev. 7 para el indie tech:
+- casi recto (swing 50 %);
+- hipnótico;
+- tonos apagados;
+- pocos golpes;
+- brillo solo en el peak;
+- graves fuera de las semicorcheas del kick (1, 5, 9, 13).
+
+Todo va en Tribe. Hay tres candidatos y cada uno prueba **una idea rítmica que todavía no está en la librería**:
+
+| Patrón | Idea | Lo nuevo frente a la Rev. 7 |
+|---|---|---|
+| `quintillo_cascara` | Cáscara de tambora cada **5** semicorcheas. Tambora apagada en la "a" del 2 y del 4. Alegre bajoneo escaso | Ciclo de 5 sobre 16: tarda 5 compases en volver al mismo lugar. Es más largo y menos obvio que el de 3 de `tambora_hipnotica` |
+| `llamador_seco` | El llamador hace su papel de la cumbia, **el golpe a contratiempo**, pero en bajoneo (apagado). Tambora apagada sincopada. Un solo quemao cada 2 compases | La raíz cumbiera del llamador, reducida a un pulso oscuro |
+| `bullerengue_tech` | Alegre bajoneo en **3-3-2** (el tresillo que en el bullerengue sentao viene del 6/8). Tambora apagada en las síncopas. Caja fondo solo en el 3 del compás 2 y del 4 (medio tiempo) | El 3-3-2 en la percusión media y un backbeat a medio tiempo, que en indie da peso sin acelerar |
+
+El peak agrega guacharaca o guache. El compás 4 trae remate. La audición compara solo el **main**, con el kick 4x4
+como único fondo, porque todavía no hay bajo ni acordes elegidos. Archivos:
+`midi/adn/estudio_indie/perc_<patrón>_{main,peak}_tribe.mid`, generados por `tools/paleta-lab/make_estudio_clips.py`.
+
+Referencias: el llamador como marcador del contratiempo en la cumbia y el 6/8 del bullerengue, en Convers &
+Ochoa, *Gaita Colombiana: método de aprendizaje* (Ministerio de Cultura, 2007), y Ochoa, *Músicas locales en tiempos
+de globalización* (2003). La polirritmia de ciclos impares sobre 4/4 está en Toussaint, *The Geometry of Musical
+Rhythm* (2013, cap. sobre ritmos euclidianos).
