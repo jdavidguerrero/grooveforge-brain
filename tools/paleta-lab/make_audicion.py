@@ -50,9 +50,10 @@ def add_cc_envelope(clip: ET.Element, pointee: str, value: int):
     """Envolvente de clip constante (el evento en -63072000 es el valor de base de Live)."""
     env = ET.fromstring(
         f'<ClipEnvelope Id="0"><EnvelopeTarget><PointeeId Value="{pointee}" /></EnvelopeTarget><Automation><Events>'
-        f'<FloatEvent Id="1" Time="-63072000" Value="{value}" /></Events><AutomationTransformViewState>'
+        f'<FloatEvent Id="0" Time="-63072000" Value="{value}" /><FloatEvent Id="1" Time="0" Value="{value}" /></Events><AutomationTransformViewState>'
         '<IsTransformPending Value="false" /><TimeAndValueTransforms /></AutomationTransformViewState></Automation>'
-        '</ClipEnvelope>')
+        '<LoopSlot><Value /></LoopSlot><ScrollerTimePreserver><LeftTime Value="0" /><RightTime Value="0" />'
+        '</ScrollerTimePreserver></ClipEnvelope>')     # Live 12 cae si faltan LoopSlot / ScrollerTimePreserver
     clip.find("Envelopes/Envelopes").append(env)
 
 
