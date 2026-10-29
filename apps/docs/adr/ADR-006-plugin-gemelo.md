@@ -1,6 +1,6 @@
 # ADR-006: Gemelo en software del Brain (núcleo DSP compartido, renderizador y plugin AU/VST3)
 
-**Status:** Proposed — para que Juan lo evalúe; no autoriza implementar
+**Status:** Accepted para las fases 1–2 en una **rama dedicada** (Juan, 2026-10-29); la decisión de producto (contradicciones 1–2) sigue abierta
 **Date:** 2026-10-29
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-003 (el Brain v1 usa el filtro digital `MoogLadder4P`), ADR-005 (DX7 de 4 operadores con objeto
@@ -144,7 +144,15 @@ productor, herramienta local personal.
 **Si no se acepta:** se sigue con la opción A (sonido en el clip + una pasada por pista al final), y el audio del
 dataset depende de sesiones de grabación.
 
-## Action Items (solo si Juan lo acepta)
+## Decisión de Juan (2026-10-29)
+
+- **Fases 1–2: adelante, en una rama dedicada** que sale de `feat/studio-engines-10x` y se compila desde ahí. En esa
+  rama se pueden aplicar los cambios (incluido actualizar `01` cuando el piloto pase su puerta). Se integra a la rama
+  principal solo cuando Juan lo apruebe.
+- **Producto (contradicciones 1–2): sin decidir.** Mientras tanto el gemelo es herramienta interna. `00` no se toca.
+- Juan cree que hay mucho reutilizable (núcleos nativos, tests, bibliotecario): la fase 1 empieza por inventariarlo.
+
+## Action Items
 
 1. [ ] Decidir las contradicciones 1–4 (Juan).
 2. [ ] Theory doc de la fase 1: inventario de engines y etapas, dependencias de la frecuencia de muestreo y de objetos
