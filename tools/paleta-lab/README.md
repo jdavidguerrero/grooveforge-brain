@@ -140,3 +140,12 @@ librería y escribe los JSON; no toca el Brain.
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py import <lib>/juno_106/jd-keys-juno.json <lib>/prophet_5/jd-keys-prophet.json
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import <lib>/layers/jd-keys-capa.json
 ```
+
+## Snapshot del laboratorio (`gf_snapshot.py`)
+
+Congela MIDI, presets, kits, fichas, los `.als` y las tomas de Live en `GrooveForge_Dataset_v1/snapshots/<fecha>/` con
+un `manifest.json` (SHA-256 por archivo, formato real de los WAV, commit del repo, firmware declarado). Con `--brain`
+exporta además los presets **del Brain** y anota qué difiere de la librería. Un snapshot no se edita. Ver
+`apps/docs/produccion/protocolo-captura.md` §6.
+
+    python3 tools/paleta-lab/gf_snapshot.py --brain --firmware "<lo que se sabe>"

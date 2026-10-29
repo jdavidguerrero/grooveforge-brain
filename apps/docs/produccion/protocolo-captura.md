@@ -11,7 +11,7 @@
 | Brain | VOL de salida en **0 dB**; SYNTH FX como los trae el preset (eso es "seco del Brain") |
 | Cable | LINE OUT L / R del Brain → entradas 1 / 2 de la Quantum ES 2 (estéreo: el chorus del Juno y las capas lo usan) |
 | Ganancia de la interfaz | Fijarla con el preset más fuerte de la sesión para que los picos queden en **−12 dBFS** (nunca sobre −6); **anotar la posición** y no tocarla en toda la sesión |
-| Live | 48 kHz / 24 bit; pista de audio estéreo con Monitor en **Off** al grabar (se escucha por la interfaz) |
+| Live | **48 kHz** / 24 bit (rev. 2026-10-29: las 6 tomas del 28-oct quedaron a 44,1 kHz porque Live estaba en 44,1; se conservan tal cual y la frecuencia real va en el manifiesto, §6); pista de audio estéreo con Monitor en **Off** al grabar (se escucha por la interfaz) |
 | Reloj | Live manda clock al Brain (Sync en la salida GrooveForge) para que PUMP y ARP caigan en fase |
 | Tempo | **124 BPM** salvo que el estudio pida otro |
 
@@ -88,3 +88,28 @@ Al empezar, `tools/paleta-lab/gf_session.py new <rol> <candidatos…>` crea la f
 - **Origen y permisos** por sonido: propio, Tribe Instruments, Kick 3, Splice o Loopcloud, y si se puede usar para
   entrenar y para publicar. Un sample procesado sigue teniendo el permiso de su origen.
 - Máximo **tres candidatos por decisión**, para no bloquearse con demasiadas opciones.
+
+## 6. Snapshot antes de cambiar (rev. 2026-10-29, auditoría de datasets §5 P0)
+
+Un nombre no congela lo que sonó: un preset exportado con el mismo nombre puede traer parámetros nuevos, y un MIDI
+regenerado puede cambiar sin que cambie su ruta. Por eso, **antes de refinar ganadores** (y al cerrar cada ronda de
+escucha) se congela el estado completo:
+
+```
+python3 tools/paleta-lab/gf_snapshot.py --brain --firmware "<lo que se sabe del firmware cargado>"
+```
+
+Copia a `GrooveForge_Dataset_v1/snapshots/<AAAA-MM-DD>/`, sin tocar los originales:
+
+| Carpeta | Qué |
+|---|---|
+| `brain_export/` | `gf_presets.py export` + `layers` **desde el Brain** (lo que de verdad suena, no lo que dice la librería) |
+| `dataset/` | `midi/`, `patches/`, `kits/` y `metadata/` del dataset tal como estaban |
+| `live/` | los `.als` de `GFExploration Project` y las tomas de `Samples/Recorded` |
+| `manifest.json` | por archivo: ruta, bytes y **SHA-256**; WAV con frecuencia, bits, canales y duración reales; commit y estado del repo; el firmware cargado como se declaró (o `unknown`); y la diferencia librería ↔ Brain |
+
+Reglas:
+
+- Un snapshot **no se edita**: si algo cambia, se toma otro con otra fecha (o `--etiqueta`).
+- El commit del repo **no prueba** qué firmware tiene la Teensy; si no se sabe, `unknown`.
+- Las fichas de escucha (registro v2, por definir) referencian estímulos por **hash** del snapshot, no por nombre.
