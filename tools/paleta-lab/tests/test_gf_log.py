@@ -177,3 +177,16 @@ def test_quitar_no_es_rechazo_y_las_reglas_las_confirma_juan(ds):
     gf_log.set_rule(r["event_id"], "confirmed", "sí, así lo siento")
     assert gf_log.rule_state(gf_log.load_events())[r["event_id"]]["status"] == "confirmed"
     assert gf_log.stats(gf_log.load_events())["reglas"]["confirmed"] == 1
+
+
+def test_audicion_de_clips_con_la_misma_capa(ds, tmp_path):
+    (ds / "midi").mkdir()
+    import make_test_clips as mtc
+    mtc.write_mid(ds / "midi" / "x.mid", [(0, 480, 45, 90)], 124, "x")
+    mtc.write_mid(ds / "midi" / "y.mid", [(0, 480, 47, 90)], 124, "y")
+    layers = [("UNO", b"\x01"), ("DOS", b"\x02")]
+    prep = mau.prepare_clips(tmp_path / "aud", ["x.mid", "y.mid"], "DOS", layers, "p1", {}, seed=3,
+                             exploration=("y.mid",))
+    assert {o["patch"]["name"] for o in prep["options"]} == {"DOS"}
+    assert {o["midi"]["path"] for o in prep["options"]} == {"midi/x.mid", "midi/y.mid"}
+    assert [o["exploration"] for o in prep["options"] if o["midi"]["path"] == "midi/y.mid"] == [True]

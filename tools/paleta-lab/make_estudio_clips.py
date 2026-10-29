@@ -35,6 +35,16 @@ def clips() -> dict[str, list]:
     return out
 
 
+INDIE_PROGRESSIONS = ("menor_v_prestado", "frigia_dominante", "frigia")   # caso 2: tensión al V, color indie, oscura
+
+
+def indie_progresiones() -> dict[str, list]:
+    """Caso 2 (est-indie): la misma figura que ganó en el caso 1 (décimas en tresillo) sobre tres progresiones, para
+    que lo único que cambie sea la armonía."""
+    import make_chord_lab as mcl
+    return {f"acordes_{p}__decimas__tresillo": mcl.pattern(p, "decimas", "tresillo") for p in INDIE_PROGRESSIONS}
+
+
 def roll_acelerado() -> dict[str, list]:
     """8 compases: negras, corcheas, semicorcheas y fusas, dos compases cada una (percusion-groove.md rev. 9)."""
     hits = []                                             # (tick, duración, velocity)
@@ -62,6 +72,11 @@ def main(argv=None):
     for name, notes in clips().items():
         write_mid(out / f"{name}.mid", notes, 124, name)
         print(out / f"{name}.mid")
+    indie = Path(a.dataset) / "midi" / "adn" / "estudio_indie"
+    indie.mkdir(parents=True, exist_ok=True)
+    for name, notes in indie_progresiones().items():
+        write_mid(indie / f"{name}.mid", notes, 124, name)
+        print(indie / f"{name}.mid")
 
 
 if __name__ == "__main__":
