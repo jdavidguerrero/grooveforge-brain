@@ -47,7 +47,7 @@ void key_levels(const GF_UiState& ui, uint8_t out[KEY_LEDS]) {
         if (ui.page == OSC) out[0] = KEY_ON;
         if (ui.page == ENV) out[1] = KEY_ON;
         if (ui.page == LFO || ui.page == GROOVE) out[2] = KEY_ON;
-        if (ui.page == SYNTH_FX || ui.page == LAYER_PRESETS || ui.page == ENGINE) out[3] = KEY_ON;
+        if (ui.page == SYNTH_FX || ui.page == PRESETS || ui.page == ENGINE) out[3] = KEY_ON;   // PRESETS: SHIFT + B4 (§3e)
     }
     out[4] = KEY_ON;                                   // MODE siempre encendida: el color dice SYNTH, FX o HYBRID SYNTH
     out[5] = (ui.shift || ui.fx_hold) ? KEY_ON : KEY_DIM;

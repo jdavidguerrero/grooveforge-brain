@@ -359,9 +359,9 @@ void test_modo_hybrid() {
     TEST_ASSERT_TRUE(ui.hybrid());
     ui.handle(Control::Nav, 3);                                 // NAV recorre los presets de capa
     TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
-    ui.handle(Control::Nav, 20);                                // no pasa de la fila + CUSTOM
-    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
-    ui.handle(Control::Nav, -5);
+    ui.handle(Control::Nav, 20);                                // no pasa de la fila + CUSTOM (8 capas, SAVE, CUSTOM)
+    TEST_ASSERT_EQUAL_UINT8(9, ui.state().cursor);
+    ui.handle(Control::Nav, -6);
     r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(int(Action::LayerLoad), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(3, r.arg);
@@ -391,26 +391,23 @@ void test_modo_hybrid() {
     TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
     TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(0, r.arg);
+    r = ui.handle(Control::Key4);                               // B4 en GROOVE: TAP (rev. 7), sigue en GROOVE
+    TEST_ASSERT_EQUAL(int(Action::Tap), int(r.action));
+    ui.handle(Control::NavLong);
     ui.handle(Control::Key4);                                   // B4: SYNTH FX · otra vez: home
     TEST_ASSERT_EQUAL_UINT8(SYNTH_FX, ui.state().page);
     ui.handle(Control::Key4);
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
 
-    ui.handle(Control::B6Down);                                 // SHIFT + B4: presets de capa (cursor en el cargado)
-    ui.handle(Control::Key4);
-    ui.handle(Control::B6Up);
-    TEST_ASSERT_EQUAL_UINT8(LAYER_PRESETS, ui.state().page);
-    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
-    ui.handle(Control::Key1);                                   // banco A = fila 1
-    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);
-    ui.handle(Control::Key2);                                   // banco B sin presets: el último
+    ui.handle(Control::Nav, 20);                                // + SAVE LAYER: la fila después de las capas
+    ui.handle(Control::Nav, -1);
     TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
-    ui.handle(Control::Nav, -20);                               // SAVE
     r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(int(Action::LayerSave), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(8, r.arg);
     TEST_ASSERT_EQUAL_UINT8(9, ui.layer_count());
-    ui.handle(Control::NavLong);
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);              // el cursor queda en la capa guardada
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
 
     ui.handle(Control::B6Down);                                 // SHIFT + NAV push: ENGINE de la capa en foco
     ui.handle(Control::NavPush);
@@ -418,7 +415,7 @@ void test_modo_hybrid() {
     TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
     r = ui.handle(Control::NavPush);
     TEST_ASSERT_EQUAL(int(Action::LoadEngine), int(r.action));
-    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);          // rev. 7: elegir el engine abre los presets de la mitad
     ui.handle(Control::Key1);
     ui.handle(Control::NavLong);                                // NAV largo = home del modo
     TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
@@ -436,7 +433,7 @@ void test_hybrid_custom() {
     StudioUi ui;
     ui.set_hybrid(true);
     ui.handle(Control::Nav, 20);                                // la última fila: + CUSTOM
-    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    TEST_ASSERT_EQUAL_UINT8(9, ui.state().cursor);
     Result r = ui.handle(Control::NavPush);                     // ENGINE SELECT de A
     TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
     TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
@@ -545,6 +542,85 @@ void test_presets_saltos_de_banco() {
     TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);         // sigue en PRESETS
 }
 
+void test_hybrid_presets_de_la_mitad_en_foco() {   // theory/12 §3e rev. 7
+    StudioUi ui;
+    ui.set_hybrid(true);
+    ui.set_preset_count(20);                                   // banco del engine en foco: A lleno y 4 en B
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                  // SHIFT + B4: directo a PRESETS de la mitad en foco
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_TRUE(ui.hybrid());
+    ui.handle(Control::Key2);                                  // B2 = banco B del engine: fila 17, no ENV
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(17, ui.state().cursor);
+    ui.handle(Control::Nav, 2);
+    Result r = ui.handle(Control::NavPush);                    // carga en la mitad en foco, sin salir de la capa
+    TEST_ASSERT_EQUAL(int(Action::LoadPreset), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(18, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    r = ui.handle(Control::P2Push);                            // P2 push: foco en B, sigue en PRESETS
+    TEST_ASSERT_EQUAL(int(Action::LayerFocus), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(1, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.set_preset_count(8);                                    // el sketch manda el banco del engine de B
+    TEST_ASSERT_EQUAL_UINT8(8, ui.state().cursor);
+    ui.handle(Control::Nav, -20);                              // SAVE guarda esa mitad en el banco de su engine
+    r = ui.handle(Control::NavPush);
+    TEST_ASSERT_EQUAL(int(Action::SavePreset), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(8, r.arg);
+    ui.handle(Control::Key4);                                  // B4 sin SHIFT: banco D, no SYNTH FX
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key4);                                  // SHIFT + B4 otra vez: home
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+}
+
+void test_hybrid_engine_select_salta_la_otra_mitad() {   // theory/12 §3e H2–H4
+    StudioUi ui;
+    ui.set_hybrid(true);
+    ui.set_engine(4);                                          // A = DX7 en foco, B = OB-6 (3)
+    ui.set_other_engine(3);
+    ui.handle(Control::B6Down);
+    ui.handle(Control::NavPush);                               // SHIFT + NAV push: ENGINE SELECT de A
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
+    ui.handle(Control::Nav, -1);                               // 4 → 3 es el de B: lo salta, queda en 2
+    TEST_ASSERT_EQUAL_UINT8(2, ui.state().cursor);
+    ui.handle(Control::Nav, 1);
+    TEST_ASSERT_EQUAL_UINT8(4, ui.state().cursor);
+    Result r = ui.handle(Control::Pick3);                      // tocar el de B: no hace nada
+    TEST_ASSERT_EQUAL(int(Action::None), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(ENGINE, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(4, ui.engine());
+    ui.handle(Control::Key4);                                  // B4: home, como en SYNTH (no SYNTH FX)
+    TEST_ASSERT_EQUAL_UINT8(HYBRID, ui.state().page);
+    ui.handle(Control::EngineCard);
+    r = ui.handle(Control::Pick1);                             // engine nuevo: LoadEngine y PRESETS de esa mitad
+    TEST_ASSERT_EQUAL(int(Action::LoadEngine), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(1, r.arg);
+    TEST_ASSERT_EQUAL_UINT8(PRESETS, ui.state().page);
+    TEST_ASSERT_EQUAL_UINT8(1, ui.state().cursor);             // en el preset 0, el que carga el sketch
+    ui.set_other_engine(0xFF);                                 // sin capa: ENGINE SELECT recorre los 6
+    ui.handle(Control::EngineCard);
+    ui.handle(Control::Nav, 2);
+    TEST_ASSERT_EQUAL_UINT8(3, ui.state().cursor);
+}
+
+void test_hybrid_groove_b4_es_tap() {   // theory/12 §3e H5
+    StudioUi ui;
+    ui.set_hybrid(true);
+    ui.handle(Control::B6Down);
+    ui.handle(Control::Key3);                                  // SHIFT + B3: GROOVE
+    ui.handle(Control::B6Up);
+    TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
+    Result r = ui.handle(Control::Key4);
+    TEST_ASSERT_EQUAL(int(Action::Tap), int(r.action));
+    TEST_ASSERT_EQUAL_UINT8(GROOVE, ui.state().page);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_arranque_en_perform);
@@ -575,5 +651,8 @@ int main() {
     RUN_TEST(test_cada_modo_vuelve_a_su_pagina);
     RUN_TEST(test_layer_state_ida_y_vuelta);
     RUN_TEST(test_presets_saltos_de_banco);
+    RUN_TEST(test_hybrid_presets_de_la_mitad_en_foco);
+    RUN_TEST(test_hybrid_engine_select_salta_la_otra_mitad);
+    RUN_TEST(test_hybrid_groove_b4_es_tap);
     return UNITY_END();
 }

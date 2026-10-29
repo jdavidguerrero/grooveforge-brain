@@ -128,6 +128,77 @@ con `FOCUS_B`).
 **Protocolo:** `0x47 LAYER_ENTRY` (Teensy → cabeza): `[índice, cantidad, nombre]`, como `PRESET_ENTRY`. La página de
 presets de capa es la **14** de UI_STATE.
 
+**Rev. 6 (2026-10-28, aprobada por Juan; la ruta la reemplaza la rev. 7 de §3e): presets del engine de la mitad en foco.** Probado
+en el hardware: con la rev. 5 no hay camino del panel para cargar un preset **del engine** (p. ej. GF AFRO SUB del banco
+del Model D) en una mitad de la capa. La tabla de §3c lo tenía ("SHIFT + B4 = PRESETS de la capa en foco… SAVE guarda esa
+mitad en el banco de su engine"), pero la rev. 5 le dio SHIFT + B4 a los presets de capa y la función se perdió; hoy se
+compuso la capa con `gf_presets.py`. El firmware ya lo soporta: `load_preset()` / `save_preset()` usan `ui.engine()`, que
+en capa es la mitad en foco, y `focus_engine()` manda a la cabeza la lista del engine en foco al cambiar el foco.
+
+Propuesta (B3 de LAYER_PRESETS hoy abre LFO / MOD, que ya está en B3 desde la home):
+
+| Control | En LAYER_PRESETS (rev. 6) |
+|---|---|
+| **B3** | **PRESETS de la mitad en foco** (página 6 de siempre, la lista del engine de esa mitad) |
+
+| Control | En PRESETS dentro de HYBRID SYNTH (rev. 6) |
+|---|---|
+| NAV · NAV push | Recorre · carga el preset en la mitad en foco sin salir de la capa (fila 0 = SAVE: guarda esa mitad en el banco de su engine) |
+| B1 … B4 | Banco A … D del engine (como PRESETS de SYNTH, theory/13) |
+| P1 push / P2 push | Foco en A / B: la lista cambia al engine de esa mitad, sin salir de la página |
+| **SHIFT + B4** | Vuelve a LAYER_PRESETS (de donde vino) |
+| NAV largo | Home de HYBRID SYNTH |
+
+- Se guarda como mitad, no como capa: el preset de capa sigue sonando con la mitad cambiada hasta que SAVE de
+  LAYER_PRESETS la guarda como `LAYER nn` (o se carga otra capa).
+- **Cabeza:** PRESETS titula "PRESETS · CAPA A" / "PRESETS · CAPA B" en el modo (como ENGINE SELECT) (flags `mode` 2 y `FOCUS_B` de UI_STATE, que ya
+  viajan); en LAYER_PRESETS la etiqueta de B3 pasa de "LFO / MOD" a "PRESETS A / B". Sin cambios de protocolo.
+- **Alternativa descartada:** que SHIFT + B4 recorra capa → mitad → home. Ahorra la tecla B3, pero rompe "SHIFT + B4 otra
+  vez: home" de la rev. 5 y no se ve en ninguna etiqueta.
+
+### 3e. Revisión de la navegación de HYBRID SYNTH contra SYNTH (2026-10-28) y rev. 7 (aprobada por Juan, 2026-10-28)
+
+Juan, revisando la rev. 6 en el hardware: la home ya recorre los presets de capa con NAV, así que tener que pasar por
+LAYER_PRESETS para llegar a los presets de una mitad es un rodeo; y hay navegaciones copiadas de SYNTH que en HYBRID
+no funcionan (ejemplo: la selección de engine). Revisión hecha recorriendo **cada página × cada tecla** en los dos modos
+con un arnés native sobre `StudioUi` (lo que cambia de página y qué acción manda) y leyendo qué hace el sketch con cada
+acción en capa (`run_action`, `layer_replace_engine`, `load_preset`).
+
+**Hallazgos**
+
+| # | Dónde | En SYNTH | En HYBRID SYNTH hoy | Causa |
+|---|---|---|---|---|
+| H1 | Presets de una mitad | SHIFT + B4 → PRESETS (1 paso) | SHIFT + B4 → LAYER_PRESETS → B3 (2 pasos, rev. 6); LAYER_PRESETS repite la lista que ya está en la home | rev. 5 le dio SHIFT + B4 a la capa |
+| H2 | ENGINE SELECT: elegir el engine de **la otra mitad** | — | No pasa nada, sin aviso: el sketch lo rechaza y vuelve al engine anterior; la pantalla no lo marca | `layer_replace_engine`: `e == other` → vuelve |
+| H3 | ENGINE SELECT: elegir un engine nuevo | Suena el engine con su sonido actual | La capa pasa a CUSTOM, la mitad carga el **preset 0** del engine y la mezcla A/B vuelve a 0 dB; vuelve a la home | `layer_replace_engine` (no documentado más allá de "capa CUSTOM") |
+| H4 | ENGINE SELECT: B4 | Vuelve a la home | Abre SYNTH FX | `handle_hybrid` toma B4 antes que la página ENGINE |
+| H5 | GROOVE: B4 | **TAP** del tempo | Abre SYNTH FX: **no hay TAP** en HYBRID | ídem: `handle_hybrid` toma B4 antes que GROOVE |
+| H6 | Banner al entrar al modo (cabeza) | — | Dice "B1 EDIT A · B2 EDIT B · B3 GROOVE / FX · B4 PRESETS" (teclas de la rev. 4) | texto viejo en `overlays.cpp` |
+| H7 | Tocar una fila de PRESETS en la pantalla | No carga con el Teensy conectado (solo en el demo) | ídem | `handle_synth` ignora `Pick` en PRESETS; afecta a los dos modos — fuera de este alcance, se anota |
+
+Lo demás coincide con SYNTH: B1–B3 (OSC / ENV / LFO, con A ↔ B), NAV / NAV push en cada página, P1 push = forma del
+LFO en la parada LFO, SYNTH FX, GROOVE con NAV push, SHIFT + NAV push → ENGINE SELECT, NAV largo → home.
+
+**Rev. 7** (reemplaza la ruta de la rev. 6; las teclas quedan iguales a SYNTH donde la función existe):
+
+| Control | En HYBRID SYNTH (rev. 7) |
+|---|---|
+| Home: NAV · NAV push | Recorre los presets de capa · carga (igual que hoy). Al final de la lista: **+ SAVE LAYER** (guarda la capa como `LAYER nn`) y **+ CUSTOM** |
+| **SHIFT + B4** | **PRESETS de la mitad en foco** (como SYNTH y como §3c) · otra vez: home |
+| En PRESETS: B1–B4 · P1 / P2 push · NAV push | Bancos A–D · cambia de mitad (la lista cambia) · carga en esa mitad (fila 0 = SAVE en el banco de su engine) |
+| ENGINE SELECT (SHIFT + NAV push) | El engine de la otra mitad aparece marcado "EN A" / "EN B" y NAV lo salta; elegir uno nuevo carga su preset 0 en esa mitad y abre **PRESETS de esa mitad** para elegir el sonido; B4 vuelve a la home |
+| GROOVE: B4 | **TAP**, como en SYNTH (SHIFT + B3 otra vez: home) |
+
+- **LAYER_PRESETS (página 14) sale de la navegación**: cargar y guardar capas queda en la home. Los bancos A / B de
+  capas no hacen falta mientras la lista sea corta (≤ 32 con NAV acelerado). La página queda en el protocolo por si
+  vuelve.
+- **Cabeza:** fila "+ SAVE LAYER" en la lista de la home; ENGINE SELECT marca y atenúa el engine de la otra mitad;
+  banner y ayuda de la home con las teclas de la rev. 7. Sin cambios de protocolo (la home ya recibe el cursor y la
+  cantidad de capas; la fila SAVE es `cantidad`, CUSTOM `cantidad + 1`).
+- **Alternativa:** mantener la rev. 6 (SHIFT + B4 = LAYER_PRESETS, B3 = presets de la mitad) y arreglar solo H2–H6.
+  Menos cambio, pero deja el rodeo de H1 y dos listas de capas.
+- **H7** (tocar filas de PRESETS) queda para otra tanda: es de los dos modos.
+
 ## 4. Cómo se prueba
 
 | Qué | Cómo |

@@ -15,7 +15,7 @@ namespace {
 constexpr int LIST_X = 16, LIST_Y = 104, LIST_W = 456, ROW_H = 40;
 constexpr int SCROLL_X = 476, SCROLL_H = 240;
 const char* const KEYS_PRESET[4] = {"BANK A", "BANK B", "BANK C", "BANK D"};  // B1–B4 saltan de banco (theory/13)
-const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "LFO / MOD", "SYNTH FX"};  // HYBRID SYNTH (theory/12 §3d)
+const char* const KEYS_LAYER[4] = {"BANK A", "BANK B", "LFO / MOD", "SYNTH FX"};  // fuera de la navegación (theory/12 §3e)
 
 }  // namespace
 
@@ -102,6 +102,8 @@ bool ScreenPresets::tap_row(int i, const StudioState& s) {
 
 void ScreenPresets::update(const StudioState& s) {
     _top.update(s);
+    if (!_layers)                                    // en HYBRID SYNTH, el banco es el de la mitad en foco (theory/12 §3e)
+        _top.set_page(s.mode != Mode::Hybrid ? "PRESETS" : s.focus_b ? "PRESETS \xC2\xB7 CAPA B" : "PRESETS \xC2\xB7 CAPA A");
     _bottom.set_mode(s.mode == Mode::Fx, s.shift, s.mode == Mode::Hybrid);
     _bottom.set_filter_encs(s.cutoff_hz, s.resonance);
     const int n = count(s), ld = loaded(s);

@@ -21,7 +21,7 @@ public:
     int cursor() const { return _cursor; }
 
 private:
-    struct Tile { lv_obj_t *box, *art, *name, *active, *tag; };
+    struct Tile { lv_obj_t *box, *art, *name, *active, *tag, *used; };
 
     lv_obj_t* _scr = nullptr;
     TopBar _top;
@@ -30,5 +30,5 @@ private:
     Tile _tiles[ENGINE_COUNT] = {};
 
     int _cursor = 0;
-    int _last_cursor = -1, _last_active = -1;
+    int _last_cursor = -1, _last_active = -1, _last_blocked = -2;
 };

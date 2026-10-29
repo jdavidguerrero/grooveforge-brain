@@ -213,7 +213,7 @@ void Overlays::paint_banner(Mode m) {
     set_text_color(_banner_hint, hyb ? BG : WHITE);
     lv_label_set_text(_banner_big, fx ? "FX" : hyb ? "HYBRID SYNTH" : "SYNTH");
     lv_label_set_text(_banner_hint, fx    ? "ENC L DRY/WET · ENC R · P1 · P2 FX PARAMS · B6 HOLD · MODE: HYBRID SYNTH"
-                                    : hyb ? "NAV CAPAS · B1 EDIT A · B2 EDIT B · B3 GROOVE / FX · B4 PRESETS · MODE: SYNTH"
+                                    : hyb ? "NAV CAPAS · B1-B3 EDITAR (OTRA VEZ: A / B) · SHIFT+B4 PRESETS DE LA MITAD · MODE: SYNTH"
                                           : "ENC L CUTOFF · ENC R RES · B6 SHIFT · MODE: FX");
 }
 
