@@ -84,3 +84,24 @@ def test_cc_de_capa_ida_y_vuelta():
         for slot in range(1, count + 1):
             v = mau.cc_for_layer(slot, count)
             assert min(count, 1 + (v - 1) * count // 127) == slot
+
+
+def test_bajo_del_estudio_en_la_dorica_y_fuera_de_choque():
+    import make_estudio_clips as mec
+    dorian = {0, 2, 3, 5, 7, 9, 10}                                # La dórica (kumoi: Am – D)
+    notes = mec.clips()["bass_octavas_kumoi"]
+    assert notes and all((n - 33) % 12 in dorian for _, _, n, _ in notes)
+    assert {(n - 33) % 12 for t, _, n, _ in notes if t // (4 * 480) in (1, 3)} <= {5, 0, 10}   # Re y su 5.ª / 8.ª
+
+
+def test_audicion_solo_midi(ds, tmp_path):
+    (ds / "midi").mkdir()
+    import make_test_clips as mtc
+    mtc.write_mid(ds / "midi" / "x.mid", [(0, 480, 45, 90)], 124, "x")
+    layers = [("UNO", b"\x01"), ("DOS", b"\x02"), ("TRES", b"\x03")]
+    prep = mau.prepare(tmp_path / "aud", "x.mid", ["UNO", "TRES"], "UNO", layers, "p1", {"als": "set.als"}, seed=1)
+    assert sorted(p.name for p in (tmp_path / "aud").iterdir()) == ["A.mid", "B.mid"]
+    assert {o["patch"]["name"] for o in prep["options"]} == {"UNO", "TRES"}
+    assert [o["kind"] for o in prep["options"] if o["patch"]["name"] == "UNO"] == ["keep_current"]
+    with pytest.raises(SystemExit):
+        mau.prepare(tmp_path / "aud", "x.mid", ["UNO"], "UNO", layers, "p1", {}, seed=1)
