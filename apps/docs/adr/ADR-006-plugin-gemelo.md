@@ -1,6 +1,6 @@
 # ADR-006: Gemelo en software del Brain (núcleo DSP compartido, renderizador y plugin AU/VST3)
 
-**Status:** Accepted para las fases 1–2 en una **rama dedicada** (Juan, 2026-10-29); la decisión de producto (contradicciones 1–2) sigue abierta
+**Status:** Accepted para las fases 1–2 en una **rama dedicada** (Juan, 2026-10-29); **revisado el mismo día**: fase 1 con shim nativo, plugin en pausa, se agrega la grabadora automática (ver §Revisión). La decisión de producto (contradicciones 1–2) sigue abierta
 **Date:** 2026-10-29
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-003 (el Brain v1 usa el filtro digital `MoogLadder4P`), ADR-005 (DX7 de 4 operadores con objeto
@@ -152,16 +152,60 @@ dataset depende de sesiones de grabación.
 - **Producto (contradicciones 1–2): sin decidir.** Mientras tanto el gemelo es herramienta interna. `00` no se toca.
 - Juan cree que hay mucho reutilizable (núcleos nativos, tests, bibliotecario): la fase 1 empieza por inventariarlo.
 
+## Revisión de Juan (2026-10-29, tarde): shim, sin plugin por ahora, y grabadora automática
+
+**Qué cambió y por qué.**
+
+- **Fase 1 con un *shim* nativo de la Teensy Audio Library, no con el refactor.** El shim es una Audio Library mínima
+  para el Mac (`AudioStream`, `AudioConnection`, `AudioMixer4` con la aritmética de PJRC y un `millis()` virtual). Con
+  él, el código del firmware compila **sin cambios**: una prueba del 2026-10-29 renderizó el Prophet-5 actual de forma
+  reproducible (mismo sha256 en dos corridas). Para renderizar los 6 engines con FX son ~20–28 h, contra ~45–65 h del
+  refactor, y **el firmware no se toca**: el sonido y el CPU del Brain no cambian.
+- **El plugin AU/VST3 (fase 3) queda en pausa.** Juan: "un plugin perdería la esencia". Tocar es del Brain; el gemelo
+  solo **imprime** (como el Freeze de Live) y renderiza por lote. El refactor a `libs/gf-dsp/` con
+  `prepare(sample_rate, max_block)` se pospone hasta que se decida si hay plugin: es lo que un plugin necesitaría
+  (frecuencia y bloque variables, varias instancias por proceso), y el shim no lo da.
+- **Se agrega la opción A automatizada: grabadora automática del hardware.** Un script carga el preset en el Brain, le
+  manda el clip MIDI con el clock y graba la salida analógica por la interfaz, sin que Juan esté. Conserva el 100 % de
+  la esencia (codec, salida analógica). Va en tiempo real, pero sin atención.
+
+**Cómo se reparten:**
+
+| Herramienta | Para qué | `source` en el dataset |
+|---|---|---|
+| `gf-render` (shim) | Componer: oír opciones de una parte contra el resto en segundos; renders por lote para el dataset | `render` |
+| Grabadora automática | Lo definitivo: las tomas finales de un track y la sesión de grabación de la paleta (`protocolo-captura.md` §3) | `hardware` |
+
+Las tomas de la grabadora son también la referencia de la fase 4 (fidelidad render ↔ hardware), así que esa
+validación sale casi gratis.
+
+**Hallazgos que corrigen este ADR (para que Juan decida si se corrige el texto de arriba):**
+
+1. El Brain corre a **44 100 Hz**, no a ≈ 44 117,6 Hz. `AUDIO_SAMPLE_RATE_EXACT` no está definido en `platformio.ini`,
+   así que vale 44100.0f, y en la Teensy 4.x el PLL4 fraccional lo sigue (`output_i2s.cpp`, `config_i2s`). Los
+   44 117,6 Hz son de la Teensy 3.x.
+2. En `engines/` solo `Prophet5Osc` y `Dx7Voice` heredan de `AudioStream`. La constante aparece en código en 13
+   archivos, no en 14.
+3. `src/dsp/` ya tiene 20 núcleos puros con la frecuencia como argumento.
+4. El sonido de un preset depende de ~600 líneas de pegamento del sketch 49 (preset → engine, macros) y de la cadena
+   SFX. `gf-render` necesita extraerlas.
+
+**Contradicción 3 (`01`, estructura del código):** sigue vigente, pero en otra forma. Ya no es `libs/gf-dsp/`: es el shim
+(`libs/teensy-audio-shim/`) y un env nativo `render`. Se actualiza `01` cuando `gf-render` pase su puerta.
+
+Detalle técnico: `theory/gemelo-fase1-nucleo-dsp.md` y `produccion/grabadora-automatica.md`.
+
 ## Action Items
 
 1. [ ] Decidir las contradicciones 1–4 (Juan).
-2. [ ] Theory doc de la fase 1: inventario de engines y etapas, dependencias de la frecuencia de muestreo y de objetos
+2. [x] Theory doc de la fase 1 (`theory/gemelo-fase1-nucleo-dsp.md`): inventario de engines y etapas, dependencias de la frecuencia de muestreo y de objetos
        oficiales, plan de pruebas golden.
-3. [ ] Fase 1 con **un solo engine piloto** (el Prophet-5, que ya tiene núcleo nativo) de punta a punta: núcleo
-       compartido + adaptador en firmware + test golden + CPU on-device. **Puerta:** suena igual en el Brain y el
-       render nativo pasa la tolerancia.
-4. [ ] Fase 2: `gf-render` con el engine piloto; renders a 48 kHz en `renders/` con ficha y hash.
-5. [ ] Recién entonces: resto de engines, plugin (fase 3) y validación (fase 4).
+3. [x] ~~Fase 1 con un engine piloto refactorizado a núcleo compartido~~ → reemplazado por el shim (§Revisión).
+4. [ ] Shim en el repo + tests + `gf-render` con el Prophet-5. Puerta: render reproducible, afinación y tiempos
+       correctos a 48 kHz, y Juan lo oye igual que el Brain.
+5. [ ] Grabadora automática (`produccion/grabadora-automatica.md`).
+6. [ ] `gf-render` con los 6 engines y la cadena SFX.
+7. [ ] Fase 4 (fidelidad) con las tomas de la grabadora. Plugin y refactor a `libs/gf-dsp/`: en pausa.
 
 ## Referencias
 

@@ -1,6 +1,8 @@
 # Gemelo · Fase 1: núcleo DSP compartido y shim nativo de la Audio Library
 
 > **Fecha:** 2026-10-29 · **Estado:** BORRADOR para revisión de Juan · **Rama:** `feat/gemelo-dsp`
+> **Rev. 2026-10-29 (tarde, Juan):** el camino es el **shim**; el plugin y el refactor a `libs/gf-dsp/` quedan en
+> pausa (ADR-006 §Revisión). §3 queda como diseño de referencia para cuando se decida el plugin; §5.2 y §6 cambian.
 > **Depende de:** ADR-006 (gemelo en software, fases 1–2 aceptadas), ADR-003 (filtro digital `MoogLadder4P`),
 > theory/prophet-5-completo.md, theory/fidelidad-engines.md.
 > **Decisión de Juan (2026-10-29):** usar un *shim* nativo de la Teensy Audio Library "si es posible". La prueba de
@@ -16,8 +18,8 @@ documento usa los dos, cada uno para lo suyo:
 | **Shim** (§2) | Una Audio Library mínima de mentira para el Mac: el código del firmware compila **sin cambios** | Referencia golden "antes" del refactor; `gf-render` temprano | Plugin: la frecuencia queda fija al compilar y el bloque es de 128 muestras |
 | **Núcleo** `libs/gf-dsp/` (§3) | El refactor del ADR-006: cada engine con `prepare(sample_rate, max_block)` / `process` | Plugin AU/VST3 (fase 3), frecuencia y bloque variables | — (es el destino) |
 
-El shim **no reemplaza** el refactor del ADR. Lo vuelve más seguro, porque da la referencia contra la que se prueba, y
-adelanta los renders mientras el refactor avanza engine por engine.
+Tras la revisión de Juan, **el shim es el camino de las fases 1–2** y el firmware no se toca. El núcleo (§3) es lo que
+un plugin necesitaría; queda documentado y en pausa.
 
 ## 1. Inventario (2026-10-29, rama `feat/studio-engines-10x`)
 
@@ -103,7 +105,9 @@ Con el shim, `AUDIO_SAMPLE_RATE_EXACT` es un macro, así que la frecuencia de mu
   derivado en muestras fijas que no pase por el macro, por ejemplo el `_fs = 44100.0f` inicial de
   `pingpong_delay_core.h:85`, que `init()` sobrescribe. Se cubre con las pruebas de §5.3.
 
-## 3. El núcleo `libs/gf-dsp/` (refactor del ADR-006)
+## 3. El núcleo `libs/gf-dsp/` (refactor del ADR-006) — EN PAUSA
+
+> Solo se retoma si se decide hacer el plugin. Se conserva el diseño para no rehacer el análisis.
 
 ### 3.1 Forma de cada engine
 
@@ -164,7 +168,12 @@ hardware (ADR-006, fidelidad percibida).
    `receiveWritable`.
 3. Determinismo: dos renders del mismo caso dan el mismo sha256.
 
-### 5.2 Golden del Prophet-5 (antes / después del refactor)
+### 5.2 Golden del Prophet-5 (regresión de sonido; y antes / después si algún día hay refactor)
+
+Sin refactor, el golden sigue sirviendo: detecta cuándo un cambio del firmware **cambia el sonido** de un engine. Ese
+cambio puede ser buscado (fidelidad) o accidental. En los dos casos los renders viejos del dataset dejan de
+representar al Brain, y la ficha lo tiene que saber. Si el golden cambia a propósito, se regenera en el mismo commit
+y se anota por qué.
 
 **Referencia "antes":** el código actual de la rama, sin modificar, renderizado con el shim a 44 100 Hz. Se guarda
 como `.raw` int16 mono, 1,5 s por caso (~130 KB), en `apps/firmware-teensy/test/golden/prophet5/`, con un sha256 del
@@ -193,7 +202,7 @@ Si un caso no pasa, el refactor cambió el sonido. Se corrige el núcleo; la tol
 - El cutoff del ladder en 1 kHz (resonancia 0): −3 dB a la misma frecuencia en Hz en las dos frecuencias de muestreo
   (±2 %).
 
-### 5.4 Firmware (puerta del piloto)
+### 5.4 Firmware (solo si hay refactor; hoy no aplica)
 
 - Los 154 tests nativos + los nuevos pasan.
 - `pio run -e sketch` compila.
@@ -204,20 +213,19 @@ Si un caso no pasa, el refactor cambió el sonido. Se corrige el núcleo; la tol
 - **Juan escucha** el Brain con los presets de fábrica del Prophet antes y después (A/B a ciegas si se puede) y no
   distingue un cambio.
 
-## 6. Orden propuesto (una cosa a la vez, cada paso con su puerta)
+## 6. Orden (rev. 2026-10-29, tarde)
 
-1. **Shim en el repo** (`libs/teensy-audio-shim/`) + tests de §5.1 + golden "antes" del Prophet (§5.2).
-   *Puerta:* tests verdes y golden reproducible.
-2. **Piloto Prophet-5 en `libs/gf-dsp/`** + adaptador en el firmware. *Puerta:* §5.2, §5.3 y §5.4.
-3. **`gf-render` v0** (`[env:render]` de PlatformIO, programa nativo): GFP + MIDI → WAV 48 kHz / 24 bit + ficha.
-   Requiere extraer el pegamento del sketch 49 para el Prophet. Sin cadena SFX, y la ficha lo dice
-   (`fx: none`).
-4. Resto de engines; cadena SFX (chorus, modal y plate, primero portados al shim y después como núcleos); plugin.
-
-**Alternativa que adelanta audio:** con el shim, `gf-render` v0 puede ir **antes** del paso 2, renderizando el código
-actual compilado a 48 kHz. Da audio para el dataset días antes. Costo: cuando el piloto pase, `gf-render` cambia de
-camino (shim → núcleo), y los renders hechos antes se marcan en la ficha con `dsp: shim@<commit>`. El plan del ADR pone
-la fase 2 después de la 1; **elegir el orden es decisión de Juan**.
+1. **Shim en el repo** (`libs/teensy-audio-shim/`) + tests de §5.1 + golden del Prophet (§5.2).
+   *Puerta:* tests verdes, golden reproducible, y los 154 tests nativos siguen pasando.
+2. **`gf-render` v0** (`[env:render]` de PlatformIO, programa nativo compilado a 48 kHz): engine + preset GFP + MIDI →
+   WAV 48 kHz / 24 bit + ficha. Requiere extraer del sketch 49 el pegamento del Prophet (`engine_patch`,
+   `engine_osc`, `engine_filter`, `engine_lfo`, macros). Sin cadena SFX, y la ficha lo dice (`fx: none`).
+   *Puerta:* §5.3 y Juan compara el render con el Brain tocando el mismo preset y el mismo clip.
+3. **Grabadora automática** (`produccion/grabadora-automatica.md`), en paralelo lógico pero después en el tiempo: una
+   cosa a la vez.
+4. Resto de engines y cadena SFX en el shim: portar `AudioSynthNoiseWhite`, `AudioEffectMultiply`,
+   `AudioEffectChorus`, `AudioEffectWaveshaper`, `AudioFilterBiquad` y `AudioEffectFreeverbStereo` con la aritmética
+   de PJRC.
 
 ## 7. Qué no cubre esta fase
 
