@@ -101,7 +101,7 @@ def test_audicion_solo_midi(ds, tmp_path):
     mtc.write_mid(ds / "midi" / "x.mid", [(0, 480, 45, 90)], 124, "x")
     layers = [("UNO", b"\x01"), ("DOS", b"\x02"), ("TRES", b"\x03")]
     prep = mau.prepare(tmp_path / "aud", "x.mid", ["UNO", "TRES"], "UNO", layers, "p1", {"als": "set.als"}, seed=1)
-    assert sorted(p.name for p in (tmp_path / "aud").iterdir()) == ["A.mid", "B.mid"]
+    assert sorted(p.name for p in (tmp_path / "aud").iterdir()) == ["A.mid", "B.mid"]   # sin "(sin)": las dos son capas
     assert {o["patch"]["name"] for o in prep["options"]} == {"UNO", "TRES"}
     assert [o["kind"] for o in prep["options"] if o["patch"]["name"] == "UNO"] == ["keep_current"]
     with pytest.raises(SystemExit):

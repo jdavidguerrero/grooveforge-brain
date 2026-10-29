@@ -60,8 +60,7 @@ def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str, layers:
     for k, name in enumerate(order):
         label = LETTERS[k]
         kind = "keep_current" if name == keep else "option"
-        if name == NONE:                     # "sin esto": un clip vacío, la escena suena sin el Brain
-            mtc.write_mid(out_dir / f"{label}.mid", [], bpm, label)
+        if name == NONE:                     # "sin esto": slot vacío (Live no importa un .mid sin notas), no es ciego
             opts.append({"id": f"opt{k + 1}", "letter": label, "kind": kind, "patch": None, "midi": None,
                          "origin": "keep_current", "exploration": False})
             continue
@@ -77,7 +76,8 @@ def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str, layers:
     prep = {"audicion_id": aid, "pendiente_id": pending, "pieza": None,
             "context": {**context, "midi_dir": str(out_dir), "bpm": bpm, "declared_by": "asistente, según lo que se le pidió a Juan"},
             "options": opts,
-            "presentation": {"order": [o["letter"] for o in opts], "blind": True, "seed": seed,
+            "presentation": {"order": [o["letter"] for o in opts], "blind": "partial" if NONE in options else True,
+                             "seed": seed,
                              "level_matched": "unknown", "exploration_policy": "none (cerrar decisión)"},
             "firmware_loaded": "unknown", "snapshot": snapshot.name if snapshot else None}
     gf_log.auditions_dir().mkdir(parents=True, exist_ok=True)
