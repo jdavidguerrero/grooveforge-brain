@@ -30,6 +30,7 @@ import make_test_clips as mtc  # noqa: E402
 
 CC_LAYER = 18
 LETTERS = "ABC"
+NONE = "(sin)"                     # opción "dejar así" cuando todavía no hay nada en ese rol
 
 
 def cc_for_layer(slot: int, count: int) -> int:
@@ -46,7 +47,7 @@ def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str, layers:
         raise SystemExit("hasta 3 opciones, y --dejar tiene que ser una de ellas")
     names = [n for n, _ in layers]
     for o in options:
-        if o not in names:
+        if o != NONE and o not in names:
             raise SystemExit(f"{o} no está en el Brain")
     if out_dir.exists() and any(out_dir.iterdir()):
         raise SystemExit(f"{out_dir} ya tiene archivos: cada audición va en una carpeta nueva")
@@ -57,10 +58,17 @@ def prepare(out_dir: Path, clip_rel: str, options: list[str], keep: str, layers:
     snapshot = gf_log.latest_snapshot()
     opts = []
     for k, name in enumerate(order):
-        label, slot = LETTERS[k], names.index(name) + 1
+        label = LETTERS[k]
+        kind = "keep_current" if name == keep else "option"
+        if name == NONE:                     # "sin esto": un clip vacío, la escena suena sin el Brain
+            mtc.write_mid(out_dir / f"{label}.mid", [], bpm, label)
+            opts.append({"id": f"opt{k + 1}", "letter": label, "kind": kind, "patch": None, "midi": None,
+                         "origin": "keep_current", "exploration": False})
+            continue
+        slot = names.index(name) + 1
         mtc.write_mid(out_dir / f"{label}.mid", [(round(t * mtc.TPQ), round(d * mtc.TPQ), n, v) for t, d, n, v in notes],
                       bpm, label, ccs=[(0, CC_LAYER, cc_for_layer(slot, len(names)))])
-        opts.append({"id": f"opt{k + 1}", "letter": label, "kind": "keep_current" if name == keep else "option",
+        opts.append({"id": f"opt{k + 1}", "letter": label, "kind": kind,
                      "patch": {"name": name, "slot": slot,
                                "sha256_brain_raw": hashlib.sha256(layers[slot - 1][1]).hexdigest(), "match": "exact"},
                      "midi": gf_log.asset(f"midi/{clip_rel}", snapshot), "origin": "generator_proposal",

@@ -91,6 +91,7 @@ def test_bajo_del_estudio_en_la_dorica_y_fuera_de_choque():
     dorian = {0, 2, 3, 5, 7, 9, 10}                                # La dórica (kumoi: Am – D)
     notes = mec.clips()["bass_octavas_kumoi"]
     assert notes and all((n - 33) % 12 in dorian for _, _, n, _ in notes)
+    assert all((n - 33) % 12 in dorian for _, _, n, _ in mec.clips()["pluck_arp16_kumoi"])
     assert {(n - 33) % 12 for t, _, n, _ in notes if t // (4 * 480) in (1, 3)} <= {5, 0, 10}   # Re y su 5.ª / 8.ª
 
 
@@ -105,3 +106,21 @@ def test_audicion_solo_midi(ds, tmp_path):
     assert [o["kind"] for o in prep["options"] if o["patch"]["name"] == "UNO"] == ["keep_current"]
     with pytest.raises(SystemExit):
         mau.prepare(tmp_path / "aud", "x.mid", ["UNO"], "UNO", layers, "p1", {}, seed=1)
+
+
+def test_capa_solo_suena_solo_a():
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "preset-librarian"))
+    import gf_presets as gp
+    import make_solo_layers as msl
+    lib = Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1" / "patches" / "brain" / "prophet_5"
+    files = sorted(lib.glob("*.json")) if lib.is_dir() else []
+    if not files:
+        pytest.skip("sin librería local")
+    pre = bytes.fromhex(json.loads(files[0].read_text())["raw"])
+    fill = bytes.fromhex(json.loads(sorted((lib.parent / "juno_106").glob("*.json"))[0].read_text())["raw"])
+    lay = gp.decode_layer(msl.solo_layer(pre, fill, "S PRUEBA"))
+    assert lay["morph"] == 0 and lay["gain_b_db"] == -60
+    assert (lay["engine_a"], lay["engine_b"]) == ("prophet_5", "juno_106")   # el firmware exige engines distintos
+    with pytest.raises(ValueError):
+        msl.solo_layer(pre, pre, "S MAL")
+    assert lay["a"]["patch"] == gp.decode(pre)["patch"]

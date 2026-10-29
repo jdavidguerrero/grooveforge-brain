@@ -17,11 +17,20 @@ import make_adn_clips as ma
 from make_test_clips import BAR, S16, write_mid
 
 ROOTS = (0, 5, 0, 5)                       # La, Re, La, Re (kumoi: Am – D)
+CHORDS = ((0, 3, 7, 10), (0, 4, 7, 10), (0, 3, 7, 10), (0, 4, 7, 10))   # Am7 · D7 (el IV dórico, con Fa#)
 
 
 def clips() -> dict[str, list]:
-    return {"bass_octavas_kumoi": [(b * BAR + s * S16, d * S16 - 10, ma.A1 + ROOTS[b] + iv, v)
-                                   for b in range(4) for s, d, iv, v in ma.BASS["bass_adn_octavas"]]}
+    out = {"bass_octavas_kumoi": [(b * BAR + s * S16, d * S16 - 10, ma.A1 + ROOTS[b] + iv, v)
+                                  for b in range(4) for s, d, iv, v in ma.BASS["bass_adn_octavas"]]}
+    arp = []                                 # pluck_adn_arp16 (sube y baja por el acorde, acentos 3-3-2) sobre Am7 – D7
+    for b in range(4):
+        tones = [ma.A1 + 36 + ROOTS[b] + iv for iv in CHORDS[b]]
+        seq = tones + [tones[0] + 12] + tones[::-1][:3]
+        for s in range(16):
+            arp.append((b * BAR + s * S16, S16 - 10, seq[s % 8], 100 if s in (0, 3, 6, 8, 11, 14) else 66))
+    out["pluck_arp16_kumoi"] = arp
+    return out
 
 
 def main(argv=None):
