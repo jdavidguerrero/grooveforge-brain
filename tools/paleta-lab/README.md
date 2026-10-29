@@ -149,3 +149,10 @@ exporta además los presets **del Brain** y anota qué difiere de la librería. 
 `apps/docs/produccion/protocolo-captura.md` §6.
 
     python3 tools/paleta-lab/gf_snapshot.py --brain --firmware "<lo que se sabe>"
+
+## Registro v2 y audición a ciegas (`gf_log.py`, `make_audicion.py`)
+
+`gf_log.py` agrega eventos (pendientes, audiciones) a `metadata/eventos/<fecha>.jsonl`, solo agregando; `show` lista
+los pendientes abiertos. `make_audicion.py` arma una copia de un set con escenas **A / B / C** que eligen la capa del
+Brain por CC 18 (envolvente de clip), barajadas; la correspondencia queda en `metadata/audiciones/<id>.json` con el
+hash del raw de cada slot. Ver `apps/docs/produccion/motor-asistencia.md` §5 y §10.
