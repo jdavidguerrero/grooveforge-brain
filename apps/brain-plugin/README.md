@@ -9,8 +9,7 @@ efectivos; con LFO SYNC activo no se exporta porque el formato GFP no almacena e
 DX7 también acepta CC 14 (DRIFT), 15 (GRIT), 16 (POCKET) y 19 (MOVE); los cambios se aplican en el offset MIDI y
 se reflejan en los parámetros del DAW desde el hilo de mensajes.
 Un piloto inicial de Juno ofrece seis voces, DCO, sub, filtro y chorus estéreo, con MIDI sustain y pitch bend.
-Carga GFP Juno y aplica OSC, ruido aproximado, envelopes, filtro y chorus. Aplica glide, UNISON y DRIFT del preset. Incluye LFO/PWM sincronizable, GROOVE y SYNTH FX del GFP, además de exportación GFP con LFO Sync apagado; el chorus queda apagado
-por encima de 95 kHz mientras se adapta su memoria. HYBRID y los otros engines siguen pendientes.
+Carga GFP Juno y aplica OSC, ruido aproximado, envelopes, filtro y chorus. Aplica glide, UNISON y DRIFT del preset. Incluye LFO/PWM sincronizable, GROOVE y SYNTH FX del GFP, además de exportación GFP con LFO Sync apagado; el chorus admite frecuencias del DAW hasta 384 kHz en las pruebas nativas. HYBRID y los otros engines siguen pendientes.
 Su sonido no está validado contra hardware. Ver
 `apps/docs/sprints/gemelo-vst-prototipo-prophet.md`.
 

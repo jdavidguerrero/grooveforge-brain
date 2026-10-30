@@ -14,7 +14,7 @@ Referencias: ADR-006; `engines/juno_106.cpp`, `audio/juno_chorus.h`, `dsp/juno_c
 
 ## Piloto inicial en el VST
 
-El primer incremento conecta un patch fijo de seis voces al host: DCO saw+pulse, sub, filtro IR3109, envolventes y chorus estéreo del núcleo compartido. Se admiten notas, sustain y pitch bend. La mezcla y el ritmo de llamadas al oscilador son aproximaciones flotantes; no sustituyen la comparación PCM con el grafo de referencia. El piloto aún no importa GFP Juno, no implementa ruido, LFO/PWM, glide, GROOVE ni SYNTH FX y no demuestra fidelidad A/B. El chorus conserva el búfer fijo del firmware: por encima de 95 kHz se desactiva para evitar un retardo recortado; HPF y chorus a tasas altas siguen pendientes de adaptación.
+El primer incremento conecta un patch fijo de seis voces al host: DCO saw+pulse, sub, filtro IR3109, envolventes y chorus estéreo del núcleo compartido. Se admiten notas, sustain y pitch bend. La mezcla y el ritmo de llamadas al oscilador son aproximaciones flotantes; no sustituyen la comparación PCM con el grafo de referencia. El piloto aún no importa GFP Juno, no implementa ruido, LFO/PWM, glide, GROOVE ni SYNTH FX y no demuestra fidelidad A/B. El chorus inicialmente conservaba el búfer fijo del firmware: originalmente se desactivaba por encima de 95 kHz; el incremento posterior amplía el búfer para frecuencias altas.
 
 ## Incremento GFP y patch de Juno
 
@@ -39,3 +39,7 @@ Juno entrega dos canales tras su chorus. El bus portátil debe procesarlos con e
 ## Incremento exportación GFP
 
 La exportación Juno parte del GFP importado o un patch INIT, actualiza los cuatro controles generales y conserva los campos que todavía no tienen editor. GRIT, POCKET y MOVE se incorporan a los valores efectivos y se ponen a cero para evitar aplicarlos dos veces al recargar; DRIFT permanece como macro. El GFP no registra LFO SYNC, por lo que la exportación se rechaza mientras está activado. Se verifican el formato, la conservación de parámetros y la recarga audible. La GUI completa de todos los parámetros permanece pendiente.
+
+## Chorus a frecuencias altas del host
+
+El búfer circular del firmware tiene 512 muestras: no alcanza para el retardo máximo del modo II a 96 kHz. El núcleo compartido pasa a aceptar un tamaño como parámetro de compilación; el alias del firmware mantiene 512 muestras. En el plugin se conserva ese mismo núcleo y tamaño hasta 95 kHz, y se usa una instancia de 4096 muestras por encima. Así se preserva la aritmética anterior a 44,1 kHz y se habilitan los mismos retardos temporales hasta 384 kHz sin asignación en el hilo de audio. La prueba comprueba salida estéreo, niveles finitos y reproducibilidad a 44,1/48/96/192/384 kHz; no sustituye la comparación de frecuencia y sonido frente al hardware.

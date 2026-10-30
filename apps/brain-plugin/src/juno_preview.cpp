@@ -16,7 +16,9 @@ void JunoPreview::reset() {
     lfo_.set_sync(lfo_sync_, bpm_, lfo_beats_);
     held_ = 0; lfo_elapsed_ms_ = 0; lfo_pitch_ratio_ = lfo_cutoff_ratio_ = 1; pwm_mod_ = 0;
     chorus_ = dsp::JunoChorusCore{};
-    chorus_.setMode(fs_ <= 95000 ? chorus_mode_ : 0); chorus_.setHpf(hpf_); chorus_.setHiss(hiss_);
+    chorus_high_rate_ = dsp::JunoChorusCoreT<4096>{};
+    chorus_.setMode(chorus_mode_); chorus_.setHpf(hpf_); chorus_.setHiss(hiss_);
+    chorus_high_rate_.setMode(chorus_mode_); chorus_high_rate_.setHpf(hpf_); chorus_high_rate_.setHiss(hiss_);
     for (size_t i = 0; i < voices_.size(); ++i) {
         if (!voices_[i]) continue;
         auto& v = *voices_[i];
@@ -96,7 +98,8 @@ void JunoPreview::set_oscillator(uint16_t wave, float sub, float noise, float pu
     pulse_width_ = std::clamp(pulse_width, 0.05f, 0.95f); chorus_mode_ = std::min<uint8_t>(chorus, 3);
     hpf_ = std::min<uint8_t>(hpf, 3); range_ = std::min<uint8_t>(range, 2); gate_ = gate;
     hiss_ = std::clamp(hiss, 0.0f, 1.0f);
-    chorus_.setMode(fs_ <= 95000 ? chorus_mode_ : 0); chorus_.setHpf(hpf_); chorus_.setHiss(hiss_);
+    chorus_.setMode(chorus_mode_); chorus_.setHpf(hpf_); chorus_.setHiss(hiss_);
+    chorus_high_rate_.setMode(chorus_mode_); chorus_high_rate_.setHpf(hpf_); chorus_high_rate_.setHiss(hiss_);
     for (auto& v : voices_) if (v) {
         v->amp.setAttack(gate_ ? 1.0f : attack_); v->amp.setDecay(gate_ ? 1.0f : decay_);
         v->amp.setSustain(gate_ ? 1.0f : sustain_level_); v->amp.setRelease(gate_ ? 8.0f : release_);
@@ -167,7 +170,8 @@ void JunoPreview::process_frame(float& left, float& right) {
         mix += v.filter.process_sample((0.6f * dco + sub_level_ * sub + 0.5f * noise_level_ * noise) * gain) * v.amp.step() * 0.25f;
     }
     mix = std::clamp(mix, -1.0f, 1.0f);
-    chorus_.render_stereo(&mix, &left, &right, 1, fs_);
+    if (fs_ <= 95000) chorus_.render_stereo(&mix, &left, &right, 1, fs_);
+    else chorus_high_rate_.render_stereo(&mix, &left, &right, 1, fs_);
     left = std::clamp(left * unison_gain_, -1.0f, 1.0f); right = std::clamp(right * unison_gain_, -1.0f, 1.0f);
 }
 }

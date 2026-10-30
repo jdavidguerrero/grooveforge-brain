@@ -23,9 +23,11 @@
 
 namespace dsp {
 
-class JunoChorusCore {
+template <int BufferLength>
+class JunoChorusCoreT {
 public:
-    static constexpr int BUF_LEN = 512;  // ~11.6 ms @ 44.1 kHz (potencia de 2 para máscara rápida)
+    static_assert(BufferLength >= 4 && (BufferLength & (BufferLength - 1)) == 0, "chorus buffer must be a power of two");
+    static constexpr int BUF_LEN = BufferLength;
     static constexpr int BUF_MASK = BUF_LEN - 1;
 
     void reset() {
@@ -197,5 +199,7 @@ private:
     float _hiss = 0.0f;
     uint32_t _rng = 0xB8DD1A55u;
 };
+
+using JunoChorusCore = JunoChorusCoreT<512>;
 
 }  // namespace dsp

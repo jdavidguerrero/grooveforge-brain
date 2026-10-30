@@ -16,7 +16,7 @@ static bool run(double rate) {
         energy += l * l + r * r;
         difference += std::abs(l - r);
     }
-    if (energy < 0.01f || (rate <= 95000 && difference < 0.01f)) return false;
+    if (energy < 0.01f || difference < 0.01f) return false;
     a.note_off(60);
     for (int i = 0; i < int(rate * 4); ++i) { float l, r; a.process_frame(l, r); if (!std::isfinite(l + r)) return false; }
     float l, r; a.process_frame(l, r);
@@ -99,7 +99,7 @@ static bool lfo_modulation() {
     return difference > 0.01f;
 }
 int main() {
-    for (double rate : {44100.0, 48000.0, 96000.0, 192000.0})
+    for (double rate : {44100.0, 48000.0, 96000.0, 192000.0, 384000.0})
         if (!run(rate)) { std::fprintf(stderr, "Juno preview failed at %.0f Hz\n", rate); return 1; }
     if (!lfo_modulation()) { std::fprintf(stderr, "Juno LFO mapping failed\n"); return 1; }
     if (!preset_unison()) { std::fprintf(stderr, "Juno preset unison mapping failed\n"); return 1; }
