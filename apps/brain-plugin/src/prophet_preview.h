@@ -111,13 +111,15 @@ public:
     void process_frame(float& left, float& right);
     /** @brief Procesa una fuente mono externa por el bus SYNTH FX. */
     void process_external_frame(float input, float& left, float& right);
+    /** @brief Procesa una fuente estéreo externa conservando ambos canales. */
+    void process_external_stereo(float input_left, float input_right, float& left, float& right);
     /** @brief Razón de pitch de wow/flutter calculada por el bus de efectos. */
     float tape_pitch_ratio() const { return tape_pitch_; }
     /** @brief Dirige eventos GROOVE a otro motor sin tomar propiedad del contexto. */
     void set_voice_sink(void* context, void (*on)(void*, uint8_t, float), void (*off)(void*, uint8_t));
 
 private:
-    void process_frame_impl(float& left, float& right, bool external, float input);
+    void process_frame_impl(float& left, float& right, bool external, float input, bool stereo = false, float input_right = 0);
     void voice_note_on(uint8_t note, float velocity);
     void voice_note_off(uint8_t note);
     static void arp_note_on(uint8_t note, uint8_t velocity, void* context);
@@ -175,11 +177,14 @@ private:
     float lfo_bpm_ = 120.0f, lfo_beats_ = 0.5f;
     bool lfo_sync_ = false;
     dsp::OutputStageCore output_stage_;
+    dsp::OutputStageCore output_stage_right_;
     dsp::DriveCore synth_drive_;
+    dsp::DriveCore synth_drive_right_;
     bool synth_drive_enabled_ = false;
     uint8_t synth_drive_type_ = 0;
     float synth_drive_amount_ = 0.35f, synth_drive_tone_ = 0.6f, synth_drive_mix_ = 0.5f;
     dsp::TapeCore synth_tape_;
+    dsp::TapeCore synth_tape_right_;
     dsp::TapeModulation tape_modulation_;
     bool synth_tape_enabled_ = false;
     float synth_tape_drive_ = 2.0f, synth_tape_mix_ = 0.6f;

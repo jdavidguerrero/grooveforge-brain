@@ -7,6 +7,8 @@
 #include "prophet_preset.h"
 #include "preset_import.h"
 #include "dx7_preview.h"
+#include "juno_preview.h"
+#include "juno_preset.h"
 #include "dx7_preset.h"
 #include "ui/groove_macros.h"
 
@@ -94,6 +96,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout make_layout() {
     for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i)
         parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{DX_MACRO_IDS[i], 1},
             "DX7 " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
+    parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"juno_preview", 1}, "Juno Preview", false));
     return {parameters.begin(), parameters.end()};
 }
 
@@ -107,6 +110,7 @@ public:
         release_ = state_.getRawParameterValue("release");
         lfo_sync_ = state_.getRawParameterValue("lfo_sync");
         dx7_enabled_ = state_.getRawParameterValue("dx7_preview");
+        juno_enabled_ = state_.getRawParameterValue("juno_preview");
         dx_algorithm_ = state_.getRawParameterValue("dx7.algorithm");
         dx_feedback_ = state_.getRawParameterValue("dx7.feedback");
         dx_kbd_level_ = state_.getRawParameterValue("dx7.kbd_level");
@@ -152,15 +156,24 @@ public:
         delay_right_.assign(delay_length, 0);
         dx_delay_left_.assign(delay_length, 0);
         dx_delay_right_.assign(delay_length, 0);
+        juno_delay_left_.assign(delay_length, 0);
+        juno_delay_right_.assign(delay_length, 0);
         plate_memory_.assign(gf::PlateReverbPreview::required_samples(float(sample_rate > 0.0 ? sample_rate : 44100.0)), 0);
         dx_plate_memory_.assign(plate_memory_.size(), 0);
+        juno_plate_memory_.assign(plate_memory_.size(), 0);
         engine_.prepare(sample_rate);
         dx_bus_.prepare(sample_rate);
+        juno_bus_.prepare(sample_rate);
         dx7_.prepare(sample_rate);
+        juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        juno_.prepare(sample_rate);
         dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_bus_.set_voice_sink(&juno_,
+            [](void* context, uint8_t note, float velocity) { static_cast<gf::JunoPreview*>(context)->note_on(note, velocity); },
+            [](void* context, uint8_t note) { static_cast<gf::JunoPreview*>(context)->note_off(note); });
         dx_bus_.set_voice_sink(&dx7_,
             [](void* context, uint8_t note, float velocity) { static_cast<gf::Dx7Preview*>(context)->note_on(note, velocity); },
             [](void* context, uint8_t note) { static_cast<gf::Dx7Preview*>(context)->note_off(note); });
@@ -168,16 +181,22 @@ public:
         engine_.set_plate_memory(plate_memory_.data(), plate_memory_.size());
         dx_bus_.set_delay_memory(dx_delay_left_.data(), dx_delay_right_.data(), uint32_t(delay_length));
         dx_bus_.set_plate_memory(dx_plate_memory_.data(), dx_plate_memory_.size());
+        juno_bus_.set_delay_memory(juno_delay_left_.data(), juno_delay_right_.data(), uint32_t(delay_length));
+        juno_bus_.set_plate_memory(juno_plate_memory_.data(), juno_plate_memory_.size());
         applied_sequence_ = 0;
+        last_juno_mode_ = false; last_dx7_mode_ = false;
     }
-    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); }
+    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         buffer.clear();
+        const bool juno_mode = juno_enabled_->load() >= 0.5f;
+        const bool dx7_mode = !juno_mode && dx7_enabled_->load() >= 0.5f;
+        if (juno_mode) juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; }
         apply_pending_preset();
-        const bool dx7_mode = dx7_enabled_->load() >= 0.5f;
-        if (dx7_mode != last_dx7_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); last_dx7_mode_ = dx7_mode; }
+        if (juno_mode) juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
         engine_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
         if (dx7_mode) {
             load_dx_macros();
@@ -201,14 +220,17 @@ public:
         }
         engine_.set_transport(bpm, has_position, position_beats, running);
         dx_bus_.set_transport(bpm, has_position, position_beats, running);
+        juno_bus_.set_transport(bpm, has_position, position_beats, running);
         engine_.set_lfo_sync(lfo_sync_->load() >= 0.5f, bpm);
         dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f);
+        juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         int position = 0;
         auto render_until = [&](int end) {
             end = juce::jlimit(position, buffer.getNumSamples(), end);
             while (position < end) {
                 float left, right;
-                if (dx7_mode) {
+                if (juno_mode) { float in_l, in_r; juno_.process_frame(in_l, in_r); juno_bus_.process_external_stereo(in_l, in_r, left, right); }
+                else if (dx7_mode) {
                     dx7_.set_tape_pitch(dx_bus_.tape_pitch_ratio());
                     dx_bus_.process_external_frame(dx7_.process_sample(), left, right);
                 }
@@ -223,21 +245,26 @@ public:
             if (metadata.numBytes > 3) continue;
             const auto message = metadata.getMessage();
             if (message.isNoteOn()) {
-                if (dx7_mode) dx_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                if (juno_mode) juno_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                else if (dx7_mode) dx_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else engine_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
             } else if (message.isNoteOff()) {
-                if (dx7_mode) dx_bus_.note_off(uint8_t(message.getNoteNumber()));
+                if (juno_mode) juno_bus_.note_off(uint8_t(message.getNoteNumber()));
+                else if (dx7_mode) dx_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else engine_.note_off(uint8_t(message.getNoteNumber()));
             } else if (message.isPitchWheel()) {
-                if (dx7_mode) dx7_.set_pitch_bend(message.getPitchWheelValue());
+                if (juno_mode) juno_.set_pitch_bend(message.getPitchWheelValue());
+                else if (dx7_mode) dx7_.set_pitch_bend(message.getPitchWheelValue());
                 else engine_.set_pitch_bend(message.getPitchWheelValue());
             }
             else if (message.isController() && message.getControllerNumber() == 1) {
-                if (dx7_mode) { dx7_wheel_ = message.getControllerValue() / 127.0f; dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
+                if (juno_mode) { juno_wheel_ = message.getControllerValue() / 127.0f; juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
+                else if (dx7_mode) { dx7_wheel_ = message.getControllerValue() / 127.0f; dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
                 else engine_.setWheel(message.getControllerValue() / 127.0f);
             }
             else if (message.isController() && message.getControllerNumber() == 64) {
-                if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
+                if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
+                else if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
                 else engine_.set_sustain(message.getControllerValue() >= 64);
             } else if (dx7_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
@@ -249,7 +276,7 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
         }
         render_until(buffer.getNumSamples());
     }
@@ -306,7 +333,7 @@ public:
         uint8_t engine = 0;
         if (!gf::decode_supported_preset(static_cast<const uint8_t*>(data), size, preset, engine)) return false;
         clear_cc_pending();
-        const auto patch = studio::macro_patch(preset.patch, 2);
+        const auto patch = studio::macro_patch(preset.patch, engine);
         const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
         const float cutoff = std::clamp(preset.cutoff_hz * studio::move_cutoff_mul(move), 20.0f, 8000.0f);
         const float reso = studio::move_resonance(studio::macro_resonance(preset.reso_norm, preset.patch), move);
@@ -314,7 +341,7 @@ public:
             auto* p = state_.getParameter(id);
             p->setValueNotifyingHost(p->convertTo0to1(value));
         };
-        if (engine == 2) {
+        if (engine == 2 || engine == 1) {
             set("cutoff", cutoff);
             set("resonance", std::clamp(0.1f + reso * 4.9f, 0.707f, 5.0f));
             set("attack", patch.attack_ms);
@@ -327,11 +354,38 @@ public:
             set_dx7_groove_parameters(preset);
             set_dx7_macro_parameters(preset);
         }
+        set("juno_preview", engine == 1 ? 1.0f : 0.0f);
         set("dx7_preview", engine == 4 ? 1.0f : 0.0f);
         std::lock_guard<std::mutex> guard(preset_mutex_);
         preset_raw_.replaceAll(data, size);
         preset_name_ = juce::String::fromUTF8(preset.name);
         publish_preset(preset_raw_);
+        return true;
+    }
+    bool export_juno_preset(std::vector<uint8_t>& data) override {
+        if (juno_enabled_->load() < 0.5f || lfo_sync_->load() >= 0.5f) return false;
+        studio::Preset preset;
+        {
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            if (preset_raw_.getSize()) {
+                uint8_t source = 0;
+                if (!gf::decode_supported_preset(static_cast<const uint8_t*>(preset_raw_.getData()),
+                                                 preset_raw_.getSize(), preset, source) || source != 1) return false;
+            } else { studio::patch_init(preset.patch, 1); studio::patch_vel_defaults(preset.patch, 1); }
+        }
+        float velocity_amp, velocity_filter;
+        studio::macro_vel_depths(preset.patch, &velocity_amp, &velocity_filter);
+        preset.patch = studio::macro_patch(preset.patch, 1);
+        preset.patch.vel_amp = velocity_amp * 100.0f; preset.patch.vel_cut = velocity_filter * 100.0f;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 0;
+        preset.cutoff_hz = cutoff_->load();
+        preset.reso_norm = std::clamp((resonance_->load() - 0.1f) / 4.9f, 0.0f, 1.0f);
+        preset.patch.attack_ms = attack_->load(); preset.patch.release_ms = release_->load();
+        std::vector<uint8_t> encoded(studio::PRESET_BYTES);
+        if (studio::preset_encode(preset, 1, encoded.data(), encoded.size()) != encoded.size()) return false;
+        data = std::move(encoded);
         return true;
     }
     bool export_dx7_preset(std::vector<uint8_t>& data) override {
@@ -592,7 +646,12 @@ private:
             studio::Preset preset;
             uint8_t preset_engine = 0;
             if (!gf::decode_supported_preset(bytes.data(), size, preset, preset_engine)) return;
-            if (preset_engine == 4) {
+            if (preset_engine == 1) {
+                juno_.reset(); juno_bus_.reset(); gf::apply_juno_preset_preview(juno_, preset);
+                gf::apply_synth_fx_preview(juno_bus_, preset, 1);
+                gf::apply_groove_preview(juno_bus_, preset);
+                juno_bus_.set_unison(1, 0.0f);
+            } else if (preset_engine == 4) {
                 dx7_.reset(); dx_bus_.reset(); gf::apply_dx7_preset_preview(dx7_, preset);
                 dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -607,13 +666,19 @@ private:
     }
     gf::ProphetPreview engine_;
     gf::ProphetPreview dx_bus_;
+    gf::ProphetPreview juno_bus_;
     gf::Dx7Preview dx7_;
+    gf::JunoPreview juno_;
+    float juno_wheel_ = 0.0f;
+    bool last_juno_mode_ = false;
     bool last_dx7_mode_ = false;
     float dx7_wheel_ = 0.0f;
     std::vector<int16_t> delay_left_, delay_right_;
     std::vector<int16_t> dx_delay_left_, dx_delay_right_;
+    std::vector<int16_t> juno_delay_left_, juno_delay_right_;
     std::vector<int16_t> plate_memory_;
     std::vector<int16_t> dx_plate_memory_;
+    std::vector<int16_t> juno_plate_memory_;
     juce::AudioProcessorValueTreeState state_;
     std::atomic<float>* cutoff_ = nullptr;
     std::atomic<float>* resonance_ = nullptr;
@@ -621,6 +686,7 @@ private:
     std::atomic<float>* release_ = nullptr;
     std::atomic<float>* lfo_sync_ = nullptr;
     std::atomic<float>* dx7_enabled_ = nullptr;
+    std::atomic<float>* juno_enabled_ = nullptr;
     std::atomic<float>* dx_algorithm_ = nullptr;
     std::atomic<float>* dx_feedback_ = nullptr;
     std::atomic<float>* dx_kbd_level_ = nullptr;
@@ -689,6 +755,12 @@ public:
         addAndMakeVisible(dx7_toggle_);
         dx7_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
             owner.parameters(), "dx7_preview", dx7_toggle_);
+        juno_toggle_.setButtonText("JUNO PREVIEW");
+        juno_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
+        addAndMakeVisible(juno_toggle_);
+        juno_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "juno_preview", juno_toggle_);
+        juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) dx7_toggle_.setToggleState(false, juce::sendNotification); };
+        dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) juno_toggle_.setToggleState(false, juce::sendNotification); };
         dx_page_.setButtonText("VOICE");
         dx_page_.onClick = [this] { dx_page_index_ = (dx_page_index_ + 1) % 5; update_status(); };
         addChildComponent(dx_page_);
@@ -833,10 +905,10 @@ public:
         g.drawText("GROOVEFORGE  /  BRAIN", 28, 15, 350, 24, juce::Justification::left);
         g.setColour(juce::Colour(0xfff2f2f2));
         g.setFont(juce::Font(juce::FontOptions(22.0f, juce::Font::bold)));
-        g.drawText(dx7_toggle_.getToggleState() ? "DX7  /  PREVIEW" : "PROPHET  /  PREVIEW", 28, 40, 350, 28, juce::Justification::left);
+        g.drawText(juno_toggle_.getToggleState() ? "JUNO  /  PREVIEW" : dx7_toggle_.getToggleState() ? "DX7  /  PREVIEW" : "PROPHET  /  PREVIEW", 28, 40, 350, 28, juce::Justification::left);
         g.setColour(juce::Colour(0xff9fe1cb));
         g.setFont(juce::Font(juce::FontOptions(12.0f)));
-        if (!dx7_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
+        if (!dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
     }
 
     void resized() override {
@@ -849,6 +921,7 @@ public:
         import_.setBounds(getWidth() - 145, 12, 115, 25);
         sync_.setBounds(getWidth() - 260, 12, 105, 25);
         dx7_toggle_.setBounds(getWidth() - 380, 12, 115, 25);
+        juno_toggle_.setBounds(getWidth() - 510, 12, 125, 25);
         dx_page_.setBounds(getWidth() - 155, 42, 120, 25);
         export_.setBounds(getWidth() - 285, 42, 120, 25);
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i) {
@@ -887,11 +960,12 @@ private:
     void update_status() {
         const auto name = owner_.preset_name();
         displayed_preset_ = name;
-        const bool dx7 = dx7_toggle_.getToggleState();
+        const bool juno = juno_toggle_.getToggleState();
+        const bool dx7 = !juno && dx7_toggle_.getToggleState();
         const bool dx_ops = dx7 && dx_page_index_ == 0, dx_voice = dx7 && dx_page_index_ == 1;
         const bool dx_fx = dx7 && dx_page_index_ == 2, dx_groove = dx7 && dx_page_index_ == 3, dx_macro = dx7 && dx_page_index_ == 4;
         dx_page_.setVisible(dx7);
-        export_.setVisible(dx7);
+        export_.setVisible(dx7 || juno);
         dx_page_.setButtonText(dx_ops ? "VOICE" : dx_voice ? "FX" : dx_fx ? "GROOVE" : dx_groove ? "MACROS" : "OPERATORS");
         for (auto& knob : knobs_) knob.setVisible(!dx7);
         for (auto& label : labels_) label.setVisible(!dx7);
@@ -913,16 +987,17 @@ private:
         for (auto& label : dx_macro_labels_) label.setVisible(dx_macro);
         for (auto& slider : dx_macro_sliders_) slider.setVisible(dx_macro);
         sync_.setEnabled(true);
-        status_.setText(dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
+        status_.setText(juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
             (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
-        displayed_dx7_ = dx7;
+        displayed_dx7_ = dx7_toggle_.getToggleState();
+        displayed_juno_ = juno;
         repaint();
     }
     void timerCallback() override {
-        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState()) update_status();
+        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState()) update_status();
     }
     void choose_preset() {
-        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Prophet o DX7 GFP", juce::File(), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Juno, Prophet o DX7 GFP", juce::File(), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [safe](const juce::FileChooser& chooser) {
@@ -940,11 +1015,12 @@ private:
     }
     void export_dx7() {
         std::vector<uint8_t> bytes;
-        if (!owner_.export_dx7_preset(bytes)) {
-            status_.setText("EXPORT: DESACTIVA LFO SYNC Y CARGA UN GFP DX7", juce::dontSendNotification);
+        const bool juno = juno_toggle_.getToggleState();
+        if (!(juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
+            status_.setText("EXPORT: DESACTIVA LFO SYNC Y CARGA UN GFP DEL ENGINE", juce::dontSendNotification);
             return;
         }
-        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset DX7 GFP", juce::File("DX7.gfp"), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(juno ? "Juno.gfp" : "DX7.gfp"), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles |
                               juce::FileBrowserComponent::warnAboutOverwriting,
@@ -961,6 +1037,9 @@ private:
     juce::TooltipWindow tooltip_{this, 500};
     juce::TextButton import_;
     juce::ToggleButton sync_;
+    juce::ToggleButton juno_toggle_;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> juno_attachment_;
+    bool displayed_juno_ = false;
     juce::ToggleButton dx7_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> dx7_attachment_;
     bool displayed_dx7_ = false;

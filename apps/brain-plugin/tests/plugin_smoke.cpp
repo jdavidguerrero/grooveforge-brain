@@ -43,6 +43,98 @@ int main() {
     if (!check(silent.getRMSLevel(0, 0, 128) == 0.0f, "instance isolation")) return 1;
     for (int i = 0; i < 128; ++i)
         if (!check(buffer.getSample(0, i) == buffer.getSample(1, i), "stereo output")) return 1;
+    auto juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    juno->prepareToPlay(48000.0, 128);
+    juce::RangedAudioParameter* juno_parameter = nullptr;
+    for (auto* parameter : juno->getParameters()) {
+        auto* ranged = dynamic_cast<juce::RangedAudioParameter*>(parameter);
+        if (ranged && ranged->getParameterID() == "juno_preview") juno_parameter = ranged;
+    }
+    if (!check(juno_parameter != nullptr, "Juno selector exists")) return 1;
+    juno_parameter->setValueNotifyingHost(1.0f);
+    juce::MidiBuffer juno_midi;
+    juno_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+    juno->processBlock(silent, juno_midi);
+    for (int i = 0; i < 40; ++i) if (!check(silent.getSample(0, i) == 0, "Juno MIDI offset")) return 1;
+    if (!check(silent.getRMSLevel(0, 40, 88) > 0, "Juno audible")) return 1;
+    juce::MemoryBlock juno_state;
+    juno->getStateInformation(juno_state);
+    auto restored_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    restored_juno->setStateInformation(juno_state.getData(), int(juno_state.getSize()));
+    bool restored_juno_selection = false;
+    for (auto* parameter : restored_juno->getParameters()) {
+        auto* ranged = dynamic_cast<juce::RangedAudioParameter*>(parameter);
+        if (ranged && ranged->getParameterID() == "juno_preview") restored_juno_selection = ranged->getValue() > 0.5f;
+    }
+    if (!check(restored_juno_selection, "Juno state restore")) return 1;
+    studio::Preset juno_patch;
+    if (!check(studio::factory_preset(1, 0, &juno_patch), "Juno factory preset exists")) return 1;
+    juno_patch.patch.mod[0][1] = 0;
+    std::array<uint8_t, studio::PRESET_BYTES> juno_bytes{};
+    if (!check(studio::preset_encode(juno_patch, 1, juno_bytes.data(), juno_bytes.size()) == juno_bytes.size(), "Juno encode")) return 1;
+    auto* juno_import = dynamic_cast<gf::PresetImport*>(juno.get());
+    if (!check(juno_import && juno_import->import_preset(juno_bytes.data(), juno_bytes.size()), "Juno GFP import")) return 1;
+    juce::MemoryBlock juno_saved, juno_invalid;
+    juno->getStateInformation(juno_saved);
+    if (!check(!juno_import->import_preset(juno_bytes.data(), juno_bytes.size() - 1), "Juno invalid import")) return 1;
+    juno->getStateInformation(juno_invalid);
+    if (!check(juno_saved == juno_invalid, "Juno invalid import preserves state")) return 1;
+    restored_juno->setStateInformation(juno_saved.getData(), int(juno_saved.getSize()));
+    juno->prepareToPlay(44100, 128); restored_juno->prepareToPlay(44100, 128);
+    juce::AudioBuffer<float> juno_a(2, 128), juno_b(2, 128);
+    juce::MidiBuffer juno_note_a, juno_note_b;
+    juno_note_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    juno_note_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    juno->processBlock(juno_a, juno_note_a); restored_juno->processBlock(juno_b, juno_note_b);
+    for (int i = 0; i < 128; ++i) for (int ch = 0; ch < 2; ++ch)
+        if (std::abs(juno_a.getSample(ch, i) - juno_b.getSample(ch, i)) >= 1.0e-7f) { std::fprintf(stderr, "Juno mismatch %d %d %.9f %.9f\n", ch, i, juno_a.getSample(ch, i), juno_b.getSample(ch, i)); return 1; }
+    if (!check(juno_a.getRMSLevel(0, 0, 128) > 0, "Juno preset audible")) return 1;
+    auto fx_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto dry_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    fx_juno->prepareToPlay(44100, 128); dry_juno->prepareToPlay(44100, 128);
+    juno_patch.patch.osc[0][4] = 2;
+    juno_patch.patch.sfx_on[GF_SFX_DRIVE] = false;
+    studio::preset_encode(juno_patch, 1, juno_bytes.data(), juno_bytes.size());
+    auto* dry_import = dynamic_cast<gf::PresetImport*>(dry_juno.get());
+    auto* fx_import = dynamic_cast<gf::PresetImport*>(fx_juno.get());
+    if (!check(dry_import && fx_import && dry_import->import_preset(juno_bytes.data(), juno_bytes.size()), "Juno dry GFP")) return 1;
+    juno_patch.patch.sfx_on[GF_SFX_DRIVE] = true;
+    juno_patch.patch.sfx_mix[GF_SFX_DRIVE] = 1;
+    juno_patch.patch.sfx_p[GF_SFX_DRIVE][0] = 0.9f;
+    studio::preset_encode(juno_patch, 1, juno_bytes.data(), juno_bytes.size());
+    if (!check(fx_import->import_preset(juno_bytes.data(), juno_bytes.size()), "Juno FX GFP")) return 1;
+    float stereo_delta = 0, fx_delta = 0;
+    for (int block = 0; block < 50; ++block) {
+        juce::MidiBuffer fx_midi, dry_midi;
+        if (block == 0) { fx_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); dry_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        fx_juno->processBlock(juno_a, fx_midi); dry_juno->processBlock(juno_b, dry_midi);
+        for (int i = 0; i < 128; ++i) {
+            stereo_delta += std::abs(juno_b.getSample(0, i) - juno_b.getSample(1, i));
+            fx_delta += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+        }
+    }
+    if (!check(stereo_delta > .01f, "Juno stereo preserved through bus")) return 1;
+    if (!check(fx_delta > .01f, "Juno preset drive changes audio")) return 1;
+    std::vector<uint8_t> exported_juno;
+    if (!check(fx_import->export_juno_preset(exported_juno), "Juno GFP export")) return 1;
+    studio::Preset exported_patch; uint8_t exported_engine = 0;
+    if (!check(gf::decode_supported_preset(exported_juno.data(), exported_juno.size(), exported_patch, exported_engine) &&
+               exported_engine == 1 && exported_patch.patch.sfx_on[GF_SFX_DRIVE] &&
+               exported_patch.patch.osc[0][4] == 2, "Juno GFP preserves oscillator and FX")) return 1;
+    if (!check(dry_import->import_preset(exported_juno.data(), exported_juno.size()), "Juno exported GFP reimport")) return 1;
+    fx_juno->prepareToPlay(44100, 128); dry_juno->prepareToPlay(44100, 128);
+    for (int block = 0; block < 15; ++block) {
+        juce::MidiBuffer fx_events, restored_events;
+        if (block == 0) { fx_events.addEvent(juce::MidiMessage::noteOn(1, 64, uint8_t(100)), 5); restored_events.addEvent(juce::MidiMessage::noteOn(1, 64, uint8_t(100)), 5); }
+        fx_juno->processBlock(juno_a, fx_events); dry_juno->processBlock(juno_b, restored_events);
+        for (int i = 0; i < 128; ++i) for (int ch = 0; ch < 2; ++ch)
+            if (!check(std::abs(juno_a.getSample(ch, i) - juno_b.getSample(ch, i)) < 1.0e-6f, "Juno exported GFP audible roundtrip")) return 1;
+    }
+    auto* sync_param = dynamic_cast<juce::RangedAudioParameter*>(fx_juno->getParameters()[4]);
+    sync_param->setValueNotifyingHost(1.0f);
+    auto before_rejected_export = exported_juno;
+    if (!check(!fx_import->export_juno_preset(exported_juno) && exported_juno == before_rejected_export,
+               "Juno sync export rejected without modifying data")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);

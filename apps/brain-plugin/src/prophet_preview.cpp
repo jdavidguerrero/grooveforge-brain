@@ -54,12 +54,16 @@ void ProphetPreview::prepare(double sample_rate) {
     lfo_value_ = 0.0f;
     lfo_pitch_multiplier_ = 1.0f;
     output_stage_.reset();
+    output_stage_right_.reset();
     output_stage_.set(8.0f, 1.2f, sample_rate_);
+    output_stage_right_.set(8.0f, 1.2f, sample_rate_);
     pump_gain_ = pump_target_ = 1.0f;
     transport_beats_ = 0.0;
     synth_drive_ = dsp::DriveCore{};
+    synth_drive_right_ = dsp::DriveCore{};
     set_synth_drive(synth_drive_enabled_, synth_drive_type_, synth_drive_amount_, synth_drive_tone_, synth_drive_mix_);
     synth_tape_ = dsp::TapeCore{};
+    synth_tape_right_ = dsp::TapeCore{};
     tape_modulation_ = dsp::TapeModulation{};
     tape_pitch_ = 1.0f;
     set_synth_tape(synth_tape_enabled_, synth_tape_drive_, synth_tape_mix_, tape_wow_, tape_flutter_);
@@ -92,11 +96,14 @@ void ProphetPreview::reset() {
     lfo_value_ = 0.0f;
     lfo_pitch_multiplier_ = 1.0f;
     output_stage_.reset();
+    output_stage_right_.reset();
     pump_gain_ = pump_target_ = 1.0f;
     transport_beats_ = 0.0;
     synth_drive_ = dsp::DriveCore{};
+    synth_drive_right_ = dsp::DriveCore{};
     set_synth_drive(synth_drive_enabled_, synth_drive_type_, synth_drive_amount_, synth_drive_tone_, synth_drive_mix_);
     synth_tape_ = dsp::TapeCore{};
+    synth_tape_right_ = dsp::TapeCore{};
     tape_modulation_ = dsp::TapeModulation{};
     tape_pitch_ = 1.0f;
     set_synth_tape(synth_tape_enabled_, synth_tape_drive_, synth_tape_mix_, tape_wow_, tape_flutter_);
@@ -180,6 +187,9 @@ void ProphetPreview::set_synth_tape(bool enabled, float drive, float mix, float 
     tape_flutter_ = std::clamp(flutter, 0.0f, 1.0f);
     tape_pitch_ = 1.0f;
     tape_cutoff_ = 20000.0f;
+    synth_tape_right_.set_drive(drive);
+    synth_tape_right_.set_mix(mix);
+    synth_tape_right_.set_cutoff(20000.0f, sample_rate_);
     synth_tape_.set_drive(drive);
     synth_tape_.set_mix(mix);
     synth_tape_.set_cutoff(20000.0f, sample_rate_);
@@ -252,6 +262,10 @@ void ProphetPreview::set_synth_drive(bool enabled, uint8_t type, float amount, f
     synth_drive_amount_ = amount;
     synth_drive_tone_ = tone;
     synth_drive_mix_ = mix;
+    synth_drive_right_.set_type(type);
+    synth_drive_right_.set_amount(amount);
+    synth_drive_right_.set_tone(tone, sample_rate_);
+    synth_drive_right_.set_mix(mix);
     synth_drive_.set_type(type);
     synth_drive_.set_amount(amount);
     synth_drive_.set_tone(tone, sample_rate_);
@@ -431,7 +445,11 @@ void ProphetPreview::process_external_frame(float input, float& left, float& rig
     process_frame_impl(left, right, true, input);
 }
 
-void ProphetPreview::process_frame_impl(float& left, float& right, bool external, float input) {
+void ProphetPreview::process_external_stereo(float input_left, float input_right, float& left, float& right) {
+    process_frame_impl(left, right, true, input_left, true, input_right);
+}
+
+void ProphetPreview::process_frame_impl(float& left, float& right, bool external, float input, bool stereo, float input_right) {
     control_accumulator_ += 1000.0f;
     if (control_accumulator_ >= sample_rate_) {
         control_accumulator_ -= sample_rate_;
@@ -446,6 +464,7 @@ void ProphetPreview::process_frame_impl(float& left, float& right, bool external
             if (std::fabs(mod.cutoff - tape_cutoff_) > 0.01f * tape_cutoff_) {
                 tape_cutoff_ = mod.cutoff;
                 synth_tape_.set_cutoff(tape_cutoff_, sample_rate_);
+                synth_tape_right_.set_cutoff(tape_cutoff_, sample_rate_);
             }
         }
         tick_strum();
@@ -504,14 +523,20 @@ void ProphetPreview::process_frame_impl(float& left, float& right, bool external
     float out = output_stage_.tick(std::clamp(mixed * 0.7f, -1.0f, 1.0f));
     if (synth_drive_enabled_) synth_drive_.render(&out, &out, 1);
     if (synth_tape_enabled_) synth_tape_.render(&out, &out, 1);
+    float out_right = out;
+    if (stereo) {
+        out_right = output_stage_right_.tick(std::clamp(input_right * 0.7f, -1.0f, 1.0f));
+        if (synth_drive_enabled_) synth_drive_right_.render(&out_right, &out_right, 1);
+        if (synth_tape_enabled_) synth_tape_right_.render(&out_right, &out_right, 1);
+    }
     left = synth_chorus_[0].process(out);
-    right = synth_chorus_[1].process(out);
+    right = synth_chorus_[1].process(out_right);
     if (synth_phaser_enabled_) {
         float wet_left, wet_right;
         synth_phaser_[0].render(&out, &wet_left, 1, sample_rate_);
-        synth_phaser_[1].render(&out, &wet_right, 1, sample_rate_);
+        synth_phaser_[1].render(&out_right, &wet_right, 1, sample_rate_);
         left += phaser_mix_ * (wet_left - out);
-        right += phaser_mix_ * (wet_right - out);
+        right += phaser_mix_ * (wet_right - out_right);
     }
     if (delay_enabled_ && delay_ready_) {
         float delayed_left, delayed_right;

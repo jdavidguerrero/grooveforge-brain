@@ -57,3 +57,14 @@ private:
     audio_block_t* queue_[4]{};
     int32_t multiplier_[4] = {65536, 65536, 65536, 65536};
 };
+
+/** Silent placeholder: Juno reference scenarios require noise gain zero. */
+class AudioSynthNoiseWhite : public AudioStream {
+public:
+    AudioSynthNoiseWhite() : AudioStream(0, nullptr) {}
+    void amplitude(float) {}
+    void update() override {
+        auto* block = allocate();
+        if (block) { transmit(block); release(block); }
+    }
+};

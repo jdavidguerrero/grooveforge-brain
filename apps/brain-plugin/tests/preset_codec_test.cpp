@@ -70,6 +70,18 @@ int main() {
         if (!check(!gf::decode_prophet_preset(bytes.data(), bytes.size(), output) && output.cutoff_hz == previous,
                    "non-finite data must preserve state")) return 1;
     }
+    for (uint8_t i = 0; i < studio::factory_count(1); ++i) {
+        studio::Preset input, output;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        uint8_t decoded_engine = 99;
+        if (!check(studio::factory_preset(1, i, &input) &&
+                   studio::preset_encode(input, 1, bytes.data(), bytes.size()) == bytes.size() &&
+                   gf::decode_supported_preset(bytes.data(), bytes.size(), output, decoded_engine) &&
+                   decoded_engine == 1 && std::strcmp(input.name, output.name) == 0, "Juno GFP factory roundtrip")) return 1;
+        auto malformed = bytes; malformed[3] = 0;
+        if (!check(!gf::decode_supported_preset(malformed.data(), malformed.size(), output, decoded_engine) &&
+                   decoded_engine == 1, "invalid Juno GFP preserves output")) return 1;
+    }
     studio::Patch patch;
     patch.osc[0][0] = 12; patch.osc[0][1] = 35; patch.osc[0][2] = 1; patch.osc[0][3] = 1; patch.osc[0][4] = 1;
     patch.osc[1][0] = -12; patch.osc[1][1] = 7; patch.osc[1][2] = 60; patch.osc[1][3] = 1;

@@ -34,3 +34,14 @@ Para reproducir exactamente los hashes usar el mismo compilador/arquitectura ind
 plataformas se comparan numéricamente. No usar este shim para el VST ni varias instancias simultáneas.
 
 `shim/audio.cpp` reproduce la semántica escalar relevante de `Audio/mixer.cpp` de PJRC; ver `PJRC-LICENSE.txt`.
+
+## Referencia Juno-106
+
+```sh
+python3 tools/gemelo-baseline/run_juno.py --out /tmp/gf-juno-reference
+```
+
+Genera siete WAV estéreo y PCM16 con manifiesto a 44.100 Hz. Los PCM y su procedencia se conservan en
+`apps/firmware-teensy/test/golden/juno106/`. El ruido está desactivado y el shim lo sustituye por silencio;
+esta referencia no verifica ruido, FX Studio, ejecución en DAW ni fidelidad del hardware. Véase
+`apps/docs/sprints/gemelo-juno-referencia.md`.
