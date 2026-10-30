@@ -2,6 +2,7 @@
 
 // Teensy Audio Library (oficial — PaulStoffregen/Audio, incluida con Teensyduino)
 #include <Audio.h>
+#include "../dsp/modal_modes.h"
 #include <math.h>
 
 /**
@@ -58,10 +59,7 @@ public:
     // Los ratios de CAMPANA y GUADUA siguen los β_nL de Euler-Bernoulli barra libre-libre.
     // Los ratios de CRISTAL siguen modos de Kirchhoff-Love para plato rectangular libre.
     // Ref: Fletcher y Rossing (1998), Cap. 2 §2.3; Rossing (2001), Cap. 18 Tabla 18.1
-    struct ModeParams {
-        float freqRatio;   ///< multiplicador sobre BASE_FREQ (300 Hz)
-        float t60Base;     ///< tiempo de decay a -60 dB en segundos (material base, Size MEDIUM)
-    };
+    using ModeParams = dsp::ModalMode;
 
     static constexpr float BASE_FREQ = 300.0f;  ///< frecuencia del modo 1, todos los materiales
 

@@ -1,6 +1,6 @@
 # ADR-006: Gemelo en software del Brain (núcleo DSP compartido, renderizador y plugin AU/VST3)
 
-**Status:** Accepted para las fases 1–2 en una **rama dedicada** (Juan, 2026-10-29); **revisado el mismo día**: fase 1 con shim nativo, plugin en pausa, se agrega la grabadora automática (ver §Revisión). La decisión de producto (contradicciones 1–2) sigue abierta
+**Status:** Accepted para las fases 1–2 en una **rama dedicada**. Juan retomó el plugin con **JUCE** y aprobó el spec inicial para iniciar implementación (2026-10-29; ver §Revisión vigente). La decisión de producto (contradicciones 1–2) sigue abierta.
 **Date:** 2026-10-29
 **Deciders:** Juan Guerrero (owner)
 **Relacionados:** ADR-003 (el Brain v1 usa el filtro digital `MoogLadder4P`), ADR-005 (DX7 de 4 operadores con objeto
@@ -195,7 +195,37 @@ validación sale casi gratis.
 
 Detalle técnico: `theory/gemelo-fase1-nucleo-dsp.md` y `produccion/grabadora-automatica.md`.
 
-## Action Items
+## Revisión vigente de Juan (2026-10-29): retomar plugin con JUCE y GUI de escritorio
+
+**Fuente:** instrucción posterior en el chat: «usemos JUCE», adaptar la organización de la GUI actual a algo más
+manejable «tipo Serum», usar la rama creada y empezar con theory y spec.
+
+- Se retoma la dirección de plugin VST3 para SYNTH y HYBRID, con JUCE confirmado como framework. Esta instrucción
+  sustituye la pausa de la revisión anterior; no borra su historial ni autoriza por sí sola venta/distribución.
+- Juan aprobó el [theory](../theory/gemelo-plugin-juce.md) y el
+  [spec v0.1](../specs/gemelo-plugin-v1.md) para empezar. El layout concreto requiere revisión visual posterior.
+  No se declaran cumplidos los hitos por aprobar la documentación.
+- El destino propuesto vuelve a ser núcleo compartido por instancia, frecuencia parametrizable y wrapper JUCE.
+  El shim sirve de harness de referencia cuando se incorpore/verifique; su prueba scratch anterior no constituye
+  código integrado ni golden de CI. La grabadora automática conserva su documento como herramienta separada.
+- **Corrección confirmada:** la configuración nominal del Brain con Teensy 4.1 es **44.100 Hz** (`teensy4/AudioStream.h`,
+  sin override en PlatformIO). Los 44.117,6 Hz del contexto original corresponden a Teensy 3.x. Medir el reloj físico
+  sigue siendo distinto de verificar la configuración.
+- Serum se usa como referencia de organización: módulos visibles, edición directa y navegación de escritorio.
+  La identidad, parámetros y sonido siguen siendo GrooveForge. No se añade una arquitectura wavetable ni matriz nueva.
+- Las contradicciones de producto con `00` y la procedencia de datos de `04` siguen abiertas; `00–06` no se modifican
+  en esta entrega. La autorización anterior de integrar a principal solo con aprobación de Juan sigue vigente.
+
+### Próximas acciones vigentes
+
+1. [x] Theory y spec iniciales en `feat/gemelo-dsp`; registrar frecuencia correcta y elección JUCE.
+2. [ ] Revisar el detalle del spec y fijar snapshot, corpus, toolchain y criterios del piloto.
+3. [ ] Prophet completo compartido + adaptador firmware + golden y medición CPU/escucha on-device.
+4. [ ] `gf-render` piloto con procedencia; después engines/SYNTH FX e HYBRID/GROOVE, uno por uno.
+5. [ ] VST3 JUCE mínimo, prototipo visual, GUI definitiva y conexión con audiciones según puertas del spec.
+6. [ ] Validación de fidelidad contra hardware e integración a principal con aprobación de Juan.
+
+## Action Items históricos de la revisión con shim (sustituidos por la lista vigente)
 
 1. [ ] Decidir las contradicciones 1–4 (Juan).
 2. [x] Theory doc de la fase 1 (`theory/gemelo-fase1-nucleo-dsp.md`): inventario de engines y etapas, dependencias de la frecuencia de muestreo y de objetos

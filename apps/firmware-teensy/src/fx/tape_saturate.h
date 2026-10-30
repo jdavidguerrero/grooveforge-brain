@@ -4,6 +4,7 @@
 #include <Audio.h>
 
 #include "../audio/tape_stage.h"
+#include "../dsp/tape_modulation.h"
 
 /**
  * @brief FX Tape Saturate — Master Layer, Sprint 2.3.
@@ -152,16 +153,10 @@ private:
     float _lpApplied = -1.0f;            ///< último corte enviado (el stage lo suaviza por muestra)
 
     // ── Estado LFO Wow/Flutter ────────────────────────────────────────────────────
-    float _wowPhase      = 0.0f;
-    float _wowPhase2     = 0.0f;    // segunda senoide (freq × 0.73) para romper periodicidad
-    float _flutterPhase  = 0.0f;
-    float _flutterPhase2 = 0.0f;    // segunda senoide (freq × 1.05)
+    dsp::TapeModulation _modulation;
     float _wowDepth      = 0.0f;
     float _flutterDepth  = 0.0f;
     float _currentMod    = 0.0f;    // factor combinado Wow+Flutter, leído por getWowFlutterMod()
-
-    static constexpr float WOW_FREQ_HZ     = 0.5f;
-    static constexpr float FLUTTER_FREQ_HZ = 6.0f;
 
     // ── Estado de parámetros ──────────────────────────────────────────────────────
     float _mix       = 0.7f;

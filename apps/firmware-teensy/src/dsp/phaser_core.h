@@ -26,12 +26,13 @@ public:
         for (int i = 0; i < n; ++i) {
             _ph += inc;
             if (_ph >= 1.0f) _ph -= 1.0f;
-            if ((i & 15) == 0) {                // el barrido es lento: el coeficiente cada 16 muestras (tanf es caro)
+            if (_coefficient_phase == 0) {      // el barrido es lento: coeficiente cada 16 muestras
                 const float tri = 1.0f - 4.0f * fabsf(_ph - 0.5f);                    // −1…1
                 const float hz = 775.0f * powf(3000.0f / 200.0f, 0.5f * _depth * tri);   // centro ≈ √(200·3000)
                 const float t = tanf(3.14159265f * (hz < fs * 0.45f ? hz : fs * 0.45f) / fs);
                 _a = (t - 1.0f) / (t + 1.0f);                                     // coeficiente del pasa-todo
             }
+            _coefficient_phase = (_coefficient_phase + 1) & 15;
             const float a = _a;
             float x = in[i] + FEEDBACK * _fb;
             for (int s = 0; s < STAGES; ++s) {
@@ -48,6 +49,7 @@ private:
     static constexpr float FEEDBACK = 0.5f;
     float _rate = 0.5f, _depth = 0.6f, _ph = 0.0f, _fb = 0.0f, _a = 0.0f;
     float _z[STAGES] = {};
+    unsigned _coefficient_phase = 0;
 };
 
 }  // namespace dsp

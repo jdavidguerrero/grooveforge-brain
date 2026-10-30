@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../dsp/zdf_ladder.h"
+#include "../dsp/ladder_stage_core.h"
 #include <Audio.h>
 #include <math.h>
 
@@ -74,10 +74,8 @@ public:
 private:
     audio_block_t* inputQueueArray[1];
 
-    dsp::ZdfLadder _zdf;                 // núcleo TPT / ZDF (dsp/zdf_ladder.h)
+    dsp::LadderStageCore _core{AUDIO_SAMPLE_RATE_EXACT};
     volatile bool _enabled = true;       // leído en la ISR de audio, escrito desde loop()
-    float _drive = 1.0f;                 // ganancia de entrada [0.5, 4.0]
-    float _inv_drive_comp = 1.0f;        // compensación parcial de ganancia
 
     /** @brief Procesa una muestra. Llamado 128 veces por update(). */
     float processSample(float in);

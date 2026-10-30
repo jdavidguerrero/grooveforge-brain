@@ -70,6 +70,7 @@
 #include "../ui/detent.h"
 #include "../ui/groove_macros.h"
 #include "../ui/layers.h"
+#include "../engines/prophet_patch_apply.h"
 #include "../ui/layer_bank.h"
 #include "../ui/session.h"
 #include "../ui/page_params.h"
@@ -647,8 +648,7 @@ void engine_patch(uint8_t e) {
     eng.setVelocityDepth(va, vf);
         case 1: POLY_PATCH(juno) break;
         case 2:
-            POLY_PATCH(prophet)
-            prophet.setGlide(fmaxf(glide_ms, p.osc[2][3] * 20.0f));
+            studio::apply_prophet_envelope_patch(prophet, p, va, vf);
             break;
         case 3: POLY_PATCH(ob6) break;
         case 4: POLY_PATCH(dx7) break;
@@ -695,23 +695,7 @@ void engine_osc(uint8_t e) {
             juno.setHiss(mp.mod[0][1] / 100.0f);                                // HISS del BBD (fase2 §3)
             break;
         case 2: {  // theory/prophet-5-completo.md §3.1: OSC A · OSC B · MIXER
-            const studio::Patch& p = mp;
-            prophet.setOscAFreq(o[0][0]);
-            prophet.setOscAPw(o[0][1] / 100.0f);
-            prophet.setOscAShape(o[0][2] > 0.5f, o[0][3] > 0.5f);
-            prophet.setSync(o[0][4] > 0.5f);
-            prophet.setOscBInterval(o[1][0]);
-            prophet.setOscBFine(o[1][1]);
-            prophet.setOscBPw(o[1][2] / 100.0f);
-            prophet.setOscBKeyboard(o[1][3] > 0.5f);
-            prophet.setOscBShape(o[1][4] > 0.5f, o[1][5] > 0.5f, o[1][6] > 0.5f);
-            prophet.setOscBLoFreq(o[1][7] > 0.5f);
-            prophet.setMixer(o[2][0] / 100.0f, o[2][1] / 100.0f, o[2][2] / 100.0f);
-            prophet.setGlide(fmaxf(p.glide * p.glide * 1500.0f, o[2][3] * 20.0f)); // 0–100 → 0–2 s
-            prophet.setFilterKeyboard(o[2][4] * 0.5f);                            // OFF / HALF / FULL
-            const float (&m)[GF_OSC_SLOTS] = p.mod[0], (&wm)[GF_OSC_SLOTS] = p.mod[1];
-            prophet.setPolyMod(m[0] / 100.0f, m[1] / 100.0f, m[2] > 0.5f, m[3] > 0.5f, m[4] > 0.5f);
-            prophet.setWheelMod(wm[0] / 100.0f, wm[1] > 0.5f, wm[2] > 0.5f, wm[3] > 0.5f, wm[4] > 0.5f, wm[5] > 0.5f);
+            studio::apply_prophet_osc_patch(prophet, mp);
             break;
         }
         case 3: {

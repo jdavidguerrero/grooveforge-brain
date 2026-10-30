@@ -2,6 +2,7 @@
 // Prophet-5 Engine: 5-voice polyphony with Poly-Mod (including OSC B -> Filter), AnalogEnv RC & Drive.
 
 #include "prophet_5.h"
+#include "../dsp/prophet_control_core.h"
 #include <math.h>
 
 namespace {
@@ -171,8 +172,8 @@ void Prophet5::update() {
 
     for (uint8_t i = 0; i < PROPHET_VOICES; i++) {
         const float env = _filterEnv[i].update((float)dt);
-        const float velGain = 1.0f - _velAmp * (1.0f - _voices[i].velocity);
-        const float velBright = 1.0f - _velCut * (1.0f - _voices[i].velocity);
+        const float velGain = dsp::prophet_velocity_gain(_voices[i].velocity, _velAmp);
+        const float velBright = dsp::prophet_velocity_gain(_voices[i].velocity, _velCut);
 
         _currentHz[i] += (_targetHz[i] - _currentHz[i]) * glide_k;
         const float f = _currentHz[i] * _lfo.pitch_ratio * _spread[i].pitch * _uni[i];
@@ -199,7 +200,8 @@ void Prophet5::update() {
         const float oscBMod = _bTri ? (1.0f - 4.0f * fabsf(pb - 0.5f)) : (2.0f * pb - 1.0f);
 
         // Filtro: base + envelope, × LFO, × POLY-MOD (envelope + OSC B), × WHEEL-MOD, × keyboard tracking
-        float cutoff = (_filterCutoff + _filterEnvAmt * velBright * env * 6000.0f) * _lfo.cutoff_mul * _spread[i].cutoff * _cutJit[i];
+        float cutoff = dsp::prophet_envelope_cutoff(_filterCutoff, _filterEnvAmt, velBright, env,
+                                                    _lfo.cutoff_mul, _spread[i].cutoff, _cutJit[i]);
         if (_pmFilter) {
             cutoff *= prophet_fast_exp2(PROPHET_PM_OCT * (_pmEnv * env + 0.5f * _pmB * oscBMod));
         }

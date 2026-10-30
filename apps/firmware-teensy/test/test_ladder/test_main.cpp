@@ -5,6 +5,7 @@
 #include <unity.h>
 
 #include "dsp/fast_math.h"
+#include "dsp/ladder_stage_core.h"
 #include "dsp/zdf_ladder.h"
 
 void setUp() {}
@@ -104,9 +105,49 @@ void test_cutoff_suavizado_sin_zipper() {
     TEST_ASSERT_FLOAT_WITHIN(1e-4f, f.coeff_target(), f.coeff());
 }
 
+void test_ladder_stage_respeta_frecuencia_de_muestreo() {
+    auto rms = [](float sample_rate) {
+        dsp::LadderStageCore stage(sample_rate);
+        stage.set_character(dsp::LadderCharacter::Cem3320);
+        stage.set_frequency(1000.0f);
+        stage.set_resonance(0.707f);
+        stage.set_drive(dsp::LadderStageCore::prepare_drive(1.2f));
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < int(sample_rate); ++i) {
+            const float out = stage.process_sample(0.01f * sinf(6.2831853f * 500.0f * i / sample_rate));
+            if (!isfinite(out)) return double(NAN);
+            if (i >= int(sample_rate / 2)) { sum += out * out; ++count; }
+        }
+        return sqrt(sum / count);
+    };
+    const double a = rms(44100.0f), b = rms(48000.0f), c = rms(96000.0f);
+    TEST_ASSERT_TRUE(isfinite(a) && isfinite(b) && isfinite(c));
+    TEST_ASSERT_TRUE(a > 0.0);
+    TEST_ASSERT_TRUE(fabs(b / a - 1.0) < 0.02);
+    TEST_ASSERT_TRUE(fabs(c / a - 1.0) < 0.02);
+}
+
+void test_suavizado_en_milisegundos_independiente_de_fs() {
+    auto progress = [](float fs) {
+        dsp::ZdfLadder f;
+        f.set_cutoff(500.0f, fs);
+        const float initial = f.coeff();
+        f.set_cutoff(4000.0f, fs);
+        const float target = f.coeff_target();
+        for (int i = 0; i < int(fs * 0.005f); ++i) f.tick(0.0f);
+        return (f.coeff() - initial) / (target - initial);
+    };
+    const float a = progress(44100.0f), b = progress(48000.0f), c = progress(96000.0f);
+    TEST_ASSERT_FLOAT_WITHIN(2e-4f, a, b);
+    TEST_ASSERT_FLOAT_WITHIN(2e-4f, a, c);
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_cutoff_suavizado_sin_zipper);
+    RUN_TEST(test_ladder_stage_respeta_frecuencia_de_muestreo);
+    RUN_TEST(test_suavizado_en_milisegundos_independiente_de_fs);
     RUN_TEST(test_pade_contra_tanhf);
     RUN_TEST(test_resonancia_afinada_en_todo_el_rango);
     RUN_TEST(test_pendiente_24db_y_corte);

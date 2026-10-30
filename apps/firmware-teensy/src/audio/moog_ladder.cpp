@@ -25,19 +25,18 @@ MoogLadder4P::MoogLadder4P() : AudioStream(1, inputQueueArray) {
 // ── Parámetros públicos ───────────────────────────────────────────────────────
 
 void MoogLadder4P::frequency(float hz) {
-    _zdf.set_cutoff(hz, AUDIO_SAMPLE_RATE_EXACT);
+    _core.set_frequency(hz);
 }
 
 void MoogLadder4P::resonance(float q) {
     // Convención de AudioFilterStateVariable [0.707, 5.0] → k [0, 4.4]: el tope pasa apenas el umbral de
     // auto-oscilación del ZDF con límite de lazo (~4.05), así la resonancia máxima canta con amplitud ~0.5.
-    const float r = (q - 0.707f) / (5.0f - 0.707f);
-    _zdf.set_k((r < 0.0f ? 0.0f : r > 1.0f ? 1.0f : r) * 4.4f);
+    _core.set_resonance(q);
 }
 
 void MoogLadder4P::setCharacter(dsp::LadderCharacter ch) {
     AudioNoInterrupts();
-    _zdf.set_character(ch);
+    _core.set_character(ch);
     AudioInterrupts();
 }
 
@@ -57,30 +56,18 @@ void MoogLadder4P::set_enabled(bool on) {
 // ── Procesamiento por muestra ─────────────────────────────────────────────────
 
 void MoogLadder4P::set_drive(float drive) {
-    if (drive < 0.5f) drive = 0.5f;
-    if (drive > 4.0f) drive = 4.0f;
-    const float comp = 1.0f / sqrtf(drive);
+    const auto setting = dsp::LadderStageCore::prepare_drive(drive);
     AudioNoInterrupts();
-    _drive = drive;
-    _inv_drive_comp = comp;
+    _core.set_drive(setting);
     AudioInterrupts();
 }
 
 void MoogLadder4P::resetState() {
-    _zdf.reset();
+    _core.reset();
 }
 
 float MoogLadder4P::processSample(float in) {
-    const float y = _zdf.tick(in * _drive);
-    // Protección ante NaN/Inf en transitorios de parámetros: resetea en vez de propagar
-    if (!isfinite(y)) {
-        resetState();
-        return 0.0f;
-    }
-    float out = y * _inv_drive_comp;
-    if (out >  1.0f) out =  1.0f;
-    if (out < -1.0f) out = -1.0f;
-    return out;
+    return _core.process_sample(in);
 }
 
 // ── AudioStream::update() — procesa 128 muestras por llamada ─────────────────

@@ -15,54 +15,26 @@
 //   Nombres históricos: hum, prime, tierce, quint, nominal, parcial superior.
 //   Ratios de Rossing (2001) Tabla 18.1 — inarmónicos por geometría de cuerpo de revolución.
 //   T60 de mediciones acústicas en campanas fundidas reales.
-const ModalReverb::ModeParams ModalReverb::CAMPANA[6] = {
-    {1.000f,  8.0f},   // hum    — 300 Hz,  T60=8s, modo más grave y más largo
-    {2.756f,  6.0f},   // prime  — 827 Hz,  T60=6s, octava ligeramente flat
-    {5.404f,  4.0f},   // tierce — 1621 Hz, T60=4s, tercera menor (carácter melancólico)
-    {8.933f,  3.0f},   // quint  — 2680 Hz, T60=3s, quinta
-    {13.46f,  2.0f},   // nominal— 4038 Hz, T60=2s, nota percibida de la campana
-    {18.02f,  1.5f}    // superior—5406 Hz, T60=1.5s, brillo agudo
-};
+const ModalReverb::ModeParams ModalReverb::CAMPANA[6] = {dsp::MODAL_MODES[0][0], dsp::MODAL_MODES[0][1], dsp::MODAL_MODES[0][2], dsp::MODAL_MODES[0][3], dsp::MODAL_MODES[0][4], dsp::MODAL_MODES[0][5]};
 
 // GUADUA: barra libre-libre de Guadua angustifolia, sección 60 cm (marimba de chonta).
 //   Ratios: β_nL de Euler-Bernoulli barra libre (mismos que campana para modos 1-4,
 //   ligeramente distintos en 5-6 por efecto de nudos internos del bambú).
 //   T60 más cortos que campana: Q_guadua ≈ 300-600 vs Q_campana ≈ 1000-3000.
 //   Ref: Fletcher y Rossing (1998) §2.3; Escalante-Jiménez (2011) etnomusicología.
-const ModalReverb::ModeParams ModalReverb::GUADUA[6] = {
-    {1.000f,  3.0f},   // modo 1 — 300 Hz,  T60=3s, cuerpo abrigador en graves
-    {2.757f,  2.5f},   // modo 2 — 827 Hz,  T60=2.5s
-    {5.404f,  1.8f},   // modo 3 — 1621 Hz, T60=1.8s
-    {8.933f,  1.2f},   // modo 4 — 2680 Hz, T60=1.2s
-    {13.34f,  0.8f},   // modo 5 — 4002 Hz, T60=0.8s (ratio levemente dist. por nudos)
-    {17.81f,  0.5f}    // modo 6 — 5343 Hz, T60=0.5s, brillo muy corto
-};
+const ModalReverb::ModeParams ModalReverb::GUADUA[6] = {dsp::MODAL_MODES[1][0], dsp::MODAL_MODES[1][1], dsp::MODAL_MODES[1][2], dsp::MODAL_MODES[1][3], dsp::MODAL_MODES[1][4], dsp::MODAL_MODES[1][5]};
 
 // CRISTAL: plato rectangular de vidrio (borosilicato), libre en todos los bordes.
 //   Modos de Kirchhoff-Love para placas delgadas — bidimensionales, distintos a barra.
 //   Q cristal ≈ 1000-10000: decays extremadamente largos (armónica de cristal, s. XVIII).
 //   Ref: Rossing (2001) Cap. 19 §19.3, tablas de frecuencias para platos rectangulares.
-const ModalReverb::ModeParams ModalReverb::CRISTAL[6] = {
-    {1.000f, 12.0f},   // modo (2,0) — 300 Hz,  T60=12s, fundamental etérea
-    {2.442f, 10.0f},   // modo (0,2) — 733 Hz,  T60=10s, nodos transversales
-    {3.908f,  8.0f},   // modo (2,2) — 1172 Hz, T60=8s,  cuatro nodos
-    {5.983f,  6.0f},   // modo (3,1) — 1795 Hz, T60=6s
-    {8.547f,  4.0f},   // modo (2,3) — 2564 Hz, T60=4s
-    {11.41f,  2.0f}    // modo superior — 3423 Hz, T60=2s, brillo sostenido
-};
+const ModalReverb::ModeParams ModalReverb::CRISTAL[6] = {dsp::MODAL_MODES[2][0], dsp::MODAL_MODES[2][1], dsp::MODAL_MODES[2][2], dsp::MODAL_MODES[2][3], dsp::MODAL_MODES[2][4], dsp::MODAL_MODES[2][5]};
 
 // MADERA: tabla de pino (Pinus sylvestris), libre en bordes cortos.
 //   Q pino ≈ 100-400: amortiguamiento interno de fibras de celulosa.
 //   Los modos superiores se extinguen en décimas de segundo — reverb muy seca.
 //   Ref: Fletcher y Rossing (1998) §2.6 sobre amortiguamiento en maderas de luthería.
-const ModalReverb::ModeParams ModalReverb::MADERA[6] = {
-    {1.000f,  1.5f},   // modo 1 — 300 Hz,  T60=1.5s, seco y presente
-    {2.756f,  1.2f},   // modo 2 — 827 Hz,  T60=1.2s
-    {5.404f,  0.9f},   // modo 3 — 1621 Hz, T60=0.9s
-    {8.933f,  0.6f},   // modo 4 — 2680 Hz, T60=0.6s
-    {13.34f,  0.4f},   // modo 5 — 4002 Hz, T60=0.4s, casi inaudible
-    {17.81f,  0.2f}    // modo 6 — 5343 Hz, T60=0.2s, instantáneo
-};
+const ModalReverb::ModeParams ModalReverb::MADERA[6] = {dsp::MODAL_MODES[3][0], dsp::MODAL_MODES[3][1], dsp::MODAL_MODES[3][2], dsp::MODAL_MODES[3][3], dsp::MODAL_MODES[3][4], dsp::MODAL_MODES[3][5]};
 
 // ── Constructor ──────────────────────────────────────────────────────────────────
 // Conexiones estáticas: modos→mixers, mixers→wetMix, wetMix→dryWetMix, out L+R.

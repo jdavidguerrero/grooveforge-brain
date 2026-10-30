@@ -1,5 +1,10 @@
 # Gemelo · Fase 1: núcleo DSP compartido y shim nativo de la Audio Library
 
+> **Referencia histórica:** la instrucción posterior de Juan del 2026-10-29 retoma el plugin y confirma JUCE.
+> El diseño vigente propuesto está en [gemelo-plugin-juce.md](gemelo-plugin-juce.md) y
+> [spec v0.1](../specs/gemelo-plugin-v1.md). Las menciones a pausa del plugin, simplificación de saturaciones y
+> eventos MIDI por borde de bloque de este documento describen el enfoque anterior; no gobiernan el nuevo plugin.
+>
 > **Fecha:** 2026-10-29 · **Estado:** BORRADOR para revisión de Juan · **Rama:** `feat/gemelo-dsp`
 > **Rev. 2026-10-29 (tarde, Juan):** el camino es el **shim**; el plugin y el refactor a `libs/gf-dsp/` quedan en
 > pausa (ADR-006 §Revisión). §3 queda como diseño de referencia para cuando se decida el plugin; §5.2 y §6 cambian.

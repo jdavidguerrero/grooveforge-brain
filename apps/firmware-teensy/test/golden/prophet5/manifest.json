@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "kind": "pre_refactor_reference",
+  "source": "software_shim",
+  "limitations": [
+    "Prophet engine output only; no presets, Studio FX or physical hardware",
+    "control ticks simulated before each 128-sample block",
+    "not hardware-validated"
+  ],
+  "git_commit": "9ab538dc4478f5c95b3bdd8aec71c29b90ca278d",
+  "git_dirty": true,
+  "compiler": "Apple clang version 17.0.0 (clang-1700.4.4.1)",
+  "architecture": "arm64",
+  "sample_rate": 44100,
+  "channels": 1,
+  "audio_format": "signed PCM16 little-endian",
+  "frames": 88320,
+  "source_sha256": {
+    "tools/gemelo-baseline/shim/audio.cpp": "2eaae4f81b5415bc8617fff52a9b07d249a469977097b04a6de32b3db7a5ce32",
+    "tools/gemelo-baseline/reference.cpp": "269dcdc42948c2e7df255329754a270d26004666bb50c790a3a41005df270e1e",
+    "apps/firmware-teensy/src/engines/prophet_5.cpp": "0de8b9c438cf759d31501e22f3424411db64506877bd2659a82551610c1354b6",
+    "apps/firmware-teensy/src/engines/prophet_osc_core.cpp": "f47ab2d955d2d35495540102ca44577c0e1884b9491fff6d5242fb27ca14c0a6",
+    "apps/firmware-teensy/src/audio/moog_ladder.cpp": "740327e429162362006eb619173ab85d1797c3b6efdb53d8041e4a944840ba49",
+    "tools/gemelo-baseline/shim/Arduino.h": "780e8168f1bcba6bec12874d9f3effd9b1351fd5e48ee41e590da38c35161db6",
+    "tools/gemelo-baseline/shim/Audio.h": "e13c89575bf5c8e91823b96a5633797fc45f3e5ce6694b05d063ee43f1597bb7",
+    "apps/firmware-teensy/src/engines/prophet_5.h": "acca6deec56cba40643c4dbdfe2b8d8fd56952112a404fcb9427341607c37c0b",
+    "apps/firmware-teensy/src/engines/prophet_osc_core.h": "0d353027159bdeb40770371fc2ed554b7a8628a2d43dffabad45df78c4f9ffb3",
+    "apps/firmware-teensy/src/engines/lfo_mod.h": "910e39caed00164edba2e737789208068009e3f65467f83c3de6a2866deb4798",
+    "apps/firmware-teensy/src/audio/moog_ladder.h": "49c760445adf42f1143d0aa53997c5823922e223a6920b3267d23e2966a8daeb",
+    "apps/firmware-teensy/src/audio/analog_vca.h": "1cfde8239e64b824ed76a6129fac940d2b84e77341d89c63a60b03dc08e0e09c",
+    "apps/firmware-teensy/src/dsp/analog_env.h": "45bccc0193b89aadeacc06d34a106cd3223327981d6bc3c07d473fbc0b455215",
+    "apps/firmware-teensy/src/dsp/voice_spread.h": "c54e206e0f1b114a3ef840be85b6cfc1ce7e7f64955ce163c2109aea7071837d",
+    "apps/firmware-teensy/src/dsp/zdf_ladder.h": "c3419bb39bf27e46f2c895da56b9ed801f43a262eef64946b103d37beb64ffe6",
+    "apps/firmware-teensy/src/dsp/polyblep_core.h": "bfb82188af91e3091c6faab6528a75e3654f57e84dca340755495db6e88c6f69",
+    "apps/firmware-teensy/src/dsp/fast_math.h": "0036e14505635a1ca118a7c806d2c875c586610c95f09dce119f4741091df8a0",
+    "tools/gemelo-baseline/run.py": "150213c9f6365749efd96a55c5e63dbc8cc4acc028b0493d1f36c0d19d02a6ee",
+    "tools/gemelo-baseline/test_mixer.cpp": "c2cb29fb3452899dbcc8b7031de5b22ec182657e6a7616b2c191f5b881a052f6"
+  },
+  "cases": [
+    {
+      "name": "saw_chord",
+      "pcm_sha256": "7c9a8ddfed1489274c42ff3195259a36dfec86c49c72afe719a9fcd14255721d",
+      "attack_rms_pcm": 3437.3022872159495,
+      "tail_rms_pcm": 1.1916375287812984
+    },
+    {
+      "name": "pulse_pwm",
+      "pcm_sha256": "9cf1fc1c27be93bdffeb1e24535c10033b9493bea53bbfd8ca7b8cf6ccea6caf",
+      "attack_rms_pcm": 2298.3008845666836,
+      "tail_rms_pcm": 1.890304208322036
+    },
+    {
+      "name": "poly_mod",
+      "pcm_sha256": "9148471abd1d928c7625286db5f1d23af086f4b2b973349f97f1fa1e76a532c9",
+      "attack_rms_pcm": 2490.8475018354698,
+      "tail_rms_pcm": 0.9169242062460778
+    },
+    {
+      "name": "glide",
+      "pcm_sha256": "91de8b64cc606c9ddec64b584e5cc8d172d573e225f5b14047fe35036706ab0a",
+      "attack_rms_pcm": 3437.3022872159495,
+      "tail_rms_pcm": 1.420211251891774
+    },
+    {
+      "name": "resonance",
+      "pcm_sha256": "ff7a41338a0062300a4f2a5387c3df569f2539409f22dc187e0acf34330dc772",
+      "attack_rms_pcm": 3091.4539062551135,
+      "tail_rms_pcm": 1.138255243783221
+    },
+    {
+      "name": "voice_steal",
+      "pcm_sha256": "d15ee063d1081598c5ad138185d19e9e03f8bd7fdd0a343127e942c8061e5913",
+      "attack_rms_pcm": 4584.208603543255,
+      "tail_rms_pcm": 1.76769624087398
+    }
+  ]
+}

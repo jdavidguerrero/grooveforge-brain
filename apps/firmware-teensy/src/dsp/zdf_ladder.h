@@ -40,10 +40,15 @@ class ZdfLadder {
 public:
     /// Cutoff en Hz (se recorta a 10 Hz – 0.45·fs). Precalcula G = g / (1 + g), g = tan(π·fc/fs).
     void set_cutoff(float hz, float fs) {
+        if (fs <= 0.0f || !isfinite(fs)) return;
         if (hz < 10.0f) hz = 10.0f;
         if (hz > 0.45f * fs) hz = 0.45f * fs;
         const float g = tanf(3.14159265359f * hz / fs);
         Gt_ = g / (1.0f + g);
+        if (fs != smooth_fs_) {
+            smooth_ = fs == 44100.0f ? 0.0224f : -expm1f(log1pf(-0.0224f) * (44100.0f / fs));
+            smooth_fs_ = fs;
+        }
         if (!g_set_) {                      // el primer valor va directo; después se suaviza en tick() (sin zipper)
             G_ = Gt_;
             g_set_ = true;
@@ -78,8 +83,8 @@ public:
     /// Una muestra (entrada y salida en ±1 nominal).
     float tick(float x) {
         // Suavizado de un polo (~1 ms a 44.1 kHz): una perilla o un CC no producen escalones audibles
-        G_ += SMOOTH * (Gt_ - G_);
-        k_ += SMOOTH * (kt_ - k_);
+        G_ += smooth_ * (Gt_ - G_);
+        k_ += smooth_ * (kt_ - k_);
         const float G = G_, k = k_;
         const float H = 1.0f - G;
         // Contribución de los estados a la salida (y4 = G⁴·u + Σ)
@@ -101,7 +106,8 @@ public:
     }
 
 private:
-    static constexpr float SMOOTH = 0.0224f;   // 1 − e^(−1 / (1 ms · 44.1 kHz))
+    float smooth_ = 0.0224f;   // valor histórico a 44.1 kHz, ajustado a otras frecuencias en set_cutoff
+    float smooth_fs_ = 44100.0f;
     float G_ = 0.1f, k_ = 0.0f, Gt_ = 0.1f, kt_ = 0.0f;
     bool g_set_ = false, k_set_ = false;
     float drive_ = 1.6f, inv_drive_ = 1.0f / 1.6f, comp_ = 0.0f;

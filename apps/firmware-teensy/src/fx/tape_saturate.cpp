@@ -69,34 +69,9 @@ void TapeSaturate::update(float dt_ms) {
         _currentMod = 0.0f;
         return;
     }
-    const float dt_s = dt_ms * 0.001f;
-
-    _wowPhase      += WOW_FREQ_HZ     * dt_s;
-    _wowPhase2     += WOW_FREQ_HZ     * 0.73f * dt_s;
-    _flutterPhase  += FLUTTER_FREQ_HZ * dt_s;
-    _flutterPhase2 += FLUTTER_FREQ_HZ * 1.05f * dt_s;
-
-    if (_wowPhase      > 1.0f) _wowPhase      -= 1.0f;
-    if (_wowPhase2     > 1.0f) _wowPhase2     -= 1.0f;
-    if (_flutterPhase  > 1.0f) _flutterPhase  -= 1.0f;
-    if (_flutterPhase2 > 1.0f) _flutterPhase2 -= 1.0f;
-
-    float wow_lfo     = sinf(2.0f * PI * _wowPhase)
-                      + 0.3f * sinf(2.0f * PI * _wowPhase2);
-    float flutter_lfo = sinf(2.0f * PI * _flutterPhase)
-                      + 0.3f * sinf(2.0f * PI * _flutterPhase2);
-
-    float cents = (_wowDepth    * 18.0f * wow_lfo)
-                + (_flutterDepth * 10.0f * flutter_lfo);
-
-    _currentMod = powf(2.0f, cents / 1200.0f) - 1.0f;
-
-    // Modulación de azimut de cabezal sobre el filtro de cinta (Age LP)
-    const float baseCutoff = 20000.0f * powf(0.3f, _ageAmount);
-    const float azMod = 1.0f + 0.12f * (_wowDepth * wow_lfo + 0.5f * _flutterDepth * flutter_lfo);
-    float f = (_wowDepth > 0.0f || _flutterDepth > 0.0f) ? baseCutoff * azMod : baseCutoff;
-    if (f < 2500.0f)  f = 2500.0f;
-    if (f > 20000.0f) f = 20000.0f;
+    const auto modulation = _modulation.tick(dt_ms * 0.001f, _wowDepth, _flutterDepth, _ageAmount);
+    _currentMod = modulation.pitch;
+    const float f = modulation.cutoff;
     // El stage suaviza el corte por muestra; solo se le manda si cambió (> 1 %)
     if (_lpApplied < 0.0f || fabsf(f - _lpApplied) > 0.01f * _lpApplied) {
         _lpApplied = f;
