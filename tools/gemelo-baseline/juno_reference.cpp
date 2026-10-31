@@ -26,13 +26,13 @@ private:
 int main(int argc, char** argv) {
     if (argc != 2) return 2;
     const int scenario = std::atoi(argv[1]);
-    if (scenario < 1 || scenario > 7) return 2;
+    if (scenario < 1 || scenario > 8) return 2;
     Juno106 juno;
     Capture capture;
     AudioConnection left(juno.getOutput(), 0, capture, 0);
     AudioConnection right(juno.getOutput(), 1, capture, 1);
     juno.begin();
-    juno.setNoiseLevel(0);
+    juno.setNoiseLevel(scenario == 8 ? 0.6f : 0.0f);
     if (scenario == 2) { juno.setWaveform(WAVEFORM_PULSE); juno.setPulseWidth(0.35f); }
     if (scenario == 3) juno.setGlide(180);
     if (scenario == 5) juno.setHpf(3);

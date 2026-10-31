@@ -41,7 +41,14 @@ plataformas se comparan numéricamente. No usar este shim para el VST ni varias 
 python3 tools/gemelo-baseline/run_juno.py --out /tmp/gf-juno-reference
 ```
 
-Genera siete WAV estéreo y PCM16 con manifiesto a 44.100 Hz. Los PCM y su procedencia se conservan en
-`apps/firmware-teensy/test/golden/juno106/`. El ruido está desactivado y el shim lo sustituye por silencio;
-esta referencia no verifica ruido, FX Studio, ejecución en DAW ni fidelidad del hardware. Véase
+Genera ocho WAV estéreo y PCM16 con manifiesto a 44.100 Hz. Los siete casos originales se conservan en
+`apps/firmware-teensy/test/golden/juno106/`; la escena adicional de ruido se conserva en
+`apps/firmware-teensy/test/golden/juno106-noise/`. El shim usa una implementación escalar PJRC de ruido con semillas
+del harness, no comprueba las semillas ni la fase de ruido de una unidad física. Esta referencia no valida FX Studio,
+ejecución en DAW ni fidelidad del hardware. Se puede verificar cualquiera de las dos referencias:
+
+```sh
+python3 tools/gemelo-baseline/run_juno.py --out /tmp/gf-juno-check \
+  --compare apps/firmware-teensy/test/golden/juno106
+``` Véase
 `apps/docs/sprints/gemelo-juno-referencia.md`.

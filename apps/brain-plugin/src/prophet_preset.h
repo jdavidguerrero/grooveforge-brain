@@ -14,7 +14,7 @@ struct PresetPreviewLimitations {
 /** @brief Configura los efectos SYNTH comunes de un GFP validado. */
 void apply_synth_fx_preview(ProphetPreview& engine, const studio::Preset& preset, uint8_t engine_id);
 /** @brief Configura el reloj y las funciones GROOVE de un GFP validado. */
-void apply_groove_preview(ProphetPreview& engine, const studio::Preset& preset);
+void apply_groove_preview(ProphetPreview& engine, const studio::Preset& preset, bool apply_voice = true);
 
 /**
  * @brief Aplica un preset GFP decodificado al piloto ya preparado.

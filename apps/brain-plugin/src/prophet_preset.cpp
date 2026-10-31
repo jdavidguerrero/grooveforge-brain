@@ -31,7 +31,7 @@ void apply_synth_fx_preview(ProphetPreview& engine, const studio::Preset& preset
                            gf_index_from_norm(reverb[2], 3), gf_sfx_decay(reverb[0]), patch.sfx_mix[GF_SFX_REVERB]);
 }
 
-void apply_groove_preview(ProphetPreview& engine, const studio::Preset& preset) {
+void apply_groove_preview(ProphetPreview& engine, const studio::Preset& preset, bool apply_voice) {
     const auto& original = preset.patch;
     const auto& pump = original.groove[GF_GROOVE_PUMP];
     dsp::PumpParams pump_params;
@@ -55,9 +55,11 @@ void apply_groove_preview(ProphetPreview& engine, const studio::Preset& preset) 
                      std::max(0.0f, chord[GF_CHORD_STRUM]));
     const auto& unison = original.groove[GF_GROOVE_UNISON];
     const auto unison_index = uint8_t(std::clamp(unison[GF_UNISON_VOICES], 0.0f, 3.0f));
-    engine.set_unison(original.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[unison_index] : 1,
-                      unison[GF_UNISON_DETUNE]);
-    engine.set_drift(studio::macro_amount(original, GF_MACRO_DRIFT));
+    if (apply_voice) {
+        engine.set_unison(original.groove_on[GF_GROOVE_UNISON] ? GF_UNISON_COUNT[unison_index] : 1,
+                          unison[GF_UNISON_DETUNE]);
+        engine.set_drift(studio::macro_amount(original, GF_MACRO_DRIFT));
+    }
 
 }
 

@@ -135,6 +135,286 @@ int main() {
     auto before_rejected_export = exported_juno;
     if (!check(!fx_import->export_juno_preset(exported_juno) && exported_juno == before_rejected_export,
                "Juno sync export rejected without modifying data")) return 1;
+    auto find_parameter = [](juce::AudioProcessor& processor, const char* id) -> juce::RangedAudioParameter* {
+        for (auto* parameter : processor.getParameters()) {
+            auto* ranged = dynamic_cast<juce::RangedAudioParameter*>(parameter);
+            if (ranged && ranged->getParameterID() == id) return ranged;
+        }
+        return nullptr;
+    };
+    auto* juno_wave = find_parameter(*dry_juno, "juno.wave");
+    auto* juno_sub = find_parameter(*dry_juno, "juno.sub");
+    auto* juno_chorus = find_parameter(*dry_juno, "juno.chorus");
+    if (!check(juno_wave && juno_sub && juno_chorus, "Juno OSC host parameters")) return 1;
+    juno_wave->setValueNotifyingHost(juno_wave->convertTo0to1(2));
+    juno_sub->setValueNotifyingHost(juno_sub->convertTo0to1(75));
+    juno_chorus->setValueNotifyingHost(juno_chorus->convertTo0to1(0));
+    auto* juno_filter_decay = find_parameter(*dry_juno, "juno.filter_decay");
+    auto* juno_drive = find_parameter(*dry_juno, "juno.drive");
+    if (!check(juno_filter_decay && juno_drive, "Juno ENV host parameters")) return 1;
+    juno_filter_decay->setValueNotifyingHost(juno_filter_decay->convertTo0to1(730));
+    juno_drive->setValueNotifyingHost(juno_drive->convertTo0to1(.6f));
+    auto* juno_lfo_rate = find_parameter(*dry_juno, "juno.lfo_rate");
+    auto* juno_lfo_pwm = find_parameter(*dry_juno, "juno.lfo_pwm");
+    auto* juno_lfo_delay = find_parameter(*dry_juno, "juno.lfo_delay");
+    if (!check(juno_lfo_rate && juno_lfo_pwm && juno_lfo_delay, "Juno LFO host parameters")) return 1;
+    juno_lfo_rate->setValueNotifyingHost(juno_lfo_rate->convertTo0to1(7));
+    juno_lfo_pwm->setValueNotifyingHost(juno_lfo_pwm->convertTo0to1(.8f));
+    juno_lfo_delay->setValueNotifyingHost(juno_lfo_delay->convertTo0to1(50));
+    auto* glide_control = find_parameter(*dry_juno, "juno.glide");
+    auto* unison_control = find_parameter(*dry_juno, "juno.unison_on");
+    auto* count_control = find_parameter(*dry_juno, "juno.unison_count");
+    auto* detune_control = find_parameter(*dry_juno, "juno.unison_detune");
+    auto* drift_control = find_parameter(*dry_juno, "juno.drift");
+    if (!check(glide_control && unison_control && count_control && detune_control && drift_control, "Juno voice groove parameters")) return 1;
+    glide_control->setValueNotifyingHost(glide_control->convertTo0to1(375));
+    unison_control->setValueNotifyingHost(unison_control->convertTo0to1(1));
+    count_control->setValueNotifyingHost(count_control->convertTo0to1(2));
+    detune_control->setValueNotifyingHost(detune_control->convertTo0to1(30));
+    drift_control->setValueNotifyingHost(drift_control->convertTo0to1(40));
+    auto* pump_on = find_parameter(*dry_juno, "juno.groove.pump.on");
+    auto* pump_depth = find_parameter(*dry_juno, "juno.groove.pump.p1");
+    auto* arp_on = find_parameter(*dry_juno, "juno.groove.arp.on");
+    auto* chord_on = find_parameter(*dry_juno, "juno.groove.chord.on");
+    if (!check(pump_on && pump_depth && arp_on && chord_on, "Juno PUMP ARP CHORD parameters")) return 1;
+    pump_on->setValueNotifyingHost(1); pump_depth->setValueNotifyingHost(pump_depth->convertTo0to1(75));
+    auto* pump_source = find_parameter(*dry_juno, "juno.groove.pump.p6");
+    if (!check(pump_source != nullptr, "Juno GFP pump source parameter")) return 1;
+    pump_source->setValueNotifyingHost(pump_source->convertTo0to1(2));
+    auto* juno_fx_on = find_parameter(*dry_juno, "juno.fx.delay.on");
+    auto* juno_fx_mix = find_parameter(*dry_juno, "juno.fx.delay.mix");
+    if (!check(juno_fx_on && juno_fx_mix, "Juno FX host parameters")) return 1;
+    juno_fx_on->setValueNotifyingHost(1); juno_fx_mix->setValueNotifyingHost(.65f);
+    juce::MemoryBlock juno_edited_state;
+    dry_juno->getStateInformation(juno_edited_state);
+    auto edited_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    edited_restore->setStateInformation(juno_edited_state.getData(), int(juno_edited_state.getSize()));
+    auto* restored_wave = find_parameter(*edited_restore, "juno.wave");
+    auto* restored_sub = find_parameter(*edited_restore, "juno.sub");
+    if (!check(restored_wave && restored_sub && std::abs(restored_wave->convertFrom0to1(restored_wave->getValue()) - 2) < .01f &&
+               std::abs(restored_sub->convertFrom0to1(restored_sub->getValue()) - 75) < .01f, "Juno OSC state restore")) return 1;
+    std::vector<uint8_t> edited_gfp;
+    if (!check(dry_import->export_juno_preset(edited_gfp), "Juno edited GFP export")) return 1;
+    studio::Preset edited_patch; uint8_t edited_engine = 0;
+    if (!check(gf::decode_supported_preset(edited_gfp.data(), edited_gfp.size(), edited_patch, edited_engine) &&
+               edited_engine == 1 && edited_patch.patch.osc[0][0] == 2 && edited_patch.patch.osc[0][1] == 75 &&
+               edited_patch.patch.osc[0][4] == 0, "Juno OSC exported values")) return 1;
+    if (!check(std::abs(edited_patch.patch.f_decay_ms - 730) < .01f && std::abs(edited_patch.patch.drive - .6f) < .0001f,
+               "Juno ENV exported values")) return 1;
+    if (!check(std::abs(edited_patch.patch.lfo_rate_hz - 7) < .001f &&
+               std::abs(edited_patch.patch.lfo_amt[GF_DEST_PWM] - .8f) < .001f &&
+               std::abs(edited_patch.patch.mod[0][0] - 50) < .01f, "Juno LFO exported values")) return 1;
+    if (!check(std::abs(edited_patch.patch.glide - .5f) < .0001f && edited_patch.patch.groove_on[GF_GROOVE_UNISON] &&
+               std::abs(edited_patch.patch.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] - 2) < .01f &&
+               std::abs(edited_patch.patch.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] - 30) < .01f &&
+               std::abs(edited_patch.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] - 40) < .01f, "Juno voice groove GFP export")) return 1;
+    if (!check(edited_patch.patch.groove_on[GF_GROOVE_PUMP] &&
+               std::abs(edited_patch.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] - 75) < .01f &&
+               std::abs(edited_patch.patch.groove[GF_GROOVE_PUMP][GF_PUMP_SOURCE] - 2) < .01f,
+               "Juno PUMP GFP export")) return 1;
+    auto* restored_pump_source = find_parameter(*edited_restore, "juno.groove.pump.p6");
+    if (!check(restored_pump_source && std::abs(restored_pump_source->convertFrom0to1(restored_pump_source->getValue()) - 2) < .01f,
+               "Juno pump source state restore")) return 1;
+    auto* restored_pump = find_parameter(*edited_restore, "juno.groove.pump.on");
+    if (!check(restored_pump && restored_pump->getValue() > .5f, "Juno PUMP state restore")) return 1;
+    if (!check(edited_patch.patch.sfx_on[GF_SFX_DELAY] && std::abs(edited_patch.patch.sfx_mix[GF_SFX_DELAY] - .65f) < .001f,
+               "Juno FX GFP export")) return 1;
+    auto* restored_delay = find_parameter(*edited_restore, "juno.fx.delay.on");
+    if (!check(restored_delay && restored_delay->getValue() > .5f, "Juno FX state restore")) return 1;
+    auto* restored_glide = find_parameter(*edited_restore, "juno.glide");
+    if (!check(restored_glide && std::abs(restored_glide->convertFrom0to1(restored_glide->getValue()) - 375) < .01f,
+               "Juno voice groove state restore")) return 1;
+    auto* restored_lfo = find_parameter(*edited_restore, "juno.lfo_pwm");
+    if (!check(restored_lfo && std::abs(restored_lfo->convertFrom0to1(restored_lfo->getValue()) - .8f) < .001f,
+               "Juno LFO state restore")) return 1;
+    auto* restored_filter_decay = find_parameter(*edited_restore, "juno.filter_decay");
+    if (!check(restored_filter_decay && std::abs(restored_filter_decay->convertFrom0to1(restored_filter_decay->getValue()) - 730) < .01f,
+               "Juno ENV state restore")) return 1;
+    auto juno_v1_xml = juce::AudioProcessor::getXmlFromBinary(juno_edited_state.getData(), int(juno_edited_state.getSize()));
+    if (!check(juno_v1_xml != nullptr, "Juno v1 state XML")) return 1;
+    juno_v1_xml->setAttribute("junoGrooveVersion", 1);
+    juce::MemoryBlock juno_v1_state;
+    juce::AudioProcessor::copyXmlToBinary(*juno_v1_xml, juno_v1_state);
+    auto juno_v1_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    juno_v1_restore->setStateInformation(juno_v1_state.getData(), int(juno_v1_state.getSize()));
+    auto* v1_source = find_parameter(*juno_v1_restore, "juno.groove.pump.p6");
+    auto* v1_depth = find_parameter(*juno_v1_restore, "juno.groove.pump.p1");
+    if (!check(v1_source && v1_depth &&
+               std::abs(v1_source->convertFrom0to1(v1_source->getValue()) - juno_patch.patch.groove[GF_GROOVE_PUMP][GF_PUMP_SOURCE]) < .01f &&
+               std::abs(v1_depth->convertFrom0to1(v1_depth->getValue()) - 75) < .01f, "Juno v1 source migration preserves pump edits")) return 1;
+    auto juno_legacy_xml = juce::AudioProcessor::getXmlFromBinary(juno_saved.getData(), int(juno_saved.getSize()));
+    if (!check(juno_legacy_xml != nullptr, "Juno legacy state XML")) return 1;
+    juno_legacy_xml->removeAttribute("junoOscVersion");
+    juno_legacy_xml->removeAttribute("junoEnvVersion");
+    juno_legacy_xml->removeAttribute("junoLfoVersion");
+    juno_legacy_xml->removeAttribute("junoVoiceGrooveVersion");
+    juno_legacy_xml->removeAttribute("junoGrooveVersion");
+    juno_legacy_xml->removeAttribute("junoFxVersion");
+    juce::MemoryBlock juno_legacy_state;
+    juce::AudioProcessor::copyXmlToBinary(*juno_legacy_xml, juno_legacy_state);
+    auto juno_legacy_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    juno_legacy_restore->setStateInformation(juno_legacy_state.getData(), int(juno_legacy_state.getSize()));
+    auto* juno_legacy_wave = find_parameter(*juno_legacy_restore, "juno.wave");
+    if (!check(juno_legacy_wave && std::abs(juno_legacy_wave->convertFrom0to1(juno_legacy_wave->getValue()) - juno_patch.patch.osc[0][0]) < .01f,
+               "Juno legacy state migrates GFP oscillator")) return 1;
+    auto* juno_legacy_decay = find_parameter(*juno_legacy_restore, "juno.filter_decay");
+    if (!check(juno_legacy_decay && std::abs(juno_legacy_decay->convertFrom0to1(juno_legacy_decay->getValue()) - juno_patch.patch.f_decay_ms) < .01f,
+               "Juno legacy state migrates GFP envelope")) return 1;
+    auto* legacy_lfo = find_parameter(*juno_legacy_restore, "juno.lfo_rate");
+    if (!check(legacy_lfo && std::abs(legacy_lfo->convertFrom0to1(legacy_lfo->getValue()) - juno_patch.patch.lfo_rate_hz) < .01f,
+               "Juno legacy state migrates GFP LFO")) return 1;
+    auto* legacy_glide = find_parameter(*juno_legacy_restore, "juno.glide");
+    if (!check(legacy_glide && std::abs(legacy_glide->convertFrom0to1(legacy_glide->getValue()) -
+               juno_patch.patch.glide * juno_patch.patch.glide * 1500.0f) < .01f, "Juno legacy voice groove migration")) return 1;
+    dry_juno->prepareToPlay(44100, 128); edited_restore->prepareToPlay(44100, 128);
+    float edited_difference = 0;
+    for (int block = 0; block < 10; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        dry_juno->processBlock(juno_a, one); edited_restore->processBlock(juno_b, two);
+        for (int i = 0; i < 128; ++i) edited_difference += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+    }
+    if (!check(edited_difference < 1e-4f, "Juno edited OSC state audio restore")) return 1;
+    auto unedited = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* unedited_import = dynamic_cast<gf::PresetImport*>(unedited.get());
+    if (!check(unedited_import && unedited_import->import_preset(exported_juno.data(), exported_juno.size()), "Juno unedited preset")) return 1;
+    unedited->prepareToPlay(44100, 128); dry_juno->prepareToPlay(44100, 128);
+    float changed_osc_audio = 0;
+    for (int block = 0; block < 10; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        dry_juno->processBlock(juno_a, one); unedited->processBlock(juno_b, two);
+        for (int i = 0; i < 128; ++i) changed_osc_audio += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+    }
+    if (!check(changed_osc_audio > .01f, "Juno OSC automation changes audio")) return 1;
+    studio::Preset macro_juno = juno_patch;
+    macro_juno.patch.decay_ms = 1000; macro_juno.patch.drive = .2f;
+    macro_juno.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 100;
+    macro_juno.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 50;
+    studio::preset_encode(macro_juno, 1, juno_bytes.data(), juno_bytes.size());
+    auto macro_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* juno_macro_import = dynamic_cast<gf::PresetImport*>(macro_plugin.get());
+    if (!check(juno_macro_import && juno_macro_import->import_preset(juno_bytes.data(), juno_bytes.size()), "Juno macro preset import")) return 1;
+    std::vector<uint8_t> macro_export;
+    if (!check(juno_macro_import->export_juno_preset(macro_export), "Juno macro preset export")) return 1;
+    studio::Preset macro_result; uint8_t macro_engine = 0;
+    if (!check(gf::decode_supported_preset(macro_export.data(), macro_export.size(), macro_result, macro_engine) &&
+               std::abs(macro_result.patch.decay_ms - 200) < .02f && std::abs(macro_result.patch.drive - .5f) < .001f &&
+               macro_result.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] == 0 &&
+               macro_result.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] == 0, "Juno macro effective ENV export")) return 1;
+    auto lfo_off_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto lfo_on_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* lfo_off_import = dynamic_cast<gf::PresetImport*>(lfo_off_plugin.get());
+    auto* lfo_on_import = dynamic_cast<gf::PresetImport*>(lfo_on_plugin.get());
+    if (!check(lfo_off_import && lfo_on_import && lfo_off_import->import_preset(edited_gfp.data(), edited_gfp.size()) &&
+               lfo_on_import->import_preset(edited_gfp.data(), edited_gfp.size()), "Juno LFO test presets")) return 1;
+    auto* off_pwm = find_parameter(*lfo_off_plugin, "juno.lfo_pwm");
+    off_pwm->setValueNotifyingHost(off_pwm->convertTo0to1(0));
+    lfo_off_plugin->prepareToPlay(44100, 128); lfo_on_plugin->prepareToPlay(44100, 128);
+    float lfo_difference = 0;
+    for (int block = 0; block < 50; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        lfo_off_plugin->processBlock(juno_a, one); lfo_on_plugin->processBlock(juno_b, two);
+        for (int i = 0; i < 128; ++i) lfo_difference += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+    }
+    if (!check(lfo_difference > .01f, "Juno LFO automation changes audio")) return 1;
+    auto pump_off_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto pump_on_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* pump_off_import = dynamic_cast<gf::PresetImport*>(pump_off_plugin.get());
+    auto* pump_on_import = dynamic_cast<gf::PresetImport*>(pump_on_plugin.get());
+    if (!check(pump_off_import && pump_on_import && pump_off_import->import_preset(edited_gfp.data(), edited_gfp.size()) &&
+               pump_on_import->import_preset(edited_gfp.data(), edited_gfp.size()), "Juno pump test presets")) return 1;
+    auto* pump_off = find_parameter(*pump_off_plugin, "juno.groove.pump.on");
+    pump_off->setValueNotifyingHost(0);
+    pump_off_plugin->prepareToPlay(44100, 128); pump_on_plugin->prepareToPlay(44100, 128);
+    float pump_difference = 0;
+    for (int block = 0; block < 40; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        pump_off_plugin->processBlock(juno_a, one); pump_on_plugin->processBlock(juno_b, two);
+        for (int i = 0; i < 128; ++i) pump_difference += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+    }
+    if (!check(pump_difference > .01f, "Juno pump automation changes audio")) return 1;
+    auto* pump_on_source = find_parameter(*pump_on_plugin, "juno.groove.pump.p6");
+    auto* pump_off_source = find_parameter(*pump_off_plugin, "juno.groove.pump.p6");
+    auto* pump_off_enable = find_parameter(*pump_off_plugin, "juno.groove.pump.on");
+    pump_off_enable->setValueNotifyingHost(1);
+    pump_off_source->setValueNotifyingHost(pump_off_source->convertTo0to1(0));
+    pump_on_source->setValueNotifyingHost(pump_on_source->convertTo0to1(2));
+    pump_off_plugin->prepareToPlay(44100, 128); pump_on_plugin->prepareToPlay(44100, 128);
+    float source_difference = 0;
+    for (int block = 0; block < 20; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        pump_off_plugin->processBlock(juno_a, one); pump_on_plugin->processBlock(juno_b, two);
+        for (int i = 0; i < 128; ++i) source_difference += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+    }
+    if (!check(source_difference < .0001f, "Juno GFP source does not override DAW clock")) return 1;
+    auto fx_auto_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto fx_auto_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* fx_auto_import_a = dynamic_cast<gf::PresetImport*>(fx_auto_a.get());
+    auto* fx_auto_import_b = dynamic_cast<gf::PresetImport*>(fx_auto_b.get());
+    if (!check(fx_auto_import_a && fx_auto_import_b && fx_auto_import_a->import_preset(exported_juno.data(), exported_juno.size()) &&
+               fx_auto_import_b->import_preset(exported_juno.data(), exported_juno.size()), "Juno FX automation preset")) return 1;
+    auto* drive_on_a = find_parameter(*fx_auto_a, "juno.fx.drive.on");
+    auto* drive_on_b = find_parameter(*fx_auto_b, "juno.fx.drive.on");
+    drive_on_a->setValueNotifyingHost(0); drive_on_b->setValueNotifyingHost(0);
+    fx_auto_a->prepareToPlay(44100, 128); fx_auto_b->prepareToPlay(44100, 128);
+    float changed_fx_audio = 0, held_fx_energy = 0;
+    for (int block = 0; block < 40; ++block) {
+        juce::MidiBuffer one, two;
+        if (!block) { one.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); two.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        if (block == 10) drive_on_b->setValueNotifyingHost(1);
+        fx_auto_a->processBlock(juno_a, one); fx_auto_b->processBlock(juno_b, two);
+        if (block >= 10) for (int i = 0; i < 128; ++i) {
+            changed_fx_audio += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+            held_fx_energy += std::abs(juno_b.getSample(0, i));
+        }
+    }
+    if (!check(changed_fx_audio > .01f && held_fx_energy > .01f, "Juno FX automation changes audio without ending note")) return 1;
+    auto juno_macro_live = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto juno_macro_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* live_import = dynamic_cast<gf::PresetImport*>(juno_macro_live.get());
+    auto* reference_import = dynamic_cast<gf::PresetImport*>(juno_macro_reference.get());
+    if (!check(live_import && reference_import && live_import->import_preset(edited_gfp.data(), edited_gfp.size()) &&
+               reference_import->import_preset(edited_gfp.data(), edited_gfp.size()), "Juno macro automation presets")) return 1;
+    auto* grit_knob = find_parameter(*juno_macro_live, "juno.macro.grit");
+    auto* pocket_knob = find_parameter(*juno_macro_live, "juno.macro.pocket");
+    auto* move_knob = find_parameter(*juno_macro_live, "juno.macro.move");
+    if (!check(grit_knob && pocket_knob && move_knob, "Juno macro parameters")) return 1;
+    grit_knob->setValueNotifyingHost(.5f); pocket_knob->setValueNotifyingHost(.4f); move_knob->setValueNotifyingHost(.3f);
+    juce::MemoryBlock macro_state;
+    juno_macro_live->getStateInformation(macro_state);
+    auto macro_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    macro_restored->setStateInformation(macro_state.getData(), int(macro_state.getSize()));
+    auto* macro_restored_grit = find_parameter(*macro_restored, "juno.macro.grit");
+    if (!check(macro_restored_grit && std::abs(macro_restored_grit->getValue() - .5f) < .001f, "Juno macro state restore")) return 1;
+    std::vector<uint8_t> macro_live_gfp;
+    if (!check(live_import->export_juno_preset(macro_live_gfp), "Juno live macro export")) return 1;
+    auto juno_macro_roundtrip = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* macro_roundtrip_import = dynamic_cast<gf::PresetImport*>(juno_macro_roundtrip.get());
+    if (!check(macro_roundtrip_import && macro_roundtrip_import->import_preset(macro_live_gfp.data(), macro_live_gfp.size()), "Juno live macro reimport")) return 1;
+    juno_macro_live->prepareToPlay(44100, 128); juno_macro_reference->prepareToPlay(44100, 128);
+    juno_macro_roundtrip->prepareToPlay(44100, 128); macro_restored->prepareToPlay(44100, 128);
+    juce::AudioBuffer<float> juno_macro_audio(2, 128), restored_juno_macro_audio(2, 128);
+    float macro_delta = 0, macro_roundtrip_delta = 0, macro_state_delta = 0;
+    for (int block = 0; block < 30; ++block) {
+        juce::MidiBuffer one, two, three, four;
+        if (!block) for (auto* events : {&one, &two, &three, &four}) events->addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        juno_macro_live->processBlock(juno_a, one); juno_macro_reference->processBlock(juno_b, two);
+        juno_macro_roundtrip->processBlock(juno_macro_audio, three); macro_restored->processBlock(restored_juno_macro_audio, four);
+        for (int i = 0; i < 128; ++i) {
+            macro_delta += std::abs(juno_a.getSample(0, i) - juno_b.getSample(0, i));
+            macro_roundtrip_delta += std::abs(juno_a.getSample(0, i) - juno_macro_audio.getSample(0, i));
+            macro_state_delta += std::abs(juno_a.getSample(0, i) - restored_juno_macro_audio.getSample(0, i));
+        }
+    }
+    if (!check(macro_delta > .01f, "Juno macros change audio")) return 1;
+    if (!check(macro_roundtrip_delta < .01f, "Juno macro GFP audio roundtrip")) return 1;
+    if (!check(macro_state_delta < .0001f, "Juno macro project audio restore")) return 1;
+    auto juno_editor = std::unique_ptr<juce::AudioProcessorEditor>(dry_juno->createEditor());
+    if (!check(juno_editor != nullptr, "Juno editor constructed")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);

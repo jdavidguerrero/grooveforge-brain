@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render the firmware Juno graph with a silent noise shim, not a plugin."""
+"""Render the firmware Juno graph with a scalar PJRC noise shim, not a plugin."""
 import argparse
 import hashlib
 import json
@@ -12,7 +12,7 @@ import wave
 from pathlib import Path
 from run import ROOT, HERE, SRC, build
 
-CASES = ('chord', 'pwm', 'glide', 'voice_steal', 'hpf', 'chorus_ii', 'chorus_i_ii')
+CASES = ('chord', 'pwm', 'glide', 'voice_steal', 'hpf', 'chorus_ii', 'chorus_i_ii', 'white_noise')
 SOURCES = [HERE / 'shim/audio.cpp', HERE / 'juno_reference.cpp',
            SRC / 'engines/juno_106.cpp', SRC / 'audio/moog_ladder.cpp']
 
@@ -20,14 +20,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--compiler', default='c++')
+    parser.add_argument('--compare', type=Path, help='saved reference directory; compare its listed cases byte for byte')
     args = parser.parse_args()
     out = args.out.resolve()
     if out.exists() and any(out.iterdir()):
         parser.error('output directory must be empty')
     out.mkdir(parents=True, exist_ok=True)
+    baseline = None
+    if args.compare:
+        baseline = json.loads((args.compare / 'manifest.json').read_text())
     manifest = {'sample_rate': 44100, 'channels': 2, 'frames': 690 * 128,
                 'source': 'firmware graph with single-instance software shim',
-                'limitations': ['noise replaced by silence; noise gain fixed to zero',
+                'limitations': ['PJRC noise uses scalar modular implementation and harness seed order',
                                 'no Studio effects or physical hardware', 'control ticks before each block'],
                 'git_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                 'git_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT, text=True).strip()),
@@ -53,6 +57,12 @@ def main():
             tail = math.sqrt(sum(x*x for x in samples[-16000:]) / 16000)
             if attack < 100 or tail >= attack:
                 raise RuntimeError(f'{name}: invalid attack or release ({attack}, {tail})')
+            if baseline:
+                expected = next((c for c in baseline['cases'] if c['name'] == name), None)
+                if expected:
+                    old_data = (args.compare / (name + '.raw')).read_bytes()
+                    if hashlib.sha256(old_data).hexdigest() != expected['pcm_sha256'] or old_data != data:
+                        raise RuntimeError(f'{name}: reference differs or saved PCM is corrupt')
             with wave.open(str(out / (name + '.wav')), 'wb') as wav:
                 wav.setnchannels(2); wav.setsampwidth(2); wav.setframerate(44100); wav.writeframes(data)
             (out / (name + '.raw')).write_bytes(data)
@@ -60,6 +70,8 @@ def main():
             manifest['cases'].append({'name': name, 'pcm_sha256': digest, 'attack_rms': attack, 'tail_rms': tail})
             print(f'{name}: {digest}')
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+    if baseline and not all(case['name'] in CASES for case in baseline['cases']):
+        raise RuntimeError('reference contains unknown cases')
     print(f'Juno reference: {out}')
 
 if __name__ == '__main__':

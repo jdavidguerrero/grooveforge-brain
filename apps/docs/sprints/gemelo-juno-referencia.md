@@ -43,3 +43,41 @@ La exportación Juno parte del GFP importado o un patch INIT, actualiza los cuat
 ## Chorus a frecuencias altas del host
 
 El búfer circular del firmware tiene 512 muestras: no alcanza para el retardo máximo del modo II a 96 kHz. El núcleo compartido pasa a aceptar un tamaño como parámetro de compilación; el alias del firmware mantiene 512 muestras. En el plugin se conserva ese mismo núcleo y tamaño hasta 95 kHz, y se usa una instancia de 4096 muestras por encima. Así se preserva la aritmética anterior a 44,1 kHz y se habilitan los mismos retardos temporales hasta 384 kHz sin asignación en el hilo de audio. La prueba comprueba salida estéreo, niveles finitos y reproducibilidad a 44,1/48/96/192/384 kHz; no sustituye la comparación de frecuencia y sonido frente al hardware.
+
+## Incremento editor OSC y automatización
+
+La página OSC expone nueve parámetros estables del host: WAVE (0 saw, 1 square, 2 pulse, 3 saw+pulse), SUB, NOISE, PW, CHORUS (0 off, 1 I, 2 II, 3 I+II), HPF (0 boost, 1 flat, 2 225 Hz, 3 720 Hz), RANGE (0 16', 1 8', 2 4'), VCA (0 env, 1 gate) y HISS. Sus unidades y límites corresponden a los slots del firmware. Importar GFP actualiza estos controles; exportar incorpora sus valores editados. En sesiones anteriores a esta versión se inicializan desde el GFP guardado y las sesiones nuevas conservan sus valores automatizados. El audio aplica cambios entre bloques, sin prometer automatización a resolución de muestra.
+
+## Incremento editor ENV/FILTER
+
+La página ENV expone decay/sustain de amplitud, ADSR de filtro, cantidad de envolvente, drive y sensibilidad de velocity de amplitud y filtro. Attack y release de amplitud siguen en la página principal. Se editan valores efectivos después de GRIT y POCKET; al exportar se incorporan en el GFP con esas macros a cero, igual que los controles generales. IDs estables y estado del host permiten automatización por bloque. La migración de sesiones previas obtiene los valores efectivos del GFP, o los valores iniciales si no había preset. Se prueban respuesta audible, restauración y exportación. Las rutas de LFO, GROOVE y FX todavía necesitan su propio editor.
+
+## Incremento editor LFO
+
+La página LFO permite automatizar RATE (0,05–20 Hz), SHAPE (seno, triángulo, sierra, cuadrada y sample & hold), DIV (1/4, 1/8, 1/16, 1/8T), profundidades de cutoff, pitch y PWM, y DELAY (0–3000 ms). Se reutilizan el reloj de 1 ms y el LFO compartido; los cambios llegan al comienzo del bloque. La sincronización se guarda en el estado del DAW y sigue sin representarse en GFP, así que la exportación requiere desactivarla. Los proyectos anteriores migran desde el GFP, y se prueban la respuesta audible, la migración y la exportación.
+
+## Incremento controles de voz GROOVE
+
+La página GROOVE expone glide en milisegundos, encendido de UNISON, selección 0–3 (1/2/3/6 voces), desafinación de 0–50 cents y DRIFT 0–100 %. Al importar GFP se convierte glide desde su valor normalizado cuadrático; al exportar se aplica la inversa. Estos controles se guardan en el estado del DAW y se migran desde el GFP en sesiones anteriores. PUMP, ARP y CHORD todavía requieren su editor. Las pruebas verifican asignación, efecto audible, migración, persistencia y roundtrip del preset.
+
+## Incremento editor PUMP / ARP / CHORD
+
+Los controles editan las tres paradas GROOVE con el mismo catálogo y unidades del firmware. El estado se guarda en el DAW y exporta a GFP; sesiones anteriores migran desde el GFP. El scheduler y PUMP siguen siendo los del piloto compartido; la memoria de acordes aprendidos en hardware no existe en GFP. Las pruebas verifican importación, automatización observable, persistencia y exportación, sin afirmar equivalencia física.
+
+## Incremento editor SYNTH FX
+
+La página FX expone encendido, mezcla y tres parámetros por ranura: DRIVE, TAPE, CHORUS/PHASER, DELAY y REVERB. Se usan los IDs estables del host y el mapeo de la cadena SYNTH común; las cargas antiguas migran desde GFP y la exportación incorpora los valores editados. La actualización se aplica cuando cambia un control, sin reiniciar las voces. Se validan cambios audibles, persistencia, exportación y compatibilidad de Prophet/DX7. El delay, PLATE y MODAL del piloto y la compensación de UNISON aún requieren comparación A/B con el Brain.
+
+## Incremento macros de Juno
+
+GRIT, POCKET y MOVE trabajan como desplazamientos sobre los valores editables del host; GRIT RES, GRIT MOD y POCKET VEL ajustan sus profundidades. Al importar GFP, los valores efectivos se cargan como base y las posiciones de GRIT/POCKET/MOVE comienzan en cero, evitando aplicar dos veces el preset. Al exportar se incorporan los valores efectivos y se dejan esas tres macros en cero; sus posiciones independientes no se conservan en el GFP exportado. El estado del DAW sí conserva posiciones y valores base. MOVE afecta cutoff, resonancia y los FX activos; se usan las funciones compartidas del firmware. La actualización es por bloque y la fidelidad física permanece pendiente.
+
+## Fuente de reloj de PUMP en el VST
+
+El SOURCE del Brain es una selección del reloj común: AUTO, MIDI o INTERNO. La spec del plugin establece que el host gobierna BPM, posición y transporte; el piloto todavía no recibe MIDI Clock ni tiene un selector de reloj interno independiente. El editor conserva el valor SOURCE del GFP (0 AUTO, 1 MIDI, 2 INT), lo automatiza y lo exporta sin alterarlo, pero el audio del plugin sigue siempre el reloj del DAW. El texto de ayuda del control comunica esa limitación. No se declara equivalencia de las transiciones MIDI/INT hasta implementar un contrato de reloj compatible con la spec y probarlo; tampoco se añade un control que prometa cambiar la fuente de audio sin hacerlo. La migración de la versión anterior importa solo SOURCE para preservar los demás valores automatizados de PUMP.
+
+## Incremento ruido blanco PJRC
+
+`AudioSynthNoiseWhite` oficial usa Park–Miller–Carta (16807, módulo 2³¹−1) y extrae el entero de 16 bits bajo de cada estado. La ganancia de la instancia en Juno es 1 y la mezcla posterior multiplica ese PCM por NOISE × 0,5 y velocity. El piloto sustituye xorshift por una adaptación portable de ese generador con seis semillas independientes y aritmética PCM16. El shim de referencia usa una formulación modular independiente y permite una escena con ruido; se validan vectores y se conservan las siete referencias anteriores. En hardware las semillas dependen del orden global de construcción y de cuántos bloques hayan corrido: no se garantiza fase de ruido idéntica. El mezclador y ladder del piloto siguen usando float y no se declara equivalencia bit a bit del render completo.
+
+Fuente: Paul Stoffregen/PJRC, Teensy Audio Library `synth_whitenoise.cpp` y `synth_whitenoise.h`, licencia incluida en `tools/gemelo-baseline/PJRC-LICENSE.txt`; S. K. Park y K. W. Miller, «Random Number Generators: Good Ones Are Hard to Find», Communications of the ACM 31(10), 1988.

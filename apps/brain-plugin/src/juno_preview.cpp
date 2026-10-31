@@ -25,7 +25,7 @@ void JunoPreview::reset() {
         v = Voice(fs_);
         v.dco.reset(0x41060001u + uint32_t(i) * 97u);
         v.sub.reset(0x41061001u + uint32_t(i) * 97u);
-        v.noise_rng = 0x8c91a123u + uint32_t(i) * 7919u;
+        v.noise.reset(uint32_t(i) + 1u);
         v.dco.set_drift(0.00015f); v.sub.set_drift(0.00015f);
         v.spread = dsp::voice_spread(0x10601u + uint32_t(i) * 7919u, 0.3f, 0.04f);
         v.filter.set_character(dsp::LadderCharacter::Ir3109);
@@ -165,8 +165,7 @@ void JunoPreview::process_frame(float& left, float& right) {
         v.dco.render(waveform_, hz / fs_, std::clamp(pulse_width_ + pwm_mod_, 0.05f, 0.95f), 1, &dco, 1);
         v.sub.render(dsp::WAVE_SQUARE, hz * 0.5f / fs_, 0.5f, 1, &sub, 1);
         const float gain = 1.0f - velocity_amp_ * (1.0f - v.velocity);
-        v.noise_rng ^= v.noise_rng << 13; v.noise_rng ^= v.noise_rng >> 17; v.noise_rng ^= v.noise_rng << 5;
-        const float noise = float(int32_t(v.noise_rng)) * (1.0f / 2147483648.0f);
+        const float noise = float(v.noise.next()) * (1.0f / 32768.0f);
         mix += v.filter.process_sample((0.6f * dco + sub_level_ * sub + 0.5f * noise_level_ * noise) * gain) * v.amp.step() * 0.25f;
     }
     mix = std::clamp(mix, -1.0f, 1.0f);

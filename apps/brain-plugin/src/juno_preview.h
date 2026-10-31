@@ -1,5 +1,6 @@
 #pragma once
 #include "dsp/polyblep_core.h"
+#include "pjrc_white_noise.h"
 #include "dsp/ladder_stage_core.h"
 #include "dsp/analog_env.h"
 #include "dsp/lfo.h"
@@ -53,7 +54,7 @@ private:
         float hz = 440, target_hz = 440, velocity = 1, pitch_ratio = 1, cutoff_ratio = 1;
         uint64_t age = 0;
         bool deferred = false;
-        uint32_t noise_rng = 1;
+        PjrcWhiteNoise noise;
     };
     std::array<std::optional<Voice>, 6> voices_;
     dsp::JunoChorusCore chorus_;

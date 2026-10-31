@@ -58,13 +58,25 @@ private:
     int32_t multiplier_[4] = {65536, 65536, 65536, 65536};
 };
 
-/** Silent placeholder: Juno reference scenarios require noise gain zero. */
+/** Scalar PJRC-compatible reference noise; independent modulo formulation for test graphs. */
 class AudioSynthNoiseWhite : public AudioStream {
 public:
-    AudioSynthNoiseWhite() : AudioStream(0, nullptr) {}
-    void amplitude(float) {}
+    AudioSynthNoiseWhite() : AudioStream(0, nullptr), seed_(next_seed_++) {}
+    void amplitude(float n) { level_ = int32_t(std::clamp(n, 0.0f, 1.0f) * 65536.0f); }
     void update() override {
+        if (!level_) return;
         auto* block = allocate();
-        if (block) { transmit(block); release(block); }
+        if (!block) return;
+        for (auto& sample : block->data) {
+            seed_ = uint32_t((uint64_t(seed_) * 16807u) % 2147483647u);
+            int32_t signed_low = int32_t(seed_ & 0xffffu);
+            if (signed_low >= 32768) signed_low -= 65536;
+            sample = int16_t((int64_t(level_) * signed_low) >> 16);
+        }
+        transmit(block); release(block);
     }
+private:
+    inline static uint32_t next_seed_ = 1;
+    uint32_t seed_;
+    int32_t level_ = 0;
 };

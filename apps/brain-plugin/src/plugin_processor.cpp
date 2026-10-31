@@ -26,15 +26,49 @@ constexpr const char* DX_FX_LABELS[5][5] = {
     {"On", "Mix", "Depth", "Rate", "Type"}, {"On", "Mix", "Time", "Feedback", "Tone"},
     {"On", "Mix", "Decay", "Type", "Size"}};
 juce::String dx_fx_id(int fx, int field) { return "dx7.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
+juce::String juno_fx_id(int fx, int field) { return "juno.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
 constexpr std::array<const char*, 3> DX_GROOVE_NAMES{"pump", "arp", "chord"};
 constexpr std::array<int, 3> DX_GROOVE_FIELDS{6, 7, 5};
+constexpr std::array<int, 3> JUNO_GROOVE_FIELDS{7, 7, 5};
 juce::String dx_groove_id(int group, int field) {
     return "dx7.groove." + juce::String(DX_GROOVE_NAMES[size_t(group)]) + "." + (field == 0 ? juce::String("on") : "p" + juce::String(field));
+}
+juce::String juno_groove_id(int group, int field) {
+    return "juno.groove." + juce::String(DX_GROOVE_NAMES[size_t(group)]) + "." + (field == 0 ? juce::String("on") : "p" + juce::String(field));
 }
 constexpr std::array<const char*, 6> DX_MACRO_IDS{"dx7.macro.grit", "dx7.macro.pocket", "dx7.macro.move",
                                                   "dx7.macro.grit_res", "dx7.macro.grit_mod", "dx7.macro.pocket_vel"};
 constexpr std::array<const char*, 6> DX_MACRO_LABELS{"GRIT", "POCKET", "MOVE", "GRIT RES", "GRIT MOD", "POCKET VEL"};
+constexpr std::array<const char*, 6> JUNO_MACRO_IDS{"juno.macro.grit", "juno.macro.pocket", "juno.macro.move",
+    "juno.macro.grit_res", "juno.macro.grit_mod", "juno.macro.pocket_vel"};
+
 struct DxGeneral { const char* id; const char* label; float lo, hi, step, initial; };
+constexpr std::array<DxGeneral, 9> JUNO_OSC{{
+    {"juno.wave", "WAVE 0-3", 0,3,1,3}, {"juno.sub", "SUB %", 0,100,0,30},
+    {"juno.noise", "NOISE %", 0,100,0,0}, {"juno.pw", "PULSE WIDTH %", 5,95,0,50},
+    {"juno.chorus", "CHORUS 0-3", 0,3,1,1}, {"juno.hpf", "HPF 0-3", 0,3,1,1},
+    {"juno.range", "RANGE 0-2", 0,2,1,1}, {"juno.gate", "VCA 0-1", 0,1,1,0},
+    {"juno.hiss", "HISS %", 0,100,0,0}
+}};
+
+constexpr std::array<DxGeneral, 10> JUNO_ENV{{
+    {"juno.amp_decay", "AMP DECAY ms", 1.5f,12000,0,200}, {"juno.amp_sustain", "AMP SUSTAIN", 0,1,0,0.5f},
+    {"juno.filter_attack", "FLT ATTACK ms", 0,12000,0,10}, {"juno.filter_decay", "FLT DECAY ms", 0,12000,0,200},
+    {"juno.filter_sustain", "FLT SUSTAIN", 0,1,0,0.5f}, {"juno.filter_release", "FLT RELEASE ms", 0,12000,0,300},
+    {"juno.env_amount", "FLT ENV AMT", 0,1,0,0.5f}, {"juno.drive", "DRIVE", 0,1,0,0.17142857f},
+    {"juno.vel_amp", "VEL AMP %", 0,100,0,65}, {"juno.vel_filter", "VEL FILTER %", 0,100,0,50}
+}};
+constexpr std::array<DxGeneral, 7> JUNO_LFO{{
+    {"juno.lfo_rate", "RATE Hz", .05f,20,0,2}, {"juno.lfo_shape", "SHAPE 0-4", 0,4,1,1},
+    {"juno.lfo_div", "DIV 0-3", 0,3,1,1}, {"juno.lfo_cutoff", "CUTOFF DEPTH", 0,1,0,0},
+    {"juno.lfo_pitch", "PITCH DEPTH", 0,1,0,0}, {"juno.lfo_pwm", "PWM DEPTH", 0,1,0,0},
+    {"juno.lfo_delay", "DELAY ms", 0,3000,0,0}
+}};
+constexpr std::array<DxGeneral, 5> JUNO_VOICE_GROOVE{{
+    {"juno.glide", "GLIDE ms", 0,1500,0,0}, {"juno.unison_on", "UNISON ON", 0,1,1,0},
+    {"juno.unison_count", "VOICES 0-3", 0,3,1,0}, {"juno.unison_detune", "DETUNE cents", 0,50,0,0},
+    {"juno.drift", "DRIFT %", 0,100,0,0}
+}};
 constexpr std::array<DxGeneral, 18> DX_GENERAL{{
     {"dx7.cutoff", "CUTOFF", 500,20000,0,20000}, {"dx7.resonance", "RESONANCE", 0.7f,3,0,0.7f},
     {"dx7.drive", "DRIVE", 0.5f,4,0,1}, {"dx7.amp_attack", "AMP ATTACK", 0,5000,0,2},
@@ -97,6 +131,34 @@ juce::AudioProcessorValueTreeState::ParameterLayout make_layout() {
         parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{DX_MACRO_IDS[i], 1},
             "DX7 " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
     parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"juno_preview", 1}, "Juno Preview", false));
+    for (const auto& p : JUNO_OSC)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{p.id, 1}, "Juno " + String(p.label),
+            NormalisableRange<float>{p.lo, p.hi, p.step}, p.initial));
+    for (const auto& p : JUNO_ENV)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{p.id, 1}, "Juno " + String(p.label),
+            NormalisableRange<float>{p.lo, p.hi, p.step}, p.initial));
+    for (const auto& p : JUNO_LFO)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{p.id, 1}, "Juno " + String(p.label),
+            NormalisableRange<float>{p.lo, p.hi, p.step}, p.initial));
+    for (const auto& p : JUNO_VOICE_GROOVE)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{p.id, 1}, "Juno " + String(p.label),
+            NormalisableRange<float>{p.lo, p.hi, p.step}, p.initial));
+    for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+        const auto slot = field == 0 ? GF_OscSlot{0, 1, 1, 2, false} : GF_GROOVE_SLOT[group][field - 1];
+        const float initial = field == 0 ? 0.0f : default_patch.groove[group][field - 1];
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{juno_groove_id(group, field), 1},
+            "Juno GROOVE " + String(DX_GROOVE_NAMES[size_t(group)]) + " " + String(field),
+            NormalisableRange<float>{slot.lo, slot.hi, slot.count ? 1.0f : 0.0f}, initial));
+    }
+    for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field) {
+        const float initial = field == 0 ? 0.0f : field == 1 ? default_patch.sfx_mix[fx] : default_patch.sfx_p[fx][field - 2];
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{juno_fx_id(fx, field), 1},
+            "Juno FX " + String(DX_FX_NAMES[size_t(fx)]) + " " + DX_FX_LABELS[fx][field],
+            NormalisableRange<float>{0, 1, field == 0 ? 1.0f : 0.0f}, initial));
+    }
+    for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{JUNO_MACRO_IDS[i], 1},
+            "Juno " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
     return {parameters.begin(), parameters.end()};
 }
 
@@ -111,6 +173,22 @@ public:
         lfo_sync_ = state_.getRawParameterValue("lfo_sync");
         dx7_enabled_ = state_.getRawParameterValue("dx7_preview");
         juno_enabled_ = state_.getRawParameterValue("juno_preview");
+        for (size_t i = 0; i < JUNO_OSC.size(); ++i) juno_osc_[i] = state_.getRawParameterValue(JUNO_OSC[i].id);
+        juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < JUNO_ENV.size(); ++i) juno_env_[i] = state_.getRawParameterValue(JUNO_ENV[i].id);
+        juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < JUNO_LFO.size(); ++i) juno_lfo_[i] = state_.getRawParameterValue(JUNO_LFO[i].id);
+        juno_lfo_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < JUNO_VOICE_GROOVE.size(); ++i) juno_voice_groove_[i] = state_.getRawParameterValue(JUNO_VOICE_GROOVE[i].id);
+        juno_voice_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field)
+            juno_groove_[group][field] = state_.getRawParameterValue(juno_groove_id(group, field));
+        juno_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field)
+            juno_fx_[fx][field] = state_.getRawParameterValue(juno_fx_id(fx, field));
+        juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) juno_macro_[i] = state_.getRawParameterValue(JUNO_MACRO_IDS[i]);
+        juno_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_algorithm_ = state_.getRawParameterValue("dx7.algorithm");
         dx_feedback_ = state_.getRawParameterValue("dx7.feedback");
         dx_kbd_level_ = state_.getRawParameterValue("dx7.kbd_level");
@@ -165,7 +243,7 @@ public:
         dx_bus_.prepare(sample_rate);
         juno_bus_.prepare(sample_rate);
         dx7_.prepare(sample_rate);
-        juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         juno_.prepare(sample_rate);
         dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -183,6 +261,13 @@ public:
         dx_bus_.set_plate_memory(dx_plate_memory_.data(), dx_plate_memory_.size());
         juno_bus_.set_delay_memory(juno_delay_left_.data(), juno_delay_right_.data(), uint32_t(delay_length));
         juno_bus_.set_plate_memory(juno_plate_memory_.data(), juno_plate_memory_.size());
+        juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_lfo_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_voice_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        juno_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
         applied_sequence_ = 0;
         last_juno_mode_ = false; last_dx7_mode_ = false;
     }
@@ -193,10 +278,20 @@ public:
         buffer.clear();
         const bool juno_mode = juno_enabled_->load() >= 0.5f;
         const bool dx7_mode = !juno_mode && dx7_enabled_->load() >= 0.5f;
-        if (juno_mode) juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; }
         apply_pending_preset();
-        if (juno_mode) juno_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        if (juno_mode) {
+            bool macro_changed = false;
+            for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
+                const float value = juno_macro_[i]->load();
+                if (value != juno_macro_last_[i]) { juno_macro_last_[i] = value; macro_changed = true; }
+            }
+            if (macro_changed) { juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN()); juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN()); }
+            apply_juno_osc_automation(); apply_juno_env_automation(); apply_juno_lfo_automation();
+            apply_juno_voice_groove_automation(); apply_juno_groove_automation(); apply_juno_fx_automation();
+        }
+        if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         engine_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
         if (dx7_mode) {
             load_dx_macros();
@@ -287,6 +382,13 @@ public:
             if (cc_sequence_[i].load(std::memory_order_acquire) != cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("dxPendingCC" + juce::String(int(i)), cc_values_[i].load(std::memory_order_relaxed), nullptr);
         snapshot.setProperty("dx7ParamVersion", 6, nullptr);
+        snapshot.setProperty("junoOscVersion", 1, nullptr);
+        snapshot.setProperty("junoEnvVersion", 1, nullptr);
+        snapshot.setProperty("junoLfoVersion", 1, nullptr);
+        snapshot.setProperty("junoVoiceGrooveVersion", 1, nullptr);
+        snapshot.setProperty("junoGrooveVersion", 2, nullptr);
+        snapshot.setProperty("junoFxVersion", 1, nullptr);
+        snapshot.setProperty("junoMacroVersion", 1, nullptr);
         if (preset_raw_.getSize() > 0) snapshot.setProperty("gfPreset", preset_raw_.toBase64Encoding(), nullptr);
         if (auto xml = snapshot.createXml()) copyXmlToBinary(*xml, data);
     }
@@ -301,6 +403,20 @@ public:
             has_pending_cc[i] = tree.hasProperty(id);
             if (has_pending_cc[i]) { pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
+        const int juno_macro_version = int(tree.getProperty("junoMacroVersion", 0));
+        tree.removeProperty("junoMacroVersion", nullptr);
+        const int juno_fx_version = int(tree.getProperty("junoFxVersion", 0));
+        tree.removeProperty("junoFxVersion", nullptr);
+        const int juno_groove_version = int(tree.getProperty("junoGrooveVersion", 0));
+        tree.removeProperty("junoGrooveVersion", nullptr);
+        const int juno_voice_groove_version = int(tree.getProperty("junoVoiceGrooveVersion", 0));
+        tree.removeProperty("junoVoiceGrooveVersion", nullptr);
+        const int juno_lfo_version = int(tree.getProperty("junoLfoVersion", 0));
+        tree.removeProperty("junoLfoVersion", nullptr);
+        const int juno_env_version = int(tree.getProperty("junoEnvVersion", 0));
+        tree.removeProperty("junoEnvVersion", nullptr);
+        const int juno_version = int(tree.getProperty("junoOscVersion", 0));
+        tree.removeProperty("junoOscVersion", nullptr);
         const int dx_version = int(tree.getProperty("dx7ParamVersion", 0));
         tree.removeProperty("dx7ParamVersion", nullptr);
         juce::MemoryBlock raw;
@@ -314,6 +430,17 @@ public:
         std::lock_guard<std::mutex> guard(preset_mutex_);
         clear_cc_pending();
         state_.replaceState(tree);
+        if (raw.getSize() && engine == 1 && juno_macro_version < 1) set_juno_macro_parameters(decoded);
+        if (raw.getSize() && engine == 1 && juno_fx_version < 1) set_juno_fx_parameters(decoded);
+        if (raw.getSize() && engine == 1 && juno_groove_version < 1) set_juno_groove_parameters(decoded);
+        else if (raw.getSize() && engine == 1 && juno_groove_version < 2) {
+            auto* source = state_.getParameter(juno_groove_id(GF_GROOVE_PUMP, GF_PUMP_SOURCE + 1));
+            source->setValueNotifyingHost(source->convertTo0to1(decoded.patch.groove[GF_GROOVE_PUMP][GF_PUMP_SOURCE]));
+        }
+        if (raw.getSize() && engine == 1 && juno_voice_groove_version < 1) set_juno_voice_groove_parameters(decoded);
+        if (raw.getSize() && engine == 1 && juno_lfo_version < 1) set_juno_lfo_parameters(decoded);
+        if (raw.getSize() && engine == 1 && juno_env_version < 1) set_juno_env_parameters(decoded);
+        if (raw.getSize() && engine == 1 && juno_version < 1) set_juno_osc_parameters(decoded);
         if (raw.getSize() && engine == 4) {
             if (dx_version < 1) set_dx7_parameters(gf::make_dx7_operator_patch(decoded));
             if (dx_version < 2) set_dx7_general_parameters(decoded, 0);
@@ -347,6 +474,7 @@ public:
             set("attack", patch.attack_ms);
             set("release", patch.release_ms);
         }
+        if (engine == 1) { set_juno_osc_parameters(preset); set_juno_env_parameters(preset); set_juno_lfo_parameters(preset); set_juno_voice_groove_parameters(preset); set_juno_groove_parameters(preset); set_juno_fx_parameters(preset); set_juno_macro_parameters(preset); }
         if (engine == 4) {
             set_dx7_parameters(gf::make_dx7_operator_patch(preset));
             set_dx7_general_parameters(preset, 0);
@@ -380,9 +508,41 @@ public:
         preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 0;
         preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 0;
         preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 0;
-        preset.cutoff_hz = cutoff_->load();
-        preset.reso_norm = std::clamp((resonance_->load() - 0.1f) / 4.9f, 0.0f, 1.0f);
+        preset.cutoff_hz = juno_effective_cutoff();
+        preset.reso_norm = std::clamp((juno_effective_resonance() - 0.1f) / 4.9f, 0.0f, 1.0f);
         preset.patch.attack_ms = attack_->load(); preset.patch.release_ms = release_->load();
+        for (size_t i = 0; i < 8; ++i) preset.patch.osc[0][i] = juno_osc_[i]->load();
+        preset.patch.mod[0][1] = juno_osc_[8]->load();
+        preset.patch.decay_ms = juno_env_[0]->load(); preset.patch.sustain = juno_env_[1]->load();
+        preset.patch.f_attack_ms = juno_env_[2]->load(); preset.patch.f_decay_ms = juno_env_[3]->load();
+        preset.patch.f_sustain = juno_env_[4]->load(); preset.patch.f_release_ms = juno_env_[5]->load();
+        preset.patch.env_amt = juno_env_[6]->load(); preset.patch.drive = juno_env_[7]->load();
+        auto effective_env = juno_effective_env();
+        preset.patch.decay_ms = effective_env.decay_ms; preset.patch.release_ms = effective_env.release_ms;
+        preset.patch.f_decay_ms = effective_env.f_decay_ms; preset.patch.f_release_ms = effective_env.f_release_ms;
+        preset.patch.env_amt = effective_env.env_amt; preset.patch.drive = effective_env.drive;
+        float effective_amp, effective_filter; studio::macro_vel_depths(juno_base_env(), &effective_amp, &effective_filter);
+        preset.patch.vel_amp = effective_amp * 100.0f; preset.patch.vel_cut = effective_filter * 100.0f;
+        preset.patch.lfo_rate_hz = juno_lfo_[0]->load(); preset.patch.lfo_shape = uint8_t(juno_lfo_[1]->load());
+        preset.patch.lfo_div = uint8_t(juno_lfo_[2]->load()); preset.patch.lfo_amt[GF_DEST_CUTOFF] = juno_lfo_[3]->load();
+        preset.patch.lfo_amt[GF_DEST_PITCH] = juno_lfo_[4]->load(); preset.patch.lfo_amt[GF_DEST_PWM] = juno_lfo_[5]->load();
+        preset.patch.mod[0][0] = juno_lfo_[6]->load();
+        preset.patch.glide = std::sqrt(std::clamp(juno_voice_groove_[0]->load() / 1500.0f, 0.0f, 1.0f));
+        preset.patch.groove_on[GF_GROOVE_UNISON] = juno_voice_groove_[1]->load() >= .5f;
+        preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = juno_voice_groove_[2]->load();
+        preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = juno_voice_groove_[3]->load();
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = juno_voice_groove_[4]->load();
+        for (int group = 0; group < 3; ++group) {
+            preset.patch.groove_on[group] = juno_groove_[group][0]->load() >= .5f;
+            for (int field = 1; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field)
+                preset.patch.groove[group][field - 1] = juno_groove_[group][field]->load();
+        }
+        for (int fx = 0; fx < 5; ++fx) {
+            preset.patch.sfx_on[fx] = juno_fx_[fx][0]->load() >= .5f;
+            preset.patch.sfx_mix[fx] = juno_fx_[fx][1]->load();
+            for (int field = 0; field < 3; ++field) preset.patch.sfx_p[fx][field] = juno_fx_[fx][field + 2]->load();
+        }
+        preset.patch = studio::move_sfx(preset.patch, juno_macro_[2]->load());
         std::vector<uint8_t> encoded(studio::PRESET_BYTES);
         if (studio::preset_encode(preset, 1, encoded.data(), encoded.size()) != encoded.size()) return false;
         data = std::move(encoded);
@@ -622,6 +782,153 @@ private:
         }
         if (changed) dx7_.set_operator_patch(patch);
     }
+    void set_juno_macro_parameters(const studio::Preset& preset) {
+        const auto& m = preset.patch.groove[GF_GROOVE_MACRO];
+        const float values[] = {0, 0, 0, m[GF_MACRO_GRIT_RES] * .01f, m[GF_MACRO_GRIT_MOD] * .01f, m[GF_MACRO_POCKET_VEL] * .01f};
+        for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
+            auto* p = state_.getParameter(JUNO_MACRO_IDS[i]); p->setValueNotifyingHost(p->convertTo0to1(values[i]));
+        }
+    }
+    studio::Patch juno_base_env() const {
+        studio::Patch p;
+        p.decay_ms = juno_env_[0]->load(); p.sustain = juno_env_[1]->load();
+        p.f_attack_ms = juno_env_[2]->load(); p.f_decay_ms = juno_env_[3]->load(); p.f_sustain = juno_env_[4]->load();
+        p.f_release_ms = juno_env_[5]->load(); p.env_amt = juno_env_[6]->load(); p.drive = juno_env_[7]->load();
+        p.vel_amp = juno_env_[8]->load(); p.vel_cut = juno_env_[9]->load(); p.release_ms = release_->load();
+        auto& m = p.groove[GF_GROOVE_MACRO];
+        m[GF_MACRO_GRIT] = juno_macro_[0]->load() * 100; m[GF_MACRO_POCKET] = juno_macro_[1]->load() * 100;
+        m[GF_MACRO_MOVE] = juno_macro_[2]->load() * 100; m[GF_MACRO_GRIT_RES] = juno_macro_[3]->load() * 100;
+        m[GF_MACRO_GRIT_MOD] = juno_macro_[4]->load() * 100; m[GF_MACRO_POCKET_VEL] = juno_macro_[5]->load() * 100;
+        return p;
+    }
+    studio::Patch juno_effective_env() const { return studio::macro_patch(juno_base_env(), 1); }
+    float juno_effective_cutoff() const { return std::clamp(cutoff_->load() * studio::move_cutoff_mul(juno_macro_[2]->load()), 20.0f, 8000.0f); }
+    float juno_effective_resonance() const {
+        const auto p = juno_base_env();
+        const float norm = std::clamp((resonance_->load() - .1f) / 4.9f, 0.0f, 1.0f);
+        return std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(norm, p), juno_macro_[2]->load()), .707f, 5.0f);
+    }
+    void set_juno_fx_parameters(const studio::Preset& preset) {
+        const auto effective = studio::move_sfx(preset.patch, studio::macro_amount(preset.patch, GF_MACRO_MOVE));
+        for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field) {
+            auto* p = state_.getParameter(juno_fx_id(fx, field));
+            const float value = field == 0 ? (effective.sfx_on[fx] ? 1.0f : 0.0f) :
+                                field == 1 ? effective.sfx_mix[fx] : effective.sfx_p[fx][field - 2];
+            p->setValueNotifyingHost(p->convertTo0to1(value));
+        }
+    }
+    void apply_juno_fx_automation() {
+        bool changed = false;
+        for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field) {
+            const auto i = size_t(fx * 5 + field);
+            const float v = juno_fx_[fx][field]->load();
+            if (v != juno_fx_last_[i]) { juno_fx_last_[i] = v; changed = true; }
+        }
+        if (!changed) return;
+        studio::Preset p;
+        for (int fx = 0; fx < 5; ++fx) {
+            p.patch.sfx_on[fx] = juno_fx_last_[size_t(fx * 5)] >= .5f;
+            p.patch.sfx_mix[fx] = juno_fx_last_[size_t(fx * 5 + 1)];
+            for (int field = 0; field < 3; ++field) p.patch.sfx_p[fx][field] = juno_fx_last_[size_t(fx * 5 + field + 2)];
+        }
+        p.patch = studio::move_sfx(p.patch, juno_macro_[2]->load());
+        gf::apply_synth_fx_preview(juno_bus_, p, 1);
+    }
+    void set_juno_groove_parameters(const studio::Preset& preset) {
+        for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+            auto* p = state_.getParameter(juno_groove_id(group, field));
+            const float value = field == 0 ? (preset.patch.groove_on[group] ? 1.0f : 0.0f) : preset.patch.groove[group][field - 1];
+            p->setValueNotifyingHost(p->convertTo0to1(value));
+        }
+    }
+    void apply_juno_groove_automation() {
+        bool changed = false;
+        for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+            const auto i = size_t(group * 7 + field);
+            const float v = juno_groove_[group][field]->load();
+            if (v != juno_groove_last_[i]) { juno_groove_last_[i] = v; changed = true; }
+        }
+        if (!changed) return;
+        studio::Preset p;
+        for (int group = 0; group < 3; ++group) {
+            p.patch.groove_on[group] = juno_groove_last_[size_t(group * 7)] >= .5f;
+            for (int field = 1; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field)
+                p.patch.groove[group][field - 1] = juno_groove_last_[size_t(group * 7 + field)];
+        }
+        gf::apply_groove_preview(juno_bus_, p, false);
+    }
+    void set_juno_voice_groove_parameters(const studio::Preset& preset) {
+        const auto& p = preset.patch;
+        const float glide = std::clamp(p.glide, 0.0f, 1.0f);
+        const float values[] = {glide * glide * 1500.0f, p.groove_on[GF_GROOVE_UNISON] ? 1.0f : 0.0f,
+            p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES], p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE],
+            p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT]};
+        for (size_t i = 0; i < JUNO_VOICE_GROOVE.size(); ++i) {
+            auto* parameter = state_.getParameter(JUNO_VOICE_GROOVE[i].id);
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(values[i]));
+        }
+    }
+    void apply_juno_voice_groove_automation() {
+        std::array<float, JUNO_VOICE_GROOVE.size()> v{};
+        for (size_t i = 0; i < v.size(); ++i) v[i] = juno_voice_groove_[i]->load();
+        if (v == juno_voice_groove_last_) return;
+        const auto index = size_t(std::clamp(int(v[2]), 0, 3));
+        juno_.set_voice_modulation(v[0], v[1] >= .5f ? GF_UNISON_COUNT[index] : 1, v[3], v[4] * .01f);
+        juno_voice_groove_last_ = v;
+    }
+    void set_juno_lfo_parameters(const studio::Preset& preset) {
+        const auto& p = preset.patch;
+        const float values[] = {p.lfo_rate_hz, float(p.lfo_shape), float(p.lfo_div), p.lfo_amt[GF_DEST_CUTOFF],
+                                p.lfo_amt[GF_DEST_PITCH], p.lfo_amt[GF_DEST_PWM], p.mod[0][0]};
+        for (size_t i = 0; i < JUNO_LFO.size(); ++i) {
+            auto* parameter = state_.getParameter(JUNO_LFO[i].id);
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(values[i]));
+        }
+    }
+    void apply_juno_lfo_automation() {
+        std::array<float, JUNO_LFO.size()> v{};
+        for (size_t i = 0; i < v.size(); ++i) v[i] = juno_lfo_[i]->load();
+        if (v == juno_lfo_last_) return;
+        const auto division = size_t(std::clamp(int(v[2]), 0, 3));
+        juno_.set_lfo(v[0], dsp::LfoShape(uint8_t(v[1])), v[3], v[4], v[5], GF_LFO_DIV_BEATS[division], v[6]);
+        juno_lfo_last_ = v;
+    }
+    void set_juno_env_parameters(const studio::Preset& preset) {
+        const auto p = studio::macro_patch(preset.patch, 1);
+        float va, vf; studio::macro_vel_depths(p, &va, &vf);
+        const float values[] = {p.decay_ms, p.sustain, p.f_attack_ms, p.f_decay_ms, p.f_sustain, p.f_release_ms,
+                                p.env_amt, p.drive, va * 100.0f, vf * 100.0f};
+        for (size_t i = 0; i < JUNO_ENV.size(); ++i) {
+            auto* parameter = state_.getParameter(JUNO_ENV[i].id);
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(values[i]));
+        }
+    }
+    void apply_juno_env_automation() {
+        std::array<float, JUNO_ENV.size()> v{};
+        for (size_t i = 0; i < v.size(); ++i) v[i] = juno_env_[i]->load();
+        if (v == juno_env_last_) return;
+        const auto p = juno_effective_env();
+        float va, vf; studio::macro_vel_depths(juno_base_env(), &va, &vf);
+        juno_.set_patch(p.decay_ms, p.sustain, p.f_attack_ms, p.f_decay_ms, p.f_sustain, p.f_release_ms,
+                        p.env_amt, 0.5f + 3.5f * p.drive, va, vf);
+        juno_env_last_ = v;
+    }
+    void set_juno_osc_parameters(const studio::Preset& preset) {
+        for (size_t i = 0; i < JUNO_OSC.size(); ++i) {
+            auto* parameter = state_.getParameter(JUNO_OSC[i].id);
+            const float value = i < 8 ? preset.patch.osc[0][i] : preset.patch.mod[0][1];
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
+        }
+    }
+    void apply_juno_osc_automation() {
+        std::array<float, JUNO_OSC.size()> values{};
+        for (size_t i = 0; i < values.size(); ++i) values[i] = juno_osc_[i]->load();
+        if (values == juno_osc_last_) return;
+        constexpr uint16_t waves[] = {dsp::WAVE_SAWTOOTH, dsp::WAVE_SQUARE, dsp::WAVE_PULSE, dsp::WAVE_SAW_AND_PULSE};
+        juno_.set_oscillator(waves[std::clamp(int(values[0]), 0, 3)], values[1] * .01f, values[2] * .01f,
+            values[3] * .01f, uint8_t(values[4]), uint8_t(values[5]), uint8_t(values[6]), values[7] >= .5f, values[8] * .01f);
+        juno_osc_last_ = values;
+    }
     void publish_preset(const juce::MemoryBlock& raw) {
         preset_sequence_.fetch_add(1, std::memory_order_acq_rel);
         const auto* bytes = static_cast<const uint8_t*>(raw.getData());
@@ -648,9 +955,14 @@ private:
             if (!gf::decode_supported_preset(bytes.data(), size, preset, preset_engine)) return;
             if (preset_engine == 1) {
                 juno_.reset(); juno_bus_.reset(); gf::apply_juno_preset_preview(juno_, preset);
+                juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                juno_lfo_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                juno_voice_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 gf::apply_synth_fx_preview(juno_bus_, preset, 1);
-                gf::apply_groove_preview(juno_bus_, preset);
-                juno_bus_.set_unison(1, 0.0f);
+                juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                gf::apply_groove_preview(juno_bus_, preset, false);
+                juno_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
             } else if (preset_engine == 4) {
                 dx7_.reset(); dx_bus_.reset(); gf::apply_dx7_preset_preview(dx7_, preset);
                 dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -687,6 +999,20 @@ private:
     std::atomic<float>* lfo_sync_ = nullptr;
     std::atomic<float>* dx7_enabled_ = nullptr;
     std::atomic<float>* juno_enabled_ = nullptr;
+    std::array<std::atomic<float>*, JUNO_OSC.size()> juno_osc_{};
+    std::array<float, JUNO_OSC.size()> juno_osc_last_{};
+    std::array<std::atomic<float>*, JUNO_ENV.size()> juno_env_{};
+    std::array<float, JUNO_ENV.size()> juno_env_last_{};
+    std::array<std::atomic<float>*, JUNO_LFO.size()> juno_lfo_{};
+    std::array<float, JUNO_LFO.size()> juno_lfo_last_{};
+    std::array<std::atomic<float>*, JUNO_VOICE_GROOVE.size()> juno_voice_groove_{};
+    std::array<float, JUNO_VOICE_GROOVE.size()> juno_voice_groove_last_{};
+    std::array<std::array<std::atomic<float>*, 7>, 3> juno_groove_{};
+    std::array<float, 21> juno_groove_last_{};
+    std::array<std::array<std::atomic<float>*, 5>, 5> juno_fx_{};
+    std::array<float, 25> juno_fx_last_{};
+    std::array<std::atomic<float>*, JUNO_MACRO_IDS.size()> juno_macro_{};
+    std::array<float, JUNO_MACRO_IDS.size()> juno_macro_last_{};
     std::atomic<float>* dx_algorithm_ = nullptr;
     std::atomic<float>* dx_feedback_ = nullptr;
     std::atomic<float>* dx_kbd_level_ = nullptr;
@@ -761,6 +1087,65 @@ public:
         juno_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "juno_preview", juno_toggle_);
         juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) dx7_toggle_.setToggleState(false, juce::sendNotification); };
         dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) juno_toggle_.setToggleState(false, juce::sendNotification); };
+        juno_page_.setButtonText("OSC");
+        juno_page_.onClick = [this] { juno_page_index_ = (juno_page_index_ + 1) % 8; update_status(); };
+        addChildComponent(juno_page_);
+        constexpr const char* descriptions[] = {"0 Saw · 1 Square · 2 Pulse · 3 Saw+Pulse", "Nivel del suboscilador", "Nivel de ruido", "Ancho de pulso", "0 Off · 1 I · 2 II · 3 I+II", "0 Bass boost · 1 Flat · 2 225 Hz · 3 720 Hz", "0 16 pies · 1 8 pies · 2 4 pies", "0 ENV · 1 GATE", "Ruido del chorus BBD"};
+        for (size_t i = 0; i < JUNO_OSC.size(); ++i) {
+            juno_labels_[i].setText(JUNO_OSC[i].label, juce::dontSendNotification);
+            juno_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_labels_[i]);
+            juno_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 22);
+            juno_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            juno_sliders_[i].setTooltip(descriptions[i]);
+            addChildComponent(juno_sliders_[i]);
+            juno_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_OSC[i].id, juno_sliders_[i]);
+        }
+        for (size_t i = 0; i < JUNO_ENV.size(); ++i) {
+            juno_env_labels_[i].setText(JUNO_ENV[i].label, juce::dontSendNotification);
+            juno_env_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_env_labels_[i]);
+            juno_env_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_env_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
+            juno_env_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            addChildComponent(juno_env_sliders_[i]);
+            juno_env_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_ENV[i].id, juno_env_sliders_[i]);
+        }
+        constexpr const char* lfo_descriptions[] = {"Velocidad libre", "0 Sine · 1 Triangle · 2 Saw · 3 Square · 4 Sample & Hold", "0 1/4 · 1 1/8 · 2 1/16 · 3 1/8T", "Profundidad hacia cutoff", "Profundidad hacia pitch", "Profundidad hacia ancho de pulso", "Tiempo de entrada de la modulación"};
+        for (size_t i = 0; i < JUNO_LFO.size(); ++i) {
+            juno_lfo_labels_[i].setText(JUNO_LFO[i].label, juce::dontSendNotification);
+            juno_lfo_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_lfo_labels_[i]);
+            juno_lfo_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_lfo_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
+            juno_lfo_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            juno_lfo_sliders_[i].setTooltip(lfo_descriptions[i]);
+            addChildComponent(juno_lfo_sliders_[i]);
+            juno_lfo_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_LFO[i].id, juno_lfo_sliders_[i]);
+        }
+        constexpr const char* voice_groove_descriptions[] = {"Glide en milisegundos", "Activa varias voces por nota", "0: 1 voz · 1: 2 · 2: 3 · 3: 6", "Anchura total entre voces", "Variación por nota de pitch y cutoff"};
+        for (size_t i = 0; i < JUNO_VOICE_GROOVE.size(); ++i) {
+            juno_voice_groove_labels_[i].setText(JUNO_VOICE_GROOVE[i].label, juce::dontSendNotification);
+            juno_voice_groove_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_voice_groove_labels_[i]);
+            juno_voice_groove_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_voice_groove_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
+            juno_voice_groove_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            juno_voice_groove_sliders_[i].setTooltip(voice_groove_descriptions[i]);
+            addChildComponent(juno_voice_groove_sliders_[i]);
+            juno_voice_groove_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_VOICE_GROOVE[i].id, juno_voice_groove_sliders_[i]);
+        }
+        for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
+            juno_macro_labels_[i].setText(DX_MACRO_LABELS[i], juce::dontSendNotification);
+            juno_macro_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_macro_labels_[i]);
+            juno_macro_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_macro_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
+            juno_macro_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            addChildComponent(juno_macro_sliders_[i]);
+            juno_macro_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_MACRO_IDS[i], juno_macro_sliders_[i]);
+        }
         dx_page_.setButtonText("VOICE");
         dx_page_.onClick = [this] { dx_page_index_ = (dx_page_index_ + 1) % 5; update_status(); };
         addChildComponent(dx_page_);
@@ -810,6 +1195,23 @@ public:
                     owner.parameters(), dx_fx_id(i, field), slider);
             }
         }
+        for (int fx = 0; fx < 5; ++fx) {
+            juno_fx_labels_[fx].setText(juce::String(DX_FX_NAMES[size_t(fx)]).toUpperCase(), juce::dontSendNotification);
+            juno_fx_labels_[fx].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_fx_labels_[fx]);
+            juno_fx_headers_[fx].setText(DX_FX_LABELS[0][fx], juce::dontSendNotification);
+            juno_fx_headers_[fx].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_fx_headers_[fx]);
+            for (int field = 0; field < 5; ++field) {
+                auto& slider = juno_fx_sliders_[fx][field];
+                slider.setSliderStyle(juce::Slider::LinearHorizontal);
+                slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 18);
+                slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+                slider.setTooltip(DX_FX_LABELS[fx][field]);
+                addChildComponent(slider);
+                juno_fx_attachments_[fx][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), juno_fx_id(fx, field), slider);
+            }
+        }
         constexpr const char* groove_labels[3][7] = {
             {"ON", "DEPTH", "SHAPE", "RATE", "OFFSET", "RELEASE", ""},
             {"ON", "MODE", "DIV", "GATE", "OCT", "SWING", "LATCH"},
@@ -831,6 +1233,25 @@ public:
                 addChildComponent(slider);
                 dx_groove_attachments_[group][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
                     owner.parameters(), dx_groove_id(group, field), slider);
+            }
+        }
+        for (int group = 0; group < 3; ++group) {
+            juno_groove_group_labels_[group].setText(juce::String(DX_GROOVE_NAMES[size_t(group)]).toUpperCase(), juce::dontSendNotification);
+            juno_groove_group_labels_[group].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            addChildComponent(juno_groove_group_labels_[group]);
+            for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+                auto& label = juno_groove_labels_[group][field];
+                label.setText(group == 0 && field == 6 ? "SRC GFP" : groove_labels[group][field], juce::dontSendNotification);
+                label.setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+                label.setFont(juce::Font(juce::FontOptions(9.0f)));
+                addChildComponent(label);
+                auto& slider = juno_groove_sliders_[group][field];
+                slider.setSliderStyle(juce::Slider::LinearHorizontal);
+                slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 18);
+                slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+                if (group == 0 && field == 6) slider.setTooltip("SOURCE GFP: 0 AUTO, 1 MIDI, 2 INT. El plugin usa el reloj del DAW.");
+                addChildComponent(slider);
+                juno_groove_attachments_[group][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), juno_groove_id(group, field), slider);
             }
         }
         dx_voice_sliders_[15].textFromValueFunction = [](double value) {
@@ -923,6 +1344,32 @@ public:
         dx7_toggle_.setBounds(getWidth() - 380, 12, 115, 25);
         juno_toggle_.setBounds(getWidth() - 510, 12, 125, 25);
         dx_page_.setBounds(getWidth() - 155, 42, 120, 25);
+        juno_page_.setBounds(getWidth() - 155, 42, 120, 25);
+        for (size_t i = 0; i < JUNO_OSC.size(); ++i) {
+            const int x = i < 5 ? 30 : 370, y = 100 + int(i % 5) * 42;
+            juno_labels_[i].setBounds(x, y, 120, 24);
+            juno_sliders_[i].setBounds(x + 120, y, 180, 24);
+        }
+        for (size_t i = 0; i < JUNO_ENV.size(); ++i) {
+            const int x = i < 5 ? 30 : 370, y = 100 + int(i % 5) * 42;
+            juno_env_labels_[i].setBounds(x, y, 125, 24);
+            juno_env_sliders_[i].setBounds(x + 125, y, 175, 24);
+        }
+        for (size_t i = 0; i < JUNO_LFO.size(); ++i) {
+            const int x = i < 4 ? 30 : 370, y = 100 + int(i % 4) * 42;
+            juno_lfo_labels_[i].setBounds(x, y, 125, 24);
+            juno_lfo_sliders_[i].setBounds(x + 125, y, 175, 24);
+        }
+        for (size_t i = 0; i < JUNO_VOICE_GROOVE.size(); ++i) {
+            const int x = i < 3 ? 30 : 370, y = 100 + int(i % 3) * 50;
+            juno_voice_groove_labels_[i].setBounds(x, y, 125, 24);
+            juno_voice_groove_sliders_[i].setBounds(x + 125, y, 175, 24);
+        }
+        for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
+            const int x = i < 3 ? 30 : 370, y = 115 + int(i % 3) * 50;
+            juno_macro_labels_[i].setBounds(x, y, 125, 24);
+            juno_macro_sliders_[i].setBounds(x + 125, y, 175, 24);
+        }
         export_.setBounds(getWidth() - 285, 42, 120, 25);
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i) {
             const int x = i < 3 ? 30 : 370, y = 125 + int(i % 3) * 50;
@@ -953,6 +1400,22 @@ public:
             dx_global_labels_[i].setBounds(25 + i * 135, 288, 52, 22);
             dx_globals_[i].setBounds(77 + i * 135, 288, 76, 22);
         }
+        const int juno_fx_width = (getWidth() - 120) / 5;
+        for (int fx = 0; fx < 5; ++fx) {
+            juno_fx_headers_[fx].setBounds(90 + fx * juno_fx_width, 80, juno_fx_width, 22);
+            juno_fx_labels_[fx].setBounds(25, 110 + fx * 39, 65, 24);
+            for (int field = 0; field < 5; ++field)
+                juno_fx_sliders_[fx][field].setBounds(90 + field * juno_fx_width, 110 + fx * 39, juno_fx_width - 4, 24);
+        }
+        const int juno_groove_width = (getWidth() - 120) / 7;
+        for (int group = 0; group < 3; ++group) {
+            const int y = 100 + group * 68;
+            juno_groove_group_labels_[group].setBounds(20, y + 15, 65, 24);
+            for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+                juno_groove_labels_[group][field].setBounds(90 + field * juno_groove_width, y, juno_groove_width, 18);
+                juno_groove_sliders_[group][field].setBounds(90 + field * juno_groove_width, y + 19, juno_groove_width - 4, 22);
+            }
+        }
         status_.setBounds(28, 328, getWidth() - 56, 24);
     }
 
@@ -965,10 +1428,30 @@ private:
         const bool dx_ops = dx7 && dx_page_index_ == 0, dx_voice = dx7 && dx_page_index_ == 1;
         const bool dx_fx = dx7 && dx_page_index_ == 2, dx_groove = dx7 && dx_page_index_ == 3, dx_macro = dx7 && dx_page_index_ == 4;
         dx_page_.setVisible(dx7);
+        juno_page_.setVisible(juno);
+        juno_page_.setButtonText(juno_page_index_ == 0 ? "OSC" : juno_page_index_ == 1 ? "ENV" : juno_page_index_ == 2 ? "LFO" : juno_page_index_ == 3 ? "UNISON" : juno_page_index_ == 4 ? "GROOVE" : juno_page_index_ == 5 ? "FX" : juno_page_index_ == 6 ? "MACROS" : "VOICE");
+        for (auto& label : juno_labels_) label.setVisible(juno && juno_page_index_ == 1);
+        for (auto& slider : juno_sliders_) slider.setVisible(juno && juno_page_index_ == 1);
+        for (auto& label : juno_env_labels_) label.setVisible(juno && juno_page_index_ == 2);
+        for (auto& slider : juno_env_sliders_) slider.setVisible(juno && juno_page_index_ == 2);
+        for (auto& label : juno_lfo_labels_) label.setVisible(juno && juno_page_index_ == 3);
+        for (auto& slider : juno_lfo_sliders_) slider.setVisible(juno && juno_page_index_ == 3);
+        for (auto& label : juno_voice_groove_labels_) label.setVisible(juno && juno_page_index_ == 4);
+        for (auto& slider : juno_voice_groove_sliders_) slider.setVisible(juno && juno_page_index_ == 4);
+        for (auto& label : juno_macro_labels_) label.setVisible(juno && juno_page_index_ == 7);
+        for (auto& slider : juno_macro_sliders_) slider.setVisible(juno && juno_page_index_ == 7);
+        for (auto& label : juno_fx_labels_) label.setVisible(juno && juno_page_index_ == 6);
+        for (auto& label : juno_fx_headers_) label.setVisible(juno && juno_page_index_ == 6);
+        for (auto& row : juno_fx_sliders_) for (auto& slider : row) slider.setVisible(juno && juno_page_index_ == 6);
+        for (auto& label : juno_groove_group_labels_) label.setVisible(juno && juno_page_index_ == 5);
+        for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+            juno_groove_labels_[group][field].setVisible(juno && juno_page_index_ == 5);
+            juno_groove_sliders_[group][field].setVisible(juno && juno_page_index_ == 5);
+        }
         export_.setVisible(dx7 || juno);
         dx_page_.setButtonText(dx_ops ? "VOICE" : dx_voice ? "FX" : dx_fx ? "GROOVE" : dx_groove ? "MACROS" : "OPERATORS");
-        for (auto& knob : knobs_) knob.setVisible(!dx7);
-        for (auto& label : labels_) label.setVisible(!dx7);
+        for (auto& knob : knobs_) knob.setVisible(!dx7 && !(juno && juno_page_index_ != 0));
+        for (auto& label : labels_) label.setVisible(!dx7 && !(juno && juno_page_index_ != 0));
         for (auto& label : dx_field_labels_) label.setVisible(dx_ops);
         for (auto& label : dx_op_labels_) label.setVisible(dx_ops);
         for (auto& row : dx_sliders_) for (auto& slider : row) slider.setVisible(dx_ops);
@@ -1037,6 +1520,30 @@ private:
     juce::TooltipWindow tooltip_{this, 500};
     juce::TextButton import_;
     juce::ToggleButton sync_;
+    juce::TextButton juno_page_;
+    int juno_page_index_ = 0;
+    std::array<juce::Label, JUNO_MACRO_IDS.size()> juno_macro_labels_;
+    std::array<juce::Slider, JUNO_MACRO_IDS.size()> juno_macro_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_MACRO_IDS.size()> juno_macro_attachments_;
+    std::array<juce::Label, 5> juno_fx_labels_, juno_fx_headers_;
+    std::array<std::array<juce::Slider, 5>, 5> juno_fx_sliders_;
+    std::array<std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, 5>, 5> juno_fx_attachments_;
+    std::array<juce::Label, 3> juno_groove_group_labels_;
+    std::array<std::array<juce::Label, 7>, 3> juno_groove_labels_;
+    std::array<std::array<juce::Slider, 7>, 3> juno_groove_sliders_;
+    std::array<std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, 7>, 3> juno_groove_attachments_;
+    std::array<juce::Label, JUNO_VOICE_GROOVE.size()> juno_voice_groove_labels_;
+    std::array<juce::Slider, JUNO_VOICE_GROOVE.size()> juno_voice_groove_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_VOICE_GROOVE.size()> juno_voice_groove_attachments_;
+    std::array<juce::Label, JUNO_LFO.size()> juno_lfo_labels_;
+    std::array<juce::Slider, JUNO_LFO.size()> juno_lfo_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_LFO.size()> juno_lfo_attachments_;
+    std::array<juce::Label, JUNO_ENV.size()> juno_env_labels_;
+    std::array<juce::Slider, JUNO_ENV.size()> juno_env_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_ENV.size()> juno_env_attachments_;
+    std::array<juce::Label, JUNO_OSC.size()> juno_labels_;
+    std::array<juce::Slider, JUNO_OSC.size()> juno_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_OSC.size()> juno_attachments_;
     juce::ToggleButton juno_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> juno_attachment_;
     bool displayed_juno_ = false;

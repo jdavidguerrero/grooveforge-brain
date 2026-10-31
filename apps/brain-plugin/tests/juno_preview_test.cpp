@@ -4,6 +4,21 @@
 #include <cmath>
 #include <cstdio>
 
+static bool pjrc_noise_vectors() {
+    for (uint32_t seed : {1u, 2u, 6u, 1234567u, 2147483646u}) {
+        gf::PjrcWhiteNoise noise;
+        noise.reset(seed);
+        uint32_t reference = seed;
+        for (int i = 0; i < 20000; ++i) {
+            reference = uint32_t((uint64_t(reference) * 16807u) % 2147483647u);
+            int32_t sample = int32_t(reference & 0xffffu);
+            if (sample >= 32768) sample -= 65536;
+            if (noise.next() != sample) return false;
+        }
+    }
+    return true;
+}
+
 static bool run(double rate) {
     gf::JunoPreview a, b;
     a.prepare(rate); b.prepare(rate);
@@ -99,6 +114,7 @@ static bool lfo_modulation() {
     return difference > 0.01f;
 }
 int main() {
+    if (!pjrc_noise_vectors()) { std::fprintf(stderr, "PJRC noise reference vectors failed\n"); return 1; }
     for (double rate : {44100.0, 48000.0, 96000.0, 192000.0, 384000.0})
         if (!run(rate)) { std::fprintf(stderr, "Juno preview failed at %.0f Hz\n", rate); return 1; }
     if (!lfo_modulation()) { std::fprintf(stderr, "Juno LFO mapping failed\n"); return 1; }
