@@ -9,12 +9,22 @@
 #include "dx7_preview.h"
 #include "juno_preview.h"
 #include "ob6_preview.h"
+#include "model_d_preview.h"
+#include "model_d_preset.h"
 #include "ob6_preset.h"
 #include "juno_preset.h"
 #include "dx7_preset.h"
 #include "ui/groove_macros.h"
 
 namespace {
+
+void compact_slider_text(juce::Slider& slider) {
+    slider.textFromValueFunction = [](double value) {
+        if (std::abs(value - std::round(value)) < 1e-5) return juce::String(int(std::lround(value)));
+        return juce::String(value, std::abs(value) >= 10.0 ? 1 : 2);
+    };
+    slider.updateText();
+}
 
 static_assert(std::atomic<uint8_t>::is_always_lock_free && std::atomic<uint64_t>::is_always_lock_free && std::atomic<float>::is_always_lock_free &&
               std::atomic<size_t>::is_always_lock_free, "Preset mailbox requires lock-free atomics");
@@ -29,6 +39,7 @@ constexpr const char* DX_FX_LABELS[5][5] = {
     {"On", "Mix", "Decay", "Type", "Size"}};
 juce::String dx_fx_id(int fx, int field) { return "dx7.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
 juce::String ob6_fx_id(int fx, int field) { return "ob6.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
+juce::String modeld_fx_id(int fx, int field) { return "modeld.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
 juce::String juno_fx_id(int fx, int field) { return "juno.fx." + juce::String(DX_FX_NAMES[size_t(fx)]) + "." + DX_FX_FIELDS[size_t(field)]; }
 constexpr std::array<const char*, 3> DX_GROOVE_NAMES{"pump", "arp", "chord"};
 constexpr std::array<int, 3> DX_GROOVE_FIELDS{6, 7, 5};
@@ -42,15 +53,32 @@ juce::String juno_groove_id(int group, int field) {
 juce::String ob6_groove_id(int group, int field) {
     return "ob6.groove." + juce::String(DX_GROOVE_NAMES[size_t(group)]) + "." + (field == 0 ? juce::String("on") : "p" + juce::String(field));
 }
+juce::String modeld_groove_id(int group, int field) {
+    return "modeld.groove." + juce::String(DX_GROOVE_NAMES[size_t(group)]) + "." + (field == 0 ? juce::String("on") : "p" + juce::String(field));
+}
 constexpr std::array<const char*, 6> DX_MACRO_IDS{"dx7.macro.grit", "dx7.macro.pocket", "dx7.macro.move",
                                                   "dx7.macro.grit_res", "dx7.macro.grit_mod", "dx7.macro.pocket_vel"};
 constexpr std::array<const char*, 6> DX_MACRO_LABELS{"GRIT", "POCKET", "MOVE", "GRIT RES", "GRIT MOD", "POCKET VEL"};
+constexpr std::array<const char*, 6> MODELD_MACRO_IDS{"modeld.macro.grit", "modeld.macro.pocket", "modeld.macro.move",
+    "modeld.macro.grit_res", "modeld.macro.grit_mod", "modeld.macro.pocket_vel"};
 constexpr std::array<const char*, 6> OB6_MACRO_IDS{"ob6.macro.grit", "ob6.macro.pocket", "ob6.macro.move",
     "ob6.macro.grit_res", "ob6.macro.grit_mod", "ob6.macro.pocket_vel"};
 constexpr std::array<const char*, 6> JUNO_MACRO_IDS{"juno.macro.grit", "juno.macro.pocket", "juno.macro.move",
     "juno.macro.grit_res", "juno.macro.grit_mod", "juno.macro.pocket_vel"};
 
 struct Ob6Control { const char* id; const char* label; bool mod; uint8_t stop, slot; };
+constexpr std::array<Ob6Control, 20> MODELD_OSC{{
+    {"modeld.osc1.wave", "VCO1 WAVE", false, 0, 0}, {"modeld.osc1.level", "VCO1 LEVEL", false, 0, 2},
+    {"modeld.osc2.wave", "VCO2 WAVE", false, 1, 0}, {"modeld.osc2.level", "VCO2 LEVEL", false, 1, 2},
+    {"modeld.osc2.detune", "VCO2 DETUNE", false, 1, 1}, {"modeld.osc3.wave", "VCO3 WAVE", false, 2, 0},
+    {"modeld.osc3.level", "VCO3 LEVEL", false, 2, 2}, {"modeld.osc3.interval", "VCO3 INTERVAL", false, 2, 1},
+    {"modeld.osc3.detune", "VCO3 DETUNE", false, 2, 5}, {"modeld.pulse_width", "PULSE WIDTH", false, 0, 4},
+    {"modeld.noise.level", "NOISE LEVEL", false, 3, 0}, {"modeld.noise.color", "NOISE COLOR", false, 3, 1},
+    {"modeld.mod.mix", "MOD MIX", true, 0, 0}, {"modeld.mod.osc", "OSC MOD", true, 0, 1},
+    {"modeld.mod.filter", "FILTER MOD", true, 0, 2}, {"modeld.decay_switch", "DECAY SWITCH", true, 0, 3},
+    {"modeld.vco3.keyboard", "VCO3 KBD", true, 0, 4}, {"modeld.vco3.low", "VCO3 LOW", true, 0, 5},
+    {"modeld.overdrive", "OVERDRIVE", true, 0, 6}, {"modeld.filter.keyboard", "FILTER KBD", true, 0, 7}
+}};
 constexpr std::array<Ob6Control, 18> OB6_OSC{{
     {"ob6.osc1.shape", "VCO1 SHAPE", false, 0, 0}, {"ob6.sub", "SUB", false, 0, 1},
     {"ob6.osc1.level", "VCO1 LEVEL", false, 0, 2}, {"ob6.noise", "NOISE", false, 0, 3},
@@ -63,6 +91,17 @@ constexpr std::array<Ob6Control, 18> OB6_OSC{{
     {"ob6.xmod.pw", "XMOD PW", true, 0, 4}, {"ob6.sync", "SYNC", true, 0, 5}
 }};
 struct DxGeneral { const char* id; const char* label; float lo, hi, step, initial; };
+constexpr std::array<DxGeneral, 18> MODELD_VOICE{{
+    {"modeld.amp_decay", "AMP DECAY", 1.5f,12000,0,300}, {"modeld.amp_sustain", "AMP SUSTAIN", 0,1,0,.7f},
+    {"modeld.filter_attack", "FLT ATTACK", 0,12000,0,5}, {"modeld.filter_decay", "FLT DECAY", 0,12000,0,400},
+    {"modeld.filter_sustain", "FLT SUSTAIN", 0,1,0,.3f}, {"modeld.filter_release", "FLT RELEASE", 0,12000,0,300},
+    {"modeld.env_amount", "FLT ENV AMT", 0,1,0,.3f}, {"modeld.drive", "FILTER DRIVE", 0,1,0,.2f},
+    {"modeld.vel_amp", "VEL AMP %", 0,100,0,0}, {"modeld.vel_filter", "VEL FILTER %", 0,100,0,0},
+    {"modeld.lfo_rate", "LFO RATE Hz", .05f,20,0,2}, {"modeld.lfo_shape", "LFO SHAPE 0-4", 0,4,1,1},
+    {"modeld.lfo_div", "LFO DIV 0-3", 0,3,1,1}, {"modeld.lfo_cutoff", "LFO CUTOFF", 0,1,0,0},
+    {"modeld.lfo_pitch", "LFO PITCH", 0,1,0,0}, {"modeld.lfo_pwm", "LFO PWM", 0,1,0,0},
+    {"modeld.glide", "GLIDE 0-1", 0,1,0,0}, {"modeld.drift", "DRIFT %", 0,100,0,0}
+}};
 constexpr std::array<DxGeneral, 21> OB6_VOICE{{
     {"ob6.amp_decay", "AMP DECAY ms", 1.5f,12000,0,300}, {"ob6.amp_sustain", "AMP SUSTAIN", 0,1,0,.7f},
     {"ob6.filter_attack", "FLT ATTACK ms", 0,12000,0,5}, {"ob6.filter_decay", "FLT DECAY ms", 0,12000,0,400},
@@ -220,6 +259,34 @@ juce::AudioProcessorValueTreeState::ParameterLayout make_layout() {
     for (size_t i = 0; i < OB6_MACRO_IDS.size(); ++i)
         parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{OB6_MACRO_IDS[i], 1},
             "OB-6 " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
+    parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"modeld_preview", 1}, "Model D Preview", false));
+    studio::Patch modeld_defaults;
+    studio::patch_init(modeld_defaults, 0);
+    for (const auto& control : MODELD_OSC) {
+        const auto slot = control.mod ? GF_MOD_SLOT[0][control.stop][control.slot] : GF_OSC_SLOT[0][control.stop][control.slot];
+        const float initial = control.mod ? modeld_defaults.mod[control.stop][control.slot] : modeld_defaults.osc[control.stop][control.slot];
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{control.id, 1}, "Model D " + String(control.label),
+            NormalisableRange<float>{slot.lo, slot.hi, slot.count ? 1.0f : 0.0f}, initial));
+    }
+    for (const auto& p : MODELD_VOICE)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{p.id, 1}, "Model D " + String(p.label),
+            NormalisableRange<float>{p.lo, p.hi, p.step}, p.initial));
+    for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
+        const auto slot = field == 0 ? GF_OscSlot{0, 1, 1, 2, false} : GF_GROOVE_SLOT[group][field - 1];
+        const float initial = field == 0 ? 0.0f : default_patch.groove[group][field - 1];
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{modeld_groove_id(group, field), 1},
+            "Model D GROOVE " + String(DX_GROOVE_NAMES[size_t(group)]) + " " + String(field),
+            NormalisableRange<float>{slot.lo, slot.hi, slot.count ? 1.0f : 0.0f}, initial));
+    }
+    for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field) {
+        const float initial = field == 0 ? 0.0f : field == 1 ? default_patch.sfx_mix[fx] : default_patch.sfx_p[fx][field - 2];
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{modeld_fx_id(fx, field), 1},
+            "Model D FX " + String(DX_FX_NAMES[size_t(fx)]) + " " + DX_FX_LABELS[fx][field],
+            NormalisableRange<float>{0, 1, field == 0 ? 1.0f : 0.0f}, initial));
+    }
+    for (size_t i = 0; i < MODELD_MACRO_IDS.size(); ++i)
+        parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{MODELD_MACRO_IDS[i], 1},
+            "Model D " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
     return {parameters.begin(), parameters.end()};
 }
 
@@ -235,6 +302,20 @@ public:
         dx7_enabled_ = state_.getRawParameterValue("dx7_preview");
         juno_enabled_ = state_.getRawParameterValue("juno_preview");
         ob6_enabled_ = state_.getRawParameterValue("ob6_preview");
+        modeld_enabled_ = state_.getRawParameterValue("modeld_preview");
+        studio::patch_init(modeld_base_.patch, 0);
+        for (size_t i = 0; i < MODELD_OSC.size(); ++i) modeld_osc_[i] = state_.getRawParameterValue(MODELD_OSC[i].id);
+        modeld_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < MODELD_MACRO_IDS.size(); ++i) modeld_macro_[i] = state_.getRawParameterValue(MODELD_MACRO_IDS[i]);
+        modeld_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (int g = 0; g < 3; ++g) for (int f = 0; f < JUNO_GROOVE_FIELDS[size_t(g)]; ++f)
+            modeld_groove_[g][f] = state_.getRawParameterValue(modeld_groove_id(g, f));
+        for (int fx = 0; fx < 5; ++fx) for (int f = 0; f < 5; ++f)
+            modeld_fx_[fx][f] = state_.getRawParameterValue(modeld_fx_id(fx, f));
+        modeld_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        for (size_t i = 0; i < MODELD_VOICE.size(); ++i) modeld_voice_[i] = state_.getRawParameterValue(MODELD_VOICE[i].id);
+        modeld_voice_last_.fill(std::numeric_limits<float>::quiet_NaN());
         studio::patch_init(ob6_base_.patch, 3);
         for (size_t i = 0; i < OB6_OSC.size(); ++i) ob6_osc_[i] = state_.getRawParameterValue(OB6_OSC[i].id);
         ob6_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -280,8 +361,13 @@ public:
             dx_groove_[group][field] = state_.getRawParameterValue(dx_groove_id(group, field));
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i) dx_macro_[i] = state_.getRawParameterValue(DX_MACRO_IDS[i]);
+        modeld_cc_parameters_[0] = state_.getParameter("modeld.drift");
+        for (size_t i = 1; i < 4; ++i) modeld_cc_parameters_[i] = state_.getParameter(MODELD_MACRO_IDS[i - 1]);
+        modeld_cc_parameters_[4] = state_.getParameter("cutoff"); modeld_cc_parameters_[5] = state_.getParameter("resonance");
         ob6_cc_parameters_[0] = state_.getParameter("ob6.drift");
-        for (size_t i = 1; i < ob6_cc_parameters_.size(); ++i) ob6_cc_parameters_[i] = state_.getParameter(OB6_MACRO_IDS[i - 1]);
+        for (size_t i = 1; i < 4; ++i) ob6_cc_parameters_[i] = state_.getParameter(OB6_MACRO_IDS[i - 1]);
+        ob6_cc_parameters_[4] = state_.getParameter("cutoff");
+        ob6_cc_parameters_[5] = state_.getParameter("resonance");
         juno_cc_parameters_[0] = state_.getParameter("juno.drift");
         for (size_t i = 1; i < juno_cc_parameters_.size(); ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
         cc_parameters_[0] = state_.getParameter("dx7.drift");
@@ -317,18 +403,23 @@ public:
         juno_delay_right_.assign(delay_length, 0);
         ob6_delay_left_.assign(delay_length, 0);
         ob6_delay_right_.assign(delay_length, 0);
+        modeld_delay_left_.assign(delay_length, 0);
+        modeld_delay_right_.assign(delay_length, 0);
         plate_memory_.assign(gf::PlateReverbPreview::required_samples(float(sample_rate > 0.0 ? sample_rate : 44100.0)), 0);
         dx_plate_memory_.assign(plate_memory_.size(), 0);
         juno_plate_memory_.assign(plate_memory_.size(), 0);
         ob6_plate_memory_.assign(plate_memory_.size(), 0);
+        modeld_plate_memory_.assign(plate_memory_.size(), 0);
         engine_.prepare(sample_rate);
         dx_bus_.prepare(sample_rate);
         juno_bus_.prepare(sample_rate);
         ob6_bus_.prepare(sample_rate);
+        modeld_bus_.prepare(sample_rate);
         dx7_.prepare(sample_rate);
         juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         juno_.prepare(sample_rate);
         ob6_.prepare(sample_rate);
+        modeld_.prepare(sample_rate);
         dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -342,6 +433,9 @@ public:
         ob6_bus_.set_voice_sink(&ob6_,
             [](void* context, uint8_t note, float velocity) { static_cast<gf::Ob6Preview*>(context)->note_on(note, velocity); },
             [](void* context, uint8_t note) { static_cast<gf::Ob6Preview*>(context)->note_off(note); });
+        modeld_bus_.set_voice_sink(&modeld_,
+            [](void* context, uint8_t note, float velocity) { static_cast<gf::ModelDPreview*>(context)->note_on(note, velocity); },
+            [](void* context, uint8_t note) { static_cast<gf::ModelDPreview*>(context)->note_off(note); });
         engine_.set_delay_memory(delay_left_.data(), delay_right_.data(), uint32_t(delay_length));
         engine_.set_plate_memory(plate_memory_.data(), plate_memory_.size());
         dx_bus_.set_delay_memory(dx_delay_left_.data(), dx_delay_right_.data(), uint32_t(delay_length));
@@ -350,6 +444,8 @@ public:
         juno_bus_.set_plate_memory(juno_plate_memory_.data(), juno_plate_memory_.size());
         ob6_bus_.set_delay_memory(ob6_delay_left_.data(), ob6_delay_right_.data(), uint32_t(delay_length));
         ob6_bus_.set_plate_memory(ob6_plate_memory_.data(), ob6_plate_memory_.size());
+        modeld_bus_.set_delay_memory(modeld_delay_left_.data(), modeld_delay_right_.data(), uint32_t(delay_length));
+        modeld_bus_.set_plate_memory(modeld_plate_memory_.data(), modeld_plate_memory_.size());
         juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
         juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
         juno_lfo_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -362,20 +458,40 @@ public:
         ob6_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
         ob6_voice_last_.fill(std::numeric_limits<float>::quiet_NaN());
         ob6_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_voice_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+        modeld_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
         applied_sequence_ = 0;
-        last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false;
+        last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false; last_modeld_mode_ = false;
     }
-    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); }
+    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         buffer.clear();
-        const bool ob6_mode = ob6_enabled_->load() >= 0.5f;
-        const bool juno_mode = !ob6_mode && juno_enabled_->load() >= 0.5f;
-        const bool dx7_mode = !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
+        const bool modeld_mode = modeld_enabled_->load() >= 0.5f;
+        const bool ob6_mode = !modeld_mode && ob6_enabled_->load() >= 0.5f;
+        const bool juno_mode = !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
+        const bool dx7_mode = !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
         if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
-        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; }
+        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; }
         apply_pending_preset();
+        if (modeld_mode) {
+            for (size_t i = 0; i < 2; ++i)
+                if (modeld_filter_override_[i].load(std::memory_order_acquire) && !modeld_filter_override_active(i))
+                    modeld_filter_override_[i].store(false, std::memory_order_release);
+            bool macro_changed = false;
+            for (size_t i = 0; i < MODELD_MACRO_IDS.size(); ++i) {
+                const float value = modeld_macro_value(i);
+                if (value != modeld_macro_last_[i]) { modeld_macro_last_[i] = value; macro_changed = true; }
+            }
+            if (macro_changed) { modeld_osc_last_.fill(std::numeric_limits<float>::quiet_NaN()); modeld_fx_last_.fill(std::numeric_limits<float>::quiet_NaN()); }
+            apply_modeld_osc_automation(); apply_modeld_groove_automation(); apply_modeld_fx_automation();
+            const auto effective = modeld_effective_controls(modeld_base_.patch);
+            modeld_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
+        }
         if (juno_mode) {
             bool macro_changed = false;
             for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
@@ -388,6 +504,10 @@ public:
         }
         if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         if (ob6_mode) {
+            for (size_t i = 0; i < 2; ++i) {
+                if (ob6_filter_override_[i].load(std::memory_order_acquire) && !ob6_filter_override_active(i))
+                    ob6_filter_override_[i].store(false, std::memory_order_release);
+            }
             bool macro_changed = false;
             for (size_t i = 0; i < OB6_MACRO_IDS.size(); ++i) {
                 const float value = ob6_macro_value(i);
@@ -423,16 +543,22 @@ public:
         dx_bus_.set_transport(bpm, has_position, position_beats, running);
         juno_bus_.set_transport(bpm, has_position, position_beats, running);
         ob6_bus_.set_transport(bpm, has_position, position_beats, running);
+        modeld_bus_.set_transport(bpm, has_position, position_beats, running);
         engine_.set_lfo_sync(lfo_sync_->load() >= 0.5f, bpm);
         dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_);
+        modeld_.set_modulation_control(modeld_wheel_, modeld_pressure_, bpm, lfo_sync_->load() >= 0.5f);
         int position = 0;
         auto render_until = [&](int end) {
             end = juce::jlimit(position, buffer.getNumSamples(), end);
             while (position < end) {
                 float left, right;
-                if (ob6_mode) {
+                if (modeld_mode) {
+                    modeld_.set_tape_pitch(modeld_bus_.tape_pitch_ratio());
+                    modeld_bus_.process_external_frame(modeld_.process_sample(), left, right);
+                }
+                else if (ob6_mode) {
                     ob6_.set_tape_pitch(ob6_bus_.tape_pitch_ratio());
                     ob6_bus_.process_external_frame(ob6_.process_sample(), left, right);
                 }
@@ -452,36 +578,93 @@ public:
             if (metadata.numBytes > 3) continue;
             const auto message = metadata.getMessage();
             if (message.isNoteOn()) {
-                if (ob6_mode) ob6_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                if (modeld_mode) modeld_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                else if (ob6_mode) ob6_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (juno_mode) juno_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (dx7_mode) dx_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else engine_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
             } else if (message.isNoteOff()) {
-                if (ob6_mode) ob6_bus_.note_off(uint8_t(message.getNoteNumber()));
+                if (modeld_mode) modeld_bus_.note_off(uint8_t(message.getNoteNumber()));
+                else if (ob6_mode) ob6_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (juno_mode) juno_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (dx7_mode) dx_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else engine_.note_off(uint8_t(message.getNoteNumber()));
             } else if (message.isPitchWheel()) {
-                if (ob6_mode) ob6_.set_pitch_bend(message.getPitchWheelValue());
+                if (modeld_mode) modeld_.set_pitch_bend(message.getPitchWheelValue());
+                else if (ob6_mode) ob6_.set_pitch_bend(message.getPitchWheelValue());
                 else if (juno_mode) juno_.set_pitch_bend(message.getPitchWheelValue());
                 else if (dx7_mode) dx7_.set_pitch_bend(message.getPitchWheelValue());
                 else engine_.set_pitch_bend(message.getPitchWheelValue());
             }
             else if (message.isController() && message.getControllerNumber() == 1) {
-                if (ob6_mode) { ob6_wheel_ = message.getControllerValue() / 127.0f; ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_); }
+                if (modeld_mode) { modeld_wheel_ = message.getControllerValue() / 127.0f; modeld_.set_modulation_control(modeld_wheel_, modeld_pressure_, bpm, lfo_sync_->load() >= 0.5f); }
+                else if (ob6_mode) { ob6_wheel_ = message.getControllerValue() / 127.0f; ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_); }
                 else if (juno_mode) { juno_wheel_ = message.getControllerValue() / 127.0f; juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
                 else if (dx7_mode) { dx7_wheel_ = message.getControllerValue() / 127.0f; dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
                 else engine_.setWheel(message.getControllerValue() / 127.0f);
+            }
+            else if (modeld_mode && message.isChannelPressure()) {
+                modeld_pressure_ = message.getChannelPressureValue() / 127.0f;
+                modeld_.set_modulation_control(modeld_wheel_, modeld_pressure_, bpm, lfo_sync_->load() >= 0.5f);
             }
             else if (ob6_mode && message.isChannelPressure()) {
                 ob6_pressure_ = message.getChannelPressureValue() / 127.0f;
                 ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_);
             }
             else if (message.isController() && message.getControllerNumber() == 64) {
-                if (ob6_mode) ob6_bus_.set_sustain(message.getControllerValue() >= 64);
+                if (modeld_mode) modeld_bus_.set_sustain(message.getControllerValue() >= 64);
+                else if (ob6_mode) ob6_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
                 else engine_.set_sustain(message.getControllerValue() >= 64);
+            } else if (modeld_mode && message.isController() && (message.getControllerNumber() == 74 || message.getControllerNumber() == 71)) {
+                const size_t filter = message.getControllerNumber() == 74 ? 0u : 1u, index = filter + 4;
+                const float raw = message.getControllerValue() / 127.0f;
+                if (modeld_cc_sequence_[index].load(std::memory_order_acquire) == modeld_cc_delivered_[index].load(std::memory_order_acquire))
+                    modeld_filter_origin_[filter].store(modeld_cc_parameters_[index]->getValue(), std::memory_order_relaxed);
+                const auto& original = modeld_base_.patch;
+                const float old_move = studio::macro_amount(original, GF_MACRO_MOVE);
+                const float baseline = filter == 0
+                    ? std::clamp(gf_cutoff_from_cc_norm(0, raw) * studio::move_cutoff_mul(old_move), 20.0f, 8000.0f)
+                    : std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(raw, original), old_move), .707f, 5.0f);
+                const float normalized = modeld_cc_parameters_[index]->convertTo0to1(baseline);
+                modeld_filter_raw_[filter].store(raw, std::memory_order_relaxed);
+                modeld_filter_expected_[filter].store(normalized, std::memory_order_relaxed);
+                modeld_cc_values_[index].store(normalized, std::memory_order_relaxed);
+                modeld_filter_override_[filter].store(true, std::memory_order_release);
+                modeld_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                const auto effective = modeld_effective_controls(modeld_base_.patch);
+                modeld_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
+            } else if (modeld_mode && message.isController() && (message.getControllerNumber() == 14 ||
+                       message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
+                const int number = message.getControllerNumber();
+                const size_t index = number == 14 ? 0u : number == 15 ? 1u : number == 16 ? 2u : 3u;
+                modeld_cc_values_[index].store(message.getControllerValue() / 127.0f, std::memory_order_relaxed);
+                modeld_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                modeld_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                modeld_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                apply_modeld_osc_automation(); apply_modeld_fx_automation();
+                const auto effective = modeld_effective_controls(modeld_base_.patch);
+                modeld_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
+            } else if (ob6_mode && message.isController() && (message.getControllerNumber() == 74 || message.getControllerNumber() == 71)) {
+                const size_t filter = message.getControllerNumber() == 74 ? 0u : 1u;
+                const size_t index = filter + 4;
+                const float raw = message.getControllerValue() / 127.0f;
+                if (ob6_cc_sequence_[index].load(std::memory_order_acquire) == ob6_cc_delivered_[index].load(std::memory_order_acquire))
+                    ob6_filter_origin_[filter].store(ob6_cc_parameters_[index]->getValue(), std::memory_order_relaxed);
+                const auto& original = ob6_base_.patch;
+                const float old_move = studio::macro_amount(original, GF_MACRO_MOVE);
+                const float baseline = filter == 0
+                    ? std::clamp(gf_cutoff_from_cc_norm(3, raw) * studio::move_cutoff_mul(old_move), 20.0f, 20000.0f)
+                    : std::clamp(.7f + 4.3f * studio::move_resonance(studio::macro_resonance(raw, original), old_move), .707f, 5.0f);
+                const float normalized = ob6_cc_parameters_[index]->convertTo0to1(baseline);
+                ob6_filter_raw_[filter].store(raw, std::memory_order_relaxed);
+                ob6_filter_expected_[filter].store(normalized, std::memory_order_relaxed);
+                ob6_cc_values_[index].store(normalized, std::memory_order_relaxed);
+                ob6_filter_override_[filter].store(true, std::memory_order_release);
+                ob6_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                const auto effective = ob6_effective_controls(ob6_base_.patch);
+                ob6_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
             } else if (ob6_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
                 const int number = message.getControllerNumber();
@@ -513,7 +696,7 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); }
         }
         render_until(buffer.getNumSamples());
     }
@@ -527,8 +710,23 @@ public:
             if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("junoPendingCC" + juce::String(int(i)), juno_cc_values_[i].load(std::memory_order_relaxed), nullptr);
         for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
-            if (ob6_cc_sequence_[i].load(std::memory_order_acquire) != ob6_cc_delivered_[i].load(std::memory_order_acquire))
+            if (ob6_cc_sequence_[i].load(std::memory_order_acquire) != ob6_cc_delivered_[i].load(std::memory_order_acquire) &&
+                (i < 4 || ob6_filter_override_active(i - 4)))
                 snapshot.setProperty("ob6PendingCC" + juce::String(int(i)), ob6_cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < 2; ++i) {
+            snapshot.setProperty("ob6FilterOverride" + juce::String(int(i)), ob6_filter_override_active(i), nullptr);
+            snapshot.setProperty("ob6FilterRaw" + juce::String(int(i)), ob6_filter_raw_[i].load(std::memory_order_relaxed), nullptr);
+            snapshot.setProperty("ob6FilterExpected" + juce::String(int(i)), ob6_filter_expected_[i].load(std::memory_order_relaxed), nullptr);
+        }
+        for (size_t i = 0; i < modeld_cc_parameters_.size(); ++i)
+            if (modeld_cc_sequence_[i].load(std::memory_order_acquire) != modeld_cc_delivered_[i].load(std::memory_order_acquire) &&
+                (i < 4 || modeld_filter_override_active(i - 4)))
+                snapshot.setProperty("modeldPendingCC" + juce::String(int(i)), modeld_cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < 2; ++i) {
+            snapshot.setProperty("modeldFilterOverride" + juce::String(int(i)), modeld_filter_override_active(i), nullptr);
+            snapshot.setProperty("modeldFilterRaw" + juce::String(int(i)), modeld_filter_raw_[i].load(std::memory_order_relaxed), nullptr);
+            snapshot.setProperty("modeldFilterExpected" + juce::String(int(i)), modeld_filter_expected_[i].load(std::memory_order_relaxed), nullptr);
+        }
         snapshot.setProperty("dx7ParamVersion", 6, nullptr);
         snapshot.setProperty("junoOscVersion", 1, nullptr);
         snapshot.setProperty("junoEnvVersion", 1, nullptr);
@@ -542,6 +740,10 @@ public:
         snapshot.setProperty("ob6OscVersion", 1, nullptr);
         snapshot.setProperty("ob6VoiceVersion", 1, nullptr);
         snapshot.setProperty("ob6MacroVersion", 1, nullptr);
+        snapshot.setProperty("modeldOscVersion", 1, nullptr);
+        snapshot.setProperty("modeldVoiceVersion", 1, nullptr);
+        snapshot.setProperty("modeldBusVersion", 1, nullptr);
+        snapshot.setProperty("modeldMacroVersion", 1, nullptr);
         if (preset_raw_.getSize() > 0) snapshot.setProperty("gfPreset", preset_raw_.toBase64Encoding(), nullptr);
         if (auto xml = snapshot.createXml()) copyXmlToBinary(*xml, data);
     }
@@ -563,13 +765,50 @@ public:
             has_juno_pending_cc[i] = tree.hasProperty(id);
             if (has_juno_pending_cc[i]) { juno_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
-        std::array<float, 4> ob6_pending_cc{};
-        std::array<bool, 4> has_ob6_pending_cc{};
+        std::array<float, 6> ob6_pending_cc{};
+        std::array<bool, 6> has_ob6_pending_cc{};
         for (size_t i = 0; i < ob6_pending_cc.size(); ++i) {
             const auto id = "ob6PendingCC" + juce::String(int(i));
             has_ob6_pending_cc[i] = tree.hasProperty(id);
             if (has_ob6_pending_cc[i]) { ob6_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
+        std::array<bool, 2> filter_override{};
+        std::array<float, 2> filter_raw{}, filter_expected{};
+        for (size_t i = 0; i < 2; ++i) {
+            const auto suffix = juce::String(int(i));
+            filter_override[i] = bool(tree.getProperty("ob6FilterOverride" + suffix, false));
+            filter_raw[i] = float(tree.getProperty("ob6FilterRaw" + suffix, 0.0f));
+            filter_expected[i] = float(tree.getProperty("ob6FilterExpected" + suffix, 0.0f));
+            tree.removeProperty("ob6FilterOverride" + suffix, nullptr);
+            tree.removeProperty("ob6FilterRaw" + suffix, nullptr);
+            tree.removeProperty("ob6FilterExpected" + suffix, nullptr);
+        }
+        std::array<float, 6> modeld_pending_cc{};
+        std::array<bool, 6> has_modeld_pending_cc{};
+        for (size_t i = 0; i < modeld_pending_cc.size(); ++i) {
+            const auto id = "modeldPendingCC" + juce::String(int(i));
+            has_modeld_pending_cc[i] = tree.hasProperty(id);
+            if (has_modeld_pending_cc[i]) { modeld_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
+        }
+        std::array<bool, 2> modeld_filter_override{};
+        std::array<float, 2> modeld_filter_raw{}, modeld_filter_expected{};
+        for (size_t i = 0; i < 2; ++i) {
+            const auto suffix = juce::String(int(i));
+            modeld_filter_override[i] = bool(tree.getProperty("modeldFilterOverride" + suffix, false));
+            modeld_filter_raw[i] = float(tree.getProperty("modeldFilterRaw" + suffix, 0.0f));
+            modeld_filter_expected[i] = float(tree.getProperty("modeldFilterExpected" + suffix, 0.0f));
+            tree.removeProperty("modeldFilterOverride" + suffix, nullptr);
+            tree.removeProperty("modeldFilterRaw" + suffix, nullptr);
+            tree.removeProperty("modeldFilterExpected" + suffix, nullptr);
+        }
+        const int modeld_macro_version = int(tree.getProperty("modeldMacroVersion", 0));
+        tree.removeProperty("modeldMacroVersion", nullptr);
+        const int modeld_bus_version = int(tree.getProperty("modeldBusVersion", 0));
+        tree.removeProperty("modeldBusVersion", nullptr);
+        const int modeld_voice_version = int(tree.getProperty("modeldVoiceVersion", 0));
+        tree.removeProperty("modeldVoiceVersion", nullptr);
+        const int modeld_osc_version = int(tree.getProperty("modeldOscVersion", 0));
+        tree.removeProperty("modeldOscVersion", nullptr);
         const int ob6_macro_version = int(tree.getProperty("ob6MacroVersion", 0));
         tree.removeProperty("ob6MacroVersion", nullptr);
         const int ob6_voice_version = int(tree.getProperty("ob6VoiceVersion", 0));
@@ -607,6 +846,10 @@ public:
         std::lock_guard<std::mutex> guard(preset_mutex_);
         clear_cc_pending();
         state_.replaceState(tree);
+        if (raw.getSize() && engine == 0 && modeld_macro_version < 1) set_modeld_macro_parameters(decoded);
+        if (raw.getSize() && engine == 0 && modeld_bus_version < 1) set_modeld_bus_parameters(decoded);
+        if (raw.getSize() && engine == 0 && modeld_voice_version < 1) set_modeld_voice_parameters(decoded);
+        if (raw.getSize() && engine == 0 && modeld_osc_version < 1) set_modeld_osc_parameters(decoded);
         if (raw.getSize() && engine == 3 && ob6_macro_version < 1) set_ob6_macro_parameters(decoded);
         if (raw.getSize() && engine == 3 && ob6_voice_version < 1) set_ob6_voice_parameters(decoded);
         if (raw.getSize() && engine == 3 && ob6_osc_version < 1) set_ob6_osc_parameters(decoded);
@@ -637,6 +880,18 @@ public:
             if (has_juno_pending_cc[i]) juno_cc_parameters_[i]->setValueNotifyingHost(std::clamp(juno_pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < ob6_pending_cc.size(); ++i)
             if (has_ob6_pending_cc[i]) ob6_cc_parameters_[i]->setValueNotifyingHost(std::clamp(ob6_pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < 2; ++i) {
+            ob6_filter_raw_[i].store(std::clamp(filter_raw[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            ob6_filter_expected_[i].store(std::clamp(filter_expected[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            ob6_filter_override_[i].store(filter_override[i], std::memory_order_release);
+        }
+        for (size_t i = 0; i < modeld_pending_cc.size(); ++i)
+            if (has_modeld_pending_cc[i]) modeld_cc_parameters_[i]->setValueNotifyingHost(std::clamp(modeld_pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < 2; ++i) {
+            modeld_filter_raw_[i].store(std::clamp(modeld_filter_raw[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            modeld_filter_expected_[i].store(std::clamp(modeld_filter_expected[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            modeld_filter_override_[i].store(modeld_filter_override[i], std::memory_order_release);
+        }
         preset_raw_ = raw;
         preset_name_ = raw.getSize() ? juce::String::fromUTF8(decoded.name) : juce::String();
         publish_preset(raw);
@@ -654,12 +909,13 @@ public:
             auto* p = state_.getParameter(id);
             p->setValueNotifyingHost(p->convertTo0to1(value));
         };
-        if (engine == 2 || engine == 1 || engine == 3) {
+        if (engine == 0 || engine == 2 || engine == 1 || engine == 3) {
             set("cutoff", cutoff);
             set("resonance", std::clamp(engine == 3 ? .7f + reso * 4.3f : 0.1f + reso * 4.9f, 0.707f, 5.0f));
             set("attack", patch.attack_ms);
             set("release", patch.release_ms);
         }
+        if (engine == 0) { set_modeld_osc_parameters(preset); set_modeld_voice_parameters(preset); set_modeld_bus_parameters(preset); set_modeld_macro_parameters(preset); }
         if (engine == 1) { set_juno_osc_parameters(preset); set_juno_env_parameters(preset); set_juno_lfo_parameters(preset); set_juno_voice_groove_parameters(preset); set_juno_groove_parameters(preset); set_juno_fx_parameters(preset); set_juno_macro_parameters(preset); }
         if (engine == 3) { set_ob6_macro_parameters(preset); set_ob6_voice_parameters(preset); set_ob6_osc_parameters(preset); set_ob6_groove_parameters(preset); set_ob6_fx_parameters(preset); }
         if (engine == 4) {
@@ -669,6 +925,7 @@ public:
             set_dx7_groove_parameters(preset);
             set_dx7_macro_parameters(preset);
         }
+        set("modeld_preview", engine == 0 ? 1.0f : 0.0f);
         set("ob6_preview", engine == 3 ? 1.0f : 0.0f);
         set("juno_preview", engine == 1 ? 1.0f : 0.0f);
         set("dx7_preview", engine == 4 ? 1.0f : 0.0f);
@@ -676,6 +933,33 @@ public:
         preset_raw_.replaceAll(data, size);
         preset_name_ = juce::String::fromUTF8(preset.name);
         publish_preset(preset_raw_);
+        return true;
+    }
+    bool export_model_d_preset(std::vector<uint8_t>& data) override {
+        if (modeld_enabled_->load() < .5f || lfo_sync_->load() >= .5f) return false;
+        studio::Preset preset;
+        {
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            uint8_t source = 99;
+            if (!preset_raw_.getSize() || !gf::decode_supported_preset(static_cast<const uint8_t*>(preset_raw_.getData()),
+                    preset_raw_.getSize(), preset, source) || source != 0) return false;
+        }
+        const auto controls = modeld_effective_controls(preset.patch);
+        write_modeld_osc(preset.patch); write_modeld_voice(preset.patch); write_modeld_bus(preset.patch); write_modeld_macros(preset.patch);
+        float velocity_amp, velocity_filter;
+        studio::macro_vel_depths(preset.patch, &velocity_amp, &velocity_filter);
+        const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
+        preset.patch = studio::move_sfx(studio::macro_patch(preset.patch, 0), move);
+        preset.patch.vel_amp = velocity_amp * 100; preset.patch.vel_cut = velocity_filter * 100;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 0;
+        preset.cutoff_hz = controls[0];
+        preset.reso_norm = std::clamp((controls[1] - .1f) / 4.9f, 0.0f, 1.0f);
+        preset.patch.attack_ms = attack_->load(); preset.patch.release_ms = controls[2];
+        std::vector<uint8_t> encoded(studio::PRESET_BYTES);
+        if (studio::preset_encode(preset, 0, encoded.data(), encoded.size()) != encoded.size()) return false;
+        data = std::move(encoded);
         return true;
     }
     bool export_ob6_preset(std::vector<uint8_t>& data) override {
@@ -844,6 +1128,10 @@ public:
 
 private:
     void clear_cc_pending() {
+        for (auto& enabled : modeld_filter_override_) enabled.store(false, std::memory_order_release);
+        for (size_t i = 0; i < modeld_cc_parameters_.size(); ++i)
+            modeld_cc_delivered_[i].store(modeld_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
+        for (auto& enabled : ob6_filter_override_) enabled.store(false, std::memory_order_release);
         for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
             ob6_cc_delivered_[i].store(ob6_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
@@ -859,12 +1147,35 @@ private:
         return juno_cc_sequence_[index].load(std::memory_order_acquire) != juno_cc_delivered_[index].load(std::memory_order_acquire)
             ? juno_cc_values_[index].load(std::memory_order_relaxed) : fallback;
     }
+    float modeld_cc_value(size_t index, float fallback) const {
+        return modeld_cc_sequence_[index].load(std::memory_order_acquire) != modeld_cc_delivered_[index].load(std::memory_order_acquire)
+            ? modeld_cc_values_[index].load(std::memory_order_relaxed) : fallback;
+    }
+    float modeld_macro_value(size_t index) const {
+        return index < 3 ? modeld_cc_value(index + 1, modeld_macro_[index]->load()) : modeld_macro_[index]->load();
+    }
+    bool modeld_filter_override_active(size_t filter) const {
+        if (!modeld_filter_override_[filter].load(std::memory_order_acquire)) return false;
+        const size_t index = filter + 4;
+        const float value = modeld_cc_parameters_[index]->getValue();
+        if (std::abs(value - modeld_filter_expected_[filter].load(std::memory_order_relaxed)) <= 1e-5f) return true;
+        return modeld_cc_sequence_[index].load(std::memory_order_acquire) != modeld_cc_delivered_[index].load(std::memory_order_acquire) &&
+            std::abs(value - modeld_filter_origin_[filter].load(std::memory_order_relaxed)) <= 1e-5f;
+    }
     float ob6_cc_value(size_t index, float fallback) const {
         return ob6_cc_sequence_[index].load(std::memory_order_acquire) != ob6_cc_delivered_[index].load(std::memory_order_acquire)
             ? ob6_cc_values_[index].load(std::memory_order_relaxed) : fallback;
     }
     float ob6_macro_value(size_t index) const {
         return index < 3 ? ob6_cc_value(index + 1, ob6_macro_[index]->load()) : ob6_macro_[index]->load();
+    }
+    bool ob6_filter_override_active(size_t filter) const {
+        if (!ob6_filter_override_[filter].load(std::memory_order_acquire)) return false;
+        const size_t index = filter + 4;
+        const float value = ob6_cc_parameters_[index]->getValue();
+        if (std::abs(value - ob6_filter_expected_[filter].load(std::memory_order_relaxed)) <= 1e-5f) return true;
+        return ob6_cc_sequence_[index].load(std::memory_order_acquire) != ob6_cc_delivered_[index].load(std::memory_order_acquire) &&
+            std::abs(value - ob6_filter_origin_[filter].load(std::memory_order_relaxed)) <= 1e-5f;
     }
     float juno_macro_value(size_t index) const {
         return index < 3 ? juno_cc_value(index + 1, juno_macro_[index]->load()) : juno_macro_[index]->load();
@@ -874,9 +1185,25 @@ private:
             dx_macro_current_[i] = i < 3 ? cc_value(i + 1, dx_macro_[i]->load()) : dx_macro_[i]->load();
     }
     void timerCallback() override {
+        for (size_t i = 0; i < modeld_cc_parameters_.size(); ++i) {
+            const auto sequence = modeld_cc_sequence_[i].load(std::memory_order_acquire);
+            if (sequence == modeld_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            if (i >= 4 && !modeld_filter_override_active(i - 4)) {
+                modeld_filter_override_[i - 4].store(false, std::memory_order_release);
+                modeld_cc_delivered_[i].store(sequence, std::memory_order_release);
+                continue;
+            }
+            modeld_cc_parameters_[i]->setValueNotifyingHost(modeld_cc_values_[i].load(std::memory_order_relaxed));
+            modeld_cc_delivered_[i].store(sequence, std::memory_order_release);
+        }
         for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i) {
             const auto sequence = ob6_cc_sequence_[i].load(std::memory_order_acquire);
             if (sequence == ob6_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            if (i >= 4 && !ob6_filter_override_active(i - 4)) {
+                ob6_filter_override_[i - 4].store(false, std::memory_order_release);
+                ob6_cc_delivered_[i].store(sequence, std::memory_order_release);
+                continue;
+            }
             ob6_cc_parameters_[i]->setValueNotifyingHost(ob6_cc_values_[i].load(std::memory_order_relaxed));
             ob6_cc_delivered_[i].store(sequence, std::memory_order_release);
         }
@@ -1090,6 +1417,125 @@ private:
         p.patch = studio::move_sfx(p.patch, juno_macro_value(2));
         gf::apply_synth_fx_preview(juno_bus_, p, 1);
     }
+    void set_modeld_macro_parameters(const studio::Preset& preset) {
+        const auto& m = preset.patch.groove[GF_GROOVE_MACRO];
+        const float values[] = {m[GF_MACRO_GRIT], m[GF_MACRO_POCKET], m[GF_MACRO_MOVE],
+            m[GF_MACRO_GRIT_RES], m[GF_MACRO_GRIT_MOD], m[GF_MACRO_POCKET_VEL]};
+        for (size_t i = 0; i < MODELD_MACRO_IDS.size(); ++i)
+            state_.getParameter(MODELD_MACRO_IDS[i])->setValueNotifyingHost(std::clamp(values[i] * .01f, 0.0f, 1.0f));
+    }
+    void write_modeld_macros(studio::Patch& patch) const {
+        auto& m = patch.groove[GF_GROOVE_MACRO];
+        m[GF_MACRO_GRIT] = modeld_macro_value(0) * 100; m[GF_MACRO_POCKET] = modeld_macro_value(1) * 100;
+        m[GF_MACRO_MOVE] = modeld_macro_value(2) * 100; m[GF_MACRO_GRIT_RES] = modeld_macro_[3]->load() * 100;
+        m[GF_MACRO_GRIT_MOD] = modeld_macro_[4]->load() * 100; m[GF_MACRO_POCKET_VEL] = modeld_macro_[5]->load() * 100;
+    }
+    std::array<float, 3> modeld_effective_controls(const studio::Patch& original) const {
+        auto current = original; write_modeld_macros(current);
+        const float old_move = studio::macro_amount(original, GF_MACRO_MOVE), move = studio::macro_amount(current, GF_MACRO_MOVE);
+        const float cutoff = modeld_filter_override_active(0)
+            ? std::clamp(gf_cutoff_from_cc_norm(0, modeld_filter_raw_[0].load(std::memory_order_relaxed)) * studio::move_cutoff_mul(move), 20.0f, 8000.0f)
+            : std::clamp(cutoff_->load() * studio::move_cutoff_mul(move) / studio::move_cutoff_mul(old_move), 20.0f, 8000.0f);
+        const float old_res = studio::move_resonance(studio::macro_resonance(0.0f, original), old_move);
+        const float new_res = studio::move_resonance(studio::macro_resonance(0.0f, current), move);
+        const float resonance = modeld_filter_override_active(1)
+            ? std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(modeld_filter_raw_[1].load(std::memory_order_relaxed), current), move), .707f, 5.0f)
+            : std::clamp(resonance_->load() + 4.9f * (new_res - old_res), .707f, 5.0f);
+        const float old_release = studio::macro_patch(original, 0).release_ms, new_release = studio::macro_patch(current, 0).release_ms;
+        const float release = std::clamp(release_->load() * (old_release > .001f ? new_release / old_release : 1.0f), 1.0f, 10000.0f);
+        return {cutoff, resonance, release};
+    }
+    void set_modeld_bus_parameters(const studio::Preset& preset) {
+        for (int g = 0; g < 3; ++g) for (int f = 0; f < JUNO_GROOVE_FIELDS[size_t(g)]; ++f) {
+            auto* p = state_.getParameter(modeld_groove_id(g, f));
+            const float value = f == 0 ? (preset.patch.groove_on[g] ? 1.0f : 0.0f) : preset.patch.groove[g][f - 1];
+            p->setValueNotifyingHost(p->convertTo0to1(value));
+        }
+        for (int fx = 0; fx < 5; ++fx) for (int f = 0; f < 5; ++f) {
+            auto* p = state_.getParameter(modeld_fx_id(fx, f));
+            const float value = f == 0 ? (preset.patch.sfx_on[fx] ? 1.0f : 0.0f) : f == 1 ? preset.patch.sfx_mix[fx] : preset.patch.sfx_p[fx][f - 2];
+            p->setValueNotifyingHost(p->convertTo0to1(value));
+        }
+    }
+    void write_modeld_bus(studio::Patch& p) const {
+        for (int g = 0; g < 3; ++g) {
+            p.groove_on[g] = modeld_groove_[g][0]->load() >= .5f;
+            for (int f = 1; f < JUNO_GROOVE_FIELDS[size_t(g)]; ++f) p.groove[g][f - 1] = modeld_groove_[g][f]->load();
+        }
+        for (int fx = 0; fx < 5; ++fx) {
+            p.sfx_on[fx] = modeld_fx_[fx][0]->load() >= .5f; p.sfx_mix[fx] = modeld_fx_[fx][1]->load();
+            for (int f = 0; f < 3; ++f) p.sfx_p[fx][f] = modeld_fx_[fx][f + 2]->load();
+        }
+    }
+    void apply_modeld_groove_automation() {
+        bool changed = false;
+        for (int g = 0; g < 3; ++g) for (int f = 0; f < JUNO_GROOVE_FIELDS[size_t(g)]; ++f) {
+            const size_t i = size_t(g * 7 + f); const float value = modeld_groove_[g][f]->load();
+            if (value != modeld_groove_last_[i]) { modeld_groove_last_[i] = value; changed = true; }
+        }
+        if (!changed) return;
+        auto preset = modeld_base_; write_modeld_bus(preset.patch); gf::apply_groove_preview(modeld_bus_, preset, false);
+    }
+    void apply_modeld_fx_automation() {
+        bool changed = false;
+        for (int fx = 0; fx < 5; ++fx) for (int f = 0; f < 5; ++f) {
+            const size_t i = size_t(fx * 5 + f); const float value = modeld_fx_[fx][f]->load();
+            if (value != modeld_fx_last_[i]) { modeld_fx_last_[i] = value; changed = true; }
+        }
+        if (!changed) return;
+        auto preset = modeld_base_; write_modeld_bus(preset.patch); write_modeld_macros(preset.patch);
+        preset.patch = studio::move_sfx(preset.patch, studio::macro_amount(preset.patch, GF_MACRO_MOVE));
+        gf::apply_synth_fx_preview(modeld_bus_, preset, 0);
+    }
+    static std::array<float, MODELD_VOICE.size()> modeld_voice_values(const studio::Patch& p) {
+        return {p.decay_ms, p.sustain, p.f_attack_ms, p.f_decay_ms, p.f_sustain, p.f_release_ms,
+            p.env_amt, p.drive, p.vel_amp, p.vel_cut, p.lfo_rate_hz, float(p.lfo_shape), float(p.lfo_div),
+            p.lfo_amt[GF_DEST_CUTOFF], p.lfo_amt[GF_DEST_PITCH], p.lfo_amt[GF_DEST_PWM], p.glide,
+            p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT]};
+    }
+    void set_modeld_voice_parameters(const studio::Preset& preset) {
+        const auto values = modeld_voice_values(preset.patch);
+        for (size_t i = 0; i < MODELD_VOICE.size(); ++i) {
+            auto* parameter = state_.getParameter(MODELD_VOICE[i].id);
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(values[i]));
+        }
+    }
+    void write_modeld_voice(studio::Patch& p) const {
+        auto v = [&](size_t i) { return modeld_voice_[i]->load(); };
+        p.decay_ms = v(0); p.sustain = v(1); p.f_attack_ms = v(2); p.f_decay_ms = v(3);
+        p.f_sustain = v(4); p.f_release_ms = v(5); p.env_amt = v(6); p.drive = v(7);
+        p.vel_amp = v(8); p.vel_cut = v(9); p.lfo_rate_hz = v(10); p.lfo_shape = uint8_t(v(11));
+        p.lfo_div = uint8_t(v(12)); p.lfo_amt[GF_DEST_CUTOFF] = v(13); p.lfo_amt[GF_DEST_PITCH] = v(14);
+        p.lfo_amt[GF_DEST_PWM] = v(15); p.glide = v(16); p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = modeld_cc_value(0, v(17) * .01f) * 100;
+    }
+    void set_modeld_osc_parameters(const studio::Preset& preset) {
+        for (const auto& c : MODELD_OSC) {
+            auto* parameter = state_.getParameter(c.id);
+            const float value = c.mod ? preset.patch.mod[c.stop][c.slot] : preset.patch.osc[c.stop][c.slot];
+            parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
+        }
+    }
+    void write_modeld_osc(studio::Patch& patch) const {
+        for (size_t i = 0; i < MODELD_OSC.size(); ++i) {
+            const auto& c = MODELD_OSC[i];
+            (c.mod ? patch.mod[c.stop][c.slot] : patch.osc[c.stop][c.slot]) = modeld_osc_[i]->load();
+        }
+    }
+    void apply_modeld_osc_automation() {
+        bool changed = false;
+        for (size_t i = 0; i < MODELD_OSC.size(); ++i) {
+            const float value = modeld_osc_[i]->load();
+            if (value != modeld_osc_last_[i]) { modeld_osc_last_[i] = value; changed = true; }
+        }
+        for (size_t i = 0; i < MODELD_VOICE.size(); ++i) {
+            const float value = i == 17 ? modeld_cc_value(0, modeld_voice_[i]->load() * .01f) * 100 : modeld_voice_[i]->load();
+            if (value != modeld_voice_last_[i]) { modeld_voice_last_[i] = value; changed = true; }
+        }
+        if (!changed) return;
+        auto preset = modeld_base_;
+        write_modeld_osc(preset.patch); write_modeld_voice(preset.patch); write_modeld_macros(preset.patch);
+        gf::apply_model_d_preset_preview(modeld_, preset);
+    }
     void set_ob6_macro_parameters(const studio::Preset& preset) {
         const auto& m = preset.patch.groove[GF_GROOVE_MACRO];
         const float values[] = {m[GF_MACRO_GRIT], m[GF_MACRO_POCKET], m[GF_MACRO_MOVE],
@@ -1109,10 +1555,14 @@ private:
         write_ob6_macros(current);
         const float old_move = studio::macro_amount(original, GF_MACRO_MOVE);
         const float move = studio::macro_amount(current, GF_MACRO_MOVE);
-        const float cutoff = std::clamp(cutoff_->load() * studio::move_cutoff_mul(move) / studio::move_cutoff_mul(old_move), 20.0f, 20000.0f);
+        const float cutoff = ob6_filter_override_active(0)
+            ? std::clamp(gf_cutoff_from_cc_norm(3, ob6_filter_raw_[0].load(std::memory_order_relaxed)) * studio::move_cutoff_mul(move), 20.0f, 20000.0f)
+            : std::clamp(cutoff_->load() * studio::move_cutoff_mul(move) / studio::move_cutoff_mul(old_move), 20.0f, 20000.0f);
         const float old_res = studio::move_resonance(studio::macro_resonance(0.0f, original), old_move);
         const float new_res = studio::move_resonance(studio::macro_resonance(0.0f, current), move);
-        const float resonance = std::clamp(resonance_->load() + 4.3f * (new_res - old_res), .707f, 5.0f);
+        const float resonance = ob6_filter_override_active(1)
+            ? std::clamp(.7f + 4.3f * studio::move_resonance(studio::macro_resonance(ob6_filter_raw_[1].load(std::memory_order_relaxed), current), move), .707f, 5.0f)
+            : std::clamp(resonance_->load() + 4.3f * (new_res - old_res), .707f, 5.0f);
         const float old_release = studio::macro_patch(original, 3).release_ms;
         const float new_release = studio::macro_patch(current, 3).release_ms;
         const float release = std::clamp(release_->load() * (old_release > 0.001f ? new_release / old_release : 1.0f), 1.0f, 10000.0f);
@@ -1337,7 +1787,15 @@ private:
             studio::Preset preset;
             uint8_t preset_engine = 0;
             if (!gf::decode_supported_preset(bytes.data(), size, preset, preset_engine)) return;
-            if (preset_engine == 3) {
+            if (preset_engine == 0) {
+                const auto initial = modeld_effective_controls(preset.patch);
+                modeld_.set_parameters(initial[0], initial[1], attack_->load(), initial[2]);
+                modeld_.reset(); modeld_bus_.reset(); modeld_base_ = preset;
+                modeld_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                modeld_voice_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                modeld_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                modeld_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+            } else if (preset_engine == 3) {
                 ob6_.reset(); ob6_bus_.reset(); ob6_base_ = preset;
                 ob6_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 ob6_voice_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -1370,9 +1828,23 @@ private:
     gf::ProphetPreview dx_bus_;
     gf::ProphetPreview juno_bus_;
     gf::ProphetPreview ob6_bus_;
+    gf::ProphetPreview modeld_bus_;
     gf::Dx7Preview dx7_;
     gf::JunoPreview juno_;
     gf::Ob6Preview ob6_;
+    gf::ModelDPreview modeld_;
+    studio::Preset modeld_base_;
+    std::array<std::atomic<float>*, MODELD_OSC.size()> modeld_osc_{};
+    std::array<float, MODELD_OSC.size()> modeld_osc_last_{};
+    std::array<std::atomic<float>*, MODELD_VOICE.size()> modeld_voice_{};
+    std::array<float, MODELD_VOICE.size()> modeld_voice_last_{};
+    std::array<std::array<std::atomic<float>*, 7>, 3> modeld_groove_{};
+    std::array<float, 21> modeld_groove_last_{};
+    std::array<std::array<std::atomic<float>*, 5>, 5> modeld_fx_{};
+    std::array<float, 25> modeld_fx_last_{};
+    std::array<std::atomic<float>*, MODELD_MACRO_IDS.size()> modeld_macro_{};
+    std::array<float, MODELD_MACRO_IDS.size()> modeld_macro_last_{};
+    float modeld_wheel_ = 0, modeld_pressure_ = 0;
     studio::Preset ob6_base_;
     std::array<std::atomic<float>*, OB6_OSC.size()> ob6_osc_{};
     std::array<float, OB6_OSC.size()> ob6_osc_last_{};
@@ -1381,7 +1853,7 @@ private:
     std::array<std::atomic<float>*, OB6_MACRO_IDS.size()> ob6_macro_{};
     std::array<float, OB6_MACRO_IDS.size()> ob6_macro_last_{};
     float ob6_wheel_ = 0.0f, ob6_pressure_ = 0.0f;
-    bool last_ob6_mode_ = false;
+    bool last_ob6_mode_ = false, last_modeld_mode_ = false;
     float juno_wheel_ = 0.0f;
     bool last_juno_mode_ = false;
     bool last_dx7_mode_ = false;
@@ -1390,10 +1862,12 @@ private:
     std::vector<int16_t> dx_delay_left_, dx_delay_right_;
     std::vector<int16_t> juno_delay_left_, juno_delay_right_;
     std::vector<int16_t> ob6_delay_left_, ob6_delay_right_;
+    std::vector<int16_t> modeld_delay_left_, modeld_delay_right_;
     std::vector<int16_t> plate_memory_;
     std::vector<int16_t> dx_plate_memory_;
     std::vector<int16_t> juno_plate_memory_;
     std::vector<int16_t> ob6_plate_memory_;
+    std::vector<int16_t> modeld_plate_memory_;
     juce::AudioProcessorValueTreeState state_;
     std::atomic<float>* cutoff_ = nullptr;
     std::atomic<float>* resonance_ = nullptr;
@@ -1403,6 +1877,7 @@ private:
     std::atomic<float>* dx7_enabled_ = nullptr;
     std::atomic<float>* juno_enabled_ = nullptr;
     std::atomic<float>* ob6_enabled_ = nullptr;
+    std::atomic<float>* modeld_enabled_ = nullptr;
     std::array<std::atomic<float>*, JUNO_OSC.size()> juno_osc_{};
     std::array<float, JUNO_OSC.size()> juno_osc_last_{};
     std::array<std::atomic<float>*, JUNO_ENV.size()> juno_env_{};
@@ -1435,9 +1910,16 @@ private:
     std::array<float, 21> dx_groove_last_{};
     std::array<std::atomic<float>*, DX_MACRO_IDS.size()> dx_macro_{};
     std::array<float, DX_MACRO_IDS.size()> dx_macro_current_{}, dx_macro_last_{};
-    std::array<juce::RangedAudioParameter*, 4> ob6_cc_parameters_{};
-    std::array<std::atomic<float>, 4> ob6_cc_values_{};
-    std::array<std::atomic<uint64_t>, 4> ob6_cc_sequence_{}, ob6_cc_delivered_{};
+    std::array<juce::RangedAudioParameter*, 6> modeld_cc_parameters_{};
+    std::array<std::atomic<float>, 6> modeld_cc_values_{};
+    std::array<std::atomic<uint64_t>, 6> modeld_cc_sequence_{}, modeld_cc_delivered_{};
+    std::array<std::atomic<bool>, 2> modeld_filter_override_{};
+    std::array<std::atomic<float>, 2> modeld_filter_raw_{}, modeld_filter_expected_{}, modeld_filter_origin_{};
+    std::array<juce::RangedAudioParameter*, 6> ob6_cc_parameters_{};
+    std::array<std::atomic<float>, 6> ob6_cc_values_{};
+    std::array<std::atomic<uint64_t>, 6> ob6_cc_sequence_{}, ob6_cc_delivered_{};
+    std::array<std::atomic<bool>, 2> ob6_filter_override_{};
+    std::array<std::atomic<float>, 2> ob6_filter_raw_{}, ob6_filter_expected_{}, ob6_filter_origin_{};
     std::array<juce::RangedAudioParameter*, 4> juno_cc_parameters_{};
     std::array<std::atomic<float>, 4> juno_cc_values_{};
     std::array<std::atomic<uint64_t>, 4> juno_cc_sequence_{}, juno_cc_delivered_{};
@@ -1478,6 +1960,7 @@ public:
             addAndMakeVisible(labels_[i]);
             attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
                 owner.parameters(), ids[i], knob);
+            compact_slider_text(knob);
         }
         import_.setButtonText("IMPORT GFP");
         import_.setColour(juce::TextButton::buttonColourId, juce::Colour(0xff0e5040));
@@ -1496,18 +1979,27 @@ public:
         dx7_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
             owner.parameters(), "dx7_preview", dx7_toggle_);
         juno_toggle_.setButtonText("JUNO PREVIEW");
+        juno_toggle_.setComponentID("engine.juno");
         juno_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
         addAndMakeVisible(juno_toggle_);
         juno_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "juno_preview", juno_toggle_);
         ob6_toggle_.setButtonText("OB-6 PREVIEW");
+        ob6_toggle_.setComponentID("engine.ob6");
         ob6_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
         addAndMakeVisible(ob6_toggle_);
         ob6_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "ob6_preview", ob6_toggle_);
-        juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) { dx7_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
-        dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) { juno_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
-        ob6_toggle_.onClick = [this] { if (ob6_toggle_.getToggleState()) { juno_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); } };
+        modeld_toggle_.setButtonText("MODEL D");
+        modeld_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
+        addAndMakeVisible(modeld_toggle_);
+        modeld_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "modeld_preview", modeld_toggle_);
+        modeld_toggle_.onClick = [this] { if (modeld_toggle_.getToggleState()) { juno_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
+        juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) { modeld_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
+        dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) { modeld_toggle_.setToggleState(false, juce::sendNotification); juno_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
+        ob6_toggle_.onClick = [this] { if (ob6_toggle_.getToggleState()) { modeld_toggle_.setToggleState(false, juce::sendNotification); juno_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); } };
         juno_page_.setButtonText("OSC");
-        juno_page_.onClick = [this] { if (ob6_toggle_.getToggleState()) ob6_page_index_ = (ob6_page_index_ + 1) % 6; else juno_page_index_ = (juno_page_index_ + 1) % 8; update_status(); };
+        juno_page_.setComponentID("engine.page");
+        juno_page_.setTooltip("Cambiar de página de edición");
+        juno_page_.onClick = [this] { if (modeld_toggle_.getToggleState()) modeld_page_index_ = (modeld_page_index_ + 1) % 6; else if (ob6_toggle_.getToggleState()) ob6_page_index_ = (ob6_page_index_ + 1) % 6; else juno_page_index_ = (juno_page_index_ + 1) % 8; update_status(); };
         addChildComponent(juno_page_);
         constexpr const char* descriptions[] = {"0 Saw · 1 Square · 2 Pulse · 3 Saw+Pulse", "Nivel del suboscilador", "Nivel de ruido", "Ancho de pulso", "0 Off · 1 I · 2 II · 3 I+II", "0 Bass boost · 1 Flat · 2 225 Hz · 3 720 Hz", "0 16 pies · 1 8 pies · 2 4 pies", "0 ENV · 1 GATE", "Ruido del chorus BBD"};
         for (size_t i = 0; i < JUNO_OSC.size(); ++i) {
@@ -1560,10 +2052,12 @@ public:
             juno_macro_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
             addChildComponent(juno_macro_labels_[i]);
             juno_macro_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            juno_macro_sliders_[i].setComponentID("shared.macro." + juce::String(int(i)));
             juno_macro_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
             juno_macro_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
             addChildComponent(juno_macro_sliders_[i]);
             juno_macro_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_MACRO_IDS[i], juno_macro_sliders_[i]);
+            compact_slider_text(juno_macro_sliders_[i]);
         }
         dx_page_.setButtonText("VOICE");
         dx_page_.onClick = [this] { dx_page_index_ = (dx_page_index_ + 1) % 5; update_status(); };
@@ -1600,10 +2094,12 @@ public:
             ob6_osc_labels_[i].setFont(juce::Font(juce::FontOptions(11.0f)));
             addChildComponent(ob6_osc_labels_[i]);
             ob6_osc_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            ob6_osc_sliders_[i].setComponentID(OB6_OSC[i].id);
             ob6_osc_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 20);
             ob6_osc_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
             addChildComponent(ob6_osc_sliders_[i]);
             ob6_osc_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), OB6_OSC[i].id, ob6_osc_sliders_[i]);
+            compact_slider_text(ob6_osc_sliders_[i]);
         }
         for (size_t i = 0; i < OB6_VOICE.size(); ++i) {
             ob6_voice_labels_[i].setText(OB6_VOICE[i].label, juce::dontSendNotification);
@@ -1611,10 +2107,38 @@ public:
             ob6_voice_labels_[i].setFont(juce::Font(juce::FontOptions(10.0f)));
             addChildComponent(ob6_voice_labels_[i]);
             ob6_voice_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
+            ob6_voice_sliders_[i].setComponentID(OB6_VOICE[i].id);
             ob6_voice_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 19);
             ob6_voice_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
             addChildComponent(ob6_voice_sliders_[i]);
             ob6_voice_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), OB6_VOICE[i].id, ob6_voice_sliders_[i]);
+            compact_slider_text(ob6_voice_sliders_[i]);
+        }
+        for (size_t i = 0; i < MODELD_OSC.size(); ++i) {
+            modeld_osc_labels_[i].setText(MODELD_OSC[i].label, juce::dontSendNotification);
+            modeld_osc_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            modeld_osc_labels_[i].setFont(juce::Font(juce::FontOptions(10.0f)));
+            addChildComponent(modeld_osc_labels_[i]);
+            auto& slider = modeld_osc_sliders_[i];
+            slider.setSliderStyle(juce::Slider::LinearHorizontal);
+            slider.setComponentID(MODELD_OSC[i].id);
+            slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 19);
+            slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
+            addChildComponent(slider);
+            modeld_osc_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), MODELD_OSC[i].id, slider);
+            compact_slider_text(slider);
+        }
+        for (size_t i = 0; i < MODELD_VOICE.size(); ++i) {
+            modeld_voice_labels_[i].setText(MODELD_VOICE[i].label, juce::dontSendNotification);
+            modeld_voice_labels_[i].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
+            modeld_voice_labels_[i].setFont(juce::Font(juce::FontOptions(10.0f)));
+            addChildComponent(modeld_voice_labels_[i]);
+            auto& slider = modeld_voice_sliders_[i];
+            slider.setSliderStyle(juce::Slider::LinearHorizontal); slider.setComponentID(MODELD_VOICE[i].id);
+            slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 19);
+            slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2)); addChildComponent(slider);
+            modeld_voice_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), MODELD_VOICE[i].id, slider);
+            compact_slider_text(slider);
         }
         constexpr const char* fx_headers[] = {"ON", "MIX", "P1", "P2", "P3"};
         for (int i = 0; i < 5; ++i) {
@@ -1640,17 +2164,19 @@ public:
             juno_fx_labels_[fx].setText(juce::String(DX_FX_NAMES[size_t(fx)]).toUpperCase(), juce::dontSendNotification);
             juno_fx_labels_[fx].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
             addChildComponent(juno_fx_labels_[fx]);
-            juno_fx_headers_[fx].setText(DX_FX_LABELS[0][fx], juce::dontSendNotification);
+            juno_fx_headers_[fx].setText(fx_headers[fx], juce::dontSendNotification);
             juno_fx_headers_[fx].setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
             addChildComponent(juno_fx_headers_[fx]);
             for (int field = 0; field < 5; ++field) {
                 auto& slider = juno_fx_sliders_[fx][field];
+                slider.setComponentID("shared.fx." + juce::String(fx) + "." + juce::String(field));
                 slider.setSliderStyle(juce::Slider::LinearHorizontal);
                 slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 18);
                 slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
                 slider.setTooltip(DX_FX_LABELS[fx][field]);
                 addChildComponent(slider);
                 juno_fx_attachments_[fx][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), juno_fx_id(fx, field), slider);
+                compact_slider_text(slider);
             }
         }
         constexpr const char* groove_labels[3][7] = {
@@ -1687,12 +2213,14 @@ public:
                 label.setFont(juce::Font(juce::FontOptions(9.0f)));
                 addChildComponent(label);
                 auto& slider = juno_groove_sliders_[group][field];
+                slider.setComponentID("shared.groove." + juce::String(group) + "." + juce::String(field));
                 slider.setSliderStyle(juce::Slider::LinearHorizontal);
                 slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 40, 18);
                 slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
                 if (group == 0 && field == 6) slider.setTooltip("SOURCE GFP: 0 AUTO, 1 MIDI, 2 INT. El plugin usa el reloj del DAW.");
                 addChildComponent(slider);
                 juno_groove_attachments_[group][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), juno_groove_id(group, field), slider);
+                compact_slider_text(slider);
             }
         }
         dx_voice_sliders_[15].textFromValueFunction = [](double value) {
@@ -1767,10 +2295,10 @@ public:
         g.drawText("GROOVEFORGE  /  BRAIN", 28, 15, 350, 24, juce::Justification::left);
         g.setColour(juce::Colour(0xfff2f2f2));
         g.setFont(juce::Font(juce::FontOptions(22.0f, juce::Font::bold)));
-        g.drawText(ob6_toggle_.getToggleState() ? "OB-6  /  PREVIEW" : juno_toggle_.getToggleState() ? "JUNO  /  PREVIEW" : dx7_toggle_.getToggleState() ? "DX7  /  PREVIEW" : "PROPHET  /  PREVIEW", 28, 40, 350, 28, juce::Justification::left);
+        g.drawText(modeld_toggle_.getToggleState() ? "MODEL D" : ob6_toggle_.getToggleState() ? "OB-6" : juno_toggle_.getToggleState() ? "JUNO" : dx7_toggle_.getToggleState() ? "DX7" : "PROPHET", 28, 40, 155, 28, juce::Justification::left);
         g.setColour(juce::Colour(0xff9fe1cb));
         g.setFont(juce::Font(juce::FontOptions(12.0f)));
-        if (!dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
+        if (!dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState() && !modeld_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
     }
 
     void resized() override {
@@ -1784,6 +2312,7 @@ public:
         sync_.setBounds(getWidth() - 260, 12, 105, 25);
         dx7_toggle_.setBounds(getWidth() - 380, 12, 115, 25);
         juno_toggle_.setBounds(getWidth() - 510, 12, 125, 25);
+        modeld_toggle_.setBounds(195, 42, 100, 25);
         ob6_toggle_.setBounds(300, 42, 125, 25);
         dx_page_.setBounds(getWidth() - 155, 42, 120, 25);
         juno_page_.setBounds(getWidth() - 155, 42, 120, 25);
@@ -1834,6 +2363,16 @@ public:
             ob6_voice_labels_[i].setBounds(x, y, 100, 20);
             ob6_voice_sliders_[i].setBounds(x + 100, y, 200, 20);
         }
+        for (size_t i = 0; i < MODELD_OSC.size(); ++i) {
+            const int x = i < 10 ? 30 : 370, y = 100 + int(i % 10) * 20;
+            modeld_osc_labels_[i].setBounds(x, y, 100, 20);
+            modeld_osc_sliders_[i].setBounds(x + 100, y, 200, 20);
+        }
+        for (size_t i = 0; i < MODELD_VOICE.size(); ++i) {
+            const int x = i < 9 ? 30 : 370, y = 100 + int(i % 9) * 22;
+            modeld_voice_labels_[i].setBounds(x, y, 100, 20);
+            modeld_voice_sliders_[i].setBounds(x + 100, y, 200, 20);
+        }
         const int fx_width = (getWidth() - 120) / 5;
         for (int i = 0; i < 5; ++i) {
             dx_fx_headers_[i].setBounds(90 + i * fx_width, 80, fx_width, 22);
@@ -1875,34 +2414,43 @@ private:
     void update_status() {
         const auto name = owner_.preset_name();
         displayed_preset_ = name;
-        const bool ob6 = ob6_toggle_.getToggleState();
-        const bool juno = !ob6 && juno_toggle_.getToggleState();
-        const bool dx7 = !ob6 && !juno && dx7_toggle_.getToggleState();
+        const bool modeld = modeld_toggle_.getToggleState();
+        const bool ob6 = !modeld && ob6_toggle_.getToggleState();
+        const bool juno = !modeld && !ob6 && juno_toggle_.getToggleState();
+        const bool dx7 = !modeld && !ob6 && !juno && dx7_toggle_.getToggleState();
         const bool dx_ops = dx7 && dx_page_index_ == 0, dx_voice = dx7 && dx_page_index_ == 1;
         const bool dx_fx = dx7 && dx_page_index_ == 2, dx_groove = dx7 && dx_page_index_ == 3, dx_macro = dx7 && dx_page_index_ == 4;
         dx_page_.setVisible(dx7);
-        if (ob6 != groove_attached_ob6_) {
+        const int shared_engine = modeld ? 2 : ob6 ? 1 : 0;
+        if (shared_engine != shared_editor_engine_) {
             for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
                 juno_groove_attachments_[group][field].reset();
-                const auto id = ob6 ? ob6_groove_id(group, field) : juno_groove_id(group, field);
+                const auto id = modeld ? modeld_groove_id(group, field) : ob6 ? ob6_groove_id(group, field) : juno_groove_id(group, field);
                 juno_groove_attachments_[group][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner_.parameters(), id, juno_groove_sliders_[group][field]);
+                compact_slider_text(juno_groove_sliders_[group][field]);
             }
             for (int fx = 0; fx < 5; ++fx) for (int field = 0; field < 5; ++field) {
                 juno_fx_attachments_[fx][field].reset();
-                const auto id = ob6 ? ob6_fx_id(fx, field) : juno_fx_id(fx, field);
+                const auto id = modeld ? modeld_fx_id(fx, field) : ob6 ? ob6_fx_id(fx, field) : juno_fx_id(fx, field);
                 juno_fx_attachments_[fx][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner_.parameters(), id, juno_fx_sliders_[fx][field]);
+                compact_slider_text(juno_fx_sliders_[fx][field]);
             }
             for (size_t i = 0; i < OB6_MACRO_IDS.size(); ++i) {
                 juno_macro_attachments_[i].reset();
-                const auto* id = ob6 ? OB6_MACRO_IDS[i] : JUNO_MACRO_IDS[i];
+                const auto* id = modeld ? MODELD_MACRO_IDS[i] : ob6 ? OB6_MACRO_IDS[i] : JUNO_MACRO_IDS[i];
                 juno_macro_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner_.parameters(), id, juno_macro_sliders_[i]);
+                compact_slider_text(juno_macro_sliders_[i]);
             }
-            groove_attached_ob6_ = ob6;
+            shared_editor_engine_ = shared_engine;
         }
-        const bool show_groove = (juno && juno_page_index_ == 5) || (ob6 && ob6_page_index_ == 3);
-        juno_page_.setVisible(juno || ob6);
+        const bool show_groove = (juno && juno_page_index_ == 5) || (ob6 && ob6_page_index_ == 3) || (modeld && modeld_page_index_ == 3);
+        juno_page_.setVisible(juno || ob6 || modeld);
         juno_page_.setButtonText(juno_page_index_ == 0 ? "OSC" : juno_page_index_ == 1 ? "ENV" : juno_page_index_ == 2 ? "LFO" : juno_page_index_ == 3 ? "UNISON" : juno_page_index_ == 4 ? "GROOVE" : juno_page_index_ == 5 ? "FX" : juno_page_index_ == 6 ? "MACROS" : "VOICE");
-        if (ob6) juno_page_.setButtonText(ob6_page_index_ == 0 ? "OSC" : ob6_page_index_ == 1 ? "ENV/LFO" : ob6_page_index_ == 2 ? "GROOVE" : ob6_page_index_ == 3 ? "FX" : ob6_page_index_ == 4 ? "MACROS" : "VOICE");
+        if (modeld) juno_page_.setButtonText(modeld_page_index_ == 0 ? "VOICE  >" : modeld_page_index_ == 1 ? "OSC / MOD  >" : modeld_page_index_ == 2 ? "ENV / LFO  >" : modeld_page_index_ == 3 ? "GROOVE  >" : modeld_page_index_ == 4 ? "FX  >" : "MACROS  >");
+        if (ob6) {
+            constexpr const char* names[] = {"VOICE", "OSC", "ENV/LFO", "GROOVE", "FX", "MACROS"};
+            juno_page_.setButtonText(juce::String(names[ob6_page_index_]) + "  >");
+        }
         for (auto& label : juno_labels_) label.setVisible(juno && juno_page_index_ == 1);
         for (auto& slider : juno_sliders_) slider.setVisible(juno && juno_page_index_ == 1);
         for (auto& label : juno_env_labels_) label.setVisible(juno && juno_page_index_ == 2);
@@ -1911,11 +2459,11 @@ private:
         for (auto& slider : juno_lfo_sliders_) slider.setVisible(juno && juno_page_index_ == 3);
         for (auto& label : juno_voice_groove_labels_) label.setVisible(juno && juno_page_index_ == 4);
         for (auto& slider : juno_voice_groove_sliders_) slider.setVisible(juno && juno_page_index_ == 4);
-        for (auto& label : juno_macro_labels_) label.setVisible((juno && juno_page_index_ == 7) || (ob6 && ob6_page_index_ == 5));
-        for (auto& slider : juno_macro_sliders_) slider.setVisible((juno && juno_page_index_ == 7) || (ob6 && ob6_page_index_ == 5));
-        for (auto& label : juno_fx_labels_) label.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4));
-        for (auto& label : juno_fx_headers_) label.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4));
-        for (auto& row : juno_fx_sliders_) for (auto& slider : row) slider.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4));
+        for (auto& label : juno_macro_labels_) label.setVisible((juno && juno_page_index_ == 7) || (ob6 && ob6_page_index_ == 5) || (modeld && modeld_page_index_ == 5));
+        for (auto& slider : juno_macro_sliders_) slider.setVisible((juno && juno_page_index_ == 7) || (ob6 && ob6_page_index_ == 5) || (modeld && modeld_page_index_ == 5));
+        for (auto& label : juno_fx_labels_) label.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4) || (modeld && modeld_page_index_ == 4));
+        for (auto& label : juno_fx_headers_) label.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4) || (modeld && modeld_page_index_ == 4));
+        for (auto& row : juno_fx_sliders_) for (auto& slider : row) slider.setVisible((juno && juno_page_index_ == 6) || (ob6 && ob6_page_index_ == 4) || (modeld && modeld_page_index_ == 4));
         for (auto& label : juno_groove_group_labels_) label.setVisible(show_groove);
         for (int group = 0; group < 3; ++group) for (int field = 0; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field) {
             juno_groove_labels_[group][field].setVisible(show_groove);
@@ -1925,10 +2473,14 @@ private:
         for (auto& slider : ob6_osc_sliders_) slider.setVisible(ob6 && ob6_page_index_ == 1);
         for (auto& label : ob6_voice_labels_) label.setVisible(ob6 && ob6_page_index_ == 2);
         for (auto& slider : ob6_voice_sliders_) slider.setVisible(ob6 && ob6_page_index_ == 2);
-        export_.setVisible(dx7 || juno || ob6);
+        for (auto& label : modeld_osc_labels_) label.setVisible(modeld && modeld_page_index_ == 1);
+        for (auto& slider : modeld_osc_sliders_) slider.setVisible(modeld && modeld_page_index_ == 1);
+        for (auto& label : modeld_voice_labels_) label.setVisible(modeld && modeld_page_index_ == 2);
+        for (auto& slider : modeld_voice_sliders_) slider.setVisible(modeld && modeld_page_index_ == 2);
+        export_.setVisible(dx7 || juno || ob6 || modeld);
         dx_page_.setButtonText(dx_ops ? "VOICE" : dx_voice ? "FX" : dx_fx ? "GROOVE" : dx_groove ? "MACROS" : "OPERATORS");
-        for (auto& knob : knobs_) knob.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0));
-        for (auto& label : labels_) label.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0));
+        for (auto& knob : knobs_) knob.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0));
+        for (auto& label : labels_) label.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0));
         for (auto& label : dx_field_labels_) label.setVisible(dx_ops);
         for (auto& label : dx_op_labels_) label.setVisible(dx_ops);
         for (auto& row : dx_sliders_) for (auto& slider : row) slider.setVisible(dx_ops);
@@ -1947,18 +2499,19 @@ private:
         for (auto& label : dx_macro_labels_) label.setVisible(dx_macro);
         for (auto& slider : dx_macro_sliders_) slider.setVisible(dx_macro);
         sync_.setEnabled(true);
-        status_.setText(ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
+        status_.setText(modeld ? juce::String((name.isEmpty() ? juce::String("MODEL D INIT") : name) + " · MODEL D GFP PARCIAL") : ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
             (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
         displayed_dx7_ = dx7_toggle_.getToggleState();
         displayed_juno_ = juno_toggle_.getToggleState();
         displayed_ob6_ = ob6;
+        displayed_modeld_ = modeld;
         repaint();
     }
     void timerCallback() override {
-        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState()) update_status();
+        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState() || displayed_modeld_ != modeld_toggle_.getToggleState()) update_status();
     }
     void choose_preset() {
-        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Juno, Prophet, OB-6 o DX7 GFP", juce::File(), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Model D, Juno, Prophet, OB-6 o DX7 GFP", juce::File(), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [safe](const juce::FileChooser& chooser) {
@@ -1978,11 +2531,12 @@ private:
         std::vector<uint8_t> bytes;
         const bool juno = juno_toggle_.getToggleState();
         const bool ob6 = ob6_toggle_.getToggleState();
-        if (!(ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
+        const bool modeld = modeld_toggle_.getToggleState();
+        if (!(modeld ? owner_.export_model_d_preset(bytes) : ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
             status_.setText("EXPORT: DESACTIVA LFO SYNC Y CARGA UN GFP DEL ENGINE", juce::dontSendNotification);
             return;
         }
-        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(modeld ? "ModelD.gfp" : ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles |
                               juce::FileBrowserComponent::warnAboutOverwriting,
@@ -2008,7 +2562,7 @@ private:
     std::array<juce::Slider, OB6_VOICE.size()> ob6_voice_sliders_;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, OB6_VOICE.size()> ob6_voice_attachments_;
     int ob6_page_index_ = 0;
-    bool groove_attached_ob6_ = false;
+    int shared_editor_engine_ = 0;
     std::array<juce::Label, JUNO_MACRO_IDS.size()> juno_macro_labels_;
     std::array<juce::Slider, JUNO_MACRO_IDS.size()> juno_macro_sliders_;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_MACRO_IDS.size()> juno_macro_attachments_;
@@ -2031,6 +2585,16 @@ private:
     std::array<juce::Label, JUNO_OSC.size()> juno_labels_;
     std::array<juce::Slider, JUNO_OSC.size()> juno_sliders_;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_OSC.size()> juno_attachments_;
+    std::array<juce::Label, MODELD_OSC.size()> modeld_osc_labels_;
+    std::array<juce::Slider, MODELD_OSC.size()> modeld_osc_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, MODELD_OSC.size()> modeld_osc_attachments_;
+    std::array<juce::Label, MODELD_VOICE.size()> modeld_voice_labels_;
+    std::array<juce::Slider, MODELD_VOICE.size()> modeld_voice_sliders_;
+    std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, MODELD_VOICE.size()> modeld_voice_attachments_;
+    int modeld_page_index_ = 0;
+    juce::ToggleButton modeld_toggle_;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> modeld_attachment_;
+    bool displayed_modeld_ = false;
     juce::ToggleButton ob6_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> ob6_attachment_;
     bool displayed_ob6_ = false;

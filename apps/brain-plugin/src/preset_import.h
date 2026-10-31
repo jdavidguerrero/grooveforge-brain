@@ -16,6 +16,8 @@ public:
     virtual bool export_juno_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta un GFP OB-6 cargado con sus controles editados. */
     virtual bool export_ob6_preset(std::vector<uint8_t>& data) = 0;
+    /** @brief Exporta el GFP Model D cargado con los controles disponibles. */
+    virtual bool export_model_d_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta DX7 v5 si el estado puede representarse en GFP. */
     virtual bool export_dx7_preset(std::vector<uint8_t>& data) = 0;
 };

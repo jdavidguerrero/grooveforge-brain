@@ -26,8 +26,292 @@ public:
     double beats;
 };
 
+static bool ob6_midi_block_independence(double sample_rate) {
+    studio::Preset preset;
+    if (!studio::factory_preset(3, 0, &preset)) return false;
+    preset.patch.sfx_on[GF_SFX_CHORUS] = true;
+    std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+    studio::preset_encode(preset, 3, bytes.data(), bytes.size());
+    auto large = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto small = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto* p : {large.get(), small.get()}) {
+        if (!dynamic_cast<gf::PresetImport*>(p)->import_preset(bytes.data(), bytes.size())) return false;
+    }
+    large->prepareToPlay(sample_rate, 128); small->prepareToPlay(sample_rate, 32);
+    struct Event { int sample; juce::MidiMessage message; };
+    const std::array<Event, 9> events{{
+        {0, juce::MidiMessage::noteOn(1, 60, uint8_t(100))},
+        {40, juce::MidiMessage::controllerEvent(1, 74, 92)},
+        {80, juce::MidiMessage::controllerEvent(1, 71, 50)},
+        {151, juce::MidiMessage::controllerEvent(1, 15, 88)},
+        {200, juce::MidiMessage::channelPressureChange(1, 84)},
+        {250, juce::MidiMessage::controllerEvent(1, 19, 65)},
+        {480, juce::MidiMessage::noteOff(1, 60)},
+        {690, juce::MidiMessage::noteOn(1, 67, uint8_t(100))},
+        {810, juce::MidiMessage::noteOff(1, 67)}
+    }};
+    auto add_events = [&](juce::MidiBuffer& midi, int start, int count) {
+        for (const auto& event : events)
+            if (event.sample >= start && event.sample < start + count) midi.addEvent(event.message, event.sample - start);
+    };
+    double energy = 0;
+    for (int start = 0; start < 2048; start += 128) {
+        juce::AudioBuffer<float> full(2, 128);
+        juce::MidiBuffer midi;
+        add_events(midi, start, 128);
+        large->processBlock(full, midi);
+        for (int offset = 0; offset < 128; offset += 32) {
+            juce::AudioBuffer<float> part(2, 32);
+            juce::MidiBuffer part_midi;
+            add_events(part_midi, start + offset, 32);
+            small->processBlock(part, part_midi);
+            for (int i = 0; i < 32; ++i) for (int ch = 0; ch < 2; ++ch) {
+                const float a = full.getSample(ch, offset + i), b = part.getSample(ch, i);
+                energy += a * a;
+                if (!std::isfinite(a + b) || std::abs(a - b) > 1e-7f) {
+                    std::fprintf(stderr, "OB-6 block mismatch at %.0f Hz, sample %d, channel %d: %.9g vs %.9g\n",
+                                 sample_rate, start + offset + i, ch, a, b);
+                    return false;
+                }
+            }
+        }
+    }
+    return energy > .001;
+}
+
 int main() {
     juce::ScopedJuceInitialiser_GUI juce_gui;
+    {
+        const auto model_parameter = [](juce::AudioProcessor& processor) -> juce::RangedAudioParameter* {
+            for (auto* item : processor.getParameters())
+                if (auto* p = dynamic_cast<juce::RangedAudioParameter*>(item); p && p->paramID == "modeld_preview") return p;
+            return nullptr;
+        };
+        auto model = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto quiet = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto* selection = model_parameter(*model);
+        if (!check(selection != nullptr, "Model D selector")) return 1;
+        selection->setValueNotifyingHost(1);
+        model->prepareToPlay(48000, 128); quiet->prepareToPlay(48000, 128);
+        juce::AudioBuffer<float> audio(2, 128), other(2, 128);
+        juce::MidiBuffer events, empty;
+        events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+        model->processBlock(audio, events); quiet->processBlock(other, empty);
+        for (int i = 0; i < 40; ++i) if (!check(audio.getSample(0, i) == 0, "Model D MIDI offset")) return 1;
+        if (!check(audio.getRMSLevel(0, 40, 88) > 0 && other.getRMSLevel(0, 0, 128) == 0, "Model D audible and isolated")) return 1;
+        juce::MemoryBlock state;
+        model->getStateInformation(state);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(state.getData(), int(state.getSize()));
+        if (!check(model_parameter(*restored) && model_parameter(*restored)->getValue() > .5f, "Model D selection restores")) return 1;
+        studio::Preset preset;
+        if (!check(studio::factory_preset(0, 0, &preset), "Model D factory preset")) return 1;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        studio::preset_encode(preset, 0, bytes.data(), bytes.size());
+        auto* importer = dynamic_cast<gf::PresetImport*>(model.get());
+        if (!check(importer && importer->import_preset(bytes.data(), bytes.size()), "Model D GFP import")) return 1;
+        model->getStateInformation(state);
+        restored->setStateInformation(state.getData(), int(state.getSize()));
+        model->prepareToPlay(44100, 128); restored->prepareToPlay(44100, 128);
+        juce::MidiBuffer note_a, note_b;
+        note_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        note_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        model->processBlock(audio, note_a); restored->processBlock(other, note_b);
+        for (int i = 0; i < 128; ++i)
+            if (std::abs(audio.getSample(0, i) - other.getSample(0, i)) >= 1e-7f) { std::fprintf(stderr, "Model D state mismatch at %d: %.9g %.9g\n", i, audio.getSample(0, i), other.getSample(0, i)); return 1; }
+        if (!check(audio.getRMSLevel(0, 0, 128) > 0, "Model D GFP audible")) return 1;
+        auto find_model_parameter = [](juce::AudioProcessor& processor, const char* id) -> juce::RangedAudioParameter* {
+            for (auto* item : processor.getParameters())
+                if (auto* p = dynamic_cast<juce::RangedAudioParameter*>(item); p && p->paramID == id) return p;
+            return nullptr;
+        };
+        auto* model_wave = find_model_parameter(*model, "modeld.osc1.wave");
+        auto* model_filter_mod = find_model_parameter(*model, "modeld.mod.filter");
+        if (!check(model_wave && model_filter_mod, "Model D oscillator automation parameters")) return 1;
+        model_wave->setValueNotifyingHost(1);
+        model_filter_mod->setValueNotifyingHost(1);
+        auto* model_lfo_pitch = find_model_parameter(*model, "modeld.lfo_pitch");
+        auto* model_drift = find_model_parameter(*model, "modeld.drift");
+        auto* model_fx_drive = find_model_parameter(*model, "modeld.fx.drive.on");
+        auto* model_pump = find_model_parameter(*model, "modeld.groove.pump.on");
+        auto* model_grit = find_model_parameter(*model, "modeld.macro.grit");
+        auto* model_move = find_model_parameter(*model, "modeld.macro.move");
+        if (!check(model_lfo_pitch && model_drift && model_fx_drive && model_pump && model_grit && model_move, "Model D voice, bus and macro automation parameters")) return 1;
+        model_lfo_pitch->setValueNotifyingHost(.65f); model_drift->setValueNotifyingHost(.7f);
+        model_fx_drive->setValueNotifyingHost(1); model_pump->setValueNotifyingHost(1);
+        model_grit->setValueNotifyingHost(.6f); model_move->setValueNotifyingHost(.5f);
+        std::vector<uint8_t> model_export;
+        studio::Preset model_decoded;
+        uint8_t model_engine = 99;
+        if (!check(importer->export_model_d_preset(model_export) &&
+                   gf::decode_supported_preset(model_export.data(), model_export.size(), model_decoded, model_engine) &&
+                   model_engine == 0 && model_decoded.patch.osc[0][0] == 5 && model_decoded.patch.mod[0][2] > .5f &&
+                   std::abs(model_decoded.patch.lfo_amt[GF_DEST_PITCH] - .65f) < .02f &&
+                   std::abs(model_decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] - 70) < .1f &&
+                   model_decoded.patch.sfx_on[GF_SFX_DRIVE] && model_decoded.patch.groove_on[GF_GROOVE_PUMP] &&
+                   model_decoded.patch.drive > preset.patch.drive && model_decoded.cutoff_hz > preset.cutoff_hz &&
+                   model_decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] == 0,
+                   "Model D GFP export preserves oscillator and bakes macros")) return 1;
+        auto model_roundtrip = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(dynamic_cast<gf::PresetImport*>(model_roundtrip.get())->import_preset(model_export.data(), model_export.size()),
+                   "Model D exported GFP imports")) return 1;
+        model->getStateInformation(state);
+        model_roundtrip->setStateInformation(state.getData(), int(state.getSize()));
+        if (!check(find_model_parameter(*model_roundtrip, "modeld.osc1.wave")->getValue() > .99f &&
+                   find_model_parameter(*model_roundtrip, "modeld.mod.filter")->getValue() > .5f &&
+                   std::abs(find_model_parameter(*model_roundtrip, "modeld.lfo_pitch")->getValue() - .65f) < .001f &&
+                   find_model_parameter(*model_roundtrip, "modeld.fx.drive.on")->getValue() > .5f &&
+                   find_model_parameter(*model_roundtrip, "modeld.groove.pump.on")->getValue() > .5f &&
+                   std::abs(find_model_parameter(*model_roundtrip, "modeld.macro.grit")->getValue() - .6f) < .001f,
+                   "Model D oscillator automation restores")) return 1;
+        model->prepareToPlay(44100, 128); restored->prepareToPlay(44100, 128);
+        double osc_delta = 0;
+        for (int block = 0; block < 12; ++block) {
+            juce::MidiBuffer changed, original;
+            if (!block) { changed.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); original.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+            model->processBlock(audio, changed); restored->processBlock(other, original);
+            for (int i = 0; i < 128; ++i) osc_delta += std::abs(audio.getSample(0, i) - other.getSample(0, i));
+        }
+        if (!check(osc_delta > .01, "Model D oscillator automation changes audio")) return 1;
+        for (auto& enabled : preset.patch.sfx_on) enabled = false;
+        for (auto& enabled : preset.patch.groove_on) enabled = false;
+        studio::preset_encode(preset, 0, bytes.data(), bytes.size());
+        auto dry = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto wet = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(dynamic_cast<gf::PresetImport*>(dry.get())->import_preset(bytes.data(), bytes.size()), "Model D dry preset")) return 1;
+        preset.patch.sfx_on[GF_SFX_DRIVE] = true;
+        preset.patch.sfx_mix[GF_SFX_DRIVE] = 1;
+        preset.patch.sfx_p[GF_SFX_DRIVE][0] = .9f;
+        studio::preset_encode(preset, 0, bytes.data(), bytes.size());
+        if (!check(dynamic_cast<gf::PresetImport*>(wet.get())->import_preset(bytes.data(), bytes.size()), "Model D FX preset")) return 1;
+        dry->prepareToPlay(44100, 128); wet->prepareToPlay(44100, 128);
+        double fx_delta = 0;
+        for (int block = 0; block < 24; ++block) {
+            juce::MidiBuffer dry_events, wet_events;
+            if (!block) {
+                dry_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+                wet_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            }
+            dry->processBlock(audio, dry_events); wet->processBlock(other, wet_events);
+            for (int i = 0; i < 128; ++i) fx_delta += std::abs(audio.getSample(0, i) - other.getSample(0, i));
+        }
+        if (!check(fx_delta > .01, "Model D GFP synth FX changes audio")) return 1;
+        preset.patch.sfx_on[GF_SFX_DRIVE] = false;
+        preset.patch.groove_on[GF_GROOVE_ARP] = true;
+        preset.patch.groove[GF_GROOVE_ARP][GF_ARP_LATCH] = 0;
+        studio::preset_encode(preset, 0, bytes.data(), bytes.size());
+        auto arp_model = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(dynamic_cast<gf::PresetImport*>(arp_model.get())->import_preset(bytes.data(), bytes.size()), "Model D ARP preset")) return 1;
+        arp_model->prepareToPlay(44100, 128);
+        float arp_peak = 0;
+        for (int block = 0; block < 130; ++block) {
+            juce::MidiBuffer arp_events;
+            if (block == 0) arp_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            if (block == 30) { arp_events.addEvent(juce::MidiMessage::controllerEvent(1, 64, 127), 0); arp_events.addEvent(juce::MidiMessage::noteOff(1, 60), 1); }
+            if (block == 90) arp_events.addEvent(juce::MidiMessage::controllerEvent(1, 64, 0), 0);
+            arp_model->processBlock(audio, arp_events);
+            if (block >= 40 && block < 90) arp_peak = std::max(arp_peak, audio.getRMSLevel(0, 0, 128));
+        }
+        if (!check(arp_peak > .00001f, "Model D ARP sustain produces audio")) return 1;
+        preset.patch.groove_on[GF_GROOVE_ARP] = false;
+        preset.patch.mod[0][0] = 0; preset.patch.mod[0][1] = 1;
+        studio::preset_encode(preset, 0, bytes.data(), bytes.size());
+        auto wheel_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto wheel_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* processor : {wheel_a.get(), wheel_b.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(processor)->import_preset(bytes.data(), bytes.size()), "Model D modulation preset")) return 1;
+            processor->prepareToPlay(44100, 128);
+        }
+        double wheel_delta = 0;
+        for (int block = 0; block < 16; ++block) {
+            juce::MidiBuffer a_events, b_events;
+            if (!block) {
+                a_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+                b_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+                a_events.addEvent(juce::MidiMessage::controllerEvent(1, 1, 127), 64);
+            }
+            wheel_a->processBlock(audio, a_events); wheel_b->processBlock(other, b_events);
+            for (int i = 0; i < 128; ++i) {
+                const float x = audio.getSample(0, i), y = other.getSample(0, i);
+                if (!block && i < 64 && !check(x == y, "Model D wheel respects MIDI offset")) return 1;
+                if (block > 0) wheel_delta += std::abs(x - y);
+            }
+        }
+        if (!check(wheel_delta > .01, "Model D wheel changes audio")) return 1;
+        auto model_cc = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto model_cc_plain = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* processor : {model_cc.get(), model_cc_plain.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(processor)->import_preset(bytes.data(), bytes.size()), "Model D macro CC preset")) return 1;
+            processor->prepareToPlay(44100, 128);
+        }
+        juce::MidiBuffer model_cc_events, model_cc_plain_events;
+        model_cc_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        model_cc_plain_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        for (int cc : {14, 15, 16, 19}) model_cc_events.addEvent(juce::MidiMessage::controllerEvent(1, cc, 127), 64);
+        model_cc->processBlock(audio, model_cc_events); model_cc_plain->processBlock(other, model_cc_plain_events);
+        double model_cc_delta = 0;
+        for (int i = 0; i < 128; ++i) {
+            const float x = audio.getSample(0, i), y = other.getSample(0, i);
+            if (i < 64 && !check(x == y, "Model D macro CC respects offset")) return 1;
+            if (i >= 64) model_cc_delta += std::abs(x - y);
+        }
+        if (!check(model_cc_delta > .0001, "Model D macro CC changes audio")) return 1;
+        juce::MemoryBlock model_cc_state;
+        model_cc->getStateInformation(model_cc_state);
+        auto model_cc_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        model_cc_restore->setStateInformation(model_cc_state.getData(), int(model_cc_state.getSize()));
+        if (!check(find_model_parameter(*model_cc_restore, "modeld.drift")->getValue() > .99f &&
+                   find_model_parameter(*model_cc_restore, "modeld.macro.grit")->getValue() > .99f &&
+                   find_model_parameter(*model_cc_restore, "modeld.macro.pocket")->getValue() > .99f &&
+                   find_model_parameter(*model_cc_restore, "modeld.macro.move")->getValue() > .99f,
+                   "Model D pending CC restores")) return 1;
+        std::vector<uint8_t> model_cc_export;
+        if (!check(dynamic_cast<gf::PresetImport*>(model_cc.get())->export_model_d_preset(model_cc_export) &&
+                   gf::decode_supported_preset(model_cc_export.data(), model_cc_export.size(), model_decoded, model_engine) &&
+                   model_engine == 0 && model_decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] > 99 &&
+                   model_decoded.patch.drive > preset.patch.drive && model_decoded.cutoff_hz > preset.cutoff_hz,
+                   "Model D pending CC exports")) return 1;
+        studio::Preset filter_preset;
+        if (!check(studio::factory_preset(0, 0, &filter_preset), "Model D filter factory preset")) return 1;
+        filter_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 30;
+        filter_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 25;
+        std::array<uint8_t, studio::PRESET_BYTES> filter_bytes{};
+        studio::preset_encode(filter_preset, 0, filter_bytes.data(), filter_bytes.size());
+        auto filter_model = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto filter_plain = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* p : {filter_model.get(), filter_plain.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(p)->import_preset(filter_bytes.data(), filter_bytes.size()), "Model D filter CC preset")) return 1;
+            p->prepareToPlay(44100, 128);
+        }
+        juce::MidiBuffer filter_events, filter_plain_events;
+        filter_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_plain_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 127), 64);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 64), 64);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 19, 0), 96);
+        filter_model->processBlock(audio, filter_events); filter_plain->processBlock(other, filter_plain_events);
+        double filter_delta = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == other.getSample(0, i), "Model D filter CC respects offset")) return 1;
+            if (i >= 64) filter_delta += std::abs(audio.getSample(0, i) - other.getSample(0, i));
+        }
+        if (!check(filter_delta > .0001, "Model D filter CC changes audio")) return 1;
+        std::vector<uint8_t> filter_export;
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_model.get())->export_model_d_preset(filter_export) &&
+                   gf::decode_supported_preset(filter_export.data(), filter_export.size(), model_decoded, model_engine) &&
+                   model_engine == 0 && model_decoded.cutoff_hz > 7900 &&
+                   std::abs(model_decoded.reso_norm - (64.0f / 127.0f + .06f)) < .03f,
+                   "Model D filter CC and macros export effective values")) return 1;
+        juce::MemoryBlock filter_state;
+        filter_model->getStateInformation(filter_state);
+        auto filter_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        filter_restored->setStateInformation(filter_state.getData(), int(filter_state.getSize()));
+        std::vector<uint8_t> filter_restored_export;
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_restored.get())->export_model_d_preset(filter_restored_export) &&
+                   filter_restored_export == filter_export, "Model D filter CC state restores")) return 1;
+    }
+    for (double fs : {44100.0, 48000.0, 96000.0})
+        if (!check(ob6_midi_block_independence(fs), "OB-6 MIDI block independence")) return 1;
     auto a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     auto b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     a->prepareToPlay(48000.0, 128);
@@ -470,6 +754,83 @@ int main() {
         }
     }
     if (!check(pressure_difference > .01, "OB-6 channel pressure changes audio")) return 1;
+    {
+        auto editor_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*editor_plugin, "ob6_preview")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(editor_plugin->createEditor());
+        if (!check(editor != nullptr, "OB-6 editor creation")) return 1;
+        auto* page = dynamic_cast<juce::TextButton*>(editor->findChildWithID("engine.page"));
+        auto* osc = dynamic_cast<juce::Slider*>(editor->findChildWithID("ob6.osc1.shape"));
+        auto* voice = dynamic_cast<juce::Slider*>(editor->findChildWithID("ob6.lfo_rate"));
+        auto* groove = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.groove.0.0"));
+        auto* fx = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.fx.0.0"));
+        auto* macro = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.macro.0"));
+        auto* juno_select = dynamic_cast<juce::ToggleButton*>(editor->findChildWithID("engine.juno"));
+        if (!check(page && osc && voice && groove && fx && macro && juno_select && page->isVisible(), "OB-6 editor controls exist")) return 1;
+
+        if (!check(!osc->isVisible() && !voice->isVisible() && !groove->isVisible() && !fx->isVisible() && !macro->isVisible(), "OB-6 initial page visibility")) return 1;
+        page->onClick();
+        if (!check(osc->isVisible() && !voice->isVisible() && page->getButtonText().startsWith("OSC"), "OB-6 oscillator page")) return 1;
+        if (!check(osc->getTextFromValue(50.0) == "50" && osc->getTextFromValue(12.34) == "12.3" &&
+                   std::abs(osc->getValueFromText("12.34") - 12.34) < .01, "OB-6 compact display preserves numeric input")) return 1;
+        osc->setValue(80, juce::sendNotificationSync);
+        if (!check(find_parameter(*editor_plugin, "ob6.osc1.shape")->getValue() > .79f, "OB-6 oscillator widget binding")) return 1;
+        page->onClick();
+        if (!check(!osc->isVisible() && voice->isVisible(), "OB-6 envelope and LFO page")) return 1;
+        page->onClick();
+        if (!check(!voice->isVisible() && groove->isVisible(), "OB-6 groove page")) return 1;
+        groove->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*editor_plugin, "ob6.groove.pump.on")->getValue() > .5f &&
+                   find_parameter(*editor_plugin, "juno.groove.pump.on")->getValue() < .5f, "OB-6 groove widget isolation")) return 1;
+        page->onClick();
+        if (!check(!groove->isVisible() && fx->isVisible(), "OB-6 FX page")) return 1;
+        fx->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*editor_plugin, "ob6.fx.drive.on")->getValue() > .5f &&
+                   find_parameter(*editor_plugin, "juno.fx.drive.on")->getValue() < .5f, "OB-6 FX widget isolation")) return 1;
+        page->onClick();
+        if (!check(!fx->isVisible() && macro->isVisible(), "OB-6 macro page")) return 1;
+        macro->setValue(.8, juce::sendNotificationSync);
+        if (!check(find_parameter(*editor_plugin, "ob6.macro.grit")->getValue() > .79f &&
+                   find_parameter(*editor_plugin, "juno.macro.grit")->getValue() < .01f, "OB-6 macro widget isolation")) return 1;
+        page->onClick();
+        if (!check(!macro->isVisible(), "OB-6 returns to voice page")) return 1;
+        juno_select->setToggleState(true, juce::sendNotificationSync);
+        for (int i = 0; i < 5; ++i) page->onClick();
+        if (!check(groove->isVisible(), "shared groove page switches to Juno")) return 1;
+        groove->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*editor_plugin, "juno.groove.pump.on")->getValue() > .5f &&
+                   find_parameter(*editor_plugin, "ob6.groove.pump.on")->getValue() > .5f, "shared widget rebinds to Juno")) return 1;
+    }
+    {
+        auto p = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*p, "modeld_preview")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(p->createEditor());
+        auto* page = dynamic_cast<juce::TextButton*>(editor->findChildWithID("engine.page"));
+        auto* osc = dynamic_cast<juce::Slider*>(editor->findChildWithID("modeld.osc1.wave"));
+        auto* voice = dynamic_cast<juce::Slider*>(editor->findChildWithID("modeld.lfo_rate"));
+        auto* groove = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.groove.0.0"));
+        auto* fx = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.fx.0.0"));
+        auto* macro = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.macro.0"));
+        if (!check(page && osc && voice && groove && fx && macro, "Model D editor controls exist")) return 1;
+        page->onClick();
+        if (!check(osc->isVisible() && !voice->isVisible(), "Model D oscillator page")) return 1;
+        osc->setValue(5, juce::sendNotificationSync);
+        if (!check(find_parameter(*p, "modeld.osc1.wave")->getValue() > .99f, "Model D oscillator binding")) return 1;
+        page->onClick();
+        if (!check(voice->isVisible() && !osc->isVisible(), "Model D envelope page")) return 1;
+        page->onClick();
+        if (!check(groove->isVisible(), "Model D groove page")) return 1;
+        groove->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*p, "modeld.groove.pump.on")->getValue() > .5f && find_parameter(*p, "ob6.groove.pump.on")->getValue() < .5f, "Model D groove binding")) return 1;
+        page->onClick();
+        if (!check(fx->isVisible(), "Model D FX page")) return 1;
+        fx->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*p, "modeld.fx.drive.on")->getValue() > .5f && find_parameter(*p, "ob6.fx.drive.on")->getValue() < .5f, "Model D FX binding")) return 1;
+        page->onClick();
+        if (!check(macro->isVisible(), "Model D macro page")) return 1;
+        macro->setValue(.8, juce::sendNotificationSync);
+        if (!check(find_parameter(*p, "modeld.macro.grit")->getValue() > .79f && find_parameter(*p, "ob6.macro.grit")->getValue() < .01f, "Model D macro binding")) return 1;
+    }
     juce::MemoryBlock ob6_state;
     ob6_plugin->getStateInformation(ob6_state);
     auto ob6_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
@@ -537,6 +898,77 @@ int main() {
     macro_ob6.patch.sfx_on[GF_SFX_CHORUS] = true;
     std::array<uint8_t, studio::PRESET_BYTES> macro_ob6_bytes{};
     studio::preset_encode(macro_ob6, 3, macro_ob6_bytes.data(), macro_ob6_bytes.size());
+    auto ob6_filter_midi = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto ob6_filter_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto* p : {ob6_filter_midi.get(), ob6_filter_reference.get()}) {
+        if (!check(dynamic_cast<gf::PresetImport*>(p)->import_preset(macro_ob6_bytes.data(), macro_ob6_bytes.size()), "OB-6 filter CC preset")) return 1;
+        p->prepareToPlay(44100, 128);
+    }
+    juce::AudioBuffer<float> ob6_filter_a(2, 128), ob6_filter_b(2, 128);
+    juce::MidiBuffer ob6_filter_events, ob6_filter_plain;
+    ob6_filter_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_filter_plain.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 127), 64);
+    ob6_filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 64), 64);
+    ob6_filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 19, 0), 96);
+    ob6_filter_midi->processBlock(ob6_filter_a, ob6_filter_events);
+    ob6_filter_reference->processBlock(ob6_filter_b, ob6_filter_plain);
+    float filter_cc_difference = 0;
+    for (int i = 0; i < 128; ++i) {
+        const float a = ob6_filter_a.getSample(0, i), b = ob6_filter_b.getSample(0, i);
+        if (i < 64 && !check(a == b, "OB-6 filter CC respects MIDI offset")) return 1;
+        if (i >= 64) filter_cc_difference += std::abs(a - b);
+    }
+    if (!check(filter_cc_difference > .001f, "OB-6 filter CC changes audio")) return 1;
+    std::vector<uint8_t> ob6_filter_export;
+    studio::Preset ob6_filter_decoded;
+    uint8_t ob6_filter_engine = 0;
+    auto* ob6_filter_import = dynamic_cast<gf::PresetImport*>(ob6_filter_midi.get());
+    if (!check(ob6_filter_import->export_ob6_preset(ob6_filter_export) &&
+               gf::decode_supported_preset(ob6_filter_export.data(), ob6_filter_export.size(), ob6_filter_decoded, ob6_filter_engine) &&
+               ob6_filter_engine == 3 && ob6_filter_decoded.cutoff_hz > 19900 &&
+               std::abs(ob6_filter_decoded.reso_norm - (64.0f / 127.0f + .06f)) < .02f,
+               "OB-6 filter CC and macros export effective values")) return 1;
+    juce::MemoryBlock ob6_filter_state;
+    ob6_filter_midi->getStateInformation(ob6_filter_state);
+    auto ob6_filter_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_filter_restore->setStateInformation(ob6_filter_state.getData(), int(ob6_filter_state.getSize()));
+    std::vector<uint8_t> ob6_filter_restored_export;
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_filter_restore.get())->export_ob6_preset(ob6_filter_restored_export) &&
+               ob6_filter_restored_export == ob6_filter_export, "OB-6 filter CC pending state restores")) return 1;
+    auto ob6_filter_roundtrip = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_filter_roundtrip.get())->import_preset(ob6_filter_export.data(), ob6_filter_export.size()),
+               "OB-6 filter CC exported preset imports")) return 1;
+    ob6_filter_restore->prepareToPlay(44100, 128); ob6_filter_roundtrip->prepareToPlay(44100, 128);
+    double filter_roundtrip_error = 0, filter_roundtrip_signal = 0;
+    for (int block = 0; block < 16; ++block) {
+        juce::MidiBuffer a, b;
+        if (!block) { a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        ob6_filter_restore->processBlock(ob6_filter_a, a); ob6_filter_roundtrip->processBlock(ob6_filter_b, b);
+        for (int i = 0; i < 128; ++i) {
+            const float x = ob6_filter_a.getSample(0, i), y = ob6_filter_b.getSample(0, i);
+            filter_roundtrip_error += (x - y) * (x - y); filter_roundtrip_signal += x * x;
+        }
+    }
+    if (!check(filter_roundtrip_signal > 0 && std::sqrt(filter_roundtrip_error / filter_roundtrip_signal) < .08,
+               "OB-6 filter CC GFP roundtrip audio")) return 1;
+    auto* pending_cutoff = find_parameter(*ob6_filter_midi, "cutoff");
+    pending_cutoff->setValueNotifyingHost(pending_cutoff->convertTo0to1(1200.0f));
+    if (!check(ob6_filter_import->export_ob6_preset(ob6_filter_restored_export) &&
+               gf::decode_supported_preset(ob6_filter_restored_export.data(), ob6_filter_restored_export.size(), ob6_filter_decoded, ob6_filter_engine) &&
+               ob6_filter_decoded.cutoff_hz < 2000.0f, "OB-6 host cutoff supersedes pending MIDI")) return 1;
+    ob6_filter_midi->getStateInformation(ob6_filter_state);
+    auto ob6_pending_host_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_pending_host_restore->setStateInformation(ob6_filter_state.getData(), int(ob6_filter_state.getSize()));
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_pending_host_restore.get())->export_ob6_preset(ob6_filter_restored_export) &&
+               gf::decode_supported_preset(ob6_filter_restored_export.data(), ob6_filter_restored_export.size(), ob6_filter_decoded, ob6_filter_engine) &&
+               ob6_filter_decoded.cutoff_hz < 2000.0f, "OB-6 pending host override restores")) return 1;
+    auto* restored_cutoff = find_parameter(*ob6_filter_restore, "cutoff");
+    restored_cutoff->setValueNotifyingHost(restored_cutoff->convertTo0to1(1000.0f));
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_filter_restore.get())->export_ob6_preset(ob6_filter_restored_export) &&
+               gf::decode_supported_preset(ob6_filter_restored_export.data(), ob6_filter_restored_export.size(), ob6_filter_decoded, ob6_filter_engine) &&
+               ob6_filter_decoded.cutoff_hz < 2000.0f && std::abs(ob6_filter_decoded.reso_norm - (64.0f / 127.0f + .06f)) < .02f,
+               "OB-6 host cutoff supersedes MIDI independently")) return 1;
     auto ob6_cc_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     auto ob6_cc_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     for (auto* p : {ob6_cc_a.get(), ob6_cc_b.get()}) {

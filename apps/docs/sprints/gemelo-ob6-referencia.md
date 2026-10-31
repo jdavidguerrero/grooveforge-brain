@@ -76,3 +76,21 @@ En el sketch Studio, la presión de canal normalizada suma hasta una octava al c
 ## Incremento: CC MIDI de macros OB-6
 
 Como en Studio, CC 14 controla DRIFT, CC 15 GRIT, CC 16 POCKET y CC 19 MOVE. El audio aplica cada mensaje en su posición MIDI; la publicación al parámetro del DAW se hace desde el hilo de mensajes. El estado y el GFP incluyen el valor pendiente aunque se guarden antes de esa publicación. Se comprueban offset, aislamiento entre instancias, restauración y exportación. DRIFT afecta notas nuevas; las demás macros afectan el sonido activo. Referencias: `49-studio-brain.cpp`, `control_change`; `ui/page_params.cpp`, `apply_cc`.
+
+## Incremento: validación del editor OB-6
+
+El selector de página debe recorrer voz, osciladores, envolventes/LFO, GROOVE, FX y macros sin mostrar controles de otra página. Las páginas compartidas con Juno deben enlazar sus controles al engine activo sin modificar el otro. Una prueba de componentes JUCE recorre páginas y modifica controles vinculados; no sustituye la inspección visual en un DAW ni verifica accesibilidad o disposición a otras escalas.
+
+CC 74 y 71 siguen pendientes: Studio los aplica a cutoff y resonancia base antes de las macros, mientras los controles comunes actuales del VST guardan valores efectivos al importar un GFP. Con MOVE o GRIT activos, escribir directamente el valor MIDI en esos controles cambiaría el resultado y, en los extremos, el recorte impide recuperar el valor base. Su implementación requiere conservar el valor base y migrar el estado existente; la prueba de componentes no cubre esa conversión.
+
+## Incremento: CC de filtro OB-6 y compatibilidad de estado
+
+CC 74 usa `gf_cutoff_from_cc_norm` para convertir la posición MIDI en frecuencia base logarítmica; CC 71 establece la resonancia base lineal del rango OB-6. GRIT y MOVE se aplican después, como en `control_change` y `engine_filter` de Studio. El plugin conserva el valor base recibido por MIDI por separado del control compartido, que continúa representando la referencia anterior de los proyectos existentes; así la saturación no destruye el valor MIDI original. Si el usuario o la automatización cambian después el control compartido, este recupera la prioridad. El valor base y los mensajes aún pendientes se guardan en el estado del DAW y se consideran al exportar GFP. La prueba cubre offsets, macros, saturación, guardado/restauración y prioridad del control; no verifica la unidad física.
+
+## Incremento: independencia del tamaño de bloque del host
+
+Un DAW puede entregar los mismos eventos MIDI con bloques de distinto tamaño. La agenda de nota, presión y CC debe depender del offset temporal de cada evento y del reloj interno del motor, no del siguiente límite de bloque del host. La prueba reproduce la misma secuencia a 44,1, 48 y 96 kHz con bloques de 128 y 32 muestras y compara ambos canales; no cubre automatización de parámetros que el host entregue solo una vez por bloque ni los relojes del hardware.
+
+## Incremento: legibilidad del editor
+
+Las capturas locales de las seis páginas mostraron valores con hasta ocho decimales que exceden las cajas y encabezados de FX asociados solo al primer efecto. Se presenta una cantidad compacta de decimales sin modificar la precisión del parámetro ni el texto aceptado al editar, y las columnas compartidas se nombran P1–P3, con el nombre real de cada control en su ayuda contextual. La prueba verifica formato, entrada numérica y enlaces de parámetros; la revisión en un DAW y a otras escalas sigue pendiente.

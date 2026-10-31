@@ -83,6 +83,14 @@ int main() {
                    decoded_engine == 1, "invalid Juno GFP preserves output")) return 1;
     }
     if (!check(studio::factory_count(3) > 0, "OB-6 factory bank exists")) return 1;
+    if (!check(studio::factory_count(0) > 0, "Model D factory bank exists")) return 1;
+    for (uint8_t i = 0; i < studio::factory_count(0); ++i) {
+        studio::Preset input, output; uint8_t engine = 99;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        if (!check(studio::factory_preset(0, i, &input) && studio::preset_encode(input, 0, bytes.data(), bytes.size()) == bytes.size() &&
+                   gf::decode_supported_preset(bytes.data(), bytes.size(), output, engine) && engine == 0 &&
+                   std::strcmp(input.name, output.name) == 0, "Model D GFP factory roundtrip")) return 1;
+    }
     for (uint8_t i = 0; i < studio::factory_count(3); ++i) {
         studio::Preset input, output; uint8_t engine = 0;
         std::array<uint8_t, studio::PRESET_BYTES> bytes{};
