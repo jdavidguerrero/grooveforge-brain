@@ -10,7 +10,7 @@ void JunoPreview::prepare(double rate) {
     reset();
 }
 void JunoPreview::reset() {
-    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tick_ = 0;
+    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tick_ = 0; drift_samples_remaining_ = 0;
     drift_.state = 0x2545F491u;
     lfo_ = dsp::Lfo{}; lfo_.set_rate_hz(lfo_rate_); lfo_.set_shape(lfo_shape_);
     lfo_.set_sync(lfo_sync_, bpm_, lfo_beats_);
@@ -87,10 +87,7 @@ void JunoPreview::set_parameters(float cutoff, float resonance, float attack, fl
         attack_ = attack; release_ = release;
         for (auto& v : voices_) if (v) { v->amp.setAttack(gate_ ? 1.0f : attack_); v->amp.setRelease(gate_ ? 8.0f : release_); }
     }
-    for (auto& v : voices_) if (v) {
-        v->filter.set_resonance(resonance_);
-        if (tick_ == 0) v->filter.set_frequency(cutoff_);
-    }
+    for (auto& v : voices_) if (v) v->filter.set_resonance(resonance_);
 }
 void JunoPreview::set_oscillator(uint16_t wave, float sub, float noise, float pulse_width,
                                  uint8_t chorus, uint8_t hpf, uint8_t range, bool gate, float hiss) {
@@ -150,6 +147,9 @@ void JunoPreview::process_frame(float& left, float& right) {
         lfo_cutoff_ratio_ = std::exp2(lfo_cutoff_ * ramp * GF_LFO_CUT_OCT * lfo);
         pwm_mod_ = 0.42f * lfo_pwm_ * ramp * lfo;
     }
+    const bool advance_oscillator_drift = drift_samples_remaining_ <= 0.0;
+    if (advance_oscillator_drift) drift_samples_remaining_ += 128.0 * double(fs_) / 44100.0;
+    drift_samples_remaining_ -= 1.0;
     float mix = 0;
     for (auto& item : voices_) {
         auto& v = *item;
@@ -162,8 +162,8 @@ void JunoPreview::process_frame(float& left, float& right) {
         }
         const float hz = v.hz * v.spread.pitch * v.pitch_ratio * bend_ * lfo_pitch_ratio_;
         float dco = 0, sub = 0;
-        v.dco.render(waveform_, hz / fs_, std::clamp(pulse_width_ + pwm_mod_, 0.05f, 0.95f), 1, &dco, 1);
-        v.sub.render(dsp::WAVE_SQUARE, hz * 0.5f / fs_, 0.5f, 1, &sub, 1);
+        v.dco.render(waveform_, hz / fs_, std::clamp(pulse_width_ + pwm_mod_, 0.05f, 0.95f), 1, &dco, 1, 0, nullptr, nullptr, nullptr, 0, 0, advance_oscillator_drift);
+        v.sub.render(dsp::WAVE_SQUARE, hz * 0.5f / fs_, 0.5f, 1, &sub, 1, 0, nullptr, nullptr, nullptr, 0, 0, advance_oscillator_drift);
         const float gain = 1.0f - velocity_amp_ * (1.0f - v.velocity);
         const float noise = float(v.noise.next()) * (1.0f / 32768.0f);
         mix += v.filter.process_sample((0.6f * dco + sub_level_ * sub + 0.5f * noise_level_ * noise) * gain) * v.amp.step() * 0.25f;

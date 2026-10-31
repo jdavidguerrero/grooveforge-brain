@@ -77,10 +77,11 @@ public:
      * @param mod     si no es nulo, señal de audio (−1…1) por muestra para la FM y el PWM (X-MOD del OB-6)
      * @param fm_oct  profundidad de la FM exponencial: dt[i] = dt · 2^(fm_oct · mod[i])
      * @param pw_mod  profundidad del PWM: pw[i] = pw + pw_mod · mod[i]
+     * @param advance_drift  actualiza la deriva antes del bloque; false mantiene la deriva de la llamada anterior
      */
     void render(uint16_t waveform, float inc, float pw, float amp, float* out, int n, float shape = 0.0f,
                 SyncEvents* record = nullptr, const SyncEvents* sync = nullptr, const float* mod = nullptr,
-                float fm_oct = 0.0f, float pw_mod = 0.0f) {
+                float fm_oct = 0.0f, float pw_mod = 0.0f, bool advance_drift = true) {
         if (record) record->n = 0;
         if (amp <= 0.0f || inc <= 0.0f) {
             for (int i = 0; i < n; ++i) out[i] = 0.0f;
@@ -91,11 +92,13 @@ public:
         uint8_t next_sync = 0;
         // Deriva analógica lenta por bloque: ruido blanco filtrado (un polo, ~0.3 Hz) normalizado a ~±1 y
         // escalado por _drift_depth (fracción de la frecuencia: 0.0008 ≈ ±1.4 cents). Cada voz tiene su semilla.
-        _rng ^= _rng << 13;
-        _rng ^= _rng >> 17;
-        _rng ^= _rng << 5;
-        const float white = float(int32_t(_rng)) * (1.0f / 2147483648.0f);
-        _drift = 0.995f * _drift + 0.0999f * white;
+        if (advance_drift) {
+            _rng ^= _rng << 13;
+            _rng ^= _rng >> 17;
+            _rng ^= _rng << 5;
+            const float white = float(int32_t(_rng)) * (1.0f / 2147483648.0f);
+            _drift = 0.995f * _drift + 0.0999f * white;
+        }
 
         float dt0 = inc * (1.0f + _drift_depth * _drift);
         if (dt0 > 0.48f) dt0 = 0.48f;

@@ -415,6 +415,26 @@ int main() {
     if (!check(macro_state_delta < .0001f, "Juno macro project audio restore")) return 1;
     auto juno_editor = std::unique_ptr<juce::AudioProcessorEditor>(dry_juno->createEditor());
     if (!check(juno_editor != nullptr, "Juno editor constructed")) return 1;
+    auto juno_large_blocks = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto juno_small_blocks = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* large_select = find_parameter(*juno_large_blocks, "juno_preview");
+    auto* small_select = find_parameter(*juno_small_blocks, "juno_preview");
+    large_select->setValueNotifyingHost(1); small_select->setValueNotifyingHost(1);
+    juno_large_blocks->prepareToPlay(48000, 128); juno_small_blocks->prepareToPlay(48000, 32);
+    for (int block = 0; block < 40; ++block) {
+        juce::MidiBuffer large_events;
+        if (!block) large_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+        juno_large_blocks->processBlock(juno_a, large_events);
+        for (int part = 0; part < 4; ++part) {
+            juce::AudioBuffer<float> small(2, 32);
+            juce::MidiBuffer small_events;
+            if (!block && part == 1) small_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 8);
+            juno_small_blocks->processBlock(small, small_events);
+            for (int i = 0; i < 32; ++i) for (int channel = 0; channel < 2; ++channel)
+                if (!check(std::abs(juno_a.getSample(channel, part * 32 + i) - small.getSample(channel, i)) < 1e-7f,
+                           "Juno audio independent of DAW block size")) return 1;
+        }
+    }
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);

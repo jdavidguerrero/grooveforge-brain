@@ -61,6 +61,7 @@ private:
     dsp::JunoChorusCoreT<4096> chorus_high_rate_;
     float fs_ = 44100, bend_ = 1, cutoff_ = 1200, resonance_ = 0.7f, attack_ = 10, release_ = 300;
     float tick_ = 0;
+    double drift_samples_remaining_ = 0;
     uint64_t age_ = 0;
     uint8_t next_ = 0;
     bool sustain_ = false;

@@ -19,6 +19,24 @@ static bool pjrc_noise_vectors() {
     return true;
 }
 
+static bool oscillator_drift_matches_block_reference() {
+    for (uint16_t wave : {dsp::WAVE_SAWTOOTH, dsp::WAVE_SQUARE, dsp::WAVE_PULSE, dsp::WAVE_SAW_AND_PULSE}) {
+        dsp::PolyBlepCore block, sample;
+        block.reset(0x41060001u); sample.reset(0x41060001u);
+        block.set_drift(.00015f); sample.set_drift(.00015f);
+        for (int b = 0; b < 200; ++b) {
+            float expected[128]{};
+            block.render(wave, 440.0f / 44100.0f, .35f, 1, expected, 128);
+            for (int i = 0; i < 128; ++i) {
+                float actual = 0;
+                sample.render(wave, 440.0f / 44100.0f, .35f, 1, &actual, 1, 0, nullptr, nullptr, nullptr, 0, 0, i == 0);
+                if (actual != expected[i]) return false;
+            }
+        }
+    }
+    return true;
+}
+
 static bool run(double rate) {
     gf::JunoPreview a, b;
     a.prepare(rate); b.prepare(rate);
@@ -114,6 +132,7 @@ static bool lfo_modulation() {
     return difference > 0.01f;
 }
 int main() {
+    if (!oscillator_drift_matches_block_reference()) { std::fprintf(stderr, "DCO block drift mismatch\n"); return 1; }
     if (!pjrc_noise_vectors()) { std::fprintf(stderr, "PJRC noise reference vectors failed\n"); return 1; }
     for (double rate : {44100.0, 48000.0, 96000.0, 192000.0, 384000.0})
         if (!run(rate)) { std::fprintf(stderr, "Juno preview failed at %.0f Hz\n", rate); return 1; }
