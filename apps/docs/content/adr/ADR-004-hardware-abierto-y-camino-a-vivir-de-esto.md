@@ -1,6 +1,9 @@
 # ADR-004: Hardware abierto y el camino a vivir de esto en 2 años
 
-**Status:** Proposed (lo acepta Juan)
+**Status:** Proposed. **Se revisa al cierre de la Temporada 1** (EP17, el live set con el Brain y GroovePush),
+con los datos reales del canal (ADR-002, enmienda del 2026-10-31). Ideas a evaluar entonces: el canal como "el
+artista ingeniero" (música + instrumentos + experimentos), la escalera de productos, los talleres con kit y un kit de
+audio abierto para crear efectos con IA.
 **Date:** 2026-10-31
 **Deciders:** Juan Guerrero
 **Modifica (parcial):** ADR-002 §1 ("no se monetiza todavía"): sigue valiendo **hasta el cierre del Acto 1** de la

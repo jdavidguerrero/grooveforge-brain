@@ -1,8 +1,8 @@
 # Temporada 1 — "Construyendo mi synth"
 
-> Biblia de producción, versión 3 (2026-10-22). Reemplaza el enfoque de
-> `groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md`: la Temporada 1 es **solo el GrooveForge Brain · Studio**.
-> El material de GroovePush pasa a la Temporada 2.
+> Biblia de producción, versión 4 (2026-10-31). La Temporada 1 es el **GrooveForge Brain · Studio** (Actos 1 y 2) y,
+> cuando el Brain está terminado, **GroovePush** (Acto 3): los dos instrumentos del live set. Un device a la vez, en
+> orden (ADR-002, enmienda del 2026-10-31). Material de GroovePush: `groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md`.
 > Decisiones de fondo: [`../adr/ADR-002-comunidad-primero-un-device.md`](../adr/ADR-002-comunidad-primero-un-device.md).
 >
 > **Guiones listos para grabar:** [`EP01_guion.md`](EP01_guion.md) · [`EP02_guion.md`](EP02_guion.md) ·
@@ -34,8 +34,11 @@ esperar piezas**.
 ### Dos actos
 
 - **Acto 1 · Encontrar mi sonido y diseñar el instrumento (EP1-EP9):** todo grabable hoy.
-- **Acto 2 · Llevarlo al escenario (EP10-EP12):** cuando lleguen las placas: montaje, modo FX, live set. Termina con
-  el Brain **terminado**: en su caja y en uso.
+- **Acto 2 · El Brain terminado (EP10-EP12):** cuando lleguen las placas: montaje, modo FX, primer ensayo en vivo.
+  Termina con el Brain **terminado**: en su caja y en uso.
+- **Acto 3 · GroovePush y el live set (EP13-EP17):** recién con el Brain terminado. Rearmar el controlador, la
+  grilla, Ableton, la pantalla y la caja. **Final de temporada: el live set con mis dos instrumentos** y los tracks
+  de la temporada.
 
 ### La fórmula de cada episodio
 
@@ -82,7 +85,12 @@ propone ideas MIDI; el músico elige, edita y decide, y se dice en cámara. Nunc
 | 9 | 🎹 | Tocarlo como un instrumento | Un lead tocado con expresión | ✅ hoy |
 | 10 | 🛠️ | Llegaron las placas | Montaje y primer encendido | ⏳ piezas |
 | 11 | 🎹 | El modo FX: procesar en vivo | Un drop procesado en vivo | ⏳ audio del modo FX |
-| 12 | 🎹 | Mi primer live set con el Brain | El Brain en su caja, tocando un set | ⏳ todo lo anterior |
+| 12 | 🎹 | El Brain terminado: primer ensayo en vivo | El Brain en su caja, tocando el primer track en vivo | ⏳ todo lo anterior |
+| 13 | 🛠️ | Rearmo mi Push clone | GroovePush en protoboard: primera nota USB-MIDI en Ableton | ⏳ Brain terminado |
+| 14 | 🛠️ | 32 pads con su propio cerebro | La grilla NeoTrellis M4 hablando con la Teensy por UART | ⏳ EP13 |
+| 15 | 🎹 | Mi controlador maneja Ableton | Clips, escenas y mezcla desde GroovePush (Remote Script) | ⏳ EP14 |
+| 16 | 🛠️ | La pantalla y la caja de GroovePush | La pantalla táctil de 7" y el controlador en su caja | ⏳ EP15 + piezas |
+| 17 | 🎹 | Mi live set con mis instrumentos | **Final:** el set completo con el Brain y GroovePush | ⏳ todo lo anterior |
 
 **El primer track** atraviesa el Acto 1: el EP2 pone los acordes, el EP4 el bajo y las capas, el EP6 el build-up,
 el EP8 la automatización y el EP9 el lead. Al final del Acto 1 el track está terminado y se publica completo.
@@ -174,8 +182,22 @@ Unboxing, inspección, continuidad sin módulos, primer encendido con límite de
 ### EP11 — El modo FX: procesar en vivo · ⏳ requiere el audio del modo FX en el sketch49
 Inspiración RMX-1000 (ADR-004), capas INSERT / SEND / MASTER, CPU, la entrada de audio. Clímax: un drop procesado.
 
-### EP12 — Mi primer live set con el Brain · ⏳
-La rutina, qué falló en el ensayo, el set. El set completo como video aparte.
+### EP12 — El Brain terminado: primer ensayo en vivo · ⏳
+La rutina con el Brain solo, qué falló en el ensayo, el primer track tocado en vivo. Cierra "Brain terminado"
+(ADR-002 §2.1) y abre el Acto 3: *"Para el set me falta algo: controlar Ableton con mis manos."*
+
+### Acto 3 — GroovePush y el live set (EP13-EP17) · ⏳ con el Brain terminado
+Fichas a escribir cuando empiece el acto, a partir de `groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md` (su EP1
+"Desarmé mi Push clone para construir un synth" es el gancho natural del EP13: lo desarmé para el Brain, ahora lo
+rearmo para el set). Contratos técnicos: `groovepush/CLAUDE.md` (performance MIDI por USB, < 5 ms; nunca por la red).
+- **EP13 · Rearmo mi Push clone:** del controlador desarmado a la primera nota USB-MIDI (ROADMAP de GroovePush,
+  bloque 1).
+- **EP14 · 32 pads con su propio cerebro:** la NeoTrellis M4, el UART a 1 Mbps, el protocolo binario con checksum.
+- **EP15 · Mi controlador maneja Ableton:** el Remote Script, clips y escenas, por qué el MIDI de la actuación no
+  pasa por la red.
+- **EP16 · La pantalla y la caja:** la Raspberry Pi 5 con la pantalla de 7", la GUI, el enclosure.
+- **EP17 · Mi live set con mis instrumentos (final):** el set completo, qué falló en los ensayos, los tracks de la
+  temporada. El set entero, como video aparte. **Después de este episodio se revisa el modelo de negocio (ADR-004).**
 
 ---
 
@@ -191,4 +213,7 @@ La rutina, qué falló en el ensayo, el set. El set completo como video aparte.
 
 ## 6. GroovePush
 
-Temporada 2. Material ya escrito: `groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md`.
+Acto 3 de esta temporada (EP13-EP17), después del Brain terminado. Material ya escrito:
+`groovepush/docs/content/BIBLIA_PRODUCCION_FINAL.md`. Si las placas del Brain se atrasan mucho, se puede adelantar
+**solo contenido de diseño ya hecho** de GroovePush (carril Taller, como el EP3/EP5/EP7 del Brain), sin empezar a
+construirlo: eso lo decide Juan.

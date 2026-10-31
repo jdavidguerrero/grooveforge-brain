@@ -94,3 +94,19 @@ más que eso, deja de ser un cameo y espera a la temporada de IA.
 - `apps/docs/content/01-modelo-rampa-y-apertura.md`
 - `apps/docs/adr/ADR-002-variante-studio.md` (Studio como instrumento propio)
 - `apps/hardware/kicad/studio/docs/auditoria-fabricacion-2026-10-22.md` (lo que falta para la caja)
+
+---
+
+## Enmienda 2026-10-31: GroovePush entra en la Temporada 1
+
+**Decidido por Juan.** GroovePush es parte de su live set con instrumentos propios, y el live set es donde se prueban
+y se promocionan sus tracks. Por eso la Temporada 1 no termina con el Brain solo:
+
+- La Temporada 1 pasa a tener **3 actos**: Acto 1 (EP1-EP9, encontrar el sonido y diseñar el Brain), Acto 2
+  (EP10-EP12, el Brain terminado) y **Acto 3 (EP13-EP17, GroovePush y el live set)**.
+- **El punto 2 no cambia:** GroovePush se construye **después** de cerrar el Brain. La temporada lleva los dos
+  devices, pero en orden, nunca en paralelo.
+- El final de temporada es el live set con el Brain y GroovePush (EP17). **Ahí se revisa el modelo de negocio**
+  (ADR-004).
+- Detalle: `temporada-1/BIBLIA_T1_LIVESET.md` §3 y §4.
+
