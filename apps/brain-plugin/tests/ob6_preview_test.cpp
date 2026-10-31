@@ -111,7 +111,36 @@ static bool voice_controls() {
     return unison_diff > .01 && glide_diff > .01 && lfo_diff > .01;
 }
 
+static bool tape_pitch() {
+    gf::Ob6Preview normal, faster;
+    normal.prepare(44100); faster.prepare(44100);
+    gf::Ob6SoundPatch patch;
+    patch.level1 = 0; patch.level2 = .8f; patch.sub = 0; patch.detune = 0;
+    normal.set_sound_patch(patch); faster.set_sound_patch(patch);
+    normal.set_parameters(15000, .707f, 5, 300); faster.set_parameters(15000, .707f, 5, 300);
+    faster.set_tape_pitch(1.2f);
+    normal.note_on(69, .8f); faster.note_on(69, .8f);
+    int count_normal = 0, count_faster = 0;
+    float old_normal = 0, old_faster = 0;
+    for (int i = 0; i < 27050; ++i) {
+        const float a = normal.process_sample(), b = faster.process_sample();
+        if (!std::isfinite(a + b)) return false;
+        if (i >= 5000) {
+            if (old_normal < 0 && a >= 0) ++count_normal;
+            if (old_faster < 0 && b >= 0) ++count_faster;
+        }
+        old_normal = a; old_faster = b;
+    }
+    if (count_normal < 215 || count_normal > 225 || count_faster < 258 || count_faster > 270) return false;
+    normal.reset(); faster.reset();
+    normal.note_on(69, .8f); faster.note_on(69, .8f);
+    for (int i = 0; i < 4096; ++i)
+        if (normal.process_sample() != faster.process_sample()) return false;
+    return true;
+}
+
 int main() {
+    if (!tape_pitch()) { std::fprintf(stderr, "OB-6 tape pitch failed\n"); return 1; }
     if (!voice_controls()) { std::fprintf(stderr, "OB-6 unison / drift / glide / LFO failed\n"); return 1; }
     if (!gfp_xmod_mapping()) { std::fprintf(stderr, "OB-6 GFP X-MOD mapping failed\n"); return 1; }
     if (!sync_and_xmod()) { std::fprintf(stderr, "OB-6 SYNC / X-MOD failed\n"); return 1; }

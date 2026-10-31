@@ -446,6 +446,30 @@ int main() {
     ob6_plugin->processBlock(ob6_audio, ob6_midi);
     for (int i = 0; i < 40; ++i) if (!check(ob6_audio.getSample(0, i) == 0, "OB-6 MIDI offset")) return 1;
     if (!check(ob6_audio.getRMSLevel(0, 40, 88) > 0, "OB-6 audible")) return 1;
+    auto ob6_pressure_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto ob6_pressure_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto* p : {ob6_pressure_a.get(), ob6_pressure_b.get()}) {
+        find_parameter(*p, "ob6_preview")->setValueNotifyingHost(1);
+        p->prepareToPlay(44100, 128);
+    }
+    juce::AudioBuffer<float> pressure_a(2, 128), pressure_b(2, 128);
+    double pressure_difference = 0;
+    for (int block = 0; block < 16; ++block) {
+        juce::MidiBuffer midi_a, midi_b;
+        if (block == 0) {
+            midi_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            midi_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            midi_a.addEvent(juce::MidiMessage::channelPressureChange(1, 127), 64);
+        }
+        ob6_pressure_a->processBlock(pressure_a, midi_a); ob6_pressure_b->processBlock(pressure_b, midi_b);
+        for (int i = 0; i < 128; ++i) {
+            const float a = pressure_a.getSample(0, i), b = pressure_b.getSample(0, i);
+            if (!check(std::isfinite(a) && std::isfinite(b), "OB-6 pressure output finite")) return 1;
+            if (block == 0 && i < 64 && !check(a == b, "OB-6 pressure respects MIDI offset")) return 1;
+            if (block > 0) pressure_difference += std::abs(a - b);
+        }
+    }
+    if (!check(pressure_difference > .01, "OB-6 channel pressure changes audio")) return 1;
     juce::MemoryBlock ob6_state;
     ob6_plugin->getStateInformation(ob6_state);
     auto ob6_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
@@ -474,6 +498,122 @@ int main() {
     for (int i = 0; i < 128; ++i) if (!check(std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i)) < 1e-7f,
                                                "OB-6 GFP audio restores")) return 1;
     if (!check(ob6_audio.getRMSLevel(0, 0, 128) > 0, "OB-6 GFP audible")) return 1;
+    auto* ob6_shape = find_parameter(*ob6_plugin, "ob6.osc1.shape");
+    if (!check(ob6_shape != nullptr, "OB-6 oscillator parameter exists")) return 1;
+    ob6_shape->setValueNotifyingHost(1.0f);
+    std::vector<uint8_t> ob6_osc_export;
+    if (!check(ob6_import->export_ob6_preset(ob6_osc_export), "OB-6 oscillator export")) return 1;
+    studio::Preset ob6_osc_decoded;
+    uint8_t ob6_osc_engine = 0;
+    if (!check(gf::decode_supported_preset(ob6_osc_export.data(), ob6_osc_export.size(), ob6_osc_decoded, ob6_osc_engine) &&
+               ob6_osc_engine == 3 && ob6_osc_decoded.patch.osc[0][0] > 99, "OB-6 oscillator edit exported")) return 1;
+    juce::MemoryBlock ob6_osc_state;
+    ob6_plugin->getStateInformation(ob6_osc_state);
+    auto ob6_osc_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_osc_restore->setStateInformation(ob6_osc_state.getData(), int(ob6_osc_state.getSize()));
+    if (!check(find_parameter(*ob6_osc_restore, "ob6.osc1.shape")->getValue() > .99f, "OB-6 oscillator edit restored")) return 1;
+    ob6_plugin->prepareToPlay(44100, 128); ob6_osc_restore->prepareToPlay(44100, 128);
+    juce::AudioBuffer<float> ob6_osc_audio(2, 128);
+    juce::MidiBuffer osc_note_a, osc_note_b;
+    osc_note_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    osc_note_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_plugin->processBlock(ob6_audio, osc_note_a); ob6_osc_restore->processBlock(ob6_osc_audio, osc_note_b);
+    for (int i = 0; i < 128; ++i)
+        if (!check(std::abs(ob6_audio.getSample(0, i) - ob6_osc_audio.getSample(0, i)) < 1e-7f, "OB-6 oscillator audio restored")) return 1;
+    auto ob6_osc_original = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_osc_original->setStateInformation(ob6_saved.getData(), int(ob6_saved.getSize()));
+    ob6_osc_original->prepareToPlay(44100, 128);
+    juce::MidiBuffer osc_original_note;
+    osc_original_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_osc_original->processBlock(ob6_osc_audio, osc_original_note);
+    float osc_difference = 0;
+    for (int i = 0; i < 128; ++i) osc_difference += std::abs(ob6_audio.getSample(0, i) - ob6_osc_audio.getSample(0, i));
+    if (!check(osc_difference > .001f, "OB-6 oscillator automation changes audio")) return 1;
+    studio::Preset macro_ob6;
+    if (!check(studio::factory_preset(3, 0, &macro_ob6), "OB-6 macro factory preset")) return 1;
+    macro_ob6.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 30;
+    macro_ob6.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 20;
+    macro_ob6.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 25;
+    macro_ob6.patch.sfx_on[GF_SFX_CHORUS] = true;
+    std::array<uint8_t, studio::PRESET_BYTES> macro_ob6_bytes{};
+    studio::preset_encode(macro_ob6, 3, macro_ob6_bytes.data(), macro_ob6_bytes.size());
+    auto macro_ob6_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* macro_ob6_import = dynamic_cast<gf::PresetImport*>(macro_ob6_a.get());
+    if (!check(macro_ob6_import->import_preset(macro_ob6_bytes.data(), macro_ob6_bytes.size()), "OB-6 macro preset import")) return 1;
+    auto* ob6_grit = find_parameter(*macro_ob6_a, "ob6.macro.grit");
+    auto* ob6_pocket = find_parameter(*macro_ob6_a, "ob6.macro.pocket");
+    auto* ob6_move = find_parameter(*macro_ob6_a, "ob6.macro.move");
+    if (!check(ob6_grit && ob6_pocket && ob6_move && std::abs(ob6_grit->getValue() - .3f) < .02f &&
+               std::abs(ob6_move->getValue() - .25f) < .02f, "OB-6 macros populate from GFP")) return 1;
+    juce::MemoryBlock macro_ob6_state;
+    macro_ob6_a->getStateInformation(macro_ob6_state);
+    auto macro_ob6_baseline = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    macro_ob6_baseline->setStateInformation(macro_ob6_state.getData(), int(macro_ob6_state.getSize()));
+    ob6_grit->setValueNotifyingHost(.9f); ob6_pocket->setValueNotifyingHost(.8f); ob6_move->setValueNotifyingHost(.75f);
+    macro_ob6_a->prepareToPlay(44100, 128); macro_ob6_baseline->prepareToPlay(44100, 128);
+    double macro_ob6_difference = 0;
+    for (int block = 0; block < 16; ++block) {
+        juce::MidiBuffer ma, mb;
+        if (block == 0) { ma.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); mb.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        macro_ob6_a->processBlock(ob6_audio, ma); macro_ob6_baseline->processBlock(ob6_osc_audio, mb);
+        for (int i = 0; i < 128; ++i) macro_ob6_difference += std::abs(ob6_audio.getSample(0, i) - ob6_osc_audio.getSample(0, i));
+    }
+    if (!check(macro_ob6_difference > .01, "OB-6 macro automation changes audio")) return 1;
+    std::vector<uint8_t> ob6_macro_export;
+    studio::Preset ob6_macro_decoded;
+    uint8_t ob6_macro_engine = 0;
+    if (!check(macro_ob6_import->export_ob6_preset(ob6_macro_export) &&
+               gf::decode_supported_preset(ob6_macro_export.data(), ob6_macro_export.size(), ob6_macro_decoded, ob6_macro_engine) &&
+               ob6_macro_engine == 3 && ob6_macro_decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] == 0 &&
+               ob6_macro_decoded.cutoff_hz > macro_ob6.cutoff_hz &&
+               ob6_macro_decoded.patch.sfx_p[GF_SFX_CHORUS][0] > macro_ob6.patch.sfx_p[GF_SFX_CHORUS][0],
+               "OB-6 macro effective values export")) return 1;
+    macro_ob6_a->getStateInformation(macro_ob6_state);
+    auto macro_ob6_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    macro_ob6_restored->setStateInformation(macro_ob6_state.getData(), int(macro_ob6_state.getSize()));
+    if (!check(std::abs(find_parameter(*macro_ob6_restored, "ob6.macro.grit")->getValue() - .9f) < .001f &&
+               std::abs(find_parameter(*macro_ob6_restored, "ob6.macro.move")->getValue() - .75f) < .001f,
+               "OB-6 macro automation restores")) return 1;
+    auto macro_ob6_roundtrip = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    if (!check(dynamic_cast<gf::PresetImport*>(macro_ob6_roundtrip.get())->import_preset(ob6_macro_export.data(), ob6_macro_export.size()),
+               "OB-6 effective macro GFP imports")) return 1;
+    macro_ob6_restored->prepareToPlay(44100, 128); macro_ob6_roundtrip->prepareToPlay(44100, 128);
+    double roundtrip_error = 0, roundtrip_signal = 0;
+    for (int block = 0; block < 16; ++block) {
+        juce::MidiBuffer ma, mb;
+        if (block == 0) { ma.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); mb.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+        macro_ob6_restored->processBlock(ob6_audio, ma); macro_ob6_roundtrip->processBlock(ob6_osc_audio, mb);
+        for (int i = 0; i < 128; ++i) {
+            const float a = ob6_audio.getSample(0, i), b = ob6_osc_audio.getSample(0, i);
+            roundtrip_error += (a - b) * (a - b); roundtrip_signal += a * a;
+        }
+    }
+    if (!check(roundtrip_signal > 0 && std::sqrt(roundtrip_error / roundtrip_signal) < .08,
+               "OB-6 macro export preserves audio within GFP quantization")) return 1;
+    auto macro_legacy_xml = juce::AudioProcessor::getXmlFromBinary(macro_ob6_state.getData(), int(macro_ob6_state.getSize()));
+    macro_legacy_xml->removeAttribute("ob6MacroVersion");
+    juce::MemoryBlock macro_legacy_state;
+    juce::AudioProcessor::copyXmlToBinary(*macro_legacy_xml, macro_legacy_state);
+    macro_ob6_restored->setStateInformation(macro_legacy_state.getData(), int(macro_legacy_state.getSize()));
+    if (!check(std::abs(find_parameter(*macro_ob6_restored, "ob6.macro.grit")->getValue() - .3f) < .02f,
+               "OB-6 legacy macros migrate from GFP")) return 1;
+    auto* ob6_voice_sustain = find_parameter(*ob6_plugin, "ob6.amp_sustain");
+    auto* ob6_voice_lfo = find_parameter(*ob6_plugin, "ob6.lfo_pitch");
+    auto* ob6_voice_unison = find_parameter(*ob6_plugin, "ob6.unison_on");
+    if (!check(ob6_voice_sustain && ob6_voice_lfo && ob6_voice_unison, "OB-6 voice parameters exist")) return 1;
+    ob6_voice_sustain->setValueNotifyingHost(.23f);
+    ob6_voice_lfo->setValueNotifyingHost(.7f);
+    ob6_voice_unison->setValueNotifyingHost(1);
+    ob6_osc_export.clear();
+    if (!check(ob6_import->export_ob6_preset(ob6_osc_export) &&
+               gf::decode_supported_preset(ob6_osc_export.data(), ob6_osc_export.size(), ob6_osc_decoded, ob6_osc_engine) &&
+               std::abs(ob6_osc_decoded.patch.sustain - .23f) < .02f &&
+               std::abs(ob6_osc_decoded.patch.lfo_amt[GF_DEST_PITCH] - .7f) < .02f &&
+               ob6_osc_decoded.patch.groove_on[GF_GROOVE_UNISON], "OB-6 voice edits export")) return 1;
+    ob6_plugin->getStateInformation(ob6_osc_state);
+    ob6_osc_restore->setStateInformation(ob6_osc_state.getData(), int(ob6_osc_state.getSize()));
+    if (!check(std::abs(find_parameter(*ob6_osc_restore, "ob6.amp_sustain")->getValue() - .23f) < .001f &&
+               find_parameter(*ob6_osc_restore, "ob6.unison_on")->getValue() > .5f, "OB-6 voice edits restore")) return 1;
     auto ob6_dry = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     auto ob6_wet = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     for (auto& enabled : ob6_preset.patch.sfx_on) enabled = false;
@@ -510,6 +650,129 @@ int main() {
         }
     }
     if (!check(fx_difference > .01, "OB-6 GFP drive changes audio")) return 1;
+    auto* ob6_drive_on = find_parameter(*ob6_wet, "ob6.fx.drive.on");
+    if (!check(ob6_drive_on && ob6_drive_on->getValue() > .5f &&
+               find_parameter(*ob6_wet, "juno.fx.drive.on")->getValue() < .5f, "OB-6 FX parameters are independent")) return 1;
+    ob6_drive_on->setValueNotifyingHost(0);
+    juce::MemoryBlock ob6_fx_state;
+    ob6_wet->getStateInformation(ob6_fx_state);
+    auto ob6_fx_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_fx_restore->setStateInformation(ob6_fx_state.getData(), int(ob6_fx_state.getSize()));
+    if (!check(find_parameter(*ob6_fx_restore, "ob6.fx.drive.on")->getValue() < .5f, "OB-6 FX automation restores")) return 1;
+    std::vector<uint8_t> ob6_fx_export;
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_wet.get())->export_ob6_preset(ob6_fx_export), "OB-6 FX export")) return 1;
+    studio::Preset ob6_fx_decoded;
+    uint8_t ob6_fx_engine = 0;
+    if (!check(gf::decode_supported_preset(ob6_fx_export.data(), ob6_fx_export.size(), ob6_fx_decoded, ob6_fx_engine) &&
+               ob6_fx_engine == 3 && !ob6_fx_decoded.patch.sfx_on[GF_SFX_DRIVE], "OB-6 FX automation exports")) return 1;
+    auto ob6_fx_legacy_xml = juce::AudioProcessor::getXmlFromBinary(ob6_fx_state.getData(), int(ob6_fx_state.getSize()));
+    ob6_fx_legacy_xml->removeAttribute("ob6FxVersion");
+    juce::MemoryBlock ob6_fx_legacy_state;
+    juce::AudioProcessor::copyXmlToBinary(*ob6_fx_legacy_xml, ob6_fx_legacy_state);
+    auto ob6_fx_legacy = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_fx_legacy->setStateInformation(ob6_fx_legacy_state.getData(), int(ob6_fx_legacy_state.getSize()));
+    if (!check(find_parameter(*ob6_fx_legacy, "ob6.fx.drive.on")->getValue() > .5f, "OB-6 legacy FX migrate from GFP")) return 1;
+    ob6_wet->prepareToPlay(44100, 128); ob6_dry->prepareToPlay(44100, 128);
+    juce::MidiBuffer fx_edited_note, fx_dry_note;
+    fx_edited_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    fx_dry_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_wet->processBlock(ob6_audio, fx_edited_note); ob6_dry->processBlock(ob6_restored_audio, fx_dry_note);
+    for (int i = 0; i < 128; ++i)
+        if (!check(std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i)) < 1e-7f,
+                   "OB-6 FX automation bypasses drive")) return 1;
+    for (auto& enabled : ob6_preset.patch.sfx_on) enabled = false;
+    ob6_preset.patch.groove_on[GF_GROOVE_PUMP] = true;
+    ob6_preset.patch.groove[GF_GROOVE_PUMP][GF_PUMP_DEPTH] = 100;
+    ob6_preset.patch.groove[GF_GROOVE_PUMP][GF_PUMP_SHAPE] = 2;
+    studio::preset_encode(ob6_preset, 3, ob6_bytes.data(), ob6_bytes.size());
+    auto ob6_pump_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto ob6_pump_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    TestPlayHead ob6_beat(0.0), ob6_later(.25);
+    ob6_pump_a->setPlayHead(&ob6_beat); ob6_pump_b->setPlayHead(&ob6_later);
+    for (auto* processor : {ob6_pump_a.get(), ob6_pump_b.get()}) {
+        processor->prepareToPlay(48000, 128);
+        if (!check(dynamic_cast<gf::PresetImport*>(processor)->import_preset(ob6_bytes.data(), ob6_bytes.size()), "OB-6 PUMP import")) return 1;
+    }
+    juce::MidiBuffer pump_notes_a, pump_notes_b;
+    pump_notes_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    pump_notes_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_pump_a->processBlock(ob6_audio, pump_notes_a); ob6_pump_b->processBlock(ob6_restored_audio, pump_notes_b);
+    float ob6_pump_difference = 0;
+    for (int i = 0; i < 128; ++i) ob6_pump_difference += std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i));
+    if (!check(ob6_pump_difference > .001f, "OB-6 PUMP follows transport")) return 1;
+    auto* ob6_pump_on = find_parameter(*ob6_pump_a, "ob6.groove.pump.on");
+    auto* juno_pump_on = find_parameter(*ob6_pump_a, "juno.groove.pump.on");
+    if (!check(ob6_pump_on && ob6_pump_on->getValue() > .5f && juno_pump_on && juno_pump_on->getValue() < .5f,
+               "OB-6 GROOVE import and engine isolation")) return 1;
+    ob6_pump_on->setValueNotifyingHost(0);
+    juce::MemoryBlock ob6_groove_state;
+    ob6_pump_a->getStateInformation(ob6_groove_state);
+    auto ob6_groove_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_groove_restore->setStateInformation(ob6_groove_state.getData(), int(ob6_groove_state.getSize()));
+    auto* restored_pump_on = find_parameter(*ob6_groove_restore, "ob6.groove.pump.on");
+    if (!check(restored_pump_on && restored_pump_on->getValue() < .5f, "OB-6 GROOVE automation restores")) return 1;
+    ob6_groove_restore->setPlayHead(&ob6_beat);
+    ob6_groove_restore->prepareToPlay(48000, 128);
+    ob6_pump_a->prepareToPlay(48000, 128);
+    juce::MidiBuffer automation_notes, restore_notes;
+    automation_notes.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    restore_notes.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_pump_a->processBlock(ob6_audio, automation_notes);
+    ob6_groove_restore->processBlock(ob6_restored_audio, restore_notes);
+    for (int i = 0; i < 128; ++i)
+        if (std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i)) >= 1e-7f) { std::fprintf(stderr, "OB-6 restore mismatch %d %.9f %.9f\n", i, ob6_audio.getSample(0, i), ob6_restored_audio.getSample(0, i)); return 1; }
+    ob6_pump_b->setPlayHead(&ob6_beat); ob6_pump_b->prepareToPlay(48000, 128);
+    juce::MidiBuffer enabled_note;
+    enabled_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_pump_b->processBlock(ob6_restored_audio, enabled_note);
+    float ob6_automation_difference = 0;
+    for (int i = 0; i < 128; ++i) ob6_automation_difference += std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i));
+    if (!check(ob6_automation_difference > .001f, "OB-6 PUMP automation changes audio")) return 1;
+    std::vector<uint8_t> ob6_exported;
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_pump_a.get())->export_ob6_preset(ob6_exported), "OB-6 GFP export")) return 1;
+    studio::Preset ob6_exported_preset;
+    uint8_t ob6_exported_engine = 0;
+    if (!check(gf::decode_supported_preset(ob6_exported.data(), ob6_exported.size(), ob6_exported_preset, ob6_exported_engine) &&
+               ob6_exported_engine == 3 && !ob6_exported_preset.patch.groove_on[GF_GROOVE_PUMP] &&
+               ob6_exported_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] == 0 &&
+               ob6_exported_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] == 0 &&
+               ob6_exported_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] == 0,
+               "OB-6 GFP preserves edits without double macros")) return 1;
+    auto ob6_export_import = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_export_import.get())->import_preset(ob6_exported.data(), ob6_exported.size()),
+               "OB-6 exported GFP imports")) return 1;
+    if (!check(find_parameter(*ob6_export_import, "ob6.groove.pump.on")->getValue() < .5f,
+               "OB-6 exported GROOVE edit imports")) return 1;
+    auto ob6_legacy_xml = juce::AudioProcessor::getXmlFromBinary(ob6_groove_state.getData(), int(ob6_groove_state.getSize()));
+    ob6_legacy_xml->removeAttribute("ob6GrooveVersion");
+    juce::MemoryBlock ob6_legacy_state;
+    juce::AudioProcessor::copyXmlToBinary(*ob6_legacy_xml, ob6_legacy_state);
+    auto ob6_legacy = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_legacy->setStateInformation(ob6_legacy_state.getData(), int(ob6_legacy_state.getSize()));
+    if (!check(find_parameter(*ob6_legacy, "ob6.groove.pump.on")->getValue() > .5f,
+               "OB-6 legacy state migrates GFP groove")) return 1;
+    ob6_preset.patch.groove_on[GF_GROOVE_PUMP] = false;
+    ob6_preset.patch.groove_on[GF_GROOVE_ARP] = true;
+    ob6_preset.patch.groove[GF_GROOVE_ARP][GF_ARP_GATE] = 60;
+    ob6_preset.patch.groove[GF_GROOVE_ARP][GF_ARP_OCT] = 1;
+    ob6_preset.patch.groove[GF_GROOVE_ARP][GF_ARP_LATCH] = 0;
+    studio::preset_encode(ob6_preset, 3, ob6_bytes.data(), ob6_bytes.size());
+    auto ob6_arp = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_arp->prepareToPlay(48000, 128);
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_arp.get())->import_preset(ob6_bytes.data(), ob6_bytes.size()), "OB-6 ARP import")) return 1;
+    float ob6_arp_peak = 0;
+    for (int block = 0; block < 160; ++block) {
+        juce::MidiBuffer events;
+        if (block == 0) events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        if (block == 40) {
+            events.addEvent(juce::MidiMessage::controllerEvent(1, 64, 127), 0);
+            events.addEvent(juce::MidiMessage::noteOff(1, 60), 1);
+        }
+        if (block == 100) events.addEvent(juce::MidiMessage::controllerEvent(1, 64, 0), 0);
+        ob6_arp->processBlock(ob6_audio, events);
+        if (block >= 50 && block < 100) ob6_arp_peak = std::max(ob6_arp_peak, ob6_audio.getRMSLevel(0, 0, 128));
+    }
+    if (!check(ob6_arp_peak > .00001f, "OB-6 ARP sustain produces audio")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);

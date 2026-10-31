@@ -39,12 +39,14 @@ public:
     void set_sustain(bool down);
     /** @brief Aplica pitch bend de dos semitonos. */
     void set_pitch_bend(int value);
+    /** @brief Aplica la razón de afinación instantánea calculada por el efecto tape. */
+    void set_tape_pitch(float ratio);
     /** @brief Ajusta cutoff, resonancia, ataque y release. */
     void set_parameters(float cutoff, float resonance, float attack, float release);
     /** @brief Aplica el subconjunto reproducido del patch GFP. */
     void set_sound_patch(const Ob6SoundPatch& patch);
-    /** @brief Ajusta rueda MIDI y sincronización con el tempo del host. */
-    void set_lfo_control(float wheel, float bpm, bool sync);
+    /** @brief Ajusta rueda MIDI, presión de canal y sincronización con el tempo del host. */
+    void set_lfo_control(float wheel, float bpm, bool sync, float pressure = 0.0f);
     /** @brief Genera una muestra mono. */
     float process_sample();
 private:
@@ -61,7 +63,7 @@ private:
     std::array<Voice, 6> voices_{};
     Ob6SoundPatch patch_;
     bool patch_loaded_ = false;
-    float vco2_ratio_ = 1.0040511f;
+    float vco2_ratio_ = 1.0040511f, tape_pitch_ = 1;
     float fs_ = 44100, cutoff_ = 2000, resonance_ = .707f, attack_ = 10, release_ = 500, bend_ = 1, tick_ = 0;
     double drift_left_ = 0;
     uint64_t age_ = 0;
@@ -69,7 +71,7 @@ private:
     bool sustain_ = false;
     dsp::Drift note_drift_;
     dsp::Lfo lfo_;
-    float unison_gain_ = 1, wheel_ = 0, bpm_ = 120, lfo_pitch_ratio_ = 1, lfo_cutoff_ratio_ = 1, lfo_pwm_ = 0;
+    float unison_gain_ = 1, wheel_ = 0, pressure_ = 0, bpm_ = 120, lfo_pitch_ratio_ = 1, lfo_cutoff_ratio_ = 1, lfo_pwm_ = 0;
     bool lfo_sync_ = false;
 };
 }

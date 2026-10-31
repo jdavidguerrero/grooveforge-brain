@@ -85,3 +85,26 @@ python3 tools/gemelo-baseline/run_ob6.py --out /tmp/gf-ob6-check \
 Ocho escenas mono, con hash y reloj de control del shim: acorde, notch, BP, SYNC, X-MOD, ruido, robo de voz y glide
 con robo. La semilla de ruido del harness no representa necesariamente el orden de construcción del Brain. No incluye
 GFP, SYNTH FX ni hardware. Véase `apps/docs/sprints/gemelo-ob6-referencia.md`.
+
+Para comparar con el motor portable del VST sin compilar el firmware Teensy:
+
+```sh
+cmake --build /tmp/gf-brain-vst-build --target gf_ob6_preview_reference
+python3 tools/gemelo-baseline/compare_ob6_preview.py \
+  --renderer /tmp/gf-brain-vst-build/gf_ob6_preview_reference --out /tmp/gf-ob6-preview-check
+```
+
+El informe genera WAV y métricas sin alinear ganancia o tiempo ni establecer un criterio de aprobación. Es un
+diagnóstico de software: no incluye el wrapper JUCE, los efectos ni el hardware físico.
+
+Para investigar por separado la agenda del envelope de filtro y del glide, el siguiente experimento compila una copia
+temporal del motor. No modifica el VST:
+
+```sh
+python3 tools/gemelo-baseline/experiment_ob6_block_clock.py --component filter --out /tmp/gf-ob6-filter-clock
+python3 tools/gemelo-baseline/experiment_ob6_block_clock.py --component glide --out /tmp/gf-ob6-glide-clock
+python3 tools/gemelo-baseline/experiment_ob6_block_clock.py --component both --out /tmp/gf-ob6-both-clocks
+```
+
+Los ticks seleccionados se adelantan como en el fixture. El resto del DSP permanece igual; este experimento no
+establece cuándo se ejecutan los ticks en la unidad física.

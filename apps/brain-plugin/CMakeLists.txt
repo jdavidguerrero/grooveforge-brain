@@ -20,12 +20,16 @@ set_target_properties(gf_prophet_preset PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_executable(gf_juno_preview_reference "${CMAKE_CURRENT_LIST_DIR}/../../tools/gemelo-baseline/juno_preview_reference.cpp")
 target_link_libraries(gf_juno_preview_reference PRIVATE gf_prophet_preset)
+add_executable(gf_ob6_preview_reference "${CMAKE_CURRENT_LIST_DIR}/../../tools/gemelo-baseline/ob6_preview_reference.cpp")
+target_link_libraries(gf_ob6_preview_reference PRIVATE gf_prophet_preset)
 
 enable_testing()
 find_package(Python3 COMPONENTS Interpreter QUIET)
 if(Python3_Interpreter_FOUND)
     add_test(NAME juno_comparison_smoke COMMAND "${Python3_EXECUTABLE}"
         "${CMAKE_CURRENT_LIST_DIR}/tests/juno_comparison_test.py" $<TARGET_FILE:gf_juno_preview_reference>)
+    add_test(NAME ob6_comparison_smoke COMMAND "${Python3_EXECUTABLE}"
+        "${CMAKE_CURRENT_LIST_DIR}/tests/ob6_comparison_test.py" $<TARGET_FILE:gf_ob6_preview_reference>)
 endif()
 add_executable(gf_prophet_preview_test tests/prophet_preview_test.cpp)
 target_link_libraries(gf_prophet_preview_test PRIVATE gf_prophet_preset)

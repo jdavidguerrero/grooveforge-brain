@@ -26,3 +26,49 @@ El piloto aplica el glide del GFP (`glide² × 1500 ms`) a 1 kHz sobre voces reu
 # Incremento: SYNTH FX del GFP en OB-6
 
 La señal mono del motor alimenta el bus estéreo portable que ya usa el piloto DX7. Se aplican los parámetros y macros efectivos del GFP con el mismo mapeo de drive, tape, chorus/phaser, delay y reverb que los demás motores. El bus mantiene memoria propia por instancia y se reinicia al cambiar de motor o preset; el tempo del host controla el delay. Como el OB-6 todavía no recibe la modulación de afinación del tape, esa parte del efecto no queda cubierta. Las pruebas comparan reproducción seca y procesada, restauración de estado y finiteza; no validan equivalencia con firmware ni hardware. Referencias de diseño: ADR-006 y `05-fx-architecture.md`.
+
+## Incremento: afinación del tape
+
+Wow y flutter producen una variación temporal de velocidad: al reproducir la cinta más rápido o más lento cambia la frecuencia percibida. El bus portable ya calcula esa variación como razón de frecuencia; el OB-6 la aplica a ambos osciladores y al sub, además del bend y LFO, tomando el valor del bus de la muestra anterior. El bus avanza su control a 1 kHz y devuelve razón unidad cuando tape está desactivado. La prueba del motor mide cruces para una razón conocida y verifica reset; la integración comprueba la restauración del preset. Esto no establece equivalencia con el circuito ni con hardware. Referencias: ADR-006 y `05-fx-architecture.md`.
+
+## Incremento: GROOVE del GFP
+
+El bus portable recibe las notas MIDI, administra sustain y genera las notas de ARP y CHORD antes de entregarlas al OB-6; PUMP modifica la señal en el bus según el transporte del host. El unísono y DRIFT permanecen en el sintetizador, evitando duplicar voces. La carga y restauración de GFP configuran el bus sin agregar todavía controles de edición para este motor. La prueba compara un preset con PUMP contra su equivalente desactivado y valida sustain y restauración; no sustituye una comparación A/B con el firmware o el hardware. El bus compartido conserva sus limitaciones existentes, incluidas las fuentes de PUMP no implementadas. Referencias: ADR-006 y `05-fx-architecture.md`.
+
+## Incremento: edición GROOVE para OB-6
+
+Los parámetros de PUMP, ARP y CHORD se exponen con identificadores propios del OB-6 para que el DAW pueda automatizarlos sin alterar Juno. La interfaz reutiliza la organización de GROOVE existente; la automatización se aplica al inicio de cada bloque y los cambios se guardan en el estado del proyecto. Al abrir proyectos anteriores, los valores iniciales se recuperan del GFP almacenado. La fuente de PUMP se conserva como dato, pero el bus utiliza el transporte del DAW. Las pruebas cubren importación, automatización audible y restauración; exportar las ediciones a GFP queda para otra etapa.
+
+## Incremento: exportación GFP
+
+El archivo exportado parte del GFP OB-6 cargado y conserva los campos aún no editables. Los controles comunes y GROOVE reemplazan los valores originales. GRIT y POCKET se incorporan en sus valores efectivos, incluida la sensibilidad a velocity; MOVE ya está incorporado en cutoff y resonancia. Los tres macros se ponen a cero para evitar aplicarlos dos veces al volver a importar. El LFO sincronizado al DAW no se exporta porque el estado de sincronía no tiene representación equivalente en este flujo. Se valida el contenido decodificado y la reproducción tras reimportar; la codificación GFP puede cuantizar los valores.
+
+## Incremento: edición SYNTH FX
+
+Drive, tape, chorus/phaser, delay y reverb cuentan con parámetros independientes del OB-6 para activación, mezcla y tres parámetros por efecto. La interfaz comparte la distribución de Juno, pero cada engine conserva sus valores. Los cambios se aplican al inicio del bloque y se guardan en el estado del DAW y en la exportación GFP; los proyectos anteriores recuperan los valores del preset. Las pruebas comprueban importación, cambio audible, restauración y exportación.
+
+## Incremento: osciladores y X-MOD editables
+
+Los valores de los dos VCO y X-MOD se exponen en unidades GFP, con límites de `GF_OSC_SLOT` y `GF_MOD_SLOT`. El audio usa el patch almacenado como base y aplica las ediciones antes de calcular las macros, sin tocar los controles generales, GROOVE ni efectos. Cada parámetro se puede automatizar y se conserva en el estado y el GFP. Se prueba cambio audible, restauración y exportación; la fidelidad con hardware permanece por medir.
+
+## Incremento: envolventes, LFO y voces editables
+
+Los parámetros del envelope, filtro, velocity, LFO, glide, unísono y DRIFT se editan en las unidades GFP o del control correspondiente. Se aplican al patch antes de GRIT y POCKET, manteniendo sus relaciones con los controles del preset. La frecuencia de actualización es por bloque; el LFO sigue ejecutándose en la tasa de control portable de 1 kHz. Se guardan y automatizan por instancia y se exportan con las mismas reglas de macros del GFP. La prueba cubre edición, sonido y restauración, sin afirmar equivalencia A/B.
+
+## Incremento: macros de producción OB-6
+
+GRIT, POCKET y MOVE y sus tres profundidades se editan como parámetros independientes y se guardan en el proyecto. El GFP contiene valores base y macros; al importarlo el control general ya representa cutoff, resonancia y release efectivos. Para conservar ese comportamiento al automatizar, los cambios posteriores de macro se calculan respecto al valor original del GFP. Las demás rutas utilizan directamente `macro_patch`, `macro_vel_depths` y `move_sfx`. La exportación fija en el GFP los valores efectivos para evitar la doble aplicación al reimportar. Las pruebas comprueban cambios audibles, persistencia, migración de proyectos previos y exportación con comparación de audio. A diferencia de versiones anteriores del piloto, MOVE también afecta los efectos al importar un GFP: un proyecto guardado con MOVE distinto de cero puede sonar diferente. La equivalencia física queda pendiente.
+
+## Incremento: diagnóstico frente al grafo digital
+
+Se renderizan las ocho escenas del fixture OB-6 tanto en el piloto como en el grafo de firmware con shim. El informe registra RMS, error y correlación sin alinear ni aplicar un umbral de aprobación; también genera WAV para escucha y comprueba hashes y repetibilidad. Las escenas usan el mismo MIDI y valores iniciales, pero difieren la temporización de control, el mixer PCM16, el filtro y las semillas de ruido. El resultado permite priorizar discrepancias concretas; no cubre presets, efectos del VST, codec ni hardware físico y no certifica equivalencia sonora. El hito se valida generando el informe y comprobando sus entradas en una prueba nativa.
+
+## Investigación: reloj de control del shim
+
+El fixture actual adelanta los ticks de control al inicio de cada bloque de 128 muestras; el piloto avanza su control a 1 kHz a lo largo del audio. Para separar ese factor se compila una variante temporal que agrupa los ticks del envelope y glide al principio del bloque y se compara contra las mismas ocho escenas. No cambia el plugin ni pretende simular la agenda física del Brain. La diferencia entre informes permite estimar cuánto contribuye esa decisión a las discrepancias, sin probar causalidad para las etapas que no se han aislado. Se verifican tamaños, determinismo, procedencia y métricas sin umbral de aprobación.
+
+En la ejecución arm64 del 31 de octubre de 2026, X-MOD pasó de correlación 0,8904 a 0,9994 al agrupar solo el control del filtro; agrupar solo glide dejó X-MOD en 0,8904. En glide con robo, agrupar solo glide elevó la correlación de 0,9323 a 0,9989; agrupar solo el filtro la dejó en 0,9324. Agrupar ambos produjo 0,9994 y 0,9990 respectivamente. El ruido permaneció en 0,9639, consistente con las distintas semillas. Estas son métricas de las escenas completas, no una medida perceptual; diferencias en cuantización y transitorios siguen presentes. Dado que el reloj real de llamadas a `update()` depende de la ejecución del firmware, estos datos no justifican adoptar sin medición física el reloj adelantado del fixture.
+
+## Incremento: presión de canal MIDI
+
+En el sketch Studio, la presión de canal normalizada suma hasta una octava al cutoff y hasta 0,3 a la profundidad de vibrato, antes de limitar esta última a 1. El piloto OB-6 aplica la misma relación en su tick de control de 1 kHz; el evento MIDI se recibe en su offset del bloque y el cambio se escucha desde el siguiente tick, sin afectar muestras anteriores. No se interpreta presión polifónica como presión de canal. Se prueba señal, offset e independencia de instancias; no se mide latencia del teclado ni equivalencia física. Referencia: `49-studio-brain.cpp`, `engine_mod` y `after_touch`.

@@ -9,7 +9,7 @@ void Ob6Preview::prepare(double fs) {
     reset();
 }
 void Ob6Preview::reset() {
-    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tick_ = 0; drift_left_ = 0;
+    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tape_pitch_ = 1; tick_ = 0; drift_left_ = 0;
     note_drift_.state = 0x2545F491u; lfo_ = dsp::Lfo{};
     lfo_.set_rate_hz(patch_.lfo_rate); lfo_.set_shape(patch_.lfo_shape); lfo_.set_sync(lfo_sync_, bpm_, patch_.lfo_beats);
     lfo_pitch_ratio_ = lfo_cutoff_ratio_ = 1; lfo_pwm_ = 0;
@@ -59,8 +59,13 @@ void Ob6Preview::set_sustain(bool down) {
     if (!down) for (auto& v : voices_) if (v.deferred) { v.amp.noteOff(); v.filter_env.noteOff(); v.note = -1; v.deferred = false; }
 }
 void Ob6Preview::set_pitch_bend(int value) { bend_ = std::exp2((2.0f * (std::clamp(value, 0, 16383) - 8192) / 8192.0f) / 12.0f); }
+void Ob6Preview::set_tape_pitch(float ratio) { tape_pitch_ = std::isfinite(ratio) ? std::clamp(ratio, .5f, 2.0f) : 1.0f; }
 void Ob6Preview::set_parameters(float cutoff, float resonance, float attack, float release) {
-    cutoff_ = std::clamp(cutoff, 20.0f, 20000.0f); resonance_ = std::clamp(resonance, .707f, 5.0f);
+    const float new_cutoff = std::clamp(cutoff, 20.0f, 20000.0f), new_resonance = std::clamp(resonance, .707f, 5.0f);
+    if (cutoff_ != new_cutoff || resonance_ != new_resonance) {
+        cutoff_ = new_cutoff; resonance_ = new_resonance;
+        for (auto& v : voices_) v.coeff = dsp::sem_svf_compute(cutoff_, resonance_, patch_.morph, patch_.bandpass, patch_.drive, fs_);
+    }
     if (attack_ != attack || release_ != release) {
         attack_ = attack; release_ = release;
         for (auto& v : voices_) { v.amp.setAttack(attack); v.amp.setRelease(release); }
@@ -92,10 +97,12 @@ void Ob6Preview::set_sound_patch(const Ob6SoundPatch& source) {
     for (auto& v : voices_) {
         v.amp.setDecay(patch_.amp_decay); v.amp.setSustain(patch_.amp_sustain);
         v.filter_env.setADSR(patch_.filter_attack, patch_.filter_decay, patch_.filter_sustain, patch_.filter_release);
+        v.coeff = dsp::sem_svf_compute(cutoff_, resonance_, patch_.morph, patch_.bandpass, patch_.drive, fs_);
     }
 }
-void Ob6Preview::set_lfo_control(float wheel, float bpm, bool sync) {
+void Ob6Preview::set_lfo_control(float wheel, float bpm, bool sync, float pressure) {
     wheel_ = std::clamp(wheel, 0.0f, 1.0f); bpm_ = std::isfinite(bpm) && bpm > 0 ? bpm : 120;
+    pressure_ = std::isfinite(pressure) ? std::clamp(pressure, 0.0f, 1.0f) : 0.0f;
     lfo_sync_ = sync; lfo_.set_sync(sync, bpm_, patch_.lfo_beats);
 }
 float Ob6Preview::process_sample() {
@@ -103,9 +110,9 @@ float Ob6Preview::process_sample() {
     if (update) {
         tick_ -= fs_;
         const float value = lfo_.tick(.001f);
-        const float vib = std::min(1.0f, patch_.lfo_pitch + .3f * wheel_);
+        const float vib = std::min(1.0f, patch_.lfo_pitch + .3f * wheel_ + .3f * pressure_);
         lfo_pitch_ratio_ = std::exp2(gf_lfo_pitch_st(vib) * value / 12.0f);
-        lfo_cutoff_ratio_ = std::exp2(patch_.lfo_cutoff * GF_LFO_CUT_OCT * value);
+        lfo_cutoff_ratio_ = std::exp2(patch_.lfo_cutoff * GF_LFO_CUT_OCT * value + pressure_);
         lfo_pwm_ = .42f * patch_.lfo_pwm * value;
     }
     const bool drift = drift_left_ <= 0; if (drift) drift_left_ += 128.0 * double(fs_) / 44100.0; drift_left_ -= 1;
@@ -120,7 +127,7 @@ float Ob6Preview::process_sample() {
             const float morph = patch_.xmod_morph ? std::clamp(patch_.morph + .75f * patch_.xmod_env * env, 0.0f, 1.0f) : patch_.morph;
             v.coeff = dsp::sem_svf_compute(hz, resonance_, morph, patch_.bandpass, patch_.drive, fs_);
         }
-        const float hz = v.hz * v.spread.pitch * v.pitch_ratio * bend_ * lfo_pitch_ratio_;
+        const float hz = v.hz * v.spread.pitch * v.pitch_ratio * bend_ * lfo_pitch_ratio_ * tape_pitch_;
         float a = 0, b = 0, sub = 0;
         const auto wave = patch_loaded_ ? dsp::WAVE_SHAPE_MORPH : dsp::WAVE_SAWTOOTH;
         const float env_mod = patch_.xmod_env * v.filter_env.level();
