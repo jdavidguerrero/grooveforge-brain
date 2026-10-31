@@ -474,6 +474,42 @@ int main() {
     for (int i = 0; i < 128; ++i) if (!check(std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i)) < 1e-7f,
                                                "OB-6 GFP audio restores")) return 1;
     if (!check(ob6_audio.getRMSLevel(0, 0, 128) > 0, "OB-6 GFP audible")) return 1;
+    auto ob6_dry = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto ob6_wet = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto& enabled : ob6_preset.patch.sfx_on) enabled = false;
+    studio::preset_encode(ob6_preset, 3, ob6_bytes.data(), ob6_bytes.size());
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_dry.get())->import_preset(ob6_bytes.data(), ob6_bytes.size()), "OB-6 dry import")) return 1;
+    ob6_preset.patch.sfx_on[GF_SFX_DRIVE] = true;
+    ob6_preset.patch.sfx_mix[GF_SFX_DRIVE] = 1.0f;
+    ob6_preset.patch.sfx_p[GF_SFX_DRIVE][0] = .9f;
+    ob6_preset.patch.sfx_p[GF_SFX_DRIVE][1] = .7f;
+    studio::preset_encode(ob6_preset, 3, ob6_bytes.data(), ob6_bytes.size());
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_wet.get())->import_preset(ob6_bytes.data(), ob6_bytes.size()), "OB-6 wet import")) return 1;
+    juce::MemoryBlock wet_state;
+    ob6_wet->getStateInformation(wet_state);
+    auto ob6_wet_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_wet_restore->setStateInformation(wet_state.getData(), int(wet_state.getSize()));
+    ob6_dry->prepareToPlay(44100, 128); ob6_wet->prepareToPlay(44100, 128);
+    ob6_wet_restore->prepareToPlay(44100, 128);
+    juce::AudioBuffer<float> wet_restored_audio(2, 128);
+    double fx_difference = 0;
+    for (int block = 0; block < 40; ++block) {
+        juce::MidiBuffer dry_events, wet_events, restored_events;
+        if (block == 0) {
+            dry_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            wet_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            restored_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        }
+        ob6_dry->processBlock(ob6_audio, dry_events); ob6_wet->processBlock(ob6_restored_audio, wet_events);
+        ob6_wet_restore->processBlock(wet_restored_audio, restored_events);
+        for (int i = 0; i < 128; ++i) {
+            const float dry = ob6_audio.getSample(0, i), wet = ob6_restored_audio.getSample(0, i);
+            if (!check(std::isfinite(dry) && std::isfinite(wet), "OB-6 FX finite")) return 1;
+            if (!check(std::abs(wet - wet_restored_audio.getSample(0, i)) < 1e-7f, "OB-6 FX state restores")) return 1;
+            fx_difference += std::abs(dry - wet);
+        }
+    }
+    if (!check(fx_difference > .01, "OB-6 GFP drive changes audio")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);
