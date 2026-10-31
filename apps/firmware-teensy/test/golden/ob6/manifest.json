@@ -1,0 +1,113 @@
+{
+  "sample_rate": 44100,
+  "channels": 1,
+  "frames": 88320,
+  "source": "firmware graph with single-instance software shim",
+  "limitations": [
+    "PJRC noise uses scalar modular implementation and harness seed order",
+    "no Studio effects or physical hardware",
+    "control ticks before each block"
+  ],
+  "git_commit": "e096edd420e7f5fbafbf471ea369143c2e2d0125",
+  "git_dirty": true,
+  "compiler": "Apple clang version 17.0.0 (clang-1700.4.4.1)",
+  "architecture": "arm64",
+  "cases": [
+    {
+      "name": "chord",
+      "pcm_sha256": "d240205eeddb46620ada237046d9178dd873c77ac7109cdd454e6ce688bedd0f",
+      "attack_rms": 3364.6677700926134,
+      "tail_rms": 0.9760251021362104
+    },
+    {
+      "name": "notch",
+      "pcm_sha256": "9a7212f0e583eb5c0cae4178d112f652d40c3b2f7865a41e0ef0e86c5d801239",
+      "attack_rms": 1659.606472119219,
+      "tail_rms": 0.6083789937201974
+    },
+    {
+      "name": "bandpass",
+      "pcm_sha256": "2f89be725de7e150f9abe113af277ccd08c92ef1f1f4dd2bd4703ba98d695577",
+      "attack_rms": 490.57451156781474,
+      "tail_rms": 0.36297382825763075
+    },
+    {
+      "name": "sync",
+      "pcm_sha256": "1636f849f6bf1820298b6d50bad826f03d67c9cc9f4b44fcece9be990100c14e",
+      "attack_rms": 3045.8632255733346,
+      "tail_rms": 1.1051018052650172
+    },
+    {
+      "name": "xmod",
+      "pcm_sha256": "9c8def91251c7a3de5019bd164e9659eb1379f6053b58bdbb51eadc1bc8cd10a",
+      "attack_rms": 3078.1982531344534,
+      "tail_rms": 1.0110019782374315
+    },
+    {
+      "name": "white_noise",
+      "pcm_sha256": "1e8b949a8fecb090500919fb042b1398820b20d0e861f7eecd9a37989101ee85",
+      "attack_rms": 3342.748397711081,
+      "tail_rms": 0.9897600719366285
+    },
+    {
+      "name": "voice_steal",
+      "pcm_sha256": "670eb57f0269551ad83a709366da015ae9b2b9cf80b2cf070edf36945ab908da",
+      "attack_rms": 4661.206870307303,
+      "tail_rms": 1.5639293462301933
+    },
+    {
+      "name": "glide_voice_steal",
+      "pcm_sha256": "e81478915c18db181b1db9075ac56a5c9eec850bc7ba96d01e49cb5c522b9392",
+      "attack_rms": 4661.206870307303,
+      "tail_rms": 1.6124903100484045
+    }
+  ],
+  "source_sha256": {
+    "apps/firmware-teensy/src/audio/analog_vca.h": "1cfde8239e64b824ed76a6129fac940d2b84e77341d89c63a60b03dc08e0e09c",
+    "apps/firmware-teensy/src/audio/audio_graph.h": "f69cd1a9fb58e55580c86921eebae430e44cf2c995330e523cac2933f5ed508d",
+    "apps/firmware-teensy/src/audio/color_noise.h": "f7ac1e5354000b14b24747537035a4efd60c3ff1efd3126426818e26896ae0bb",
+    "apps/firmware-teensy/src/audio/drive_stage.h": "a5d797d7d661bb7081f86b6fab955d677525b67e833eac1e7794aa729fac820a",
+    "apps/firmware-teensy/src/audio/juno_chorus.h": "b253c1212cb5143a7b63e3cdd7f3dded408f98327a7611b50b3fcca6cbdc18e3",
+    "apps/firmware-teensy/src/audio/moog_ladder.h": "a3eccd0d498e3b5f0d07adcb9baf3b90c677240dd18efd5475eb420180432c8d",
+    "apps/firmware-teensy/src/audio/output_stage.h": "c423f16e749705b79236a9f37f6cabb0969a7784b674a19e6003235ec2eb875f",
+    "apps/firmware-teensy/src/audio/phaser_stage.h": "eb08eba7229b7e3b48f5756250315ee7d946146ee5295d874fb9c64d85470838",
+    "apps/firmware-teensy/src/audio/pingpong_delay.h": "e6e18aa8bf6d128483efb1514967fa4a38e26c89a80e14f52ad6ca8c082a760f",
+    "apps/firmware-teensy/src/audio/plate_reverb.h": "d8d4697489dbb068433063ab6982948f4172db683dbf5ffb2a501872566c6ab6",
+    "apps/firmware-teensy/src/audio/polyblep_waveform.h": "00264e8a1a77eba4c69bcec02de8fdffab6550e3b9804bfc0ed95607841c92b6",
+    "apps/firmware-teensy/src/audio/pump_stage.h": "e2fb7ec5b37e844a6be0dd4fe53f7dd7a81a42ccac7f3e8dee92d92ba9646d22",
+    "apps/firmware-teensy/src/audio/sem_svf.h": "12ee12a766624d76bd011b9a4a01ee24caeb87a8f9e9b11fad27454042fd7957",
+    "apps/firmware-teensy/src/audio/tape_stage.h": "e7b7da88e4b3f50a6c941f86a9966bc689202f99b5ad976139b8350fdfe4ff12",
+    "apps/firmware-teensy/src/dsp/analog_env.h": "45bccc0193b89aadeacc06d34a106cd3223327981d6bc3c07d473fbc0b455215",
+    "apps/firmware-teensy/src/dsp/arp_core.h": "42027dfd56e9e624477036f74db9e2def9b74491cfed8d6120926d6c0cae9a64",
+    "apps/firmware-teensy/src/dsp/chord_memory.h": "4d1ff58910ca85c199e521b45c5f2c0d3fa0a89c8ef8c0871142d763332f33ca",
+    "apps/firmware-teensy/src/dsp/color_noise_core.h": "f2cf8693d73fc54255932011197164a1dc207a1765078d2b2727d04faeddb53b",
+    "apps/firmware-teensy/src/dsp/drive_core.h": "e41cc1f5d7334e90099fbd681c2e2f5dcb4c05b11714c1ac460691e1f2823bb2",
+    "apps/firmware-teensy/src/dsp/fast_math.h": "0036e14505635a1ca118a7c806d2c875c586610c95f09dce119f4741091df8a0",
+    "apps/firmware-teensy/src/dsp/groove_clock.h": "14a40b0baf59c8ff63f2a13c1aff9314aea19c003484240525bce8c915f9e8b2",
+    "apps/firmware-teensy/src/dsp/juno_chorus_core.h": "25ed2ac81078f2c3abe98225d58b4da9a965e975f060ffa05c09024f7d34243b",
+    "apps/firmware-teensy/src/dsp/ladder_stage_core.h": "7c161f8432805ef9225ebdddadbef582f5a0a8a79d0fd273c821341c4a51fded",
+    "apps/firmware-teensy/src/dsp/lfo.h": "6cc80a9218e803cd5e6f63061b33a2bb843b2bb4229ece0ec46a42f1a7fe4819",
+    "apps/firmware-teensy/src/dsp/modal_modes.h": "9b355c09eb88ee13a402590d2a35e63479fa40f1472a445606313eddc47dcd44",
+    "apps/firmware-teensy/src/dsp/note_stack.h": "cb611fa641353ac339203694f63956a4911d7e6041defafc15b0c22747211f3a",
+    "apps/firmware-teensy/src/dsp/output_stage_core.h": "0ed01fee5d80f7c406ccf541f619c78dc11726f42b21bb7480fd531dac8c557a",
+    "apps/firmware-teensy/src/dsp/phaser_core.h": "667f12ee63b8f37e2e5ee74bced1949ddd65c566feed30c419196fd9d682c33e",
+    "apps/firmware-teensy/src/dsp/pingpong_delay_core.h": "9b56a77cc9dca18362a908016a5380ae404bb57d1554a76cfd8a6bba88c54042",
+    "apps/firmware-teensy/src/dsp/polyblep_core.h": "c8adc728bb491de2efec92b4defe08d42cfb79099a2e8a8a636915dd61141f33",
+    "apps/firmware-teensy/src/dsp/prophet_control_core.h": "a2b4dd75534ddbbd2530b0b500e5c5d8a0e273b82340757973a8d71bdf8ddbfc",
+    "apps/firmware-teensy/src/dsp/pump.h": "8e5c8543771aa7375eb9394584f77fc3e37751bc4f7675a175abfb9123368ded",
+    "apps/firmware-teensy/src/dsp/sem_svf_core.h": "8ad8acb63a86a75e1a4dd32b75a41d8d2480f1cfaa7d891ad9313b1f09f56fd6",
+    "apps/firmware-teensy/src/dsp/tape_core.h": "433d95b4ded4a0c1e191ef38993b117e9e3cb9337a2e3d6d17dffdcbbfff148f",
+    "apps/firmware-teensy/src/dsp/tape_modulation.h": "6ce83110f6fb020a77d1069a9aae2696110bba80b958405bd02659a07f588b29",
+    "apps/firmware-teensy/src/dsp/voice_spread.h": "c54e206e0f1b114a3ef840be85b6cfc1ce7e7f64955ce163c2109aea7071837d",
+    "apps/firmware-teensy/src/dsp/zdf_ladder.h": "d1029c93c2854b481cb3b2da9011b136bfb37561d366a1f0b471da539c9ecf14",
+    "apps/firmware-teensy/src/engines/lfo_mod.h": "910e39caed00164edba2e737789208068009e3f65467f83c3de6a2866deb4798",
+    "apps/firmware-teensy/src/engines/ob6.cpp": "d663a873c30a798b66b1aea06f398602e5a1b24c890f61cc46c26ebb396f5d84",
+    "apps/firmware-teensy/src/engines/ob6.h": "2fc03917a2cba586cd29dfb1374384df10e2eb1a214f6845b9322ea2cc64f067",
+    "tools/gemelo-baseline/ob6_reference.cpp": "9df685b0f9e8d0ee7190688e268cf41cc1b3f70f1e0c229fe4bc137cf8909cd4",
+    "tools/gemelo-baseline/run.py": "353dc4f29f00377ac046a5ca412c85a6c97c900abe6a0e16fac708cc42d68a81",
+    "tools/gemelo-baseline/run_ob6.py": "400f63bea0e913a6a8ca678fc66624ac63ca7f8d426a056078102496fc2d938d",
+    "tools/gemelo-baseline/shim/Arduino.h": "780e8168f1bcba6bec12874d9f3effd9b1351fd5e48ee41e590da38c35161db6",
+    "tools/gemelo-baseline/shim/Audio.h": "6f2c209aa2e7d6203ce81e899f361170fd9919772133f9d7823f507843d76e79",
+    "tools/gemelo-baseline/shim/audio.cpp": "2eaae4f81b5415bc8617fff52a9b07d249a469977097b04a6de32b3db7a5ce32"
+  }
+}

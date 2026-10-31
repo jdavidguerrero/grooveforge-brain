@@ -8,6 +8,7 @@
 #include "preset_import.h"
 #include "dx7_preview.h"
 #include "juno_preview.h"
+#include "ob6_preview.h"
 #include "juno_preset.h"
 #include "dx7_preset.h"
 #include "ui/groove_macros.h"
@@ -159,6 +160,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout make_layout() {
     for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i)
         parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{JUNO_MACRO_IDS[i], 1},
             "Juno " + String(DX_MACRO_LABELS[i]), NormalisableRange<float>{0, 1}, i < 3 ? 0.0f : 1.0f));
+    parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"ob6_preview", 1}, "OB-6 Preview", false));
     return {parameters.begin(), parameters.end()};
 }
 
@@ -173,6 +175,7 @@ public:
         lfo_sync_ = state_.getRawParameterValue("lfo_sync");
         dx7_enabled_ = state_.getRawParameterValue("dx7_preview");
         juno_enabled_ = state_.getRawParameterValue("juno_preview");
+        ob6_enabled_ = state_.getRawParameterValue("ob6_preview");
         for (size_t i = 0; i < JUNO_OSC.size(); ++i) juno_osc_[i] = state_.getRawParameterValue(JUNO_OSC[i].id);
         juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
         for (size_t i = 0; i < JUNO_ENV.size(); ++i) juno_env_[i] = state_.getRawParameterValue(JUNO_ENV[i].id);
@@ -247,6 +250,7 @@ public:
         dx7_.prepare(sample_rate);
         juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         juno_.prepare(sample_rate);
+        ob6_.prepare(sample_rate);
         dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -271,17 +275,18 @@ public:
         juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
         juno_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
         applied_sequence_ = 0;
-        last_juno_mode_ = false; last_dx7_mode_ = false;
+        last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false;
     }
-    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
+    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         buffer.clear();
-        const bool juno_mode = juno_enabled_->load() >= 0.5f;
-        const bool dx7_mode = !juno_mode && dx7_enabled_->load() >= 0.5f;
+        const bool ob6_mode = ob6_enabled_->load() >= 0.5f;
+        const bool juno_mode = !ob6_mode && juno_enabled_->load() >= 0.5f;
+        const bool dx7_mode = !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
         if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
-        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; }
+        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; }
         apply_pending_preset();
         if (juno_mode) {
             bool macro_changed = false;
@@ -294,6 +299,7 @@ public:
             apply_juno_voice_groove_automation(); apply_juno_groove_automation(); apply_juno_fx_automation();
         }
         if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
+        if (ob6_mode) ob6_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
         engine_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
         if (dx7_mode) {
             load_dx_macros();
@@ -326,7 +332,8 @@ public:
             end = juce::jlimit(position, buffer.getNumSamples(), end);
             while (position < end) {
                 float left, right;
-                if (juno_mode) { float in_l, in_r; juno_.process_frame(in_l, in_r); juno_bus_.process_external_stereo(in_l, in_r, left, right); }
+                if (ob6_mode) { left = ob6_.process_sample(); right = left; }
+                else if (juno_mode) { float in_l, in_r; juno_.process_frame(in_l, in_r); juno_bus_.process_external_stereo(in_l, in_r, left, right); }
                 else if (dx7_mode) {
                     dx7_.set_tape_pitch(dx_bus_.tape_pitch_ratio());
                     dx_bus_.process_external_frame(dx7_.process_sample(), left, right);
@@ -342,15 +349,18 @@ public:
             if (metadata.numBytes > 3) continue;
             const auto message = metadata.getMessage();
             if (message.isNoteOn()) {
-                if (juno_mode) juno_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                if (ob6_mode) ob6_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                else if (juno_mode) juno_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (dx7_mode) dx_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else engine_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
             } else if (message.isNoteOff()) {
-                if (juno_mode) juno_bus_.note_off(uint8_t(message.getNoteNumber()));
+                if (ob6_mode) ob6_.note_off(uint8_t(message.getNoteNumber()));
+                else if (juno_mode) juno_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (dx7_mode) dx_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else engine_.note_off(uint8_t(message.getNoteNumber()));
             } else if (message.isPitchWheel()) {
-                if (juno_mode) juno_.set_pitch_bend(message.getPitchWheelValue());
+                if (ob6_mode) ob6_.set_pitch_bend(message.getPitchWheelValue());
+                else if (juno_mode) juno_.set_pitch_bend(message.getPitchWheelValue());
                 else if (dx7_mode) dx7_.set_pitch_bend(message.getPitchWheelValue());
                 else engine_.set_pitch_bend(message.getPitchWheelValue());
             }
@@ -360,7 +370,8 @@ public:
                 else engine_.setWheel(message.getControllerValue() / 127.0f);
             }
             else if (message.isController() && message.getControllerNumber() == 64) {
-                if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
+                if (ob6_mode) ob6_.set_sustain(message.getControllerValue() >= 64);
+                else if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
                 else engine_.set_sustain(message.getControllerValue() >= 64);
             } else if (juno_mode && message.isController() && (message.getControllerNumber() == 14 ||
@@ -383,7 +394,7 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); }
         }
         render_until(buffer.getNumSamples());
     }
@@ -506,6 +517,7 @@ public:
             set_dx7_groove_parameters(preset);
             set_dx7_macro_parameters(preset);
         }
+        set("ob6_preview", 0.0f);
         set("juno_preview", engine == 1 ? 1.0f : 0.0f);
         set("dx7_preview", engine == 4 ? 1.0f : 0.0f);
         std::lock_guard<std::mutex> guard(preset_mutex_);
@@ -1020,6 +1032,8 @@ private:
     gf::ProphetPreview juno_bus_;
     gf::Dx7Preview dx7_;
     gf::JunoPreview juno_;
+    gf::Ob6Preview ob6_;
+    bool last_ob6_mode_ = false;
     float juno_wheel_ = 0.0f;
     bool last_juno_mode_ = false;
     bool last_dx7_mode_ = false;
@@ -1038,6 +1052,7 @@ private:
     std::atomic<float>* lfo_sync_ = nullptr;
     std::atomic<float>* dx7_enabled_ = nullptr;
     std::atomic<float>* juno_enabled_ = nullptr;
+    std::atomic<float>* ob6_enabled_ = nullptr;
     std::array<std::atomic<float>*, JUNO_OSC.size()> juno_osc_{};
     std::array<float, JUNO_OSC.size()> juno_osc_last_{};
     std::array<std::atomic<float>*, JUNO_ENV.size()> juno_env_{};
@@ -1127,8 +1142,13 @@ public:
         juno_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
         addAndMakeVisible(juno_toggle_);
         juno_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "juno_preview", juno_toggle_);
-        juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) dx7_toggle_.setToggleState(false, juce::sendNotification); };
-        dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) juno_toggle_.setToggleState(false, juce::sendNotification); };
+        ob6_toggle_.setButtonText("OB-6 PREVIEW");
+        ob6_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
+        addAndMakeVisible(ob6_toggle_);
+        ob6_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "ob6_preview", ob6_toggle_);
+        juno_toggle_.onClick = [this] { if (juno_toggle_.getToggleState()) { dx7_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
+        dx7_toggle_.onClick = [this] { if (dx7_toggle_.getToggleState()) { juno_toggle_.setToggleState(false, juce::sendNotification); ob6_toggle_.setToggleState(false, juce::sendNotification); } };
+        ob6_toggle_.onClick = [this] { if (ob6_toggle_.getToggleState()) { juno_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); } };
         juno_page_.setButtonText("OSC");
         juno_page_.onClick = [this] { juno_page_index_ = (juno_page_index_ + 1) % 8; update_status(); };
         addChildComponent(juno_page_);
@@ -1368,10 +1388,10 @@ public:
         g.drawText("GROOVEFORGE  /  BRAIN", 28, 15, 350, 24, juce::Justification::left);
         g.setColour(juce::Colour(0xfff2f2f2));
         g.setFont(juce::Font(juce::FontOptions(22.0f, juce::Font::bold)));
-        g.drawText(juno_toggle_.getToggleState() ? "JUNO  /  PREVIEW" : dx7_toggle_.getToggleState() ? "DX7  /  PREVIEW" : "PROPHET  /  PREVIEW", 28, 40, 350, 28, juce::Justification::left);
+        g.drawText(ob6_toggle_.getToggleState() ? "OB-6  /  PREVIEW" : juno_toggle_.getToggleState() ? "JUNO  /  PREVIEW" : dx7_toggle_.getToggleState() ? "DX7  /  PREVIEW" : "PROPHET  /  PREVIEW", 28, 40, 350, 28, juce::Justification::left);
         g.setColour(juce::Colour(0xff9fe1cb));
         g.setFont(juce::Font(juce::FontOptions(12.0f)));
-        if (!dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
+        if (!dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
     }
 
     void resized() override {
@@ -1385,6 +1405,7 @@ public:
         sync_.setBounds(getWidth() - 260, 12, 105, 25);
         dx7_toggle_.setBounds(getWidth() - 380, 12, 115, 25);
         juno_toggle_.setBounds(getWidth() - 510, 12, 125, 25);
+        ob6_toggle_.setBounds(300, 42, 125, 25);
         dx_page_.setBounds(getWidth() - 155, 42, 120, 25);
         juno_page_.setBounds(getWidth() - 155, 42, 120, 25);
         for (size_t i = 0; i < JUNO_OSC.size(); ++i) {
@@ -1465,8 +1486,9 @@ private:
     void update_status() {
         const auto name = owner_.preset_name();
         displayed_preset_ = name;
-        const bool juno = juno_toggle_.getToggleState();
-        const bool dx7 = !juno && dx7_toggle_.getToggleState();
+        const bool ob6 = ob6_toggle_.getToggleState();
+        const bool juno = !ob6 && juno_toggle_.getToggleState();
+        const bool dx7 = !ob6 && !juno && dx7_toggle_.getToggleState();
         const bool dx_ops = dx7 && dx_page_index_ == 0, dx_voice = dx7 && dx_page_index_ == 1;
         const bool dx_fx = dx7 && dx_page_index_ == 2, dx_groove = dx7 && dx_page_index_ == 3, dx_macro = dx7 && dx_page_index_ == 4;
         dx_page_.setVisible(dx7);
@@ -1512,14 +1534,15 @@ private:
         for (auto& label : dx_macro_labels_) label.setVisible(dx_macro);
         for (auto& slider : dx_macro_sliders_) slider.setVisible(dx_macro);
         sync_.setEnabled(true);
-        status_.setText(juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
+        status_.setText(ob6 ? juce::String("OB-6 · PILOTO INICIAL · SIN GFP NI FX") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
             (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
         displayed_dx7_ = dx7_toggle_.getToggleState();
-        displayed_juno_ = juno;
+        displayed_juno_ = juno_toggle_.getToggleState();
+        displayed_ob6_ = ob6;
         repaint();
     }
     void timerCallback() override {
-        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState()) update_status();
+        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState()) update_status();
     }
     void choose_preset() {
         chooser_ = std::make_unique<juce::FileChooser>("Importar preset Juno, Prophet o DX7 GFP", juce::File(), "*.gfp");
@@ -1586,6 +1609,9 @@ private:
     std::array<juce::Label, JUNO_OSC.size()> juno_labels_;
     std::array<juce::Slider, JUNO_OSC.size()> juno_sliders_;
     std::array<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>, JUNO_OSC.size()> juno_attachments_;
+    juce::ToggleButton ob6_toggle_;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> ob6_attachment_;
+    bool displayed_ob6_ = false;
     juce::ToggleButton juno_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> juno_attachment_;
     bool displayed_juno_ = false;

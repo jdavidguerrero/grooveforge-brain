@@ -7,7 +7,7 @@
 
 constexpr int AUDIO_BLOCK_SAMPLES = 128;
 constexpr float AUDIO_SAMPLE_RATE_EXACT = 44100.0f;
-constexpr uint16_t WAVEFORM_SQUARE = 2, WAVEFORM_TRIANGLE = 3, WAVEFORM_PULSE = 5;
+constexpr uint16_t WAVEFORM_SAWTOOTH = 1, WAVEFORM_SQUARE = 2, WAVEFORM_TRIANGLE = 3, WAVEFORM_PULSE = 5;
 
 struct audio_block_t {
     int16_t data[AUDIO_BLOCK_SAMPLES]{};

@@ -73,3 +73,15 @@ python3 tools/gemelo-baseline/experiment_juno_block_clock.py --out /tmp/gf-juno-
 
 El experimento compila una copia temporal con una agenda distinta; nunca modifica ni representa el VST. Su informe
 incluye las limitaciones y hashes de la variante. No es una prueba con el Brain físico.
+
+## Referencia OB-6
+
+```sh
+python3 tools/gemelo-baseline/run_ob6.py --out /tmp/gf-ob6-reference
+python3 tools/gemelo-baseline/run_ob6.py --out /tmp/gf-ob6-check \
+  --compare apps/firmware-teensy/test/golden/ob6
+```
+
+Ocho escenas mono, con hash y reloj de control del shim: acorde, notch, BP, SYNC, X-MOD, ruido, robo de voz y glide
+con robo. La semilla de ruido del harness no representa necesariamente el orden de construcción del Brain. No incluye
+GFP, SYNTH FX ni hardware. Véase `apps/docs/sprints/gemelo-ob6-referencia.md`.

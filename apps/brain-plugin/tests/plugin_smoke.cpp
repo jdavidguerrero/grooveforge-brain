@@ -435,6 +435,23 @@ int main() {
                            "Juno audio independent of DAW block size")) return 1;
         }
     }
+    auto ob6_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto* ob6_select = find_parameter(*ob6_plugin, "ob6_preview");
+    if (!check(ob6_select != nullptr, "OB-6 selector exists")) return 1;
+    ob6_select->setValueNotifyingHost(1);
+    ob6_plugin->prepareToPlay(48000, 128);
+    juce::AudioBuffer<float> ob6_audio(2, 128);
+    juce::MidiBuffer ob6_midi;
+    ob6_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+    ob6_plugin->processBlock(ob6_audio, ob6_midi);
+    for (int i = 0; i < 40; ++i) if (!check(ob6_audio.getSample(0, i) == 0, "OB-6 MIDI offset")) return 1;
+    if (!check(ob6_audio.getRMSLevel(0, 40, 88) > 0, "OB-6 audible")) return 1;
+    juce::MemoryBlock ob6_state;
+    ob6_plugin->getStateInformation(ob6_state);
+    auto ob6_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_restore->setStateInformation(ob6_state.getData(), int(ob6_state.getSize()));
+    auto* ob6_restored_select = find_parameter(*ob6_restore, "ob6_preview");
+    if (!check(ob6_restored_select && ob6_restored_select->getValue() > .5f, "OB-6 selection restores")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);
