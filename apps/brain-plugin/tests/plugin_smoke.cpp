@@ -82,6 +82,105 @@ static bool ob6_midi_block_independence(double sample_rate) {
 int main() {
     juce::ScopedJuceInitialiser_GUI juce_gui;
     {
+        auto p = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto parameter = [](juce::AudioProcessor& processor, const char* id) -> juce::RangedAudioParameter* {
+            for (auto* item : processor.getParameters())
+                if (auto* value = dynamic_cast<juce::RangedAudioParameter*>(item); value && value->paramID == id) return value;
+            return nullptr;
+        };
+        auto* select = parameter(*p, "arp2600_preview");
+        auto* ring = parameter(*p, "arp2600.ring");
+        if (!check(select && ring, "ARP VST parameters")) return 1;
+        select->setValueNotifyingHost(1); ring->setValueNotifyingHost(.75f);
+        p->prepareToPlay(48000, 128);
+        juce::AudioBuffer<float> audio(2, 128);
+        juce::MidiBuffer midi;
+        midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+        p->processBlock(audio, midi);
+        for (int i = 0; i < 40; ++i) if (!check(audio.getSample(0, i) == 0, "ARP MIDI offset")) return 1;
+        if (!check(audio.getRMSLevel(0, 40, 88) > 0, "ARP VST audible")) return 1;
+        juce::MemoryBlock state;
+        p->getStateInformation(state);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(state.getData(), int(state.getSize()));
+        if (!check(parameter(*restored, "arp2600_preview")->getValue() > .5f &&
+                   std::abs(parameter(*restored, "arp2600.ring")->getValue() - .75f) < .001f, "ARP VST state restores")) return 1;
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(restored->createEditor());
+        auto* toggle = dynamic_cast<juce::ToggleButton*>(editor->findChildWithID("engine.arp2600"));
+        auto* slider = dynamic_cast<juce::Slider*>(editor->findChildWithID("arp2600.ring"));
+        if (!check(toggle && slider && toggle->getToggleState() && slider->isVisible(), "ARP editor state")) return 1;
+        slider->setValue(.4, juce::sendNotificationSync);
+        if (!check(std::abs(parameter(*restored, "arp2600.ring")->getValue() - .4f) < .001f, "ARP ring editor binding")) return 1;
+        select->setValueNotifyingHost(0);
+        juce::MidiBuffer empty;
+        p->processBlock(audio, empty);
+        select->setValueNotifyingHost(1);
+        p->processBlock(audio, empty);
+        if (!check(audio.getRMSLevel(0, 0, 128) == 0, "ARP motor switch clears notes")) return 1;
+        studio::Preset arp_preset;
+        if (!check(studio::factory_preset(5, 0, &arp_preset), "ARP factory preset")) return 1;
+        arp_preset.patch.osc[0][2] = 73;
+        arp_preset.patch.osc[0][0] = 2;
+        arp_preset.patch.osc[0][3] = 80; arp_preset.patch.mod[0][5] = 100;
+        arp_preset.patch.mod[0][1] = 1; arp_preset.patch.osc[1][1] = 2.3f;
+        arp_preset.patch.mod[0][2] = 5; arp_preset.patch.mod[0][3] = 80; arp_preset.patch.mod[0][4] = 65;
+        arp_preset.patch.mod[0][0] = 0; arp_preset.patch.glide = .5f;
+        arp_preset.patch.groove_on[GF_GROOVE_UNISON] = true;
+        arp_preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = 3;
+        arp_preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = 30;
+        arp_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = 80;
+        arp_preset.patch.lfo_amt[GF_DEST_PITCH] = .5f; arp_preset.patch.lfo_amt[GF_DEST_CUTOFF] = .4f;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        studio::preset_encode(arp_preset, 5, bytes.data(), bytes.size());
+        auto* importer = dynamic_cast<gf::PresetImport*>(p.get());
+        if (!check(importer && importer->import_preset(bytes.data(), bytes.size()) &&
+                   select->getValue() > .5f && std::abs(ring->getValue() - .73f) < .001f, "ARP GFP import")) return 1;
+        auto invalid = bytes; invalid[0] ^= 0xff;
+        if (!check(!importer->import_preset(invalid.data(), invalid.size()), "ARP invalid GFP rejected")) return 1;
+        juce::MemoryBlock preset_state;
+        p->getStateInformation(preset_state);
+        auto preset_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        preset_restore->setStateInformation(preset_state.getData(), int(preset_state.getSize()));
+        preset_restore->prepareToPlay(48000, 128);
+        juce::AudioBuffer<float> restored_audio(2, 128);
+        juce::MidiBuffer note_a, note_b;
+        note_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        note_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        p->processBlock(audio, note_a); preset_restore->processBlock(restored_audio, note_b);
+        for (int i = 0; i < 128; ++i)
+            if (!check(std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i)) < 1e-6f, "ARP GFP state audio restores")) return 1;
+        if (!check(restored_audio.getRMSLevel(0, 0, 128) > 0, "ARP restored preset audible")) return 1;
+        juce::MidiBuffer bend, no_bend;
+        bend.addEvent(juce::MidiMessage::pitchWheel(1, 16383), 64);
+        p->processBlock(audio, bend); preset_restore->processBlock(restored_audio, no_bend);
+        double bend_change = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == restored_audio.getSample(0, i), "ARP pitch bend offset")) return 1;
+            if (i >= 64) bend_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(bend_change > .0001, "ARP pitch bend changes sound")) return 1;
+        auto expression = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto expression_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* synth : {expression.get(), expression_reference.get()}) {
+            synth->setStateInformation(preset_state.getData(), int(preset_state.getSize()));
+            synth->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer expression_note_a, expression_note_b;
+        expression_note_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        expression_note_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        expression->processBlock(audio, expression_note_a); expression_reference->processBlock(restored_audio, expression_note_b);
+        juce::MidiBuffer expression_events, expression_empty;
+        expression_events.addEvent(juce::MidiMessage::controllerEvent(1, 1, 127), 64);
+        expression_events.addEvent(juce::MidiMessage::channelPressureChange(1, 127), 64);
+        expression->processBlock(audio, expression_events); expression_reference->processBlock(restored_audio, expression_empty);
+        double expression_change = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == restored_audio.getSample(0, i), "ARP expression MIDI offset")) return 1;
+            if (i >= 64) expression_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(expression_change > .0001, "ARP MIDI expression affects sound")) return 1;
+    }
+    {
         const auto model_parameter = [](juce::AudioProcessor& processor) -> juce::RangedAudioParameter* {
             for (auto* item : processor.getParameters())
                 if (auto* p = dynamic_cast<juce::RangedAudioParameter*>(item); p && p->paramID == "modeld_preview") return p;

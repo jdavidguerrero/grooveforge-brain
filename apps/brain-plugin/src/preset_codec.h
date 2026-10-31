@@ -9,7 +9,7 @@ namespace gf {
 
 /** @brief Decodifica un preset GFP Prophet, preservando `out` si el archivo es inválido. */
 bool decode_prophet_preset(const uint8_t* data, size_t size, studio::Preset& out);
-/** @brief Decodifica GFP Model D, Juno, Prophet, OB-6 o DX7 y devuelve el engine sin alterar salidas ante error. */
+/** @brief Decodifica GFP Model D, Juno, Prophet, OB-6, DX7 o ARP 2600 y devuelve el engine sin alterar salidas ante error. */
 bool decode_supported_preset(const uint8_t* data, size_t size, studio::Preset& out, uint8_t& engine);
 
 /** @brief Carga un preset Prophet del banco de fábrica compartido con el firmware. */

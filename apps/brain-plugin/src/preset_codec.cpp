@@ -33,7 +33,7 @@ bool decode_prophet_preset(const uint8_t* data, size_t size, studio::Preset& out
 
 bool decode_supported_preset(const uint8_t* data, size_t size, studio::Preset& out, uint8_t& engine) {
     if (!data) return false;
-    for (uint8_t candidate_engine : {uint8_t(0), uint8_t(1), uint8_t(2), uint8_t(3), uint8_t(4)}) {
+    for (uint8_t candidate_engine : {uint8_t(0), uint8_t(1), uint8_t(2), uint8_t(3), uint8_t(4), uint8_t(5)}) {
         studio::Preset candidate;
         if (studio::preset_decode(data, size, candidate_engine, &candidate) && finite_preset(candidate)) {
             out = candidate; engine = candidate_engine; return true;
