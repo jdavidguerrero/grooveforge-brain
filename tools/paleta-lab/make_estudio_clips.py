@@ -46,6 +46,35 @@ def indie_progresiones() -> dict[str, list]:
     return {f"acordes_{p}__decimas__tresillo": mcl.pattern(p, "decimas", "tresillo") for p in INDIE_PROGRESSIONS}
 
 
+# bajo-groove.md §1: el bajo indie sobre Am – F – C – E (menor con V prestado), fundamentales cerca de La1
+INDIE_BASS_ROOTS = (0, -4, 3, -5)          # La1 · Fa1 · Do2 · Mi1
+SENSIBLE = 4                               # Sol# sobre Mi: la última semicorchea del compás 4 sube a La
+# (semicorchea, duración, intervalo, velocity); ninguna en 0, 4, 8, 12 (el kick)
+INDIE_BASS = {
+    "bass_indie_rodante332": [(s, 1, 12 if s == 14 else 0, 96 if s in (3, 6, 11, 14) else 50)
+                              for s in range(16) if s % 4],
+    "bass_indie_tresillo_aire": [(3, 3, 0, 98), (6, 2, 12, 84), (11, 3, 0, 96), (14, 2, 7, 82)],
+    "bass_indie_contratiempo": [(2, 2, 0, 100), (6, 1, 0, 96), (7, 1, 0, 44), (10, 2, 0, 100), (14, 1, 12, 92),
+                                (15, 1, 0, 44)],
+}
+
+
+def indie_bajos() -> dict[str, list]:
+    out = {}
+    for name, pat in INDIE_BASS.items():
+        notes = []
+        for b, root in enumerate(INDIE_BASS_ROOTS):
+            for s, d, iv, v in pat:
+                if b == 3 and s + d > 15:                    # el compás 4 deja la última semicorchea a la sensible
+                    if s == 15:
+                        continue
+                    d = 15 - s
+                notes.append((b * BAR + s * S16, d * S16 - 10, ma.A1 + root + iv, v))
+        notes.append((3 * BAR + 15 * S16, S16 - 10, ma.A1 + INDIE_BASS_ROOTS[3] + SENSIBLE, 88))
+        out[name] = sorted(notes)
+    return out
+
+
 def _cycle(period: int, offset: int = 0, bars: int = 4, ch: str = "x") -> list[str]:
     """Un golpe cada `period` semicorcheas, corriéndose sobre los compases (polirritmo de ciclo impar)."""
     steps = {s for s in range(offset, 16 * bars, period)}
@@ -130,7 +159,7 @@ def main(argv=None):
         print(out / f"{name}.mid")
     indie = Path(a.dataset) / "midi" / "adn" / "estudio_indie"
     indie.mkdir(parents=True, exist_ok=True)
-    for name, notes in {**indie_progresiones(), **indie_perc()}.items():
+    for name, notes in {**indie_progresiones(), **indie_perc(), **indie_bajos()}.items():
         write_mid(indie / f"{name}.mid", notes, 124, name)
         print(indie / f"{name}.mid")
 

@@ -208,3 +208,15 @@ def test_las_bases_332_llevan_el_3_3_2():
         lines = [l for bars in mec.INDIE_PERC[name]["roles"].values() for l in bars]
         steps = [{i for i, c in enumerate(l) if c != "."} for l in lines]
         assert any({0, 3, 6} <= s or {0, 6, 12} <= s for s in steps), name     # 3-3-2 en semicorcheas o en corcheas
+
+
+def test_bajos_indie_fuera_del_kick_y_con_la_sensible():
+    import make_estudio_clips as mec
+    bajos = mec.indie_bajos()
+    assert set(bajos) == set(mec.INDIE_BASS)
+    for name, notes in bajos.items():
+        assert all(round(t / 120) % 4 != 0 for t, *_ in notes), name                 # nada en las negras del kick
+        last = max(notes)
+        assert last[0] == 3 * 1920 + 15 * 120 and last[2] == 33 - 1, name            # Sol#1 resuelve en el La1
+        assert all(t + d <= 4 * 1920 for t, d, *_ in notes)
+        assert all(28 <= n <= 36 + 12 for _, _, n, _ in notes), name                 # Mi1 … Do3
