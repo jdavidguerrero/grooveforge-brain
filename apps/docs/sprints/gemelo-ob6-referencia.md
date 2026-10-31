@@ -72,3 +72,7 @@ En la ejecución arm64 del 31 de octubre de 2026, X-MOD pasó de correlación 0,
 ## Incremento: presión de canal MIDI
 
 En el sketch Studio, la presión de canal normalizada suma hasta una octava al cutoff y hasta 0,3 a la profundidad de vibrato, antes de limitar esta última a 1. El piloto OB-6 aplica la misma relación en su tick de control de 1 kHz; el evento MIDI se recibe en su offset del bloque y el cambio se escucha desde el siguiente tick, sin afectar muestras anteriores. No se interpreta presión polifónica como presión de canal. Se prueba señal, offset e independencia de instancias; no se mide latencia del teclado ni equivalencia física. Referencia: `49-studio-brain.cpp`, `engine_mod` y `after_touch`.
+
+## Incremento: CC MIDI de macros OB-6
+
+Como en Studio, CC 14 controla DRIFT, CC 15 GRIT, CC 16 POCKET y CC 19 MOVE. El audio aplica cada mensaje en su posición MIDI; la publicación al parámetro del DAW se hace desde el hilo de mensajes. El estado y el GFP incluyen el valor pendiente aunque se guarden antes de esa publicación. Se comprueban offset, aislamiento entre instancias, restauración y exportación. DRIFT afecta notas nuevas; las demás macros afectan el sonido activo. Referencias: `49-studio-brain.cpp`, `control_change`; `ui/page_params.cpp`, `apply_cc`.

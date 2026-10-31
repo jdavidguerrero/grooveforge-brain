@@ -537,6 +537,40 @@ int main() {
     macro_ob6.patch.sfx_on[GF_SFX_CHORUS] = true;
     std::array<uint8_t, studio::PRESET_BYTES> macro_ob6_bytes{};
     studio::preset_encode(macro_ob6, 3, macro_ob6_bytes.data(), macro_ob6_bytes.size());
+    auto ob6_cc_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto ob6_cc_b = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto* p : {ob6_cc_a.get(), ob6_cc_b.get()}) {
+        if (!check(dynamic_cast<gf::PresetImport*>(p)->import_preset(macro_ob6_bytes.data(), macro_ob6_bytes.size()), "OB-6 CC preset import")) return 1;
+        p->prepareToPlay(44100, 128);
+    }
+    juce::AudioBuffer<float> ob6_cc_audio_a(2, 128), ob6_cc_audio_b(2, 128);
+    juce::MidiBuffer ob6_cc_events_a, ob6_cc_events_b;
+    ob6_cc_events_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_cc_events_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    for (int cc : {14, 15, 16, 19}) ob6_cc_events_a.addEvent(juce::MidiMessage::controllerEvent(1, cc, 127), 64);
+    ob6_cc_a->processBlock(ob6_cc_audio_a, ob6_cc_events_a); ob6_cc_b->processBlock(ob6_cc_audio_b, ob6_cc_events_b);
+    for (int i = 0; i < 64; ++i)
+        if (!check(ob6_cc_audio_a.getSample(0, i) == ob6_cc_audio_b.getSample(0, i), "OB-6 CC respects MIDI offset")) return 1;
+    double ob6_cc_difference = 0;
+    for (int i = 64; i < 128; ++i) ob6_cc_difference += std::abs(ob6_cc_audio_a.getSample(0, i) - ob6_cc_audio_b.getSample(0, i));
+    if (!check(ob6_cc_difference > .0001, "OB-6 CC macros change audio")) return 1;
+    juce::MemoryBlock ob6_cc_state;
+    ob6_cc_a->getStateInformation(ob6_cc_state);
+    auto ob6_cc_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    ob6_cc_restored->setStateInformation(ob6_cc_state.getData(), int(ob6_cc_state.getSize()));
+    if (!check(find_parameter(*ob6_cc_restored, "ob6.drift")->getValue() > .99f &&
+               find_parameter(*ob6_cc_restored, "ob6.macro.grit")->getValue() > .99f &&
+               find_parameter(*ob6_cc_restored, "ob6.macro.pocket")->getValue() > .99f &&
+               find_parameter(*ob6_cc_restored, "ob6.macro.move")->getValue() > .99f,
+               "OB-6 pending CC values restore")) return 1;
+    std::vector<uint8_t> ob6_cc_export;
+    studio::Preset ob6_cc_decoded;
+    uint8_t ob6_cc_engine = 0;
+    if (!check(dynamic_cast<gf::PresetImport*>(ob6_cc_a.get())->export_ob6_preset(ob6_cc_export) &&
+               gf::decode_supported_preset(ob6_cc_export.data(), ob6_cc_export.size(), ob6_cc_decoded, ob6_cc_engine) &&
+               ob6_cc_engine == 3 && ob6_cc_decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] > 99 &&
+               ob6_cc_decoded.patch.drive > macro_ob6.patch.drive && ob6_cc_decoded.cutoff_hz > macro_ob6.cutoff_hz,
+               "OB-6 pending CC values export")) return 1;
     auto macro_ob6_a = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     auto* macro_ob6_import = dynamic_cast<gf::PresetImport*>(macro_ob6_a.get());
     if (!check(macro_ob6_import->import_preset(macro_ob6_bytes.data(), macro_ob6_bytes.size()), "OB-6 macro preset import")) return 1;

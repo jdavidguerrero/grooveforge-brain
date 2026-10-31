@@ -280,6 +280,8 @@ public:
             dx_groove_[group][field] = state_.getRawParameterValue(dx_groove_id(group, field));
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i) dx_macro_[i] = state_.getRawParameterValue(DX_MACRO_IDS[i]);
+        ob6_cc_parameters_[0] = state_.getParameter("ob6.drift");
+        for (size_t i = 1; i < ob6_cc_parameters_.size(); ++i) ob6_cc_parameters_[i] = state_.getParameter(OB6_MACRO_IDS[i - 1]);
         juno_cc_parameters_[0] = state_.getParameter("juno.drift");
         for (size_t i = 1; i < juno_cc_parameters_.size(); ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
         cc_parameters_[0] = state_.getParameter("dx7.drift");
@@ -388,7 +390,7 @@ public:
         if (ob6_mode) {
             bool macro_changed = false;
             for (size_t i = 0; i < OB6_MACRO_IDS.size(); ++i) {
-                const float value = ob6_macro_[i]->load();
+                const float value = ob6_macro_value(i);
                 if (value != ob6_macro_last_[i]) { ob6_macro_last_[i] = value; macro_changed = true; }
             }
             if (macro_changed) { ob6_osc_last_.fill(std::numeric_limits<float>::quiet_NaN()); ob6_fx_last_.fill(std::numeric_limits<float>::quiet_NaN()); }
@@ -480,6 +482,17 @@ public:
                 else if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
                 else engine_.set_sustain(message.getControllerValue() >= 64);
+            } else if (ob6_mode && message.isController() && (message.getControllerNumber() == 14 ||
+                       message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
+                const int number = message.getControllerNumber();
+                const size_t index = number == 14 ? 0u : number == 15 ? 1u : number == 16 ? 2u : 3u;
+                ob6_cc_values_[index].store(message.getControllerValue() / 127.0f, std::memory_order_relaxed);
+                ob6_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                ob6_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                ob6_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                apply_ob6_osc_automation(); apply_ob6_fx_automation();
+                const auto effective = ob6_effective_controls(ob6_base_.patch);
+                ob6_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
             } else if (juno_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
                 const int number = message.getControllerNumber();
@@ -513,6 +526,9 @@ public:
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
             if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("junoPendingCC" + juce::String(int(i)), juno_cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
+            if (ob6_cc_sequence_[i].load(std::memory_order_acquire) != ob6_cc_delivered_[i].load(std::memory_order_acquire))
+                snapshot.setProperty("ob6PendingCC" + juce::String(int(i)), ob6_cc_values_[i].load(std::memory_order_relaxed), nullptr);
         snapshot.setProperty("dx7ParamVersion", 6, nullptr);
         snapshot.setProperty("junoOscVersion", 1, nullptr);
         snapshot.setProperty("junoEnvVersion", 1, nullptr);
@@ -546,6 +562,13 @@ public:
             const auto id = "junoPendingCC" + juce::String(int(i));
             has_juno_pending_cc[i] = tree.hasProperty(id);
             if (has_juno_pending_cc[i]) { juno_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
+        }
+        std::array<float, 4> ob6_pending_cc{};
+        std::array<bool, 4> has_ob6_pending_cc{};
+        for (size_t i = 0; i < ob6_pending_cc.size(); ++i) {
+            const auto id = "ob6PendingCC" + juce::String(int(i));
+            has_ob6_pending_cc[i] = tree.hasProperty(id);
+            if (has_ob6_pending_cc[i]) { ob6_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
         const int ob6_macro_version = int(tree.getProperty("ob6MacroVersion", 0));
         tree.removeProperty("ob6MacroVersion", nullptr);
@@ -612,6 +635,8 @@ public:
             if (has_pending_cc[i]) cc_parameters_[i]->setValueNotifyingHost(std::clamp(pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < juno_pending_cc.size(); ++i)
             if (has_juno_pending_cc[i]) juno_cc_parameters_[i]->setValueNotifyingHost(std::clamp(juno_pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < ob6_pending_cc.size(); ++i)
+            if (has_ob6_pending_cc[i]) ob6_cc_parameters_[i]->setValueNotifyingHost(std::clamp(ob6_pending_cc[i], 0.0f, 1.0f));
         preset_raw_ = raw;
         preset_name_ = raw.getSize() ? juce::String::fromUTF8(decoded.name) : juce::String();
         publish_preset(raw);
@@ -819,6 +844,8 @@ public:
 
 private:
     void clear_cc_pending() {
+        for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
+            ob6_cc_delivered_[i].store(ob6_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
             juno_cc_delivered_[i].store(juno_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
@@ -832,6 +859,13 @@ private:
         return juno_cc_sequence_[index].load(std::memory_order_acquire) != juno_cc_delivered_[index].load(std::memory_order_acquire)
             ? juno_cc_values_[index].load(std::memory_order_relaxed) : fallback;
     }
+    float ob6_cc_value(size_t index, float fallback) const {
+        return ob6_cc_sequence_[index].load(std::memory_order_acquire) != ob6_cc_delivered_[index].load(std::memory_order_acquire)
+            ? ob6_cc_values_[index].load(std::memory_order_relaxed) : fallback;
+    }
+    float ob6_macro_value(size_t index) const {
+        return index < 3 ? ob6_cc_value(index + 1, ob6_macro_[index]->load()) : ob6_macro_[index]->load();
+    }
     float juno_macro_value(size_t index) const {
         return index < 3 ? juno_cc_value(index + 1, juno_macro_[index]->load()) : juno_macro_[index]->load();
     }
@@ -840,6 +874,12 @@ private:
             dx_macro_current_[i] = i < 3 ? cc_value(i + 1, dx_macro_[i]->load()) : dx_macro_[i]->load();
     }
     void timerCallback() override {
+        for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i) {
+            const auto sequence = ob6_cc_sequence_[i].load(std::memory_order_acquire);
+            if (sequence == ob6_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            ob6_cc_parameters_[i]->setValueNotifyingHost(ob6_cc_values_[i].load(std::memory_order_relaxed));
+            ob6_cc_delivered_[i].store(sequence, std::memory_order_release);
+        }
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i) {
             const auto sequence = juno_cc_sequence_[i].load(std::memory_order_acquire);
             if (sequence == juno_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
@@ -1060,8 +1100,8 @@ private:
     }
     void write_ob6_macros(studio::Patch& patch) const {
         auto& m = patch.groove[GF_GROOVE_MACRO];
-        m[GF_MACRO_GRIT] = ob6_macro_[0]->load() * 100; m[GF_MACRO_POCKET] = ob6_macro_[1]->load() * 100;
-        m[GF_MACRO_MOVE] = ob6_macro_[2]->load() * 100; m[GF_MACRO_GRIT_RES] = ob6_macro_[3]->load() * 100;
+        m[GF_MACRO_GRIT] = ob6_macro_value(0) * 100; m[GF_MACRO_POCKET] = ob6_macro_value(1) * 100;
+        m[GF_MACRO_MOVE] = ob6_macro_value(2) * 100; m[GF_MACRO_GRIT_RES] = ob6_macro_[3]->load() * 100;
         m[GF_MACRO_GRIT_MOD] = ob6_macro_[4]->load() * 100; m[GF_MACRO_POCKET_VEL] = ob6_macro_[5]->load() * 100;
     }
     std::array<float, 3> ob6_effective_controls(const studio::Patch& original) const {
@@ -1093,7 +1133,7 @@ private:
         p.lfo_div = uint8_t(v(12)); p.lfo_amt[GF_DEST_CUTOFF] = v(13); p.lfo_amt[GF_DEST_PITCH] = v(14);
         p.lfo_amt[GF_DEST_PWM] = v(15); p.glide = v(16); p.groove_on[GF_GROOVE_UNISON] = v(17) >= .5f;
         p.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = v(18); p.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = v(19);
-        p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = v(20);
+        p.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = ob6_cc_value(0, v(20) * .01f) * 100;
     }
     void set_ob6_voice_parameters(const studio::Preset& preset) {
         const auto values = ob6_voice_values(preset.patch);
@@ -1122,7 +1162,7 @@ private:
             if (value != ob6_osc_last_[i]) { ob6_osc_last_[i] = value; changed = true; }
         }
         for (size_t i = 0; i < OB6_VOICE.size(); ++i) {
-            const float value = ob6_voice_[i]->load();
+            const float value = i == 20 ? ob6_cc_value(0, ob6_voice_[i]->load() * .01f) * 100 : ob6_voice_[i]->load();
             if (value != ob6_voice_last_[i]) { ob6_voice_last_[i] = value; changed = true; }
         }
         if (!changed) return;
@@ -1152,7 +1192,7 @@ private:
             p.patch.sfx_mix[fx] = ob6_fx_last_[size_t(fx * 5 + 1)];
             for (int field = 0; field < 3; ++field) p.patch.sfx_p[fx][field] = ob6_fx_last_[size_t(fx * 5 + field + 2)];
         }
-        p.patch = studio::move_sfx(p.patch, ob6_macro_[2]->load());
+        p.patch = studio::move_sfx(p.patch, ob6_macro_value(2));
         gf::apply_synth_fx_preview(ob6_bus_, p, 3);
     }
     void set_ob6_groove_parameters(const studio::Preset& preset) {
@@ -1395,6 +1435,9 @@ private:
     std::array<float, 21> dx_groove_last_{};
     std::array<std::atomic<float>*, DX_MACRO_IDS.size()> dx_macro_{};
     std::array<float, DX_MACRO_IDS.size()> dx_macro_current_{}, dx_macro_last_{};
+    std::array<juce::RangedAudioParameter*, 4> ob6_cc_parameters_{};
+    std::array<std::atomic<float>, 4> ob6_cc_values_{};
+    std::array<std::atomic<uint64_t>, 4> ob6_cc_sequence_{}, ob6_cc_delivered_{};
     std::array<juce::RangedAudioParameter*, 4> juno_cc_parameters_{};
     std::array<std::atomic<float>, 4> juno_cc_values_{};
     std::array<std::atomic<uint64_t>, 4> juno_cc_sequence_{}, juno_cc_delivered_{};
