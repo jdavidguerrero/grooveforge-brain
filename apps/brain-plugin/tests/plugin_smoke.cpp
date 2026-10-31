@@ -118,6 +118,23 @@ int main() {
         if (!check(wave->isVisible() && !slider->isVisible(), "ARP oscillator page visibility")) return 1;
         wave->setValue(4, juce::sendNotificationSync);
         if (!check(parameter(*restored, "arp2600.osc1.wave")->getValue() > .99f, "ARP oscillator editor binding")) return 1;
+        page->onClick();
+        auto* lfo = dynamic_cast<juce::Slider*>(editor->findChildWithID("arp2600.lfo_pitch"));
+        if (!check(lfo && lfo->isVisible() && !wave->isVisible(), "ARP envelope and LFO page")) return 1;
+        lfo->setValue(.65, juce::sendNotificationSync);
+        if (!check(std::abs(parameter(*restored, "arp2600.lfo_pitch")->getValue() - .65f) < .001f, "ARP voice editor binding")) return 1;
+        page->onClick();
+        auto* groove = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.groove.0.0"));
+        auto* fx = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.fx.0.0"));
+        if (!check(groove && fx && groove->isVisible() && !fx->isVisible(), "ARP groove page")) return 1;
+        groove->setValue(1, juce::sendNotificationSync);
+        if (!check(parameter(*restored, "arp2600.groove.pump.on")->getValue() > .5f &&
+                   parameter(*restored, "ob6.groove.pump.on")->getValue() < .5f, "ARP groove editor isolation")) return 1;
+        page->onClick();
+        if (!check(fx->isVisible() && !groove->isVisible(), "ARP FX page")) return 1;
+        fx->setValue(1, juce::sendNotificationSync);
+        if (!check(parameter(*restored, "arp2600.fx.drive.on")->getValue() > .5f &&
+                   parameter(*restored, "ob6.fx.drive.on")->getValue() < .5f, "ARP FX editor isolation")) return 1;
         select->setValueNotifyingHost(0);
         juce::MidiBuffer empty;
         p->processBlock(audio, empty);
@@ -149,10 +166,16 @@ int main() {
         auto* wave_parameter = parameter(*p, "arp2600.osc1.wave");
         if (!check(wave_parameter != nullptr, "ARP oscillator parameter")) return 1;
         wave_parameter->setValueNotifyingHost(wave_parameter->convertTo0to1(4));
+        auto* lfo_parameter = parameter(*p, "arp2600.lfo_pitch");
+        if (!check(lfo_parameter != nullptr, "ARP voice parameter")) return 1;
+        lfo_parameter->setValueNotifyingHost(.65f);
+        parameter(*p, "arp2600.groove.pump.on")->setValueNotifyingHost(1);
+        parameter(*p, "arp2600.fx.drive.on")->setValueNotifyingHost(1);
         if (!check(importer->export_arp2600_preset(exported) &&
                    gf::decode_supported_preset(exported.data(), exported.size(), decoded, exported_engine) &&
                    exported_engine == 5 && std::abs(decoded.patch.osc[0][2] - 45) < .1f && decoded.patch.osc[0][0] == 4 &&
-                   decoded.patch.mod[0][1] > .5f && decoded.patch.groove_on[GF_GROOVE_UNISON], "ARP GFP export")) return 1;
+                   decoded.patch.mod[0][1] > .5f && std::abs(decoded.patch.lfo_amt[GF_DEST_PITCH] - .65f) < .02f && decoded.patch.groove_on[GF_GROOVE_UNISON] && decoded.patch.groove_on[GF_GROOVE_PUMP] &&
+                   decoded.patch.sfx_on[GF_SFX_DRIVE], "ARP GFP export")) return 1;
         ring->setValueNotifyingHost(.73f);
         auto invalid = bytes; invalid[0] ^= 0xff;
         if (!check(!importer->import_preset(invalid.data(), invalid.size()), "ARP invalid GFP rejected")) return 1;

@@ -13,3 +13,11 @@ El VST exporta desde el GFP ARP importado, preservando los campos que aún no se
 ## Edición de osciladores y PATCH
 
 Una página OSC/PATCH expone formas, niveles y ratio de los dos VCO, pulse width, ruido, MONO, SYNC y los destinos del VCO 3 como parámetros independientes automatizables. Los valores proceden de los mismos rangos GFP del firmware; al abrir proyectos anteriores se inicializan desde su GFP y los nuevos conservan sus ediciones en el estado del DAW. Cambiar MONO limpia las notas activas para evitar voces atascadas. La exportación escribe estas ediciones en el GFP antes de aplicar las macros. La prueba valida interfaz, automatización, persistencia y exportación; no compara con hardware.
+
+## Edición ENV/LFO y voz
+
+La página ENV/LFO expone decay y sustain de amplitud; la envolvente de filtro, drive y velocity; forma, velocidad, división y destinos del LFO; glide, UNISON y DRIFT. Los valores base se guardan por separado de las macros del GFP, que se aplican al preparar el sonido; attack y release generales permanecen en la página VOICE. El estado del DAW y la exportación GFP preservan las ediciones. Los proyectos anteriores con GFP inicializan los parámetros desde el preset. Cambiar MONO limpia las voces; cambiar UNISON afecta notas nuevas. La prueba cubre enlace visual, automatización y persistencia; no es una prueba A/B física.
+
+## Edición GROOVE y FX
+
+PUMP, ARP y CHORD y las cinco etapas de SYNTH FX tienen parámetros propios de ARP y páginas de edición compartidas visualmente con los demás motores. Cada motor mantiene sus valores independientes. Los valores base se guardan en el DAW y en el GFP; MOVE se aplica a los efectos activos al renderizar y se incorpora al exportar. La migración inicializa proyectos anteriores a partir de su GFP. Se comprueban enlace de interfaz, aislamiento, persistencia y salida, sin A/B físico.
