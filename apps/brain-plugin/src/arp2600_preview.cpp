@@ -11,7 +11,7 @@ void Arp2600Preview::prepare(double rate) {
 }
 void Arp2600Preview::reset() {
     tick_ = 0; age_ = 0; next_ = 0; sustain_ = false;
-    vco3_phase_ = 0; vco3_pitch_ratio_ = vco3_cutoff_ratio_ = bend_ = 1;
+    vco3_phase_ = 0; vco3_pitch_ratio_ = vco3_cutoff_ratio_ = bend_ = tape_pitch_ = 1;
     mono_notes_.clear(); mono_deferred_.fill(false);
     drift_.state = 0x2545F491u; drift_.amount = patch_.drift;
     lfo_ = dsp::Lfo{}; lfo_.set_rate_hz(patch_.lfo_rate); lfo_.set_shape(patch_.lfo_shape);
@@ -93,6 +93,7 @@ void Arp2600Preview::note_off(uint8_t note) {
 void Arp2600Preview::set_pitch_bend(int value) {
     bend_ = std::exp2((2.0f * (std::clamp(value, 0, 16383) - 8192) / 8192.0f) / 12.0f);
 }
+void Arp2600Preview::set_tape_pitch(float ratio) { tape_pitch_ = std::isfinite(ratio) ? std::clamp(ratio, .5f, 2.0f) : 1.0f; }
 void Arp2600Preview::set_sustain(bool down) {
     sustain_ = down;
     if (!down && patch_.mono) {
@@ -147,8 +148,8 @@ float Arp2600Preview::process_sample() {
         if (control) v.filter.set_frequency(std::clamp((cutoff_ + patch_.env_amount * (1.0f - patch_.velocity_filter * (1.0f - v.velocity)) * v.filter_env.step() * 6000) * v.spread.cutoff * v.cutoff_ratio * vco3_cutoff_ratio_ * lfo_cutoff_ratio_, 20.0f, 20000.0f));
         float a = 0, b = 0;
         dsp::SyncEvents sync_events;
-        v.vco1.render(patch_.wave1, v.hz * v.spread.pitch * v.pitch_ratio * vco3_pitch_ratio_ * bend_ * lfo_pitch_ratio_ / fs_, std::clamp(patch_.pulse_width + lfo_pwm_, .05f, .95f), 1, &a, 1, 0, patch_.sync ? &sync_events : nullptr, nullptr, nullptr, 0, 0, control);
-        v.vco2.render(patch_.wave2, v.hz * v.spread.pitch * v.pitch_ratio * patch_.ratio * vco3_pitch_ratio_ * bend_ * lfo_pitch_ratio_ / fs_, std::clamp(patch_.pulse_width + lfo_pwm_, .05f, .95f), 1, &b, 1, 0, nullptr, patch_.sync ? &sync_events : nullptr, nullptr, 0, 0, control);
+        v.vco1.render(patch_.wave1, v.hz * v.spread.pitch * v.pitch_ratio * vco3_pitch_ratio_ * bend_ * lfo_pitch_ratio_ * tape_pitch_ / fs_, std::clamp(patch_.pulse_width + lfo_pwm_, .05f, .95f), 1, &a, 1, 0, patch_.sync ? &sync_events : nullptr, nullptr, nullptr, 0, 0, control);
+        v.vco2.render(patch_.wave2, v.hz * v.spread.pitch * v.pitch_ratio * patch_.ratio * vco3_pitch_ratio_ * bend_ * lfo_pitch_ratio_ * tape_pitch_ / fs_, std::clamp(patch_.pulse_width + lfo_pwm_, .05f, .95f), 1, &b, 1, 0, nullptr, patch_.sync ? &sync_events : nullptr, nullptr, 0, 0, control);
         float noise = 0; v.noise.render(&noise, 1);
         const float sum = patch_.level1 + patch_.level2 + ring_ + .5f * patch_.noise_level;
         const float gain = sum > 1.15f ? 1.15f / sum : 1;

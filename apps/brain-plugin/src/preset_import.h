@@ -18,6 +18,8 @@ public:
     virtual bool export_ob6_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta el GFP Model D cargado con los controles disponibles. */
     virtual bool export_model_d_preset(std::vector<uint8_t>& data) = 0;
+    /** @brief Exporta el GFP ARP 2600 cargado con los controles disponibles. */
+    virtual bool export_arp2600_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta DX7 v5 si el estado puede representarse en GFP. */
     virtual bool export_dx7_preset(std::vector<uint8_t>& data) = 0;
 };

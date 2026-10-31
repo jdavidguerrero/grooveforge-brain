@@ -135,6 +135,15 @@ int main() {
         auto* importer = dynamic_cast<gf::PresetImport*>(p.get());
         if (!check(importer && importer->import_preset(bytes.data(), bytes.size()) &&
                    select->getValue() > .5f && std::abs(ring->getValue() - .73f) < .001f, "ARP GFP import")) return 1;
+        std::vector<uint8_t> exported;
+        studio::Preset decoded;
+        uint8_t exported_engine = 99;
+        ring->setValueNotifyingHost(.45f);
+        if (!check(importer->export_arp2600_preset(exported) &&
+                   gf::decode_supported_preset(exported.data(), exported.size(), decoded, exported_engine) &&
+                   exported_engine == 5 && std::abs(decoded.patch.osc[0][2] - 45) < .1f &&
+                   decoded.patch.mod[0][1] > .5f && decoded.patch.groove_on[GF_GROOVE_UNISON], "ARP GFP export")) return 1;
+        ring->setValueNotifyingHost(.73f);
         auto invalid = bytes; invalid[0] ^= 0xff;
         if (!check(!importer->import_preset(invalid.data(), invalid.size()), "ARP invalid GFP rejected")) return 1;
         juce::MemoryBlock preset_state;
@@ -179,6 +188,56 @@ int main() {
             if (i >= 64) expression_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
         }
         if (!check(expression_change > .0001, "ARP MIDI expression affects sound")) return 1;
+        studio::Preset bus_preset;
+        if (!check(studio::factory_preset(5, 0, &bus_preset), "ARP bus factory preset")) return 1;
+        for (auto& on : bus_preset.patch.sfx_on) on = false;
+        for (auto& on : bus_preset.patch.groove_on) on = false;
+        std::array<uint8_t, studio::PRESET_BYTES> bus_bytes{};
+        studio::preset_encode(bus_preset, 5, bus_bytes.data(), bus_bytes.size());
+        auto dry = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto wet = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(dynamic_cast<gf::PresetImport*>(dry.get())->import_preset(bus_bytes.data(), bus_bytes.size()), "ARP dry GFP")) return 1;
+        bus_preset.patch.sfx_on[GF_SFX_DRIVE] = true; bus_preset.patch.sfx_mix[GF_SFX_DRIVE] = 1;
+        bus_preset.patch.sfx_p[GF_SFX_DRIVE][0] = .9f;
+        studio::preset_encode(bus_preset, 5, bus_bytes.data(), bus_bytes.size());
+        if (!check(dynamic_cast<gf::PresetImport*>(wet.get())->import_preset(bus_bytes.data(), bus_bytes.size()), "ARP FX GFP")) return 1;
+        dry->prepareToPlay(44100, 128); wet->prepareToPlay(44100, 128);
+        double fx_change = 0;
+        for (int block = 0; block < 24; ++block) {
+            juce::MidiBuffer dry_midi, wet_midi;
+            if (!block) { dry_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); wet_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0); }
+            dry->processBlock(audio, dry_midi); wet->processBlock(restored_audio, wet_midi);
+            for (int i = 0; i < 128; ++i) fx_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(fx_change > .01, "ARP GFP effects process audio")) return 1;
+        bus_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 50;
+        bus_preset.patch.sfx_on[GF_SFX_CHORUS] = true;
+        bus_preset.patch.sfx_p[GF_SFX_CHORUS][0] = .2f;
+        studio::preset_encode(bus_preset, 5, bus_bytes.data(), bus_bytes.size());
+        auto* wet_import = dynamic_cast<gf::PresetImport*>(wet.get());
+        if (!check(wet_import->import_preset(bus_bytes.data(), bus_bytes.size()), "ARP MOVE preset")) return 1;
+        std::vector<uint8_t> bus_export;
+        studio::Preset bus_exported; uint8_t bus_engine = 99;
+        if (!check(wet_import->export_arp2600_preset(bus_export) &&
+                   gf::decode_supported_preset(bus_export.data(), bus_export.size(), bus_exported, bus_engine) &&
+                   bus_engine == 5 && bus_exported.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] == 0 &&
+                   std::abs(bus_exported.patch.sfx_p[GF_SFX_CHORUS][0] - .35f) < .02f,
+                   "ARP export preserves MOVE effects")) return 1;
+        bus_preset.patch.sfx_on[GF_SFX_DRIVE] = false;
+        bus_preset.patch.groove_on[GF_GROOVE_ARP] = true;
+        bus_preset.patch.groove[GF_GROOVE_ARP][GF_ARP_LATCH] = 0;
+        studio::preset_encode(bus_preset, 5, bus_bytes.data(), bus_bytes.size());
+        auto arp = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(dynamic_cast<gf::PresetImport*>(arp.get())->import_preset(bus_bytes.data(), bus_bytes.size()), "ARP arpeggiator GFP")) return 1;
+        arp->prepareToPlay(44100, 128);
+        double arp_energy = 0;
+        for (int block = 0; block < 200; ++block) {
+            juce::MidiBuffer events;
+            if (!block) events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            arp->processBlock(audio, events);
+            arp_energy += audio.getRMSLevel(0, 0, 128);
+        }
+        if (!check(arp_energy > .001, "ARP GFP arpeggiator produces audio")) return 1;
     }
     {
         const auto model_parameter = [](juce::AudioProcessor& processor) -> juce::RangedAudioParameter* {

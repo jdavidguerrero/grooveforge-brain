@@ -38,6 +38,8 @@ public:
     void note_off(uint8_t note);
     /** @brief Aplica pitch bend MIDI en el rango fijo de ±2 semitonos. */
     void set_pitch_bend(int value);
+    /** @brief Aplica la desviación instantánea de afinación de TAPE. */
+    void set_tape_pitch(float ratio);
     /** @brief Cambia el estado del pedal de sustain. */
     void set_sustain(bool down);
     /** @brief Cambia el filtro y los tiempos de ataque y liberación. */
@@ -71,7 +73,7 @@ private:
     std::array<bool, 128> mono_deferred_{};
     void release_mono_note(uint8_t note);
     float fs_ = 44100, tick_ = 0, cutoff_ = 1200, resonance_ = .707f, attack_ = 10, release_ = 500, ring_ = .2f;
-    float vco3_phase_ = 0, vco3_pitch_ratio_ = 1, vco3_cutoff_ratio_ = 1, bend_ = 1;
+    float vco3_phase_ = 0, vco3_pitch_ratio_ = 1, vco3_cutoff_ratio_ = 1, bend_ = 1, tape_pitch_ = 1;
     float wheel_ = 0, pressure_ = 0, bpm_ = 120, lfo_pitch_ratio_ = 1, lfo_cutoff_ratio_ = 1, lfo_pwm_ = 0;
     bool lfo_sync_ = false;
     uint64_t age_ = 0;

@@ -411,16 +411,19 @@ public:
         ob6_delay_right_.assign(delay_length, 0);
         modeld_delay_left_.assign(delay_length, 0);
         modeld_delay_right_.assign(delay_length, 0);
+        arp2600_delay_left_.assign(delay_length, 0); arp2600_delay_right_.assign(delay_length, 0);
         plate_memory_.assign(gf::PlateReverbPreview::required_samples(float(sample_rate > 0.0 ? sample_rate : 44100.0)), 0);
         dx_plate_memory_.assign(plate_memory_.size(), 0);
         juno_plate_memory_.assign(plate_memory_.size(), 0);
         ob6_plate_memory_.assign(plate_memory_.size(), 0);
         modeld_plate_memory_.assign(plate_memory_.size(), 0);
+        arp2600_plate_memory_.assign(plate_memory_.size(), 0);
         engine_.prepare(sample_rate);
         dx_bus_.prepare(sample_rate);
         juno_bus_.prepare(sample_rate);
         ob6_bus_.prepare(sample_rate);
         modeld_bus_.prepare(sample_rate);
+        arp2600_bus_.prepare(sample_rate);
         dx7_.prepare(sample_rate);
         juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         juno_.prepare(sample_rate);
@@ -443,6 +446,11 @@ public:
         modeld_bus_.set_voice_sink(&modeld_,
             [](void* context, uint8_t note, float velocity) { static_cast<gf::ModelDPreview*>(context)->note_on(note, velocity); },
             [](void* context, uint8_t note) { static_cast<gf::ModelDPreview*>(context)->note_off(note); });
+        arp2600_bus_.set_voice_sink(&arp2600_,
+            [](void* context, uint8_t note, float velocity) { static_cast<gf::Arp2600Preview*>(context)->note_on(note, velocity); },
+            [](void* context, uint8_t note) { static_cast<gf::Arp2600Preview*>(context)->note_off(note); });
+        arp2600_bus_.set_delay_memory(arp2600_delay_left_.data(), arp2600_delay_right_.data(), uint32_t(delay_length));
+        arp2600_bus_.set_plate_memory(arp2600_plate_memory_.data(), arp2600_plate_memory_.size());
         engine_.set_delay_memory(delay_left_.data(), delay_right_.data(), uint32_t(delay_length));
         engine_.set_plate_memory(plate_memory_.data(), plate_memory_.size());
         dx_bus_.set_delay_memory(dx_delay_left_.data(), dx_delay_right_.data(), uint32_t(delay_length));
@@ -473,8 +481,8 @@ public:
         applied_sequence_ = 0;
         last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false; last_modeld_mode_ = false; last_arp2600_mode_ = false;
     }
-    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); }
+    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         buffer.clear();
@@ -484,7 +492,7 @@ public:
         const bool juno_mode = !arp2600_mode && !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
         const bool dx7_mode = !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
         if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
-        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); last_arp2600_mode_ = arp2600_mode; }
+        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; }
         apply_pending_preset();
         if (arp2600_mode) { arp2600_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load()); arp2600_.set_ring_mix(arp2600_ring_->load()); }
         if (modeld_mode) {
@@ -553,6 +561,7 @@ public:
         juno_bus_.set_transport(bpm, has_position, position_beats, running);
         ob6_bus_.set_transport(bpm, has_position, position_beats, running);
         modeld_bus_.set_transport(bpm, has_position, position_beats, running);
+        arp2600_bus_.set_transport(bpm, has_position, position_beats, running);
         engine_.set_lfo_sync(lfo_sync_->load() >= 0.5f, bpm);
         dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f);
@@ -564,7 +573,10 @@ public:
             end = juce::jlimit(position, buffer.getNumSamples(), end);
             while (position < end) {
                 float left, right;
-                if (arp2600_mode) { left = right = arp2600_.process_sample(); }
+                if (arp2600_mode) {
+                    arp2600_.set_tape_pitch(arp2600_bus_.tape_pitch_ratio());
+                    arp2600_bus_.process_external_frame(arp2600_.process_sample(), left, right);
+                }
                 else if (modeld_mode) {
                     modeld_.set_tape_pitch(modeld_bus_.tape_pitch_ratio());
                     modeld_bus_.process_external_frame(modeld_.process_sample(), left, right);
@@ -589,14 +601,14 @@ public:
             if (metadata.numBytes > 3) continue;
             const auto message = metadata.getMessage();
             if (message.isNoteOn()) {
-                if (arp2600_mode) arp2600_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
+                if (arp2600_mode) arp2600_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (modeld_mode) modeld_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (ob6_mode) ob6_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (juno_mode) juno_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else if (dx7_mode) dx_bus_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
                 else engine_.note_on(uint8_t(message.getNoteNumber()), message.getFloatVelocity());
             } else if (message.isNoteOff()) {
-                if (arp2600_mode) arp2600_.note_off(uint8_t(message.getNoteNumber()));
+                if (arp2600_mode) arp2600_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (modeld_mode) modeld_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (ob6_mode) ob6_bus_.note_off(uint8_t(message.getNoteNumber()));
                 else if (juno_mode) juno_bus_.note_off(uint8_t(message.getNoteNumber()));
@@ -631,7 +643,7 @@ public:
                 ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_);
             }
             else if (message.isController() && message.getControllerNumber() == 64) {
-                if (arp2600_mode) arp2600_.set_sustain(message.getControllerValue() >= 64);
+                if (arp2600_mode) arp2600_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (modeld_mode) modeld_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (ob6_mode) ob6_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
@@ -716,7 +728,7 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); }
         }
         render_until(buffer.getNumSamples());
     }
@@ -955,6 +967,31 @@ public:
         preset_raw_.replaceAll(data, size);
         preset_name_ = juce::String::fromUTF8(preset.name);
         publish_preset(preset_raw_);
+        return true;
+    }
+    bool export_arp2600_preset(std::vector<uint8_t>& data) override {
+        if (arp2600_enabled_->load() < .5f || lfo_sync_->load() >= .5f) return false;
+        studio::Preset preset;
+        {
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            uint8_t source = 99;
+            if (!preset_raw_.getSize() || !gf::decode_supported_preset(static_cast<const uint8_t*>(preset_raw_.getData()),
+                    preset_raw_.getSize(), preset, source) || source != 5) return false;
+        }
+        const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
+        float va, vf; studio::macro_vel_depths(preset.patch, &va, &vf);
+        preset.patch = studio::move_sfx(studio::macro_patch(preset.patch, 5), move);
+        preset.patch.vel_amp = va * 100; preset.patch.vel_cut = vf * 100;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_POCKET] = 0;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 0;
+        preset.cutoff_hz = cutoff_->load();
+        preset.reso_norm = std::clamp((resonance_->load() - .1f) / 4.9f, 0.0f, 1.0f);
+        preset.patch.attack_ms = attack_->load(); preset.patch.release_ms = release_->load();
+        preset.patch.osc[0][2] = arp2600_ring_->load() * 100.0f;
+        std::vector<uint8_t> encoded(studio::PRESET_BYTES);
+        if (studio::preset_encode(preset, 5, encoded.data(), encoded.size()) != encoded.size()) return false;
+        data = std::move(encoded);
         return true;
     }
     bool export_model_d_preset(std::vector<uint8_t>& data) override {
@@ -1802,6 +1839,8 @@ private:
         if (sequence != preset_sequence_.load(std::memory_order_acquire)) return;
         if (size == 0) {
             arp2600_.set_patch(gf::Arp2600Patch{});
+            studio::Preset empty_arp; studio::patch_init(empty_arp.patch, 5);
+            gf::apply_synth_fx_preview(arp2600_bus_, empty_arp, 5); gf::apply_groove_preview(arp2600_bus_, empty_arp, false);
             engine_ = gf::ProphetPreview{};
             engine_.prepare(sample_rate_);
             engine_.set_delay_memory(delay_left_.data(), delay_right_.data(), uint32_t(delay_left_.size()));
@@ -1813,7 +1852,11 @@ private:
             if (preset_engine == 5) {
                 arp2600_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
                 arp2600_.set_patch(gf::make_arp2600_patch(preset));
-                arp2600_.reset();
+                arp2600_.reset(); arp2600_bus_.reset();
+                auto effects = preset;
+                effects.patch = studio::move_sfx(preset.patch, studio::macro_amount(preset.patch, GF_MACRO_MOVE));
+                gf::apply_synth_fx_preview(arp2600_bus_, effects, 5);
+                gf::apply_groove_preview(arp2600_bus_, preset, false);
             } else if (preset_engine == 0) {
                 const auto initial = modeld_effective_controls(preset.patch);
                 modeld_.set_parameters(initial[0], initial[1], attack_->load(), initial[2]);
@@ -1856,6 +1899,7 @@ private:
     gf::ProphetPreview juno_bus_;
     gf::ProphetPreview ob6_bus_;
     gf::ProphetPreview modeld_bus_;
+    gf::ProphetPreview arp2600_bus_;
     gf::Dx7Preview dx7_;
     gf::JunoPreview juno_;
     gf::Ob6Preview ob6_;
@@ -1892,11 +1936,13 @@ private:
     std::vector<int16_t> juno_delay_left_, juno_delay_right_;
     std::vector<int16_t> ob6_delay_left_, ob6_delay_right_;
     std::vector<int16_t> modeld_delay_left_, modeld_delay_right_;
+    std::vector<int16_t> arp2600_delay_left_, arp2600_delay_right_;
     std::vector<int16_t> plate_memory_;
     std::vector<int16_t> dx_plate_memory_;
     std::vector<int16_t> juno_plate_memory_;
     std::vector<int16_t> ob6_plate_memory_;
     std::vector<int16_t> modeld_plate_memory_;
+    std::vector<int16_t> arp2600_plate_memory_;
     juce::AudioProcessorValueTreeState state_;
     std::atomic<float>* cutoff_ = nullptr;
     std::atomic<float>* resonance_ = nullptr;
@@ -2526,7 +2572,7 @@ private:
         for (auto& slider : modeld_osc_sliders_) slider.setVisible(modeld && modeld_page_index_ == 1);
         for (auto& label : modeld_voice_labels_) label.setVisible(modeld && modeld_page_index_ == 2);
         for (auto& slider : modeld_voice_sliders_) slider.setVisible(modeld && modeld_page_index_ == 2);
-        export_.setVisible(dx7 || juno || ob6 || modeld);
+        export_.setVisible(dx7 || juno || ob6 || modeld || arp2600);
         dx_page_.setButtonText(dx_ops ? "VOICE" : dx_voice ? "FX" : dx_fx ? "GROOVE" : dx_groove ? "MACROS" : "OPERATORS");
         for (auto& knob : knobs_) knob.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0));
         for (auto& label : labels_) label.setVisible(!dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0));
@@ -2550,7 +2596,7 @@ private:
         arp2600_ring_label_.setVisible(arp2600);
         arp2600_ring_slider_.setVisible(arp2600);
         sync_.setEnabled(true);
-        status_.setText(arp2600 ? (name.isEmpty() ? juce::String("ARP 2600 INIT") : name) + " · ARP 2600 GFP PARCIAL · SIN FX" : modeld ? juce::String((name.isEmpty() ? juce::String("MODEL D INIT") : name) + " · MODEL D GFP PARCIAL") : ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
+        status_.setText(arp2600 ? (name.isEmpty() ? juce::String("ARP 2600 INIT") : name) + " · ARP 2600 GFP PARCIAL" : modeld ? juce::String((name.isEmpty() ? juce::String("MODEL D INIT") : name) + " · MODEL D GFP PARCIAL") : ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
             (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
         displayed_dx7_ = dx7_toggle_.getToggleState();
         displayed_juno_ = juno_toggle_.getToggleState();
@@ -2581,14 +2627,15 @@ private:
     }
     void export_dx7() {
         std::vector<uint8_t> bytes;
+        const bool arp2600 = arp2600_toggle_.getToggleState();
         const bool juno = juno_toggle_.getToggleState();
         const bool ob6 = ob6_toggle_.getToggleState();
         const bool modeld = modeld_toggle_.getToggleState();
-        if (!(modeld ? owner_.export_model_d_preset(bytes) : ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
+        if (!(arp2600 ? owner_.export_arp2600_preset(bytes) : modeld ? owner_.export_model_d_preset(bytes) : ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
             status_.setText("EXPORT: DESACTIVA LFO SYNC Y CARGA UN GFP DEL ENGINE", juce::dontSendNotification);
             return;
         }
-        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(modeld ? "ModelD.gfp" : ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(arp2600 ? "ARP2600.gfp" : modeld ? "ModelD.gfp" : ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles |
                               juce::FileBrowserComponent::warnAboutOverwriting,
