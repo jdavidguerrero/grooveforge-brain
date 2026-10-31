@@ -14,7 +14,7 @@ add_library(gf_prophet_preview STATIC src/prophet_preview.cpp "${GF_FIRMWARE}/en
     "${GF_FIRMWARE}/dsp/lfo.cpp")
 target_include_directories(gf_prophet_preview PUBLIC src "${GF_FIRMWARE}")
 set_target_properties(gf_prophet_preview PROPERTIES POSITION_INDEPENDENT_CODE ON)
-add_library(gf_prophet_preset STATIC src/prophet_preset.cpp src/dx7_preview.cpp src/dx7_preset.cpp src/juno_preview.cpp src/juno_preset.cpp src/ob6_preview.cpp "${GF_FIRMWARE}/engines/dx7_core.cpp")
+add_library(gf_prophet_preset STATIC src/prophet_preset.cpp src/dx7_preview.cpp src/dx7_preset.cpp src/juno_preview.cpp src/juno_preset.cpp src/ob6_preview.cpp src/ob6_preset.cpp "${GF_FIRMWARE}/engines/dx7_core.cpp")
 target_link_libraries(gf_prophet_preset PUBLIC gf_prophet_preview gf_preset_codec)
 set_target_properties(gf_prophet_preset PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

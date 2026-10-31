@@ -82,6 +82,14 @@ int main() {
         if (!check(!gf::decode_supported_preset(malformed.data(), malformed.size(), output, decoded_engine) &&
                    decoded_engine == 1, "invalid Juno GFP preserves output")) return 1;
     }
+    if (!check(studio::factory_count(3) > 0, "OB-6 factory bank exists")) return 1;
+    for (uint8_t i = 0; i < studio::factory_count(3); ++i) {
+        studio::Preset input, output; uint8_t engine = 0;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        if (!check(studio::factory_preset(3, i, &input) && studio::preset_encode(input, 3, bytes.data(), bytes.size()) == bytes.size() &&
+                   gf::decode_supported_preset(bytes.data(), bytes.size(), output, engine) && engine == 3 &&
+                   std::strcmp(input.name, output.name) == 0, "OB-6 GFP factory roundtrip")) return 1;
+    }
     studio::Patch patch;
     patch.osc[0][0] = 12; patch.osc[0][1] = 35; patch.osc[0][2] = 1; patch.osc[0][3] = 1; patch.osc[0][4] = 1;
     patch.osc[1][0] = -12; patch.osc[1][1] = 7; patch.osc[1][2] = 60; patch.osc[1][3] = 1;

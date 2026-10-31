@@ -452,6 +452,28 @@ int main() {
     ob6_restore->setStateInformation(ob6_state.getData(), int(ob6_state.getSize()));
     auto* ob6_restored_select = find_parameter(*ob6_restore, "ob6_preview");
     if (!check(ob6_restored_select && ob6_restored_select->getValue() > .5f, "OB-6 selection restores")) return 1;
+    studio::Preset ob6_preset;
+    if (!check(studio::factory_preset(3, 0, &ob6_preset), "OB-6 factory preset")) return 1;
+    ob6_preset.patch.osc[0][6] = 80;
+    std::array<uint8_t, studio::PRESET_BYTES> ob6_bytes{};
+    studio::preset_encode(ob6_preset, 3, ob6_bytes.data(), ob6_bytes.size());
+    auto* ob6_import = dynamic_cast<gf::PresetImport*>(ob6_plugin.get());
+    if (!check(ob6_import && ob6_import->import_preset(ob6_bytes.data(), ob6_bytes.size()), "OB-6 GFP import")) return 1;
+    juce::MemoryBlock ob6_saved, ob6_after_invalid;
+    ob6_plugin->getStateInformation(ob6_saved);
+    if (!check(!ob6_import->import_preset(ob6_bytes.data(), ob6_bytes.size() - 1), "OB-6 rejects truncated GFP")) return 1;
+    ob6_plugin->getStateInformation(ob6_after_invalid);
+    if (!check(ob6_saved == ob6_after_invalid, "OB-6 invalid GFP preserves state")) return 1;
+    ob6_restore->setStateInformation(ob6_saved.getData(), int(ob6_saved.getSize()));
+    ob6_plugin->prepareToPlay(44100, 128); ob6_restore->prepareToPlay(44100, 128);
+    juce::AudioBuffer<float> ob6_restored_audio(2, 128);
+    juce::MidiBuffer ob6_event_a, ob6_event_b;
+    ob6_event_a.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_event_b.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    ob6_plugin->processBlock(ob6_audio, ob6_event_a); ob6_restore->processBlock(ob6_restored_audio, ob6_event_b);
+    for (int i = 0; i < 128; ++i) if (!check(std::abs(ob6_audio.getSample(0, i) - ob6_restored_audio.getSample(0, i)) < 1e-7f,
+                                               "OB-6 GFP audio restores")) return 1;
+    if (!check(ob6_audio.getRMSLevel(0, 0, 128) > 0, "OB-6 GFP audible")) return 1;
     auto params = a->getParameters();
     if (!check(!params.isEmpty(), "parameters available")) return 1;
     params[0]->setValueNotifyingHost(0.75f);

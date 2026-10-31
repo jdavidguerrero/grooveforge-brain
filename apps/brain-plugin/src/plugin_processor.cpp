@@ -9,6 +9,7 @@
 #include "dx7_preview.h"
 #include "juno_preview.h"
 #include "ob6_preview.h"
+#include "ob6_preset.h"
 #include "juno_preset.h"
 #include "dx7_preset.h"
 #include "ui/groove_macros.h"
@@ -327,6 +328,7 @@ public:
         engine_.set_lfo_sync(lfo_sync_->load() >= 0.5f, bpm);
         dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f);
+        ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f);
         int position = 0;
         auto render_until = [&](int end) {
             end = juce::jlimit(position, buffer.getNumSamples(), end);
@@ -365,7 +367,8 @@ public:
                 else engine_.set_pitch_bend(message.getPitchWheelValue());
             }
             else if (message.isController() && message.getControllerNumber() == 1) {
-                if (juno_mode) { juno_wheel_ = message.getControllerValue() / 127.0f; juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
+                if (ob6_mode) { ob6_wheel_ = message.getControllerValue() / 127.0f; ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
+                else if (juno_mode) { juno_wheel_ = message.getControllerValue() / 127.0f; juno_.set_lfo_control(juno_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
                 else if (dx7_mode) { dx7_wheel_ = message.getControllerValue() / 127.0f; dx7_.set_lfo_control(dx7_wheel_, bpm, lfo_sync_->load() >= 0.5f); }
                 else engine_.setWheel(message.getControllerValue() / 127.0f);
             }
@@ -497,15 +500,15 @@ public:
         clear_cc_pending();
         const auto patch = studio::macro_patch(preset.patch, engine);
         const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
-        const float cutoff = std::clamp(preset.cutoff_hz * studio::move_cutoff_mul(move), 20.0f, 8000.0f);
+        const float cutoff = std::clamp(preset.cutoff_hz * studio::move_cutoff_mul(move), GF_CUTOFF_RANGE[engine].lo, GF_CUTOFF_RANGE[engine].hi);
         const float reso = studio::move_resonance(studio::macro_resonance(preset.reso_norm, preset.patch), move);
         auto set = [&](const char* id, float value) {
             auto* p = state_.getParameter(id);
             p->setValueNotifyingHost(p->convertTo0to1(value));
         };
-        if (engine == 2 || engine == 1) {
+        if (engine == 2 || engine == 1 || engine == 3) {
             set("cutoff", cutoff);
-            set("resonance", std::clamp(0.1f + reso * 4.9f, 0.707f, 5.0f));
+            set("resonance", std::clamp(engine == 3 ? .7f + reso * 4.3f : 0.1f + reso * 4.9f, 0.707f, 5.0f));
             set("attack", patch.attack_ms);
             set("release", patch.release_ms);
         }
@@ -517,7 +520,7 @@ public:
             set_dx7_groove_parameters(preset);
             set_dx7_macro_parameters(preset);
         }
-        set("ob6_preview", 0.0f);
+        set("ob6_preview", engine == 3 ? 1.0f : 0.0f);
         set("juno_preview", engine == 1 ? 1.0f : 0.0f);
         set("dx7_preview", engine == 4 ? 1.0f : 0.0f);
         std::lock_guard<std::mutex> guard(preset_mutex_);
@@ -1004,7 +1007,9 @@ private:
             studio::Preset preset;
             uint8_t preset_engine = 0;
             if (!gf::decode_supported_preset(bytes.data(), size, preset, preset_engine)) return;
-            if (preset_engine == 1) {
+            if (preset_engine == 3) {
+                ob6_.reset(); gf::apply_ob6_preset_preview(ob6_, preset);
+            } else if (preset_engine == 1) {
                 juno_.reset(); juno_bus_.reset(); gf::apply_juno_preset_preview(juno_, preset);
                 juno_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -1033,6 +1038,7 @@ private:
     gf::Dx7Preview dx7_;
     gf::JunoPreview juno_;
     gf::Ob6Preview ob6_;
+    float ob6_wheel_ = 0.0f;
     bool last_ob6_mode_ = false;
     float juno_wheel_ = 0.0f;
     bool last_juno_mode_ = false;
@@ -1534,7 +1540,7 @@ private:
         for (auto& label : dx_macro_labels_) label.setVisible(dx_macro);
         for (auto& slider : dx_macro_sliders_) slider.setVisible(dx_macro);
         sync_.setEnabled(true);
-        status_.setText(ob6 ? juce::String("OB-6 · PILOTO INICIAL · SIN GFP NI FX") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
+        status_.setText(ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL · SIN ARP / PUMP / FX") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
             (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
         displayed_dx7_ = dx7_toggle_.getToggleState();
         displayed_juno_ = juno_toggle_.getToggleState();
@@ -1545,7 +1551,7 @@ private:
         if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState()) update_status();
     }
     void choose_preset() {
-        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Juno, Prophet o DX7 GFP", juce::File(), "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Importar preset Juno, Prophet, OB-6 o DX7 GFP", juce::File(), "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [safe](const juce::FileChooser& chooser) {
