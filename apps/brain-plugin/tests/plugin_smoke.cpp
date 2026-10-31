@@ -939,6 +939,54 @@ int main() {
         if (!check(found && std::fabs(found->getValue() - cc_expected[i]) < 1.0e-5f,
                    "DX7 MIDI CC value survives state save")) return 1;
     }
+    auto cc_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto cc_juno_plain = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    find_parameter(*cc_juno, "juno_preview")->setValueNotifyingHost(1);
+    find_parameter(*cc_juno_plain, "juno_preview")->setValueNotifyingHost(1);
+    cc_juno->prepareToPlay(48000, 128); cc_juno_plain->prepareToPlay(48000, 128);
+    juce::AudioBuffer<float> cc_juno_audio(2, 128), cc_juno_dry(2, 128);
+    juce::MidiBuffer juno_cc_events, juno_cc_plain_events;
+    juno_cc_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    juno_cc_events.addEvent(juce::MidiMessage::controllerEvent(1, 15, 127), 64);
+    juno_cc_plain_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+    cc_juno->processBlock(cc_juno_audio, juno_cc_events); cc_juno_plain->processBlock(cc_juno_dry, juno_cc_plain_events);
+    float juno_cc_difference = 0;
+    for (int i = 0; i < 128; ++i) {
+        const float delta = std::abs(cc_juno_audio.getSample(0, i) - cc_juno_dry.getSample(0, i));
+        if (i < 64 && !check(delta < 1e-7f, "Juno MIDI macro respects offset")) return 1;
+        if (i >= 64) juno_cc_difference += delta;
+    }
+    if (!check(juno_cc_difference > .0001f, "Juno MIDI GRIT changes audio")) return 1;
+    juce::MidiBuffer juno_more_cc;
+    juno_more_cc.addEvent(juce::MidiMessage::controllerEvent(1, 14, 32), 0);
+    juno_more_cc.addEvent(juce::MidiMessage::controllerEvent(1, 16, 64), 1);
+    juno_more_cc.addEvent(juce::MidiMessage::controllerEvent(1, 19, 96), 2);
+    cc_juno->processBlock(cc_juno_audio, juno_more_cc);
+    juce::MemoryBlock juno_cc_state;
+    cc_juno->getStateInformation(juno_cc_state);
+    auto juno_cc_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    juno_cc_restore->setStateInformation(juno_cc_state.getData(), int(juno_cc_state.getSize()));
+    constexpr const char* juno_cc_ids[] = {"juno.drift", "juno.macro.grit", "juno.macro.pocket", "juno.macro.move"};
+    constexpr float juno_cc_expected[] = {32.0f / 127.0f, 1, 64.0f / 127.0f, 96.0f / 127.0f};
+    for (int i = 0; i < 4; ++i) {
+        auto* p = find_parameter(*juno_cc_restore, juno_cc_ids[i]);
+        if (!check(p && std::abs(p->getValue() - juno_cc_expected[i]) < .00001f, "Juno pending MIDI CC state restore")) return 1;
+    }
+    auto* cc_juno_import = dynamic_cast<gf::PresetImport*>(cc_juno.get());
+    std::vector<uint8_t> juno_cc_export;
+    if (!check(cc_juno_import && cc_juno_import->export_juno_preset(juno_cc_export), "Juno pending MIDI GFP export")) return 1;
+    studio::Preset juno_cc_patch; uint8_t juno_cc_engine = 0;
+    if (!check(gf::decode_supported_preset(juno_cc_export.data(), juno_cc_export.size(), juno_cc_patch, juno_cc_engine) &&
+               juno_cc_engine == 1 && std::abs(juno_cc_patch.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] - 100.0f * 32 / 127) < .001f &&
+               juno_cc_patch.patch.drive > .7f && juno_cc_patch.cutoff_hz > 2000, "Juno pending CC exported as effective sound")) return 1;
+    studio::Preset reset_juno;
+    if (!check(studio::factory_preset(1, 0, &reset_juno), "Juno reset preset")) return 1;
+    std::array<uint8_t, studio::PRESET_BYTES> reset_juno_bytes{};
+    studio::preset_encode(reset_juno, 1, reset_juno_bytes.data(), reset_juno_bytes.size());
+    if (!check(cc_juno_import->import_preset(reset_juno_bytes.data(), reset_juno_bytes.size()), "Juno reset CC with preset")) return 1;
+    cc_juno->getStateInformation(juno_cc_state);
+    juno_cc_restore->setStateInformation(juno_cc_state.getData(), int(juno_cc_state.getSize()));
+    if (!check(find_parameter(*juno_cc_restore, "juno.macro.grit")->getValue() < .001f, "Juno preset clears pending macro CC")) return 1;
     {
         auto editor = std::unique_ptr<juce::AudioProcessorEditor>(a->createEditor());
         if (!check(editor && editor->getWidth() == 720 && editor->getHeight() == 360, "editor creation")) return 1;

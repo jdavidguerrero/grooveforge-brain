@@ -33,7 +33,7 @@ void JunoPreview::reset() {
         v.filter.set_resonance(resonance_); v.filter.set_frequency(cutoff_);
         v.amp.set_rate(fs_); v.amp.setAttackOvershoot(3); v.amp.setAttack(gate_ ? 1.0f : attack_);
         v.amp.setDecay(gate_ ? 1.0f : decay_); v.amp.setSustain(gate_ ? 1.0f : sustain_level_); v.amp.setRelease(gate_ ? 8.0f : release_);
-        v.filter_env.set_rate(fs_); v.filter_env.setAttackOvershoot(3); v.filter_env.setAttack(filter_attack_);
+        v.filter_env.set_rate(1000.0f); v.filter_env.setAttackOvershoot(3); v.filter_env.setAttack(filter_attack_);
         v.filter_env.setDecay(filter_decay_); v.filter_env.setSustain(filter_sustain_); v.filter_env.setRelease(filter_release_);
     }
 }
@@ -153,7 +153,7 @@ void JunoPreview::process_frame(float& left, float& right) {
     float mix = 0;
     for (auto& item : voices_) {
         auto& v = *item;
-        const float filter_env = v.filter_env.step();
+        const float filter_env = update ? v.filter_env.update(1) : v.filter_env.level();
         if (update) {
             const float glide = glide_ms_ >= 1.0f ? 1.0f - std::exp(-1.0f / glide_ms_) : 1.0f;
             v.hz += (v.target_hz - v.hz) * glide;

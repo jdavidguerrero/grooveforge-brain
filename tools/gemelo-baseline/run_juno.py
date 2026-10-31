@@ -12,7 +12,7 @@ import wave
 from pathlib import Path
 from run import ROOT, HERE, SRC, build
 
-CASES = ('chord', 'pwm', 'glide', 'voice_steal', 'hpf', 'chorus_ii', 'chorus_i_ii', 'white_noise')
+CASES = ('chord', 'pwm', 'glide', 'voice_steal', 'hpf', 'chorus_ii', 'chorus_i_ii', 'white_noise', 'glide_voice_steal', 'pwm_initialized')
 SOURCES = [HERE / 'shim/audio.cpp', HERE / 'juno_reference.cpp',
            SRC / 'engines/juno_106.cpp', SRC / 'audio/moog_ladder.cpp']
 

@@ -46,3 +46,5 @@ Esta es una firma local ad-hoc, no una notarización para distribución.
 Para probar solo el DSP sin JUCE: configurar con `-DGF_BUILD_VST3=OFF`, compilar y ejecutar `ctest`.
 
 El control **SRC GFP** conserva la fuente de reloj del preset para el Brain. El plugin usa el transporte del DAW y no cambia de fuente al editarlo; sin transporte válido usa el fallback del piloto.
+
+Juno admite CC 14 (DRIFT), 15 (GRIT), 16 (POCKET) y 19 (MOVE); se aplican en el offset MIDI y se reflejan en los parámetros del DAW desde el hilo de mensajes.

@@ -87,3 +87,38 @@ Fuente: Paul Stoffregen/PJRC, Teensy Audio Library `synth_whitenoise.cpp` y `syn
 En `PolyBlepCore` del Brain el generador de deriva y su filtro avanzan una vez por llamada de 128 muestras, no una vez por muestra. El piloto llamaba al núcleo para cada muestra y aceleraba ese proceso 128 veces a 44,1 kHz. El núcleo expone una opción para mantener la deriva entre llamadas; su valor por defecto conserva el comportamiento del firmware. El piloto avanza la deriva cada 128 muestras a 44,1 kHz, usando un acumulador temporal para mantener ese intervalo en otras frecuencias y sin depender del tamaño del buffer del host. El oscilador sigue respondiendo a cambios de MIDI y PWM por muestra, por lo que el resultado no reproduce todas las decisiones de bloque del firmware. Se compara el núcleo por muestras contra renders de 128 muestras con parámetros constantes y se repiten referencias y compilaciones existentes. La sincronización con el bloque físico y la equivalencia completa requieren A/B.
 
 La prueba del wrapper también detectó que `set_parameters` volvía a escribir el cutoff cuando el acumulador coincidía con cero al comienzo de un callback; eso dependía del tamaño del bloque del host. Se eliminó esa escritura repetida: el filtro se actualiza por el tick de control. La prueba compara 32 y 128 muestras por callback a 48 kHz, con el mismo MIDI y sin cambios de parámetros entre bloques.
+
+## Comparador digital Juno: referencia de firmware y piloto
+
+Antes del A/B físico se compara un render aislado de `JunoPreview` con las escenas `chord` y `white_noise` capturadas del grafo firmware a 44,1 kHz. Se fijan notas, velocity, parámetros iniciales, duración y eventos a los mismos bordes de 128 muestras. Se generan WAV estéreo PCM16 y un informe con RMS de señal y error, error pico y correlación por canal, además de hashes y procedencia. El resultado es diagnóstico: no hay umbral de aprobación calibrado y no se compensan fase, ganancia ni retardo. El shim del firmware aplica el control antes de cada bloque, mientras el piloto usa ticks temporales dentro del bloque; la salida del piloto es float y no reproduce toda la cuantización de los mixers. No se incluyen presets Studio, SYNTH FX, codec ni hardware.
+
+Resultado local inicial (arm64, 44.100 Hz, comparación sin alineación): en el canal izquierdo, `chord` da correlación 0,999922 y error RMS −65,44 dBFS; `white_noise`, 0,999905 y −64,72 dBFS. Los picos son −31,56 y −31,73 dBFS, respectivamente, ambos cerca de 11,6 ms. Esto es una observación de dos escenarios, no un pass ni una medida del plugin completo. Investigar el transitorio y ampliar los casos antes de inferir fidelidad general.
+
+## Investigación del transitorio de 11,6 ms
+
+El pico se concentra en el ataque y el error disminuye después de ~14,5 ms. Un experimento aislado que reproduce en el piloto la agenda del harness —aplicar de golpe antes de cada bloque todos los ticks de 1 ms que le corresponden— reduce el error RMS izquierdo de `chord` de −65,44 a −83,56 dBFS y el pico de −31,56 a −56,68 dBFS; en `white_noise` el RMS pasa de −64,72 a −83,21 dBFS. Esto indica que la diferencia dominante en estos dos casos es la agenda de la envolvente de filtro de la referencia. Esa agenda anticipa hasta casi 128 muestras y es una simplificación del shim, no una medición del loop de la Teensy. No se incorpora al plugin: el spec exige eventos en su offset y ticks de 1 ms independientes del bloque del host.
+
+Sí se adapta la envolvente de filtro del piloto para que avance exactamente a 1 kHz mediante `AnalogEnv::update`, igual que el engine, en lugar de evaluarla por muestra y leerla a 1 kHz. La VCA sigue avanzando por muestra. Con la agenda temporal del plugin el pico de los casos medidos no desaparece; es necesario mejorar el método de referencia y medir el hardware antes de atribuirlo a una diferencia audible real.
+
+## Ampliación del corpus digital
+
+El comparador incorpora las ocho escenas existentes: acorde, PWM, glide, robo de voz, HPF, chorus II, chorus I+II y ruido. En PWM, el firmware del harness recibe una senoide de 1 Hz con profundidad 0,5; el piloto usa su LFO seno con los mismos valores, pero el primero actualiza antes de cada bloque y el segundo a 1 kHz durante el audio. En glide y robo de voz se reproducen las mismas notas y bordes de bloque del harness. La escena glide original introduce la nota nueva en una voz libre, por lo que no demuestra por sí sola un deslizamiento en voz reutilizada; se conserva como referencia histórica y se necesita otra escena para cubrir ese caso. Los resultados siguen siendo diagnósticos, sin umbrales ni comparación física.
+
+Resultado local del corpus ampliado (canal izquierdo, sin alineación): error RMS acorde −65,51 dBFS, PWM −53,14,
+glide −63,86, robo de voz −60,71, HPF −68,89, chorus II −65,52, chorus I+II −66,45 y ruido −64,80 dBFS. PWM
+presenta un pico de −23,85 dBFS en la muestra 134: el harness configura `setPulseWidth(0.35)` como valor de control,
+pero el DCO del firmware conserva 0,5 durante el primer bloque y recibe 0,35 en el siguiente `update`; el piloto usa
+0,35 desde la primera muestra. Es una diferencia identificada en la preparación del escenario, no una medición del
+hardware. Los resultados no constituyen criterios de aprobación ni cubren el plugin completo.
+
+## Casos adicionales: glide en voz reutilizada y PWM inicializado
+
+Se conservan las ocho referencias históricas y se agregan dos sin alterar sus hashes. `glide_voice_steal` ocupa las seis voces, activa glide de 180 ms y dispara una séptima nota para reutilizar la voz más antigua. `pwm_initialized` aplica un tick de control de preparación antes del primer bloque del firmware, de modo que el DCO comience con el ancho de pulso 0,35 como el piloto; la senoide y los ticks posteriores siguen ejecutándose con agendas diferentes. Este tick artificial prepara el escenario y no modela el arranque físico ni demuestra igualdad de señales. Los criterios siguen siendo diagnósticos y se prueban integridad, duración y reproducibilidad.
+
+## Diagnóstico reproducible del glide con voz reutilizada
+
+La comparación normal de `glide_voice_steal` da error RMS izquierdo −32,25 dBFS; tras la séptima nota, el harness adelanta varios ticks de glide antes de procesar el bloque y el piloto los ejecuta a medida que transcurre el audio. Un experimento de diagnóstico genera una copia temporal del piloto con esa agenda anticipada, sin editar el plugin. En la misma máquina y con la misma referencia el error baja a −78,07 dBFS. Esto apoya que la agenda del shim domina la diferencia de este escenario, pero no determina la agenda real del hardware ni acredita fidelidad A/B. El experimento usa 44,1 kHz y bloques de 128, y no reproduce toda la temporización del LFO. El plugin conserva MIDI por offset y ticks reales de 1 ms según la spec.
+
+## CC MIDI de macros Juno
+
+Juno recibe CC 14 DRIFT, 15 GRIT, 16 POCKET y 19 MOVE, igual que el sketch Studio. El evento cambia el DSP en su offset dentro del buffer; el valor se entrega al parámetro del DAW en el hilo de mensajes. Mientras esté pendiente de entrega, el guardado de estado y la exportación GFP deben recoger el último valor. Las pruebas cubren separación antes/después del evento, restauración inmediata y que un preset nuevo descarte CC pendientes. Los controles GUI y automatización del host siguen usando sus IDs existentes.

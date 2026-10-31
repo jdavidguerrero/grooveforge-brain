@@ -41,9 +41,9 @@ plataformas se comparan numéricamente. No usar este shim para el VST ni varias 
 python3 tools/gemelo-baseline/run_juno.py --out /tmp/gf-juno-reference
 ```
 
-Genera ocho WAV estéreo y PCM16 con manifiesto a 44.100 Hz. Los siete casos originales se conservan en
+Genera diez WAV estéreo y PCM16 con manifiesto a 44.100 Hz. Los siete casos originales se conservan en
 `apps/firmware-teensy/test/golden/juno106/`; la escena adicional de ruido se conserva en
-`apps/firmware-teensy/test/golden/juno106-noise/`. El shim usa una implementación escalar PJRC de ruido con semillas
+`apps/firmware-teensy/test/golden/juno106-noise/` y los dos casos recientes en `apps/firmware-teensy/test/golden/juno106-extra/`. El shim usa una implementación escalar PJRC de ruido con semillas
 del harness, no comprueba las semillas ni la fase de ruido de una unidad física. Esta referencia no valida FX Studio,
 ejecución en DAW ni fidelidad del hardware. Se puede verificar cualquiera de las dos referencias:
 
@@ -52,3 +52,24 @@ python3 tools/gemelo-baseline/run_juno.py --out /tmp/gf-juno-check \
   --compare apps/firmware-teensy/test/golden/juno106
 ``` Véase
 `apps/docs/sprints/gemelo-juno-referencia.md`.
+
+## Comparar el piloto Juno con el grafo de firmware
+
+```sh
+cmake --build /tmp/gf-brain-vst-build --target gf_juno_preview_reference
+python3 tools/gemelo-baseline/compare_juno_preview.py \
+  --renderer /tmp/gf-brain-vst-build/gf_juno_preview_reference --out /tmp/gf-juno-preview-check
+```
+
+El informe y los WAV comparan ocho escenas deterministas de `JunoPreview` con el shim, sin alinear señal ni aplicar
+umbrales de aprobación. No incluye el wrapper JUCE, la cadena completa de FX ni el hardware físico. La correlación
+alta no descarta errores transitorios: revisar también la posición y el valor del pico.
+
+Para aislar el efecto de los ticks adelantados del shim en la envolvente de filtro y el glide:
+
+```sh
+python3 tools/gemelo-baseline/experiment_juno_block_clock.py --out /tmp/gf-juno-block-experiment
+```
+
+El experimento compila una copia temporal con una agenda distinta; nunca modifica ni representa el VST. Su informe
+incluye las limitaciones y hashes de la variante. No es una prueba con el Brain físico.

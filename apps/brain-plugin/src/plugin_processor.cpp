@@ -205,6 +205,8 @@ public:
             dx_groove_[group][field] = state_.getRawParameterValue(dx_groove_id(group, field));
         dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i) dx_macro_[i] = state_.getRawParameterValue(DX_MACRO_IDS[i]);
+        juno_cc_parameters_[0] = state_.getParameter("juno.drift");
+        for (size_t i = 1; i < juno_cc_parameters_.size(); ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
         cc_parameters_[0] = state_.getParameter("dx7.drift");
         for (size_t i = 1; i < cc_parameters_.size(); ++i) cc_parameters_[i] = state_.getParameter(DX_MACRO_IDS[i - 1]);
         dx_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -284,7 +286,7 @@ public:
         if (juno_mode) {
             bool macro_changed = false;
             for (size_t i = 0; i < JUNO_MACRO_IDS.size(); ++i) {
-                const float value = juno_macro_[i]->load();
+                const float value = juno_macro_value(i);
                 if (value != juno_macro_last_[i]) { juno_macro_last_[i] = value; macro_changed = true; }
             }
             if (macro_changed) { juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN()); juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN()); }
@@ -361,6 +363,16 @@ public:
                 if (juno_mode) juno_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (dx7_mode) dx_bus_.set_sustain(message.getControllerValue() >= 64);
                 else engine_.set_sustain(message.getControllerValue() >= 64);
+            } else if (juno_mode && message.isController() && (message.getControllerNumber() == 14 ||
+                       message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
+                const int number = message.getControllerNumber();
+                const size_t index = number == 14 ? 0u : number == 15 ? 1u : number == 16 ? 2u : 3u;
+                juno_cc_values_[index].store(message.getControllerValue() / 127.0f, std::memory_order_relaxed);
+                juno_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                juno_env_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
+                apply_juno_voice_groove_automation(); apply_juno_env_automation(); apply_juno_fx_automation();
+                juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
             } else if (dx7_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
                 const int number = message.getControllerNumber();
@@ -381,6 +393,9 @@ public:
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
             if (cc_sequence_[i].load(std::memory_order_acquire) != cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("dxPendingCC" + juce::String(int(i)), cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
+            if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire))
+                snapshot.setProperty("junoPendingCC" + juce::String(int(i)), juno_cc_values_[i].load(std::memory_order_relaxed), nullptr);
         snapshot.setProperty("dx7ParamVersion", 6, nullptr);
         snapshot.setProperty("junoOscVersion", 1, nullptr);
         snapshot.setProperty("junoEnvVersion", 1, nullptr);
@@ -402,6 +417,13 @@ public:
             const auto id = "dxPendingCC" + juce::String(int(i));
             has_pending_cc[i] = tree.hasProperty(id);
             if (has_pending_cc[i]) { pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
+        }
+        std::array<float, 4> juno_pending_cc{};
+        std::array<bool, 4> has_juno_pending_cc{};
+        for (size_t i = 0; i < juno_pending_cc.size(); ++i) {
+            const auto id = "junoPendingCC" + juce::String(int(i));
+            has_juno_pending_cc[i] = tree.hasProperty(id);
+            if (has_juno_pending_cc[i]) { juno_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
         const int juno_macro_version = int(tree.getProperty("junoMacroVersion", 0));
         tree.removeProperty("junoMacroVersion", nullptr);
@@ -451,6 +473,8 @@ public:
         }
         for (size_t i = 0; i < pending_cc.size(); ++i)
             if (has_pending_cc[i]) cc_parameters_[i]->setValueNotifyingHost(std::clamp(pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < juno_pending_cc.size(); ++i)
+            if (has_juno_pending_cc[i]) juno_cc_parameters_[i]->setValueNotifyingHost(std::clamp(juno_pending_cc[i], 0.0f, 1.0f));
         preset_raw_ = raw;
         preset_name_ = raw.getSize() ? juce::String::fromUTF8(decoded.name) : juce::String();
         publish_preset(raw);
@@ -531,7 +555,7 @@ public:
         preset.patch.groove_on[GF_GROOVE_UNISON] = juno_voice_groove_[1]->load() >= .5f;
         preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_VOICES] = juno_voice_groove_[2]->load();
         preset.patch.groove[GF_GROOVE_UNISON][GF_UNISON_DETUNE] = juno_voice_groove_[3]->load();
-        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = juno_voice_groove_[4]->load();
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] = juno_cc_value(0, juno_voice_groove_[4]->load() * .01f) * 100.0f;
         for (int group = 0; group < 3; ++group) {
             preset.patch.groove_on[group] = juno_groove_[group][0]->load() >= .5f;
             for (int field = 1; field < JUNO_GROOVE_FIELDS[size_t(group)]; ++field)
@@ -542,7 +566,7 @@ public:
             preset.patch.sfx_mix[fx] = juno_fx_[fx][1]->load();
             for (int field = 0; field < 3; ++field) preset.patch.sfx_p[fx][field] = juno_fx_[fx][field + 2]->load();
         }
-        preset.patch = studio::move_sfx(preset.patch, juno_macro_[2]->load());
+        preset.patch = studio::move_sfx(preset.patch, juno_macro_value(2));
         std::vector<uint8_t> encoded(studio::PRESET_BYTES);
         if (studio::preset_encode(preset, 1, encoded.data(), encoded.size()) != encoded.size()) return false;
         data = std::move(encoded);
@@ -618,6 +642,8 @@ public:
 
 private:
     void clear_cc_pending() {
+        for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
+            juno_cc_delivered_[i].store(juno_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
             cc_delivered_[i].store(cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
     }
@@ -625,11 +651,24 @@ private:
         return cc_sequence_[index].load(std::memory_order_acquire) != cc_delivered_[index].load(std::memory_order_acquire)
             ? cc_values_[index].load(std::memory_order_relaxed) : fallback;
     }
+    float juno_cc_value(size_t index, float fallback) const {
+        return juno_cc_sequence_[index].load(std::memory_order_acquire) != juno_cc_delivered_[index].load(std::memory_order_acquire)
+            ? juno_cc_values_[index].load(std::memory_order_relaxed) : fallback;
+    }
+    float juno_macro_value(size_t index) const {
+        return index < 3 ? juno_cc_value(index + 1, juno_macro_[index]->load()) : juno_macro_[index]->load();
+    }
     void load_dx_macros() {
         for (size_t i = 0; i < DX_MACRO_IDS.size(); ++i)
             dx_macro_current_[i] = i < 3 ? cc_value(i + 1, dx_macro_[i]->load()) : dx_macro_[i]->load();
     }
     void timerCallback() override {
+        for (size_t i = 0; i < juno_cc_parameters_.size(); ++i) {
+            const auto sequence = juno_cc_sequence_[i].load(std::memory_order_acquire);
+            if (sequence == juno_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            juno_cc_parameters_[i]->setValueNotifyingHost(juno_cc_values_[i].load(std::memory_order_relaxed));
+            juno_cc_delivered_[i].store(sequence, std::memory_order_release);
+        }
         for (size_t i = 0; i < cc_parameters_.size(); ++i) {
             const auto sequence = cc_sequence_[i].load(std::memory_order_acquire);
             if (sequence == cc_delivered_[i].load(std::memory_order_relaxed)) continue;
@@ -796,17 +835,17 @@ private:
         p.f_release_ms = juno_env_[5]->load(); p.env_amt = juno_env_[6]->load(); p.drive = juno_env_[7]->load();
         p.vel_amp = juno_env_[8]->load(); p.vel_cut = juno_env_[9]->load(); p.release_ms = release_->load();
         auto& m = p.groove[GF_GROOVE_MACRO];
-        m[GF_MACRO_GRIT] = juno_macro_[0]->load() * 100; m[GF_MACRO_POCKET] = juno_macro_[1]->load() * 100;
-        m[GF_MACRO_MOVE] = juno_macro_[2]->load() * 100; m[GF_MACRO_GRIT_RES] = juno_macro_[3]->load() * 100;
+        m[GF_MACRO_GRIT] = juno_macro_value(0) * 100; m[GF_MACRO_POCKET] = juno_macro_value(1) * 100;
+        m[GF_MACRO_MOVE] = juno_macro_value(2) * 100; m[GF_MACRO_GRIT_RES] = juno_macro_[3]->load() * 100;
         m[GF_MACRO_GRIT_MOD] = juno_macro_[4]->load() * 100; m[GF_MACRO_POCKET_VEL] = juno_macro_[5]->load() * 100;
         return p;
     }
     studio::Patch juno_effective_env() const { return studio::macro_patch(juno_base_env(), 1); }
-    float juno_effective_cutoff() const { return std::clamp(cutoff_->load() * studio::move_cutoff_mul(juno_macro_[2]->load()), 20.0f, 8000.0f); }
+    float juno_effective_cutoff() const { return std::clamp(cutoff_->load() * studio::move_cutoff_mul(juno_macro_value(2)), 20.0f, 8000.0f); }
     float juno_effective_resonance() const {
         const auto p = juno_base_env();
         const float norm = std::clamp((resonance_->load() - .1f) / 4.9f, 0.0f, 1.0f);
-        return std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(norm, p), juno_macro_[2]->load()), .707f, 5.0f);
+        return std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(norm, p), juno_macro_value(2)), .707f, 5.0f);
     }
     void set_juno_fx_parameters(const studio::Preset& preset) {
         const auto effective = studio::move_sfx(preset.patch, studio::macro_amount(preset.patch, GF_MACRO_MOVE));
@@ -831,7 +870,7 @@ private:
             p.patch.sfx_mix[fx] = juno_fx_last_[size_t(fx * 5 + 1)];
             for (int field = 0; field < 3; ++field) p.patch.sfx_p[fx][field] = juno_fx_last_[size_t(fx * 5 + field + 2)];
         }
-        p.patch = studio::move_sfx(p.patch, juno_macro_[2]->load());
+        p.patch = studio::move_sfx(p.patch, juno_macro_value(2));
         gf::apply_synth_fx_preview(juno_bus_, p, 1);
     }
     void set_juno_groove_parameters(const studio::Preset& preset) {
@@ -870,7 +909,7 @@ private:
     }
     void apply_juno_voice_groove_automation() {
         std::array<float, JUNO_VOICE_GROOVE.size()> v{};
-        for (size_t i = 0; i < v.size(); ++i) v[i] = juno_voice_groove_[i]->load();
+        for (size_t i = 0; i < v.size(); ++i) v[i] = i == 4 ? juno_cc_value(0, juno_voice_groove_[i]->load() * .01f) * 100.0f : juno_voice_groove_[i]->load();
         if (v == juno_voice_groove_last_) return;
         const auto index = size_t(std::clamp(int(v[2]), 0, 3));
         juno_.set_voice_modulation(v[0], v[1] >= .5f ? GF_UNISON_COUNT[index] : 1, v[3], v[4] * .01f);
@@ -1027,6 +1066,9 @@ private:
     std::array<float, 21> dx_groove_last_{};
     std::array<std::atomic<float>*, DX_MACRO_IDS.size()> dx_macro_{};
     std::array<float, DX_MACRO_IDS.size()> dx_macro_current_{}, dx_macro_last_{};
+    std::array<juce::RangedAudioParameter*, 4> juno_cc_parameters_{};
+    std::array<std::atomic<float>, 4> juno_cc_values_{};
+    std::array<std::atomic<uint64_t>, 4> juno_cc_sequence_{}, juno_cc_delivered_{};
     std::array<juce::RangedAudioParameter*, 4> cc_parameters_{};
     std::array<std::atomic<float>, 4> cc_values_{};
     std::array<std::atomic<uint64_t>, 4> cc_sequence_{}, cc_delivered_{};

@@ -26,28 +26,29 @@ private:
 int main(int argc, char** argv) {
     if (argc != 2) return 2;
     const int scenario = std::atoi(argv[1]);
-    if (scenario < 1 || scenario > 8) return 2;
+    if (scenario < 1 || scenario > 10) return 2;
     Juno106 juno;
     Capture capture;
     AudioConnection left(juno.getOutput(), 0, capture, 0);
     AudioConnection right(juno.getOutput(), 1, capture, 1);
     juno.begin();
     juno.setNoiseLevel(scenario == 8 ? 0.6f : 0.0f);
-    if (scenario == 2) { juno.setWaveform(WAVEFORM_PULSE); juno.setPulseWidth(0.35f); }
-    if (scenario == 3) juno.setGlide(180);
+    if (scenario == 2 || scenario == 10) { juno.setWaveform(WAVEFORM_PULSE); juno.setPulseWidth(0.35f); }
+    if (scenario == 10) { ++virtual_ms; juno.update(); }
+    if (scenario == 3 || scenario == 9) juno.setGlide(180);
     if (scenario == 5) juno.setHpf(3);
     if (scenario == 6) juno.setChorusMode(2);
     if (scenario == 7) juno.setChorusMode(3);
     const uint8_t notes[] = {48, 55, 60, 64, 67, 72, 76};
-    const int count = scenario == 4 ? 6 : 3;
+    const int count = (scenario == 4 || scenario == 9) ? 6 : 3;
     for (int i = 0; i < count; ++i) juno.noteOn(notes[i], 0.8f);
     for (unsigned block = 0; block < 690; ++block) {
-        if (block == 172 && (scenario == 3 || scenario == 4)) juno.noteOn(notes[6], 0.8f);
+        if (block == 172 && (scenario == 3 || scenario == 4 || scenario == 9)) juno.noteOn(notes[6], 0.8f);
         if (block == 345) for (uint8_t note : notes) juno.noteOff(note);
-        const uint32_t target = uint32_t(uint64_t(block) * AUDIO_BLOCK_SAMPLES * 1000 / 44100);
+        const uint32_t target = uint32_t(uint64_t(block) * AUDIO_BLOCK_SAMPLES * 1000 / 44100) + (scenario == 10 ? 1u : 0u);
         while (virtual_ms < target) {
             ++virtual_ms;
-            if (scenario == 2) { LfoMod mod; mod.pwm = 0.5f * std::sin(float(virtual_ms) * 0.0062831853f); juno.setLfoMod(mod); }
+            if (scenario == 2 || scenario == 10) { LfoMod mod; mod.pwm = 0.5f * std::sin(float(virtual_ms) * 0.0062831853f); juno.setLfoMod(mod); }
             juno.update();
         }
         AudioStream::update_all();
