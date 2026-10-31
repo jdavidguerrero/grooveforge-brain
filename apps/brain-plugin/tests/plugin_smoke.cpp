@@ -111,6 +111,13 @@ int main() {
         if (!check(toggle && slider && toggle->getToggleState() && slider->isVisible(), "ARP editor state")) return 1;
         slider->setValue(.4, juce::sendNotificationSync);
         if (!check(std::abs(parameter(*restored, "arp2600.ring")->getValue() - .4f) < .001f, "ARP ring editor binding")) return 1;
+        auto* page = dynamic_cast<juce::TextButton*>(editor->findChildWithID("engine.page"));
+        auto* wave = dynamic_cast<juce::Slider*>(editor->findChildWithID("arp2600.osc1.wave"));
+        if (!check(page && wave && !wave->isVisible(), "ARP oscillator page controls")) return 1;
+        page->onClick();
+        if (!check(wave->isVisible() && !slider->isVisible(), "ARP oscillator page visibility")) return 1;
+        wave->setValue(4, juce::sendNotificationSync);
+        if (!check(parameter(*restored, "arp2600.osc1.wave")->getValue() > .99f, "ARP oscillator editor binding")) return 1;
         select->setValueNotifyingHost(0);
         juce::MidiBuffer empty;
         p->processBlock(audio, empty);
@@ -139,9 +146,12 @@ int main() {
         studio::Preset decoded;
         uint8_t exported_engine = 99;
         ring->setValueNotifyingHost(.45f);
+        auto* wave_parameter = parameter(*p, "arp2600.osc1.wave");
+        if (!check(wave_parameter != nullptr, "ARP oscillator parameter")) return 1;
+        wave_parameter->setValueNotifyingHost(wave_parameter->convertTo0to1(4));
         if (!check(importer->export_arp2600_preset(exported) &&
                    gf::decode_supported_preset(exported.data(), exported.size(), decoded, exported_engine) &&
-                   exported_engine == 5 && std::abs(decoded.patch.osc[0][2] - 45) < .1f &&
+                   exported_engine == 5 && std::abs(decoded.patch.osc[0][2] - 45) < .1f && decoded.patch.osc[0][0] == 4 &&
                    decoded.patch.mod[0][1] > .5f && decoded.patch.groove_on[GF_GROOVE_UNISON], "ARP GFP export")) return 1;
         ring->setValueNotifyingHost(.73f);
         auto invalid = bytes; invalid[0] ^= 0xff;

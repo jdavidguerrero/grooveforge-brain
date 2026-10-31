@@ -110,7 +110,9 @@ void Arp2600Preview::set_parameters(float cutoff, float resonance, float attack,
     for (auto& v : voices_) if (v) { v->filter.set_resonance(resonance_); v->amp.setAttack(attack_); v->amp.setRelease(release_); }
 }
 void Arp2600Preview::set_patch(const Arp2600Patch& patch) {
+    const bool mono_changed = patch_.mono != patch.mono;
     patch_ = patch;
+    if (mono_changed) reset();
     drift_.amount = std::clamp(patch_.drift, 0.0f, 1.0f);
     lfo_.set_rate_hz(patch_.lfo_rate); lfo_.set_shape(patch_.lfo_shape); lfo_.set_sync(lfo_sync_, bpm_, patch_.lfo_beats);
     for (auto& v : voices_) if (v) {

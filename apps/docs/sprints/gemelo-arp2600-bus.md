@@ -9,3 +9,7 @@ El wow/flutter de TAPE afecta la frecuencia de los osciladores en la muestra sig
 ## Exportación GFP de los controles disponibles
 
 El VST exporta desde el GFP ARP importado, preservando los campos que aún no se editan. El cutoff, resonancia, ataque, release y RING actuales reemplazan los valores correspondientes. Como los controles del VST contienen valores con macros aplicadas, GRIT, POCKET y MOVE se incorporan al patch y se ponen a cero; DRIFT y los ajustes GROOVE y FX se conservan. El GFP no guarda el estado LFO SYNC, por lo que se rechaza la exportación mientras está activo. Una prueba vuelve a importar el archivo exportado y verifica los valores y el engine.
+
+## Edición de osciladores y PATCH
+
+Una página OSC/PATCH expone formas, niveles y ratio de los dos VCO, pulse width, ruido, MONO, SYNC y los destinos del VCO 3 como parámetros independientes automatizables. Los valores proceden de los mismos rangos GFP del firmware; al abrir proyectos anteriores se inicializan desde su GFP y los nuevos conservan sus ediciones en el estado del DAW. Cambiar MONO limpia las notas activas para evitar voces atascadas. La exportación escribe estas ediciones en el GFP antes de aplicar las macros. La prueba valida interfaz, automatización, persistencia y exportación; no compara con hardware.
