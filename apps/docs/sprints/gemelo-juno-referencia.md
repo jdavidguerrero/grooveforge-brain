@@ -122,3 +122,9 @@ La comparación normal de `glide_voice_steal` da error RMS izquierdo −32,25 dB
 ## CC MIDI de macros Juno
 
 Juno recibe CC 14 DRIFT, 15 GRIT, 16 POCKET y 19 MOVE, igual que el sketch Studio. El evento cambia el DSP en su offset dentro del buffer; el valor se entrega al parámetro del DAW en el hilo de mensajes. Mientras esté pendiente de entrega, el guardado de estado y la exportación GFP deben recoger el último valor. Las pruebas cubren separación antes/después del evento, restauración inmediata y que un preset nuevo descarte CC pendientes. Los controles GUI y automatización del host siguen usando sus IDs existentes.
+
+## Corrección CC 74/71 en Juno SYNTH
+
+**Theory y spec.** En Studio, CC 74 convierte el valor MIDI a cutoff logarítmico con `gf_cutoff_from_cc_norm(1, n)`; CC 71 fija la resonancia base normalizada. GRIT y MOVE se aplican después (`49-studio-brain.cpp::control_change` y `engine_filter`; `ui/groove_macros.h`). En el VST los controles generales representan valores base ya editables, pero la resonancia del host está limitada a 0,707 mientras el rango MIDI normalizado del Brain comienza en 0,1. Para no perder información por ese límite, se conserva el valor MIDI normalizado en un buzón atómico hasta que el usuario o la automatización cambien explícitamente el control del DAW. El DSP aplica el CC en su offset y publica el parámetro al hilo de mensajes; el proyecto y GFP guardan el resultado sin depender de cuándo se publique. Un GFP nuevo descarta las sustituciones previas.
+
+**Validación:** comparar dos instancias con la misma nota y CC a mitad de bloque, comprobar que el audio solo diverge después del evento, los extremos de rango y saturación con macros, exportación inmediata y restauración del proyecto, prioridad de automatización y rechazo de efectos sobre otros motores. No compara el audio con el Brain físico; el A/B queda al final como solicitó Juan.

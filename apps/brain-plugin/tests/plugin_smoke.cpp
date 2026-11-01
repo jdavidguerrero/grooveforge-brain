@@ -2368,6 +2368,91 @@ int main() {
         if (!check(found && std::fabs(found->getValue() - cc_expected[i]) < 1.0e-5f,
                    "DX7 MIDI CC value survives state save")) return 1;
     }
+    {
+        auto midi_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto plain_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* plugin : {midi_juno.get(), plain_juno.get()}) {
+            find_parameter(*plugin, "juno_preview")->setValueNotifyingHost(1);
+            find_parameter(*plugin, "juno.macro.grit")->setValueNotifyingHost(1);
+            find_parameter(*plugin, "juno.macro.grit_res")->setValueNotifyingHost(1);
+            find_parameter(*plugin, "juno.macro.move")->setValueNotifyingHost(0);
+            plugin->prepareToPlay(48000, 128);
+        }
+        juce::AudioBuffer<float> changed(2, 128), plain(2, 128);
+        juce::MidiBuffer events, reference_events;
+        events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 0), 64);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 0), 64);
+        reference_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        midi_juno->processBlock(changed, events); plain_juno->processBlock(plain, reference_events);
+        double after = 0;
+        for (int i = 0; i < 128; ++i) {
+            const float delta = std::abs(changed.getSample(0, i) - plain.getSample(0, i));
+            if (i < 64 && !check(delta < 1e-7f, "Juno filter MIDI respects sample offset")) return 1;
+            if (i >= 64) after += delta;
+        }
+        if (!check(after > .00001, "Juno filter CC changes audio")) return 1;
+        auto* importer = dynamic_cast<gf::PresetImport*>(midi_juno.get());
+        std::vector<uint8_t> bytes; studio::Preset patch; uint8_t engine = 0;
+        if (!check(importer && importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   engine == 1 && std::abs(patch.cutoff_hz - 20.0f) < .01f && std::abs(patch.reso_norm - .2f) < .001f,
+                   "Juno MIDI raw resonance survives host minimum with GRIT")) return 1;
+        juce::MemoryBlock saved; midi_juno->getStateInformation(saved);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        auto* restored_importer = dynamic_cast<gf::PresetImport*>(restored.get());
+        bytes.clear();
+        if (!check(restored_importer && restored_importer->export_juno_preset(bytes) &&
+                   gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.cutoff_hz - 20.0f) < .01f && std::abs(patch.reso_norm - .2f) < .001f,
+                   "Juno pending filter CC survives project restore")) return 1;
+        auto* cutoff = find_parameter(*midi_juno, "cutoff"); auto* resonance = find_parameter(*midi_juno, "resonance");
+        for (int attempt = 0; attempt < 10 && cutoff->convertFrom0to1(cutoff->getValue()) > 21.0f; ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(cutoff->convertFrom0to1(cutoff->getValue()) < 21.0f, "Juno filter CC delivered to host")) return 1;
+        midi_juno->getStateInformation(saved); restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        bytes.clear();
+        if (!check(restored_importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.reso_norm - .2f) < .001f, "Juno delivered low resonance remains lossless")) return 1;
+        cutoff->setValueNotifyingHost(cutoff->convertTo0to1(1200));
+        resonance->setValueNotifyingHost(resonance->convertTo0to1(2.0f));
+        bytes.clear();
+        if (!check(importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.cutoff_hz - 1200.0f) < .1f && std::abs(patch.reso_norm - ((2.0f - .1f) / 4.9f + .2f)) < .001f,
+                   "Juno host filter automation overrides pending CC")) return 1;
+        juce::MidiBuffer no_events;
+        midi_juno->processBlock(changed, no_events);
+        resonance->setValueNotifyingHost(resonance->convertTo0to1(.707f));
+        bytes.clear();
+        if (!check(importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.reso_norm - ((.707f - .1f) / 4.9f + .2f)) < .001f,
+                   "Juno stale MIDI override stays cleared after host edit")) return 1;
+        studio::Preset reset; std::array<uint8_t, studio::PRESET_BYTES> reset_bytes{};
+        if (!check(studio::factory_preset(1, 0, &reset) && studio::preset_encode(reset, 1, reset_bytes.data(), reset_bytes.size()) == reset_bytes.size() &&
+                   importer->import_preset(reset_bytes.data(), reset_bytes.size()), "Juno filter CC reset preset")) return 1;
+        midi_juno->getStateInformation(saved); restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        bytes.clear();
+        if (!check(restored_importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.cutoff_hz - reset.cutoff_hz) < .1f, "Juno new preset clears filter CC")) return 1;
+        find_parameter(*midi_juno, "juno.macro.grit")->setValueNotifyingHost(1);
+        find_parameter(*midi_juno, "juno.macro.move")->setValueNotifyingHost(1);
+        juce::MidiBuffer maximum;
+        maximum.addEvent(juce::MidiMessage::controllerEvent(1, 74, 127), 0);
+        maximum.addEvent(juce::MidiMessage::controllerEvent(1, 71, 127), 0);
+        midi_juno->processBlock(changed, maximum);
+        bytes.clear();
+        if (!check(importer->export_juno_preset(bytes) && gf::decode_supported_preset(bytes.data(), bytes.size(), patch, engine) &&
+                   std::abs(patch.cutoff_hz - 8000.0f) < .1f && std::abs(patch.reso_norm - 1.0f) < .001f,
+                   "Juno filter CC saturates safely with macros")) return 1;
+        auto other = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*other, "modeld_preview")->setValueNotifyingHost(1);
+        other->prepareToPlay(48000, 128); other->processBlock(changed, maximum); other->getStateInformation(saved);
+        auto xml = juce::AudioProcessor::getXmlFromBinary(saved.getData(), int(saved.getSize()));
+        auto tree = xml ? juce::ValueTree::fromXml(*xml) : juce::ValueTree();
+        if (!check(tree.isValid() && !bool(tree.getProperty("junoFilterOverride0", false)) &&
+                   !bool(tree.getProperty("junoFilterOverride1", false)), "other engine CC does not modify Juno overrides")) return 1;
+    }
     auto cc_juno = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     auto cc_juno_plain = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
     find_parameter(*cc_juno, "juno_preview")->setValueNotifyingHost(1);

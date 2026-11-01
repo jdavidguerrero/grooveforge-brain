@@ -581,7 +581,8 @@ public:
         ob6_cc_parameters_[4] = state_.getParameter("cutoff");
         ob6_cc_parameters_[5] = state_.getParameter("resonance");
         juno_cc_parameters_[0] = state_.getParameter("juno.drift");
-        for (size_t i = 1; i < juno_cc_parameters_.size(); ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
+        for (size_t i = 1; i < 4; ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
+        juno_cc_parameters_[4] = state_.getParameter("cutoff"); juno_cc_parameters_[5] = state_.getParameter("resonance");
         cc_parameters_[0] = state_.getParameter("dx7.drift");
         for (size_t i = 1; i < cc_parameters_.size(); ++i) cc_parameters_[i] = state_.getParameter(DX_MACRO_IDS[i - 1]);
         dx_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -709,7 +710,12 @@ public:
         const bool ob6_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && ob6_enabled_->load() >= 0.5f;
         const bool juno_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
         const bool dx7_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
-        if (juno_mode) juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
+        if (juno_mode) {
+            for (size_t i = 0; i < 2; ++i)
+                if (juno_filter_override_[i].load(std::memory_order_acquire) && !juno_filter_override_active(i))
+                    juno_filter_override_[i].store(false, std::memory_order_release);
+            juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
+        }
         if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_ || hybrid_mode != last_hybrid_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; hybrid_.reset(); last_hybrid_mode_ = hybrid_mode; keyboard_playing_.fill(false); host_note_playing_.fill(false); }
         apply_pending_preset();
         apply_pending_hybrid();
@@ -1055,6 +1061,19 @@ public:
                 apply_ob6_osc_automation(); apply_ob6_fx_automation();
                 const auto effective = ob6_effective_controls(ob6_base_.patch);
                 ob6_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
+            } else if (juno_mode && message.isController() && (message.getControllerNumber() == 74 || message.getControllerNumber() == 71)) {
+                const size_t filter = message.getControllerNumber() == 74 ? 0u : 1u, index = filter + 4;
+                const float raw = message.getControllerValue() / 127.0f;
+                if (juno_cc_sequence_[index].load(std::memory_order_acquire) == juno_cc_delivered_[index].load(std::memory_order_acquire))
+                    juno_filter_origin_[filter].store(juno_cc_parameters_[index]->getValue(), std::memory_order_relaxed);
+                const float baseline = filter == 0 ? gf_cutoff_from_cc_norm(1, raw) : std::clamp(.1f + 4.9f * raw, .707f, 5.0f);
+                const float normalized = juno_cc_parameters_[index]->convertTo0to1(baseline);
+                juno_filter_raw_[filter].store(raw, std::memory_order_relaxed);
+                juno_filter_expected_[filter].store(normalized, std::memory_order_relaxed);
+                juno_cc_values_[index].store(normalized, std::memory_order_relaxed);
+                juno_filter_override_[filter].store(true, std::memory_order_release);
+                juno_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
             } else if (juno_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
                 const int number = message.getControllerNumber();
@@ -1151,8 +1170,14 @@ public:
             if (cc_sequence_[i].load(std::memory_order_acquire) != cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("dxPendingCC" + juce::String(int(i)), cc_values_[i].load(std::memory_order_relaxed), nullptr);
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
-            if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire))
+            if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire) &&
+                (i < 4 || juno_filter_override_active(i - 4)))
                 snapshot.setProperty("junoPendingCC" + juce::String(int(i)), juno_cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < 2; ++i) {
+            snapshot.setProperty("junoFilterOverride" + juce::String(int(i)), juno_filter_override_active(i), nullptr);
+            snapshot.setProperty("junoFilterRaw" + juce::String(int(i)), juno_filter_raw_[i].load(std::memory_order_relaxed), nullptr);
+            snapshot.setProperty("junoFilterExpected" + juce::String(int(i)), juno_filter_expected_[i].load(std::memory_order_relaxed), nullptr);
+        }
         for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
             if (ob6_cc_sequence_[i].load(std::memory_order_acquire) != ob6_cc_delivered_[i].load(std::memory_order_acquire) &&
                 (i < 4 || ob6_filter_override_active(i - 4)))
@@ -1236,12 +1261,23 @@ public:
             has_pending_cc[i] = tree.hasProperty(id);
             if (has_pending_cc[i]) { pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
         }
-        std::array<float, 4> juno_pending_cc{};
-        std::array<bool, 4> has_juno_pending_cc{};
+        std::array<float, 6> juno_pending_cc{};
+        std::array<bool, 6> has_juno_pending_cc{};
         for (size_t i = 0; i < juno_pending_cc.size(); ++i) {
             const auto id = "junoPendingCC" + juce::String(int(i));
             has_juno_pending_cc[i] = tree.hasProperty(id);
             if (has_juno_pending_cc[i]) { juno_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
+        }
+        std::array<bool, 2> juno_filter_override{};
+        std::array<float, 2> juno_filter_raw{}, juno_filter_expected{};
+        for (size_t i = 0; i < 2; ++i) {
+            const auto suffix = juce::String(int(i));
+            juno_filter_override[i] = bool(tree.getProperty("junoFilterOverride" + suffix, false));
+            juno_filter_raw[i] = float(tree.getProperty("junoFilterRaw" + suffix, 0.0f));
+            juno_filter_expected[i] = float(tree.getProperty("junoFilterExpected" + suffix, 0.0f));
+            tree.removeProperty("junoFilterOverride" + suffix, nullptr);
+            tree.removeProperty("junoFilterRaw" + suffix, nullptr);
+            tree.removeProperty("junoFilterExpected" + suffix, nullptr);
         }
         std::array<float, 6> ob6_pending_cc{};
         std::array<bool, 6> has_ob6_pending_cc{};
@@ -1456,6 +1492,11 @@ public:
             if (has_pending_cc[i]) cc_parameters_[i]->setValueNotifyingHost(std::clamp(pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < juno_pending_cc.size(); ++i)
             if (has_juno_pending_cc[i]) juno_cc_parameters_[i]->setValueNotifyingHost(std::clamp(juno_pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < 2; ++i) {
+            juno_filter_raw_[i].store(std::clamp(juno_filter_raw[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            juno_filter_expected_[i].store(std::clamp(juno_filter_expected[i], 0.0f, 1.0f), std::memory_order_relaxed);
+            juno_filter_override_[i].store(juno_filter_override[i], std::memory_order_release);
+        }
         for (size_t i = 0; i < ob6_pending_cc.size(); ++i)
             if (has_ob6_pending_cc[i]) ob6_cc_parameters_[i]->setValueNotifyingHost(std::clamp(ob6_pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < 2; ++i) {
@@ -1965,6 +2006,7 @@ private:
         for (auto& enabled : ob6_filter_override_) enabled.store(false, std::memory_order_release);
         for (size_t i = 0; i < ob6_cc_parameters_.size(); ++i)
             ob6_cc_delivered_[i].store(ob6_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
+        for (auto& enabled : juno_filter_override_) enabled.store(false, std::memory_order_release);
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
             juno_cc_delivered_[i].store(juno_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
@@ -2069,6 +2111,14 @@ private:
         return ob6_cc_sequence_[index].load(std::memory_order_acquire) != ob6_cc_delivered_[index].load(std::memory_order_acquire) &&
             std::abs(value - ob6_filter_origin_[filter].load(std::memory_order_relaxed)) <= 1e-5f;
     }
+    bool juno_filter_override_active(size_t filter) const {
+        if (!juno_filter_override_[filter].load(std::memory_order_acquire)) return false;
+        const size_t index = filter + 4;
+        const float value = juno_cc_parameters_[index]->getValue();
+        if (std::abs(value - juno_filter_expected_[filter].load(std::memory_order_relaxed)) <= 1e-5f) return true;
+        return juno_cc_sequence_[index].load(std::memory_order_acquire) != juno_cc_delivered_[index].load(std::memory_order_acquire) &&
+            std::abs(value - juno_filter_origin_[filter].load(std::memory_order_relaxed)) <= 1e-5f;
+    }
     float juno_macro_value(size_t index) const {
         return index < 3 ? juno_cc_value(index + 1, juno_macro_[index]->load()) : juno_macro_[index]->load();
     }
@@ -2144,6 +2194,11 @@ private:
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i) {
             const auto sequence = juno_cc_sequence_[i].load(std::memory_order_acquire);
             if (sequence == juno_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            if (i >= 4 && !juno_filter_override_active(i - 4)) {
+                juno_filter_override_[i - 4].store(false, std::memory_order_release);
+                juno_cc_delivered_[i].store(sequence, std::memory_order_release);
+                continue;
+            }
             juno_cc_parameters_[i]->setValueNotifyingHost(juno_cc_values_[i].load(std::memory_order_relaxed));
             juno_cc_delivered_[i].store(sequence, std::memory_order_release);
         }
@@ -2319,10 +2374,14 @@ private:
         return p;
     }
     studio::Patch juno_effective_env() const { return studio::macro_patch(juno_base_env(), 1); }
-    float juno_effective_cutoff() const { return std::clamp(cutoff_->load() * studio::move_cutoff_mul(juno_macro_value(2)), 20.0f, 8000.0f); }
+    float juno_effective_cutoff() const {
+        const float cutoff = juno_filter_override_active(0) ? gf_cutoff_from_cc_norm(1, juno_filter_raw_[0].load(std::memory_order_relaxed)) : cutoff_->load();
+        return std::clamp(cutoff * studio::move_cutoff_mul(juno_macro_value(2)), 20.0f, 8000.0f);
+    }
     float juno_effective_resonance() const {
         const auto p = juno_base_env();
-        const float norm = std::clamp((resonance_->load() - .1f) / 4.9f, 0.0f, 1.0f);
+        const float norm = juno_filter_override_active(1) ? juno_filter_raw_[1].load(std::memory_order_relaxed) :
+            std::clamp((resonance_->load() - .1f) / 4.9f, 0.0f, 1.0f);
         return std::clamp(.1f + 4.9f * studio::move_resonance(studio::macro_resonance(norm, p), juno_macro_value(2)), .707f, 5.0f);
     }
     void set_juno_fx_parameters(const studio::Preset& preset) {
@@ -3053,9 +3112,11 @@ private:
     std::array<std::atomic<uint64_t>, 6> ob6_cc_sequence_{}, ob6_cc_delivered_{};
     std::array<std::atomic<bool>, 2> ob6_filter_override_{};
     std::array<std::atomic<float>, 2> ob6_filter_raw_{}, ob6_filter_expected_{}, ob6_filter_origin_{};
-    std::array<juce::RangedAudioParameter*, 4> juno_cc_parameters_{};
-    std::array<std::atomic<float>, 4> juno_cc_values_{};
-    std::array<std::atomic<uint64_t>, 4> juno_cc_sequence_{}, juno_cc_delivered_{};
+    std::array<juce::RangedAudioParameter*, 6> juno_cc_parameters_{};
+    std::array<std::atomic<float>, 6> juno_cc_values_{};
+    std::array<std::atomic<uint64_t>, 6> juno_cc_sequence_{}, juno_cc_delivered_{};
+    std::array<std::atomic<bool>, 2> juno_filter_override_{};
+    std::array<std::atomic<float>, 2> juno_filter_raw_{}, juno_filter_expected_{}, juno_filter_origin_{};
     std::array<juce::RangedAudioParameter*, 4> cc_parameters_{};
     std::array<std::atomic<float>, 4> cc_values_{};
     std::array<std::atomic<uint64_t>, 4> cc_sequence_{}, cc_delivered_{};

@@ -47,4 +47,4 @@ Para probar solo el DSP sin JUCE: configurar con `-DGF_BUILD_VST3=OFF`, compilar
 
 El control **SRC GFP** conserva la fuente de reloj del preset para el Brain. El plugin usa el transporte del DAW y no cambia de fuente al editarlo; sin transporte válido usa el fallback del piloto.
 
-Juno admite CC 14 (DRIFT), 15 (GRIT), 16 (POCKET) y 19 (MOVE); se aplican en el offset MIDI y se reflejan en los parámetros del DAW desde el hilo de mensajes.
+Juno admite CC 14 (DRIFT), 15 (GRIT), 16 (POCKET), 19 (MOVE), 74 (cutoff) y 71 (resonancia); se aplican en el offset MIDI y se reflejan en los parámetros del DAW desde el hilo de mensajes. Los CC de filtro se aplican antes de GRIT/MOVE y se conserva la resonancia MIDI por debajo del mínimo del control del host.
