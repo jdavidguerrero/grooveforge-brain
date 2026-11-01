@@ -2546,8 +2546,22 @@ int main() {
         plugin->processBlock(audio, midi); reference->processBlock(ref_audio, ref_midi);
         difference = 0;
         for (int i = 0; i < 512; ++i) difference += std::abs(audio.getSample(0, i) - ref_audio.getSample(0, i));
+        if (!check(difference > .0001 && std::abs(audio.getSample(0, 511) - ref_audio.getSample(0, 511)) < .00001,
+                   "cancel preview fades back to original output")) return 1;
+        plugin->processBlock(audio, midi); reference->processBlock(ref_audio, ref_midi);
+        difference = 0;
+        for (int i = 0; i < 512; ++i) difference += std::abs(audio.getSample(0, i) - ref_audio.getSample(0, i));
         if (!check(difference < .0001 && std::abs(find_parameter(*plugin, "cutoff")->getValue() - .57f) < .001f,
                    "cancel preview restores live output and keeps automation")) return 1;
+        if (!check(panel->on_preview(0), "preview restarts for oversized block")) return 1;
+        juce::AudioBuffer<float> oversized(2, 5000); juce::MidiBuffer oversized_midi;
+        oversized_midi.addEvent(juce::MidiMessage::noteOn(1, 67, uint8_t(110)), 0);
+        plugin->processBlock(oversized, oversized_midi);
+        bool finite = true;
+        for (int channel = 0; channel < 2; ++channel) for (int i = 0; i < oversized.getNumSamples(); ++i)
+            finite = finite && std::isfinite(oversized.getSample(channel, i));
+        if (!check(finite && oversized.getMagnitude(0, 0, oversized.getNumSamples()) > 0, "preview handles oversized host blocks")) return 1;
+        panel->on_cancel_preview();
     }
     {
         OutputMeterState state;

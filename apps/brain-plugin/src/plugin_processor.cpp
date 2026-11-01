@@ -605,8 +605,11 @@ public:
     bool isBusesLayoutSupported(const BusesLayout& layouts) const override {
         return layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
     }
-    void prepareToPlay(double sample_rate, int) override {
+    void prepareToPlay(double sample_rate, int maximum_block_size) override {
         sample_rate_ = sample_rate;
+        const size_t preview_capacity = size_t(juce::jmax(4096, maximum_block_size));
+        preview_left_.assign(preview_capacity, 0.0f); preview_right_.assign(preview_capacity, 0.0f);
+        preview_mix_ = 0.0f;
         preview_sample_rate_.store(sample_rate > 0.0 ? sample_rate : 44100.0, std::memory_order_relaxed);
         if (auto* preview = preview_pointer_.load(std::memory_order_acquire)) preview->prepareToPlay(sample_rate, 512);
         const auto delay_length = size_t(sample_rate > 0.0 ? sample_rate : 44100.0) + 2;
@@ -1075,14 +1078,33 @@ public:
             } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); keyboard_playing_.fill(false); host_note_playing_.fill(false); }
         }
         render_until(buffer.getNumSamples());
-        if (preview_active_.load(std::memory_order_acquire)) {
+        const bool preview_requested = preview_active_.load(std::memory_order_acquire);
+        if (preview_requested || preview_mix_ > 0.0f) {
             if (auto* preview = preview_pointer_.load(std::memory_order_acquire)) {
                 for (size_t i = 0; i < keyboard_desired_.size(); ++i)
                     preview->set_keyboard_note(int(i), keyboard_desired_[i].load(std::memory_order_relaxed));
                 preview->setPlayHead(getPlayHead());
-                preview->processBlock(buffer, midi);
-                meter_left = buffer.getMagnitude(0, 0, buffer.getNumSamples());
-                meter_right = buffer.getMagnitude(1, 0, buffer.getNumSamples());
+                if (size_t(buffer.getNumSamples()) <= preview_left_.size()) {
+                    float* channels[] = {preview_left_.data(), preview_right_.data()};
+                    juce::AudioBuffer<float> preview_buffer(channels, 2, buffer.getNumSamples());
+                    preview->processBlock(preview_buffer, midi);
+                    const float step = 1.0f / juce::jmax(1.0f, float(sample_rate_) * .010f);
+                    auto* left = buffer.getWritePointer(0); auto* right = buffer.getWritePointer(1);
+                    meter_left = meter_right = 0.0f;
+                    for (int i = 0; i < buffer.getNumSamples(); ++i) {
+                        preview_mix_ = juce::jlimit(0.0f, 1.0f, preview_mix_ + (preview_requested ? step : -step));
+                        left[i] += (preview_left_[size_t(i)] - left[i]) * preview_mix_;
+                        right[i] += (preview_right_[size_t(i)] - right[i]) * preview_mix_;
+                        meter_left = std::max(meter_left, std::abs(left[i])); meter_right = std::max(meter_right, std::abs(right[i]));
+                    }
+                } else {
+                    preview_mix_ = preview_requested ? 1.0f : 0.0f;
+                    if (preview_requested) {
+                        preview->processBlock(buffer, midi);
+                        meter_left = buffer.getMagnitude(0, 0, buffer.getNumSamples());
+                        meter_right = buffer.getMagnitude(1, 0, buffer.getNumSamples());
+                    }
+                }
             }
         }
         meter_state_.publish(meter_left, meter_right);
@@ -2965,6 +2987,8 @@ private:
     std::atomic<BrainPrototype*> preview_pointer_{nullptr};
     std::atomic<bool> preview_active_{false};
     std::atomic<double> preview_sample_rate_{44100.0};
+    std::vector<float> preview_left_, preview_right_;
+    float preview_mix_ = 0.0f;
     std::array<std::atomic<bool>, 128> keyboard_desired_{};
     std::array<bool, 128> keyboard_playing_{}, host_note_playing_{};
     std::atomic<float>* hybrid_focus_ = nullptr;

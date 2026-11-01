@@ -81,3 +81,7 @@ El navegador permite pulsar PREV en una fila para escuchar el sonido con nuevas 
 ## Preescucha opcional por hover
 
 La casilla PREVIEW HOVER activa la preescucha aislada al mantener el cursor 300 ms sobre una fila. La opción arranca apagada; al salir de la lista, desactivarla o cerrar el navegador se cancela la preescucha. La estrella y el editor de etiquetas no disparan el hover. Si se selecciona la fila, el preset se carga normalmente. El coste y la ausencia de crossfade son los mismos de PREV.
+
+## Transición de preescucha
+
+Al activar o cancelar la preescucha se aplica una mezcla lineal de 10 ms entre la salida principal y la del procesador auxiliar. Ambas rutas siguen recibiendo MIDI durante el fundido. La memoria temporal estéreo se reserva en `prepareToPlay`; el callback no la amplía. Si el DAW entrega un bloque mayor al tamaño reservado, ese bloque usa conmutación directa para evitar asignaciones en el hilo de audio. Cambiar de preset mientras ya se está preescuchando no garantiza un fundido entre los dos presets auxiliares.
