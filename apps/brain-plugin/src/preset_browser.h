@@ -5,7 +5,7 @@
 #include <vector>
 
 /** Searchable view of a real preset or layer bank. */
-class PresetBrowser final : public juce::Component, private juce::ListBoxModel {
+class PresetBrowser final : public juce::Component, private juce::ListBoxModel, private juce::Timer {
 public:
     PresetBrowser() {
         setComponentID("browser.panel");
@@ -24,6 +24,11 @@ public:
         favourites_only_.setButtonText("FAVORITOS");
         favourites_only_.onClick = [this] { filter(); };
         addAndMakeVisible(favourites_only_);
+        hover_preview_.setComponentID("browser.preview.hover"); hover_preview_.setButtonText("PREVIEW HOVER");
+        hover_preview_.onClick = [this] {
+            if (!hover_preview_.getToggleState()) { hover_index_ = -1; cancel_preview(); }
+        };
+        addAndMakeVisible(hover_preview_);
         cancel_preview_.setComponentID("browser.preview.cancel"); cancel_preview_.setButtonText("CANCEL PREV");
         cancel_preview_.onClick = [this] { cancel_preview(); };
         addChildComponent(cancel_preview_);
@@ -38,13 +43,15 @@ public:
         list_.setComponentID("browser.list"); list_.setModel(this); list_.setRowHeight(28);
         list_.setColour(juce::ListBox::backgroundColourId, juce::Colour(0xff141414));
         addAndMakeVisible(list_);
+        list_.addMouseListener(this, true);
+        startTimer(50);
         empty_.setText("Sin resultados", juce::dontSendNotification);
         empty_.setColour(juce::Label::textColourId, juce::Colour(0xff8e8ea2));
         empty_.setJustificationType(juce::Justification::centred);
         addChildComponent(empty_);
         setOpaque(true);
     }
-    ~PresetBrowser() override { list_.setModel(nullptr); }
+    ~PresetBrowser() override { stopTimer(); list_.removeMouseListener(this); list_.setModel(nullptr); }
     /** Replace the bank while retaining a user's current search. */
     void set_items(const juce::StringArray& names, const std::vector<bool>& favourites = {}, const juce::StringArray& tags = {}) {
         items_ = names; favourites_ = favourites; favourites_.resize(size_t(items_.size()), false);
@@ -70,8 +77,9 @@ public:
         auto header = bounds.removeFromTop(26);
         title_.setBounds(header.removeFromLeft(180));
         close_.setBounds(header.removeFromRight(80));
-        favourites_only_.setBounds(header.removeFromRight(130));
-        cancel_preview_.setBounds(header.removeFromRight(125));
+        favourites_only_.setBounds(header.removeFromRight(110));
+        cancel_preview_.setBounds(header.removeFromRight(115));
+        hover_preview_.setBounds(header.removeFromRight(135));
         bounds.removeFromTop(6);
         search_.setBounds(bounds.removeFromTop(24));
         bounds.removeFromTop(6);
@@ -84,6 +92,7 @@ public:
     }
 private:
     void filter() {
+        hover_index_ = -1;
         visible_.clear();
         const auto query = search_.getText().trim();
         for (int i = 0; i < items_.size(); ++i)
@@ -127,9 +136,36 @@ private:
         } else if (on_load) { cancel_preview(); on_load(index); }
     }
     void cancel_preview() {
+        hover_index_ = -1;
         if (preview_index_ >= 0 && on_cancel_preview) on_cancel_preview();
         preview_index_ = -1; cancel_preview_.setVisible(false); list_.repaint();
     }
+    void mouseMove(const juce::MouseEvent& event) override {
+        if (!hover_preview_.getToggleState() || !isVisible()) return;
+        const auto point = event.getEventRelativeTo(&list_).position;
+        const int row = list_.getRowContainingPosition(int(point.x), int(point.y));
+        const int index = point.x >= 48.0f && point.x < float(list_.getWidth() - 60) && row >= 0 && size_t(row) < visible_.size()
+            ? visible_[size_t(row)] : -1;
+        if (index == hover_index_) return;
+        hover_index_ = index;
+        hover_since_ = juce::Time::getMillisecondCounter();
+        if (preview_index_ >= 0 && preview_index_ != index) {
+            if (on_cancel_preview) on_cancel_preview();
+            preview_index_ = -1; cancel_preview_.setVisible(false); list_.repaint();
+        }
+    }
+    void mouseExit(const juce::MouseEvent& event) override {
+        const auto point = event.getEventRelativeTo(&list_).position;
+        if (hover_preview_.getToggleState() && !list_.getLocalBounds().toFloat().contains(point)) cancel_preview();
+    }
+    void listWasScrolled() override { if (hover_preview_.getToggleState()) cancel_preview(); }
+    void timerCallback() override {
+        if (!isVisible() || !hover_preview_.getToggleState() || hover_index_ < 0 || hover_index_ == preview_index_) return;
+        if (juce::Time::getMillisecondCounter() - hover_since_ >= 300 && on_preview && on_preview(hover_index_)) {
+            preview_index_ = hover_index_; cancel_preview_.setVisible(true); list_.repaint();
+        }
+    }
+    void visibilityChanged() override { if (!isVisible()) cancel_preview(); }
     void apply_tags() {
         if (editing_ < 0 || editing_ >= items_.size()) return;
         const int index = editing_;
@@ -139,12 +175,13 @@ private:
         resized(); filter();
     }
     juce::StringArray items_, tags_;
-    int editing_ = -1, preview_index_ = -1;
+    int editing_ = -1, preview_index_ = -1, hover_index_ = -1;
+    juce::uint32 hover_since_ = 0;
     std::vector<int> visible_;
     std::vector<bool> favourites_;
     juce::Label title_, empty_;
     juce::TextEditor search_, tag_editor_;
     juce::TextButton close_, tag_apply_, cancel_preview_;
-    juce::ToggleButton favourites_only_;
+    juce::ToggleButton favourites_only_, hover_preview_;
     juce::ListBox list_;
 };

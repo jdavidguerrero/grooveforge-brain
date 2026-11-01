@@ -2457,6 +2457,18 @@ int main() {
         if (!check(preview_cancel && preview_cancel->isVisible() && panel->isVisible(), "browser starts isolated preview")) return 1;
         preview_cancel->onClick();
         if (!check(!preview_cancel->isVisible(), "browser cancels preview")) return 1;
+        auto* hover = dynamic_cast<juce::ToggleButton*>(panel->findChildWithID("browser.preview.hover"));
+        if (!check(hover && !hover->getToggleState(), "hover preview is opt-in")) return 1;
+        hover->setToggleState(true, juce::dontSendNotification); hover->onClick();
+        static_cast<juce::Component*>(panel)->mouseMove(browser_event);
+        juce::Timer::callPendingTimersSynchronously();
+        if (!check(!preview_cancel->isVisible(), "hover preview does not start immediately")) return 1;
+        for (int attempt = 0; attempt < 20 && !preview_cancel->isVisible(); ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(preview_cancel->isVisible(), "hover preview starts after delay")) return 1;
+        hover->setToggleState(false, juce::dontSendNotification); hover->onClick();
+        if (!check(!preview_cancel->isVisible(), "disabling hover cancels preview")) return 1;
         juce::MouseEvent star_event(juce::Desktop::getInstance().getMainMouseSource(), {5.0f, 5.0f}, juce::ModifierKeys::leftButtonModifier,
                                     1.0f, 0.0f, 0.0f, 0.0f, 0.0f, list, list, now_browser, {5.0f, 5.0f}, now_browser, 1, false);
         list->getModel()->listBoxItemClicked(0, star_event);

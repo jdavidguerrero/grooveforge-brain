@@ -77,3 +77,7 @@ DX7 dispone de una pestaña LFO con forma, velocidad, división y destinos pitch
 ## Preescucha aislada
 
 El navegador permite pulsar PREV en una fila para escuchar el sonido con nuevas notas MIDI; CANCELAR o cerrar el navegador vuelve al sonido del proyecto. Un segundo procesador, creado y preparado fuera del callback al iniciar la primera preescucha, recibe el preset seleccionado y procesa las mismas notas, mientras el procesador principal sigue ejecutándose y conserva su estado y automatización. Se sustituye solo la salida durante la preescucha. El procesador auxiliar permanece vivo hasta cerrar la instancia para evitar destruirlo en el hilo de audio. Esta primera interacción es explícita y no se activa por hover; puede aumentar el uso de CPU y memoria mientras está activa. La conmutación no usa crossfade y no hay equivalencia de fase garantizada.
+
+## Preescucha opcional por hover
+
+La casilla PREVIEW HOVER activa la preescucha aislada al mantener el cursor 300 ms sobre una fila. La opción arranca apagada; al salir de la lista, desactivarla o cerrar el navegador se cancela la preescucha. La estrella y el editor de etiquetas no disparan el hover. Si se selecciona la fila, el preset se carga normalmente. El coste y la ausencia de crossfade son los mismos de PREV.
