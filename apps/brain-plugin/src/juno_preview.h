@@ -26,6 +26,8 @@ public:
     void set_sustain(bool down);
     /** @brief Ajusta pitch bend de ±2 semitonos. */
     void set_pitch_bend(int value);
+    /** @brief Aplica la razón de afinación del TAPE compartido. */
+    void set_tape_pitch(float ratio);
     /** @brief Ajusta los controles básicos del piloto. */
     void set_parameters(float cutoff, float resonance, float attack, float release);
     /** @brief Aplica los controles de oscilador del patch Juno. */
@@ -59,7 +61,7 @@ private:
     std::array<std::optional<Voice>, 6> voices_;
     dsp::JunoChorusCore chorus_;
     dsp::JunoChorusCoreT<4096> chorus_high_rate_;
-    float fs_ = 44100, bend_ = 1, cutoff_ = 1200, resonance_ = 0.7f, attack_ = 10, release_ = 300;
+    float fs_ = 44100, bend_ = 1, tape_pitch_ = 1, cutoff_ = 1200, resonance_ = 0.7f, attack_ = 10, release_ = 300;
     float tick_ = 0;
     double drift_samples_remaining_ = 0;
     uint64_t age_ = 0;

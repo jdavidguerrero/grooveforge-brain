@@ -65,7 +65,7 @@ void ProphetPreview::prepare(double sample_rate) {
     synth_tape_ = dsp::TapeCore{};
     synth_tape_right_ = dsp::TapeCore{};
     tape_modulation_ = dsp::TapeModulation{};
-    tape_pitch_ = 1.0f;
+    tape_pitch_ = external_tape_pitch_ = 1.0f;
     set_synth_tape(synth_tape_enabled_, synth_tape_drive_, synth_tape_mix_, tape_wow_, tape_flutter_);
     synth_phaser_ = {};
     synth_phaser_[1].set_phase(0.25f);
@@ -105,7 +105,7 @@ void ProphetPreview::reset() {
     synth_tape_ = dsp::TapeCore{};
     synth_tape_right_ = dsp::TapeCore{};
     tape_modulation_ = dsp::TapeModulation{};
-    tape_pitch_ = 1.0f;
+    tape_pitch_ = external_tape_pitch_ = 1.0f;
     set_synth_tape(synth_tape_enabled_, synth_tape_drive_, synth_tape_mix_, tape_wow_, tape_flutter_);
     synth_phaser_ = {};
     synth_phaser_[1].set_phase(0.25f);
@@ -425,6 +425,9 @@ void ProphetPreview::set_sustain(bool down) {
         if (roots_[i].deferred) release_root(uint8_t(i));
 }
 
+void ProphetPreview::set_external_tape_pitch(float ratio) {
+    external_tape_pitch_ = std::isfinite(ratio) ? std::clamp(ratio, .5f, 2.0f) : 1.0f;
+}
 void ProphetPreview::set_pitch_bend(int value) {
     const int limited = std::clamp(value, 0, 16383);
     const float semitones = 2.0f * float(limited - 8192) / 8192.0f;
@@ -441,6 +444,10 @@ void ProphetPreview::process_frame(float& left, float& right) {
     process_frame_impl(left, right, false, 0.0f);
 }
 
+void ProphetPreview::process_voice_frame(float& left, float& right) {
+    process_frame_impl(left, right, false, 0.0f, false, 0.0f, true);
+}
+
 void ProphetPreview::process_external_frame(float input, float& left, float& right) {
     process_frame_impl(left, right, true, input);
 }
@@ -449,7 +456,7 @@ void ProphetPreview::process_external_stereo(float input_left, float input_right
     process_frame_impl(left, right, true, input_left, true, input_right);
 }
 
-void ProphetPreview::process_frame_impl(float& left, float& right, bool external, float input, bool stereo, float input_right) {
+void ProphetPreview::process_frame_impl(float& left, float& right, bool external, float input, bool stereo, float input_right, bool voice_only) {
     control_accumulator_ += 1000.0f;
     if (control_accumulator_ >= sample_rate_) {
         control_accumulator_ -= sample_rate_;
@@ -500,7 +507,7 @@ void ProphetPreview::process_frame_impl(float& left, float& right, bool external
         if (!v || !v->amp.active()) continue;
         Prophet5OscParams p;
         const float wm = ((1.0f - wheel_mix_) * lfo_value_ + wheel_mix_ * wheel_noise_) * wheel_;
-        const float hz = v->hz * v->spread.pitch * v->unison_ratio * bend_ratio_ * lfo_pitch_multiplier_ * tape_pitch_;
+        const float hz = v->hz * v->spread.pitch * v->unison_ratio * bend_ratio_ * lfo_pitch_multiplier_ * tape_pitch_ * external_tape_pitch_;
         p.inc_a = hz * prophet_fast_exp2((osc_a_st_ + (wheel_freq_a_ ? 12.0f * wm : 0.0f)) / 12.0f) / sample_rate_;
         float hz_b = (b_keyboard_ ? hz : 261.63f) * prophet_fast_exp2(
             (osc_b_st_ + osc_b_fine_ / 100.0f + (wheel_freq_b_ ? 12.0f * wm : 0.0f)) / 12.0f);
@@ -519,6 +526,11 @@ void ProphetPreview::process_frame_impl(float& left, float& right, bool external
         float sample = 0.0f;
         v->osc.render(p, &sample, 1);
         mixed += v->filter.process_sample(sample * (20000.0f / 32768.0f)) * v->amp.step() * 0.25f;
+    }
+    if (voice_only) {
+        left = right = mixed * unison_gain_;
+        if (transport_running_) transport_beats_ += double(transport_bpm_) / (60.0 * sample_rate_);
+        return;
     }
     float out = output_stage_.tick(std::clamp(mixed * 0.7f, -1.0f, 1.0f));
     if (synth_drive_enabled_) synth_drive_.render(&out, &out, 1);

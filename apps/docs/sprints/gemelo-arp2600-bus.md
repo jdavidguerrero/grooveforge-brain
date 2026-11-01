@@ -21,3 +21,15 @@ La página ENV/LFO expone decay y sustain de amplitud; la envolvente de filtro, 
 ## Edición GROOVE y FX
 
 PUMP, ARP y CHORD y las cinco etapas de SYNTH FX tienen parámetros propios de ARP y páginas de edición compartidas visualmente con los demás motores. Cada motor mantiene sus valores independientes. Los valores base se guardan en el DAW y en el GFP; MOVE se aplica a los efectos activos al renderizar y se incorpora al exportar. La migración inicializa proyectos anteriores a partir de su GFP. Se comprueban enlace de interfaz, aislamiento, persistencia y salida, sin A/B físico.
+
+## Macros del ARP 2600
+
+GRIT, POCKET y MOVE y sus tres profundidades se exponen como parámetros independientes del DAW. El patch base del GFP permanece sin alterar; el render calcula las envolventes, el drive y la respuesta a velocity desde las posiciones actuales. MOVE modifica cutoff, resonancia y FX activos, usando como referencia los valores efectivos del GFP importado para evitar aplicar las macros dos veces. Al exportar, los valores efectivos se incorporan al GFP y las tres macros se ponen a cero; DRIFT permanece independiente. La prueba verifica controles, cambios audibles, persistencia y exportación; no es una comparación A/B con hardware.
+
+## CC MIDI de macros
+
+CC 14 controla DRIFT, CC 15 GRIT, CC 16 POCKET y CC 19 MOVE. El motor aplica cada evento en su posición dentro del bloque; un buzón atómico comunica después el valor al hilo de mensajes para actualizar el parámetro del DAW. Si se guarda o exporta antes de esa publicación se conserva el valor pendiente. Se prueban la temporización, la salida y la recuperación de valores; no se ejecuta A/B con hardware.
+
+## CC MIDI de filtro
+
+CC 74 modifica el cutoff base con la curva logarítmica del ARP y CC 71 la resonancia base; GRIT y MOVE se aplican después. Se conserva el valor base incluso si el resultado efectivo se satura, y una edición posterior del control del DAW recupera la prioridad. Los valores pendientes se guardan y exportan sin esperar al hilo de interfaz. Se prueban el offset MIDI, la interacción con macros y la restauración, sin A/B físico. Referencias: `gf_params.h` y `49-studio-brain.cpp::engine_filter`.

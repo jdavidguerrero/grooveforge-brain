@@ -41,6 +41,8 @@ public:
     void set_sustain(bool down);
     /** @brief Aplica pitch bend MIDI de 14 bits con rango de ±2 semitonos. */
     void set_pitch_bend(int value);
+    /** @brief Aplica afinación TAPE externa al motor Prophet. */
+    void set_external_tape_pitch(float ratio);
     /** @brief Ajusta la rueda de modulación normalizada. */
     void setWheel(float amount) { wheel_ = amount; }
     /** @brief Ajusta LFO libre y profundidades normalizadas para cutoff, pitch y PWM. */
@@ -109,6 +111,8 @@ public:
     float process_sample();
     /** @brief Genera un frame estéreo con los efectos activos. */
     void process_frame(float& left, float& right);
+    /** @brief Genera las voces antes de la etapa de salida y del bus de efectos. */
+    void process_voice_frame(float& left, float& right);
     /** @brief Procesa una fuente mono externa por el bus SYNTH FX. */
     void process_external_frame(float input, float& left, float& right);
     /** @brief Procesa una fuente estéreo externa conservando ambos canales. */
@@ -119,7 +123,7 @@ public:
     void set_voice_sink(void* context, void (*on)(void*, uint8_t, float), void (*off)(void*, uint8_t));
 
 private:
-    void process_frame_impl(float& left, float& right, bool external, float input, bool stereo = false, float input_right = 0);
+    void process_frame_impl(float& left, float& right, bool external, float input, bool stereo = false, float input_right = 0, bool voice_only = false);
     void voice_note_on(uint8_t note, float velocity);
     void voice_note_off(uint8_t note);
     static void arp_note_on(uint8_t note, uint8_t velocity, void* context);
@@ -188,7 +192,7 @@ private:
     dsp::TapeModulation tape_modulation_;
     bool synth_tape_enabled_ = false;
     float synth_tape_drive_ = 2.0f, synth_tape_mix_ = 0.6f;
-    float tape_wow_ = 0.0f, tape_flutter_ = 0.0f, tape_pitch_ = 1.0f, tape_cutoff_ = 20000.0f;
+    float tape_wow_ = 0.0f, tape_flutter_ = 0.0f, tape_pitch_ = 1.0f, external_tape_pitch_ = 1.0f, tape_cutoff_ = 20000.0f;
     std::array<dsp::PhaserCore, 2> synth_phaser_;
     bool synth_phaser_enabled_ = false;
     float phaser_depth_ = 0.6f, phaser_rate_ = 0.5f, phaser_mix_ = 0.5f;

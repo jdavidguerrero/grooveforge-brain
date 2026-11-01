@@ -10,7 +10,7 @@ void JunoPreview::prepare(double rate) {
     reset();
 }
 void JunoPreview::reset() {
-    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tick_ = 0; drift_samples_remaining_ = 0;
+    age_ = 0; next_ = 0; sustain_ = false; bend_ = 1; tape_pitch_ = 1; tick_ = 0; drift_samples_remaining_ = 0;
     drift_.state = 0x2545F491u;
     lfo_ = dsp::Lfo{}; lfo_.set_rate_hz(lfo_rate_); lfo_.set_shape(lfo_shape_);
     lfo_.set_sync(lfo_sync_, bpm_, lfo_beats_);
@@ -79,6 +79,9 @@ void JunoPreview::set_sustain(bool down) {
 }
 void JunoPreview::set_pitch_bend(int value) {
     bend_ = std::exp2((2.0f * (std::clamp(value, 0, 16383) - 8192) / 8192.0f) / 12.0f);
+}
+void JunoPreview::set_tape_pitch(float ratio) {
+    tape_pitch_ = std::isfinite(ratio) ? std::clamp(ratio, .5f, 2.0f) : 1.0f;
 }
 void JunoPreview::set_parameters(float cutoff, float resonance, float attack, float release) {
     cutoff_ = std::clamp(cutoff, 20.0f, 20000.0f);
@@ -160,7 +163,7 @@ void JunoPreview::process_frame(float& left, float& right) {
             const float brightness = 1.0f - velocity_filter_ * (1.0f - v.velocity);
             v.filter.set_frequency(std::clamp((cutoff_ + 8000.0f * env_amount_ * brightness * filter_env) * v.spread.cutoff * v.cutoff_ratio * lfo_cutoff_ratio_, 20.0f, 20000.0f));
         }
-        const float hz = v.hz * v.spread.pitch * v.pitch_ratio * bend_ * lfo_pitch_ratio_;
+        const float hz = v.hz * v.spread.pitch * v.pitch_ratio * bend_ * lfo_pitch_ratio_ * tape_pitch_;
         float dco = 0, sub = 0;
         v.dco.render(waveform_, hz / fs_, std::clamp(pulse_width_ + pwm_mod_, 0.05f, 0.95f), 1, &dco, 1, 0, nullptr, nullptr, nullptr, 0, 0, advance_oscillator_drift);
         v.sub.render(dsp::WAVE_SQUARE, hz * 0.5f / fs_, 0.5f, 1, &sub, 1, 0, nullptr, nullptr, nullptr, 0, 0, advance_oscillator_drift);

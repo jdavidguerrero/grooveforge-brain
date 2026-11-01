@@ -1,5 +1,12 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "preset_import.h"
+#include "output_meter.h"
+#include "studio_keyboard.h"
+#include "preset_browser.h"
+#include "envelope_editor.h"
+#include "lfo_display.h"
+#include "hybrid_codec.h"
+#include "ui/layers.h"
 #include "preset_codec.h"
 
 #include <array>
@@ -79,8 +86,337 @@ static bool ob6_midi_block_independence(double sample_rate) {
     return energy > .001;
 }
 
+static bool hybrid_midi_block_independence(double sample_rate) {
+    studio::LayerPreset layer;
+    if (!studio::factory_layer(0, &layer)) return false;
+    layer.delay_b_ms = 7; layer.transpose_b = 12;
+    std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+    if (!gf::encode_hybrid_layer(layer, bytes.data(), bytes.size())) return false;
+    auto large = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    auto small = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+    for (auto* p : {large.get(), small.get()})
+        if (!dynamic_cast<gf::PresetImport*>(p)->import_preset(bytes.data(), bytes.size())) return false;
+    large->prepareToPlay(sample_rate, 128); small->prepareToPlay(sample_rate, 32);
+    struct Event { int sample; juce::MidiMessage message; };
+    const std::array<Event, 7> events{{
+        {0, juce::MidiMessage::noteOn(1, 60, uint8_t(100))},
+        {41, juce::MidiMessage::controllerEvent(1, 17, 95)},
+        {95, juce::MidiMessage::controllerEvent(1, 74, 70)},
+        {172, juce::MidiMessage::controllerEvent(1, 71, 70)},
+        {410, juce::MidiMessage::noteOff(1, 60)},
+        {611, juce::MidiMessage::noteOn(1, 67, uint8_t(100))},
+        {900, juce::MidiMessage::noteOff(1, 67)}
+    }};
+    auto add = [&](juce::MidiBuffer& midi, int start, int count) {
+        for (const auto& event : events) if (event.sample >= start && event.sample < start + count) midi.addEvent(event.message, event.sample - start);
+    };
+    double energy = 0;
+    for (int start = 0; start < 2048; start += 128) {
+        juce::AudioBuffer<float> full(2, 128); juce::MidiBuffer midi; add(midi, start, 128); large->processBlock(full, midi);
+        for (int offset = 0; offset < 128; offset += 32) {
+            juce::AudioBuffer<float> part(2, 32); juce::MidiBuffer part_midi; add(part_midi, start + offset, 32); small->processBlock(part, part_midi);
+            for (int i = 0; i < 32; ++i) for (int ch = 0; ch < 2; ++ch) {
+                const float a = full.getSample(ch, offset + i), b = part.getSample(ch, i); energy += a * a;
+                if (!std::isfinite(a + b) || std::abs(a - b) > 1e-6f) {
+                    std::fprintf(stderr, "HYBRID block mismatch at %.0f Hz, sample %d: %.9g %.9g\n", sample_rate, start + offset + i, a, b);
+                    return false;
+                }
+            }
+        }
+    }
+    return energy > .001;
+}
+
 int main() {
     juce::ScopedJuceInitialiser_GUI juce_gui;
+    for (double fs : {44100.0, 48000.0, 96000.0})
+        if (!check(hybrid_midi_block_independence(fs), "HYBRID MIDI block independence")) return 1;
+    {
+        studio::LayerPreset layer;
+        if (!check(studio::factory_layer(0, &layer), "HYBRID factory layer")) return 1;
+        layer.delay_b_ms = 24; layer.transpose_b = 7; layer.morph = 60;
+        std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+        if (!check(gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()), "HYBRID encode layer")) return 1;
+        auto synth = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto find = [](juce::AudioProcessor& p, const char* id) -> juce::RangedAudioParameter* {
+            for (auto* item : p.getParameters())
+                if (auto* param = dynamic_cast<juce::RangedAudioParameter*>(item); param && param->paramID == id) return param;
+            return nullptr;
+        };
+        find(*synth, "juno_preview")->setValueNotifyingHost(1);
+        auto* importer = dynamic_cast<gf::PresetImport*>(synth.get());
+        if (!check(importer && importer->import_preset(bytes.data(), bytes.size()) && find(*synth, "hybrid_preview")->getValue() > .5f &&
+                   std::abs(find(*synth, "hybrid.morph")->getValue() - .6f) < .001f, "HYBRID import GFL")) return 1;
+        auto malformed = bytes; malformed[0] = 'X';
+        if (!check(!importer->import_preset(malformed.data(), malformed.size()), "HYBRID invalid layer rejected")) return 1;
+        juce::MemoryBlock state; synth->getStateInformation(state);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(state.getData(), int(state.getSize()));
+        if (!check(find(*restored, "hybrid_preview")->getValue() > .5f &&
+                   std::abs(find(*restored, "hybrid.morph")->getValue() - .6f) < .001f, "HYBRID project restores")) return 1;
+        synth->prepareToPlay(48000, 128); restored->prepareToPlay(48000, 128);
+        juce::AudioBuffer<float> audio(2, 128), other(2, 128);
+        juce::MidiBuffer note, other_note;
+        note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+        other_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 40);
+        synth->processBlock(audio, note); restored->processBlock(other, other_note);
+        for (int i = 0; i < 128; ++i) {
+            if (i < 40 && !check(audio.getSample(0, i) == 0, "HYBRID MIDI offset")) return 1;
+            if (!check(std::abs(audio.getSample(0, i) - other.getSample(0, i)) < 1e-6f, "HYBRID layer audio restores")) return 1;
+        }
+        if (!check(audio.getRMSLevel(0, 40, 88) > 0, "HYBRID GFL audible")) return 1;
+        auto* held_cutoff = find(*synth, "hybrid.a.cutoff");
+        held_cutoff->setValueNotifyingHost(held_cutoff->convertTo0to1(1200));
+        juce::MidiBuffer held_no_events;
+        synth->processBlock(audio, held_no_events);
+        if (!check(audio.getRMSLevel(0, 0, 128) > 0, "HYBRID half edit preserves held note")) return 1;
+        juce::MidiBuffer morph;
+        morph.addEvent(juce::MidiMessage::controllerEvent(1, 17, 127), 64);
+        synth->processBlock(audio, morph); synth->getStateInformation(state);
+        auto cc_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        cc_restore->setStateInformation(state.getData(), int(state.getSize()));
+        if (!check(find(*cc_restore, "hybrid.morph")->getValue() > .99f, "HYBRID pending CC17 restores")) return 1;
+        find(*synth, "hybrid.morph")->setValueNotifyingHost(.25f);
+        std::vector<uint8_t> manual_export; studio::LayerPreset manual_layer;
+        if (!check(importer->export_hybrid_preset(manual_export) && gf::decode_hybrid_layer(manual_export.data(), manual_export.size(), manual_layer) &&
+                   manual_layer.morph == 25, "HYBRID DAW morph overrides pending CC")) return 1;
+        find(*synth, "hybrid.morph")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(cc_restore->createEditor());
+        auto* toggle = dynamic_cast<juce::ToggleButton*>(editor->findChildWithID("engine.hybrid"));
+        auto* morph_slider = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.morph"));
+        if (!check(toggle && toggle->getToggleState() && morph_slider && morph_slider->isVisible(), "HYBRID editor")) return 1;
+        auto* card_a = dynamic_cast<juce::TextButton*>(editor->findChildWithID("hybrid.card.0"));
+        auto* card_b = dynamic_cast<juce::TextButton*>(editor->findChildWithID("hybrid.card.1"));
+        if (!check(card_a && card_b && card_a->isVisible() && card_b->isVisible(), "HYBRID layer cards")) return 1;
+        card_b->onClick();
+        if (!check(find(*cc_restore, "hybrid.focus")->getValue() > .99f && card_b->getButtonText().contains("FOCUS"), "HYBRID B card selects focus")) return 1;
+        card_a->onClick();
+        if (!check(find(*cc_restore, "hybrid.focus")->getValue() < .01f && card_a->getButtonText().contains("FOCUS"), "HYBRID A card selects focus")) return 1;
+        auto* hybrid_page = dynamic_cast<juce::TextButton*>(editor->findChildWithID("hybrid.page"));
+        auto* b_cutoff = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.b.cutoff"));
+        if (!check(hybrid_page && b_cutoff && !b_cutoff->isVisible(), "HYBRID half controls")) return 1;
+        auto* hybrid_filter_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.1"));
+        auto* hybrid_home_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
+        if (!check(hybrid_filter_tab && hybrid_home_tab && hybrid_filter_tab->isVisible(), "HYBRID direct navigation")) return 1;
+        hybrid_filter_tab->onClick();
+        if (!check(b_cutoff->isVisible(), "HYBRID filter tab opens controls")) return 1;
+        auto* a_filter = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.a.cutoff"));
+        auto* focus_selector = dynamic_cast<juce::ComboBox*>(editor->findChildWithID("hybrid.focus"));
+        if (!check(a_filter && a_filter->isVisible() && focus_selector && focus_selector->isVisible(), "HYBRID comparison controls visible")) return 1;
+        const double a_before_focus = a_filter->getValue(), b_before_focus = b_cutoff->getValue();
+        focus_selector->setSelectedId(2, juce::sendNotificationSync);
+        if (!check(find(*cc_restore, "hybrid.focus")->getValue() > .99f && a_filter->getValue() == a_before_focus && b_cutoff->getValue() == b_before_focus, "HYBRID filter focus preserves both layers")) return 1;
+        focus_selector->setSelectedId(1, juce::sendNotificationSync);
+        hybrid_home_tab->onClick();
+        if (!check(morph_slider->isVisible() && !b_cutoff->isVisible(), "HYBRID home tab returns to layer")) return 1;
+        hybrid_page->onClick();
+        if (!check(b_cutoff->isVisible() && !morph_slider->isVisible(), "HYBRID half page")) return 1;
+        b_cutoff->setValue(1400, juce::sendNotificationSync);
+        std::vector<uint8_t> exported;
+        studio::LayerPreset exported_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_restore.get())->export_hybrid_preset(exported) &&
+                   gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
+                   exported_layer.eng_a == layer.eng_a && exported_layer.eng_b == layer.eng_b &&
+                   exported_layer.morph == 100 && exported_layer.delay_b_ms == 24 && exported_layer.transpose_b == 7 &&
+                   std::abs(exported_layer.b.cutoff_hz - 1400) < .01f,
+                   "HYBRID export layer controls")) return 1;
+        studio::Preset new_half;
+        std::array<uint8_t, studio::PRESET_BYTES> half_bytes{};
+        if (!check(studio::factory_preset(1, 0, &new_half) && studio::preset_encode(new_half, 1, half_bytes.data(), half_bytes.size()) == half_bytes.size(), "HYBRID replacement GFP")) return 1;
+        auto* a_cutoff = find(*synth, "hybrid.a.cutoff");
+        a_cutoff->setValueNotifyingHost(a_cutoff->convertTo0to1(1234));
+        auto* gain_a = find(*synth, "hybrid.gain_a");
+        gain_a->setValueNotifyingHost(gain_a->convertTo0to1(-9));
+        if (!check(importer->import_hybrid_half(half_bytes.data(), half_bytes.size(), 1), "HYBRID replace half B")) return 1;
+        exported.clear();
+        if (!check(importer->export_hybrid_preset(exported) && gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
+                   exported_layer.eng_a == layer.eng_a && exported_layer.eng_b == 1 && exported_layer.gain_a_db == -9 &&
+                   std::abs(exported_layer.a.cutoff_hz - 1234) < .1f &&
+                   exported_layer.morph == 100 && exported_layer.delay_b_ms == 24 && exported_layer.transpose_b == 7,
+                   "HYBRID replacement preserves controls")) return 1;
+        if (!check(studio::factory_preset(exported_layer.eng_a, 0, &new_half) &&
+                   studio::preset_encode(new_half, exported_layer.eng_a, half_bytes.data(), half_bytes.size()) == half_bytes.size() &&
+                   !importer->import_hybrid_half(half_bytes.data(), half_bytes.size(), 1), "HYBRID reject duplicate engines")) return 1;
+        juce::MidiBuffer bank_midi;
+        bank_midi.addEvent(juce::MidiMessage::controllerEvent(1, 18, 127), 0);
+        synth->processBlock(audio, bank_midi);
+        juce::Thread::sleep(50); juce::Timer::callPendingTimersSynchronously();
+        exported.clear();
+        if (!check(importer->export_hybrid_preset(exported) && gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
+                   std::strcmp(exported_layer.name, studio::layer_def(7).name) == 0, "HYBRID CC18 factory layer")) return 1;
+        juce::MidiBuffer bank_off;
+        bank_off.addEvent(juce::MidiMessage::controllerEvent(1, 18, 0), 0);
+        synth->processBlock(audio, bank_off);
+        for (int attempt = 0; attempt < 10 && (find(*synth, "hybrid_preview")->getValue() >= .5f || find(*synth, "juno_preview")->getValue() <= .5f); ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(find(*synth, "hybrid_preview")->getValue() < .5f && find(*synth, "juno_preview")->getValue() > .5f,
+                   "HYBRID CC18 restores SYNTH")) return 1;
+        hybrid_page->onClick();
+        auto* hybrid_grit = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.macro.grit"));
+        if (!check(hybrid_grit && hybrid_grit->isVisible(), "HYBRID macro page")) return 1;
+        hybrid_grit->setValue(.45, juce::sendNotificationSync);
+        if (!check(std::abs(find(*cc_restore, "hybrid.macro.grit")->getValue() - .45f) < .001f, "HYBRID macro editor binding")) return 1;
+        hybrid_page->onClick();
+        auto* hybrid_groove = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.groove.0.0"));
+        auto* hybrid_fx = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.fx.0.0"));
+        if (!check(hybrid_groove && hybrid_fx && hybrid_groove->isVisible(), "HYBRID groove page")) return 1;
+        hybrid_groove->setValue(1, juce::sendNotificationSync);
+        if (!check(find(*cc_restore, "hybrid.groove.pump.on")->getValue() > .5f &&
+                   find(*cc_restore, "arp2600.groove.pump.on")->getValue() < .5f, "HYBRID groove isolation")) return 1;
+        hybrid_page->onClick();
+        if (!check(hybrid_fx->isVisible() && !hybrid_groove->isVisible(), "HYBRID FX page")) return 1;
+        hybrid_fx->setValue(1, juce::sendNotificationSync);
+        if (!check(find(*cc_restore, "hybrid.fx.drive.on")->getValue() > .5f &&
+                   find(*cc_restore, "arp2600.fx.drive.on")->getValue() < .5f, "HYBRID FX isolation")) return 1;
+        std::vector<uint8_t> bus_gfl; studio::LayerPreset bus_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_restore.get())->export_hybrid_preset(bus_gfl) &&
+                   gf::decode_hybrid_layer(bus_gfl.data(), bus_gfl.size(), bus_layer) &&
+                   bus_layer.a.patch.groove_on[GF_GROOVE_PUMP] && bus_layer.a.patch.sfx_on[GF_SFX_DRIVE], "HYBRID bus export")) return 1;
+        hybrid_page->onClick();
+        auto* a_decay = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.a.voice.decay"));
+        auto* b_pitch = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.b.voice.lfo_pitch"));
+        if (!check(a_decay && b_pitch && a_decay->isVisible() && !b_pitch->isVisible(), "HYBRID voice A page")) return 1;
+        a_decay->setValue(777, juce::sendNotificationSync);
+        hybrid_page->onClick();
+        if (!check(b_pitch->isVisible() && !a_decay->isVisible(), "HYBRID voice B page")) return 1;
+        b_pitch->setValue(.33, juce::sendNotificationSync);
+        std::vector<uint8_t> voice_gfl; studio::LayerPreset voice_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_restore.get())->export_hybrid_preset(voice_gfl) &&
+                   gf::decode_hybrid_layer(voice_gfl.data(), voice_gfl.size(), voice_layer) &&
+                   std::abs(voice_layer.a.patch.decay_ms - 777) < .1f &&
+                   std::abs(voice_layer.b.patch.lfo_amt[GF_DEST_PITCH] - .33f) < .001f, "HYBRID voice export")) return 1;
+        hybrid_page->onClick();
+        auto* osc_stop = dynamic_cast<juce::ComboBox*>(editor->findChildWithID("hybrid.osc.stop"));
+        auto* osc_slot0 = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.osc.slot.0"));
+        auto* osc_slot2 = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.osc.slot.2"));
+        if (!check(osc_stop && osc_slot0 && osc_slot2 && osc_stop->isVisible() && osc_slot0->isVisible(), "HYBRID oscillator A page")) return 1;
+        osc_stop->setSelectedId(2, juce::sendNotificationSync);
+        osc_slot2->setValue(1, juce::sendNotificationSync);
+        hybrid_page->onClick();
+        osc_stop->setSelectedId(1, juce::sendNotificationSync);
+        if (!check(osc_slot0->isVisible(), "HYBRID oscillator B page")) return 1;
+        osc_slot0->setValue(1, juce::sendNotificationSync);
+        std::vector<uint8_t> osc_gfl; studio::LayerPreset osc_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_restore.get())->export_hybrid_preset(osc_gfl) &&
+                   gf::decode_hybrid_layer(osc_gfl.data(), osc_gfl.size(), osc_layer) &&
+                   osc_layer.a.patch.osc[0][2] == 8 && osc_layer.b.patch.osc[0][0] == 5,
+                   "HYBRID oscillator pages export engine slots")) return 1;
+        hybrid_page->onClick();
+        auto* factory = dynamic_cast<juce::ComboBox*>(editor->findChildWithID("hybrid.factory"));
+        if (!check(factory && factory->isVisible(), "HYBRID factory selector")) return 1;
+        auto filter_hybrid = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto filter_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* p : {filter_hybrid.get(), filter_reference.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(p)->import_preset(bytes.data(), bytes.size()), "HYBRID filter layer import")) return 1;
+            find(*p, "hybrid.focus")->setValueNotifyingHost(1); p->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer filter_events, filter_none;
+        filter_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_none.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 0), 64);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 127), 64);
+        filter_hybrid->processBlock(audio, filter_events); filter_reference->processBlock(other, filter_none);
+        double filter_effect = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == other.getSample(0, i), "HYBRID filter CC offset")) return 1;
+            if (i >= 64) filter_effect += std::abs(audio.getSample(0, i) - other.getSample(0, i));
+        }
+        if (!check(filter_effect > .00001, "HYBRID filter CC changes audio")) return 1;
+        auto macros = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto macros_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* p : {macros.get(), macros_reference.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(p)->import_preset(bytes.data(), bytes.size()), "HYBRID macro layer import")) return 1;
+            p->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer macro_events, macro_plain;
+        macro_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        macro_plain.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        for (int cc : {14, 15, 16, 19}) macro_events.addEvent(juce::MidiMessage::controllerEvent(1, cc, 127), 64);
+        macros->processBlock(audio, macro_events); macros_reference->processBlock(other, macro_plain);
+        double macro_effect = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == other.getSample(0, i), "HYBRID macro CC offset")) return 1;
+            if (i >= 64) macro_effect += std::abs(audio.getSample(0, i) - other.getSample(0, i));
+        }
+        if (!check(macro_effect > .00001, "HYBRID macro CC changes audio")) return 1;
+        juce::MemoryBlock macro_state; macros->getStateInformation(macro_state);
+        auto macro_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        macro_restored->setStateInformation(macro_state.getData(), int(macro_state.getSize()));
+        if (!check(find(*macro_restored, "hybrid.macro.drift")->getValue() > .99f &&
+                   find(*macro_restored, "hybrid.macro.grit")->getValue() > .99f &&
+                   find(*macro_restored, "hybrid.macro.pocket")->getValue() > .99f &&
+                   find(*macro_restored, "hybrid.macro.move")->getValue() > .99f, "HYBRID pending macro CC restores")) return 1;
+        std::vector<uint8_t> macro_gfl; studio::LayerPreset macro_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(macros.get())->export_hybrid_preset(macro_gfl) &&
+                   gf::decode_hybrid_layer(macro_gfl.data(), macro_gfl.size(), macro_layer) &&
+                   macro_layer.a.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] > 99 &&
+                   macro_layer.a.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] > 99, "HYBRID pending macro CC export")) return 1;
+        juce::MemoryBlock filter_state; filter_hybrid->getStateInformation(filter_state);
+        auto filter_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        filter_restored->setStateInformation(filter_state.getData(), int(filter_state.getSize()));
+        std::vector<uint8_t> filter_bytes; studio::LayerPreset filter_layer;
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_restored.get())->export_hybrid_preset(filter_bytes) &&
+                   gf::decode_hybrid_layer(filter_bytes.data(), filter_bytes.size(), filter_layer) &&
+                   std::abs(filter_layer.b.cutoff_hz - GF_CUTOFF_RANGE[layer.eng_b].lo) < .1f &&
+                   filter_layer.a.cutoff_hz >= GF_CUTOFF_RANGE[layer.eng_a].lo && filter_layer.b.reso_norm > .99f,
+                   "HYBRID focused filter CC restores")) return 1;
+        auto* manual_cutoff = find(*filter_hybrid, "hybrid.b.cutoff");
+        manual_cutoff->setValueNotifyingHost(manual_cutoff->convertTo0to1(1000));
+        filter_bytes.clear();
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_hybrid.get())->export_hybrid_preset(filter_bytes) &&
+                   gf::decode_hybrid_layer(filter_bytes.data(), filter_bytes.size(), filter_layer) &&
+                   std::abs(filter_layer.b.cutoff_hz - 1000) < .1f, "HYBRID DAW cutoff overrides pending CC")) return 1;
+        juce::MidiBuffer b_move_events;
+        b_move_events.addEvent(juce::MidiMessage::controllerEvent(1, 19, 127), 64);
+        filter_hybrid->processBlock(audio, b_move_events);
+        juce::MemoryBlock b_move_state; filter_hybrid->getStateInformation(b_move_state);
+        auto b_move_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        b_move_restore->setStateInformation(b_move_state.getData(), int(b_move_state.getSize()));
+        filter_bytes.clear();
+        if (!check(find(*b_move_restore, "hybrid.b.move")->getValue() > .99f &&
+                   dynamic_cast<gf::PresetImport*>(b_move_restore.get())->export_hybrid_preset(filter_bytes) &&
+                   gf::decode_hybrid_layer(filter_bytes.data(), filter_bytes.size(), filter_layer) &&
+                   filter_layer.b.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] > 99 &&
+                   std::abs(filter_layer.a.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] - layer.a.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE]) < .1f,
+                   "HYBRID focused B MOVE CC restores")) return 1;
+        factory->setSelectedId(2, juce::sendNotificationSync);
+        exported.clear();
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_restore.get())->export_hybrid_preset(exported) &&
+                   gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
+                   std::strcmp(exported_layer.name, studio::layer_def(1).name) == 0, "HYBRID factory selector loads layer")) return 1;
+        auto* save_layer = dynamic_cast<juce::TextButton*>(editor->findChildWithID("hybrid.save"));
+        if (!check(save_layer && save_layer->isVisible() && factory->getNumItems() == 8, "HYBRID bank controls")) return 1;
+        save_layer->onClick();
+        if (!check(factory->getNumItems() == 9, "HYBRID save adds user layer")) return 1;
+        for (int i = 9; i < studio::LAYER_MAX; ++i) save_layer->onClick();
+        if (!check(factory->getNumItems() == studio::LAYER_MAX, "HYBRID bank reaches capacity")) return 1;
+        save_layer->onClick();
+        if (!check(factory->getNumItems() == studio::LAYER_MAX, "HYBRID bank rejects overflow")) return 1;
+        juce::MemoryBlock bank_state; cc_restore->getStateInformation(bank_state);
+        auto bank_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        bank_restored->setStateInformation(bank_state.getData(), int(bank_state.getSize()));
+        auto bank_editor = std::unique_ptr<juce::AudioProcessorEditor>(bank_restored->createEditor());
+        auto* restored_factory = dynamic_cast<juce::ComboBox*>(bank_editor->findChildWithID("hybrid.factory"));
+        if (!check(restored_factory && restored_factory->getNumItems() == studio::LAYER_MAX, "HYBRID bank project restores")) return 1;
+        restored_factory->setSelectedId(9, juce::sendNotificationSync);
+        exported.clear();
+        if (!check(dynamic_cast<gf::PresetImport*>(bank_restored.get())->export_hybrid_preset(exported) &&
+                   gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
+                   std::strcmp(exported_layer.name, "LAYER 09") == 0, "HYBRID saved layer loads")) return 1;
+        restored_factory->setSelectedId(1, juce::sendNotificationSync);
+        bank_restored->prepareToPlay(48000, 128);
+        juce::MidiBuffer custom_bank_cc;
+        custom_bank_cc.addEvent(juce::MidiMessage::controllerEvent(1, 18, 33), 0);
+        bank_restored->processBlock(audio, custom_bank_cc);
+        bool selected_custom = false;
+        for (int attempt = 0; attempt < 10 && !selected_custom; ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously(); exported.clear();
+            selected_custom = dynamic_cast<gf::PresetImport*>(bank_restored.get())->export_hybrid_preset(exported) &&
+                gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) && std::strcmp(exported_layer.name, "LAYER 09") == 0;
+        }
+        if (!check(selected_custom, "HYBRID CC18 selects user layer")) return 1;
+    }
     {
         auto p = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
         auto parameter = [](juce::AudioProcessor& processor, const char* id) -> juce::RangedAudioParameter* {
@@ -135,6 +471,12 @@ int main() {
         fx->setValue(1, juce::sendNotificationSync);
         if (!check(parameter(*restored, "arp2600.fx.drive.on")->getValue() > .5f &&
                    parameter(*restored, "ob6.fx.drive.on")->getValue() < .5f, "ARP FX editor isolation")) return 1;
+        page->onClick();
+        auto* macro = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.macro.0"));
+        if (!check(macro && macro->isVisible() && !fx->isVisible(), "ARP macro page")) return 1;
+        macro->setValue(.6, juce::sendNotificationSync);
+        if (!check(parameter(*restored, "arp2600.macro.grit")->getValue() > .59f &&
+                   parameter(*restored, "ob6.macro.grit")->getValue() < .01f, "ARP macro editor isolation")) return 1;
         select->setValueNotifyingHost(0);
         juce::MidiBuffer empty;
         p->processBlock(audio, empty);
@@ -171,11 +513,14 @@ int main() {
         lfo_parameter->setValueNotifyingHost(.65f);
         parameter(*p, "arp2600.groove.pump.on")->setValueNotifyingHost(1);
         parameter(*p, "arp2600.fx.drive.on")->setValueNotifyingHost(1);
+        parameter(*p, "arp2600.macro.grit")->setValueNotifyingHost(.6f);
+        parameter(*p, "arp2600.macro.move")->setValueNotifyingHost(.5f);
         if (!check(importer->export_arp2600_preset(exported) &&
                    gf::decode_supported_preset(exported.data(), exported.size(), decoded, exported_engine) &&
                    exported_engine == 5 && std::abs(decoded.patch.osc[0][2] - 45) < .1f && decoded.patch.osc[0][0] == 4 &&
                    decoded.patch.mod[0][1] > .5f && std::abs(decoded.patch.lfo_amt[GF_DEST_PITCH] - .65f) < .02f && decoded.patch.groove_on[GF_GROOVE_UNISON] && decoded.patch.groove_on[GF_GROOVE_PUMP] &&
-                   decoded.patch.sfx_on[GF_SFX_DRIVE], "ARP GFP export")) return 1;
+                   decoded.patch.sfx_on[GF_SFX_DRIVE] && decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] == 0 &&
+                   decoded.patch.groove[GF_GROOVE_MACRO][GF_MACRO_GRIT] == 0 && decoded.patch.drive > arp_preset.patch.drive, "ARP GFP export")) return 1;
         ring->setValueNotifyingHost(.73f);
         auto invalid = bytes; invalid[0] ^= 0xff;
         if (!check(!importer->import_preset(invalid.data(), invalid.size()), "ARP invalid GFP rejected")) return 1;
@@ -221,6 +566,86 @@ int main() {
             if (i >= 64) expression_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
         }
         if (!check(expression_change > .0001, "ARP MIDI expression affects sound")) return 1;
+        auto macro_synth = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto macro_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* synth : {macro_synth.get(), macro_reference.get()}) {
+            synth->setStateInformation(preset_state.getData(), int(preset_state.getSize())); synth->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer macro_note, reference_note;
+        macro_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        reference_note.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        macro_synth->processBlock(audio, macro_note); macro_reference->processBlock(restored_audio, reference_note);
+        parameter(*macro_synth, "arp2600.macro.grit")->setValueNotifyingHost(1);
+        parameter(*macro_synth, "arp2600.macro.move")->setValueNotifyingHost(1);
+        double macro_change = 0;
+        for (int block = 0; block < 16; ++block) {
+            juce::MidiBuffer a, b;
+            macro_synth->processBlock(audio, a); macro_reference->processBlock(restored_audio, b);
+            for (int i = 0; i < 128; ++i) macro_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(macro_change > .01, "ARP macros affect audio")) return 1;
+        auto cc_synth = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto cc_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* synth : {cc_synth.get(), cc_reference.get()}) {
+            synth->setStateInformation(preset_state.getData(), int(preset_state.getSize())); synth->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer cc_events, cc_plain;
+        cc_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        cc_plain.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        for (int cc : {14, 15, 16, 19}) cc_events.addEvent(juce::MidiMessage::controllerEvent(1, cc, 127), 64);
+        cc_synth->processBlock(audio, cc_events); cc_reference->processBlock(restored_audio, cc_plain);
+        double cc_change = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == restored_audio.getSample(0, i), "ARP macro CC offset")) return 1;
+            if (i >= 64) cc_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(cc_change > .0001, "ARP macro CC changes audio")) return 1;
+        juce::MemoryBlock cc_state; cc_synth->getStateInformation(cc_state);
+        auto cc_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        cc_restore->setStateInformation(cc_state.getData(), int(cc_state.getSize()));
+        if (!check(parameter(*cc_restore, "arp2600.drift")->getValue() > .99f &&
+                   parameter(*cc_restore, "arp2600.macro.grit")->getValue() > .99f &&
+                   parameter(*cc_restore, "arp2600.macro.pocket")->getValue() > .99f &&
+                   parameter(*cc_restore, "arp2600.macro.move")->getValue() > .99f, "ARP pending macro CC restores")) return 1;
+        std::vector<uint8_t> cc_export; studio::Preset cc_preset; uint8_t cc_engine = 99;
+        if (!check(dynamic_cast<gf::PresetImport*>(cc_synth.get())->export_arp2600_preset(cc_export) &&
+                   gf::decode_supported_preset(cc_export.data(), cc_export.size(), cc_preset, cc_engine) && cc_engine == 5 &&
+                   cc_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_DRIFT] > 99 &&
+                   cc_preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] == 0, "ARP pending macro CC exports")) return 1;
+        auto filter_synth = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto filter_reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* synth : {filter_synth.get(), filter_reference.get()}) {
+            synth->setStateInformation(preset_state.getData(), int(preset_state.getSize())); synth->prepareToPlay(48000, 128);
+        }
+        juce::MidiBuffer filter_events, filter_plain;
+        filter_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_plain.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 127), 64);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 64), 64);
+        filter_events.addEvent(juce::MidiMessage::controllerEvent(1, 19, 0), 96);
+        filter_synth->processBlock(audio, filter_events); filter_reference->processBlock(restored_audio, filter_plain);
+        double filter_change = 0;
+        for (int i = 0; i < 128; ++i) {
+            if (i < 64 && !check(audio.getSample(0, i) == restored_audio.getSample(0, i), "ARP filter CC offset")) return 1;
+            if (i >= 64) filter_change += std::abs(audio.getSample(0, i) - restored_audio.getSample(0, i));
+        }
+        if (!check(filter_change > .0001, "ARP filter CC changes audio")) return 1;
+        std::vector<uint8_t> filter_export; studio::Preset filter_preset; uint8_t filter_engine = 99;
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_synth.get())->export_arp2600_preset(filter_export) &&
+                   gf::decode_supported_preset(filter_export.data(), filter_export.size(), filter_preset, filter_engine) &&
+                   filter_engine == 5 && filter_preset.cutoff_hz > GF_CUTOFF_RANGE[5].hi * .99f &&
+                   std::abs(filter_preset.reso_norm - (64.0f / 127.0f + .12f)) < .03f, "ARP filter CC export")) return 1;
+        juce::MemoryBlock filter_state; filter_synth->getStateInformation(filter_state);
+        auto filter_restore = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        filter_restore->setStateInformation(filter_state.getData(), int(filter_state.getSize()));
+        std::vector<uint8_t> filter_restored_export;
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_restore.get())->export_arp2600_preset(filter_restored_export) &&
+                   filter_restored_export == filter_export, "ARP filter CC state restores")) return 1;
+        auto* cutoff_parameter = parameter(*filter_synth, "cutoff");
+        cutoff_parameter->setValueNotifyingHost(cutoff_parameter->convertTo0to1(1000));
+        if (!check(dynamic_cast<gf::PresetImport*>(filter_synth.get())->export_arp2600_preset(filter_export) &&
+                   gf::decode_supported_preset(filter_export.data(), filter_export.size(), filter_preset, filter_engine) &&
+                   filter_preset.cutoff_hz < 2000, "ARP DAW cutoff overrides MIDI")) return 1;
         studio::Preset bus_preset;
         if (!check(studio::factory_preset(5, 0, &bus_preset), "ARP bus factory preset")) return 1;
         for (auto& on : bus_preset.patch.sfx_on) on = false;
@@ -960,6 +1385,15 @@ int main() {
         if (!check(page && osc && voice && groove && fx && macro && juno_select && page->isVisible(), "OB-6 editor controls exist")) return 1;
 
         if (!check(!osc->isVisible() && !voice->isVisible() && !groove->isVisible() && !fx->isVisible() && !macro->isVisible(), "OB-6 initial page visibility")) return 1;
+        auto* fx_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.4"));
+        auto* voice_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
+        if (!check(fx_tab && voice_tab && fx_tab->isVisible(), "OB-6 direct navigation")) return 1;
+        fx_tab->onClick();
+        if (!check(fx->isVisible() && !osc->isVisible(), "OB-6 FX tab opens controls")) return 1;
+        auto* feedback_label = dynamic_cast<juce::Label*>(editor->findChildWithID("fx.label.3.3"));
+        if (!check(feedback_label && feedback_label->isVisible() && feedback_label->getText() == "FEEDBACK", "FX page displays parameter names")) return 1;
+        voice_tab->onClick();
+        if (!check(!fx->isVisible() && !feedback_label->isVisible(), "OB-6 voice tab returns to initial page")) return 1;
         page->onClick();
         if (!check(osc->isVisible() && !voice->isVisible() && page->getButtonText().startsWith("OSC"), "OB-6 oscillator page")) return 1;
         if (!check(osc->getTextFromValue(50.0) == "50" && osc->getTextFromValue(12.34) == "12.3" &&
@@ -1983,8 +2417,271 @@ int main() {
     juno_cc_restore->setStateInformation(juno_cc_state.getData(), int(juno_cc_state.getSize()));
     if (!check(find_parameter(*juno_cc_restore, "juno.macro.grit")->getValue() < .001f, "Juno preset clears pending macro CC")) return 1;
     {
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        plugin->prepareToPlay(44100, 512);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* toggle = dynamic_cast<juce::TextButton*>(editor->findChildWithID("keyboard.toggle"));
+        auto* keyboard = dynamic_cast<StudioKeyboard*>(editor->findChildWithID("keyboard.keys"));
+        auto* browser = dynamic_cast<juce::ComboBox*>(editor->findChildWithID("preset.browser"));
+        if (!check(toggle && keyboard && browser && !keyboard->isVisible() && browser->getNumItems() > 0, "keyboard and factory browser")) return 1;
+        browser->setSelectedId(1, juce::sendNotificationSync);
+        if (!check(browser->getSelectedId() == 1, "factory browser selects a preset")) return 1;
+        juce::MemoryBlock browser_state;
+        plugin->getStateInformation(browser_state);
+        auto browser_xml = juce::AudioProcessor::getXmlFromBinary(browser_state.getData(), int(browser_state.getSize()));
+        auto browser_tree = browser_xml ? juce::ValueTree::fromXml(*browser_xml) : juce::ValueTree();
+        if (!check(browser_tree.isValid() && browser_tree.hasProperty("gfPreset"), "factory browser loads preset state")) return 1;
+        auto* open = dynamic_cast<juce::TextButton*>(editor->findChildWithID("browser.open"));
+        auto* panel = dynamic_cast<PresetBrowser*>(editor->findChildWithID("browser.panel"));
+        auto* search = dynamic_cast<juce::TextEditor*>(panel ? panel->findChildWithID("browser.search") : nullptr);
+        auto* list = dynamic_cast<juce::ListBox*>(panel ? panel->findChildWithID("browser.list") : nullptr);
+        if (!check(open && panel && search && list, "preset browser controls")) return 1;
+        open->onClick();
+        if (!check(panel->isVisible() && list->getModel()->getNumRows() == browser->getNumItems(), "preset browser opens bank")) return 1;
+        search->setText("zzzz-not-a-preset", false); search->onTextChange();
+        if (!check(list->getModel()->getNumRows() == 0, "preset browser filters results")) return 1;
+        search->setText(browser->getItemText(0), false); search->onTextChange();
+        if (!check(list->getModel()->getNumRows() > 0, "preset browser finds preset")) return 1;
+        const auto now_browser = juce::Time::getCurrentTime();
+        juce::MouseEvent browser_event(juce::Desktop::getInstance().getMainMouseSource(), {55.0f, 5.0f}, juce::ModifierKeys::leftButtonModifier,
+                                       1.0f, 0.0f, 0.0f, 0.0f, 0.0f, list, list, now_browser, {5.0f, 5.0f}, now_browser, 1, false);
+        list->getModel()->listBoxItemClicked(0, browser_event);
+        if (!check(!panel->isVisible() && browser->getSelectedId() == 1, "preset browser loads filtered bank index")) return 1;
+        open->onClick();
+        search->setText("", false); search->onTextChange();
+        const float preview_x = float(list->getWidth() - 10);
+        juce::MouseEvent preview_event(juce::Desktop::getInstance().getMainMouseSource(), {preview_x, 5.0f}, juce::ModifierKeys::leftButtonModifier,
+                                       1.0f, 0.0f, 0.0f, 0.0f, 0.0f, list, list, now_browser, {preview_x, 5.0f}, now_browser, 1, false);
+        list->getModel()->listBoxItemClicked(0, preview_event);
+        auto* preview_cancel = dynamic_cast<juce::TextButton*>(panel->findChildWithID("browser.preview.cancel"));
+        if (!check(preview_cancel && preview_cancel->isVisible() && panel->isVisible(), "browser starts isolated preview")) return 1;
+        preview_cancel->onClick();
+        if (!check(!preview_cancel->isVisible(), "browser cancels preview")) return 1;
+        juce::MouseEvent star_event(juce::Desktop::getInstance().getMainMouseSource(), {5.0f, 5.0f}, juce::ModifierKeys::leftButtonModifier,
+                                    1.0f, 0.0f, 0.0f, 0.0f, 0.0f, list, list, now_browser, {5.0f, 5.0f}, now_browser, 1, false);
+        list->getModel()->listBoxItemClicked(0, star_event);
+        juce::MouseEvent tag_event(juce::Desktop::getInstance().getMainMouseSource(), {35.0f, 5.0f}, juce::ModifierKeys::leftButtonModifier,
+                                   1.0f, 0.0f, 0.0f, 0.0f, 0.0f, list, list, now_browser, {35.0f, 5.0f}, now_browser, 1, false);
+        list->getModel()->listBoxItemClicked(0, tag_event);
+        auto* tag_editor = dynamic_cast<juce::TextEditor*>(panel->findChildWithID("browser.tag.editor"));
+        auto* tag_apply = dynamic_cast<juce::TextButton*>(panel->findChildWithID("browser.tag.apply"));
+        if (!check(tag_editor && tag_apply && tag_editor->isVisible(), "preset tag editor opens")) return 1;
+        tag_editor->setText("afro, bajo", false); tag_apply->onClick();
+        search->setText("afro", false); search->onTextChange();
+        if (!check(list->getModel()->getNumRows() == 1 && panel->isVisible(), "preset tag search without loading")) return 1;
+        search->setText("", false); search->onTextChange();
+        auto* favourites = dynamic_cast<juce::ToggleButton*>(panel->findChildWithID("browser.favourites"));
+        if (!check(favourites && panel->isVisible(), "favourite toggles without loading")) return 1;
+        favourites->setToggleState(true, juce::dontSendNotification); favourites->onClick();
+        if (!check(list->getModel()->getNumRows() == 1, "browser favourites filter")) return 1;
+        juce::MemoryBlock favourite_state; plugin->getStateInformation(favourite_state);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(favourite_state.getData(), int(favourite_state.getSize()));
+        auto restored_editor = std::unique_ptr<juce::AudioProcessorEditor>(restored->createEditor());
+        auto* restored_open = dynamic_cast<juce::TextButton*>(restored_editor->findChildWithID("browser.open"));
+        auto* restored_panel = dynamic_cast<PresetBrowser*>(restored_editor->findChildWithID("browser.panel"));
+        if (!check(restored_open && restored_panel, "restored browser exists")) return 1;
+        restored_open->onClick();
+        auto* restored_filter = dynamic_cast<juce::ToggleButton*>(restored_panel->findChildWithID("browser.favourites"));
+        auto* restored_list = dynamic_cast<juce::ListBox*>(restored_panel->findChildWithID("browser.list"));
+        if (!check(restored_filter && restored_list, "restored favourites controls")) return 1;
+        restored_filter->setToggleState(true, juce::dontSendNotification); restored_filter->onClick();
+        if (!check(restored_list->getModel()->getNumRows() == 1, "favourites restored with project")) return 1;
+        auto* restored_search = dynamic_cast<juce::TextEditor*>(restored_panel->findChildWithID("browser.search"));
+        if (!check(restored_search != nullptr, "restored preset search")) return 1;
+        restored_search->setText("afro", false); restored_search->onTextChange();
+        if (!check(restored_list->getModel()->getNumRows() == 1, "preset tags restored with project")) return 1;
+        favourites->setToggleState(false, juce::dontSendNotification); favourites->onClick();
+        int chosen_index = -1;
+        panel->set_items(juce::StringArray{"FIRST", "SECOND", "THIRD"});
+        panel->on_load = [&chosen_index](int index) { chosen_index = index; };
+        search->setText("THIRD", false); search->onTextChange();
+        list->getModel()->listBoxItemClicked(0, browser_event);
+        if (!check(chosen_index == 2, "preset browser preserves original bank index")) return 1;
+        toggle->onClick();
+        if (!check(keyboard->isVisible() && editor->getHeight() == 960, "keyboard expands editor")) return 1;
+        keyboard->midi_state().noteOn(1, 60, 0.8f);
+        juce::AudioBuffer<float> audio(2, 512); juce::MidiBuffer midi;
+        plugin->processBlock(audio, midi);
+        if (!check(audio.getRMSLevel(0, 0, 512) > 0.0f, "screen keyboard produces sound")) return 1;
+        keyboard->midi_state().noteOff(1, 60, 0.0f);
+        toggle->onClick();
+        if (!check(!keyboard->isVisible() && editor->getHeight() == 760, "keyboard collapses editor")) return 1;
+    }
+    {
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto reference = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* p : {plugin.get(), reference.get()}) {
+            p->prepareToPlay(44100, 512);
+            find_parameter(*p, "cutoff")->setValueNotifyingHost(0.31f);
+        }
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* panel = dynamic_cast<PresetBrowser*>(editor->findChildWithID("browser.panel"));
+        if (!check(panel && panel->on_preview && panel->on_cancel_preview, "isolated preset preview controls")) return 1;
+        if (!check(panel->on_preview(0), "isolated preset preview starts")) return 1;
+        if (!check(std::abs(find_parameter(*plugin, "cutoff")->getValue() - .31f) < .001f, "preview preserves original parameter")) return 1;
+        juce::AudioBuffer<float> audio(2, 512), ref_audio(2, 512);
+        juce::MidiBuffer midi, ref_midi;
+        midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(120)), 0);
+        ref_midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(120)), 0);
+        plugin->processBlock(audio, midi); reference->processBlock(ref_audio, ref_midi);
+        double difference = 0;
+        for (int i = 0; i < 512; ++i) difference += std::abs(audio.getSample(0, i) - ref_audio.getSample(0, i));
+        if (!check(difference > .001, "preview outputs the auditioned preset")) return 1;
+        find_parameter(*plugin, "cutoff")->setValueNotifyingHost(.57f);
+        find_parameter(*reference, "cutoff")->setValueNotifyingHost(.57f);
+        panel->on_cancel_preview(); midi.clear(); ref_midi.clear();
+        plugin->processBlock(audio, midi); reference->processBlock(ref_audio, ref_midi);
+        difference = 0;
+        for (int i = 0; i < 512; ++i) difference += std::abs(audio.getSample(0, i) - ref_audio.getSample(0, i));
+        if (!check(difference < .0001 && std::abs(find_parameter(*plugin, "cutoff")->getValue() - .57f) < .001f,
+                   "cancel preview restores live output and keeps automation")) return 1;
+    }
+    {
+        OutputMeterState state;
+        state.publish(0.25f, 1.1f); state.publish(0.5f, 0.1f);
+        if (!check(state.consume(0) == 0.5f && state.consume(1) == 1.1f && state.clipped(1) && !state.clipped(0), "output meter peak and clip latch")) return 1;
+        if (!check(state.consume(0) == 0.0f, "output meter consumes peak")) return 1;
+        state.clear_clip();
+        if (!check(!state.clipped(1), "output meter clears clip")) return 1;
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        plugin->prepareToPlay(44100, 512);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* meter = dynamic_cast<OutputMeter*>(editor->findChildWithID("output.meter"));
+        juce::AudioBuffer<float> audio(2, 512); juce::MidiBuffer notes;
+        notes.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(120)), 0);
+        plugin->processBlock(audio, notes);
+        if (!check(meter != nullptr, "output meter component")) return 1;
+        meter->refresh();
+        if (!check(meter->level(0) > 0.0f && meter->level(1) > 0.0f, "output meter follows rendered audio")) return 1;
+    }
+    {
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*plugin, "juno_preview")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* env_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.2"));
+        auto* graph = dynamic_cast<EnvelopeEditor*>(editor->findChildWithID("juno.env.graph.filter"));
+        auto* attack = find_parameter(*plugin, "juno.filter_attack");
+        if (!check(env_tab && graph && attack, "Juno envelope controls")) return 1;
+        env_tab->onClick();
+        if (!check(graph->isVisible(), "Juno envelope graph visible")) return 1;
+        const auto start = graph->handles()[0], end = start.translated(45.0f, 0.0f);
+        const auto now = juce::Time::getCurrentTime();
+        auto source = juce::Desktop::getInstance().getMainMouseSource();
+        juce::MouseEvent down(source, start, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, false);
+        juce::MouseEvent drag(source, end, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, true);
+        const auto before = attack->getValue(); graph->mouseDown(down); graph->mouseDrag(drag); graph->mouseUp(drag);
+        if (!check(attack->getValue() > before, "dragging envelope edits host attack")) return 1;
+        auto* lfo_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.3"));
+        auto* lfo = dynamic_cast<LfoDisplay*>(editor->findChildWithID("juno.lfo.display"));
+        auto* shape = find_parameter(*plugin, "juno.lfo_shape");
+        if (!check(lfo_tab && lfo && shape, "Juno LFO display exists")) return 1;
+        lfo_tab->onClick();
+        if (!check(lfo->isVisible() && !graph->isVisible(), "Juno LFO page visibility")) return 1;
+        shape->setValueNotifyingHost(1.0f);
+        juce::MouseEvent click(source, {10.0f, 10.0f}, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, lfo, lfo, now, {10.0f, 10.0f}, now, 1, false);
+        lfo->mouseDown(click);
+        if (!check(lfo->shape() == 0 && shape->getValue() < .01f, "Juno LFO display edits shape and wraps")) return 1;
+    }
+    {
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*plugin, "hybrid_preview")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        for (int side = 0; side < 2; ++side) {
+            auto* tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab." + juce::String(5 + side)));
+            const auto prefix = juce::String(side == 0 ? "hybrid.a." : "hybrid.b.");
+            auto* graph = dynamic_cast<EnvelopeEditor*>(editor->findChildWithID(prefix + "env.graph.amp"));
+            auto* parameter = find_parameter(*plugin, (prefix + "attack").toRawUTF8());
+            auto* other = find_parameter(*plugin, side == 0 ? "hybrid.b.attack" : "hybrid.a.attack");
+            if (!check(tab && graph && parameter && other, "HYBRID envelope controls")) return 1;
+            tab->onClick();
+            if (!check(graph->isVisible(), "HYBRID layer envelope visible")) return 1;
+            const auto start = graph->handles()[0], end = start.translated(45.0f, 0.0f);
+            const auto now = juce::Time::getCurrentTime();
+            auto source = juce::Desktop::getInstance().getMainMouseSource();
+            juce::MouseEvent down(source, start, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, false);
+            juce::MouseEvent drag(source, end, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, true);
+            const auto before = parameter->getValue(), other_before = other->getValue();
+            graph->mouseDown(down); graph->mouseDrag(drag); graph->mouseUp(drag);
+            if (!check(parameter->getValue() > before && other->getValue() == other_before, "HYBRID envelope edits only its layer")) return 1;
+            auto* lfo_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab." + juce::String(9 + side)));
+            auto* lfo = dynamic_cast<LfoDisplay*>(editor->findChildWithID(prefix + "lfo.display"));
+            auto* shape = find_parameter(*plugin, (prefix + "voice.lfo_shape").toRawUTF8());
+            auto* other_shape = find_parameter(*plugin, side == 0 ? "hybrid.b.voice.lfo_shape" : "hybrid.a.voice.lfo_shape");
+            if (!check(lfo_tab && lfo && shape && other_shape, "HYBRID LFO controls")) return 1;
+            lfo_tab->onClick();
+            if (!check(lfo->isVisible() && !graph->isVisible(), "HYBRID LFO page")) return 1;
+            shape->setValueNotifyingHost(1.0f); const auto other_shape_before = other_shape->getValue();
+            juce::MouseEvent click(source, {10.0f, 10.0f}, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, lfo, lfo, now, {10.0f, 10.0f}, now, 1, false);
+            lfo->mouseDown(click);
+            if (!check(lfo->shape() == 0 && other_shape->getValue() == other_shape_before, "HYBRID LFO edits only its layer")) return 1;
+        }
+    }
+    for (const auto& engine : std::array<std::array<const char*, 4>, 4>{{
+             {{"ob6_preview", "ob6.env.graph.filter", "ob6.filter_attack", "2"}},
+             {{"modeld_preview", "modeld.env.graph.filter", "modeld.filter_attack", "2"}},
+             {{"arp2600_preview", "arp2600.env.graph.filter", "arp2600.filter_attack", "2"}},
+             {{"dx7_preview", "dx7.env.graph.amp", "dx7.amp_attack", "1"}}}}) {
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*plugin, engine[0])->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID(juce::String("navigation.tab.") + engine[3]));
+        auto* graph = dynamic_cast<EnvelopeEditor*>(editor->findChildWithID(engine[1]));
+        auto* parameter = find_parameter(*plugin, engine[2]);
+        if (!check(tab && graph && parameter, "analog envelope controls")) return 1;
+        tab->onClick();
+        if (!check(graph->isVisible(), "analog envelope visible")) return 1;
+        const auto start = graph->handles()[0], end = start.translated(45.0f, 0.0f);
+        const auto now = juce::Time::getCurrentTime();
+        auto source = juce::Desktop::getInstance().getMainMouseSource();
+        juce::MouseEvent down(source, start, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, false);
+        juce::MouseEvent drag(source, end, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, graph, graph, now, start, now, 1, true);
+        const auto before = parameter->getValue(); graph->mouseDown(down); graph->mouseDrag(drag); graph->mouseUp(drag);
+        if (!check(parameter->getValue() > before, "analog envelope edits engine parameter")) return 1;
+        if (juce::String(engine[3]) == "1") {
+            auto* lfo_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.5"));
+            auto* lfo = dynamic_cast<LfoDisplay*>(editor->findChildWithID("dx7.lfo.display"));
+            auto* shape = find_parameter(*plugin, "dx7.lfo_shape");
+            if (!check(lfo_tab && lfo && shape, "DX7 LFO controls")) return 1;
+            lfo_tab->onClick();
+            if (!check(lfo->isVisible() && !graph->isVisible(), "DX7 LFO page")) return 1;
+            shape->setValueNotifyingHost(1.0f);
+            juce::MouseEvent click(source, {10.0f, 10.0f}, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, lfo, lfo, now, {10.0f, 10.0f}, now, 1, false);
+            lfo->mouseDown(click);
+            if (!check(lfo->shape() == 0, "DX7 LFO changes shape")) return 1;
+        }
+        if (juce::String(engine[3]) == "2") {
+            const auto prefix = juce::String(engine[1]).upToFirstOccurrenceOf(".env.", false, false);
+            auto* lfo_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.6"));
+            auto* lfo = dynamic_cast<LfoDisplay*>(editor->findChildWithID(prefix + ".lfo.display"));
+            auto* shape = find_parameter(*plugin, (prefix + ".lfo_shape").toRawUTF8());
+            if (!check(lfo_tab && lfo && shape, "analog LFO controls")) return 1;
+            lfo_tab->onClick();
+            if (!check(lfo->isVisible() && !graph->isVisible(), "analog LFO page")) return 1;
+            shape->setValueNotifyingHost(1.0f);
+            juce::MouseEvent click(source, {10.0f, 10.0f}, juce::ModifierKeys::leftButtonModifier, 1.0f, 0, 0, 0, 0, lfo, lfo, now, {10.0f, 10.0f}, now, 1, false);
+            lfo->mouseDown(click);
+            if (!check(lfo->shape() == 0 && shape->getValue() < .01f, "analog LFO edits engine shape")) return 1;
+        }
+    }
+    {
+        auto dx_plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*dx_plugin, "dx7_preview")->setValueNotifyingHost(1);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(dx_plugin->createEditor());
+        auto* groove_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.3"));
+        auto* pump = dynamic_cast<juce::Slider*>(editor->findChildWithID("dx.groove.0.0"));
+        auto* depth = dynamic_cast<juce::Slider*>(editor->findChildWithID("dx.groove.0.1"));
+        if (!check(groove_tab && pump && depth, "DX7 groove controls")) return 1;
+        groove_tab->onClick();
+        if (!check(pump->isVisible() && depth->isVisible() && pump->getWidth() > 0 && depth->getWidth() > 0 && !pump->getBounds().intersects(depth->getBounds()), "DX7 groove layout")) return 1;
+        pump->setValue(1, juce::sendNotificationSync);
+        if (!check(find_parameter(*dx_plugin, "dx7.groove.pump.on")->getValue() > .99f, "DX7 groove control binding")) return 1;
+    }
+    {
         auto editor = std::unique_ptr<juce::AudioProcessorEditor>(a->createEditor());
-        if (!check(editor && editor->getWidth() == 720 && editor->getHeight() == 360, "editor creation")) return 1;
+        if (!check(editor && editor->getWidth() == 1200 && editor->getHeight() == 760, "editor creation")) return 1;
+        editor->setSize(900, 570);
+        if (!check(editor->getWidth() == 900 && editor->getHeight() == 570, "editor resize")) return 1;
     }
     return 0;
 }

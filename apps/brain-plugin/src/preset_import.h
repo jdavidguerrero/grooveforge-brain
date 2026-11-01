@@ -12,6 +12,10 @@ public:
     virtual ~PresetImport() = default;
     /** @return false si los bytes no contienen un preset válido de engine admitido. */
     virtual bool import_preset(const void* data, size_t size) = 0;
+    /** @brief Reemplaza una mitad HYBRID con un GFP válido; side es 0 para A o 1 para B. */
+    virtual bool import_hybrid_half(const void* data, size_t size, unsigned side) = 0;
+    /** @brief Exporta la capa HYBRID como GFL v2. */
+    virtual bool export_hybrid_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta Juno v5 si el estado puede representarse en GFP. */
     virtual bool export_juno_preset(std::vector<uint8_t>& data) = 0;
     /** @brief Exporta un GFP OB-6 cargado con sus controles editados. */
