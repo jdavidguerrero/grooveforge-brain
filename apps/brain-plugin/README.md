@@ -48,3 +48,8 @@ Para probar solo el DSP sin JUCE: configurar con `-DGF_BUILD_VST3=OFF`, compilar
 El control **SRC GFP** conserva la fuente de reloj del preset para el Brain. El plugin usa el transporte del DAW y no cambia de fuente al editarlo; sin transporte válido usa el fallback del piloto.
 
 Juno admite CC 14 (DRIFT), 15 (GRIT), 16 (POCKET), 19 (MOVE), 74 (cutoff) y 71 (resonancia); se aplican en el offset MIDI y se reflejan en los parámetros del DAW desde el hilo de mensajes. Los CC de filtro se aplican antes de GRIT/MOVE y se conserva la resonancia MIDI por debajo del mínimo del control del host.
+
+DX7 y Prophet admiten CC 74 (cutoff) y 71 (resonancia) con los rangos del firmware; en el Prophet el valor se convierte
+con MOVE y GRIT del preset cargado. Las macros CC 14/15/16/19 del Prophet siguen pendientes. La salida pasa por un
+bloqueador de DC de 5 Hz, porque la PLATE de PJRC deja un offset al terminar la cola y la salida física del Brain es
+acoplada en alterna (`apps/docs/sprints/gemelo-correcciones-2026-11-03.md`).

@@ -584,7 +584,10 @@ public:
         for (size_t i = 1; i < 4; ++i) juno_cc_parameters_[i] = state_.getParameter(JUNO_MACRO_IDS[i - 1]);
         juno_cc_parameters_[4] = state_.getParameter("cutoff"); juno_cc_parameters_[5] = state_.getParameter("resonance");
         cc_parameters_[0] = state_.getParameter("dx7.drift");
-        for (size_t i = 1; i < cc_parameters_.size(); ++i) cc_parameters_[i] = state_.getParameter(DX_MACRO_IDS[i - 1]);
+        for (size_t i = 1; i < 4; ++i) cc_parameters_[i] = state_.getParameter(DX_MACRO_IDS[i - 1]);
+        cc_parameters_[4] = state_.getParameter("dx7.cutoff"); cc_parameters_[5] = state_.getParameter("dx7.resonance");
+        prophet_cc_parameters_[0] = state_.getParameter("cutoff"); prophet_cc_parameters_[1] = state_.getParameter("resonance");
+        studio::patch_init(prophet_base_.patch, 2);
         dx_macro_last_.fill(std::numeric_limits<float>::quiet_NaN());
         initialize_hybrid_bank(hybrid_bank_, hybrid_bank_count_);
         startTimerHz(30);
@@ -608,6 +611,9 @@ public:
     }
     void prepareToPlay(double sample_rate, int maximum_block_size) override {
         sample_rate_ = sample_rate;
+        // gemelo-correcciones-2026-11-03 §1: la salida física es acoplada en alterna; el VST no.
+        dc_r_ = float(std::exp(-2.0 * juce::MathConstants<double>::pi * 5.0 / (sample_rate > 0.0 ? sample_rate : 44100.0)));
+        reset_dc_blocker();
         const size_t preview_capacity = size_t(juce::jmax(4096, maximum_block_size));
         preview_left_.assign(preview_capacity, 0.0f); preview_right_.assign(preview_capacity, 0.0f);
         preview_mix_ = 0.0f;
@@ -700,7 +706,7 @@ public:
         last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false; last_modeld_mode_ = false; last_arp2600_mode_ = false; last_hybrid_mode_ = false;
     }
     void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); reset_dc_blocker(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         buffer.clear();
@@ -710,13 +716,14 @@ public:
         const bool ob6_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && ob6_enabled_->load() >= 0.5f;
         const bool juno_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
         const bool dx7_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
+        const bool prophet_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && !dx7_mode;
         if (juno_mode) {
             for (size_t i = 0; i < 2; ++i)
                 if (juno_filter_override_[i].load(std::memory_order_acquire) && !juno_filter_override_active(i))
                     juno_filter_override_[i].store(false, std::memory_order_release);
             juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         }
-        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_ || hybrid_mode != last_hybrid_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; hybrid_.reset(); last_hybrid_mode_ = hybrid_mode; keyboard_playing_.fill(false); host_note_playing_.fill(false); }
+        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_ || hybrid_mode != last_hybrid_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; hybrid_.reset(); last_hybrid_mode_ = hybrid_mode; keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
         apply_pending_preset();
         apply_pending_hybrid();
         if (hybrid_mode) {
@@ -792,7 +799,7 @@ public:
             const auto effective = ob6_effective_controls(ob6_base_.patch);
             ob6_.set_parameters(effective[0], effective[1], attack_->load(), effective[2]);
         }
-        engine_.set_parameters(cutoff_->load(), resonance_->load(), attack_->load(), release_->load());
+        engine_.set_parameters(prophet_cc_value(0, cutoff_->load()), prophet_cc_value(1, resonance_->load()), attack_->load(), release_->load());
         if (dx7_mode) {
             load_dx_macros();
             const bool macro_changed = dx_macro_current_ != dx_macro_last_;
@@ -1084,6 +1091,27 @@ public:
                 juno_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_juno_voice_groove_automation(); apply_juno_env_automation(); apply_juno_fx_automation();
                 juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
+            } else if (prophet_mode && message.isController() && (message.getControllerNumber() == 74 || message.getControllerNumber() == 71)) {
+                // Los parámetros del Prophet ya traen MOVE y GRIT del preset (import_preset): el CC se convierte con ellos.
+                const bool cutoff = message.getControllerNumber() == 74;
+                const float raw = message.getControllerValue() / 127.0f;
+                const auto& original = prophet_base_.patch;
+                const float move = studio::macro_amount(original, GF_MACRO_MOVE);
+                const float value = cutoff
+                    ? std::clamp(gf_cutoff_from_cc_norm(2, raw) * studio::move_cutoff_mul(move), GF_CUTOFF_RANGE[2].lo, GF_CUTOFF_RANGE[2].hi)
+                    : .1f + 4.9f * std::clamp(studio::move_resonance(studio::macro_resonance(raw, original), move), 0.0f, 1.0f);
+                const size_t index = cutoff ? 0u : 1u;
+                prophet_cc_values_[index].store(prophet_cc_parameters_[index]->convertTo0to1(value), std::memory_order_relaxed);
+                prophet_cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                engine_.set_parameters(prophet_cc_value(0, cutoff_->load()), prophet_cc_value(1, resonance_->load()), attack_->load(), release_->load());
+            } else if (dx7_mode && message.isController() && (message.getControllerNumber() == 74 || message.getControllerNumber() == 71)) {
+                const bool cutoff = message.getControllerNumber() == 74;
+                const float raw = message.getControllerValue() / 127.0f;
+                const size_t index = cutoff ? 4u : 5u;
+                const float value = cutoff ? gf_cutoff_from_cc_norm(4, raw) : .7f + 2.3f * raw;   // GF_CUTOFF_RANGE / RESO_RANGE del DX7
+                cc_values_[index].store(cc_parameters_[index]->convertTo0to1(value), std::memory_order_relaxed);
+                cc_sequence_[index].fetch_add(1, std::memory_order_release);
+                apply_dx7_general(true);
             } else if (dx7_mode && message.isController() && (message.getControllerNumber() == 14 ||
                        message.getControllerNumber() == 15 || message.getControllerNumber() == 16 || message.getControllerNumber() == 19)) {
                 const int number = message.getControllerNumber();
@@ -1094,9 +1122,21 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); keyboard_playing_.fill(false); host_note_playing_.fill(false); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
         }
         render_until(buffer.getNumSamples());
+        // Antes de mezclar la preescucha: esa instancia filtra su propia salida y la memoria del filtro no la arrastra.
+        for (int ch = 0; ch < 2; ++ch) {
+            auto* data = buffer.getWritePointer(ch);
+            float x1 = dc_x1_[size_t(ch)], y1 = dc_y1_[size_t(ch)];
+            for (int i = 0; i < buffer.getNumSamples(); ++i) {
+                const float x = data[i];
+                y1 = x - x1 + dc_r_ * y1;
+                x1 = x;
+                data[i] = y1;
+            }
+            dc_x1_[size_t(ch)] = x1; dc_y1_[size_t(ch)] = y1;
+        }
         const bool preview_requested = preview_active_.load(std::memory_order_acquire);
         if (preview_requested || preview_mix_ > 0.0f) {
             if (auto* preview = preview_pointer_.load(std::memory_order_acquire)) {
@@ -1169,6 +1209,9 @@ public:
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
             if (cc_sequence_[i].load(std::memory_order_acquire) != cc_delivered_[i].load(std::memory_order_acquire))
                 snapshot.setProperty("dxPendingCC" + juce::String(int(i)), cc_values_[i].load(std::memory_order_relaxed), nullptr);
+        for (size_t i = 0; i < prophet_cc_parameters_.size(); ++i)
+            if (prophet_cc_sequence_[i].load(std::memory_order_acquire) != prophet_cc_delivered_[i].load(std::memory_order_acquire))
+                snapshot.setProperty("prophetPendingCC" + juce::String(int(i)), prophet_cc_values_[i].load(std::memory_order_relaxed), nullptr);
         for (size_t i = 0; i < juno_cc_parameters_.size(); ++i)
             if (juno_cc_sequence_[i].load(std::memory_order_acquire) != juno_cc_delivered_[i].load(std::memory_order_acquire) &&
                 (i < 4 || juno_filter_override_active(i - 4)))
@@ -1254,8 +1297,15 @@ public:
         if (!xml || !xml->hasTagName(state_.state.getType())) return;
         stop_preset_preview();
         auto tree = juce::ValueTree::fromXml(*xml);
-        std::array<float, 4> pending_cc{};
-        std::array<bool, 4> has_pending_cc{};
+        std::array<float, 2> prophet_pending_cc{};
+        std::array<bool, 2> has_prophet_pending_cc{};
+        for (size_t i = 0; i < prophet_pending_cc.size(); ++i) {
+            const auto id = "prophetPendingCC" + juce::String(int(i));
+            has_prophet_pending_cc[i] = tree.hasProperty(id);
+            if (has_prophet_pending_cc[i]) { prophet_pending_cc[i] = float(tree.getProperty(id)); tree.removeProperty(id, nullptr); }
+        }
+        std::array<float, 6> pending_cc{};
+        std::array<bool, 6> has_pending_cc{};
         for (size_t i = 0; i < pending_cc.size(); ++i) {
             const auto id = "dxPendingCC" + juce::String(int(i));
             has_pending_cc[i] = tree.hasProperty(id);
@@ -1490,6 +1540,8 @@ public:
         }
         for (size_t i = 0; i < pending_cc.size(); ++i)
             if (has_pending_cc[i]) cc_parameters_[i]->setValueNotifyingHost(std::clamp(pending_cc[i], 0.0f, 1.0f));
+        for (size_t i = 0; i < prophet_pending_cc.size(); ++i)
+            if (has_prophet_pending_cc[i]) prophet_cc_parameters_[i]->setValueNotifyingHost(std::clamp(prophet_pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < juno_pending_cc.size(); ++i)
             if (has_juno_pending_cc[i]) juno_cc_parameters_[i]->setValueNotifyingHost(std::clamp(juno_pending_cc[i], 0.0f, 1.0f));
         for (size_t i = 0; i < 2; ++i) {
@@ -2011,10 +2063,23 @@ private:
             juno_cc_delivered_[i].store(juno_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < cc_parameters_.size(); ++i)
             cc_delivered_[i].store(cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
+        for (size_t i = 0; i < prophet_cc_parameters_.size(); ++i)
+            prophet_cc_delivered_[i].store(prophet_cc_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
     }
     float cc_value(size_t index, float fallback) const {
         return cc_sequence_[index].load(std::memory_order_acquire) != cc_delivered_[index].load(std::memory_order_acquire)
             ? cc_values_[index].load(std::memory_order_relaxed) : fallback;
+    }
+    void reset_dc_blocker() noexcept { dc_x1_.fill(0.0f); dc_y1_.fill(0.0f); }
+    /** Cutoff / resonancia del Prophet en sus unidades: el CC pendiente o el del host. */
+    float prophet_cc_value(size_t index, float fallback) const {
+        return prophet_cc_sequence_[index].load(std::memory_order_acquire) != prophet_cc_delivered_[index].load(std::memory_order_acquire)
+            ? prophet_cc_parameters_[index]->convertFrom0to1(prophet_cc_values_[index].load(std::memory_order_relaxed)) : fallback;
+    }
+    /** Valor del parámetro DX7 en sus unidades: el CC pendiente (guardado normalizado) o el del host. */
+    float cc_parameter_value(size_t index, float fallback) const {
+        return cc_sequence_[index].load(std::memory_order_acquire) != cc_delivered_[index].load(std::memory_order_acquire)
+            ? cc_parameters_[index]->convertFrom0to1(cc_values_[index].load(std::memory_order_relaxed)) : fallback;
     }
     float juno_cc_value(size_t index, float fallback) const {
         return juno_cc_sequence_[index].load(std::memory_order_acquire) != juno_cc_delivered_[index].load(std::memory_order_acquire)
@@ -2208,6 +2273,12 @@ private:
             cc_parameters_[i]->setValueNotifyingHost(cc_values_[i].load(std::memory_order_relaxed));
             cc_delivered_[i].store(sequence, std::memory_order_release);
         }
+        for (size_t i = 0; i < prophet_cc_parameters_.size(); ++i) {
+            const auto sequence = prophet_cc_sequence_[i].load(std::memory_order_acquire);
+            if (sequence == prophet_cc_delivered_[i].load(std::memory_order_relaxed)) continue;
+            prophet_cc_parameters_[i]->setValueNotifyingHost(prophet_cc_values_[i].load(std::memory_order_relaxed));
+            prophet_cc_delivered_[i].store(sequence, std::memory_order_release);
+        }
     }
     void set_dx7_macro_parameters(const studio::Preset& preset) {
         const auto& macro = preset.patch.groove[GF_GROOVE_MACRO];
@@ -2291,7 +2362,8 @@ private:
         bool changed = force;
         const float old_on = dx_general_last_[14], old_count = dx_general_last_[15];
         for (size_t i = 0; i < DX_GENERAL.size(); ++i) {
-            const float value = i == 17 ? cc_value(0, dx_general_[i]->load()) : dx_general_[i]->load();
+            const float value = i == 17 ? cc_value(0, dx_general_[i]->load())
+                : i < 2 ? cc_parameter_value(4 + i, dx_general_[i]->load()) : dx_general_[i]->load();
             if (value != dx_general_last_[i]) { dx_general_last_[i] = value; changed = true; }
         }
         if (!changed) return;
@@ -2910,6 +2982,7 @@ private:
             studio::Preset empty_arp; studio::patch_init(empty_arp.patch, 5);
             gf::apply_synth_fx_preview(arp2600_bus_, empty_arp, 5); gf::apply_groove_preview(arp2600_bus_, empty_arp, false);
             engine_ = gf::ProphetPreview{};
+            studio::patch_init(prophet_base_.patch, 2);
             engine_.prepare(sample_rate_);
             engine_.set_delay_memory(delay_left_.data(), delay_right_.data(), uint32_t(delay_left_.size()));
             engine_.set_plate_memory(plate_memory_.data(), plate_memory_.size());
@@ -2964,7 +3037,7 @@ private:
                 gf::apply_groove_preview(dx_bus_, preset);
                 dx_bus_.set_unison(1, 0.0f);
             }
-            else { engine_.reset(); gf::apply_prophet_preset_preview(engine_, preset); }
+            else { engine_.reset(); gf::apply_prophet_preset_preview(engine_, preset); prophet_base_ = preset; }
         }
         applied_sequence_ = sequence;
     }
@@ -3048,6 +3121,8 @@ private:
     std::atomic<double> preview_sample_rate_{44100.0};
     std::vector<float> preview_left_, preview_right_;
     float preview_mix_ = 0.0f;
+    float dc_r_ = 0.99928796f;                 // exp(−2π·5/44100), por si se procesa antes de prepareToPlay
+    std::array<float, 2> dc_x1_{}, dc_y1_{};
     std::array<std::atomic<bool>, 128> keyboard_desired_{};
     std::array<bool, 128> keyboard_playing_{}, host_note_playing_{};
     std::atomic<float>* hybrid_focus_ = nullptr;
@@ -3117,9 +3192,13 @@ private:
     std::array<std::atomic<uint64_t>, 6> juno_cc_sequence_{}, juno_cc_delivered_{};
     std::array<std::atomic<bool>, 2> juno_filter_override_{};
     std::array<std::atomic<float>, 2> juno_filter_raw_{}, juno_filter_expected_{}, juno_filter_origin_{};
-    std::array<juce::RangedAudioParameter*, 4> cc_parameters_{};
-    std::array<std::atomic<float>, 4> cc_values_{};
-    std::array<std::atomic<uint64_t>, 4> cc_sequence_{}, cc_delivered_{};
+    studio::Preset prophet_base_;                                         ///< preset Prophet aplicado (hilo de audio)
+    std::array<juce::RangedAudioParameter*, 2> prophet_cc_parameters_{};  ///< cutoff (CC 74), resonance (CC 71)
+    std::array<std::atomic<float>, 2> prophet_cc_values_{};
+    std::array<std::atomic<uint64_t>, 2> prophet_cc_sequence_{}, prophet_cc_delivered_{};
+    std::array<juce::RangedAudioParameter*, 6> cc_parameters_{};       ///< DX7: DRIFT, GRIT, POCKET, MOVE, CUTOFF (74), RESONANCE (71)
+    std::array<std::atomic<float>, 6> cc_values_{};
+    std::array<std::atomic<uint64_t>, 6> cc_sequence_{}, cc_delivered_{};
     double sample_rate_ = 44100.0;
     std::mutex preset_mutex_;
     juce::MemoryBlock preset_raw_;

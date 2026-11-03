@@ -49,3 +49,11 @@ El resultado 10/10 cubre las suites de comportamiento incluidas en esa configura
 ## Seguimiento de corrección: Juno CC 74/71
 
 Implementado en el VST: CC 74 y 71 llegan al filtro Juno en el offset MIDI y se aplican antes de GRIT/MOVE. El valor MIDI de resonancia se conserva incluso por debajo del mínimo del control del host; cambios del usuario/DAW recuperan la prioridad. Se cubren los valores 0 y 127, macros, entrega diferida, guardado/restauración antes y después de entregar, exportación, carga de otro GFP y aislamiento frente a otro motor. No se hizo A/B con hardware. La fila histórica de la matriz refleja el diagnóstico anterior a esta corrección; Prophet y DX7 siguen pendientes.
+
+## Seguimiento de corrección: DX7 y Prophet CC 74/71, DC de la PLATE (2026-11-03)
+
+Implementado en el VST (`gemelo-correcciones-2026-11-03.md`): CC 74 y 71 llegan al filtro del DX7 y del Prophet en el
+offset MIDI, con los rangos de `GF_CUTOFF_RANGE` / `RESO_RANGE` del firmware, se guardan con el proyecto y se entregan
+al host. En el Prophet se convierten con MOVE y GRIT del preset cargado, porque sus parámetros ya los traen aplicados.
+Además, la salida pasa por un bloqueador de DC de 5 Hz: la PLATE dejaba hasta −55 dBFS de DC al terminar la cola. Siguen
+pendientes las macros 14/15/16/19, el editor y la exportación del Prophet. No se hizo A/B con hardware.

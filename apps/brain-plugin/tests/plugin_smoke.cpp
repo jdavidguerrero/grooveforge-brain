@@ -6,6 +6,7 @@
 #include "envelope_editor.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
+#include "ui/groove_macros.h"
 #include "ui/layers.h"
 #include "preset_codec.h"
 
@@ -2787,6 +2788,115 @@ int main() {
         if (!check(pump->isVisible() && depth->isVisible() && pump->getWidth() > 0 && depth->getWidth() > 0 && !pump->getBounds().intersects(depth->getBounds()), "DX7 groove layout")) return 1;
         pump->setValue(1, juce::sendNotificationSync);
         if (!check(find_parameter(*dx_plugin, "dx7.groove.pump.on")->getValue() > .99f, "DX7 groove control binding")) return 1;
+    }
+    {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
+        studio::Preset riser; bool found = false;
+        for (uint8_t i = 0; i < studio::factory_count(5) && !found; ++i)
+            found = studio::factory_preset(5, i, &riser) && std::string(riser.name) == "GF NOISE RISER";
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        if (!check(found && riser.patch.sfx_on[GF_SFX_REVERB] && studio::preset_encode(riser, 5, bytes.data(), bytes.size()) == bytes.size() &&
+                   dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), bytes.size()), "PLATE DC preset")) return 1;
+        plugin->prepareToPlay(48000, 480);
+        double sum = 0;
+        for (int block = 0; block < 2000; ++block) {                       // 20 s: nota de 0,5 s y la cola entera
+            juce::AudioBuffer<float> audio(2, 480); juce::MidiBuffer midi;
+            if (block == 0) midi.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(100)), 0);
+            if (block == 50) midi.addEvent(juce::MidiMessage::noteOff(1, 60), 0);
+            plugin->processBlock(audio, midi);
+            if (block >= 1900) for (int i = 0; i < 480; ++i) sum += audio.getSample(0, i) + audio.getSample(1, i);
+        }
+        if (!check(std::abs(sum / (2.0 * 100 * 480)) < 1e-5, "PLATE tail leaves no DC offset")) return 1;
+    }
+    {   // gemelo-correcciones-2026-11-03 §2: CC 74 / 71 en el DX7, con los rangos del firmware
+        auto midi_dx = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto plain_dx = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* plugin : {midi_dx.get(), plain_dx.get()}) {
+            find_parameter(*plugin, "dx7_preview")->setValueNotifyingHost(1);
+            plugin->prepareToPlay(48000, 128);
+        }
+        juce::AudioBuffer<float> changed(2, 128), plain(2, 128);
+        juce::MidiBuffer events, reference_events;
+        events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 0), 64);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 127), 64);
+        reference_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        midi_dx->processBlock(changed, events); plain_dx->processBlock(plain, reference_events);
+        double after = 0;
+        for (int i = 0; i < 128; ++i) {
+            const float delta = std::abs(changed.getSample(0, i) - plain.getSample(0, i));
+            if (i < 64 && !check(delta < 1e-7f, "DX7 filter MIDI respects sample offset")) return 1;
+            if (i >= 64) after += delta;
+        }
+        if (!check(after > .00001, "DX7 filter CC changes audio")) return 1;
+        juce::MemoryBlock saved; midi_dx->getStateInformation(saved);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        auto hz = [&](juce::AudioProcessor& p, const char* id) { auto* q = find_parameter(p, id); return q->convertFrom0to1(q->getValue()); };
+        if (!check(std::abs(hz(*restored, "dx7.cutoff") - 500.0f) < 1.0f && std::abs(hz(*restored, "dx7.resonance") - 3.0f) < .001f,
+                   "DX7 pending filter CC survives project restore")) return 1;
+        for (int attempt = 0; attempt < 10 && hz(*midi_dx, "dx7.cutoff") > 501.0f; ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(std::abs(hz(*midi_dx, "dx7.cutoff") - 500.0f) < 1.0f && std::abs(hz(*midi_dx, "dx7.resonance") - 3.0f) < .001f,
+                   "DX7 filter CC delivered to host with firmware range")) return 1;
+        juce::MidiBuffer middle;
+        middle.addEvent(juce::MidiMessage::controllerEvent(1, 74, 127), 0);
+        middle.addEvent(juce::MidiMessage::controllerEvent(1, 71, 0), 0);
+        midi_dx->processBlock(changed, middle);
+        for (int attempt = 0; attempt < 10 && hz(*midi_dx, "dx7.cutoff") < 19999.0f; ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(std::abs(hz(*midi_dx, "dx7.cutoff") - 20000.0f) < 1.0f && std::abs(hz(*midi_dx, "dx7.resonance") - .7f) < .001f,
+                   "DX7 filter CC reaches both ends")) return 1;
+    }
+    {   // gemelo-correcciones-2026-11-03 §3: CC 74 / 71 en el Prophet, con MOVE y GRIT del preset cargado
+        studio::Preset preset;
+        if (!check(studio::factory_preset(2, 0, &preset), "Prophet factory preset")) return 1;
+        preset.patch.groove[GF_GROOVE_MACRO][GF_MACRO_MOVE] = 50;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        studio::preset_encode(preset, 2, bytes.data(), bytes.size());
+        auto midi_p = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto plain_p = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        for (auto* plugin : {midi_p.get(), plain_p.get()}) {
+            if (!check(dynamic_cast<gf::PresetImport*>(plugin)->import_preset(bytes.data(), bytes.size()), "Prophet import")) return 1;
+            plugin->prepareToPlay(48000, 128);
+        }
+        juce::AudioBuffer<float> changed(2, 128), plain(2, 128);
+        juce::MidiBuffer events, reference_events;
+        events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 74, 20), 64);
+        events.addEvent(juce::MidiMessage::controllerEvent(1, 71, 100), 64);
+        reference_events.addEvent(juce::MidiMessage::noteOn(1, 60, uint8_t(110)), 0);
+        midi_p->processBlock(changed, events); plain_p->processBlock(plain, reference_events);
+        double after = 0;
+        for (int i = 0; i < 128; ++i) {
+            const float delta = std::abs(changed.getSample(0, i) - plain.getSample(0, i));
+            if (i < 64 && !check(delta < 1e-7f, "Prophet filter MIDI respects sample offset")) return 1;
+            if (i >= 64) after += delta;
+        }
+        if (!check(after > .00001, "Prophet filter CC changes audio")) return 1;
+        const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
+        const float want_cutoff = std::clamp(gf_cutoff_from_cc_norm(2, 20 / 127.0f) * studio::move_cutoff_mul(move), 20.0f, 8000.0f);
+        const float want_res = .1f + 4.9f * std::clamp(studio::move_resonance(studio::macro_resonance(100 / 127.0f, preset.patch), move), 0.0f, 1.0f);
+        auto value = [&](juce::AudioProcessor& p, const char* id) { auto* q = find_parameter(p, id); return q->convertFrom0to1(q->getValue()); };
+        juce::MemoryBlock saved; midi_p->getStateInformation(saved);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        if (!check(std::abs(value(*restored, "cutoff") - want_cutoff) < .5f && std::abs(value(*restored, "resonance") - want_res) < .001f,
+                   "Prophet pending filter CC survives project restore")) return 1;
+        for (int attempt = 0; attempt < 10 && std::abs(value(*midi_p, "cutoff") - want_cutoff) > .5f; ++attempt) {
+            juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        }
+        if (!check(std::abs(value(*midi_p, "cutoff") - want_cutoff) < .5f && std::abs(value(*midi_p, "resonance") - want_res) < .001f,
+                   "Prophet filter CC uses firmware range and preset macros")) return 1;
+        auto other = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        find_parameter(*other, "dx7_preview")->setValueNotifyingHost(1);
+        const float before = value(*other, "cutoff");
+        juce::MidiBuffer cc; cc.addEvent(juce::MidiMessage::controllerEvent(1, 74, 0), 0);
+        other->prepareToPlay(48000, 128); other->processBlock(changed, cc);
+        juce::Thread::sleep(35); juce::Timer::callPendingTimersSynchronously();
+        if (!check(std::abs(value(*other, "cutoff") - before) < .01f, "DX7 filter CC does not move the shared cutoff")) return 1;
     }
     {
         auto editor = std::unique_ptr<juce::AudioProcessorEditor>(a->createEditor());
