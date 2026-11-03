@@ -7,7 +7,7 @@
 #include "studio_look_and_feel.h"
 #include "studio_shell.h"
 #include "perform_view.h"
-#include "osc_view.h"
+#include "env_lfo_view.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -4382,18 +4382,26 @@ private:
         }
         if (kind == 0 || kind == 3 || kind == 5) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {6}, {3, 5}, {4}}; return t[tab]; }
         if (kind == 1) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {3}, {5, 4, 7}, {6}}; return t[tab]; }
-        if (kind == 4) { static const std::vector<int> t[6] = {{1}, {0}, {1, 0}, {5}, {3, 4}, {2}}; return t[tab]; }
+        if (kind == 4) { static const std::vector<int> t[6] = {{1}, {0}, {1}, {5}, {3, 4}, {2}}; return t[tab]; }
         return {};
     }
     static juce::String page_label(int kind, int page) {
         if (kind == 6) return page == 0 ? "LAYERS" : page == 1 ? "FILTER" : page == 2 ? "MACRO" : "GROOVE";
         if (kind == 1) return page == 4 ? "UNISON" : page == 7 ? "MACRO" : "GROOVE";
-        if (kind == 4) return page == 4 ? "MACRO" : page == 1 ? "VOICE" : page == 0 ? "OP EG" : "GROOVE";
+        if (kind == 4) return page == 4 ? "MACRO" : "GROOVE";
         return page == 5 ? "MACRO" : "GROOVE";
+    }
+    /** Sub-páginas de las vistas nuevas (cortes 4–): la vista nueva primero; VOICE = la página vieja con lo que todavía no
+     *  tiene lugar nuevo (unísono del OB-6, ARP y DX7); MOD = las paradas GF_MOD_SLOT del engine. */
+    static juce::StringArray view_subs(int kind, int tab) {
+        if (kind == 6) return {};
+        if (tab == 2) return kind == 3 || kind == 4 || kind == 5 ? juce::StringArray{"ENV", "VOICE"} : juce::StringArray{"ENV"};
+        if (tab == 3 && kind != 2) return kind == 1 ? juce::StringArray{"LFO"} : juce::StringArray{"LFO", "MOD"};
+        return {};
     }
     void select_tab(int tab) {
         if (fx_view_) return;
-        engine_view_ = false; studio_tab_ = tab; sub_index_ = 0;
+        engine_view_ = false; studio_tab_ = tab; sub_index_ = 0; view_sub_ = 0;
         const int kind = current_kind();
         const auto pages = pages_for(kind, tab, hybrid_focus());
         if (auto* index = legacy_index(kind); index && !pages.empty()) *index = pages.front();
@@ -4401,6 +4409,10 @@ private:
     }
     void select_sub(int i) {
         const int kind = current_kind();
+        if (const auto views = view_subs(kind, studio_tab_); views.size() > 1) {
+            if (i >= 0 && i < views.size()) { view_sub_ = i; update_status(); }
+            return;
+        }
         const auto pages = pages_for(kind, studio_tab_, hybrid_focus());
         if (i < 0 || i >= int(pages.size())) return;
         sub_index_ = i;
@@ -4408,7 +4420,7 @@ private:
         update_status();
     }
     void set_hybrid_mode(bool hybrid) {
-        fx_view_ = false; engine_view_ = false; studio_tab_ = 0; sub_index_ = 0;
+        fx_view_ = false; engine_view_ = false; studio_tab_ = 0; sub_index_ = 0; view_sub_ = 0;
         auto* p = owner_.parameters().getParameter("hybrid_preview");
         p->beginChangeGesture(); p->setValueNotifyingHost(hybrid ? 1.0f : 0.0f); p->endChangeGesture();
         if (auto* index = legacy_index(current_kind())) *index = pages_for(current_kind(), 0, hybrid_focus()).front();
@@ -4439,7 +4451,7 @@ private:
         } else {
             owner_.import_preset(data.data(), size);
         }
-        engine_view_ = false; studio_tab_ = 0; sub_index_ = 0;
+        engine_view_ = false; studio_tab_ = 0; sub_index_ = 0; view_sub_ = 0;
         if (auto* index = legacy_index(current_kind())) *index = pages_for(current_kind(), 0, hybrid_focus()).front();
         update_status();
     }
@@ -4597,6 +4609,14 @@ private:
         add(perform_page_, "studio.perform", false);
         osc_page_.on_change = [this] { repaint(); };
         add(osc_page_, "studio.osc", false);
+        env_page_.on_change = [this] { repaint(); };
+        add(env_page_, "studio.env", false);
+        lfo_page_.on_change = [this] { repaint(); };
+        lfo_page_.host_bpm = [this] { return owner_.host_bpm(); };
+        lfo_page_.cutoff_hz = [this] { return raw_parameter(perform_ids(current_kind()).cutoff, 1000.0f); };
+        add(lfo_page_, "studio.lfo", false);
+        mod_page_.on_change = [this] { repaint(); };
+        add(mod_page_, "studio.mod", false);
         engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
         add(engine_select_, "studio.engine.select", false);
         add(fx_later_, "studio.fx.later", false);
@@ -4679,7 +4699,9 @@ private:
                 }
             }
         } else {
-            studio_tab_ = 0; sub_pages_.clear();
+            // Prophet: sin páginas viejas por pestaña; solo PERFORM y ENV tienen vista
+            if (!(kind == 2 && studio_tab_ == 2)) studio_tab_ = 0;
+            sub_pages_.clear();
         }
         for (int i = 0; i < 3; ++i) {
             const Mode mm = i == 0 ? synth_mode() : i == 1 ? hybrid_mode() : fx_mode();
@@ -4722,13 +4744,17 @@ private:
         }
         layer_note_.setVisible(hybrid && !fx_view_ && !engine_view_ && layer_wide);
         layer_note_.style(juce::Colours::transparentBlack, m.hi, m.hi);
+        const auto views = view_subs(kind, studio_tab_);
+        if (views.size() <= 1 || view_sub_ >= views.size()) view_sub_ = 0;
         for (int i = 0; i < 3; ++i) {
             auto& b = sub_tabs_[size_t(i)];
-            const bool shown = !fx_view_ && !engine_view_ && sub_pages_.size() > 1 && i < int(sub_pages_.size());
+            const bool use_views = views.size() > 1;
+            const int count = use_views ? views.size() : int(sub_pages_.size());
+            const bool shown = !fx_view_ && !engine_view_ && count > 1 && i < count;
             b.setVisible(shown);
             if (!shown) continue;
-            b.text = page_label(kind, sub_pages_[size_t(i)]);
-            const bool on = i == sub_index_;
+            b.text = use_views ? views[i] : page_label(kind, sub_pages_[size_t(i)]);
+            const bool on = i == (use_views ? view_sub_ : sub_index_);
             b.style(on ? m.hi : juce::Colours::transparentBlack, on ? m.hi : m.dim, on ? m.on : colour::GRAY);
         }
         act_save_layer_.setVisible(hybrid && !fx_view_);
@@ -4739,12 +4765,12 @@ private:
         for (int i = 0; i < 4; ++i) {
             auto& k = soft_keys_[size_t(i)];
             const bool on = !fx_view_ && (i < 3 ? (!engine_view_ && studio_tab_ == i + 1) : browser_panel_.isVisible());
-            k.setEnabled(!fx_view_ && (i == 3 || kind != 2));
+            k.setEnabled(!fx_view_ && (i == 3 || i == 1 || kind != 2));   // el Prophet tiene PERFORM y ENV
             k.text = fx_view_ ? utf8("\xe2\x80\x94") : utf8(i == 0 ? "OSC" : i == 1 ? "ENV" : i == 2 ? "LFO \xc2\xb7 MOD" : "PRESET");
             k.style(on ? m.dim : juce::Colours::transparentBlack, on ? m.hi : colour::LINE, on ? colour::WHITE : colour::GRAY);
         }
         mode_key_.style(juce::Colours::transparentBlack, colour::LINE, m.hi);
-        sync_.setVisible(!fx_view_ && !engine_view_ && studio_tab_ == 3);
+        sync_.setVisible(!fx_view_ && !engine_view_ && hybrid && studio_tab_ == 3);
         engine_select_.mode = m;
         engine_select_.current = hybrid ? owner_.hybrid_engine_id(unsigned(focus)) : kind;
         engine_select_.locked = hybrid ? owner_.hybrid_engine_id(unsigned(1 - focus)) : -1;
@@ -4764,6 +4790,19 @@ private:
         if (osc) { osc_page_.mode = m; osc_page_.build(kind, owner_.parameters()); }
         osc_page_.setVisible(osc);
         if (osc) { osc_page_.toFront(false); osc_page_.refresh(); }
+        const bool synth_page = !fx_view_ && !engine_view_ && !hybrid;
+        const bool env = synth_page && studio_tab_ == 2 && view_sub_ == 0;
+        if (env) { env_page_.mode = m; env_page_.build(kind, owner_.parameters()); }
+        env_page_.setVisible(env);
+        if (env) { env_page_.toFront(false); env_page_.refresh(); }
+        const bool lfo = synth_page && studio_tab_ == 3 && kind != 2 && view_sub_ == 0;
+        if (lfo) { lfo_page_.mode = m; lfo_page_.build(kind, owner_.parameters()); }
+        lfo_page_.setVisible(lfo);
+        if (lfo) { lfo_page_.toFront(false); lfo_page_.refresh(); }
+        const bool mod = synth_page && studio_tab_ == 3 && kind != 2 && view_sub_ == 1;
+        if (mod) { mod_page_.mode = m; mod_page_.build(kind, owner_.parameters(), 1); }
+        mod_page_.setVisible(mod);
+        if (mod) { mod_page_.toFront(false); mod_page_.refresh(); }
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
@@ -4791,7 +4830,8 @@ private:
             b->setBounds(right - w, 72, w, 32); right -= w + 8;
         }
         engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488); perform_page_.setBounds(0, 112, 1200, 488);
-        osc_page_.setBounds(0, 112, 1200, 488);
+        osc_page_.setBounds(0, 112, 1200, 488); env_page_.setBounds(0, 112, 1200, 488);
+        lfo_page_.setBounds(0, 112, 1200, 488); mod_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
@@ -4855,8 +4895,8 @@ private:
             auto shown = [](studio_ui::MacroKnob& k) { return k.parameter() ? juce::String(juce::roundToInt(k.parameter()->getValue() * 100.0f)) + " %" : juce::String("OFF"); };
             box(16, 152, "P1", "FLT ENV AMT", shown(*perform_page_.page_knobs[0]) + utf8("   \xe2\x87\xa7 GLIDE"), false, colour::GRAY);
             box(512, 152, "P2", utf8("LFO \xe2\x86\x92 CUTOFF"), utf8("\xe2\x87\xa7 DRIVE   ") + shown(*perform_page_.page_knobs[1]), true, colour::GRAY);
-        } else if (osc_page_.isVisible()) {
-            const auto s = osc_page_.strip();
+        } else if (osc_page_.isVisible() || env_page_.isVisible() || lfo_page_.isVisible() || mod_page_.isVisible()) {
+            const auto s = strip_text();
             box(16, 152, "P1", s.p1, s.p1_value, false, s.p1 == "NO FUNCTION" ? colour::MON : colour::GRAY);
             box(512, 152, "P2", s.p2, s.p2_value, true, s.p2 == "NO FUNCTION" ? colour::MON : colour::GRAY);
         } else {
@@ -4864,8 +4904,15 @@ private:
             box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
         }
         box(256, 168, "NAV", fx_view_ ? utf8("\xe2\x80\x94") : engine_view_ ? utf8("TURN BROWSE \xc2\xb7 PUSH LOAD")
-            : osc_page_.isVisible() ? osc_page_.strip().nav : utf8("TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
+            : strip_text().nav.isNotEmpty() ? strip_text().nav : utf8("TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
         box(432, 72, "B6", "SHIFT", {}, false, colour::GRAY);
+    }
+    studio_ui::StripText strip_text() const {
+        if (osc_page_.isVisible()) return osc_page_.strip();
+        if (env_page_.isVisible()) return env_page_.strip();
+        if (lfo_page_.isVisible()) return lfo_page_.strip();
+        if (mod_page_.isVisible()) return mod_page_.strip();
+        return {};
     }
     void configure_hybrid_osc_page(unsigned side) {
         const uint8_t engine = owner_.hybrid_engine_id(side);
@@ -4994,8 +5041,11 @@ private:
     studio_ui::EngineSelectPage engine_select_;
     studio_ui::FxLaterPage fx_later_;
     studio_ui::PerformPage perform_page_;
-    studio_ui::OscPage osc_page_;
+    studio_ui::OscPage osc_page_, mod_page_;
+    studio_ui::EnvPage env_page_;
+    studio_ui::LfoPage lfo_page_;
     std::vector<juce::Component*> shell_;
+    int view_sub_ = 0;
     int studio_tab_ = 0, sub_index_ = 0, shell_engine_ = -2, shell_focus_ = 0, shell_kind_ = -1;
     bool fx_view_ = false, engine_view_ = false, in_update_ = false;
     std::vector<int> sub_pages_;

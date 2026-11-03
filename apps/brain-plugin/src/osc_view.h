@@ -16,6 +16,11 @@
  * unidades de la tabla de slots del firmware (GF_OSC_SLOT, gf_params.h) y de osc_catalog.cpp de la cabeza. */
 namespace studio_ui {
 
+/** Lo que la tira del panel muestra en P1 / P2 y NAV para la página visible. */
+struct StripText {
+    juce::String p1 = "NO FUNCTION", p1_value = utf8("\xe2\x80\x94"), p2 = "NO FUNCTION", p2_value = utf8("\xe2\x80\x94"), nav;
+};
+
 /** Una celda de panel (`VstParam` de la referencia): perilla, segmentos, interruptor o valor con pasos. */
 struct CellSpec {
     enum class Kind { knob, segments, toggle, value } kind = Kind::knob;
@@ -268,11 +273,11 @@ private:
     }
     void draw_value(juce::Graphics& g, int y) {
         const bool on = parameter_ != nullptr;
-        const auto n = number();
-        const int nw = int(float(n.length()) * 7.9f), uw = spec.unit.isEmpty() ? 0 : int(float(spec.unit.length()) * 6.7f) + 4;
+        const auto n = on ? number() : juce::String("OFF");
+        const int nw = int(float(n.length()) * 7.9f), uw = on && spec.unit.isNotEmpty() ? int(float(spec.unit.length()) * 6.7f) + 4 : 0;
         const int x0 = (getWidth() - nw - uw) / 2;
         g.setFont(mono(13.0f)); g.setColour(on ? colour::WHITE : colour::MON);
-        g.drawText(on ? n : juce::String("OFF"), x0, y, nw + 8, 16, juce::Justification::left);
+        g.drawText(n, x0, y, nw + 8, 16, juce::Justification::left);
         if (on && uw) { g.setFont(mono(11.0f)); g.setColour(colour::GRAY); g.drawText(spec.unit, x0 + nw + 4, y + 1, uw + 4, 16, juce::Justification::left); }
     }
 };
@@ -298,12 +303,13 @@ public:
         addAndMakeVisible(*c);
         return c;
     }
+    bool has_view() const { return algorithm || wave != nullptr; }
     juce::Rectangle<float> wave_box() const { return {16.0f, 48.0f, float(getWidth()) - 32.0f, 112.0f}; }
     void resized() override {
         // filas de alto variable: cada fila mide lo que pide su celda más alta
         const int cols = narrow ? 1 : getWidth() >= 560 ? 4 : getWidth() >= 280 ? 3 : 2;
         const float cw = (float(getWidth()) - 32.0f) / float(cols);
-        int col = 0, y = 168, row_h = 0;
+        int col = 0, y = has_view() ? 168 : 48, row_h = 0;
         for (auto& c : cells) {
             const int span = std::min(cols, c->spec.span);
             if (col + span > cols) { col = 0; y += row_h + 8; row_h = 0; }
@@ -325,8 +331,7 @@ public:
         g.setColour(focused ? mode.hi : colour::MON_TEXT);
         g.drawText(focused ? utf8("\xe2\x97\x8f NAV") : tag, getWidth() - 116, 20, 100, 16, juce::Justification::right);
         const auto box = wave_box();
-        g.setColour(colour::BG); g.fillRect(box);
-        g.setColour(colour::LINE); g.drawRect(box, 1.0f);
+        if (has_view()) { g.setColour(colour::BG); g.fillRect(box); g.setColour(colour::LINE); g.drawRect(box, 1.0f); }
         if (algorithm && algorithm_number) draw_algorithm(g, box, algorithm_number(), selected_op, mode);
         else if (wave) {
             const float mid = box.getCentreY();
@@ -409,9 +414,9 @@ public:
         picker.current = juce::roundToInt(algorithm_->convertFrom0to1(algorithm_->getValue()));
         picker.mode = mode; picker.setVisible(true); picker.toFront(false); picker.repaint();
     }
-    struct Strip { juce::String p1, p1_value, p2, p2_value, nav; };
+    using Strip = StripText;
     Strip strip() const {
-        Strip s{"NO FUNCTION", utf8("\xe2\x80\x94"), "NO FUNCTION", utf8("\xe2\x80\x94"), nav_};
+        Strip s; s.nav = nav_;
         if (focus_ < 0 || focus_ >= int(panels.size())) return s;
         const auto& p = *panels[size_t(focus_)];
         if (p.p1 >= 0) { s.p1 = p.cells[size_t(p.p1)]->spec.label; s.p1_value = p.cells[size_t(p.p1)]->value_text(); }
@@ -425,8 +430,10 @@ public:
     }
 
     /** Arma los paneles de `kind` (0 Model D · 1 Juno · 3 OB-6 · 4 DX7 · 5 ARP); no hace nada si ya están. */
-    void build(int kind, juce::AudioProcessorValueTreeState& state) {
-        if (kind == kind_ && state_ == &state) return;
+    /** `page` 0 = OSC; 1 = paradas MOD de la página LFO · MOD (GF_MOD_SLOT; gemelo-vst-ui-migracion.md §5). */
+    void build(int kind, juce::AudioProcessorValueTreeState& state, int page = 0) {
+        if (kind == kind_ && state_ == &state && page == page_) return;
+        page_ = page;
         for (auto& p : panels) removeChildComponent(p.get());
         panels.clear(); algorithm_ = nullptr; picker.setVisible(false);
         kind_ = kind; state_ = &state; focus_ = 0; ids_.clear();
@@ -455,6 +462,7 @@ public:
                 return perform_math::osc_sample(s, ph, juce::jlimit(0.05f, 0.95f, raw(pw_id, 50.0f) / 100.0f));
             };
         };
+        if (page == 1) { build_mod(kind, state, knob, seg, toggle, panel, add); finish(); return; }
         switch (kind) {
             case 0: {   // Model D (1b)
                 auto* v1 = panel("VCO 1", "REF", false, "P1 WAVE \xc2\xb7 P2 \xe2\x80\x94 \xc2\xb7 ENC L LEVEL \xc2\xb7 \xe2\x87\xa7 P1 PW (ENGINE)");
@@ -573,6 +581,9 @@ public:
             }
             default: nav_ = {}; break;
         }
+        finish();
+    }
+    void finish() {
         for (auto& p : panels) for (auto& c : p->cells) c->mode = mode;
         set_focus(0);
         refresh();
@@ -618,7 +629,52 @@ private:
     juce::RangedAudioParameter* algorithm_ = nullptr;
     juce::StringArray ids_;
     juce::String nav_;
-    int kind_ = -1, focus_ = 0;
+    int kind_ = -1, focus_ = 0, page_ = 0;
+
+    template <typename Knob, typename Seg, typename Toggle, typename Panel, typename Add>
+    void build_mod(int kind, juce::AudioProcessorValueTreeState&, Knob knob, Seg seg, Toggle toggle, Panel panel, Add add) {
+        switch (kind) {
+            case 0: {   // MODULATION (fidelidad §11.2): la rueda reparte VCO 3 ↔ NOISE hacia OSC y FILTER
+                auto* m = panel("MODULATION", "WHEEL \xc2\xb7 VCO 3 + NOISE", false,
+                                "P1 NOISE MIX \xc2\xb7 P2 OSC MOD \xc2\xb7 ENC L FILTER MOD \xc2\xb7 ENC R DECAY \xc2\xb7 \xe2\x87\xa7 VCO3 KBD \xc2\xb7 VCO3 LO \xc2\xb7 OVERDRIVE \xc2\xb7 FILTER KBD");
+                add(m, knob("modeld.mod.mix", "NOISE MIX", "%")); add(m, toggle("modeld.mod.osc", "OSC MOD")); add(m, toggle("modeld.mod.filter", "FILTER MOD"));
+                add(m, toggle("modeld.decay_switch", "DECAY")); add(m, toggle("modeld.vco3.keyboard", "VCO3 KBD")); add(m, toggle("modeld.vco3.low", "VCO3 LO"));
+                add(m, knob("modeld.overdrive", "OVERDRIVE", "%"));
+                { auto s = seg("modeld.filter.keyboard", "FILTER KBD", juce::StringArray{"OFF", "1/3", "2/3", "FULL"}); s.span = 1; add(m, s); }
+                m->p1 = 0; m->p2 = 1;
+                nav_ = utf8("LFO \xc2\xb7 MODULATION");
+                break;
+            }
+            case 3: {   // X-MOD (fidelidad §11.3)
+                auto* x = panel("X-MOD", "VCO 2 + FILT ENV", false, "P1 FILT ENV \xc2\xb7 P2 VCO 2 \xc2\xb7 ENC L FREQ 1 \xc2\xb7 ENC R FILTER \xc2\xb7 \xe2\x87\xa7 PW 1 \xc2\xb7 SYNC");
+                add(x, knob("ob6.xmod.env", "FILT ENV", "%")); add(x, knob("ob6.xmod.vco2", "VCO 2", "%"));
+                add(x, toggle("ob6.xmod.freq", "FREQ 1")); add(x, toggle("ob6.xmod.morph", "FILTER"));
+                add(x, toggle("ob6.xmod.pw", "PW 1")); add(x, toggle("ob6.sync", "SYNC"));
+                x->p1 = 0; x->p2 = 1;
+                nav_ = utf8("LFO \xc2\xb7 X-MOD");
+                break;
+            }
+            case 4: {   // KBD / EG (fidelidad §11.1); WAVE y DETUNE de cada operador están en OSC
+                auto* k = panel("KBD / EG", "ALL OPERATORS", false, "P1 KBD LEVEL \xc2\xb7 P2 KBD RATE \xc2\xb7 ENC L D2 RATE (0 = HOLDS)");
+                add(k, knob("dx7.kbd_level", "KBD LEVEL", "")); { auto s = seg("dx7.kbd_rate", "KBD RATE", juce::StringArray{"0", "1", "2", "3"}); s.span = 1; add(k, s); }
+                add(k, knob("dx7.d2", "D2 RATE", "MS"));
+                k->p1 = 0; k->p2 = 1;
+                nav_ = utf8("LFO \xc2\xb7 WAVE \xc2\xb7 KBD / EG");
+                break;
+            }
+            case 5: {   // PATCH (fidelidad §11.4): VCO 3 hace de LFO de audio
+                auto* p = panel("PATCH", "VCO 3 \xc2\xb7 NORMALLED", false, "P1 MONO \xc2\xb7 P2 SYNC \xc2\xb7 ENC L VCO3 RATE \xc2\xb7 ENC R VCO3 \xe2\x86\x92 PITCH \xc2\xb7 \xe2\x87\xa7 VCO3 \xe2\x86\x92 CUTOFF \xc2\xb7 NOISE COLOR");
+                add(p, toggle("arp2600.mono", "MONO")); add(p, toggle("arp2600.sync", "SYNC"));
+                add(p, knob("arp2600.vco3.rate", "VCO3 RATE", "HZ", 1)); add(p, knob("arp2600.vco3.pitch", "VCO3 \xe2\x86\x92 PITCH", "%"));
+                add(p, knob("arp2600.vco3.cutoff", "VCO3 \xe2\x86\x92 CUTOFF", "%")); add(p, knob("arp2600.noise.color", "NOISE COLOR", "%"));
+                p->p1 = 0; p->p2 = 1;
+                p->wave = [this](float ph) { return std::sin(juce::MathConstants<float>::twoPi * ph); };
+                nav_ = utf8("LFO \xc2\xb7 PATCH");
+                break;
+            }
+            default: nav_ = {}; break;
+        }
+    }
     std::vector<float> snapshot_;
 
     float raw(const char* id, float fallback = 0.0f) const {

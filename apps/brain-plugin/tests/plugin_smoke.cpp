@@ -6,7 +6,7 @@
 #include "envelope_editor.h"
 #include "studio_shell.h"
 #include "perform_view.h"
-#include "osc_view.h"
+#include "env_lfo_view.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -2968,8 +2968,8 @@ int main() {
                 level->parameter()->setValueNotifyingHost(0.0f);
                 if (!check(std::abs(page->op_wave(0, 0.3f) - op1) > 1e-3f, "carrier wave shows its FM output")) return 1;
                 tab(*editor, 2)->onClick();
-                auto* op_eg = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
-                if (!check(op_eg && op_eg->isVisible() && op_eg->text == "OP EG" && !page->isVisible(), "DX7 ENV keeps the operator EG page")) return 1;
+                auto* voice = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+                if (!check(voice && voice->isVisible() && voice->text == "VOICE" && !page->isVisible(), "DX7 ENV keeps the VOICE page")) return 1;
             }
             if (engine == 3) {
                 auto* sync = page->cell("ob6.sync");
@@ -2977,6 +2977,74 @@ int main() {
                 sync->set_index(1 - was);
                 if (!check(sync->index() == 1 - was, "OSC toggle edits")) return 1;
             }
+        }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 4: ENV (1e) y LFO · MOD (1f)
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        auto sub = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.sub." + juce::String(i))); };
+        auto at = [](juce::Component* c, juce::Point<float> p, juce::Point<float> down, bool dragged) {
+            return juce::MouseEvent(juce::Desktop::getInstance().getMainMouseSource(), p, {}, 0, 0, 0, 0, 0, c, c, juce::Time::getCurrentTime(), down, juce::Time::getCurrentTime(), 1, dragged);
+        };
+        constexpr const char* mod_ids[6] = {"modeld.mod.osc", nullptr, nullptr, "ob6.xmod.env", "dx7.kbd_level", "arp2600.mono"};
+        for (int engine = 0; engine < 6; ++engine) {
+            auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+            if (!check(studio::factory_preset(uint8_t(engine), 0, &preset) &&
+                       dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), studio::preset_encode(preset, uint8_t(engine), bytes.data(), bytes.size())),
+                       "ENV preset")) return 1;
+            auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+            tab(*editor, 2)->onClick();
+            auto* env = dynamic_cast<studio_ui::EnvPage*>(editor->findChildWithID("studio.env"));
+            if (!check(env && env->isVisible() && env->kind() == engine, "ENV page per engine")) { std::fprintf(stderr, "  engine %d visible %d kind %d\n", engine, env && env->isVisible(), env ? env->kind() : -9); return 1; }
+            // ATTACK del AMP: el parámetro del engine (attack compartido, dx7.amp_attack en el DX7)
+            auto* attack = find_parameter(*plugin, engine == 4 ? "dx7.amp_attack" : "attack");
+            if (!check(env->amp.adsr[0] == attack && env->amp.cells[0]->parameter() == attack, "ENV binds the amp attack")) return 1;
+            // arrastrar el punto del ataque cambia ATTACK; el eje no se mueve mientras se arrastra
+            const auto peak = env->amp.points()[0];
+            const float before = attack->getValue(), axis = env->amp.axis_s;
+            env->amp.mouseDown(at(&env->amp, peak, peak, false));
+            env->amp.mouseDrag(at(&env->amp, peak + juce::Point<float>(60, 0), peak, true));
+            if (!check(attack->getValue() > before && env->amp.axis_s == axis, "ENV peak drag sets ATTACK")) return 1;
+            env->amp.mouseUp(at(&env->amp, peak + juce::Point<float>(60, 0), peak, true));
+            if (engine != 2) {
+                auto* sustain = env->filter.adsr[2];
+                const auto corner = env->filter.points()[1];
+                const float s0 = sustain->getValue();
+                env->filter.mouseDown(at(&env->filter, corner, corner, false));
+                env->filter.mouseDrag(at(&env->filter, corner + juce::Point<float>(0, -40), corner, true));
+                env->filter.mouseUp(at(&env->filter, corner + juce::Point<float>(0, -40), corner, true));
+                if (!check(sustain->getValue() > s0 || s0 > .99f, "ENV decay corner sets SUSTAIN")) return 1;
+            }
+            if (engine == 4) {
+                if (!check(env->filter.name == "OP EG" && env->filter.adsr[0] == find_parameter(*plugin, "dx7.op1.attack"), "DX7 OP EG panel")) return 1;
+                env->filter.on_select(2);
+                if (!check(env->filter.adsr[3] == find_parameter(*plugin, "dx7.op3.release"), "OP EG selector rebinds")) return 1;
+            }
+            if (engine == 3 && !check(sub(*editor, 1)->isVisible() && sub(*editor, 1)->text == "VOICE", "OB-6 ENV keeps VOICE")) return 1;
+            if (engine == 0 && !check(!sub(*editor, 0)->isVisible(), "Model D ENV has nothing left behind")) return 1;
+            if (engine == 2) { if (!check(!tab(*editor, 3)->isEnabled(), "Prophet has no LFO")) return 1; continue; }
+            // LFO · MOD
+            tab(*editor, 3)->onClick();
+            auto* lfo = dynamic_cast<studio_ui::LfoPage*>(editor->findChildWithID("studio.lfo"));
+            if (!check(lfo && lfo->isVisible() && lfo->kind() == engine && lfo->shape && lfo->shape->parameter(), "LFO page per engine")) return 1;
+            const int target = engine == 4 ? 1 : 0;   // el DX7 no tiene LFO → CUTOFF en el plugin
+            auto* depth = lfo->dests[size_t(target)].depth;
+            if (!check(depth != nullptr, "LFO destination bound")) return 1;
+            depth->setValueNotifyingHost(0.0f);
+            lfo->drop_on(target);
+            if (!check(std::abs(depth->getValue() - .25f) < .01f, "dropping the LFO sets +25 %")) return 1;
+            if (engine == 4 && !check(lfo->dests[0].depth == nullptr && lfo->dests[2].depth == find_parameter(*plugin, "dx7.lfo_amp"), "DX7 LFO goes to AMP, not CUTOFF")) return 1;
+            if (engine != 4 && !check(lfo->dests[3].depth != nullptr && lfo->dests[2].depth == nullptr, "LFO third destination is PWM")) return 1;
+            lfo->shape->set_index(3);
+            if (!check(lfo->shape->index() == 3, "LFO shape segment edits")) return 1;
+            if (mod_ids[engine]) {
+                sub(*editor, 1)->onClick();
+                auto* mod = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.mod"));
+                if (!check(mod && mod->isVisible() && !lfo->isVisible() && mod->cell(mod_ids[engine]) &&
+                           mod->cell(mod_ids[engine])->parameter() == find_parameter(*plugin, mod_ids[engine]), "MOD stop page")) return 1;
+                for (auto& panel : mod->panels) for (auto& cell : panel->cells)
+                    if (!check(cell->parameter() == find_parameter(*plugin, cell->spec.id), "MOD cell bound")) { std::fprintf(stderr, "  %s\n", cell->spec.id); return 1; }
+            } else if (!check(!sub(*editor, 1)->isVisible(), "Juno LFO has no MOD stop")) return 1;
         }
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida

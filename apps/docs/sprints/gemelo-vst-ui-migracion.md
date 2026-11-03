@@ -263,3 +263,74 @@ Decisiones que salieron al implementar:
   (dif 0); es un artefacto del arnés, no del plugin.
 
 Siguiente: corte 4, ENV y LFO · MOD (1e, 1f).
+
+## 5. Corte 4: ENV (1e) y LFO · MOD (1f)
+
+### ENV
+
+Dos paneles de 576 × 456 (x 16 y 608): AMP ENV y FILTER ENV. Cada uno: gráfica de 544 × 232 con la envolvente
+(ataque recto, decay y release curvos, sostén fijo de 0,5 s para que se vea), cuatro puntos de 8 × 8 y una fila de
+perillas debajo.
+
+- **Puntos (nota HANDLES de 1e):** el pico = ATTACK (x); la esquina del decay = DECAY (x) y SUSTAIN (y); el fin del
+  sostén = SUSTAIN (y); el fin = RELEASE (x). Shift = fino (×0,2). El punto elegido se pinta blanco con su valor.
+- **Eje común (nota SCALE):** los dos paneles comparten el eje, ajustado a la envolvente más larga en pasos de 0,6 s.
+  Mientras se arrastra el eje queda quieto; si no, el punto se escaparía del cursor.
+- **Perillas:** ATTACK · DECAY · SUSTAIN · RELEASE con la curva de cada parámetro del plugin (la referencia pide log
+  1 ms–10 s; los parámetros ya tienen su propia curva y se respeta), más **VEL → AMP / VEL → FILTER**, que vivían en la
+  página vieja y son de la envolvente (theory/10 de Studio).
+- **Por engine:**
+  - Model D, Juno, OB-6 y ARP: ATTACK y RELEASE del amplificador son los parámetros compartidos `attack` / `release`
+    (los que usa cada engine); el resto es del engine.
+  - DX7: AMP (dx7.amp_*, VEL = dx7.velocity) y, en el segundo panel, **OP EG**, con un selector 1–4 que cambia de
+    operador. La sub-página "OP EG" del corte 3 deja de hacer falta.
+  - Prophet: el plugin solo tiene ATTACK y RELEASE; DECAY y SUSTAIN aparecen OFF y FILTER ENV vacío.
+
+### LFO · MOD
+
+- **LFO (izquierda):** SHAPE (SINE · TRI · SAW · SQR · S&H), la onda de 544 × 176 con el punto de fase, RATE, SYNC,
+  DIVISION (1/4 · 1/8 · 1/16 · 1/8T) y, en el Juno, DELAY. Con SYNC encendido RATE se atenúa y DIVISION se activa (nota
+  PHASE DOT). La nota de arriba dice "FREE · x S PER CYCLE" o "SYNC · división · HOST bpm".
+- **Destinos (derecha):** CUTOFF, PITCH, AMP y PWM, una profundidad cada uno (0–100 %, como el firmware: la referencia
+  dibuja ±, el parámetro es unipolar). El firmware tiene tres destinos por engine: CUTOFF, PITCH y PWM, salvo el DX7 que
+  tiene AMP en lugar de PWM y no tiene CUTOFF en el plugin. Los que no existen se ven "NOT ON THIS ENGINE".
+  CUTOFF dice cuánto barre: "1240 HZ · SWINGS 950–1530 HZ" (±4 octavas a profundidad máxima, la escala del firmware).
+- **Arrastrar el LFO (notas DRAG SOURCE y DROP):** el chip "⋮⋮ LFO" se arrastra sobre un destino; el destino válido se
+  marca con borde púrpura punteado y una línea punteada sigue al cursor. Al entrar la profundidad pasa a +25 % y seguir
+  arrastrando en vertical la ajusta; soltar la fija; salir sin soltar devuelve el valor anterior.
+- **MOD:** sub-página con las paradas MOD del engine (GF_MOD_SLOT), con los mismos paneles de OSC: Model D MODULATION
+  (8 controles), OB-6 X-MOD (6), DX7 KBD / EG (KBD LEVEL · KBD RATE · D2 RATE; WAVE y DETUNE ya están en OSC), ARP PATCH
+  (6). El Juno no tiene parada MOD propia (DELAY va en el LFO, HISS en OSC).
+
+**Arreglo del corte 3:** la página vieja de OSC también tenía estos controles MOD; desde el corte 3 quedaban tapados por
+los paneles nuevos. Ahora están en LFO · MOD, donde los pone el firmware.
+
+### Sub-páginas
+
+| Pestaña | Sub-páginas |
+|---|---|
+| ENV | ENV; más VOICE (la página vieja) en OB-6, ARP y DX7, porque su unísono todavía no tiene lugar (GROOVE, corte 5) |
+| LFO · MOD | LFO; más MOD en Model D, OB-6, DX7 y ARP |
+
+En Model D y Juno todo lo de la página vieja de ENV ya tiene lugar (envolventes y VEL en ENV, FLT ENV AMT · DRIVE ·
+GLIDE en PERFORM, LFO en LFO, DRIFT en la tira), así que no hay VOICE.
+
+### Tests
+
+- ENV liga los parámetros del engine; arrastrar el pico cambia ATTACK y el eje no se mueve; arrastrar la esquina del
+  decay cambia SUSTAIN; en el DX7 el selector de OP EG cambia de operador; OB-6 conserva VOICE y Model D no la necesita.
+- LFO liga sus parámetros; soltar el chip sobre un destino deja +25 %; el DX7 va a AMP y no a CUTOFF; el resto tiene PWM.
+- MOD muestra las paradas del engine con todas sus celdas ligadas; el Juno no tiene MOD.
+
+### Resultado del corte 4 (2026-11-03)
+
+Hecho todo lo de arriba (`env_lfo_view.h`; MOD reutiliza `OscPage` con `build(kind, state, 1)`). 12/12 tests; arnés de
+audio sin cambios (el corte solo toca el editor).
+
+- **Prophet:** su pestaña ENV nunca había abierto: el editor devolvía siempre a PERFORM a los engines sin páginas viejas
+  por pestaña. Corregido; B2 también queda activa en el Prophet.
+- **Textos:** algunos "·" se veían como "Â·" por literales UTF-8 asignados sin `utf8()`; corregidos.
+- Pendiente para cuando haya HYBRID (corte 7): la envolvente fantasma de la otra mitad (2c) y el arco MOD púrpura en
+  todas las perillas del destino.
+
+Siguiente: corte 5, GROOVE y FX (1g, 1h).
