@@ -191,6 +191,17 @@ Confirmar versión/edición de Live y Max for Live, capacidades actuales de Groo
 
 El repo conserva formulaciones históricas diferentes sobre la ubicación de la IA entre `01` y `04`. Este refinamiento propone una ruta de estudio local con nube opcional; no resuelve unilateralmente esos contratos ni convierte nuevas funciones TinyML en requisitos del Brain.
 
+## 10. El gemelo digital (añadido 2026-11-03)
+
+El plugin gemelo abarata el audio: un clip que toma unos 20 s en grabarse tomaría menos de 1 s en renderizarse. Eso hace
+viables experimentos que aquí quedaban lejos, pero no altera el orden de §8 ni convierte renders en preferencias. El
+gemelo todavía no se ha medido contra el Brain físico.
+
+La exploración completa está en [`ia-local-gemelo-digital.md`](ia-local-gemelo-digital.md): qué significa gemelo digital
+aplicado al Brain, estado real, 12 aplicaciones con su baseline, fidelidad que exige cada una, riesgos y decisiones
+pendientes. Para la IA local propone empezar por la audición renderizada de una decisión real y por reimprimir tomas
+tocadas en el Brain. Además guarda, como línea futura y sin fecha, la ruta al gemelo completo con arquitectura IoT.
+
 ---
 
 ## Anexo (2026-10-27): cómo encaja con lo que ya existe
