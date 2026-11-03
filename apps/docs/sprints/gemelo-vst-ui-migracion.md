@@ -334,3 +334,82 @@ audio sin cambios (el corte solo toca el editor).
   todas las perillas del destino.
 
 Siguiente: corte 5, GROOVE y FX (1g, 1h).
+
+## 6. Corte 5: GROOVE (1g) y FX (1h)
+
+### GROOVE
+
+Cinco columnas de 224 de ancho (x 16 + i · 232): PUMP · ARP · CHORD · UNISON · MACRO. Cada una lleva su nombre, el
+interruptor de la parada arriba a la derecha (MACRO no tiene: dice DEPTHS) y sus celdas en 2 columnas. Rangos y
+nombres de `GF_GROOVE_SLOT` (gf_params.h) y `GROOVE_STOP` de la cabeza (osc_catalog.cpp):
+
+| Parada | Celdas (P1 · P2 = las dos primeras, como en el panel) |
+|---|---|
+| PUMP | DEPTH % · SHAPE (SMOOTH · EXP · KICK) · RATE (1/4 · 1/8 · 1/2) · OFFSET ±50 MS · RELEASE 30–400 MS · CLOCK (AUTO · MIDI · INT) |
+| ARP | MODE (UP · DOWN · UP-DN · RANDOM · SMART) · DIV (1/4 · 1/8 · 1/16 · 1/8T · 1/16T · 1/8.) · GATE 5–100 % · OCT 1–3 · SWING 50–75 % · LATCH |
+| CHORD | TYPE (MEMORY · KEY) · INV (ROOT · 1ST · 2ND · 3RD) · STRUM 0–100 MS · KEY (24) |
+| UNISON | VOICES (×1 · ×2 · ×3 · ×6) · DETUNE 0–50 CT |
+| MACRO | GRIT RES · GRIT MOD · POCKET VEL (DRIFT · GRIT · POCKET · MORPH · MOVE están en la tira) |
+
+- El **DX7** no tiene CLOCK en PUMP en el plugin: esa celda no aparece.
+- El **Model D** es mono: la columna UNISON dice "MONO ENGINE" y no tiene celdas.
+- **TAP:** en el VST el reloj es el del host; la caja TAP de MACRO muestra "HOST bpm" y no toma golpes (en el panel físico
+  TAP sí existe porque el reloj puede ser interno).
+- Con UNISON aquí, la sub-página VOICE de ENV (corte 4) ya no hace falta: todo lo de las páginas viejas de VOICE tiene
+  lugar nuevo.
+
+### FX
+
+La cadena real del synth: **cinco** unidades en orden DRIVE → TAPE → CHORUS → DELAY → REVERB (theory/fase3-fx.md §2),
+columnas de (1168 − 4 · 8) / 5 con una "›" entre ellas. La referencia dibuja seis, con un PHASER aparte: en el firmware
+PHASER es un TYPE de CHORUS, así que va como selector ahí (punto abierto ya anotado en la revisión del diseño).
+
+Cada unidad: número, nombre, interruptor ON / OFF, una línea con el tipo elegido, un dibujo de 72 de alto y sus celdas.
+Los parámetros del plugin van normalizados 0–1; los valores se muestran como en la cabeza (`sfx_format` de
+screen_sfx.cpp) y los discretos son segmentos (`GF_SFX_STEPS`):
+
+| Unidad | Celdas |
+|---|---|
+| DRIVE | DRY/WET · AMOUNT % · TONE % · TYPE (OVERDRV · DIST · CRUSH) |
+| TAPE | DRY/WET · DRIVE ×1,0–10,0 · WOW % · FLUTTER % |
+| CHORUS | DRY/WET · DEPTH % · RATE 0,10–10 HZ · TYPE (CHORUS · PHASER) |
+| DELAY | DRY/WET · TIME (1/16 · 1/8 · 1/8. · 1/4 · 1/4.) · FEEDBACK 0–90 % · TONE (DARK · FLAT · THIN) |
+| REVERB | DRY/WET · DECAY ×0,2–4,0 · TYPE (BELL · GUADUA · GLASS · WOOD · PLATE) · SIZE (S · M · L) |
+
+Dibujos (ilustrativos, siguen a los parámetros): curva tanh del DRIVE según AMOUNT; seno con wow y flutter; dos senos
+desfasados según DEPTH (o los notches del phaser); los ecos del DELAY cayendo con FEEDBACK; ruido con caída
+exponencial según DECAY.
+
+### Cómo se arma
+
+Las dos páginas usan los mismos paneles de OSC (`OscPage::build(kind, state, page)` con page 2 = GROOVE y 3 = FX),
+con dos agregados al panel: el interruptor en la cabecera y la altura del dibujo configurable (FX: 72). Las celdas
+aprenden a mostrar un parámetro normalizado con pasos (`steps`) y con un formato propio (`format`). Clic en una
+columna = foco: P1 / P2 de la tira muestran sus dos primeras celdas y NAV "STOP n / 5" o "UNIT n / 5".
+
+### Tests
+
+- GROOVE muestra las cinco paradas en Model D, Juno, OB-6, DX7 y ARP, con las celdas ligadas a los parámetros del engine;
+  el interruptor de PUMP cambia `*.groove.pump.on`; DX7 sin CLOCK; Model D sin unísono.
+- FX muestra las cinco unidades ligadas a `*.fx.*`; TYPE de REVERB en PLATE deja el parámetro en 1,0 (índice 4 de 5); el
+  formato de TAPE DRIVE es ×1,0–10,0; el interruptor de una unidad la enciende.
+- ENV ya no tiene sub-página VOICE.
+
+**No cubre:** HYBRID (corte 7).
+
+### Resultado del corte 5 (2026-11-03)
+
+GROOVE y FX nuevos en Model D, Juno, OB-6, DX7 y ARP 2600 con los mismos paneles de OSC (`OscPage` páginas 2 y 3):
+interruptor en la cabecera de cada parada o unidad, celdas con los rangos del firmware, segmentos sobre parámetros
+normalizados con pasos (`CellSpec::steps`) y valores con el formato de la cabeza (`CellSpec::format`). 12/12 tests (bloque
+nuevo: celdas ligadas en los cinco engines, interruptor de PUMP, DX7 sin CLOCK, Model D sin unísono, TYPE de REVERB en
+PLATE = 1,0, formato ×10,0 de TAPE DRIVE, subtítulo con el tipo y tira por unidad). Arnés de audio sin cambios.
+
+- **Las páginas viejas ya no se ven en SYNTH:** con GROOVE y FX, ninguna pestaña de los seis engines muestra una
+  página vieja (la sub-página VOICE de ENV desapareció: el unísono vive en UNISON). Las páginas viejas siguen existiendo
+  ocultas para HYBRID (corte 7) y para los tests de cada página.
+- **KEY de CHORD** es un valor con pasos (clic = siguiente, arrastre o rueda): 24 tonalidades no caben como segmentos.
+- **Tira en GROOVE:** P1 / P2 son los slots 0 y 1 de cada parada en el firmware (PUMP: DEPTH · SHAPE; ARP: MODE · DIV;
+  CHORD: TYPE · INV), no siempre las primeras celdas de la columna; la referencia mostraba RATE en P2 de PUMP.
+
+Siguiente: corte 6, navegador (1i).

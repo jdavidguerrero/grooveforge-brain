@@ -30,6 +30,8 @@ struct CellSpec {
     int span = 1, decimals = 0;
     bool bipolar = false;
     float scale = 1.0f;                              ///< valor mostrado = valor del parámetro × scale (0–1 → %)
+    int steps = 0;                                   ///< > 0: parámetro normalizado 0–1 con `steps` valores (FX, GF_SFX_STEPS)
+    std::function<juce::String(float)> format;       ///< texto propio del valor (sin unidad), p. ej. sfx_format de la cabeza
 };
 
 namespace osc_math {
@@ -137,7 +139,11 @@ public:
     }
     juce::RangedAudioParameter* parameter() const { return parameter_; }
     float raw() const { return parameter_ ? parameter_->convertFrom0to1(parameter_->getValue()) : 0.0f; }
-    int index() const { return parameter_ ? juce::roundToInt(raw() - parameter_->getNormalisableRange().start) : 0; }
+    int index() const {
+        if (!parameter_) return 0;
+        if (spec.steps > 1) return juce::roundToInt(juce::jlimit(0.0f, 1.0f, raw()) * float(spec.steps - 1));
+        return juce::roundToInt(raw() - parameter_->getNormalisableRange().start);
+    }
     /** Valor como lo muestra la celda (texto + unidad), para la tira. */
     juce::String value_text() const {
         if (!parameter_) return utf8("\xe2\x80\x94");
@@ -147,7 +153,7 @@ public:
     }
     void set_index(int i) {
         if (!parameter_) return;
-        const float v = parameter_->getNormalisableRange().start + float(i);
+        const float v = spec.steps > 1 ? float(i) / float(spec.steps - 1) : parameter_->getNormalisableRange().start + float(i);
         parameter_->beginChangeGesture(); parameter_->setValueNotifyingHost(parameter_->convertTo0to1(v)); parameter_->endChangeGesture();
         repaint();
     }
@@ -266,6 +272,7 @@ private:
     bool drags() const { return spec.kind == CellSpec::Kind::knob || spec.kind == CellSpec::Kind::value; }
     juce::String number() const {
         if (!parameter_) return utf8("\xe2\x80\x94");
+        if (spec.format) return spec.format(raw());
         const float v = raw() * spec.scale;
         const auto text = juce::String(v, spec.decimals);
         if (spec.prefix.isNotEmpty()) return spec.prefix + text;
@@ -294,25 +301,32 @@ public:
     int selected_op = -1;
     std::function<void()> on_focus, on_diagram;
     std::vector<std::unique_ptr<ParamCell>> cells;
+    juce::RangedAudioParameter* power = nullptr;     ///< interruptor de la parada / unidad en la cabecera (GROOVE, FX)
+    juce::String index_text;                         ///< número de unidad delante del nombre (FX)
+    juce::String bottom_box;                         ///< caja de 48 al pie (TAP de MACRO)
+    int sub_cell = -1;                               ///< celda cuyo valor se muestra como subtítulo (TYPE de un FX)
+    float view_h = 112, row_gap = 8;
 
+    juce::Rectangle<float> power_rect() const { return {float(getWidth()) - 16 - 40, 14, 40, 22}; }
     ParamCell* add(CellSpec spec, juce::RangedAudioParameter* p) {
         cells.push_back(std::make_unique<ParamCell>(std::move(spec), p));
         auto* c = cells.back().get();
         c->on_touch = [this] { if (on_focus) on_focus(); };
-        c->setComponentID("osc.cell." + juce::String(c->spec.id));
+        c->setComponentID("osc.cell." + juce::String(c->spec.id ? c->spec.id : "none"));
         addAndMakeVisible(*c);
         return c;
     }
     bool has_view() const { return algorithm || wave != nullptr; }
-    juce::Rectangle<float> wave_box() const { return {16.0f, 48.0f, float(getWidth()) - 32.0f, 112.0f}; }
+    float head_h() const { return power ? 64.0f : 48.0f; }    ///< con interruptor, el subtítulo baja a su propia línea
+    juce::Rectangle<float> wave_box() const { return {16.0f, head_h(), float(getWidth()) - 32.0f, view_h}; }
     void resized() override {
         // filas de alto variable: cada fila mide lo que pide su celda más alta
         const int cols = narrow ? 1 : getWidth() >= 560 ? 4 : getWidth() >= 280 ? 3 : 2;
         const float cw = (float(getWidth()) - 32.0f) / float(cols);
-        int col = 0, y = has_view() ? 168 : 48, row_h = 0;
+        int col = 0, y = int(has_view() ? head_h() + view_h + 8 : head_h()), row_h = 0;
         for (auto& c : cells) {
             const int span = std::min(cols, c->spec.span);
-            if (col + span > cols) { col = 0; y += row_h + 8; row_h = 0; }
+            if (col + span > cols) { col = 0; y += row_h + int(row_gap); row_h = 0; }
             const int w = int(cw * float(span)), h = c->preferred_height(w);
             c->setBounds(int(16.0f + float(col) * cw), y, w, h);
             row_h = std::max(row_h, h);
@@ -323,13 +337,32 @@ public:
         auto r = getLocalBounds().toFloat();
         g.setColour(colour::SURFACE); g.fillRect(r);
         g.setColour(focused ? mode.hi : colour::LINE); g.drawRect(r, focused ? 2.0f : 1.0f);
-        g.setFont(mono(16.0f, true)); g.setColour(colour::WHITE);
+        int x0 = 16;
+        if (index_text.isNotEmpty()) {
+            g.setFont(mono(11.0f)); g.setColour(colour::MON_TEXT); g.drawText(index_text, x0, 20, 16, 16, juce::Justification::left); x0 += 16;
+        }
+        const bool power_on = power && power->getValue() >= 0.5f;
+        g.setFont(mono(16.0f, true)); g.setColour(power && !power_on ? colour::GRAY : colour::WHITE);
         const int nw = int(float(name.length()) * 10.0f);
-        g.drawText(name, 16, 16, nw + 4, 22, juce::Justification::left);
+        g.drawText(name, x0, 16, nw + 4, 22, juce::Justification::left);
         g.setFont(mono(11.0f)); g.setColour(colour::GRAY);
-        g.drawText(sub, 16 + nw + 8, 20, getWidth() - nw - 40, 16, juce::Justification::left);
-        g.setColour(focused ? mode.hi : colour::MON_TEXT);
-        g.drawText(focused ? utf8("\xe2\x97\x8f NAV") : tag, getWidth() - 116, 20, 100, 16, juce::Justification::right);
+        if (power) g.drawText(sub, 16, 40, getWidth() - 32, 16, juce::Justification::left);
+        else g.drawText(sub, x0 + nw + 8, 20, getWidth() - nw - 40, 16, juce::Justification::left);
+        if (power) {
+            const auto r = power_rect();
+            if (power_on) { g.setColour(mode.hi); g.fillRect(r); }
+            g.setColour(power_on ? mode.hi : colour::MON); g.drawRect(r, 1.0f);
+            g.setColour(power_on ? mode.on : colour::GRAY); g.drawText(power_on ? "ON" : "OFF", r, juce::Justification::centred);
+        } else {
+            g.setColour(focused ? mode.hi : colour::MON_TEXT);
+            g.drawText(focused ? utf8("\xe2\x97\x8f NAV") : tag, getWidth() - 116, 20, 100, 16, juce::Justification::right);
+        }
+        if (bottom_box.isNotEmpty()) {
+            const juce::Rectangle<float> b(16, float(getHeight()) - 64, float(getWidth()) - 32, 48);
+            g.setColour(mode.hi); g.drawRect(b, 1.0f);
+            g.setColour(colour::WHITE); g.setFont(mono(13.0f)); g.drawText("TAP", b.reduced(12, 0), juce::Justification::left);
+            g.setColour(colour::GRAY); g.setFont(mono(11.0f)); g.drawText(bottom_box, b.reduced(12, 0), juce::Justification::right);
+        }
         const auto box = wave_box();
         if (has_view()) { g.setColour(colour::BG); g.fillRect(box); g.setColour(colour::LINE); g.drawRect(box, 1.0f); }
         if (algorithm && algorithm_number) draw_algorithm(g, box, algorithm_number(), selected_op, mode);
@@ -345,10 +378,14 @@ public:
             g.setColour(focused ? mode.hi : mode.mc); g.strokePath(p, juce::PathStrokeType(2.0f));
         }
         g.setColour(colour::MON_TEXT); g.setFont(mono(11.0f));
-        g.drawFittedText(foot, 16, getHeight() - 36, getWidth() - 32, 28, juce::Justification::bottomLeft, 2);
+        if (bottom_box.isEmpty()) g.drawFittedText(foot, 16, getHeight() - 36, getWidth() - 32, 28, juce::Justification::bottomLeft, 2);
     }
     void mouseDown(const juce::MouseEvent& e) override {
         if (on_focus) on_focus();
+        if (power && power_rect().contains(e.position)) {
+            power->beginChangeGesture(); power->setValueNotifyingHost(power->getValue() >= 0.5f ? 0.0f : 1.0f); power->endChangeGesture();
+            repaint(); return;
+        }
         if (algorithm && wave_box().contains(e.position) && on_diagram) on_diagram();
     }
 };
@@ -386,6 +423,7 @@ class OscPage final : public juce::Component, private juce::Timer {
 public:
     Mode mode = synth_mode();
     std::function<void()> on_change;                 ///< la tira (P1 / P2) se repinta
+    std::function<float()> host_bpm;                 ///< TAP de GROOVE muestra el tempo del host
     std::vector<std::unique_ptr<OscPanel>> panels;
     AlgorithmPicker picker;
 
@@ -404,6 +442,8 @@ public:
     int focus() const { return focus_; }
     void set_focus(int i) {
         focus_ = juce::jlimit(0, std::max(0, int(panels.size()) - 1), i);
+        if (page_ >= 2 && focus_ < int(panels.size()))
+            nav_ = juce::String(page_ == 2 ? "STOP " : "UNIT ") + juce::String(focus_ + 1) + " / " + juce::String(int(panels.size())) + utf8(" \xc2\xb7 ") + panels[size_t(focus_)]->name;
         for (size_t p = 0; p < panels.size(); ++p) panels[p]->focused = int(p) == focus_;
         if (kind_ == 4 && !panels.empty()) panels.back()->selected_op = focus_ < 4 ? focus_ : -1;
         repaint();
@@ -463,6 +503,8 @@ public:
             };
         };
         if (page == 1) { build_mod(kind, state, knob, seg, toggle, panel, add); finish(); return; }
+        if (page == 2) { build_groove(kind, state, knob, seg, toggle, value, panel); finish(); return; }
+        if (page == 3) { build_fx(kind, state, knob, seg, panel); finish(); return; }
         switch (kind) {
             case 0: {   // Model D (1b)
                 auto* v1 = panel("VCO 1", "REF", false, "P1 WAVE \xc2\xb7 P2 \xe2\x80\x94 \xc2\xb7 ENC L LEVEL \xc2\xb7 \xe2\x87\xa7 P1 PW (ENGINE)");
@@ -601,6 +643,10 @@ public:
                 panels[size_t(op)]->sub = t < 0 ? juce::String("CARRIER") : utf8("MOD \xe2\x86\x92 OP ") + juce::String(t + 1);
             }
         }
+        for (auto& p : panels) {
+            if (p->sub_cell >= 0 && p->sub_cell < int(p->cells.size())) p->sub = p->cells[size_t(p->sub_cell)]->value_text();
+            if (page_ == 2 && p->name == "MACRO") p->bottom_box = "HOST " + juce::String(host_bpm ? host_bpm() : 120.0f, 2);
+        }
         snapshot_ = values();
         repaint();
         for (auto& p : panels) p->repaint();
@@ -615,7 +661,12 @@ public:
         for (auto& p : panels) { const int w = p->narrow ? 176 : full_w; p->setBounds(x, 16, w, 456); x += w + 8; }
         picker.setBounds(getLocalBounds());
     }
-    void paint(juce::Graphics& g) override { g.fillAll(colour::BG); }
+    void paint(juce::Graphics& g) override {
+        g.fillAll(colour::BG);
+        if (page_ != 3) return;
+        g.setColour(colour::MON); g.setFont(mono(11.0f));   // la cadena va de izquierda a derecha
+        for (size_t i = 0; i + 1 < panels.size(); ++i) g.drawText(utf8("\xe2\x80\xba"), panels[i]->getRight(), 28, 8, 16, juce::Justification::centred);
+    }
 
     /** Salida de un operador del DX7 para dibujar: moduladores = su propia onda; portadoras = su salida FM (nota 1d). */
     float op_wave(int op, float ph) const {
@@ -630,6 +681,131 @@ private:
     juce::StringArray ids_;
     juce::String nav_;
     int kind_ = -1, focus_ = 0, page_ = 0;
+
+    /// Guarda un id armado en tiempo de ejecución para que `CellSpec::id` siga siendo válido.
+    const char* keep(const juce::String& id) { ids_.add(id); return ids_.getReference(ids_.size() - 1).toRawUTF8(); }
+    static const char* prefix_for(int kind) {
+        return kind == 0 ? "modeld." : kind == 1 ? "juno." : kind == 3 ? "ob6." : kind == 4 ? "dx7." : kind == 5 ? "arp2600." : "";
+    }
+
+    /** GROOVE (1g): PUMP · ARP · CHORD · UNISON · MACRO con los rangos de GF_GROOVE_SLOT y los nombres de la cabeza. */
+    template <typename Knob, typename Seg, typename Toggle, typename Value, typename Panel>
+    void build_groove(int kind, juce::AudioProcessorValueTreeState& state, Knob knob, Seg seg, Toggle toggle, Value value, Panel panel) {
+        const juce::String pre = prefix_for(kind);
+        auto gid = [&](const char* stop, int field) { return keep(pre + "groove." + stop + "." + (field == 0 ? juce::String("on") : "p" + juce::String(field))); };
+        auto add = [&](OscPanel* p, CellSpec spec) -> int {
+            auto* param = spec.id ? state.getParameter(spec.id) : nullptr;
+            if (!param) return -1;                   // el DX7 no tiene CLOCK en PUMP
+            p->add(std::move(spec), param); return int(p->cells.size()) - 1;
+        };
+        auto setup = [&](OscPanel* p) { p->row_gap = 4; p->foot = {}; };
+        auto* pump = panel("PUMP", "", false, ""); setup(pump);
+        pump->power = state.getParameter(gid("pump", 0));
+        pump->p1 = add(pump, knob(gid("pump", 1), "DEPTH", "%"));
+        add(pump, knob(gid("pump", 4), "OFFSET", "MS", 0, true)); add(pump, knob(gid("pump", 5), "RELEASE", "MS"));
+        pump->p2 = add(pump, seg(gid("pump", 2), "SHAPE", {"SMOOTH", "EXP", "KICK"}));
+        add(pump, seg(gid("pump", 3), "RATE", {"1/4", "1/8", "1/2"})); add(pump, seg(gid("pump", 6), "CLOCK", {"AUTO", "MIDI", "INT"}));
+        auto* arp = panel("ARP", "", false, ""); setup(arp);
+        arp->power = state.getParameter(gid("arp", 0));
+        add(arp, knob(gid("arp", 3), "GATE", "%")); add(arp, knob(gid("arp", 5), "SWING", "%"));
+        { auto o = seg(gid("arp", 4), "OCT", {"1", "2", "3"}); o.span = 1; add(arp, o); }
+        add(arp, toggle(gid("arp", 6), "LATCH"));
+        arp->p1 = add(arp, seg(gid("arp", 1), "MODE", {"UP", "DOWN", "UP-DN", "RANDOM", "SMART"}));
+        arp->p2 = add(arp, seg(gid("arp", 2), "DIV", {"1/4", "1/8", "1/16", "1/8T", "1/16T", "1/8."}));
+        auto* chord = panel("CHORD", "", false, ""); setup(chord);
+        chord->power = state.getParameter(gid("chord", 0));
+        add(chord, knob(gid("chord", 3), "STRUM", "MS"));
+        {
+            auto k = value(gid("chord", 4), "KEY", "");
+            k.format = [](float v) {
+                static const char* keys[24] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B",
+                                               "Cm", "C#m", "Dm", "D#m", "Em", "Fm", "F#m", "Gm", "G#m", "Am", "A#m", "Bm"};
+                return juce::String(keys[juce::jlimit(0, 23, juce::roundToInt(v))]);
+            };
+            add(chord, k);
+        }
+        chord->p1 = add(chord, seg(gid("chord", 1), "TYPE", {"MEMORY", "KEY"}));
+        chord->p2 = add(chord, seg(gid("chord", 2), "INV", {"ROOT", "1ST", "2ND", "3RD"}));
+        auto* unison = panel("UNISON", kind == 0 ? "MONO ENGINE" : "", false, ""); setup(unison);
+        if (kind != 0) {
+            unison->power = state.getParameter(keep(pre + "unison_on"));
+            unison->p1 = add(unison, seg(keep(pre + "unison_count"), "VOICES", {utf8("\xc3\x97" "1"), utf8("\xc3\x97" "2"), utf8("\xc3\x97" "3"), utf8("\xc3\x97" "6")}));
+            unison->p2 = add(unison, knob(keep(pre + "unison_detune"), "DETUNE", "CT"));
+        }
+        auto* macro = panel("MACRO", "", false, ""); setup(macro);
+        macro->tag = "DEPTHS";
+        macro->p1 = add(macro, knob(keep(pre + "macro.grit_res"), "GRIT RES", "%", 0, false, 100.0f));
+        macro->p2 = add(macro, knob(keep(pre + "macro.grit_mod"), "GRIT MOD", "%", 0, false, 100.0f));
+        add(macro, knob(keep(pre + "macro.pocket_vel"), "POCKET VEL", "%", 0, false, 100.0f));
+        nav_ = utf8("STOP 1 / 5 \xc2\xb7 PUMP");
+    }
+
+    /** FX (1h): la cadena DRIVE → TAPE → CHORUS → DELAY → REVERB, valores como sfx_format de la cabeza. */
+    template <typename Knob, typename Seg, typename Panel>
+    void build_fx(int kind, juce::AudioProcessorValueTreeState& state, Knob knob, Seg seg, Panel panel) {
+        const juce::String pre = prefix_for(kind);
+        static const char* names[5] = {"drive", "tape", "chorus", "delay", "reverb"};
+        auto fid = [&](int fx, const char* field) { return keep(pre + "fx." + names[fx] + "." + field); };
+        auto pct = [](float n) { return juce::String(juce::roundToInt(n * 100.0f)); };
+        auto add = [&](OscPanel* p, CellSpec spec) { auto* param = state.getParameter(spec.id); p->add(std::move(spec), param); return int(p->cells.size()) - 1; };
+        auto pk = [&](int fx, const char* field, const char* label, const char* unit, std::function<juce::String(float)> f) {
+            auto c = knob(fid(fx, field), label, unit); c.format = std::move(f); return c;
+        };
+        auto st = [&](int fx, const char* field, const char* label, juce::StringArray o, int span = 4) {
+            auto c = seg(fid(fx, field), label, std::move(o), span); c.steps = c.options.size(); return c;
+        };
+        auto unit = [&](int fx, const char* name) {
+            auto* p = panel(name, "", false, "");
+            p->power = state.getParameter(fid(fx, "on"));
+            p->index_text = juce::String(fx + 1); p->view_h = 72; p->row_gap = 4;
+            p->p1 = add(p, pk(fx, "mix", "DRY/WET", "%", pct));
+            return p;
+        };
+        auto raw = [this](const char* id) { return this->raw(id); };
+        auto* drive = unit(0, "DRIVE");
+        drive->p2 = add(drive, pk(0, "p1", "AMOUNT", "%", pct)); add(drive, pk(0, "p2", "TONE", "%", pct));
+        drive->sub_cell = add(drive, st(0, "p3", "TYPE", {"OVERDRV", "DIST", "CRUSH"}));
+        drive->wave = [raw, id = fid(0, "p1")](float ph) {
+            const float g = 1.0f + 9.0f * raw(id), x = ph - 1.0f;
+            return std::tanh(g * x) / std::tanh(g);
+        };
+        auto* tape = unit(1, "TAPE");
+        tape->p2 = add(tape, pk(1, "p1", "DRIVE", "", [](float n) { return utf8("\xc3\x97") + juce::String(1.0f + 9.0f * n, 1); }));
+        add(tape, pk(1, "p2", "WOW", "%", pct)); add(tape, pk(1, "p3", "FLUTTER", "%", pct));
+        tape->sub = utf8("WOW \xc2\xb7 FLUTTER");
+        tape->wave = [raw, wow = fid(1, "p2"), flutter = fid(1, "p3")](float ph) {
+            const float u = ph / 2.0f, tau = juce::MathConstants<float>::twoPi;
+            return std::sin(tau * (3.0f * u + 0.3f * raw(wow) * std::sin(tau * u))) * (1.0f - 0.3f * raw(flutter) * std::sin(4.5f * tau * u));
+        };
+        auto* chorus = unit(2, "CHORUS");
+        chorus->p2 = add(chorus, pk(2, "p1", "DEPTH", "%", pct));
+        add(chorus, pk(2, "p2", "RATE", "HZ", [](float n) { return juce::String(0.1f * std::pow(100.0f, n), 2); }));
+        chorus->sub_cell = add(chorus, st(2, "p3", "TYPE", {"CHORUS", "PHASER"}));
+        chorus->wave = [raw, depth = fid(2, "p1"), type = fid(2, "p3")](float ph) {
+            const float u = ph / 2.0f, pi = juce::MathConstants<float>::pi;
+            if (raw(type) >= 0.5f) return 0.9f - 1.8f * std::sqrt(std::abs(std::cos(pi * u * 3.5f)));   // notches del phaser
+            return 0.5f * std::sin(4.0f * pi * u) + 0.5f * std::sin(4.0f * pi * u + 2.0f * raw(depth));
+        };
+        auto* delay = unit(3, "DELAY");
+        delay->p2 = delay->sub_cell = add(delay, st(3, "p1", "TIME", {"1/16", "1/8", "1/8.", "1/4", "1/4."}));
+        add(delay, pk(3, "p2", "FEEDBACK", "%", [](float n) { return juce::String(juce::roundToInt(90.0f * n)); }));
+        add(delay, pk(3, "p3", "TONE", "", [](float n) { return juce::String(n < 0.48f ? "DARK" : n > 0.52f ? "THIN" : "FLAT"); }));
+        delay->wave = [raw, fb = fid(3, "p2")](float ph) {
+            const float u = ph / 2.0f, k = 0.1f + 0.8f * raw(fb);
+            for (int i = 0; i < 7; ++i)
+                if (std::abs(u - (0.06f + 0.13f * float(i))) < 0.006f) return (i % 2 ? -1.0f : 1.0f) * std::pow(k, float(i));
+            return 0.0f;
+        };
+        auto* reverb = unit(4, "REVERB");
+        reverb->p2 = add(reverb, pk(4, "p1", "DECAY", "", [](float n) { return utf8("\xc3\x97") + juce::String(0.2f * std::pow(20.0f, n), 1); }));
+        reverb->sub_cell = add(reverb, st(4, "p2", "TYPE", {"BELL", "GUADUA", "GLASS", "WOOD", "PLATE"}));
+        add(reverb, st(4, "p3", "SIZE", {"S", "M", "L"}));
+        reverb->wave = [raw, decay = fid(4, "p1")](float ph) {
+            const float u = ph / 2.0f, d = 0.2f * std::pow(20.0f, raw(decay));
+            return osc_math::noise(int(u * 300.0f)) * std::exp(-u * 3.0f / d);
+        };
+        nav_ = utf8("UNIT 1 / 5 \xc2\xb7 DRIVE");
+    }
 
     template <typename Knob, typename Seg, typename Toggle, typename Panel, typename Add>
     void build_mod(int kind, juce::AudioProcessorValueTreeState&, Knob knob, Seg seg, Toggle toggle, Panel panel, Add add) {
@@ -694,7 +870,10 @@ private:
     }
     std::vector<float> values() const {
         std::vector<float> v;
-        for (auto& p : panels) for (auto& c : p->cells) v.push_back(c->parameter() ? c->parameter()->getValue() : 0.0f);
+        for (auto& p : panels) {
+            for (auto& c : p->cells) v.push_back(c->parameter() ? c->parameter()->getValue() : 0.0f);
+            if (p->power) v.push_back(p->power->getValue());
+        }
         return v;
     }
     void timerCallback() override {

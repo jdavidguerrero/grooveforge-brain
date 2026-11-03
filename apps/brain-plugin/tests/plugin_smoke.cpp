@@ -2855,11 +2855,11 @@ int main() {
         if (!check(select && select->isVisible(), "engine badge opens ENGINE SELECT")) return 1;
         select->on_pick(1);
         if (!check(!select->isVisible() && find_parameter(*plugin, "juno_preview")->getValue() > .5f, "ENGINE SELECT loads Juno A.00")) return 1;
-        // las seis pestañas comunes llevan a las páginas del Juno; GROOVE junta GROOVE · UNISON · MACRO
+        // las seis pestañas comunes llevan a las páginas del Juno; GROOVE junta GROOVE · UNISON · MACRO (corte 5: columnas)
         for (int i = 0; i < 6; ++i) if (!check(tab(*editor, i)->isEnabled(), "Juno common tabs")) return 1;
         tab(*editor, 4)->onClick();
-        auto* sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
-        if (!check(sub && sub->isVisible() && sub->text == "UNISON", "GROOVE sub-pages")) return 1;
+        auto* groove_view = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.groove"));
+        if (!check(groove_view && groove_view->isVisible() && groove_view->panels.size() == 5 && groove_view->panels[3]->name == "UNISON", "GROOVE stops")) return 1;
         // las macros de la tira mueven los parámetros del engine activo; MORPH es OFF fuera de HYBRID
         auto* grit = dynamic_cast<studio_ui::MacroKnob*>(editor->findChildWithID("studio.macro.grit"));
         auto* morph = dynamic_cast<studio_ui::MacroKnob*>(editor->findChildWithID("studio.macro.morph"));
@@ -2968,8 +2968,7 @@ int main() {
                 level->parameter()->setValueNotifyingHost(0.0f);
                 if (!check(std::abs(page->op_wave(0, 0.3f) - op1) > 1e-3f, "carrier wave shows its FM output")) return 1;
                 tab(*editor, 2)->onClick();
-                auto* voice = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
-                if (!check(voice && voice->isVisible() && voice->text == "VOICE" && !page->isVisible(), "DX7 ENV keeps the VOICE page")) return 1;
+                if (!check(!page->isVisible() && editor->findChildWithID("studio.env")->isVisible(), "DX7 ENV page")) return 1;
             }
             if (engine == 3) {
                 auto* sync = page->cell("ob6.sync");
@@ -3020,7 +3019,7 @@ int main() {
                 env->filter.on_select(2);
                 if (!check(env->filter.adsr[3] == find_parameter(*plugin, "dx7.op3.release"), "OP EG selector rebinds")) return 1;
             }
-            if (engine == 3 && !check(sub(*editor, 1)->isVisible() && sub(*editor, 1)->text == "VOICE", "OB-6 ENV keeps VOICE")) return 1;
+            if (engine == 3 && !check(!sub(*editor, 1)->isVisible(), "OB-6 ENV no longer needs VOICE (unison is in GROOVE)")) return 1;
             if (engine == 0 && !check(!sub(*editor, 0)->isVisible(), "Model D ENV has nothing left behind")) return 1;
             if (engine == 2) { if (!check(!tab(*editor, 3)->isEnabled(), "Prophet has no LFO")) return 1; continue; }
             // LFO · MOD
@@ -3045,6 +3044,53 @@ int main() {
                 for (auto& panel : mod->panels) for (auto& cell : panel->cells)
                     if (!check(cell->parameter() == find_parameter(*plugin, cell->spec.id), "MOD cell bound")) { std::fprintf(stderr, "  %s\n", cell->spec.id); return 1; }
             } else if (!check(!sub(*editor, 1)->isVisible(), "Juno LFO has no MOD stop")) return 1;
+        }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 5: GROOVE (1g) y FX (1h)
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        constexpr const char* prefix[6] = {"modeld.", "juno.", "", "ob6.", "dx7.", "arp2600."};
+        for (int engine = 0; engine < 6; ++engine) {
+            if (engine == 2) continue;
+            auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+            if (!check(studio::factory_preset(uint8_t(engine), 0, &preset) &&
+                       dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), studio::preset_encode(preset, uint8_t(engine), bytes.data(), bytes.size())),
+                       "GROOVE preset")) return 1;
+            auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+            const juce::String pre = prefix[engine];
+            tab(*editor, 4)->onClick();
+            auto* groove = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.groove"));
+            if (!check(groove && groove->isVisible() && groove->panels.size() == 5, "GROOVE page per engine")) return 1;
+            for (auto& panel : groove->panels) for (auto& cell : panel->cells)
+                if (!check(cell->parameter() && cell->parameter() == find_parameter(*plugin, cell->spec.id), "GROOVE cell bound")) { std::fprintf(stderr, "  %d %s\n", engine, cell->spec.id); return 1; }
+            auto* pump_on = find_parameter(*plugin, (pre + "groove.pump.on").toRawUTF8());
+            if (!check(groove->panels[0]->power == pump_on, "PUMP switch bound")) return 1;
+            const float was = pump_on->getValue();
+            auto& pump_panel = *groove->panels[0];
+            const auto r = pump_panel.power_rect().getCentre();
+            pump_panel.mouseDown(juce::MouseEvent(juce::Desktop::getInstance().getMainMouseSource(), r, {}, 0, 0, 0, 0, 0, &pump_panel, &pump_panel,
+                                                  juce::Time::getCurrentTime(), r, juce::Time::getCurrentTime(), 1, false));
+            if (!check(std::abs(pump_on->getValue() - (1.0f - was)) < .01f, "PUMP switch toggles")) return 1;
+            if (!check((groove->cell(pre + "groove.pump.p6") != nullptr) == (engine != 4), "DX7 has no PUMP CLOCK")) return 1;
+            if (!check(groove->panels[3]->cells.empty() == (engine == 0), "Model D has no unison")) return 1;
+            tab(*editor, 5)->onClick();
+            auto* fx = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.fx"));
+            if (!check(fx && fx->isVisible() && !groove->isVisible() && fx->panels.size() == 5, "FX page per engine")) return 1;
+            for (auto& panel : fx->panels) {
+                for (auto& cell : panel->cells)
+                    if (!check(cell->parameter() && cell->parameter() == find_parameter(*plugin, cell->spec.id), "FX cell bound")) { std::fprintf(stderr, "  %d %s\n", engine, cell->spec.id); return 1; }
+                if (panel->wave) for (int i = 0; i <= 64; ++i) if (!check(std::isfinite(panel->wave(float(i) / 32.0f)), "FX drawing finite")) return 1;
+            }
+            auto* type = fx->cell(pre + "fx.reverb.p2");
+            type->set_index(4);
+            if (!check(std::abs(find_parameter(*plugin, (pre + "fx.reverb.p2").toRawUTF8())->getValue() - 1.0f) < 1e-4f && type->value_text() == "PLATE", "REVERB TYPE segment")) return 1;
+            auto* tape_drive = fx->cell(pre + "fx.tape.p1");
+            tape_drive->parameter()->setValueNotifyingHost(1.0f);
+            if (!check(tape_drive->value_text() == juce::String::fromUTF8("\xc3\x97" "10.0"), "TAPE DRIVE format")) return 1;
+            fx->refresh();
+            if (!check(fx->panels[4]->sub == "PLATE", "REVERB subtitle shows the type")) return 1;
+            fx->set_focus(3);
+            if (!check(fx->strip().p1 == "DRY/WET" && fx->strip().p2 == "TIME" && fx->strip().nav.startsWith("UNIT 4 / 5"), "FX strip follows the unit")) return 1;
         }
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida

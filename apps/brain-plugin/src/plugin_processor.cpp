@@ -4391,12 +4391,14 @@ private:
         if (kind == 4) return page == 4 ? "MACRO" : "GROOVE";
         return page == 5 ? "MACRO" : "GROOVE";
     }
-    /** Sub-páginas de las vistas nuevas (cortes 4–): la vista nueva primero; VOICE = la página vieja con lo que todavía no
-     *  tiene lugar nuevo (unísono del OB-6, ARP y DX7); MOD = las paradas GF_MOD_SLOT del engine. */
+    /** Sub-páginas de las vistas nuevas (cortes 4–5). Si la pestaña tiene vista nueva, sus sub-páginas reemplazan a las
+     *  de las páginas viejas; MOD = las paradas GF_MOD_SLOT del engine. Vacío = la pestaña sigue en la página vieja. */
     static juce::StringArray view_subs(int kind, int tab) {
         if (kind == 6) return {};
-        if (tab == 2) return kind == 3 || kind == 4 || kind == 5 ? juce::StringArray{"ENV", "VOICE"} : juce::StringArray{"ENV"};
+        if (tab == 2) return {"ENV"};
         if (tab == 3 && kind != 2) return kind == 1 ? juce::StringArray{"LFO"} : juce::StringArray{"LFO", "MOD"};
+        if (tab == 4 && kind != 2) return {"GROOVE"};
+        if (tab == 5 && kind != 2) return {"FX"};
         return {};
     }
     void select_tab(int tab) {
@@ -4617,6 +4619,11 @@ private:
         add(lfo_page_, "studio.lfo", false);
         mod_page_.on_change = [this] { repaint(); };
         add(mod_page_, "studio.mod", false);
+        groove_page_.on_change = [this] { repaint(); };
+        groove_page_.host_bpm = [this] { return owner_.host_bpm(); };
+        add(groove_page_, "studio.groove", false);
+        fx_page_.on_change = [this] { repaint(); };
+        add(fx_page_, "studio.fx", false);
         engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
         add(engine_select_, "studio.engine.select", false);
         add(fx_later_, "studio.fx.later", false);
@@ -4748,7 +4755,7 @@ private:
         if (views.size() <= 1 || view_sub_ >= views.size()) view_sub_ = 0;
         for (int i = 0; i < 3; ++i) {
             auto& b = sub_tabs_[size_t(i)];
-            const bool use_views = views.size() > 1;
+            const bool use_views = !views.isEmpty();
             const int count = use_views ? views.size() : int(sub_pages_.size());
             const bool shown = !fx_view_ && !engine_view_ && count > 1 && i < count;
             b.setVisible(shown);
@@ -4803,6 +4810,14 @@ private:
         if (mod) { mod_page_.mode = m; mod_page_.build(kind, owner_.parameters(), 1); }
         mod_page_.setVisible(mod);
         if (mod) { mod_page_.toFront(false); mod_page_.refresh(); }
+        const bool groove = synth_page && studio_tab_ == 4 && kind != 2;
+        if (groove) { groove_page_.mode = m; groove_page_.build(kind, owner_.parameters(), 2); }
+        groove_page_.setVisible(groove);
+        if (groove) { groove_page_.toFront(false); groove_page_.refresh(); }
+        const bool fx = synth_page && studio_tab_ == 5 && kind != 2;
+        if (fx) { fx_page_.mode = m; fx_page_.build(kind, owner_.parameters(), 3); }
+        fx_page_.setVisible(fx);
+        if (fx) { fx_page_.toFront(false); fx_page_.refresh(); }
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
@@ -4832,6 +4847,7 @@ private:
         engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488); perform_page_.setBounds(0, 112, 1200, 488);
         osc_page_.setBounds(0, 112, 1200, 488); env_page_.setBounds(0, 112, 1200, 488);
         lfo_page_.setBounds(0, 112, 1200, 488); mod_page_.setBounds(0, 112, 1200, 488);
+        groove_page_.setBounds(0, 112, 1200, 488); fx_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
@@ -4895,7 +4911,8 @@ private:
             auto shown = [](studio_ui::MacroKnob& k) { return k.parameter() ? juce::String(juce::roundToInt(k.parameter()->getValue() * 100.0f)) + " %" : juce::String("OFF"); };
             box(16, 152, "P1", "FLT ENV AMT", shown(*perform_page_.page_knobs[0]) + utf8("   \xe2\x87\xa7 GLIDE"), false, colour::GRAY);
             box(512, 152, "P2", utf8("LFO \xe2\x86\x92 CUTOFF"), utf8("\xe2\x87\xa7 DRIVE   ") + shown(*perform_page_.page_knobs[1]), true, colour::GRAY);
-        } else if (osc_page_.isVisible() || env_page_.isVisible() || lfo_page_.isVisible() || mod_page_.isVisible()) {
+        } else if (osc_page_.isVisible() || env_page_.isVisible() || lfo_page_.isVisible() || mod_page_.isVisible() ||
+                   groove_page_.isVisible() || fx_page_.isVisible()) {
             const auto s = strip_text();
             box(16, 152, "P1", s.p1, s.p1_value, false, s.p1 == "NO FUNCTION" ? colour::MON : colour::GRAY);
             box(512, 152, "P2", s.p2, s.p2_value, true, s.p2 == "NO FUNCTION" ? colour::MON : colour::GRAY);
@@ -4912,6 +4929,8 @@ private:
         if (env_page_.isVisible()) return env_page_.strip();
         if (lfo_page_.isVisible()) return lfo_page_.strip();
         if (mod_page_.isVisible()) return mod_page_.strip();
+        if (groove_page_.isVisible()) return groove_page_.strip();
+        if (fx_page_.isVisible()) return fx_page_.strip();
         return {};
     }
     void configure_hybrid_osc_page(unsigned side) {
@@ -5041,7 +5060,7 @@ private:
     studio_ui::EngineSelectPage engine_select_;
     studio_ui::FxLaterPage fx_later_;
     studio_ui::PerformPage perform_page_;
-    studio_ui::OscPage osc_page_, mod_page_;
+    studio_ui::OscPage osc_page_, mod_page_, groove_page_, fx_page_;
     studio_ui::EnvPage env_page_;
     studio_ui::LfoPage lfo_page_;
     std::vector<juce::Component*> shell_;
