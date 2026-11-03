@@ -138,7 +138,7 @@ inline void draw_engine(juce::Graphics& g, int engine, juce::Rectangle<float> ds
 /** Botón rectangular de la referencia (radio 0): relleno, borde (sólido o punteado), texto y barra inferior opcional. */
 class ChromeButton final : public juce::Component {
 public:
-    std::function<void()> onClick;
+    std::function<void()> onClick, onDoubleClick;
     juce::String text, caption;            ///< caption: etiqueta chica arriba a la izquierda (B1, B5…)
     juce::Colour fill{juce::Colours::transparentBlack}, border{colour::LINE}, ink{colour::GRAY}, bar{juce::Colours::transparentBlack};
     bool dashed = false, semibold = false;
@@ -171,6 +171,7 @@ public:
     void mouseUp(const juce::MouseEvent& e) override {
         if (isEnabled() && onClick && getLocalBounds().contains(e.getPosition())) onClick();
     }
+    void mouseDoubleClick(const juce::MouseEvent&) override { if (isEnabled() && onDoubleClick) onDoubleClick(); }
 };
 
 /** Celda de la tira con valor editable arrastrando (ENC L / ENC R): rótulo, nombre del parámetro y valor. */

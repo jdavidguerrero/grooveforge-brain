@@ -6,6 +6,7 @@
 
 #include "studio_look_and_feel.h"
 #include "studio_shell.h"
+#include "perform_view.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -4441,6 +4442,86 @@ private:
         if (auto* index = legacy_index(current_kind())) *index = pages_for(current_kind(), 0, hybrid_focus()).front();
         update_status();
     }
+
+    float raw_parameter(const char* id, float fallback = 0.0f) {
+        if (!id) return fallback;
+        auto* v = owner_.parameters().getRawParameterValue(id);
+        return v ? v->load() : fallback;
+    }
+    struct PerformIds { const char *cutoff, *resonance, *env, *lfo_cut, *glide, *drive, *lfo_rate, *lfo_shape, *wave, *pw; };
+    static PerformIds perform_ids(int kind) {
+        switch (kind) {
+            case 0: return {"cutoff", "resonance", "modeld.env_amount", "modeld.lfo_cutoff", "modeld.glide", "modeld.drive", "modeld.lfo_rate", "modeld.lfo_shape", "modeld.osc1.wave", "modeld.pulse_width"};
+            case 1: return {"cutoff", "resonance", "juno.env_amount", "juno.lfo_cutoff", "juno.glide", "juno.drive", "juno.lfo_rate", "juno.lfo_shape", "juno.wave", "juno.pw"};
+            case 3: return {"cutoff", "resonance", "ob6.env_amount", "ob6.lfo_cutoff", "ob6.glide", "ob6.drive", "ob6.lfo_rate", "ob6.lfo_shape", nullptr, "ob6.osc1.pw"};
+            case 4: return {"dx7.cutoff", "dx7.resonance", nullptr, nullptr, "dx7.glide", "dx7.drive", "dx7.lfo_rate", "dx7.lfo_shape", nullptr, nullptr};
+            case 5: return {"cutoff", "resonance", "arp2600.env_amount", "arp2600.lfo_cutoff", "arp2600.glide", "arp2600.drive", "arp2600.lfo_rate", "arp2600.lfo_shape", "arp2600.osc1.wave", "arp2600.osc1.pw"};
+            default: return {"cutoff", "resonance", nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
+        }
+    }
+    juce::String groove_id(int kind, int group, int field) const {
+        switch (kind) {
+            case 0: return modeld_groove_id(group, field);
+            case 1: return juno_groove_id(group, field);
+            case 3: return ob6_groove_id(group, field);
+            case 4: return dx_groove_id(group, field);
+            case 5: return arp2600_groove_id(group, field);
+            default: return {};
+        }
+    }
+    void setup_perform() {
+        perform_page_.read_source = [this] {
+            studio_ui::PerformSource s;
+            const int kind = current_kind();
+            const auto ids = perform_ids(kind);
+            s.engine = kind == 6 ? 2 : kind;
+            s.wave = raw_parameter(ids.wave); s.pw = raw_parameter(ids.pw, 50.0f);
+            s.sub = raw_parameter(kind == 1 ? "juno.sub" : nullptr); s.shape = raw_parameter(kind == 3 ? "ob6.osc1.shape" : nullptr);
+            s.sem_morph = raw_parameter(kind == 3 ? "ob6.morph" : nullptr); s.sem_bp = raw_parameter(kind == 3 ? "ob6.bandpass" : nullptr) > 0.5f;
+            s.fm_level = raw_parameter(kind == 4 ? "dx7.op2.level" : nullptr); s.fm_ratio = raw_parameter(kind == 4 ? "dx7.op2.ratio" : nullptr, 1.0f);
+            s.cutoff_hz = raw_parameter(ids.cutoff, 1000.0f);
+            const float lo = kind == 3 || kind == 4 ? 0.7f : 0.1f, hi = kind == 4 ? 3.0f : 5.0f;      // RESO_RANGE del firmware
+            s.res_norm = juce::jlimit(0.0f, 1.0f, (raw_parameter(ids.resonance, lo) - lo) / (hi - lo));
+            s.lfo_cutoff = raw_parameter(ids.lfo_cut); s.lfo_rate = raw_parameter(ids.lfo_rate, 2.0f);
+            s.lfo_shape = int(raw_parameter(ids.lfo_shape, 1.0f));
+            return s;
+        };
+        perform_page_.host_bpm = [this] { return owner_.host_bpm(); };
+        perform_page_.chip_states = [this] {
+            std::array<bool, 3> on{};
+            const int kind = current_kind();
+            for (int i = 0; i < 3; ++i) { const auto id = groove_id(kind, i, 0); on[size_t(i)] = id.isNotEmpty() && raw_parameter(id.toRawUTF8()) >= 0.5f; }
+            return on;
+        };
+        perform_page_.chip_texts = [this] {
+            const auto on = perform_page_.chip_states();
+            static const char* rates[] = {"1/4", "1/8", "1/2"};
+            const auto rate = groove_id(current_kind(), 0, 3);
+            const juce::String pump = rate.isNotEmpty() ? rates[juce::jlimit(0, 2, int(raw_parameter(rate.toRawUTF8())))] : "OFF";
+            auto chip = [&](int i, const char* name, juce::String detail) {
+                return studio_ui::utf8(on[size_t(i)] ? "\xe2\x96\xa0 " : "\xe2\x96\xa1 ") + name + studio_ui::utf8(" \xc2\xb7 ") + (on[size_t(i)] ? detail : juce::String("OFF"));
+            };
+            return std::array<juce::String, 3>{chip(0, "PUMP", pump), chip(1, "ARP", "ON"), chip(2, "CHORD", "ON")};
+        };
+        perform_page_.on_chip = [this](int i) {
+            const auto id = groove_id(current_kind(), i, 0);
+            if (auto* p = id.isNotEmpty() ? owner_.parameters().getParameter(id) : nullptr) {
+                p->beginChangeGesture(); p->setValueNotifyingHost(p->getValue() >= 0.5f ? 0.0f : 1.0f); p->endChangeGesture();
+            }
+            perform_page_.refresh(); repaint();
+        };
+        perform_page_.on_chip_jump = [this](int) { select_tab(4); };
+    }
+    void bind_perform(int kind) {
+        const auto ids = perform_ids(kind);
+        auto& state = owner_.parameters();
+        perform_page_.mode = studio_ui::synth_mode();
+        perform_page_.cutoff = state.getParameter(ids.cutoff); perform_page_.resonance = state.getParameter(ids.resonance);
+        const char* page[4] = {ids.env, ids.lfo_cut, ids.glide, ids.drive};
+        for (size_t i = 0; i < 4; ++i)
+            if (perform_page_.page_knobs[i]->parameter() != (page[i] ? state.getParameter(page[i]) : nullptr)) perform_page_.page_knobs[i]->bind(state, page[i]);
+        for (auto& chip : perform_page_.chips) chip.setEnabled(kind != 2);
+    }
     void setup_shell() {
         using namespace studio_ui;
         auto add = [this](juce::Component& c, const juce::String& id, bool visible = true) {
@@ -4511,6 +4592,8 @@ private:
             macros_[size_t(i)] = std::make_unique<MacroKnob>(macro_names[i], macro_cc[i]);
             add(*macros_[size_t(i)], "studio.macro." + juce::String(macro_names[i]).toLowerCase());
         }
+        setup_perform();
+        add(perform_page_, "studio.perform", false);
         engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
         add(engine_select_, "studio.engine.select", false);
         add(fx_later_, "studio.fx.later", false);
@@ -4548,6 +4631,19 @@ private:
         for (auto* c : std::initializer_list<juce::Component*>{&juno_toggle_, &dx7_toggle_, &ob6_toggle_, &modeld_toggle_, &hybrid_toggle_, &arp2600_toggle_,
                                                                &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
             c->setVisible(false);
+        // Al abrir el editor arranca en PERFORM / HOME, como la home del panel (ENGINE SELECT y el selector de modo hacen
+        // lo mismo al cambiar de engine; otros caminos conservan la página que se esté navegando).
+        if (shell_kind_ < 0) {
+            shell_kind_ = kind; studio_tab_ = 0; sub_index_ = 0;
+            if (auto* index = legacy_index(kind); index && *index != pages_for(kind, 0, focus).front()) {
+                *index = pages_for(kind, 0, focus).front();
+                update_legacy_status();
+                for (auto& tab : page_tabs_) tab.setVisible(false);
+                for (auto* c : std::initializer_list<juce::Component*>{&juno_toggle_, &dx7_toggle_, &ob6_toggle_, &modeld_toggle_, &hybrid_toggle_, &arp2600_toggle_,
+                                                                       &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
+                    c->setVisible(false);
+            }
+        }
         // La pestaña sigue a la página vieja (otros controles también la cambian); con el foco de HYBRID, la página sigue a la pestaña.
         if (auto* index = legacy_index(kind)) {
             if (!pages_for(kind, studio_tab_, focus, true).empty()) {
@@ -4607,7 +4703,7 @@ private:
         for (int i = 0; i < 6; ++i) {
             auto& t = studio_tabs_[size_t(i)];
             t.text = utf8(hybrid && i == 0 ? "HOME" : TAB_NAMES[i]);
-            const bool available = !fx_view_ && (kind == 2 ? i == 0 : !pages_for(kind, i, focus).empty());
+            const bool available = !fx_view_ && (kind == 2 ? (i == 0 || i == 2) : !pages_for(kind, i, focus).empty());
             const bool on = available && !engine_view_ && i == studio_tab_;
             t.setEnabled(available);
             t.style(on ? colour::SURFACE_2 : juce::Colours::transparentBlack, juce::Colours::transparentBlack,
@@ -4657,6 +4753,10 @@ private:
         engine_select_.hover_badge = utf8(hybrid ? "CLICK \xc2\xb7 LAYER \xe2\x86\x92 CUSTOM" : "CLICK \xc2\xb7 LOADS A\xc2\xb7" "00");
         engine_select_.setVisible(engine_view_ && !fx_view_);
         fx_later_.setVisible(fx_view_);
+        const bool perform = !fx_view_ && !engine_view_ && !hybrid && studio_tab_ == 0;
+        if (perform) bind_perform(kind);
+        perform_page_.setVisible(perform);
+        if (perform) { perform_page_.toFront(false); perform_page_.refresh(); }
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
@@ -4683,7 +4783,7 @@ private:
             const int w = int(float(b->text.length()) * 6.6f) + 20;
             b->setBounds(right - w, 72, w, 32); right -= w + 8;
         }
-        engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488);
+        engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488); perform_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
@@ -4743,10 +4843,15 @@ private:
             g.setColour(ink); g.drawText(value, x + 8, 718, w - 16, 14, just);
             g.setColour(colour::MON); g.setFont(mono(13.0f)); g.drawText(sub, x + 8, 732, w - 16, 18, just);
         };
+        if (perform_page_.isVisible()) {
+            auto shown = [](studio_ui::MacroKnob& k) { return k.parameter() ? juce::String(juce::roundToInt(k.parameter()->getValue() * 100.0f)) + " %" : juce::String("OFF"); };
+            box(16, 152, "P1", "FLT ENV AMT", shown(*perform_page_.page_knobs[0]) + utf8("   \xe2\x87\xa7 GLIDE"), false, colour::GRAY);
+            box(512, 152, "P2", utf8("LFO \xe2\x86\x92 CUTOFF"), utf8("\xe2\x87\xa7 DRIVE   ") + shown(*perform_page_.page_knobs[1]), true, colour::GRAY);
+        } else
         box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
         box(256, 168, "NAV", utf8(fx_view_ ? "\xe2\x80\x94" : engine_view_ ? "TURN BROWSE \xc2\xb7 PUSH LOAD" : "TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
         box(432, 72, "B6", "SHIFT", {}, false, colour::GRAY);
-        box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
+        if (!perform_page_.isVisible()) box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
     }
     void configure_hybrid_osc_page(unsigned side) {
         const uint8_t engine = owner_.hybrid_engine_id(side);
@@ -4874,8 +4979,9 @@ private:
     std::array<std::unique_ptr<studio_ui::MacroKnob>, 5> macros_;
     studio_ui::EngineSelectPage engine_select_;
     studio_ui::FxLaterPage fx_later_;
+    studio_ui::PerformPage perform_page_;
     std::vector<juce::Component*> shell_;
-    int studio_tab_ = 0, sub_index_ = 0, shell_engine_ = -2, shell_focus_ = 0;
+    int studio_tab_ = 0, sub_index_ = 0, shell_engine_ = -2, shell_focus_ = 0, shell_kind_ = -1;
     bool fx_view_ = false, engine_view_ = false, in_update_ = false;
     std::vector<int> sub_pages_;
     std::array<juce::TextButton, 2> hybrid_focus_buttons_;

@@ -5,6 +5,7 @@
 #include "preset_browser.h"
 #include "envelope_editor.h"
 #include "studio_shell.h"
+#include "perform_view.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -2878,6 +2879,43 @@ int main() {
                    "FX LATER keeps the audio")) return 1;
         dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.mode.0"))->onClick();
         if (!check(!later->isVisible() && find_parameter(*plugin, "hybrid_preview")->getValue() < .5f, "back to SYNTH")) return 1;
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 2: PERFORM (1a)
+        for (int engine = 0; engine < 6; ++engine) {
+            auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+            if (!check(studio::factory_preset(uint8_t(engine), 0, &preset) &&
+                       dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), studio::preset_encode(preset, uint8_t(engine), bytes.data(), bytes.size())),
+                       "PERFORM preset")) return 1;
+            auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+            auto* page = dynamic_cast<studio_ui::PerformPage*>(editor->findChildWithID("studio.perform"));
+            if (!check(page && page->isVisible() && page->source().engine == engine, "PERFORM page per engine")) {
+                std::fprintf(stderr, "  engine %d page %d visible %d source %d\n", engine, page != nullptr, page && page->isVisible(), page ? page->source().engine : -1);
+                return 1;
+            }
+            for (float v : page->wave_points()) if (!check(std::isfinite(v), "PERFORM wave finite")) return 1;
+            if (!check(page->cutoff == find_parameter(*plugin, engine == 4 ? "dx7.cutoff" : "cutoff"), "PERFORM hero binds the engine cutoff")) return 1;
+            const auto before = page->wave_points();
+            page->cutoff->setValueNotifyingHost(.05f); page->refresh();
+            double moved = 0; for (size_t i = 0; i < before.size(); ++i) moved += std::abs(before[i] - page->wave_points()[i]);
+            if (!check(moved > 1.0, "PERFORM wave follows the cutoff")) return 1;
+            if (engine == 1) {
+                auto* glide = dynamic_cast<studio_ui::MacroKnob*>(page->findChildWithID("perform.p.2"));
+                if (!check(glide && glide->parameter() == find_parameter(*plugin, "juno.glide"), "PERFORM P1/P2 row binds the engine")) return 1;
+                auto* pump = dynamic_cast<studio_ui::ChromeButton*>(page->findChildWithID("perform.chip.0"));
+                const float was = find_parameter(*plugin, "juno.groove.pump.on") ? find_parameter(*plugin, "juno.groove.pump.on")->getValue() : -1.0f;
+                pump->onClick();
+                if (!check(was >= 0 && std::abs(find_parameter(*plugin, "juno.groove.pump.on")->getValue() - (1.0f - was)) < .01f, "PERFORM chip toggles PUMP")) return 1;
+                // arrastrar en la curva mueve el cutoff
+                page->setBounds(0, 0, 1200, 488);
+                const float start = page->cutoff->getValue();
+                juce::MouseEvent drag(juce::Desktop::getInstance().getMainMouseSource(), {600.0f, 380.0f}, {}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                                      page, page, juce::Time::getCurrentTime(), {600.0f, 380.0f}, juce::Time::getCurrentTime(), 1, false);
+                page->mouseDown(drag); page->mouseUp(drag);
+                if (!check(std::abs(page->cutoff->getValue() - start) > .01f, "PERFORM curve drag sets the cutoff")) return 1;
+            }
+            if (engine == 4 && !check(page->page_knobs[0]->parameter() == nullptr, "DX7 has no FLT ENV AMT")) return 1;
+        }
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;

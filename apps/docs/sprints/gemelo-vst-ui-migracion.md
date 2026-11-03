@@ -107,3 +107,66 @@ Decisiones que salieron al implementar:
 - **Bancos B–D** se dibujan deshabilitados: el plugin todavía no tiene bancos de usuario (tema del corte 6).
 
 Siguiente: corte 2, PERFORM (1a).
+
+## 3. Corte 2: PERFORM (1a)
+
+### Geometría (contenido 112–600)
+
+| Elemento | Rectángulo (relativo al contenido) | Qué muestra |
+|---|---|---|
+| Onda | 16, 16, 752 × 248 | "OSC → FILTER · forma · A2 110 HZ"; a la derecha, "LFO forma rate → CUTOFF" en púrpura si el LFO mueve el cutoff |
+| Curva del filtro | 16, 272, 752 × 200 | respuesta en dB, relleno dim y trazo hi, línea blanca en el cutoff con su valor; eje 100 · 1K · 10K |
+| Chips | 784, 16 | ■ PUMP · 1/4 · □ ARP · OFF · □ CHORD · OFF, y HOST + BPM a la derecha |
+| Perillas héroe | 784 y 992, 56; 192 de ancho | CUTOFF (ENC L) y RESONANCE (ENC R): perilla de 160 px, valor en 40 px y unidad en 16 |
+| Fila P1 / P2 | 784, 352 | "PAGE · P1 · P2 · ⇧ P1 · ⇧ P2" y cuatro perillas: FLT ENV AMT, LFO → CUTOFF, ⇧ GLIDE, ⇧ DRIVE |
+
+### De dónde sale cada dibujo
+
+La referencia usa una aproximación (`filterDb` de `studio-data.js`). La cabeza de Studio ya tiene la versión fiel
+(theory/08 de Studio, `apps/studio-head/src/ui/screen_perform.cpp` y `dsp_math.h`), y se porta tal cual:
+
+- **Onda:** la forma principal de cada engine a 110 Hz (Model D: SAW · TRI · SQR · PULSE · SHARK · NARROW; Juno: forma
+  + SUB una octava abajo; OB-6: SHAPE continua saw → pulse; DX7: OP2 → OP1 con el índice desde el LEVEL; ARP: SAW · TRI
+  · SQR · PULSE · SINE; Prophet: SAW, porque su página OSC no existe en el plugin) pasada por un **ladder TPT de 4 polos
+  con realimentación** (Zavalishin, *The Art of VA Filter Design*, cap. 5) al cutoff y la resonancia actuales. Arranca 4
+  ciclos antes para que el filtro se asiente. Es ilustrativa: no es el audio medido.
+- **Curva:** 24 dB/oct con el pico de resonancia; en el OB-6, el SEM SVF de 2 polos con su morph LP ↔ notch ↔ HP o BP.
+- **LFO:** si el LFO va al cutoff, la onda y la curva se mueven con él (±4 octavas a profundidad máxima, la misma escala
+  que el firmware). Solo entonces se redibuja a 30 Hz; si nada cambia, no se redibuja.
+- **Resonancia normalizada:** el dibujo trabaja en 0–1. Se obtiene del parámetro con el rango de cada engine
+  (`RESO_RANGE` del firmware: 0,1–5; OB-6 0,7–5; DX7 0,7–3).
+
+### Interacción
+
+- Arrastrar en la curva: horizontal = CUTOFF (eje logarítmico), vertical = RESONANCE (referencia, nota de 1a).
+- Perillas héroe: arrastre vertical, Shift = fino, doble clic = valor por defecto. El arco púrpura MOD muestra el rango
+  que recorre el LFO.
+- Chip: clic = encender / apagar esa parada de GROOVE; doble clic = ir a GROOVE.
+- La tira muestra P1 = FLT ENV AMT (⇧ GLIDE) y P2 = LFO → CUTOFF (⇧ DRIVE) en esta página.
+
+### Qué no aplica a cada engine
+
+- DX7: no tiene FLT ENV AMT ni LFO → CUTOFF en el plugin; esas perillas aparecen OFF.
+- Prophet: sin parámetros de envolvente de filtro, LFO, GLIDE, DRIVE ni GROOVE en el plugin; solo cutoff y resonancia.
+  Su pestaña ENV muestra las cuatro perillas viejas (ATTACK y RELEASE) hasta el corte 4.
+- HYBRID: su pestaña HOME es la 2a (corte 7); este corte cubre SYNTH.
+
+### Tests
+
+- PERFORM muestra la página nueva en los seis engines y la vieja ya no se ve.
+- La onda es finita y cambia al mover el cutoff; con resonancia alta aparece el pico en la curva.
+- Arrastrar en la curva mueve el cutoff; las perillas P1 / P2 están ligadas al parámetro del engine.
+- Un chip enciende PUMP.
+
+### Resultado del corte 2 (2026-11-03)
+
+PERFORM nuevo en los seis engines de SYNTH (`perform_view.h`): onda filtrada y curva portadas de la cabeza de Studio,
+perillas héroe con arco MOD del LFO, chips de GROOVE (clic = on / off, doble clic = GROOVE), fila P1 / P2 ligada al
+engine y la tira mostrando P1 / P2. 12/12 tests (bloque nuevo del corte 2: página por engine, onda finita que sigue al
+cutoff, P1 / P2, chip de PUMP, arrastre en la curva); el arnés de audio sigue sin regresiones.
+
+- Al abrir el editor arranca en PERFORM (en el DX7 la página vieja por defecto era OPERATORS y abría en OSC).
+- El Prophet usa PERFORM para cutoff y resonancia y su pestaña ENV muestra las perillas viejas (ATTACK, RELEASE).
+- La animación por LFO usa una fase propia del dibujo a 30 Hz, no la del audio (como en la cabeza de Studio).
+
+Siguiente: corte 3, OSC (1b–1d).
