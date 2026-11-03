@@ -120,6 +120,7 @@ public:
     juce::String label, encoder, unit;
     Mode mode = synth_mode();
     float mod_low = -1, mod_high = -1;               ///< rango normalizado que recorre el LFO; < 0 = sin MOD
+    std::function<void()> on_drag_start, on_drag, on_drag_end;   ///< LINK de HYBRID: la otra mitad sigue a esta (§9.2)
 
     void bind(juce::RangedAudioParameter* p) { parameter_ = p; repaint(); }
     juce::RangedAudioParameter* parameter() const { return parameter_; }
@@ -157,13 +158,18 @@ public:
         g.setFont(mono(16.0f)); g.setColour(colour::GRAY);
         g.drawText(unit, x0 + vw + 6, 200, uw, 24, juce::Justification::left);
     }
-    void mouseDown(const juce::MouseEvent&) override { if (parameter_) { start_ = parameter_->getValue(); parameter_->beginChangeGesture(); } }
+    void mouseDown(const juce::MouseEvent&) override {
+        if (!parameter_) return;
+        start_ = parameter_->getValue(); parameter_->beginChangeGesture();
+        if (on_drag_start) on_drag_start();
+    }
     void mouseDrag(const juce::MouseEvent& e) override {
         if (!parameter_) return;
         parameter_->setValueNotifyingHost(juce::jlimit(0.0f, 1.0f, start_ - float(e.getDistanceFromDragStartY()) * (e.mods.isShiftDown() ? 0.0006f : 0.004f)));
+        if (on_drag) on_drag();
         repaint();
     }
-    void mouseUp(const juce::MouseEvent&) override { if (parameter_) parameter_->endChangeGesture(); }
+    void mouseUp(const juce::MouseEvent&) override { if (parameter_) { parameter_->endChangeGesture(); if (on_drag_end) on_drag_end(); } }
     void mouseDoubleClick(const juce::MouseEvent&) override {
         if (!parameter_) return;
         parameter_->beginChangeGesture(); parameter_->setValueNotifyingHost(parameter_->getDefaultValue()); parameter_->endChangeGesture();

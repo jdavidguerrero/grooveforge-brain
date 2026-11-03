@@ -136,6 +136,10 @@ static bool hybrid_midi_block_independence(double sample_rate) {
 
 int main() {
     juce::ScopedJuceInitialiser_GUI juce_gui;
+    // §9.1: los datos del navegador van a un archivo de la máquina; la suite usa uno propio y no toca el del usuario
+    const auto browser_store_file = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("gf-browser-store-test.settings");
+    browser_store_file.deleteFile();
+    setenv("GF_BROWSER_STORE", browser_store_file.getFullPathName().toRawUTF8(), 1);
     for (double fs : {44100.0, 48000.0, 96000.0})
         if (!check(hybrid_midi_block_independence(fs), "HYBRID MIDI block independence")) return 1;
     {
@@ -204,10 +208,9 @@ int main() {
         if (!check(hybrid_page && b_cutoff && !b_cutoff->isVisible(), "HYBRID half controls")) return 1;
         auto* hybrid_filter_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.1"));
         auto* hybrid_home_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
-        // Corte 1 de la migración: las pestañas viejas quedan internas. Corte 7a: HOME es la vista nueva y la página vieja
-        // de capas queda como sub-página LAYER (mezcla base e importar una mitad).
+        // Corte 1 de la migración: las pestañas viejas quedan internas. §9.3: HOME ya no tiene sub-páginas en HYBRID.
         auto* layer_sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
-        if (!check(hybrid_filter_tab && hybrid_home_tab && layer_sub && layer_sub->isVisible() && layer_sub->text == "LAYER", "HYBRID direct navigation")) return 1;
+        if (!check(hybrid_filter_tab && hybrid_home_tab && layer_sub && !layer_sub->isVisible(), "HYBRID direct navigation")) return 1;
         hybrid_filter_tab->onClick();
         if (!check(b_cutoff->isVisible(), "HYBRID filter tab opens controls")) return 1;
         auto* a_filter = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.a.cutoff"));
@@ -3136,7 +3139,7 @@ int main() {
         dynamic_cast<studio_ui::ChromeButton*>(restored_editor->findChildWithID("studio.preset.menu"))->onClick();
         auto* again = dynamic_cast<studio_ui::StudioBrowser*>(restored_editor->findChildWithID("studio.browser"));
         if (!check(again && again->items()[1].role == "bass" && again->items()[2].rating == 3 && again->items()[2].dialect == "afro" &&
-                   again->items()[3].discarded && !again->items()[0].discarded, "browser data restored with the project")) return 1;
+                   again->items()[3].discarded && !again->items()[0].discarded, "browser data shared by every project on the machine")) return 1;
         // la preview no cambia el preset cargado; A/B alterna
         browser->select(4);
         browser->toggle_ab();
@@ -3283,6 +3286,83 @@ int main() {
         browser->close();
         // franja de CPU con histéresis
         if (!check(!home->update_cpu(.75f) && home->update_cpu(.85f) && home->update_cpu(.75f) && !home->update_cpu(.65f), "CPU HIGH shows over 80 %, leaves under 70 %")) return 1;
+    }
+    {   // gemelo-vst-ui-migracion.md §9: datos del navegador por máquina, LINK y HYBRID sin páginas viejas
+        // 9.1: un proyecto sin datos ve los de la máquina; un dato viejo del proyecto se migra al archivo
+        {
+            auto first = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            std::unique_ptr<juce::AudioProcessorEditor> first_editor(first->createEditor());
+            auto* browser = dynamic_cast<studio_ui::StudioBrowser*>(first_editor->findChildWithID("studio.browser"));
+            dynamic_cast<studio_ui::ChromeButton*>(first_editor->findChildWithID("studio.preset.menu"))->onClick();
+            browser->set_rating(5, 2);
+            auto second = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            std::unique_ptr<juce::AudioProcessorEditor> second_editor(second->createEditor());
+            dynamic_cast<studio_ui::ChromeButton*>(second_editor->findChildWithID("studio.preset.menu"))->onClick();
+            auto* other = dynamic_cast<studio_ui::StudioBrowser*>(second_editor->findChildWithID("studio.browser"));
+            if (!check(other && other->engine() == browser->engine() && other->items()[5].rating == 2, "two projects see the same rating")) return 1;
+            // dato guardado en el proyecto antes de §9.1 (clave que el archivo todavía no tiene)
+            auto old_project = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            juce::MemoryBlock blank; old_project->getStateInformation(blank);
+            auto xml = juce::AudioProcessor::getXmlFromBinary(blank.getData(), int(blank.getSize()));
+            auto tree = juce::ValueTree::fromXml(*xml);
+            tree.setProperty("browserDialect2_7", "indie", nullptr);
+            juce::MemoryBlock legacy; juce::AudioProcessor::copyXmlToBinary(*tree.createXml(), legacy);
+            old_project->setStateInformation(legacy.getData(), int(legacy.getSize()));
+            std::unique_ptr<juce::AudioProcessorEditor> old_editor(old_project->createEditor());
+            dynamic_cast<studio_ui::ChromeButton*>(old_editor->findChildWithID("studio.preset.menu"))->onClick();
+            auto* old_browser = dynamic_cast<studio_ui::StudioBrowser*>(old_editor->findChildWithID("studio.browser"));
+            juce::PropertiesFile::Options options;
+            juce::PropertiesFile store(juce::File(juce::SystemStats::getEnvironmentVariable("GF_BROWSER_STORE", {})), options);
+            if (!check(old_browser && old_browser->items()[7].dialect == "indie" && store.getValue("browserDialect2_7") == "indie",
+                       "old project data migrates to the machine file")) return 1;
+        }
+        // 9.2 y 9.3 en HYBRID
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        studio::LayerPreset layer; std::vector<uint8_t> bytes(studio::LAYER_BYTES);
+        if (!check(studio::factory_layer(1, &layer) && gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) &&
+                   dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), bytes.size()), "§9 layer")) return 1;
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* home = dynamic_cast<studio_ui::HybridHome*>(editor->findChildWithID("studio.hybrid.home"));
+        auto* a_cut = find_parameter(*plugin, "hybrid.a.cutoff");
+        auto* b_cut = find_parameter(*plugin, "hybrid.b.cutoff");
+        a_cut->setValueNotifyingHost(a_cut->convertTo0to1(1000)); b_cut->setValueNotifyingHost(b_cut->convertTo0to1(1500));
+        if (!check(home && home->isVisible() && home->link && home->cutoff == a_cut, "LINK on by default")) return 1;
+        home->begin_follow(0);
+        a_cut->setValueNotifyingHost(a_cut->convertTo0to1(2000)); home->follow(0); home->end_follow(0);
+        if (!check(std::abs(b_cut->convertFrom0to1(b_cut->getValue()) - 3000.0f) < 2.0f, "LINK: B follows A in proportion")) return 1;
+        a_cut->setValueNotifyingHost(a_cut->convertTo0to1(1000));   // automatización directa: B no se mueve
+        if (!check(std::abs(b_cut->convertFrom0to1(b_cut->getValue()) - 3000.0f) < 2.0f, "automation of A does not move B")) return 1;
+        home->setBounds(0, 0, 1200, 488);
+        const auto lr = studio_ui::HybridHome::link_rect().getCentre().toFloat();
+        home->mouseDown(juce::MouseEvent(juce::Desktop::getInstance().getMainMouseSource(), lr, {}, 0, 0, 0, 0, 0, home, home, juce::Time::getCurrentTime(), lr, juce::Time::getCurrentTime(), 1, false));
+        home->begin_follow(0);
+        a_cut->setValueNotifyingHost(a_cut->convertTo0to1(4000)); home->follow(0); home->end_follow(0);
+        if (!check(!home->link && std::abs(b_cut->convertFrom0to1(b_cut->getValue()) - 3000.0f) < 2.0f, "LINK OFF: B stays")) return 1;
+        // LINK se guarda con el proyecto
+        juce::MemoryBlock link_state; plugin->getStateInformation(link_state);
+        auto link_restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        link_restored->setStateInformation(link_state.getData(), int(link_state.getSize()));
+        std::unique_ptr<juce::AudioProcessorEditor> link_editor(link_restored->createEditor());
+        auto* link_home = dynamic_cast<studio_ui::HybridHome*>(link_editor->findChildWithID("studio.hybrid.home"));
+        if (!check(link_home && !link_home->link, "LINK state restored with the project")) return 1;
+        // 9.3: BASE GAIN en las tarjetas, ENV con GLIDE / ENV AMT / DRIVE, UNISON con A y B, sin sub-páginas
+        if (!check(home->gain[1] && home->gain[1]->parameter() == find_parameter(*plugin, "hybrid.gain_b"), "BASE GAIN of card B")) return 1;
+        auto tab = [&](int i) { dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.tab." + juce::String(i)))->onClick(); };
+        auto* sub1 = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+        if (!check(!sub1->isVisible(), "HOME has no sub-pages in HYBRID")) return 1;
+        tab(2);
+        auto* env = dynamic_cast<studio_ui::EnvPage*>(editor->findChildWithID("studio.env"));
+        auto cell_of = [](studio_ui::EnvPanel& panel, const juce::String& label) -> juce::RangedAudioParameter* {
+            for (auto& c : panel.cells) if (c->spec.label == label) return c->parameter();
+            return nullptr;
+        };
+        if (!check(!sub1->isVisible() && cell_of(env->amp, "GLIDE") == find_parameter(*plugin, "hybrid.a.voice.glide") &&
+                   cell_of(env->filter, "ENV AMT") == find_parameter(*plugin, "hybrid.a.voice.env_amount") &&
+                   cell_of(env->filter, "DRIVE") == find_parameter(*plugin, "hybrid.a.voice.drive"), "HYBRID ENV holds GLIDE, ENV AMT and DRIVE")) return 1;
+        tab(4);
+        auto* groove = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.groove"));
+        if (!check(groove && groove->cell("hybrid.b.voice.unison_count") && groove->cell("hybrid.b.voice.unison_on") &&
+                   groove->panels[3]->power == find_parameter(*plugin, "hybrid.a.voice.unison_on"), "UNISON shows both halves")) return 1;
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;

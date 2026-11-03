@@ -248,8 +248,17 @@ public:
         hybrid_ids_[0] = ids(side, true); hybrid_ids_[1] = ids(side, false);
         hybrid_ids_[2] = ids(1 - side, true); hybrid_ids_[3] = ids(1 - side, false);
         auto raw = [this](int set, int i) { return hybrid_ids_[size_t(set)][size_t(i)].toRawUTF8(); };
-        setup(amp, "AMP ENV", {raw(0, 0), raw(0, 1), raw(0, 2), raw(0, 3)}, raw(0, 4), "VEL \xe2\x86\x92 AMP", 1.0f);
-        setup(filter, "FILTER ENV", {raw(1, 0), raw(1, 1), raw(1, 2), raw(1, 3)}, raw(1, 4), "VEL \xe2\x86\x92 FILTER", 1.0f);
+        setup(amp, "AMP ENV", {raw(0, 0), raw(0, 1), raw(0, 2), raw(0, 3)}, raw(0, 4), "VEL", 1.0f);
+        setup(filter, "FILTER ENV", {raw(1, 0), raw(1, 1), raw(1, 2), raw(1, 3)}, raw(1, 4), "VEL", 1.0f);
+        // lo que estaba en ENV · VOICE (§9.3): GLIDE con el amplificador, ENV AMT y DRIVE con el filtro; todo 0–1 → %
+        const juce::String v = side == 0 ? "hybrid.a.voice." : "hybrid.b.voice.";
+        extra_ids_ = {v + "glide", v + "env_amount", v + "drive"};
+        auto extra = [&](EnvPanel& panel, int i, const char* label) {
+            CellSpec c; c.kind = CellSpec::Kind::knob; c.id = extra_ids_[size_t(i)].toRawUTF8(); c.label = label; c.unit = "%"; c.scale = 100.0f;
+            panel.add(c, state.getParameter(extra_ids_[size_t(i)]));
+        };
+        extra(amp, 0, "GLIDE"); extra(filter, 1, "ENV AMT"); extra(filter, 2, "DRIVE");
+        amp.resized(); filter.resized();
         for (int set = 2; set < 4; ++set) {
             auto& panel = set == 2 ? amp : filter;
             for (int i = 0; i < 4; ++i) panel.ghost[size_t(i)] = state.getParameter(hybrid_ids_[size_t(set)][size_t(i)]);
@@ -312,6 +321,7 @@ private:
     std::array<juce::String, 2> vel_ids_;
     std::array<std::array<juce::String, 5>, 4> hybrid_ids_;
     std::array<int, 2> hybrid_engines_{-1, -1};
+    std::array<juce::String, 3> extra_ids_;
     std::vector<float> snapshot_;
 
     void setup(EnvPanel& p, const char* name, std::array<const char*, 4> ids, const char* extra, const char* extra_label, float extra_scale) {

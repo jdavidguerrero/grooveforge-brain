@@ -835,13 +835,20 @@ private:
         chord->p1 = add(chord, seg(gid("chord", 1), "TYPE", {"MEMORY", "KEY"}));
         chord->p2 = add(chord, seg(gid("chord", 2), "INV", {"ROOT", "1ST", "2ND", "3RD"}));
         auto* unison = panel("UNISON", kind == 0 ? "MONO ENGINE" : "", false, ""); setup(unison);
-        if (kind != 0) {
-            // en HYBRID el unísono es de cada mitad; la página es de la capa y toma el de A (etiqueta LAYER · FROM A, 2c)
-            const juce::String uni = kind == 6 ? juce::String("hybrid.a.voice.") : pre;
-            unison->power = state.getParameter(keep(uni + "unison_on"));
-            unison->p1 = add(unison, seg(keep(uni + "unison_count"), "VOICES", {utf8("\xc3\x97" "1"), utf8("\xc3\x97" "2"), utf8("\xc3\x97" "3"), utf8("\xc3\x97" "6")}));
-            unison->p2 = add(unison, knob(keep(uni + "unison_detune"), "DETUNE", "CT"));
-            if (kind == 6) unison->sub = "FROM A";
+        const juce::StringArray voices{utf8("\xc3\x97" "1"), utf8("\xc3\x97" "2"), utf8("\xc3\x97" "3"), utf8("\xc3\x97" "6")};
+        if (kind == 6) {
+            // en HYBRID el unísono es de cada mitad (§9.3): A con el interruptor de la cabecera, B con su ON
+            unison->power = state.getParameter(keep("hybrid.a.voice.unison_on"));
+            unison->sub = utf8("A \xc2\xb7 B");
+            unison->p1 = add(unison, seg(keep("hybrid.a.voice.unison_count"), "A VOICES", voices));
+            unison->p2 = add(unison, knob(keep("hybrid.a.voice.unison_detune"), "A DETUNE", "CT"));
+            add(unison, toggle(keep("hybrid.b.voice.unison_on"), "B ON"));
+            add(unison, seg(keep("hybrid.b.voice.unison_count"), "B VOICES", voices));
+            add(unison, knob(keep("hybrid.b.voice.unison_detune"), "B DETUNE", "CT"));
+        } else if (kind != 0) {
+            unison->power = state.getParameter(keep(pre + "unison_on"));
+            unison->p1 = add(unison, seg(keep(pre + "unison_count"), "VOICES", voices));
+            unison->p2 = add(unison, knob(keep(pre + "unison_detune"), "DETUNE", "CT"));
         }
         auto* macro = panel("MACRO", "", false, ""); setup(macro);
         macro->tag = "DEPTHS";

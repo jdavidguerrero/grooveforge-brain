@@ -644,3 +644,67 @@ sin cambios (el estado de HYBRID crece porque guarda la referencia de MODIFIED).
 
 Con 7b la migración del editor a la referencia queda completa: los seis cortes de SYNTH y HYBRID entero. Lo que sigue
 usando páginas viejas son las sub-páginas HOME · LAYER y ENV · VOICE de HYBRID (ver 7a).
+
+## 9. Decisiones cerradas después de la migración (2026-11-03)
+
+Juan pidió aplicar las recomendaciones sobre los cuatro puntos abiertos.
+
+### 9.1 Datos del navegador por máquina
+
+Rating, rol, dialecto, descarte y etiquetas son curaduría de la librería, no de una canción: se guardan en un archivo
+del usuario (`~/Library/Application Support/GrooveForge/BrainVST.settings` en macOS, vía `juce::PropertiesFile`) y se
+ven en todos los proyectos y en todas las instancias del plugin. Las claves no cambian (`browserRate{engine}_{índice}`…).
+
+- **Migración:** si el archivo no tiene una clave y el proyecto sí (datos guardados antes de este cambio), se usa la del
+  proyecto y se copia al archivo. El proyecto no se modifica.
+- **Tests:** la variable de entorno `GF_BROWSER_STORE` apunta el archivo a otro lugar, para no tocar el del usuario.
+- El navegador viejo (oculto) sigue guardando favoritos y etiquetas en el proyecto: ya no lo abre ningún botón.
+
+### 9.2 LINK: B sigue a A (nota FILTER de 2a)
+
+Se implementa en el editor, no en el DSP: cuando CUTOFF o RESONANCE de la mitad en foco se mueven **desde la interfaz**
+(perillas de HOME, ENC L / ENC R de la tira), la otra mitad se mueve en la misma proporción:
+cutoff_otra = cutoff_otra_inicial · (cutoff_foco / cutoff_foco_inicial), y lo mismo con la resonancia (normalizada 0–1;
+si la inicial es 0, la otra se mueve por diferencia). El interruptor LINK está en el bloque del filtro de HOME,
+encendido por defecto como en la referencia, y se guarda con el proyecto (`hybridLink`). La nota bajo CUTOFF dice
+"B FOLLOWS A · 0.85 ×" (cociente actual) o el valor de la otra mitad si LINK está apagado.
+
+**Por qué no en el DSP:** la automatización del DAW (y el CC 74 / 71) de cada mitad sigue siendo independiente; si el
+procesador acoplara los parámetros, una pista de automatización de B dejaría de significar "el cutoff de B".
+
+### 9.3 Sin sub-páginas viejas en HYBRID
+
+| Control | Dónde estaba | Dónde queda |
+|---|---|---|
+| GAIN A / GAIN B (mezcla base) | HOME · LAYER | perilla BASE GAIN en cada tarjeta de HOME |
+| Importar una mitad desde GFP | HOME · LAYER | botón IMPORT GFP → A / B al pie del navegador de la mitad (2d) |
+| FLT ENV AMT, DRIVE | ENV · VOICE | panel FILTER ENV de la mitad (celdas ENV AMT y DRIVE) |
+| GLIDE | ENV · VOICE | panel AMP ENV de la mitad |
+| Unísono de B | ENV · VOICE | columna UNISON de GROOVE: A (interruptor de la cabecera, VOICES, DETUNE) y B (ON, VOICES, DETUNE) |
+
+La lista de capas y + SAVE LAYER ya estaban en HOME. HOME y ENV quedan sin sub-páginas en HYBRID.
+
+### 9.4 Instalación
+
+El VST3 compilado se copia a `/Library/Audio/Plug-Ins/VST3/` después de guardar una copia del instalado (31 de octubre)
+en la carpeta de trabajo. El DAW tiene que volver a escanear los plugins.
+
+### Tests
+
+- El navegador lee y escribe en el archivo de `GF_BROWSER_STORE`; un dato del proyecto viejo se migra; dos editores ven
+  los mismos datos sin pasar por el proyecto.
+- Con LINK, mover el cutoff de A desde HOME mueve el de B en proporción; sin LINK no. La automatización directa del
+  parámetro de A no mueve B.
+- BASE GAIN de la tarjeta B cambia `hybrid.gain_b`; ENV de la mitad tiene ENV AMT, DRIVE y GLIDE ligados a
+  `hybrid.x.voice.*`; UNISON tiene las celdas de A y de B; HOME y ENV en HYBRID no tienen sub-páginas.
+
+### Resultado de §9 (2026-11-03)
+
+Hecho 9.1–9.3; 12/12 tests (bloque nuevo: dos proyectos ven el mismo rating, un dato viejo del proyecto se migra al
+archivo, LINK proporcional desde la interfaz y no desde la automatización, LINK apagado, LINK restaurado con el
+proyecto, BASE GAIN en la tarjeta, ENV de la mitad con GLIDE · ENV AMT · DRIVE, UNISON de A y B, sin sub-páginas en
+HOME y ENV). Arnés de audio sin cambios. La suite usa su propio archivo de navegador (`GF_BROWSER_STORE`).
+
+- Con la mezcla y la importación de mitades en su lugar nuevo, **HYBRID ya no muestra ninguna página vieja**; solo
+  LFO · MOD conserva sub-páginas (LFO · MOD, ambas nuevas).
+- ENV de cada mitad tiene 6 y 7 perillas; las etiquetas VEL → AMP / FILTER pasan a VEL para que entren.

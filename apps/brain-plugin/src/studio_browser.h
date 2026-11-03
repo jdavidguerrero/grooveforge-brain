@@ -38,7 +38,8 @@ public:
     int locked_engine = -1;
     bool keep_open_on_load = false;
     juce::String context, warn;
-    std::function<void()> on_save_layer;
+    std::function<void()> on_save_layer, on_import;  ///< on_import: IMPORT GFP → la mitad (§9.3)
+    juce::String import_text;
     int role_filter = -1, dialect_filter = -1, min_rating = 0;
 
     StudioBrowser() {
@@ -119,6 +120,7 @@ public:
     static juce::Rectangle<int> chip_area() { return {920, 72, 264, 300}; }
     juce::Rectangle<int> load_rect() const { return {920, getHeight() - 56, 264, 32}; }
     juce::Rectangle<int> save_layer_rect() const { return {920, getHeight() - 96, 264, 32}; }
+    juce::Rectangle<int> import_rect() const { return {920, getHeight() - 136, 264, 32}; }
     bool engine_enabled(int i) const { return locked_engine >= 0 ? i == locked_engine : (i < 6 || layers_enabled_); }
 
     void resized() override { search.setBounds(16, 8, 320, 32); }
@@ -194,9 +196,14 @@ public:
             g.setColour(mode.mc); g.fillRect(sr);
             g.setColour(mode.on); g.drawText("SAVE LAYER", sr, juce::Justification::centred);
         }
+        if (on_import) {
+            const auto ir = import_rect();
+            g.setColour(colour::MON); g.drawRect(ir, 1);
+            g.setColour(colour::WHITE); g.drawText(import_text, ir, juce::Justification::centred);
+        }
         if (warn.isNotEmpty()) {
             g.setColour(colour::AMBER);
-            g.drawFittedText(warn, 920, save_layer_rect().getY() - 40, 264, 36, juce::Justification::bottomLeft, 2);
+            g.drawFittedText(warn, 920, (on_import ? import_rect() : save_layer_rect()).getY() - 40, 264, 36, juce::Justification::bottomLeft, 2);
         }
         const auto lr = load_rect();
         const bool can_load = valid(selected_);
@@ -211,6 +218,7 @@ public:
         if (ab_rect().contains(p)) { toggle_ab(); return; }
         if (load_rect().contains(p)) { load_selected(); return; }
         if (on_save_layer && save_layer_rect().contains(p)) { on_save_layer(); return; }
+        if (on_import && import_rect().contains(p)) { on_import(); return; }
         for (int i = 0; i < 7; ++i)
             if (engine_row(i).contains(p) && engine_enabled(i) && i != engine_) { if (on_engine) on_engine(i); return; }
         for (const auto& c : chip_layout()) if (c.r.contains(p)) { c.action(); return; }

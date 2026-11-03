@@ -32,8 +32,11 @@ public:
     std::function<juce::String(int)> half_name;
     std::array<int, 2> engine{4, 3};
     int focus = 0;
-    juce::RangedAudioParameter *morph = nullptr, *cutoff = nullptr, *resonance = nullptr, *other_cutoff = nullptr;
+    juce::RangedAudioParameter *morph = nullptr, *cutoff = nullptr, *resonance = nullptr, *other_cutoff = nullptr, *other_resonance = nullptr;
+    bool link = true;                                ///< §9.2: la otra mitad sigue a la del foco (solo desde la interfaz)
+    std::function<void(bool)> on_link;
     std::unique_ptr<ParamCell> delay, transpose;
+    std::array<std::unique_ptr<ParamCell>, 2> gain;  ///< BASE GAIN de cada mitad en su tarjeta (§9.3; antes HOME · LAYER)
     HeroKnob hero_cutoff, hero_resonance;
 
     static constexpr int ROW_H = 28, LIST_X = 16, LIST_Y = 48, LIST_W = 264, LIST_ROWS = 13;
@@ -49,6 +52,9 @@ public:
         hero_resonance.label = "RESONANCE"; hero_resonance.encoder = "ENC R";
         for (auto* h : {&hero_cutoff, &hero_resonance}) { addAndMakeVisible(*h); h->setTransform(juce::AffineTransform::scale(0.8f)); }
         hero_cutoff.setComponentID("hybrid.home.cutoff"); hero_resonance.setComponentID("hybrid.home.resonance");
+        hero_cutoff.on_drag_start = [this] { begin_follow(0); }; hero_cutoff.on_drag = [this] { follow(0); };
+        hero_resonance.on_drag_start = [this] { begin_follow(1); }; hero_resonance.on_drag = [this] { follow(1); };
+        hero_cutoff.on_drag_end = [this] { end_follow(0); }; hero_resonance.on_drag_end = [this] { end_follow(1); };
         startTimerHz(15);
     }
     /** Liga los parámetros de la capa y de la mitad en foco. */
@@ -56,7 +62,7 @@ public:
         const juce::String mine = focus == 0 ? "hybrid.a." : "hybrid.b.", other = focus == 0 ? "hybrid.b." : "hybrid.a.";
         morph = state.getParameter("hybrid.morph");
         cutoff = state.getParameter(mine + "cutoff"); resonance = state.getParameter(mine + "resonance");
-        other_cutoff = state.getParameter(other + "cutoff");
+        other_cutoff = state.getParameter(other + "cutoff"); other_resonance = state.getParameter(other + "resonance");
         hero_cutoff.bind(cutoff); hero_resonance.bind(resonance);
         hero_cutoff.mode = hero_resonance.mode = mode;
         if (!delay) {
@@ -67,11 +73,50 @@ public:
             transpose = std::make_unique<ParamCell>(t, state.getParameter("hybrid.transpose"));
             delay->setComponentID("hybrid.home.delay"); transpose->setComponentID("hybrid.home.transpose");
             addAndMakeVisible(*delay); addAndMakeVisible(*transpose);
+            for (int side = 0; side < 2; ++side) {
+                CellSpec c; c.kind = CellSpec::Kind::knob; c.id = side == 0 ? "hybrid.gain_a" : "hybrid.gain_b"; c.label = "BASE GAIN"; c.unit = "DB";
+                c.format = [](float db) {   // −60…+12 dB: el arco va desde el mínimo, el signo se escribe
+                    const int v = juce::roundToInt(db);
+                    return v > 0 ? "+" + juce::String(v) : v < 0 ? utf8("\xe2\x88\x92") + juce::String(-v) : juce::String("0");
+                };
+                gain[size_t(side)] = std::make_unique<ParamCell>(c, state.getParameter(c.id));
+                gain[size_t(side)]->setComponentID(side == 0 ? "hybrid.home.gain_a" : "hybrid.home.gain_b");
+                addAndMakeVisible(*gain[size_t(side)]);
+            }
         }
         delay->mode = transpose->mode = mode;
+        for (auto& c : gain) c->mode = mode;
         resized(); repaint();
     }
     int scroll() const { return scroll_; }
+    static juce::Rectangle<int> link_rect() { return {680, 262, 64, 20}; }
+    /** LINK (§9.2): al empezar a mover CUTOFF (0) o RESONANCE (1) de la mitad en foco se anotan los dos valores… */
+    void begin_follow(int which) {
+        auto* mine = which == 0 ? cutoff : resonance;
+        auto* other = which == 0 ? other_cutoff : other_resonance;
+        if (!mine || !other) return;
+        follow_start_[0] = mine->convertFrom0to1(mine->getValue());
+        follow_start_[1] = other->convertFrom0to1(other->getValue());
+        following_ = link;
+        if (following_) other->beginChangeGesture();
+    }
+    /** …y en cada paso la otra mitad se mueve en la misma proporción (por diferencia si la inicial era 0). */
+    void follow(int which) {
+        if (!following_) return;
+        auto* mine = which == 0 ? cutoff : resonance;
+        auto* other = which == 0 ? other_cutoff : other_resonance;
+        if (!mine || !other) return;
+        const float now = mine->convertFrom0to1(mine->getValue());
+        const auto range = other->getNormalisableRange();
+        const float target = follow_start_[0] > 1e-3f ? follow_start_[1] * now / follow_start_[0] : follow_start_[1] + (now - follow_start_[0]);
+        other->setValueNotifyingHost(other->convertTo0to1(juce::jlimit(range.start, range.end, target)));
+        repaint();
+    }
+    void end_follow(int which) {
+        auto* other = which == 0 ? other_cutoff : other_resonance;
+        if (following_ && other) other->endChangeGesture();
+        following_ = false;
+    }
     /** Franja ▲ CPU HIGH (nota CPU de 2h): aparece sobre 80 % y se va bajo 70 %. @return si se muestra. */
     bool update_cpu(float load) {
         const bool before = cpu_high_;
@@ -86,6 +131,8 @@ public:
     void resized() override {
         if (delay) delay->setBounds(600, 152, 88, 88);
         if (transpose) transpose->setBounds(696, 152, 184, 88);
+        for (int side = 0; side < 2; ++side)
+            if (gain[size_t(side)]) gain[size_t(side)]->setBounds(card_rect(side).getX() + 184, card_rect(side).getY() + 112, 88, 88);
         // las perillas héroe de PERFORM (250 × 240) al 80 %: ocupan 200 × 192 del bloque de 200 × 216
         hero_cutoff.setBounds(960, 320, 250, 240);
         hero_resonance.setBounds(1230, 320, 250, 240);
@@ -140,13 +187,13 @@ public:
             if (f) { g.setColour(mode.hi); g.drawText("EDITING", r.getRight() - 76, r.getY() + 16, 60, 24, juce::Justification::right); }
             draw_engine(g, engine[size_t(side)], juce::Rectangle<float>(float(r.getX() + 16), float(r.getY() + 48), 248, 56), f ? 1.0f : 0.5f);
             g.setFont(mono(16.0f, true)); g.setColour(f ? colour::WHITE : colour::GRAY);
-            g.drawText(half_name ? half_name(side) : juce::String(), r.getX() + 16, r.getY() + 112, 248, 20, juce::Justification::left, true);
+            g.drawText(half_name ? half_name(side) : juce::String(), r.getX() + 16, r.getY() + 112, 164, 20, juce::Justification::left, true);
             g.setFont(mono(11.0f)); g.setColour(colour::GRAY);
-            g.drawText(utf8(side == 0 ? "HALF A \xc2\xb7 FROM THE LAYER" : "HALF B \xc2\xb7 FROM THE LAYER"), r.getX() + 16, r.getY() + 132, 248, 16, juce::Justification::left);
+            g.drawText(utf8(side == 0 ? "HALF A \xc2\xb7 IN THE LAYER" : "HALF B \xc2\xb7 IN THE LAYER"), r.getX() + 16, r.getY() + 132, 164, 16, juce::Justification::left);
             juce::Path wave;
             PerformSource s; s.engine = engine[size_t(side)];
-            for (int x = 0; x <= 248; x += 2) {
-                const float y = float(r.getY() + 172) - perform_math::osc_sample(s, 3.0f * float(x) / 248.0f, 0.5f) * 12.0f;
+            for (int x = 0; x <= 160; x += 2) {
+                const float y = float(r.getY() + 172) - perform_math::osc_sample(s, 2.0f * float(x) / 160.0f, 0.5f) * 12.0f;
                 if (x == 0) wave.startNewSubPath(float(r.getX() + 16), y); else wave.lineTo(float(r.getX() + 16 + x), y);
             }
             g.setColour(f ? mode.hi : mode.dim); g.strokePath(wave, juce::PathStrokeType(2.0f));
@@ -181,7 +228,7 @@ public:
         g.setColour(colour::MON_TEXT);
         const int poly = std::min(hybrid_math::voices(engine[0]), hybrid_math::voices(engine[1]));
         g.drawText("LAYER POLY " + juce::String(poly) + utf8(" \xc2\xb7 ") + engines()[size_t(engine[0])].name + " " + juce::String(hybrid_math::voices(engine[0])) +
-                   utf8(" \xc2\xb7 ") + engines()[size_t(engine[1])].name + " " + juce::String(hybrid_math::voices(engine[1])), 440, 264, 300, 16, juce::Justification::right);
+                   utf8(" \xc2\xb7 ") + engines()[size_t(engine[1])].name + " " + juce::String(hybrid_math::voices(engine[1])), 360, 264, 310, 16, juce::Justification::right);
         PerformSource s; s.engine = engine[size_t(focus)];
         const float fc = cutoff ? cutoff->convertFrom0to1(cutoff->getValue()) : 1000.0f;
         s.res_norm = resonance ? juce::jlimit(0.0f, 1.0f, resonance->convertFrom0to1(resonance->getValue())) : 0.0f;
@@ -201,9 +248,19 @@ public:
         // perillas de la mitad en foco; la nota dice el valor de la otra mitad
         panel({768, 256, 200, 216}); panel({984, 256, 200, 216});
         g.setFont(mono(11.0f)); g.setColour(colour::MON_TEXT);
-        if (other_cutoff)
-            g.drawText(juce::String(focus == 0 ? "B " : "A ") + juce::String(juce::roundToInt(other_cutoff->convertFrom0to1(other_cutoff->getValue()))) + " HZ",
+        if (other_cutoff && cutoff) {
+            const float mine_hz = cutoff->convertFrom0to1(cutoff->getValue()), other_hz = other_cutoff->convertFrom0to1(other_cutoff->getValue());
+            const juce::String other_name = focus == 0 ? "B" : "A", mine_name = focus == 0 ? "A" : "B";
+            g.drawText(link ? other_name + " FOLLOWS " + mine_name + utf8(" \xc2\xb7 ") + juce::String(other_hz / std::max(1.0f, mine_hz), 2) + utf8(" \xc3\x97")
+                            : other_name + " " + juce::String(juce::roundToInt(other_hz)) + " HZ",
                        768, 448, 200, 16, juce::Justification::centred);
+        }
+        {
+            const auto lr = link_rect();
+            if (link) { g.setColour(mode.hi); g.fillRect(lr); }
+            g.setColour(link ? mode.hi : colour::MON); g.drawRect(lr, 1);
+            g.setColour(link ? mode.on : colour::GRAY); g.drawText(link ? "LINK ON" : "LINK OFF", lr, juce::Justification::centred);
+        }
         g.drawText(utf8("HALF ") + (focus == 0 ? "A" : "B"), 984, 448, 200, 16, juce::Justification::centred);
     }
     void paintOverChildren(juce::Graphics& g) override {
@@ -222,6 +279,7 @@ public:
         for (int side = 0; side < 2; ++side)
             if (card_rect(side).contains(p)) { if (side != focus && on_focus) on_focus(side); return; }
         if (save_row().contains(p)) { if (on_save_layer) on_save_layer(); return; }
+        if (link_rect().contains(p)) { link = !link; if (on_link) on_link(link); repaint(); return; }
         if (custom_row().contains(p)) { if (on_custom) on_custom(); return; }
         if (morph && morph_rect().contains(p) && p.y < 148) { dragging_morph_ = true; morph->beginChangeGesture(); mouseDrag(e); return; }
         if (juce::Rectangle<int>(LIST_X, LIST_Y, LIST_W, LIST_ROWS * ROW_H).contains(p)) {
@@ -248,7 +306,8 @@ public:
 
 private:
     int scroll_ = 0;
-    bool dragging_morph_ = false, cpu_high_ = false;
+    bool dragging_morph_ = false, cpu_high_ = false, following_ = false;
+    std::array<float, 2> follow_start_{};
     float cpu_shown_ = 0;
     std::array<float, 5> last_{};
     void timerCallback() override {

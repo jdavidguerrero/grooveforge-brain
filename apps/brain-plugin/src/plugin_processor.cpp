@@ -46,6 +46,20 @@ void compact_slider_text(juce::Slider& slider) {
 static_assert(std::atomic<uint8_t>::is_always_lock_free && std::atomic<uint64_t>::is_always_lock_free && std::atomic<float>::is_always_lock_free &&
               std::atomic<size_t>::is_always_lock_free, "Preset mailbox requires lock-free atomics");
 
+/** Datos del navegador (rating, rol, dialecto, descarte, etiquetas) por máquina, compartidos por todos los proyectos e
+ *  instancias (gemelo-vst-ui-migracion.md §9.1). `GF_BROWSER_STORE` apunta a otro archivo (tests). Solo hilo de mensajes. */
+juce::PropertiesFile& browser_store() {
+    static std::unique_ptr<juce::PropertiesFile> store = [] {
+        juce::PropertiesFile::Options options;
+        options.applicationName = "BrainVST"; options.folderName = "GrooveForge";
+        options.filenameSuffix = ".settings"; options.osxLibrarySubFolder = "Application Support";
+        options.millisecondsBeforeSaving = 0;
+        const auto path = juce::SystemStats::getEnvironmentVariable("GF_BROWSER_STORE", {});
+        return path.isNotEmpty() ? std::make_unique<juce::PropertiesFile>(juce::File(path), options) : std::make_unique<juce::PropertiesFile>(options);
+    }();
+    return *store;
+}
+
 constexpr std::array<const char*, 8> DX_FIELDS{"ratio", "level", "attack", "decay", "sustain", "release", "wave", "detune"};
 juce::String dx_id(int op, int field) { return "dx7.op" + juce::String(op + 1) + "." + DX_FIELDS[size_t(field)]; }
 constexpr std::array<const char*, 5> DX_FX_NAMES{"drive", "tape", "chorus", "delay", "reverb"};
@@ -4479,10 +4493,10 @@ private:
     /** Sub-páginas de las vistas nuevas (cortes 4–5). Si la pestaña tiene vista nueva, sus sub-páginas reemplazan a las
      *  de las páginas viejas; MOD = las paradas GF_MOD_SLOT del engine. Vacío = la pestaña sigue en la página vieja. */
     static juce::StringArray view_subs(int kind, int tab) {
-        // HYBRID (corte 7a): LAYER = la página vieja de capas (mezcla base GAIN A / B e importar una mitad);
-        // VOICE = la vieja de la mitad (FLT ENV AMT, DRIVE, GLIDE y su unísono todavía no tienen lugar nuevo)
+        // HYBRID: sin páginas viejas desde §9.3 (GAIN en las tarjetas de HOME, importar mitad en su navegador,
+        // ENV AMT · DRIVE · GLIDE en ENV, unísono de A y B en GROOVE)
         if (kind == 6) {
-            static const juce::StringArray tabs[6] = {{"HOME", "LAYER"}, {"OSC"}, {"ENV", "VOICE"}, {"LFO", "MOD"}, {"GROOVE"}, {"FX"}};
+            static const juce::StringArray tabs[6] = {{"HOME"}, {"OSC"}, {"ENV"}, {"LFO", "MOD"}, {"GROOVE"}, {"FX"}};
             return tabs[juce::jlimit(0, 5, tab)];
         }
         if (tab == 2) return {"ENV"};
@@ -4714,14 +4728,11 @@ private:
         studio_browser_.on_preview = [this](int engine, int index) { return owner_.preview_bank_item(engine, unsigned(index)); };
         studio_browser_.on_cancel_preview = [this] { owner_.stop_preset_preview(); };
         studio_browser_.on_close = [this] { update_status(); };
-        studio_browser_.on_meta = [this](int engine, int index, const studio_ui::BrowserItem& item) {
-            auto& state = owner_.parameters().state;
+        studio_browser_.on_meta = [](int engine, int index, const studio_ui::BrowserItem& item) {
             const juce::String suffix = juce::String(engine) + "_" + juce::String(index);
-            state.setProperty(juce::Identifier("browserRole" + suffix), item.role, nullptr);
-            state.setProperty(juce::Identifier("browserDialect" + suffix), item.dialect, nullptr);
-            state.setProperty(juce::Identifier("browserRate" + suffix), item.rating, nullptr);
-            state.setProperty(juce::Identifier("browserDisc" + suffix), item.discarded, nullptr);
-            state.setProperty(juce::Identifier("browserTags" + suffix), item.tags, nullptr);
+            meta_set("browserRole" + suffix, item.role); meta_set("browserDialect" + suffix, item.dialect);
+            meta_set("browserRate" + suffix, item.rating); meta_set("browserDisc" + suffix, item.discarded);
+            meta_set("browserTags" + suffix, item.tags);
         };
         studio_browser_.on_load = [this](int engine, int index) {
             if (current_kind() == 6) {   // 2d: cambia solo la mitad en foco; el navegador queda abierto
@@ -4759,15 +4770,24 @@ private:
         hybrid_home_.on_custom = [this] { custom_step_ = 1; custom_a_ = -1; engine_view_ = true; studio_browser_.close(); update_status(); };
         hybrid_home_.modified = [this] { return owner_.hybrid_modified(); };
         hybrid_home_.cpu = [this] { return owner_.cpu_load(); };
+        hybrid_home_.on_link = [this](bool on) { owner_.parameters().state.setProperty("hybridLink", on, nullptr); };
+        // ENC L / ENC R de la tira también arrastran la otra mitad con LINK (§9.2)
+        for (int which = 0; which < 2; ++which) {
+            auto& cell = which == 0 ? enc_l_ : enc_r_;
+            cell.on_drag_start = [this, which] {
+                if (current_kind() != 6) return;
+                hybrid_home_.focus = hybrid_focus(); hybrid_home_.link = bool(owner_.parameters().state.getProperty("hybridLink", true));
+                hybrid_home_.bind(owner_.parameters()); hybrid_home_.begin_follow(which);
+            };
+            cell.on_drag = [this, which] { if (current_kind() == 6) hybrid_home_.follow(which); };
+            cell.on_drag_end = [this, which] { if (current_kind() == 6) hybrid_home_.end_follow(which); };
+        }
         add(hybrid_home_, "studio.hybrid.home", false);
         save_dialog_.on_save = [this](const juce::String& name, int overwrite, const juce::String& role, const juce::String& dialect, int rating) {
             const int index = owner_.save_hybrid_layer(name, overwrite);
             if (index < 0) return;
-            auto& state = owner_.parameters().state;
             const juce::String suffix = "6_" + juce::String(index);
-            state.setProperty(juce::Identifier("browserRole" + suffix), role, nullptr);
-            state.setProperty(juce::Identifier("browserDialect" + suffix), dialect, nullptr);
-            state.setProperty(juce::Identifier("browserRate" + suffix), rating, nullptr);
+            meta_set("browserRole" + suffix, role); meta_set("browserDialect" + suffix, dialect); meta_set("browserRate" + suffix, rating);
             update_status();
             preset_browser_.setSelectedId(index + 1, juce::dontSendNotification);
             update_status();
@@ -5150,6 +5170,7 @@ private:
             case 0:
                 if (view_sub_ == 0) {
                     hybrid_home_.mode = m; hybrid_home_.engine = eng; hybrid_home_.focus = focus;
+                    hybrid_home_.link = bool(state.state.getProperty("hybridLink", true));
                     hybrid_home_.bind(state); show(hybrid_home_); hybrid_home_.repaint();
                 } else if (hybrid_page_index_ != 0) { hybrid_page_index_ = 0; update_legacy_status(); hide_legacy_chrome(); }
                 break;
@@ -5168,6 +5189,21 @@ private:
         for (auto* c : std::initializer_list<juce::Component*>{&juno_toggle_, &dx7_toggle_, &ob6_toggle_, &modeld_toggle_, &hybrid_toggle_, &arp2600_toggle_,
                                                                &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
             c->setVisible(false);
+    }
+    /** Dato del navegador: el archivo de la máquina; si no lo tiene y el proyecto sí (datos de antes de §9.1), se copia. */
+    static juce::var meta_get(const juce::ValueTree& state, const juce::String& key, const juce::var& fallback) {
+        auto& store = browser_store();
+        if (store.containsKey(key)) return store.getValue(key);
+        if (state.hasProperty(juce::Identifier(key))) {
+            const auto value = state.getProperty(juce::Identifier(key));
+            store.setValue(key, value); store.saveIfNeeded();
+            return value;
+        }
+        return fallback;
+    }
+    static void meta_set(const juce::String& key, const juce::var& value) {
+        auto& store = browser_store();
+        store.setValue(key, value); store.saveIfNeeded();
     }
     /** 2g: abre SAVE LAYER con el nombre de la capa actual, NEW = siguiente número, OVERWRITE = la capa cargada. */
     void open_save_dialog() {
@@ -5197,11 +5233,11 @@ private:
             const juce::String suffix = juce::String(engine) + "_" + juce::String(i);
             studio_ui::BrowserItem item;
             item.name = juce::String(preset.name).trim();
-            item.role = state.getProperty(juce::Identifier("browserRole" + suffix), {}).toString();
-            item.dialect = state.getProperty(juce::Identifier("browserDialect" + suffix), {}).toString();
-            item.tags = state.getProperty(juce::Identifier("browserTags" + suffix), {}).toString();
-            item.rating = int(state.getProperty(juce::Identifier("browserRate" + suffix), 0));
-            item.discarded = bool(state.getProperty(juce::Identifier("browserDisc" + suffix), false));
+            item.role = meta_get(state, "browserRole" + suffix, {}).toString();
+            item.dialect = meta_get(state, "browserDialect" + suffix, {}).toString();
+            item.tags = meta_get(state, "browserTags" + suffix, {}).toString();
+            item.rating = int(meta_get(state, "browserRate" + suffix, 0));
+            item.discarded = bool(meta_get(state, "browserDisc" + suffix, false));
             items.push_back(item);
         }
         const bool here = engine == current_kind();
@@ -5210,6 +5246,8 @@ private:
         studio_browser_.locked_engine = hybrid ? engine : -1;
         studio_browser_.keep_open_on_load = hybrid;
         studio_browser_.on_save_layer = hybrid ? std::function<void()>([this] { open_save_dialog(); }) : nullptr;
+        studio_browser_.on_import = hybrid ? std::function<void()>([this, focus] { choose_hybrid_half(unsigned(focus)); }) : nullptr;
+        studio_browser_.import_text = studio_ui::utf8(focus ? "IMPORT GFP \xe2\x86\x92 B" : "IMPORT GFP \xe2\x86\x92 A");
         studio_browser_.context = hybrid ? studio_ui::utf8(focus ? "B HALF \xc2\xb7 " : "A HALF \xc2\xb7 ") + studio_ui::engines()[size_t(engine)].name + studio_ui::utf8(" ONLY \xc2\xb7 BANK A") : juce::String();
         const int layer = preset_browser_.getSelectedId();
         studio_browser_.warn = hybrid && owner_.hybrid_modified()
@@ -5271,6 +5309,7 @@ private:
                     safe->status_.setText(juce::String::fromUTF8("GFP INVÁLIDO O ENGINE REPETIDO · SIN CAMBIOS"), juce::dontSendNotification); return;
                 }
                 safe->status_.setText(side == 0 ? juce::String::fromUTF8("HYBRID · MITAD A ACTUALIZADA") : juce::String::fromUTF8("HYBRID · MITAD B ACTUALIZADA"), juce::dontSendNotification);
+                if (safe->studio_browser_.isVisible()) safe->fill_browser(int(safe->owner_.hybrid_engine_id(side)));   // el GFP puede traer otro engine
             });
     }
     void choose_preset() {

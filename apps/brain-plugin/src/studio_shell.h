@@ -179,6 +179,7 @@ class ValueCell final : public juce::Component {
 public:
     juce::String caption, name;
     bool right_aligned = false;
+    std::function<void()> on_drag_start, on_drag, on_drag_end;   ///< LINK de HYBRID (§9.2)
 
     void bind(juce::RangedAudioParameter* parameter, juce::String shown_name, juce::String shown_unit = {}) {
         parameter_ = parameter; name = std::move(shown_name); unit_ = std::move(shown_unit); repaint();
@@ -202,14 +203,16 @@ public:
     void mouseDown(const juce::MouseEvent&) override {
         if (!parameter_) return;
         start_ = parameter_->getValue(); parameter_->beginChangeGesture();
+        if (on_drag_start) on_drag_start();
     }
     void mouseDrag(const juce::MouseEvent& e) override {
         if (!parameter_) return;
         const float fine = e.mods.isShiftDown() ? 0.1f : 1.0f;
         parameter_->setValueNotifyingHost(juce::jlimit(0.0f, 1.0f, start_ - float(e.getDistanceFromDragStartY()) * 0.004f * fine));
+        if (on_drag) on_drag();
         repaint();
     }
-    void mouseUp(const juce::MouseEvent&) override { if (parameter_) parameter_->endChangeGesture(); }
+    void mouseUp(const juce::MouseEvent&) override { if (parameter_) { parameter_->endChangeGesture(); if (on_drag_end) on_drag_end(); } }
     void mouseDoubleClick(const juce::MouseEvent&) override {
         if (!parameter_) return;
         parameter_->beginChangeGesture(); parameter_->setValueNotifyingHost(parameter_->getDefaultValue()); parameter_->endChangeGesture();
