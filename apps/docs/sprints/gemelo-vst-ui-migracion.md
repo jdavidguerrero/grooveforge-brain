@@ -413,3 +413,62 @@ PLATE = 1,0, formato ×10,0 de TAPE DRIVE, subtítulo con el tipo y tira por uni
   CHORD: TYPE · INV), no siempre las primeras celdas de la columna; la referencia mostraba RATE en P2 de PUMP.
 
 Siguiente: corte 6, navegador (1i).
+
+## 7. Corte 6: navegador (1i)
+
+### Qué es
+
+Se abre con ≡, con el nombre del preset o con B4 PRESET, y cae sobre pestañas + contenido (0, 64, 1200 × 536); la tira
+del panel sigue viva debajo. ≡ otra vez, ✕ o Esc lo cierran.
+
+| Zona | Rectángulo (relativo al navegador) | Qué hace |
+|---|---|---|
+| Búsqueda | 16, 8, 320 × 32 | filtra por nombre, rol, dialecto y etiquetas libres |
+| Contexto | 352, 16 | "MODEL D · BANK A · 15" |
+| Botones | derecha, alto 32 | A/B · vs cargado, ■ PREVIEW ON HOVER, ✕ |
+| ENGINE | 16, 48, 184 | los seis engines con su cantidad de presets de fábrica, más LAYERS; el elegido en dim |
+| BANK | 208, 48, 72 | A activo; B–D deshabilitados (el plugin todavía no tiene bancos de usuario) |
+| Lista | 288, 48, 616 | # · NAME · TAGS · RATE · WHERE · estado; filas de 32 |
+| Filtros | 920, 48, 264 | ROLE · DIALECT · RATING MIN · SHOW DISCARDED, la leyenda y LOAD |
+
+### Datos de cada preset
+
+- **Rol** (bass · chords · pluck · lead · pad · perc · fx) y **dialecto** (afro · organic · melodic · indie · disco):
+  los de la referencia, los mismos de la paleta por ADN. Se ven como etiquetas en la fila junto con las etiquetas libres
+  que ya existían.
+- **Rating** 0–3: ■■□. Clic en un cuadro lo fija; clic en el mismo otra vez lo pone en 0.
+- **DESCARTADO:** tachado, oculto salvo con SHOW DISCARDED; se restaura desde el menú de la fila. Nunca se borra un
+  preset (nota de la referencia).
+- **WHERE:** ● BRAIN = está en el banco del hardware; ○ VST ONLY = solo en esta máquina. Hoy todos los presets del
+  navegador son de fábrica, o sea ● BRAIN; la columna queda lista para los bancos de usuario.
+- **Dónde se guardan:** como hoy las etiquetas y los favoritos, en el estado del proyecto (`browserRole…`,
+  `browserDialect…`, `browserRate…`, `browserDisc…`, junto a `browserTags…`). **Decisión abierta para Juan:** ratings y
+  descartes son curaduría de la librería; tendría más sentido guardarlos por máquina (un archivo en la carpeta de datos
+  del usuario) que por proyecto. No lo cambio sin que lo decidas.
+
+### Interacción
+
+- Clic en una fila = elegirla; doble clic, Enter o LOAD = cargarla. ↑ / ↓ mueven la selección.
+- Clic derecho en una fila: ROLE ▸, DIALECT ▸, RATING ▸, EDIT TAGS…, DISCARD / RESTORE.
+- PREVIEW ON HOVER (apagado por defecto, como el navegador actual: el audio no debe cambiar sin pedirlo): 300 ms sobre
+  una fila la escucha aislada, sin tocar el preset cargado.
+- A/B: alterna entre escuchar la fila elegida (B, en preview) y el preset cargado (A).
+- Elegir otro engine en la columna ENGINE lista sus presets; cargar uno cambia de engine (como ENGINE SELECT).
+- LAYERS se ve deshabilitado en SYNTH: los presets de capa son del corte 7 (2d).
+- Estado a la derecha de la fila: LOADED, ▶ PREVIEWING o DISCARDED.
+
+### Cómo se arma
+
+Componente nuevo `StudioBrowser` (`studio_browser.h`) que solo dibuja y filtra; el editor le pasa los presets y sus
+datos, y recibe cargar / escuchar / guardar datos. El navegador viejo (`PresetBrowser`) sigue oculto: lo usa HYBRID
+hasta el corte 7 y lo prueban sus tests.
+
+### Tests
+
+- ≡ abre el navegador nuevo con los presets del engine; buscar filtra; el filtro de rol filtra.
+- Rating, rol, dialecto y descarte se guardan con el proyecto y vuelven al restaurarlo; un descartado se oculta y
+  vuelve con SHOW DISCARDED.
+- Cargar una fila carga ese preset (LOADED); cargar un preset de otro engine cambia de engine.
+- La preview no cambia el preset cargado; A/B alterna.
+
+**No cubre:** HYBRID (2d, corte 7), bancos de usuario.
