@@ -34,6 +34,11 @@ public:
     std::function<void(int, int, const BrowserItem&)> on_meta;   ///< guardar los datos de un preset
     juce::TextEditor search;
     bool hover_preview = false, show_discarded = false;
+    // HYBRID (2d): engine bloqueado a la mitad en foco, el navegador queda abierto al cargar, SAVE LAYER y aviso al pie
+    int locked_engine = -1;
+    bool keep_open_on_load = false;
+    juce::String context, warn;
+    std::function<void()> on_save_layer;
     int role_filter = -1, dialect_filter = -1, min_rating = 0;
 
     StudioBrowser() {
@@ -70,6 +75,7 @@ public:
     int selected() const { return selected_; }
     int previewing() const { return preview_; }
     void select(int index) { selected_ = index; scroll_into_view(); repaint(); }
+    void set_loaded(int index) { loaded_ = index; repaint(); }
 
     // datos de un preset (menú de la fila, cuadros de rating, tests)
     void set_rating(int index, int rating) { if (valid(index)) { items_[size_t(index)].rating = juce::jlimit(0, 3, rating); changed(index); } }
@@ -82,7 +88,13 @@ public:
     void set_min_rating(int r) { min_rating = r; filter(); }
     void set_show_discarded(bool on) { show_discarded = on; filter(); }
 
-    void load_selected() { if (valid(selected_)) { stop_preview(); if (on_load) on_load(engine_, selected_); } }
+    void load_selected() {
+        if (!valid(selected_)) return;
+        stop_preview();
+        const int index = selected_;
+        if (on_load) on_load(engine_, index);
+        if (keep_open_on_load) set_loaded(index);
+    }
     /** A/B: B = escuchar la fila elegida; A = volver al cargado. */
     void toggle_ab() {
         if (preview_ >= 0) stop_preview();
@@ -106,6 +118,8 @@ public:
     juce::Rectangle<int> close_rect() const { return {getWidth() - 48, 8, 32, 32}; }
     static juce::Rectangle<int> chip_area() { return {920, 72, 264, 300}; }
     juce::Rectangle<int> load_rect() const { return {920, getHeight() - 56, 264, 32}; }
+    juce::Rectangle<int> save_layer_rect() const { return {920, getHeight() - 96, 264, 32}; }
+    bool engine_enabled(int i) const { return locked_engine >= 0 ? i == locked_engine : (i < 6 || layers_enabled_); }
 
     void resized() override { search.setBounds(16, 8, 320, 32); }
     void paint(juce::Graphics& g) override {
@@ -113,7 +127,8 @@ public:
         g.setColour(colour::LINE); g.drawRect(getLocalBounds(), 1);
         // contexto y botones
         g.setFont(mono(11.0f)); g.setColour(mode.hi);
-        g.drawText(engine_name(engine_) + utf8(" \xc2\xb7 BANK A \xc2\xb7 ") + juce::String(int(items_.size())), 352, 16, 300, 16, juce::Justification::left);
+        g.drawText(context.isNotEmpty() ? context : engine_name(engine_) + utf8(" \xc2\xb7 BANK A \xc2\xb7 ") + juce::String(int(items_.size())),
+                   352, 16, 360, 16, juce::Justification::left);
         g.setColour(colour::LINE);
         const auto ab = ab_rect();
         g.setColour(preview_ >= 0 ? mode.hi : mode.hi.withAlpha(0.7f)); g.drawRect(ab, 1);
@@ -132,7 +147,7 @@ public:
         g.drawText("BANK", 208, 48, 72, 24, juce::Justification::left);
         for (int i = 0; i < 7; ++i) {
             const auto r = engine_row(i);
-            const bool enabled = i < 6 || layers_enabled_;
+            const bool enabled = engine_enabled(i);
             if (i == engine_) { g.setColour(mode.dim); g.fillRect(r); }
             g.setColour(colour::SURFACE_2); g.drawHorizontalLine(r.getBottom() - 1, float(r.getX()), float(r.getRight()));
             g.setFont(mono(13.0f)); g.setColour(enabled ? colour::WHITE : colour::MON);
@@ -174,6 +189,15 @@ public:
         g.setColour(colour::GRAY);
         g.drawFittedText(utf8("\xe2\x97\x8f BRAIN \xc2\xb7 in the hardware bank\n\xe2\x97\x8b VST ONLY \xc2\xb7 this machine only"),
                          920, legend_y_, 264, 32, juce::Justification::topLeft, 2);
+        if (on_save_layer) {
+            const auto sr = save_layer_rect();
+            g.setColour(mode.mc); g.fillRect(sr);
+            g.setColour(mode.on); g.drawText("SAVE LAYER", sr, juce::Justification::centred);
+        }
+        if (warn.isNotEmpty()) {
+            g.setColour(colour::AMBER);
+            g.drawFittedText(warn, 920, save_layer_rect().getY() - 40, 264, 36, juce::Justification::bottomLeft, 2);
+        }
         const auto lr = load_rect();
         const bool can_load = valid(selected_);
         g.setColour(can_load ? mode.hi : colour::SURFACE_2); g.fillRect(lr);
@@ -186,8 +210,9 @@ public:
         if (hover_rect().contains(p)) { hover_preview = !hover_preview; if (!hover_preview) stop_preview(); repaint(); return; }
         if (ab_rect().contains(p)) { toggle_ab(); return; }
         if (load_rect().contains(p)) { load_selected(); return; }
+        if (on_save_layer && save_layer_rect().contains(p)) { on_save_layer(); return; }
         for (int i = 0; i < 7; ++i)
-            if (engine_row(i).contains(p) && (i < 6 || layers_enabled_) && i != engine_) { if (on_engine) on_engine(i); return; }
+            if (engine_row(i).contains(p) && engine_enabled(i) && i != engine_) { if (on_engine) on_engine(i); return; }
         for (const auto& c : chip_layout()) if (c.r.contains(p)) { c.action(); return; }
         const int row = row_at(p);
         if (row < 0) return;

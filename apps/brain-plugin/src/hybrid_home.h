@@ -26,7 +26,9 @@ public:
     std::function<juce::StringArray()> layer_names;
     std::function<int()> loaded_layer;
     std::function<void(int)> on_load_layer, on_focus, on_open_osc;
-    std::function<void()> on_save_layer;
+    std::function<void()> on_save_layer, on_custom;
+    std::function<bool()> modified;                  ///< 2h: la capa cargada tiene cambios sin guardar
+    std::function<float()> cpu;                      ///< carga 0–1 del callback de audio
     std::function<juce::String(int)> half_name;
     std::array<int, 2> engine{4, 3};
     int focus = 0;
@@ -70,6 +72,16 @@ public:
         resized(); repaint();
     }
     int scroll() const { return scroll_; }
+    /** Franja ▲ CPU HIGH (nota CPU de 2h): aparece sobre 80 % y se va bajo 70 %. @return si se muestra. */
+    bool update_cpu(float load) {
+        const bool before = cpu_high_;
+        if (load > 0.8f) cpu_high_ = true;
+        else if (load < 0.7f) cpu_high_ = false;
+        cpu_shown_ = load;
+        if (before != cpu_high_) repaint();
+        return cpu_high_;
+    }
+    bool cpu_high() const { return cpu_high_; }
 
     void resized() override {
         if (delay) delay->setBounds(600, 152, 88, 88);
@@ -100,13 +112,17 @@ public:
             g.setFont(mono(11.0f)); g.setColour(colour::MON_TEXT);
             g.drawText(juce::String(i + 1).paddedLeft('0', 2), r.getX() + 8, r.getY(), 20, ROW_H, juce::Justification::left);
             g.setFont(mono(13.0f)); g.setColour(colour::WHITE);
-            g.drawText(names[i], r.getX() + 36, r.getY(), 160, ROW_H, juce::Justification::left, true);
-            if (i == loaded) { g.setFont(mono(11.0f)); g.setColour(mode.hi); g.drawText("LOADED", r.reduced(8, 0), juce::Justification::right); }
+            g.drawText(names[i] + (i == loaded && modified && modified() ? " *" : ""), r.getX() + 36, r.getY(), 160, ROW_H, juce::Justification::left, true);
+            if (i == loaded) {
+                const bool mod = modified && modified();
+                g.setFont(mono(11.0f)); g.setColour(mod ? colour::AMBER : mode.hi);
+                g.drawText(mod ? "MODIFIED" : "LOADED", r.reduced(8, 0), juce::Justification::right);
+            }
         }
         g.setColour(colour::LINE); g.drawHorizontalLine(save_row().getY(), 17, 279);
         g.setFont(mono(13.0f));
         g.setColour(mode.hi); g.drawText("+ SAVE LAYER", save_row().reduced(8, 0), juce::Justification::left);
-        g.setColour(colour::MON); g.drawText("+ CUSTOM", custom_row().reduced(8, 0), juce::Justification::left);
+        g.setColour(mode.hi); g.drawText("+ CUSTOM", custom_row().reduced(8, 0), juce::Justification::left);
         // tarjetas A y B
         for (int side = 0; side < 2; ++side) {
             const auto r = card_rect(side);
@@ -190,6 +206,15 @@ public:
                        768, 448, 200, 16, juce::Justification::centred);
         g.drawText(utf8("HALF ") + (focus == 0 ? "A" : "B"), 984, 448, 200, 16, juce::Justification::centred);
     }
+    void paintOverChildren(juce::Graphics& g) override {
+        if (!cpu_high_) return;
+        const juce::Rectangle<int> t(296, 440, 456, 32);
+        g.setColour(colour::AMBER); g.fillRect(t);
+        g.setColour(colour::BG); g.setFont(mono(11.0f, true));
+        g.drawText(utf8("\xe2\x96\xb2 CPU HIGH"), t.reduced(12, 0), juce::Justification::left);
+        g.setFont(mono(11.0f));
+        g.drawText(juce::String(juce::roundToInt(cpu_shown_ * 100.0f)) + utf8(" % \xc2\xb7 LIGHTEN FX OR LOWER POLY"), t.reduced(12, 0), juce::Justification::right);
+    }
 
     void mouseDown(const juce::MouseEvent& e) override {
         const auto p = e.getPosition();
@@ -197,6 +222,7 @@ public:
         for (int side = 0; side < 2; ++side)
             if (card_rect(side).contains(p)) { if (side != focus && on_focus) on_focus(side); return; }
         if (save_row().contains(p)) { if (on_save_layer) on_save_layer(); return; }
+        if (custom_row().contains(p)) { if (on_custom) on_custom(); return; }
         if (morph && morph_rect().contains(p) && p.y < 148) { dragging_morph_ = true; morph->beginChangeGesture(); mouseDrag(e); return; }
         if (juce::Rectangle<int>(LIST_X, LIST_Y, LIST_W, LIST_ROWS * ROW_H).contains(p)) {
             const int i = scroll_ + (p.y - LIST_Y) / ROW_H;
@@ -222,10 +248,12 @@ public:
 
 private:
     int scroll_ = 0;
-    bool dragging_morph_ = false;
+    bool dragging_morph_ = false, cpu_high_ = false;
+    float cpu_shown_ = 0;
     std::array<float, 5> last_{};
     void timerCallback() override {
         if (!isShowing()) return;
+        if (cpu) update_cpu(cpu());
         const std::array<float, 5> now{morph ? morph->getValue() : 0, cutoff ? cutoff->getValue() : 0, resonance ? resonance->getValue() : 0,
                                        delay && delay->parameter() ? delay->parameter()->getValue() : 0, transpose && transpose->parameter() ? transpose->parameter()->getValue() : 0};
         if (now != last_) { last_ = now; repaint(); }

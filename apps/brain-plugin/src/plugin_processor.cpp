@@ -10,6 +10,7 @@
 #include "env_lfo_view.h"
 #include "studio_browser.h"
 #include "hybrid_home.h"
+#include "save_layer_dialog.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -1288,6 +1289,8 @@ public:
         if (preset_raw_.getSize() > 0) snapshot.setProperty("gfPreset", preset_raw_.toBase64Encoding(), nullptr);
         if (hybrid_raw_.getSize() > 0) snapshot.setProperty("gfLayer", hybrid_raw_.toBase64Encoding(), nullptr);
         snapshot.setProperty("gfLayerBankCount", int(hybrid_bank_count_), nullptr);
+        if (hybrid_baseline_.getSize() > 0) snapshot.setProperty("gfLayerBaseline", hybrid_baseline_.toBase64Encoding(), nullptr);
+        if (hybrid_custom_) snapshot.setProperty("gfLayerCustom", true, nullptr);
         for (size_t i = 0; i < hybrid_bank_count_; ++i)
             snapshot.setProperty("gfLayerBank" + juce::String(int(i)), hybrid_bank_[i].toBase64Encoding(), nullptr);
         snapshot.setProperty("hybridOscVersion", 1, nullptr);
@@ -1454,6 +1457,10 @@ public:
                 tree.removeProperty(id, nullptr);
             }
         } else initialize_hybrid_bank(layer_bank, layer_bank_count);
+        juce::MemoryBlock layer_baseline;   // MODIFIED (2h) sobrevive a cerrar y abrir el proyecto
+        if (tree.hasProperty("gfLayerBaseline")) layer_baseline.fromBase64Encoding(tree.getProperty("gfLayerBaseline").toString());
+        const bool layer_custom = bool(tree.getProperty("gfLayerCustom", false));
+        tree.removeProperty("gfLayerBaseline", nullptr); tree.removeProperty("gfLayerCustom", nullptr);
         juce::MemoryBlock layer_raw;
         studio::LayerPreset decoded_layer;
         if (tree.hasProperty("gfLayer")) {
@@ -1600,6 +1607,7 @@ public:
         hybrid_bank_revision_.fetch_add(1, std::memory_order_release);
         hybrid_raw_ = layer_raw; publish_hybrid(hybrid_raw_);
         hybrid_revision_.fetch_add(1, std::memory_order_release);
+        hybrid_baseline_ = layer_baseline; hybrid_custom_ = layer_custom;
         preset_raw_ = raw;
         preset_name_ = raw.getSize() ? juce::String::fromUTF8(decoded.name) : juce::String();
         publish_preset(raw);
@@ -1664,9 +1672,12 @@ public:
         set("hybrid.morph", layer.morph * .01f); set("hybrid.delay", float(layer.delay_b_ms)); set("hybrid.transpose", float(layer.transpose_b));
         set("hybrid.gain_a", float(layer.gain_a_db)); set("hybrid.gain_b", float(layer.gain_b_db));
         set("hybrid_preview", 1);
-        std::lock_guard<std::mutex> guard(preset_mutex_);
-        hybrid_raw_.replaceAll(data, size); publish_hybrid(hybrid_raw_);
-        hybrid_revision_.fetch_add(1, std::memory_order_release);
+        {
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            hybrid_raw_.replaceAll(data, size); publish_hybrid(hybrid_raw_);
+            hybrid_revision_.fetch_add(1, std::memory_order_release);
+        }
+        hybrid_custom_ = false; mark_hybrid_baseline();
         return true;
     }
     void set_hybrid_osc_parameters(const studio::Patch& patch, uint8_t engine, unsigned side) {
@@ -1828,11 +1839,21 @@ public:
         layer.gain_a_db = int8_t(std::clamp(int(std::lround(hybrid_gain_a_->load())), -60, 12));
         layer.gain_b_db = int8_t(std::clamp(int(std::lround(hybrid_gain_b_->load())), -60, 12));
         std::array<uint8_t, studio::LAYER_BYTES> bytes{};
-        return gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) && import_hybrid(bytes.data(), bytes.size());
+        const auto baseline = hybrid_baseline_; const bool custom = hybrid_custom_;
+        if (!gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) || !import_hybrid(bytes.data(), bytes.size())) return false;
+        hybrid_baseline_ = baseline; hybrid_custom_ = custom;   // cambiar una mitad modifica la capa cargada (2d)
+        return true;
     }
     bool export_hybrid_preset(std::vector<uint8_t>& data) override {
         if (hybrid_enabled_->load() < .5f || lfo_sync_->load() >= .5f) return false;
         studio::LayerPreset layer;
+        if (!current_hybrid_layer(layer)) return false;
+        std::vector<uint8_t> encoded(studio::LAYER_BYTES);
+        if (!gf::encode_hybrid_layer(layer, encoded.data(), encoded.size())) return false;
+        data = std::move(encoded); return true;
+    }
+    /** La capa con los parámetros actuales (la cargada + lo editado). Base de la exportación, MODIFIED y SAVE LAYER. */
+    bool current_hybrid_layer(studio::LayerPreset& layer) {
         {
             std::lock_guard<std::mutex> guard(preset_mutex_);
             if (hybrid_raw_.getSize()) {
@@ -1845,9 +1866,56 @@ public:
         layer.transpose_b = int8_t(std::clamp(int(std::lround(hybrid_transpose_->load())), -24, 24));
         layer.gain_a_db = int8_t(std::clamp(int(std::lround(hybrid_gain_a_->load())), -60, 12));
         layer.gain_b_db = int8_t(std::clamp(int(std::lround(hybrid_gain_b_->load())), -60, 12));
-        std::vector<uint8_t> encoded(studio::LAYER_BYTES);
-        if (!gf::encode_hybrid_layer(layer, encoded.data(), encoded.size())) return false;
-        data = std::move(encoded); return true;
+        return true;
+    }
+    /** Codifica la capa actual en el formato del banco (para comparar sin falsos cambios por redondeo). */
+    bool encode_current_hybrid(juce::MemoryBlock& out) {
+        studio::LayerPreset layer; std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+        if (!current_hybrid_layer(layer) || !gf::encode_hybrid_layer(layer, bytes.data(), bytes.size())) return false;
+        out.replaceAll(bytes.data(), bytes.size()); return true;
+    }
+    /** 2h: la capa cambió desde que se cargó (o es CUSTOM y no se guardó). */
+    bool hybrid_modified() {
+        if (hybrid_custom_) return true;
+        juce::MemoryBlock now;
+        if (!hybrid_baseline_.getSize() || !encode_current_hybrid(now)) return false;
+        return now != hybrid_baseline_;
+    }
+    void mark_hybrid_baseline() { juce::MemoryBlock b; if (encode_current_hybrid(b)) hybrid_baseline_ = b; }
+    /** 2g: guarda la capa actual con `name` (A–Z 0–9 espacio, 12); `overwrite` ≥ 0 reemplaza esa capa. @return índice, o −1. */
+    int save_hybrid_layer(const juce::String& name, int overwrite) {
+        studio::LayerPreset layer;
+        if (!current_hybrid_layer(layer)) return -1;
+        const auto clean = name.toUpperCase().retainCharacters("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ").trim().substring(0, int(studio::LAYER_NAME_LEN));
+        std::snprintf(layer.name, sizeof(layer.name), "%s", (clean.isEmpty() ? juce::String("LAYER") : clean).toRawUTF8());
+        std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+        if (!gf::encode_hybrid_layer(layer, bytes.data(), bytes.size())) return -1;
+        int index = -1;
+        {
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            if (overwrite >= 0 && overwrite < int(hybrid_bank_count_)) index = overwrite;
+            else if (hybrid_bank_count_ < studio::LAYER_MAX) index = int(hybrid_bank_count_++);
+            else return -1;
+            hybrid_bank_[size_t(index)].replaceAll(bytes.data(), bytes.size());
+            hybrid_raw_.replaceAll(bytes.data(), bytes.size()); publish_hybrid(hybrid_raw_);
+        }
+        hybrid_bank_revision_.fetch_add(1, std::memory_order_release);
+        hybrid_revision_.fetch_add(1, std::memory_order_release);
+        hybrid_custom_ = false; mark_hybrid_baseline();
+        return index;
+    }
+    /** 2f: capa CUSTOM con las dos mitades en INIT (A·00 de fábrica), MORPH 50 %, sin delay ni transposición. */
+    bool create_custom_layer(int engine_a, int engine_b) {
+        if (engine_a == engine_b || engine_a < 0 || engine_a > 5 || engine_b < 0 || engine_b > 5) return false;
+        studio::LayerPreset layer;
+        std::snprintf(layer.name, sizeof(layer.name), "CUSTOM");
+        layer.eng_a = uint8_t(engine_a); layer.eng_b = uint8_t(engine_b);
+        if (!studio::factory_preset(layer.eng_a, 0, &layer.a) || !studio::factory_preset(layer.eng_b, 0, &layer.b)) return false;
+        layer.morph = 50; layer.delay_b_ms = 0; layer.transpose_b = 0; layer.gain_a_db = 0; layer.gain_b_db = 0;
+        std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+        if (!gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) || !import_hybrid(bytes.data(), bytes.size())) return false;
+        hybrid_custom_ = true;
+        return true;
     }
     bool export_arp2600_preset(std::vector<uint8_t>& data) override {
         if (arp2600_enabled_->load() < .5f || lfo_sync_->load() >= .5f) return false;
@@ -3232,6 +3300,8 @@ private:
     juce::MemoryBlock hybrid_raw_;
     std::array<juce::MemoryBlock, studio::LAYER_MAX> hybrid_bank_{};
     uint8_t hybrid_bank_count_ = 0;
+    juce::MemoryBlock hybrid_baseline_;                 ///< la capa tal como quedó al cargarla (MODIFIED, 2h)
+    bool hybrid_custom_ = false;
     std::atomic<uint64_t> hybrid_bank_revision_{0};
     std::array<std::atomic<uint8_t>, studio::LAYER_BYTES> hybrid_bytes_{};
     std::atomic<size_t> hybrid_size_{0};
@@ -4343,6 +4413,10 @@ private:
         enc_l_.repaint(); enc_r_.repaint();
         for (auto& knob : macros_) knob->repaint();
         repaint(design_to_editor({1056, 8, 104, 48}));
+        if (hybrid_toggle_.getToggleState()) {
+            const bool modified = owner_.hybrid_modified();
+            if (modified != displayed_modified_) { displayed_modified_ = modified; update_status(); }
+        }
         if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState() || displayed_modeld_ != modeld_toggle_.getToggleState() || displayed_arp2600_ != arp2600_toggle_.getToggleState() || displayed_hybrid_ != hybrid_toggle_.getToggleState() || displayed_hybrid_revision_ != owner_.hybrid_revision() || displayed_hybrid_bank_revision_ != owner_.hybrid_bank_revision() || (hybrid_toggle_.getToggleState() && displayed_hybrid_focus_ != (owner_.parameters().getRawParameterValue("hybrid.focus")->load() >= 0.5f ? 1 : 0))) update_status();
     }
 
@@ -4419,7 +4493,7 @@ private:
     }
     void select_tab(int tab) {
         if (fx_view_) return;
-        engine_view_ = false; studio_tab_ = tab; sub_index_ = 0; view_sub_ = 0;
+        engine_view_ = false; custom_step_ = 0; studio_tab_ = tab; sub_index_ = 0; view_sub_ = 0;
         const int kind = current_kind();
         const auto pages = pages_for(kind, tab, hybrid_focus());
         if (auto* index = legacy_index(kind); index && !pages.empty()) *index = pages.front();
@@ -4579,9 +4653,12 @@ private:
         auto open_browser = [this] {
             if (fx_view_) return;
             engine_view_ = false;
-            if (current_kind() == 6) { if (browse_button_.onClick) browse_button_.onClick(); }
-            else if (studio_browser_.isVisible()) studio_browser_.close();
-            else { fill_browser(current_kind()); studio_browser_.setVisible(true); studio_browser_.toFront(true); }
+            if (studio_browser_.isVisible()) studio_browser_.close();
+            else {
+                fill_browser(current_kind() == 6 ? int(owner_.hybrid_engine_id(unsigned(hybrid_focus()))) : current_kind());
+                browser_hybrid_ = current_kind() == 6;
+                studio_browser_.setVisible(true); studio_browser_.toFront(true);
+            }
             update_status();
         };
         preset_menu_.onClick = open_browser; preset_name_area_.onClick = open_browser;
@@ -4607,7 +4684,7 @@ private:
             sub_tabs_[size_t(i)].onClick = [this, i] { select_sub(i); };
             add(sub_tabs_[size_t(i)], "studio.sub." + juce::String(i), false);
         }
-        act_save_layer_.text = "SAVE LAYER"; act_save_layer_.onClick = [this] { if (hybrid_save_.onClick) hybrid_save_.onClick(); };
+        act_save_layer_.text = "SAVE LAYER"; act_save_layer_.onClick = [this] { open_save_dialog(); };
         act_import_.text = "IMPORT GFP"; act_import_.onClick = [this] { if (import_.onClick) import_.onClick(); };
         act_export_.text = "EXPORT GFP"; act_export_.onClick = [this] { if (export_.onClick) export_.onClick(); };
         add(act_save_layer_, "studio.action.save_layer", false); add(act_import_, "studio.action.import"); add(act_export_, "studio.action.export", false);
@@ -4647,6 +4724,14 @@ private:
             state.setProperty(juce::Identifier("browserTags" + suffix), item.tags, nullptr);
         };
         studio_browser_.on_load = [this](int engine, int index) {
+            if (current_kind() == 6) {   // 2d: cambia solo la mitad en foco; el navegador queda abierto
+                studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> data{};
+                if (!studio::factory_preset(uint8_t(engine), uint8_t(index), &preset)) return;
+                const auto size = studio::preset_encode(preset, uint8_t(engine), data.data(), data.size());
+                if (size) owner_.import_hybrid_half(data.data(), size, unsigned(hybrid_focus()));
+                update_status(); fill_browser(engine); studio_browser_.set_loaded(index);
+                return;
+            }
             if (engine == current_kind()) {
                 preset_browser_.setSelectedId(index + 1, juce::sendNotificationSync);
             } else {
@@ -4670,7 +4755,25 @@ private:
         hybrid_home_.on_focus = [this](int side) { set_focus(side); };
         hybrid_home_.on_open_osc = [this](int side) { set_focus(side); select_tab(1); };
         hybrid_home_.half_name = [this](int side) { return owner_.hybrid_half_name(unsigned(side)); };
+        hybrid_home_.on_save_layer = [this] { open_save_dialog(); };
+        hybrid_home_.on_custom = [this] { custom_step_ = 1; custom_a_ = -1; engine_view_ = true; studio_browser_.close(); update_status(); };
+        hybrid_home_.modified = [this] { return owner_.hybrid_modified(); };
+        hybrid_home_.cpu = [this] { return owner_.cpu_load(); };
         add(hybrid_home_, "studio.hybrid.home", false);
+        save_dialog_.on_save = [this](const juce::String& name, int overwrite, const juce::String& role, const juce::String& dialect, int rating) {
+            const int index = owner_.save_hybrid_layer(name, overwrite);
+            if (index < 0) return;
+            auto& state = owner_.parameters().state;
+            const juce::String suffix = "6_" + juce::String(index);
+            state.setProperty(juce::Identifier("browserRole" + suffix), role, nullptr);
+            state.setProperty(juce::Identifier("browserDialect" + suffix), dialect, nullptr);
+            state.setProperty(juce::Identifier("browserRate" + suffix), rating, nullptr);
+            update_status();
+            preset_browser_.setSelectedId(index + 1, juce::dontSendNotification);
+            update_status();
+        };
+        save_dialog_.on_cancel = [this] { update_status(); };
+        add(save_dialog_, "studio.save.layer", false);
         osc_page_.on_change = [this] { repaint(); };
         add(osc_page_, "studio.osc", false);
         env_page_.on_change = [this] { repaint(); };
@@ -4689,7 +4792,19 @@ private:
         add(groove_page_, "studio.groove", false);
         fx_page_.on_change = [this] { repaint(); };
         add(fx_page_, "studio.fx", false);
-        engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
+        engine_select_.on_pick = [this](int engine) {
+            if (custom_step_ == 1) { custom_a_ = engine; custom_step_ = 2; update_status(); return; }
+            if (custom_step_ == 2) {
+                const int a = custom_a_;
+                custom_step_ = 0; engine_view_ = false;
+                if (owner_.create_custom_layer(a, engine)) {
+                    preset_browser_.setSelectedId(0, juce::dontSendNotification);
+                    set_focus(0); select_tab(1);   // 2f: abre OSC de A
+                } else update_status();
+                return;
+            }
+            pick_engine(engine);
+        };
         add(engine_select_, "studio.engine.select", false);
         add(fx_later_, "studio.fx.later", false);
         for (auto* c : std::initializer_list<juce::Component*>{&output_meter_, &keyboard_toggle_, &keyboard_, &browser_panel_, &sync_})
@@ -4887,7 +5002,20 @@ private:
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
-        if ((fx_view_ || engine_view_ || hybrid) && studio_browser_.isVisible()) studio_browser_.close();
+        if ((fx_view_ || engine_view_ || hybrid != browser_hybrid_) && studio_browser_.isVisible()) studio_browser_.close();
+        if (!engine_view_) custom_step_ = 0;
+        if (custom_step_ > 0) {   // 2f: + CUSTOM elige A y después B
+            engine_select_.banner = custom_step_ == 1 ? "1 ENGINE A" : "2 ENGINE B";
+            engine_select_.banner_right = utf8("+ CUSTOM \xc2\xb7 both halves start at INIT");
+            engine_select_.current = -1;
+            engine_select_.locked = custom_step_ == 2 ? custom_a_ : -1;
+            engine_select_.locked_badge = utf8("IN A \xc2\xb7 NOT AVAILABLE");
+            engine_select_.hover_badge = utf8(custom_step_ == 1 ? "CLICK \xc2\xb7 ENGINE A" : "CLICK \xc2\xb7 ENGINE B");
+            engine_select_.repaint();
+        }
+        if (hybrid && !fx_view_ && owner_.hybrid_modified()) act_save_layer_.style(m.mc, m.mc, m.on);
+        save_dialog_.mode = m;
+        if (save_dialog_.isVisible()) save_dialog_.toFront(false);
         studio_browser_.mode = m;
         if (studio_browser_.isVisible()) studio_browser_.toFront(false);
         engine_select_.repaint();
@@ -4919,6 +5047,7 @@ private:
         groove_page_.setBounds(0, 112, 1200, 488); fx_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
         studio_browser_.setBounds(0, 64, 1200, 536);
+        save_dialog_.setBounds(0, 0, 1200, 760);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
         for (int i = 0; i < 4; ++i) soft_keys_[size_t(i)].setBounds(136 + i * 104, 624, 96, 64);
@@ -4943,6 +5072,10 @@ private:
             if (hybrid) {
                 line1 = index >= 0 ? "LAYER " + juce::String(index + 1).paddedLeft('0', 2) : juce::String("LAYER");
                 name = owner_.hybrid_description().upToFirstOccurrenceOf(utf8(" \xc2\xb7 "), false, false);
+                if (owner_.hybrid_modified()) {
+                    name += " *";
+                    g.setColour(colour::AMBER); g.setFont(mono(11.0f)); g.drawText("MODIFIED", 656, 15, 208, 14, juce::Justification::right);
+                }
             } else {
                 line1 = (index >= 0 ? utf8("A\xc2\xb7") + juce::String(index).paddedLeft('0', 2) : utf8("A\xc2\xb7\xe2\x80\x94")) + utf8(" \xc2\xb7 ") +
                         engines()[size_t(kind)].name;
@@ -5036,6 +5169,19 @@ private:
                                                                &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
             c->setVisible(false);
     }
+    /** 2g: abre SAVE LAYER con el nombre de la capa actual, NEW = siguiente número, OVERWRITE = la capa cargada. */
+    void open_save_dialog() {
+        if (current_kind() != 6) return;
+        studio_browser_.close();
+        const auto names = owner_.hybrid_bank_names();
+        const int loaded = preset_browser_.getSelectedId() - 1;
+        const auto current = owner_.hybrid_description().upToFirstOccurrenceOf(studio_ui::utf8(" \xc2\xb7 "), false, false);
+        const juce::String halves = studio_ui::utf8("A \xc2\xb7 ") + studio_ui::engines()[owner_.hybrid_engine_id(0)].name + studio_ui::utf8(" + B \xc2\xb7 ") +
+                                    studio_ui::engines()[owner_.hybrid_engine_id(1)].name;
+        save_dialog_.open(current, halves, names.size() + 1, loaded >= 0 && loaded < names.size() ? loaded : -1,
+                          loaded >= 0 && loaded < names.size() ? names[loaded] : juce::String());
+        update_status();
+    }
     /** Llena el navegador con los presets de fábrica de `engine` y los datos guardados en el proyecto. */
     void fill_browser(int engine) {
         auto& state = owner_.parameters().state;
@@ -5059,7 +5205,17 @@ private:
             items.push_back(item);
         }
         const bool here = engine == current_kind();
-        studio_browser_.set_items(engine, std::move(items), here ? preset_browser_.getSelectedId() - 1 : -1, owner_.preset_name());
+        const bool hybrid = current_kind() == 6;
+        const int focus = hybrid_focus();
+        studio_browser_.locked_engine = hybrid ? engine : -1;
+        studio_browser_.keep_open_on_load = hybrid;
+        studio_browser_.on_save_layer = hybrid ? std::function<void()>([this] { open_save_dialog(); }) : nullptr;
+        studio_browser_.context = hybrid ? studio_ui::utf8(focus ? "B HALF \xc2\xb7 " : "A HALF \xc2\xb7 ") + studio_ui::engines()[size_t(engine)].name + studio_ui::utf8(" ONLY \xc2\xb7 BANK A") : juce::String();
+        const int layer = preset_browser_.getSelectedId();
+        studio_browser_.warn = hybrid && owner_.hybrid_modified()
+            ? (layer > 0 ? "LAYER " + juce::String(layer).paddedLeft('0', 2) : juce::String("THE LAYER")) + studio_ui::utf8(" IS MODIFIED \xc2\xb7 SAVE LAYER KEEPS IT") : juce::String();
+        studio_browser_.set_items(engine, std::move(items), here && !hybrid ? preset_browser_.getSelectedId() - 1 : -1,
+                                  hybrid ? owner_.hybrid_half_name(unsigned(focus)) : owner_.preset_name());
     }
     studio_ui::StripText strip_text() const {
         if (osc_page_.isVisible()) return osc_page_.strip();
@@ -5170,6 +5326,9 @@ private:
     PresetBrowser browser_panel_;
     studio_ui::StudioBrowser studio_browser_;
     studio_ui::HybridHome hybrid_home_;
+    studio_ui::SaveLayerDialog save_dialog_;
+    int custom_step_ = 0, custom_a_ = -1;
+    bool browser_hybrid_ = false, displayed_modified_ = false;
     int browser_engine_ = -1;
     uint64_t browser_bank_revision_ = UINT64_MAX;
     bool keyboard_open_ = false;

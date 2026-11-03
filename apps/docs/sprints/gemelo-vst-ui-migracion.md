@@ -572,3 +572,75 @@ reconstrucción con A | B; envolvente fantasma; GROOVE y FX de la capa). Arnés 
 - Arreglado: la tira decía "OSC Â· A" (texto del corte 1 sin `utf8()`).
 
 Siguiente: corte 7b (2d presets de la mitad, 2f + CUSTOM, 2g SAVE LAYER, 2h estados).
+
+### 7b · Presets de la mitad (2d)
+
+En HYBRID, ≡ (o B4) abre el navegador nuevo **bloqueado al engine de la mitad en foco**: las demás filas de ENGINE se ven
+al 30 % y no responden; el contexto dice "B HALF · OB-6 ONLY · BANK A". Cargar una fila cambia **solo esa mitad**
+(`import_hybrid_half`) y el navegador queda abierto con la fila en LOADED, así se pueden probar varias. La capa pasa a
+MODIFIED. Al pie: SAVE LAYER (abre 2g) y el aviso en ámbar "LAYER nn IS MODIFIED · SAVE LAYER KEEPS IT". "SAVE B → OB-6
+BANK" no se hace: el plugin no tiene bancos de usuario por engine (igual que B–D en SYNTH).
+
+### 7b · + CUSTOM (2f)
+
++ CUSTOM (lista de HOME) → ENGINE SELECT para A ("1 ENGINE A") → ENGINE SELECT para B con el de A bloqueado ("2 ENGINE
+B") → capa nueva: nombre CUSTOM, las dos mitades en su preset INIT (A·00 de fábrica), MORPH 50 %, sin delay ni
+transposición, mezcla base 0 dB; se abre OSC de A. Cambiar de pestaña o de modo a mitad de camino cancela. Una capa
+CUSTOM es MODIFIED por definición hasta que se guarda.
+
+### 7b · SAVE LAYER (2g)
+
+Diálogo modal de 560 × 464 sobre un velo negro al 70 %. Enter guarda, Esc cancela.
+
+- **Nombre:** 12 caracteres, A–Z 0–9 y espacio (lo que el hardware puede mostrar); las minúsculas se pasan a mayúsculas;
+  el contador se pone ámbar en 12.
+- **Lugar:** NEW toma el siguiente "LAYER nn"; OVERWRITE reemplaza la capa cargada sin pedir otra confirmación (solo si
+  hay una capa del banco cargada). La referencia guarda la versión vieja en el historial de deshacer de la sesión: el
+  plugin no tiene historial, así que eso **no** se hace y queda anotado.
+- **Rol, dialecto, rating:** los mismos del navegador (corte 6), guardados para la capa.
+- Entradas: SAVE LAYER de la fila de pestañas, "+ SAVE LAYER" de HOME y el pie del navegador.
+
+### 7b · Estados (2h)
+
+- **MODIFIED:** la capa actual (los parámetros) es distinta de como se cargó. El procesador guarda la capa tal como quedó
+  al cargarla y la compara con la actual codificada en el mismo formato (así el redondeo no da falsos cambios).
+  Se ve: nombre + " *" y MODIFIED en ámbar en la barra de preset, SAVE LAYER relleno, la fila de la capa en HOME dice
+  MODIFIED.
+- **Mitad faltante:** en el hardware una capa apunta a presets del banco y puede faltar uno. En el plugin cada capa
+  guarda sus dos mitades completas (formato de `LayerPreset`), así que **no puede faltar**: el estado no aplica.
+- **CPU alta:** sobre 80 % la cabecera ya pone CPU en ámbar (corte 1). En HOME aparece la franja "▲ CPU HIGH" con el
+  porcentaje; queda hasta que baja de 70 % (histéresis, nota CPU). El plugin no baja voces de B, así que la franja no da
+  ese número.
+
+### Procesador
+
+Solo funciones para la interfaz, sin cambios de audio: `current_hybrid_layer` (la capa con los parámetros actuales; la
+usa también la exportación), `hybrid_modified`, `save_hybrid_layer(nombre, sobrescribir)` y `create_custom_layer(a, b)`.
+
+### Tests (7b)
+
+- Recién cargada una capa no está MODIFIED; mover MORPH la marca; guardar como nueva la desmarca, suma una capa con el
+  nombre dado; sobrescribir no suma.
+- + CUSTOM con dos engines arma la capa CUSTOM, MODIFIED, y abre OSC de A; no deja elegir el mismo engine para B.
+- El diálogo pasa el nombre a mayúsculas, corta en 12 y Enter guarda.
+- El navegador en HYBRID queda bloqueado al engine de la mitad; cargar una fila cambia solo esa mitad.
+- La franja de CPU aparece sobre 80 % y se va bajo 70 %.
+
+### Resultado del corte 7b (2026-11-03)
+
+Flujo completo de capas (`save_layer_dialog.h`, navegador y HOME extendidos, cuatro funciones del procesador). 12/12
+tests (bloque nuevo: capa recién cargada sin MODIFIED, MORPH la marca, SAVE LAYER con nombre en mayúsculas y cortado en
+12, Enter guarda como nueva y desmarca, OVERWRITE no suma, + CUSTOM en dos pasos con A bloqueado y OSC de A abierto,
+navegador de la mitad bloqueado que cambia solo esa mitad y queda abierto, franja de CPU con histéresis). Arnés de audio
+sin cambios (el estado de HYBRID crece porque guarda la referencia de MODIFIED).
+
+- **MODIFIED sobrevive al proyecto:** la referencia (la capa tal como se cargó) y la marca de CUSTOM se guardan en el estado
+  (`gfLayerBaseline`, `gfLayerCustom`), así una capa editada sigue marcada al reabrir la sesión.
+- **Cambiar una mitad** (2d o importar un GFP) deja la capa MODIFIED: la referencia sigue siendo la capa cargada.
+- **El nombre** se filtra al teclear y al pegar (filtro de entrada de JUCE): los avisos de cambio de texto de JUCE son
+  asíncronos y pasar a mayúsculas ahí no alcanzaba para pegar.
+- **No hecho, a propósito:** SAVE B → OB-6 BANK (no hay bancos de usuario por engine), el historial de deshacer al
+  sobrescribir, el aviso de mitad faltante (no puede pasar en el plugin) y "B FOLLOWS A" (DSP).
+
+Con 7b la migración del editor a la referencia queda completa: los seis cortes de SYNTH y HYBRID entero. Lo que sigue
+usando páginas viejas son las sub-páginas HOME · LAYER y ENV · VOICE de HYBRID (ver 7a).

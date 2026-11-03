@@ -9,6 +9,7 @@
 #include "env_lfo_view.h"
 #include "studio_browser.h"
 #include "hybrid_home.h"
+#include "save_layer_dialog.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -3220,6 +3221,68 @@ int main() {
         if (!check(fx && fx->isVisible() && fx->cell("hybrid.fx.reverb.mix") != nullptr, "HYBRID FX is layer-wide")) return 1;
         for (auto* page : {groove, fx}) for (auto& panel : page->panels) for (auto& cell : panel->cells)
             if (!check(cell->parameter() == find_parameter(*plugin, cell->spec.id), "HYBRID GROOVE / FX cells bound")) { std::fprintf(stderr, "  %s\n", cell->spec.id); return 1; }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 7b: presets de la mitad, + CUSTOM, SAVE LAYER y estados
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.mode.1"))->onClick();
+        auto* home = dynamic_cast<studio_ui::HybridHome*>(editor->findChildWithID("studio.hybrid.home"));
+        if (!check(home && home->isVisible(), "7b HOME")) return 1;
+        // cargar una capa del banco: no está MODIFIED; mover MORPH la marca
+        home->on_load_layer(1);
+        if (!check(!home->modified(), "a freshly loaded layer is not MODIFIED")) return 1;
+        auto* morph = find_parameter(*plugin, "hybrid.morph");
+        morph->setValueNotifyingHost(morph->getValue() > .5f ? .1f : .9f);
+        if (!check(home->modified(), "moving MORPH marks the layer MODIFIED")) return 1;
+        // SAVE LAYER: el nombre pasa a mayúsculas y se corta en 12; guardar como nueva suma una capa y desmarca
+        const int before = home->layer_names().size();
+        auto* save = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.action.save_layer"));
+        auto* dialog = dynamic_cast<studio_ui::SaveLayerDialog*>(editor->findChildWithID("studio.save.layer"));
+        if (!check(save && dialog, "SAVE LAYER controls")) return 1;
+        save->onClick();
+        if (!check(dialog->isVisible() && dialog->next_number == before + 1 && dialog->overwrite_index == 1, "SAVE LAYER opens with NEW and OVERWRITE")) return 1;
+        dialog->name.setText("", false);
+        dialog->name.insertTextAtCaret("dusk bells long name");
+        if (!check(dialog->name.getText() == "DUSK BELLS L", "name is upper case, 12 characters")) { std::fprintf(stderr, "  '%s'\n", dialog->name.getText().toRawUTF8()); return 1; }
+        dialog->role = 4; dialog->rating = 2;
+        dialog->keyPressed(juce::KeyPress(juce::KeyPress::returnKey));
+        const auto names = home->layer_names();
+        if (!check(!dialog->isVisible() && names.size() == before + 1 && names[before] == "DUSK BELLS L" && !home->modified() && home->loaded_layer() == before,
+                   "Enter saves a new layer and clears MODIFIED")) return 1;
+        // sobrescribir no suma capas
+        morph->setValueNotifyingHost(.5f);
+        save->onClick(); dialog->overwrite = true; dialog->name.setText("DUSK BELLS 2", false); dialog->save();
+        if (!check(home->layer_names().size() == before + 1 && home->layer_names()[before] == "DUSK BELLS 2", "OVERWRITE replaces the loaded layer")) return 1;
+        // + CUSTOM: A = Juno, B = Prophet; no deja el mismo engine para B
+        home->on_custom();
+        auto* select = dynamic_cast<studio_ui::EngineSelectPage*>(editor->findChildWithID("studio.engine.select"));
+        if (!check(select && select->isVisible() && select->banner == "1 ENGINE A", "+ CUSTOM asks for engine A")) return 1;
+        select->on_pick(1);
+        if (!check(select->isVisible() && select->banner == "2 ENGINE B" && select->locked == 1, "+ CUSTOM asks for engine B with A locked")) return 1;
+        select->on_pick(2);
+        auto* importer = dynamic_cast<gf::PresetImport*>(plugin.get());
+        std::vector<uint8_t> custom_bytes; studio::LayerPreset custom;
+        auto* osc = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.osc"));
+        if (!check(!select->isVisible() && importer->export_hybrid_preset(custom_bytes) && gf::decode_hybrid_layer(custom_bytes.data(), custom_bytes.size(), custom) &&
+                   std::string(custom.name) == "CUSTOM" && custom.eng_a == 1 && custom.eng_b == 2 && custom.morph == 50 && home->modified() &&
+                   osc && osc->isVisible() && find_parameter(*plugin, "hybrid.focus")->getValue() < .5f, "+ CUSTOM builds the layer and opens OSC of A")) return 1;
+        // navegador de la mitad: bloqueado al engine de la mitad; cargar cambia solo esa mitad y queda abierto
+        tab(*editor, 0)->onClick();
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.ab.1"))->onClick();
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.preset.menu"))->onClick();
+        auto* browser = dynamic_cast<studio_ui::StudioBrowser*>(editor->findChildWithID("studio.browser"));
+        if (!check(browser && browser->isVisible() && browser->engine() == 2 && browser->locked_engine == 2 && browser->on_save_layer, "half browser locked to Prophet")) return 1;
+        if (!check(!browser->engine_enabled(4) && browser->engine_enabled(2), "other engines are locked in the half browser")) return 1;
+        browser->select(3); browser->load_selected();
+        std::vector<uint8_t> after_bytes; studio::LayerPreset after;
+        studio::Preset prophet3; studio::factory_preset(2, 3, &prophet3);
+        if (!check(browser->isVisible() && importer->export_hybrid_preset(after_bytes) && gf::decode_hybrid_layer(after_bytes.data(), after_bytes.size(), after) &&
+                   after.eng_a == 1 && after.eng_b == 2 && std::string(after.b.name) == std::string(prophet3.name) && browser->items().size() == size_t(studio::factory_count(2)),
+                   "loading a row changes only half B and keeps the browser open")) return 1;
+        browser->close();
+        // franja de CPU con histéresis
+        if (!check(!home->update_cpu(.75f) && home->update_cpu(.85f) && home->update_cpu(.75f) && !home->update_cpu(.65f), "CPU HIGH shows over 80 %, leaves under 70 %")) return 1;
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;
