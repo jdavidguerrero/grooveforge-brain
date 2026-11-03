@@ -8,6 +8,7 @@
 #include "studio_shell.h"
 #include "perform_view.h"
 #include "env_lfo_view.h"
+#include "studio_browser.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -4559,7 +4560,15 @@ private:
         preset_menu_.size = 13.0f;
         preset_prev_.onClick = [this] { step_preset(-1); };
         preset_next_.onClick = [this] { step_preset(1); };
-        auto open_browser = [this] { if (!fx_view_ && browse_button_.onClick) { engine_view_ = false; browse_button_.onClick(); update_status(); } };
+        // SYNTH: el navegador de la referencia (1i), ≡ otra vez lo cierra; HYBRID sigue con el viejo hasta el corte 7 (2d)
+        auto open_browser = [this] {
+            if (fx_view_) return;
+            engine_view_ = false;
+            if (current_kind() == 6) { if (browse_button_.onClick) browse_button_.onClick(); }
+            else if (studio_browser_.isVisible()) studio_browser_.close();
+            else { fill_browser(current_kind()); studio_browser_.setVisible(true); studio_browser_.toFront(true); }
+            update_status();
+        };
         preset_menu_.onClick = open_browser; preset_name_area_.onClick = open_browser;
         preset_name_area_.border = juce::Colours::transparentBlack;
         add(preset_prev_, "studio.preset.prev"); add(preset_next_, "studio.preset.next");
@@ -4609,6 +4618,36 @@ private:
         }
         setup_perform();
         add(perform_page_, "studio.perform", false);
+        studio_browser_.on_engine = [this](int engine) { fill_browser(engine); };
+        studio_browser_.on_preview = [this](int engine, int index) { return owner_.preview_bank_item(engine, unsigned(index)); };
+        studio_browser_.on_cancel_preview = [this] { owner_.stop_preset_preview(); };
+        studio_browser_.on_close = [this] { update_status(); };
+        studio_browser_.on_meta = [this](int engine, int index, const studio_ui::BrowserItem& item) {
+            auto& state = owner_.parameters().state;
+            const juce::String suffix = juce::String(engine) + "_" + juce::String(index);
+            state.setProperty(juce::Identifier("browserRole" + suffix), item.role, nullptr);
+            state.setProperty(juce::Identifier("browserDialect" + suffix), item.dialect, nullptr);
+            state.setProperty(juce::Identifier("browserRate" + suffix), item.rating, nullptr);
+            state.setProperty(juce::Identifier("browserDisc" + suffix), item.discarded, nullptr);
+            state.setProperty(juce::Identifier("browserTags" + suffix), item.tags, nullptr);
+        };
+        studio_browser_.on_load = [this](int engine, int index) {
+            if (engine == current_kind()) {
+                preset_browser_.setSelectedId(index + 1, juce::sendNotificationSync);
+            } else {
+                // otro engine: se carga como ENGINE SELECT, pero con el preset elegido
+                studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> data{};
+                if (!studio::factory_preset(uint8_t(engine), uint8_t(index), &preset)) return;
+                const auto size = studio::preset_encode(preset, uint8_t(engine), data.data(), data.size());
+                if (!size || !owner_.import_preset(data.data(), size)) return;
+                studio_tab_ = 0; sub_index_ = 0; view_sub_ = 0;
+                if (auto* page = legacy_index(current_kind())) *page = pages_for(current_kind(), 0, hybrid_focus()).front();
+                update_status();
+                preset_browser_.setSelectedId(index + 1, juce::dontSendNotification);
+            }
+            studio_browser_.close();
+        };
+        add(studio_browser_, "studio.browser", false);
         osc_page_.on_change = [this] { repaint(); };
         add(osc_page_, "studio.osc", false);
         env_page_.on_change = [this] { repaint(); };
@@ -4725,7 +4764,7 @@ private:
             b->setEnabled(!fx_view_);
             b->style(juce::Colours::transparentBlack, colour::LINE, colour::GRAY);
         }
-        if (browser_panel_.isVisible()) preset_menu_.style(m.hi, colour::LINE, m.on);
+        if (browser_panel_.isVisible() || studio_browser_.isVisible()) preset_menu_.style(m.hi, colour::LINE, m.on);
         for (int i = 0; i < 4; ++i) {
             auto& b = bank_buttons_[size_t(i)];
             b.setVisible(!hybrid && !fx_view_);
@@ -4771,7 +4810,7 @@ private:
         bind_strip(kind);
         for (int i = 0; i < 4; ++i) {
             auto& k = soft_keys_[size_t(i)];
-            const bool on = !fx_view_ && (i < 3 ? (!engine_view_ && studio_tab_ == i + 1) : browser_panel_.isVisible());
+            const bool on = !fx_view_ && (i < 3 ? (!engine_view_ && studio_tab_ == i + 1) : browser_panel_.isVisible() || studio_browser_.isVisible());
             k.setEnabled(!fx_view_ && (i == 3 || i == 1 || kind != 2));   // el Prophet tiene PERFORM y ENV
             k.text = fx_view_ ? utf8("\xe2\x80\x94") : utf8(i == 0 ? "OSC" : i == 1 ? "ENV" : i == 2 ? "LFO \xc2\xb7 MOD" : "PRESET");
             k.style(on ? m.dim : juce::Colours::transparentBlack, on ? m.hi : colour::LINE, on ? colour::WHITE : colour::GRAY);
@@ -4821,6 +4860,9 @@ private:
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
+        if ((fx_view_ || engine_view_ || hybrid) && studio_browser_.isVisible()) studio_browser_.close();
+        studio_browser_.mode = m;
+        if (studio_browser_.isVisible()) studio_browser_.toFront(false);
         engine_select_.repaint();
         shell_focus_ = focus;
         layout_shell();
@@ -4849,6 +4891,7 @@ private:
         lfo_page_.setBounds(0, 112, 1200, 488); mod_page_.setBounds(0, 112, 1200, 488);
         groove_page_.setBounds(0, 112, 1200, 488); fx_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
+        studio_browser_.setBounds(0, 64, 1200, 536);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
         for (int i = 0; i < 4; ++i) soft_keys_[size_t(i)].setBounds(136 + i * 104, 624, 96, 64);
@@ -4896,7 +4939,8 @@ private:
         g.drawText("CPU " + juce::String(cpu) + " %", 1064, 34, 96, 16, juce::Justification::left);
         g.setColour(colour::BG); g.fillRect(0, 600, 1200, 160);
         g.setColour(colour::LINE); g.fillRect(0, 600, 1200, 1);
-        const juce::String page = fx_view_ ? juce::String("FX") : engine_view_ ? juce::String("ENGINE SELECT")
+        const bool browsing = studio_browser_.isVisible();
+        const juce::String page = fx_view_ ? juce::String("FX") : engine_view_ ? juce::String("ENGINE SELECT") : browsing ? juce::String("PRESETS")
             : utf8(hybrid && studio_tab_ == 0 ? "HOME" : TAB_NAMES[studio_tab_]) + (hybrid && studio_tab_ >= 1 && studio_tab_ <= 3 ? juce::String(hybrid_focus() ? " \xc2\xb7 B" : " \xc2\xb7 A") : juce::String());
         g.setColour(colour::MON_TEXT); g.setFont(mono(11.0f));
         g.drawText(utf8("PANEL STUDIO \xc2\xb7 ") + page, 16, 604, 400, 16, juce::Justification::left);
@@ -4907,7 +4951,10 @@ private:
             g.setColour(ink); g.drawText(value, x + 8, 718, w - 16, 14, just);
             g.setColour(ink == colour::MON ? colour::MON : colour::WHITE); g.setFont(mono(13.0f)); g.drawText(sub, x + 8, 732, w - 16, 18, just);
         };
-        if (perform_page_.isVisible()) {
+        if (browsing) {
+            box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
+            box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
+        } else if (perform_page_.isVisible()) {
             auto shown = [](studio_ui::MacroKnob& k) { return k.parameter() ? juce::String(juce::roundToInt(k.parameter()->getValue() * 100.0f)) + " %" : juce::String("OFF"); };
             box(16, 152, "P1", "FLT ENV AMT", shown(*perform_page_.page_knobs[0]) + utf8("   \xe2\x87\xa7 GLIDE"), false, colour::GRAY);
             box(512, 152, "P2", utf8("LFO \xe2\x86\x92 CUTOFF"), utf8("\xe2\x87\xa7 DRIVE   ") + shown(*perform_page_.page_knobs[1]), true, colour::GRAY);
@@ -4920,9 +4967,34 @@ private:
             box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
             box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
         }
-        box(256, 168, "NAV", fx_view_ ? utf8("\xe2\x80\x94") : engine_view_ ? utf8("TURN BROWSE \xc2\xb7 PUSH LOAD")
+        box(256, 168, "NAV", fx_view_ ? utf8("\xe2\x80\x94") : engine_view_ || browsing ? utf8("TURN BROWSE \xc2\xb7 PUSH LOAD")
             : strip_text().nav.isNotEmpty() ? strip_text().nav : utf8("TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
         box(432, 72, "B6", "SHIFT", {}, false, colour::GRAY);
+    }
+    /** Llena el navegador con los presets de fábrica de `engine` y los datos guardados en el proyecto. */
+    void fill_browser(int engine) {
+        auto& state = owner_.parameters().state;
+        std::array<int, 7> counts{};
+        for (int e = 0; e < 6; ++e) counts[size_t(e)] = studio::factory_count(uint8_t(e));
+        counts[6] = preset_browser_.getNumItems();
+        if (current_kind() != 6) counts[6] = 0;
+        studio_browser_.set_engines(counts, false);
+        std::vector<studio_ui::BrowserItem> items;
+        for (int i = 0; i < counts[size_t(engine)]; ++i) {
+            studio::Preset preset;
+            if (!studio::factory_preset(uint8_t(engine), uint8_t(i), &preset)) break;
+            const juce::String suffix = juce::String(engine) + "_" + juce::String(i);
+            studio_ui::BrowserItem item;
+            item.name = juce::String(preset.name).trim();
+            item.role = state.getProperty(juce::Identifier("browserRole" + suffix), {}).toString();
+            item.dialect = state.getProperty(juce::Identifier("browserDialect" + suffix), {}).toString();
+            item.tags = state.getProperty(juce::Identifier("browserTags" + suffix), {}).toString();
+            item.rating = int(state.getProperty(juce::Identifier("browserRate" + suffix), 0));
+            item.discarded = bool(state.getProperty(juce::Identifier("browserDisc" + suffix), false));
+            items.push_back(item);
+        }
+        const bool here = engine == current_kind();
+        studio_browser_.set_items(engine, std::move(items), here ? preset_browser_.getSelectedId() - 1 : -1, owner_.preset_name());
     }
     studio_ui::StripText strip_text() const {
         if (osc_page_.isVisible()) return osc_page_.strip();
@@ -5031,6 +5103,7 @@ private:
     juce::ComboBox preset_browser_;
     juce::TextButton browse_button_;
     PresetBrowser browser_panel_;
+    studio_ui::StudioBrowser studio_browser_;
     int browser_engine_ = -1;
     uint64_t browser_bank_revision_ = UINT64_MAX;
     bool keyboard_open_ = false;

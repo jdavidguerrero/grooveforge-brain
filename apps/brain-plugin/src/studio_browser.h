@@ -44,6 +44,7 @@ public:
         search.setColour(juce::TextEditor::outlineColourId, colour::MON);
         search.setColour(juce::TextEditor::focusedOutlineColourId, colour::GRAY);
         search.setColour(juce::TextEditor::textColourId, colour::WHITE);
+        search.setFont(mono(13.0f)); search.setIndents(12, 8);
         search.onTextChange = [this] { filter(); };
         search.onEscapeKey = [this] { close(); };
         search.onReturnKey = [this] { load_selected(); };

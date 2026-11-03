@@ -7,6 +7,7 @@
 #include "studio_shell.h"
 #include "perform_view.h"
 #include "env_lfo_view.h"
+#include "studio_browser.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -3092,6 +3093,69 @@ int main() {
             fx->set_focus(3);
             if (!check(fx->strip().p1 == "DRY/WET" && fx->strip().p2 == "TIME" && fx->strip().nav.startsWith("UNIT 4 / 5"), "FX strip follows the unit")) return 1;
         }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 6: navegador (1i)
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        if (!check(studio::factory_preset(0, 0, &preset) &&
+                   dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), studio::preset_encode(preset, 0, bytes.data(), bytes.size())),
+                   "browser preset")) return 1;
+        plugin->prepareToPlay(48000, 256);
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* menu = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.preset.menu"));
+        auto* browser = dynamic_cast<studio_ui::StudioBrowser*>(editor->findChildWithID("studio.browser"));
+        if (!check(menu && browser && !browser->isVisible(), "studio browser exists")) return 1;
+        menu->onClick();
+        const int count = studio::factory_count(0);
+        if (!check(browser->isVisible() && browser->engine() == 0 && int(browser->items().size()) == count && int(browser->visible().size()) == count,
+                   "menu opens the browser with the engine presets")) return 1;
+        // buscar y filtrar por rol
+        browser->search.setText(browser->items()[1].name, false); browser->search.onTextChange();
+        if (!check(!browser->visible().empty() && browser->visible().size() < size_t(count), "browser search filters")) return 1;
+        browser->search.setText("", false); browser->search.onTextChange();
+        browser->set_role(1, "bass");
+        browser->set_role_filter(0);
+        if (!check(browser->visible().size() == 1 && browser->visible()[0] == 1, "role filter")) return 1;
+        browser->set_role_filter(0);
+        // rating, dialecto y descarte; un descartado se oculta y vuelve con SHOW DISCARDED
+        browser->set_rating(2, 3); browser->set_dialect(2, "afro"); browser->set_discarded(3, true);
+        browser->set_min_rating(3);
+        if (!check(browser->visible().size() == 1 && browser->visible()[0] == 2, "rating filter")) return 1;
+        browser->set_min_rating(0);
+        if (!check(browser->visible().size() == size_t(count - 1), "discarded preset hidden")) return 1;
+        browser->set_show_discarded(true);
+        if (!check(browser->visible().size() == size_t(count), "SHOW DISCARDED brings it back")) return 1;
+        // los datos vuelven con el proyecto
+        juce::MemoryBlock saved; plugin->getStateInformation(saved);
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        restored->setStateInformation(saved.getData(), int(saved.getSize()));
+        auto restored_editor = std::unique_ptr<juce::AudioProcessorEditor>(restored->createEditor());
+        dynamic_cast<studio_ui::ChromeButton*>(restored_editor->findChildWithID("studio.preset.menu"))->onClick();
+        auto* again = dynamic_cast<studio_ui::StudioBrowser*>(restored_editor->findChildWithID("studio.browser"));
+        if (!check(again && again->items()[1].role == "bass" && again->items()[2].rating == 3 && again->items()[2].dialect == "afro" &&
+                   again->items()[3].discarded && !again->items()[0].discarded, "browser data restored with the project")) return 1;
+        // la preview no cambia el preset cargado; A/B alterna
+        browser->select(4);
+        browser->toggle_ab();
+        if (!check(browser->previewing() == 4, "A/B previews the selected preset")) return 1;
+        browser->toggle_ab();
+        if (!check(browser->previewing() < 0, "A/B returns to the loaded preset")) return 1;
+        // cargar una fila del mismo engine
+        browser->select(4); browser->load_selected();
+        if (!check(!browser->isVisible() && find_parameter(*plugin, "modeld_preview")->getValue() > .5f, "browser loads a Model D preset")) return 1;
+        menu->onClick();
+        if (!check(browser->isVisible() && browser->items().size() > 4, "browser reopens")) return 1;
+        // cargar un preset de otro engine cambia de engine
+        browser->on_engine(1);
+        if (!check(browser->engine() == 1 && int(browser->items().size()) == studio::factory_count(1), "ENGINE column lists another engine")) return 1;
+        browser->select(2); browser->load_selected();
+        auto* engine_badge = dynamic_cast<studio_ui::EngineBadge*>(editor->findChildWithID("studio.engine"));
+        if (!check(!browser->isVisible() && find_parameter(*plugin, "juno_preview")->getValue() > .5f && engine_badge->engine == 1,
+                   "loading another engine's preset switches engine")) return 1;
+        menu->onClick();
+        if (!check(browser->isVisible() && browser->engine() == 1, "browser follows the new engine")) return 1;
+        menu->onClick();
+        if (!check(!browser->isVisible(), "menu closes the browser")) return 1;
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;

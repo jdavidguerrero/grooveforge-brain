@@ -472,3 +472,17 @@ hasta el corte 7 y lo prueban sus tests.
 - La preview no cambia el preset cargado; A/B alterna.
 
 **No cubre:** HYBRID (2d, corte 7), bancos de usuario.
+
+### Resultado del corte 6 (2026-11-03)
+
+Navegador nuevo en SYNTH (`studio_browser.h`), abierto con ≡, el nombre del preset o B4; ≡ otra vez, ✕ o Esc lo cierran
+y la tira muestra PRESETS · TURN BROWSE · PUSH LOAD. 12/12 tests (bloque nuevo: abrir con los presets del engine,
+búsqueda, filtros de rol y rating, descarte oculto y SHOW DISCARDED, datos restaurados con el proyecto, A/B, cargar del
+mismo engine y de otro, y cerrar con ≡). Arnés de audio sin cambios.
+
+- **LOADED** se marca cuando el preset se cargó desde el navegador o con ◀ / ▶; un preset importado de un archivo no
+  tiene índice de fábrica y la cabecera lo muestra como A·—, así que ninguna fila sale LOADED.
+- El navegador viejo sigue para HYBRID (≡ en HYBRID abre el viejo) hasta el corte 7.
+- Sigue abierta la decisión de dónde guardar rating y descartes (proyecto o máquina).
+
+Siguiente: corte 7, HYBRID (2a–2h).
