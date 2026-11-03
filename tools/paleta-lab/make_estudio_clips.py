@@ -10,6 +10,7 @@ octavas, fundamentales La y Re.
 from __future__ import annotations
 
 import argparse
+import zlib
 import os
 from pathlib import Path
 
@@ -32,6 +33,100 @@ def clips() -> dict[str, list]:
             arp.append((b * BAR + s * S16, S16 - 10, seq[s % 8], 100 if s in (0, 3, 6, 8, 11, 14) else 66))
     out["pluck_arp16_kumoi"] = arp
     out.update(roll_acelerado())
+    return out
+
+
+INDIE_PROGRESSIONS = ("menor_v_prestado", "frigia_dominante", "frigia")   # caso 2: tensión al V, color indie, oscura
+
+
+def indie_progresiones() -> dict[str, list]:
+    """Caso 2 (est-indie): la misma figura que ganó en el caso 1 (décimas en tresillo) sobre tres progresiones, para
+    que lo único que cambie sea la armonía."""
+    import make_chord_lab as mcl
+    return {f"acordes_{p}__decimas__tresillo": mcl.pattern(p, "decimas", "tresillo") for p in INDIE_PROGRESSIONS}
+
+
+# bajo-groove.md §1: el bajo indie sobre Am – F – C – E (menor con V prestado), fundamentales cerca de La1
+INDIE_BASS_ROOTS = (0, -4, 3, -5)          # La1 · Fa1 · Do2 · Mi1
+SENSIBLE = 4                               # Sol# sobre Mi: la última semicorchea del compás 4 sube a La
+# (semicorchea, duración, intervalo, velocity); ninguna en 0, 4, 8, 12 (el kick)
+INDIE_BASS = {
+    "bass_indie_rodante332": [(s, 1, 12 if s == 14 else 0, 96 if s in (3, 6, 11, 14) else 50)
+                              for s in range(16) if s % 4],
+    "bass_indie_tresillo_aire": [(3, 3, 0, 98), (6, 2, 12, 84), (11, 3, 0, 96), (14, 2, 7, 82)],
+    "bass_indie_contratiempo": [(2, 2, 0, 100), (6, 1, 0, 96), (7, 1, 0, 44), (10, 2, 0, 100), (14, 1, 12, 92),
+                                (15, 1, 0, 44)],
+}
+
+
+def indie_bajos() -> dict[str, list]:
+    out = {}
+    for name, pat in INDIE_BASS.items():
+        notes = []
+        for b, root in enumerate(INDIE_BASS_ROOTS):
+            for s, d, iv, v in pat:
+                if b == 3 and s + d > 15:                    # el compás 4 deja la última semicorchea a la sensible
+                    if s == 15:
+                        continue
+                    d = 15 - s
+                notes.append((b * BAR + s * S16, d * S16 - 10, ma.A1 + root + iv, v))
+        notes.append((3 * BAR + 15 * S16, S16 - 10, ma.A1 + INDIE_BASS_ROOTS[3] + SENSIBLE, 88))
+        out[name] = sorted(notes)
+    return out
+
+
+def _cycle(period: int, offset: int = 0, bars: int = 4, ch: str = "x") -> list[str]:
+    """Un golpe cada `period` semicorcheas, corriéndose sobre los compases (polirritmo de ciclo impar)."""
+    steps = {s for s in range(offset, 16 * bars, period)}
+    return ["".join(ch if b * 16 + i in steps else "." for i in range(16)) for b in range(bars)]
+
+
+# percusion-groove.md rev. 10: tres bases nuevas en Tribe para el caso 2 (swing 50 %, graves fuera del kick)
+INDIE_PERC = {
+    "quintillo_cascara": dict(kit="tribe_colombia", swing=50, micro={"aro_madera": -2}, roles={
+        "aro_madera":    _cycle(5),                                     # Tambora Cáscara cada 5: vuelve en 5 compases
+        "grave_apagado": ["......x.......x."],                         # Tambora Damped en la "a" del 2 y del 4
+        "medio_apagado": ["...........o....", "...o.......o...."]},    # Alegre Bajoneo, escaso
+        intro=["aro_madera"], fill={"grave_apagado": "......x....x.xXX"},
+        peak={"raspado": "..x...x...x...x."}),                         # Guacharaca a contratiempo
+    "llamador_seco": dict(kit="tribe_colombia", swing=50, micro={"campana_aguda": -3}, roles={
+        "campana_aguda": ["..x...x...x...x."],                         # Llamador Bajoneo: el contratiempo cumbiero
+        "grave_apagado": ["...x.......x....", "...x.......x..x."],     # Tambora Damped sincopada
+        "agudo_slap":    ["................", "..............X."]},    # un Alegre Quemao cada 2 compases
+        intro=["campana_aguda"], fill={"grave_apagado": "...x.......x.xXX"},
+        peak={"sacudido_corto": "gxgxgxgxgxgxgxgx"}),                  # Guache
+    "bullerengue_tech": dict(kit="tribe_colombia", swing=50, micro={"medio_apagado": 2}, roles={
+        "medio_apagado": ["x..x..x.x..x..x."],                         # Alegre Bajoneo en 3-3-2
+        "grave_apagado": ["...x.......x....", "...x......x....."],     # Tambora Damped en las síncopas
+        "caja":          ["................", "........x......."]},    # Caja Fondo en el 3 del compás 2 y 4
+        intro=["medio_apagado"], fill={"medio_apagado": "x..x..x.x..xxxXX"},
+        peak={"raspado": "x.x.x.x.x.x.x.x."}),                         # Guacharaca en corcheas
+    # Rev. 10b: Juan pide el 3-3-2 en toda base (claves o toms, estilo tribal). Las tres opciones lo llevan; cambia quién.
+    "cascara_332": dict(kit="tribe_colombia", swing=50, micro={"aro_madera": -2}, roles={
+        "aro_madera":    ["x..x..x.x..x..x."],                         # la clave: Tambora Cáscara en 3-3-2 por medio compás
+        "grave_apagado": [".......x.......x", ".......x......x."],     # Tambora Damped en la "a" que cierra cada 3-3-2
+        "campana_aguda": ["..x.......x....."]},                        # Llamador Bajoneo a contratiempo, escaso
+        intro=["aro_madera"], fill={"grave_apagado": ".......x...x.xXX"},
+        peak={"sacudido_corto": "gxgxgxgxgxgxgxgx"}),                  # Guache
+    "toms_332_largo": dict(kit="tribe_colombia", swing=50, micro={"medio_abierto": 2}, roles={
+        "medio_abierto": ["x.....x.....x...", "x.....x.....x.x."],     # Alegre Abierto (tom medio) en 3-3-2 de corcheas
+        "grave_apagado": ["...x.....x......", "...x.....x....x."],     # Tambora Damped respondiendo entre los toms
+        "agudo_abierto": ["..........x.....", ".........x....x."]},    # Llamador Abierto (tom agudo), pregunta y respuesta
+        intro=["medio_abierto"], fill={"grave_apagado": "...x.....x.x.xXX"},
+        peak={"raspado": "x.x.x.x.x.x.x.x."}),                         # Guacharaca en corcheas
+}
+
+PERC_332 = ("bullerengue_tech", "cascara_332", "toms_332_largo")       # la audición 2 del caso 2
+
+
+def indie_perc(bpm: float = 124.0) -> dict[str, list]:
+    import make_perc_patterns as mp
+    out = {}
+    for name, p in INDIE_PERC.items():
+        for version in ("main", "peak"):
+            notes, missing = mp.to_tribe(mp.notes_of(mp.arrange(p, version), bpm, micro=True, seed=zlib.crc32(name.encode())))
+            assert not missing, missing
+            out[f"perc_{name}_{version}_tribe"] = sorted(notes)
     return out
 
 
@@ -62,6 +157,11 @@ def main(argv=None):
     for name, notes in clips().items():
         write_mid(out / f"{name}.mid", notes, 124, name)
         print(out / f"{name}.mid")
+    indie = Path(a.dataset) / "midi" / "adn" / "estudio_indie"
+    indie.mkdir(parents=True, exist_ok=True)
+    for name, notes in {**indie_progresiones(), **indie_perc(), **indie_bajos()}.items():
+        write_mid(indie / f"{name}.mid", notes, 124, name)
+        print(indie / f"{name}.mid")
 
 
 if __name__ == "__main__":

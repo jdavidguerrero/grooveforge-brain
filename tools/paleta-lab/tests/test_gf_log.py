@@ -137,3 +137,86 @@ def test_roll_acelerado_dobla_la_densidad_cada_dos_compases():
     assert vels[0] < vels[-1] <= 127
     tribe = [n for _, _, n, _ in mec.roll_acelerado()["roll_acelerado_tribe"] if n in (71, 72)]
     assert all(a != b for a, b in zip(tribe, tribe[1:]))                    # manos alternando golpe a golpe
+
+
+def ficha(ds):
+    (ds / "metadata" / "sesiones").mkdir(parents=True)
+    (ds / "metadata" / "sesiones" / "2026-10-28_bass.json").write_text(json.dumps({
+        "rol": "bass", "decisiones": [{"a": "GF AFRO SUB", "b": "ROLLER SUB", "elegido": "ambos (papeles distintos)",
+                                       "por_que": "uno sub, otro mid"}],
+        "prefiltro": {"probados": ["GF AFRO SUB", "WOODBASS (capa)"], "pasan": {"preset": "GF AFRO SUB"}},
+        "elegidos": [{"sonido": "GF AFRO SUB", "ganador": True}, {"sonido": "ROLLER SUB"}],
+        "rechazados": [{"sonido": "WOODBASS", "por_que": "flojo"}]}))
+
+
+def test_migracion_idempotente_y_sin_inventar(ds):
+    import migrate_v1 as mv
+    ficha(ds)
+    _, new = mv.migrate(write=True)
+    assert len(new) == 3
+    _, again = mv.migrate(write=True)
+    assert again == [] and len(gf_log.load_events()) == 3
+    dec = {e["migrated"]["source"].split("#")[1]: e for e in gf_log.load_events()}
+    assert dec["decisiones[0]"]["decision"]["state"] == "multiple_useful"            # "ambos" no es preferencia
+    assert dec["elegidos"]["decision"]["state"] == "prefer"
+    for e in gf_log.load_events():
+        assert all(o["patch"]["match"] in ("name_match_only", "unknown") for o in e["options"])   # nunca exact
+        assert "not_auditioned" not in {o["listen"] for o in e["options"]}
+    assert gf_log.preferences(gf_log.load_events()) == [("opt1", "opt2"), ("opt1", "opt3")]
+
+
+def test_quitar_no_es_rechazo_y_las_reglas_las_confirma_juan(ds):
+    u = gf_log.record_use("p", "removed", "pad")
+    assert u["reason"] == "missing"
+    r = gf_log.record_rule("ganan los que dejan espacio", "tendencia_observada", "mezcla completa", [])
+    assert r["status"] == "hypothesis"
+    with pytest.raises(SystemExit):
+        gf_log.set_rule(r["event_id"], "confirmed", "")
+    with pytest.raises(SystemExit):
+        gf_log.record_rule("riser + roll", "preferencia_declarada", "breaks", [])
+    gf_log.set_rule(r["event_id"], "confirmed", "sí, así lo siento")
+    assert gf_log.rule_state(gf_log.load_events())[r["event_id"]]["status"] == "confirmed"
+    assert gf_log.stats(gf_log.load_events())["reglas"]["confirmed"] == 1
+
+
+def test_audicion_de_clips_con_la_misma_capa(ds, tmp_path):
+    (ds / "midi").mkdir()
+    import make_test_clips as mtc
+    mtc.write_mid(ds / "midi" / "x.mid", [(0, 480, 45, 90)], 124, "x")
+    mtc.write_mid(ds / "midi" / "y.mid", [(0, 480, 47, 90)], 124, "y")
+    layers = [("UNO", b"\x01"), ("DOS", b"\x02")]
+    prep = mau.prepare_clips(tmp_path / "aud", ["x.mid", "y.mid"], "DOS", layers, "p1", {}, seed=3,
+                             exploration=("y.mid",))
+    assert {o["patch"]["name"] for o in prep["options"]} == {"DOS"}
+    assert {o["midi"]["path"] for o in prep["options"]} == {"midi/x.mid", "midi/y.mid"}
+    assert [o["exploration"] for o in prep["options"] if o["midi"]["path"] == "midi/y.mid"] == [True]
+
+
+def test_bases_indie_graves_fuera_del_kick_y_reproducibles():
+    import make_estudio_clips as mec
+    import make_perc_patterns as mp
+    graves = {mp.TRIBE[a] for r in ("grave_abierto", "grave_apagado") for a in mp.TRIBE_ROLES[r]}
+    a, b = mec.indie_perc(), mec.indie_perc()
+    assert a == b and len(a) == 2 * len(mec.INDIE_PERC)
+    for notes in a.values():
+        assert notes and all(round(t / 120) % 4 != 0 for t, _, n, _ in notes if n in graves)   # 120 ticks = 1/16
+
+
+def test_las_bases_332_llevan_el_3_3_2():
+    import make_estudio_clips as mec
+    for name in mec.PERC_332:
+        lines = [l for bars in mec.INDIE_PERC[name]["roles"].values() for l in bars]
+        steps = [{i for i, c in enumerate(l) if c != "."} for l in lines]
+        assert any({0, 3, 6} <= s or {0, 6, 12} <= s for s in steps), name     # 3-3-2 en semicorcheas o en corcheas
+
+
+def test_bajos_indie_fuera_del_kick_y_con_la_sensible():
+    import make_estudio_clips as mec
+    bajos = mec.indie_bajos()
+    assert set(bajos) == set(mec.INDIE_BASS)
+    for name, notes in bajos.items():
+        assert all(round(t / 120) % 4 != 0 for t, *_ in notes), name                 # nada en las negras del kick
+        last = max(notes)
+        assert last[0] == 3 * 1920 + 15 * 120 and last[2] == 33 - 1, name            # Sol#1 resuelve en el La1
+        assert all(t + d <= 4 * 1920 for t, d, *_ in notes)
+        assert all(28 <= n <= 36 + 12 for _, _, n, _ in notes), name                 # Mi1 … Do3
