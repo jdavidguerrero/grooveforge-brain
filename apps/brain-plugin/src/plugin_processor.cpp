@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "studio_look_and_feel.h"
+#include "studio_shell.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -709,6 +710,7 @@ public:
     void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); reset_dc_blocker(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
+        const auto started = juce::Time::getHighResolutionTicks();
         buffer.clear();
         const bool hybrid_mode = hybrid_enabled_->load() >= 0.5f;
         const bool arp2600_mode = !hybrid_mode && arp2600_enabled_->load() >= 0.5f;
@@ -820,6 +822,7 @@ public:
                 running = position_info->getIsPlaying();
             }
         }
+        host_bpm_.store(bpm, std::memory_order_relaxed);
         engine_.set_transport(bpm, has_position, position_beats, running);
         dx_bus_.set_transport(bpm, has_position, position_beats, running);
         juno_bus_.set_transport(bpm, has_position, position_beats, running);
@@ -1167,7 +1170,16 @@ public:
             }
         }
         meter_state_.publish(meter_left, meter_right);
+        if (buffer.getNumSamples() > 0 && sample_rate_ > 0.0) {   // CPU = tiempo de este bloque / duración del bloque
+            const double spent = juce::Time::highResolutionTicksToSeconds(juce::Time::getHighResolutionTicks() - started);
+            const float load = float(spent * sample_rate_ / double(buffer.getNumSamples()));
+            cpu_load_.store(cpu_load_.load(std::memory_order_relaxed) * .95f + load * .05f, std::memory_order_relaxed);
+        }
     }
+    /** BPM que entregó el host en el último bloque (120 sin transporte). */
+    float host_bpm() const noexcept { return host_bpm_.load(std::memory_order_relaxed); }
+    /** Carga del callback de audio, 0–1, promedio móvil. */
+    float cpu_load() const noexcept { return cpu_load_.load(std::memory_order_relaxed); }
     /** Audition a factory preset or project layer without changing this processor's state. */
     bool preview_bank_item(int engine, unsigned index) {
         preview_active_.store(false, std::memory_order_release);
@@ -3121,6 +3133,7 @@ private:
     std::atomic<double> preview_sample_rate_{44100.0};
     std::vector<float> preview_left_, preview_right_;
     float preview_mix_ = 0.0f;
+    std::atomic<float> host_bpm_{120.0f}, cpu_load_{0.0f};
     float dc_r_ = 0.99928796f;                 // exp(−2π·5/44100), por si se procesa antes de prepareToPlay
     std::array<float, 2> dc_x1_{}, dc_y1_{};
     std::array<std::atomic<bool>, 128> keyboard_desired_{};
@@ -3831,6 +3844,7 @@ public:
         status_.setColour(juce::Label::textColourId, juce::Colour(0xff9fe1cb));
         status_.setJustificationType(juce::Justification::centred);
         status_.setFont(juce::Font(juce::FontOptions(12.0f)));
+        setup_shell();
         update_status();
         addAndMakeVisible(status_);
         startTimerHz(5);
@@ -3844,16 +3858,15 @@ public:
 
     void paint(juce::Graphics& g) override {
         g.fillAll(juce::Colour(0xff0a0a0a));
-        const float scale = juce::jmin(float(getWidth()) / 720.0f, float(getHeight()) / (keyboard_open_ ? 576.0f : 456.0f));
+        {
+            juce::Graphics::ScopedSaveState save(g);
+            g.addTransform(juce::AffineTransform::scale(shell_scale()));
+            paint_chrome(g);
+        }
+        if (fx_view_ || engine_view_) return;
         const auto accent = juce::Colour(hybrid_toggle_.getToggleState() ? 0xff2fa8c8 : 0xff1d9e75);
-        g.setColour(accent); g.fillRect(0, 0, getWidth(), juce::jmax(2, int(scale)));
-        g.setColour(juce::Colour(0xff242424)); g.drawHorizontalLine(int(40.0f * scale), 0.0f, float(getWidth()));
-        g.setColour(juce::Colour(0xfff2f2f2));
-        g.setFont(juce::Font(juce::FontOptions(10.0f * scale, juce::Font::bold)));
-        g.drawText("GROOVEFORGE  /  BRAIN", int(16 * scale), int(8 * scale), int(220 * scale), int(22 * scale), juce::Justification::left);
-        g.setColour(accent);
-        g.drawText(hybrid_toggle_.getToggleState() ? "HYBRID" : "SYNTH", int(245 * scale), int(8 * scale), int(100 * scale), int(22 * scale), juce::Justification::left);
-        g.addTransform(juce::AffineTransform::scale(scale).translated(0.0f, 80.0f * scale));
+        g.reduceClipRegion(design_to_editor({0, 112, 1200, 488}));
+        g.addTransform(legacy_transform());
         g.setColour(juce::Colour(0xff141414));
         g.fillRoundedRectangle(18.0f, 74.0f, 684.0f, 250.0f, 6.0f);
         if (hybrid_toggle_.getToggleState() && hybrid_page_index_ == 0) {
@@ -3904,15 +3917,6 @@ public:
                 g.drawText(enabled.getValue() >= 0.5 ? "ON" : "OFF", 30, int(y) + 33, 50, 16, juce::Justification::left);
             }
         }
-        g.setColour(juce::Colour(0xff5dcaa5));
-        g.setFont(juce::Font(juce::FontOptions(14.0f, juce::Font::bold)));
-        g.drawText("GROOVEFORGE  /  BRAIN", 28, 15, 350, 24, juce::Justification::left);
-        g.setColour(juce::Colour(0xfff2f2f2));
-        g.setFont(juce::Font(juce::FontOptions(22.0f, juce::Font::bold)));
-        g.drawText(hybrid_toggle_.getToggleState() ? "HYBRID" : arp2600_toggle_.getToggleState() ? "ARP 2600" : modeld_toggle_.getToggleState() ? "MODEL D" : ob6_toggle_.getToggleState() ? "OB-6" : juno_toggle_.getToggleState() ? "JUNO" : dx7_toggle_.getToggleState() ? "DX7" : "PROPHET", 28, 40, 155, 28, juce::Justification::left);
-        g.setColour(juce::Colour(0xff9fe1cb));
-        g.setFont(juce::Font(juce::FontOptions(12.0f)));
-        if (!hybrid_toggle_.getToggleState() && !arp2600_toggle_.getToggleState() && !dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState() && !modeld_toggle_.getToggleState()) g.drawText(juce::String::fromUTF8("EXPERIMENTAL  ·  5 VOCES"), 400, 42, 290, 24, juce::Justification::right);
     }
 
     void resized() override {
@@ -4101,16 +4105,26 @@ public:
             }
         }
         status_.setBounds(28, 328, 720 - 56, 24);
-        const float scale = juce::jmin(float(getWidth()) / 720.0f, float(getHeight()) / (keyboard_open_ ? 576.0f : 456.0f));
-        const auto transform = juce::AffineTransform::scale(scale).translated(0.0f, 80.0f * scale);
-        for (int i = 0; i < getNumChildComponents(); ++i)
-            getChildComponent(i)->setTransform(transform);
+        layout_shell();
+        const auto legacy = legacy_transform(), shell = juce::AffineTransform::scale(shell_scale());
+        for (int i = 0; i < getNumChildComponents(); ++i) {
+            auto* child = getChildComponent(i);
+            child->setTransform(std::find(shell_.begin(), shell_.end(), child) != shell_.end() ? shell : legacy);
+        }
     }
 
 private:
     void handleNoteOn(juce::MidiKeyboardState*, int, int note, float) override { owner_.set_keyboard_note(note, true); }
     void handleNoteOff(juce::MidiKeyboardState*, int, int note, float) override { owner_.set_keyboard_note(note, false); }
+    /** Páginas viejas (visibilidad por índice de página) y después el armazón de la referencia. */
     void update_status() {
+        if (in_update_) return;
+        in_update_ = true;
+        update_legacy_status();
+        apply_shell();
+        in_update_ = false;
+    }
+    void update_legacy_status() {
         const auto name = owner_.preset_name();
         displayed_preset_ = name;
         const bool hybrid = hybrid_toggle_.getToggleState();
@@ -4313,7 +4327,426 @@ private:
     }
     void timerCallback() override {
         if (dx_groove_group_labels_[0].isVisible() || juno_groove_group_labels_[0].isVisible()) repaint();
+        enc_l_.repaint(); enc_r_.repaint();
+        for (auto& knob : macros_) knob->repaint();
+        repaint(design_to_editor({1056, 8, 104, 48}));
         if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState() || displayed_modeld_ != modeld_toggle_.getToggleState() || displayed_arp2600_ != arp2600_toggle_.getToggleState() || displayed_hybrid_ != hybrid_toggle_.getToggleState() || displayed_hybrid_revision_ != owner_.hybrid_revision() || displayed_hybrid_bank_revision_ != owner_.hybrid_bank_revision() || (hybrid_toggle_.getToggleState() && displayed_hybrid_focus_ != (owner_.parameters().getRawParameterValue("hybrid.focus")->load() >= 0.5f ? 1 : 0))) update_status();
+    }
+
+    // ---- Armazón de la referencia (apps/docs/sprints/gemelo-vst-ui-migracion.md, corte 1) ----
+    static constexpr const char* TAB_NAMES[6] = {"PERFORM", "OSC", "ENV", "LFO \xc2\xb7 MOD", "GROOVE", "FX"};
+    float shell_scale() const { return float(getWidth()) / 1200.0f; }
+    /** Páginas viejas (720 × 456 lógicos): su franja y 74–352 cae en el área de contenido 112–600 de la referencia. */
+    juce::AffineTransform legacy_transform() const {
+        constexpr float k = 1200.0f / 720.0f;
+        return juce::AffineTransform::scale(k).translated(0.0f, 120.0f - 74.0f * k).scaled(shell_scale());
+    }
+    juce::Rectangle<int> design_to_editor(juce::Rectangle<int> r) const {
+        return r.toFloat().transformedBy(juce::AffineTransform::scale(shell_scale())).getSmallestIntegerContainer();
+    }
+    /** 0 Model D · 1 Juno · 2 Prophet · 3 OB-6 · 4 DX7 · 5 ARP 2600 · 6 HYBRID (el mismo orden que el navegador). */
+    int current_kind() const {
+        if (hybrid_toggle_.getToggleState()) return 6;
+        if (arp2600_toggle_.getToggleState()) return 5;
+        if (modeld_toggle_.getToggleState()) return 0;
+        if (ob6_toggle_.getToggleState()) return 3;
+        if (juno_toggle_.getToggleState()) return 1;
+        if (dx7_toggle_.getToggleState()) return 4;
+        return 2;
+    }
+    int hybrid_focus() const { return owner_.parameters().getRawParameterValue("hybrid.focus")->load() >= 0.5f ? 1 : 0; }
+    int* legacy_index(int kind) {
+        switch (kind) {
+            case 6: return &hybrid_page_index_;
+            case 5: return &arp2600_page_index_;
+            case 0: return &modeld_page_index_;
+            case 3: return &ob6_page_index_;
+            case 1: return &juno_page_index_;
+            case 4: return &dx_page_index_;
+            default: return nullptr;
+        }
+    }
+    /** Páginas viejas detrás de cada pestaña; `any_side` incluye las dos mitades de HYBRID. MACRO va con GROOVE (1g). */
+    static std::vector<int> pages_for(int kind, int tab, int focus, bool any_side = false) {
+        if (kind == 6) {
+            switch (tab) {
+                case 0: return {0, 1};
+                case 1: return any_side ? std::vector<int>{7, 8} : std::vector<int>{7 + focus};
+                case 2: return any_side ? std::vector<int>{5, 6} : std::vector<int>{5 + focus};
+                case 3: return any_side ? std::vector<int>{9, 10} : std::vector<int>{9 + focus};
+                case 4: return {3, 2};
+                default: return {4};
+            }
+        }
+        if (kind == 0 || kind == 3 || kind == 5) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {6}, {3, 5}, {4}}; return t[tab]; }
+        if (kind == 1) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {3}, {5, 4, 7}, {6}}; return t[tab]; }
+        if (kind == 4) { static const std::vector<int> t[6] = {{1}, {0}, {1}, {5}, {3, 4}, {2}}; return t[tab]; }
+        return {};
+    }
+    static juce::String page_label(int kind, int page) {
+        if (kind == 6) return page == 0 ? "LAYERS" : page == 1 ? "FILTER" : page == 2 ? "MACRO" : "GROOVE";
+        if (kind == 1) return page == 4 ? "UNISON" : page == 7 ? "MACRO" : "GROOVE";
+        if (kind == 4) return page == 4 ? "MACRO" : "GROOVE";
+        return page == 5 ? "MACRO" : "GROOVE";
+    }
+    void select_tab(int tab) {
+        if (fx_view_) return;
+        engine_view_ = false; studio_tab_ = tab; sub_index_ = 0;
+        const int kind = current_kind();
+        const auto pages = pages_for(kind, tab, hybrid_focus());
+        if (auto* index = legacy_index(kind); index && !pages.empty()) *index = pages.front();
+        update_status();
+    }
+    void select_sub(int i) {
+        const int kind = current_kind();
+        const auto pages = pages_for(kind, studio_tab_, hybrid_focus());
+        if (i < 0 || i >= int(pages.size())) return;
+        sub_index_ = i;
+        if (auto* index = legacy_index(kind)) *index = pages[size_t(i)];
+        update_status();
+    }
+    void set_hybrid_mode(bool hybrid) {
+        fx_view_ = false; engine_view_ = false; studio_tab_ = 0; sub_index_ = 0;
+        auto* p = owner_.parameters().getParameter("hybrid_preview");
+        p->beginChangeGesture(); p->setValueNotifyingHost(hybrid ? 1.0f : 0.0f); p->endChangeGesture();
+        if (auto* index = legacy_index(current_kind())) *index = pages_for(current_kind(), 0, hybrid_focus()).front();
+        update_status();
+    }
+    void set_focus(int side) {
+        auto* p = owner_.parameters().getParameter("hybrid.focus");
+        p->beginChangeGesture(); p->setValueNotifyingHost(float(side)); p->endChangeGesture();
+        update_status();
+    }
+    void step_preset(int direction) {
+        const int count = preset_browser_.getNumItems();
+        if (count <= 0) return;
+        const int current = preset_browser_.getSelectedId();
+        const int next = current <= 0 ? (direction > 0 ? 1 : count) : (current - 1 + direction + count) % count + 1;
+        preset_browser_.setSelectedId(next, juce::sendNotificationSync);
+        update_status();
+    }
+    void pick_engine(int engine) {
+        studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> data{};
+        if (!studio::factory_preset(uint8_t(engine), 0, &preset)) return;
+        const auto size = studio::preset_encode(preset, uint8_t(engine), data.data(), data.size());
+        if (!size) return;
+        if (current_kind() == 6) {
+            const int side = hybrid_focus();
+            if (owner_.hybrid_engine_id(unsigned(1 - side)) == engine) return;
+            owner_.import_hybrid_half(data.data(), size, unsigned(side));
+        } else {
+            owner_.import_preset(data.data(), size);
+        }
+        engine_view_ = false; studio_tab_ = 0; sub_index_ = 0;
+        if (auto* index = legacy_index(current_kind())) *index = pages_for(current_kind(), 0, hybrid_focus()).front();
+        update_status();
+    }
+    void setup_shell() {
+        using namespace studio_ui;
+        auto add = [this](juce::Component& c, const juce::String& id, bool visible = true) {
+            c.setComponentID(id);
+            if (visible) addAndMakeVisible(c); else addChildComponent(c);
+            shell_.push_back(&c);
+        };
+        constexpr const char* modes[] = {"SYNTH", "HYBRID", "FX \xc2\xb7 LATER"};
+        for (int i = 0; i < 3; ++i) {
+            mode_buttons_[size_t(i)].text = utf8(modes[i]);
+            add(mode_buttons_[size_t(i)], "studio.mode." + juce::String(i));
+        }
+        mode_buttons_[0].onClick = [this] { set_hybrid_mode(false); };
+        mode_buttons_[1].onClick = [this] { set_hybrid_mode(true); };
+        mode_buttons_[2].onClick = [this] { fx_view_ = true; engine_view_ = false; update_status(); };
+        mode_buttons_[2].dashed = true;
+        engine_badge_.onClick = [this] { if (!fx_view_) { engine_view_ = !engine_view_; update_status(); } };
+        add(engine_badge_, "studio.engine");
+        preset_prev_.text = utf8("\xe2\x97\x80"); preset_next_.text = utf8("\xe2\x96\xb6"); preset_menu_.text = utf8("\xe2\x89\xa1");
+        preset_menu_.size = 13.0f;
+        preset_prev_.onClick = [this] { step_preset(-1); };
+        preset_next_.onClick = [this] { step_preset(1); };
+        auto open_browser = [this] { if (!fx_view_ && browse_button_.onClick) { engine_view_ = false; browse_button_.onClick(); update_status(); } };
+        preset_menu_.onClick = open_browser; preset_name_area_.onClick = open_browser;
+        preset_name_area_.border = juce::Colours::transparentBlack;
+        add(preset_prev_, "studio.preset.prev"); add(preset_next_, "studio.preset.next");
+        add(preset_menu_, "studio.preset.menu"); add(preset_name_area_, "studio.preset.name");
+        for (int i = 0; i < 4; ++i) {
+            bank_buttons_[size_t(i)].text = juce::String::charToString(juce::juce_wchar('A' + i));
+            add(bank_buttons_[size_t(i)], "studio.bank." + juce::String(i));
+        }
+        for (int i = 0; i < 6; ++i) {
+            studio_tabs_[size_t(i)].size = 13.0f;
+            studio_tabs_[size_t(i)].onClick = [this, i] { select_tab(i); };
+            add(studio_tabs_[size_t(i)], "studio.tab." + juce::String(i));
+        }
+        for (int i = 0; i < 2; ++i) {
+            ab_buttons_[size_t(i)].onClick = [this, i] { set_focus(i); };
+            add(ab_buttons_[size_t(i)], "studio.ab." + juce::String(i), false);
+        }
+        layer_note_.dashed = true; layer_note_.text = utf8("LAYER \xc2\xb7 FROM A"); layer_note_.setEnabled(true);
+        add(layer_note_, "studio.layer.note", false);
+        for (int i = 0; i < 3; ++i) {
+            sub_tabs_[size_t(i)].onClick = [this, i] { select_sub(i); };
+            add(sub_tabs_[size_t(i)], "studio.sub." + juce::String(i), false);
+        }
+        act_save_layer_.text = "SAVE LAYER"; act_save_layer_.onClick = [this] { if (hybrid_save_.onClick) hybrid_save_.onClick(); };
+        act_import_.text = "IMPORT GFP"; act_import_.onClick = [this] { if (import_.onClick) import_.onClick(); };
+        act_export_.text = "EXPORT GFP"; act_export_.onClick = [this] { if (export_.onClick) export_.onClick(); };
+        add(act_save_layer_, "studio.action.save_layer", false); add(act_import_, "studio.action.import"); add(act_export_, "studio.action.export", false);
+        enc_l_.caption = "ENC L"; enc_r_.caption = "ENC R"; enc_r_.right_aligned = true;
+        add(enc_l_, "studio.enc.l"); add(enc_r_, "studio.enc.r");
+        constexpr const char* keys[] = {"OSC", "ENV", "LFO \xc2\xb7 MOD", "PRESET"};
+        for (int i = 0; i < 4; ++i) {
+            soft_keys_[size_t(i)].caption = "B" + juce::String(i + 1);
+            soft_keys_[size_t(i)].text = utf8(keys[i]);
+            soft_keys_[size_t(i)].size = 13.0f;
+            add(soft_keys_[size_t(i)], "studio.key.b" + juce::String(i + 1));
+        }
+        for (int i = 0; i < 3; ++i) soft_keys_[size_t(i)].onClick = [this, i] { select_tab(i + 1); };
+        soft_keys_[3].onClick = open_browser;
+        mode_key_.caption = "B5"; mode_key_.text = "MODE";
+        mode_key_.onClick = [this] { if (!fx_view_) set_hybrid_mode(current_kind() != 6); };
+        add(mode_key_, "studio.key.b5");
+        constexpr const char* macro_names[] = {"DRIFT", "GRIT", "POCKET", "MORPH", "MOVE"};
+        constexpr const char* macro_cc[] = {"CC 14", "CC 15", "CC 16", "CC 17", "CC 19"};
+        for (int i = 0; i < 5; ++i) {
+            macros_[size_t(i)] = std::make_unique<MacroKnob>(macro_names[i], macro_cc[i]);
+            add(*macros_[size_t(i)], "studio.macro." + juce::String(macro_names[i]).toLowerCase());
+        }
+        engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
+        add(engine_select_, "studio.engine.select", false);
+        add(fx_later_, "studio.fx.later", false);
+        for (auto* c : std::initializer_list<juce::Component*>{&output_meter_, &keyboard_toggle_, &keyboard_, &browser_panel_, &sync_})
+            shell_.push_back(c);
+    }
+    void bind_strip(int kind) {
+        auto& state = owner_.parameters();
+        const bool hybrid = kind == 6;
+        const int focus = hybrid_focus();
+        const char* cutoff = fx_view_ ? nullptr : kind == 4 ? "dx7.cutoff" : hybrid ? (focus ? "hybrid.b.cutoff" : "hybrid.a.cutoff") : "cutoff";
+        const char* resonance = fx_view_ ? nullptr : kind == 4 ? "dx7.resonance" : hybrid ? (focus ? "hybrid.b.resonance" : "hybrid.a.resonance") : "resonance";
+        enc_l_.bind(cutoff ? state.getParameter(cutoff) : nullptr, "CUTOFF", "HZ");
+        enc_r_.bind(resonance ? state.getParameter(resonance) : nullptr, "RESONANCE");
+        const int key = fx_view_ ? -1 : kind;
+        if (key == shell_engine_) return;
+        shell_engine_ = key;
+        static const char* drift[7] = {"modeld.drift", "juno.drift", nullptr, "ob6.drift", "dx7.drift", "arp2600.drift", "hybrid.macro.drift"};
+        const char* const* trio = kind == 0 ? MODELD_MACRO_IDS.data() : kind == 1 ? JUNO_MACRO_IDS.data() : kind == 3 ? OB6_MACRO_IDS.data()
+            : kind == 4 ? DX_MACRO_IDS.data() : kind == 5 ? ARP2600_MACRO_IDS.data() : hybrid ? HYBRID_MACRO_IDS.data() + 1 : nullptr;
+        const bool on = key >= 0;
+        macros_[0]->bind(state, on ? drift[kind] : nullptr);
+        for (int i = 0; i < 3; ++i) macros_[size_t(i == 2 ? 4 : i + 1)]->bind(state, on && trio ? trio[i] : nullptr);
+        macros_[3]->bind(state, on && hybrid ? "hybrid.morph" : nullptr);
+    }
+    void apply_shell() {
+        using namespace studio_ui;
+        const int kind = current_kind();
+        const bool hybrid = kind == 6;
+        int focus = hybrid ? hybrid_focus() : 0;
+        const Mode m = fx_view_ ? fx_mode() : hybrid ? hybrid_mode() : synth_mode();
+        const bool can_export = export_.isVisible();
+        const bool focus_changed = focus != shell_focus_;
+        for (auto& tab : page_tabs_) tab.setVisible(false);
+        for (auto* c : std::initializer_list<juce::Component*>{&juno_toggle_, &dx7_toggle_, &ob6_toggle_, &modeld_toggle_, &hybrid_toggle_, &arp2600_toggle_,
+                                                               &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
+            c->setVisible(false);
+        // La pestaña sigue a la página vieja (otros controles también la cambian); con el foco de HYBRID, la página sigue a la pestaña.
+        if (auto* index = legacy_index(kind)) {
+            if (!pages_for(kind, studio_tab_, focus, true).empty()) {
+                const auto mine = pages_for(kind, studio_tab_, focus, true);
+                if (std::find(mine.begin(), mine.end(), *index) == mine.end())
+                    for (int tab = 0; tab < 6; ++tab) {
+                        const auto any = pages_for(kind, tab, focus, true);
+                        if (std::find(any.begin(), any.end(), *index) != any.end()) { studio_tab_ = tab; break; }
+                    }
+            }
+            sub_pages_ = pages_for(kind, studio_tab_, focus);
+            const auto at = std::find(sub_pages_.begin(), sub_pages_.end(), *index);
+            if (at != sub_pages_.end()) sub_index_ = int(at - sub_pages_.begin());
+            else {
+                const auto any = pages_for(kind, studio_tab_, focus, true);
+                if (std::find(any.begin(), any.end(), *index) != any.end() && !sub_pages_.empty() && !focus_changed) {
+                    // Otro control abrió la página de la otra mitad: el foco la sigue (como la misma tecla otra vez en el panel).
+                    const int side = *index == any[1] ? 1 : 0;
+                    auto* p = owner_.parameters().getParameter("hybrid.focus");
+                    p->beginChangeGesture(); p->setValueNotifyingHost(float(side)); p->endChangeGesture();
+                    focus = side;
+                    sub_pages_ = pages_for(kind, studio_tab_, focus);
+                } else if (std::find(any.begin(), any.end(), *index) != any.end() && !sub_pages_.empty()) {
+                    *index = sub_pages_[size_t(juce::jlimit(0, int(sub_pages_.size()) - 1, sub_index_))];
+                    update_legacy_status();
+                    for (auto& tab : page_tabs_) tab.setVisible(false);
+                    for (auto* c : std::initializer_list<juce::Component*>{&juno_toggle_, &dx7_toggle_, &ob6_toggle_, &modeld_toggle_, &hybrid_toggle_, &arp2600_toggle_,
+                                                                           &hybrid_page_, &dx_page_, &juno_page_, &preset_browser_, &browse_button_, &import_, &export_, &hybrid_save_})
+                        c->setVisible(false);
+                }
+            }
+        } else {
+            studio_tab_ = 0; sub_pages_.clear();
+        }
+        for (int i = 0; i < 3; ++i) {
+            const Mode mm = i == 0 ? synth_mode() : i == 1 ? hybrid_mode() : fx_mode();
+            const bool on = i == (fx_view_ ? 2 : hybrid ? 1 : 0);
+            mode_buttons_[size_t(i)].style(on ? mm.mc : juce::Colours::transparentBlack, on ? mm.mc : colour::LINE,
+                                           on ? mm.on : i == 2 ? colour::MON : colour::GRAY);
+            mode_buttons_[size_t(i)].dashed = i == 2 && !on;
+        }
+        engine_badge_.kind = fx_view_ ? EngineBadge::Kind::fx : hybrid ? EngineBadge::Kind::hybrid : EngineBadge::Kind::synth;
+        engine_badge_.engine = kind == 6 ? 2 : kind; engine_badge_.mode = m; engine_badge_.focus = focus;
+        if (hybrid) { engine_badge_.a = owner_.hybrid_engine_id(0); engine_badge_.b = owner_.hybrid_engine_id(1); }
+        engine_badge_.repaint();
+        for (auto* b : {&preset_prev_, &preset_next_, &preset_menu_}) {
+            b->setEnabled(!fx_view_);
+            b->style(juce::Colours::transparentBlack, colour::LINE, colour::GRAY);
+        }
+        if (browser_panel_.isVisible()) preset_menu_.style(m.hi, colour::LINE, m.on);
+        for (int i = 0; i < 4; ++i) {
+            auto& b = bank_buttons_[size_t(i)];
+            b.setVisible(!hybrid && !fx_view_);
+            b.setEnabled(i == 0);
+            b.style(i == 0 ? m.dim : juce::Colours::transparentBlack, i == 0 ? m.hi : colour::LINE, i == 0 ? colour::WHITE : colour::MON);
+        }
+        for (int i = 0; i < 6; ++i) {
+            auto& t = studio_tabs_[size_t(i)];
+            t.text = utf8(hybrid && i == 0 ? "HOME" : TAB_NAMES[i]);
+            const bool available = !fx_view_ && (kind == 2 ? i == 0 : !pages_for(kind, i, focus).empty());
+            const bool on = available && !engine_view_ && i == studio_tab_;
+            t.setEnabled(available);
+            t.style(on ? colour::SURFACE_2 : juce::Colours::transparentBlack, juce::Colours::transparentBlack,
+                    on ? colour::WHITE : available ? colour::GRAY : colour::MON, on ? m.mc : juce::Colours::transparentBlack);
+        }
+        const bool layer_wide = studio_tab_ == 4 || studio_tab_ == 5;
+        for (int side = 0; side < 2; ++side) {
+            auto& b = ab_buttons_[size_t(side)];
+            b.setVisible(hybrid && !fx_view_ && !engine_view_ && !layer_wide);
+            b.text = utf8(side == 0 ? "A \xc2\xb7 " : "B \xc2\xb7 ") + engines()[size_t(owner_.hybrid_engine_id(unsigned(side)))].name;
+            b.semibold = side == focus;
+            b.style(side == focus ? m.hi : juce::Colours::transparentBlack, side == focus ? m.hi : colour::LINE, side == focus ? m.on : colour::GRAY);
+        }
+        layer_note_.setVisible(hybrid && !fx_view_ && !engine_view_ && layer_wide);
+        layer_note_.style(juce::Colours::transparentBlack, m.hi, m.hi);
+        for (int i = 0; i < 3; ++i) {
+            auto& b = sub_tabs_[size_t(i)];
+            const bool shown = !fx_view_ && !engine_view_ && sub_pages_.size() > 1 && i < int(sub_pages_.size());
+            b.setVisible(shown);
+            if (!shown) continue;
+            b.text = page_label(kind, sub_pages_[size_t(i)]);
+            const bool on = i == sub_index_;
+            b.style(on ? m.hi : juce::Colours::transparentBlack, on ? m.hi : m.dim, on ? m.on : colour::GRAY);
+        }
+        act_save_layer_.setVisible(hybrid && !fx_view_);
+        act_import_.setVisible(!fx_view_);
+        act_export_.setVisible(can_export && !fx_view_);
+        for (auto* b : {&act_save_layer_, &act_import_, &act_export_}) b->style(juce::Colours::transparentBlack, colour::MON, colour::WHITE);
+        bind_strip(kind);
+        for (int i = 0; i < 4; ++i) {
+            auto& k = soft_keys_[size_t(i)];
+            const bool on = !fx_view_ && (i < 3 ? (!engine_view_ && studio_tab_ == i + 1) : browser_panel_.isVisible());
+            k.setEnabled(!fx_view_ && (i == 3 || kind != 2));
+            k.text = fx_view_ ? utf8("\xe2\x80\x94") : utf8(i == 0 ? "OSC" : i == 1 ? "ENV" : i == 2 ? "LFO \xc2\xb7 MOD" : "PRESET");
+            k.style(on ? m.dim : juce::Colours::transparentBlack, on ? m.hi : colour::LINE, on ? colour::WHITE : colour::GRAY);
+        }
+        mode_key_.style(juce::Colours::transparentBlack, colour::LINE, m.hi);
+        sync_.setVisible(!fx_view_ && !engine_view_ && studio_tab_ == 3);
+        engine_select_.mode = m;
+        engine_select_.current = hybrid ? owner_.hybrid_engine_id(unsigned(focus)) : kind;
+        engine_select_.locked = hybrid ? owner_.hybrid_engine_id(unsigned(1 - focus)) : -1;
+        engine_select_.banner = hybrid ? juce::String(focus ? "ENGINE FOR B" : "ENGINE FOR A") : juce::String("ENGINE");
+        engine_select_.banner_right = utf8(hybrid ? "New engine = CUSTOM layer \xc2\xb7 this half loads A\xc2\xb7" "00"
+                                                  : "Loads preset A\xc2\xb7" "00 of the chosen engine");
+        engine_select_.current_badge = hybrid ? utf8(focus ? "IN B \xc2\xb7 CURRENT" : "IN A \xc2\xb7 CURRENT") : juce::String("LOADED");
+        engine_select_.locked_badge = utf8(focus ? "IN A \xc2\xb7 NOT AVAILABLE" : "IN B \xc2\xb7 NOT AVAILABLE");
+        engine_select_.hover_badge = utf8(hybrid ? "CLICK \xc2\xb7 LAYER \xe2\x86\x92 CUSTOM" : "CLICK \xc2\xb7 LOADS A\xc2\xb7" "00");
+        engine_select_.setVisible(engine_view_ && !fx_view_);
+        fx_later_.setVisible(fx_view_);
+        if (engine_select_.isVisible()) engine_select_.toFront(false);
+        if (fx_later_.isVisible()) fx_later_.toFront(false);
+        if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
+        engine_select_.repaint();
+        shell_focus_ = focus;
+        layout_shell();
+        repaint();
+    }
+    void layout_shell() {
+        mode_buttons_[0].setBounds(152, 16, 72, 32); mode_buttons_[1].setBounds(228, 16, 80, 32); mode_buttons_[2].setBounds(312, 16, 96, 32);
+        engine_badge_.setBounds(424, 12, 184, 40);
+        preset_prev_.setBounds(616, 12, 32, 40); preset_name_area_.setBounds(648, 12, 224, 40);
+        preset_next_.setBounds(872, 12, 32, 40); preset_menu_.setBounds(904, 12, 32, 40);
+        for (int i = 0; i < 4; ++i) bank_buttons_[size_t(i)].setBounds(952 + i * 24, 16, 24, 32);
+        output_meter_.setBounds(1160, 12, 20, 40);
+        for (int i = 0; i < 6; ++i) studio_tabs_[size_t(i)].setBounds(16 + i * 96, 64, 96, 47);
+        ab_buttons_[0].setBounds(600, 72, 92, 32); ab_buttons_[1].setBounds(696, 72, 92, 32);
+        layer_note_.setBounds(600, 72, 188, 32);
+        const bool hybrid = current_kind() == 6;
+        for (int i = 0; i < 3; ++i) sub_tabs_[size_t(i)].setBounds(hybrid ? 792 + i * 52 : 600 + i * 84, 72, hybrid ? 48 : 80, 32);
+        int right = 1184;
+        for (auto* b : {&act_export_, &act_import_, &act_save_layer_}) {
+            if (!b->isVisible()) continue;
+            const int w = int(float(b->text.length()) * 6.6f) + 20;
+            b->setBounds(right - w, 72, w, 32); right -= w + 8;
+        }
+        engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488);
+        browser_panel_.setBounds(16, 72, 1168, 520);
+        sync_.setBounds(1000, 120, 184, 24);
+        enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
+        for (int i = 0; i < 4; ++i) soft_keys_[size_t(i)].setBounds(136 + i * 104, 624, 96, 64);
+        mode_key_.setBounds(176, 696, 72, 56);
+        for (int i = 0; i < 5; ++i) macros_[size_t(i)]->setBounds(680 + i * 102, 624, 96, 120);
+        keyboard_toggle_.setBounds(1104, 601, 80, 20);
+        keyboard_.setBounds(0, 760, 1200, 200);
+    }
+    void paint_chrome(juce::Graphics& g) {
+        using namespace studio_ui;
+        const int kind = current_kind();
+        const bool hybrid = kind == 6;
+        const Mode m = fx_view_ ? fx_mode() : hybrid ? hybrid_mode() : synth_mode();
+        g.setColour(m.mc); g.fillRect(0, 0, 1200, 2);
+        g.setColour(colour::LINE); g.fillRect(0, 63, 1200, 1); g.fillRect(0, 111, 1200, 1);
+        g.setColour(colour::WHITE); g.setFont(mono(13.0f, true)); g.drawText("GROOVEFORGE", 16, 14, 130, 16, juce::Justification::left);
+        g.setColour(m.hi); g.setFont(mono(11.0f)); g.drawText(utf8("BRAIN \xc2\xb7 VST"), 16, 32, 130, 16, juce::Justification::left);
+        g.setColour(colour::LINE); g.drawRect(616, 12, 320, 40, 1);
+        juce::String line1 = utf8("\xe2\x80\x94"), name = "NO PRESET";
+        if (!fx_view_) {
+            const int index = preset_browser_.getSelectedId() - 1;
+            if (hybrid) {
+                line1 = index >= 0 ? "LAYER " + juce::String(index + 1).paddedLeft('0', 2) : juce::String("LAYER");
+                name = owner_.hybrid_description().upToFirstOccurrenceOf(utf8(" \xc2\xb7 "), false, false);
+            } else {
+                line1 = (index >= 0 ? utf8("A\xc2\xb7") + juce::String(index).paddedLeft('0', 2) : utf8("A\xc2\xb7\xe2\x80\x94")) + utf8(" \xc2\xb7 ") +
+                        engines()[size_t(kind)].name;
+                name = owner_.preset_name();
+                if (name.isEmpty()) name = "INIT";
+            }
+        }
+        g.setColour(colour::GRAY); g.setFont(mono(11.0f)); g.drawText(line1, 656, 15, 208, 14, juce::Justification::left);
+        g.setColour(colour::WHITE); g.setFont(mono(16.0f, true)); g.drawText(name.toUpperCase(), 656, 30, 208, 18, juce::Justification::left);
+        if (hybrid && !fx_view_) {
+            g.setColour(colour::LINE); g.drawRect(952, 16, 96, 32, 1);
+            const int index = preset_browser_.getSelectedId();
+            g.setColour(colour::GRAY); g.setFont(mono(11.0f));
+            g.drawText("LAYER " + (index > 0 ? juce::String(index).paddedLeft('0', 2) : juce::String("--")) + " / " + juce::String(preset_browser_.getNumItems()),
+                       952, 16, 96, 32, juce::Justification::centred);
+        }
+        g.setColour(colour::WHITE); g.setFont(mono(13.0f));
+        g.drawText(juce::String(owner_.host_bpm(), 2) + " BPM", 1064, 12, 96, 18, juce::Justification::left);
+        const int cpu = juce::roundToInt(owner_.cpu_load() * 100.0f);
+        g.setColour(cpu > 80 ? colour::AMBER : colour::GRAY); g.setFont(mono(11.0f));
+        g.drawText("CPU " + juce::String(cpu) + " %", 1064, 34, 96, 16, juce::Justification::left);
+        g.setColour(colour::BG); g.fillRect(0, 600, 1200, 160);
+        g.setColour(colour::LINE); g.fillRect(0, 600, 1200, 1);
+        const juce::String page = fx_view_ ? juce::String("FX") : engine_view_ ? juce::String("ENGINE SELECT")
+            : utf8(hybrid && studio_tab_ == 0 ? "HOME" : TAB_NAMES[studio_tab_]) + (hybrid && studio_tab_ >= 1 && studio_tab_ <= 3 ? juce::String(hybrid_focus() ? " \xc2\xb7 B" : " \xc2\xb7 A") : juce::String());
+        g.setColour(colour::MON_TEXT); g.setFont(mono(11.0f));
+        g.drawText(utf8("PANEL STUDIO \xc2\xb7 ") + page, 16, 604, 400, 16, juce::Justification::left);
+        auto box = [&](int x, int w, const char* caption, juce::String value, juce::String sub, bool right, juce::Colour ink) {
+            g.setColour(colour::LINE); g.drawRect(x, 696, w, 56, 1);
+            const auto just = right ? juce::Justification::topRight : juce::Justification::topLeft;
+            g.setColour(colour::MON_TEXT); g.setFont(mono(11.0f)); g.drawText(caption, x + 8, 702, w - 16, 14, just);
+            g.setColour(ink); g.drawText(value, x + 8, 718, w - 16, 14, just);
+            g.setColour(colour::MON); g.setFont(mono(13.0f)); g.drawText(sub, x + 8, 732, w - 16, 18, just);
+        };
+        box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
+        box(256, 168, "NAV", utf8(fx_view_ ? "\xe2\x80\x94" : engine_view_ ? "TURN BROWSE \xc2\xb7 PUSH LOAD" : "TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
+        box(432, 72, "B6", "SHIFT", {}, false, colour::GRAY);
+        box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
     }
     void configure_hybrid_osc_page(unsigned side) {
         const uint8_t engine = owner_.hybrid_engine_id(side);
@@ -4426,6 +4859,25 @@ private:
     LfoDisplay dx_lfo_display_, hybrid_a_lfo_display_, hybrid_b_lfo_display_;
     std::array<std::array<juce::Label, 5>, 5> fx_parameter_labels_;
     std::array<juce::TextButton, 11> page_tabs_;
+    // Armazón de la referencia (gemelo-vst-ui-migracion.md, corte 1)
+    std::array<studio_ui::ChromeButton, 3> mode_buttons_;
+    studio_ui::EngineBadge engine_badge_;
+    studio_ui::ChromeButton preset_prev_, preset_next_, preset_menu_, preset_name_area_;
+    std::array<studio_ui::ChromeButton, 4> bank_buttons_;
+    std::array<studio_ui::ChromeButton, 6> studio_tabs_;
+    std::array<studio_ui::ChromeButton, 2> ab_buttons_;
+    std::array<studio_ui::ChromeButton, 3> sub_tabs_;
+    studio_ui::ChromeButton layer_note_, act_save_layer_, act_import_, act_export_;
+    studio_ui::ValueCell enc_l_, enc_r_;
+    std::array<studio_ui::ChromeButton, 4> soft_keys_;
+    studio_ui::ChromeButton mode_key_;
+    std::array<std::unique_ptr<studio_ui::MacroKnob>, 5> macros_;
+    studio_ui::EngineSelectPage engine_select_;
+    studio_ui::FxLaterPage fx_later_;
+    std::vector<juce::Component*> shell_;
+    int studio_tab_ = 0, sub_index_ = 0, shell_engine_ = -2, shell_focus_ = 0;
+    bool fx_view_ = false, engine_view_ = false, in_update_ = false;
+    std::vector<int> sub_pages_;
     std::array<juce::TextButton, 2> hybrid_focus_buttons_;
     int displayed_hybrid_focus_ = -1;
     juce::TooltipWindow tooltip_{this, 500};

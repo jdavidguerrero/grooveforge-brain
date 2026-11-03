@@ -4,6 +4,7 @@
 #include "studio_keyboard.h"
 #include "preset_browser.h"
 #include "envelope_editor.h"
+#include "studio_shell.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -198,7 +199,9 @@ int main() {
         if (!check(hybrid_page && b_cutoff && !b_cutoff->isVisible(), "HYBRID half controls")) return 1;
         auto* hybrid_filter_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.1"));
         auto* hybrid_home_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
-        if (!check(hybrid_filter_tab && hybrid_home_tab && hybrid_filter_tab->isVisible(), "HYBRID direct navigation")) return 1;
+        // Corte 1 de la migración: las pestañas viejas quedan internas; HOME de la referencia ofrece LAYERS · FILTER.
+        auto* filter_sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+        if (!check(hybrid_filter_tab && hybrid_home_tab && filter_sub && filter_sub->isVisible() && filter_sub->text == "FILTER", "HYBRID direct navigation")) return 1;
         hybrid_filter_tab->onClick();
         if (!check(b_cutoff->isVisible(), "HYBRID filter tab opens controls")) return 1;
         auto* a_filter = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.a.cutoff"));
@@ -387,7 +390,8 @@ int main() {
                    gf::decode_hybrid_layer(exported.data(), exported.size(), exported_layer) &&
                    std::strcmp(exported_layer.name, studio::layer_def(1).name) == 0, "HYBRID factory selector loads layer")) return 1;
         auto* save_layer = dynamic_cast<juce::TextButton*>(editor->findChildWithID("hybrid.save"));
-        if (!check(save_layer && save_layer->isVisible() && factory->getNumItems() == 8, "HYBRID bank controls")) return 1;
+        auto* save_action = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.action.save_layer"));
+        if (!check(save_layer && save_action && save_action->isVisible() && factory->getNumItems() == 8, "HYBRID bank controls")) return 1;
         save_layer->onClick();
         if (!check(factory->getNumItems() == 9, "HYBRID save adds user layer")) return 1;
         for (int i = 9; i < studio::LAYER_MAX; ++i) save_layer->onClick();
@@ -1383,12 +1387,13 @@ int main() {
         auto* fx = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.fx.0.0"));
         auto* macro = dynamic_cast<juce::Slider*>(editor->findChildWithID("shared.macro.0"));
         auto* juno_select = dynamic_cast<juce::ToggleButton*>(editor->findChildWithID("engine.juno"));
-        if (!check(page && osc && voice && groove && fx && macro && juno_select && page->isVisible(), "OB-6 editor controls exist")) return 1;
+        if (!check(page && osc && voice && groove && fx && macro && juno_select && editor->findChildWithID("studio.tab.1")->isVisible(), "OB-6 editor controls exist")) return 1;
 
         if (!check(!osc->isVisible() && !voice->isVisible() && !groove->isVisible() && !fx->isVisible() && !macro->isVisible(), "OB-6 initial page visibility")) return 1;
         auto* fx_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.4"));
         auto* voice_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
-        if (!check(fx_tab && voice_tab && fx_tab->isVisible(), "OB-6 direct navigation")) return 1;
+        auto* studio_fx = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.tab.5"));
+        if (!check(fx_tab && voice_tab && studio_fx && studio_fx->isVisible() && studio_fx->isEnabled(), "OB-6 direct navigation")) return 1;
         fx_tab->onClick();
         if (!check(fx->isVisible() && !osc->isVisible(), "OB-6 FX tab opens controls")) return 1;
         auto* feedback_label = dynamic_cast<juce::Label*>(editor->findChildWithID("fx.label.3.3"));
@@ -2820,10 +2825,12 @@ int main() {
                            "UTF-8 check preset")) return 1;
             }
             auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
-            for (int tab = -1; tab < 11; ++tab) {
-                if (tab >= 0) {
-                    auto* button = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab." + juce::String(tab)));
-                    if (!button || !button->isVisible()) continue;
+            for (int tab = -1; tab < 7; ++tab) {
+                if (tab == 6) {
+                    if (auto* badge = dynamic_cast<studio_ui::EngineBadge*>(editor->findChildWithID("studio.engine"))) badge->onClick();
+                } else if (tab >= 0) {
+                    auto* button = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.tab." + juce::String(tab)));
+                    if (!button || !button->isEnabled()) continue;
                     button->onClick();
                 }
                 const auto bad = first_bad(*editor);
@@ -2832,6 +2839,45 @@ int main() {
             const auto face = juce::LookAndFeel::getDefaultLookAndFeel().getTypefaceForFont(juce::Font(juce::FontOptions(13.0f)));
             if (!check(face && face->getName() == "IBM Plex Mono", "editor uses embedded IBM Plex Mono")) return 1;
         }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 1: cabecera, pestañas comunes, tira del panel, ENGINE SELECT, FX · LATER
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        if (!check(editor->getWidth() == 1200 && editor->getHeight() == 760, "studio shell size")) return 1;
+        // Prophet (por defecto): solo PERFORM; las demás pestañas no tienen página todavía
+        if (!check(tab(*editor, 0)->isEnabled() && !tab(*editor, 1)->isEnabled() && !tab(*editor, 5)->isEnabled(), "Prophet tabs")) return 1;
+        auto* badge = dynamic_cast<studio_ui::EngineBadge*>(editor->findChildWithID("studio.engine"));
+        auto* select = dynamic_cast<studio_ui::EngineSelectPage*>(editor->findChildWithID("studio.engine.select"));
+        badge->onClick();
+        if (!check(select && select->isVisible(), "engine badge opens ENGINE SELECT")) return 1;
+        select->on_pick(1);
+        if (!check(!select->isVisible() && find_parameter(*plugin, "juno_preview")->getValue() > .5f, "ENGINE SELECT loads Juno A.00")) return 1;
+        // las seis pestañas comunes llevan a las páginas del Juno; GROOVE junta GROOVE · UNISON · MACRO
+        for (int i = 0; i < 6; ++i) if (!check(tab(*editor, i)->isEnabled(), "Juno common tabs")) return 1;
+        tab(*editor, 4)->onClick();
+        auto* sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+        if (!check(sub && sub->isVisible() && sub->text == "UNISON", "GROOVE sub-pages")) return 1;
+        // las macros de la tira mueven los parámetros del engine activo; MORPH es OFF fuera de HYBRID
+        auto* grit = dynamic_cast<studio_ui::MacroKnob*>(editor->findChildWithID("studio.macro.grit"));
+        auto* morph = dynamic_cast<studio_ui::MacroKnob*>(editor->findChildWithID("studio.macro.morph"));
+        if (!check(grit && grit->parameter() == find_parameter(*plugin, "juno.macro.grit") && morph && morph->parameter() == nullptr, "strip macros bind Juno")) return 1;
+        grit->slider().setValue(grit->slider().getMaximum(), juce::sendNotificationSync);
+        if (!check(find_parameter(*plugin, "juno.macro.grit")->getValue() > .99f, "strip macro edits the engine")) return 1;
+        // selector de modo: HYBRID cambia hybrid_preview, la tira liga MORPH y aparece A | B
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.mode.1"))->onClick();
+        auto* ab = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.ab.1"));
+        if (!check(find_parameter(*plugin, "hybrid_preview")->getValue() > .5f && morph->parameter() == find_parameter(*plugin, "hybrid.morph") &&
+                   ab && ab->isVisible() && tab(*editor, 0)->text == "HOME", "HYBRID mode")) return 1;
+        ab->onClick();
+        if (!check(find_parameter(*plugin, "hybrid.focus")->getValue() > .5f, "A | B selects the focus")) return 1;
+        // FX · LATER no cambia el audio
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.mode.2"))->onClick();
+        auto* later = editor->findChildWithID("studio.fx.later");
+        if (!check(later && later->isVisible() && find_parameter(*plugin, "hybrid_preview")->getValue() > .5f && !tab(*editor, 0)->isEnabled(),
+                   "FX LATER keeps the audio")) return 1;
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.mode.0"))->onClick();
+        if (!check(!later->isVisible() && find_parameter(*plugin, "hybrid_preview")->getValue() < .5f, "back to SYNTH")) return 1;
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;
