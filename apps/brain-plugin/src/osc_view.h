@@ -9,6 +9,8 @@
 #include <vector>
 
 #include "engines/dx7_core.h"
+#include <gf_params.h>
+
 #include "perform_view.h"
 #include "studio_shell.h"
 
@@ -32,6 +34,7 @@ struct CellSpec {
     float scale = 1.0f;                              ///< valor mostrado = valor del parámetro × scale (0–1 → %)
     int steps = 0;                                   ///< > 0: parámetro normalizado 0–1 con `steps` valores (FX, GF_SFX_STEPS)
     std::function<juce::String(float)> format;       ///< texto propio del valor (sin unidad), p. ej. sfx_format de la cabeza
+    std::vector<float> values;                       ///< segmentos que fijan valores propios (B TRANSPOSE en octavas)
 };
 
 namespace osc_math {
@@ -141,19 +144,24 @@ public:
     float raw() const { return parameter_ ? parameter_->convertFrom0to1(parameter_->getValue()) : 0.0f; }
     int index() const {
         if (!parameter_) return 0;
+        if (!spec.values.empty()) {
+            for (size_t i = 0; i < spec.values.size(); ++i) if (std::abs(raw() - spec.values[i]) < 0.5f) return int(i);
+            return -1;                               // valor fuera de los segmentos: se muestra el número
+        }
         if (spec.steps > 1) return juce::roundToInt(juce::jlimit(0.0f, 1.0f, raw()) * float(spec.steps - 1));
         return juce::roundToInt(raw() - parameter_->getNormalisableRange().start);
     }
     /** Valor como lo muestra la celda (texto + unidad), para la tira. */
     juce::String value_text() const {
         if (!parameter_) return utf8("\xe2\x80\x94");
-        if (spec.kind == CellSpec::Kind::segments || spec.kind == CellSpec::Kind::toggle)
+        if ((spec.kind == CellSpec::Kind::segments || spec.kind == CellSpec::Kind::toggle) && index() >= 0)
             return spec.options[juce::jlimit(0, spec.options.size() - 1, index())];
         return number() + (spec.unit.isEmpty() ? juce::String() : " " + spec.unit);
     }
     void set_index(int i) {
         if (!parameter_) return;
-        const float v = spec.steps > 1 ? float(i) / float(spec.steps - 1) : parameter_->getNormalisableRange().start + float(i);
+        const float v = !spec.values.empty() ? spec.values[size_t(juce::jlimit(0, int(spec.values.size()) - 1, i))]
+                      : spec.steps > 1 ? float(i) / float(spec.steps - 1) : parameter_->getNormalisableRange().start + float(i);
         parameter_->beginChangeGesture(); parameter_->setValueNotifyingHost(parameter_->convertTo0to1(v)); parameter_->endChangeGesture();
         repaint();
     }
@@ -245,8 +253,11 @@ public:
         if (!parameter_ || !drags()) return;
         if (spec.kind == CellSpec::Kind::value && !dragged_) {   // clic = siguiente, dando la vuelta
             const auto range = parameter_->getNormalisableRange();
-            const int count = juce::roundToInt(range.end - range.start) + 1;
-            parameter_->setValueNotifyingHost(parameter_->convertTo0to1(range.start + float((index() + 1) % count)));
+            if (spec.steps > 1) parameter_->setValueNotifyingHost(float((index() + 1) % spec.steps) / float(spec.steps - 1));
+            else {
+                const int count = juce::roundToInt(range.end - range.start) + 1;
+                parameter_->setValueNotifyingHost(parameter_->convertTo0to1(range.start + float((index() + 1) % count)));
+            }
         }
         parameter_->endChangeGesture(); repaint();
     }
@@ -470,6 +481,103 @@ public:
     }
 
     /** Arma los paneles de `kind` (0 Model D · 1 Juno · 3 OB-6 · 4 DX7 · 5 ARP); no hace nada si ya están. */
+    /** Una mitad de HYBRID (corte 7, 2b): los paneles salen de la tabla de slots, porque cada mitad guarda su página OSC
+     *  como slots normalizados `hybrid.a.osc.página.slot` (0–1 sobre el rango de GF_OSC_SLOT / GF_MOD_SLOT).
+     *  `page` 0 = OSC, 1 = MOD; `label` = nombre del slot (hybrid_osc_label del procesador). */
+    void build_hybrid(int side, int engine, juce::AudioProcessorValueTreeState& state, int page,
+                      const std::function<const char*(int, int, int)>& label) {
+        const int key = 100 + side * 10 + engine;
+        if (key == kind_ && state_ == &state && page == page_) return;
+        for (auto& p : panels) removeChildComponent(p.get());
+        panels.clear(); algorithm_ = nullptr; picker.setVisible(false);
+        kind_ = key; page_ = page; state_ = &state; focus_ = 0; ids_.clear();
+        engine = juce::jlimit(0, 5, engine);
+        static const char* osc_names[6][4] = {{"VCO 1", "VCO 2", "VCO 3", "NOISE"}, {"DCO", "", "", ""}, {"OSC A", "OSC B", "MIXER", ""},
+                                              {"VCO 1", "VCO 2", "", ""}, {"OP 1", "OP 2", "OP 3", "OP 4"}, {"VCO 1", "VCO 2", "", ""}};
+        static const char* mod_names[6][2] = {{"MODULATION", ""}, {"LFO", ""}, {"POLY-MOD", "WHEEL-MOD"}, {"X-MOD", ""}, {"WAVE / DETUNE", "KBD / EG"}, {"PATCH", ""}};
+        const int stops = page == 0 ? GF_OSC_STOP_COUNT[engine] : GF_MOD_STOPS[engine];
+        const juce::String prefix = side == 0 ? "hybrid.a.osc." : "hybrid.b.osc.";
+        bool global_seen[GF_OSC_SLOTS] = {};
+        for (int stop = 0; stop < stops; ++stop) {
+            const int pg = page == 0 ? stop : 4 + stop;
+            const GF_OscSlot* table = page == 0 ? GF_OSC_SLOT[engine][stop] : GF_MOD_SLOT[engine][stop];
+            panels.push_back(std::make_unique<OscPanel>());
+            auto* p = panels.back().get();
+            p->name = page == 0 ? osc_names[engine][stop] : mod_names[engine][stop];
+            p->tag = side == 0 ? "A" : "B";
+            const int index = int(panels.size()) - 1;
+            p->on_focus = [this, index] { if (focus_ != index) set_focus(index); };
+            p->setComponentID("osc.panel." + juce::String(index));
+            addAndMakeVisible(*p);
+            int wave_slot = -1;
+            for (int slot = 0; slot < int(GF_OSC_SLOTS); ++slot) {
+                const GF_OscSlot& d = table[slot];
+                if (!gf_osc_used(&d)) continue;
+                if (d.global) { if (global_seen[slot]) continue; global_seen[slot] = true; }
+                const juce::String name = label ? juce::String(label(engine, pg, slot)) : juce::String("SLOT ") + juce::String(slot);
+                const auto id = keep(prefix + juce::String(pg) + "." + juce::String(slot));
+                p->add(slot_cell(engine, name, d, id), state.getParameter(id));
+                if (p->p1 < 0) p->p1 = int(p->cells.size()) - 1;
+                else if (p->p2 < 0) p->p2 = int(p->cells.size()) - 1;
+                if (page == 0 && slot == 0 && (name.startsWith("WAVE") || name.startsWith("SHAPE"))) wave_slot = 0;
+            }
+            if (wave_slot == 0 && (engine == 0 || engine == 1 || engine == 3 || engine == 5) && (p->cells.size() <= 5 || stops == 1)) {
+                auto* first = p->cells.front().get();
+                p->wave = [first, engine](float ph) {
+                    PerformSource s; s.engine = engine;
+                    if (engine == 3) s.shape = first->raw() * 100.0f;
+                    else s.wave = float(first->index());
+                    return perform_math::osc_sample(s, ph, 0.5f);
+                };
+            }
+        }
+        nav_ = utf8(side == 0 ? "A \xc2\xb7 " : "B \xc2\xb7 ") + engines()[size_t(engine)].name;
+        finish();
+    }
+    /** Celda de un slot de la tabla: segmentos o valor con pasos si es discreto, perilla con unidad si es continuo. */
+    static CellSpec slot_cell(int engine, const juce::String& name, const GF_OscSlot& d, const char* id) {
+        CellSpec c; c.id = id; c.label = name;
+        const float lo = d.lo, hi = d.hi;
+        if (d.count > 0) {
+            juce::StringArray o;
+            if (name.startsWith("WAVE") && !name.contains("OP")) {
+                if (engine == 0) o = {"SAW", "TRI", "SQR", "PULSE", "SHARK", "NARROW"};
+                else if (engine == 1) o = {"SAW", "SQR", "PULSE", "SAW+PLS"};
+                else if (engine == 5) o = {"SAW", "TRI", "SQR", "PULSE", "SINE"};
+            } else if (d.count == 2) {
+                o = name == "NOISE COLOR" ? juce::StringArray{"WHITE", "PINK"} : name.startsWith("VCA") ? juce::StringArray{"ENV", "GATE"} : juce::StringArray{"OFF", "ON"};
+            } else if (name == "CHORUS") o = {"OFF", "I", "II", "I+II"};
+            else if (name == "RANGE") o = {"16'", "8'", "4'"};
+            else if (name == "FILTER KBD") o = d.count == 4 ? juce::StringArray{"OFF", "1/3", "2/3", "FULL"} : juce::StringArray{"OFF", "HALF", "FULL"};
+            if (o.isEmpty() && d.count <= 5) for (int i = 0; i < d.count; ++i) o.add(juce::String(juce::roundToInt(lo + float(i) * d.step)));
+            if (!o.isEmpty() && o.size() == d.count) {
+                c.kind = d.count == 2 && o[0] == "OFF" ? CellSpec::Kind::toggle : CellSpec::Kind::segments;
+                c.options = o; c.steps = d.count; c.span = d.count <= 3 ? 1 : 4;
+                return c;
+            }
+            c.kind = CellSpec::Kind::value; c.steps = d.count;   // ALGORITHM, FEEDBACK, WAVE W1–W8, DETUNE −3…3
+            const bool w = name.contains("WAVE");
+            c.format = [lo, hi, w](float n) {
+                const int v = juce::roundToInt(lo + juce::jlimit(0.0f, 1.0f, n) * (hi - lo));
+                return w ? "W" + juce::String(v) : v > 0 && lo < 0 ? "+" + juce::String(v) : juce::String(v);
+            };
+            return c;
+        }
+        c.kind = CellSpec::Kind::knob;
+        const bool percent = (lo == 0 && hi == 100) || (lo == 5 && hi == 95);
+        const char* unit = percent ? "%" : (lo == -50 && hi == 50) ? "CT" : (lo == -24 && hi == 24) ? "ST" : (lo == 0.5f) ? "\xc3\x97"
+                         : hi >= 3000 ? "MS" : (lo == 0.1f && hi == 30) ? "HZ" : "";
+        c.unit = utf8(unit);
+        c.bipolar = lo < 0;
+        const int decimals = lo == 0.5f ? 2 : lo == 0.1f ? 1 : 0;
+        c.format = [lo, hi, decimals, bip = lo < 0](float n) {
+            const float v = lo + juce::jlimit(0.0f, 1.0f, n) * (hi - lo);
+            const auto t = juce::String(v, decimals);
+            return bip && v > 0.0f ? "+" + t : t;
+        };
+        return c;
+    }
+
     /** `page` 0 = OSC; 1 = paradas MOD de la página LFO · MOD (GF_MOD_SLOT; gemelo-vst-ui-migracion.md §5). */
     void build(int kind, juce::AudioProcessorValueTreeState& state, int page = 0) {
         if (kind == kind_ && state_ == &state && page == page_) return;
@@ -685,7 +793,7 @@ private:
     /// Guarda un id armado en tiempo de ejecución para que `CellSpec::id` siga siendo válido.
     const char* keep(const juce::String& id) { ids_.add(id); return ids_.getReference(ids_.size() - 1).toRawUTF8(); }
     static const char* prefix_for(int kind) {
-        return kind == 0 ? "modeld." : kind == 1 ? "juno." : kind == 3 ? "ob6." : kind == 4 ? "dx7." : kind == 5 ? "arp2600." : "";
+        return kind == 0 ? "modeld." : kind == 1 ? "juno." : kind == 3 ? "ob6." : kind == 4 ? "dx7." : kind == 5 ? "arp2600." : kind == 6 ? "hybrid." : "";
     }
 
     /** GROOVE (1g): PUMP · ARP · CHORD · UNISON · MACRO con los rangos de GF_GROOVE_SLOT y los nombres de la cabeza. */
@@ -728,9 +836,12 @@ private:
         chord->p2 = add(chord, seg(gid("chord", 2), "INV", {"ROOT", "1ST", "2ND", "3RD"}));
         auto* unison = panel("UNISON", kind == 0 ? "MONO ENGINE" : "", false, ""); setup(unison);
         if (kind != 0) {
-            unison->power = state.getParameter(keep(pre + "unison_on"));
-            unison->p1 = add(unison, seg(keep(pre + "unison_count"), "VOICES", {utf8("\xc3\x97" "1"), utf8("\xc3\x97" "2"), utf8("\xc3\x97" "3"), utf8("\xc3\x97" "6")}));
-            unison->p2 = add(unison, knob(keep(pre + "unison_detune"), "DETUNE", "CT"));
+            // en HYBRID el unísono es de cada mitad; la página es de la capa y toma el de A (etiqueta LAYER · FROM A, 2c)
+            const juce::String uni = kind == 6 ? juce::String("hybrid.a.voice.") : pre;
+            unison->power = state.getParameter(keep(uni + "unison_on"));
+            unison->p1 = add(unison, seg(keep(uni + "unison_count"), "VOICES", {utf8("\xc3\x97" "1"), utf8("\xc3\x97" "2"), utf8("\xc3\x97" "3"), utf8("\xc3\x97" "6")}));
+            unison->p2 = add(unison, knob(keep(uni + "unison_detune"), "DETUNE", "CT"));
+            if (kind == 6) unison->sub = "FROM A";
         }
         auto* macro = panel("MACRO", "", false, ""); setup(macro);
         macro->tag = "DEPTHS";

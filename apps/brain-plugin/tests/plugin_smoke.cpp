@@ -8,6 +8,7 @@
 #include "perform_view.h"
 #include "env_lfo_view.h"
 #include "studio_browser.h"
+#include "hybrid_home.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -202,9 +203,10 @@ int main() {
         if (!check(hybrid_page && b_cutoff && !b_cutoff->isVisible(), "HYBRID half controls")) return 1;
         auto* hybrid_filter_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.1"));
         auto* hybrid_home_tab = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab.0"));
-        // Corte 1 de la migración: las pestañas viejas quedan internas; HOME de la referencia ofrece LAYERS · FILTER.
-        auto* filter_sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
-        if (!check(hybrid_filter_tab && hybrid_home_tab && filter_sub && filter_sub->isVisible() && filter_sub->text == "FILTER", "HYBRID direct navigation")) return 1;
+        // Corte 1 de la migración: las pestañas viejas quedan internas. Corte 7a: HOME es la vista nueva y la página vieja
+        // de capas queda como sub-página LAYER (mezcla base e importar una mitad).
+        auto* layer_sub = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+        if (!check(hybrid_filter_tab && hybrid_home_tab && layer_sub && layer_sub->isVisible() && layer_sub->text == "LAYER", "HYBRID direct navigation")) return 1;
         hybrid_filter_tab->onClick();
         if (!check(b_cutoff->isVisible(), "HYBRID filter tab opens controls")) return 1;
         auto* a_filter = dynamic_cast<juce::Slider*>(editor->findChildWithID("hybrid.a.cutoff"));
@@ -3156,6 +3158,68 @@ int main() {
         if (!check(browser->isVisible() && browser->engine() == 1, "browser follows the new engine")) return 1;
         menu->onClick();
         if (!check(!browser->isVisible(), "menu closes the browser")) return 1;
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 7a: HYBRID HOME, edición de cada mitad y GROOVE / FX de la capa
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        auto at = [](juce::Component* c, juce::Point<float> p) {
+            return juce::MouseEvent(juce::Desktop::getInstance().getMainMouseSource(), p, {}, 0, 0, 0, 0, 0, c, c, juce::Time::getCurrentTime(), p, juce::Time::getCurrentTime(), 1, false);
+        };
+        auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        studio::LayerPreset layer; std::vector<uint8_t> bytes(studio::LAYER_BYTES);
+        if (!check(studio::factory_layer(1, &layer) && gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) &&
+                   dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), bytes.size()), "7a layer")) return 1;
+        auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+        auto* home = dynamic_cast<studio_ui::HybridHome*>(editor->findChildWithID("studio.hybrid.home"));
+        if (!check(home && home->isVisible() && home->engine[0] == layer.eng_a && home->engine[1] == layer.eng_b && home->layer_names().size() > 1,
+                   "HYBRID opens on HOME with the layer list and both halves")) return 1;
+        if (!check(home->half_name(0) == juce::String::fromUTF8(layer.a.name).trim(), "HOME card shows the half preset")) return 1;
+        // MORPH: arrastrar en el bloque
+        auto* morph = find_parameter(*plugin, "hybrid.morph");
+        home->setBounds(0, 0, 1200, 488);
+        home->mouseDown(at(home, {600.0f + 280.0f * 0.8f, 80.0f})); home->mouseUp(at(home, {600.0f + 280.0f * 0.8f, 80.0f}));
+        if (!check(std::abs(morph->getValue() - 0.8f) < 0.01f, "dragging in MORPH sets hybrid.morph")) return 1;
+        if (!check(std::abs(studio_ui::hybrid_math::gain_a(0.5f) - 1.0f) < 1e-5f && std::abs(studio_ui::hybrid_math::gain_b(0.5f) - 1.0f) < 1e-5f &&
+                   studio_ui::hybrid_math::gain_b(0.0f) < 1e-6f, "MORPH is equal power, 50 % = base gain")) return 1;
+        // B TRANSPOSE en octavas
+        home->transpose->set_index(3);
+        if (!check(std::abs(find_parameter(*plugin, "hybrid.transpose")->convertFrom0to1(find_parameter(*plugin, "hybrid.transpose")->getValue()) - 12.0f) < 0.01f,
+                   "B TRANSPOSE segment sets +12")) return 1;
+        // tarjeta B = foco B; el filtro y las perillas pasan a B
+        home->mouseDown(at(home, {1000.0f, 100.0f}));
+        if (!check(find_parameter(*plugin, "hybrid.focus")->getValue() > .5f && home->cutoff == find_parameter(*plugin, "hybrid.b.cutoff"), "card B takes the focus")) return 1;
+        // clic en una capa la carga
+        home->mouseDown(at(home, {100.0f, 48.0f + 28.0f * 2 + 10.0f}));
+        if (!check(home->loaded_layer() == 2, "clicking a layer row loads it")) return 1;
+        // OSC, ENV y LFO de la mitad en foco
+        tab(*editor, 1)->onClick();
+        auto* osc = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.osc"));
+        if (!check(osc && osc->isVisible() && !home->isVisible() && !osc->panels.empty(), "HYBRID OSC page")) return 1;
+        const juce::String side_b = "hybrid.b.osc.";
+        for (auto& panel : osc->panels) for (auto& cell : panel->cells)
+            if (!check(juce::String(cell->spec.id).startsWith(side_b) && cell->parameter() == find_parameter(*plugin, cell->spec.id), "HYBRID OSC cells bind half B")) return 1;
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.ab.0"))->onClick();
+        for (auto& panel : osc->panels) for (auto& cell : panel->cells)
+            if (!check(juce::String(cell->spec.id).startsWith("hybrid.a.osc."), "A | B rebuilds OSC for half A")) return 1;
+        tab(*editor, 2)->onClick();
+        auto* env = dynamic_cast<studio_ui::EnvPage*>(editor->findChildWithID("studio.env"));
+        if (!check(env && env->isVisible() && env->amp.adsr[0] == find_parameter(*plugin, "hybrid.a.attack") &&
+                   env->amp.ghost[0] == find_parameter(*plugin, "hybrid.b.attack"), "HYBRID ENV edits A with B as ghost")) return 1;
+        tab(*editor, 3)->onClick();
+        auto* lfo = dynamic_cast<studio_ui::LfoPage*>(editor->findChildWithID("studio.lfo"));
+        if (!check(lfo && lfo->isVisible() && lfo->dests[0].depth == find_parameter(*plugin, "hybrid.a.voice.lfo_cutoff"), "HYBRID LFO of half A")) return 1;
+        dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"))->onClick();
+        auto* mod = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.mod"));
+        if (!check(mod && mod->isVisible(), "HYBRID MOD page")) return 1;
+        // GROOVE y FX de la capa
+        tab(*editor, 4)->onClick();
+        auto* groove = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.groove"));
+        if (!check(groove && groove->isVisible() && groove->panels[0]->power == find_parameter(*plugin, "hybrid.groove.pump.on") &&
+                   groove->panels[3]->power == find_parameter(*plugin, "hybrid.a.voice.unison_on"), "HYBRID GROOVE is layer-wide")) return 1;
+        tab(*editor, 5)->onClick();
+        auto* fx = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.fx"));
+        if (!check(fx && fx->isVisible() && fx->cell("hybrid.fx.reverb.mix") != nullptr, "HYBRID FX is layer-wide")) return 1;
+        for (auto* page : {groove, fx}) for (auto& panel : page->panels) for (auto& cell : panel->cells)
+            if (!check(cell->parameter() == find_parameter(*plugin, cell->spec.id), "HYBRID GROOVE / FX cells bound")) { std::fprintf(stderr, "  %s\n", cell->spec.id); return 1; }
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;

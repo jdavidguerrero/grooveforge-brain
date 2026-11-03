@@ -40,22 +40,38 @@ public:
     }
     void clear_cells() { for (auto& c : cells) removeChildComponent(c.get()); cells.clear(); }
 
-    float seconds(int i) const {
-        auto* p = adsr[size_t(i)];
+    using Adsr = std::array<juce::RangedAudioParameter*, 4>;
+    Adsr ghost{};                                        ///< HYBRID: la envolvente de la otra mitad, punteada (nota GHOST de 2b)
+
+    static float seconds_of(const Adsr& e, int i) {
+        auto* p = e[size_t(i)];
         return p ? p->convertFrom0to1(p->getValue()) / 1000.0f : 0.0f;
     }
-    float sustain() const {
-        auto* p = adsr[2];
+    static float sustain_of(const Adsr& e) {
+        auto* p = e[2];
         if (!p) return 1.0f;
         const auto r = p->getNormalisableRange();
         return (p->convertFrom0to1(p->getValue()) - r.start) / (r.end - r.start);
     }
-    /** Largo total dibujado (A + D + sostén fijo + R), para el eje compartido. */
-    float total_s() const { return seconds(0) + seconds(1) + HOLD_S + seconds(3); }
-    std::array<juce::Point<float>, 4> points() const {
-        const float k = GW / axis_s, xa = seconds(0) * k, xd = xa + seconds(1) * k, xs = xd + HOLD_S * k, xr = xs + seconds(3) * k;
-        const float ys = GH - (GH - TOP) * sustain();
+    float seconds(int i) const { return seconds_of(adsr, i); }
+    float sustain() const { return sustain_of(adsr); }
+    static float total_of(const Adsr& e) { return e[0] || e[3] ? seconds_of(e, 0) + seconds_of(e, 1) + HOLD_S + seconds_of(e, 3) : 0.0f; }
+    /** Largo total dibujado (A + D + sostén fijo + R), para el eje compartido; incluye la fantasma. */
+    float total_s() const { return std::max(total_of(adsr), total_of(ghost)); }
+    std::array<juce::Point<float>, 4> points_of(const Adsr& e) const {
+        const float k = GW / axis_s, xa = seconds_of(e, 0) * k, xd = xa + seconds_of(e, 1) * k, xs = xd + HOLD_S * k, xr = xs + seconds_of(e, 3) * k;
+        const float ys = GH - (GH - TOP) * sustain_of(e);
         return {{{GX + xa, GY + TOP}, {GX + xd, GY + ys}, {GX + xs, GY + ys}, {GX + xr, GY + GH}}};
+    }
+    std::array<juce::Point<float>, 4> points() const { return points_of(adsr); }
+    juce::Path path_of(const Adsr& e) const {
+        const auto p = points_of(e);
+        juce::Path path;
+        path.startNewSubPath(GX, GY + GH); path.lineTo(p[0]);
+        path.quadraticTo(p[0].x + (p[1].x - p[0].x) * 0.12f, p[1].y, p[1].x, p[1].y);
+        path.lineTo(p[2]);
+        path.quadraticTo(p[2].x + (p[3].x - p[2].x) * 0.12f, GY + GH, p[3].x, p[3].y);
+        return path;
     }
     juce::String point_text(int i) const {
         static const char* names[] = {"ATTACK", "DECAY", "SUSTAIN", "RELEASE"};
@@ -94,13 +110,14 @@ public:
         const bool on = adsr[0] || adsr[3];
         if (on) {
             const auto p = points();
-            juce::Path path;
-            path.startNewSubPath(GX, GY + GH); path.lineTo(p[0]);
-            path.quadraticTo(p[0].x + (p[1].x - p[0].x) * 0.12f, p[1].y, p[1].x, p[1].y);
-            path.lineTo(p[2]);
-            path.quadraticTo(p[2].x + (p[3].x - p[2].x) * 0.12f, GY + GH, p[3].x, p[3].y);
+            const auto path = path_of(adsr);
             auto fill = path; fill.closeSubPath();
             g.setColour(mode.dim); g.fillPath(fill);
+            if (ghost[0] || ghost[3]) {
+                juce::Path dashed; const float d[] = {4.0f, 3.0f};
+                juce::PathStrokeType(1.5f).createDashedStroke(dashed, path_of(ghost), d, 2);
+                g.setColour(colour::MON); g.fillPath(dashed);
+            }
             g.setColour(mode.hi); g.strokePath(path, juce::PathStrokeType(2.0f));
             for (int i = 0; i < 4; ++i) {
                 if (!handle_active(i)) continue;
@@ -218,9 +235,38 @@ public:
         return s;
     }
 
+    /** Una mitad de HYBRID (2b): la mitad en foco editable y la otra como fantasma; `engines` = engine de A y de B. */
+    void build_hybrid(int side, std::array<int, 2> engines_ab, juce::AudioProcessorValueTreeState& state) {
+        const int key = 100 + side * 10 + engines_ab[size_t(side)];
+        if (key == kind_ && state_ == &state && engines_ab == hybrid_engines_) return;
+        kind_ = key; state_ = &state; hybrid_engines_ = engines_ab;
+        auto ids = [](int s, bool amp) {
+            const juce::String h = s == 0 ? "hybrid.a." : "hybrid.b.", v = h + "voice.";
+            return amp ? std::array<juce::String, 5>{h + "attack", v + "decay", v + "sustain", h + "release", v + "vel_amp"}
+                       : std::array<juce::String, 5>{v + "filter_attack", v + "filter_decay", v + "filter_sustain", v + "filter_release", v + "vel_filter"};
+        };
+        hybrid_ids_[0] = ids(side, true); hybrid_ids_[1] = ids(side, false);
+        hybrid_ids_[2] = ids(1 - side, true); hybrid_ids_[3] = ids(1 - side, false);
+        auto raw = [this](int set, int i) { return hybrid_ids_[size_t(set)][size_t(i)].toRawUTF8(); };
+        setup(amp, "AMP ENV", {raw(0, 0), raw(0, 1), raw(0, 2), raw(0, 3)}, raw(0, 4), "VEL \xe2\x86\x92 AMP", 1.0f);
+        setup(filter, "FILTER ENV", {raw(1, 0), raw(1, 1), raw(1, 2), raw(1, 3)}, raw(1, 4), "VEL \xe2\x86\x92 FILTER", 1.0f);
+        for (int set = 2; set < 4; ++set) {
+            auto& panel = set == 2 ? amp : filter;
+            for (int i = 0; i < 4; ++i) panel.ghost[size_t(i)] = state.getParameter(hybrid_ids_[size_t(set)][size_t(i)]);
+        }
+        const juce::String mine = utf8(side == 0 ? "A \xc2\xb7 " : "B \xc2\xb7 ") + studio_ui::engines()[size_t(engines_ab[size_t(side)])].name;
+        const juce::String other = utf8(side == 0 ? "- - B \xc2\xb7 " : "- - A \xc2\xb7 ") + studio_ui::engines()[size_t(engines_ab[size_t(1 - side)])].name;
+        for (auto* p : {&amp, &filter}) {
+            p->tag = mine; p->legend = other;
+            p->foot = utf8("P1 ATTACK \xc2\xb7 P2 DECAY \xc2\xb7 \xe2\x87\xa7 SUSTAIN / RELEASE \xc2\xb7 DRAG THE POINTS");
+        }
+        focus_ = -1; set_focus(0);
+        refresh(); resized();
+    }
     void build(int kind, juce::AudioProcessorValueTreeState& state) {
         if (kind == kind_ && state_ == &state) return;
         kind_ = kind; state_ = &state;
+        for (auto* p : {&amp, &filter}) { p->ghost = {}; p->tag = {}; }
         const char* prefix = kind == 0 ? "modeld." : kind == 1 ? "juno." : kind == 3 ? "ob6." : kind == 5 ? "arp2600." : "";
         auto id = [&](const char* name) { return juce::String(prefix) + name; };
         if (kind == 4) {
@@ -264,6 +310,8 @@ private:
     int kind_ = -1, focus_ = 0;
     std::array<juce::String, 4> amp_ids_, filter_ids_, op_ids_;
     std::array<juce::String, 2> vel_ids_;
+    std::array<std::array<juce::String, 5>, 4> hybrid_ids_;
+    std::array<int, 2> hybrid_engines_{-1, -1};
     std::vector<float> snapshot_;
 
     void setup(EnvPanel& p, const char* name, std::array<const char*, 4> ids, const char* extra, const char* extra_label, float extra_scale) {
@@ -327,14 +375,28 @@ public:
         return s;
     }
 
+    /** Una mitad de HYBRID (2b): `hybrid.x.voice.lfo_*`; el tercer destino es AMP si la mitad es un DX7 y PWM si no. */
+    void build_hybrid(int side, int engine, juce::AudioProcessorValueTreeState& state) {
+        const int key = 100 + side * 10 + engine;
+        if (key == kind_ && state_ == &state) return;
+        kind_ = key; state_ = &state;
+        const juce::String v = side == 0 ? "hybrid.a.voice." : "hybrid.b.voice.";
+        ids_ = {v + "lfo_shape", v + "lfo_rate", v + "lfo_div", v + "lfo_cutoff", v + "lfo_pitch",
+                engine == 4 ? v + "lfo_pwm" : juce::String(), engine == 4 ? juce::String() : v + "lfo_pwm", juce::String(), "lfo_sync"};
+        create(state);
+    }
     void build(int kind, juce::AudioProcessorValueTreeState& state) {
         if (kind == kind_ && state_ == &state) return;
         kind_ = kind; state_ = &state;
-        for (auto* c : {shape.get(), rate.get(), sync.get(), division.get(), delay.get()}) if (c) removeChildComponent(c);
-        for (auto& d : dests) if (d.knob) removeChildComponent(d.knob.get());
         const juce::String prefix = kind == 0 ? "modeld." : kind == 1 ? "juno." : kind == 3 ? "ob6." : kind == 4 ? "dx7." : "arp2600.";
         ids_ = {prefix + "lfo_shape", prefix + "lfo_rate", prefix + "lfo_div", prefix + "lfo_cutoff", prefix + "lfo_pitch",
                 kind == 4 ? prefix + "lfo_amp" : juce::String(), kind == 4 ? juce::String() : prefix + "lfo_pwm", kind == 1 ? prefix + "lfo_delay" : juce::String(), "lfo_sync"};
+        create(state);
+    }
+private:
+    void create(juce::AudioProcessorValueTreeState& state) {
+        for (auto* c : {shape.get(), rate.get(), sync.get(), division.get(), delay.get()}) if (c) removeChildComponent(c);
+        for (auto& d : dests) if (d.knob) removeChildComponent(d.knob.get());
         auto param = [&](const juce::String& id) { return id.isEmpty() ? nullptr : state.getParameter(id); };
         auto cell = [&](CellSpec s, const juce::String& id) {
             s.id = id.isEmpty() ? nullptr : id.toRawUTF8();
@@ -359,6 +421,7 @@ public:
         }
         resized(); refresh();
     }
+public:
     void refresh() {
         for (auto* c : {shape.get(), rate.get(), sync.get(), division.get(), delay.get()}) if (c) { c->mode = mode; c->repaint(); }
         for (auto& d : dests) if (d.knob) { d.knob->mode = mode; d.knob->repaint(); }

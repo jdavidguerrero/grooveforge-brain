@@ -486,3 +486,89 @@ mismo engine y de otro, y cerrar con ≡). Arnés de audio sin cambios.
 - Sigue abierta la decisión de dónde guardar rating y descartes (proyecto o máquina).
 
 Siguiente: corte 7, HYBRID (2a–2h).
+
+## 8. Corte 7: HYBRID (2a–2h)
+
+Es el corte más grande (ocho pantallas, y dos necesitan cambios en el procesador), así que va en dos entregas:
+
+| Entrega | Pantallas | Qué queda demostrable |
+|---|---|---|
+| **7a** | 2a HOME, 2b editar una mitad, 2c GROOVE / FX de la capa (2e ENGINE SELECT ya está desde el corte 1) | HYBRID se navega entero con las páginas nuevas |
+| 7b | 2d presets de la mitad, 2f + CUSTOM, 2g SAVE LAYER, 2h estados | Flujo completo de capas: elegir, crear, guardar con nombre, ver lo modificado |
+
+### 7a · HOME (2a)
+
+Área de contenido, en coordenadas de la referencia:
+
+| Bloque | Rectángulo | Contenido |
+|---|---|---|
+| Lista de capas | 16, 16, 264 × 456 | "LAYER PRESETS · n / 32 · CC 18", filas de 28 (número, nombre, LOADED en la cargada), y al pie + SAVE LAYER y + CUSTOM |
+| Tarjetas A y B | 296 y 904, 16, 280 × 232 | letra, engine, EDITING en la del foco, ilustración (50 % si no tiene foco), nombre del preset de la mitad, una onda corta y el papel ("ATTACK · DEFINITION" / "BODY · WEIGHT · SPACE") |
+| MORPH | 584, 16, 312 × 232 | "MORPH · CC 17" y el valor; curvas de ganancia A (sólida) y B (punteada) con la posición; B DELAY y B TRANSPOSE |
+| Filtro | 296, 256, 456 × 216 | "FILTER · BOTH HALVES" y la polifonía de la capa; curva del filtro de la mitad en foco |
+| Perillas héroe | 768 y 984, 256, 200 × 216 | CUTOFF y RESONANCE de la mitad en foco |
+
+- **MORPH (nota de 2a):** crossfade de igual potencia normalizado para que al 50 % las dos mitades estén a su ganancia base:
+  g_A(m) = min(1, cos(π m / 2) / √½), g_B(m) = min(1, sin(π m / 2) / √½). Arrastrar en horizontal dentro del bloque
+  mueve MORPH (`hybrid.morph`).
+- **B DELAY:** la referencia dice 0–35 ms; el plugin y el firmware aceptan 0–255 ms (`hybrid.delay`). Se muestra el rango
+  real.
+- **B TRANSPOSE:** la referencia lo pone en octavas (−24 · −12 · 0 · +12 · +24). El parámetro va en semitonos (−24…+24);
+  los segmentos fijan octavas y, si el preset trae otro valor, se ve el número.
+- **Tarjetas:** clic = foco de esa mitad (igual que A | B); doble clic = OSC de esa mitad.
+- **Lista:** clic = cargar la capa. + SAVE LAYER usa por ahora el guardado que ya existe (agrega "LAYER nn"); el diálogo con
+  nombre es 7b. + CUSTOM se ve deshabilitado hasta 7b.
+- **Filtro:** la nota de la referencia dice "B FOLLOWS A · ratio" (cada mitad sigue a la otra en proporción). En el plugin
+  cada mitad tiene su cutoff y resonancia propios (`hybrid.a.cutoff`, `hybrid.b.cutoff`), así que las perillas editan la
+  mitad en foco y la nota dice el valor de la otra mitad. Que una siga a la otra sería un cambio de DSP: queda anotado,
+  no se hace en este corte.
+- **Polifonía:** la de la capa es la del engine más chico (nota POLY).
+
+### 7a · Editar una mitad (2b)
+
+A | B queda siempre en la fila de pestañas (x 600). OSC, ENV y LFO · MOD muestran la mitad en foco con las páginas nuevas:
+
+- **OSC y MOD:** cada mitad guarda su página OSC como slots normalizados (`hybrid.a.osc.página.slot`, 0–1 sobre el rango de
+  `GF_OSC_SLOT` / `GF_MOD_SLOT`). Los paneles se arman de la tabla de slots: un panel por parada, una celda por slot usado,
+  con el nombre de `hybrid_osc_label`, el valor desnormalizado (lo + n · (hi − lo)) con su unidad, y los discretos como
+  segmentos o valores con pasos. Los slots del engine (ALGORITHM, FEEDBACK…) aparecen una sola vez. Es el mismo sistema de
+  paneles que SYNTH, pero sin la disposición hecha a mano de cada engine.
+- **ENV:** AMP y FILTER de la mitad (`hybrid.x.attack` / `release` y `hybrid.x.voice.*`), con la **envolvente fantasma** de
+  la otra mitad: punteada en MON sobre el mismo eje (nota GHOST). El eje se ajusta a las cuatro envolventes.
+- **LFO:** `hybrid.x.voice.lfo_*`; el tercer destino es AMP si la mitad es un DX7 y PWM si no.
+- Las marcas de foco: A | B relleno, la etiqueta "B · OB-6" en cada panel, y la cabecera con la miniatura de la mitad
+  marcada (ya existe desde el corte 1).
+
+### 7a · GROOVE y FX de la capa (2c)
+
+GROOVE y FX procesan la suma: A | B se reemplaza por la etiqueta punteada "LAYER · FROM A" (ya existe desde el corte 1) y
+las páginas son las de SYNTH con los parámetros `hybrid.groove.*`, `hybrid.macro.*` y `hybrid.fx.*`. UNISON es por
+mitad en el plugin; la columna toma el de A, como dice la etiqueta.
+
+### Tests (7a)
+
+- HYBRID abre en HOME con la lista de capas, las dos tarjetas y MORPH; arrastrar en MORPH cambia `hybrid.morph`; clic en
+  una tarjeta cambia el foco; clic en una capa la carga.
+- OSC, ENV y LFO de cada mitad ligan los parámetros `hybrid.a.*` o `hybrid.b.*` según el foco; cambiar el foco reconstruye
+  la página; la envolvente fantasma es la de la otra mitad.
+- GROOVE y FX ligan los parámetros `hybrid.*`.
+
+**No cubre (7b):** 2d, 2f, 2g, 2h.
+
+### Resultado del corte 7a (2026-11-03)
+
+HYBRID se navega con las páginas nuevas (`hybrid_home.h`, `OscPage::build_hybrid`, `EnvPage::build_hybrid`,
+`LfoPage::build_hybrid`). 12/12 tests (bloque nuevo: HOME con capas y mitades, arrastre de MORPH, igual potencia al 50 %,
+B TRANSPOSE en octavas, tarjeta = foco, clic en capa = cargar; OSC / ENV / LFO / MOD de la mitad en foco y su
+reconstrucción con A | B; envolvente fantasma; GROOVE y FX de la capa). Arnés de audio sin cambios.
+
+- **Sub-páginas que quedan viejas en HYBRID:** HOME · LAYER (mezcla base GAIN A / B e importar una mitad desde archivo) y
+  ENV · VOICE (FLT ENV AMT, DRIVE y GLIDE de cada mitad, y el unísono de B). No tienen lugar en la referencia; las
+  decide 7b o una revisión del diseño.
+- **OSC de cada mitad** usa la tabla de slots: es completo pero menos legible que los paneles hechos a mano de SYNTH (el
+  DX7 muestra RATIO · LEVEL · A · D · S · R en cada operador, sin el diagrama de algoritmo).
+- **Filtro:** las perillas editan la mitad en foco y la nota dice el cutoff de la otra; "B FOLLOWS A" no se implementó
+  (sería un cambio de DSP).
+- Arreglado: la tira decía "OSC Â· A" (texto del corte 1 sin `utf8()`).
+
+Siguiente: corte 7b (2d presets de la mitad, 2f + CUSTOM, 2g SAVE LAYER, 2h estados).
