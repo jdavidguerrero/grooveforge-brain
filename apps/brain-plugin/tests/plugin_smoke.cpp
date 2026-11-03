@@ -2789,6 +2789,50 @@ int main() {
         pump->setValue(1, juce::sendNotificationSync);
         if (!check(find_parameter(*dx_plugin, "dx7.groove.pump.on")->getValue() > .99f, "DX7 groove control binding")) return 1;
     }
+    {   // gemelo-vst-ui-studio.md "Texto y tipografía": UTF-8 bien leído e IBM Plex Mono en los siete modos
+        // UTF-8 leído como 8 bits: Â/Ã/â seguidas de un byte de continuación (U+0080–U+00BF), p. ej. "Â·" o "â˜"
+        auto mojibake = [](const juce::String& text) {
+            for (int i = 0; i + 1 < text.length(); ++i)
+                if ((text[i] == 0xC2 || text[i] == 0xC3 || text[i] == 0xE2) && text[i + 1] >= 0x80 && text[i + 1] <= 0xBF) return true;
+            return false;
+        };
+        std::function<juce::String(juce::Component&)> first_bad = [&](juce::Component& c) -> juce::String {
+            juce::StringArray texts;
+            if (auto* l = dynamic_cast<juce::Label*>(&c)) texts.add(l->getText());
+            if (auto* b = dynamic_cast<juce::Button*>(&c)) texts.add(b->getButtonText());
+            if (auto* box = dynamic_cast<juce::ComboBox*>(&c)) { texts.add(box->getText()); texts.add(box->getTextWhenNothingSelected()); }
+            if (auto* tip = dynamic_cast<juce::SettableTooltipClient*>(&c)) texts.add(tip->getTooltip());
+            for (auto& t : texts) if (mojibake(t)) return t;
+            for (auto* child : c.getChildren()) if (auto bad = first_bad(*child); bad.isNotEmpty()) return bad;
+            return {};
+        };
+        for (int engine = 0; engine <= 6; ++engine) {
+            auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            auto* importer = dynamic_cast<gf::PresetImport*>(plugin.get());
+            if (engine == 6) {
+                studio::LayerPreset layer; std::array<uint8_t, studio::LAYER_BYTES> bytes{};
+                if (!check(studio::factory_layer(0, &layer) && gf::encode_hybrid_layer(layer, bytes.data(), bytes.size()) &&
+                           importer->import_preset(bytes.data(), bytes.size()), "UTF-8 check layer")) return 1;
+            } else {
+                studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+                if (!check(studio::factory_preset(uint8_t(engine), 0, &preset) &&
+                           importer->import_preset(bytes.data(), studio::preset_encode(preset, uint8_t(engine), bytes.data(), bytes.size())),
+                           "UTF-8 check preset")) return 1;
+            }
+            auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+            for (int tab = -1; tab < 11; ++tab) {
+                if (tab >= 0) {
+                    auto* button = dynamic_cast<juce::TextButton*>(editor->findChildWithID("navigation.tab." + juce::String(tab)));
+                    if (!button || !button->isVisible()) continue;
+                    button->onClick();
+                }
+                const auto bad = first_bad(*editor);
+                if (!check(bad.isEmpty(), "editor text is valid UTF-8")) { std::fprintf(stderr, "  %s\n", bad.toRawUTF8()); return 1; }
+            }
+            const auto face = juce::LookAndFeel::getDefaultLookAndFeel().getTypefaceForFont(juce::Font(juce::FontOptions(13.0f)));
+            if (!check(face && face->getName() == "IBM Plex Mono", "editor uses embedded IBM Plex Mono")) return 1;
+        }
+    }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida
         studio::Preset riser; bool found = false;
         for (uint8_t i = 0; i < studio::factory_count(5) && !found; ++i)

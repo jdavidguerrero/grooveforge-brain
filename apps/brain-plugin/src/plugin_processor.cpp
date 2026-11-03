@@ -1781,7 +1781,7 @@ public:
             if (!gf::decode_hybrid_layer(static_cast<const uint8_t*>(hybrid_raw_.getData()), hybrid_raw_.getSize(), layer)) return "HYBRID";
         } else if (!studio::factory_layer(0, &layer)) return "HYBRID";
         constexpr const char* names[] = {"MODEL D", "JUNO", "PROPHET", "OB-6", "DX7", "ARP 2600"};
-        return juce::String::fromUTF8(layer.name) + " · A " + names[layer.eng_a] + " / B " + names[layer.eng_b];
+        return juce::String::fromUTF8(layer.name) + juce::String::fromUTF8(" · A ") + names[layer.eng_a] + " / B " + names[layer.eng_b];
     }
     bool import_hybrid_half(const void* data, size_t size, unsigned side) override {
         if (side > 1 || !data) return false;
@@ -3290,19 +3290,19 @@ public:
         keyboard_.setColour(juce::MidiKeyboardComponent::keyDownOverlayColourId, juce::Colour(0xff5dcaa5));
         addChildComponent(keyboard_);
         keyboard_toggle_.setComponentID("keyboard.toggle");
-        keyboard_toggle_.setButtonText("KEYS ▴");
+        keyboard_toggle_.setButtonText(juce::String::fromUTF8("KEYS ▴"));
         keyboard_toggle_.onClick = [this] {
             keyboard_open_ = !keyboard_open_;
             if (!keyboard_open_) { keyboard_state_.reset(); owner_.clear_keyboard_notes(); }
             keyboard_.setVisible(keyboard_open_);
-            keyboard_toggle_.setButtonText(keyboard_open_ ? "KEYS ▾" : "KEYS ▴");
+            keyboard_toggle_.setButtonText(keyboard_open_ ? juce::String::fromUTF8("KEYS ▾") : juce::String::fromUTF8("KEYS ▴"));
             const double ratio = keyboard_open_ ? 1200.0 / 960.0 : 1200.0 / 760.0;
             getConstrainer()->setFixedAspectRatio(ratio);
             setSize(getWidth(), int(std::lround(double(getWidth()) / ratio)));
         };
         addAndMakeVisible(keyboard_toggle_);
         preset_browser_.setComponentID("preset.browser");
-        preset_browser_.setTextWhenNothingSelected("PRESETS · FACTORY");
+        preset_browser_.setTextWhenNothingSelected(juce::String::fromUTF8("PRESETS · FACTORY"));
         preset_browser_.onChange = [this] {
             const int index = preset_browser_.getSelectedId() - 1;
             if (index < 0) return;
@@ -3427,7 +3427,7 @@ public:
         hybrid_page_.onClick = [this] { hybrid_page_index_ = (hybrid_page_index_ + 1) % 9; update_status(); };
         addChildComponent(hybrid_page_);
         hybrid_factory_.setComponentID("hybrid.factory");
-        hybrid_factory_.setTextWhenNothingSelected("CAPAS DE FÁBRICA");
+        hybrid_factory_.setTextWhenNothingSelected(juce::String::fromUTF8("CAPAS DE FÁBRICA"));
         hybrid_factory_.onChange = [this] {
             const int index = hybrid_factory_.getSelectedId() - 1;
             if (index >= 0) { owner_.load_hybrid_bank(unsigned(index)); update_status(); }
@@ -3435,7 +3435,7 @@ public:
         hybrid_save_.setButtonText("GUARDAR CAPA"); hybrid_save_.setComponentID("hybrid.save");
         hybrid_save_.onClick = [this] {
             const bool ok = owner_.save_hybrid_bank(); update_status();
-            status_.setText(ok ? "CAPA GUARDADA EN EL PROYECTO" : "NO SE PUDO GUARDAR · BANCO LLENO O LFO SYNC ACTIVO", juce::dontSendNotification);
+            status_.setText(ok ? "CAPA GUARDADA EN EL PROYECTO" : juce::String::fromUTF8("NO SE PUDO GUARDAR · BANCO LLENO O LFO SYNC ACTIVO"), juce::dontSendNotification);
         };
         addChildComponent(hybrid_save_);
         addChildComponent(hybrid_factory_);
@@ -3525,7 +3525,7 @@ public:
         ob6_toggle_.onClick = [this] { if (ob6_toggle_.getToggleState()) { hybrid_toggle_.setToggleState(false, juce::sendNotification); arp2600_toggle_.setToggleState(false, juce::sendNotification); modeld_toggle_.setToggleState(false, juce::sendNotification); juno_toggle_.setToggleState(false, juce::sendNotification); dx7_toggle_.setToggleState(false, juce::sendNotification); } };
         juno_page_.setButtonText("OSC");
         juno_page_.setComponentID("engine.page");
-        juno_page_.setTooltip("Cambiar de página de edición");
+        juno_page_.setTooltip(juce::String::fromUTF8("Cambiar de página de edición"));
         juno_page_.onClick = [this] { if (arp2600_toggle_.getToggleState()) arp2600_page_index_ = (arp2600_page_index_ + 1) % 6; else if (modeld_toggle_.getToggleState()) modeld_page_index_ = (modeld_page_index_ + 1) % 6; else if (ob6_toggle_.getToggleState()) ob6_page_index_ = (ob6_page_index_ + 1) % 6; else juno_page_index_ = (juno_page_index_ + 1) % 8; update_status(); };
         addChildComponent(juno_page_);
         constexpr const char* descriptions[] = {"0 Saw · 1 Square · 2 Pulse · 3 Saw+Pulse", "Nivel del suboscilador", "Nivel de ruido", "Ancho de pulso", "0 Off · 1 I · 2 II · 3 I+II", "0 Bass boost · 1 Flat · 2 225 Hz · 3 720 Hz", "0 16 pies · 1 8 pies · 2 4 pies", "0 ENV · 1 GATE", "Ruido del chorus BBD"};
@@ -3536,7 +3536,7 @@ public:
             juno_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
             juno_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 22);
             juno_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
-            juno_sliders_[i].setTooltip(descriptions[i]);
+            juno_sliders_[i].setTooltip(juce::String::fromUTF8(descriptions[i]));
             addChildComponent(juno_sliders_[i]);
             juno_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_OSC[i].id, juno_sliders_[i]);
         }
@@ -3558,7 +3558,7 @@ public:
             juno_lfo_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
             juno_lfo_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
             juno_lfo_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
-            juno_lfo_sliders_[i].setTooltip(lfo_descriptions[i]);
+            juno_lfo_sliders_[i].setTooltip(juce::String::fromUTF8(lfo_descriptions[i]));
             addChildComponent(juno_lfo_sliders_[i]);
             juno_lfo_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_LFO[i].id, juno_lfo_sliders_[i]);
         }
@@ -3570,7 +3570,7 @@ public:
             juno_voice_groove_sliders_[i].setSliderStyle(juce::Slider::LinearHorizontal);
             juno_voice_groove_sliders_[i].setTextBoxStyle(juce::Slider::TextBoxRight, false, 65, 22);
             juno_voice_groove_sliders_[i].setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
-            juno_voice_groove_sliders_[i].setTooltip(voice_groove_descriptions[i]);
+            juno_voice_groove_sliders_[i].setTooltip(juce::String::fromUTF8(voice_groove_descriptions[i]));
             addChildComponent(juno_voice_groove_sliders_[i]);
             juno_voice_groove_attachments_[i] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(owner.parameters(), JUNO_VOICE_GROOVE[i].id, juno_voice_groove_sliders_[i]);
         }
@@ -3713,7 +3713,7 @@ public:
                 slider.setSliderStyle(juce::Slider::LinearHorizontal);
                 slider.setTextBoxStyle(juce::Slider::TextBoxRight, false, 50, 18);
                 slider.setColour(juce::Slider::textBoxTextColourId, juce::Colour(0xfff2f2f2));
-                slider.setTooltip(juce::String(DX_FX_NAMES[size_t(i)]).toUpperCase() + " · " + DX_FX_LABELS[i][field]);
+                slider.setTooltip(juce::String(DX_FX_NAMES[size_t(i)]).toUpperCase() + juce::String::fromUTF8(" · ") + DX_FX_LABELS[i][field]);
                 addChildComponent(slider);
                 dx_fx_attachments_[i][field] = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
                     owner.parameters(), dx_fx_id(i, field), slider);
@@ -3878,8 +3878,8 @@ public:
                 g.setColour(juce::Colour(side == focus ? 0xff7ad4ea : 0xff242424));
                 g.drawRect(x, 102.0f, 335.0f, 176.0f, side == focus ? 2.0f : 1.0f);
                 const auto engine = owner_.hybrid_engine_id(unsigned(side));
-                const auto title = juce::String(side == 0 ? "A  ·  " : "B  ·  ") +
-                    (engine < 6 ? names[engine] : "?") + (side == focus ? "  ·  FOCUS" : "");
+                const auto title = juce::String(side == 0 ? juce::String::fromUTF8("A  ·  ") : juce::String::fromUTF8("B  ·  ")) +
+                    (engine < 6 ? names[engine] : "?") + (side == focus ? juce::String::fromUTF8("  ·  FOCUS") : "");
                 g.setFont(juce::Font(juce::FontOptions(11.0f, juce::Font::bold)));
                 g.drawText(title, int(x) + 10, 106, 300, 20, juce::Justification::left);
             }
@@ -3912,7 +3912,7 @@ public:
         g.drawText(hybrid_toggle_.getToggleState() ? "HYBRID" : arp2600_toggle_.getToggleState() ? "ARP 2600" : modeld_toggle_.getToggleState() ? "MODEL D" : ob6_toggle_.getToggleState() ? "OB-6" : juno_toggle_.getToggleState() ? "JUNO" : dx7_toggle_.getToggleState() ? "DX7" : "PROPHET", 28, 40, 155, 28, juce::Justification::left);
         g.setColour(juce::Colour(0xff9fe1cb));
         g.setFont(juce::Font(juce::FontOptions(12.0f)));
-        if (!hybrid_toggle_.getToggleState() && !arp2600_toggle_.getToggleState() && !dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState() && !modeld_toggle_.getToggleState()) g.drawText("EXPERIMENTAL  ·  5 VOCES", 400, 42, 290, 24, juce::Justification::right);
+        if (!hybrid_toggle_.getToggleState() && !arp2600_toggle_.getToggleState() && !dx7_toggle_.getToggleState() && !juno_toggle_.getToggleState() && !ob6_toggle_.getToggleState() && !modeld_toggle_.getToggleState()) g.drawText(juce::String::fromUTF8("EXPERIMENTAL  ·  5 VOCES"), 400, 42, 290, 24, juce::Justification::right);
     }
 
     void resized() override {
@@ -4128,12 +4128,12 @@ private:
             if (hybrid) {
                 const auto names = owner_.hybrid_bank_names();
                 for (int i = 0; i < names.size(); ++i) preset_browser_.addItem(names[i], i + 1);
-                preset_browser_.setTextWhenNothingSelected("LAYERS · PROJECT");
+                preset_browser_.setTextWhenNothingSelected(juce::String::fromUTF8("LAYERS · PROJECT"));
             } else {
                 studio::Preset preset;
                 for (int i = 0; i < 256 && studio::factory_preset(uint8_t(browser_engine), uint8_t(i), &preset); ++i)
                     preset_browser_.addItem(juce::String::fromUTF8(preset.name), i + 1);
-                preset_browser_.setTextWhenNothingSelected("PRESETS · FACTORY");
+                preset_browser_.setTextWhenNothingSelected(juce::String::fromUTF8("PRESETS · FACTORY"));
             }
         }
         constexpr const char* hybrid_tabs[] = {"HOME", "FILTER", "MACROS", "GROOVE", "FX", "A VOICE", "B VOICE", "A OSC", "B OSC", "A LFO", "B LFO"};
@@ -4273,7 +4273,7 @@ private:
             auto& button = hybrid_focus_buttons_[size_t(side)];
             button.setVisible(hybrid && hybrid_page_index_ == 0);
             const auto engine = owner_.hybrid_engine_id(unsigned(side));
-            button.setButtonText(juce::String(side == 0 ? "A · " : "B · ") + (engine < 6 ? engine_names[engine] : "?") + (side == focus ? " · FOCUS" : ""));
+            button.setButtonText(juce::String(side == 0 ? juce::String::fromUTF8("A · ") : juce::String::fromUTF8("B · ")) + (engine < 6 ? engine_names[engine] : "?") + (side == focus ? juce::String::fromUTF8(" · FOCUS") : ""));
             button.setColour(juce::TextButton::buttonColourId, juce::Colour(side == focus ? 0xff0f4352 : 0xff141414));
         }
         displayed_hybrid_focus_ = focus;
@@ -4300,8 +4300,8 @@ private:
         arp2600_ring_label_.setVisible(arp2600 && arp2600_page_index_ == 0);
         arp2600_ring_slider_.setVisible(arp2600 && arp2600_page_index_ == 0);
         sync_.setEnabled(true);
-        status_.setText(hybrid ? owner_.hybrid_description() : arp2600 ? (name.isEmpty() ? juce::String("ARP 2600 INIT") : name) + " · ARP 2600 GFP PARCIAL" : modeld ? juce::String((name.isEmpty() ? juce::String("MODEL D INIT") : name) + " · MODEL D GFP PARCIAL") : ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + " · OB-6 GFP PARCIAL") : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + " · JUNO PREVIEW") : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + " · DX7 PREVIEW" :
-            (name.isEmpty() ? juce::String("INIT") : name) + "  ·  PREVIEW: CADENA FX INCOMPLETA", juce::dontSendNotification);
+        status_.setText(hybrid ? owner_.hybrid_description() : arp2600 ? (name.isEmpty() ? juce::String("ARP 2600 INIT") : name) + juce::String::fromUTF8(" · ARP 2600 GFP PARCIAL") : modeld ? juce::String((name.isEmpty() ? juce::String("MODEL D INIT") : name) + juce::String::fromUTF8(" · MODEL D GFP PARCIAL")) : ob6 ? juce::String((name.isEmpty() ? juce::String("OB-6 INIT") : name) + juce::String::fromUTF8(" · OB-6 GFP PARCIAL")) : juno ? juce::String((name.isEmpty() ? juce::String("INIT") : name) + juce::String::fromUTF8(" · JUNO PREVIEW")) : dx7 ? (name.isEmpty() ? juce::String("DX7 E.PIANO") : name) + juce::String::fromUTF8(" · DX7 PREVIEW") :
+            (name.isEmpty() ? juce::String("INIT") : name) + juce::String::fromUTF8("  ·  PREVIEW: CADENA FX INCOMPLETA"), juce::dontSendNotification);
         displayed_dx7_ = dx7_toggle_.getToggleState();
         displayed_juno_ = juno_toggle_.getToggleState();
         displayed_ob6_ = ob6_toggle_.getToggleState();
@@ -4357,9 +4357,9 @@ private:
                 juce::MemoryBlock bytes;
                 if (file.getSize() <= 0 || file.getSize() > int64_t(studio::PRESET_BYTES) || !file.loadFileAsData(bytes) ||
                     !safe->owner_.import_hybrid_half(bytes.getData(), bytes.getSize(), side)) {
-                    safe->status_.setText("GFP INVÁLIDO O ENGINE REPETIDO · SIN CAMBIOS", juce::dontSendNotification); return;
+                    safe->status_.setText(juce::String::fromUTF8("GFP INVÁLIDO O ENGINE REPETIDO · SIN CAMBIOS"), juce::dontSendNotification); return;
                 }
-                safe->status_.setText(side == 0 ? "HYBRID · MITAD A ACTUALIZADA" : "HYBRID · MITAD B ACTUALIZADA", juce::dontSendNotification);
+                safe->status_.setText(side == 0 ? juce::String::fromUTF8("HYBRID · MITAD A ACTUALIZADA") : juce::String::fromUTF8("HYBRID · MITAD B ACTUALIZADA"), juce::dontSendNotification);
             });
     }
     void choose_preset() {
@@ -4373,7 +4373,7 @@ private:
                 juce::MemoryBlock data;
                 if (file.getSize() <= 0 || file.getSize() > int64_t(studio::LAYER_BYTES) ||
                     !file.loadFileAsData(data) || !safe->owner_.import_preset(data.getData(), data.getSize())) {
-                    safe->status_.setText("GFP INVÁLIDO O DE OTRO ENGINE · SIN CAMBIOS", juce::dontSendNotification);
+                    safe->status_.setText(juce::String::fromUTF8("GFP INVÁLIDO O DE OTRO ENGINE · SIN CAMBIOS"), juce::dontSendNotification);
                     return;
                 }
                 safe->update_status();
@@ -4399,11 +4399,12 @@ private:
                 const auto file = chooser.getResult();
                 if (file == juce::File()) return;
                 const bool ok = file.replaceWithData(bytes.data(), bytes.size());
-                safe->status_.setText(ok ? (hybrid ? "GFL GUARDADO · CAPAS Y CONTROLES" : "GFP GUARDADO · GRIT / POCKET / MOVE INCORPORADOS") : "NO SE PUDO GUARDAR EL PRESET",
+                safe->status_.setText(ok ? (hybrid ? juce::String::fromUTF8("GFL GUARDADO · CAPAS Y CONTROLES") : juce::String::fromUTF8("GFP GUARDADO · GRIT / POCKET / MOVE INCORPORADOS")) : "NO SE PUDO GUARDAR EL PRESET",
                                       juce::dontSendNotification);
             });
     }
     BrainPrototype& owner_;
+    juce::SharedResourcePointer<StudioFonts> studio_fonts_;   // antes que los componentes: su texto ya sale en Plex
     StudioLookAndFeel studio_look_;
     OutputMeter output_meter_;
     juce::MidiKeyboardState keyboard_state_;

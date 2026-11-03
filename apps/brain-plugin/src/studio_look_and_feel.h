@@ -2,6 +2,7 @@
 
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <cmath>
+#include "gf_fonts.h"
 
 /** Visual tokens shared by the VST's existing JUCE controls. */
 class StudioLookAndFeel final : public juce::LookAndFeel_V4 {
@@ -56,4 +57,19 @@ public:
     }
 private:
     juce::Colour accent_{0xff5dcaa5}, dim_{0xff0e5040};
+};
+
+/** IBM Plex Mono incrustada como tipografía por defecto del plugin.
+    JUCE resuelve la fuente de todo texto con el LookAndFeel *por defecto*, no con el del componente; por eso esta clase
+    se registra como predeterminada mientras exista. Se usa con juce::SharedResourcePointer: la crea el primer editor
+    abierto y la destruye el último, así varias ventanas del plugin no se pisan. */
+class StudioFonts final : public juce::LookAndFeel_V4 {
+public:
+    StudioFonts() { juce::LookAndFeel::setDefaultLookAndFeel(this); juce::Typeface::clearTypefaceCache(); }
+    ~StudioFonts() override { juce::LookAndFeel::setDefaultLookAndFeel(nullptr); juce::Typeface::clearTypefaceCache(); }
+    /** Regular, o SemiBold cuando el texto pide negrita. */
+    juce::Typeface::Ptr getTypefaceForFont(const juce::Font& font) override { return font.isBold() ? semibold_ : regular_; }
+private:
+    juce::Typeface::Ptr regular_ = juce::Typeface::createSystemTypefaceFor(gf_fonts::IBMPlexMonoRegular_ttf, size_t(gf_fonts::IBMPlexMonoRegular_ttfSize));
+    juce::Typeface::Ptr semibold_ = juce::Typeface::createSystemTypefaceFor(gf_fonts::IBMPlexMonoSemiBold_ttf, size_t(gf_fonts::IBMPlexMonoSemiBold_ttfSize));
 };

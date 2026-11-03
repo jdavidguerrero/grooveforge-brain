@@ -26,7 +26,7 @@ public:
         g.fillAll(juce::Colour(0xff101918));
         g.setColour(juce::Colour(0xff242424)); g.drawRect(getLocalBounds(), 1);
         constexpr const char* names[] = {"SINE", "TRIANGLE", "SAW", "SQUARE", "SAMPLE & HOLD"};
-        const auto heading = juce::String("LFO · ") + names[shape()] + "   ·   " +
+        const auto heading = juce::String(juce::String::fromUTF8("LFO · ")) + names[shape()] + juce::String::fromUTF8("   ·   ") +
             (sync_->load(std::memory_order_relaxed) >= .5f ? juce::String("SYNC DAW") : juce::String(rate_->load(std::memory_order_relaxed), 2) + " Hz");
         g.setColour(juce::Colour(0xff9fe1cb)); g.setFont(juce::Font(juce::FontOptions(10.0f, juce::Font::bold)));
         g.drawText(heading, 10, 3, getWidth() - 20, 17, juce::Justification::left);

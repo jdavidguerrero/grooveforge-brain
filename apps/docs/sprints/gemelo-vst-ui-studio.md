@@ -85,3 +85,24 @@ La casilla PREVIEW HOVER activa la preescucha aislada al mantener el cursor 300 
 ## Transición de preescucha
 
 Al activar o cancelar la preescucha se aplica una mezcla lineal de 10 ms entre la salida principal y la del procesador auxiliar. Ambas rutas siguen recibiendo MIDI durante el fundido. La memoria temporal estéreo se reserva en `prepareToPlay`; el callback no la amplía. Si el DAW entrega un bloque mayor al tamaño reservado, ese bloque usa conmutación directa para evitar asignaciones en el hilo de audio. Cambiar de preset mientras ya se está preescuchando no garantiza un fundido entre los dos presets auxiliares.
+
+## Texto y tipografía (2026-11-03)
+
+**Problema.** En las capturas del editor aparecían "PRESETS Â· FACTORY", "CAPAS DE FÃ BRICA", "KEYS â ´" y la estrella
+de favoritos como "â". El código fuente está en UTF-8, pero `juce::String(const char*)` interpreta los bytes como
+caracteres de 8 bits: el "·" (U+00B7) son dos bytes en UTF-8 (C2 B7) y se veían como "Â·". Afectaba a 44 textos
+(etiquetas, estados, tooltips, ★/☆, ▴/▾).
+
+**Corrección.** Todo literal con caracteres fuera de ASCII pasa por `juce::String::fromUTF8`; en los arreglos
+`constexpr const char*` de tooltips la conversión se hace donde se usan. Un test recorre el árbol de componentes del
+editor en los siete modos y falla si algún texto visible contiene la secuencia de un UTF-8 mal leído (Â, Ã, â seguida
+de un byte de continuación).
+
+**Tipografía.** La referencia usa IBM Plex Mono 400/600 en toda la interfaz, como la cabeza de Studio. El editor usaba
+la fuente del sistema. Se incrustan en el binario los mismos `.ttf` de `apps/studio-head/assets/fonts/` (licencia SIL
+Open Font License 1.1, que permite incrustarlos y redistribuirlos con el programa; `OFL.txt` va junto a ellos) con
+`juce_add_binary_data`, y `StudioLookAndFeel::getTypefaceForFont` devuelve Regular o SemiBold según el estilo pedido.
+No depende de que la fuente esté instalada en el Mac.
+
+**No cubre.** La escala tipográfica de la referencia (11 / 13 / 16 / 20 / 28 / 40) ni los radios en 0: los tamaños y
+las formas siguen siendo los del editor actual hasta migrar cada pantalla.

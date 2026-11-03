@@ -108,7 +108,7 @@ private:
         const int index = visible_[size_t(row)];
         g.setColour(juce::Colour(favourites_[size_t(index)] ? 0xffe8b84a : 0xff8e8ea2));
         g.setFont(juce::Font(juce::FontOptions(15.0f)));
-        g.drawText(favourites_[size_t(index)] ? "★" : "☆", 5, 0, 20, height, juce::Justification::centred);
+        g.drawText(favourites_[size_t(index)] ? juce::String::fromUTF8("★") : juce::String::fromUTF8("☆"), 5, 0, 20, height, juce::Justification::centred);
         g.setColour(juce::Colour(0xff8e8ea2)); g.setFont(juce::Font(juce::FontOptions(10.0f)));
         g.drawText("#", 27, 0, 20, height, juce::Justification::centred);
         g.drawText(juce::String(index + 1).paddedLeft('0', 2), 48, 0, 22, height, juce::Justification::centredLeft);

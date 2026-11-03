@@ -77,9 +77,14 @@ if(GF_BUILD_VST3)
         NEEDS_MIDI_INPUT TRUE
         NEEDS_MIDI_OUTPUT FALSE
         COPY_PLUGIN_AFTER_BUILD FALSE)
+    # IBM Plex Mono (SIL OFL 1.1, OFL.txt junto a los .ttf): la misma tipografía que la cabeza de Studio
+    juce_add_binary_data(GfBrainFonts HEADER_NAME gf_fonts.h NAMESPACE gf_fonts SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/../studio-head/assets/fonts/IBMPlexMono-Regular.ttf"
+        "${CMAKE_CURRENT_LIST_DIR}/../studio-head/assets/fonts/IBMPlexMono-SemiBold.ttf")
+    set_target_properties(GfBrainFonts PROPERTIES POSITION_INDEPENDENT_CODE ON)
     target_sources(GrooveForgeBrainPrototype PRIVATE src/plugin_processor.cpp)
     target_compile_definitions(GrooveForgeBrainPrototype PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)
-    target_link_libraries(GrooveForgeBrainPrototype PRIVATE gf_prophet_preset juce::juce_audio_utils
+    target_link_libraries(GrooveForgeBrainPrototype PRIVATE gf_prophet_preset GfBrainFonts juce::juce_audio_utils
         PUBLIC juce::juce_recommended_config_flags juce::juce_recommended_warning_flags)
     add_executable(gf_plugin_smoke tests/plugin_smoke.cpp)
     target_compile_definitions(gf_plugin_smoke PRIVATE JUCE_WEB_BROWSER=0 JUCE_USE_CURL=0)

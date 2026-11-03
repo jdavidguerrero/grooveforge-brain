@@ -34,7 +34,7 @@ class OutputMeter final : public juce::Component, public juce::SettableTooltipCl
 public:
     explicit OutputMeter(OutputMeterState& state) : state_(state) {
         setComponentID("output.meter");
-        setTooltip("Pico de salida L/R · clic para borrar 0 dBFS");
+        setTooltip(juce::String::fromUTF8("Pico de salida L/R · clic para borrar 0 dBFS"));
         startTimerHz(30);
     }
     /** Consume new peaks and advance the visual falloff. */
