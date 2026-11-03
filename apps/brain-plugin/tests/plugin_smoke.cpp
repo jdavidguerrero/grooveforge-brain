@@ -6,6 +6,7 @@
 #include "envelope_editor.h"
 #include "studio_shell.h"
 #include "perform_view.h"
+#include "osc_view.h"
 #include "lfo_display.h"
 #include "hybrid_codec.h"
 #include "ui/groove_macros.h"
@@ -2915,6 +2916,67 @@ int main() {
                 if (!check(std::abs(page->cutoff->getValue() - start) > .01f, "PERFORM curve drag sets the cutoff")) return 1;
             }
             if (engine == 4 && !check(page->page_knobs[0]->parameter() == nullptr, "DX7 has no FLT ENV AMT")) return 1;
+        }
+    }
+    {   // gemelo-vst-ui-migracion.md, corte 3: OSC (1b–1d, Juno, ARP 2600)
+        for (int alg = 1; alg <= 8; ++alg) for (int op = 0; op < 4; ++op)
+            if (!check(studio_ui::osc_math::is_carrier(alg, op) == dx7_is_carrier(alg, op), "OSC algorithm table matches dx7_core")) return 1;
+        auto tab = [](juce::Component& e, int i) { return dynamic_cast<studio_ui::ChromeButton*>(e.findChildWithID("studio.tab." + juce::String(i))); };
+        constexpr const char* first_wave[6] = {"modeld.osc1.wave", "juno.wave", nullptr, nullptr, nullptr, "arp2600.osc1.wave"};
+        for (int engine = 0; engine < 6; ++engine) {
+            auto plugin = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+            studio::Preset preset; std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+            if (!check(studio::factory_preset(uint8_t(engine), 0, &preset) &&
+                       dynamic_cast<gf::PresetImport*>(plugin.get())->import_preset(bytes.data(), studio::preset_encode(preset, uint8_t(engine), bytes.data(), bytes.size())),
+                       "OSC preset")) return 1;
+            auto editor = std::unique_ptr<juce::AudioProcessorEditor>(plugin->createEditor());
+            if (engine == 2) { if (!check(!tab(*editor, 1)->isEnabled(), "Prophet OSC stays disabled")) return 1; continue; }
+            tab(*editor, 1)->onClick();
+            auto* page = dynamic_cast<studio_ui::OscPage*>(editor->findChildWithID("studio.osc"));
+            if (!check(page && page->isVisible() && page->kind() == engine && !page->panels.empty(), "OSC page per engine")) return 1;
+            for (auto& panel : page->panels) {
+                for (auto& cell : panel->cells)
+                    if (!check(cell->parameter() == find_parameter(*plugin, cell->spec.id), "OSC cell bound to the engine")) {
+                        std::fprintf(stderr, "  engine %d cell %s\n", engine, cell->spec.id); return 1;
+                    }
+                if (panel->wave) for (int i = 0; i <= 64; ++i) if (!check(std::isfinite(panel->wave(float(i) / 32.0f)), "OSC wave finite")) return 1;
+            }
+            if (first_wave[engine]) {
+                auto* wave = page->cell(first_wave[engine]);
+                const auto& w = page->panels[0]->wave;
+                std::array<float, 64> before{}; for (int i = 0; i < 64; ++i) before[size_t(i)] = w(float(i) / 32.0f + 0.01f);
+                const int was = wave->index();
+                wave->set_index(was == 0 ? 1 : 0);   // contra SAW: PULSE al 50 % se dibuja igual que SQR
+                double moved = 0; for (int i = 0; i < 64; ++i) moved += std::abs(w(float(i) / 32.0f + 0.01f) - before[size_t(i)]);
+                if (!check(wave->index() != was && moved > 1.0, "OSC WAVE segment edits and redraws")) { std::fprintf(stderr, "  engine %d was %d now %d moved %f\n", engine, was, wave->index(), moved); return 1; }
+            }
+            // un clic en un panel mueve el foco que siguen P1 / P2
+            page->panels[1]->mouseDown(juce::MouseEvent(juce::Desktop::getInstance().getMainMouseSource(), {200.0f, 400.0f}, {}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                                       page->panels[1].get(), page->panels[1].get(), juce::Time::getCurrentTime(), {200.0f, 400.0f}, juce::Time::getCurrentTime(), 1, false));
+            if (!check(page->focus() == 1 && page->panels[1]->focused && !page->panels[0]->focused, "OSC panel click moves focus")) return 1;
+            const auto strip = page->strip();
+            const auto& focused = *page->panels[1];
+            if (!check((focused.p1 < 0 || strip.p1 == focused.cells[size_t(focused.p1)]->spec.label) && strip.nav.isNotEmpty(), "OSC strip follows the focus")) return 1;
+            if (engine == 4) {
+                auto* algorithm = find_parameter(*plugin, "dx7.algorithm");
+                page->open_picker();
+                if (!check(page->picker.isVisible(), "OSC algorithm picker opens")) return 1;
+                page->picker.on_pick(1);
+                if (!check(juce::roundToInt(algorithm->getValue() * 7.0f) == 0 && !page->picker.isVisible() && page->panels[1]->sub.contains("OP 1"), "OSC picker chooses the algorithm")) return 1;
+                auto* level = page->cell("dx7.op2.level");
+                const float op1 = page->op_wave(0, 0.3f);
+                level->parameter()->setValueNotifyingHost(0.0f);
+                if (!check(std::abs(page->op_wave(0, 0.3f) - op1) > 1e-3f, "carrier wave shows its FM output")) return 1;
+                tab(*editor, 2)->onClick();
+                auto* op_eg = dynamic_cast<studio_ui::ChromeButton*>(editor->findChildWithID("studio.sub.1"));
+                if (!check(op_eg && op_eg->isVisible() && op_eg->text == "OP EG" && !page->isVisible(), "DX7 ENV keeps the operator EG page")) return 1;
+            }
+            if (engine == 3) {
+                auto* sync = page->cell("ob6.sync");
+                const int was = sync->index();
+                sync->set_index(1 - was);
+                if (!check(sync->index() == 1 - was, "OSC toggle edits")) return 1;
+            }
         }
     }
     {   // gemelo-correcciones-2026-11-03 §1: la cola de la PLATE no deja DC a la salida

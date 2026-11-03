@@ -170,3 +170,96 @@ cutoff, P1 / P2, chip de PUMP, arrastre en la curva); el arnés de audio sigue s
 - La animación por LFO usa una fase propia del dibujo a 30 Hz, no la del audio (como en la cabeza de Studio).
 
 Siguiente: corte 3, OSC (1b–1d).
+
+## 4. Corte 3: OSC (1b–1d, más Juno, ARP 2600 y OB-6)
+
+### El sistema de paneles (nota SYSTEM de 1b)
+
+Una fila de paneles en el área de contenido (16, 16, 1168 × 456, separación 8):
+
+- **Panel completo** (flex 1) para cada oscilador u operador; **panel angosto** (176) para una fuente que es solo
+  nivel o una cantidad del engine entero.
+- Cada panel: cabecera de 24 (nombre 16 semibold, subtítulo, etiqueta a la derecha), onda de 112, grilla de celdas
+  (2 columnas en un panel completo angosto, 4 si el panel mide ≥ 560; 1 en el angosto) y al pie el mapeo del panel físico.
+- Celdas (componente `VstParam` de la referencia), 88 de alto: **perilla** de 48 px (pista 4 px dim, arco 4 px hi desde el
+  inicio o desde el centro si es bipolar, puntero blanco 3 px), **segmentos** (opción elegida rellena en hi, texto BG; el
+  resto con borde dim) e **interruptor** (segmentos OFF | ON, para que el estado se lea como texto).
+- **Foco:** en el hardware NAV mueve el panel seleccionado (borde de 2 px hi y "● NAV"). En el VST todos los paneles se
+  editan directo; un clic en un panel solo mueve el foco que siguen P1 / P2 en la tira.
+
+### Qué va en cada engine
+
+Los nombres, rangos y unidades salen de la tabla de slots del firmware (`GF_OSC_SLOT` / `GF_MOD_SLOT` en
+`gf_params.h`) y de los nombres de la cabeza (`osc_catalog.cpp`), como pide la nota SLOTS de la referencia. Donde la
+referencia dibuja otra cosa, gana el firmware (01 §contratos técnicos) y queda anotado:
+
+| Engine | Paneles | Diferencias con la referencia |
+|---|---|---|
+| Model D (1b) | VCO 1 (WAVE · LEVEL · PW), VCO 2 (WAVE · DETUNE · LEVEL), VCO 3 (WAVE · INTERVAL · LEVEL · FINE), NOISE angosto (LEVEL · WHITE / PINK) | WAVE tiene las **6 formas** del firmware (SAW · TRI · SQR · PULSE · SHARK · NARROW), no 3. PW es del engine: va en VCO 1 |
+| OB-6 (1c) | VCO 1 (SHAPE · SUB · LEVEL · PW), VCO 2 (SHAPE · INTERVAL · LEVEL · PW · DETUNE), X-MOD angosto (VCO 2 → 1 · SYNC), NOISE angosto, SEM angosto (MORPH · BP MODE) | SHAPE es **continua** saw → pulse (fidelidad §11.3), no un selector de 3. El resto de X-MOD (FILT ENV, FREQ 1, FILTER, PW 1) sigue en LFO · MOD, donde lo pone el firmware |
+| DX7 (1d) | OP 1–4 (RATIO · LEVEL · WAVE W1–W8 · DETUNE), ALGORITHM angosto (diagrama · ALGORITHM 1–8 · FEEDBACK 0–7) | Se suman WAVE y DETUNE por operador (están en el plugin; en el panel son la parada MOD). Sin RATIO fino, como el hardware (ADR-005) |
+| Juno-106 | DCO (WAVE · PW · RANGE · HPF · VCA · CHORUS), SUB angosto, NOISE angosto (LEVEL · BBD HISS) | Las funciones de SHIFT del DCO van dentro del panel DCO |
+| ARP 2600 | VCO 1 (WAVE · PW · LEVEL), VCO 2 (WAVE · RATIO · LEVEL · SYNC), RING angosto, NOISE angosto (LEVEL · COLOR) | La referencia no lo dibuja; se arma como dice su nota (SYNC como interruptor en VCO 2) |
+| Prophet-5 | — | La pestaña OSC sigue deshabilitada: el plugin no tiene su página de osciladores |
+
+**Envolventes de los operadores del DX7:** no caben en el panel y son de ENV (1e, corte 4). Hasta entonces la pestaña
+ENV del DX7 suma una sub-página "OP EG" con la página vieja de operadores, así ninguna función se pierde.
+
+### Ondas de los paneles
+
+Ilustrativas, sin filtro (el filtro ya se ve en PERFORM): 2 ciclos a ancho completo.
+
+- VCO: la forma elegida con `perform_math::osc_sample` (la misma de PERFORM). OB-6 mezcla saw → pulse según SHAPE.
+  SUB: cuadrada una octava abajo. NOISE: ruido de un generador fijo (dibujo estable). RING: producto de VCO 1 × VCO 2.
+  X-MOD: VCO 1 con su fase modulada por VCO 2 según la cantidad.
+- DX7: cada operador con `dx7_wave` del firmware (W1–W8) a su RATIO. Nota OPERATORS de 1d: los **moduladores
+  muestran su propia onda** y las **portadoras su salida FM**: y_op(φ) = wave(ratio·φ + Σ I_m · y_m(φ)), con el índice
+  I desde el LEVEL del modulador (la misma escala que PERFORM). La red de modulación es la tabla `MODS` de
+  `dx7_core.cpp` copiada en la vista; un test la compara con `dx7_is_carrier` para que no se desincronice.
+- El subtítulo del operador dice su papel en el algoritmo: CARRIER o "MOD → OP n".
+
+### Diagrama de algoritmo
+
+Cajas de operador de 28 × 22; portadoras abajo con borde mc, la seleccionada (operador en foco) con borde de 2 px hi.
+Cada operador va en el nivel de su camino más largo hasta una portadora; en x, las portadoras se reparten y cada
+modulador se centra sobre sus destinos (si dos caen en el mismo lugar se separan). Las portadoras se unen por una barra
+abajo; OP 4 lleva el lazo de feedback. Clic en el diagrama abre el selector de 8 algoritmos (como 11c2 de la UI v3);
+clic en uno lo elige.
+
+### Tira del panel
+
+En OSC: P1 / P2 muestran los dos parámetros del panel en foco (los mismos del pie de cada panel) y NAV la lista de
+paradas ("VCO 1 · 2 · 3"); B1 queda encendido.
+
+### Tests
+
+- OSC muestra la página nueva en Model D, Juno, OB-6, DX7 y ARP; Prophet sigue con la pestaña deshabilitada.
+- Cada celda está ligada a un parámetro del engine y editarla cambia ese parámetro (perilla, segmento, interruptor).
+- Las ondas son finitas; la de VCO 1 cambia al cambiar WAVE.
+- DX7: los papeles CARRIER / MOD coinciden con `dx7_is_carrier` en los 8 algoritmos; el selector elige el algoritmo.
+- Clic en un panel mueve el foco y la tira muestra su P1 / P2.
+- DX7: ENV tiene la sub-página OP EG.
+
+**No cubre:** HYBRID (corte 7, 2f usa estos mismos paneles), la página MOD de cada engine (corte 4).
+
+### Resultado del corte 3 (2026-11-03)
+
+OSC nuevo en Model D, Juno, OB-6, DX7 y ARP 2600 (`osc_view.h`): fila de paneles con su onda, celdas ligadas a los
+parámetros del engine (perillas, segmentos, interruptores y valores con pasos), foco por clic que siguen P1 / P2 y NAV en
+la tira, y en el DX7 el diagrama de algoritmo con el selector de los 8. 12/12 tests (bloque nuevo del corte 3: tabla de
+algoritmos contra `dx7_is_carrier`, celdas ligadas en los cinco engines, ondas finitas, WAVE que edita y redibuja, foco y
+tira, selector de algoritmo, salida FM de la portadora, interruptor SYNC, OP EG en ENV del DX7).
+
+Decisiones que salieron al implementar:
+- **Filas de alto variable:** una fila de segmentos mide lo que ocupan sus botones (≈ 56) y una de perillas 88; con
+  filas fijas de 88, VCO 3 del Model D (WAVE + 3 perillas) se montaba sobre el pie. Los paneles de 280–559 de ancho usan 3
+  columnas; los segmentos ocupan la fila entera salvo los de 2–4 opciones cortas.
+- **WAVE del DX7 es un valor con pasos** ("W1 OF 8"; clic = siguiente, arrastre o rueda), no 8 segmentos: no caben con
+  RATIO, LEVEL y DETUNE en el ancho de un operador.
+- **El pie de cada panel sigue la tabla del firmware** (P1 = slot 0, P2 = slot 1, ENC L / R = slots 2–3, ⇧ = 4–7). Lo
+  que en el panel físico vive en LFO · MOD (SYNC y COLOR del ARP, el resto de X-MOD del OB-6) lo dice el pie.
+- **Arnés de audio:** sin cambios de audio (el corte solo toca el editor). El chequeo de guardado marca `LFO Sync` en
+  HYBRID: el arnés le escribe 0,43 a un parámetro booleano y al restaurar vuelve como 0. El audio restaurado es idéntico
+  (dif 0); es un artefacto del arnés, no del plugin.
+
+Siguiente: corte 4, ENV y LFO · MOD (1e, 1f).

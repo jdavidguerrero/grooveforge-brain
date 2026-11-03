@@ -7,6 +7,7 @@
 #include "studio_look_and_feel.h"
 #include "studio_shell.h"
 #include "perform_view.h"
+#include "osc_view.h"
 #include "output_meter.h"
 #include "studio_keyboard.h"
 #include "preset_browser.h"
@@ -4381,13 +4382,13 @@ private:
         }
         if (kind == 0 || kind == 3 || kind == 5) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {6}, {3, 5}, {4}}; return t[tab]; }
         if (kind == 1) { static const std::vector<int> t[6] = {{0}, {1}, {2}, {3}, {5, 4, 7}, {6}}; return t[tab]; }
-        if (kind == 4) { static const std::vector<int> t[6] = {{1}, {0}, {1}, {5}, {3, 4}, {2}}; return t[tab]; }
+        if (kind == 4) { static const std::vector<int> t[6] = {{1}, {0}, {1, 0}, {5}, {3, 4}, {2}}; return t[tab]; }
         return {};
     }
     static juce::String page_label(int kind, int page) {
         if (kind == 6) return page == 0 ? "LAYERS" : page == 1 ? "FILTER" : page == 2 ? "MACRO" : "GROOVE";
         if (kind == 1) return page == 4 ? "UNISON" : page == 7 ? "MACRO" : "GROOVE";
-        if (kind == 4) return page == 4 ? "MACRO" : "GROOVE";
+        if (kind == 4) return page == 4 ? "MACRO" : page == 1 ? "VOICE" : page == 0 ? "OP EG" : "GROOVE";
         return page == 5 ? "MACRO" : "GROOVE";
     }
     void select_tab(int tab) {
@@ -4594,6 +4595,8 @@ private:
         }
         setup_perform();
         add(perform_page_, "studio.perform", false);
+        osc_page_.on_change = [this] { repaint(); };
+        add(osc_page_, "studio.osc", false);
         engine_select_.on_pick = [this](int engine) { pick_engine(engine); };
         add(engine_select_, "studio.engine.select", false);
         add(fx_later_, "studio.fx.later", false);
@@ -4757,6 +4760,10 @@ private:
         if (perform) bind_perform(kind);
         perform_page_.setVisible(perform);
         if (perform) { perform_page_.toFront(false); perform_page_.refresh(); }
+        const bool osc = !fx_view_ && !engine_view_ && !hybrid && studio_tab_ == 1 && kind != 2;
+        if (osc) { osc_page_.mode = m; osc_page_.build(kind, owner_.parameters()); }
+        osc_page_.setVisible(osc);
+        if (osc) { osc_page_.toFront(false); osc_page_.refresh(); }
         if (engine_select_.isVisible()) engine_select_.toFront(false);
         if (fx_later_.isVisible()) fx_later_.toFront(false);
         if (fx_view_ || engine_view_) browser_panel_.setVisible(false);
@@ -4784,6 +4791,7 @@ private:
             b->setBounds(right - w, 72, w, 32); right -= w + 8;
         }
         engine_select_.setBounds(0, 112, 1200, 488); fx_later_.setBounds(0, 112, 1200, 488); perform_page_.setBounds(0, 112, 1200, 488);
+        osc_page_.setBounds(0, 112, 1200, 488);
         browser_panel_.setBounds(16, 72, 1168, 520);
         sync_.setBounds(1000, 120, 184, 24);
         enc_l_.setBounds(16, 624, 112, 64); enc_r_.setBounds(552, 624, 112, 64);
@@ -4841,17 +4849,23 @@ private:
             const auto just = right ? juce::Justification::topRight : juce::Justification::topLeft;
             g.setColour(colour::MON_TEXT); g.setFont(mono(11.0f)); g.drawText(caption, x + 8, 702, w - 16, 14, just);
             g.setColour(ink); g.drawText(value, x + 8, 718, w - 16, 14, just);
-            g.setColour(colour::MON); g.setFont(mono(13.0f)); g.drawText(sub, x + 8, 732, w - 16, 18, just);
+            g.setColour(ink == colour::MON ? colour::MON : colour::WHITE); g.setFont(mono(13.0f)); g.drawText(sub, x + 8, 732, w - 16, 18, just);
         };
         if (perform_page_.isVisible()) {
             auto shown = [](studio_ui::MacroKnob& k) { return k.parameter() ? juce::String(juce::roundToInt(k.parameter()->getValue() * 100.0f)) + " %" : juce::String("OFF"); };
             box(16, 152, "P1", "FLT ENV AMT", shown(*perform_page_.page_knobs[0]) + utf8("   \xe2\x87\xa7 GLIDE"), false, colour::GRAY);
             box(512, 152, "P2", utf8("LFO \xe2\x86\x92 CUTOFF"), utf8("\xe2\x87\xa7 DRIVE   ") + shown(*perform_page_.page_knobs[1]), true, colour::GRAY);
-        } else
-        box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
-        box(256, 168, "NAV", utf8(fx_view_ ? "\xe2\x80\x94" : engine_view_ ? "TURN BROWSE \xc2\xb7 PUSH LOAD" : "TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
+        } else if (osc_page_.isVisible()) {
+            const auto s = osc_page_.strip();
+            box(16, 152, "P1", s.p1, s.p1_value, false, s.p1 == "NO FUNCTION" ? colour::MON : colour::GRAY);
+            box(512, 152, "P2", s.p2, s.p2_value, true, s.p2 == "NO FUNCTION" ? colour::MON : colour::GRAY);
+        } else {
+            box(16, 152, "P1", "NO FUNCTION", utf8("\xe2\x80\x94"), false, colour::MON);
+            box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
+        }
+        box(256, 168, "NAV", fx_view_ ? utf8("\xe2\x80\x94") : engine_view_ ? utf8("TURN BROWSE \xc2\xb7 PUSH LOAD")
+            : osc_page_.isVisible() ? osc_page_.strip().nav : utf8("TURN VIEWS \xc2\xb7 PUSH ACTION"), {}, false, colour::GRAY);
         box(432, 72, "B6", "SHIFT", {}, false, colour::GRAY);
-        if (!perform_page_.isVisible()) box(512, 152, "P2", "NO FUNCTION", utf8("\xe2\x80\x94"), true, colour::MON);
     }
     void configure_hybrid_osc_page(unsigned side) {
         const uint8_t engine = owner_.hybrid_engine_id(side);
@@ -4980,6 +4994,7 @@ private:
     studio_ui::EngineSelectPage engine_select_;
     studio_ui::FxLaterPage fx_later_;
     studio_ui::PerformPage perform_page_;
+    studio_ui::OscPage osc_page_;
     std::vector<juce::Component*> shell_;
     int studio_tab_ = 0, sub_index_ = 0, shell_engine_ = -2, shell_focus_ = 0, shell_kind_ = -1;
     bool fx_view_ = false, engine_view_ = false, in_update_ = false;
