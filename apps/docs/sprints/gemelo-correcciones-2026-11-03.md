@@ -114,3 +114,19 @@ una corrección.
     hardware.
   - Con MOVE (CC 19) al máximo, la cola del delay se alarga mucho (GF DARK DRONE sigue en −65 dB a los 20 s):
     `move_sfx` sube el feedback hasta ~0,85. Es el diseño de la macro en el firmware.
+
+## 6. Comportamiento indefinido en el DSP compartido (UBSan)
+
+Los tests del DSP compilados con `-fsanitize=undefined` encontraron dos desplazamientos a la izquierda de un entero
+negativo, que en C++17 son comportamiento indefinido ([expr.shift]/2; C++20 los define):
+
+- `dsp/fast_math.h` · `fast_exp2` (filtros ladder/SEM y tape), y
+- `engines/dx7_core.cpp` · `fast_exp2` (envolventes del DX7).
+
+Los dos arman 2^x sumando la parte entera al exponente del float: `u.i += int32_t(fl) << 23`, con `fl` negativo. Se
+cambia por `int32_t(fl) * (1 << 23)`: para los rangos acotados de cada función (−30…24) no desborda, el resultado es
+**bit a bit idéntico** (comprobado en 145 937 valores de −30 a 24) y el compilador emite la misma instrucción. No cambia
+el sonido del firmware ni del VST; quita el riesgo de que una versión futura del compilador optimice distinto.
+
+Con el cambio, los 11 tests del DSP pasan con `-fsanitize=undefined -fno-sanitize-recover`. AddressSanitizer no se
+pudo usar: su runtime se cuelga al iniciar en este macOS (`get_dyld_hdr`), antes de ejecutar código del proyecto.

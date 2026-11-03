@@ -46,7 +46,7 @@ inline float fast_exp2(float x) {
     const float f = x - fl;
     const float p = 1.0f + f * (0.6951786f + f * (0.2261868f + f * 0.0781021f));
     union { float v; int32_t i; } u{p};
-    u.i += int32_t(fl) << 23;
+    u.i += int32_t(fl) * (1 << 23);   // no `<< 23`: desplazar un negativo es UB en C++17 (mismo resultado, mismo código)
     return u.v;
 }
 
