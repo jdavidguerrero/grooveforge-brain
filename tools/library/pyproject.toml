@@ -1,0 +1,15 @@
+[project]
+name = "gf-library"
+version = "0.1.0"
+description = "Genera GrooveForge_Library desde el dataset, con catálogo para la IA"
+requires-python = ">=3.11"
+dependencies = ["mido>=1.3"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
