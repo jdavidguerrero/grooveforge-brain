@@ -58,7 +58,7 @@ Interfaz web local ──► Motor local (Python) ──► Puente con Live ─�
 |---|---|---|
 | Motor | Generar sonidos y MIDI, catálogo, registro de eventos | `perc-synth`, `paleta-lab`, `gf_log.py` |
 | Interfaz | Pasos, opciones, audición rápida y correcciones con palabras | Nueva; web local |
-| Puente | Crear pistas, poner tempo, escribir y leer clips, poner niveles | Copia parcial del Remote Script de GroovePilot |
+| Puente | Crear pistas, poner tempo, escribir y leer clips, cargar racks, poner niveles | Remote Script propio `GFMotor`; GroovePilot queda intacto |
 
 **Un device M4L** con `jweb` puede llevar la interfaz dentro de Live más adelante, sin rehacerla. **Del plugin de GroovePilot** no se reutiliza
 nada en esta etapa: depende de nube y prohíbe guardar audio. `mix_analysis` queda para una etapa de mezcla.
@@ -114,14 +114,13 @@ Valores exactos, rumble, pista fantasma y envíos de partida: `template-envios-v
 
 ## 9. Puente con Live: estado
 
-**Juan confirma que el Remote Script está probado:** lo creó y lo usa para GroovePilot y su clon de Push. Por eso ya no se plantea una prueba de
-viabilidad general. Su código ya trae comandos para crear pistas MIDI, poner tempo, escribir y leer clips, pasos de undo y parámetros
-(`set_parameter`, `set_property`, `call_method`).
+**Decisión de Juan:** un script paralelo solo para el motor, `GFMotor`, al que se le van agregando comandos. El de GroovePilot queda intacto. Ya cubre sesión, tempo, pistas MIDI, escribir y leer clips, y cargar racks
+(`apps/docs/theory/motor-primera-entrega.md` §3).
 
-Se comprueba al implementar, sin bloquear el spec:
+Se agregan cuando el flujo los necesite:
 
-- Escribir volúmenes y envíos desde el motor, con los comandos genéricos o uno nuevo.
-- Cargar samples o Drum Racks automáticamente, a partir del `BrowserManager` de PushClone. Mientras tanto, se arrastran desde el navegador de Live.
+- Volúmenes y envíos, para los niveles por rol.
+- Cargar plugins, para el VST del Brain en el paso de bajo.
 
 ## 10. Entradas de Juan
 

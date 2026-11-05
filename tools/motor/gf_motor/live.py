@@ -1,4 +1,4 @@
-"""Cliente del Remote Script de GroovePilot. Teoría: apps/docs/theory/motor-primera-entrega.md §2-§3."""
+"""Cliente de la superficie GFMotor. Teoría: apps/docs/theory/motor-primera-entrega.md §2-§3."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import struct
 import uuid
 
 _CABECERA = struct.Struct(">I")
-_SIN_CLIPS = "No arrangement clips"
+PUERTO = 9878
 
 
 class ErrorLive(RuntimeError):
@@ -16,7 +16,7 @@ class ErrorLive(RuntimeError):
 
 
 class ClienteLive:
-    def __init__(self, host: str = "127.0.0.1", puerto: int = 9877, timeout: float = 20.0) -> None:
+    def __init__(self, host: str = "127.0.0.1", puerto: int = PUERTO, timeout: float = 30.0) -> None:
         self.host = host
         self.puerto = puerto
         self.timeout = timeout
@@ -25,17 +25,12 @@ class ClienteLive:
         ident = uuid.uuid4().hex
         cuerpo = json.dumps({"type": tipo, "id": ident, **campos}).encode()
         try:
-            with socket.create_connection((self.host, self.puerto), timeout=self.timeout) as s:
+            with socket.create_connection((self.host, self.puerto), timeout=min(self.timeout, 2.0)) as s:
                 s.settimeout(self.timeout)
                 s.sendall(_CABECERA.pack(len(cuerpo)) + cuerpo)
-                while True:
-                    r = self._recibir(s)
-                    # read_midi_clip responde primero "queued" y después el resultado con el mismo id;
-                    # entre medias pueden llegar notificaciones ajenas.
-                    if r.get("id") == ident and not r.get("queued"):
-                        return r
+                return self._recibir(s)
         except OSError as exc:
-            raise ErrorLive(f"Sin conexión con Live en {self.host}:{self.puerto}: {exc}") from exc
+            raise ErrorLive(f"La superficie GFMotor no responde en {self.host}:{self.puerto}: {exc}") from exc
 
     @staticmethod
     def _recibir(s: socket.socket) -> dict:
@@ -71,26 +66,15 @@ class ClienteLive:
     def poner_tempo(self, bpm: float) -> None:
         self._ok("set_tempo", value=bpm)
 
-    def escribir_clip(self, pista: int, inicio: float, longitud: float, notas: list[dict], nombre: str) -> None:
-        r = self._ok(
-            "write_arrangement_clip", track_index=pista, start_beats=inicio, length_beats=longitud, notes=notas, clip_name=nombre
-        )
-        if r.get("view") != "arrangement":
-            raise ErrorLive(f"El clip {nombre!r} no llegó a Arrangement")
+    def escribir_clip(self, pista: int, inicio: float, longitud: float, notas: list[dict], nombre: str, color: int | None = None) -> None:
+        self._ok("write_clip", track_index=pista, start_beats=inicio, length_beats=longitud, notes=notas, clip_name=nombre, color=color)
 
-    def leer_clip(self, pista: int, tiempo: float) -> dict | None:
-        """Clip que empieza exactamente en `tiempo`, o None. El script devuelve el más cercano si no lo hay."""
-        r = self.llamar("read_midi_clip", view="arrangement", track_index=pista, time_beats=tiempo)
-        if not r.get("ok"):
-            if _SIN_CLIPS in str(r.get("error", "")):
-                return None
-            raise ErrorLive(f"read_midi_clip: {r.get('error', 'error desconocido')}")
-        return r if abs(float(r["clip_start_time"]) - tiempo) < 1e-3 else None
+    def leer_clip(self, pista: int, inicio: float) -> dict | None:
+        """Clip que empieza exactamente en `inicio`, o None."""
+        return self._ok("read_clip", track_index=pista, start_beats=inicio)["clip"]
 
     def pista_sin_clips(self, pista: int) -> bool:
-        r = self.llamar("read_midi_clip", view="arrangement", track_index=pista, time_beats=0.0)
-        if r.get("ok"):
-            return False
-        if _SIN_CLIPS in str(r.get("error", "")):
-            return True
-        raise ErrorLive(f"read_midi_clip: {r.get('error', 'error desconocido')}")
+        return not self._ok("list_clips", track_index=pista)["clips"]
+
+    def cargar_rack(self, partes: list[str], pista: str) -> None:
+        self._ok("load_rack", partes=partes, pista=pista)

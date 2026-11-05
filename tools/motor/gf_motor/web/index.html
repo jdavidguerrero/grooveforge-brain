@@ -38,13 +38,14 @@ button.sec{background:transparent;color:var(--teal-plus)}
 button.sec:hover:not(:disabled){color:var(--bg)}
 button:disabled{opacity:.5;cursor:default}
 .linea{display:flex;gap:2px;margin:0 0 6px;height:44px}
-.bloque{min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 5px;background:var(--panel-2);border-top:3px solid var(--monitor);font-size:11px;line-height:1.2;white-space:nowrap}
-.bloque.kick{border-top-color:var(--teal);background:#10231d}
+.bloque{min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 5px;background:var(--panel-2);border-top:4px solid var(--monitor);font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap}
 .bloque small{color:var(--monitor);font-size:10px}
 .leyenda{font-size:11px;color:var(--monitor);margin:0 0 12px}
-.leyenda i{display:inline-block;width:10px;height:3px;background:var(--teal);vertical-align:middle;margin-right:5px}
+.fila{display:flex;align-items:center;gap:12px}
+.contador{font-weight:700;color:var(--teal-plus)}
+.tanda{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--monitor);margin:14px 0 0}
+.op.sel b{color:var(--ambar)}
 .op{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
-.op:first-child{margin-top:12px}
 .op b{color:var(--teal-plus);font-size:17px}
 audio{width:100%;height:32px}
 .ok{color:var(--teal-plus);margin:10px 0 0;overflow-wrap:anywhere}
@@ -77,7 +78,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-guia" class="bloq">
     <div class="num">2</div>
     <h2>Pista guía</h2>
-    <p>Un track MIDI mudo con un clip por sección, como un mapa del tema en Arrangement. Lo mueves y lo cortas como cualquier clip. Plantilla provisional.</p>
+    <p>Un track MIDI mudo con un clip de color por sección: el mapa del tema en Arrangement. Lo mueves y lo cortas como cualquier clip. Plantilla provisional.</p>
     <div class="linea" id="linea"></div>
     <div class="leyenda" id="leyenda"></div>
     <button id="b-guia" disabled>Crear guía en Live</button>
@@ -87,7 +88,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-borrador" class="bloq">
     <div class="num">3</div>
     <h2>Borrador de kick</h2>
-    <p>Negras en las secciones con kick. Si <code>KICK</code> ya tiene clips, va en otra pista.</p>
+    <p>Un clip de 16 compases a negras en el compás 1. Si <code>KICK</code> ya tiene clips, va en otra pista.</p>
     <button id="b-borrador" disabled>Escribir borrador</button>
     <div id="r-borrador"></div>
   </section>
@@ -95,8 +96,8 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-kicks" class="bloq">
     <div class="num">4</div>
     <h2>Tres kicks</h2>
-    <p>Afinados a tu tonalidad. Elige uno o pide otros tres.</p>
-    <button id="b-kicks" disabled>Generar</button>
+    <p>Genera todos los que quieras y elige tres. Al elegir el tercero se crea el Drum Rack y queda puesto en <code>KICK</code>, con un pad para cada uno.</p>
+    <div class="fila"><button id="b-kicks" disabled>Generar</button><span id="contador" class="contador"></span></div>
     <div id="r-kicks"></div>
   </section>
 
@@ -124,7 +125,7 @@ function ok(id, t) { const d = document.createElement("p"); d.className="ok"; d.
 
 function pintarSet(l) {
   $("punto").className = l.conectado ? "on" : "off";
-  if (!l.conectado) { $("set").textContent = "Live no responde"; aviso("protegido", "¿Está Live abierto, con la superficie GroovePilot activa?"); return; }
+  if (!l.conectado) { $("set").textContent = "Live no responde"; aviso("protegido", "¿Está Live abierto, con GFMotor elegido en Preferencias › Link, Tempo & MIDI › Control Surface?"); return; }
   const nombre = l.ruta ? l.ruta.split("/").pop() : "set nuevo sin guardar";
   $("set").textContent = `${nombre} · ${l.tempo} BPM`;
   aviso("protegido", l.protegido ? "Este es el template original. Abre un set nuevo desde Templates en el navegador de Live para poder escribir." : "");
@@ -134,7 +135,8 @@ function pintarLinea() {
   const total = bloques.reduce((a,b) => a + b.compases, 0);
   $("linea").replaceChildren(...bloques.map(b => {
     const d = document.createElement("div");
-    d.className = "bloque" + (b.kick ? " kick" : "");
+    d.className = "bloque";
+    d.style.borderTopColor = b.color;
     d.style.flex = `${b.compases} 1 0`;
     d.title = `${b.nombre}: ${b.compases} compases`;
     d.textContent = b.nombre;
@@ -143,9 +145,7 @@ function pintarLinea() {
   }));
   const bpm = parseFloat($("bpm").value) || 122;
   const seg = Math.round(total * 4 * 60 / bpm);
-  $("leyenda").innerHTML = "";
-  const i = document.createElement("i");
-  $("leyenda").append(i, `con kick · ${total} compases · ${Math.floor(seg/60)}:${String(seg%60).padStart(2,"0")} a ${bpm} BPM`);
+  $("leyenda").textContent = `${total} compases · ${Math.floor(seg/60)}:${String(seg%60).padStart(2,"0")} a ${bpm} BPM`;
 }
 function resumen(c) {
   if (c.estado !== "leido") return `${c.clip}: movido o borrado`;
@@ -164,29 +164,60 @@ function pintar(s) {
   const b = s.borradores.at(-1);
   $("s-borrador").classList.toggle("hecho", !!b);
   if (b) ok("r-borrador", `Listo en la pista ${b.pista}.`);
-  $("s-kicks").classList.toggle("hecho", !!s.elegido);
-  const ops = s.opciones.at(-1);
-  if (ops) {
-    const t = Date.now();
-    $("r-kicks").replaceChildren(...ops.map(o => {
-      const f = document.createElement("div"); f.className="op";
-      const l = document.createElement("b"); l.textContent=o.letra;
-      const a = document.createElement("audio"); a.controls=true; a.preload="none"; a.src=`/audio/${o.letra}?t=${t}`;
-      const e = document.createElement("button"); e.className="sec"; e.textContent = s.elegido?.letra===o.letra ? "Elegido" : "Elegir"; e.disabled = s.elegido?.letra===o.letra;
-      e.onclick = () => accion("elegir", {letra:o.letra}, e);
-      f.append(l,a,e); return f;
-    }));
-    if (s.elegido) { const p=document.createElement("p"); p.className="ok"; p.textContent=`Arrástralo a KICK desde Live: GrooveForge_Library › 00 Elegidos › ${s.elegido.ruta.split("/").pop()}`; $("r-kicks").append(p); }
-    $("b-kicks").textContent = "Otros tres";
-  }
+  $("s-kicks").classList.toggle("hecho", !!s.rack);
+  pintarKicks(s);
   $("s-revisar").classList.toggle("hecho", !!s.ultima_revision);
   if (s.ultima_revision) { const p=document.createElement("pre"); p.textContent=s.ultima_revision.map(resumen).join("\n"); $("r-revisar").replaceChildren(p); }
+}
+const NOTAS = {36:"C1",37:"C#1",38:"D1"};
+function filaKick(o, s, sello, boton) {
+  const f = document.createElement("div"); f.className = "op" + (s.seleccion.includes(o.id) ? " sel" : "");
+  const l = document.createElement("b"); l.textContent = o.id;
+  const a = document.createElement("audio"); a.controls = true; a.preload = "none"; a.src = `/audio/${o.id}?t=${sello}`;
+  f.append(l, a, boton); return f;
+}
+function pintarKicks(s) {
+  const nodos = [], sello = s.opciones.length;
+  $("contador").textContent = s.opciones.length ? `${s.seleccion.length} de 3 elegidos` : "";
+  if (s.opciones.length) $("b-kicks").textContent = "Otros tres";
+  if (s.rack) {
+    const r = document.createElement("p"); r.className = "ok";
+    r.textContent = s.rack.cargado ? `Rack ${s.rack.nombre} puesto en ${s.rack.pista}.` : `Rack creado, pero no pude ponerlo en ${s.rack.pista}: ${s.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
+    nodos.push(r);
+    for (const p of s.rack.pads) {
+      const o = s.opciones.flat().find(x => x.id === p.id);
+      const b = document.createElement("button"); b.className = "sec";
+      const activo = s.elegido?.id === p.id;
+      b.textContent = activo ? `Usando ${NOTAS[p.nota]}` : `Usar ${NOTAS[p.nota]}`; b.disabled = activo;
+      b.onclick = () => accion("usar", {id:p.id}, b);
+      nodos.push(filaKick(o, s, sello, b));
+    }
+    if (s.elegido) {
+      const e = document.createElement("p"); e.className = "ok";
+      e.textContent = s.elegido.colocado ? `El clip ahora toca ${NOTAS[s.elegido.nota_pad]}.` : `El clip no se tocó porque no existe o tiene cambios tuyos: ponlo en ${NOTAS[s.elegido.nota_pad]}.`;
+      nodos.push(e);
+    }
+    const n = document.createElement("button"); n.className = "sec"; n.textContent = "Nueva selección"; n.style.marginTop = "12px";
+    n.onclick = () => accion("nueva_seleccion", {}, n);
+    nodos.push(n);
+  } else {
+    s.opciones.forEach((tanda, i) => {
+      const t = document.createElement("div"); t.className = "tanda"; t.textContent = `Tanda ${i + 1}`; nodos.push(t);
+      for (const o of tanda) {
+        const b = document.createElement("button"); b.className = "sec";
+        b.textContent = s.seleccion.includes(o.id) ? "Quitar" : "Elegir";
+        b.onclick = () => accion("seleccionar", {id:o.id}, b);
+        nodos.push(filaKick(o, s, sello, b));
+      }
+    });
+  }
+  $("r-kicks").replaceChildren(...nodos);
 }
 async function accion(n, datos, boton) {
   aviso("error", ""); boton.disabled = true;
   try { pintar((await api(`/api/${n}`, datos)).sesion); await refrescar(); }
   catch (e) { aviso("error", e.message); boton.disabled = false; return; }
-  if (n === "partida") boton.disabled = false;
+  if (document.contains(boton) && !["usar"].includes(n)) boton.disabled = false;
 }
 async function refrescar() { try { pintarSet((await api("/api/estado")).live); } catch (e) { $("punto").className="off"; $("set").textContent = "El motor no responde"; } }
 

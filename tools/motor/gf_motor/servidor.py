@@ -8,8 +8,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-from .borrador import PLANTILLAS
-from .live import ClienteLive, ErrorLive
+from .borrador import COLORES, PLANTILLAS
+from .live import PUERTO, ClienteLive, ErrorLive
 from .motor import Motor
 
 _WEB = Path(__file__).parent / "web" / "index.html"
@@ -21,7 +21,9 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "guia": lambda d: motor.crear_guia(),
         "borrador": lambda d: motor.borrador_kick(),
         "kicks": lambda d: motor.generar_kicks(),
-        "elegir": lambda d: motor.elegir_kick(d["letra"]),
+        "seleccionar": lambda d: motor.alternar_kick(d["id"]),
+        "usar": lambda d: motor.usar_kick(d["id"]),
+        "nueva_seleccion": lambda d: motor.nueva_seleccion(),
         "revisar": lambda d: motor.revisar_edicion(),
     }
 
@@ -57,7 +59,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
                 except ErrorLive as exc:
                     live = {"conectado": False, "error": str(exc)}
                 plantillas = {
-                    g: [{"nombre": n, "compases": c, "kick": k} for n, c, k in bloques] for g, bloques in PLANTILLAS.items()
+                    g: [{"nombre": n, "compases": c, "color": f"#{COLORES[n]:06X}"} for n, c in bloques] for g, bloques in PLANTILLAS.items()
                 }
                 return self._json(200, {"live": live, "sesion": motor.estado, "plantillas": plantillas})
             if ruta.startswith("/audio/"):
@@ -86,7 +88,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
 def main() -> None:
     ap = argparse.ArgumentParser(description="Motor de asistencia: primera entrega")
     ap.add_argument("--puerto", type=int, default=8765)
-    ap.add_argument("--puerto-live", type=int, default=9877)
+    ap.add_argument("--puerto-live", type=int, default=PUERTO)
     a = ap.parse_args()
     servidor = crear_servidor(Motor(ClienteLive(puerto=a.puerto_live)), a.puerto)
     print(f"Motor en http://127.0.0.1:{a.puerto}  (Ctrl+C para cerrar; Live sigue igual)")

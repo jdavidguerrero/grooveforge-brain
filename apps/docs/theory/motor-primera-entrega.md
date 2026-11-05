@@ -20,23 +20,24 @@ Live solo deja modificar el set desde su hilo principal. El Remote Script recibe
 `update_display()`, más o menos cada 100 ms y sin garantía (Ableton, *Live Object Model*). Una escritura tarda lo que Live permita, y el motor debe esperar la respuesta,
 no suponerla.
 
-Tampoco hay una función para crear clips directamente en Arrangement. El script crea un clip temporal en Session y usa `duplicate_clip_to_arrangement`.
-De aquí salen tres riesgos que el motor debe evitar:
+Tampoco se pueden crear clips directamente en Arrangement desde un script: se crea un clip temporal en Session y se usa `duplicate_clip_to_arrangement`.
+Duplicar ocupa el tramo destino, así que podría pisar un clip de Juan: el motor solo escribe en una pista sin clips de Arrangement y, si no, crea otra.
 
-| Comportamiento del puente | Riesgo | Qué hace el motor |
-|---|---|---|
-| Duplicar a Arrangement ocupa ese tramo de la pista | Podría pisar un clip de Juan | Solo escribe en una pista sin clips de Arrangement; si no, crea otra |
-| Leer un tiempo sin clip devuelve **el clip más cercano** | Comparar contra el clip equivocado | Comprueba `clip_start_time` antes de comparar |
-| `lom_id` puede repetirse entre pistas (visto en el set de Juan) | Escribir en la pista equivocada | Busca la pista por nombre exacto antes de cada escritura; si hay dos iguales, se detiene |
+**Pistas por nombre:** el motor busca la pista por nombre exacto antes de cada escritura. Si hay dos iguales, se detiene.
 
-**Bloques de la guía:** cada clip lleva una nota inaudible (nota 0, velocity 1), porque un clip vacío obliga al script a usar una API antigua de notas que puede no existir
-en Live 12. La pista guía no tiene instrumento, así que no suena.
+**Bloques de la guía:** cada clip lleva una nota inaudible (nota 0, velocity 1). La pista guía no tiene instrumento, así que no suena. Nombre y color se ponen en el clip temporal y la copia los hereda, sin depender del orden de `arrangement_clips`.
 
-## 3. Puente: script instalado, sin copia
+## 3. Puente: script propio
 
-El spec §5 proponía una copia parcial del Remote Script. El de GroovePilot ya está activo en `127.0.0.1:9877` y admite varios clientes a la vez, así que esta entrega
-habla con él directamente: no instala nada ni exige reiniciar Live. **Alternativa:** una copia evita depender de cambios futuros de GroovePilot, a cambio de otra ranura de
-superficie de control. Se decide si esa dependencia molesta.
+La primera versión usó el Remote Script de GroovePilot, que lo tiene todo mezclado y le faltan comandos como cargar racks. **Decisión de Juan:** un script paralelo solo para el motor, donde se van agregando cosas. GroovePilot queda intacto, y los dos pueden estar activos a la vez.
+
+`GFMotor` escucha en `127.0.0.1:9878` y separa tres piezas: red (`superficie.py`), comandos sobre el set (`comandos.py`) y búsqueda en el navegador (`buscar.py`). Los comandos corren solo en el hilo principal de Live, y se prueban fuera con un set simulado. Comparado con el puente anterior:
+
+- **Lectura exacta:** `read_clip` nunca devuelve el clip más cercano.
+- **Sin ejecución tardía:** si un pedido agota su tiempo, se cancela, para que no actúe después de informar el fallo.
+- **Lista corta y explícita:** solo existen los comandos que el motor usa, sin escritura genérica de propiedades.
+
+**Costo:** Live solo lee estos scripts al arrancar, así que cada comando nuevo exige reiniciarlo. Cargar plugins se agregará al llegar al bajo, con el VST del Brain.
 
 ## 4. Editar es el dato
 
@@ -48,13 +49,21 @@ Comparar el borrador con lo que queda después de editarlo es un problema de emp
 
 Es una heurística: dos notas intercambiadas se ven como dos movidas. Alcanza para documentar el criterio. El borrador guardado es inmutable y cada revisión agrega un evento nuevo.
 
-## 5. Tres kicks distintos
+## 5. Tres kicks en un Drum Rack
 
 Se usan `sintetizar_en_genero` y la selección *farthest-first* (`percusion-kits-808-organica.md` §10): se generan más candidatos de los necesarios y se conservan los tres más
-distintos. Todos quedan afinados a la tonalidad con el perfil `organic`. Solo el elegido se copia a `00 Elegidos` en la Library (`apps/docs/produccion/library-grooveforge.md`), para no llenar el navegador de Live.
+distintos. Todos quedan afinados a la tonalidad con el perfil `organic`.
 
-**Mientras no exista carga automática** (spec §9), Juan arrastra el kick elegido a `KICK`. El borrador usa la nota 60, donde un Simpler toca sin transponer. La pista `SC GHOST`
-ya viene a negras en el template y el borrador también, así que el motor no la toca.
+**Decisión de Juan:** el clip son 16 compases a negras en el compás 1. Él genera las tandas que quiera y elige tres kicks, con un contador. Al elegir el tercero, el motor crea el Drum Rack (C1, C#1 y D1, en el orden elegido) y lo pone en `KICK`.
+
+Esto corrige un fallo de la primera versión: cada tanda creaba su propio rack, y elegir en una tanda nueva movía la nota mientras seguía cargado el rack de otra, así que el clip sonaba con otro kick. Ahora hay un único rack por selección.
+
+- **Se oye en contexto:** con el rack puesto, `Usar` mueve la nota del clip al pad, si el clip sigue igual a como lo escribió el motor. Si Juan lo editó, no se toca (regla 3) y se le indica la nota.
+- **Datos para la IA:** el evento `motor_seleccion` guarda lo elegido junto a todo lo presentado; lo no elegido también informa. `escuchadas` queda `unknown`, porque el motor no sabe qué se oyó.
+- **Poner el rack en la pista:** `GFMotor` selecciona la pista y usa `browser.load_item` con el item de Places. Live tarda en ver un archivo nuevo en Places, así que reintenta hasta 20 s. Si falla, el rack queda creado y la interfaz indica el motivo y dónde está.
+
+**El `.adg` parte de un rack real de Juan** (`808 Core Kit.adg`), porque el formato no está documentado y cambia entre versiones de Live: se conserva el molde de un pad y se cambia el sample, igual que `make_gf_racks.py`. No crea ni modifica `.als` (regla 7). La pista `SC GHOST`
+ya viene a negras en el template, así que el motor no la toca.
 
 ## 6. Protección del template
 
@@ -63,23 +72,22 @@ así. Un set nuevo creado desde el template no tiene ruta y se acepta.
 
 ## 7. Plantilla provisional
 
-| Bloque | Compases | Kick |
+| Bloque | Compases | Color |
 |---|---|---|
-| Intro | 32 | Sí |
-| Build | 16 | Sí |
-| Drop | 48 | Sí |
-| Break | 32 | No |
-| Build | 16 | No |
-| Drop | 48 | Sí |
-| Outro | 20 | Sí |
+| INTRO | 32 | Teal |
+| BUILD | 16 | Ámbar |
+| DROP | 48 | Naranja |
+| BREAK | 32 | Púrpura |
+| BUILD | 16 | Ámbar |
+| DROP | 48 | Naranja |
+| OUTRO | 20 | Menta |
 
-Son 212 compases: 6:57 a 122 BPM, igual que el clip de `SC GHOST`. Es una **hipótesis** para probar el flujo, no una regla de arrangement. `SC GHOST` sigue sonando en los tramos sin kick; solo afecta a lo que
-se envíe al Rumble, y el kick no envía nada ahí.
+Son 212 compases: 6:57 a 122 BPM, igual que el clip de `SC GHOST`. Es una **hipótesis** para probar el flujo, no una regla de arrangement. Cada tipo de sección tiene su color para reconocerla de un vistazo; el color se asigna por la posición en `arrangement_clips`.
 
 ## 8. Cómo se valida
 
-**Tests** contra un Live simulado que imita el protocolo, el clip más cercano y la sobrescritura: reglas de escritura, diferencias de notas, protección del template, registro.
+**Tests** contra un puente y un set simulados, con la sobrescritura al duplicar: reglas de escritura, diferencias de notas, protección del template, registro.
 
-**Con Live real, lo que el simulado no prueba:** que los clips aparezcan como se espera, que las notas leídas sean relativas al clip y qué revierte Cmd+Z, porque `create_midi_track` no abre un paso de undo propio.
+**Con Live real, lo que el simulado no prueba:** que el rack se cargue y reemplace al anterior, que los clips hereden nombre y color, que las notas leídas sean relativas al clip y qué revierte Cmd+Z.
 
 **Lo que decide es Juan:** si le ahorró tiempo frente a hacerlo a mano.
