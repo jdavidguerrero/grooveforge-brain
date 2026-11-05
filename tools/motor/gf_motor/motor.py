@@ -19,7 +19,9 @@ import soundfile as sf  # noqa: E402
 from gf_perc.core import SR  # noqa: E402
 from gf_perc.caracteres import COLAS_KICK, sintetizar_cola  # noqa: E402
 
+from .bajo import FAMILIAS, patron  # noqa: E402
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
+from .brain import BAJOS_CONOCIDOS, Brain  # noqa: E402
 from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
 from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
@@ -45,7 +47,8 @@ def carpeta_live_por_defecto() -> Path:
 
 
 class Motor:
-    def __init__(self, live: ClienteLive, carpeta_live: Path | None = None) -> None:
+    def __init__(self, live: ClienteLive, carpeta_live: Path | None = None, brain: Brain | None = None) -> None:
+        self.brain = brain or Brain()
         self.live = live
         self.carpeta_live = carpeta_live or carpeta_live_por_defecto()
         self.estado: dict | None = None
@@ -116,6 +119,7 @@ class Motor:
             "racks": [],
             "rack": None,
             "elegido": None,
+            "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
         self._guardar()
         self._evento("partida")
@@ -269,6 +273,79 @@ class Motor:
         self.live.escribir_clip(indice, nuevo["inicio"], nuevo["longitud"], nuevo["notas"], nuevo["nombre"])
         self.estado["borradores"].append({"pista": b["pista"], "clips": [nuevo], "deriva_de_eleccion": True})
         return True
+
+    # ── Bajo (motor-bajo.md) ──────────────────────────────────────────
+    def generar_patrones(self) -> dict:
+        e = self._exigir_estado()
+        b = e["bajo"]
+        b["tandas"] += 1
+        for familia in FAMILIAS:
+            b["patrones"].append({"id": f"{b['tandas']}{list(FAMILIAS).index(familia) + 1}", "familia": familia, "tanda": b["tandas"]})
+        self._guardar()
+        self._evento("opciones", parte="bajo", tanda=b["tandas"], opciones=list(FAMILIAS))
+        return e
+
+    def poner_patron(self, ident: str) -> dict:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        b = e["bajo"]
+        op = next((p for p in b["patrones"] if p["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe el patrón {ident!r}")
+        clip = patron(op["familia"], e["partida"]["raiz"], op["tanda"])
+        nombre = b["pista"] or "BASS"
+        indice = self.live.indice_pista(nombre)
+        if indice is None:
+            indice = self.live.crear_pista_midi(nombre)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = b["clip"] is not None and leido is not None and diferencia(b["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                nombre = self._nombre_libre("BASS propuesta")
+                indice = self.live.crear_pista_midi(nombre)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        b.update(pista=nombre, clip=clip, actual=ident)
+        self._guardar()
+        self._evento("borrador", parte="bajo", pista=nombre, patron=ident, familia=op["familia"], tanda=op["tanda"], capa=b["capa"])
+        return e
+
+    def cargar_capas(self) -> dict:
+        e = self._exigir_estado()
+        nombres = self.brain.capas()
+        b = e["bajo"]
+        b["total_capas"] = len(nombres)
+        b["capas"] = [{"nombre": n, "indice": nombres.index(n)} for n in BAJOS_CONOCIDOS if n in nombres]
+        self._guardar()
+        return e
+
+    def usar_capa(self, nombre: str) -> dict:
+        e = self._exigir_estado()
+        b = e["bajo"]
+        capa = next((c for c in b["capas"] if c["nombre"] == nombre), None)
+        if capa is None:
+            raise ValueError(f"La capa {nombre!r} no está en la lista")
+        self.brain.elegir_capa(capa["indice"], b["total_capas"])
+        b["capa"] = nombre
+        self._guardar()
+        self._evento("eleccion", parte="sonido_bajo", elegido=nombre, presentadas=[c["nombre"] for c in b["capas"]], escuchadas="unknown", patron=b["actual"])
+        return e
+
+    def revisar_bajo(self) -> dict:
+        """Solo lee Live y registra."""
+        e = self._exigir_estado()
+        b = e["bajo"]
+        if not b["clip"]:
+            raise ValueError("Aún no hay patrón que revisar")
+        indice = self.live.indice_pista(b["pista"])
+        leido = None if indice is None else self.live.leer_clip(indice, 0.0)
+        if leido is None:
+            b["revision"] = {"estado": "movido_o_borrado"}
+        else:
+            b["revision"] = {"estado": "leido", **diferencia(b["clip"]["notas"], leido["notes"])}
+        self._guardar()
+        self._evento("edicion", parte="bajo", pista=b["pista"], patron=b["actual"], clips=[b["revision"]])
+        return e
 
     def revisar_edicion(self) -> dict:
         """Solo lee Live. El borrador guardado no cambia; cada revisión agrega un evento."""

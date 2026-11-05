@@ -18,6 +18,13 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 #punto{flex:none;width:8px;height:8px;border-radius:50%;background:var(--monitor)}
 #punto.on{background:var(--teal-plus);box-shadow:0 0 8px var(--teal)}
 #punto.off{background:var(--rojo)}
+nav{display:flex;gap:4px;margin-bottom:14px;overflow-x:auto}
+.tab{flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:7px;padding:8px 12px;background:transparent;border:1px solid var(--bd);color:var(--menta);font-weight:400}
+.tab:hover:not(:disabled){background:var(--panel-2);border-color:var(--teal-dim);color:var(--blanco)}
+.tab[aria-current="true"],.tab[aria-current="true"]:hover:not(:disabled){background:var(--teal-dim);border-color:var(--teal);color:var(--blanco);font-weight:700}
+.tab i{width:6px;height:6px;border-radius:50%;background:transparent}
+.tab.lista i{background:var(--teal-plus)}
+section[hidden]{display:none}
 .aviso{display:none;border:1px solid var(--ambar);color:var(--ambar);border-radius:6px;padding:10px 12px;margin-bottom:12px;font-size:13px}
 #error{border-color:var(--rojo);color:var(--rojo)}
 section{position:relative;background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:16px 16px 16px 58px;margin-bottom:10px}
@@ -48,6 +55,8 @@ button:disabled{opacity:.5;cursor:default}
 .tanda{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--monitor);margin:14px 0 0}
 .op.sel b{color:var(--ambar)}
 .op small{display:block;color:var(--monitor);font-size:10px;font-weight:400;letter-spacing:.04em;line-height:1.2}
+.patron{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid var(--bd)}
+.patron.sel span{color:var(--ambar);font-weight:700}
 .op{display:grid;grid-template-columns:150px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
 .op b{color:var(--teal-plus);font-size:17px}
 audio{width:100%;height:32px}
@@ -62,10 +71,16 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div class="marca">GROOVEFORGE <span>/ MOTOR</span></div>
     <div id="estado"><i id="punto"></i><span id="set">Conectando con Live…</span></div>
   </header>
+  <nav id="secciones" aria-label="Secciones">
+    <button data-ir="partida" class="tab">Partida<i></i></button>
+    <button data-ir="arrangement" class="tab">Arrangement<i></i></button>
+    <button data-ir="kick" class="tab">Kick<i></i></button>
+    <button data-ir="bajo" class="tab">Bajo<i></i></button>
+  </nav>
   <div class="aviso" id="protegido" role="status"></div>
   <div class="aviso" id="error" role="alert"></div>
 
-  <section id="s-partida">
+  <section id="s-partida" data-seccion="partida">
     <div class="num">1</div>
     <h2>Partida</h2>
     <p>Tú eliges. Todavía no se escribe nada en Live.</p>
@@ -78,7 +93,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button id="b-partida">Empezar</button>
   </section>
 
-  <section id="s-guia" class="bloq">
+  <section id="s-guia" class="bloq" data-seccion="arrangement">
     <div class="num">2</div>
     <h2>Pista guía</h2>
     <p>Un track MIDI mudo con un clip de color por sección: el mapa del tema en Arrangement. Lo mueves y lo cortas como cualquier clip. Plantilla provisional.</p>
@@ -88,7 +103,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-guia"></div>
   </section>
 
-  <section id="s-borrador" class="bloq">
+  <section id="s-borrador" class="bloq" data-seccion="kick">
     <div class="num">3</div>
     <h2>Borrador de kick</h2>
     <p>Un clip de 16 compases a negras en el compás 1. Si <code>KICK</code> ya tiene clips, va en otra pista.</p>
@@ -96,7 +111,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-borrador"></div>
   </section>
 
-  <section id="s-kicks" class="bloq">
+  <section id="s-kicks" class="bloq" data-seccion="kick">
     <div class="num">4</div>
     <h2>Tres kicks</h2>
     <p>Cada tanda trae dos familias: CUERPO, a partir de tus favoritos, e INICIAL, con menos cuerpo y colas de madera o piel. Genera las que quieras y elige tres según tu bajo. Al elegir el tercero se crea el Drum Rack y queda puesto en <code>KICK</code>, con un pad para cada uno.</p>
@@ -104,12 +119,36 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-kicks"></div>
   </section>
 
-  <section id="s-revisar" class="bloq">
+  <section id="s-revisar" class="bloq" data-seccion="kick">
     <div class="num">5</div>
     <h2>Tu edición</h2>
     <p>Edita el borrador en Live y vuelve aquí. Esto solo lee y lo guarda en tu Mac.</p>
     <button id="b-revisar" disabled>Registrar lo que cambié</button>
     <div id="r-revisar"></div>
+  </section>
+
+  <section id="s-bajo-patron" class="bloq" data-seccion="bajo">
+    <div class="num">1</div>
+    <h2>Patrón</h2>
+    <p>Sensación con el kick sobre la fundamental, sin progresión. Pon uno en <code>BASS</code> y oyelo con tu kick. La pista debe tener salida MIDI a <code>GrooveForge</code>.</p>
+    <button id="b-bajo-patrones" disabled>Generar</button>
+    <div id="r-bajo-patrones"></div>
+  </section>
+
+  <section id="s-bajo-sonido" class="bloq" data-seccion="bajo">
+    <div class="num">2</div>
+    <h2>Sonido en el Brain</h2>
+    <p>Capas de bajo, con <code>JD SUB MID</code> primero. Cambian al instante en el Brain físico.</p>
+    <button id="b-bajo-capas" disabled>Leer capas del Brain</button>
+    <div id="r-bajo-capas"></div>
+  </section>
+
+  <section id="s-bajo-revisar" class="bloq" data-seccion="bajo">
+    <div class="num">3</div>
+    <h2>Tu edición</h2>
+    <p>Edita el patrón en Live y vuelve aquí. Esto solo lee y lo guarda en tu Mac.</p>
+    <button id="b-bajo-revisar" disabled>Registrar lo que cambié</button>
+    <div id="r-bajo-revisar"></div>
   </section>
 </main>
 <script>
@@ -155,9 +194,23 @@ function resumen(c) {
   if (c.sin_cambios) return `${c.clip}: sin cambios`;
   return `${c.clip}: ${c.movidas.length} movidas, ${c.quitadas.length} quitadas, ${c.anadidas.length} añadidas, ${c.velocidad.length} velocity, ${c.duracion.length} duración`;
 }
+function irA(nombre) {
+  for (const x of document.querySelectorAll("[data-seccion]")) x.hidden = x.dataset.seccion !== nombre;
+  for (const b of document.querySelectorAll(".tab")) b.setAttribute("aria-current", b.dataset.ir === nombre);
+  try { localStorage.setItem("gf-seccion", nombre); } catch (e) {}
+}
+for (const b of document.querySelectorAll(".tab")) b.onclick = () => irA(b.dataset.ir);
+{
+  let guardada = null;
+  try { guardada = localStorage.getItem("gf-seccion"); } catch (e) {}
+  irA(document.querySelector(`.tab[data-ir="${guardada}"]`) ? guardada : "partida");
+}
+function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}"]`).classList.toggle("lista", lista); }
 function pintar(s) {
-  for (const n of ["guia","borrador","kicks","revisar"]) {
-    $(`s-${n}`).classList.toggle("bloq", !s);
+  marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar"]) {
+    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido"}[n] || n;
+    $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
   }
   $("s-partida").classList.toggle("hecho", !!s);
@@ -169,8 +222,36 @@ function pintar(s) {
   if (b) ok("r-borrador", `Listo en la pista ${b.pista}.`);
   $("s-kicks").classList.toggle("hecho", !!s.rack);
   pintarKicks(s);
+  pintarBajo(s.bajo);
   $("s-revisar").classList.toggle("hecho", !!s.ultima_revision);
   if (s.ultima_revision) { const p=document.createElement("pre"); p.textContent=s.ultima_revision.map(resumen).join("\n"); $("r-revisar").replaceChildren(p); }
+}
+function pintarBajo(b) {
+  $("s-bajo-patron").classList.toggle("hecho", !!b.clip);
+  if (b.tandas) $("b-bajo-patrones").textContent = "Otra tanda";
+  const filas = [];
+  for (let t = 1; t <= b.tandas; t++) {
+    const c = document.createElement("div"); c.className = "tanda"; c.textContent = `Tanda ${t}`; filas.push(c);
+    for (const p of b.patrones.filter(x => x.tanda === t)) {
+      const f = document.createElement("div"); f.className = "patron" + (b.actual === p.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = p.familia;
+      const x = document.createElement("button"); x.className = "sec"; x.textContent = b.actual === p.id ? "Puesto" : "Poner"; x.disabled = b.actual === p.id;
+      x.onclick = () => accion("bajo_poner", {id:p.id}, x);
+      f.append(n, x); filas.push(f);
+    }
+  }
+  if (b.pista && b.pista !== "BASS") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${b.pista}.`; filas.unshift(a); }
+  $("r-bajo-patrones").replaceChildren(...filas);
+  $("s-bajo-sonido").classList.toggle("hecho", !!b.capa);
+  $("r-bajo-capas").replaceChildren(...b.capas.map(c => {
+    const f = document.createElement("div"); f.className = "patron" + (b.capa === c.nombre ? " sel" : "");
+    const n = document.createElement("span"); n.textContent = c.nombre;
+    const x = document.createElement("button"); x.className = "sec"; x.textContent = b.capa === c.nombre ? "En el Brain" : "Usar"; x.disabled = b.capa === c.nombre;
+    x.onclick = () => accion("bajo_capa", {nombre:c.nombre}, x);
+    f.append(n, x); return f;
+  }));
+  $("s-bajo-revisar").classList.toggle("hecho", !!b.revision);
+  if (b.revision) { const p = document.createElement("pre"); p.textContent = resumen({clip: "Patrón", ...b.revision}); $("r-bajo-revisar").replaceChildren(p); }
 }
 const NOTAS = {36:"C1",37:"C#1",38:"D1"};
 function filaKick(o, s, sello, boton) {
@@ -218,10 +299,13 @@ function pintarKicks(s) {
   $("r-kicks").replaceChildren(...nodos);
 }
 async function accion(n, datos, boton) {
+  // Empezar lleva al siguiente paso: el contenido sigue en su sección, solo cambia lo que se muestra.
+
   aviso("error", ""); boton.disabled = true;
   try { pintar((await api(`/api/${n}`, datos)).sesion); await refrescar(); }
   catch (e) { aviso("error", e.message); boton.disabled = false; return; }
   if (document.contains(boton) && !["usar"].includes(n)) boton.disabled = false;
+  if (n === "partida") irA("arrangement");
 }
 async function refrescar() { try { pintarSet((await api("/api/estado")).live); } catch (e) { $("punto").className="off"; $("set").textContent = "El motor no responde"; } }
 
@@ -230,6 +314,9 @@ $("b-guia").onclick = e => accion("guia", {}, e.target);
 $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
+$("b-bajo-patrones").onclick = e => accion("bajo_patrones", {}, e.target);
+$("b-bajo-capas").onclick = e => accion("bajo_capas", {}, e.target);
+$("b-bajo-revisar").onclick = e => accion("bajo_revisar", {}, e.target);
 $("bpm").oninput = pintarLinea;
 api("/api/estado").then(j => { plantillas = j.plantillas; pintarLinea(); pintarSet(j.live); pintar(j.sesion); }).catch(() => refrescar());
 setInterval(refrescar, 4000);

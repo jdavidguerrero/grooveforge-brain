@@ -3,7 +3,7 @@ name = "gf-motor"
 version = "0.1.0"
 description = "Motor de asistencia de GrooveForge: flujo con Ableton Live, solo local"
 requires-python = ">=3.11"
-dependencies = ["numpy>=2.0", "scipy>=1.13", "soundfile>=0.12"]
+dependencies = ["numpy>=2.0", "scipy>=1.13", "soundfile>=0.12", "mido>=1.3", "python-rtmidi>=1.5", "pyserial>=3.5"]
 
 [dependency-groups]
 dev = ["pytest>=8"]

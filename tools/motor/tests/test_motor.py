@@ -11,8 +11,10 @@ import threading
 import pytest
 import soundfile as sf
 
+from gf_motor.bajo import COMPASES, FAMILIAS, PASOS_KICK, fundamental, patron
 from gf_motor.borrador import COLORES, PLANTILLAS, clip_kick, clips_guia
 from gf_motor.edicion import diferencia
+from gf_motor.brain import cc_de_capa
 from gf_motor.live import ClienteLive, ErrorLive
 from gf_motor.motor import Motor, SetProtegido, gf_log
 from gf_motor.servidor import crear_servidor
@@ -32,13 +34,24 @@ def _plantilla(ruta):
     return ruta
 
 
+class BrainFalso:
+    def __init__(self):
+        self.enviados = []
+
+    def capas(self):
+        return ["ACID ARP", "JD SUB MID", "KALIMBA", "ROLLER SUB", "WOODBASS", "OTRA"]
+
+    def elegir_capa(self, indice, total):
+        self.enviados.append((indice, total))
+
+
 @pytest.fixture
 def entorno(tmp_path, monkeypatch):
     monkeypatch.setenv("GF_DATASET", str(tmp_path / "dataset"))
     monkeypatch.setenv("GF_RACK_PLANTILLA", str(_plantilla(tmp_path / "molde.adg")))
     live = LiveSimulado()
     (tmp_path / "GrooveForge_Library").mkdir()
-    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "GrooveForge_Library")
+    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "GrooveForge_Library", BrainFalso())
     yield live, motor
     live.cerrar()
 
@@ -244,7 +257,7 @@ def test_template_no_recibe_rack(tmp_path, monkeypatch):
     monkeypatch.setenv("GF_RACK_PLANTILLA", str(_plantilla(tmp_path / "m.adg")))
     live = LiveSimulado("/x/TEMPLATE.als")
     (tmp_path / "L").mkdir()
-    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "L")
+    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "L", BrainFalso())
     motor.partida("organic", "A", "menor", 122)
     motor.generar_kicks()
     for i in ("1A", "1B", "1C"):
@@ -519,6 +532,117 @@ def test_si_no_encuentra_el_rack_nuevo_no_borra_nada():
     navegador = types.SimpleNamespace(user_folders=[], load_item=lambda _i: None)
     assert c.intentar_cargar(s, navegador, ["Lib", "X.adg"], "KICK") is False
     assert s.tracks[0].devices == [viejo]
+
+
+# ── Bajo ──
+def _layer_from_cc(valor, total):
+    return min(1 + (valor - 1) * total // 127, total)
+
+
+def test_cc_de_capa_es_la_inversa_del_firmware():
+    for total in range(1, 33):
+        for i in range(total):
+            v = cc_de_capa(i, total)
+            assert 1 <= v <= 127 and _layer_from_cc(v, total) == i + 1
+
+
+@pytest.mark.parametrize("familia", list(FAMILIAS))
+@pytest.mark.parametrize("tanda", [1, 2, 3])
+def test_patron_cumple_las_reglas(familia, tanda):
+    c = patron(familia, "A", tanda)
+    n = c["notas"]
+    assert c["longitud"] == COMPASES * 4 and n
+    assert all(int(x["start_beat"] * 4) % 16 not in PASOS_KICK for x in n)
+    assert all(1 <= x["velocity"] <= 127 for x in n)
+    orden = sorted(n, key=lambda x: x["start_beat"])
+    assert all(a["start_beat"] + a["duration_beats"] <= b["start_beat"] + 1e-6 for a, b in zip(orden, orden[1:]))
+    tonica = fundamental("A")
+    assert tonica == 33
+    principal = sum(x["pitch"] in (tonica, tonica + 12) for x in n)
+    assert principal >= 0.9 * len(n) and all(tonica - 1 <= x["pitch"] <= tonica + 12 for x in n)
+
+
+def test_tandas_cambian_y_son_repetibles():
+    assert patron("TAMBORA", "A", 1) == patron("TAMBORA", "A", 1)
+    assert patron("TAMBORA", "A", 1) != patron("TAMBORA", "A", 2)
+
+
+def test_familias_se_diferencian():
+    firmas = {f: frozenset(int(x["start_beat"] * 4) % 16 for x in patron(f, "A", 1)["notas"]) for f in FAMILIAS}
+    assert len(set(firmas.values())) == len(FAMILIAS)
+
+
+def test_fundamental_en_registro_o_cercana():
+    assert all(28 <= fundamental(r) <= 39 for r in ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"))
+    assert fundamental("E") == 28 and fundamental("C") == 36
+
+
+def test_poner_patron_crea_bass_y_reemplaza_si_esta_intacto(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    motor.poner_patron("11")
+    bass = next(p for p in live.pistas if p["name"] == "BASS")
+    primero = copy.deepcopy(bass["clips"][0]["notes"])
+    e = motor.poner_patron("13")
+    assert bass["clips"][0]["notes"] != primero and e["bajo"]["pista"] == "BASS" and len(bass["clips"]) == 1
+
+
+def test_poner_patron_no_pisa_lo_editado(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    motor.poner_patron("11")
+    bass = next(p for p in live.pistas if p["name"] == "BASS")
+    bass["clips"][0]["notes"] = bass["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(bass)
+    e = motor.poner_patron("12")
+    assert bass == copia and e["bajo"]["pista"] == "BASS propuesta"
+
+
+def test_bass_ajeno_no_se_pisa(entorno):
+    live, motor = entorno
+    live.pistas.append({"name": "BASS", "clips": [{"start": 0.0, "length": 4.0, "notes": [nota(0)], "name": "mio", "color": None}]})
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    assert motor.poner_patron("11")["bajo"]["pista"] == "BASS propuesta"
+    assert live.pistas[2]["clips"][0]["name"] == "mio"
+
+
+def test_capas_de_bajo_con_jd_primero_y_cc(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    e = motor.cargar_capas()
+    assert [c["nombre"] for c in e["bajo"]["capas"]] == ["JD SUB MID", "ROLLER SUB", "WOODBASS"]
+    motor.usar_capa("ROLLER SUB")
+    assert motor.brain.enviados == [(3, 6)] and motor.estado["bajo"]["capa"] == "ROLLER SUB"
+    assert _eventos("motor_eleccion")[-1]["parte"] == "sonido_bajo"
+    with pytest.raises(ValueError):
+        motor.usar_capa("KALIMBA")
+
+
+def test_revisar_bajo_registra_y_no_escribe(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    motor.poner_patron("11")
+    live.pistas[-1]["clips"][0]["notes"] = live.pistas[-1]["clips"][0]["notes"][1:]
+    live.comandos.clear()
+    r = motor.revisar_bajo()["bajo"]["revision"]
+    assert r["estado"] == "leido" and len(r["quitadas"]) == 1
+    assert set(live.comandos) <= {"get_session", "read_clip"}
+
+
+def test_template_no_recibe_patron(tmp_path, monkeypatch):
+    monkeypatch.setenv("GF_DATASET", str(tmp_path / "d"))
+    live = LiveSimulado("/x/TEMPLATE.als")
+    (tmp_path / "L").mkdir()
+    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "L", BrainFalso())
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    with pytest.raises(SetProtegido):
+        motor.poner_patron("11")
+    live.cerrar()
 
 
 def test_buscar_item_en_el_navegador():

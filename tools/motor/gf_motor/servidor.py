@@ -25,6 +25,11 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "usar": lambda d: motor.usar_kick(d["id"]),
         "nueva_seleccion": lambda d: motor.nueva_seleccion(),
         "revisar": lambda d: motor.revisar_edicion(),
+        "bajo_patrones": lambda d: motor.generar_patrones(),
+        "bajo_poner": lambda d: motor.poner_patron(d["id"]),
+        "bajo_capas": lambda d: motor.cargar_capas(),
+        "bajo_capa": lambda d: motor.usar_capa(d["nombre"]),
+        "bajo_revisar": lambda d: motor.revisar_bajo(),
     }
 
     class Manejador(BaseHTTPRequestHandler):
