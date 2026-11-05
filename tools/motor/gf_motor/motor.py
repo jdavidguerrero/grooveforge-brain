@@ -17,18 +17,15 @@ import gf_log  # noqa: E402
 import numpy as np  # noqa: E402
 import soundfile as sf  # noqa: E402
 from gf_perc.core import SR  # noqa: E402
-from gf_perc.generos import sintetizar_en_genero  # noqa: E402
-from gf_perc.seleccion import huella, mas_distintas  # noqa: E402
+from gf_perc.caracteres import COLAS_KICK, sintetizar_cola  # noqa: E402
 
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
 from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
 from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
 
-LETRAS = "ABC"
+LETRAS = "ABCDEFGHIJKL"
 TAMANO_RACK = 3
-_VARIACION = 0.6  # El mismo valor de `kit-genero`, cuyos kits aprobó Juan.
-_CANDIDATOS = 12
 
 
 class SetProtegido(ErrorLive):
@@ -166,29 +163,27 @@ class Motor:
         p = self.estado["partida"]
         return self.carpeta_live / "00 Motor" / f"KICK {p['genero']} {p['raiz']} {p['modo']} {self.estado['id'][:4]}"
 
-    def generar_kicks(self) -> dict:
-        """Tres kicks más para escuchar. El rack se crea cuando Juan haya elegido los tres que quiere."""
+    def generar_kicks(self, grave: bool = True) -> dict:
+        """Un kick por cola, con el mismo golpe. El rack se crea cuando Juan haya elegido los tres que quiere."""
         e = self._exigir_estado()
         self._exigir_library()
         p = e["partida"]
         tanda = len(e["opciones"]) + 1
-        semilla = 1 + (tanda - 1) * 1000
-        candidatos = [
-            sintetizar_en_genero("kick", p["genero"], p["raiz"], p["modo"], 0.85, semilla + i, 1, _VARIACION if i else 0.0)
-            for i in range(_CANDIDATOS)
-        ]
-        elegidos = mas_distintas([huella(y) for y, _ in candidatos], len(LETRAS))
         carpeta = self._carpeta_kicks()
         carpeta.mkdir(parents=True, exist_ok=True)
         opciones = []
-        for letra, i in zip(LETRAS, elegidos):
+        # La misma semilla da el mismo golpe en toda la tanda: lo único que cambia es la cola.
+        semilla = tanda * 1000
+        for letra, cola in zip(LETRAS, COLAS_KICK):
+            y, meta = sintetizar_cola(cola, p["genero"], p["raiz"], p["modo"], semilla, grave=grave)
             ident = f"{tanda}{letra}"
-            ruta = carpeta / f"kick_{p['genero']}_{p['raiz']}_{p['modo']}_{ident}.wav"
-            sf.write(ruta, np.asarray(candidatos[i][0]), SR, subtype="PCM_24")
-            opciones.append({"id": ident, "ruta": str(ruta), "seed_timbre": semilla + i, "nota_midi": candidatos[i][1].get("nota_midi")})
+            nombre = cola.lower().replace(" + ", "_").replace(" ", "_")
+            ruta = carpeta / f"kick_{nombre}_{p['raiz']}_{p['modo']}_{ident}.wav"
+            sf.write(ruta, np.asarray(y), SR, subtype="PCM_24")
+            opciones.append({"id": ident, "caracter": cola, "ruta": str(ruta), "seed_timbre": semilla, "nota_midi": meta.get("nota_midi")})
         e["opciones"].append(opciones)
         self._guardar()
-        self._evento("opciones", parte="kick", opciones=[{k: o[k] for k in ("id", "seed_timbre", "nota_midi")} for o in opciones])
+        self._evento("opciones", parte="kick", opciones=[{k: o[k] for k in ("id", "caracter", "seed_timbre", "nota_midi")} for o in opciones])
         return e
 
     def ruta_opcion(self, ident: str) -> Path:

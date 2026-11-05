@@ -1,6 +1,11 @@
 """Comandos sobre el set. Solo corren en el hilo principal de Live; sin dependencias de red para probarlos fuera."""
 
+import re
+
 from .buscar import buscar_item
+
+# Solo el nombre exacto que genera el motor: un rack de Juan nunca coincide y nunca se borra.
+_RACK_DEL_MOTOR = re.compile(r"^KICK \S+ \S+ \S+ [0-9a-f]{4} R\d+$")
 
 
 class ErrorComando(Exception):
@@ -132,6 +137,17 @@ def intentar_cargar(song, navegador, partes, nombre_pista):
     item = buscar_item(navegador.user_folders, partes)
     if item is None:
         return False
-    song.view.selected_track = pistas[0]
-    navegador.load_item(item)
+    pista = pistas[0]
+    song.begin_undo_step()
+    try:
+        song.view.selected_track = pista
+        navegador.load_item(item)
+        # Después de cargar: si la carga falla, el rack anterior sigue en su sitio.
+        nuevo = partes[-1].rsplit(".", 1)[0]
+        for i in range(len(pista.devices) - 1, -1, -1):
+            nombre = pista.devices[i].name
+            if nombre != nuevo and _RACK_DEL_MOTOR.match(nombre):
+                pista.delete_device(i)
+    finally:
+        song.end_undo_step()
     return True

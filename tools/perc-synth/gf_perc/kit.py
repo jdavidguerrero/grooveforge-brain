@@ -142,6 +142,68 @@ def _kick(material: str, vel: float, g, a: Ajuste) -> np.ndarray:
     return y
 
 
+def _kick_acustico(vel: float, g, a: Ajuste) -> np.ndarray:
+    """Bombo tocado. Teoría §11: modos reales, mazo de fieltro y casco, sin capa 808 ni saturación."""
+    f0 = 52.0 * a.afinacion
+    t60 = 0.5 * a.decay
+    dur = min(1.6 * t60 + 0.12, 1.2)
+    # El golpe estira el parche: la nota sube un instante y cae rápido, mucho menos que el barrido de una 808.
+    fundamental = banco_modal(np.array([f0]), np.array([1.0]), np.array([_SIGMA / t60]), dur, glide=0.14 * (0.65 + 0.5 * vel), glide_tau=0.012)
+    capa = _capa_material(f0, 0.11 * a.decay, "piel", vel, g, dur, omitir_primero=True)
+    casco_f = g.uniform(165.0, 215.0)
+    casco = banco_modal(np.array([casco_f, casco_f * 1.48]), np.array([1.0, 0.45]), np.array([_SIGMA / 0.07, _SIGMA / 0.04]), dur)
+    # Un contacto más largo anularía los parciales del parche y dejaría un golpe sordo (pulso sen²: nulo cerca de 2/T).
+    contacto = (2.6 - 1.0 * vel) * g.uniform(0.9, 1.1)
+    mezcla = fundamental + 0.32 * a.capa * _normal(capa) + 0.26 * a.capa * _normal(casco)
+    mazo = ruido_contacto(g, dur, 0.0035, 1800.0, 0.7)
+    # Se mezcla sobre el cuerpo ya normalizado: si el mazo fijara el pico, el bombo quedaría delgado al normalizar.
+    return _normal(golpear(mezcla, contacto)) + min(a.ataque, 1.3) * (0.05 + 0.1 * vel) * _normal(mazo)
+
+
+def _kick_base(f0: float, g_cabeza, vel: float, cuerpo: float = 1.0) -> np.ndarray:
+    """Teoría §14-15: seno casi plano y poco barrido; `cuerpo` fija cuánto nivel sostiene y cuánto dura."""
+    # Cada tanda varía aquí: sin esto, pedir otra tanda daría casi el mismo golpe.
+    largo = g_cabeza.uniform(0.165, 0.215) * (0.7 + 0.3 * cuerpo)
+    t = tiempo(largo)
+    barrido = g_cabeza.uniform(14.0, 42.0)
+    tau = g_cabeza.uniform(0.035, 0.08)
+    f = f0 + barrido * np.exp(-t / tau)
+    seno = np.sin(2.0 * np.pi * np.cumsum(f) / SR)
+    # Llega al final todavía a la mitad del nivel; se corta con un fundido corto, como en la referencia.
+    caida = 1.0 - (1.0 - 0.47 * cuerpo) * np.minimum(t / largo, 1.0)
+    salida = np.minimum((largo - t) / 0.008, 1.0).clip(0.0, 1.0)
+    clic = g_cabeza.normal(size=t.size) * np.exp(-t / 0.0006) * (0.1 + 0.15 * vel)
+    return _normal(seno * caida * salida + clic)
+
+
+def _kick_cola(tipo: str, vel: float, g_cabeza, g_cola, a: Ajuste) -> np.ndarray:
+    """Teoría §12-13. La base depende solo de `g_cabeza`, así las opciones de una tanda comparten el mismo golpe."""
+    f0 = 52.0 * a.afinacion
+    y = _kick_base(f0, g_cabeza, vel, a.gordura)
+    t60 = 0.36 * a.decay
+    dur = max(len(y) / SR, 1.6 * t60 + 0.1)
+    cola = np.zeros(int(dur * SR))
+
+    def modos(relaciones, amps, caida, escala, peso):
+        r = np.asarray(relaciones)
+        f = f0 * escala * r * g_cola.uniform(0.992, 1.008, r.size)
+        # Decaen más despacio que en la capa normal: aquí los parciales son la cola, no un adorno del ataque.
+        s = _SIGMA / np.maximum(t60 * r**-caida, 0.02)
+        return peso * _normal(banco_modal(f, np.asarray(amps), s, dur))[: len(cola)]
+
+    if tipo in ("madera", "mixta"):
+        # Una octava sobre la nota, con parciales de barra: suena hueco, a caja de madera, sin competir con el sub.
+        cola += modos(BARRA_LIBRE[:4], (1.0, 0.8, 0.45, 0.2), 0.6, 2.0, 1.0 if tipo == "mixta" else 1.5)
+    if tipo in ("piel", "mixta"):
+        # Sobre la nota, con los modos de la membrana: quedan graves y juntos, como un parche que sigue sonando.
+        cola += modos(PIEL_RELACIONES[:6], (0.7, 1.0, 0.8, 0.6, 0.45, 0.3), 0.4, 1.0, 1.0 if tipo == "mixta" else 1.5)
+    t = tiempo(dur)[: len(cola)]
+    # Entra tarde para no ensuciar los primeros ciclos de la base: ahí está el cuerpo, y el inicio no cambia entre opciones.
+    entrada = 0.5 - 0.5 * np.cos(np.pi * np.clip((t - 0.05) / 0.07, 0.0, 1.0))
+    n = max(len(y), len(cola))
+    return _normal(np.pad(y, (0, n - len(y))) + a.capa * np.pad(entrada * cola, (0, n - len(cola))))
+
+
 def _rafagas_clap(material: str, vel: float, g, a: Ajuste = Ajuste()) -> np.ndarray:
     dur = 0.34
     t = tiempo(dur)
@@ -295,10 +357,13 @@ def sintetizar_voz(
     gordura: float = 1.0,
     centro: Ajuste = Ajuste(),
     afinar_hz: float | None = None,
+    modelo: str = "808",
 ) -> tuple[np.ndarray, dict]:
     """Genera una voz. `gordura` solo afecta al kick; `variacion` = 0 es la versión base.
 
     `centro` desplaza la voz según un perfil de género. `afinar_hz` fija la nota exacta en voces afinables.
+    `modelo` cambia el kick: "acustico" es un bombo tocado y "cola_madera", "cola_piel" o "cola_mixta" dejan el mismo
+    golpe inicial para una semilla y cambian lo que viene después. No afecta a las demás voces.
     """
     if voz not in VOCES:
         raise ValueError(f"voz desconocida: {voz!r}")
@@ -318,7 +383,12 @@ def sintetizar_voz(
     vel = velocity if material == "clasico" else float(np.clip(velocity * g.uniform(0.96, 1.04), 0.05, 1.0))
 
     if voz == "kick":
-        y = _kick(material, vel, g, a)
+        if modelo.startswith("cola_"):
+            y = _kick_cola(modelo.removeprefix("cola_"), vel, rng_para("kick-cabeza", seed_timbre), g, a)
+        elif modelo == "acustico":
+            y = _kick_acustico(vel, g, a)
+        else:
+            y = _kick(material, vel, g, a)
     elif voz == "snare":
         y = _snare(material, vel, g, a)
     elif voz == "clap":
@@ -350,6 +420,7 @@ def sintetizar_voz(
     return y, {
         "voz": voz,
         "material": material,
+        "modelo": modelo,
         "nota": NOTAS[voz],
         "velocity": velocity,
         "seed_timbre": seed_timbre,

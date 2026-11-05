@@ -191,11 +191,21 @@ def test_generar_no_crea_rack_y_tandas_tienen_ids_propios(entorno):
     motor.partida("organic", "A", "menor", 122)
     motor.generar_kicks()
     e = motor.generar_kicks()
-    assert [o["id"] for t in e["opciones"] for o in t] == ["1A", "1B", "1C", "2A", "2B", "2C"]
+    assert [o["id"] for o in e["opciones"][0]] == [f"1{x}" for x in "ABCDEFGHIJKL"]
+    assert [o["id"] for o in e["opciones"][1]][0] == "2A"
+    assert [o["caracter"] for o in e["opciones"][0]] == ["MADERA CORTA", "MADERA LARGA", "PIEL CORTA", "PIEL LARGA", "MADERA + PIEL", "MADERA SECA", "PIEL SECA", "MADERA + PIEL SECA", "MADERA CORTA LIGERA", "PIEL CORTA LIGERA", "MADERA SECA LIGERA", "PIEL SECA LIGERA"]
     audios = [sf.read(o["ruta"])[0] for o in e["opciones"][0]]
     assert all(abs(a).max() > 0.1 for a in audios)
-    assert not (len(audios[0]) == len(audios[1]) and (audios[0] == audios[1]).all())
+    assert len({o["seed_timbre"] for o in e["opciones"][0]}) == 1
+    assert e["opciones"][0][0]["seed_timbre"] != e["opciones"][1][0]["seed_timbre"]
     assert not list(motor.carpeta_live.rglob("*.adg")) and e["rack"] is None
+
+
+def test_nota_del_kick_grave_o_anterior(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    assert motor.generar_kicks()["opciones"][0][0]["nota_midi"] == 28
+    assert motor.generar_kicks(grave=False)["opciones"][1][0]["nota_midi"] == 33
 
 
 def test_contador_quitar_y_rack_solo_al_tercero(entorno):
@@ -227,7 +237,7 @@ def test_rack_mezcla_tandas_y_se_pone_en_la_pista(entorno):
     partes, pista = live.cargas[0]
     assert pista == "KICK" and partes[0] == "GrooveForge_Library" and partes[-1] == Path(r["ruta"]).name
     evento = _eventos("motor_seleccion")[0]
-    assert evento["seleccion"] == ["1A", "2B", "1C"] and len(evento["presentadas"]) == 6
+    assert evento["seleccion"] == ["1A", "2B", "1C"] and len(evento["presentadas"]) == 24
 
 
 def test_si_no_carga_el_rack_queda_y_se_explica(entorno):
@@ -319,6 +329,10 @@ class _Pista:
 
     def __init__(self, name):
         self.name, self.clip_slots, self.arrangement_clips = name, [_Ranura(), _Ranura()], []
+        self.devices = []
+
+    def delete_device(self, i):
+        del self.devices[i]
 
     def duplicate_clip_to_arrangement(self, clip, tiempo):
         if tiempo < 0:
@@ -481,6 +495,38 @@ def test_superficie_real_responde_por_socket(monkeypatch):
     finally:
         vivo[0] = False
         sup.disconnect()
+
+
+def test_rack_nuevo_reemplaza_solo_los_del_motor():
+    import types
+
+    c = _comandos()
+    s = _Cancion("KICK")
+    pista = s.tracks[0]
+    nombres = ["KICK organic A menor a383 R1", "Mi rack KICK", "KICK organic A menor aeb5 R2", "KICK", "EQ Eight"]
+    pista.devices = [types.SimpleNamespace(name=n) for n in nombres]
+    rack = types.SimpleNamespace(name="KICK organic C# dorico dbc8 R1.adg", children=(), is_loadable=True)
+    carpeta = types.SimpleNamespace(name="Lib", children=(rack,), is_loadable=False)
+
+    def cargar(_item):
+        pista.devices.append(types.SimpleNamespace(name="KICK organic C# dorico dbc8 R1"))
+
+    navegador = types.SimpleNamespace(user_folders=[carpeta], load_item=cargar)
+    assert c.intentar_cargar(s, navegador, ["Lib", rack.name], "KICK")
+    assert [d.name for d in pista.devices] == ["Mi rack KICK", "KICK", "EQ Eight", "KICK organic C# dorico dbc8 R1"]
+    assert s.pasos == ["inicio", "fin"]
+
+
+def test_si_no_encuentra_el_rack_nuevo_no_borra_nada():
+    import types
+
+    c = _comandos()
+    s = _Cancion("KICK")
+    viejo = types.SimpleNamespace(name="KICK organic A menor a383 R1")
+    s.tracks[0].devices = [viejo]
+    navegador = types.SimpleNamespace(user_folders=[], load_item=lambda _i: None)
+    assert c.intentar_cargar(s, navegador, ["Lib", "X.adg"], "KICK") is False
+    assert s.tracks[0].devices == [viejo]
 
 
 def test_buscar_item_en_el_navegador():

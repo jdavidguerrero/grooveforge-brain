@@ -51,8 +51,7 @@ Es una heurística: dos notas intercambiadas se ven como dos movidas. Alcanza pa
 
 ## 5. Tres kicks en un Drum Rack
 
-Se usan `sintetizar_en_genero` y la selección *farthest-first* (`percusion-kits-808-organica.md` §10): se generan más candidatos de los necesarios y se conservan los tres más
-distintos. Todos quedan afinados a la tonalidad con el perfil `organic`.
+Cada tanda tiene un mismo golpe duro y gordo, y cinco colas de madera o de piel (`percusion-kits-808-organica.md` §12), afinadas a la tonalidad. Así la elección depende solo de lo que viene después del golpe.
 
 **Decisión de Juan:** el clip son 16 compases a negras en el compás 1. Él genera las tandas que quiera y elige tres kicks, con un contador. Al elegir el tercero, el motor crea el Drum Rack (C1, C#1 y D1, en el orden elegido) y lo pone en `KICK`.
 
@@ -60,7 +59,7 @@ Esto corrige un fallo de la primera versión: cada tanda creaba su propio rack, 
 
 - **Se oye en contexto:** con el rack puesto, `Usar` mueve la nota del clip al pad, si el clip sigue igual a como lo escribió el motor. Si Juan lo editó, no se toca (regla 3) y se le indica la nota.
 - **Datos para la IA:** el evento `motor_seleccion` guarda lo elegido junto a todo lo presentado; lo no elegido también informa. `escuchadas` queda `unknown`, porque el motor no sabe qué se oyó.
-- **Poner el rack en la pista:** `GFMotor` selecciona la pista y usa `browser.load_item` con el item de Places. Live tarda en ver un archivo nuevo en Places, así que reintenta hasta 20 s. Si falla, el rack queda creado y la interfaz indica el motivo y dónde está.
+- **Poner el rack en la pista:** `GFMotor` selecciona la pista y usa `browser.load_item` con el item de Places. Después borra los racks anteriores del motor, reconocidos por el nombre exacto que él genera; un rack de Juan no coincide. Va en un solo paso de deshacer, y si la carga no encuentra el archivo no borra nada. Live tarda en ver un archivo nuevo en Places, así que reintenta hasta 20 s. Si falla, el rack queda creado y la interfaz indica el motivo y dónde está.
 
 **El `.adg` parte de un rack real de Juan** (`808 Core Kit.adg`), porque el formato no está documentado y cambia entre versiones de Live: se conserva el molde de un pad y se cambia el sample, igual que `make_gf_racks.py`. No crea ni modifica `.als` (regla 7). La pista `SC GHOST`
 ya viene a negras en el template, así que el motor no la toca.

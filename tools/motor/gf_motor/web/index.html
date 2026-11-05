@@ -41,16 +41,19 @@ button:disabled{opacity:.5;cursor:default}
 .bloque{min-width:0;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:0 5px;background:var(--panel-2);border-top:4px solid var(--monitor);font-size:11px;font-weight:700;line-height:1.2;white-space:nowrap}
 .bloque small{color:var(--monitor);font-size:10px}
 .leyenda{font-size:11px;color:var(--monitor);margin:0 0 12px}
-.fila{display:flex;align-items:center;gap:12px}
+.fila{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.enlinea{display:flex;align-items:center;gap:6px}
+.enlinea select{width:auto;margin:0;padding:6px}
 .contador{font-weight:700;color:var(--teal-plus)}
 .tanda{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--monitor);margin:14px 0 0}
 .op.sel b{color:var(--ambar)}
-.op{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
+.op small{display:block;color:var(--monitor);font-size:10px;font-weight:400;letter-spacing:.04em;line-height:1.2}
+.op{display:grid;grid-template-columns:140px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
 .op b{color:var(--teal-plus);font-size:17px}
 audio{width:100%;height:32px}
 .ok{color:var(--teal-plus);margin:10px 0 0;overflow-wrap:anywhere}
 pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;font-size:13px;color:var(--menta)}
-@media (max-width:520px){section{padding-left:16px;padding-top:52px}.bloque small{display:none}.bloque{font-size:9px;padding:0 2px}.op{grid-template-columns:24px 1fr}.op button{grid-column:2}}
+@media (max-width:520px){section{padding-left:16px;padding-top:52px}.bloque small{display:none}.bloque{font-size:9px;padding:0 2px}.op{grid-template-columns:72px 1fr}.op button{grid-column:2}}
 </style>
 </head>
 <body>
@@ -96,8 +99,8 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-kicks" class="bloq">
     <div class="num">4</div>
     <h2>Tres kicks</h2>
-    <p>Genera todos los que quieras y elige tres. Al elegir el tercero se crea el Drum Rack y queda puesto en <code>KICK</code>, con un pad para cada uno.</p>
-    <div class="fila"><button id="b-kicks" disabled>Generar</button><span id="contador" class="contador"></span></div>
+    <p>Cada tanda tiene un mismo golpe duro y gordo, con doce opciones: colas de madera o de piel, secas y con menos cuerpo (LIGERA). Genera las que quieras y elige tres según tu bajo. Al elegir el tercero se crea el Drum Rack y queda puesto en <code>KICK</code>, con un pad para cada uno.</p>
+    <div class="fila"><button id="b-kicks" disabled>Generar</button><label class="enlinea">Nota <select id="nota-kick"><option value="grave">Grave</option><option value="tonica">Regla anterior</option></select></label><span id="contador" class="contador"></span></div>
     <div id="r-kicks"></div>
   </section>
 
@@ -173,13 +176,14 @@ const NOTAS = {36:"C1",37:"C#1",38:"D1"};
 function filaKick(o, s, sello, boton) {
   const f = document.createElement("div"); f.className = "op" + (s.seleccion.includes(o.id) ? " sel" : "");
   const l = document.createElement("b"); l.textContent = o.id;
+  const c = document.createElement("small"); c.textContent = o.caracter; l.append(c);
   const a = document.createElement("audio"); a.controls = true; a.preload = "none"; a.src = `/audio/${o.id}?t=${sello}`;
   f.append(l, a, boton); return f;
 }
 function pintarKicks(s) {
   const nodos = [], sello = s.opciones.length;
   $("contador").textContent = s.opciones.length ? `${s.seleccion.length} de 3 elegidos` : "";
-  if (s.opciones.length) $("b-kicks").textContent = "Otros tres";
+  if (s.opciones.length) $("b-kicks").textContent = "Otra tanda";
   if (s.rack) {
     const r = document.createElement("p"); r.className = "ok";
     r.textContent = s.rack.cargado ? `Rack ${s.rack.nombre} puesto en ${s.rack.pista}.` : `Rack creado, pero no pude ponerlo en ${s.rack.pista}: ${s.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
@@ -224,7 +228,7 @@ async function refrescar() { try { pintarSet((await api("/api/estado")).live); }
 $("b-partida").onclick = e => accion("partida", {genero:$("genero").value, raiz:$("raiz").value, modo:$("modo").value, bpm:$("bpm").value}, e.target);
 $("b-guia").onclick = e => accion("guia", {}, e.target);
 $("b-borrador").onclick = e => accion("borrador", {}, e.target);
-$("b-kicks").onclick = e => accion("kicks", {}, e.target);
+$("b-kicks").onclick = e => accion("kicks", {grave: $("nota-kick").value === "grave"}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("bpm").oninput = pintarLinea;
 api("/api/estado").then(j => { plantillas = j.plantillas; pintarLinea(); pintarSet(j.live); pintar(j.sesion); }).catch(() => refrescar());

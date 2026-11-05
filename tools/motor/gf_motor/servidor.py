@@ -20,7 +20,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "partida": lambda d: motor.partida(d["genero"], d["raiz"], d["modo"], float(d["bpm"])),
         "guia": lambda d: motor.crear_guia(),
         "borrador": lambda d: motor.borrador_kick(),
-        "kicks": lambda d: motor.generar_kicks(),
+        "kicks": lambda d: motor.generar_kicks(bool(d.get("grave", True))),
         "seleccionar": lambda d: motor.alternar_kick(d["id"]),
         "usar": lambda d: motor.usar_kick(d["id"]),
         "nueva_seleccion": lambda d: motor.nueva_seleccion(),
