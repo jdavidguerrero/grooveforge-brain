@@ -1,5 +1,7 @@
 # Sesión de paleta por ADN (no por género)
 
+> **Nota 2026-11-05:** Juan ahora enfoca los sonidos por género; ver el cambio de criterio en §1c.
+
 > **Fecha:** 2026-10-28 · **Estado:** propuesta para la Sesión B · **Depende de:** `ia-local-refinamiento.md` §2–3
 > (un núcleo y varias direcciones), `protocolo-captura.md` (montaje, tomas, ficha), `variants/studio/paleta-v1.md`
 > (roles, híbridos), `percusion-groove.md` §7 (selección de percusión).
@@ -42,6 +44,10 @@ El disco / house pide otra cosa (stabs, octavas, brillo) y se trata como matiz d
 - Para más adelante (arreglo): frases de 8 / 16 / 32 compases, intro y outro mezclables por un DJ.
 
 ## 1c. ADN y dialectos (Juan, 2026-10-28, fase 2)
+
+> **Cambio de criterio (Juan, 2026-11-05):** se retira la regla de que un sonido deba funcionar en dos contextos. Las diferencias
+> entre géneros son grandes y la regla resultaba restrictiva: los sonidos se enfocan por género, sin obligación de converger en
+> otro. Lo que ya se eligió con la regla anterior se conserva. Este documento queda como historia de la fase 2.
 
 Juan se mueve entre subgéneros con una sola marca, pero hay cosas que funcionan en afro y no en melodic o indie. Eso
 no es un defecto del patrón: es que cada subgénero es un **dialecto** del mismo ADN (la versión práctica de "un núcleo

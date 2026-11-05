@@ -250,7 +250,7 @@ ganador. Lo que tenga ✓ en varios dialectos es ADN de patrón.
 
 | Ronda | Qué se decide | Con qué |
 |---|---|---|
-| 1 · sonido | el preset base (es ADN: tiene que pasar en dos contextos, uno B) | §5, con mixta A en eólica |
+| 1 · sonido | el preset base (regla de dos contextos retirada el 2026-11-05; ver `sesion-paleta-adn.md` §1c) | §5, con mixta A en eólica |
 | 2 · mapa de escalas | por familia, las 3 escalas en cada contexto: ✓ o ✗ (no se elimina) | mixta A, con el preset ganador, sobre su progresión |
 | 3 · favorita por dialecto | entre las que tienen ✓ en ese dialecto, la favorita (máximo 3 a la vez) | el contexto propio del dialecto (D, E, F; A o C para afro y disco) |
 | 4 · ritmo | qué rítmicas sirven en cada escala favorita: ✓ o ✗ | las 4 rítmicas |
