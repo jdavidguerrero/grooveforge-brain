@@ -82,3 +82,67 @@ def test_preset_de_capa_ida_y_vuelta():
     assert gp.decode_layer(gp.rename_layer(raw, "MI CAPA"))["name"] == "MI CAPA"
     e = gp.layer_entry_from_raw(raw, {"notes": "para el bajo", "rating": 4})
     assert e["notes"] == "para el bajo" and e["half_a"] == "HY WOODBASS A" and e["origin"] == "fabrica-brain"
+
+
+def _args(tmp_path, archivo, nombre, subir=False, rol="bass"):
+    import argparse
+
+    return argparse.Namespace(lib=str(tmp_path), archivo=str(archivo), nombre=nombre, rol=rol, subir=subir, port=None)
+
+
+def test_desde_vst_preset_va_a_la_libreria_sin_subir(tmp_path):
+    raw = gp.encode(0, "VIEJO", sample_patch())
+    f = tmp_path / "Model.gfp"
+    f.write_bytes(raw)
+    gp.cmd_desde_vst(_args(tmp_path, f, "JD VST BASS"))
+    j = json.loads((tmp_path / "brain" / "model_d" / "jd-vst-bass.json").read_text())
+    assert j["name"] == "JD VST BASS" and j["origin"] == "propio" and j["role"] == "bass"
+    assert gp.decode(bytes.fromhex(j["raw"]))["name"] == "JD VST BASS"
+
+
+def test_desde_vst_no_pisa_un_sonido(tmp_path):
+    f = tmp_path / "Model.gfp"
+    f.write_bytes(gp.encode(0, "X", sample_patch()))
+    gp.cmd_desde_vst(_args(tmp_path, f, "MISMO"))
+    import pytest
+
+    with pytest.raises(SystemExit, match="Ya existe"):
+        gp.cmd_desde_vst(_args(tmp_path, f, "MISMO"))
+
+
+def test_desde_vst_rechaza_archivo_invalido(tmp_path):
+    import pytest
+
+    f = tmp_path / "malo.gfp"
+    f.write_bytes(b"GFP" + bytes(10))
+    with pytest.raises(ValueError):
+        gp.cmd_desde_vst(_args(tmp_path, f, "MALO"))
+    assert not list((tmp_path / "brain").rglob("*.json")) if (tmp_path / "brain").exists() else True
+
+
+def test_desde_vst_capa_y_subir(tmp_path, monkeypatch):
+    capa = tmp_path / "capa.json"
+    biblioteca = Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1" / "patches" / "brain" / "layers" / "jd-sub-mid.json"
+    if not biblioteca.exists():
+        import pytest
+
+        pytest.skip("Sin la librería de Juan")
+    raw = bytes.fromhex(json.loads(biblioteca.read_text())["raw"])
+    f = tmp_path / "Hybrid.gfl"
+    f.write_bytes(raw)
+    subidos = []
+
+    class BrainFalso:
+        def __init__(self, _p):
+            pass
+
+        def layer_export(self):
+            return [(0, raw)]
+
+        def layer_put(self, i, r):
+            subidos.append((i, r))
+
+    monkeypatch.setattr(gp, "Brain", BrainFalso)
+    gp.cmd_desde_vst(_args(tmp_path, f, "JD VST CAPA", subir=True))
+    assert subidos[0][0] == 1 and gp.decode_layer(subidos[0][1])["name"] == "JD VST CAPA"
+    assert (tmp_path / "brain" / "layers" / "jd-vst-capa.json").exists()

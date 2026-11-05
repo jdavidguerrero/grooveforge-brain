@@ -22,6 +22,13 @@ por el USB. Diseño: `apps/docs/variants/studio/theory/11-studio-preset-libraria
 ~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py layer-import capa.json [--reemplazar]
 ```
 
+Para pasar un sonido del VST, expórtalo con **EXPORT GFP** (`.gfp`, o `.gfl` si es HYBRID) y luego:
+
+```bash
+# solo a la librería; con --subir también al final del banco del Brain. Nunca pisa un sonido existente
+~/.platformio/penv/bin/python tools/preset-librarian/gf_presets.py desde-vst ruta/Hybrid.gfl "JD VST BASS" --rol bass --subir
+```
+
 - Usa el Python de PlatformIO porque ya trae `pyserial`. La librería va en `$GF_LIBRARY` o en el dataset de la paleta
   (`~/GROOVEFORGE/GrooveForge_Dataset_v1/patches`).
 - En cada JSON se completan a mano `role` (bass · chords · pad · lead · pluck · perc · fx), `tags`, `key_range`,

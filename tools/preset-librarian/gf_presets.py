@@ -387,6 +387,37 @@ def cmd_layer_import(a):
     print(f"{len(raws)} presets de capa subidos")
 
 
+def cmd_desde_vst(a):
+    """Pasa un .gfp o .gfl exportado por el VST a la librería y, solo con --subir, al Brain. Nunca pisa un sonido."""
+    folder_base = library_dir(a.lib) / "brain"
+    raw = Path(a.archivo).read_bytes()
+    capa = raw[:3] == LAYER_MAGIC
+    if capa:
+        raw = rename_layer(raw, a.nombre)
+        entry = layer_entry_from_raw(raw)
+        folder = folder_base / "layers"
+    else:
+        raw = rename(raw, a.nombre)
+        entry = entry_from_raw(raw)
+        folder = folder_base / entry["engine"]
+    entry["origin"] = "propio"
+    entry["notes"] = f"Exportado del VST: {Path(a.archivo).name}"
+    if a.rol:
+        entry["role"] = a.rol
+    folder.mkdir(parents=True, exist_ok=True)
+    if find_by_name(folder, entry["name"]):
+        sys.exit(f"Ya existe {entry['name']!r} en {folder}: elige otro nombre")
+    ruta = folder / f"{slug(entry['name'])}.json"
+    ruta.write_text(json.dumps(entry, indent=2, ensure_ascii=False) + "\n")
+    print(f"En la librería: {ruta}")
+    if a.subir:
+        a.files = [str(ruta)]
+        a.reemplazar = False
+        (cmd_layer_import if capa else cmd_import)(a)
+    else:
+        print("No se subió al Brain: repite con --subir cuando quieras.")
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Bibliotecario de presets del GrooveForge Brain")
     p.add_argument("--port", help="puerto serie (por defecto el primer /dev/cu.usbmodem*)")
@@ -407,6 +438,12 @@ def main(argv=None):
     s.add_argument("files", nargs="+")
     s.add_argument("--reemplazar", action="store_true", help="reescribir todos los presets de capa en este orden")
     s.set_defaults(fn=cmd_layer_import)
+    s = sub.add_parser("desde-vst", help="pasar un .gfp o .gfl del VST a la librería (y al Brain con --subir)")
+    s.add_argument("archivo")
+    s.add_argument("nombre", help="nombre del sonido en el Brain")
+    s.add_argument("--rol", choices=ROLES)
+    s.add_argument("--subir", action="store_true", help="subirlo también al final del banco")
+    s.set_defaults(fn=cmd_desde_vst)
     s = sub.add_parser("format", help="BORRA todos los presets del Brain y regenera los de fábrica")
     s.add_argument("--si", action="store_true", help="confirmar")
     s.set_defaults(fn=cmd_format)
