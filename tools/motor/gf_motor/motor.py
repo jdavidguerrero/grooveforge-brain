@@ -24,7 +24,7 @@ from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
 from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
 
-LETRAS = "ABCDEFGHIJKL"
+LETRAS = "ABCDEFGH"
 TAMANO_RACK = 3
 
 
@@ -163,8 +163,8 @@ class Motor:
         p = self.estado["partida"]
         return self.carpeta_live / "00 Motor" / f"KICK {p['genero']} {p['raiz']} {p['modo']} {self.estado['id'][:4]}"
 
-    def generar_kicks(self, grave: bool = True) -> dict:
-        """Un kick por cola, con el mismo golpe. El rack se crea cuando Juan haya elegido los tres que quiere."""
+    def generar_kicks(self) -> dict:
+        """Las dos familias de kick (teoría de kits §16). El rack se crea cuando Juan haya elegido los tres que quiere."""
         e = self._exigir_estado()
         self._exigir_library()
         p = e["partida"]
@@ -172,15 +172,13 @@ class Motor:
         carpeta = self._carpeta_kicks()
         carpeta.mkdir(parents=True, exist_ok=True)
         opciones = []
-        # La misma semilla da el mismo golpe en toda la tanda: lo único que cambia es la cola.
-        semilla = tanda * 1000
         for letra, cola in zip(LETRAS, COLAS_KICK):
-            y, meta = sintetizar_cola(cola, p["genero"], p["raiz"], p["modo"], semilla, grave=grave)
+            y, meta = sintetizar_cola(cola, p["genero"], p["raiz"], p["modo"], tanda)
             ident = f"{tanda}{letra}"
             nombre = cola.lower().replace(" + ", "_").replace(" ", "_")
             ruta = carpeta / f"kick_{nombre}_{p['raiz']}_{p['modo']}_{ident}.wav"
             sf.write(ruta, np.asarray(y), SR, subtype="PCM_24")
-            opciones.append({"id": ident, "caracter": cola, "ruta": str(ruta), "seed_timbre": semilla, "nota_midi": meta.get("nota_midi")})
+            opciones.append({"id": ident, "caracter": cola, "ruta": str(ruta), "seed_timbre": meta["seed_timbre"], "nota_midi": meta.get("nota_midi")})
         e["opciones"].append(opciones)
         self._guardar()
         self._evento("opciones", parte="kick", opciones=[{k: o[k] for k in ("id", "caracter", "seed_timbre", "nota_midi")} for o in opciones])

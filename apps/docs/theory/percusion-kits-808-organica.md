@@ -217,3 +217,18 @@ El cuerpo no viene de saturar: viene de **sostener el nivel** y de una nota más
 ## 15. Rev. 7: cuerpo como opción
 
 **Escucha de Juan:** el cuerpo de §14 le gusta, pero quiere además opciones con menos, porque elige según el bajo. Se añaden cuatro `LIGERA`, sobre las colas cortas y secas, que es donde más ha elegido. El nivel cae casi hasta el final y el golpe dura cerca de un 20 % menos. Las `LIGERA` usan `cuerpo = 0,4`, un punto de partida para corregir de oído.
+
+## 16. Rev. 8: dos familias
+
+**Escucha de Juan:** la base de §14 dejó raros algunos sonidos, sobre todo con madera. Le gustaron `1H`, `2C` y `2L`, y los quiere como base de la familia con cuerpo, junto con versiones hechas como antes.
+
+| Familia | Opciones | Base | Nota en La menor |
+|---|---|---|---|
+| **CUERPO** | `MIX SECA` (1H), `PIEL CORTA` (2C), `PIEL LIGERA` (2L) | §14 | E1 solo en la primera; las otras dos en A1, como las eligió |
+| **INICIAL** | Madera corta, piel corta, mixta, madera seca y piel seca | §13 | A1 |
+
+- **Recetas exactas:** la tanda 1 de CUERPO reproduce esos tres sonidos. En las siguientes cambia el golpe y se conserva la receta.
+- **Hipótesis sobre lo raro:** los parciales de barra (×2,756 y ×5,404) son inarmónicos. Sobre una base sostenida siguen sonando contra ella y baten, mientras que una base que cae los enmascara menos tiempo. No está medido; por eso, por ahora, la madera solo va con la base inicial.
+- **Nota:** dos de los tres favoritos se eligieron en 55 Hz. Por eso el modo grave deja de ser el predeterminado y se quita el selector.
+
+**Pendiente tras la escucha de §16:** Juan sigue oyendo rara la familia INICIAL y la madera, y prefiere seguir refinando con sus elecciones. No está resuelto.

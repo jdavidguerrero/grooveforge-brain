@@ -191,21 +191,13 @@ def test_generar_no_crea_rack_y_tandas_tienen_ids_propios(entorno):
     motor.partida("organic", "A", "menor", 122)
     motor.generar_kicks()
     e = motor.generar_kicks()
-    assert [o["id"] for o in e["opciones"][0]] == [f"1{x}" for x in "ABCDEFGHIJKL"]
+    assert [o["id"] for o in e["opciones"][0]] == [f"1{x}" for x in "ABCDEFGH"]
     assert [o["id"] for o in e["opciones"][1]][0] == "2A"
-    assert [o["caracter"] for o in e["opciones"][0]] == ["MADERA CORTA", "MADERA LARGA", "PIEL CORTA", "PIEL LARGA", "MADERA + PIEL", "MADERA SECA", "PIEL SECA", "MADERA + PIEL SECA", "MADERA CORTA LIGERA", "PIEL CORTA LIGERA", "MADERA SECA LIGERA", "PIEL SECA LIGERA"]
+    assert [o["caracter"] for o in e["opciones"][0]] == ["CUERPO MIX SECA", "CUERPO PIEL CORTA", "CUERPO PIEL LIGERA", "INICIAL MADERA CORTA", "INICIAL PIEL CORTA", "INICIAL MIX", "INICIAL MADERA SECA", "INICIAL PIEL SECA"]
     audios = [sf.read(o["ruta"])[0] for o in e["opciones"][0]]
     assert all(abs(a).max() > 0.1 for a in audios)
-    assert len({o["seed_timbre"] for o in e["opciones"][0]}) == 1
     assert e["opciones"][0][0]["seed_timbre"] != e["opciones"][1][0]["seed_timbre"]
     assert not list(motor.carpeta_live.rglob("*.adg")) and e["rack"] is None
-
-
-def test_nota_del_kick_grave_o_anterior(entorno):
-    _, motor = entorno
-    motor.partida("organic", "A", "menor", 122)
-    assert motor.generar_kicks()["opciones"][0][0]["nota_midi"] == 28
-    assert motor.generar_kicks(grave=False)["opciones"][1][0]["nota_midi"] == 33
 
 
 def test_contador_quitar_y_rack_solo_al_tercero(entorno):
@@ -237,7 +229,7 @@ def test_rack_mezcla_tandas_y_se_pone_en_la_pista(entorno):
     partes, pista = live.cargas[0]
     assert pista == "KICK" and partes[0] == "GrooveForge_Library" and partes[-1] == Path(r["ruta"]).name
     evento = _eventos("motor_seleccion")[0]
-    assert evento["seleccion"] == ["1A", "2B", "1C"] and len(evento["presentadas"]) == 24
+    assert evento["seleccion"] == ["1A", "2B", "1C"] and len(evento["presentadas"]) == 16
 
 
 def test_si_no_carga_el_rack_queda_y_se_explica(entorno):

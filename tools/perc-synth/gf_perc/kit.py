@@ -176,10 +176,24 @@ def _kick_base(f0: float, g_cabeza, vel: float, cuerpo: float = 1.0) -> np.ndarr
     return _normal(seno * caida * salida + clic)
 
 
-def _kick_cola(tipo: str, vel: float, g_cabeza, g_cola, a: Ajuste) -> np.ndarray:
+def _kick_base_inicial(f0: float, g_cabeza, vel: float) -> np.ndarray:
+    """Teoría §13: barrido mayor y caída casi recta hasta cero, con menos cuerpo que la base de §14."""
+    largo = 0.24
+    t = tiempo(largo)
+    barrido = 85.0 * g_cabeza.uniform(0.92, 1.08)
+    tau = 0.03 * g_cabeza.uniform(0.9, 1.1)
+    f = f0 + barrido * np.exp(-t / tau)
+    seno = np.sin(2.0 * np.pi * np.cumsum(f) / SR)
+    entrada = 0.72 + 0.28 * np.minimum(t / 0.016, 1.0)
+    caida = np.clip(1.0 - t / largo, 0.0, 1.0) ** 0.9
+    clic = g_cabeza.normal(size=t.size) * np.exp(-t / 0.0007) * (0.2 + 0.25 * vel)
+    return _normal(seno * entrada * caida + clic)
+
+
+def _kick_cola(tipo: str, vel: float, g_cabeza, g_cola, a: Ajuste, inicial: bool = False) -> np.ndarray:
     """Teoría §12-13. La base depende solo de `g_cabeza`, así las opciones de una tanda comparten el mismo golpe."""
     f0 = 52.0 * a.afinacion
-    y = _kick_base(f0, g_cabeza, vel, a.gordura)
+    y = _kick_base_inicial(f0, g_cabeza, vel) if inicial else _kick_base(f0, g_cabeza, vel, a.gordura)
     t60 = 0.36 * a.decay
     dur = max(len(y) / SR, 1.6 * t60 + 0.1)
     cola = np.zeros(int(dur * SR))
@@ -199,7 +213,8 @@ def _kick_cola(tipo: str, vel: float, g_cabeza, g_cola, a: Ajuste) -> np.ndarray
         cola += modos(PIEL_RELACIONES[:6], (0.7, 1.0, 0.8, 0.6, 0.45, 0.3), 0.4, 1.0, 1.0 if tipo == "mixta" else 1.5)
     t = tiempo(dur)[: len(cola)]
     # Entra tarde para no ensuciar los primeros ciclos de la base: ahí está el cuerpo, y el inicio no cambia entre opciones.
-    entrada = 0.5 - 0.5 * np.cos(np.pi * np.clip((t - 0.05) / 0.07, 0.0, 1.0))
+    inicio, subida = (0.018, 0.05) if inicial else (0.05, 0.07)
+    entrada = 0.5 - 0.5 * np.cos(np.pi * np.clip((t - inicio) / subida, 0.0, 1.0))
     n = max(len(y), len(cola))
     return _normal(np.pad(y, (0, n - len(y))) + a.capa * np.pad(entrada * cola, (0, n - len(cola))))
 
@@ -383,8 +398,9 @@ def sintetizar_voz(
     vel = velocity if material == "clasico" else float(np.clip(velocity * g.uniform(0.96, 1.04), 0.05, 1.0))
 
     if voz == "kick":
-        if modelo.startswith("cola_"):
-            y = _kick_cola(modelo.removeprefix("cola_"), vel, rng_para("kick-cabeza", seed_timbre), g, a)
+        if modelo.startswith(("cola_", "inicial_")):
+            familia, tipo = modelo.split("_", 1)
+            y = _kick_cola(tipo, vel, rng_para("kick-cabeza", seed_timbre), g, a, inicial=familia == "inicial")
         elif modelo == "acustico":
             y = _kick_acustico(vel, g, a)
         else:

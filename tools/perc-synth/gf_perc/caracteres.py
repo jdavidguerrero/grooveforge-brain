@@ -31,22 +31,28 @@ CARACTERES_KICK = {
 }
 
 
-# La variación está en la cola; la base es común (teoría §12-13). Las secas llevan poca cola y nada de sala.
+@dataclass(frozen=True)
+class Cola:
+    modelo: str
+    decay: float
+    seca: bool
+    semilla: int
+    grave: bool
+    cuerpo: float = 1.0
+
+
+# §16. Familia CUERPO: recetas exactas de los tres que eligió Juan. Familia INICIAL: la base de §13, en tónica.
+# La madera con la base de §14 sonó rara, así que aquí no se combina.
 COLAS_KICK = {
-    "MADERA CORTA": ("cola_madera", 1.2, False),
-    "MADERA LARGA": ("cola_madera", 2.6, False),
-    "PIEL CORTA": ("cola_piel", 1.2, False),
-    "PIEL LARGA": ("cola_piel", 2.6, False),
-    "MADERA + PIEL": ("cola_mixta", 1.8, False),
-    "MADERA SECA": ("cola_madera", 0.6, True),
-    "PIEL SECA": ("cola_piel", 0.6, True),
-    "MADERA + PIEL SECA": ("cola_mixta", 0.6, True),
-    "MADERA CORTA LIGERA": ("cola_madera", 1.2, False),
-    "PIEL CORTA LIGERA": ("cola_piel", 1.2, False),
-    "MADERA SECA LIGERA": ("cola_madera", 0.6, True),
-    "PIEL SECA LIGERA": ("cola_piel", 0.6, True),
+    "CUERPO MIX SECA": Cola("cola_mixta", 0.6, True, 1000, True),
+    "CUERPO PIEL CORTA": Cola("cola_piel", 1.2, False, 2000, False),
+    "CUERPO PIEL LIGERA": Cola("cola_piel", 0.6, True, 2000, False, 0.4),
+    "INICIAL MADERA CORTA": Cola("inicial_madera", 1.2, False, 1000, False),
+    "INICIAL PIEL CORTA": Cola("inicial_piel", 1.2, False, 1000, False),
+    "INICIAL MIX": Cola("inicial_mixta", 1.8, False, 1000, False),
+    "INICIAL MADERA SECA": Cola("inicial_madera", 0.6, True, 1000, False),
+    "INICIAL PIEL SECA": Cola("inicial_piel", 0.6, True, 1000, False),
 }
-CUERPO_LIGERO = 0.4
 
 
 # Las dos referencias de Juan terminan entre 35 y 40 Hz (C#1 = 34,6 Hz; G#1 = 51,9 Hz).
@@ -65,13 +71,16 @@ def nota_grave(raiz: str, modo: str) -> int:
     raise ValueError(f"sin nota grave para {raiz} {modo}")
 
 
-def sintetizar_cola(cola: str, genero: str, raiz: str, modo: str, seed_timbre: int = 1, velocity: float = 0.85, grave: bool = True) -> tuple[np.ndarray, dict]:
-    modelo, decay, seca = COLAS_KICK[cola]
-    nota = nota_grave(raiz, modo) if grave else notas_de(genero, raiz, modo)["kick"]
+def sintetizar_cola(cola: str, genero: str, raiz: str, modo: str, tanda: int = 1, velocity: float = 0.85) -> tuple[np.ndarray, dict]:
+    """La tanda 1 de CUERPO reproduce los kicks elegidos; las siguientes cambian el golpe y conservan la receta."""
+    c = COLAS_KICK[cola]
+    semilla = c.semilla + (tanda - 1) * 1000
+    nota = nota_grave(raiz, modo) if c.grave else notas_de(genero, raiz, modo)["kick"]
     y, meta = sintetizar_voz(
-        "kick", "piel", velocity, seed_timbre, 1, 0.0, room=0.0 if seca else 0.08, centro=Ajuste(decay=decay, capa=2.2 if seca else 1.0, gordura=CUERPO_LIGERO if "LIGERA" in cola else 1.0), afinar_hz=440.0 * 2 ** ((nota - 69) / 12), modelo=modelo
+        "kick", "piel", velocity, semilla, 1, 0.0, room=0.0 if c.seca else 0.08,
+        centro=Ajuste(decay=c.decay, capa=2.2 if c.seca else 1.0, gordura=c.cuerpo), afinar_hz=440.0 * 2 ** ((nota - 69) / 12), modelo=c.modelo,
     )
-    return y, {**meta, "cola": cola, "seca": seca, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": nota}
+    return y, {**meta, "cola": cola, "seca": c.seca, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": nota}
 
 
 def sintetizar_caracter(caracter: str, genero: str, raiz: str, modo: str, seed_timbre: int = 1, velocity: float = 0.85, variacion: float = VARIACION) -> tuple[np.ndarray, dict]:
