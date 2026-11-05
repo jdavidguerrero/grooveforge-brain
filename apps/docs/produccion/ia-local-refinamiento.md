@@ -202,6 +202,31 @@ aplicado al Brain, estado real, 12 aplicaciones con su baseline, fidelidad que e
 pendientes. Para la IA local propone empezar por la audición renderizada de una decisión real y por reimprimir tomas
 tocadas en el Brain. Además guarda, como línea futura y sin fecha, la ruta al gemelo completo con arquitectura IoT.
 
+## 11. Orden tras el motor v2 (añadido 2026-11-05)
+
+**Aprobado por Juan.** `motor-asistencia-v2.md` cambia el orden y los datos; no autoriza por sí solo entrenar ningún modelo. El dato principal
+pasa a incluir cada borrador junto a la edición de Juan. Cada paso necesita superar a la solución simple anterior.
+
+| Paso | Entrega | Cuándo entra |
+|---|---|---|
+| 1. Motor sin ML | Pista guía y kick; empieza a registrar ediciones | Ahora |
+| 2. Reglas por género | Bases de batería de Juan y patrones del laboratorio | Es el baseline de los modelos |
+| 3. LLM local pequeño | Palabras → cambios acotados que Juan acepta | Si escribir es más rápido que mover controles |
+| 4. Preferencias sobre `perc-synth` | Modelo simple sobre elecciones, sin deep learning | Cuando haya elecciones registradas |
+| 5. CLAP | Buscar y comparar sonidos | Cuando buscar en carpetas haga perder tiempo |
+| 6. Modelo MIDI | Borradores que necesiten menos correcciones que las reglas | Con ediciones de varios proyectos; se evalúa en proyectos no usados al entrenar |
+| 7. Audio generativo | Solo un modelo elegido | Si el DSP no alcanza, y tras revisar la licencia |
+
+Corregir menos no prueba por sí solo que un borrador sea mejor: también puede indicar que se aceptó lo primero que sonó bien. Por eso la decisión final
+sobre un modelo es de Juan. El TinyML de `04` es otro proyecto y no cambia. El render del gemelo se retoma al llegar a bajo y armonía.
+
+**Contradicciones abiertas, sin decisión de Juan:**
+
+1. **Set abierto o copia.** §4 y `motor-asistencia.md` §2 piden trabajar sobre una copia; `motor-asistencia-v2.md` trabaja sobre el set abierto.
+2. **Nube.** §4 admite nube opcional y `04` tiene funciones en la nube; `motor-asistencia-v2.md` dice que nada sale del Mac.
+
+La primera entrega sigue el spec v2 aprobado. Estos documentos no se reescriben hasta que Juan decida.
+
 ---
 
 ## Anexo (2026-10-27): cómo encaja con lo que ya existe
