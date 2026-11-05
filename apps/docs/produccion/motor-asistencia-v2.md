@@ -1,6 +1,6 @@
 # Motor de asistencia v2: spec del flujo con Ableton Live
 
-> **Fecha:** 2026-11-05. **Estado:** borrador para revisión de Juan; sin implementar.
+> **Fecha:** 2026-11-05. **Estado:** aprobado por Juan el 2026-11-05; sin implementar.
 > **Amplía:** `motor-asistencia.md`, cuya v1 no compone, no genera audio y no automatiza Live. El registro de decisiones y las
 > reglas de audición se conservan. **No modifica** `00–06`.
 
