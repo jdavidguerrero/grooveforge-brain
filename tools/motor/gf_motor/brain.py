@@ -8,7 +8,7 @@ from pathlib import Path
 
 PUERTO_MIDI = "GrooveForge"
 CC_CAPA = 18
-BAJOS_CONOCIDOS = ("JD SUB MID", "TRESBASS", "ROLLER SUB", "WOODBASS")
+BAJOS_CONOCIDOS = ("JD SUB MID", "TRESBASS", "TRESB OSC", "TRESB MAD1", "TRESB MAD2", "TRESB MAD3", "ROLLER SUB", "WOODBASS")
 
 
 def cc_de_capa(indice: int, total: int) -> int:

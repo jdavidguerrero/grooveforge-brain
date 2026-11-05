@@ -49,6 +49,27 @@ La sensación sale de **dónde cae el bajo respecto al kick**, sin cambiar de ac
 
 **Refinar más presets es el paso siguiente (Juan), no esta entrega:** variaciones acotadas de un preset elegido (`ia-local-gemelo-digital.md` §5, F), cada una explicable como un cambio pequeño en filtro, envolvente o mezcla de osciladores, nunca en algoritmos o parámetros discretos. Es la parte con más riesgo: una variación mal acotada suena rota, como pasó con la madera del kick. Todo preset generado se oye en el Brain antes de darlo por bueno (`ia-local-gemelo-digital.md` §10, decisión 3).
 
+### 4.1 Primera tanda de variaciones: `TRESBASS`
+
+**Escucha de Juan (2026-11-05):** en el Brain suena algo más brillante que en el VST, y prefiere el VST. Quiere más madera y un poco menos de sub.
+
+`TRESBASS` es una capa: A es un DX7 (el golpe de madera) y B un Model D una octava abajo, con filtro cerrado a 122 Hz (el sub).
+
+| Quiero | Parámetro | Por qué |
+|---|---|---|
+| **Menos sub** | MORPH hacia A y nivel del oscilador sub de B | MORPH reparte con ley de igual potencia (`layer_gains`); más bajo es más A |
+| **Más madera** | Nivel y largo del modulador del DX7 | El modulador crea los parciales del golpe. Es FM (Chowning, 1973): más índice, más parciales, y si el modulador decae rápido quedan solo en el ataque, como en un golpe |
+| **Menos brillo** | Cutoff de A | Es el control más directo de lo que sobra. No explica por qué el Brain difiere del VST: eso sigue sin medir |
+
+| Capa | Cambios sobre `TRESBASS` | Pregunta que responde |
+|---|---|---|
+| `TRESB OSC` | Cutoff de A: 10,2 → 6,5 kHz | ¿Con menos brillo vuelve a parecerse al VST? |
+| `TRESB MAD1` | MORPH 53 → 42, sub de B 75 → 50 | ¿Basta con mover el balance? |
+| `TRESB MAD2` | Lo de MAD1, modulador 75 → 85, cutoff 7 kHz | ¿Más golpe de FM sin sumar brillo? |
+| `TRESB MAD3` | Lo de MAD1, modulador en razón 3, nivel 60, cutoff 7 kHz | ¿Un timbre más hueco? Es la más arriesgada |
+
+Solo cambian valores continuos o el nivel, salvo la razón de MAD3, que es la excepción explícita. `TRESBASS` no se toca. Quedan 2 ranuras libres de 32; descartar las que no sirvan es decisión de Juan.
+
 ## 5. Decisiones de Juan (2026-11-05)
 
 Suena en el **Brain físico**. Se empieza con **presets existentes**, `JD SUB MID` primero. **Una sola pista** de bajo. **Sin progresión de acordes.**

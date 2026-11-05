@@ -146,3 +146,55 @@ def test_desde_vst_capa_y_subir(tmp_path, monkeypatch):
     gp.cmd_desde_vst(_args(tmp_path, f, "JD VST CAPA", subir=True))
     assert subidos[0][0] == 1 and gp.decode_layer(subidos[0][1])["name"] == "JD VST CAPA"
     assert (tmp_path / "brain" / "layers" / "jd-vst-capa.json").exists()
+
+
+def _capa_real():
+    import pytest
+
+    ruta = Path.home() / "GROOVEFORGE" / "GrooveForge_Dataset_v1" / "patches" / "brain" / "layers" / "tresbass.json"
+    if not ruta.exists():
+        pytest.skip("Sin la librería de Juan")
+    return bytes.fromhex(json.loads(ruta.read_text())["raw"])
+
+
+def test_encode_layer_es_inverso_salvo_redondeo():
+    import variar_capa as v
+
+    raw = _capa_real()
+    nuevo = v.encode_layer(gp.decode_layer(raw))
+    assert len(nuevo) == len(raw) and gp.decode_layer(nuevo) == gp.decode_layer(raw)
+    # decode() redondea los decimales: como mucho se mueve la última cifra de alguno.
+    dif = [abs(a - b) for a, b in zip(raw, nuevo) if a != b]
+    assert len(dif) <= 4 and all(x == 1 for x in dif)
+
+
+def test_variaciones_cambian_solo_lo_declarado():
+    import variar_capa as v
+
+    base = gp.decode_layer(_capa_real())
+    original = json.dumps(base, sort_keys=True)
+
+    def difs(a, b, p=""):
+        if isinstance(a, dict):
+            return [x for k in a for x in difs(a[k], b[k], f"{p}.{k}")]
+        if isinstance(a, list):
+            return [x for i, (m, n) in enumerate(zip(a, b)) for x in difs(m, n, f"{p}[{i}]")]
+        return [p] if a != b else []
+
+    esperado = {
+        "TRESB OSC": {".a.patch.cutoff_hz"},
+        "TRESB MAD1": {".morph", ".b.patch.osc[2][2]"},
+        "TRESB MAD2": {".morph", ".b.patch.osc[2][2]", ".a.patch.osc[1][1]", ".a.patch.cutoff_hz"},
+        "TRESB MAD3": {".morph", ".b.patch.osc[2][2]", ".a.patch.osc[1][0]", ".a.patch.osc[1][1]", ".a.patch.cutoff_hz"},
+    }
+    for nombre, campos in esperado.items():
+        d = gp.decode_layer(v.encode_layer(v.variar(base, nombre)))
+        assert d["name"] == nombre
+        assert set(difs(d, {**base, "name": nombre})) == campos
+    assert json.dumps(base, sort_keys=True) == original
+
+
+def test_morph_menor_da_mas_a():
+    from math import cos, pi, sin
+
+    assert cos(0.42 * pi / 2) > cos(0.53 * pi / 2) and sin(0.42 * pi / 2) < sin(0.53 * pi / 2)
