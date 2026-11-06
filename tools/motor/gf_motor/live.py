@@ -73,6 +73,9 @@ class ClienteLive:
         """Clip que empieza exactamente en `inicio`, o None."""
         return self._ok("read_clip", track_index=pista, start_beats=inicio)["clip"]
 
+    def listar_clips(self, pista: int) -> list[dict]:
+        return self._ok("list_clips", track_index=pista)["clips"]
+
     def pista_sin_clips(self, pista: int) -> bool:
         return not self._ok("list_clips", track_index=pista)["clips"]
 

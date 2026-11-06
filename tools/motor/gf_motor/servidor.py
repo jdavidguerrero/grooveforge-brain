@@ -30,6 +30,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "bajo_capas": lambda d: motor.cargar_capas(),
         "bajo_capa": lambda d: motor.usar_capa(d["nombre"]),
         "bajo_revisar": lambda d: motor.revisar_bajo(),
+        "registrar": lambda d: motor.registrar(d.get("sonido", ""), d.get("kick", ""), d.get("nota", "")),
     }
 
     class Manejador(BaseHTTPRequestHandler):
@@ -84,7 +85,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
             try:
                 datos = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
                 self._json(200, {"sesion": accion(datos)})
-            except (ErrorLive, ValueError, KeyError) as exc:
+            except (ErrorLive, ValueError, KeyError, OSError) as exc:
                 self._json(400, {"error": str(exc)})
 
     return ThreadingHTTPServer(("127.0.0.1", puerto), Manejador)

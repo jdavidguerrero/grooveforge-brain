@@ -645,6 +645,88 @@ def test_template_no_recibe_patron(tmp_path, monkeypatch):
     live.cerrar()
 
 
+# ── Estado y registro ──
+def test_la_sesion_sobrevive_a_reiniciar_el_motor(entorno, tmp_path):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_patrones()
+    motor.poner_patron("13")
+    otro = Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso())
+    assert otro.estado["id"] == motor.estado["id"] and otro.estado["bajo"]["actual"] == "13"
+    assert otro.revisar_bajo()["bajo"]["revision"]["sin_cambios"]
+
+
+def test_abre_la_sesion_mas_reciente_y_tolera_archivos_danados(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    primera = motor.estado["id"]
+    motor.partida("organic", "D", "menor", 124)
+    segunda = motor.estado["id"]
+    assert primera != segunda
+    otro = Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso())
+    assert otro.estado["id"] == segunda
+    (gf_log.dataset_dir() / "metadata" / "motor" / segunda / "estado.json").write_text("{roto")
+    assert Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso()).estado["id"] == primera
+
+
+def test_sin_sesiones_arranca_vacio(entorno):
+    live, motor = entorno
+    assert motor.estado is None
+
+
+def test_estado_antiguo_sin_bajo_se_completa(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    ruta = motor._carpeta() / "estado.json"
+    viejo = json.loads(ruta.read_text())
+    del viejo["bajo"], viejo["registros"]
+    ruta.write_text(json.dumps(viejo))
+    otro = Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso())
+    assert otro.estado["bajo"]["tandas"] == 0 and otro.estado["registros"] == []
+
+
+def test_registrar_guarda_todo_sin_tocar_live(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.borrador_kick()
+    live.pistas.append({"name": "BASS", "clips": [{"start": 8.0, "length": 4.0, "notes": [nota(0, pitch=33)], "name": "mio", "color": None}]})
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    r = motor.registrar("TRESB MAD2", "rack R1", "más madera")["registros"][-1]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    guardado = json.loads(Path(r["archivo"]).read_text())
+    bass = next(p for p in guardado["pistas"] if p["name"] == "BASS")
+    assert bass["clips"][0]["notes"][0]["pitch"] == 33 and guardado["sonido_bajo"] == "TRESB MAD2"
+    assert r["pistas"]["KICK"] == 64 and r["pistas"]["BASS"] == 1 and r["sin_guardar"]
+    assert len(r["midis"]) == 2
+    import mido
+
+    m = mido.MidiFile(next(x for x in r["midis"] if "bass" in x))
+    tiempo = 0
+    for msg in m.tracks[0]:
+        tiempo += msg.time
+        if msg.type == "note_on":
+            assert msg.note == 33 and tiempo == 8 * 480
+    assert _eventos("motor_registro")[0]["nota"] == "más madera"
+
+
+def test_registrar_no_pisa_y_acumula(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.registrar("A")
+    motor.registrar("B")
+    assert [r["sonido_bajo"] for r in motor.estado["registros"]] == ["A", "B"]
+
+
+def test_registrar_funciona_sin_ssd(entorno, tmp_path):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.borrador_kick()
+    motor.carpeta_live = tmp_path / "no" / "Lib"
+    r = motor.registrar("X")["registros"][-1]
+    assert r["midis"] == [] and Path(r["archivo"]).exists()
+
+
 def test_buscar_item_en_el_navegador():
     sys.path.insert(0, str(Path(__file__).parents[1] / "remote_script"))
     from GFMotor.buscar import buscar_item

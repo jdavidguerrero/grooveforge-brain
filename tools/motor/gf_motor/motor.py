@@ -51,12 +51,30 @@ class Motor:
         self.brain = brain or Brain()
         self.live = live
         self.carpeta_live = carpeta_live or carpeta_live_por_defecto()
-        self.estado: dict | None = None
+        self.estado: dict | None = self._cargar_ultimo()
 
     # ── Persistencia ────────────────────────────────────────────────────
     def _carpeta(self) -> Path:
         assert self.estado
         return gf_log.dataset_dir() / "metadata" / "motor" / self.estado["id"]
+
+    @staticmethod
+    def _cargar_ultimo() -> dict | None:
+        """La sesión sobrevive a reiniciar el motor; `Empezar` es lo único que abre una nueva."""
+        base = gf_log.dataset_dir() / "metadata" / "motor"
+        rutas = sorted(base.glob("*/estado.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        for ruta in rutas:
+            try:
+                e = json.loads(ruta.read_text())
+            except (OSError, json.JSONDecodeError):
+                continue  # Un archivo dañado no debe impedir abrir la sesión anterior.
+            e.setdefault("seleccion", [])
+            e.setdefault("racks", [])
+            e.setdefault("rack", None)
+            e.setdefault("registros", [])
+            e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
+            return e
+        return None
 
     def _guardar(self) -> None:
         c = self._carpeta()
@@ -119,6 +137,7 @@ class Motor:
             "racks": [],
             "rack": None,
             "elegido": None,
+            "registros": [],
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
         self._guardar()
@@ -346,6 +365,87 @@ class Motor:
         self._guardar()
         self._evento("edicion", parte="bajo", pista=b["pista"], patron=b["actual"], clips=[b["revision"]])
         return e
+
+    # ── Registro de lo que quedó ───────────────────────────────────────
+    def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:
+        """Solo lee Live. Guarda todas las notas del set y los MIDI de kick y bajo; nunca sobrescribe un registro."""
+        e = self._exigir_estado()
+        s = self.live.sesion()
+        marca = gf_log.now().strftime("%Y%m%dT%H%M%S")
+        pistas = []
+        for p in s["tracks"]:
+            try:
+                clips = self.live.listar_clips(p["index"])
+            except ErrorLive:
+                clips = []
+            detalle = []
+            for c in clips:
+                try:
+                    leido = self.live.leer_clip(p["index"], c["start"])
+                except ErrorLive:
+                    leido = None  # Pista de audio: el clip existe, pero no tiene notas.
+                detalle.append({**c, "notes": leido["notes"] if leido else None})
+            pistas.append({"name": p["name"], "index": p["index"], "clips": detalle})
+        registro = {
+            "ts": marca,
+            "set": s.get("file_path") or "",
+            "tempo": s["tempo"],
+            "partida": e["partida"],
+            "sonido_bajo": sonido.strip(),
+            "kick": kick.strip(),
+            "nota": nota.strip(),
+            "pistas": pistas,
+        }
+        carpeta = self._carpeta() / "registros"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        ruta = carpeta / f"{marca}.json"
+        ruta.write_text(json.dumps(registro, ensure_ascii=False, indent=1))
+        midis = self._exportar_midis(pistas, s, marca)
+        resumen = {
+            "ts": marca,
+            "set": registro["set"],
+            "sonido_bajo": registro["sonido_bajo"],
+            "kick": registro["kick"],
+            "nota": registro["nota"],
+            "archivo": str(ruta),
+            "midis": midis,
+            "pistas": {p["name"]: sum(len(c["notes"] or []) for c in p["clips"]) for p in pistas},
+            "sin_guardar": not registro["set"],
+        }
+        e["registros"].append(resumen)
+        self._guardar()
+        self._evento("registro", **{k: resumen[k] for k in ("set", "sonido_bajo", "kick", "nota", "archivo", "midis", "pistas")}, tempo=s["tempo"])
+        return e
+
+    def _exportar_midis(self, pistas: list[dict], s: dict, marca: str) -> list[str]:
+        if not self.carpeta_live.parent.exists():
+            return []  # Sin SSD: las notas ya quedaron en el JSON del dataset.
+        import mido
+
+        salida = []
+        carpeta = self.carpeta_live / "00 Elegidos" / "registros"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        for p in pistas:
+            notas = [n for c in p["clips"] for n in ({**x, "start_beat": x["start_beat"] + c["start"]} for x in (c["notes"] or []))]
+            if p["name"] not in ("KICK", "BASS") or not notas:
+                continue
+            archivo = mido.MidiFile(ticks_per_beat=480)
+            pista = mido.MidiTrack()
+            archivo.tracks.append(pista)
+            pista.append(mido.MetaMessage("set_tempo", tempo=mido.bpm2tempo(s["tempo"])))
+            pista.append(mido.MetaMessage("track_name", name=p["name"]))
+            eventos = []
+            for n in notas:
+                inicio = round(n["start_beat"] * 480)
+                eventos += [(inicio + round(n["duration_beats"] * 480), 0, n["pitch"], 0), (inicio, 1, n["pitch"], n["velocity"])]
+            ahora = 0
+            for tiempo, tipo, nota, velocidad in sorted(eventos):
+                pista.append(mido.Message("note_on" if tipo else "note_off", note=nota, velocity=velocidad, time=tiempo - ahora))
+                ahora = tiempo
+            ruta = carpeta / f"{p['name'].lower()}_{marca}.mid"
+            archivo.save(ruta)
+            salida.append(str(ruta))
+        return salida
 
     def revisar_edicion(self) -> dict:
         """Solo lee Live. El borrador guardado no cambia; cada revisión agrega un evento."""

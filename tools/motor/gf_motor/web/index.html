@@ -37,8 +37,8 @@ p{margin:0 0 12px;color:var(--menta);font-size:13px;opacity:.85}
 code{color:var(--teal-plus)}
 .campos{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:12px}
 label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--monitor)}
-select,input{width:100%;margin-top:4px;padding:8px;border:1px solid var(--bd);border-radius:5px;background:var(--panel-2);color:var(--blanco);font:inherit;font-size:14px;text-transform:none}
-select:focus,input:focus,button:focus-visible{outline:2px solid var(--teal-plus);outline-offset:1px}
+select,input,textarea{width:100%;margin-top:4px;padding:8px;border:1px solid var(--bd);border-radius:5px;background:var(--panel-2);color:var(--blanco);font:inherit;font-size:14px;text-transform:none}
+select:focus,input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--teal-plus);outline-offset:1px}
 button{padding:8px 14px;border:1px solid var(--teal);border-radius:5px;background:var(--teal);color:var(--bg);font:inherit;font-weight:700;cursor:pointer}
 button:hover:not(:disabled){background:var(--teal-plus);border-color:var(--teal-plus)}
 button.sec{background:transparent;color:var(--teal-plus)}
@@ -76,6 +76,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="arrangement" class="tab">Arrangement<i></i></button>
     <button data-ir="kick" class="tab">Kick<i></i></button>
     <button data-ir="bajo" class="tab">Bajo<i></i></button>
+    <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
   <div class="aviso" id="error" role="alert"></div>
@@ -150,6 +151,18 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button id="b-bajo-revisar" disabled>Registrar lo que cambié</button>
     <div id="r-bajo-revisar"></div>
   </section>
+  <section id="s-registro" class="bloq" data-seccion="registro">
+    <div class="num">1</div>
+    <h2>Registrar lo que quedó</h2>
+    <p>Guarda las notas de todas las pistas tal como están en Live y los MIDI de <code>KICK</code> y <code>BASS</code>. Solo lee: no cambia tu set ni pisa registros anteriores.</p>
+    <div class="campos">
+      <label>Sonido del bajo <input id="reg-sonido" list="reg-capas" placeholder="TRESBASS, TRESB MAD2…"><datalist id="reg-capas"><option value="TRESBASS"><option value="TRESB OSC"><option value="TRESB MAD1"><option value="TRESB MAD2"><option value="TRESB MAD3"><option value="JD SUB MID"></datalist></label>
+      <label>Kick <input id="reg-kick" placeholder="Rack o pad"></label>
+    </div>
+    <label>Qué te gustó y qué falta <textarea id="reg-nota" rows="3"></textarea></label>
+    <button id="b-registrar" disabled>Registrar</button>
+    <div id="r-registrar"></div>
+  </section>
 </main>
 <script>
 const $ = id => document.getElementById(id);
@@ -207,9 +220,18 @@ for (const b of document.querySelectorAll(".tab")) b.onclick = () => irA(b.datas
 }
 function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}"]`).classList.toggle("lista", lista); }
 function pintar(s) {
+  marcar("registro", !!s?.registros?.length);
+  if (s) {
+    $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
+    $("b-partida").textContent = "Nueva sesión";
+    pintarLinea();
+    if (!$("reg-kick").value && s.rack) $("reg-kick").value = s.rack.nombre;
+    if (!$("reg-sonido").value && s.bajo.capa) $("reg-sonido").value = s.bajo.capa;
+    pintarRegistros(s.registros);
+  }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar"]) {
-    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido"}[n] || n;
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar"]) {
+    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
   }
@@ -225,6 +247,15 @@ function pintar(s) {
   pintarBajo(s.bajo);
   $("s-revisar").classList.toggle("hecho", !!s.ultima_revision);
   if (s.ultima_revision) { const p=document.createElement("pre"); p.textContent=s.ultima_revision.map(resumen).join("\n"); $("r-revisar").replaceChildren(p); }
+}
+function pintarRegistros(lista) {
+  $("s-registro").classList.toggle("hecho", lista.length > 0);
+  $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
+    const p = document.createElement("p"); p.className = "ok";
+    const t = `${r.ts.slice(0,4)}-${r.ts.slice(4,6)}-${r.ts.slice(6,8)} ${r.ts.slice(9,11)}:${r.ts.slice(11,13)}`;
+    p.textContent = `${t} · ${r.sonido_bajo || "sonido sin indicar"} · KICK ${r.pistas.KICK ?? 0} notas · BASS ${r.pistas.BASS ?? 0} notas` + (r.sin_guardar ? " · el set de Live no está guardado" : "");
+    return p;
+  }));
 }
 function pintarBajo(b) {
   $("s-bajo-patron").classList.toggle("hecho", !!b.clip);
@@ -306,14 +337,19 @@ async function accion(n, datos, boton) {
   catch (e) { aviso("error", e.message); boton.disabled = false; return; }
   if (document.contains(boton) && !["usar"].includes(n)) boton.disabled = false;
   if (n === "partida") irA("arrangement");
+  if (n === "registrar") $("reg-nota").value = "";
 }
 async function refrescar() { try { pintarSet((await api("/api/estado")).live); } catch (e) { $("punto").className="off"; $("set").textContent = "El motor no responde"; } }
 
-$("b-partida").onclick = e => accion("partida", {genero:$("genero").value, raiz:$("raiz").value, modo:$("modo").value, bpm:$("bpm").value}, e.target);
+$("b-partida").onclick = e => {
+  if ($("b-partida").textContent === "Nueva sesión" && !confirm("¿Empezar una sesión nueva? La actual queda guardada, pero dejará de mostrarse aquí.")) return;
+  accion("partida", {genero:$("genero").value, raiz:$("raiz").value, modo:$("modo").value, bpm:$("bpm").value}, e.target);
+};
 $("b-guia").onclick = e => accion("guia", {}, e.target);
 $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
+$("b-registrar").onclick = e => accion("registrar", {sonido:$("reg-sonido").value, kick:$("reg-kick").value, nota:$("reg-nota").value}, e.target);
 $("b-bajo-patrones").onclick = e => accion("bajo_patrones", {}, e.target);
 $("b-bajo-capas").onclick = e => accion("bajo_capas", {}, e.target);
 $("b-bajo-revisar").onclick = e => accion("bajo_revisar", {}, e.target);
