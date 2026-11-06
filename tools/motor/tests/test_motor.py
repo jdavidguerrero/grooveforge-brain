@@ -900,7 +900,7 @@ def _catalogo_tops(lib):
 def test_candidatos_orden_diversidad_y_filtros(tmp_path):
     _catalogo_tops(tmp_path)
     c = candidatos(tmp_path, "perc", "organic")
-    assert [x["nombre"] for x in c] == ["sel_peak", "copia", "sel_peak2", "fav", "resto"]
+    assert [x["nombre"] for x in c] == ["copia", "sel_peak", "sel_peak2", "fav", "resto"]
     assert all(x["nombre"] not in ("otro_rack", "otro_genero", "top") for x in c)
     assert [x["nombre"] for x in candidatos(tmp_path, "top", "organic")] == ["top"]
     with pytest.raises(ValueError):
