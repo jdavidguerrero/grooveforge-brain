@@ -13,6 +13,7 @@ import soundfile as sf
 
 from gf_motor.bajo import COMPASES, FAMILIAS, PASOS_KICK, fundamental, patron
 from gf_motor.borrador import COLORES, PLANTILLAS, clip_kick, clips_guia
+from gf_motor.drums import CLAVE, CLAP, HAT_ABIERTO, HAT_CERRADO, SNARE, analizar, clip_drums, opciones as opciones_drums
 from gf_motor.edicion import diferencia
 from gf_motor.brain import cc_de_capa
 from gf_motor.live import ClienteLive, ErrorLive
@@ -755,6 +756,103 @@ def test_nombre_de_rack_drums_se_reemplaza():
     navegador = types.SimpleNamespace(user_folders=[carpeta], load_item=lambda _i: p.devices.append(types.SimpleNamespace(name="DRUMS organic A menor abcd R2")))
     assert c.intentar_cargar(s, navegador, ["Lib", rack.name], "DRUMS")
     assert [d.name for d in p.devices] == ["Mi kit", "GF Brasil", "DRUMS organic A menor abcd R2"]
+
+
+# ── Patrones de drums ──
+def _compases(pasos, compases=16, pitch=33):
+    return [{"pitch": pitch, "start_beat": (c * 16 + p) / 4, "duration_beats": 0.2, "velocity": 90} for c in range(compases) for p in pasos]
+
+
+def _analisis_real():
+    # Tresillo editado por Juan: 3, 6, 11, 14, ghosts en 1, 5 y 9 cada 4 compases, y un remate de kick.
+    kick = _compases((0, 4, 8, 12)) + [{"pitch": 36, "start_beat": 63.5, "duration_beats": 0.2, "velocity": 90}]
+    bajo = _compases((3, 6, 11, 14))
+    for inicio, p in ((0, 5), (1, 9), (3, 1)):
+        bajo += [n for n in _compases((p,)) if int(n["start_beat"] // 4) % 4 == inicio]
+    return analizar(kick, bajo)
+
+
+def test_analisis_lee_kick_bajo_ghosts_y_huecos():
+    a = _analisis_real()
+    assert a["kick"] == [0, 4, 8, 12] and a["bajo"] == [3, 6, 11, 14]
+    assert a["ghosts"] == [1, 5, 9] and a["libres"] == [2, 7, 10, 13, 15]
+
+
+def test_opciones_de_clave_segun_kick_y_bajo():
+    op = {o["nombre"]: o["clave"] for o in opciones_drums(_analisis_real())}
+    assert op["RESPUESTA"] == [2, 7, 10, 13]
+    assert op["SON 3-2"] == [0, 3, 6, 10, 12]
+    assert op["CONTRA"] == [7, 13, 15]
+    a = _analisis_real()
+    ocupados = set(a["kick"]) | set(a["bajo"]) | set(a["ghosts"])
+    assert not ocupados & set(op["RESPUESTA"]) and not ocupados & set(op["CONTRA"])
+
+
+def test_cambiar_el_bajo_cambia_las_claves():
+    kick = _compases((0, 4, 8, 12))
+    a = {o["nombre"]: o["clave"] for o in opciones_drums(analizar(kick, _compases((2, 10))))}
+    b = {o["nombre"]: o["clave"] for o in opciones_drums(analizar(kick, _compases((3, 6, 11, 14))))}
+    assert a["RESPUESTA"] != b["RESPUESTA"] and a["CONTRA"] != b["CONTRA"] and a["SON 3-2"] == b["SON 3-2"]
+
+
+def test_sin_clips_asume_cuatro_por_cuatro_y_sin_huecos_descarta():
+    a = analizar([], [])
+    assert a["kick"] == [0, 4, 8, 12] and a["bajo"] == [] and {o["nombre"] for o in opciones_drums(a)} == {"RESPUESTA", "SON 3-2"}
+    lleno = analizar(_compases(range(16)), [])
+    assert [o["nombre"] for o in opciones_drums(lleno)] == ["SON 3-2"]
+
+
+def test_clip_de_drums_notas_del_rack_y_16_compases():
+    c = clip_drums({"nombre": "RESPUESTA", "clave": [2, 7, 10, 13]})
+    assert c["longitud"] == 64 and {n["pitch"] for n in c["notas"]} == {CLAVE, SNARE, CLAP, HAT_CERRADO, HAT_ABIERTO}
+    assert all(0 <= n["start_beat"] < 64 and 1 <= n["velocity"] <= 127 for n in c["notas"])
+    claves = sorted({round(n["start_beat"] * 4) % 16 for n in c["notas"] if n["pitch"] == CLAVE})
+    assert claves == [2, 7, 10, 13]
+    assert sum(n["pitch"] == SNARE for n in c["notas"]) == 4
+    assert c == clip_drums({"nombre": "RESPUESTA", "clave": [2, 7, 10, 13]})
+
+
+def _con_kick_y_bajo(live, motor):
+    motor.partida("organic", "A", "menor", 122)
+    live.pistas[1]["clips"] = [{"start": 0.0, "length": 64.0, "notes": _compases((0, 4, 8, 12), pitch=36), "name": "KICK", "color": None}]
+    live.pistas.append({"name": "BASS", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((3, 6, 11, 14)), "name": "BASS", "color": None}]})
+
+
+def test_proponer_solo_lee_live(entorno):
+    live, motor = entorno
+    _con_kick_y_bajo(live, motor)
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    p = motor.proponer_patrones_drums()["drums"]["patrones"]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert p["analisis"]["bajo"] == [3, 6, 11, 14] and len(p["opciones"]) == 3
+
+
+def test_poner_patron_drums_reemplaza_intacto_y_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _con_kick_y_bajo(live, motor)
+    live.pistas.append({"name": "DRUMS", "clips": []})
+    motor.proponer_patrones_drums()
+    motor.poner_patron_drums("RESPUESTA")
+    d = next(p for p in live.pistas if p["name"] == "DRUMS")
+    assert d["clips"][0]["name"] == "DRUMS RESPUESTA"
+    motor.poner_patron_drums("CONTRA")
+    assert len(d["clips"]) == 1 and d["clips"][0]["name"] == "DRUMS CONTRA"
+    d["clips"][0]["notes"] = d["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(d)
+    e = motor.poner_patron_drums("SON 3-2")
+    assert d == copia and e["drums"]["patrones"]["pista"] == "DRUMS propuesta"
+    with pytest.raises(ValueError):
+        motor.poner_patron_drums("NO EXISTE")
+
+
+def test_clip_ajeno_en_drums_no_se_pisa(entorno):
+    live, motor = entorno
+    _con_kick_y_bajo(live, motor)
+    live.pistas.append({"name": "DRUMS", "clips": [{"start": 0.0, "length": 8.0, "notes": [nota(0, pitch=48)], "name": "mio", "color": None}]})
+    motor.proponer_patrones_drums()
+    assert motor.poner_patron_drums("CONTRA")["drums"]["patrones"]["pista"] == "DRUMS propuesta"
+    assert next(p for p in live.pistas if p["name"] == "DRUMS")["clips"][0]["name"] == "mio"
 
 
 # ── Estado y registro ──

@@ -40,6 +40,24 @@ Juan cambió a **La lidia dominante** (1 2 3 #4 5 6 b7). Se añade como modo. Ca
 
 Tras oír kick, bajo y rumble: le gusta la mezcla y el ritmo que ya generan. El bajo podría ir menos cargado de notas, o mezclar notas largas y cortas. Entra como nueva familia cuando se vuelva al bajo.
 
-## 7. Cómo se valida
+## 7. Patrones (Juan, 2026-11-06)
+
+**Idea de Juan:** en organic, la clave debe interactuar con el kick y el bajo. Por eso el motor **lee esas pistas en Live** cada vez que propone, incluidas sus ediciones, y calcula las claves. Son reglas, sin ML: la relación entre pistas se puede calcular con exactitud y todavía no hay ejemplos suyos de los que aprender.
+
+**Lectura:** un golpe es **fuerte** si aparece en al menos la mitad de los compases. Si aparece menos veces es un **ghost**, y un golpe suelto, como un remate de kick, no cambia el análisis. Un paso **libre** no tiene kick, ni bajo fuerte, ni ghost.
+
+| Opción | Regla | Relación esperada |
+|---|---|---|
+| **RESPUESTA** | Hasta 4 pasos libres, separados al menos 2 | Conversa en los huecos |
+| **SON 3-2** | 0, 3, 6, 10, 12, sin importar el resto | Figura fija que coincide donde coincida; con un bajo en tresillo, en 3 y 6 |
+| **CONTRA** | El primer paso libre tras cada golpe fuerte de bajo, a 2 pasos como máximo | Contesta justo después del bajo |
+
+La clave ya no comparte frecuencias con kick y bajo (`Clave` va cerca de 1,76 kHz), así que coincidir no enmascara: es una decisión de ritmo. Si el análisis no deja pasos para una regla, esa opción no se ofrece.
+
+**Base común, para editar:** clap en 2 y 4 (pasos 4 y 12), hat cerrado en las negras y hat abierto en la «y» (2, 6, 10, 14), que el cerrado corta. Es un punto de partida: Juan indicó que creará bases propias por género, y sustituirán a esta.
+
+**Frase:** 16 compases, como kick y bajo. Acentos leves por compás y un golpe de snare de remate cada 4. En `DRUMS` rige la regla de no pisar lo editado: si el clip cambió, la propuesta va a `DRUMS propuesta`, que **no tendrá rack** hasta que se le cargue uno.
+
+## 8. Cómo se valida
 
 **Tests:** notas del mapa, choke solo en hats, hats con la misma semilla, opciones distintas entre sí, afinación de clave y snare. **Lo que decide es Juan:** si el rack le sirve como punto de partida.

@@ -160,6 +160,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-drums"></div>
   </section>
 
+  <section id="s-drum-patron" class="bloq" data-seccion="drums">
+    <div class="num">2</div>
+    <h2>Patrón</h2>
+    <p>Lee tu <code>KICK</code> y tu <code>BASS</code> y propone claves que dialogan con ellos, con clap y hats de base. Pon uno en <code>DRUMS</code> y edítalo. Vuelve a leer si cambias el bajo.</p>
+    <button id="b-drum-patrones" disabled>Leer kick y bajo</button>
+    <div id="r-drum-patrones"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -231,7 +239,7 @@ function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}
 function pintar(s) {
   marcar("registro", !!s?.registros?.length);
   marcar("drums", !!s?.drums?.rack);
-  if (s) pintarDrums(s.drums);
+  if (s) { pintarDrums(s.drums); pintarPatronDrums(s.drums.patrones); }
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
     $("b-partida").textContent = "Nueva sesión";
@@ -241,8 +249,8 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums"]) {
-    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro"}[n] || n;
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones"]) {
+    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
   }
@@ -263,11 +271,11 @@ const GRUPOS_DRUM = ["CLAVE","SNARE","CLAP","HATS"];
 function pintarDrums(d) {
   $("s-drums").classList.toggle("hecho", !!d.rack);
   if (d.tandas) $("b-drums").textContent = "Otra tanda";
-  $("contador-drums").textContent = d.tandas ? `${Object.keys(d.seleccion).length} de 4 elegidos` : "";
+  $("contador-drums").textContent = !d.tandas ? "" : d.rack?.cargado ? `4 de 4 · rack puesto en ${d.rack.pista} (R${d.racks.length})` : `${Object.keys(d.seleccion).length} de 4 elegidos`;
   const nodos = [];
   if (d.rack) {
     const r = document.createElement("p"); r.className = "ok";
-    r.textContent = d.rack.cargado ? `Rack ${d.rack.nombre} puesto en ${d.rack.pista}.` : `Rack creado, pero no pude ponerlo en ${d.rack.pista}: ${d.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
+    r.textContent = d.rack.cargado ? `Rack ${d.rack.nombre} puesto en ${d.rack.pista}. Aún no suena solo: la pista no tiene clip. Pads: clave B1, snare C2, clap C#2, hat cerrado E2, hat abierto F2.` : `Rack creado, pero no pude ponerlo en ${d.rack.pista}: ${d.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
     nodos.push(r);
   }
   for (const g of GRUPOS_DRUM) {
@@ -292,6 +300,30 @@ function pintarDrums(d) {
     }
   }
   $("r-drums").replaceChildren(...nodos);
+}
+function rejilla(pasos) {
+  const set = new Set(pasos);
+  return Array.from({length:16}, (_, i) => set.has(i) ? "X" : (i % 4 ? "·" : "|")).join(" ");
+}
+function pintarPatronDrums(p) {
+  if (!p) return;
+  $("s-drum-patron").classList.toggle("hecho", !!p.clip);
+  const nodos = [];
+  if (p.analisis) {
+    const r = document.createElement("pre");
+    r.textContent = `KICK   ${rejilla(p.analisis.kick)}\nBASS   ${rejilla(p.analisis.bajo)}` + (p.sin_bajo ? "\n(no encontré notas en BASS)" : "");
+    nodos.push(r);
+    for (const o of p.opciones) {
+      const f = document.createElement("div"); f.className = "patron" + (p.actual === o.nombre ? " sel" : "");
+      const n = document.createElement("pre"); n.style.margin = "0"; n.textContent = `${o.nombre.padEnd(10)}\nCLAVE  ${rejilla(o.clave)}`;
+      const x = document.createElement("button"); x.className = "sec"; x.textContent = p.actual === o.nombre ? "Puesto" : "Poner"; x.disabled = p.actual === o.nombre;
+      x.onclick = () => accion("drum_poner", {nombre:o.nombre}, x);
+      f.append(n, x); nodos.push(f);
+    }
+    if (p.pista && p.pista !== "DRUMS") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${p.pista}. Esa pista aún no tiene rack.`; nodos.push(a); }
+    $("b-drum-patrones").textContent = "Volver a leer";
+  }
+  $("r-drum-patrones").replaceChildren(...nodos);
 }
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
@@ -395,6 +427,7 @@ $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("b-drums").onclick = e => accion("drums", {}, e.target);
+$("b-drum-patrones").onclick = e => accion("drum_patrones", {}, e.target);
 for (const id of ["raiz","modo"]) $(id).onchange = () => {
   if ($("b-partida").textContent === "Nueva sesión") accion("tonalidad", {raiz:$("raiz").value, modo:$("modo").value}, $("b-partida"));
 };

@@ -24,6 +24,7 @@ from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 from .bajo import FAMILIAS, patron  # noqa: E402
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
 from .brain import BAJOS_CONOCIDOS, Brain  # noqa: E402
+from .drums import analizar, clip_drums, opciones as opciones_drums  # noqa: E402
 from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
 from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
@@ -76,6 +77,7 @@ class Motor:
             e.setdefault("rack", None)
             e.setdefault("registros", [])
             e.setdefault("drums", {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None})
+            e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
         return None
@@ -142,7 +144,7 @@ class Motor:
             "rack": None,
             "elegido": None,
             "registros": [],
-            "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None},
+            "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
         self._guardar()
@@ -466,6 +468,55 @@ class Motor:
         d["racks"].append(rack)
         presentadas = [o["id"] for o in d["opciones"]]
         self._evento("seleccion", parte="drums", seleccion=dict(d["seleccion"]), presentadas=presentadas, escuchadas="unknown", rack=nombre, cargado=rack["cargado"])
+
+    def _notas_de(self, pista: str) -> list[dict]:
+        """Notas de una pista de Live, con su tiempo absoluto."""
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            return []
+        notas = []
+        for c in self.live.listar_clips(indice):
+            leido = self.live.leer_clip(indice, c["start"])
+            if leido:
+                notas += [{**n, "start_beat": n["start_beat"] + c["start"]} for n in leido["notes"]]
+        return notas
+
+    def proponer_patrones_drums(self) -> dict:
+        """Solo lee Live. Cada propuesta usa el kick y el bajo como están ahora, con las ediciones de Juan."""
+        e = self._exigir_estado()
+        p = e["drums"]["patrones"]
+        kick, bajo = self._notas_de("KICK"), self._notas_de("BASS")
+        p["analisis"] = analizar(kick, bajo)
+        p["opciones"] = opciones_drums(p["analisis"])
+        p["sin_bajo"] = not bajo
+        self._guardar()
+        self._evento("opciones", parte="patron_drums", analisis=p["analisis"], opciones=p["opciones"])
+        return e
+
+    def poner_patron_drums(self, nombre: str) -> dict:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        p = e["drums"]["patrones"]
+        op = next((o for o in p["opciones"] if o["nombre"] == nombre), None)
+        if op is None:
+            raise ValueError(f"No existe el patrón {nombre!r}")
+        clip = clip_drums(op)
+        pista = p["pista"] or "DRUMS"
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = p["clip"] is not None and leido is not None and diferencia(p["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                pista = self._nombre_libre("DRUMS propuesta")
+                indice = self.live.crear_pista_midi(pista)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        p.update(actual=nombre, clip=clip, pista=pista)
+        self._guardar()
+        self._evento("borrador", parte="patron_drums", pista=pista, patron=nombre, clave=op["clave"], analisis=p["analisis"])
+        return e
 
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:
