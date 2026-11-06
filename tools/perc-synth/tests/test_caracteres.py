@@ -154,7 +154,8 @@ def test_ruido_se_alinea_a_la_fundamental_sin_perder_caracter(voz, material):
         assert m["afinado"] == "resonancia" and m["nota_midi"] is None
         nota = 69 + 12 * np.log2(m["resonancia_hz"] / 440.0)
         grado = round(nota - clase_de(raiz)) % 12
-        assert abs(nota - round(nota)) < 0.02 and grado in (0, 7)
+        # El tercer armónico puro queda 2 cents sobre la quinta temperada.
+        assert abs(nota - round(nota)) < 0.03 and grado in (0, 7)
         assert 0.75 < m["ajuste"]["afinacion"] < 1.25
 
 
