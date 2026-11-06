@@ -24,7 +24,7 @@ Las notas son las del **GF Perc Map** (`percusion-groove.md` §3), así que los 
 
 Cada tanda trae tres materiales por voz: **MADERA, PIEL y 808**. Son los modelos de `percusion-kits-808-organica.md` §4, con los que Juan ya aprobó los kits. La tanda 1 usa la versión base; las siguientes varían parámetros con la semilla.
 
-**Tonalidad:** clave y snare se afinan a la tónica o a la quinta según `percusion-generos-tonalidad.md`. El clap y los hats no tienen nota definida.
+**Tonalidad (regla de Juan):** todo va a la fundamental (`percusion-kits-808-organica.md` §17). Clave y snare, a su nota; clap y hats, alineando su resonancia principal con la tónica o su tercer armónico.
 
 **Riesgo conocido:** la madera sonó rara en el kick, sobre una base sostenida. Aquí no hay esa base, así que no tendría por qué repetirse, pero está sin oír.
 

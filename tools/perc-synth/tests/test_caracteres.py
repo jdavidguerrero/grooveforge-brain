@@ -5,6 +5,7 @@ import pytest
 
 from gf_perc.caracteres import GRUPOS_DRUMS, MATERIALES_DRUMS, sintetizar_drum, CARACTERES_KICK, COLAS_KICK, huella_kick, mas_lejanas, nota_grave, rasgos_kick, sintetizar_caracter, sintetizar_cola
 from gf_perc.kit import sintetizar_voz
+from gf_perc.tonalidad import clase_de
 
 
 def _rasgos(caracter, semillas=(1, 2, 3, 4)):
@@ -77,11 +78,10 @@ def test_tanda_tiene_las_dos_familias():
     assert sum(c.startswith("INICIAL") for c in COLAS_KICK) == 5
 
 
-def test_notas_de_las_anclas_y_de_la_familia_inicial():
-    n = {c: sintetizar_cola(c, "organic", "A", "menor")[1]["nota_midi"] for c in COLAS_KICK}
-    assert n["CUERPO MIX SECA"] == 28
-    assert n["CUERPO PIEL CORTA"] == n["CUERPO PIEL LIGERA"] == 33
-    assert all(v == 33 for c, v in n.items() if c.startswith("INICIAL"))
+@pytest.mark.parametrize("raiz,nota", [("A", 33), ("F", 29), ("D", 26), ("C", 36), ("C#", 25), ("G#", 32)])
+def test_todo_kick_en_la_fundamental(raiz, nota):
+    for c in COLAS_KICK:
+        assert sintetizar_cola(c, "organic", raiz, "menor")[1]["nota_midi"] == nota
 
 
 def test_familia_cuerpo_sostiene_mas_que_la_inicial(colas):
@@ -112,12 +112,13 @@ def test_secas_mas_cortas_que_las_cortas(colas):
     assert len(colas["CUERPO PIEL LIGERA"]) < 0.8 * len(colas["CUERPO PIEL CORTA"])
 
 
-def test_nota_grave_tonica_o_quinta():
-    assert nota_grave("A", "menor") == 28  # E1, la quinta de La
-    assert nota_grave("F", "menor") == 29  # F1, la tónica
-    assert nota_grave("D", "frigio") == 26
-    for raiz in ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"):
-        assert 25 <= nota_grave(raiz, "menor") <= 32
+def test_nota_grave_es_siempre_la_tonica():
+    nombres = ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B")
+    for i, raiz in enumerate(nombres):
+        n = nota_grave(raiz, "menor")
+        assert 25 <= n <= 36 and n % 12 == i
+    with pytest.raises(ValueError):
+        nota_grave("A", "inventado")
 
 
 @pytest.mark.parametrize("cola", list(COLAS_KICK))
@@ -136,10 +137,40 @@ def test_materiales_de_drums_se_distinguen(grupo):
             assert np.linalg.norm(h[a] - h[b]) > 1.0, (grupo, a, b)
 
 
-def test_clave_y_snare_afinadas_y_hats_sin_nota():
-    assert sintetizar_drum("clave", "MADERA", "organic", "A", "lidia_dominante")[1]["nota_midi"] is not None
-    assert sintetizar_drum("snare", "PIEL", "organic", "A", "menor")[1]["nota_midi"] is not None
-    assert sintetizar_drum("hat_cerrado", "MADERA", "organic", "A", "menor")[1]["nota_midi"] is None
+@pytest.mark.parametrize("raiz,clase", [("A", 9), ("D", 2), ("F#", 6)])
+@pytest.mark.parametrize("material", list(MATERIALES_DRUMS))
+def test_clave_y_snare_en_la_fundamental(material, raiz, clase):
+    for voz in ("clave", "snare"):
+        for tanda in (1, 2):
+            m = sintetizar_drum(voz, material, "organic", raiz, "lidia_dominante", tanda)[1]
+            assert m["nota_midi"] % 12 == clase and m["afinado"] == "nota"
+
+
+@pytest.mark.parametrize("voz", ["clap", "hat_cerrado", "hat_abierto"])
+@pytest.mark.parametrize("material", list(MATERIALES_DRUMS))
+def test_ruido_se_alinea_a_la_fundamental_sin_perder_caracter(voz, material):
+    for raiz in ("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"):
+        m = sintetizar_drum(voz, material, "organic", raiz, "menor")[1]
+        assert m["afinado"] == "resonancia" and m["nota_midi"] is None
+        nota = 69 + 12 * np.log2(m["resonancia_hz"] / 440.0)
+        grado = round(nota - clase_de(raiz)) % 12
+        assert abs(nota - round(nota)) < 0.02 and grado in (0, 7)
+        assert 0.75 < m["ajuste"]["afinacion"] < 1.25
+
+
+@pytest.mark.parametrize("material", list(MATERIALES_DRUMS))
+def test_clave_suena_en_la_tonica(material):
+    y, m = sintetizar_drum("clave", material, "organic", "A", "menor")
+    espectro = np.abs(np.fft.rfft(y, n=48000))
+    pico = int(espectro[200:6000].argmax()) + 200
+    assert abs(1200 * np.log2(pico / (440.0 * 2 ** ((m["nota_midi"] - 69) / 12)))) < 60
+
+
+def test_hats_comparten_afinacion():
+    for material in MATERIALES_DRUMS:
+        a = sintetizar_drum("hat_cerrado", material, "organic", "A", "menor")[1]
+        b = sintetizar_drum("hat_abierto", material, "organic", "A", "menor")[1]
+        assert a["resonancia_hz"] == b["resonancia_hz"]
 
 
 def test_hat_abierto_dura_mas_y_tanda_cambia_el_sonido():

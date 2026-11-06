@@ -373,6 +373,7 @@ def sintetizar_voz(
     centro: Ajuste = Ajuste(),
     afinar_hz: float | None = None,
     modelo: str = "808",
+    factor_afinacion: float | None = None,
 ) -> tuple[np.ndarray, dict]:
     """Genera una voz. `gordura` solo afecta al kick; `variacion` = 0 es la versión base.
 
@@ -394,6 +395,8 @@ def sintetizar_voz(
     base_voz = base_hz(voz, material)
     if afinar_hz is not None and base_voz is not None:
         a = replace(a, afinacion=afinar_hz / base_voz)
+    elif factor_afinacion is not None:
+        a = replace(a, afinacion=factor_afinacion)  # Voces de ruido: mueve sus resonancias; ignora la variación.
     # En `clasico` la fuerza no varía entre golpes: una caja de ritmos repite su velocity exacta.
     vel = velocity if material == "clasico" else float(np.clip(velocity * g.uniform(0.96, 1.04), 0.05, 1.0))
 
