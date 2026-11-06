@@ -21,6 +21,7 @@ from gf_perc.caracteres import COLAS_KICK, GRUPOS_DRUMS, MATERIALES_DRUMS, sinte
 from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
+from .acordes import PROGRESIONES, choques, clip_acordes, nombres_progresion, patrones as patrones_acordes  # noqa: E402
 from .bajo import FAMILIAS, patron  # noqa: E402
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
 from .brain import BAJOS_CONOCIDOS, MELODICOS_CONOCIDOS, Brain  # noqa: E402
@@ -60,6 +61,10 @@ def notas_en_arreglo(clip: dict, siguiente: float | None) -> list[dict]:
         for n in (clip.get("notes") or [])
         if marcador - 1e-6 <= n["start_beat"] < marcador + tramo - 1e-6
     ]
+
+
+def _acordes_vacio() -> dict:
+    return {"opciones": [], "actual": None, "clip": None, "pista": None, "melodia": None}
 
 
 class SetProtegido(ErrorLive):
@@ -107,6 +112,7 @@ class Motor:
             e.setdefault("drums", {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None})
             e.setdefault("tops", _tops_vacio())
             e.setdefault("motivo", _motivo_vacio())
+            e.setdefault("acordes", _acordes_vacio())
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -176,6 +182,7 @@ class Motor:
             "registros": [],
             "tops": _tops_vacio(),
             "motivo": _motivo_vacio(),
+            "acordes": _acordes_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
@@ -660,6 +667,58 @@ class Motor:
         m["capa"] = nombre
         self._guardar()
         self._evento("eleccion", parte="sonido_motivo", elegido=nombre, presentadas=[c["nombre"] for c in m["capas"]], escuchadas="unknown", motivo=m["actual"])
+        return e
+
+    # ── Acordes (motor-acordes.md) ────────────────────────────────────
+    def proponer_acordes(self) -> dict:
+        """Solo lee Live. Vuelve a calcular con el groove y la melodía como están ahora."""
+        e = self._exigir_estado()
+        p = e["partida"]
+        escala = MODOS[p["modo"]]
+        a = analizar(self._notas_de("KICK"), self._notas_de("BASS"))
+        clave = sorted({round(n["start_beat"] * 4) % 16 for n in self._notas_de("DRUMS") if n["pitch"] == 47})
+        pista_melodia = next((n for n in ("MELODY", "MOTIVO") if self._notas_de(n)), None)
+        melodia = self._notas_de(pista_melodia) if pista_melodia else []
+        patrones = patrones_acordes(a["libres"], clave)
+        opciones = []
+        for prog in PROGRESIONES:
+            for nombre, definicion in patrones.items():
+                opciones.append(
+                    {
+                        "id": f"{prog}|{nombre}", "progresion": prog, "acordes": nombres_progresion(prog, p["raiz"], escala), "patron": nombre, "tipo": definicion[0],
+                        "pasos": list(definicion[1]), "raiz": p["raiz"], "modo": p["modo"], "choques": choques(melodia, prog, definicion[0] == "septima", p["raiz"], escala),
+                    }
+                )
+        estado = e["acordes"]
+        estado["opciones"] = opciones
+        estado["melodia"] = pista_melodia
+        self._guardar()
+        self._evento("opciones", parte="acordes", modo=p["modo"], progresiones=list(PROGRESIONES), patrones=list(patrones), melodia=pista_melodia)
+        return e
+
+    def poner_acordes(self, ident: str) -> dict:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        estado = e["acordes"]
+        op = next((o for o in estado["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe la opción {ident!r}")
+        clip = clip_acordes(op["progresion"], op["patron"], (op["tipo"], tuple(op["pasos"])), op["raiz"], MODOS[op["modo"]])
+        pista = estado["pista"] or "CHORDS"
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = estado["clip"] is not None and leido is not None and diferencia(estado["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                pista = self._nombre_libre("CHORDS propuesta")
+                indice = self.live.crear_pista_midi(pista)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        estado.update(actual=ident, clip=clip, pista=pista)
+        self._guardar()
+        self._evento("borrador", parte="acordes", pista=pista, progresion=op["progresion"], acordes=op["acordes"], patron=op["patron"], modo=op["modo"], choques=op["choques"])
         return e
 
     # ── Registro de lo que quedó ───────────────────────────────────────

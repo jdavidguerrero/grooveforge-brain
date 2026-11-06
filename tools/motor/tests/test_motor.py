@@ -19,6 +19,7 @@ from gf_motor.brain import cc_de_capa
 from gf_motor.tops import candidatos, clip_loop, encaje, leer_midi
 from gf_motor.motivo import COLOR, RITMOS_FIJOS, TOPE_OCUPACION, motivo as crear_motivo, ocupacion, opciones as ritmos_motivo
 from gf_motor.motor import MODOS
+from gf_motor.acordes import NOMBRES, PROGRESIONES, REG_MAX, REG_MIN, choques, clases_acorde, clip_acordes, nombre_acorde, nombres_progresion, patrones as patrones_acordes
 from gf_motor.live import ClienteLive, ErrorLive
 from gf_motor.motor import Motor, SetProtegido, gf_log
 from gf_motor.servidor import crear_servidor
@@ -1134,6 +1135,124 @@ def test_clip_partido_no_duplica_notas_al_registrar(entorno):
     r = motor.registrar("X")["registros"][-1]
     m = mido.MidiFile(next(x for x in r["midis"] if "motivo" in x))
     assert sum(x.type == "note_on" and x.velocity > 0 for x in m.tracks[0]) == 2 + 4
+
+
+# ── Acordes ──
+_LD = (0, 2, 4, 6, 7, 9, 10)  # lidia dominante
+
+
+def test_acordes_nombres_en_la_lidia_dominante():
+    assert nombres_progresion("I-II-VI-II", "A", _LD) == "A – B – F#m – B"
+    assert nombres_progresion("I-II", "A", _LD) == "A – B"
+    assert nombres_progresion("I-II-V-I", "A", _LD) == "A – B – Em – A"
+    assert nombre_acorde(clases_acorde(9, _LD, 0, True)) == "A7"
+    assert nombre_acorde(clases_acorde(9, _LD, 1, True)) == "B7"
+    assert nombre_acorde(clases_acorde(9, _LD, 5, True)) == "F#m7"
+    assert nombre_acorde(clases_acorde(9, _LD, 4, True)) == "Em(maj7)"
+
+
+@pytest.mark.parametrize("raiz", ["A", "F", "C#"])
+@pytest.mark.parametrize("escala", [_LD, (0, 2, 3, 5, 7, 8, 10), (0, 2, 4, 5, 7, 9, 11)])
+@pytest.mark.parametrize("prog", list(PROGRESIONES))
+def test_acordes_en_escala_y_registro(raiz, escala, prog):
+    from gf_motor.bajo import _NOTAS
+
+    casa = {(_NOTAS[raiz] + g) % 12 for g in escala}
+    for nombre, definicion in patrones_acordes(_LIBRES, _CLAVE).items():
+        c = clip_acordes(prog, nombre, definicion, raiz, escala)
+        assert c["longitud"] == 64 and c["notas"]
+        for n in c["notas"]:
+            assert n["pitch"] % 12 in casa, nombre
+            assert REG_MIN <= n["pitch"] <= REG_MAX + 12, (nombre, n["pitch"])
+            assert 0 <= n["start_beat"] < 64 and 1 <= n["velocity"] <= 127
+
+
+def test_voicing_cercano_entre_acordes():
+    c = clip_acordes("I-II", "BLOQUE TRESILLO", patrones_acordes([], [])["BLOQUE TRESILLO"], "A", _LD)
+    a = sorted(n["pitch"] for n in c["notas"] if n["start_beat"] == 0)
+    b = sorted(n["pitch"] for n in c["notas"] if n["start_beat"] == 4)
+    assert len(a) == len(b) == 3 and sum(abs(x - y) for x, y in zip(a, b)) <= 8
+
+
+def test_tipos_de_voicing():
+    p = patrones_acordes(_LIBRES, _CLAVE)
+    def primer(nombre):
+        c = clip_acordes("I-II", nombre, p[nombre], "A", _LD)
+        return sorted(n["pitch"] for n in c["notas"] if n["start_beat"] == c["notas"][0]["start_beat"])
+    assert len(primer("BLOQUE TRESILLO")) == 3
+    assert len(primer("SEPTIMAS CONTRATIEMPO")) == 4
+    d = primer("DECIMAS TRESILLO")
+    assert len(d) == 2 and d[1] - d[0] == 16  # décima mayor sobre A
+    q = primer("1-5-8 TRESILLO")
+    assert [x - q[0] for x in q] == [0, 7, 12]
+
+
+def test_ritmos_leen_el_groove():
+    p = patrones_acordes(_LIBRES, _CLAVE)
+    assert p["SEPTIMAS HUECOS"][1] == tuple(_LIBRES[:4]) and p["SEPTIMAS CLAVE"][1] == tuple(_CLAVE)
+    assert not {"SEPTIMAS HUECOS", "SEPTIMAS CLAVE"} & set(patrones_acordes([2], []))
+
+
+def test_cierre_adelanta_el_siguiente_acorde():
+    d = patrones_acordes([], [])["BLOQUE TRESILLO"]
+    c = clip_acordes("I-II", "BLOQUE TRESILLO", d, "A", _LD)
+    # Compás 4 (B) anticipa el A del compás 5 en su último golpe; el compás 2 (B) no.
+    a = {n["pitch"] for n in c["notas"] if n["start_beat"] == 0}
+    cierre = {n["pitch"] for n in c["notas"] if n["start_beat"] == (3 * 16 + 14) / 4}
+    assert cierre == a
+    normal = {n["pitch"] for n in c["notas"] if n["start_beat"] == (1 * 16 + 14) / 4}
+    assert normal != a
+
+
+def test_choques_detecta_semitono_sin_contar_notas_del_acorde():
+    m = [{"pitch": 63, "start_beat": 0.0, "duration_beats": 1.0, "velocity": 90}, {"pitch": 61, "start_beat": 1.0, "duration_beats": 1.0, "velocity": 90}]
+    r = choques(m, "I-II", False, "A", _LD)  # Re# roza Mi en A; Do# es parte de A.
+    assert r["porcentaje"] == 50 and r["frecuentes"] == ["D# sobre A"]
+    assert choques([], "I-II", False, "A", _LD)["porcentaje"] is None
+    m2 = [{"pitch": 67, "start_beat": 0.0, "duration_beats": 1.0, "velocity": 90}]
+    assert choques(m2, "I-II", False, "A", _LD)["porcentaje"] == 0
+    assert choques(m2, "I-II", True, "A", _LD)["porcentaje"] == 0
+
+
+def _set_acordes(live, motor):
+    _groove_para_motivo(live, motor)
+    motor.cambiar_tonalidad("A", "lidia_dominante")
+    live.pistas.append({"name": "MELODY", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((3, 6), pitch=63), "name": "m", "color": None}]})
+
+
+def test_proponer_acordes_solo_lee_y_usa_melodia(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    a = motor.proponer_acordes()["acordes"]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert a["melodia"] == "MELODY" and len(a["opciones"]) == 3 * 7
+    assert {o["acordes"] for o in a["opciones"]} == {"A – B – F#m – B", "A – B", "A – B – Em – A"}
+    assert all(o["choques"]["porcentaje"] is not None for o in a["opciones"])
+
+
+def test_proponer_acordes_sin_melodia(entorno):
+    live, motor = entorno
+    _groove_para_motivo(live, motor)
+    a = motor.proponer_acordes()["acordes"]
+    assert a["melodia"] is None and a["opciones"][0]["choques"]["porcentaje"] is None
+
+
+def test_poner_acordes_reemplaza_intacto_y_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    motor.proponer_acordes()
+    motor.poner_acordes("I-II|BLOQUE TRESILLO")
+    p = next(x for x in live.pistas if x["name"] == "CHORDS")
+    motor.poner_acordes("I-II-V-I|ARCO")
+    assert len(p["clips"]) == 1 and p["clips"][0]["name"] == "I-II-V-I ARCO"
+    p["clips"][0]["notes"] = p["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(p)
+    assert motor.poner_acordes("I-II|ARCO")["acordes"]["pista"] == "CHORDS propuesta" and p == copia
+    with pytest.raises(ValueError):
+        motor.poner_acordes("nada")
+    assert _eventos("motor_borrador")[-1]["parte"] == "acordes"
 
 
 # ── Estado y registro ──
