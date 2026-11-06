@@ -78,6 +78,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="bajo" class="tab">Bajo<i></i></button>
     <button data-ir="drums" class="tab">Drums<i></i></button>
     <button data-ir="tops" class="tab">Tops<i></i></button>
+    <button data-ir="motivo" class="tab">Motivo<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -185,6 +186,22 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-tops-top"></div>
   </section>
 
+  <section id="s-motivo" class="bloq" data-seccion="motivo">
+    <div class="num">1</div>
+    <h2>Motivo</h2>
+    <p>Motivos de 2 compases, en forma A A A B, en tu escala. Respuesta y Con clave salen de tu groove. Pon uno en <code>MOTIVO</code> y edítalo: es solo un punto de partida.</p>
+    <button id="b-motivo" disabled>Generar</button>
+    <div id="r-motivo"></div>
+  </section>
+
+  <section id="s-motivo-sonido" class="bloq" data-seccion="motivo">
+    <div class="num">2</div>
+    <h2>Sonido en el Brain</h2>
+    <p>Opcional, si <code>MOTIVO</code> sale al Brain. Cambia la capa al instante; si prefieres el VST u otro instrumento, cárgalo en la pista.</p>
+    <button id="b-motivo-capas" disabled>Leer capas del Brain</button>
+    <div id="r-motivo-capas"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -258,6 +275,8 @@ function pintar(s) {
   marcar("drums", !!s?.drums?.rack);
   if (s) { pintarDrums(s.drums); pintarPatronDrums(s.drums.patrones); pintarTops("perc", s.tops.perc); pintarTops("top", s.tops.top); }
   marcar("tops", !!(s?.tops?.perc?.clip || s?.tops?.top?.clip));
+  marcar("motivo", !!s?.motivo?.clip);
+  if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
     $("b-partida").textContent = "Nueva sesión";
@@ -267,8 +286,8 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top"]) {
-    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron"}[n] || n;
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas"]) {
+    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
   }
@@ -360,6 +379,32 @@ function pintarTops(rol, t) {
   });
   if (t.pista && t.pista !== rol.toUpperCase()) { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Ese clip ya tenía cambios, así que va en ${t.pista}. Esa pista aún no tiene Tribe.`; nodos.push(a); }
   $(`r-tops-${rol}`).replaceChildren(...nodos);
+}
+function pintarMotivo(m) {
+  $("s-motivo").classList.toggle("hecho", !!m.clip);
+  if (m.tandas) $("b-motivo").textContent = "Otra tanda";
+  const nodos = [];
+  for (let t = 1; t <= m.tandas; t++) {
+    const c = document.createElement("div"); c.className = "tanda"; c.textContent = `Tanda ${t}`; nodos.push(c);
+    for (const o of m.opciones.filter(x => x.tanda === t)) {
+      const f = document.createElement("div"); f.className = "patron" + (m.actual === o.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = o.nombre;
+      const e = document.createElement("small"); e.style.display = "block"; e.style.color = "var(--monitor)"; e.textContent = `${o.raiz} ${o.modo}`; n.append(e);
+      const x = document.createElement("button"); x.className = "sec"; x.textContent = m.actual === o.id ? "Puesto" : "Poner"; x.disabled = m.actual === o.id;
+      x.onclick = () => accion("motivo_poner", {id:o.id}, x);
+      f.append(n, x); nodos.push(f);
+    }
+  }
+  if (m.pista && m.pista !== "MOTIVO") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${m.pista}.`; nodos.unshift(a); }
+  $("r-motivo").replaceChildren(...nodos);
+  $("s-motivo-sonido").classList.toggle("hecho", !!m.capa);
+  $("r-motivo-capas").replaceChildren(...m.capas.map(c => {
+    const f = document.createElement("div"); f.className = "patron" + (m.capa === c.nombre ? " sel" : "");
+    const n = document.createElement("span"); n.textContent = c.nombre;
+    const x = document.createElement("button"); x.className = "sec"; x.textContent = m.capa === c.nombre ? "En el Brain" : "Usar"; x.disabled = m.capa === c.nombre;
+    x.onclick = () => accion("motivo_capa", {nombre:c.nombre}, x);
+    f.append(n, x); return f;
+  }));
 }
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
@@ -463,6 +508,8 @@ $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("b-drums").onclick = e => accion("drums", {}, e.target);
+$("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
+$("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);
 $("b-tops-top").onclick = e => accion("tops_proponer", {rol:"top"}, e.target);
 $("b-drum-patrones").onclick = e => accion("drum_patrones", {}, e.target);

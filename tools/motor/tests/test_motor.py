@@ -17,6 +17,8 @@ from gf_motor.drums import CLAVE, CLAP, HAT_ABIERTO, HAT_CERRADO, SNARE, analiza
 from gf_motor.edicion import diferencia
 from gf_motor.brain import cc_de_capa
 from gf_motor.tops import candidatos, clip_loop, encaje, leer_midi
+from gf_motor.motivo import COLOR, RITMOS_FIJOS, TOPE_OCUPACION, motivo as crear_motivo, ocupacion, opciones as ritmos_motivo
+from gf_motor.motor import MODOS
 from gf_motor.live import ClienteLive, ErrorLive
 from gf_motor.motor import Motor, SetProtegido, gf_log
 from gf_motor.servidor import crear_servidor
@@ -984,6 +986,123 @@ def test_sesion_antigua_sin_tops_se_completa(entorno):
     del viejo["tops"]
     ruta.write_text(json.dumps(viejo))
     assert Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso()).estado["tops"]["perc"]["opciones"] == []
+
+
+# ── Motivo ──
+_LIBRES, _CLAVE = [2, 7, 10, 13, 15], [0, 3, 6, 10, 12]
+
+
+def _clips_motivo(raiz="A", modo="lidia_dominante", tanda=1):
+    return {n: crear_motivo(n, r, raiz, modo, MODOS[modo], tanda) for n, r in ritmos_motivo(_LIBRES, _CLAVE).items()}
+
+
+@pytest.mark.parametrize("modo", list(COLOR))
+@pytest.mark.parametrize("raiz", ["A", "F", "C#"])
+def test_motivo_en_escala_registro_y_con_nota_de_color(raiz, modo):
+    from gf_perc.tonalidad import clase_de
+
+    escala = {(clase_de(raiz) + g) % 12 for g in MODOS[modo]}
+    color = (clase_de(raiz) + MODOS[modo][COLOR[modo]]) % 12
+    for tanda in (1, 2, 3):
+        for nombre, c in _clips_motivo(raiz, modo, tanda).items():
+            assert c["longitud"] == 64
+            alturas = [n["pitch"] for n in c["notas"]]
+            assert all(p % 12 in escala for p in alturas), nombre
+            assert max(alturas) <= 76 and min(alturas) >= 45, nombre
+            assert color in {p % 12 for p in alturas}, nombre
+
+
+def test_motivo_tiene_silencios_y_no_se_extiende():
+    for tanda in (1, 2):
+        for nombre, c in _clips_motivo(tanda=tanda).items():
+            assert ocupacion(c) <= TOPE_OCUPACION, nombre
+            orden = sorted(c["notas"], key=lambda n: n["start_beat"])
+            assert all(a["start_beat"] + a["duration_beats"] <= b["start_beat"] + 1e-6 for a, b in zip(orden, orden[1:])), nombre
+
+
+def test_motivo_forma_aaab():
+    for nombre, c in _clips_motivo().items():
+        bloques = [[(round(n["start_beat"] - b * 8, 4), n["pitch"]) for n in c["notas"] if b * 8 <= n["start_beat"] < (b + 1) * 8] for b in range(8)]
+        assert bloques[0] == bloques[1] == bloques[2], nombre
+        assert bloques[3] != bloques[0], nombre
+        assert bloques[3] == bloques[7] and bloques[4] == bloques[0], nombre
+        resuelve = bloques[3][-1][1]
+        assert (resuelve - 57) % 12 in (0, 7), nombre
+
+
+def test_ritmos_fijos_no_empiezan_con_el_kick():
+    for nombre, r in RITMOS_FIJOS.items():
+        assert all(p % 4 != 0 for p, _ in r), nombre
+
+
+def test_respuesta_vive_en_los_huecos_y_con_clave_sigue_la_clave():
+    r = ritmos_motivo(_LIBRES, _CLAVE)
+    assert {p % 16 for p, _ in r["RESPUESTA"]} <= set(_LIBRES)
+    assert {p % 16 for p, _ in r["CON CLAVE"]} <= set(_CLAVE)
+    solo = ritmos_motivo([2], [])
+    assert set(solo) == set(RITMOS_FIJOS)
+
+
+def test_motivo_repetible_y_otra_tanda_cambia_contorno():
+    a, b = _clips_motivo(tanda=1), _clips_motivo(tanda=1)
+    assert a == b
+    distintos = sum(a[n]["notas"] != _clips_motivo(tanda=t)[n]["notas"] for n in a for t in (2, 3, 4))
+    assert distintos > 0
+
+
+def _groove_para_motivo(live, motor):
+    _con_kick_y_bajo(live, motor)
+    live.pistas.append({"name": "DRUMS", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((0, 3, 6, 10, 12), pitch=47), "name": "D", "color": None}]})
+
+
+def test_generar_motivos_solo_lee_y_usa_el_groove(entorno):
+    live, motor = entorno
+    _groove_para_motivo(live, motor)
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    m = motor.generar_motivos()["motivo"]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert {o["nombre"] for o in m["opciones"]} == {"CORTO", "MIXTO", "LARGO", "RESPUESTA", "CON CLAVE"}
+    assert _eventos("motor_opciones")[-1]["parte"] == "motivo"
+
+
+def test_poner_motivo_reemplaza_intacto_y_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _groove_para_motivo(live, motor)
+    motor.generar_motivos()
+    motor.poner_motivo("1-CORTO")
+    p = next(x for x in live.pistas if x["name"] == "MOTIVO")
+    motor.poner_motivo("1-LARGO")
+    assert len(p["clips"]) == 1 and p["clips"][0]["name"] == "MOTIVO LARGO"
+    p["clips"][0]["notes"] = p["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(p)
+    assert motor.poner_motivo("1-MIXTO")["motivo"]["pista"] == "MOTIVO propuesta" and p == copia
+    with pytest.raises(ValueError):
+        motor.poner_motivo("nada")
+
+
+def test_capas_de_motivo(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.brain.capas = lambda: ["KALIMBA", "JD SUB MID", "JD PLK WOOD"]
+    e = motor.cargar_capas_motivo()
+    assert [c["nombre"] for c in e["motivo"]["capas"]] == ["JD PLK WOOD", "KALIMBA"]
+    motor.usar_capa_motivo("KALIMBA")
+    assert motor.brain.enviados == [(0, 3)]
+    with pytest.raises(ValueError):
+        motor.usar_capa_motivo("JD SUB MID")
+
+
+def test_motivo_en_template_no_escribe(tmp_path, monkeypatch):
+    monkeypatch.setenv("GF_DATASET", str(tmp_path / "d"))
+    live = LiveSimulado("/x/TEMPLATE.als")
+    (tmp_path / "L").mkdir()
+    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "L", BrainFalso())
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_motivos()
+    with pytest.raises(SetProtegido):
+        motor.poner_motivo("1-CORTO")
+    live.cerrar()
 
 
 # ── Estado y registro ──

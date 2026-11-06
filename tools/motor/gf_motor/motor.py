@@ -23,7 +23,8 @@ from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .bajo import FAMILIAS, patron  # noqa: E402
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
-from .brain import BAJOS_CONOCIDOS, Brain  # noqa: E402
+from .brain import BAJOS_CONOCIDOS, MELODICOS_CONOCIDOS, Brain  # noqa: E402
+from .motivo import motivo as crear_motivo, opciones as ritmos_motivo  # noqa: E402
 from .drums import analizar, clip_drums, opciones as opciones_drums  # noqa: E402
 from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
@@ -37,6 +38,10 @@ CHOKE_HATS = 1
 
 def _tops_vacio() -> dict:
     return {r: {"opciones": [], "actual": None, "clip": None, "pista": None} for r in ("perc", "top")}
+
+
+def _motivo_vacio() -> dict:
+    return {"tandas": 0, "opciones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None}
 
 
 class SetProtegido(ErrorLive):
@@ -83,6 +88,7 @@ class Motor:
             e.setdefault("registros", [])
             e.setdefault("drums", {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None})
             e.setdefault("tops", _tops_vacio())
+            e.setdefault("motivo", _motivo_vacio())
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -151,6 +157,7 @@ class Motor:
             "elegido": None,
             "registros": [],
             "tops": _tops_vacio(),
+            "motivo": _motivo_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
@@ -573,6 +580,69 @@ class Motor:
         self._evento("borrador", parte=rol, pista=pista, origen=op["ruta"], grupo=op["grupo"], decision_juan=op["decision_juan"], encaje=op.get("encaje"))
         return e
 
+    # ── Motivo (motor-motivo.md) ──────────────────────────────────────
+    def generar_motivos(self) -> dict:
+        """Solo lee Live: los ritmos RESPUESTA y CON CLAVE salen del groove actual."""
+        e = self._exigir_estado()
+        m = e["motivo"]
+        a = analizar(self._notas_de("KICK"), self._notas_de("BASS"))
+        clave = sorted({round(n["start_beat"] * 4) % 16 for n in self._notas_de("DRUMS") if n["pitch"] == 47})
+        ritmos = ritmos_motivo(a["libres"], clave)
+        m["tandas"] += 1
+        p = e["partida"]
+        for nombre, ritmo in ritmos.items():
+            m["opciones"].append({"id": f"{m['tandas']}-{nombre}", "nombre": nombre, "tanda": m["tandas"], "ritmo": [list(x) for x in ritmo], "raiz": p["raiz"], "modo": p["modo"]})
+        self._guardar()
+        self._evento("opciones", parte="motivo", tanda=m["tandas"], opciones=list(ritmos), modo=p["modo"], libres=a["libres"], clave=clave)
+        return e
+
+    def poner_motivo(self, ident: str) -> dict:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        m = e["motivo"]
+        op = next((o for o in m["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe el motivo {ident!r}")
+        ritmo = tuple(tuple(x) for x in op["ritmo"])
+        clip = crear_motivo(op["nombre"], ritmo, op["raiz"], op["modo"], MODOS[op["modo"]], op["tanda"])
+        pista = m["pista"] or "MOTIVO"
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = m["clip"] is not None and leido is not None and diferencia(m["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                pista = self._nombre_libre("MOTIVO propuesta")
+                indice = self.live.crear_pista_midi(pista)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        m.update(actual=ident, clip=clip, pista=pista)
+        self._guardar()
+        self._evento("borrador", parte="motivo", pista=pista, motivo=ident, modo=op["modo"], capa=m["capa"])
+        return e
+
+    def cargar_capas_motivo(self) -> dict:
+        e = self._exigir_estado()
+        nombres = self.brain.capas()
+        m = e["motivo"]
+        m["total_capas"] = len(nombres)
+        m["capas"] = [{"nombre": n, "indice": nombres.index(n)} for n in MELODICOS_CONOCIDOS if n in nombres]
+        self._guardar()
+        return e
+
+    def usar_capa_motivo(self, nombre: str) -> dict:
+        e = self._exigir_estado()
+        m = e["motivo"]
+        capa = next((c for c in m["capas"] if c["nombre"] == nombre), None)
+        if capa is None:
+            raise ValueError(f"La capa {nombre!r} no está en la lista")
+        self.brain.elegir_capa(capa["indice"], m["total_capas"])
+        m["capa"] = nombre
+        self._guardar()
+        self._evento("eleccion", parte="sonido_motivo", elegido=nombre, presentadas=[c["nombre"] for c in m["capas"]], escuchadas="unknown", motivo=m["actual"])
+        return e
+
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:
         """Solo lee Live. Guarda todas las notas del set y los MIDI de kick y bajo; nunca sobrescribe un registro."""
@@ -634,7 +704,7 @@ class Motor:
         carpeta.mkdir(parents=True, exist_ok=True)
         for p in pistas:
             notas = [n for c in p["clips"] for n in ({**x, "start_beat": x["start_beat"] + c["start"]} for x in (c["notes"] or []))]
-            if p["name"] not in ("KICK", "BASS", "DRUMS", "PERC", "TOP") or not notas:
+            if p["name"] not in ("KICK", "BASS", "DRUMS", "PERC", "TOP", "MOTIVO") or not notas:
                 continue
             archivo = mido.MidiFile(ticks_per_beat=480)
             pista = mido.MidiTrack()
