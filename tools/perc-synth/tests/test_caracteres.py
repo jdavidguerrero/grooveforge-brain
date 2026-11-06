@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from gf_perc.caracteres import CARACTERES_KICK, COLAS_KICK, huella_kick, mas_lejanas, nota_grave, rasgos_kick, sintetizar_caracter, sintetizar_cola
+from gf_perc.caracteres import GRUPOS_DRUMS, MATERIALES_DRUMS, sintetizar_drum, CARACTERES_KICK, COLAS_KICK, huella_kick, mas_lejanas, nota_grave, rasgos_kick, sintetizar_caracter, sintetizar_cola
 from gf_perc.kit import sintetizar_voz
 
 
@@ -124,3 +124,28 @@ def test_nota_grave_tonica_o_quinta():
 def test_cola_sana(cola):
     y, m = sintetizar_cola(cola, "organic", "F", "menor")
     assert np.isfinite(y).all() and 0.5 < np.abs(y).max() <= 1.0 and m["cola"] == cola
+
+
+@pytest.mark.parametrize("grupo", list(GRUPOS_DRUMS))
+def test_materiales_de_drums_se_distinguen(grupo):
+    voz = GRUPOS_DRUMS[grupo][0]
+    h = {m: huella_kick(sintetizar_drum(voz, m, "organic", "A", "menor")[0]) for m in MATERIALES_DRUMS}
+    nombres = list(h)
+    for i, a in enumerate(nombres):
+        for b in nombres[i + 1 :]:
+            assert np.linalg.norm(h[a] - h[b]) > 1.0, (grupo, a, b)
+
+
+def test_clave_y_snare_afinadas_y_hats_sin_nota():
+    assert sintetizar_drum("clave", "MADERA", "organic", "A", "lidia_dominante")[1]["nota_midi"] is not None
+    assert sintetizar_drum("snare", "PIEL", "organic", "A", "menor")[1]["nota_midi"] is not None
+    assert sintetizar_drum("hat_cerrado", "MADERA", "organic", "A", "menor")[1]["nota_midi"] is None
+
+
+def test_hat_abierto_dura_mas_y_tanda_cambia_el_sonido():
+    for m in MATERIALES_DRUMS:
+        c = sintetizar_drum("hat_cerrado", m, "organic", "A", "menor")[0]
+        a = sintetizar_drum("hat_abierto", m, "organic", "A", "menor")[0]
+        assert len(a) > 1.5 * len(c)
+    x, y = (sintetizar_drum("snare", "PIEL", "organic", "A", "menor", t)[0] for t in (1, 2))
+    assert len(x) != len(y) or not np.array_equal(x, y)

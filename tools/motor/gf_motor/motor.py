@@ -17,7 +17,9 @@ import gf_log  # noqa: E402
 import numpy as np  # noqa: E402
 import soundfile as sf  # noqa: E402
 from gf_perc.core import SR  # noqa: E402
-from gf_perc.caracteres import COLAS_KICK, sintetizar_cola  # noqa: E402
+from gf_perc.caracteres import COLAS_KICK, GRUPOS_DRUMS, MATERIALES_DRUMS, sintetizar_cola, sintetizar_drum  # noqa: E402
+from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
+from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .bajo import FAMILIAS, patron  # noqa: E402
 from .borrador import PLANTILLAS, clip_kick, clips_guia  # noqa: E402
@@ -28,6 +30,7 @@ from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
 
 LETRAS = "ABCDEFGH"
 TAMANO_RACK = 3
+CHOKE_HATS = 1
 
 
 class SetProtegido(ErrorLive):
@@ -72,6 +75,7 @@ class Motor:
             e.setdefault("racks", [])
             e.setdefault("rack", None)
             e.setdefault("registros", [])
+            e.setdefault("drums", {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
         return None
@@ -138,6 +142,7 @@ class Motor:
             "rack": None,
             "elegido": None,
             "registros": [],
+            "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
         self._guardar()
@@ -365,6 +370,102 @@ class Motor:
         self._guardar()
         self._evento("edicion", parte="bajo", pista=b["pista"], patron=b["actual"], clips=[b["revision"]])
         return e
+
+    # ── Drums (motor-drums.md) ────────────────────────────────────────
+    def cambiar_tonalidad(self, raiz: str, modo: str) -> dict:
+        """Afecta solo a lo que se genere después."""
+        e = self._exigir_estado()
+        clase_de(raiz)
+        if modo not in MODOS:
+            raise ValueError(f"Modo desconocido: {modo!r}")
+        if (e["partida"]["raiz"], e["partida"]["modo"]) != (raiz, modo):
+            e["partida"].update(raiz=raiz, modo=modo)
+            self._guardar()
+            self._evento("tonalidad", raiz=raiz, modo=modo)
+        return e
+
+    def _carpeta_drums(self) -> Path:
+        assert self.estado
+        p = self.estado["partida"]
+        return self.carpeta_live / "00 Motor" / f"DRUMS {p['genero']} {p['raiz']} {p['modo']} {self.estado['id'][:4]}"
+
+    def generar_drums(self) -> dict:
+        e = self._exigir_estado()
+        self._exigir_library()
+        p = e["partida"]
+        d = e["drums"]
+        d["tandas"] += 1
+        tanda = d["tandas"]
+        carpeta = self._carpeta_drums()
+        carpeta.mkdir(parents=True, exist_ok=True)
+        nuevas = []
+        for grupo, voces in GRUPOS_DRUMS.items():
+            for material in MATERIALES_DRUMS:
+                archivos = {}
+                nota = None
+                for voz in voces:
+                    y, meta = sintetizar_drum(voz, material, p["genero"], p["raiz"], p["modo"], tanda)
+                    ruta = carpeta / f"{voz}_{material.lower()}_{p['raiz']}_{p['modo']}_t{tanda}.wav"
+                    sf.write(ruta, np.asarray(y), SR, subtype="PCM_24")
+                    archivos[voz] = str(ruta)
+                    nota = meta.get("nota_midi")
+                nuevas.append({"id": f"{grupo.lower()}-{material.lower()}-{tanda}", "grupo": grupo, "material": material, "tanda": tanda, "archivos": archivos, "nota_midi": nota, "raiz": p["raiz"], "modo": p["modo"]})
+        d["opciones"].extend(nuevas)
+        self._guardar()
+        self._evento("opciones", parte="drums", tanda=tanda, opciones=[o["id"] for o in nuevas])
+        return e
+
+    def ruta_drum(self, ident: str, voz: str) -> Path:
+        e = self._exigir_estado()
+        for o in e["drums"]["opciones"]:
+            if o["id"] == ident and voz in o["archivos"]:
+                return Path(o["archivos"][voz])
+        raise ValueError(f"No existe {ident!r} para {voz!r}")
+
+    def elegir_drum(self, ident: str) -> dict:
+        """Al completar los cuatro grupos se crea el rack; cambiar uno después crea el siguiente."""
+        e = self._exigir_estado()
+        d = e["drums"]
+        op = next((o for o in d["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe la opción {ident!r}")
+        d["seleccion"][op["grupo"]] = ident
+        if len(d["seleccion"]) == len(GRUPOS_DRUMS):
+            self._crear_rack_drums()
+        self._guardar()
+        return e
+
+    def _crear_rack_drums(self) -> None:
+        assert self.estado
+        e = self.estado
+        d = e["drums"]
+        self._exigir_library()
+        por_id = {o["id"]: o for o in d["opciones"]}
+        wavs, notas, pads = [], [], []
+        for grupo, voces in GRUPOS_DRUMS.items():
+            op = por_id[d["seleccion"][grupo]]
+            for voz in voces:
+                wavs.append(Path(op["archivos"][voz]))
+                notas.append(NOTAS_PERC[voz])
+                pads.append({"voz": voz, "nota": NOTAS_PERC[voz], "id": op["id"], "material": op["material"]})
+        numero = len(d["racks"]) + 1
+        nombre = f"{self._carpeta_drums().name} R{numero}"
+        ruta = self._carpeta_drums() / f"{nombre}.adg"
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        crear_rack(wavs, nombre, ruta, notas=notas, choke={NOTAS_PERC["hat_cerrado"]: CHOKE_HATS, NOTAS_PERC["hat_abierto"]: CHOKE_HATS})
+        rack = {"nombre": nombre, "ruta": str(ruta), "pista": "DRUMS", "pads": pads, "cargado": False, "motivo": None}
+        try:
+            self._exigir_set_editable()
+            if self.live.indice_pista("DRUMS") is None:
+                self.live.crear_pista_midi("DRUMS")
+            self.live.cargar_rack([self.carpeta_live.name, "00 Motor", self._carpeta_drums().name, ruta.name], "DRUMS")
+            rack["cargado"] = True
+        except ErrorLive as exc:
+            rack["motivo"] = str(exc)
+        d["rack"] = rack
+        d["racks"].append(rack)
+        presentadas = [o["id"] for o in d["opciones"]]
+        self._evento("seleccion", parte="drums", seleccion=dict(d["seleccion"]), presentadas=presentadas, escuchadas="unknown", rack=nombre, cargado=rack["cargado"])
 
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:

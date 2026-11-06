@@ -645,6 +645,118 @@ def test_template_no_recibe_patron(tmp_path, monkeypatch):
     live.cerrar()
 
 
+# ── Drums ──
+_NOTAS_DRUMS = {"clave": 47, "snare": 48, "clap": 49, "hat_cerrado": 52, "hat_abierto": 53}
+
+
+def _drums_listo(motor):
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_drums()
+    for g in ("clave", "snare", "clap"):
+        motor.elegir_drum(f"{g}-piel-1")
+    return motor.elegir_drum("hats-madera-1")
+
+
+def test_generar_drums_tres_materiales_por_voz(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    d = motor.generar_drums()["drums"]
+    assert len(d["opciones"]) == 12 and {o["material"] for o in d["opciones"]} == {"MADERA", "PIEL", "808"}
+    for o in d["opciones"]:
+        for ruta in o["archivos"].values():
+            y, _ = sf.read(ruta)
+            assert abs(y).max() > 0.05
+    hats = next(o for o in d["opciones"] if o["grupo"] == "HATS")
+    assert set(hats["archivos"]) == {"hat_cerrado", "hat_abierto"}
+    assert d["rack"] is None and not list(motor.carpeta_live.rglob("*.adg"))
+
+
+def test_rack_de_drums_notas_choke_y_pista(entorno):
+    live, motor = entorno
+    d = _drums_listo(motor)["drums"]
+    r = d["rack"]
+    assert r["cargado"] and r["pista"] == "DRUMS" and live.cargas[-1][1] == "DRUMS"
+    assert any(p["name"] == "DRUMS" for p in live.pistas)
+    assert {p["voz"]: p["nota"] for p in r["pads"]} == _NOTAS_DRUMS
+    raiz = ET.fromstring(gzip.decompress(open(r["ruta"], "rb").read()))
+    pads = raiz.findall("GroupDevicePreset/BranchPresets/DrumBranchPreset")
+    assert sorted(128 - int(p.find("ZoneSettings/ReceivingNote").get("Value")) for p in pads) == sorted(_NOTAS_DRUMS.values())
+    assert _eventos("motor_seleccion")[-1]["parte"] == "drums"
+
+
+def test_cambiar_una_voz_crea_el_siguiente_rack(entorno):
+    live, motor = entorno
+    primero = _drums_listo(motor)["drums"]["rack"]["nombre"]
+    d = motor.elegir_drum("snare-808-1")["drums"]
+    assert d["rack"]["nombre"] != primero and len(d["racks"]) == 2 and len(live.cargas) == 2
+    assert next(p for p in d["rack"]["pads"] if p["voz"] == "snare")["material"] == "808"
+
+
+def test_no_hay_rack_hasta_elegir_las_cuatro(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_drums()
+    motor.elegir_drum("clave-piel-1")
+    motor.elegir_drum("clave-madera-1")
+    assert motor.estado["drums"]["rack"] is None and motor.estado["drums"]["seleccion"] == {"CLAVE": "clave-madera-1"}
+    with pytest.raises(ValueError):
+        motor.elegir_drum("no-existe")
+
+
+def test_tonalidad_afecta_solo_lo_nuevo(entorno):
+    _, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    motor.generar_drums()
+    motor.cambiar_tonalidad("A", "lidia_dominante")
+    d = motor.generar_drums()["drums"]
+    assert d["opciones"][0]["modo"] == "menor" and d["opciones"][-1]["modo"] == "lidia_dominante"
+    with pytest.raises(ValueError):
+        motor.cambiar_tonalidad("A", "inventado")
+    assert _eventos("motor_tonalidad")[0]["modo"] == "lidia_dominante"
+
+
+def test_template_no_recibe_rack_de_drums(tmp_path, monkeypatch):
+    monkeypatch.setenv("GF_DATASET", str(tmp_path / "d"))
+    monkeypatch.setenv("GF_RACK_PLANTILLA", str(_plantilla(tmp_path / "m.adg")))
+    live = LiveSimulado("/x/TEMPLATE.als")
+    (tmp_path / "L").mkdir()
+    motor = Motor(ClienteLive(puerto=live.puerto), tmp_path / "L", BrainFalso())
+    r = _drums_listo(motor)["drums"]["rack"]
+    assert not r["cargado"] and not live.cargas and len(live.pistas) == 2
+    live.cerrar()
+
+
+def test_rack_real_con_choke_si_existe_la_plantilla(tmp_path, monkeypatch):
+    from gf_motor.rack import plantilla_por_defecto
+
+    monkeypatch.delenv("GF_RACK_PLANTILLA", raising=False)
+    if not plantilla_por_defecto().exists():
+        pytest.skip("Sin la plantilla de Juan")
+    a, b = tmp_path / "a.wav", tmp_path / "b.wav"
+    sf.write(a, [0.1] * 4800, 48000, subtype="PCM_24")
+    sf.write(b, [0.1] * 4800, 48000, subtype="PCM_24")
+    destino = tmp_path / "r.adg"
+    assert crear_rack([a, b], "R", destino, notas=[48, 52], choke={52: 1}) == [48, 52]
+    raiz = ET.fromstring(gzip.decompress(destino.read_bytes()))
+    pads = raiz.findall("GroupDevicePreset/BranchPresets/DrumBranchPreset")
+    assert [p.find("ZoneSettings/ChokeGroup").get("Value") for p in pads] == ["0", "1"]
+    assert [p.find("ZoneSettings/ReceivingNote").get("Value") for p in pads] == ["80", "76"]
+
+
+def test_nombre_de_rack_drums_se_reemplaza():
+    import types
+
+    c = _comandos()
+    s = _Cancion("DRUMS")
+    p = s.tracks[0]
+    p.devices = [types.SimpleNamespace(name=n) for n in ("DRUMS organic A lidia_dominante abcd R1", "Mi kit", "GF Brasil")]
+    rack = types.SimpleNamespace(name="DRUMS organic A menor abcd R2.adg", children=(), is_loadable=True)
+    carpeta = types.SimpleNamespace(name="Lib", children=(rack,), is_loadable=False)
+    navegador = types.SimpleNamespace(user_folders=[carpeta], load_item=lambda _i: p.devices.append(types.SimpleNamespace(name="DRUMS organic A menor abcd R2")))
+    assert c.intentar_cargar(s, navegador, ["Lib", rack.name], "DRUMS")
+    assert [d.name for d in p.devices] == ["Mi kit", "GF Brasil", "DRUMS organic A menor abcd R2"]
+
+
 # ── Estado y registro ──
 def test_la_sesion_sobrevive_a_reiniciar_el_motor(entorno, tmp_path):
     live, motor = entorno

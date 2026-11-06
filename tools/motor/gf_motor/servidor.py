@@ -6,7 +6,7 @@ import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from .borrador import COLORES, PLANTILLAS
 from .live import PUERTO, ClienteLive, ErrorLive
@@ -30,6 +30,9 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "bajo_capas": lambda d: motor.cargar_capas(),
         "bajo_capa": lambda d: motor.usar_capa(d["nombre"]),
         "bajo_revisar": lambda d: motor.revisar_bajo(),
+        "drums": lambda d: motor.generar_drums(),
+        "drum_elegir": lambda d: motor.elegir_drum(d["id"]),
+        "tonalidad": lambda d: motor.cambiar_tonalidad(d["raiz"], d["modo"]),
         "registrar": lambda d: motor.registrar(d.get("sonido", ""), d.get("kick", ""), d.get("nota", "")),
     }
 
@@ -68,6 +71,12 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
                     g: [{"nombre": n, "compases": c, "color": f"#{COLORES[n]:06X}"} for n, c in bloques] for g, bloques in PLANTILLAS.items()
                 }
                 return self._json(200, {"live": live, "sesion": motor.estado, "plantillas": plantillas})
+            if ruta.startswith("/drum/"):
+                try:
+                    _, _, ident, voz = ruta.split("/")
+                    return self._enviar(200, motor.ruta_drum(unquote(ident), unquote(voz)).read_bytes(), "audio/wav")
+                except (ValueError, OSError) as exc:
+                    return self._json(404, {"error": str(exc)})
             if ruta.startswith("/audio/"):
                 try:
                     return self._enviar(200, motor.ruta_opcion(ruta.rsplit("/", 1)[-1]).read_bytes(), "audio/wav")

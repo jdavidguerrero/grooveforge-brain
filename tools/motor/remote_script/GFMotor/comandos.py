@@ -5,7 +5,7 @@ import re
 from .buscar import buscar_item
 
 # Solo el nombre exacto que genera el motor: un rack de Juan nunca coincide y nunca se borra.
-_RACK_DEL_MOTOR = re.compile(r"^KICK \S+ \S+ \S+ [0-9a-f]{4} R\d+$")
+_RACK_DEL_MOTOR = re.compile(r"^(KICK|DRUMS) \S+ \S+ \S+ [0-9a-f]{4} R\d+$")
 
 
 class ErrorComando(Exception):

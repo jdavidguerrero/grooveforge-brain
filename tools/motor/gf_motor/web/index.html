@@ -76,6 +76,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="arrangement" class="tab">Arrangement<i></i></button>
     <button data-ir="kick" class="tab">Kick<i></i></button>
     <button data-ir="bajo" class="tab">Bajo<i></i></button>
+    <button data-ir="drums" class="tab">Drums<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -88,7 +89,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div class="campos">
       <label>Género <select id="genero"><option value="organic">Organic</option></select></label>
       <label>Tonalidad <select id="raiz"></select></label>
-      <label>Modo <select id="modo"><option value="menor">Menor</option><option value="dorico">Dórico</option><option value="frigio">Frigio</option><option value="mayor">Mayor</option></select></label>
+      <label>Modo <select id="modo"><option value="menor">Menor</option><option value="dorico">Dórico</option><option value="frigio">Frigio</option><option value="lidia_dominante">Lidia dominante</option><option value="mayor">Mayor</option></select></label>
       <label>BPM <input id="bpm" type="number" min="60" max="200" step="0.5" value="122"></label>
     </div>
     <button id="b-partida">Empezar</button>
@@ -151,6 +152,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button id="b-bajo-revisar" disabled>Registrar lo que cambié</button>
     <div id="r-bajo-revisar"></div>
   </section>
+  <section id="s-drums" class="bloq" data-seccion="drums">
+    <div class="num">1</div>
+    <h2>Rack de batería</h2>
+    <p>Elige un sonido para clave, snare, clap y hats. Al completar los cuatro, el rack queda puesto en <code>DRUMS</code>; si cambias uno, se reemplaza. Usa las notas de tus patrones (47, 48, 49, 52, 53), y el hat cerrado corta al abierto.</p>
+    <div class="fila"><button id="b-drums" disabled>Generar</button><span id="contador-drums" class="contador"></span></div>
+    <div id="r-drums"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -221,6 +230,8 @@ for (const b of document.querySelectorAll(".tab")) b.onclick = () => irA(b.datas
 function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}"]`).classList.toggle("lista", lista); }
 function pintar(s) {
   marcar("registro", !!s?.registros?.length);
+  marcar("drums", !!s?.drums?.rack);
+  if (s) pintarDrums(s.drums);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
     $("b-partida").textContent = "Nueva sesión";
@@ -230,7 +241,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -247,6 +258,40 @@ function pintar(s) {
   pintarBajo(s.bajo);
   $("s-revisar").classList.toggle("hecho", !!s.ultima_revision);
   if (s.ultima_revision) { const p=document.createElement("pre"); p.textContent=s.ultima_revision.map(resumen).join("\n"); $("r-revisar").replaceChildren(p); }
+}
+const GRUPOS_DRUM = ["CLAVE","SNARE","CLAP","HATS"];
+function pintarDrums(d) {
+  $("s-drums").classList.toggle("hecho", !!d.rack);
+  if (d.tandas) $("b-drums").textContent = "Otra tanda";
+  $("contador-drums").textContent = d.tandas ? `${Object.keys(d.seleccion).length} de 4 elegidos` : "";
+  const nodos = [];
+  if (d.rack) {
+    const r = document.createElement("p"); r.className = "ok";
+    r.textContent = d.rack.cargado ? `Rack ${d.rack.nombre} puesto en ${d.rack.pista}.` : `Rack creado, pero no pude ponerlo en ${d.rack.pista}: ${d.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
+    nodos.push(r);
+  }
+  for (const g of GRUPOS_DRUM) {
+    const opciones = d.opciones.filter(o => o.grupo === g);
+    if (!opciones.length) continue;
+    const t = document.createElement("div"); t.className = "tanda"; t.textContent = g; nodos.push(t);
+    for (const o of opciones) {
+      const elegido = d.seleccion[g] === o.id;
+      for (const voz of Object.keys(o.archivos)) {
+        const f = document.createElement("div"); f.className = "op" + (elegido ? " sel" : "");
+        const l = document.createElement("b"); l.textContent = `${o.material} ${o.tanda}`;
+        const c = document.createElement("small"); c.textContent = g === "HATS" ? (voz === "hat_abierto" ? "ABIERTO" : "CERRADO") : `${o.raiz} ${o.modo}`; l.append(c);
+        const a = document.createElement("audio"); a.controls = true; a.preload = "none"; a.src = `/drum/${encodeURIComponent(o.id)}/${voz}`;
+        f.append(l, a);
+        if (voz === Object.keys(o.archivos)[0]) {
+          const b = document.createElement("button"); b.className = "sec"; b.textContent = elegido ? "Elegido" : "Elegir"; b.disabled = elegido;
+          b.onclick = () => accion("drum_elegir", {id:o.id}, b);
+          f.append(b);
+        } else f.append(document.createElement("span"));
+        nodos.push(f);
+      }
+    }
+  }
+  $("r-drums").replaceChildren(...nodos);
 }
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
@@ -349,6 +394,10 @@ $("b-guia").onclick = e => accion("guia", {}, e.target);
 $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
+$("b-drums").onclick = e => accion("drums", {}, e.target);
+for (const id of ["raiz","modo"]) $(id).onchange = () => {
+  if ($("b-partida").textContent === "Nueva sesión") accion("tonalidad", {raiz:$("raiz").value, modo:$("modo").value}, $("b-partida"));
+};
 $("b-registrar").onclick = e => accion("registrar", {sonido:$("reg-sonido").value, kick:$("reg-kick").value, nota:$("reg-nota").value}, e.target);
 $("b-bajo-patrones").onclick = e => accion("bajo_patrones", {}, e.target);
 $("b-bajo-capas").onclick = e => accion("bajo_capas", {}, e.target);

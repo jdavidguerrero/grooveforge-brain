@@ -83,6 +83,21 @@ def sintetizar_cola(cola: str, genero: str, raiz: str, modo: str, tanda: int = 1
     return y, {**meta, "cola": cola, "seca": c.seca, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": nota}
 
 
+# §Motor de drums: `apps/docs/produccion/motor-drums.md`.
+MATERIALES_DRUMS = {"MADERA": "madera", "PIEL": "piel", "808": "clasico"}
+GRUPOS_DRUMS = {"CLAVE": ("clave",), "SNARE": ("snare",), "CLAP": ("clap",), "HATS": ("hat_cerrado", "hat_abierto")}
+_VARIACION_DRUMS = 0.6
+
+
+def sintetizar_drum(voz: str, material: str, genero: str, raiz: str, modo: str, tanda: int = 1, velocity: float = 0.85) -> tuple[np.ndarray, dict]:
+    """La tanda 1 es la versión base; las siguientes varían con la semilla."""
+    mat = MATERIALES_DRUMS[material]
+    notas = notas_de(genero, raiz, modo)
+    afinar = 440.0 * 2 ** ((notas[voz] - 69) / 12) if voz in notas else None
+    y, meta = sintetizar_voz(voz, mat, velocity, tanda * 1000, 1, _VARIACION_DRUMS if tanda > 1 else 0.0, afinar_hz=afinar)
+    return y, {**meta, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": notas.get(voz)}
+
+
 def sintetizar_caracter(caracter: str, genero: str, raiz: str, modo: str, seed_timbre: int = 1, velocity: float = 0.85, variacion: float = VARIACION) -> tuple[np.ndarray, dict]:
     c = CARACTERES_KICK[caracter]
     nota = notas_de(genero, raiz, modo)["kick"]
