@@ -27,11 +27,16 @@ from .brain import BAJOS_CONOCIDOS, Brain  # noqa: E402
 from .drums import analizar, clip_drums, opciones as opciones_drums  # noqa: E402
 from .edicion import diferencia  # noqa: E402
 from .live import ClienteLive, ErrorLive  # noqa: E402
+from .tops import candidatos, clip_loop, encaje, leer_midi  # noqa: E402
 from .rack import NOTA_PRIMER_PAD, crear_rack  # noqa: E402
 
 LETRAS = "ABCDEFGH"
 TAMANO_RACK = 3
 CHOKE_HATS = 1
+
+
+def _tops_vacio() -> dict:
+    return {r: {"opciones": [], "actual": None, "clip": None, "pista": None} for r in ("perc", "top")}
 
 
 class SetProtegido(ErrorLive):
@@ -77,6 +82,7 @@ class Motor:
             e.setdefault("rack", None)
             e.setdefault("registros", [])
             e.setdefault("drums", {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None})
+            e.setdefault("tops", _tops_vacio())
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -144,6 +150,7 @@ class Motor:
             "rack": None,
             "elegido": None,
             "registros": [],
+            "tops": _tops_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
@@ -518,6 +525,54 @@ class Motor:
         self._evento("borrador", parte="patron_drums", pista=pista, patron=nombre, clave=op["clave"], analisis=p["analisis"])
         return e
 
+    # ── Tops (motor-tops.md) ──────────────────────────────────────────
+    def proponer_tops(self, rol: str) -> dict:
+        """Solo lee Live y la Library."""
+        e = self._exigir_estado()
+        self._exigir_library()
+        if rol not in e["tops"]:
+            raise ValueError(f"Papel desconocido: {rol!r}")
+        kick, bajo = self._notas_de("KICK"), self._notas_de("BASS")
+        a = analizar(kick, bajo)
+        clave = sorted({round(n["start_beat"] * 4) % 16 for n in self._notas_de("DRUMS") if n["pitch"] == 47})
+        opciones = candidatos(self.carpeta_live, rol, e["partida"]["genero"])
+        for o in opciones:
+            notas, _ = leer_midi(self.carpeta_live / o["ruta"])
+            o["encaje"] = encaje(notas, a["kick"], a["bajo"], clave)
+        e["tops"][rol]["opciones"] = opciones
+        self._guardar()
+        self._evento("opciones", parte=rol, opciones=[{k: o[k] for k in ("id", "nombre", "decision_juan", "encaje")} for o in opciones])
+        return e
+
+    def poner_top(self, rol: str, ident: str) -> dict:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        estado = e["tops"].get(rol)
+        if estado is None:
+            raise ValueError(f"Papel desconocido: {rol!r}")
+        op = next((o for o in estado["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe la opción {ident!r}")
+        notas, largo = leer_midi(self.carpeta_live / op["ruta"])
+        clip = clip_loop(op["nombre"], notas, largo)
+        base = rol.upper()
+        pista = estado["pista"] or base
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = estado["clip"] is not None and leido is not None and diferencia(estado["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                pista = self._nombre_libre(f"{base} propuesta")
+                indice = self.live.crear_pista_midi(pista)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        estado.update(actual=ident, clip=clip, pista=pista)
+        self._guardar()
+        self._evento("borrador", parte=rol, pista=pista, origen=op["ruta"], grupo=op["grupo"], decision_juan=op["decision_juan"], encaje=op.get("encaje"))
+        return e
+
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:
         """Solo lee Live. Guarda todas las notas del set y los MIDI de kick y bajo; nunca sobrescribe un registro."""
@@ -579,7 +634,7 @@ class Motor:
         carpeta.mkdir(parents=True, exist_ok=True)
         for p in pistas:
             notas = [n for c in p["clips"] for n in ({**x, "start_beat": x["start_beat"] + c["start"]} for x in (c["notes"] or []))]
-            if p["name"] not in ("KICK", "BASS") or not notas:
+            if p["name"] not in ("KICK", "BASS", "DRUMS", "PERC", "TOP") or not notas:
                 continue
             archivo = mido.MidiFile(ticks_per_beat=480)
             pista = mido.MidiTrack()

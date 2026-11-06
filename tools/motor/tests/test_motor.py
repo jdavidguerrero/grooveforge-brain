@@ -16,6 +16,7 @@ from gf_motor.borrador import COLORES, PLANTILLAS, clip_kick, clips_guia
 from gf_motor.drums import CLAVE, CLAP, HAT_ABIERTO, HAT_CERRADO, SNARE, analizar, clip_drums, opciones as opciones_drums
 from gf_motor.edicion import diferencia
 from gf_motor.brain import cc_de_capa
+from gf_motor.tops import candidatos, clip_loop, encaje, leer_midi
 from gf_motor.live import ClienteLive, ErrorLive
 from gf_motor.motor import Motor, SetProtegido, gf_log
 from gf_motor.servidor import crear_servidor
@@ -853,6 +854,136 @@ def test_clip_ajeno_en_drums_no_se_pisa(entorno):
     motor.proponer_patrones_drums()
     assert motor.poner_patron_drums("CONTRA")["drums"]["patrones"]["pista"] == "DRUMS propuesta"
     assert next(p for p in live.pistas if p["name"] == "DRUMS")["clips"][0]["name"] == "mio"
+
+
+# ── Tops ──
+def _mid(ruta, notas, tpb=480):
+    import mido
+
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    m = mido.MidiFile(ticks_per_beat=tpb)
+    p = mido.MidiTrack()
+    m.tracks.append(p)
+    ev = []
+    for b, d, n, v in notas:
+        ev += [(round(b * tpb), 1, n, v), (round((b + d) * tpb), 0, n, 0)]
+    ahora = 0
+    for tiempo, on, n, v in sorted(ev, key=lambda x: (x[0], x[1])):
+        p.append(mido.Message("note_on" if on else "note_off", note=n, velocity=v, time=tiempo - ahora))
+        ahora = tiempo
+    m.save(ruta)
+
+
+def _catalogo_tops(lib):
+    filas = []
+
+    def fila(i, nombre, rol="perc", grupo="patron:a", seccion="peak", decision=None, rack="tribe", genero="organic_house", sha=None, version=1):
+        ruta = f"03 Drums MIDI/x/{nombre}.mid"
+        _mid(lib / ruta, [(0.269, 0.25, 53, 100), (15.5, 0.25, 53, 60)])
+        filas.append({"id": f"i{i}", "ruta": ruta, "tipo": "midi", "rol": rol, "genero": genero, "rack": rack, "grupo": grupo, "seccion": seccion, "version": version, "decision_juan": decision, "sha256": sha or f"s{i}"})
+
+    fila(1, "resto", seccion="peak")
+    fila(2, "fav", decision="favorito", grupo="patron:b")
+    fila(3, "sel_main", decision="seleccion", seccion="main", grupo="patron:c")
+    fila(4, "sel_peak", decision="seleccion", grupo="patron:c")
+    fila(5, "sel_peak2", decision="seleccion", grupo="patron:c", version=2)
+    fila(6, "sel_peak3", decision="seleccion", grupo="patron:c", version=3)
+    fila(7, "copia", decision="seleccion", grupo="patron:d", sha="dup")
+    fila(8, "copia2", decision="seleccion", grupo="patron:d", sha="dup")
+    fila(9, "otro_rack", rack="808")
+    fila(10, "otro_genero", genero="afro_house")
+    fila(11, "top", rol="top")
+    (lib / "_catalogo").mkdir(parents=True, exist_ok=True)
+    (lib / "_catalogo" / "catalogo.jsonl").write_text("".join(json.dumps(f) + "\n" for f in filas))
+
+
+def test_candidatos_orden_diversidad_y_filtros(tmp_path):
+    _catalogo_tops(tmp_path)
+    c = candidatos(tmp_path, "perc", "organic")
+    assert [x["nombre"] for x in c] == ["sel_peak", "copia", "sel_peak2", "fav", "resto"]
+    assert all(x["nombre"] not in ("otro_rack", "otro_genero", "top") for x in c)
+    assert [x["nombre"] for x in candidatos(tmp_path, "top", "organic")] == ["top"]
+    with pytest.raises(ValueError):
+        candidatos(tmp_path, "perc", "inventado")
+    with pytest.raises(ValueError, match="catálogo"):
+        candidatos(tmp_path / "vacio", "perc", "organic")
+
+
+def test_leer_midi_conserva_microtiming_y_largo(tmp_path):
+    r = tmp_path / "a.mid"
+    _mid(r, [(0.269, 0.25, 53, 56), (15.5, 0.25, 53, 86), (15.5, 0.25, 44, 70)])
+    notas, largo = leer_midi(r)
+    assert largo == 16 and notas[0] == {"pitch": 53, "start_beat": 0.2687, "duration_beats": 0.25, "velocity": 56} or abs(notas[0]["start_beat"] - 0.269) < 0.002
+    assert len(notas) == 3 and {n["pitch"] for n in notas} == {53, 44}
+
+
+def test_microtiming_no_alarga_el_loop(tmp_path):
+    r = tmp_path / "a.mid"
+    _mid(r, [(0.0, 0.25, 53, 90), (15.9, 0.2, 53, 90)])
+    assert leer_midi(r)[1] == 16
+    r2 = tmp_path / "b.mid"
+    _mid(r2, [(0.0, 0.25, 53, 90), (16.03, 0.2, 53, 90)])
+    assert leer_midi(r2)[1] == 16
+    r3 = tmp_path / "c.mid"
+    _mid(r3, [(0.0, 0.25, 53, 90), (18.0, 0.2, 53, 90)])
+    assert leer_midi(r3)[1] == 20
+
+
+def test_clip_loop_repite_hasta_16_compases():
+    notas = [{"pitch": 53, "start_beat": 0.269, "duration_beats": 0.25, "velocity": 90}]
+    c = clip_loop("x", notas, 16.0)
+    assert c["longitud"] == 64 and [n["start_beat"] for n in c["notas"]] == [0.269, 16.269, 32.269, 48.269]
+    assert len(clip_loop("x", notas, 4.0)["notas"]) == 16
+
+
+def test_encaje_informa_sin_descartar():
+    n = [{"pitch": 1, "start_beat": b, "duration_beats": 0.1, "velocity": 100} for b in (0.0, 0.75, 1.5, 2.25)] + [{"pitch": 1, "start_beat": 3.25, "duration_beats": 0.1, "velocity": 40}]
+    assert encaje(n, [0], [3], [6, 9]) == {"kick": 25, "bajo": 25, "clave": 50, "golpes": 4}
+    assert encaje([], [0], [], [])["golpes"] == 0
+
+
+def test_tops_proponer_solo_lee_y_poner_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _catalogo_tops(motor.carpeta_live)
+    motor.partida("organic", "A", "lidia_dominante", 122)
+    live.pistas[1]["clips"] = [{"start": 0.0, "length": 64.0, "notes": _compases((0, 4, 8, 12)), "name": "KICK", "color": None}]
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    op = motor.proponer_tops("perc")["tops"]["perc"]["opciones"]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert op[0]["encaje"]["golpes"] > 0
+    motor.poner_top("perc", op[0]["id"])
+    perc = next(p for p in live.pistas if p["name"] == "PERC")
+    assert perc["clips"][0]["length"] == 64 and len(perc["clips"][0]["notes"]) == 8
+    assert abs(perc["clips"][0]["notes"][0]["start_beat"] - 0.269) < 0.002
+    motor.poner_top("perc", op[1]["id"])
+    assert len(perc["clips"]) == 1 and perc["clips"][0]["name"] == op[1]["nombre"]
+    perc["clips"][0]["notes"] = perc["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(perc)
+    assert motor.poner_top("perc", op[0]["id"])["tops"]["perc"]["pista"] == "PERC propuesta"
+    assert perc == copia
+    assert not any("TRIBE" in p["name"].upper() for p in live.pistas)
+    with pytest.raises(ValueError):
+        motor.poner_top("otro", "x")
+
+
+def test_top_va_en_su_pista(entorno):
+    live, motor = entorno
+    _catalogo_tops(motor.carpeta_live)
+    motor.partida("organic", "A", "menor", 122)
+    op = motor.proponer_tops("top")["tops"]["top"]["opciones"]
+    motor.poner_top("top", op[0]["id"])
+    assert any(p["name"] == "TOP" and p["clips"] for p in live.pistas)
+
+
+def test_sesion_antigua_sin_tops_se_completa(entorno):
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    ruta = motor._carpeta() / "estado.json"
+    viejo = json.loads(ruta.read_text())
+    del viejo["tops"]
+    ruta.write_text(json.dumps(viejo))
+    assert Motor(ClienteLive(puerto=live.puerto), motor.carpeta_live, BrainFalso()).estado["tops"]["perc"]["opciones"] == []
 
 
 # ── Estado y registro ──

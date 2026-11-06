@@ -33,6 +33,8 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "drums": lambda d: motor.generar_drums(),
         "drum_patrones": lambda d: motor.proponer_patrones_drums(),
         "drum_poner": lambda d: motor.poner_patron_drums(d["nombre"]),
+        "tops_proponer": lambda d: motor.proponer_tops(d["rol"]),
+        "tops_poner": lambda d: motor.poner_top(d["rol"], d["id"]),
         "drum_elegir": lambda d: motor.elegir_drum(d["id"]),
         "tonalidad": lambda d: motor.cambiar_tonalidad(d["raiz"], d["modo"]),
         "registrar": lambda d: motor.registrar(d.get("sonido", ""), d.get("kick", ""), d.get("nota", "")),

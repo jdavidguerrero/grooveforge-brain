@@ -77,6 +77,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="kick" class="tab">Kick<i></i></button>
     <button data-ir="bajo" class="tab">Bajo<i></i></button>
     <button data-ir="drums" class="tab">Drums<i></i></button>
+    <button data-ir="tops" class="tab">Tops<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -168,6 +169,22 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-drum-patrones"></div>
   </section>
 
+  <section id="s-tops-perc" class="bloq" data-seccion="tops">
+    <div class="num">1</div>
+    <h2>Perc</h2>
+    <p>Tus patrones para Tribe, con lo que ya elegiste primero. Quedan como clip editable de 16 compases en <code>PERC</code>. Carga Tribe a mano una vez en esa pista.</p>
+    <button id="b-tops-perc" disabled>Ver opciones</button>
+    <div id="r-tops-perc"></div>
+  </section>
+
+  <section id="s-tops-top" class="bloq" data-seccion="tops">
+    <div class="num">2</div>
+    <h2>Top</h2>
+    <p>Lo mismo para el movimiento continuo, en la pista <code>TOP</code>.</p>
+    <button id="b-tops-top" disabled>Ver opciones</button>
+    <div id="r-tops-top"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -239,7 +256,8 @@ function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}
 function pintar(s) {
   marcar("registro", !!s?.registros?.length);
   marcar("drums", !!s?.drums?.rack);
-  if (s) { pintarDrums(s.drums); pintarPatronDrums(s.drums.patrones); }
+  if (s) { pintarDrums(s.drums); pintarPatronDrums(s.drums.patrones); pintarTops("perc", s.tops.perc); pintarTops("top", s.tops.top); }
+  marcar("tops", !!(s?.tops?.perc?.clip || s?.tops?.top?.clip));
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
     $("b-partida").textContent = "Nueva sesión";
@@ -249,7 +267,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -324,6 +342,24 @@ function pintarPatronDrums(p) {
     $("b-drum-patrones").textContent = "Volver a leer";
   }
   $("r-drum-patrones").replaceChildren(...nodos);
+}
+function pintarTops(rol, t) {
+  $(`s-tops-${rol}`).classList.toggle("hecho", !!t.clip);
+  if (t.opciones.length) $(`b-tops-${rol}`).textContent = "Volver a leer";
+  const nodos = t.opciones.map(o => {
+    const f = document.createElement("div"); f.className = "patron" + (t.actual === o.id ? " sel" : "");
+    const n = document.createElement("span");
+    const marca = o.decision_juan === "seleccion" ? " · tu selección" : o.decision_juan === "favorito" ? " · tu favorito" : "";
+    n.textContent = `${o.nombre}${marca}`;
+    const e = document.createElement("small"); e.style.display = "block"; e.style.color = "var(--monitor)";
+    e.textContent = o.encaje ? `Cae con kick ${o.encaje.kick} % · bajo ${o.encaje.bajo} % · clave ${o.encaje.clave} %` : "";
+    n.append(e);
+    const x = document.createElement("button"); x.className = "sec"; x.textContent = t.actual === o.id ? "Puesto" : "Poner"; x.disabled = t.actual === o.id;
+    x.onclick = () => accion("tops_poner", {rol, id:o.id}, x);
+    f.append(n, x); return f;
+  });
+  if (t.pista && t.pista !== rol.toUpperCase()) { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Ese clip ya tenía cambios, así que va en ${t.pista}. Esa pista aún no tiene Tribe.`; nodos.push(a); }
+  $(`r-tops-${rol}`).replaceChildren(...nodos);
 }
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
@@ -427,6 +463,8 @@ $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("b-drums").onclick = e => accion("drums", {}, e.target);
+$("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);
+$("b-tops-top").onclick = e => accion("tops_proponer", {rol:"top"}, e.target);
 $("b-drum-patrones").onclick = e => accion("drum_patrones", {}, e.target);
 for (const id of ["raiz","modo"]) $(id).onchange = () => {
   if ($("b-partida").textContent === "Nueva sesión") accion("tonalidad", {raiz:$("raiz").value, modo:$("modo").value}, $("b-partida"));
