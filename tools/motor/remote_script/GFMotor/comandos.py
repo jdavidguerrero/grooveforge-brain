@@ -100,7 +100,8 @@ def escribir_clip(song, m, especificacion):
 
 def listar_clips(song, m):
     pista = _pista(song, int(m["track_index"]))
-    return {"clips": [{"start": c.start_time, "length": c.length, "name": c.name} for c in _clips(pista)]}
+    # `length` es el largo del loop, no lo que ocupa en Arrangement: un clip partido conserva todas sus notas.
+    return {"clips": [{"start": c.start_time, "length": c.length, "name": c.name, "end": c.end_time, "marker": c.start_marker} for c in _clips(pista)]}
 
 
 def leer_clip(song, m):

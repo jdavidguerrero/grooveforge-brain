@@ -310,6 +310,7 @@ class _Nota:
 class _Clip:
     def __init__(self, length, start_time=0.0):
         self.length, self.start_time, self.name, self.color, self.notas = length, start_time, "", None, ()
+        self.end_time, self.start_marker = start_time + length, 0.0
 
     def add_new_notes(self, specs):
         self.notas = specs
@@ -384,7 +385,7 @@ def test_superficie_escribe_y_lee_con_nombre_y_color():
     c.escribir_clip(s, m, _Nota)
     pista = s.tracks[0]
     assert all(not r.has_clip for r in pista.clip_slots) and s.pasos == ["inicio", "fin"]
-    assert c.listar_clips(s, {"track_index": 0})["clips"] == [{"start": 8.0, "length": 4.0, "name": "INTRO"}]
+    assert c.listar_clips(s, {"track_index": 0})["clips"] == [{"start": 8.0, "length": 4.0, "name": "INTRO", "end": 12.0, "marker": 0.0}]
     assert pista.arrangement_clips[0].color == 0x1D9E75
     assert c.leer_clip(s, {"track_index": 0, "start_beats": 8.0})["clip"]["notes"][0]["start_beat"] == 1
     assert c.leer_clip(s, {"track_index": 0, "start_beats": 0.0})["clip"] is None
@@ -1103,6 +1104,36 @@ def test_motivo_en_template_no_escribe(tmp_path, monkeypatch):
     with pytest.raises(SetProtegido):
         motor.poner_motivo("1-CORTO")
     live.cerrar()
+
+
+# ── Clips partidos ──
+def test_notas_en_arreglo_clip_partido_con_marcador():
+    from gf_motor.motor import notas_en_arreglo
+
+    notas = [nota(b) for b in (0, 8, 16, 20, 31, 40)]
+    c = {"start": 16.0, "length": 64.0, "end": 32.0, "marker": 16.0, "notes": notas}
+    assert [n["start_beat"] for n in notas_en_arreglo(c, 32.0)] == [16.0, 20.0, 31.0]
+
+
+def test_notas_en_arreglo_sin_datos_del_script_usa_el_siguiente_clip():
+    from gf_motor.motor import notas_en_arreglo
+
+    c = {"start": 0.0, "length": 64.0, "notes": [nota(0), nota(15), nota(16), nota(40)]}
+    assert [n["start_beat"] for n in notas_en_arreglo(c, 16.0)] == [0.0, 15.0]
+    assert [n["start_beat"] for n in notas_en_arreglo(c, None)] == [0.0, 15.0, 16.0, 40.0]
+    assert notas_en_arreglo({"start": 0.0, "length": 4.0, "notes": None}, None) == []
+
+
+def test_clip_partido_no_duplica_notas_al_registrar(entorno):
+    import mido
+
+    live, motor = entorno
+    motor.partida("organic", "A", "menor", 122)
+    notas = [nota(b, pitch=57) for b in (0, 1, 2, 3)]
+    live.pistas.append({"name": "MOTIVO", "clips": [{"start": 0.0, "length": 4.0, "notes": notas, "name": "a", "color": None}, {"start": 2.0, "length": 4.0, "notes": notas, "name": "b", "color": None}]})
+    r = motor.registrar("X")["registros"][-1]
+    m = mido.MidiFile(next(x for x in r["midis"] if "motivo" in x))
+    assert sum(x.type == "note_on" and x.velocity > 0 for x in m.tracks[0]) == 2 + 4
 
 
 # ── Estado y registro ──

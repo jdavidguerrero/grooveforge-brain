@@ -44,6 +44,24 @@ def _motivo_vacio() -> dict:
     return {"tandas": 0, "opciones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None}
 
 
+def notas_en_arreglo(clip: dict, siguiente: float | None) -> list[dict]:
+    """Solo las notas que suenan en Arrangement, en tiempo absoluto.
+
+    Un clip partido devuelve todas las notas del original; lo que suena es el tramo desde su marcador. Sin los datos
+    del script nuevo, el tramo termina donde empieza el clip siguiente o al final de su largo, y parte del marcador 0.
+    """
+    marcador = clip.get("marker") or 0.0
+    fin = clip.get("end")
+    if fin is None:
+        fin = siguiente if siguiente is not None else clip["start"] + clip["length"]
+    tramo = fin - clip["start"]
+    return [
+        {**n, "start_beat": round(n["start_beat"] - marcador + clip["start"], 4)}
+        for n in (clip.get("notes") or [])
+        if marcador - 1e-6 <= n["start_beat"] < marcador + tramo - 1e-6
+    ]
+
+
 class SetProtegido(ErrorLive):
     """El set abierto es el template original."""
 
@@ -488,11 +506,12 @@ class Motor:
         indice = self.live.indice_pista(pista)
         if indice is None:
             return []
+        clips = self.live.listar_clips(indice)
         notas = []
-        for c in self.live.listar_clips(indice):
+        for i, c in enumerate(clips):
             leido = self.live.leer_clip(indice, c["start"])
             if leido:
-                notas += [{**n, "start_beat": n["start_beat"] + c["start"]} for n in leido["notes"]]
+                notas += notas_en_arreglo({**c, "notes": leido["notes"]}, clips[i + 1]["start"] if i + 1 < len(clips) else None)
         return notas
 
     def proponer_patrones_drums(self) -> dict:
@@ -703,8 +722,12 @@ class Motor:
         carpeta = self.carpeta_live / "00 Elegidos" / "registros"
         carpeta.mkdir(parents=True, exist_ok=True)
         for p in pistas:
-            notas = [n for c in p["clips"] for n in ({**x, "start_beat": x["start_beat"] + c["start"]} for x in (c["notes"] or []))]
-            if p["name"] not in ("KICK", "BASS", "DRUMS", "PERC", "TOP", "MOTIVO") or not notas:
+            notas = [
+                n
+                for i, c in enumerate(p["clips"])
+                for n in notas_en_arreglo(c, p["clips"][i + 1]["start"] if i + 1 < len(p["clips"]) else None)
+            ]
+            if p["name"] in ("SC GHOST", "ARRANGE", "GUIA") or not notas:  # Guías y sidechain no son material musical.
                 continue
             archivo = mido.MidiFile(ticks_per_beat=480)
             pista = mido.MidiTrack()
