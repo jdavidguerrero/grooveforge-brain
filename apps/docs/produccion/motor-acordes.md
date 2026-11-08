@@ -71,3 +71,7 @@ Juan no encuentra presets de acordes en el VST. Antes de generar nada nuevo se o
 | **JD SUS WARM** | Pulso + sierra una octava abajo, filtro 750 Hz, S 0,45 | Tine suave, −9 dB | Lo más cálido |
 | **JD SUS WARM2** | Pulso + sierra en la misma octava, filtro 1,2 kHz | Tine más presente, −5 dB | Más brillo, más Electric |
 | **JD SUS POLY** | Dos sierras, B desafinada 7 cents, ataque 20 ms, S 0,55 | Tine muy corta, −10 dB | Ancho, casi pad |
+
+## Pendiente: carácter de las progresiones (Juan, 2026-11-08)
+
+Etiquetar cada progresión por carácter (luminosa o alegre, melancólica, eufórica, sombría) para tener más contexto al elegir. Juan lo deja para el futuro; en `organic-id-GF` se quedó con A – B. Idea de partida: en la lidia dominante, solo mayores = luminosa (el II mayor es el levante lidio); peso en F#m y Em = melancólica; el aumentado G+ antes de volver a A = eufórica; el disminuido D#dim = sombría.
