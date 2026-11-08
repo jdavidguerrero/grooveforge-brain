@@ -2063,7 +2063,7 @@ def test_carga_y_voz():
 
 def test_anchura_por_rol():
     a = {x["pista"]: x["que"] for x in anchura_rec(["BASS SUB", "STABS", "PAD", "PERC CONGA", "LEAD AUX"])}
-    assert a["BASS SUB"].startswith("Mono") and a["STABS"] == "Haas" and a["PAD"].startswith("Ancho") and "PERC CONGA" not in a
+    assert a["BASS SUB"].startswith("Mono") and a["STABS"] == "Haas" and a["PAD"].startswith("Ancho") and a["PERC CONGA"].startswith("Sin Haas")
     assert a["LEAD AUX"].startswith("Doble")
 
 
