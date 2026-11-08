@@ -190,7 +190,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-motivo" class="bloq" data-seccion="motivo">
     <div class="num">1</div>
     <h2>Motivo</h2>
-    <p>Motivos de 2 compases, en forma A A A B, en tu escala. Respuesta y Con clave salen de tu groove. Pon uno en <code>MOTIVO</code> y edítalo: es solo un punto de partida.</p>
+    <p>Motivos de 2 compases, en forma A A A B, en tu escala. Respuesta y Con clave salen de tu groove. Pon uno en <code>LEAD</code> y edítalo: es solo un punto de partida.</p>
     <button id="b-motivo" disabled>Generar</button>
     <div id="r-motivo"></div>
   </section>
@@ -198,7 +198,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
   <section id="s-motivo-sonido" class="bloq" data-seccion="motivo">
     <div class="num">2</div>
     <h2>Sonido en el Brain</h2>
-    <p>Opcional, si <code>MOTIVO</code> sale al Brain. Cambia la capa al instante; si prefieres el VST u otro instrumento, cárgalo en la pista.</p>
+    <p>Opcional, si <code>LEAD</code> sale al Brain. Cambia la capa al instante; si prefieres el VST u otro instrumento, cárgalo en la pista.</p>
     <button id="b-motivo-capas" disabled>Leer capas del Brain</button>
     <div id="r-motivo-capas"></div>
   </section>
@@ -406,7 +406,7 @@ function pintarMotivo(m) {
       f.append(n, x); nodos.push(f);
     }
   }
-  if (m.pista && m.pista !== "MOTIVO") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${m.pista}.`; nodos.unshift(a); }
+  if (m.pista && m.pista !== "LEAD") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${m.pista}.`; nodos.unshift(a); }
   $("r-motivo").replaceChildren(...nodos);
   $("s-motivo-sonido").classList.toggle("hecho", !!m.capa);
   $("r-motivo-capas").replaceChildren(...m.capas.map(c => {

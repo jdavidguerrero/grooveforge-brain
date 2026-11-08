@@ -47,7 +47,7 @@ Cada 4 compases, el último golpe anticipa el acorde siguiente (`lab-acordes.md`
 
 Para cada combinación se calcula cuánto de la melodía **choca**: una nota a un semitono de una nota del acorde sin ser parte de él, ponderada por duración. **Es información, no un filtro:** un choque puede ser justo el color que se busca, y por eso nada se descarta. Se muestran los más frecuentes, como «Re# sobre A», para decidir de oído.
 
-Se lee la pista `MELODY` o, si no existe, `MOTIVO`. Si no hay melodía, el dato no aparece.
+Se lee la primera pista con notas entre `LEAD`, `MELODY` y `MOTIVO`, en ese orden, y todos sus clips del arreglo. Si no hay melodía, el dato no aparece.
 
 ## 5. En Live
 

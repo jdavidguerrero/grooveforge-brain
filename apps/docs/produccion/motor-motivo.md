@@ -44,7 +44,7 @@ Las dos últimas no se ofrecen si el groove no les deja pasos. Otra tanda cambia
 
 ## 5. En Live
 
-Clip en la pista `MOTIVO`, con la regla de no pisar lo editado. No trae instrumento. Si suena en el Brain, se puede elegir capa desde la web, como en el bajo: **cada canal del Brain es uno solo**, así que una capa nueva reemplaza la que suene en él.
+Clip en la pista `LEAD` (antes `MOTIVO`; Juan, 2026-11-08), con la regla de no pisar lo editado. No trae instrumento. Si suena en el Brain, se puede elegir capa desde la web, como en el bajo: **cada canal del Brain es uno solo**, así que una capa nueva reemplaza la que suene en él.
 
 ## 6. Cómo se valida
 

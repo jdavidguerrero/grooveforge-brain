@@ -1073,12 +1073,12 @@ def test_poner_motivo_reemplaza_intacto_y_respeta_lo_editado(entorno):
     _groove_para_motivo(live, motor)
     motor.generar_motivos()
     motor.poner_motivo("1-CORTO")
-    p = next(x for x in live.pistas if x["name"] == "MOTIVO")
+    p = next(x for x in live.pistas if x["name"] == "LEAD")
     motor.poner_motivo("1-LARGO")
-    assert len(p["clips"]) == 1 and p["clips"][0]["name"] == "MOTIVO LARGO"
+    assert len(p["clips"]) == 1 and p["clips"][0]["name"] == "LEAD LARGO"
     p["clips"][0]["notes"] = p["clips"][0]["notes"][1:]
     copia = copy.deepcopy(p)
-    assert motor.poner_motivo("1-MIXTO")["motivo"]["pista"] == "MOTIVO propuesta" and p == copia
+    assert motor.poner_motivo("1-MIXTO")["motivo"]["pista"] == "LEAD propuesta" and p == copia
     with pytest.raises(ValueError):
         motor.poner_motivo("nada")
 
@@ -1230,6 +1230,13 @@ def test_proponer_acordes_solo_lee_y_usa_melodia(entorno):
     assert a["melodia"] == "MELODY" and len(a["opciones"]) == 3 * 7
     assert {o["acordes"] for o in a["opciones"]} == {"A – B – F#m – B", "A – B", "A – B – Em – A"}
     assert all(o["choques"]["porcentaje"] is not None for o in a["opciones"])
+
+
+def test_proponer_acordes_prefiere_lead(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    live.pistas.append({"name": "LEAD", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((2,), pitch=64), "name": "l", "color": None}]})
+    assert motor.proponer_acordes()["acordes"]["melodia"] == "LEAD"
 
 
 def test_proponer_acordes_sin_melodia(entorno):

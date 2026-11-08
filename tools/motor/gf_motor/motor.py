@@ -632,7 +632,7 @@ class Motor:
             raise ValueError(f"No existe el motivo {ident!r}")
         ritmo = tuple(tuple(x) for x in op["ritmo"])
         clip = crear_motivo(op["nombre"], ritmo, op["raiz"], op["modo"], MODOS[op["modo"]], op["tanda"])
-        pista = m["pista"] or "MOTIVO"
+        pista = m["pista"] or "LEAD"
         indice = self.live.indice_pista(pista)
         if indice is None:
             indice = self.live.crear_pista_midi(pista)
@@ -640,7 +640,7 @@ class Motor:
             leido = self.live.leer_clip(indice, 0.0)
             intacto = m["clip"] is not None and leido is not None and diferencia(m["clip"]["notas"], leido["notes"])["sin_cambios"]
             if not intacto:
-                pista = self._nombre_libre("MOTIVO propuesta")
+                pista = self._nombre_libre("LEAD propuesta")
                 indice = self.live.crear_pista_midi(pista)
         self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
         m.update(actual=ident, clip=clip, pista=pista)
@@ -677,7 +677,7 @@ class Motor:
         escala = MODOS[p["modo"]]
         a = analizar(self._notas_de("KICK"), self._notas_de("BASS"))
         clave = sorted({round(n["start_beat"] * 4) % 16 for n in self._notas_de("DRUMS") if n["pitch"] == 47})
-        pista_melodia = next((n for n in ("MELODY", "MOTIVO") if self._notas_de(n)), None)
+        pista_melodia = next((n for n in ("LEAD", "MELODY", "MOTIVO") if self._notas_de(n)), None)
         melodia = self._notas_de(pista_melodia) if pista_melodia else []
         patrones = patrones_acordes(a["libres"], clave)
         opciones = []

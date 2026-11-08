@@ -78,7 +78,7 @@ def motivo(nombre: str, ritmo: tuple[tuple[int, int], ...], raiz: str, modo: str
                 pitch -= 12
             velocity = (98 if i == 0 else 84 if d >= 2 else 72) + rnd.randint(-5, 5)
             notas.append({"pitch": pitch, "start_beat": (bloque * PASOS_MOTIVO + p) / 4, "duration_beats": round(d * 0.92 / 4, 4), "velocity": velocity})
-    return {"nombre": f"MOTIVO {nombre}", "inicio": 0.0, "longitud": float(COMPASES * 4), "notas": notas}
+    return {"nombre": f"LEAD {nombre}", "inicio": 0.0, "longitud": float(COMPASES * 4), "notas": notas}
 
 
 def ocupacion(clip: dict) -> float:
