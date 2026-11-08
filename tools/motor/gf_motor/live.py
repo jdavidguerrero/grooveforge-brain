@@ -79,6 +79,13 @@ class ClienteLive:
     def pista_sin_clips(self, pista: int) -> bool:
         return not self._ok("list_clips", track_index=pista)["clips"]
 
+    def version(self) -> int:
+        """Versión de GFMotor que Live cargó al arrancar."""
+        try:
+            return int(self.llamar("ping").get("version", "1"))
+        except (ValueError, TypeError):
+            return 1
+
     def borrar_clip(self, pista: int, inicio: float) -> bool:
         return bool(self._ok("delete_clip", track_index=pista, start_beats=inicio).get("borrado"))
 

@@ -1949,3 +1949,14 @@ def test_presencia_por_nombre_parecido():
     p = presencia_inicial(["CHORDS SUS", "PAD 2", "PERC 2"], s)
     assert p["CHORDS SUS"][0] == "todo" and p["CHORDS SUS"][2] == "nada"
     assert p["PAD 2"] == p["CHORDS SUS"] and p["PERC 2"][3] == "todo"
+
+
+def test_llenar_pide_reiniciar_live_si_gfmotor_es_viejo(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    motor.proponer_armado()
+    live.version = "2"
+    antes = copy.deepcopy(live.pistas)
+    with pytest.raises(ValueError, match="cierra y abre Live"):
+        motor.llenar_armado()
+    assert live.pistas == antes and not motor.estado["registros"]

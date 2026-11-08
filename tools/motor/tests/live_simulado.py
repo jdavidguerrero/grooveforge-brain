@@ -18,6 +18,7 @@ class LiveSimulado:
         self.comandos: list[str] = []
         self.cargas: list[tuple[list[str], str]] = []
         self.plugins: list[tuple[str, str]] = []
+        self.version = "3"
         self.error_carga: str | None = None
         externo = self
 
@@ -55,6 +56,8 @@ class LiveSimulado:
     def atender(self, m: dict) -> dict:
         t = m["type"]
         self.comandos.append(t)
+        if t == "ping":
+            return {"ok": True, "version": self.version}
         if t == "get_session":
             pistas = [{"index": i, "name": p["name"]} for i, p in enumerate(self.pistas)]
             return {"ok": True, "session": {"tempo": self.tempo, "tracks": pistas, "file_path": self.ruta}}

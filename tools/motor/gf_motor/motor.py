@@ -1088,6 +1088,8 @@ class Motor:
         a = e["armado"]
         if not a["roles"]:
             raise ValueError("Primero lee el arreglo y los materiales")
+        if self.live.version() < 3:
+            raise ValueError("Live tiene cargado un GFMotor anterior: cierra y abre Live una vez para poder llenar (hace falta borrar clips)")
         if not a["registrado"]:
             self.registrar(nota="antes de armar: materiales del compás 1")
             a["registrado"] = True
