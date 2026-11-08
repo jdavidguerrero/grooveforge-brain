@@ -189,3 +189,57 @@ def borrar_clip(song, m):
     finally:
         song.end_undo_step()
     return {"borrado": True}
+
+
+def _db_de(parametro, valor=None):
+    """dB del texto que muestra Live («-6.0 dB», «-inf dB»)."""
+    texto = parametro.str_for_value(parametro.value if valor is None else valor)
+    numero = texto.replace("dB", "").strip()
+    try:
+        return float(numero)
+    except ValueError:
+        return float("-inf")
+
+
+def _valor_para_db(parametro, db):
+    """Live guarda el fader de 0 a 1 con una curva propia: se busca el valor cuyo texto da los dB pedidos."""
+    if db == float("-inf"):
+        return parametro.min
+    bajo, alto = parametro.min, parametro.max
+    for _ in range(40):
+        medio = (bajo + alto) / 2
+        if _db_de(parametro, medio) < db:
+            bajo = medio
+        else:
+            alto = medio
+    return (bajo + alto) / 2
+
+
+def leer_mezcla(song, _m):
+    pistas = [
+        {"name": t.name, "volume_db": _db_de(t.mixer_device.volume), "pan": t.mixer_device.panning.value,
+         "sends": [_db_de(s) for s in t.mixer_device.sends]}
+        for t in song.tracks
+    ]
+    return {"tracks": pistas, "returns": [r.name for r in song.return_tracks]}
+
+
+def poner_mezcla(song, m):
+    pistas = [t for t in song.tracks if t.name == m["pista"]]
+    if len(pistas) != 1:
+        raise ErrorComando("Se esperaba una pista %s y hay %d" % (m["pista"], len(pistas)))
+    mixer = pistas[0].mixer_device
+    song.begin_undo_step()
+    try:
+        if m.get("volume_db") is not None:
+            mixer.volume.value = _valor_para_db(mixer.volume, float(m["volume_db"]))
+        if m.get("pan") is not None:
+            mixer.panning.value = max(-1.0, min(1.0, float(m["pan"])))
+        envios = list(mixer.sends)
+        for indice, db in (m.get("sends") or {}).items():
+            i = int(indice)
+            if 0 <= i < len(envios):
+                envios[i].value = _valor_para_db(envios[i], float(db))
+    finally:
+        song.end_undo_step()
+    return {}

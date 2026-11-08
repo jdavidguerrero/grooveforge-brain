@@ -84,6 +84,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="detalles" class="tab">Stabs<i></i></button>
     <button data-ir="transiciones" class="tab">Transiciones<i></i></button>
     <button data-ir="armado" class="tab">Armado<i></i></button>
+    <button data-ir="mezcla" class="tab">Mezcla<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -247,6 +248,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-armado"></div>
   </section>
 
+  <section id="s-mezcla" class="bloq" data-seccion="mezcla">
+    <div class="num">1</div>
+    <h2>Mezcla de partida</h2>
+    <p>Fader, paneo y envíos a tus retornos (A Office … F Echo) por rol, según el nombre de cada pista. Es un punto de partida: cada instrumento sale con su propio nivel. Lo que ya moviste no se toca. Míralo después en GrooveScope (The Room).</p>
+    <button id="b-mezcla" disabled>Leer mezcla</button>
+    <div id="r-mezcla"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -331,6 +340,8 @@ function pintar(s) {
   if (s) pintarTransiciones(s.transiciones);
   marcar("armado", !!s?.armado && Object.keys(s.armado.escritos || {}).length > 0);
   if (s) pintarArmado(s.armado);
+  marcar("mezcla", !!s?.mezcla && Object.keys(s.mezcla.escrito || {}).length > 0);
+  if (s) pintarMezcla(s.mezcla);
   if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
@@ -341,7 +352,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado","mezcla"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -657,6 +668,24 @@ function pintarArmado(a) {
   if (a.saltados?.length) { const p = nota(`Saltados porque ahí hay clips tuyos: ${a.saltados.join(", ")}`); p.style.color = "var(--monitor)"; nodos.push(p); }
   $("r-armado").replaceChildren(...nodos);
 }
+function pintarMezcla(m) {
+  if (!m || !m.plan.length) { $("r-mezcla").replaceChildren(); return; }
+  $("b-mezcla").textContent = "Volver a leer";
+  $("s-mezcla").classList.toggle("hecho", Object.keys(m.escrito).length > 0);
+  const pan = v => v === null ? "—" : Math.abs(v) < 0.005 ? "C" : `${Math.round(Math.abs(v) * 100)} % ${v < 0 ? "izq." : "der."}`;
+  const nodos = m.plan.map(p => {
+    const envios = Object.entries(p.sends).map(([i, db]) => `${"ABCDEF"[i]} ${db}`).join(" · ") || "sin envíos";
+    const saltos = [...p.saltado, ...p.saltados_envios];
+    const f = document.createElement("div"); f.className = "patron";
+    const n = document.createElement("span"); n.textContent = `${p.pista} (${p.rol})`;
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+    x.textContent = `${p.volume_db === null ? "fader sin tocar" : p.volume_db + " dB"} · ${pan(p.pan)} · ${envios}` + (saltos.length ? ` · se salta: ${saltos.join(", ")}` : "");
+    n.append(x); f.append(n); return f;
+  });
+  const b = document.createElement("button"); b.textContent = "Aplicar mezcla de partida";
+  b.onclick = () => { if (confirm("¿Aplicar fader, paneo y envíos de partida? Lo que ya moviste no se toca.")) accion("mezcla_aplicar", {}, b); };
+  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b);
+}
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
   $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
@@ -764,6 +793,7 @@ $("b-pads").onclick = e => accion("pads_proponer", {}, e.target);
 $("b-detalles").onclick = e => accion("detalles_proponer", {}, e.target);
 $("b-transiciones").onclick = e => accion("transiciones_proponer", {}, e.target);
 $("b-armado").onclick = e => accion("armado_proponer", {}, e.target);
+$("b-mezcla").onclick = e => accion("mezcla_proponer", {}, e.target);
 $("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
 $("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);

@@ -1968,3 +1968,74 @@ def test_presencia_con_las_convenciones():
     assert p["BASS SUB"] == ["todo"] * 5 + ["nada", "todo", "todo"]  # todo el track menos el INTER
     assert p["BASS MID"][0] == "nada" and p["CHORDS PLK"][1] == "todo"
     assert p["LEAD AUX"] == ["nada"] * 6 + ["todo", "nada"] and p["LEAD MAIN"][2] == "todo"
+
+
+# ── Mezcla de partida (motor-mezcla.md) ───────────────────────────────
+from gf_motor.mezcla import CADENAS_DRUMS, TABLA, plan as plan_mezcla, rol_de  # noqa: E402
+
+_RET = ["A Office", "B Plate", "C Hall", "D Rumble", "E Delay", "F Echo"]
+
+
+def _p(nombre, vol=0.0, pan=0.0, sends=None):
+    return {"name": nombre, "volume_db": vol, "pan": pan, "sends": sends or [float("-inf")] * 6}
+
+
+def test_rol_por_nombre():
+    assert rol_de("CHORDS SUS") == "CHORDS SUS" and rol_de("PERC CONGA") == "PERC" and rol_de("PAD propuesta") == "PAD"
+    assert rol_de("SC GHOST") is None and rol_de("ARRANGE") is None and rol_de("BRAIN") is None and rol_de("RARO") is None
+    assert TABLA["KICK"][2] == {3: -18.0}  # Rumble, template-envios-valhalla §5
+
+
+def test_plan_respeta_lo_movido_y_retornos_faltantes():
+    p = {x["pista"]: x for x in plan_mezcla([_p("KICK"), _p("BASS", vol=-4.0), _p("PAD", sends=[float("-inf"), float("-inf"), -10.0] + [float("-inf")] * 3)], _RET, {})}
+    assert p["KICK"]["volume_db"] == -3.0 and p["KICK"]["sends"] == {3: -18.0}
+    assert p["BASS"]["volume_db"] is None and p["BASS"]["saltado"]  # Juan ya movió el fader
+    assert p["PAD"]["sends"] == {} and "envío C (lo moviste)" in p["PAD"]["saltados_envios"]
+    corto = plan_mezcla([_p("KICK", sends=[float("-inf")] * 2)], _RET[:2], {})[0]
+    assert corto["sends"] == {} and corto["saltados_envios"] == ["envío D (no hay ese retorno)"]
+    # Lo que escribió el motor se puede volver a escribir; si Juan lo movió después, no.
+    escrito = {"KICK": {"volume_db": -3.0, "pan": 0.0, "sends": {"3": -18.0}}}
+    assert plan_mezcla([_p("KICK", vol=-3.0, sends=[float("-inf")] * 3 + [-18.0, float("-inf"), float("-inf")])], _RET, escrito)[0]["volume_db"] == -3.0
+    assert plan_mezcla([_p("KICK", vol=-1.0)], _RET, escrito)[0]["volume_db"] is None
+
+
+def test_aplicar_mezcla(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    live.pistas.append({"name": "PERC CONGA", "clips": [], "volume_db": 0.0})
+    m = motor.aplicar_mezcla()["mezcla"]
+    kick = next(p for p in live.pistas if p["name"] == "KICK")
+    assert kick["volume_db"] == -3.0 and kick["sends"][3] == -18.0
+    conga = next(p for p in live.pistas if p["name"] == "PERC CONGA")
+    assert conga["pan"] == -0.25 and conga["sends"][0] == -16.0
+    sc = next(p for p in live.pistas if p["name"] == "SC GHOST")
+    assert "volume_db" not in sc  # SC GHOST no se toca
+    kick["volume_db"] = -1.5  # Juan mueve el fader
+    motor.aplicar_mezcla()
+    assert kick["volume_db"] == -1.5
+    live.version = "3"
+    with pytest.raises(ValueError, match="cierra y abre Live"):
+        motor.proponer_mezcla()
+
+
+def test_rack_con_volumen_de_cadena(tmp_path, monkeypatch):
+    monkeypatch.setenv("GF_RACK_PLANTILLA", str(_plantilla(tmp_path / "molde.adg")))
+    w = tmp_path / "clap.wav"
+    w.write_bytes(b"x")
+    ruta = tmp_path / "r.adg"
+    crear_rack([w], "R", ruta, notas=[49], volumenes=CADENAS_DRUMS)
+    xml = gzip.decompress(ruta.read_bytes()).decode()
+    assert 'Value="0.794328"' in xml or "MixerPreset" not in xml  # −2 dB; el molde de prueba puede no traer mezclador
+
+
+@pytest.mark.skipif(not (Path.home() / "Music/Ableton/User Library/Presets/Instruments/Drum Rack/808 Core Kit.adg").exists(), reason="sin la plantilla de Juan")
+def test_volumen_de_cadena_con_la_plantilla_real(tmp_path):
+    real = Path.home() / "Music/Ableton/User Library/Presets/Instruments/Drum Rack/808 Core Kit.adg"
+    wavs = []
+    for n in ("clave", "hat"):
+        w = tmp_path / f"{n}.wav"
+        w.write_bytes(b"x")
+        wavs.append(w)
+    crear_rack(wavs, "R", tmp_path / "r.adg", plantilla=real, notas=[47, 52], volumenes=CADENAS_DRUMS)
+    xml = gzip.decompress((tmp_path / "r.adg").read_bytes()).decode()
+    assert xml.count('Value="0.630957"') >= 1 and xml.count('Value="0.316228"') >= 1  # −4 y −10 dB

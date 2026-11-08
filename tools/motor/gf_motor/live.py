@@ -86,6 +86,12 @@ class ClienteLive:
         except (ValueError, TypeError):
             return 1
 
+    def leer_mezcla(self) -> dict:
+        return self._ok("get_mixer")
+
+    def poner_mezcla(self, pista: str, volume_db: float | None, pan: float | None, sends: dict[int, float]) -> None:
+        self._ok("set_mixer", pista=pista, volume_db=volume_db, pan=pan, sends={str(k): v for k, v in sends.items()})
+
     def borrar_clip(self, pista: int, inicio: float) -> bool:
         return bool(self._ok("delete_clip", track_index=pista, start_beats=inicio).get("borrado"))
 

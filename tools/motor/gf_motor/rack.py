@@ -40,9 +40,11 @@ def _apuntar_a(branch: ET.Element, wav: Path) -> None:
 
 
 def crear_rack(
-    wavs: list[Path], nombre: str, destino: Path, plantilla: Path | None = None, notas: list[int] | None = None, choke: dict[int, int] | None = None
+    wavs: list[Path], nombre: str, destino: Path, plantilla: Path | None = None, notas: list[int] | None = None, choke: dict[int, int] | None = None,
+    volumenes: dict[int, float] | None = None,
 ) -> list[int]:
-    """Escribe un .adg con un pad por WAV y devuelve sus notas. `choke` da el grupo por nota; 0 es sin grupo."""
+    """Escribe un .adg con un pad por WAV y devuelve sus notas. `choke` da el grupo por nota; 0 es sin grupo.
+    `volumenes` da el volumen de la cadena en dB por nota (motor-mezcla.md §3); Live lo guarda como ganancia lineal."""
     fuente = plantilla or plantilla_por_defecto()
     if not fuente.exists():
         raise ValueError(f"No encuentro el rack de plantilla: {fuente}")
@@ -63,6 +65,11 @@ def crear_rack(
         grupo = pad.find("ZoneSettings/ChokeGroup")
         if grupo is not None:
             grupo.set("Value", str((choke or {}).get(nota, 0)))
+        if volumenes and nota in volumenes:
+            mixer = next(pad.iter("MixerPreset"), None)
+            control = mixer.find(".//Volume/Manual") if mixer is not None else None
+            if control is not None:
+                control.set("Value", f"{10 ** (volumenes[nota] / 20):.6f}")
         pads.append(pad)
         usadas.append(nota)
     raiz.find(".//DrumGroupDevice/UserName").set("Value", nombre)

@@ -23,6 +23,7 @@ from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
+from .mezcla import CADENAS_DRUMS, CADENAS_ROLL, plan as plan_mezcla  # noqa: E402
 from .armado import NADA, PARCIAL, PISTAS_FIJAS, TODO, clips_de_tramo, material_de, presencia_inicial, tramo  # noqa: E402
 from .transiciones import ELEMENTOS, NOTA_SUBDROP, clips_transicion, secciones  # noqa: E402
 from gf_perc.subdrop import SUBDROPS, sintetizar_subdrop  # noqa: E402
@@ -84,6 +85,10 @@ INSTRUMENTOS = {
     "FILL": TRIBE_PLUGIN, "ROLL TRIBE": TRIBE_PLUGIN,
     **{p: GF_PLUGIN for p in ("CHORDS", "PAD", "ATMOS", "STABS", "PLUCKS", "RISER", "FX", "EAR CANDY")},
 }
+
+
+def _mezcla_vacio() -> dict:
+    return {"plan": [], "retornos": [], "escrito": {}}
 
 
 def _armado_vacio() -> dict:
@@ -168,6 +173,7 @@ class Motor:
             e.setdefault("pads", _pads_vacio())
             e.setdefault("detalles", _detalles_vacio())
             e.setdefault("armado", _armado_vacio())
+            e.setdefault("mezcla", _mezcla_vacio())
             e.setdefault("transiciones", _transiciones_vacio())
             for k, v in _transiciones_vacio().items():
                 e["transiciones"].setdefault(k, v)
@@ -246,6 +252,7 @@ class Motor:
             "pads": _pads_vacio(),
             "detalles": _detalles_vacio(),
             "armado": _armado_vacio(),
+            "mezcla": _mezcla_vacio(),
             "transiciones": _transiciones_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
@@ -557,7 +564,7 @@ class Motor:
         nombre = f"{self._carpeta_drums().name} R{numero}"
         ruta = self._carpeta_drums() / f"{nombre}.adg"
         ruta.parent.mkdir(parents=True, exist_ok=True)
-        crear_rack(wavs, nombre, ruta, notas=notas, choke={NOTAS_PERC["hat_cerrado"]: CHOKE_HATS, NOTAS_PERC["hat_abierto"]: CHOKE_HATS})
+        crear_rack(wavs, nombre, ruta, notas=notas, choke={NOTAS_PERC["hat_cerrado"]: CHOKE_HATS, NOTAS_PERC["hat_abierto"]: CHOKE_HATS}, volumenes=CADENAS_DRUMS)
         rack = {"nombre": nombre, "ruta": str(ruta), "pista": "DRUMS", "pads": pads, "cargado": False, "motivo": None}
         try:
             self._exigir_set_editable()
@@ -998,7 +1005,7 @@ class Motor:
             wavs.append(ruta)
         nombre = f"DRUMS roll-{material.lower()} {p['raiz']} {p['modo']} {e['id'][:4]} R{numero}"
         ruta = carpeta / f"{nombre}.adg"
-        crear_rack(wavs, nombre, ruta, notas=[NOTAS_PERC["snare"], NOTAS_PERC["clap"]])
+        crear_rack(wavs, nombre, ruta, notas=[NOTAS_PERC["snare"], NOTAS_PERC["clap"]], volumenes=CADENAS_ROLL)
         rack = {"nombre": nombre, "material": material, "numero": numero, "cargado": [], "motivo": None}
         try:
             self._exigir_set_editable()
@@ -1125,6 +1132,42 @@ class Motor:
             mat["clips"] = []  # el material ya no está en Live: vive en el estado y en el registro
         self._guardar()
         self._evento("borrador", parte="armado", roles=a["roles"], presencia=a["presencia"], saltados=a["saltados"])
+        return e
+
+    # ── Mezcla de partida (motor-mezcla.md) ──────────────────────────
+    def _exigir_version(self, minima: int, para: str) -> None:
+        if self.live.version() < minima:
+            raise ValueError(f"Live tiene cargado un GFMotor anterior: cierra y abre Live una vez para {para}")
+
+    def proponer_mezcla(self) -> dict:
+        """Solo lee Live: qué se pondría en cada pista y qué se salta porque Juan ya lo movió."""
+        e = self._exigir_estado()
+        self._exigir_version(4, "leer y poner la mezcla")
+        m = e["mezcla"]
+        leido = self.live.leer_mezcla()
+        m["retornos"] = leido["returns"]
+        m["plan"] = plan_mezcla(leido["tracks"], leido["returns"], m["escrito"])
+        self._guardar()
+        return e
+
+    def aplicar_mezcla(self) -> dict:
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        self.proponer_mezcla()
+        m = e["mezcla"]
+        for p in m["plan"]:
+            if p["volume_db"] is None and not p["sends"]:
+                continue
+            self.live.poner_mezcla(p["pista"], p["volume_db"], p["pan"], p["sends"])
+            previo = m["escrito"].get(p["pista"], {"sends": {}})
+            if p["volume_db"] is not None:
+                previo.update(volume_db=p["volume_db"], pan=p["pan"])
+            else:
+                previo.setdefault("volume_db", None)
+            previo["sends"] = {**previo.get("sends", {}), **{str(i): db for i, db in p["sends"].items()}}
+            m["escrito"][p["pista"]] = previo
+        self._guardar()
+        self._evento("borrador", parte="mezcla", plan=m["plan"])
         return e
 
     # ── Registro de lo que quedó ───────────────────────────────────────
