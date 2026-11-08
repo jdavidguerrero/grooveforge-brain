@@ -534,6 +534,17 @@ function pintarDetalles(d) {
   if (!d.stab.opciones.length) { $("r-detalles").replaceChildren(); return; }
   $("b-detalles").textContent = "Volver a leer";
   const nodos = [nota((d.progresion ? `Sobre ${d.progresion}` : "Sin acordes: sobre la tónica") + (d.lead ? `, con los huecos de ${d.lead}.` : ", sin lead."))];
+  if (d.recomendacion?.length) {
+    nodos.push(tanda("Recomendación"));
+    for (const r of d.recomendacion) {
+      const f = document.createElement("div"); f.className = "patron" + (r.anadir ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = (r.anadir ? "Añadir " : "No hace falta: ") + (r.parte === "stab" ? "stab " : "pluck ") + r.patron;
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)"; x.textContent = r.razon;
+      n.append(x); f.append(n);
+      if (r.anadir) { const b = document.createElement("button"); b.className = "sec"; b.textContent = "Poner"; b.onclick = () => accion("detalles_poner", {parte:r.parte, id:r.patron}, b); f.append(b); }
+      nodos.push(f);
+    }
+  }
   for (const [parte, titulo, base] of [["stab", "Stabs", "STABS"], ["pluck", "Plucks", "PLUCKS"]]) {
     const e = d[parte];
     nodos.push(tanda(titulo));

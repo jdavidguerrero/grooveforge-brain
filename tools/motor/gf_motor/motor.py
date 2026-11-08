@@ -21,7 +21,7 @@ from gf_perc.caracteres import COLAS_KICK, GRUPOS_DRUMS, MATERIALES_DRUMS, sinte
 from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
-from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, clip_detalle, huecos_lead  # noqa: E402
+from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
 from .transiciones import ELEMENTOS, clips_transicion, secciones  # noqa: E402
 from .pads import PATRONES_ATMOS, PATRONES_PAD, clip_pad  # noqa: E402
 from .acordes import PROGRESIONES, choques, clip_acordes, nombres_progresion, patrones as patrones_acordes  # noqa: E402
@@ -833,7 +833,7 @@ class Motor:
         acordes = {n: self._notas_de(n) for n in nombres}
         libres = huecos_lead(lead)
         a = avisos_detalles(acordes, lead, libres)
-        d.update(libres=libres, kick=analizar(self._notas_de("KICK"), [])["kick"], lead=pista_lead, riff_aviso=a["riff"], lead_notas=lead)
+        d.update(libres=libres, kick=analizar(self._notas_de("KICK"), [])["kick"], lead=pista_lead, riff_aviso=a["riff"], lead_notas=lead, recomendacion=recomendar(acordes, lead, libres))
         d["stab"]["aviso"], d["pluck"]["aviso"] = a["stab"], a["pluck"]
         for parte, patrones in (("stab", PATRONES_STAB), ("pluck", PATRONES_PLUCK)):
             d[parte]["opciones"] = [{"id": p, "patron": p, "tanda": d["tanda"]} for p in patrones]

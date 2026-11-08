@@ -22,6 +22,8 @@ Juan (2026-11-08): si los acordes ya están punteados, el motor debe decir que e
 | `LEAD` (o `MELODY`, `MOTIVO`) | Huecos: pasos de semicorchea en un ciclo de 2 compases donde el lead calla en al menos 3 de cada 4 vueltas | Si quedan menos del 30 % de pasos libres: «tu lead deja pocos huecos para un riff» |
 | `KICK` | Golpes fuertes | Los stabs no caen en el kick |
 
+**Recomendación (Juan, 2026-11-08):** además de los avisos, un veredicto por papel: «añadir stab RESPUESTA», «no hace falta pluck arpegio», con la razón y un botón para ponerlo. Stab: GANCHO si nada marca el ritmo armónico, RESPUESTA (el más escaso) si los acordes ya lo marcan. Pluck arpegio: no si un `CHORDS` es punteado. Riff: sí si el lead deja al menos el 30 % libre.
+
 **Pregunta y respuesta:** stabs y riff caen **donde el lead calla**. Si suenan a la vez, compiten; si se alternan, conversan (Butler, *Unlocking the Groove*, 2006, sobre capas que se reparten el espacio rítmico).
 
 ## 3. Patrones

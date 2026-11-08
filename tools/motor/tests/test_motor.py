@@ -1702,3 +1702,14 @@ def test_progresion_desde_el_nombre_del_clip_si_la_sesion_no_la_tiene(entorno):
     live.pistas.append({"name": "CHORDS 2", "clips": [{"start": 0.0, "length": 64.0, "notes": [], "name": "I-II SEPTIMAS LARGAS", "color": None}]})
     assert motor.proponer_pads()["pads"]["progresion"] == "I-II"
     assert motor.proponer_detalles()["detalles"]["progresion"] == "I-II"
+
+
+def test_recomendacion_de_stabs_y_plucks():
+    from gf_motor.detalles import recomendar
+
+    punteado = _compases((0, 3, 6, 8, 11, 14), pitch=57)
+    largo = [{"pitch": 57, "start_beat": c * 4.0, "duration_beats": 3.9, "velocity": 80} for c in range(16)]
+    r = {(x["parte"], x["patron"]): x["anadir"] for x in recomendar({"CHORDS": punteado}, _LEAD_A, huecos_lead(_LEAD_A))}
+    assert r == {("stab", "RESPUESTA"): True, ("pluck", "ARPEGIO 3-3-2"): False, ("pluck", "RIFF EN HUECOS"): True}
+    r = {(x["parte"], x["patron"]): x["anadir"] for x in recomendar({"CHORDS 2": largo}, [], list(range(CICLO)))}
+    assert r == {("stab", "GANCHO"): True, ("pluck", "ARPEGIO 3-3-2"): True}

@@ -51,6 +51,26 @@ def avisos(acordes: dict[str, list[dict]], lead: list[dict], libres: list[int]) 
     return {"stab": stab, "pluck": pluck, "riff": riff}
 
 
+def recomendar(acordes: dict[str, list[dict]], lead: list[dict], libres: list[int]) -> list[dict]:
+    """Veredicto por papel: añadir o no, con qué patrón y por qué. Es una sugerencia; las opciones siguen todas."""
+    a = avisos(acordes, lead, libres)
+    hueco = round(100 * len(libres) / CICLO)
+    salida = []
+    if a["stab"]:
+        salida.append({"anadir": True, "parte": "stab", "patron": "RESPUESTA", "razon": "Tus acordes ya marcan el ritmo: si añades stab, que sea el más escaso, uno tras cada frase del lead."})
+    else:
+        salida.append({"anadir": True, "parte": "stab", "patron": "GANCHO", "razon": "Nada marca un gancho armónico todavía: 2 o 3 golpes fijos en los huecos se recuerdan."})
+    if a["pluck"]:
+        salida.append({"anadir": False, "parte": "pluck", "patron": "ARPEGIO 3-3-2", "razon": a["pluck"]})
+    else:
+        salida.append({"anadir": True, "parte": "pluck", "patron": "ARPEGIO 3-3-2", "razon": "Tus acordes son largos: un arpegio les da movimiento debajo del lead."})
+    if a["riff"]:
+        salida.append({"anadir": False, "parte": "pluck", "patron": "RIFF EN HUECOS", "razon": a["riff"]})
+    elif lead:
+        salida.append({"anadir": True, "parte": "pluck", "patron": "RIFF EN HUECOS", "razon": f"Tu lead deja libre el {hueco} % del ciclo: un riff puede responderle."})
+    return salida
+
+
 def _grados(progresion: str | None) -> tuple[int, ...]:
     return PROGRESIONES.get(progresion or "", (0,))
 
