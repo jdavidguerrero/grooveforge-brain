@@ -198,3 +198,16 @@ def test_morph_menor_da_mas_a():
     from math import cos, pi, sin
 
     assert cos(0.42 * pi / 2) > cos(0.53 * pi / 2) and sin(0.42 * pi / 2) < sin(0.53 * pi / 2)
+
+
+def test_hacia_vst_es_la_inversa_de_desde_vst(tmp_path):
+    import argparse
+
+    f = tmp_path / "Model.gfp"
+    f.write_bytes(gp.encode(0, "X", sample_patch()))
+    gp.cmd_desde_vst(_args(tmp_path, f, "JD VUELTA"))
+    entrada = tmp_path / "brain" / "model_d" / "jd-vuelta.json"
+    gp.cmd_hacia_vst(argparse.Namespace(destino=str(tmp_path / "vst"), files=[str(entrada)]))
+    salida = (tmp_path / "vst" / "jd-vuelta.gfp").read_bytes()
+    assert salida == bytes.fromhex(json.loads(entrada.read_text())["raw"])
+    assert gp.decode(salida)["name"] == "JD VUELTA"

@@ -56,3 +56,7 @@ Clip de 16 compases en `CHORDS`, sin instrumento: Juan carga ahí el VST. Rige l
 ## 6. Cómo se valida
 
 **Tests:** notas dentro de la escala, registro, conducción de voces, ritmo, forma, choques y regla de no pisar. **Lo que decide es Juan.**
+
+## Sonido (2026-11-08)
+
+Juan no encuentra presets de acordes en el VST. Antes de generar nada nuevo se oyen los que ya existen y nunca se probaron en el VST (`lab-acordes.md` §9): **JD PLK WOOD2** (elegido para el groove el 2026-10-29), **WOOD3** (variación), **JD SUS DARK** y sus variaciones **DARK2 / DARK3**, que no se habían oído. `gf_presets.py hacia-vst` los escribe como `.gfl` en `GrooveForge_Library/presets/acordes/`, sin tocar el Brain. Pluck para los patrones cortos (tresillo, contratiempo, clave, huecos); sostenidos para bloque, décimas y séptimas largas.
