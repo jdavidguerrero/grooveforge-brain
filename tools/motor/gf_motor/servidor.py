@@ -46,6 +46,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "detalles_proponer": lambda d: motor.proponer_detalles(),
         "detalles_poner": lambda d: motor.poner_detalle(d["parte"], d["id"]),
         "transiciones_proponer": lambda d: motor.proponer_transiciones(),
+        "roll_sonido": lambda d: motor.sonido_roll(d["material"]),
         "transiciones_poner": lambda d: motor.poner_transicion(d["elemento"], d["id"]),
         "drum_elegir": lambda d: motor.elegir_drum(d["id"]),
         "tonalidad": lambda d: motor.cambiar_tonalidad(d["raiz"], d["modo"]),

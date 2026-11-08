@@ -9,6 +9,8 @@ Parte de GF NOISE RISER (ARP 2600) y GF DARK DRONE (OB-6), que ya están en la l
     JD GOTAS    ARP 2600            ruido, resonancia alta, S&H mueve el filtro a saltos
     JD RIO      capa ARP 2600 + OB-6   gorgoteo (S&H rápido y poco profundo) + corriente grave que respira
     JD CASCADA  capa ARP 2600 + OB-6   ruido ancho y constante + golpe grave
+    JD CAIDA    ARP 2600            FX de transición: ruido que se cierra en ~3 s al entrar el drop (motor-transiciones.md)
+    JD SWELL    ARP 2600            FX de transición: ruido que crece ~2 s (un compás a 122) y corta: suena a platillo al revés
 """
 from __future__ import annotations
 
@@ -63,6 +65,25 @@ SOLOS = [
     ("JD GOTAS", dict(color=0.0, cutoff=1400.0, reso=0.85, lfo_shape=SH, lfo_rate=5.0, lfo_cut=0.3,
                       attack=800.0, release=2000.0)),
 ]
+def fx_ruido(src: dict, color: float, cutoff: float, env_amt: float, attack: float, decay: float, sustain: float,
+             release: float, f_attack: float, f_decay: float, f_sustain: float) -> dict:
+    """FX de ruido: aquí sí mueve el filtro la envolvente, porque el gesto tiene principio y fin."""
+    p = atmos(src, cutoff=cutoff, reso=0.3, lfo_shape=SINE, lfo_rate=0.1, lfo_cut=0.0, attack=attack, release=release)
+    p.update(decay_ms=decay, sustain=sustain, f_attack_ms=f_attack, f_decay_ms=f_decay, f_sustain=f_sustain,
+             f_release_ms=release, env_amt=env_amt, vel_amp=40.0)
+    p["osc"][0][3], p["osc"][0][4], p["osc"][1][4] = 100.0, 0.0, 0.0
+    p["mod"][0][0], p["mod"][0][3], p["mod"][0][4], p["mod"][0][5] = 0.0, 0.0, 0.0, color
+    return p
+
+
+FX = [
+    ("JD CAIDA", dict(color=10.0, cutoff=250.0, env_amt=0.8, attack=5.0, decay=4000.0, sustain=0.0, release=800.0,
+                      f_attack=5.0, f_decay=3000.0, f_sustain=0.0)),
+    ("JD SWELL", dict(color=20.0, cutoff=300.0, env_amt=0.7, attack=1900.0, decay=500.0, sustain=1.0, release=60.0,
+                      f_attack=1900.0, f_decay=500.0, f_sustain=1.0)),
+]
+
+
 # (nombre, ganancia A dB, ganancia B dB, mitad ARP, mitad OB-6)
 CAPAS = [
     ("JD RIO", 0, -3,
@@ -95,6 +116,11 @@ def build(lib: Path) -> dict[str, dict]:
         e.update(role="atmos", origin="propio", tags=["motor-pads", "organico"],
                  notes="ruido + filtro + LFO, agua y aire (motor-pads.md §5.1)")
         out[f"arp_2600/{g.slug(name)}.json"] = e
+    for name, receta in FX:
+        e = g.entry_from_raw(g.encode(g.ENGINES.index("arp_2600"), name, fx_ruido(arp, **receta)))
+        e.update(role="fx", origin="propio", tags=["motor-transiciones", "fx"],
+                 notes="FX de transición con ruido y envolvente de filtro (motor-transiciones.md)")
+        out[f"arp_2600/{g.slug(name)}.json"] = e
     for name, ga, gb, ra, rb in CAPAS:
         e = g.layer_entry_from_raw(capa_raw(name, ga, gb, arp_ruido(arp, **ra), ob6_ruido(ob6, **rb)))
         e.update(role="atmos", origin="propio", tags=["motor-pads", "organico"],
@@ -111,7 +137,8 @@ def main(argv=None):
     for rel, e in build(lib).items():
         path = lib / rel
         if path.exists():
-            raise SystemExit(f"ya existe {path}: no lo piso")
+            print(f"{e['name']:12}   ya existe, no lo piso")
+            continue
         path.write_text(json.dumps(e, indent=2, ensure_ascii=False) + "\n")
         print(f"{e['name']:12} → {path}")
 

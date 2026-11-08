@@ -53,6 +53,40 @@ Se leen los clips con nombre de `ARRANGE` (INTRO, BUILD, DROP, BREAK, OUTRO). Un
 
 Todo lo que tiene nota va a la tónica o al acorde de la tónica, por la regla de Juan.
 
+### 3.1 Segunda ronda (Juan, 2026-11-08): rolls con carácter, Tribe y FX
+
+**Más rolls** (los de arriba son PIRÁMIDE), todos de 4 compases:
+
+| Patrón | Qué hace |
+|---|---|
+| **ROLL TRESILLO** | 3-3-2 en semicorcheas, luego tresillos de corchea, sextillos y fusas: el tresillo de la base, acelerando |
+| **ROLL CON SILENCIO** | La pirámide, pero el último tiempo antes del drop queda vacío: el hueco hace que el drop pegue más |
+| **ROLL FLAM** | Cada golpe de negras, corcheas y semicorcheas con una nota de adorno 1/64 antes y más suave |
+
+**Sonido del roll con la drum machine:** snare y clap de `gf_perc` (madera, piel u 808, afinados a la fundamental) en un rack que se carga en `ROLL` y, si existe, en `FILL`. El nombre empieza por `DRUMS roll-…` para que `GFMotor` quite el rack anterior de esa pista sin tocar su Remote Script.
+
+**Fills con Tribe** (pista `FILL TRIBE`, notas de `kits/tribe_colombia.json`). En la cumbia y el bullerengue, el llamador sostiene y el alegre «llama» los cambios; la tambora remata:
+
+| Patrón | Dónde | Qué toca |
+|---|---|---|
+| **LLAMADOR** | 4 compases antes de cada drop | Abierto y bajoneo alternados: negras, corcheas, tresillos, semicorcheas |
+| **ALEGRE QUE LLAMA** | Último compás antes de cada cambio | Frase de abierto, quemao y latigazo que crece |
+| **TAMBORA** | 2 compases antes de cada cambio | Cáscara en corcheas, luego semicorcheas, y remate en abiertos |
+| **GUACHE RAIN** | 4 compases antes de cada drop | Dos lluvias y luego trémolo en semicorcheas que crece: un riser orgánico |
+
+**FX** (pista `FX`). El gesto lo pone el preset, así que no hace falta automatización:
+
+| Patrón | Dónde | Preset |
+|---|---|---|
+| **CAÍDA** | Al entrar cada drop, 2 compases | **JD CAIDA**: ruido que se cierra en ~3 s |
+| **SWELL INVERSO** | El compás antes de cada drop, cortando en el drop | **JD SWELL**: ruido que crece ~2 s y corta, como un platillo al revés |
+| **STUTTER** | Último compás antes del drop | La tónica en corcheas, semicorcheas y fusas, cada vez más cortas, con el sonido del lead o un stab |
+| **NATURALEZA** | Intro y breaks, hasta 8 compases | JD RIO, JD AIRE, JD CASCADA |
+
+Presets de FX y ear candy para el VST en `GrooveForge_Library/presets/fx/`: JD CAIDA, JD SWELL, GF NOISE RISER, JD AIRE, JD RIO, JD GOTAS, GF LOG DRUM (impacto), GF KALIMBA TINE, GF CHONTA, BELLS, RING BELL (gota). Los stabs están en `presets/stabs-plucks/`.
+
+**Más adelante** (requieren que `GFMotor` escriba automatización): barrido de filtro en el build, echo throw de la última nota del lead y el silencio de un tiempo en todo el set.
+
 ## 4. Regla de no pisar
 
 Cada elemento recuerda los clips que escribió. Si Juan editó o agregó algo en esa pista, la opción siguiente va a `<PISTA> propuesta`.

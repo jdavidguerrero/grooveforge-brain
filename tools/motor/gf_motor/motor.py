@@ -81,7 +81,7 @@ def _detalles_vacio() -> dict:
 
 
 def _transiciones_vacio() -> dict:
-    return {"secciones": [], **{k: {"opciones": [], "actual": None, "clips": None, "pista": None} for k in ELEMENTOS}}
+    return {"secciones": [], "rack_roll": None, **{k: {"opciones": [], "actual": None, "clips": None, "pista": None} for k in ELEMENTOS}}
 
 
 def _unir_con_previos(nuevos: list[dict], previos: list[dict]) -> list[dict]:
@@ -153,6 +153,8 @@ class Motor:
             e.setdefault("pads", _pads_vacio())
             e.setdefault("detalles", _detalles_vacio())
             e.setdefault("transiciones", _transiciones_vacio())
+            for k, v in _transiciones_vacio().items():
+                e["transiciones"].setdefault(k, v)
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -920,6 +922,42 @@ class Motor:
         estado.update(actual=ident, clips=finales, pista=pista)
         self._guardar()
         self._evento("borrador", parte=elemento, pista=pista, patron=op["patron"], puntos=[c["inicio"] for c in clips])
+        return e
+
+    def sonido_roll(self, material: str) -> dict:
+        """Snare y clap de la drum machine (afinados a la fundamental) en un rack para ROLL; FILL usa las mismas notas.
+        El nombre empieza por DRUMS para que GFMotor quite el rack anterior de la pista al cargar el nuevo."""
+        e = self._exigir_estado()
+        self._exigir_library()
+        if material not in MATERIALES_DRUMS:
+            raise ValueError(f"Material desconocido {material!r}")
+        p, t = e["partida"], e["transiciones"]
+        numero = (t["rack_roll"] or {}).get("numero", 0) + 1
+        carpeta = self.carpeta_live / "00 Motor" / f"ROLL {p['genero']} {p['raiz']} {p['modo']} {e['id'][:4]}"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        wavs = []
+        for voz in ("snare", "clap"):
+            y, _ = sintetizar_drum(voz, material, p["genero"], p["raiz"], p["modo"], 1)
+            ruta = carpeta / f"{voz}_{material.lower()}_{p['raiz']}_{p['modo']}.wav"
+            sf.write(ruta, np.asarray(y), SR, subtype="PCM_24")
+            wavs.append(ruta)
+        nombre = f"DRUMS roll-{material.lower()} {p['raiz']} {p['modo']} {e['id'][:4]} R{numero}"
+        ruta = carpeta / f"{nombre}.adg"
+        crear_rack(wavs, nombre, ruta, notas=[NOTAS_PERC["snare"], NOTAS_PERC["clap"]])
+        rack = {"nombre": nombre, "material": material, "numero": numero, "cargado": [], "motivo": None}
+        try:
+            self._exigir_set_editable()
+            for pista in ("ROLL", "FILL"):
+                if pista == "ROLL" and self.live.indice_pista(pista) is None:
+                    self.live.crear_pista_midi(pista)
+                if self.live.indice_pista(pista) is not None:
+                    self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], pista)
+                    rack["cargado"].append(pista)
+        except ErrorLive as exc:
+            rack["motivo"] = str(exc)
+        t["rack_roll"] = rack
+        self._guardar()
+        self._evento("eleccion", parte="sonido_roll", elegido=material, presentadas=list(MATERIALES_DRUMS), rack=nombre)
         return e
 
     def _clips_intactos(self, indice: int, actuales: list[dict], escritos: list[dict] | None) -> bool:

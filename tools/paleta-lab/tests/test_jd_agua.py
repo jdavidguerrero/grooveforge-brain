@@ -36,7 +36,18 @@ def test_build_escribe_dos_presets_y_dos_capas(tmp_path):
         raw = g.encode(g.ENGINES.index(engine), name, blank())
         (lib / engine / f"{g.slug(name)}.json").write_text(json.dumps(g.entry_from_raw(raw)))
     out = mk.build(lib)
-    assert set(out) == {"arp_2600/jd-aire.json", "arp_2600/jd-gotas.json", "layers/jd-rio.json", "layers/jd-cascada.json"}
+    assert set(out) == {"arp_2600/jd-aire.json", "arp_2600/jd-gotas.json", "layers/jd-rio.json", "layers/jd-cascada.json",
+                        "arp_2600/jd-caida.json", "arp_2600/jd-swell.json"}
     capa = out["layers/jd-rio.json"]
     assert capa["engine_a"] == "arp_2600" and capa["engine_b"] == "ob_6" and capa["role"] == "atmos"
     assert g.decode(bytes.fromhex(out["arp_2600/jd-aire.json"]["raw"]))["name"] == "JD AIRE"
+
+
+def test_fx_caida_se_cierra_y_swell_crece_y_corta():
+    r = dict(mk.FX)
+    c = mk.fx_ruido(blank(), **r["JD CAIDA"])
+    assert c["attack_ms"] <= 10 and c["sustain"] == 0 and c["env_amt"] > 0 and c["f_sustain"] == 0 and c["f_decay_ms"] >= 2000
+    s = mk.fx_ruido(blank(), **r["JD SWELL"])
+    assert 1500 <= s["attack_ms"] <= 2100 and s["f_attack_ms"] == s["attack_ms"] and s["release_ms"] <= 100
+    for p in (c, s):
+        assert p["osc"][0][3] == 100 and p["osc"][0][4] == 0 and not any(p["lfo_amt"])

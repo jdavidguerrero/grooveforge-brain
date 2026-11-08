@@ -318,7 +318,7 @@ function pintar(s) {
   if (s) pintarPads(s.pads);
   marcar("detalles", !!(s?.detalles?.stab?.clip || s?.detalles?.pluck?.clip));
   if (s) pintarDetalles(s.detalles);
-  marcar("transiciones", !!s && ["roll","riser","fill","ear"].some(k => s.transiciones[k].clips));
+  marcar("transiciones", !!s && ["roll","riser","fill","ear","tribe","fx"].some(k => s.transiciones[k]?.clips));
   if (s) pintarTransiciones(s.transiciones);
   if (s) pintarMotivo(s.motivo);
   if (s) {
@@ -555,11 +555,14 @@ function pintarDetalles(d) {
   }
   $("r-detalles").replaceChildren(...nodos);
 }
-const TRANS = [["roll", "Roll", "ROLL"], ["riser", "Riser", "RISER"], ["fill", "Fill", "FILL"], ["ear", "Ear candy", "EAR CANDY"]];
+const TRANS = [["roll", "Roll", "ROLL"], ["tribe", "Fills con Tribe", "FILL TRIBE"], ["riser", "Riser", "RISER"], ["fill", "Fill", "FILL"], ["ear", "Ear candy", "EAR CANDY"], ["fx", "FX", "FX"]];
 const TRANS_INFO = {
   "ROLL 4": "4 compases: negras, corcheas, semicorcheas, fusas", "ROLL 8": "8 compases, dos por subdivisión", "ROLL 2": "2 compases, corto",
   "RISER NOTA": "La tónica sostenida: la subida la pone el preset", "RISER ESCALERA": "Las notas del acorde entran una a una", "RISER OCTAVAS": "La tónica sube de octava",
   "FILL TRESILLO": "Clap en 3-3-2 que crece", "FILL ULTIMO TIEMPO": "Snare en semicorcheas en el último tiempo",
+  "ROLL TRESILLO": "3-3-2, tresillos, sextillos y fusas: tu tresillo acelerando", "ROLL CON SILENCIO": "Se corta un tiempo antes del drop", "ROLL FLAM": "Golpes dobles, más orgánico",
+  "LLAMADOR": "Llamador abierto y bajoneo acelerando hacia el drop", "ALEGRE QUE LLAMA": "La llamada del alegre en el último compás", "TAMBORA": "Cáscara que abre: el remate de cumbia", "GUACHE RAIN": "Guache en trémolo creciendo: un riser orgánico",
+  "CAIDA": "Ruido que se cierra al entrar el drop (JD CAIDA)", "SWELL INVERSO": "Ruido que crece un compás y corta en el drop (JD SWELL)", "STUTTER": "La tónica repetida cada vez más rápido", "NATURALEZA": "Agua o aire en intro y break (JD RIO, JD AIRE)",
   "IMPACTO": "Sub drop en la tónica al entrar el drop", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
 };
 function pintarTransiciones(t) {
@@ -572,6 +575,18 @@ function pintarTransiciones(t) {
     const e = t[k];
     nodos.push(tanda(titulo));
     if (e.pista && e.pista !== base) nodos.push(nota(`Editaste esa pista, así que esto va en ${e.pista}.`));
+    if (k === "roll") {
+      const f = document.createElement("div"); f.className = "patron";
+      const n = document.createElement("span"); n.textContent = "Sonido de la drum machine";
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+      x.textContent = t.rack_roll ? `${t.rack_roll.nombre}` + (t.rack_roll.cargado.length ? ` · en ${t.rack_roll.cargado.join(" y ")}` : ` · no se cargó: ${t.rack_roll.motivo || ""}`) : "Snare y clap afinados a La, en un rack para ROLL (y FILL si existe)";
+      n.append(x); f.append(n);
+      for (const m of ["MADERA", "PIEL", "808"]) {
+        const b = document.createElement("button"); b.className = "sec"; b.textContent = m; b.disabled = t.rack_roll?.material === m;
+        b.onclick = () => accion("roll_sonido", {material:m}, b); f.append(b);
+      }
+      nodos.push(f);
+    }
     for (const o of e.opciones) {
       const info = (TRANS_INFO[o.patron] || "") + ` · ${o.clips} ${o.clips === 1 ? "punto" : "puntos"} del arreglo`;
       const fila = filaOpcion(o.patron, info, e.actual === o.id, b => accion("transiciones_poner", {elemento:k, id:o.id}, b));

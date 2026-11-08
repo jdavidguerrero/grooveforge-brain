@@ -1,4 +1,4 @@
-"""Roll, riser, fill y ear candy en los puntos del arreglo. Diseño: apps/docs/produccion/motor-transiciones.md."""
+"""Roll, riser, fill, fills de Tribe, ear candy y FX en los puntos del arreglo. Diseño: apps/docs/produccion/motor-transiciones.md."""
 
 from __future__ import annotations
 
@@ -7,10 +7,18 @@ from .bajo import _NOTAS
 from .drums import CLAP, SNARE
 
 ELEMENTOS = {
-    "roll": ("ROLL", ("ROLL 4", "ROLL 8", "ROLL 2")),
+    "roll": ("ROLL", ("ROLL 4", "ROLL 8", "ROLL 2", "ROLL TRESILLO", "ROLL CON SILENCIO", "ROLL FLAM")),
     "riser": ("RISER", ("RISER NOTA", "RISER ESCALERA", "RISER OCTAVAS")),
     "fill": ("FILL", ("FILL TRESILLO", "FILL ULTIMO TIEMPO")),
     "ear": ("EAR CANDY", ("IMPACTO", "STAB ANTES DEL DROP", "GOTA EN EL BREAK")),
+    "tribe": ("FILL TRIBE", ("LLAMADOR", "ALEGRE QUE LLAMA", "TAMBORA", "GUACHE RAIN")),
+    "fx": ("FX", ("CAIDA", "SWELL INVERSO", "STUTTER", "NATURALEZA")),
+}
+# Teclado de Tribe · Colombian Percussion (GrooveForge_Dataset_v1/kits/tribe_colombia.json, octava 0).
+TRIBE = {
+    "tambora_open_l": 41, "tambora_open_r": 43, "tambora_cascara_l": 44, "tambora_cascara_r": 46,
+    "llamador_bajoneo": 48, "llamador_abierto": 50, "alegre_bajoneo": 52, "alegre_abierto": 53,
+    "alegre_quemao": 55, "alegre_latigazo": 57, "guache_rain": 62, "guache_tremolo": 64,
 }
 _SUBDIVISIONES = (1.0, 0.5, 0.25, 0.125)  # negras, corcheas, semicorcheas, fusas (en tiempos)
 RISER_MAX = 64.0  # 16 compases
@@ -35,18 +43,67 @@ def _nota(pitch: int, inicio: float, duracion: float, velocity: int) -> dict:
     return {"pitch": pitch, "start_beat": round(inicio, 4), "duration_beats": round(duracion, 4), "velocity": max(1, min(127, round(velocity)))}
 
 
-def _roll(llegada: float, compases: float) -> list[dict]:
-    """Cuatro tramos iguales de negras a fusas; la fuerza sube de 50 a 120 a lo largo de todo el roll."""
+def _roll(llegada: float, compases: float, subdivisiones=_SUBDIVISIONES, pitch: int = SNARE) -> list[dict]:
+    """Tramos iguales, uno por subdivisión; la fuerza sube de 50 a 120 a lo largo de todo el roll."""
     largo = compases * 4
     inicio = llegada - largo
-    tramo = largo / len(_SUBDIVISIONES)
+    tramo = largo / len(subdivisiones)
     notas = []
-    for k, paso in enumerate(_SUBDIVISIONES):
+    for k, paso in enumerate(subdivisiones):
         t = inicio + k * tramo
         while t < inicio + (k + 1) * tramo - 1e-6:
-            notas.append(_nota(SNARE, t, paso * 0.8, 50 + 70 * (t - inicio) / largo))
+            notas.append(_nota(pitch(len(notas)) if callable(pitch) else pitch, t, paso * 0.8, 50 + 70 * (t - inicio) / largo))
             t += paso
     return notas
+
+
+def _roll_patron(patron: str, llegada: float, compases: float) -> list[dict]:
+    if patron == "ROLL TRESILLO":
+        # 3-3-2 en semicorcheas, luego tresillos de corchea, sextillos y fusas: el tresillo de la base, acelerando.
+        primero = [_nota(SNARE, llegada - compases * 4 + s / 4, 0.2, 50 + 4 * i) for i, s in enumerate((0, 3, 6, 8, 11, 14))]
+        resto = _roll(llegada, compases * 3 / 4, (1 / 3, 1 / 6, 0.125))
+        for n in resto:
+            n["velocity"] = max(n["velocity"], 75)
+        return primero + resto
+    if patron == "ROLL CON SILENCIO":
+        return [n for n in _roll(llegada, compases) if n["start_beat"] < llegada - 1 - 1e-6]  # el hueco antes del drop
+    notas = _roll(llegada, compases)
+    if patron == "ROLL FLAM":
+        flams = [_nota(SNARE, n["start_beat"] - 0.0625, 0.05, n["velocity"] * 0.55) for n in notas if n["duration_beats"] >= 0.2 - 1e-6]
+        return sorted(notas + flams, key=lambda n: n["start_beat"])
+    return notas
+
+
+def _tribe(patron: str, llegada: float) -> list[dict]:
+    """Fills con Tribe: la llamada del tamborero antes del cambio (cumbia y bullerengue: el alegre llama, la tambora remata)."""
+    if patron == "LLAMADOR":
+        sonido = lambda i: TRIBE["llamador_abierto"] if i % 2 == 0 else TRIBE["llamador_bajoneo"]  # noqa: E731
+        return _roll(llegada, 4, (1.0, 0.5, 1 / 3, 0.25), pitch=sonido)
+    if patron == "GUACHE RAIN":
+        lluvia = [_nota(TRIBE["guache_rain"], llegada - 16 + 4 * k, 3.9, 60 + 10 * k) for k in range(2)]
+        tremolo = [_nota(TRIBE["guache_tremolo"], llegada - 8 + s / 4, 0.25, 40 + 70 * s / 31) for s in range(32)]
+        return lluvia + tremolo
+    compas = llegada - 4
+    if patron == "ALEGRE QUE LLAMA":
+        frase = ((0, "abierto"), (3, "quemao"), (6, "abierto"), (8, "latigazo"), (10, "quemao"), (11, "quemao"),
+                 (12, "abierto"), (13, "abierto"), (14, "latigazo"), (15, "quemao"))
+        return [_nota(TRIBE[f"alegre_{s}"], compas + p / 4, 0.25, 70 + 4 * i) for i, (p, s) in enumerate(frase)]
+    cascara = [_nota(TRIBE["tambora_cascara_l" if s % 4 == 0 else "tambora_cascara_r"], compas - 4 + s / 4, 0.25, 64 + s) for s in range(0, 16, 2)]
+    cascara += [_nota(TRIBE["tambora_cascara_l" if s % 2 == 0 else "tambora_cascara_r"], compas + s / 4, 0.2, 80 + 2 * s) for s in range(8)]
+    abiertos = [_nota(TRIBE["tambora_open_l" if k % 2 == 0 else "tambora_open_r"], compas + s / 4, 0.25, 96 + 4 * k) for k, s in enumerate((8, 10, 12, 13, 14, 15))]
+    return cascara + abiertos
+
+
+def _fx(patron: str, tonica: int, llegada: float) -> list[dict]:
+    raiz = 57 + (tonica - 57) % 12
+    if patron == "CAIDA":
+        return [_nota(raiz, llegada, 7.75, 110)]  # el preset cierra el filtro: barre la tensión del build
+    if patron == "SWELL INVERSO":
+        return [_nota(raiz, llegada - 4, 4.0, 100)]  # ataque de un compás que termina justo en el drop
+    alta = raiz + 12  # STUTTER: corcheas, semicorcheas y fusas en el último compás, cada vez más cortas
+    notas = [_nota(alta, llegada - 4 + 0.5 * k, 0.25, 96) for k in range(4)]
+    notas += [_nota(alta, llegada - 2 + 0.25 * k, 0.12, 100) for k in range(4)]
+    return notas + [_nota(alta, llegada - 1 + 0.125 * k, 0.06, 104) for k in range(8)]
 
 
 def _riser(patron: str, tonica: int, escala, desde: float, llegada: float) -> list[dict]:
@@ -98,11 +155,11 @@ def clips_transicion(elemento: str, patron: str, secs: list[dict], raiz: str, es
     tonica = _NOTAS[raiz]
     clips = []
     if elemento == "roll":
-        compases = {"ROLL 4": 4, "ROLL 8": 8, "ROLL 2": 2}[patron]
+        compases = {"ROLL 8": 8, "ROLL 2": 2}.get(patron, 4)
         for antes, drop in _drops(secs):
             largo = min(compases * 4, drop["inicio"] - (antes["inicio"] if antes else 0.0))
             if largo >= 4:
-                clips.append((drop["inicio"] - largo, largo, _roll(drop["inicio"], largo / 4)))
+                clips.append((drop["inicio"] - largo, largo, _roll_patron(patron, drop["inicio"], largo / 4)))
     elif elemento == "riser":
         for antes, drop in _drops(secs):
             desde = antes["inicio"] if antes else 0.0
@@ -113,6 +170,25 @@ def clips_transicion(elemento: str, patron: str, secs: list[dict], raiz: str, es
         for s in secs[1:]:
             if s["inicio"] >= 4:
                 clips.append((s["inicio"] - 4, 4.0, _fill(patron, s["inicio"])))
+    elif elemento == "tribe":
+        if patron in ("LLAMADOR", "GUACHE RAIN"):
+            llegadas = [d["inicio"] for _, d in _drops(secs)]
+        else:
+            llegadas = [s["inicio"] for s in secs[1:]]
+        largo = {"LLAMADOR": 16.0, "GUACHE RAIN": 16.0, "TAMBORA": 8.0}.get(patron, 4.0)
+        for llegada in llegadas:
+            if llegada >= largo:
+                clips.append((llegada - largo, largo, _tribe(patron, llegada)))
+    elif elemento == "fx" and patron == "NATURALEZA":
+        for s in secs:
+            if s["nombre"].startswith(("INTRO", "BREAK")):
+                largo = min(s["fin"] - s["inicio"], 32.0)
+                clips.append((s["inicio"], largo, [_nota(45 + (tonica - 45) % 12, s["inicio"], largo - 0.25, 80)]))
+    elif elemento == "fx":
+        for _, drop in _drops(secs):
+            notas = _fx(patron, tonica, drop["inicio"])
+            inicio = min(n["start_beat"] for n in notas)
+            clips.append((inicio, max(n["start_beat"] + n["duration_beats"] for n in notas) - inicio + 0.25, notas))
     else:
         notas = _ear(patron, tonica, escala, secs)
         for n in notas:

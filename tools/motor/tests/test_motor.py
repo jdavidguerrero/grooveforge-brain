@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import sys
 from pathlib import Path
 import urllib.error
@@ -1713,3 +1714,52 @@ def test_recomendacion_de_stabs_y_plucks():
     assert r == {("stab", "RESPUESTA"): True, ("pluck", "ARPEGIO 3-3-2"): False, ("pluck", "RIFF EN HUECOS"): True}
     r = {(x["parte"], x["patron"]): x["anadir"] for x in recomendar({"CHORDS 2": largo}, [], list(range(CICLO)))}
     assert r == {("stab", "GANCHO"): True, ("pluck", "ARPEGIO 3-3-2"): True}
+
+
+def test_rolls_nuevos():
+    s = secciones(_ARREGLO)
+    tres = clips_transicion("roll", "ROLL TRESILLO", s, "A", _LD)[0]["notas"]
+    assert [round(n["start_beat"] * 4) for n in tres[:6]] == [0, 3, 6, 8, 11, 14]  # el 3-3-2 abre el roll
+    assert len(tres) == 6 + 12 + 24 + 32
+    sil = clips_transicion("roll", "ROLL CON SILENCIO", s, "A", _LD)[0]["notas"]
+    assert max(n["start_beat"] for n in sil) < 15  # el último tiempo antes del drop queda vacío
+    flam = clips_transicion("roll", "ROLL FLAM", s, "A", _LD)[0]["notas"]
+    base = clips_transicion("roll", "ROLL 4", s, "A", _LD)[0]["notas"]
+    assert len(flam) == len(base) + 4 + 8 + 16  # flam en negras, corcheas y semicorcheas, no en fusas
+
+
+def test_fills_de_tribe_y_fx():
+    from gf_motor.transiciones import TRIBE
+
+    s = secciones(_ARREGLO)
+    kit = Path.home() / "GROOVEFORGE/GrooveForge_Dataset_v1/kits/tribe_colombia.json"
+    if kit.exists():  # las notas coinciden con el mapa del kit de Tribe
+        teclado = json.loads(kit.read_text())["teclado"]
+        assert TRIBE["llamador_abierto"] == teclado["Llamador Abierto"] and TRIBE["tambora_open_r"] == teclado["Tambora Open R"]
+    ll = clips_transicion("tribe", "LLAMADOR", s, "A", _LD)
+    assert [c["inicio"] for c in ll] == [240.0, 560.0] and {n["pitch"] for n in ll[0]["notas"]} == {48, 50}
+    alegre = clips_transicion("tribe", "ALEGRE QUE LLAMA", s, "A", _LD)
+    assert len(alegre) == 6 and all(c["longitud"] == 4 for c in alegre)
+    tambora = clips_transicion("tribe", "TAMBORA", s, "A", _LD)[0]["notas"]
+    assert {41, 43} <= {n["pitch"] for n in tambora} and max(n["start_beat"] for n in tambora) < 8
+    caida = clips_transicion("fx", "CAIDA", s, "A", _LD)
+    assert [c["inicio"] for c in caida] == [256.0, 576.0] and caida[0]["notas"][0]["pitch"] == 57
+    swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)[0]
+    assert swell["inicio"] == 252.0 and swell["notas"][0]["duration_beats"] == 4.0
+    st = clips_transicion("fx", "STUTTER", s, "A", _LD)[0]["notas"]
+    assert len(st) == 16 and st[-1]["duration_beats"] < st[0]["duration_beats"]
+    nat = clips_transicion("fx", "NATURALEZA", s, "A", _LD)
+    assert [c["inicio"] for c in nat] == [0.0, 384.0] and nat[0]["notas"][0]["pitch"] % 12 == 9
+
+
+def test_sonido_roll_crea_rack_y_lo_carga(entorno):
+    live, motor = entorno
+    _con_arreglo(live, motor)
+    t = motor.sonido_roll("PIEL")["transiciones"]
+    r = t["rack_roll"]
+    assert r["nombre"].startswith("DRUMS roll-piel A lidia_dominante ") and r["nombre"].endswith(" R1")
+    assert r["cargado"] == ["ROLL"] and live.cargas[-1][1] == "ROLL"
+    assert re.match(r"^(KICK|DRUMS) \S+ \S+ \S+ [0-9a-f]{4} R\d+$", r["nombre"])  # GFMotor quita el anterior
+    assert motor.sonido_roll("808")["transiciones"]["rack_roll"]["numero"] == 2
+    with pytest.raises(ValueError):
+        motor.sonido_roll("METAL")
