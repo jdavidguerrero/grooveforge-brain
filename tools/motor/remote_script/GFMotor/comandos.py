@@ -104,6 +104,18 @@ def listar_clips(song, m):
     return {"clips": [{"start": c.start_time, "length": c.length, "name": c.name, "end": c.end_time, "marker": c.start_marker} for c in _clips(pista)]}
 
 
+def _notas_del_clip(clip):
+    return [
+        {
+            "pitch": int(n.pitch),
+            "start_beat": round(float(n.start_time), 4),
+            "duration_beats": round(float(n.duration), 4),
+            "velocity": int(n.velocity),
+        }
+        for n in clip.get_notes_extended(0, 128, 0.0, float(clip.length))
+    ]
+
+
 def leer_clip(song, m):
     """Solo devuelve el clip que empieza justo en ese tiempo; nunca el más cercano."""
     pista = _pista_midi(song, int(m["track_index"]))
@@ -111,23 +123,18 @@ def leer_clip(song, m):
     clip = next((c for c in _clips(pista) if abs(c.start_time - inicio) < 1e-3), None)
     if clip is None:
         return {"clip": None}
-    notas = clip.get_notes_extended(0, 128, 0.0, float(clip.length))
-    return {
-        "clip": {
-            "start": clip.start_time,
-            "length": clip.length,
-            "name": clip.name,
-            "notes": [
-                {
-                    "pitch": int(n.pitch),
-                    "start_beat": round(float(n.start_time), 4),
-                    "duration_beats": round(float(n.duration), 4),
-                    "velocity": int(n.velocity),
-                }
-                for n in notas
-            ],
-        }
-    }
+    return {"clip": {"start": clip.start_time, "length": clip.length, "name": clip.name, "notes": _notas_del_clip(clip)}}
+
+
+def leer_pista(song, m):
+    """Todos los clips del arreglo con sus notas, en una sola consulta: Live atiende pocos comandos por segundo."""
+    pista = _pista(song, int(m["track_index"]))
+    midi = pista.has_midi_input
+    return {"clips": [
+        {"start": c.start_time, "length": c.length, "name": c.name, "end": c.end_time, "marker": c.start_marker,
+         "notes": _notas_del_clip(c) if midi else None}
+        for c in _clips(pista)
+    ]}
 
 
 def intentar_cargar(song, navegador, partes, nombre_pista):

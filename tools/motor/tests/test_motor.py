@@ -830,7 +830,7 @@ def test_proponer_solo_lee_live(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     p = motor.proponer_patrones_drums()["drums"]["patrones"]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     assert p["analisis"]["bajo"] == [3, 6, 11, 14] and len(p["opciones"]) == 3
 
 
@@ -955,7 +955,7 @@ def test_tops_proponer_solo_lee_y_poner_respeta_lo_editado(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     op = motor.proponer_tops("perc")["tops"]["perc"]["opciones"]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     assert op[0]["encaje"]["golpes"] > 0
     motor.poner_top("perc", op[0]["id"])
     perc = next(p for p in live.pistas if p["name"] == "PERC")
@@ -1064,7 +1064,7 @@ def test_generar_motivos_solo_lee_y_usa_el_groove(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     m = motor.generar_motivos()["motivo"]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     assert {o["nombre"] for o in m["opciones"]} == {"CORTO", "MIXTO", "LARGO", "RESPUESTA", "CON CLAVE"}
     assert _eventos("motor_opciones")[-1]["parte"] == "motivo"
 
@@ -1238,7 +1238,7 @@ def test_proponer_acordes_solo_lee_y_usa_melodia(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     a = motor.proponer_acordes()["acordes"]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     assert a["melodia"] == "MELODY" and len(a["opciones"]) == 3 * 10
     assert {o["acordes"] for o in a["opciones"]} == {"A – B – F#m – B", "A – B", "A – B – Em – A"}
     assert all(o["choques"]["porcentaje"] is not None for o in a["opciones"])
@@ -1322,7 +1322,7 @@ def test_registrar_guarda_todo_sin_tocar_live(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     r = motor.registrar("TRESB MAD2", "rack R1", "más madera")["registros"][-1]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     guardado = json.loads(Path(r["archivo"]).read_text())
     bass = next(p for p in guardado["pistas"] if p["name"] == "BASS")
     assert bass["clips"][0]["notes"][0]["pitch"] == 33 and guardado["sonido_bajo"] == "TRESB MAD2"
@@ -2073,5 +2073,25 @@ def test_recomendar_solo_lee(entorno):
     antes = copy.deepcopy(live.pistas)
     live.comandos.clear()
     r = motor.recomendar()["recomendaciones"]
-    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip", "read_track"}
     assert len(r["secciones"]) == 8 and any(x["pista"] == "STABS" for x in r["anchura"])
+
+
+def test_lectura_de_pista_con_gfmotor_viejo_y_nuevo(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    indice = live.pistas.index(next(p for p in live.pistas if p["name"] == "KICK"))
+    nuevo = motor.live.clips_con_notas(indice)
+    live.comandos.clear()
+    live.version = "4"
+    viejo = motor.live.clips_con_notas(indice)
+    assert [c["notes"] for c in nuevo] == [c["notes"] for c in viejo] and "read_clip" in live.comandos
+
+
+def test_superficie_lee_toda_la_pista():
+    c = _comandos()
+    s = _Cancion("KICK")
+    for t in (8.0, 0.0):
+        c.escribir_clip(s, {"track_index": 0, "start_beats": t, "length_beats": 4.0, "clip_name": "A", "notes": [nota(1)]}, _Nota)
+    r = c.leer_pista(s, {"track_index": 0})["clips"]
+    assert [x["start"] for x in r] == [0.0, 8.0] and r[0]["notes"][0]["start_beat"] == 1

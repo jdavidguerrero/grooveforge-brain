@@ -585,12 +585,11 @@ class Motor:
         indice = self.live.indice_pista(pista)
         if indice is None:
             return []
-        clips = self.live.listar_clips(indice)
+        clips = self.live.clips_con_notas(indice)
         notas = []
         for i, c in enumerate(clips):
-            leido = self.live.leer_clip(indice, c["start"])
-            if leido:
-                notas += notas_en_arreglo({**c, "notes": leido["notes"]}, clips[i + 1]["start"] if i + 1 < len(clips) else None)
+            if c.get("notes"):
+                notas += notas_en_arreglo(c, clips[i + 1]["start"] if i + 1 < len(clips) else None)
         return notas
 
     def proponer_patrones_drums(self) -> dict:
@@ -1061,13 +1060,14 @@ class Motor:
             if nombre in a["escritos"]:
                 mat = a["materiales"].get(nombre)  # ya armado: el material vive en el estado
             else:
-                clips = self.live.listar_clips(p["index"])
-                mat = material_de(clips, self._notas_de(nombre))
+                clips = self.live.clips_con_notas(p["index"])
+                notas_abs = []
+                for i, c in enumerate(clips):
+                    if c.get("notes"):
+                        notas_abs += notas_en_arreglo(c, clips[i + 1]["start"] if i + 1 < len(clips) else None)
+                mat = material_de(clips, notas_abs)
                 if mat:
-                    mat["clips"] = [
-                        {"inicio": c["start"], "notas": (self.live.leer_clip(p["index"], c["start"]) or {}).get("notes", [])}
-                        for c in clips if c["start"] < mat["desde"] + mat["largo"] - 1e-6
-                    ]
+                    mat["clips"] = [{"inicio": c["start"], "notas": c.get("notes") or []} for c in clips if c["start"] < mat["desde"] + mat["largo"] - 1e-6]
             if mat:
                 roles.append(nombre)
                 materiales[nombre] = mat
@@ -1114,10 +1114,9 @@ class Motor:
                     nuevos += clips_de_tramo(mat, t[0], t[1], f"{rol} · {s['nombre']}")
             conocidos = list(a["escritos"].get(rol, [])) + list(mat.get("clips", []))
             ajenos = []
-            for c in self.live.listar_clips(indice):
+            for c in self.live.clips_con_notas(indice):
                 propio = next((x for x in conocidos if abs(x["inicio"] - c["start"]) < 1e-3), None)
-                leido = self.live.leer_clip(indice, c["start"])
-                if propio is not None and leido is not None and diferencia(propio["notas"], leido["notes"])["sin_cambios"]:
+                if propio is not None and c.get("notes") is not None and diferencia(propio["notas"], c["notes"])["sin_cambios"]:
                     self.live.borrar_clip(indice, c["start"])
                 else:
                     ajenos.append((c["start"], c.get("end", c["start"] + c["length"])))
@@ -1200,16 +1199,9 @@ class Motor:
         pistas = []
         for p in s["tracks"]:
             try:
-                clips = self.live.listar_clips(p["index"])
+                detalle = self.live.clips_con_notas(p["index"])  # en una pista de audio, notes es None
             except ErrorLive:
-                clips = []
-            detalle = []
-            for c in clips:
-                try:
-                    leido = self.live.leer_clip(p["index"], c["start"])
-                except ErrorLive:
-                    leido = None  # Pista de audio: el clip existe, pero no tiene notas.
-                detalle.append({**c, "notes": leido["notes"] if leido else None})
+                detalle = []
             pistas.append({"name": p["name"], "index": p["index"], "clips": detalle})
         registro = {
             "ts": marca,

@@ -18,7 +18,7 @@ class LiveSimulado:
         self.comandos: list[str] = []
         self.cargas: list[tuple[list[str], str]] = []
         self.plugins: list[tuple[str, str]] = []
-        self.version = "4"
+        self.version = "5"
         self.retornos = ["A Office", "B Plate", "C Hall", "D Rumble", "E Delay", "F Echo"]
         self.error_carga: str | None = None
         externo = self
@@ -79,6 +79,11 @@ class LiveSimulado:
         if t == "read_clip":
             c = next((x for x in self.pistas[m["track_index"]]["clips"] if abs(x["start"] - m["start_beats"]) < 1e-3), None)
             return {"ok": True, "clip": c}
+        if t == "read_track":
+            if self.version < "5":
+                return {"ok": False, "error": "Comando desconocido: 'read_track'"}
+            clips = sorted(self.pistas[m["track_index"]]["clips"], key=lambda c: c["start"])
+            return {"ok": True, "clips": [{"start": c["start"], "length": c["length"], "name": c["name"], "notes": c["notes"]} for c in clips]}
         if t == "get_mixer":
             pistas = [{"name": p["name"], "volume_db": p.get("volume_db", 0.0), "pan": p.get("pan", 0.0),
                        "sends": p.get("sends", [float("-inf")] * len(self.retornos))} for p in self.pistas]
