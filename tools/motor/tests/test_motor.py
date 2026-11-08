@@ -1694,3 +1694,11 @@ def test_transiciones_sin_arrange(entorno):
     _set_acordes(live, motor)
     with pytest.raises(ValueError, match="ARRANGE"):
         motor.proponer_transiciones()
+
+
+def test_progresion_desde_el_nombre_del_clip_si_la_sesion_no_la_tiene(entorno):
+    live, motor = entorno
+    _groove_para_motivo(live, motor)
+    live.pistas.append({"name": "CHORDS 2", "clips": [{"start": 0.0, "length": 64.0, "notes": [], "name": "I-II SEPTIMAS LARGAS", "color": None}]})
+    assert motor.proponer_pads()["pads"]["progresion"] == "I-II"
+    assert motor.proponer_detalles()["detalles"]["progresion"] == "I-II"

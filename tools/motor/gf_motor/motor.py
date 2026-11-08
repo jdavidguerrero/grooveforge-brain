@@ -769,14 +769,26 @@ class Motor:
         """Solo lee el estado: la progresión que quedó en Acordes. Cada lectura da otra tanda de la nube."""
         e = self._exigir_estado()
         pads = e["pads"]
-        actual = e["acordes"]["actual"]
-        pads["progresion"] = actual.split("|")[0] if actual else None
+        pads["progresion"] = self._progresion_actual(e)
         pads["tanda"] += 1
         for parte, patrones in (("pad", PATRONES_PAD), ("atmos", PATRONES_ATMOS)):
             pads[parte]["opciones"] = [{"id": p, "patron": p, "tanda": pads["tanda"]} for p in patrones]
         self._guardar()
         self._evento("opciones", parte="pads", progresion=pads["progresion"], tanda=pads["tanda"], pad=list(PATRONES_PAD), atmos=list(PATRONES_ATMOS))
         return e
+
+    def _progresion_actual(self, e: dict) -> str | None:
+        """La que se puso desde Acordes; si esta sesión no la tiene, la del nombre de un clip en una pista CHORDS*."""
+        actual = e["acordes"]["actual"]
+        if actual:
+            return actual.split("|")[0]
+        for p in self.live.sesion()["tracks"]:
+            if p["name"].upper().startswith("CHORDS"):
+                for c in self.live.listar_clips(p["index"]):
+                    primera = (c.get("name") or "").split(" ")[0]
+                    if primera in PROGRESIONES:
+                        return primera
+        return None
 
     def poner_pad(self, parte: str, ident: str) -> dict:
         """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
@@ -812,8 +824,7 @@ class Motor:
         """Solo lee Live: acordes, lead y kick. Avisa si otra pista ya cumple el papel; no quita opciones."""
         e = self._exigir_estado()
         d = e["detalles"]
-        actual = e["acordes"]["actual"]
-        d["progresion"] = actual.split("|")[0] if actual else None
+        d["progresion"] = self._progresion_actual(e)
         d["tanda"] += 1
         pista_lead = next((n for n in ("LEAD", "MELODY", "MOTIVO") if self._notas_de(n)), None)
         lead = self._notas_de(pista_lead) if pista_lead else []
