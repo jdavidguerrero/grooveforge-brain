@@ -100,9 +100,21 @@ Presets de FX y ear candy para el VST en `GrooveForge_Library/presets/fx/`: JD C
 Juan agregó a `ARRANGE` una sección **INTER**: el interludio del segundo build, donde va el **subdrop** y caben más detalles. Cuando un DROP viene después de un INTER:
 
 - La **subida** (riser, roll y roll de Tribe) llega al **inicio del INTER**: ahí se corta la tensión.
-- **SUBDROP INTER** (ear candy): la tónica grave (La1) al empezar cada INTER. **IMPACTO** sigue en el primer tiempo de cada drop.
+- **SUBDROP INTER**: al empezar cada INTER (§3.3). **SUBDROP EN DROP** sigue en el primer tiempo de cada drop.
 - El INTER puede llevar **GOTA** y **NATURALEZA**. **SWELL INVERSO**, **STUTTER** y **STAB ANTES DEL DROP** siguen yendo al drop, al final del INTER.
 - No lleva fills: no es una frase de 8 compases.
+
+### 3.3 Subdrop propio (Juan, 2026-11-08)
+
+Juan dejó el INTER en **un compás**: un pequeño silencio para el subdrop. Ningún preset del Brain servía como subdrop: el Brain no tiene envolvente de tono, y GF LOG DRUM es un golpe. El subdrop sale de la drum machine (`gf_perc/subdrop.py`): un seno que **cae de tono** hasta la tónica grave (La1, 55 Hz), con algo de saturación para que se oiga en parlantes pequeños.
+
+| Sonido | Caída | Dura | Para |
+|---|---|---|---|
+| **CORTA** (por defecto) | Una octava, rápida | 1,8 s | Un INTER de un compás (≈ 2 s a 122) |
+| **LARGA** | Una octava, lenta | 3,5 s | Un INTER largo o un break |
+| **808** | Un cuarto de octava | 2,5 s | Casi recto: un 808 largo |
+
+Va a su propia pista, `SUBDROP`, con un rack del motor (pad C1, nombre `DRUMS subdrop-…` para que se reemplace al elegir otro). **SUBDROP INTER** cae al empezar cada INTER; **SUBDROP EN DROP** (antes IMPACTO, en Ear candy) en el primer tiempo de cada drop. Si no se eligió sonido, al poner el primero se crea el CORTA.
 
 ## 4. Regla de no pisar
 

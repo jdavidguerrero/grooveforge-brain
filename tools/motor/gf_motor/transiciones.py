@@ -10,7 +10,8 @@ ELEMENTOS = {
     "roll": ("ROLL", ("ROLL 4", "ROLL 8", "ROLL 2", "ROLL TRESILLO", "ROLL CON SILENCIO", "ROLL FLAM")),
     "riser": ("RISER", ("RISER NOTA", "RISER ESCALERA", "RISER OCTAVAS")),
     "fill": ("FILL", ("ALEGRE QUE LLAMA", "TAMBORA", "CAJA")),
-    "ear": ("EAR CANDY", ("IMPACTO", "SUBDROP INTER", "STAB ANTES DEL DROP", "GOTA EN EL BREAK")),
+    "ear": ("EAR CANDY", ("STAB ANTES DEL DROP", "GOTA EN EL BREAK")),
+    "subdrop": ("SUBDROP", ("SUBDROP INTER", "SUBDROP EN DROP")),
     "tribe": ("ROLL TRIBE", ("LLAMADOR", "GUACHE RAIN")),
     "fx": ("FX", ("CAIDA", "SWELL INVERSO", "STUTTER", "NATURALEZA")),
 }
@@ -22,6 +23,7 @@ TRIBE = {
     "alegre_quemao": 55, "alegre_latigazo": 57, "guache_rain": 62, "guache_tremolo": 64,
     "caja_fondo_l": 71, "caja_fondo_r": 72, "caja_quemao_l": 74, "caja_quemao_r": 76, "caja_latigazo": 77,
 }
+NOTA_SUBDROP = 36  # pad del rack SUBDROP
 FRASE = 32.0  # 8 compases: los fills van al final de cada frase, dentro de las secciones
 _SUBDIVISIONES = (1.0, 0.5, 0.25, 0.125)  # negras, corcheas, semicorcheas, fusas (en tiempos)
 RISER_MAX = 64.0  # 16 compases
@@ -163,14 +165,7 @@ def _riser(patron: str, tonica: int, escala, desde: float, llegada: float) -> li
 
 def _ear(patron: str, tonica: int, escala, secs: list[dict]) -> list[dict]:
     notas = []
-    if patron == "IMPACTO":
-        for _, drop in _drops(secs):
-            notas.append(_nota(33 + (tonica - 33) % 12, drop["inicio"], 7.75, 115))  # La1: el sub drop
-    elif patron == "SUBDROP INTER":
-        for s in secs:
-            if s["nombre"].startswith("INTER"):
-                notas.append(_nota(33 + (tonica - 33) % 12, s["inicio"], min(s["fin"] - s["inicio"], 8.0) - 0.25, 118))
-    elif patron == "STAB ANTES DEL DROP":
+    if patron == "STAB ANTES DEL DROP":
         clases = clases_acorde(tonica, escala, 0)
         raiz = 60 + (clases[0] - 60) % 12
         for _, drop in _drops(secs):
@@ -210,6 +205,14 @@ def clips_transicion(elemento: str, patron: str, secs: list[dict], raiz: str, es
         for desde, llegada in subidas(secs):
             if llegada - desde >= 16:
                 clips.append((llegada - 16.0, 16.0, _tribe(patron, llegada)))
+    elif elemento == "subdrop":
+        # Una nota al pad del rack SUBDROP (el sample ya está en la tónica); dura lo que dure el sample.
+        if patron == "SUBDROP INTER":
+            puntos = [s["inicio"] for s in secs if s["nombre"].startswith("INTER")]
+        else:
+            puntos = [d["inicio"] for _, d in _drops(secs)]
+        for p in puntos:
+            clips.append((p, 4.0, [_nota(NOTA_SUBDROP, p, 3.75, 120)]))
     elif elemento == "fx" and patron == "NATURALEZA":
         for s in secs:
             if s["nombre"].startswith(("INTRO", "BREAK", "INTER")):

@@ -1658,8 +1658,8 @@ def test_riser_fill_y_ear_candy_en_su_sitio():
     drop2, outro = [576.0 + 32.0 * k for k in range(1, 7)], [800.0, 832.0]
     assert fines == intro + drop1 + brk + drop2 + outro
     assert 256.0 not in fines and 576.0 not in fines  # la llegada al drop es del roll
-    imp = clips_transicion("ear", "IMPACTO", s, "A", _LD)
-    assert [c["inicio"] for c in imp] == [256.0, 576.0] and imp[0]["notas"][0]["pitch"] == 33
+    imp = clips_transicion("subdrop", "SUBDROP EN DROP", s, "A", _LD)
+    assert [c["inicio"] for c in imp] == [256.0, 576.0] and imp[0]["notas"][0]["pitch"] == 36  # pad del rack SUBDROP
     gota = clips_transicion("ear", "GOTA EN EL BREAK", s, "A", _LD)
     assert [c["inicio"] for c in gota] == [384.0, 448.0]
     assert clips_transicion("roll", "ROLL 4", secciones([{"start": 0.0, "length": 64.0, "name": "INTRO"}]), "A", _LD) == []
@@ -1683,11 +1683,11 @@ def test_poner_transiciones_varios_clips_y_respeta_lo_editado(entorno):
     motor.poner_transicion("roll", "ROLL 2")  # más corto: se estira para tapar el anterior
     assert sorted((c["start"], c["length"]) for c in roll["clips"]) == [(240.0, 16.0), (560.0, 16.0)]
     assert min(n["start_beat"] for n in roll["clips"][0]["notes"]) == 8.0
-    motor.poner_transicion("ear", "IMPACTO")
-    motor.poner_transicion("ear", "GOTA EN EL BREAK")  # el impacto queda tapado con un clip vacío
+    motor.poner_transicion("ear", "STAB ANTES DEL DROP")
+    motor.poner_transicion("ear", "GOTA EN EL BREAK")  # el stab queda tapado con un clip vacío
     ear = next(x for x in live.pistas if x["name"] == "EAR CANDY")
     vacios = [c for c in ear["clips"] if not c["notes"]]
-    assert sorted(c["start"] for c in vacios) == [256.0, 576.0]
+    assert sorted(c["start"] for c in vacios) == [252.0, 572.0]
     roll["clips"][0]["notes"] = roll["clips"][0]["notes"][1:]
     copia = copy.deepcopy(roll)
     assert motor.poner_transicion("roll", "ROLL 8")["transiciones"]["roll"]["pista"] == "ROLL propuesta" and roll == copia
@@ -1787,9 +1787,9 @@ def test_inter_recibe_la_subida_y_el_subdrop():
     assert [c["inicio"] + c["longitud"] for c in roll] == [192.0, 560.0]  # la subida llega al INTER, no al drop
     riser = clips_transicion("riser", "RISER NOTA", s, "A", _LD)
     assert riser[-1]["inicio"] == 512.0 and riser[-1]["inicio"] + riser[-1]["longitud"] == 560.0
-    sub = clips_transicion("ear", "SUBDROP INTER", s, "A", _LD)
-    assert [c["inicio"] for c in sub] == [560.0] and sub[0]["notas"][0]["pitch"] == 33
-    assert [c["inicio"] for c in clips_transicion("ear", "IMPACTO", s, "A", _LD)] == [192.0, 576.0]
+    sub = clips_transicion("subdrop", "SUBDROP INTER", s, "A", _LD)
+    assert [c["inicio"] for c in sub] == [560.0] and sub[0]["notas"][0]["pitch"] == 36
+    assert [c["inicio"] for c in clips_transicion("subdrop", "SUBDROP EN DROP", s, "A", _LD)] == [192.0, 576.0]
     assert 560.0 in [c["inicio"] for c in clips_transicion("fx", "NATURALEZA", s, "A", _LD)]
     swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)
     assert swell[-1]["inicio"] + 4 == 576.0  # el swell y el stutter sí van al drop, al final del INTER
@@ -1842,3 +1842,15 @@ def test_el_motor_pone_el_instrumento_en_las_pistas_que_crea(entorno):
     motor.poner_acordes("I-II|SEPTIMAS CLAVE")
     assert [p for _, p in live.plugins].count("CHORDS") == 1  # no lo vuelve a poner
     assert motor.estado["instrumentos"]["CHORDS"] == "ya tiene instrumento"
+
+
+def test_subdrop_crea_su_rack_si_no_hay_y_va_a_su_pista(entorno):
+    live, motor = entorno
+    _con_arreglo(live, motor)
+    motor.proponer_transiciones()
+    t = motor.poner_transicion("subdrop", "SUBDROP EN DROP")["transiciones"]
+    assert t["rack_subdrop"]["variante"] == "CORTA" and live.cargas[-1][1] == "SUBDROP"
+    assert re.match(r"^(KICK|DRUMS) \S+ \S+ \S+ [0-9a-f]{4} R\d+$", t["rack_subdrop"]["nombre"])
+    sub = next(x for x in live.pistas if x["name"] == "SUBDROP")
+    assert sorted(c["start"] for c in sub["clips"]) == [256.0, 576.0] and not any(p == "SUBDROP" for _, p in live.plugins)
+    assert motor.sonido_subdrop("LARGA")["transiciones"]["rack_subdrop"]["numero"] == 2

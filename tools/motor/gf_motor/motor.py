@@ -23,7 +23,8 @@ from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
-from .transiciones import ELEMENTOS, clips_transicion, secciones  # noqa: E402
+from .transiciones import ELEMENTOS, NOTA_SUBDROP, clips_transicion, secciones  # noqa: E402
+from gf_perc.subdrop import SUBDROPS, sintetizar_subdrop  # noqa: E402
 from .pads import PATRONES_ATMOS, PATRONES_PAD, clip_pad  # noqa: E402
 from .acordes import PROGRESIONES, choques, clip_acordes, nombres_progresion, patrones as patrones_acordes  # noqa: E402
 from .bajo import FAMILIAS, patron  # noqa: E402
@@ -90,7 +91,7 @@ def _detalles_vacio() -> dict:
 
 
 def _transiciones_vacio() -> dict:
-    return {"secciones": [], "rack_roll": None, **{k: {"opciones": [], "actual": None, "clips": None, "pista": None} for k in ELEMENTOS}}
+    return {"secciones": [], "rack_roll": None, "rack_subdrop": None, **{k: {"opciones": [], "actual": None, "clips": None, "pista": None} for k in ELEMENTOS}}
 
 
 def _unir_con_previos(nuevos: list[dict], previos: list[dict]) -> list[dict]:
@@ -917,6 +918,8 @@ class Motor:
         clips = clips_transicion(elemento, op["patron"], t["secciones"], p["raiz"], MODOS[p["modo"]])
         if not clips:
             raise ValueError(f"Tu arreglo no tiene dónde poner {op['patron']}: revisa los nombres de ARRANGE")
+        if elemento == "subdrop" and not t["rack_subdrop"]:
+            self.sonido_subdrop("CORTA")  # sin sonido elegido, el corto: cabe en un INTER de un compás
         base = ELEMENTOS[elemento][0]
         pista = estado["pista"] or base
         indice = self.live.indice_pista(pista)
@@ -937,6 +940,36 @@ class Motor:
         estado.update(actual=ident, clips=finales, pista=pista)
         self._guardar()
         self._evento("borrador", parte=elemento, pista=pista, patron=op["patron"], puntos=[c["inicio"] for c in clips])
+        return e
+
+    def sonido_subdrop(self, variante: str) -> dict:
+        """Subdrop de la drum machine (seno que cae a la tónica) en un rack para la pista SUBDROP."""
+        e = self._exigir_estado()
+        self._exigir_library()
+        if variante not in SUBDROPS:
+            raise ValueError(f"Subdrop desconocido {variante!r}")
+        p, t = e["partida"], e["transiciones"]
+        numero = (t["rack_subdrop"] or {}).get("numero", 0) + 1
+        carpeta = self.carpeta_live / "00 Motor" / f"SUBDROP {p['genero']} {p['raiz']} {p['modo']} {e['id'][:4]}"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        y, _ = sintetizar_subdrop(variante, p["raiz"], p["modo"])
+        wav = carpeta / f"subdrop_{variante.lower()}_{p['raiz']}_{p['modo']}.wav"
+        sf.write(wav, np.asarray(y), SR, subtype="PCM_24")
+        nombre = f"DRUMS subdrop-{variante.lower()} {p['raiz']} {p['modo']} {e['id'][:4]} R{numero}"
+        ruta = carpeta / f"{nombre}.adg"
+        crear_rack([wav], nombre, ruta, notas=[NOTA_SUBDROP])
+        rack = {"nombre": nombre, "variante": variante, "numero": numero, "cargado": [], "motivo": None}
+        try:
+            self._exigir_set_editable()
+            if self.live.indice_pista("SUBDROP") is None:
+                self.live.crear_pista_midi("SUBDROP")
+            self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], "SUBDROP")
+            rack["cargado"].append("SUBDROP")
+        except ErrorLive as exc:
+            rack["motivo"] = str(exc)
+        t["rack_subdrop"] = rack
+        self._guardar()
+        self._evento("eleccion", parte="sonido_subdrop", elegido=variante, presentadas=list(SUBDROPS), rack=nombre)
         return e
 
     def sonido_roll(self, material: str) -> dict:

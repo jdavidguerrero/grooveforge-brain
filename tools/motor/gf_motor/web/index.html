@@ -318,7 +318,7 @@ function pintar(s) {
   if (s) pintarPads(s.pads);
   marcar("detalles", !!(s?.detalles?.stab?.clip || s?.detalles?.pluck?.clip));
   if (s) pintarDetalles(s.detalles);
-  marcar("transiciones", !!s && ["roll","riser","fill","ear","tribe","fx"].some(k => s.transiciones[k]?.clips));
+  marcar("transiciones", !!s && ["roll","riser","fill","ear","tribe","fx","subdrop"].some(k => s.transiciones[k]?.clips));
   if (s) pintarTransiciones(s.transiciones);
   if (s) pintarMotivo(s.motivo);
   if (s) {
@@ -555,7 +555,7 @@ function pintarDetalles(d) {
   }
   $("r-detalles").replaceChildren(...nodos);
 }
-const TRANS = [["roll", "Roll (drum machine) · antes de cada drop", "ROLL"], ["tribe", "Roll y riser con Tribe · antes de cada drop", "ROLL TRIBE"], ["riser", "Riser · durante el build", "RISER"], ["fill", "Fills con Tribe · al final de cada frase de 8 compases", "FILL"], ["ear", "Ear candy", "EAR CANDY"], ["fx", "FX", "FX"]];
+const TRANS = [["roll", "Roll (drum machine) · antes de cada drop", "ROLL"], ["tribe", "Roll y riser con Tribe · antes de cada drop", "ROLL TRIBE"], ["riser", "Riser · durante el build", "RISER"], ["fill", "Fills con Tribe · al final de cada frase de 8 compases", "FILL"], ["subdrop", "Subdrop · seno que cae a La", "SUBDROP"], ["ear", "Ear candy", "EAR CANDY"], ["fx", "FX", "FX"]];
 const TRANS_INFO = {
   "ROLL 4": "4 compases: negras, corcheas, semicorcheas, fusas", "ROLL 8": "8 compases, dos por subdivisión", "ROLL 2": "2 compases, corto",
   "RISER NOTA": "La tónica sostenida: la subida la pone el preset", "RISER ESCALERA": "Las notas del acorde entran una a una", "RISER OCTAVAS": "La tónica sube de octava",
@@ -563,7 +563,7 @@ const TRANS_INFO = {
   "ROLL TRESILLO": "3-3-2, tresillos, sextillos y fusas: tu tresillo acelerando", "ROLL CON SILENCIO": "Se corta un tiempo antes del drop", "ROLL FLAM": "Golpes dobles, más orgánico",
   "LLAMADOR": "Llamador abierto y bajoneo acelerando hacia el drop", "ALEGRE QUE LLAMA": "La llamada del alegre en el último compás de la frase", "TAMBORA": "Apagado que abre en remate, en los 2 últimos compases", "GUACHE RAIN": "Guache en trémolo creciendo: un riser orgánico",
   "CAIDA": "Ruido que se cierra al entrar el drop (JD CAIDA)", "SWELL INVERSO": "Ruido que crece un compás y corta en el drop (JD SWELL)", "STUTTER": "La tónica repetida cada vez más rápido", "NATURALEZA": "Agua o aire en intro y break (JD RIO, JD AIRE)",
-  "IMPACTO": "Sub drop en la tónica al entrar el drop", "SUBDROP INTER": "Sub drop al empezar cada INTER (interludio)", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
+  "SUBDROP INTER": "En el silencio del INTER, antes del drop", "SUBDROP EN DROP": "En el primer tiempo de cada drop", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
 };
 function pintarTransiciones(t) {
   const hay = TRANS.some(([k]) => t[k].opciones.length);
@@ -575,6 +575,18 @@ function pintarTransiciones(t) {
     const e = t[k];
     nodos.push(tanda(titulo));
     if (e.pista && e.pista !== base) nodos.push(nota(`Editaste esa pista, así que esto va en ${e.pista}.`));
+    if (k === "subdrop") {
+      const f = document.createElement("div"); f.className = "patron";
+      const n = document.createElement("span"); n.textContent = "Sonido";
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+      x.textContent = t.rack_subdrop ? `${t.rack_subdrop.nombre}` + (t.rack_subdrop.cargado.length ? " · en SUBDROP" : ` · no se cargó: ${t.rack_subdrop.motivo || ""}`) : "CORTA (1,8 s) cabe en un INTER de un compás; LARGA cae más lento; 808 casi no cae";
+      n.append(x); f.append(n);
+      for (const v of ["CORTA", "LARGA", "808"]) {
+        const b = document.createElement("button"); b.className = "sec"; b.textContent = v; b.disabled = t.rack_subdrop?.variante === v;
+        b.onclick = () => accion("subdrop_sonido", {variante:v}, b); f.append(b);
+      }
+      nodos.push(f);
+    }
     if (k === "roll") {
       const f = document.createElement("div"); f.className = "patron";
       const n = document.createElement("span"); n.textContent = "Sonido de la drum machine";
