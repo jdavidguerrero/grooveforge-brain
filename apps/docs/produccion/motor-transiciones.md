@@ -80,7 +80,7 @@ En la cumbia y el bullerengue, el llamador sostiene y el alegre «llama» los ca
 | **LLAMADOR** | `ROLL TRIBE` · 4 compases antes de cada drop | Abierto y bajoneo alternados: negras, corcheas, tresillos, semicorcheas |
 | **GUACHE RAIN** | `ROLL TRIBE` · 4 compases antes de cada drop | Dos lluvias y luego trémolo en semicorcheas que crece: un riser orgánico |
 
-**Teclas de Tribe — contradicción abierta.** Juan observa que Tribe no usa sostenidos en las percusiones. El mapa `kits/tribe_colombia.json` sí tiene dos: **Tambora Cascara L = G#1 (44)** y **Tambora Cascara R = A#1 (46)**, y con ellos se generaron los patrones de percusión de Tribe (el loop de `TOP` del set los usa). Además, 32 sonidos no caben en las 30 teclas blancas de C1 a D5. **Pendiente de Juan:** tocar G#1 y A#1 en Tribe y decir si suenan, y en qué tecla está la cáscara si no. Mientras tanto, la TAMBORA del fill usa apagado y abierto (solo teclas blancas) y un test exige teclas blancas en todo lo de Tribe del motor.
+**Teclas de Tribe (resuelto, 2026-11-08):** Juan probó G#1 y A#1 en Tribe: suenan, son la cáscara de la tambora y son los **únicos sostenidos** del kit. El mapa `kits/tribe_colombia.json` está bien. La TAMBORA del fill vuelve a la cáscara, y un test exige que todo lo de Tribe caiga en teclas del kit, sin otros sostenidos.
 
 **FX** (pista `FX`). El gesto lo pone el preset, así que no hace falta automatización:
 
@@ -94,6 +94,15 @@ En la cumbia y el bullerengue, el llamador sostiene y el alegre «llama» los ca
 Presets de FX y ear candy para el VST en `GrooveForge_Library/presets/fx/`: JD CAIDA, JD SWELL, GF NOISE RISER, JD AIRE, JD RIO, JD GOTAS, GF LOG DRUM (impacto), GF KALIMBA TINE, GF CHONTA, BELLS, RING BELL (gota). Los stabs están en `presets/stabs-plucks/`.
 
 **Más adelante** (requieren que `GFMotor` escriba automatización): barrido de filtro en el build, echo throw de la última nota del lead y el silencio de un tiempo en todo el set.
+
+### 3.2 INTER: el interludio del build (Juan, 2026-11-08)
+
+Juan agregó a `ARRANGE` una sección **INTER**: el interludio del segundo build, donde va el **subdrop** y caben más detalles. Cuando un DROP viene después de un INTER:
+
+- La **subida** (riser, roll y roll de Tribe) llega al **inicio del INTER**: ahí se corta la tensión.
+- **SUBDROP INTER** (ear candy): la tónica grave (La1) al empezar cada INTER. **IMPACTO** sigue en el primer tiempo de cada drop.
+- El INTER puede llevar **GOTA** y **NATURALEZA**. **SWELL INVERSO**, **STUTTER** y **STAB ANTES DEL DROP** siguen yendo al drop, al final del INTER.
+- No lleva fills: no es una frase de 8 compases.
 
 ## 4. Regla de no pisar
 

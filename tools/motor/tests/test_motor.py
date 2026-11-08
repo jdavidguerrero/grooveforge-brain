@@ -1745,13 +1745,15 @@ def test_fills_de_tribe_y_fx():
     ll = clips_transicion("tribe", "LLAMADOR", s, "A", _LD)
     assert [c["inicio"] for c in ll] == [240.0, 560.0] and {n["pitch"] for n in ll[0]["notas"]} == {48, 50}
     tambora = clips_transicion("fill", "TAMBORA", s, "A", _LD)[0]["notas"]
-    assert {41, 43, 45, 47} == {n["pitch"] for n in tambora} and max(n["start_beat"] for n in tambora) < 8
+    assert {41, 43, 44, 46} == {n["pitch"] for n in tambora} and max(n["start_beat"] for n in tambora) < 8
     caja = clips_transicion("fill", "CAJA", s, "A", _LD)[0]["notas"]
     assert caja[-1]["pitch"] == TRIBE["caja_latigazo"]
-    # Tribe solo en teclas blancas (Juan, 2026-11-08): ningún fill ni roll de Tribe usa sostenidos.
+    # Todo lo de Tribe cae en teclas del kit; G#1 y A#1 (cáscara) son los únicos sostenidos (Juan, 2026-11-08).
+    validas = set(TRIBE.values())
     for el, pats in (("fill", ("ALEGRE QUE LLAMA", "TAMBORA", "CAJA")), ("tribe", ("LLAMADOR", "GUACHE RAIN"))):
         for pat in pats:
-            assert all(n["pitch"] % 12 in (0, 2, 4, 5, 7, 9, 11) for c in clips_transicion(el, pat, s, "A", _LD) for n in c["notas"]), pat
+            notas = {n["pitch"] for c in clips_transicion(el, pat, s, "A", _LD) for n in c["notas"]}
+            assert notas <= validas and not {p for p in notas if p % 12 in (1, 3, 6, 8, 10)} - {44, 46}, pat
     caida = clips_transicion("fx", "CAIDA", s, "A", _LD)
     assert [c["inicio"] for c in caida] == [256.0, 576.0] and caida[0]["notas"][0]["pitch"] == 57
     swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)[0]
@@ -1773,3 +1775,22 @@ def test_sonido_roll_crea_rack_y_lo_carga(entorno):
     assert motor.sonido_roll("808")["transiciones"]["rack_roll"]["numero"] == 2
     with pytest.raises(ValueError):
         motor.sonido_roll("METAL")
+
+
+def test_inter_recibe_la_subida_y_el_subdrop():
+    # Como el set de Juan: BUILD 129-141, INTER 141-145 (interludio con el subdrop), DROP 145.
+    arreglo = [{"start": 0.0, "length": 192.0, "name": "INTRO"}, {"start": 192.0, "length": 64.0, "name": "DROP"},
+               {"start": 512.0, "length": 48.0, "name": "BUILD"}, {"start": 560.0, "length": 16.0, "name": "INTER"},
+               {"start": 576.0, "length": 160.0, "name": "DROP"}]
+    s = secciones(arreglo)
+    roll = clips_transicion("roll", "ROLL 4", s, "A", _LD)
+    assert [c["inicio"] + c["longitud"] for c in roll] == [192.0, 560.0]  # la subida llega al INTER, no al drop
+    riser = clips_transicion("riser", "RISER NOTA", s, "A", _LD)
+    assert riser[-1]["inicio"] == 512.0 and riser[-1]["inicio"] + riser[-1]["longitud"] == 560.0
+    sub = clips_transicion("ear", "SUBDROP INTER", s, "A", _LD)
+    assert [c["inicio"] for c in sub] == [560.0] and sub[0]["notas"][0]["pitch"] == 33
+    assert [c["inicio"] for c in clips_transicion("ear", "IMPACTO", s, "A", _LD)] == [192.0, 576.0]
+    assert 560.0 in [c["inicio"] for c in clips_transicion("fx", "NATURALEZA", s, "A", _LD)]
+    swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)
+    assert swell[-1]["inicio"] + 4 == 576.0  # el swell y el stutter sí van al drop, al final del INTER
+    assert all(c["inicio"] + c["longitud"] not in (560.0, 576.0) for c in clips_transicion("fill", "CAJA", s, "A", _LD))
