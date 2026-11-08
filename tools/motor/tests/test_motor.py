@@ -1960,3 +1960,11 @@ def test_llenar_pide_reiniciar_live_si_gfmotor_es_viejo(entorno):
     with pytest.raises(ValueError, match="cierra y abre Live"):
         motor.llenar_armado()
     assert live.pistas == antes and not motor.estado["registros"]
+
+
+def test_presencia_con_las_convenciones():
+    s = secciones(_ARREGLO_INTER)
+    p = presencia_inicial(["BASS SUB", "BASS MID", "CHORDS PLK", "LEAD AUX", "LEAD MAIN"], s)
+    assert p["BASS SUB"] == ["todo"] * 5 + ["nada", "todo", "todo"]  # todo el track menos el INTER
+    assert p["BASS MID"][0] == "nada" and p["CHORDS PLK"][1] == "todo"
+    assert p["LEAD AUX"] == ["nada"] * 6 + ["todo", "nada"] and p["LEAD MAIN"][2] == "todo"

@@ -16,14 +16,19 @@ _PRESENCIA = {
     "DRUMS": (PARCIAL, TODO, TODO, NADA, NADA, PARCIAL),
     "TOP": (PARCIAL, TODO, TODO, NADA, NADA, PARCIAL),
     "BASS": (NADA, NADA, TODO, NADA, NADA, PARCIAL),
+    "BASS MID": (NADA, NADA, TODO, NADA, NADA, PARCIAL),
+    "BASS SUB": (TODO, TODO, TODO, TODO, NADA, TODO),  # Juan: el sub en todo el track, menos el silencio del INTER
     "LEAD": (NADA, NADA, TODO, TODO, NADA, NADA),
+    "LEAD MAIN": (NADA, NADA, TODO, TODO, NADA, NADA),
+    "MELODY": (NADA, NADA, TODO, TODO, NADA, NADA),
     "CHORDS": (NADA, TODO, TODO, NADA, NADA, NADA),
+    "CHORDS PLK": (NADA, TODO, TODO, NADA, NADA, NADA),
     "CHORDS 2": (TODO, NADA, NADA, TODO, NADA, TODO),
     "CHORDS SUS": (TODO, NADA, NADA, TODO, NADA, TODO),
     "PAD": (TODO, NADA, NADA, TODO, NADA, TODO),
     "ATMOS": (TODO, NADA, NADA, TODO, TODO, TODO),
 }
-_SEGUNDO_DROP = {"AUX LEAD", "STABS", "PLUCKS"}
+_SEGUNDO_DROP = {"AUX LEAD", "LEAD AUX", "STABS", "PLUCKS"}  # convenciones-workspace.md §2
 # Turno de entrada en la intro (1 = entra a los 8 compases) y de salida en el outro (1 = sale primero).
 _ENTRA = {"KICK": 1, "SC GHOST": 1, "PERC": 2, "DRUMS": 3, "TOP": 4}
 _SALE = {"KICK": 4, "SC GHOST": 4, "PERC": 3, "DRUMS": 2, "TOP": 1}
