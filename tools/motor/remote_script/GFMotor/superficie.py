@@ -13,7 +13,7 @@ from _Framework.ControlSurface import ControlSurface
 from . import comandos
 
 PUERTO = 9878
-VERSION = "1"
+VERSION = "2"
 ESPERA_COMANDO_S = 15.0
 ESPERA_INDEXADO_S = 20.0  # Live tarda en ver un archivo recién creado en una carpeta de Places.
 _CABECERA = struct.Struct(">I")
@@ -135,6 +135,7 @@ class SuperficieGFMotor(ControlSurface):
             "list_clips": comandos.listar_clips,
             "read_clip": comandos.leer_clip,
             "write_clip": lambda s, x: comandos.escribir_clip(s, x, MidiNoteSpecification),
+            "load_plugin": lambda s, x: comandos.cargar_plugin(s, Live.Application.get_application().browser, x),
         }
         funcion = tabla.get(m.get("type"))
         if funcion is None:

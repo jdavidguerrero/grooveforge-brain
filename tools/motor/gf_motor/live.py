@@ -79,5 +79,9 @@ class ClienteLive:
     def pista_sin_clips(self, pista: int) -> bool:
         return not self._ok("list_clips", track_index=pista)["clips"]
 
+    def cargar_plugin(self, plugin: str, pista: str) -> dict:
+        """Solo si la pista no tiene instrumento; si ya tiene, no toca nada."""
+        return self._ok("load_plugin", plugin=plugin, pista=pista)
+
     def cargar_rack(self, partes: list[str], pista: str) -> None:
         self._ok("load_rack", partes=partes, pista=pista)

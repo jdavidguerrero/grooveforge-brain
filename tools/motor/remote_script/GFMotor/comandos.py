@@ -2,7 +2,7 @@
 
 import re
 
-from .buscar import buscar_item
+from .buscar import buscar_item, buscar_plugin
 
 # Solo el nombre exacto que genera el motor: un rack de Juan nunca coincide y nunca se borra.
 _RACK_DEL_MOTOR = re.compile(r"^(KICK|DRUMS) \S+ \S+ \S+ [0-9a-f]{4} R\d+$")
@@ -152,3 +152,25 @@ def intentar_cargar(song, navegador, partes, nombre_pista):
     finally:
         song.end_undo_step()
     return True
+
+
+def _es_instrumento(dispositivo):
+    tipo = getattr(dispositivo, "type", None)
+    return tipo == 1 or str(tipo).endswith("instrument")  # Live.Device.DeviceType.instrument
+
+
+def cargar_plugin(song, navegador, m):
+    """Pone un plugin en una pista que todavía no tiene instrumento. Si ya tiene uno (el de Juan, un rack o
+    el mismo plugin), no toca nada: nunca reemplaza un sonido elegido."""
+    pistas = [t for t in song.tracks if t.name == m["pista"]]
+    if len(pistas) != 1:
+        raise ErrorComando("Se esperaba una pista %s y hay %d" % (m["pista"], len(pistas)))
+    pista = pistas[0]
+    if any(_es_instrumento(d) for d in pista.devices):
+        return {"cargado": False, "motivo": "ya tiene instrumento"}
+    item = buscar_plugin(navegador.plugins, m["plugin"])
+    if item is None:
+        raise ErrorComando("Live no encontró el plugin %r en Plugins" % m["plugin"])
+    song.view.selected_track = pista
+    navegador.load_item(item)
+    return {"cargado": True}

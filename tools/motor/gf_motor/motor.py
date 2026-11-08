@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import os
 import shutil
 import sys
@@ -73,6 +74,14 @@ def _acordes_vacio() -> dict:
 def _pads_vacio() -> dict:
     parte = lambda: {"opciones": [], "actual": None, "clip": None, "pista": None}  # noqa: E731
     return {"progresion": None, "tanda": 0, "pad": parte(), "atmos": parte()}
+
+
+TRIBE_PLUGIN, GF_PLUGIN = "TRIBE Player 2", "GrooveForge Brain Prototype"
+# Pistas que crea el motor y su instrumento. ROLL lleva el rack de la drum machine (sonido_roll).
+INSTRUMENTOS = {
+    "FILL": TRIBE_PLUGIN, "ROLL TRIBE": TRIBE_PLUGIN,
+    **{p: GF_PLUGIN for p in ("CHORDS", "PAD", "ATMOS", "STABS", "PLUCKS", "RISER", "FX", "EAR CANDY")},
+}
 
 
 def _detalles_vacio() -> dict:
@@ -762,6 +771,7 @@ class Motor:
             if not intacto:
                 pista = self._nombre_libre("CHORDS propuesta")
                 indice = self.live.crear_pista_midi(pista)
+        self._asegurar_instrumento(pista)
         self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
         estado.update(actual=ident, clip=clip, pista=pista)
         self._guardar()
@@ -817,6 +827,7 @@ class Motor:
             if not intacto:
                 pista = self._nombre_libre(f"{base} propuesta")
                 indice = self.live.crear_pista_midi(pista)
+        self._asegurar_instrumento(pista)
         self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
         estado.update(actual=ident, clip=clip, pista=pista)
         self._guardar()
@@ -874,6 +885,7 @@ class Motor:
             if not intacto:
                 pista = self._nombre_libre(f"{base} propuesta")
                 indice = self.live.crear_pista_midi(pista)
+        self._asegurar_instrumento(pista)
         self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
         estado.update(clip=clip, pista=pista)
 
@@ -919,6 +931,7 @@ class Motor:
             else:
                 previos = estado["clips"] or []
         finales = _unir_con_previos(clips, previos)
+        self._asegurar_instrumento(pista)
         for c in finales:
             self.live.escribir_clip(indice, c["inicio"], c["longitud"], c["notas"], c["nombre"])
         estado.update(actual=ident, clips=finales, pista=pista)
@@ -959,6 +972,19 @@ class Motor:
         self._guardar()
         self._evento("eleccion", parte="sonido_roll", elegido=material, presentadas=list(MATERIALES_DRUMS), rack=nombre)
         return e
+
+    def _asegurar_instrumento(self, pista: str) -> None:
+        """Pone el instrumento de la pista si aún no tiene uno, para que Juan solo elija el preset. Nunca reemplaza
+        lo que haya y nunca frena el paso: si falla, se anota y sigue. BASS y LEAD quedan fuera: pueden ir al Brain."""
+        base = re.sub(r"( propuesta)?( \d+)?$", "", pista)
+        plugin = INSTRUMENTOS.get(base)
+        if plugin is None or self.estado is None:
+            return
+        try:
+            r = self.live.cargar_plugin(plugin, pista)
+            self.estado.setdefault("instrumentos", {})[pista] = plugin if r.get("cargado") else r.get("motivo", "")
+        except ErrorLive as exc:
+            self.estado.setdefault("instrumentos", {})[pista] = f"no se cargó: {exc}"
 
     def _clips_intactos(self, indice: int, actuales: list[dict], escritos: list[dict] | None) -> bool:
         if not escritos or len(actuales) != len(escritos):

@@ -1794,3 +1794,51 @@ def test_inter_recibe_la_subida_y_el_subdrop():
     swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)
     assert swell[-1]["inicio"] + 4 == 576.0  # el swell y el stutter sí van al drop, al final del INTER
     assert all(c["inicio"] + c["longitud"] not in (560.0, 576.0) for c in clips_transicion("fill", "CAJA", s, "A", _LD))
+
+
+def test_superficie_carga_plugin_solo_si_no_hay_instrumento():
+    c = _comandos()
+    s = _Cancion("CHORDS", "FILL")
+
+    class I:
+        def __init__(self, name, children=(), is_loadable=False):
+            self.name, self.children, self.is_loadable = name, children, is_loadable
+
+    class Navegador:
+        cargado = None
+        plugins = I("Plugins", [
+            I("Audio Units", [I("Tribe", [I("TRIBE Player 2", is_loadable=True)])]),
+            I("VST3", [I("Tribe Instruments", [I("TRIBE Player 2", is_loadable=True)]), I("GrooveForge", [I("GrooveForge Brain Prototype", is_loadable=True)])]),
+        ])
+
+        def load_item(self, item):
+            self.cargado = item
+
+    n = Navegador()
+    assert c.cargar_plugin(s, n, {"plugin": "TRIBE Player 2", "pista": "FILL"}) == {"cargado": True}
+    assert s.view.selected_track.name == "FILL" and n.cargado is Navegador.plugins.children[1].children[0].children[0]  # VST3 primero
+
+    class Instrumento:
+        type = 1
+        name = "Mi sonido"
+
+    s.tracks[0].devices.append(Instrumento())
+    n.cargado = None
+    assert c.cargar_plugin(s, n, {"plugin": "GrooveForge Brain Prototype", "pista": "CHORDS"})["cargado"] is False and n.cargado is None
+    with pytest.raises(c.ErrorComando):
+        c.cargar_plugin(s, n, {"plugin": "No Existe", "pista": "FILL"})
+
+
+def test_el_motor_pone_el_instrumento_en_las_pistas_que_crea(entorno):
+    live, motor = entorno
+    _con_arreglo(live, motor)
+    motor.proponer_acordes()
+    motor.poner_acordes("I-II|SEPTIMAS LARGAS")
+    motor.proponer_transiciones()
+    motor.poner_transicion("fill", "CAJA")
+    motor.poner_transicion("roll", "ROLL 4")
+    assert ("GrooveForge Brain Prototype", "CHORDS") in live.plugins and ("TRIBE Player 2", "FILL") in live.plugins
+    assert not any(p == "ROLL" for _, p in live.plugins)  # ROLL lleva el rack de la drum machine
+    motor.poner_acordes("I-II|SEPTIMAS CLAVE")
+    assert [p for _, p in live.plugins].count("CHORDS") == 1  # no lo vuelve a poner
+    assert motor.estado["instrumentos"]["CHORDS"] == "ya tiene instrumento"

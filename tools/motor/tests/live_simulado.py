@@ -17,6 +17,7 @@ class LiveSimulado:
         self.pistas: list[dict] = [{"name": "SC GHOST", "clips": []}, {"name": "KICK", "clips": []}]
         self.comandos: list[str] = []
         self.cargas: list[tuple[list[str], str]] = []
+        self.plugins: list[tuple[str, str]] = []
         self.error_carga: str | None = None
         externo = self
 
@@ -74,6 +75,13 @@ class LiveSimulado:
         if t == "read_clip":
             c = next((x for x in self.pistas[m["track_index"]]["clips"] if abs(x["start"] - m["start_beats"]) < 1e-3), None)
             return {"ok": True, "clip": c}
+        if t == "load_plugin":
+            pista = next(p for p in self.pistas if p["name"] == m["pista"])
+            if pista.get("instrumento"):
+                return {"ok": True, "cargado": False, "motivo": "ya tiene instrumento"}
+            pista["instrumento"] = m["plugin"]
+            self.plugins.append((m["plugin"], m["pista"]))
+            return {"ok": True, "cargado": True}
         if t == "load_rack":
             if self.error_carga:
                 return {"ok": False, "error": self.error_carga}
