@@ -1187,6 +1187,17 @@ def test_tipos_de_voicing():
     assert [x - q[0] for x in q] == [0, 7, 12]
 
 
+@pytest.mark.parametrize("nombre,voces", [("BLOQUE LARGO", 3), ("SEPTIMAS LARGAS", 4), ("DECIMAS LARGAS", 2)])
+def test_acordes_largos_un_acorde_sostenido_por_compas(nombre, voces):
+    d = patrones_acordes([], [])[nombre]
+    c = clip_acordes("I-II", nombre, d, "A", _LD)
+    assert len(c["notas"]) == 16 * voces
+    assert all(n["start_beat"] % 4 == 0 and 3.9 <= n["duration_beats"] < 4 for n in c["notas"])
+    # Sin anticipación: el compás 4 sigue siendo B, no el A que viene.
+    b = {n["pitch"] for n in c["notas"] if n["start_beat"] == 4}
+    assert {n["pitch"] for n in c["notas"] if n["start_beat"] == 12} == b
+
+
 def test_ritmos_leen_el_groove():
     p = patrones_acordes(_LIBRES, _CLAVE)
     assert p["SEPTIMAS HUECOS"][1] == tuple(_LIBRES[:4]) and p["SEPTIMAS CLAVE"][1] == tuple(_CLAVE)
@@ -1227,7 +1238,7 @@ def test_proponer_acordes_solo_lee_y_usa_melodia(entorno):
     live.comandos.clear()
     a = motor.proponer_acordes()["acordes"]
     assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
-    assert a["melodia"] == "MELODY" and len(a["opciones"]) == 3 * 7
+    assert a["melodia"] == "MELODY" and len(a["opciones"]) == 3 * 10
     assert {o["acordes"] for o in a["opciones"]} == {"A – B – F#m – B", "A – B", "A – B – Em – A"}
     assert all(o["choques"]["porcentaje"] is not None for o in a["opciones"])
 

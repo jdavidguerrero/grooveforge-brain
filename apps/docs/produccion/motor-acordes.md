@@ -40,8 +40,11 @@ Son progresiones de una vuelta por compás. El bajo no las sigue: sigue la decis
 | **SÉPTIMAS HUECOS** | Cuatriada | Pasos libres de kick y bajo, **leídos de Live** | Conversa con el groove |
 | **SÉPTIMAS CLAVE** | Cuatriada | Golpes de la clave, **leídos de Live** | Refuerza la clave |
 | **ARCO** | 1 3 5 8 5 3 | Corcheas | Lo que gustó en lidia, para el break |
+| **BLOQUE LARGO** | Tríada | Un acorde sostenido por compás | Pedido de Juan (2026-11-08): acordes largos, no solo punteados |
+| **SÉPTIMAS LARGAS** | Cuatriada | Un acorde sostenido por compás | Ídem; con un sonido sostenido (JD SUS DARK*) |
+| **DÉCIMAS LARGAS** | Fundamental + décima | Un acorde sostenido por compás | Ídem; el más abierto, deja aire a la melodía |
 
-Cada 4 compases, el último golpe anticipa el acorde siguiente (`lab-acordes.md` §3).
+Cada 4 compases, el último golpe anticipa el acorde siguiente (`lab-acordes.md` §3), salvo en los largos: ahí la anticipación borraría el compás entero del acorde actual.
 
 ## 4. Lectura de la melodía
 

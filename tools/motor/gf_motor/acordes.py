@@ -13,6 +13,7 @@ PROGRESIONES = {"I-II-VI-II": (0, 1, 5, 1), "I-II": (0, 1), "I-II-V-I": (0, 1, 4
 _TRESILLO = (0, 3, 6, 8, 11, 14)
 _CONTRATIEMPO = (2, 6, 10, 14)
 _CORCHEAS = (0, 2, 4, 6, 8, 10, 12, 14)
+_LARGO = (0,)  # Un acorde sostenido por compás.
 _QUIEBRE_ARCO = (0, 1, 2, 3, 2, 1)
 _FIJOS = {
     "BLOQUE TRESILLO": ("triada", _TRESILLO),
@@ -20,6 +21,9 @@ _FIJOS = {
     "1-5-8 TRESILLO": ("158", _TRESILLO),
     "SEPTIMAS CONTRATIEMPO": ("septima", _CONTRATIEMPO),
     "ARCO": ("arco", _CORCHEAS),
+    "BLOQUE LARGO": ("triada", _LARGO),
+    "SEPTIMAS LARGAS": ("septima", _LARGO),
+    "DECIMAS LARGAS": ("decimas", _LARGO),
 }
 
 
@@ -93,6 +97,7 @@ def clip_acordes(progresion: str, patron: str, patron_def: tuple[str, tuple[int,
     for g in dict.fromkeys(grados):
         previo = _voicing(tipo, tonica, escala, g, previo)
         voicings[g] = previo
+    largo = pasos == _LARGO
     notas = []
     for c in range(COMPASES):
         actual = grados[c % len(grados)]
@@ -101,10 +106,11 @@ def clip_acordes(progresion: str, patron: str, patron_def: tuple[str, tuple[int,
             hasta = pasos[i + 1] if i + 1 < len(pasos) else 16
             ultimo = i == len(pasos) - 1
             # Cierre de la frase: el último golpe adelanta el acorde que viene.
-            v = voicings[siguiente] if c % 4 == 3 and ultimo else voicings[actual]
-            duracion = round(max(hasta - p, 1) * 0.9 / 4, 4)
+            # Un acorde largo no anticipa: perdería el compás entero del acorde actual.
+            v = voicings[siguiente] if c % 4 == 3 and ultimo and not largo else voicings[actual]
+            duracion = round(max(hasta - p, 1) * (0.98 if largo else 0.9) / 4, 4)
             inicio = (c * 16 + p) / 4
-            velocity = 96 if i == 0 else 84
+            velocity = 80 if largo else 96 if i == 0 else 84
             if tipo == "arco":
                 notas.append({"pitch": v[_QUIEBRE_ARCO[i % len(_QUIEBRE_ARCO)]], "start_beat": inicio, "duration_beats": duracion, "velocity": velocity - 10})
             else:
