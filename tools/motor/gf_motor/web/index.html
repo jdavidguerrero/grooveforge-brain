@@ -81,6 +81,8 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="motivo" class="tab">Motivo<i></i></button>
     <button data-ir="acordes" class="tab">Acordes<i></i></button>
     <button data-ir="pads" class="tab">Pads<i></i></button>
+    <button data-ir="detalles" class="tab">Stabs<i></i></button>
+    <button data-ir="transiciones" class="tab">Transiciones<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -220,6 +222,22 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-pads"></div>
   </section>
 
+  <section id="s-detalles" class="bloq" data-seccion="detalles">
+    <div class="num">1</div>
+    <h2>Stabs y plucks</h2>
+    <p>Lee tus acordes, tu lead y tu kick. Los stabs y el riff caen donde el lead calla: pregunta y respuesta. Si otra pista ya hace ese papel, te aviso; decides tú. Van a <code>STABS</code> y <code>PLUCKS</code>; sonidos en <code>presets/stabs-plucks</code>, envío Delay.</p>
+    <button id="b-detalles" disabled>Leer acordes y lead</button>
+    <div id="r-detalles"></div>
+  </section>
+
+  <section id="s-transiciones" class="bloq" data-seccion="transiciones">
+    <div class="num">1</div>
+    <h2>Transiciones</h2>
+    <p>Lee los bloques de <code>ARRANGE</code> y pone cada elemento justo antes de cada llegada, en su propia pista: <code>ROLL</code>, <code>RISER</code>, <code>FILL</code> y <code>EAR CANDY</code>. Si mueves los bloques, vuelve a leer.</p>
+    <button id="b-transiciones" disabled>Leer arreglo</button>
+    <div id="r-transiciones"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -298,6 +316,10 @@ function pintar(s) {
   if (s) pintarAcordes(s.acordes);
   marcar("pads", !!(s?.pads?.pad?.clip || s?.pads?.atmos?.clip));
   if (s) pintarPads(s.pads);
+  marcar("detalles", !!(s?.detalles?.stab?.clip || s?.detalles?.pluck?.clip));
+  if (s) pintarDetalles(s.detalles);
+  marcar("transiciones", !!s && ["roll","riser","fill","ear"].some(k => s.transiciones[k].clips));
+  if (s) pintarTransiciones(s.transiciones);
   if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
@@ -308,7 +330,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -488,6 +510,66 @@ function pintarPads(p) {
   }
   $("r-pads").replaceChildren(...nodos);
 }
+function filaOpcion(texto, info, puesta, onclick) {
+  const f = document.createElement("div"); f.className = "patron" + (puesta ? " sel" : "");
+  const n = document.createElement("span"); n.textContent = texto;
+  const d = document.createElement("small"); d.style.display = "block"; d.style.color = "var(--monitor)"; d.textContent = info || "";
+  n.append(d);
+  const b = document.createElement("button"); b.className = "sec"; b.textContent = puesta ? "Puesto" : "Poner"; b.disabled = puesta;
+  b.onclick = () => onclick(b);
+  f.append(n, b); return f;
+}
+function nota(texto) { const p = document.createElement("p"); p.className = "ok"; p.textContent = texto; return p; }
+function tanda(texto) { const t = document.createElement("div"); t.className = "tanda"; t.textContent = texto; return t; }
+const DETALLES_INFO = {
+  "GANCHO": "Hasta 3 golpes fijos cada 2 compases, en los huecos del lead",
+  "RESPUESTA": "Un golpe justo después de cada frase del lead",
+  "ANTICIPO": "La última «y» de cada 2 compases, con el acorde que viene",
+  "ARPEGIO 16": "1 3 5 8 5 3 en semicorcheas",
+  "ARPEGIO 3-3-2": "El acorde subiendo, en 3-3-2",
+  "RIFF EN HUECOS": "Frase de 2 compases solo donde el lead calla. Volver a leer da otra",
+};
+function pintarDetalles(d) {
+  $("s-detalles").classList.toggle("hecho", !!(d.stab.clip || d.pluck.clip));
+  if (!d.stab.opciones.length) { $("r-detalles").replaceChildren(); return; }
+  $("b-detalles").textContent = "Volver a leer";
+  const nodos = [nota((d.progresion ? `Sobre ${d.progresion}` : "Sin acordes: sobre la tónica") + (d.lead ? `, con los huecos de ${d.lead}.` : ", sin lead."))];
+  for (const [parte, titulo, base] of [["stab", "Stabs", "STABS"], ["pluck", "Plucks", "PLUCKS"]]) {
+    const e = d[parte];
+    nodos.push(tanda(titulo));
+    if (e.aviso) { const a = nota(e.aviso); a.style.color = "var(--monitor)"; nodos.push(a); }
+    if (parte === "pluck" && d.riff_aviso) { const a = nota(d.riff_aviso); a.style.color = "var(--monitor)"; nodos.push(a); }
+    if (e.pista && e.pista !== base) nodos.push(nota(`Editaste el clip, así que este va en ${e.pista}.`));
+    for (const o of e.opciones) nodos.push(filaOpcion(o.patron, DETALLES_INFO[o.patron], e.actual === o.id, b => accion("detalles_poner", {parte, id:o.id}, b)));
+  }
+  $("r-detalles").replaceChildren(...nodos);
+}
+const TRANS = [["roll", "Roll", "ROLL"], ["riser", "Riser", "RISER"], ["fill", "Fill", "FILL"], ["ear", "Ear candy", "EAR CANDY"]];
+const TRANS_INFO = {
+  "ROLL 4": "4 compases: negras, corcheas, semicorcheas, fusas", "ROLL 8": "8 compases, dos por subdivisión", "ROLL 2": "2 compases, corto",
+  "RISER NOTA": "La tónica sostenida: la subida la pone el preset", "RISER ESCALERA": "Las notas del acorde entran una a una", "RISER OCTAVAS": "La tónica sube de octava",
+  "FILL TRESILLO": "Clap en 3-3-2 que crece", "FILL ULTIMO TIEMPO": "Snare en semicorcheas en el último tiempo",
+  "IMPACTO": "Sub drop en la tónica al entrar el drop", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
+};
+function pintarTransiciones(t) {
+  const hay = TRANS.some(([k]) => t[k].opciones.length);
+  $("s-transiciones").classList.toggle("hecho", TRANS.some(([k]) => t[k].clips));
+  if (!hay) { $("r-transiciones").replaceChildren(); return; }
+  $("b-transiciones").textContent = "Volver a leer";
+  const nodos = [nota("Secciones: " + (t.secciones.map(s => `${s.nombre} ${s.inicio / 4 + 1}`).join(" · ") || "ninguna con nombre"))];
+  for (const [k, titulo, base] of TRANS) {
+    const e = t[k];
+    nodos.push(tanda(titulo));
+    if (e.pista && e.pista !== base) nodos.push(nota(`Editaste esa pista, así que esto va en ${e.pista}.`));
+    for (const o of e.opciones) {
+      const info = (TRANS_INFO[o.patron] || "") + ` · ${o.clips} ${o.clips === 1 ? "punto" : "puntos"} del arreglo`;
+      const fila = filaOpcion(o.patron, info, e.actual === o.id, b => accion("transiciones_poner", {elemento:k, id:o.id}, b));
+      if (!o.clips) fila.querySelector("button").disabled = true;
+      nodos.push(fila);
+    }
+  }
+  $("r-transiciones").replaceChildren(...nodos);
+}
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
   $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
@@ -592,6 +674,8 @@ $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("b-drums").onclick = e => accion("drums", {}, e.target);
 $("b-acordes").onclick = e => accion("acordes_proponer", {}, e.target);
 $("b-pads").onclick = e => accion("pads_proponer", {}, e.target);
+$("b-detalles").onclick = e => accion("detalles_proponer", {}, e.target);
+$("b-transiciones").onclick = e => accion("transiciones_proponer", {}, e.target);
 $("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
 $("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);

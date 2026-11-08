@@ -21,6 +21,8 @@ from gf_perc.caracteres import COLAS_KICK, GRUPOS_DRUMS, MATERIALES_DRUMS, sinte
 from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
+from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, clip_detalle, huecos_lead  # noqa: E402
+from .transiciones import ELEMENTOS, clips_transicion, secciones  # noqa: E402
 from .pads import PATRONES_ATMOS, PATRONES_PAD, clip_pad  # noqa: E402
 from .acordes import PROGRESIONES, choques, clip_acordes, nombres_progresion, patrones as patrones_acordes  # noqa: E402
 from .bajo import FAMILIAS, patron  # noqa: E402
@@ -73,6 +75,35 @@ def _pads_vacio() -> dict:
     return {"progresion": None, "tanda": 0, "pad": parte(), "atmos": parte()}
 
 
+def _detalles_vacio() -> dict:
+    parte = lambda: {"opciones": [], "actual": None, "clip": None, "pista": None, "aviso": None}  # noqa: E731
+    return {"progresion": None, "tanda": 0, "libres": [], "kick": [], "lead": None, "stab": parte(), "pluck": parte(), "riff_aviso": None}
+
+
+def _transiciones_vacio() -> dict:
+    return {"secciones": [], **{k: {"opciones": [], "actual": None, "clips": None, "pista": None} for k in ELEMENTOS}}
+
+
+def _unir_con_previos(nuevos: list[dict], previos: list[dict]) -> list[dict]:
+    """GFMotor no borra clips del arreglo: cada clip nuevo se estira hasta cubrir los anteriores que toca,
+    y los anteriores que ya no toca ninguno se tapan con un clip vacío."""
+    finales = []
+    usados = set()
+    for n in nuevos:
+        inicio, fin = n["inicio"], n["inicio"] + n["longitud"]
+        for i, v in enumerate(previos):
+            if v["inicio"] < fin and v["inicio"] + v["longitud"] > inicio:
+                usados.add(i)
+                inicio, fin = min(inicio, v["inicio"]), max(fin, v["inicio"] + v["longitud"])
+        corrimiento = n["inicio"] - inicio
+        notas = [{**x, "start_beat": round(x["start_beat"] + corrimiento, 4)} for x in n["notas"]]
+        finales.append({**n, "inicio": inicio, "longitud": fin - inicio, "notas": notas})
+    for i, v in enumerate(previos):
+        if i not in usados:
+            finales.append({"nombre": "—", "inicio": v["inicio"], "longitud": v["longitud"], "notas": []})
+    return sorted(finales, key=lambda c: c["inicio"])
+
+
 class SetProtegido(ErrorLive):
     """El set abierto es el template original."""
 
@@ -120,6 +151,8 @@ class Motor:
             e.setdefault("motivo", _motivo_vacio())
             e.setdefault("acordes", _acordes_vacio())
             e.setdefault("pads", _pads_vacio())
+            e.setdefault("detalles", _detalles_vacio())
+            e.setdefault("transiciones", _transiciones_vacio())
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -191,6 +224,8 @@ class Motor:
             "motivo": _motivo_vacio(),
             "acordes": _acordes_vacio(),
             "pads": _pads_vacio(),
+            "detalles": _detalles_vacio(),
+            "transiciones": _transiciones_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
         }
@@ -771,6 +806,120 @@ class Motor:
         self._guardar()
         self._evento("borrador", parte=parte, pista=pista, patron=op["patron"], progresion=pads["progresion"], tanda=op["tanda"])
         return e
+
+    # ── Stabs y plucks (motor-detalles.md) ───────────────────────────
+    def proponer_detalles(self) -> dict:
+        """Solo lee Live: acordes, lead y kick. Avisa si otra pista ya cumple el papel; no quita opciones."""
+        e = self._exigir_estado()
+        d = e["detalles"]
+        actual = e["acordes"]["actual"]
+        d["progresion"] = actual.split("|")[0] if actual else None
+        d["tanda"] += 1
+        pista_lead = next((n for n in ("LEAD", "MELODY", "MOTIVO") if self._notas_de(n)), None)
+        lead = self._notas_de(pista_lead) if pista_lead else []
+        lead = [{**n, "start_beat": n["start_beat"] % 64} for n in lead]  # Se pliega a los 16 compases del clip.
+        nombres = [p["name"] for p in self.live.sesion()["tracks"] if p["name"].upper().startswith("CHORDS")]
+        acordes = {n: self._notas_de(n) for n in nombres}
+        libres = huecos_lead(lead)
+        a = avisos_detalles(acordes, lead, libres)
+        d.update(libres=libres, kick=analizar(self._notas_de("KICK"), [])["kick"], lead=pista_lead, riff_aviso=a["riff"], lead_notas=lead)
+        d["stab"]["aviso"], d["pluck"]["aviso"] = a["stab"], a["pluck"]
+        for parte, patrones in (("stab", PATRONES_STAB), ("pluck", PATRONES_PLUCK)):
+            d[parte]["opciones"] = [{"id": p, "patron": p, "tanda": d["tanda"]} for p in patrones]
+        self._guardar()
+        self._evento("opciones", parte="detalles", progresion=d["progresion"], lead=pista_lead, avisos=a, tanda=d["tanda"])
+        return e
+
+    def poner_detalle(self, parte: str, ident: str) -> dict:
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        if parte not in ("stab", "pluck"):
+            raise ValueError(f"Parte desconocida {parte!r}")
+        d, p = e["detalles"], e["partida"]
+        estado = d[parte]
+        op = next((o for o in estado["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe la opción {ident!r}")
+        clip = clip_detalle(parte, op["patron"], d["progresion"], p["raiz"], MODOS[p["modo"]], d["libres"], d["kick"], d.get("lead_notas") or [], op["tanda"])
+        self._poner_unico(estado, "STABS" if parte == "stab" else "PLUCKS", clip)
+        estado["actual"] = ident
+        self._guardar()
+        self._evento("borrador", parte=parte, pista=estado["pista"], patron=op["patron"], progresion=d["progresion"], aviso=estado["aviso"])
+        return e
+
+    def _poner_unico(self, estado: dict, base: str, clip: dict) -> None:
+        """Regla 3: reemplaza el clip solo si sigue como lo escribió el motor; si no, va a otra pista."""
+        pista = estado["pista"] or base
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        elif not self.live.pista_sin_clips(indice):
+            leido = self.live.leer_clip(indice, 0.0)
+            intacto = estado["clip"] is not None and leido is not None and diferencia(estado["clip"]["notas"], leido["notes"])["sin_cambios"]
+            if not intacto:
+                pista = self._nombre_libre(f"{base} propuesta")
+                indice = self.live.crear_pista_midi(pista)
+        self.live.escribir_clip(indice, clip["inicio"], clip["longitud"], clip["notas"], clip["nombre"])
+        estado.update(clip=clip, pista=pista)
+
+    # ── Transiciones (motor-transiciones.md) ─────────────────────────
+    def proponer_transiciones(self) -> dict:
+        """Solo lee la pista ARRANGE."""
+        e = self._exigir_estado()
+        indice = self.live.indice_pista("ARRANGE")
+        if indice is None:
+            raise ValueError("No hay pista ARRANGE: crea la guía en Arrangement primero")
+        t = e["transiciones"]
+        t["secciones"] = secciones(self.live.listar_clips(indice))
+        for elemento, (_, patrones) in ELEMENTOS.items():
+            t[elemento]["opciones"] = [{"id": p, "patron": p, "clips": len(clips_transicion(elemento, p, t["secciones"], e["partida"]["raiz"], MODOS[e["partida"]["modo"]]))} for p in patrones]
+        self._guardar()
+        self._evento("opciones", parte="transiciones", secciones=[s["nombre"] for s in t["secciones"]])
+        return e
+
+    def poner_transicion(self, elemento: str, ident: str) -> dict:
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        if elemento not in ELEMENTOS:
+            raise ValueError(f"Elemento desconocido {elemento!r}")
+        t, p = e["transiciones"], e["partida"]
+        estado = t[elemento]
+        op = next((o for o in estado["opciones"] if o["id"] == ident), None)
+        if op is None:
+            raise ValueError(f"No existe la opción {ident!r}")
+        clips = clips_transicion(elemento, op["patron"], t["secciones"], p["raiz"], MODOS[p["modo"]])
+        if not clips:
+            raise ValueError(f"Tu arreglo no tiene dónde poner {op['patron']}: revisa los nombres de ARRANGE")
+        base = ELEMENTOS[elemento][0]
+        pista = estado["pista"] or base
+        indice = self.live.indice_pista(pista)
+        previos: list[dict] = []
+        if indice is None:
+            indice = self.live.crear_pista_midi(pista)
+        else:
+            actuales = self.live.listar_clips(indice)
+            if actuales and not self._clips_intactos(indice, actuales, estado["clips"]):
+                pista = self._nombre_libre(f"{base} propuesta")
+                indice = self.live.crear_pista_midi(pista)
+            else:
+                previos = estado["clips"] or []
+        finales = _unir_con_previos(clips, previos)
+        for c in finales:
+            self.live.escribir_clip(indice, c["inicio"], c["longitud"], c["notas"], c["nombre"])
+        estado.update(actual=ident, clips=finales, pista=pista)
+        self._guardar()
+        self._evento("borrador", parte=elemento, pista=pista, patron=op["patron"], puntos=[c["inicio"] for c in clips])
+        return e
+
+    def _clips_intactos(self, indice: int, actuales: list[dict], escritos: list[dict] | None) -> bool:
+        if not escritos or len(actuales) != len(escritos):
+            return False
+        for c in actuales:
+            propio = next((x for x in escritos if abs(x["inicio"] - c["start"]) < 1e-3), None)
+            leido = self.live.leer_clip(indice, c["start"])
+            if propio is None or leido is None or not diferencia(propio["notas"], leido["notes"])["sin_cambios"]:
+                return False
+        return True
 
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:

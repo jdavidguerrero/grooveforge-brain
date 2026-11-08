@@ -1541,3 +1541,156 @@ def test_pads_sin_acordes_usan_la_tonica(entorno):
     notas = next(x for x in live.pistas if x["name"] == "PAD")["clips"][0]["notes"]
     clases = {n["pitch"] % 12 for n in notas}
     assert len(clases) == 3 and {9, 4} <= clases  # solo el acorde de la tónica: La, Mi y su tercera
+
+
+# ── Stabs y plucks (motor-detalles.md) ────────────────────────────────
+from gf_motor.detalles import CICLO, PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, clip_detalle, huecos_lead  # noqa: E402
+
+_LEAD_A = _compases((0, 2, 4, 6), compases=16, pitch=69)  # el lead toca la primera mitad de cada compás
+
+
+def test_huecos_del_lead():
+    libres = huecos_lead(_LEAD_A)
+    assert 8 in libres and 14 in libres and 30 in libres
+    assert not {0, 2, 4, 6, 16, 18} & set(libres)
+    assert huecos_lead([]) == list(range(CICLO))
+
+
+@pytest.mark.parametrize("prog", [None, *PROGRESIONES])
+def test_stabs_y_plucks_en_escala(prog):
+    casa = {(9 + g) % 12 for g in _LD}
+    libres = huecos_lead(_LEAD_A)
+    for parte, patrones in (("stab", PATRONES_STAB), ("pluck", PATRONES_PLUCK)):
+        for nombre in patrones:
+            c = clip_detalle(parte, nombre, prog, "A", _LD, libres, [0, 4, 8, 12], _LEAD_A)
+            assert c["notas"], nombre
+            for n in c["notas"]:
+                assert n["pitch"] % 12 in casa and 0 <= n["start_beat"] < 64, (nombre, n)
+
+
+def test_stabs_en_huecos_y_fuera_del_kick():
+    libres = huecos_lead(_LEAD_A)
+    for nombre in ("GANCHO", "RESPUESTA"):
+        c = clip_detalle("stab", nombre, "I-II", "A", _LD, libres, [0, 4, 8, 12], _LEAD_A)
+        pasos = {round(n["start_beat"] * 4) for n in c["notas"]}
+        assert all(p % CICLO in libres and p % 16 not in (0, 4, 8, 12) for p in pasos), nombre
+    g = clip_detalle("stab", "GANCHO", "I-II", "A", _LD, libres, [0, 4, 8, 12], _LEAD_A)["notas"]
+    golpes = sorted({round(n["start_beat"] * 4) % CICLO for n in g})
+    assert 1 <= len(golpes) <= 3  # la misma figura cada 2 compases
+
+
+def test_riff_solo_en_huecos_y_con_semilla():
+    libres = huecos_lead(_LEAD_A)
+    a = clip_detalle("pluck", "RIFF EN HUECOS", "I-II", "A", _LD, libres, [], _LEAD_A, tanda=1)["notas"]
+    assert a == clip_detalle("pluck", "RIFF EN HUECOS", "I-II", "A", _LD, libres, [], _LEAD_A, tanda=1)["notas"]
+    assert a != clip_detalle("pluck", "RIFF EN HUECOS", "I-II", "A", _LD, libres, [], _LEAD_A, tanda=2)["notas"]
+    assert all(round(n["start_beat"] * 4) % CICLO in libres for n in a)
+
+
+def test_avisos_cuando_el_papel_ya_esta_cubierto():
+    punteado = _compases((0, 3, 6, 8, 11, 14), pitch=57)
+    largo = [{"pitch": 57, "start_beat": c * 4.0, "duration_beats": 3.9, "velocity": 80} for c in range(16)]
+    a = avisos_detalles({"CHORDS": punteado, "CHORDS 2": largo}, _LEAD_A, huecos_lead(_LEAD_A))
+    assert "CHORDS" in a["pluck"] and "golpes" in a["stab"] and a["riff"] is None
+    b = avisos_detalles({"CHORDS 2": largo}, [], list(range(CICLO)))
+    assert b == {"stab": None, "pluck": None, "riff": None}
+    denso = _compases(tuple(range(0, 16, 1)), pitch=69)
+    assert avisos_detalles({}, denso, huecos_lead(denso))["riff"]
+
+
+def test_proponer_y_poner_detalles(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    live.pistas.append({"name": "CHORDS", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((0, 3, 6, 8, 11, 14), pitch=57), "name": "c", "color": None}]})
+    motor.proponer_acordes()
+    antes = copy.deepcopy(live.pistas)
+    d = motor.proponer_detalles()["detalles"]
+    assert live.pistas == antes and d["lead"] == "MELODY"
+    assert d["pluck"]["aviso"] and "CHORDS" in d["pluck"]["aviso"]
+    assert [o["id"] for o in d["stab"]["opciones"]] == list(PATRONES_STAB)
+    motor.poner_detalle("stab", "GANCHO")
+    motor.poner_detalle("pluck", "ARPEGIO 3-3-2")
+    stabs = next(x for x in live.pistas if x["name"] == "STABS")
+    assert stabs["clips"][0]["name"] == "STAB GANCHO" and any(x["name"] == "PLUCKS" for x in live.pistas)
+    stabs["clips"][0]["notes"] = stabs["clips"][0]["notes"][1:]
+    assert motor.poner_detalle("stab", "ANTICIPO")["detalles"]["stab"]["pista"] == "STABS propuesta"
+    with pytest.raises(ValueError):
+        motor.poner_detalle("otra", "GANCHO")
+
+
+# ── Transiciones (motor-transiciones.md) ──────────────────────────────
+from gf_motor.transiciones import ELEMENTOS, clips_transicion, secciones  # noqa: E402
+
+_ARREGLO = [  # como el de Juan: compases 1, 49, 65, 97, 129 (+ un clip sin nombre), 145, 193
+    {"start": 0.0, "length": 128.0, "name": "INTRO"}, {"start": 192.0, "length": 64.0, "name": "BUILD"},
+    {"start": 256.0, "length": 192.0, "name": "DROP"}, {"start": 384.0, "length": 128.0, "name": "BREAK"},
+    {"start": 512.0, "length": 64.0, "name": "BUILD"}, {"start": 560.0, "length": 16.0, "name": ""},
+    {"start": 576.0, "length": 192.0, "name": "DROP"}, {"start": 768.0, "length": 80.0, "name": "OUTRO"},
+]
+
+
+def test_secciones_terminan_donde_empieza_la_siguiente():
+    s = secciones(_ARREGLO)
+    assert [x["nombre"] for x in s] == ["INTRO", "BUILD", "DROP", "BREAK", "BUILD", "DROP", "OUTRO"]
+    assert s[2]["fin"] == 384.0 and s[4]["fin"] == 576.0  # el clip sin nombre no corta
+
+
+def test_roll_termina_en_el_drop_y_crece():
+    s = secciones(_ARREGLO)
+    clips = clips_transicion("roll", "ROLL 4", s, "A", _LD)
+    assert [c["inicio"] for c in clips] == [240.0, 560.0] and all(c["longitud"] == 16 for c in clips)
+    notas = clips[0]["notas"]
+    assert len(notas) == 4 + 8 + 16 + 32  # un compás de negras, corcheas, semicorcheas y fusas
+    assert notas[0]["velocity"] < notas[-1]["velocity"] and notas[-1]["start_beat"] + 0.125 == 16
+    assert [len(c["notas"]) for c in clips_transicion("roll", "ROLL 2", s, "A", _LD)] == [30, 30]  # medio compás por subdivisión: 2 + 4 + 8 + 16
+
+
+def test_riser_fill_y_ear_candy_en_su_sitio():
+    s = secciones(_ARREGLO)
+    r = clips_transicion("riser", "RISER ESCALERA", s, "A", _LD)
+    assert [c["inicio"] for c in r] == [192.0, 512.0] and r[0]["inicio"] + r[0]["longitud"] == 256.0
+    assert {n["pitch"] % 12 for c in r for n in c["notas"]} <= {9, 1, 4}  # acorde de la tónica: La, Do#, Mi
+    f = clips_transicion("fill", "FILL ULTIMO TIEMPO", s, "A", _LD)
+    assert [c["inicio"] for c in f] == [188.0, 252.0, 380.0, 508.0, 572.0, 764.0]
+    imp = clips_transicion("ear", "IMPACTO", s, "A", _LD)
+    assert [c["inicio"] for c in imp] == [256.0, 576.0] and imp[0]["notas"][0]["pitch"] == 33
+    gota = clips_transicion("ear", "GOTA EN EL BREAK", s, "A", _LD)
+    assert [c["inicio"] for c in gota] == [384.0, 448.0]
+    assert clips_transicion("roll", "ROLL 4", secciones([{"start": 0.0, "length": 64.0, "name": "INTRO"}]), "A", _LD) == []
+
+
+def _con_arreglo(live, motor):
+    _set_acordes(live, motor)
+    live.pistas.append({"name": "ARRANGE", "clips": [{**c, "notes": [], "color": None} for c in _ARREGLO]})
+
+
+def test_poner_transiciones_varios_clips_y_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _con_arreglo(live, motor)
+    antes = copy.deepcopy(live.pistas)
+    t = motor.proponer_transiciones()["transiciones"]
+    assert live.pistas == antes and len(t["secciones"]) == 7
+    assert {o["id"]: o["clips"] for o in t["roll"]["opciones"]}["ROLL 4"] == 2
+    motor.poner_transicion("roll", "ROLL 4")
+    roll = next(x for x in live.pistas if x["name"] == "ROLL")
+    assert sorted(c["start"] for c in roll["clips"]) == [240.0, 560.0]
+    motor.poner_transicion("roll", "ROLL 2")  # más corto: se estira para tapar el anterior
+    assert sorted((c["start"], c["length"]) for c in roll["clips"]) == [(240.0, 16.0), (560.0, 16.0)]
+    assert min(n["start_beat"] for n in roll["clips"][0]["notes"]) == 8.0
+    motor.poner_transicion("ear", "IMPACTO")
+    motor.poner_transicion("ear", "GOTA EN EL BREAK")  # el impacto queda tapado con un clip vacío
+    ear = next(x for x in live.pistas if x["name"] == "EAR CANDY")
+    vacios = [c for c in ear["clips"] if not c["notes"]]
+    assert sorted(c["start"] for c in vacios) == [256.0, 576.0]
+    roll["clips"][0]["notes"] = roll["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(roll)
+    assert motor.poner_transicion("roll", "ROLL 8")["transiciones"]["roll"]["pista"] == "ROLL propuesta" and roll == copia
+    with pytest.raises(ValueError):
+        motor.poner_transicion("nada", "ROLL 4")
+
+
+def test_transiciones_sin_arrange(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    with pytest.raises(ValueError, match="ARRANGE"):
+        motor.proponer_transiciones()
