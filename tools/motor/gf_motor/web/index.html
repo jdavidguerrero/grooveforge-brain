@@ -704,18 +704,10 @@ function botonCadenas(m) {
   b.onclick = () => { if (confirm("¿Poner la cadena GF ROL en cada pista con rol? Una vez por pista; si la quitas, no vuelve.")) accion("cadenas_poner", {}, b); };
   caja.append(nota("Cadena por rol: EQ (cortes), Compressor y Saturator solo donde hacen falta, Delay solo para el Haas, Utility con mono en el grave."), b);
   for (const r of m.ultimo_cadenas || []) caja.append(nota(`${r.pista}: ${r.cargado ? "GF ROL " + r.rol : "no se cargó (" + r.motivo + ")"}`));
-  caja.append(tanda("Reponer racks del motor"));
-  const l = document.createElement("button"); l.className = "sec"; l.textContent = "Listar racks"; l.onclick = () => accion("racks_listar", {}, l);
-  caja.append(l);
-  for (const [pista, racks] of Object.entries(m.racks_disponibles || {})) {
-    if (!racks.length) continue;
-    const f = document.createElement("div"); f.className = "patron";
-    const n = document.createElement("span"); n.textContent = pista + (m.repuestos?.[pista] ? ` · repuesto: ${m.repuestos[pista].split("/")[1]}` : "");
-    const sel = document.createElement("select"); for (const r of racks) { const o = document.createElement("option"); o.value = r; o.textContent = r.split("/")[1]; sel.append(o); }
-    const b = document.createElement("button"); b.className = "sec"; b.textContent = "Cargar";
-    b.onclick = () => accion("rack_reponer", {pista, rack: sel.value}, b);
-    f.append(n, sel, b); caja.append(f);
-  }
+  const r = document.createElement("button"); r.className = "sec"; r.textContent = "Reponer racks del motor que falten";
+  r.onclick = () => accion("racks_reponer", {}, r);
+  caja.append(r);
+  if (m.repuestos) caja.append(nota(m.repuestos.length ? `Repuestos: ${m.repuestos.join(" · ")}` : "No faltaba ningún rack del motor."));
   return caja;
 }
 function pintarIdeas(r) {
@@ -740,7 +732,14 @@ function pintarIdeas(r) {
     const fila = document.createElement("div"); fila.className = "patron";
     const n = document.createElement("span"); n.textContent = `${a.pista}: ${a.que}`;
     const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)"; x.textContent = a.como;
-    n.append(x); fila.append(n); nodos.push(fila);
+    n.append(x); fila.append(n);
+    if (a.accion) {
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = "Aplicar";
+      const que = {doble: `duplicar ${a.pista} como ${a.pista} DOBLE`, octava: `duplicar ${a.pista} una octava arriba (${a.pista} OCT)`, cadena: `poner GF ROL en ${a.pista}`}[a.accion];
+      b.onclick = () => { if (confirm(`¿${que}?`)) accion("idea_aplicar", {pista: a.pista, accion: a.accion}, b); };
+      fila.append(b);
+    }
+    nodos.push(fila);
   }
   nodos.push(nota("Revisa siempre la mezcla en mono: el Haas de más de 30–40 ms se oye como eco y en mono crea filtro peine."));
   $("r-ideas").replaceChildren(...nodos);

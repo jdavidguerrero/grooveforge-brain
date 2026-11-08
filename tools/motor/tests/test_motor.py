@@ -2178,15 +2178,49 @@ def test_cargar_cadena_no_borra_el_rack_del_motor():
     assert [d.name for d in s.tracks[0].devices] == ["GF ROL KICK", "KICK organic A menor ae8c R2"]  # un rack sí reemplaza al otro
 
 
-def test_reponer_rack_del_motor(entorno):
+def test_reponer_racks_que_faltan(entorno):
+    live, motor = entorno
+    _con_arreglo(live, motor)
+    motor.sonido_roll("MADERA")
+    motor.proponer_transiciones()
+    motor.poner_transicion("subdrop", "SUBDROP EN DROP")
+    assert set(motor.estado["racks_en_pista"]) == {"ROLL", "SUBDROP"}
+    roll = next(p for p in live.pistas if p["name"] == "ROLL")
+    roll["devices"] = [motor.estado["transiciones"]["rack_roll"]["nombre"], "GF ROL ROLL"]  # el ROLL sigue con su rack
+    next(p for p in live.pistas if p["name"] == "SUBDROP")["devices"] = ["GF ROL SUBDROP"]  # al SUBDROP se le borró
+    n = len(live.cargas)
+    r = motor.reponer_racks()["mezcla"]["repuestos"]
+    assert len(live.cargas) == n + 1 and live.cargas[-1][1] == "SUBDROP" and r[0].startswith("SUBDROP: DRUMS subdrop-corta")
+    live.version = "6"
+    with pytest.raises(ValueError, match="cierra y abre Live"):
+        motor.reponer_racks()
+
+
+def test_aplicar_ideas_doble_octava_y_cadena(entorno):
     live, motor = entorno
     _set_para_armar(live, motor)
-    carpeta = motor.carpeta_live / "00 Motor" / "KICK organic A menor ae8c"
-    carpeta.mkdir(parents=True)
-    (carpeta / "KICK organic A menor ae8c R1.adg").write_bytes(b"x")
-    r = motor.racks_disponibles()["mezcla"]["racks_disponibles"]
-    assert r["KICK"] == ["KICK organic A menor ae8c/KICK organic A menor ae8c R1.adg"] and r["DRUMS"] == []
-    motor.reponer_rack("KICK", r["KICK"][0])
-    assert live.cargas[-1] == ([motor.carpeta_live.name, "00 Motor", "KICK organic A menor ae8c", "KICK organic A menor ae8c R1.adg"], "KICK")
-    with pytest.raises(ValueError):
-        motor.reponer_rack("KICK", "../otro.adg")
+    live.pistas.append({"name": "LEAD AUX", "volume_db": -13.0, "pan": 0.15, "devices": ["GrooveForge Brain Prototype"],
+                        "clips": [{"start": 0.0, "length": 16.0, "notes": _compases((0, 6), compases=4, pitch=69), "name": "L", "color": None}]})
+    motor.aplicar_idea("LEAD AUX", "doble")
+    doble = next(p for p in live.pistas if p["name"] == "LEAD AUX DOBLE")
+    origen = next(p for p in live.pistas if p["name"] == "LEAD AUX")
+    assert doble["devices"] == origen["devices"]  # mismo instrumento y preset: es la pista duplicada
+    a, b = origen["clips"][0]["notes"], doble["clips"][0]["notes"]
+    assert [n["pitch"] for n in a] == [n["pitch"] for n in b] and b[0]["start_beat"] == pytest.approx(a[0]["start_beat"] + 0.015 * 124 / 60, abs=1e-3)
+    assert doble["pan"] == -0.3 and doble["volume_db"] == -17.0
+    motor.aplicar_idea("LEAD AUX", "octava")
+    oct_ = next(p for p in live.pistas if p["name"] == "LEAD AUX OCT")
+    assert oct_["clips"][0]["notes"][0]["pitch"] == 81 and oct_["volume_db"] == -23.0
+    with pytest.raises(ValueError, match="Ya existe"):
+        motor.aplicar_idea("LEAD AUX", "doble")
+    if _GF_ROL.exists():
+        motor.aplicar_idea("STABS", "cadena")
+        assert motor.estado["mezcla"]["cadenas"] == {"STABS": "STABS"}
+    live.version = "7"
+    with pytest.raises(ValueError, match="cierra y abre Live"):
+        motor.aplicar_idea("STABS", "octava")
+
+
+def test_ideas_traen_su_accion():
+    acc = {x["pista"]: x["accion"] for x in anchura_rec(["LEAD AUX", "LEAD MAIN", "STABS", "PERC", "BASS SUB", "DRUMS"])}
+    assert acc == {"LEAD AUX": "doble", "LEAD MAIN": "octava", "STABS": "cadena", "PERC": None, "BASS SUB": "cadena", "DRUMS": None}

@@ -18,7 +18,7 @@ class LiveSimulado:
         self.comandos: list[str] = []
         self.cargas: list[tuple[list[str], str]] = []
         self.plugins: list[tuple[str, str]] = []
-        self.version = "5"
+        self.version = "8"
         self.retornos = ["A Office", "B Plate", "C Hall", "D Rumble", "E Delay", "F Echo"]
         self.error_carga: str | None = None
         externo = self
@@ -84,9 +84,17 @@ class LiveSimulado:
                 return {"ok": False, "error": "Comando desconocido: 'read_track'"}
             clips = sorted(self.pistas[m["track_index"]]["clips"], key=lambda c: c["start"])
             return {"ok": True, "clips": [{"start": c["start"], "length": c["length"], "name": c["name"], "notes": c["notes"]} for c in clips]}
+        if t == "duplicate_track":
+            import copy as _copy
+
+            i = m["track_index"]
+            nueva = _copy.deepcopy(self.pistas[i])
+            nueva["name"] = m["name"]
+            self.pistas.insert(i + 1, nueva)
+            return {"ok": True, "track_index": i + 1}
         if t == "get_mixer":
             pistas = [{"name": p["name"], "volume_db": p.get("volume_db", 0.0), "pan": p.get("pan", 0.0),
-                       "sends": p.get("sends", [float("-inf")] * len(self.retornos))} for p in self.pistas]
+                       "sends": p.get("sends", [float("-inf")] * len(self.retornos)), "devices": p.get("devices", [])} for p in self.pistas]
             return {"ok": True, "tracks": pistas, "returns": list(self.retornos)}
         if t == "set_mixer":
             p = next(x for x in self.pistas if x["name"] == m["pista"])

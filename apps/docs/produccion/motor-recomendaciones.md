@@ -49,10 +49,22 @@ Por rol presente en el set:
 
 **Límite del Haas:** de 30–40 ms en adelante deja de oírse como ancho y se oye como eco, y en mono crea filtro peine (Haas, 1951). Siempre se revisa la mezcla en mono.
 
+### 4.1 Aplicar (Juan, 2026-11-08)
+
+Cada idea con acción trae un botón **Aplicar**, con confirmación:
+
+| Acción | Qué hace |
+|---|---|
+| **Doble** (LEAD AUX) | Duplica la pista con Live (mismo instrumento, preset, cadena y clips), corre las notas 15 ms, varía el velocity ±8 y la panea al 30 % del lado opuesto, 4 dB por debajo del original. Pista `<PISTA> DOBLE` |
+| **Octava** (LEAD MAIN) | Duplica, sube una octava, velocity al 85 %, 10 dB por debajo. Pista `<PISTA> OCT` |
+| **Cadena** (Haas, ancho, mono) | Pone `GF ROL` en esa pista sola |
+
+Si la pista nueva ya existe, no la vuelve a crear. Requiere GFMotor 8 (`duplicate_track`).
+
 ## 5. Rack de rol (`GF ROL.adg`)
 
 Plantilla que guarda Juan una vez: **EQ Eight → Compressor → Saturator → Delay → Utility**, todo por defecto. El motor la clona por rol y enciende o apaga cada dispositivo (tabla del rack, `motor-mezcla.md` §4); el Delay solo se enciende donde la tabla de §4 pide Haas.
 
 ## 6. No cubre
 
-Generar voces (no se sintetizan con IA: calidad y derechos dudosos), el chop automático (cuando Juan tenga material) y escribir la duplicación en Live (por ahora es recomendación).
+Generar voces (no se sintetizan con IA: calidad y derechos dudosos) y el chop automático (cuando Juan tenga material).

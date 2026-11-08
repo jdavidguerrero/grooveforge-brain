@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import random
 import re
 import os
 import shutil
@@ -87,6 +88,9 @@ INSTRUMENTOS = {
     "FILL": TRIBE_PLUGIN, "ROLL TRIBE": TRIBE_PLUGIN,
     **{p: GF_PLUGIN for p in ("CHORDS", "PAD", "ATMOS", "STABS", "PLUCKS", "RISER", "FX", "EAR CANDY")},
 }
+
+
+RACK_DEL_MOTOR = re.compile(r"^(KICK|DRUMS) \S+ \S+ \S+ [0-9a-f]{4} R\d+$")  # el mismo patrón que GFMotor
 
 
 def _mezcla_vacio() -> dict:
@@ -363,6 +367,7 @@ class Motor:
         try:
             self._exigir_set_editable()
             self.live.cargar_rack([self.carpeta_live.name, "00 Motor", self._carpeta_kicks().name, ruta.name], pista)
+            self._recordar_rack(pista, self._carpeta_kicks().name, ruta.name)
             rack["cargado"] = True
         except ErrorLive as exc:
             rack["motivo"] = str(exc)
@@ -574,6 +579,7 @@ class Motor:
             if self.live.indice_pista("DRUMS") is None:
                 self.live.crear_pista_midi("DRUMS")
             self.live.cargar_rack([self.carpeta_live.name, "00 Motor", self._carpeta_drums().name, ruta.name], "DRUMS")
+            self._recordar_rack("DRUMS", self._carpeta_drums().name, ruta.name)
             rack["cargado"] = True
         except ErrorLive as exc:
             rack["motivo"] = str(exc)
@@ -980,6 +986,7 @@ class Motor:
             if self.live.indice_pista("SUBDROP") is None:
                 self.live.crear_pista_midi("SUBDROP")
             self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], "SUBDROP")
+            self._recordar_rack("SUBDROP", carpeta.name, ruta.name)
             rack["cargado"].append("SUBDROP")
         except ErrorLive as exc:
             rack["motivo"] = str(exc)
@@ -1014,6 +1021,7 @@ class Motor:
             if self.live.indice_pista("ROLL") is None:
                 self.live.crear_pista_midi("ROLL")
             self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], "ROLL")
+            self._recordar_rack("ROLL", carpeta.name, ruta.name)
             rack["cargado"].append("ROLL")
         except ErrorLive as exc:
             rack["motivo"] = str(exc)
@@ -1176,34 +1184,76 @@ class Motor:
         self._evento("borrador", parte="mezcla", plan=m["plan"], forzar=forzar)
         return e
 
-    _FAMILIAS_RACK = {"KICK": "KICK ", "DRUMS": "DRUMS ", "ROLL": "ROLL ", "SUBDROP": "SUBDROP "}
+    def _recordar_rack(self, pista: str, carpeta: str, archivo: str) -> None:
+        """Qué rack del motor tiene cada pista, para poder reponerlo si se pierde."""
+        assert self.estado
+        self.estado.setdefault("racks_en_pista", {})[pista] = [carpeta, archivo]
 
-    def racks_disponibles(self) -> dict:
-        """Racks del motor en la Library por pista, del más nuevo al más viejo."""
-        base = self.carpeta_live / "00 Motor"
-        salida = {}
-        for pista, prefijo in self._FAMILIAS_RACK.items():
-            archivos = [a for c in base.glob(f"{prefijo}*") if c.is_dir() for a in c.glob("*.adg")]
-            salida[pista] = [f"{a.parent.name}/{a.name}" for a in sorted(archivos, key=lambda a: a.stat().st_mtime, reverse=True)]
-        e = self._exigir_estado()
-        e["mezcla"]["racks_disponibles"] = salida
-        self._guardar()
-        return e
-
-    def reponer_rack(self, pista: str, relativo: str) -> dict:
-        """Vuelve a cargar un rack del motor elegido por Juan (p. ej., tras el fallo de GF ROL del 2026-11-08)."""
+    def reponer_racks(self) -> dict:
+        """Vuelve a cargar el rack del motor en las pistas que lo perdieron (fallo de GF ROL del 2026-11-08).
+        Una pista que todavía tiene un rack del motor no se toca."""
         e = self._exigir_estado()
         self._exigir_set_editable()
-        if pista not in self._FAMILIAS_RACK or relativo not in e["mezcla"].get("racks_disponibles", {}).get(pista, []):
-            raise ValueError("Rack o pista no válidos: vuelve a listar los racks")
-        carpeta, archivo = relativo.split("/", 1)
-        self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta, archivo], pista)
-        e["mezcla"].setdefault("repuestos", {})[pista] = relativo
+        self._exigir_version(7, "reponer los racks")
+        dispositivos = {p["name"]: p.get("devices", []) for p in self.live.leer_mezcla()["tracks"]}
+        repuestos = []
+        for pista, (carpeta, archivo) in e.get("racks_en_pista", {}).items():
+            if pista not in dispositivos or any(RACK_DEL_MOTOR.match(d) for d in dispositivos[pista]):
+                continue
+            if not (self.carpeta_live / "00 Motor" / carpeta / archivo).exists():
+                continue
+            self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta, archivo], pista)
+            repuestos.append(f"{pista}: {archivo.rsplit('.', 1)[0]}")
+        e["mezcla"]["repuestos"] = repuestos
         self._guardar()
-        self._evento("eleccion", parte="reponer_rack", elegido=relativo, pista=pista)
+        self._evento("borrador", parte="reponer_racks", repuestos=repuestos)
         return e
 
-    def poner_cadenas(self) -> dict:
+    def aplicar_idea(self, pista: str, accion: str) -> dict:
+        """Aplica una idea de anchura cuando Juan la elige (motor-recomendaciones.md §4).
+        doble: duplica la pista (mismo instrumento y preset), corre las notas ~15 ms, varía el velocity y la panea al
+        lado opuesto, 4 dB abajo. octava: duplica, sube una octava, 10 dB abajo. cadena: pone GF ROL en esa pista
+        (Haas, ancho o mono según su rol)."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        if accion == "cadena":
+            return self.poner_cadenas(solo=pista)
+        if accion not in ("doble", "octava"):
+            raise ValueError(f"Acción desconocida {accion!r}")
+        self._exigir_version(8, "duplicar pistas")
+        indice = self.live.indice_pista(pista)
+        if indice is None:
+            raise ValueError(f"No existe la pista {pista}")
+        nombre = f"{pista} {'DOBLE' if accion == 'doble' else 'OCT'}"
+        if self.live.indice_pista(nombre) is not None:
+            raise ValueError(f"Ya existe {nombre}: bórrala si quieres volver a generarla")
+        mezcla = {p["name"]: p for p in self.live.leer_mezcla()["tracks"]}
+        nueva = self.live.duplicar_pista(indice, nombre)
+        azar = random.Random(f"{pista}-{accion}")
+        corrimiento = 0.015 * e["partida"]["bpm"] / 60  # 15 ms en tiempos
+        for c in self.live.clips_con_notas(nueva):
+            if not c.get("notes"):
+                continue
+            largo = c.get("end", c["start"] + c["length"]) - c["start"]
+            notas = []
+            for n in c["notes"]:
+                if accion == "doble":
+                    inicio = min(n["start_beat"] + corrimiento, max(largo - 0.01, 0.0))
+                    notas.append({**n, "start_beat": round(inicio, 4), "velocity": max(1, min(127, n["velocity"] + azar.randint(-8, 8)))})
+                else:
+                    notas.append({**n, "pitch": min(127, n["pitch"] + 12), "velocity": max(1, round(n["velocity"] * 0.85))})
+            self.live.escribir_clip(nueva, c["start"], largo, notas, c.get("name") or nombre)
+        origen = mezcla.get(pista, {})
+        volumen = origen.get("volume_db", 0.0)
+        volumen = (volumen if volumen != float("-inf") else -12.0) - (4.0 if accion == "doble" else 10.0)
+        pan = (-0.3 if origen.get("pan", 0.0) >= 0 else 0.3) if accion == "doble" else origen.get("pan", 0.0)
+        self.live.poner_mezcla(nombre, volumen, pan, {})
+        e.setdefault("ideas_aplicadas", []).append({"pista": pista, "accion": accion, "nueva": nombre})
+        self._guardar()
+        self._evento("borrador", parte="idea", pista=pista, accion=accion, nueva=nombre)
+        return e
+
+    def poner_cadenas(self, solo: str | None = None) -> dict:
         """Una cadena GF ROL por pista con rol (motor-mezcla.md §4). Una sola vez por pista: si Juan la quita o la
         cambia, el motor no la vuelve a poner."""
         e = self._exigir_estado()
@@ -1215,6 +1265,8 @@ class Motor:
             nombre = p["name"]
             rol = rol_de(nombre)
             if rol is None or nombre.upper() in NO_TOCAR or ajustes_rol(rol) is None or nombre in m["cadenas"]:
+                continue
+            if solo is not None and nombre != solo:
                 continue
             archivo = f"GF ROL {rol}.adg"
             crear_rack_rol(rol, f"GF ROL {rol}", carpeta / archivo)

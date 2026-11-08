@@ -95,5 +95,6 @@ def anchura(pistas: list[str]) -> list[dict]:
         if rol in ANCHURA and p not in vistos:
             vistos.add(p)
             que, como = ANCHURA[rol]
-            salida.append({"pista": p, "rol": rol, "que": que, "como": como})
+            accion = "doble" if que.startswith("Doble") else "octava" if "octava" in que else None if que.startswith("Sin Haas") or que.startswith("Al centro, sin") else "cadena"
+            salida.append({"pista": p, "rol": rol, "que": que, "como": como, "accion": accion})
     return salida

@@ -227,7 +227,7 @@ def _valor_para_db(parametro, db):
 def leer_mezcla(song, _m):
     pistas = [
         {"name": t.name, "volume_db": _db_de(t.mixer_device.volume), "pan": t.mixer_device.panning.value,
-         "sends": [_db_de(s) for s in t.mixer_device.sends]}
+         "sends": [_db_de(s) for s in t.mixer_device.sends], "devices": [d.name for d in t.devices]}
         for t in song.tracks
     ]
     return {"tracks": pistas, "returns": [r.name for r in song.return_tracks]}
@@ -252,3 +252,13 @@ def poner_mezcla(song, m):
     finally:
         song.end_undo_step()
     return {}
+
+
+def duplicar_pista(song, m):
+    """Duplica una pista con todo (instrumento, preset, cadena y clips) y le pone nombre. Queda justo debajo."""
+    i = int(m["track_index"])
+    _pista(song, i)
+    song.duplicate_track(i)
+    nueva = list(song.tracks)[i + 1]
+    nueva.name = m["name"]
+    return {"track_index": i + 1}

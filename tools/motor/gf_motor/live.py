@@ -134,6 +134,9 @@ class ClienteLive:
             c["notes"] = leido["notes"] if leido else None
         return clips
 
+    def duplicar_pista(self, pista: int, nombre: str) -> int:
+        return int(self._ok("duplicate_track", track_index=pista, name=nombre)["track_index"])
+
     def leer_mezcla(self) -> dict:
         return self._ok("get_mixer")
 
