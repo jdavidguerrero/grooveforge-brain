@@ -1176,6 +1176,33 @@ class Motor:
         self._evento("borrador", parte="mezcla", plan=m["plan"], forzar=forzar)
         return e
 
+    _FAMILIAS_RACK = {"KICK": "KICK ", "DRUMS": "DRUMS ", "ROLL": "ROLL ", "SUBDROP": "SUBDROP "}
+
+    def racks_disponibles(self) -> dict:
+        """Racks del motor en la Library por pista, del más nuevo al más viejo."""
+        base = self.carpeta_live / "00 Motor"
+        salida = {}
+        for pista, prefijo in self._FAMILIAS_RACK.items():
+            archivos = [a for c in base.glob(f"{prefijo}*") if c.is_dir() for a in c.glob("*.adg")]
+            salida[pista] = [f"{a.parent.name}/{a.name}" for a in sorted(archivos, key=lambda a: a.stat().st_mtime, reverse=True)]
+        e = self._exigir_estado()
+        e["mezcla"]["racks_disponibles"] = salida
+        self._guardar()
+        return e
+
+    def reponer_rack(self, pista: str, relativo: str) -> dict:
+        """Vuelve a cargar un rack del motor elegido por Juan (p. ej., tras el fallo de GF ROL del 2026-11-08)."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        if pista not in self._FAMILIAS_RACK or relativo not in e["mezcla"].get("racks_disponibles", {}).get(pista, []):
+            raise ValueError("Rack o pista no válidos: vuelve a listar los racks")
+        carpeta, archivo = relativo.split("/", 1)
+        self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta, archivo], pista)
+        e["mezcla"].setdefault("repuestos", {})[pista] = relativo
+        self._guardar()
+        self._evento("eleccion", parte="reponer_rack", elegido=relativo, pista=pista)
+        return e
+
     def poner_cadenas(self) -> dict:
         """Una cadena GF ROL por pista con rol (motor-mezcla.md §4). Una sola vez por pista: si Juan la quita o la
         cambia, el motor no la vuelve a poner."""

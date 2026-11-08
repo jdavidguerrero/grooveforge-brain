@@ -704,6 +704,18 @@ function botonCadenas(m) {
   b.onclick = () => { if (confirm("¿Poner la cadena GF ROL en cada pista con rol? Una vez por pista; si la quitas, no vuelve.")) accion("cadenas_poner", {}, b); };
   caja.append(nota("Cadena por rol: EQ (cortes), Compressor y Saturator solo donde hacen falta, Delay solo para el Haas, Utility con mono en el grave."), b);
   for (const r of m.ultimo_cadenas || []) caja.append(nota(`${r.pista}: ${r.cargado ? "GF ROL " + r.rol : "no se cargó (" + r.motivo + ")"}`));
+  caja.append(tanda("Reponer racks del motor"));
+  const l = document.createElement("button"); l.className = "sec"; l.textContent = "Listar racks"; l.onclick = () => accion("racks_listar", {}, l);
+  caja.append(l);
+  for (const [pista, racks] of Object.entries(m.racks_disponibles || {})) {
+    if (!racks.length) continue;
+    const f = document.createElement("div"); f.className = "patron";
+    const n = document.createElement("span"); n.textContent = pista + (m.repuestos?.[pista] ? ` · repuesto: ${m.repuestos[pista].split("/")[1]}` : "");
+    const sel = document.createElement("select"); for (const r of racks) { const o = document.createElement("option"); o.value = r; o.textContent = r.split("/")[1]; sel.append(o); }
+    const b = document.createElement("button"); b.className = "sec"; b.textContent = "Cargar";
+    b.onclick = () => accion("rack_reponer", {pista, rack: sel.value}, b);
+    f.append(n, sel, b); caja.append(f);
+  }
   return caja;
 }
 function pintarIdeas(r) {

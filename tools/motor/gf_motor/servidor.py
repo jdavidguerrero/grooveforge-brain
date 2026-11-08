@@ -50,6 +50,8 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "mezcla_proponer": lambda d: motor.proponer_mezcla(),
         "mezcla_aplicar": lambda d: motor.aplicar_mezcla(bool(d.get("forzar"))),
         "cadenas_poner": lambda d: motor.poner_cadenas(),
+        "racks_listar": lambda d: motor.racks_disponibles(),
+        "rack_reponer": lambda d: motor.reponer_rack(d["pista"], d["rack"]),
         "armado_proponer": lambda d: motor.proponer_armado(),
         "armado_presencia": lambda d: motor.cambiar_presencia(d["rol"], int(d["i"]), d["valor"]),
         "armado_llenar": lambda d: motor.llenar_armado(),

@@ -150,12 +150,14 @@ def intentar_cargar(song, navegador, partes, nombre_pista):
     try:
         song.view.selected_track = pista
         navegador.load_item(item)
-        # Después de cargar: si la carga falla, el rack anterior sigue en su sitio.
+        # Después de cargar: si la carga falla, el rack anterior sigue en su sitio. Solo un rack del motor
+        # reemplaza a otro rack del motor; una cadena de efectos (GF ROL) se suma y no borra nada.
         nuevo = partes[-1].rsplit(".", 1)[0]
-        for i in range(len(pista.devices) - 1, -1, -1):
-            nombre = pista.devices[i].name
-            if nombre != nuevo and _RACK_DEL_MOTOR.match(nombre):
-                pista.delete_device(i)
+        if _RACK_DEL_MOTOR.match(nuevo):
+            for i in range(len(pista.devices) - 1, -1, -1):
+                nombre = pista.devices[i].name
+                if nombre != nuevo and _RACK_DEL_MOTOR.match(nombre):
+                    pista.delete_device(i)
     finally:
         song.end_undo_step()
     return True

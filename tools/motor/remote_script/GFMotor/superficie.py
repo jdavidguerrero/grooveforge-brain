@@ -13,7 +13,7 @@ from _Framework.ControlSurface import ControlSurface
 from . import comandos
 
 PUERTO = 9878
-VERSION = "5"
+VERSION = "6"
 ESPERA_COMANDO_S = 15.0
 ESPERA_INDEXADO_S = 20.0  # Live tarda en ver un archivo recién creado en una carpeta de Places.
 _CABECERA = struct.Struct(">I")

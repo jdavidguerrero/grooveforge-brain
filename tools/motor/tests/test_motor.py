@@ -2151,3 +2151,42 @@ def test_aplicar_mezcla_forzada_reinicia_lo_movido(entorno):
     assert len(motor.estado["registros"]) == 1  # registró antes de reiniciar
     sc = next(p for p in live.pistas if p["name"] == "SC GHOST")
     assert "volume_db" not in sc
+
+
+def test_cargar_cadena_no_borra_el_rack_del_motor():
+    c = _comandos()
+    s = _Cancion("KICK")
+
+    class I:
+        def __init__(self, name, children=(), is_loadable=False):
+            self.name, self.children, self.is_loadable = name, children, is_loadable
+
+    class D:
+        def __init__(self, name):
+            self.name = name
+
+    class Navegador:
+        user_folders = [I("Lib", [I("GF ROL KICK.adg", is_loadable=True), I("KICK organic A menor ae8c R2.adg", is_loadable=True)])]
+
+        def load_item(self, item):
+            s.tracks[0].devices.append(D(item.name.rsplit(".", 1)[0]))
+
+    s.tracks[0].devices = [D("KICK organic A menor ae8c R1")]
+    assert c.intentar_cargar(s, Navegador(), ["Lib", "GF ROL KICK.adg"], "KICK")
+    assert [d.name for d in s.tracks[0].devices] == ["KICK organic A menor ae8c R1", "GF ROL KICK"]
+    assert c.intentar_cargar(s, Navegador(), ["Lib", "KICK organic A menor ae8c R2.adg"], "KICK")
+    assert [d.name for d in s.tracks[0].devices] == ["GF ROL KICK", "KICK organic A menor ae8c R2"]  # un rack sí reemplaza al otro
+
+
+def test_reponer_rack_del_motor(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    carpeta = motor.carpeta_live / "00 Motor" / "KICK organic A menor ae8c"
+    carpeta.mkdir(parents=True)
+    (carpeta / "KICK organic A menor ae8c R1.adg").write_bytes(b"x")
+    r = motor.racks_disponibles()["mezcla"]["racks_disponibles"]
+    assert r["KICK"] == ["KICK organic A menor ae8c/KICK organic A menor ae8c R1.adg"] and r["DRUMS"] == []
+    motor.reponer_rack("KICK", r["KICK"][0])
+    assert live.cargas[-1] == ([motor.carpeta_live.name, "00 Motor", "KICK organic A menor ae8c", "KICK organic A menor ae8c R1.adg"], "KICK")
+    with pytest.raises(ValueError):
+        motor.reponer_rack("KICK", "../otro.adg")
