@@ -63,16 +63,24 @@ Todo lo que tiene nota va a la tónica o al acorde de la tónica, por la regla d
 | **ROLL CON SILENCIO** | La pirámide, pero el último tiempo antes del drop queda vacío: el hueco hace que el drop pegue más |
 | **ROLL FLAM** | Cada golpe de negras, corcheas y semicorcheas con una nota de adorno 1/64 antes y más suave |
 
-**Sonido del roll con la drum machine:** snare y clap de `gf_perc` (madera, piel u 808, afinados a la fundamental) en un rack que se carga en `ROLL` y, si existe, en `FILL`. El nombre empieza por `DRUMS roll-…` para que `GFMotor` quite el rack anterior de esa pista sin tocar su Remote Script.
+**Sonido del roll con la drum machine:** snare y clap de `gf_perc` (madera, piel u 808, afinados a la fundamental) en un rack que se carga en `ROLL`. El nombre empieza por `DRUMS roll-…` para que `GFMotor` quite el rack anterior de esa pista sin tocar su Remote Script.
 
-**Fills con Tribe** (pista `FILL TRIBE`, notas de `kits/tribe_colombia.json`). En la cumbia y el bullerengue, el llamador sostiene y el alegre «llama» los cambios; la tambora remata:
+**Corrección de Juan (2026-11-08): los fills van de paso entre frases**, dentro de las secciones; los builds y breaks son de risers y rolls. Por eso:
 
-| Patrón | Dónde | Qué toca |
+- **Fills** (pista `FILL`, **con Tribe**): al final de **cada frase de 8 compases**, en todas las secciones menos los builds y menos la llegada a un drop (esa es del roll). Reemplazan a los fills de clap y snare de la drum machine, que quedaron fuera.
+- **Roll y riser con Tribe** (pista `ROLL TRIBE`): antes de cada drop, junto al roll de la drum machine.
+
+En la cumbia y el bullerengue, el llamador sostiene y el alegre «llama» los cambios; la tambora remata (notas de `kits/tribe_colombia.json`):
+
+| Patrón | Pista · dónde | Qué toca |
 |---|---|---|
-| **LLAMADOR** | 4 compases antes de cada drop | Abierto y bajoneo alternados: negras, corcheas, tresillos, semicorcheas |
-| **ALEGRE QUE LLAMA** | Último compás antes de cada cambio | Frase de abierto, quemao y latigazo que crece |
-| **TAMBORA** | 2 compases antes de cada cambio | Cáscara en corcheas, luego semicorcheas, y remate en abiertos |
-| **GUACHE RAIN** | 4 compases antes de cada drop | Dos lluvias y luego trémolo en semicorcheas que crece: un riser orgánico |
+| **ALEGRE QUE LLAMA** | `FILL` · último compás de cada frase | Frase de abierto, quemao y latigazo que crece |
+| **TAMBORA** | `FILL` · 2 últimos compases de cada frase | Apagado en corcheas, luego en semicorcheas, y remate en abiertos |
+| **CAJA** | `FILL` · último compás de cada frase | Caja vallenata: fondo en semicorcheas, quemao y latigazo |
+| **LLAMADOR** | `ROLL TRIBE` · 4 compases antes de cada drop | Abierto y bajoneo alternados: negras, corcheas, tresillos, semicorcheas |
+| **GUACHE RAIN** | `ROLL TRIBE` · 4 compases antes de cada drop | Dos lluvias y luego trémolo en semicorcheas que crece: un riser orgánico |
+
+**Teclas de Tribe — contradicción abierta.** Juan observa que Tribe no usa sostenidos en las percusiones. El mapa `kits/tribe_colombia.json` sí tiene dos: **Tambora Cascara L = G#1 (44)** y **Tambora Cascara R = A#1 (46)**, y con ellos se generaron los patrones de percusión de Tribe (el loop de `TOP` del set los usa). Además, 32 sonidos no caben en las 30 teclas blancas de C1 a D5. **Pendiente de Juan:** tocar G#1 y A#1 en Tribe y decir si suenan, y en qué tecla está la cáscara si no. Mientras tanto, la TAMBORA del fill usa apagado y abierto (solo teclas blancas) y un test exige teclas blancas en todo lo de Tribe del motor.
 
 **FX** (pista `FX`). El gesto lo pone el preset, así que no hace falta automatización:
 

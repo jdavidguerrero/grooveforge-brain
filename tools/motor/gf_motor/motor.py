@@ -155,6 +155,8 @@ class Motor:
             e.setdefault("transiciones", _transiciones_vacio())
             for k, v in _transiciones_vacio().items():
                 e["transiciones"].setdefault(k, v)
+            if e["transiciones"]["tribe"].get("pista") == "FILL TRIBE":  # antes los fills de Tribe iban ahí
+                e["transiciones"]["tribe"] = _transiciones_vacio()["tribe"]
             e["drums"].setdefault("patrones", {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None})
             e.setdefault("bajo", {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None})
             return e
@@ -925,7 +927,7 @@ class Motor:
         return e
 
     def sonido_roll(self, material: str) -> dict:
-        """Snare y clap de la drum machine (afinados a la fundamental) en un rack para ROLL; FILL usa las mismas notas.
+        """Snare y clap de la drum machine (afinados a la fundamental) en un rack para ROLL.
         El nombre empieza por DRUMS para que GFMotor quite el rack anterior de la pista al cargar el nuevo."""
         e = self._exigir_estado()
         self._exigir_library()
@@ -947,12 +949,10 @@ class Motor:
         rack = {"nombre": nombre, "material": material, "numero": numero, "cargado": [], "motivo": None}
         try:
             self._exigir_set_editable()
-            for pista in ("ROLL", "FILL"):
-                if pista == "ROLL" and self.live.indice_pista(pista) is None:
-                    self.live.crear_pista_midi(pista)
-                if self.live.indice_pista(pista) is not None:
-                    self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], pista)
-                    rack["cargado"].append(pista)
+            if self.live.indice_pista("ROLL") is None:
+                self.live.crear_pista_midi("ROLL")
+            self.live.cargar_rack([self.carpeta_live.name, "00 Motor", carpeta.name, ruta.name], "ROLL")
+            rack["cargado"].append("ROLL")
         except ErrorLive as exc:
             rack["motivo"] = str(exc)
         t["rack_roll"] = rack

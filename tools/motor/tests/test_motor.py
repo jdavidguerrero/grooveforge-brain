@@ -1651,8 +1651,13 @@ def test_riser_fill_y_ear_candy_en_su_sitio():
     r = clips_transicion("riser", "RISER ESCALERA", s, "A", _LD)
     assert [c["inicio"] for c in r] == [192.0, 512.0] and r[0]["inicio"] + r[0]["longitud"] == 256.0
     assert {n["pitch"] % 12 for c in r for n in c["notas"]} <= {9, 1, 4}  # acorde de la tónica: La, Do#, Mi
-    f = clips_transicion("fill", "FILL ULTIMO TIEMPO", s, "A", _LD)
-    assert [c["inicio"] for c in f] == [188.0, 252.0, 380.0, 508.0, 572.0, 764.0]
+    f = clips_transicion("fill", "ALEGRE QUE LLAMA", s, "A", _LD)
+    fines = [c["inicio"] + c["longitud"] for c in f]
+    # Frases de 8 compases (32 tiempos) en INTRO 0-192, DROP 256-384, BREAK 384-512, DROP 576-768 y OUTRO 768-848; sin builds.
+    intro, drop1, brk = [32.0 * k for k in range(1, 7)], [288.0, 320.0, 352.0, 384.0], [416.0, 448.0, 480.0, 512.0]
+    drop2, outro = [576.0 + 32.0 * k for k in range(1, 7)], [800.0, 832.0]
+    assert fines == intro + drop1 + brk + drop2 + outro
+    assert 256.0 not in fines and 576.0 not in fines  # la llegada al drop es del roll
     imp = clips_transicion("ear", "IMPACTO", s, "A", _LD)
     assert [c["inicio"] for c in imp] == [256.0, 576.0] and imp[0]["notas"][0]["pitch"] == 33
     gota = clips_transicion("ear", "GOTA EN EL BREAK", s, "A", _LD)
@@ -1736,12 +1741,17 @@ def test_fills_de_tribe_y_fx():
     if kit.exists():  # las notas coinciden con el mapa del kit de Tribe
         teclado = json.loads(kit.read_text())["teclado"]
         assert TRIBE["llamador_abierto"] == teclado["Llamador Abierto"] and TRIBE["tambora_open_r"] == teclado["Tambora Open R"]
+        assert TRIBE["caja_latigazo"] == teclado["Caja Latigazo"] and TRIBE["tambora_damped_r"] == teclado["Tambora Damped R"]
     ll = clips_transicion("tribe", "LLAMADOR", s, "A", _LD)
     assert [c["inicio"] for c in ll] == [240.0, 560.0] and {n["pitch"] for n in ll[0]["notas"]} == {48, 50}
-    alegre = clips_transicion("tribe", "ALEGRE QUE LLAMA", s, "A", _LD)
-    assert len(alegre) == 6 and all(c["longitud"] == 4 for c in alegre)
-    tambora = clips_transicion("tribe", "TAMBORA", s, "A", _LD)[0]["notas"]
-    assert {41, 43} <= {n["pitch"] for n in tambora} and max(n["start_beat"] for n in tambora) < 8
+    tambora = clips_transicion("fill", "TAMBORA", s, "A", _LD)[0]["notas"]
+    assert {41, 43, 45, 47} == {n["pitch"] for n in tambora} and max(n["start_beat"] for n in tambora) < 8
+    caja = clips_transicion("fill", "CAJA", s, "A", _LD)[0]["notas"]
+    assert caja[-1]["pitch"] == TRIBE["caja_latigazo"]
+    # Tribe solo en teclas blancas (Juan, 2026-11-08): ningún fill ni roll de Tribe usa sostenidos.
+    for el, pats in (("fill", ("ALEGRE QUE LLAMA", "TAMBORA", "CAJA")), ("tribe", ("LLAMADOR", "GUACHE RAIN"))):
+        for pat in pats:
+            assert all(n["pitch"] % 12 in (0, 2, 4, 5, 7, 9, 11) for c in clips_transicion(el, pat, s, "A", _LD) for n in c["notas"]), pat
     caida = clips_transicion("fx", "CAIDA", s, "A", _LD)
     assert [c["inicio"] for c in caida] == [256.0, 576.0] and caida[0]["notas"][0]["pitch"] == 57
     swell = clips_transicion("fx", "SWELL INVERSO", s, "A", _LD)[0]

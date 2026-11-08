@@ -4,22 +4,24 @@ from __future__ import annotations
 
 from .acordes import clases_acorde
 from .bajo import _NOTAS
-from .drums import CLAP, SNARE
+from .drums import SNARE
 
 ELEMENTOS = {
     "roll": ("ROLL", ("ROLL 4", "ROLL 8", "ROLL 2", "ROLL TRESILLO", "ROLL CON SILENCIO", "ROLL FLAM")),
     "riser": ("RISER", ("RISER NOTA", "RISER ESCALERA", "RISER OCTAVAS")),
-    "fill": ("FILL", ("FILL TRESILLO", "FILL ULTIMO TIEMPO")),
+    "fill": ("FILL", ("ALEGRE QUE LLAMA", "TAMBORA", "CAJA")),
     "ear": ("EAR CANDY", ("IMPACTO", "STAB ANTES DEL DROP", "GOTA EN EL BREAK")),
-    "tribe": ("FILL TRIBE", ("LLAMADOR", "ALEGRE QUE LLAMA", "TAMBORA", "GUACHE RAIN")),
+    "tribe": ("ROLL TRIBE", ("LLAMADOR", "GUACHE RAIN")),
     "fx": ("FX", ("CAIDA", "SWELL INVERSO", "STUTTER", "NATURALEZA")),
 }
 # Teclado de Tribe · Colombian Percussion (GrooveForge_Dataset_v1/kits/tribe_colombia.json, octava 0).
 TRIBE = {
-    "tambora_open_l": 41, "tambora_open_r": 43, "tambora_cascara_l": 44, "tambora_cascara_r": 46,
+    "tambora_open_l": 41, "tambora_open_r": 43, "tambora_damped_l": 45, "tambora_damped_r": 47,
     "llamador_bajoneo": 48, "llamador_abierto": 50, "alegre_bajoneo": 52, "alegre_abierto": 53,
     "alegre_quemao": 55, "alegre_latigazo": 57, "guache_rain": 62, "guache_tremolo": 64,
+    "caja_fondo_l": 71, "caja_fondo_r": 72, "caja_quemao_l": 74, "caja_quemao_r": 76, "caja_latigazo": 77,
 }
+FRASE = 32.0  # 8 compases: los fills van al final de cada frase, dentro de las secciones
 _SUBDIVISIONES = (1.0, 0.5, 0.25, 0.125)  # negras, corcheas, semicorcheas, fusas (en tiempos)
 RISER_MAX = 64.0  # 16 compases
 
@@ -32,6 +34,22 @@ def secciones(clips: list[dict]) -> list[dict]:
         fin = con_nombre[i + 1]["start"] if i + 1 < len(con_nombre) else c["start"] + c["length"]
         salida.append({"nombre": c["name"].strip().upper(), "inicio": c["start"], "fin": fin})
     return salida
+
+
+def fines_de_frase(secs: list[dict]) -> list[float]:
+    """Final de cada frase de 8 compases dentro de las secciones. Fuera: los builds (ahí van riser y roll) y la
+    llegada a un drop (es del roll)."""
+    drops = {d["inicio"] for _, d in _drops(secs)}
+    salida = []
+    for s in secs:
+        if s["nombre"].startswith("BUILD"):
+            continue
+        fin = s["inicio"] + FRASE
+        while fin <= s["fin"] + 1e-6:
+            if fin not in drops:
+                salida.append(fin)
+            fin += FRASE
+    return sorted(set(salida))
 
 
 def _drops(secs: list[dict]) -> list[tuple[dict | None, dict]]:
@@ -88,10 +106,14 @@ def _tribe(patron: str, llegada: float) -> list[dict]:
         frase = ((0, "abierto"), (3, "quemao"), (6, "abierto"), (8, "latigazo"), (10, "quemao"), (11, "quemao"),
                  (12, "abierto"), (13, "abierto"), (14, "latigazo"), (15, "quemao"))
         return [_nota(TRIBE[f"alegre_{s}"], compas + p / 4, 0.25, 70 + 4 * i) for i, (p, s) in enumerate(frase)]
-    cascara = [_nota(TRIBE["tambora_cascara_l" if s % 4 == 0 else "tambora_cascara_r"], compas - 4 + s / 4, 0.25, 64 + s) for s in range(0, 16, 2)]
-    cascara += [_nota(TRIBE["tambora_cascara_l" if s % 2 == 0 else "tambora_cascara_r"], compas + s / 4, 0.2, 80 + 2 * s) for s in range(8)]
+    if patron == "CAJA":
+        fondo = [_nota(TRIBE["caja_fondo_l" if s % 2 == 0 else "caja_fondo_r"], compas + s / 4, 0.2, 70 + 2 * s) for s in range(8, 14)]
+        return fondo + [_nota(TRIBE["caja_quemao_l"], compas + 14 / 4, 0.2, 100), _nota(TRIBE["caja_latigazo"], compas + 15 / 4, 0.25, 115)]
+    # TAMBORA: apagado en corcheas, luego en semicorcheas, y remate en abiertos (sin cáscara hasta confirmar su tecla)
+    apagado = [_nota(TRIBE["tambora_damped_l" if s % 4 == 0 else "tambora_damped_r"], compas - 4 + s / 4, 0.25, 64 + s) for s in range(0, 16, 2)]
+    apagado += [_nota(TRIBE["tambora_damped_l" if s % 2 == 0 else "tambora_damped_r"], compas + s / 4, 0.2, 80 + 2 * s) for s in range(8)]
     abiertos = [_nota(TRIBE["tambora_open_l" if k % 2 == 0 else "tambora_open_r"], compas + s / 4, 0.25, 96 + 4 * k) for k, s in enumerate((8, 10, 12, 13, 14, 15))]
-    return cascara + abiertos
+    return apagado + abiertos
 
 
 def _fx(patron: str, tonica: int, llegada: float) -> list[dict]:
@@ -121,12 +143,6 @@ def _riser(patron: str, tonica: int, escala, desde: float, llegada: float) -> li
     return [_nota(p, inicio + k * paso, llegada - (inicio + k * paso) - 0.25, 70 + 12 * k) for k, p in enumerate(voces)]
 
 
-def _fill(patron: str, llegada: float) -> list[dict]:
-    compas = llegada - 4
-    if patron == "FILL TRESILLO":
-        return [_nota(CLAP, compas + s / 4, 0.2, 70 + 8 * i) for i, s in enumerate((0, 3, 6, 8, 11, 14))]
-    notas = [_nota(SNARE, compas + s / 4, 0.2, 80 + 10 * k) for k, s in enumerate((12, 13, 14, 15))]
-    return notas + [_nota(CLAP, compas + 15 / 4, 0.2, 115)]
 
 
 def _ear(patron: str, tonica: int, escala, secs: list[dict]) -> list[dict]:
@@ -167,18 +183,14 @@ def clips_transicion(elemento: str, patron: str, secs: list[dict], raiz: str, es
                 notas = _riser(patron, tonica, escala, desde, drop["inicio"])
                 clips.append((notas[0]["start_beat"], drop["inicio"] - notas[0]["start_beat"], notas))
     elif elemento == "fill":
-        for s in secs[1:]:
-            if s["inicio"] >= 4:
-                clips.append((s["inicio"] - 4, 4.0, _fill(patron, s["inicio"])))
+        largo = 8.0 if patron == "TAMBORA" else 4.0
+        for fin in fines_de_frase(secs):
+            if fin >= largo:
+                clips.append((fin - largo, largo, _tribe(patron, fin)))
     elif elemento == "tribe":
-        if patron in ("LLAMADOR", "GUACHE RAIN"):
-            llegadas = [d["inicio"] for _, d in _drops(secs)]
-        else:
-            llegadas = [s["inicio"] for s in secs[1:]]
-        largo = {"LLAMADOR": 16.0, "GUACHE RAIN": 16.0, "TAMBORA": 8.0}.get(patron, 4.0)
-        for llegada in llegadas:
-            if llegada >= largo:
-                clips.append((llegada - largo, largo, _tribe(patron, llegada)))
+        for _, drop in _drops(secs):
+            if drop["inicio"] >= 16:
+                clips.append((drop["inicio"] - 16.0, 16.0, _tribe(patron, drop["inicio"])))
     elif elemento == "fx" and patron == "NATURALEZA":
         for s in secs:
             if s["nombre"].startswith(("INTRO", "BREAK")):
