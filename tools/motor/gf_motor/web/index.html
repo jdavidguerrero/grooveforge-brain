@@ -80,6 +80,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="tops" class="tab">Tops<i></i></button>
     <button data-ir="motivo" class="tab">Motivo<i></i></button>
     <button data-ir="acordes" class="tab">Acordes<i></i></button>
+    <button data-ir="pads" class="tab">Pads<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -211,6 +212,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-acordes"></div>
   </section>
 
+  <section id="s-pads" class="bloq" data-seccion="pads">
+    <div class="num">1</div>
+    <h2>Pad y atmósfera</h2>
+    <p>Sigue la progresión que dejaste en Acordes. El pad sostiene la armonía en <code>PAD</code>; la atmósfera es textura sin ritmo en <code>ATMOS</code>. Son material de intro y break: mueve los clips donde quieras. Sonidos para el VST en <code>presets/pads</code> de la Library; en la mezcla, envío Hall a −16 dB.</p>
+    <button id="b-pads" disabled>Leer acordes</button>
+    <div id="r-pads"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -287,6 +296,8 @@ function pintar(s) {
   marcar("motivo", !!s?.motivo?.clip);
   marcar("acordes", !!s?.acordes?.clip);
   if (s) pintarAcordes(s.acordes);
+  marcar("pads", !!(s?.pads?.pad?.clip || s?.pads?.atmos?.clip));
+  if (s) pintarPads(s.pads);
   if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
@@ -297,7 +308,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -443,6 +454,40 @@ function pintarAcordes(a) {
   }
   $("r-acordes").replaceChildren(...nodos);
 }
+const PADS_INFO = {
+  "DRON": "La + Mi sostenidos: el piso que no cambia",
+  "LINEA GUIA": "3.ª y 7.ª de cada acorde, despacio: el color lidio cantado",
+  "ABIERTO ALTO": "Fundamental, quinta y décima, por encima de tus acordes",
+  "NUBE": "Notas sueltas y largas, fuera del pulso. Volver a leer da otra nube",
+  "SWELL": "Las notas del acorde entran una a una: para el build",
+  "RAIZ GRAVE": "Un La grave sostenido, para un preset que se mueve solo",
+};
+function pintarPads(p) {
+  $("s-pads").classList.toggle("hecho", !!(p.pad.clip || p.atmos.clip));
+  if (p.pad.opciones.length) $("b-pads").textContent = "Volver a leer";
+  const nodos = [];
+  if (p.pad.opciones.length) {
+    const m = document.createElement("p"); m.className = "ok";
+    m.textContent = p.progresion ? `Sobre tu progresión ${p.progresion}.` : "No hay acordes puestos: todo va sobre la tónica.";
+    nodos.push(m);
+  }
+  for (const [parte, titulo, base] of [["pad", "Pad", "PAD"], ["atmos", "Atmósfera", "ATMOS"]]) {
+    const e = p[parte];
+    if (!e.opciones.length) continue;
+    const t = document.createElement("div"); t.className = "tanda"; t.textContent = titulo; nodos.push(t);
+    if (e.pista && e.pista !== base) { const x = document.createElement("p"); x.className = "ok"; x.textContent = `Editaste el clip, así que este va en ${e.pista}.`; nodos.push(x); }
+    for (const o of e.opciones) {
+      const f = document.createElement("div"); f.className = "patron" + (e.actual === o.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = o.patron;
+      const d = document.createElement("small"); d.style.display = "block"; d.style.color = "var(--monitor)"; d.textContent = PADS_INFO[o.patron] || "";
+      n.append(d);
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = e.actual === o.id ? "Puesto" : "Poner"; b.disabled = e.actual === o.id;
+      b.onclick = () => accion("pads_poner", {parte, id:o.id}, b);
+      f.append(n, b); nodos.push(f);
+    }
+  }
+  $("r-pads").replaceChildren(...nodos);
+}
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
   $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
@@ -546,6 +591,7 @@ $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
 $("b-drums").onclick = e => accion("drums", {}, e.target);
 $("b-acordes").onclick = e => accion("acordes_proponer", {}, e.target);
+$("b-pads").onclick = e => accion("pads_proponer", {}, e.target);
 $("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
 $("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);

@@ -1,6 +1,6 @@
 # Motor: pads y atmósfera
 
-> **Fecha:** 2026-11-08. **Estado:** borrador, pendiente de aprobación de Juan. **Amplía:** `motor-asistencia-v2.md`, último paso del flujo. **Base:** `motor-acordes.md`, `sesion-paleta-adn.md` (§ pads y texturas), `template-envios-valhalla.md`. **No modifica** `00–06`.
+> **Fecha:** 2026-11-08. **Estado:** primera entrega en prueba (Juan pidió la pestaña para escuchar; los patrones aún no los ha oído). **Amplía:** `motor-asistencia-v2.md`, último paso del flujo. **Base:** `motor-acordes.md`, `sesion-paleta-adn.md` (§ pads y texturas), `template-envios-valhalla.md`. **No modifica** `00–06`.
 
 ## 1. Objetivo
 
@@ -28,7 +28,7 @@ Igual que en los demás pasos: reglas, sin ML; MIDI editable; clip de 16 compase
 |---|---|---|
 | **DRON** | La + Mi (fundamental y quinta) sostenidos 16 compases, en La2–Mi3 | Ya existe como `pad_adn_dron`. No sigue los acordes: es el piso que no cambia, como la tambora sobre la que se mueve todo |
 | **LÍNEA GUÍA** | Solo la 3.ª y la 7.ª de cada acorde (A7: Do# y Sol; B7: Re# y La), una nota larga por compás, por encima de los acordes | Las notas guía definen el acorde con dos voces (Levine, *The Jazz Theory Book*, cap. 2). Aquí el Do# → Re# sube un semitono: ese paso **es** el color lidio, y la línea lo canta despacio |
-| **ABIERTO ALTO** | Fundamental, quinta y décima de cada acorde, arriba de los acordes (MIDI 64–79), cambio cada compás con ataque lento | Voicing abierto: ocupa espacio sin espesar el centro, y deja el registro medio a `CHORDS 2` |
+| **ABIERTO ALTO** | Fundamental, quinta y décima de cada acorde, arriba de los acordes (fundamental desde Mi4, MIDI 64–88), cambio cada compás con ataque lento | Voicing abierto: ocupa espacio sin espesar el centro, y deja el registro medio a `CHORDS 2` |
 
 La duración llena el compás (o los 16 compases en el dron), con un pequeño espacio para que el ataque lento del preset vuelva a entrar.
 
@@ -61,12 +61,12 @@ Juan quiere un ambient más orgánico: cascadas, ríos, aire. Ya están en `pres
 
 | Preset nuevo | Motor | Receta | Suena a |
 |---|---|---|---|
-| **GF AIRE** | ARP 2600, solo ruido | Filtro 900 Hz con algo de resonancia; LFO seno muy lento (0,1 Hz) que abre y cierra el filtro | Viento que sube y baja |
-| **GF RIO** | Capa ARP 2600 + OB-6, ruido en las dos | A: ruido a 1,5 kHz con S&H rápido y poco profundo (el gorgoteo). B: ruido más grave que crece y baja muy lento | Corriente con burbujas |
-| **GF CASCADA** | Capa ARP 2600 + Juno, ruido en las dos | A: ruido ancho a 3 kHz, constante. B: ruido grave a 300 Hz (el golpe del agua al caer) | Caída de agua, densa |
-| **GF GOTAS** | ARP 2600, ruido con mucha resonancia | S&H mueve el filtro a saltos; la resonancia convierte cada salto en una nota corta | Gotas, agua que suena |
+| **JD AIRE** | ARP 2600, solo ruido | Filtro 900 Hz con algo de resonancia; LFO seno muy lento (0,1 Hz) que abre y cierra el filtro | Viento que sube y baja |
+| **JD RIO** | Capa ARP 2600 + OB-6, ruido en las dos | A: ruido a 1,5 kHz con S&H rápido y poco profundo (el gorgoteo). B: ruido más grave que crece y baja muy lento | Corriente con burbujas |
+| **JD CASCADA** | Capa ARP 2600 + OB-6, ruido en las dos (el Juno no puede apagar su oscilador) | A: ruido ancho a 3 kHz, constante. B: ruido grave a 300 Hz (el golpe del agua al caer) | Caída de agua, densa |
+| **JD GOTAS** | ARP 2600, ruido con mucha resonancia | S&H mueve el filtro a saltos; la resonancia convierte cada salto en una nota corta | Gotas, agua que suena |
 
-Todo es en La donde hay altura (resonancia afinada a la fundamental o su quinta, regla de Juan). Son sonidos de síntesis: se acercan al agua, no la imitan.
+**Sin afinar:** el ruido no tiene nota y en JD GOTAS el S&H elige la altura al azar, así que la regla de la fundamental no aplica aquí, como en los loops de Tribe. Generados en `tools/paleta-lab/make_jd_agua.py`. Son sonidos de síntesis: se acercan al agua, no la imitan.
 
 **Alternativa:** grabaciones de campo reales en una pista de audio, sin afinar, como Tribe. Es la vía más fiel. La síntesis tiene a su favor que se edita como MIDI y se mueve con el set.
 

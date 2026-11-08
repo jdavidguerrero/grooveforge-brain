@@ -1452,3 +1452,92 @@ def test_servidor_rechaza_otra_web(web):
     with pytest.raises(urllib.error.HTTPError):
         urllib.request.urlopen(pet, timeout=5)
     assert motor.estado is None
+
+
+# ── Pads y atmósfera (motor-pads.md) ──────────────────────────────────
+from gf_motor.pads import ALTO_MIN, GUIA_MIN, PATRONES_ATMOS, PATRONES_PAD, clip_pad  # noqa: E402
+
+
+@pytest.mark.parametrize("escala", [_LD, (0, 2, 3, 5, 7, 8, 10)])
+@pytest.mark.parametrize("prog", [None, *PROGRESIONES])
+def test_pads_en_escala_y_dentro_del_clip(escala, prog):
+    from gf_motor.bajo import _NOTAS
+
+    casa = {(_NOTAS["A"] + g) % 12 for g in escala}
+    for parte, patrones in (("pad", PATRONES_PAD), ("atmos", PATRONES_ATMOS)):
+        for nombre in patrones:
+            c = clip_pad(parte, nombre, prog, "A", escala)
+            assert c["longitud"] == 64 and c["notas"], nombre
+            for n in c["notas"]:
+                assert n["pitch"] % 12 in casa, (nombre, n)
+                assert 0 <= n["start_beat"] and n["start_beat"] + n["duration_beats"] <= 64, (nombre, n)
+                assert n["duration_beats"] >= 3.5 and 1 <= n["velocity"] <= 127, (nombre, n)
+
+
+def test_pad_no_pisa_el_registro_de_los_acordes():
+    alto = clip_pad("pad", "ABIERTO ALTO", "I-II", "A", _LD)["notas"]
+    assert min(n["pitch"] for n in alto) >= ALTO_MIN > REG_MAX - 1
+    dron = clip_pad("pad", "DRON", "I-II", "A", _LD)["notas"]
+    assert sorted(n["pitch"] for n in dron) == [45, 52] and dron[0]["duration_beats"] > 60  # La2 + Mi3, 16 compases
+
+
+def test_linea_guia_solo_terceras_y_septimas():
+    notas = clip_pad("pad", "LINEA GUIA", "I-II", "A", _LD)["notas"]
+    assert {n["pitch"] % 12 for n in notas} == {1, 7, 3, 9}  # A7: Do# y Sol · B7: Re# y La
+    assert min(n["pitch"] for n in notas) >= GUIA_MIN
+    # Do# → Re#: la voz de terceras sube un semitono... o baja diez; aquí se mueve lo mínimo.
+    terceras = sorted((n for n in notas if n["pitch"] % 12 in (1, 3)), key=lambda n: n["start_beat"])
+    assert abs(terceras[1]["pitch"] - terceras[0]["pitch"]) == 2
+
+
+def test_nube_fuera_del_pulso_y_con_semilla():
+    a = clip_pad("atmos", "NUBE", "I-II", "A", _LD, tanda=1)["notas"]
+    assert a == clip_pad("atmos", "NUBE", "I-II", "A", _LD, tanda=1)["notas"]
+    assert a != clip_pad("atmos", "NUBE", "I-II", "A", _LD, tanda=2)["notas"]
+    assert all(n["start_beat"] % 1 != 0 for n in a)
+    assert {n["pitch"] % 12 for n in a} <= {9, 4, 3}  # La, Mi y Re#
+
+
+def test_swell_entra_nota_a_nota():
+    notas = clip_pad("atmos", "SWELL", "I-II", "A", _LD)["notas"]
+    primeras = sorted(n["start_beat"] for n in notas if n["start_beat"] < 16)
+    assert primeras == [0, 4, 8, 12]
+    assert all(n["start_beat"] + n["duration_beats"] <= 16 for n in notas if n["start_beat"] < 16)
+
+
+def test_proponer_y_poner_pads_respeta_lo_editado(entorno):
+    live, motor = entorno
+    _set_acordes(live, motor)
+    motor.proponer_acordes()
+    motor.poner_acordes("I-II|SEPTIMAS LARGAS")
+    live.comandos.clear()
+    s = motor.proponer_pads()["pads"]
+    assert not live.comandos and s["progresion"] == "I-II" and s["tanda"] == 1
+    assert [o["id"] for o in s["pad"]["opciones"]] == list(PATRONES_PAD)
+    motor.poner_pad("pad", "DRON")
+    motor.poner_pad("atmos", "NUBE")
+    pad = next(x for x in live.pistas if x["name"] == "PAD")
+    atmos = next(x for x in live.pistas if x["name"] == "ATMOS")
+    assert pad["clips"][0]["name"] == "PAD DRON" and atmos["clips"][0]["name"] == "ATMOS NUBE"
+    motor.poner_pad("pad", "LINEA GUIA")
+    assert len(pad["clips"]) == 1 and pad["clips"][0]["name"] == "PAD LINEA GUIA"
+    pad["clips"][0]["notes"] = pad["clips"][0]["notes"][1:]
+    copia = copy.deepcopy(pad)
+    assert motor.poner_pad("pad", "DRON")["pads"]["pad"]["pista"] == "PAD propuesta" and pad == copia
+    assert motor.proponer_pads()["pads"]["tanda"] == 2
+    with pytest.raises(ValueError):
+        motor.poner_pad("pad", "nada")
+    with pytest.raises(ValueError):
+        motor.poner_pad("otra", "DRON")
+    assert _eventos("motor_borrador")[-1]["parte"] == "pad"
+
+
+def test_pads_sin_acordes_usan_la_tonica(entorno):
+    live, motor = entorno
+    _groove_para_motivo(live, motor)
+    s = motor.proponer_pads()["pads"]
+    assert s["progresion"] is None
+    motor.poner_pad("pad", "ABIERTO ALTO")
+    notas = next(x for x in live.pistas if x["name"] == "PAD")["clips"][0]["notes"]
+    clases = {n["pitch"] % 12 for n in notas}
+    assert len(clases) == 3 and {9, 4} <= clases  # solo el acorde de la tónica: La, Mi y su tercera
