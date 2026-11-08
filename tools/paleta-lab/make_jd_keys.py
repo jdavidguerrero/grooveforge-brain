@@ -154,11 +154,46 @@ LAYERS = [
           release=600.0, chorus=JUNO_CHORUS_I_II, attack=12.0, hpf=2.0),
      dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=60.0, tine_mod=50.0, tine_decay=150.0)),
 ]
+
+
+def prophet_half(src: dict, a_wave: str, a_freq: float, b_wave: str, b_freq: float, b_fine: float, level_a: float,
+                 level_b: float, cutoff: float, env_amt: float, f_decay: float, attack: float, decay: float,
+                 sustain: float, release: float, vel_cut: float = 60.0, drive: float = 0.2) -> dict:
+    """Cuerpo sostenido para acordes largos (motor-acordes.md, Sonido): la mitad Prophet de las capas Prophet + DX7.
+    Ondas: "saw", "pulse" o "tri" (solo B). B FINE en cents desafina contra A: el ancho sin chorus del Prophet."""
+    p = copy.deepcopy(src)
+    keys_env(p, decay=decay, cutoff=cutoff, env_amt=env_amt, f_decay=f_decay, vel_cut=vel_cut)
+    p.update(attack_ms=attack, sustain=sustain, release_ms=release, f_release_ms=release, drive=drive, vel_amp=60.0)
+    a, b, mix = p["osc"][0], p["osc"][1], p["osc"][2]
+    a[:5] = [a_freq, 40.0, float(a_wave == "saw"), float(a_wave == "pulse"), 0.0]
+    b[:8] = [b_freq, b_fine, 45.0, 1.0, float(b_wave == "saw"), float(b_wave == "tri"), float(b_wave == "pulse"), 0.0]
+    mix[:5] = [level_a, level_b, 0.0, 0.0, 1.0]
+    p["mod"][0][0] = 0.0                          # sin POLY-MOD
+    return p
+
+
+# Capas Prophet + DX7 para acordes largos (pedido de Juan, 2026-11-08). Mismo esquema que Juno + DX7: el analógico
+# pone el cuerpo y el DX7 solo la tine del golpe.
+LAYERS_PROPHET = [
+    ("JD SUS WARM", "sostenido", 0, -9,
+     dict(a_wave="pulse", a_freq=0.0, b_wave="saw", b_freq=-12.0, b_fine=0.0, level_a=60.0, level_b=40.0,
+          cutoff=750.0, env_amt=0.3, f_decay=700.0, attack=8.0, decay=4000.0, sustain=0.45, release=600.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=55.0, tine_mod=45.0, tine_decay=140.0)),
+    ("JD SUS WARM2", "sostenido", 0, -5,
+     dict(a_wave="pulse", a_freq=0.0, b_wave="saw", b_freq=0.0, b_fine=0.0, level_a=60.0, level_b=35.0,
+          cutoff=1200.0, env_amt=0.4, f_decay=600.0, attack=6.0, decay=4000.0, sustain=0.45, release=600.0,
+          vel_cut=70.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=65.0, tine_mod=55.0, tine_decay=160.0)),
+    ("JD SUS POLY", "sostenido", 0, -10,
+     dict(a_wave="saw", a_freq=0.0, b_wave="saw", b_freq=0.0, b_fine=7.0, level_a=50.0, level_b=50.0,
+          cutoff=1000.0, env_amt=0.25, f_decay=900.0, attack=20.0, decay=5000.0, sustain=0.55, release=900.0),
+     dict(body=0.0, body_mod=0.0, body_decay=150.0, mod_decay=100.0, tine=50.0, tine_mod=40.0, tine_decay=90.0)),
+]
 VARIATIONS = {"JD PLK WOOD": ("JD PLK WOOD2", "JD PLK WOOD3"), "JD SUS DARK": ("JD SUS DARK2", "JD SUS DARK3")}
 
 
-def layer_raw(name: str, gain_a: int, gain_b: int, a: dict, b: dict) -> bytes:
-    ea, eb = g.ENGINES.index("juno_106"), g.ENGINES.index("dx7")
+def layer_raw(name: str, gain_a: int, gain_b: int, a: dict, b: dict, engine_a: str = "juno_106") -> bytes:
+    ea, eb = g.ENGINES.index(engine_a), g.ENGINES.index("dx7")
     head = (g.LAYER_MAGIC + bytes([g.LAYER_FORMAT]) + name.encode().ljust(g.LAYER_NAME_LEN, b"\0")
             + bytes([ea, eb, 50, 0]) + struct.pack("<bbb", 0, gain_a, gain_b))
     return head + g.encode(ea, f"{name} A", a) + g.encode(eb, f"{name} B", b)
@@ -205,6 +240,13 @@ def build(lib: Path) -> dict[str, dict]:
         le = g.layer_entry_from_raw(layer_raw(name, ga, gb, juno_half(juno_src, **ja), dx7_half(dx7_src, **db)))
         le.update(role="chords", origin="propio", tags=["lab-acordes", "fase2", family],
                   notes=f"capa Juno + DX7, familia {family} (lab-acordes.md §9)")
+        out[f"layers/{g.slug(name)}.json"] = le
+    prophet_src = src("prophet_5", "WARM KEYS")
+    for name, family, ga, gb, pa, db in LAYERS_PROPHET:
+        raw = layer_raw(name, ga, gb, prophet_half(prophet_src, **pa), dx7_half(dx7_src, **db), "prophet_5")
+        le = g.layer_entry_from_raw(raw)
+        le.update(role="chords", origin="propio", tags=["motor-acordes", "largo", family],
+                  notes="capa Prophet + DX7 para acordes largos (motor-acordes.md, Sonido)")
         out[f"layers/{g.slug(name)}.json"] = le
     return out
 

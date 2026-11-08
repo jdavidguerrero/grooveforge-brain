@@ -63,3 +63,11 @@ Clip de 16 compases en `CHORDS`, sin instrumento: Juan carga ahí el VST. Rige l
 ## Sonido (2026-11-08)
 
 Juan no encuentra presets de acordes en el VST. Antes de generar nada nuevo se oyen los que ya existen y nunca se probaron en el VST (`lab-acordes.md` §9): **JD PLK WOOD2** (elegido para el groove el 2026-10-29), **WOOD3** (variación), **JD SUS DARK** y sus variaciones **DARK2 / DARK3**, que no se habían oído. `gf_presets.py hacia-vst` los escribe como `.gfl` en `GrooveForge_Library/presets/acordes/`, sin tocar el Brain. Pluck para los patrones cortos (tresillo, contratiempo, clave, huecos); sostenidos para bloque, décimas y séptimas largas.
+
+**Capas Prophet + DX7 (2026-11-08, para el VST):** mismo esquema que Juno + DX7, el analógico pone el cuerpo y el DX7 solo la tine del golpe, pero con el Prophet (más cálido; WARM KEYS ya gustó como lead) y pensadas para los patrones largos. Generadas en `tools/paleta-lab/make_jd_keys.py` (`LAYERS_PROPHET`) desde WARM KEYS, sin tocar el Brain.
+
+| Capa | Prophet (cuerpo) | DX7 | Busca |
+|---|---|---|---|
+| **JD SUS WARM** | Pulso + sierra una octava abajo, filtro 750 Hz, S 0,45 | Tine suave, −9 dB | Lo más cálido |
+| **JD SUS WARM2** | Pulso + sierra en la misma octava, filtro 1,2 kHz | Tine más presente, −5 dB | Más brillo, más Electric |
+| **JD SUS POLY** | Dos sierras, B desafinada 7 cents, ataque 20 ms, S 0,55 | Tine muy corta, −10 dB | Ancho, casi pad |
