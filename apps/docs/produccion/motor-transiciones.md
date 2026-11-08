@@ -116,6 +116,22 @@ Juan dejó el INTER en **un compás**: un pequeño silencio para el subdrop. Nin
 
 Va a su propia pista, `SUBDROP`, con un rack del motor (pad C1, nombre `DRUMS subdrop-…` para que se reemplace al elegir otro). **SUBDROP INTER** cae al empezar cada INTER; **SUBDROP EN DROP** (antes IMPACTO, en Ear candy) en el primer tiempo de cada drop. Si no se eligió sonido, al poner el primero se crea el CORTA.
 
+### 3.4 Motor y preset sugerido (Juan, 2026-11-08)
+
+En el VST se elige primero el motor y después el preset. La pestaña lo muestra en cada opción:
+
+| Opción | Motor · preset |
+|---|---|
+| RISER NOTA, RISER OCTAVAS | ARP 2600 · GF NOISE RISER (o JD AIRE) |
+| RISER ESCALERA | OB-6 · GF DARK DRONE, o Juno-106 · GF STRING SWELL |
+| STAB ANTES DEL DROP | HYBRID (Juno-106 + Prophet-5) · FRENCH STAB; OB-6 · GF BRASS HIT; DX7 · GF FM DISCO STAB |
+| GOTA EN EL BREAK | DX7 · GF KALIMBA TINE, GF CHONTA o BELLS; ARP 2600 · RING BELL o JD GOTAS |
+| CAÍDA | ARP 2600 · JD CAIDA |
+| SWELL INVERSO | ARP 2600 · JD SWELL |
+| STUTTER | El sonido del lead, o DX7 · GF FM DISCO STAB |
+| NATURALEZA | HYBRID (ARP 2600 + OB-6) · JD RIO o JD CASCADA; ARP 2600 · JD AIRE |
+| SUBDROP | Rack de la drum machine, no el VST |
+
 ## 4. Regla de no pisar
 
 Cada elemento recuerda los clips que escribió. Si Juan editó o agregó algo en esa pista, la opción siguiente va a `<PISTA> propuesta`.

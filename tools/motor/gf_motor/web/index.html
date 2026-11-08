@@ -565,6 +565,15 @@ const TRANS_INFO = {
   "CAIDA": "Ruido que se cierra al entrar el drop (JD CAIDA)", "SWELL INVERSO": "Ruido que crece un compás y corta en el drop (JD SWELL)", "STUTTER": "La tónica repetida cada vez más rápido", "NATURALEZA": "Agua o aire en intro y break (JD RIO, JD AIRE)",
   "SUBDROP INTER": "En el silencio del INTER, antes del drop", "SUBDROP EN DROP": "En el primer tiempo de cada drop", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
 };
+// Motor del VST y preset sugerido (librería del Brain). HYBRID = capa de dos motores.
+const SONIDOS = {
+  "RISER NOTA": "ARP 2600 · GF NOISE RISER o JD AIRE", "RISER ESCALERA": "OB-6 · GF DARK DRONE, o Juno-106 · GF STRING SWELL", "RISER OCTAVAS": "ARP 2600 · GF NOISE RISER",
+  "STAB ANTES DEL DROP": "HYBRID (Juno + Prophet) · FRENCH STAB, OB-6 · GF BRASS HIT o DX7 · GF FM DISCO STAB",
+  "GOTA EN EL BREAK": "DX7 · GF KALIMBA TINE, GF CHONTA o BELLS; ARP 2600 · RING BELL o JD GOTAS",
+  "CAIDA": "ARP 2600 · JD CAIDA", "SWELL INVERSO": "ARP 2600 · JD SWELL", "STUTTER": "El de tu lead, o un stab (DX7 · GF FM DISCO STAB)",
+  "NATURALEZA": "HYBRID (ARP 2600 + OB-6) · JD RIO o JD CASCADA; ARP 2600 · JD AIRE",
+  "SUBDROP INTER": "Rack de la drum machine (botones de arriba)", "SUBDROP EN DROP": "Rack de la drum machine (botones de arriba)",
+};
 function pintarTransiciones(t) {
   const hay = TRANS.some(([k]) => t[k].opciones.length);
   $("s-transiciones").classList.toggle("hecho", TRANS.some(([k]) => t[k].clips));
@@ -600,7 +609,7 @@ function pintarTransiciones(t) {
       nodos.push(f);
     }
     for (const o of e.opciones) {
-      const info = (TRANS_INFO[o.patron] || "") + ` · ${o.clips} ${o.clips === 1 ? "punto" : "puntos"} del arreglo`;
+      const info = (TRANS_INFO[o.patron] || "") + ` · ${o.clips} ${o.clips === 1 ? "punto" : "puntos"} del arreglo` + (SONIDOS[o.patron] ? ` · Sonido: ${SONIDOS[o.patron]}` : "");
       const fila = filaOpcion(o.patron, info, e.actual === o.id, b => accion("transiciones_poner", {elemento:k, id:o.id}, b));
       if (!o.clips) fila.querySelector("button").disabled = true;
       nodos.push(fila);
