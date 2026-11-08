@@ -679,7 +679,7 @@ function pintarArmado(a) {
   $("r-armado").replaceChildren(...nodos);
 }
 function pintarMezcla(m) {
-  if (!m || !m.plan.length) { $("r-mezcla").replaceChildren(); return; }
+  if (!m || !m.plan.length) { $("r-mezcla").replaceChildren(...(m ? [botonCadenas(m)] : [])); return; }
   $("b-mezcla").textContent = "Volver a leer";
   $("s-mezcla").classList.toggle("hecho", Object.keys(m.escrito).length > 0);
   const pan = v => v === null ? "—" : Math.abs(v) < 0.005 ? "C" : `${Math.round(Math.abs(v) * 100)} % ${v < 0 ? "izq." : "der."}`;
@@ -694,7 +694,15 @@ function pintarMezcla(m) {
   });
   const b = document.createElement("button"); b.textContent = "Aplicar mezcla de partida";
   b.onclick = () => { if (confirm("¿Aplicar fader, paneo y envíos de partida? Lo que ya moviste no se toca.")) accion("mezcla_aplicar", {}, b); };
-  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b);
+  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b, botonCadenas(m));
+}
+function botonCadenas(m) {
+  const caja = document.createElement("div");
+  const b = document.createElement("button"); b.className = "sec"; b.textContent = "Poner cadena por rol (GF ROL)";
+  b.onclick = () => { if (confirm("¿Poner la cadena GF ROL en cada pista con rol? Una vez por pista; si la quitas, no vuelve.")) accion("cadenas_poner", {}, b); };
+  caja.append(nota("Cadena por rol: EQ (cortes), Compressor y Saturator solo donde hacen falta, Delay solo para el Haas, Utility con mono en el grave."), b);
+  for (const r of m.ultimo_cadenas || []) caja.append(nota(`${r.pista}: ${r.cargado ? "GF ROL " + r.rol : "no se cargó (" + r.motivo + ")"}`));
+  return caja;
 }
 function pintarIdeas(r) {
   if (!r) { $("r-ideas").replaceChildren(); return; }

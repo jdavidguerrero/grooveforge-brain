@@ -56,6 +56,28 @@ Los tops de Tribe no lo necesitan: la dinámica viene en el velocity del MIDI.
 
 Un Audio Effect Rack por rol con dispositivos de Live: **EQ Eight → Compressor → Saturator → Utility**, con macros (corte grave, corte agudo, compresión, drive, ancho). El motor lo clona desde una plantilla que Juan guarda una vez (como el drum rack) y ajusta los valores por rol. **Por qué los de Live:** sus parámetros están en el `.adg` y el motor los puede escribir; el estado de un plugin como FabFilter es un bloque cerrado. FabFilter sigue disponible para la mezcla final, encima.
 
+### 4.1 Hecho (2026-11-08): `GF ROL.adg` de Juan
+
+Plantilla en `User Library/Presets/Audio Effects/Audio Effect Rack/GF ROL.adg` (Live 12.4): EQ Eight → Compressor → Saturator → Delay → Utility. El motor (`gf_motor/rack_rol.py`) la clona por rol, escribe `00 Motor/ROL/GF ROL <rol>.adg` y la carga **una vez por pista** (si Juan la quita, no vuelve).
+
+| Rol | EQ (banda 1 corte 48 dB / banda 8 corte 48 dB) | Compressor (umbral, ratio, ataque, release) | Saturator (Soft Sine) | Delay | Utility |
+|---|---|---|---|---|---|
+| KICK | 30 Hz / — | apagado | 2 dB, 30 % | — | Bass Mono 120 |
+| BASS SUB | 30 / 120 Hz | −10 dB, 2:1, 10, 100 ms | apagado | — | Mono |
+| BASS (capa) | 30 / — | −10, 2:1, 10, 100 | 2 dB, 30 % | — | Bass Mono |
+| BASS MID | 120 / — | −12, 3:1, 5, 80 | 4 dB, 50 % | — | Bass Mono |
+| DRUMS | 150 / — | −12, 4:1, 10, 60 | 2 dB, 30 % | — | — |
+| PERC · TOP | 150 · 400 / — | apagado | apagado | — | — |
+| LEAD (MAIN, AUX) | 180 / — | −10, 2,5:1, 10, 80 | 2 dB, 30 % | — | — |
+| CHORDS PLK · STABS · PLUCKS | 200 / — | apagado | 2 dB, 30 % | **Haas** L 1 / R 15 ms | — |
+| CHORDS SUS | 250 / — | apagado | apagado | — | Ancho 130 % |
+| PAD · ATMOS | 250 / 10 kHz | apagado | apagado | — | Ancho 130 % |
+| FX · RISER · EAR CANDY | 200 / — | apagado | apagado | — | — |
+| ROLL · ROLL TRIBE · FILL | 150 / — | apagado | apagado | — | — |
+| SUBDROP | 25 / — | apagado | apagado | — | Mono |
+
+**A verificar en Live:** el tipo de filtro de EQ Eight se guarda como un número (`Mode`). Se usa el orden del menú de Live (0 = Low Cut 48 … 7 = High Cut 48). En la plantilla, la banda 8 trae `Mode = 6` por defecto, que según ese orden sería High Cut 12; si en Live la banda 1 no muestra «Low Cut 48» o la banda 8 no muestra «High Cut 48», el orden es otro y se corrige la constante. Los macros del rack no se mapean todavía.
+
 ## 5. Puente
 
 `GFMotor` versión 4: `get_mixer` (fader, paneo y envíos de cada pista, y nombres de los retornos) y `set_mixer`. Live guarda el fader como un valor de 0 a 1; el script busca el valor cuyo texto («−6.0 dB») corresponde al pedido. Requiere reiniciar Live.

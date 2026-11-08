@@ -2095,3 +2095,45 @@ def test_superficie_lee_toda_la_pista():
         c.escribir_clip(s, {"track_index": 0, "start_beats": t, "length_beats": 4.0, "clip_name": "A", "notes": [nota(1)]}, _Nota)
     r = c.leer_pista(s, {"track_index": 0})["clips"]
     assert [x["start"] for x in r] == [0.0, 8.0] and r[0]["notes"][0]["start_beat"] == 1
+
+
+# ── Cadena por rol (motor-mezcla.md §4) ───────────────────────────────
+_GF_ROL = Path.home() / "Music/Ableton/User Library/Presets/Audio Effects/Audio Effect Rack/GF ROL.adg"
+
+
+def test_ajustes_por_rol():
+    from gf_motor.rack_rol import ajustes
+
+    assert ajustes("BASS SUB")["agudo"] == 120 and ajustes("BASS SUB")["mono"] and ajustes("BASS SUB")["sat"] is None
+    assert ajustes("STABS")["haas"] and not ajustes("PERC")["haas"] and ajustes("PERC")["comp"] is None
+    assert ajustes("LEAD AUX") == ajustes("LEAD") and ajustes("PAD")["ancho"] == 1.3 and ajustes("RARO") is None
+
+
+@pytest.mark.skipif(not _GF_ROL.exists(), reason="sin la plantilla GF ROL de Juan")
+def test_rack_rol_con_la_plantilla_real(tmp_path):
+    import xml.etree.ElementTree as ET
+    from gf_motor.rack_rol import HIGH_CUT_48, LOW_CUT_48, crear_rack_rol
+
+    crear_rack_rol("STABS", "GF ROL STABS", tmp_path / "s.adg")
+    r = ET.fromstring(gzip.decompress((tmp_path / "s.adg").read_bytes()))
+    v = lambda d, k: next(r.iter(d)).find(f"{k}/Manual").get("Value")  # noqa: E731
+    assert v("Compressor2", "On") == "false" and v("Saturator", "On") == "true" and v("Delay", "On") == "true"
+    assert v("Delay", "DelayLine_SimpleDelayTimeR") == "15" and v("Delay", "DelayLine_SyncR") == "false" and v("Delay", "Feedback") == "0"
+    eq = next(r.iter("Eq8"))
+    assert eq.find("Bands.0/ParameterA/Mode/Manual").get("Value") == str(LOW_CUT_48) and eq.find("Bands.0/ParameterA/Freq/Manual").get("Value") == "200"
+    crear_rack_rol("BASS SUB", "GF ROL BASS SUB", tmp_path / "b.adg")
+    r = ET.fromstring(gzip.decompress((tmp_path / "b.adg").read_bytes()))
+    eq = next(r.iter("Eq8"))
+    assert eq.find("Bands.7/ParameterA/Mode/Manual").get("Value") == str(HIGH_CUT_48) and v("StereoGain", "Mono") == "true"
+    assert next(r.iter("AudioEffectGroupDevice")).find("UserName").get("Value") == "GF ROL BASS SUB"
+
+
+@pytest.mark.skipif(not _GF_ROL.exists(), reason="sin la plantilla GF ROL de Juan")
+def test_poner_cadenas_una_vez_por_pista(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    r = motor.poner_cadenas()["mezcla"]
+    assert r["cadenas"]["KICK"] == "KICK" and r["cadenas"]["STABS"] == "STABS" and "SC GHOST" not in r["cadenas"]
+    n = len(live.cargas)
+    motor.poner_cadenas()
+    assert len(live.cargas) == n  # no la vuelve a poner

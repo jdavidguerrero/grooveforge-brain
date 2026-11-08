@@ -24,7 +24,8 @@ from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
 from .recomendaciones import anchura as anchura_rec, carga, voz as voz_rec  # noqa: E402
-from .mezcla import CADENAS_DRUMS, CADENAS_ROLL, plan as plan_mezcla  # noqa: E402
+from .rack_rol import ajustes as ajustes_rol, crear_rack_rol  # noqa: E402
+from .mezcla import NO_TOCAR, CADENAS_DRUMS, CADENAS_ROLL, plan as plan_mezcla, rol_de  # noqa: E402
 from .armado import NADA, PARCIAL, PISTAS_FIJAS, TODO, clips_de_tramo, material_de, presencia_inicial, tramo  # noqa: E402
 from .transiciones import ELEMENTOS, NOTA_SUBDROP, clips_transicion, secciones  # noqa: E402
 from gf_perc.subdrop import SUBDROPS, sintetizar_subdrop  # noqa: E402
@@ -89,7 +90,7 @@ INSTRUMENTOS = {
 
 
 def _mezcla_vacio() -> dict:
-    return {"plan": [], "retornos": [], "escrito": {}}
+    return {"plan": [], "retornos": [], "escrito": {}, "cadenas": {}}
 
 
 def _armado_vacio() -> dict:
@@ -175,6 +176,7 @@ class Motor:
             e.setdefault("detalles", _detalles_vacio())
             e.setdefault("armado", _armado_vacio())
             e.setdefault("mezcla", _mezcla_vacio())
+            e["mezcla"].setdefault("cadenas", {})
             e.setdefault("transiciones", _transiciones_vacio())
             for k, v in _transiciones_vacio().items():
                 e["transiciones"].setdefault(k, v)
@@ -1168,6 +1170,32 @@ class Motor:
             m["escrito"][p["pista"]] = previo
         self._guardar()
         self._evento("borrador", parte="mezcla", plan=m["plan"])
+        return e
+
+    def poner_cadenas(self) -> dict:
+        """Una cadena GF ROL por pista con rol (motor-mezcla.md §4). Una sola vez por pista: si Juan la quita o la
+        cambia, el motor no la vuelve a poner."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        m = e["mezcla"]
+        carpeta = self.carpeta_live / "00 Motor" / "ROL"
+        resultado = []
+        for p in self.live.sesion()["tracks"]:
+            nombre = p["name"]
+            rol = rol_de(nombre)
+            if rol is None or nombre.upper() in NO_TOCAR or ajustes_rol(rol) is None or nombre in m["cadenas"]:
+                continue
+            archivo = f"GF ROL {rol}.adg"
+            crear_rack_rol(rol, f"GF ROL {rol}", carpeta / archivo)
+            try:
+                self.live.cargar_rack([self.carpeta_live.name, "00 Motor", "ROL", archivo], nombre)
+                m["cadenas"][nombre] = rol
+                resultado.append({"pista": nombre, "rol": rol, "cargado": True})
+            except ErrorLive as exc:
+                resultado.append({"pista": nombre, "rol": rol, "cargado": False, "motivo": str(exc)})
+        m["ultimo_cadenas"] = resultado
+        self._guardar()
+        self._evento("borrador", parte="cadenas", resultado=resultado)
         return e
 
     # ── Recomendaciones de voces y anchura (motor-recomendaciones.md) ─
