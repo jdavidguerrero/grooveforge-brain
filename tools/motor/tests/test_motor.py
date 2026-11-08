@@ -1942,3 +1942,10 @@ def test_superficie_borra_clip_del_arreglo():
     assert c.borrar_clip(s, {"track_index": 0, "start_beats": 0.0}) == {"borrado": False}
     assert c.borrar_clip(s, {"track_index": 0, "start_beats": 8.0}) == {"borrado": True}
     assert not pista.arrangement_clips and s.pasos == ["inicio", "fin"]
+
+
+def test_presencia_por_nombre_parecido():
+    s = secciones(_ARREGLO_INTER)
+    p = presencia_inicial(["CHORDS SUS", "PAD 2", "PERC 2"], s)
+    assert p["CHORDS SUS"][0] == "todo" and p["CHORDS SUS"][2] == "nada"
+    assert p["PAD 2"] == p["CHORDS SUS"] and p["PERC 2"][3] == "todo"

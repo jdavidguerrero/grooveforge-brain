@@ -19,6 +19,7 @@ _PRESENCIA = {
     "LEAD": (NADA, NADA, TODO, TODO, NADA, NADA),
     "CHORDS": (NADA, TODO, TODO, NADA, NADA, NADA),
     "CHORDS 2": (TODO, NADA, NADA, TODO, NADA, TODO),
+    "CHORDS SUS": (TODO, NADA, NADA, TODO, NADA, TODO),
     "PAD": (TODO, NADA, NADA, TODO, NADA, TODO),
     "ATMOS": (TODO, NADA, NADA, TODO, TODO, TODO),
 }
@@ -30,6 +31,14 @@ _SALE = {"KICK": 4, "SC GHOST": 4, "PERC": 3, "DRUMS": 2, "TOP": 1}
 
 def _kind(nombre: str) -> str | None:
     return next((k for k in _KINDS if nombre.startswith(k)), None)
+
+
+def _fila(rol: str) -> tuple[str, ...]:
+    """Por nombre exacto; si no, por el prefijo más largo («PAD 2» se comporta como PAD); si no, solo en los drops."""
+    if rol in _PRESENCIA:
+        return _PRESENCIA[rol]
+    previos = [k for k in _PRESENCIA if rol.startswith(k + " ")]
+    return _PRESENCIA[max(previos, key=len)] if previos else (NADA, NADA, TODO, NADA, NADA, NADA)
 
 
 def presencia_inicial(roles: list[str], secs: list[dict]) -> dict[str, list[str]]:
@@ -45,7 +54,7 @@ def presencia_inicial(roles: list[str], secs: list[dict]) -> dict[str, list[str]
             elif kind is None:
                 fila.append(NADA)
             else:
-                fila.append(_PRESENCIA.get(rol, (NADA, NADA, TODO, NADA, NADA, NADA))[_KINDS.index(kind)])
+                fila.append(_fila(rol)[_KINDS.index(kind)])
         salida[rol] = fila
     return salida
 

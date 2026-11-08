@@ -38,6 +38,8 @@ Filas: los elementos. Columnas: las secciones del arreglo, en orden. Cada casill
 | AUX LEAD, STABS, PLUCKS | nada | nada | **solo desde el segundo drop** | nada | nada | nada |
 | Otra pista | nada | nada | todo | nada | nada | nada |
 
+Un nombre parecido usa la fila de su prefijo (`PAD 2` → `PAD`); `CHORDS SUS` (los acordes largos de Juan) va como `CHORDS 2`.
+
 El segundo drop suma AUX LEAD, stabs y plucks: la pista crece en vez de repetirse.
 
 ## 4. Llenar
