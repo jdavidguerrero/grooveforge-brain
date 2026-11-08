@@ -23,6 +23,7 @@ from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
+from .recomendaciones import anchura as anchura_rec, carga, voz as voz_rec  # noqa: E402
 from .mezcla import CADENAS_DRUMS, CADENAS_ROLL, plan as plan_mezcla  # noqa: E402
 from .armado import NADA, PARCIAL, PISTAS_FIJAS, TODO, clips_de_tramo, material_de, presencia_inicial, tramo  # noqa: E402
 from .transiciones import ELEMENTOS, NOTA_SUBDROP, clips_transicion, secciones  # noqa: E402
@@ -1168,6 +1169,26 @@ class Motor:
             m["escrito"][p["pista"]] = previo
         self._guardar()
         self._evento("borrador", parte="mezcla", plan=m["plan"])
+        return e
+
+    # ── Recomendaciones de voces y anchura (motor-recomendaciones.md) ─
+    def recomendar(self) -> dict:
+        """Solo lee Live. No escribe nada: sugiere y explica."""
+        e = self._exigir_estado()
+        indice = self.live.indice_pista("ARRANGE")
+        if indice is None:
+            raise ValueError("No hay pista ARRANGE: crea la guía en Arrangement primero")
+        secs = secciones(self.live.listar_clips(indice))
+        nombres = [p["name"] for p in self.live.sesion()["tracks"] if p["name"].upper() not in ("ARRANGE", "SC GHOST", "BRAIN")]
+        notas = {n: self._notas_de(n) for n in nombres}
+        notas = {n: v for n, v in notas.items() if v}
+        filas = []
+        for s in secs:
+            c = carga(s, notas)
+            filas.append({"seccion": s["nombre"], "inicio": s["inicio"], "carga": c, "voz": voz_rec(s, c)})
+        e["recomendaciones"] = {"secciones": filas, "anchura": anchura_rec(list(notas))}
+        self._guardar()
+        self._evento("opciones", parte="recomendaciones", voces=[(f["seccion"], (f["voz"] or {}).get("forma")) for f in filas])
         return e
 
     # ── Registro de lo que quedó ───────────────────────────────────────

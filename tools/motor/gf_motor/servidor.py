@@ -46,6 +46,7 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "detalles_proponer": lambda d: motor.proponer_detalles(),
         "detalles_poner": lambda d: motor.poner_detalle(d["parte"], d["id"]),
         "transiciones_proponer": lambda d: motor.proponer_transiciones(),
+        "recomendar": lambda d: motor.recomendar(),
         "mezcla_proponer": lambda d: motor.proponer_mezcla(),
         "mezcla_aplicar": lambda d: motor.aplicar_mezcla(),
         "armado_proponer": lambda d: motor.proponer_armado(),

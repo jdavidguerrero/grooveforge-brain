@@ -85,6 +85,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="transiciones" class="tab">Transiciones<i></i></button>
     <button data-ir="armado" class="tab">Armado<i></i></button>
     <button data-ir="mezcla" class="tab">Mezcla<i></i></button>
+    <button data-ir="ideas" class="tab">Ideas<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -256,6 +257,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-mezcla"></div>
   </section>
 
+  <section id="s-ideas" class="bloq" data-seccion="ideas">
+    <div class="num">1</div>
+    <h2>Ideas: voces y anchura</h2>
+    <p>Lee la carga de cada sección (qué bandas ocupan tus pistas melódicas, cuánto calla el lead, cuánta percusión hay) y sugiere dónde cabe una voz y de qué tipo, y qué pistas abrir o duplicar. Solo recomienda: no escribe nada en Live.</p>
+    <button id="b-ideas" disabled>Leer la carga</button>
+    <div id="r-ideas"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -342,6 +351,7 @@ function pintar(s) {
   if (s) pintarArmado(s.armado);
   marcar("mezcla", !!s?.mezcla && Object.keys(s.mezcla.escrito || {}).length > 0);
   if (s) pintarMezcla(s.mezcla);
+  if (s) pintarIdeas(s.recomendaciones);
   if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
@@ -352,7 +362,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado","mezcla"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado","mezcla","ideas"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -686,6 +696,33 @@ function pintarMezcla(m) {
   b.onclick = () => { if (confirm("¿Aplicar fader, paneo y envíos de partida? Lo que ya moviste no se toca.")) accion("mezcla_aplicar", {}, b); };
   $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b);
 }
+function pintarIdeas(r) {
+  if (!r) { $("r-ideas").replaceChildren(); return; }
+  $("b-ideas").textContent = "Volver a leer";
+  const pct = v => `${Math.round(v * 100)} %`;
+  const nodos = [tanda("Voces por sección")];
+  for (const f of r.secciones) {
+    const fila = document.createElement("div"); fila.className = "patron";
+    const n = document.createElement("span");
+    n.textContent = `${f.seccion} ${f.inicio / 4 + 1}: ` + (f.voz ? `${f.voz.forma} · voz ${f.voz.tipo}` : "sin voz (silencio del subdrop o salida)");
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+    const b = f.carga.bandas;
+    x.textContent = (f.voz ? f.voz.razon + (f.voz.extra ? `. ${f.voz.extra}` : "") + ". " : "")
+      + `Carga: grave ${pct(b.grave)}, medio-grave ${pct(b["medio-grave"])}, medio ${pct(b.medio)}, agudo ${pct(b.agudo)}; lead calla ${pct(f.carga.lead_calla)}; percusión ${f.carga.perc_por_compas} notas/compás`;
+    n.append(x); fila.append(n); nodos.push(fila);
+  }
+  const ap = r.secciones.find(f => f.voz);
+  if (ap) nodos.push(nota(`Cómo aplicarla: ${ap.voz.aplicar}`));
+  nodos.push(tanda("Duplicación y anchura"));
+  for (const a of r.anchura) {
+    const fila = document.createElement("div"); fila.className = "patron";
+    const n = document.createElement("span"); n.textContent = `${a.pista}: ${a.que}`;
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)"; x.textContent = a.como;
+    n.append(x); fila.append(n); nodos.push(fila);
+  }
+  nodos.push(nota("Revisa siempre la mezcla en mono: el Haas de más de 30–40 ms se oye como eco y en mono crea filtro peine."));
+  $("r-ideas").replaceChildren(...nodos);
+}
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
   $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
@@ -794,6 +831,7 @@ $("b-detalles").onclick = e => accion("detalles_proponer", {}, e.target);
 $("b-transiciones").onclick = e => accion("transiciones_proponer", {}, e.target);
 $("b-armado").onclick = e => accion("armado_proponer", {}, e.target);
 $("b-mezcla").onclick = e => accion("mezcla_proponer", {}, e.target);
+$("b-ideas").onclick = e => accion("recomendar", {}, e.target);
 $("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
 $("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);

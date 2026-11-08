@@ -2039,3 +2039,39 @@ def test_volumen_de_cadena_con_la_plantilla_real(tmp_path):
     crear_rack(wavs, "R", tmp_path / "r.adg", plantilla=real, notas=[47, 52], volumenes=CADENAS_DRUMS)
     xml = gzip.decompress((tmp_path / "r.adg").read_bytes()).decode()
     assert xml.count('Value="0.630957"') >= 1 and xml.count('Value="0.316228"') >= 1  # −4 y −10 dB
+
+
+# ── Recomendaciones (motor-recomendaciones.md) ────────────────────────
+from gf_motor.recomendaciones import anchura as anchura_rec, carga, voz as voz_rec  # noqa: E402
+
+
+def test_carga_y_voz():
+    s = {"nombre": "DROP", "inicio": 0.0, "fin": 64.0}
+    lead = [{"pitch": 76, "start_beat": c * 4.0, "duration_beats": 3.0, "velocity": 90} for c in range(16)]  # Mi5, suena 75 %
+    acordes = [{"pitch": 57, "start_beat": c * 4.0, "duration_beats": 1.0, "velocity": 80} for c in range(16)]  # La3
+    c = carga(s, {"LEAD MAIN": lead, "CHORDS SUS": acordes, "KICK": acordes})
+    assert c["lead_calla"] == 0.25 and c["bandas"]["medio"] == 0.75 and c["bandas"]["medio-grave"] == 0.25
+    v = voz_rec(s, c)
+    assert v["forma"].startswith("Chop") and v["tipo"].startswith("masculina")
+    brk = {"nombre": "BREAK", "inicio": 0.0, "fin": 64.0}
+    perc = [{"pitch": 50, "start_beat": k * 0.5, "duration_beats": 0.2, "velocity": 90} for k in range(128)]
+    c2 = carga(brk, {"CHORDS SUS": acordes, "PERC CONGA": perc})
+    v2 = voz_rec(brk, c2)
+    assert v2["forma"].startswith("Frase") and v2["tipo"].startswith("femenina") and "tribal" in v2["extra"]
+    assert voz_rec({"nombre": "INTER", "inicio": 0.0, "fin": 4.0}, c2) is None
+
+
+def test_anchura_por_rol():
+    a = {x["pista"]: x["que"] for x in anchura_rec(["BASS SUB", "STABS", "PAD", "PERC CONGA", "LEAD AUX"])}
+    assert a["BASS SUB"].startswith("Mono") and a["STABS"] == "Haas" and a["PAD"].startswith("Ancho") and "PERC CONGA" not in a
+    assert a["LEAD AUX"].startswith("Doble")
+
+
+def test_recomendar_solo_lee(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    antes = copy.deepcopy(live.pistas)
+    live.comandos.clear()
+    r = motor.recomendar()["recomendaciones"]
+    assert live.pistas == antes and set(live.comandos) <= {"get_session", "list_clips", "read_clip"}
+    assert len(r["secciones"]) == 8 and any(x["pista"] == "STABS" for x in r["anchura"])
