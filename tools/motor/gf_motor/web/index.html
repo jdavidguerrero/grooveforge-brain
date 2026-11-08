@@ -83,6 +83,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="pads" class="tab">Pads<i></i></button>
     <button data-ir="detalles" class="tab">Stabs<i></i></button>
     <button data-ir="transiciones" class="tab">Transiciones<i></i></button>
+    <button data-ir="armado" class="tab">Armado<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -238,6 +239,14 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div id="r-transiciones"></div>
   </section>
 
+  <section id="s-armado" class="bloq" data-seccion="armado">
+    <div class="num">1</div>
+    <h2>Armado</h2>
+    <p>Reparte tus materiales (el primer clip de cada pista, hasta 16 compases) por los bloques de <code>ARRANGE</code>. Cambia cada casilla con un clic: <b>●</b> todo · <b>◐</b> parcial (entra escalonado en la intro, sale en el outro, primera mitad en el resto) · <b>·</b> nada. Antes de llenar se registra el set. Lo que hayas puesto tú no se toca; las transiciones tampoco.</p>
+    <button id="b-armado" disabled>Leer arreglo y materiales</button>
+    <div id="r-armado"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -320,6 +329,8 @@ function pintar(s) {
   if (s) pintarDetalles(s.detalles);
   marcar("transiciones", !!s && ["roll","riser","fill","ear","tribe","fx","subdrop"].some(k => s.transiciones[k]?.clips));
   if (s) pintarTransiciones(s.transiciones);
+  marcar("armado", !!s?.armado && Object.keys(s.armado.escritos || {}).length > 0);
+  if (s) pintarArmado(s.armado);
   if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
@@ -330,7 +341,7 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones"]) {
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado"]) {
     const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
@@ -617,6 +628,35 @@ function pintarTransiciones(t) {
   }
   $("r-transiciones").replaceChildren(...nodos);
 }
+function pintarArmado(a) {
+  if (!a || !a.roles.length) { $("r-armado").replaceChildren(); return; }
+  $("b-armado").textContent = "Volver a leer";
+  $("s-armado").classList.toggle("hecho", Object.keys(a.escritos).length > 0);
+  const marca = {todo: "●", parcial: "◐", nada: "·"};
+  const sig = {todo: "nada", nada: "parcial", parcial: "todo"};
+  const tabla = document.createElement("table"); tabla.style.borderCollapse = "collapse"; tabla.style.fontSize = "12px"; tabla.style.width = "100%";
+  const cab = document.createElement("tr"); cab.append(document.createElement("th"));
+  for (const s of a.secciones) { const th = document.createElement("th"); th.textContent = `${s.nombre} ${s.inicio / 4 + 1}`; th.style.padding = "2px 4px"; th.style.writingMode = "vertical-rl"; cab.append(th); }
+  tabla.append(cab);
+  for (const rol of a.roles) {
+    const tr = document.createElement("tr");
+    const n = document.createElement("td"); n.textContent = rol; n.style.whiteSpace = "nowrap"; n.style.paddingRight = "8px"; tr.append(n);
+    a.presencia[rol].forEach((v, i) => {
+      const td = document.createElement("td"); td.style.textAlign = "center";
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = marca[v]; b.style.minWidth = "28px"; b.style.padding = "2px";
+      b.title = `${rol} · ${a.secciones[i].nombre}: ${v}`;
+      b.onclick = () => accion("armado_presencia", {rol, i, valor: sig[v]}, b);
+      td.append(b); tr.append(td);
+    });
+    tabla.append(tr);
+  }
+  const envoltura = document.createElement("div"); envoltura.style.overflowX = "auto"; envoltura.append(tabla);
+  const llenar = document.createElement("button"); llenar.textContent = Object.keys(a.escritos).length ? "Volver a llenar" : "Llenar el arreglo";
+  llenar.onclick = () => { if (confirm("¿Llenar el arreglo? Se registra el set antes, y solo se reemplaza lo que escribió el motor.")) accion("armado_llenar", {}, llenar); };
+  const nodos = [envoltura, llenar];
+  if (a.saltados?.length) { const p = nota(`Saltados porque ahí hay clips tuyos: ${a.saltados.join(", ")}`); p.style.color = "var(--monitor)"; nodos.push(p); }
+  $("r-armado").replaceChildren(...nodos);
+}
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
   $("r-registrar").replaceChildren(...lista.slice(-5).reverse().map(r => {
@@ -723,6 +763,7 @@ $("b-acordes").onclick = e => accion("acordes_proponer", {}, e.target);
 $("b-pads").onclick = e => accion("pads_proponer", {}, e.target);
 $("b-detalles").onclick = e => accion("detalles_proponer", {}, e.target);
 $("b-transiciones").onclick = e => accion("transiciones_proponer", {}, e.target);
+$("b-armado").onclick = e => accion("armado_proponer", {}, e.target);
 $("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
 $("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
 $("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);

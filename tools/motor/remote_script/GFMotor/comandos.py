@@ -174,3 +174,18 @@ def cargar_plugin(song, navegador, m):
     song.view.selected_track = pista
     navegador.load_item(item)
     return {"cargado": True}
+
+
+def borrar_clip(song, m):
+    """Borra el clip del arreglo que empieza exactamente en `start_beats`. El motor solo lo pide para clips suyos
+    o para el material que ya guardó."""
+    pista = _pista(song, int(m["track_index"]))
+    clip = next((c for c in pista.arrangement_clips if abs(c.start_time - float(m["start_beats"])) < 1e-3), None)
+    if clip is None:
+        return {"borrado": False}
+    song.begin_undo_step()
+    try:
+        pista.delete_clip(clip)
+    finally:
+        song.end_undo_step()
+    return {"borrado": True}

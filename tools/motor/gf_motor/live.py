@@ -79,6 +79,9 @@ class ClienteLive:
     def pista_sin_clips(self, pista: int) -> bool:
         return not self._ok("list_clips", track_index=pista)["clips"]
 
+    def borrar_clip(self, pista: int, inicio: float) -> bool:
+        return bool(self._ok("delete_clip", track_index=pista, start_beats=inicio).get("borrado"))
+
     def cargar_plugin(self, plugin: str, pista: str) -> dict:
         """Solo si la pista no tiene instrumento; si ya tiene, no toca nada."""
         return self._ok("load_plugin", plugin=plugin, pista=pista)

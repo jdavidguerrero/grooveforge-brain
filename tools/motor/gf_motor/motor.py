@@ -23,6 +23,7 @@ from gf_perc.kit import NOTAS as NOTAS_PERC  # noqa: E402
 from gf_perc.tonalidad import MODOS, clase_de  # noqa: E402
 
 from .detalles import PATRONES_PLUCK, PATRONES_STAB, avisos as avisos_detalles, recomendar, clip_detalle, huecos_lead  # noqa: E402
+from .armado import NADA, PARCIAL, PISTAS_FIJAS, TODO, clips_de_tramo, material_de, presencia_inicial, tramo  # noqa: E402
 from .transiciones import ELEMENTOS, NOTA_SUBDROP, clips_transicion, secciones  # noqa: E402
 from gf_perc.subdrop import SUBDROPS, sintetizar_subdrop  # noqa: E402
 from .pads import PATRONES_ATMOS, PATRONES_PAD, clip_pad  # noqa: E402
@@ -83,6 +84,10 @@ INSTRUMENTOS = {
     "FILL": TRIBE_PLUGIN, "ROLL TRIBE": TRIBE_PLUGIN,
     **{p: GF_PLUGIN for p in ("CHORDS", "PAD", "ATMOS", "STABS", "PLUCKS", "RISER", "FX", "EAR CANDY")},
 }
+
+
+def _armado_vacio() -> dict:
+    return {"secciones": [], "roles": [], "materiales": {}, "presencia": {}, "escritos": {}, "saltados": [], "registrado": False}
 
 
 def _detalles_vacio() -> dict:
@@ -162,6 +167,7 @@ class Motor:
             e.setdefault("acordes", _acordes_vacio())
             e.setdefault("pads", _pads_vacio())
             e.setdefault("detalles", _detalles_vacio())
+            e.setdefault("armado", _armado_vacio())
             e.setdefault("transiciones", _transiciones_vacio())
             for k, v in _transiciones_vacio().items():
                 e["transiciones"].setdefault(k, v)
@@ -239,6 +245,7 @@ class Motor:
             "acordes": _acordes_vacio(),
             "pads": _pads_vacio(),
             "detalles": _detalles_vacio(),
+            "armado": _armado_vacio(),
             "transiciones": _transiciones_vacio(),
             "drums": {"tandas": 0, "opciones": [], "seleccion": {}, "racks": [], "rack": None, "patrones": {"analisis": None, "opciones": [], "actual": None, "clip": None, "pista": None}},
             "bajo": {"tandas": 0, "patrones": [], "actual": None, "clip": None, "pista": None, "capas": [], "total_capas": 0, "capa": None, "revision": None},
@@ -1028,6 +1035,95 @@ class Motor:
             if propio is None or leido is None or not diferencia(propio["notas"], leido["notes"])["sin_cambios"]:
                 return False
         return True
+
+    # ── Armado (motor-armado.md) ─────────────────────────────────────
+    def proponer_armado(self) -> dict:
+        """Solo lee Live: secciones de ARRANGE y el material de cada pista (su clip del compás 1)."""
+        e = self._exigir_estado()
+        indice = self.live.indice_pista("ARRANGE")
+        if indice is None:
+            raise ValueError("No hay pista ARRANGE: crea la guía en Arrangement primero")
+        a = e["armado"]
+        secs = secciones(self.live.listar_clips(indice))
+        roles, materiales = [], {}
+        for p in self.live.sesion()["tracks"]:
+            nombre = p["name"]
+            if nombre.upper() in PISTAS_FIJAS or nombre.endswith(" propuesta") or nombre in roles:
+                continue
+            if nombre in a["escritos"]:
+                mat = a["materiales"].get(nombre)  # ya armado: el material vive en el estado
+            else:
+                clips = self.live.listar_clips(p["index"])
+                mat = material_de(clips, self._notas_de(nombre))
+                if mat:
+                    mat["clips"] = [
+                        {"inicio": c["start"], "notas": (self.live.leer_clip(p["index"], c["start"]) or {}).get("notes", [])}
+                        for c in clips if c["start"] < mat["desde"] + mat["largo"] - 1e-6
+                    ]
+            if mat:
+                roles.append(nombre)
+                materiales[nombre] = mat
+        firma = ([s["nombre"] for s in secs], roles)
+        if firma != ([s["nombre"] for s in a["secciones"]], a["roles"]):
+            a["presencia"] = presencia_inicial(roles, secs)
+        a.update(secciones=secs, roles=roles, materiales=materiales, saltados=[])
+        self._guardar()
+        self._evento("opciones", parte="armado", secciones=[s["nombre"] for s in secs], roles=roles)
+        return e
+
+    def cambiar_presencia(self, rol: str, i: int, valor: str) -> dict:
+        e = self._exigir_estado()
+        a = e["armado"]
+        if rol not in a["presencia"] or not 0 <= i < len(a["secciones"]) or valor not in (TODO, NADA, PARCIAL):
+            raise ValueError("Casilla inválida")
+        a["presencia"][rol][i] = valor
+        self._guardar()
+        return e
+
+    def llenar_armado(self) -> dict:
+        """Registra el set, borra lo que escribió el motor (y el material ya guardado) y llena según la cuadrícula.
+        Un tramo con un clip que no es del motor se salta."""
+        e = self._exigir_estado()
+        self._exigir_set_editable()
+        a = e["armado"]
+        if not a["roles"]:
+            raise ValueError("Primero lee el arreglo y los materiales")
+        if not a["registrado"]:
+            self.registrar(nota="antes de armar: materiales del compás 1")
+            a["registrado"] = True
+        a["saltados"] = []
+        for rol in a["roles"]:
+            indice = self.live.indice_pista(rol)
+            if indice is None:
+                continue
+            mat = a["materiales"][rol]
+            nuevos = []
+            for s, valor in zip(a["secciones"], a["presencia"][rol]):
+                t = tramo(rol, s, valor)
+                if t:
+                    nuevos += clips_de_tramo(mat, t[0], t[1], f"{rol} · {s['nombre']}")
+            conocidos = list(a["escritos"].get(rol, [])) + list(mat.get("clips", []))
+            ajenos = []
+            for c in self.live.listar_clips(indice):
+                propio = next((x for x in conocidos if abs(x["inicio"] - c["start"]) < 1e-3), None)
+                leido = self.live.leer_clip(indice, c["start"])
+                if propio is not None and leido is not None and diferencia(propio["notas"], leido["notes"])["sin_cambios"]:
+                    self.live.borrar_clip(indice, c["start"])
+                else:
+                    ajenos.append((c["start"], c.get("end", c["start"] + c["length"])))
+            escritos = []
+            for c in nuevos:
+                fin = c["inicio"] + c["longitud"]
+                if any(x < fin - 1e-6 and y > c["inicio"] + 1e-6 for x, y in ajenos):
+                    a["saltados"].append(f"{rol} compás {c['inicio'] / 4 + 1:g}")
+                    continue
+                self.live.escribir_clip(indice, c["inicio"], c["longitud"], c["notas"], c["nombre"])
+                escritos.append({"inicio": c["inicio"], "notas": c["notas"]})
+            a["escritos"][rol] = escritos
+            mat["clips"] = []  # el material ya no está en Live: vive en el estado y en el registro
+        self._guardar()
+        self._evento("borrador", parte="armado", roles=a["roles"], presencia=a["presencia"], saltados=a["saltados"])
+        return e
 
     # ── Registro de lo que quedó ───────────────────────────────────────
     def registrar(self, sonido: str = "", kick: str = "", nota: str = "") -> dict:

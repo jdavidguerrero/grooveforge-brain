@@ -1854,3 +1854,91 @@ def test_subdrop_crea_su_rack_si_no_hay_y_va_a_su_pista(entorno):
     sub = next(x for x in live.pistas if x["name"] == "SUBDROP")
     assert sorted(c["start"] for c in sub["clips"]) == [256.0, 576.0] and not any(p == "SUBDROP" for _, p in live.plugins)
     assert motor.sonido_subdrop("LARGA")["transiciones"]["rack_subdrop"]["numero"] == 2
+
+
+# ── Armado (motor-armado.md) ──────────────────────────────────────────
+from gf_motor.armado import clips_de_tramo, material_de, presencia_inicial, tramo  # noqa: E402
+
+_ARREGLO_INTER = [
+    {"start": 0.0, "length": 192.0, "name": "INTRO"}, {"start": 192.0, "length": 64.0, "name": "BUILD"},
+    {"start": 256.0, "length": 128.0, "name": "DROP"}, {"start": 384.0, "length": 64.0, "name": "BREAK"},
+    {"start": 448.0, "length": 60.0, "name": "BUILD"}, {"start": 508.0, "length": 4.0, "name": "INTER"},
+    {"start": 512.0, "length": 128.0, "name": "DROP"}, {"start": 640.0, "length": 144.0, "name": "OUTRO"},
+]
+
+
+def test_presencia_inicial_y_segundo_drop():
+    s = secciones(_ARREGLO_INTER)
+    p = presencia_inicial(["KICK", "BASS", "STABS", "ATMOS", "OTRA"], s)
+    assert p["KICK"] == ["parcial", "todo", "todo", "nada", "todo", "nada", "todo", "parcial"]
+    assert p["BASS"] == ["nada", "nada", "todo", "nada", "nada", "nada", "todo", "parcial"]
+    assert p["STABS"] == ["nada"] * 6 + ["todo", "nada"]  # solo desde el segundo drop
+    assert p["ATMOS"][5] == "todo" and p["OTRA"][2] == "todo" and p["OTRA"][0] == "nada"
+
+
+def test_tramos_escalonados():
+    s = secciones(_ARREGLO_INTER)
+    assert tramo("KICK", s[0], "parcial") == (32.0, 192.0)  # entra a los 8 compases
+    assert tramo("TOP", s[0], "parcial") == (128.0, 192.0)
+    assert tramo("TOP", s[7], "parcial") == (640.0, 672.0)  # sale primero
+    assert tramo("KICK", s[7], "parcial") == (640.0, 768.0)
+    assert tramo("BASS", s[2], "parcial") == (256.0, 320.0)
+    assert tramo("KICK", s[3], "nada") is None and tramo("KICK", s[2], "todo") == (256.0, 384.0)
+
+
+def test_clips_del_largo_del_material_y_corte_final():
+    mat = {"largo": 64.0, "notas": [{"pitch": 36, "start_beat": b, "duration_beats": 0.5, "velocity": 100} for b in (0.0, 30.0, 63.8)]}
+    c = clips_de_tramo(mat, 256.0, 384.0 + 8, "KICK · DROP")
+    assert [(x["inicio"], x["longitud"]) for x in c] == [(256.0, 64.0), (320.0, 64.0), (384.0, 8.0)]
+    assert [n["start_beat"] for n in c[-1]["notas"]] == [0.0]
+    assert c[0]["notas"][-1]["duration_beats"] == pytest.approx(0.2)  # cortada al final del clip
+    m = material_de([{"start": 32.0, "length": 64.0, "name": "a"}], [{"pitch": 60, "start_beat": 40.0, "duration_beats": 1, "velocity": 90}])
+    assert m["desde"] == 32.0 and m["notas"][0]["start_beat"] == 8.0
+
+
+def _set_para_armar(live, motor):
+    _set_acordes(live, motor)
+    live.pistas.append({"name": "ARRANGE", "clips": [{**c, "notes": [], "color": None} for c in _ARREGLO_INTER]})
+    kick = next(p for p in live.pistas if p["name"] == "KICK")
+    kick["clips"] = [{"start": 0.0, "length": 64.0, "notes": _compases((0, 4, 8, 12), pitch=36), "name": "KICK", "color": None}]
+    live.pistas.append({"name": "STABS", "clips": [{"start": 0.0, "length": 64.0, "notes": _compases((14,), pitch=61), "name": "S", "color": None}]})
+    live.pistas.append({"name": "ROLL", "clips": [{"start": 240.0, "length": 16.0, "notes": _compases((0,), compases=4, pitch=48), "name": "R", "color": None}]})
+
+
+def test_llenar_el_arreglo(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    a = motor.proponer_armado()["armado"]
+    assert "KICK" in a["roles"] and "STABS" in a["roles"] and "ROLL" not in a["roles"] and "ARRANGE" not in a["roles"]
+    roll_antes = copy.deepcopy(next(p for p in live.pistas if p["name"] == "ROLL"))
+    a = motor.llenar_armado()["armado"]
+    assert a["registrado"] and len(motor.estado["registros"]) == 1  # registró el set antes de tocarlo
+    kick = next(p for p in live.pistas if p["name"] == "KICK")
+    inicios = sorted(c["start"] for c in kick["clips"])
+    assert 0.0 not in inicios and inicios[0] == 32.0  # el kick entra a los 8 compases
+    assert not any(384.0 <= c["start"] < 448.0 for c in kick["clips"])  # fuera del break
+    stabs = next(p for p in live.pistas if p["name"] == "STABS")
+    assert sorted(c["start"] for c in stabs["clips"]) == [512.0, 576.0]  # solo el segundo drop
+    assert next(p for p in live.pistas if p["name"] == "ROLL") == roll_antes  # las transiciones no se tocan
+    # Juan pone un clip suyo en el break: volver a llenar no lo toca y salta ese tramo.
+    motor.cambiar_presencia("KICK", 3, "todo")
+    kick["clips"].append({"start": 400.0, "length": 4.0, "notes": [], "name": "mío", "color": None})
+    a = motor.llenar_armado()["armado"]
+    assert any(c["name"] == "mío" for c in kick["clips"]) and a["saltados"] == ["KICK compás 97"]
+    assert len(motor.estado["registros"]) == 1
+    # Releer usa el material guardado aunque el clip del compás 1 ya no exista.
+    assert motor.proponer_armado()["armado"]["materiales"]["KICK"]["largo"] == 64.0
+    with pytest.raises(ValueError):
+        motor.cambiar_presencia("KICK", 99, "todo")
+
+
+def test_superficie_borra_clip_del_arreglo():
+    c = _comandos()
+    s = _Cancion("KICK")
+    c.escribir_clip(s, {"track_index": 0, "start_beats": 8.0, "length_beats": 4.0, "clip_name": "A", "notes": []}, _Nota)
+    pista = s.tracks[0]
+    pista.delete_clip = lambda clip: pista.arrangement_clips.remove(clip)
+    s.pasos.clear()
+    assert c.borrar_clip(s, {"track_index": 0, "start_beats": 0.0}) == {"borrado": False}
+    assert c.borrar_clip(s, {"track_index": 0, "start_beats": 8.0}) == {"borrado": True}
+    assert not pista.arrangement_clips and s.pasos == ["inicio", "fin"]

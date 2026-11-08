@@ -75,6 +75,11 @@ class LiveSimulado:
         if t == "read_clip":
             c = next((x for x in self.pistas[m["track_index"]]["clips"] if abs(x["start"] - m["start_beats"]) < 1e-3), None)
             return {"ok": True, "clip": c}
+        if t == "delete_clip":
+            pista = self.pistas[m["track_index"]]
+            antes = len(pista["clips"])
+            pista["clips"] = [c for c in pista["clips"] if abs(c["start"] - m["start_beats"]) >= 1e-3]
+            return {"ok": True, "borrado": len(pista["clips"]) < antes}
         if t == "load_plugin":
             pista = next(p for p in self.pistas if p["name"] == m["pista"])
             if pista.get("instrumento"):
