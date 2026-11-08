@@ -38,6 +38,8 @@ El rol se reconoce por el nombre (`convenciones-workspace.md`: familia y variant
 
 **Regla 6 (lo que movió Juan no se toca):** el motor recuerda lo que escribió. Una pista cuyo fader o paneo ya no coincide con eso, o que la primera vez no está en el valor por defecto de Live (fader a 0 dB y paneo al centro), se salta y se informa. Lo mismo vale para cada envío por separado (por defecto, −∞).
 
+**Reiniciar a la partida (Juan, 2026-11-08):** «yo los moví, pero eso fue antes para ir probando». Un segundo botón aplica la partida a **todas** las pistas con rol, incluidas las movidas, con confirmación y registrando el set antes. Los envíos que Juan ya tenía y que la tabla no usa se dejan como están. `SC GHOST`, `ARRANGE` y `BRAIN` siguen sin tocarse.
+
 **Retornos:** se toman por orden, A a F. Si el set tiene menos de seis, los envíos que faltan se saltan y se informa.
 
 ## 3. Capa 2: cadenas de volumen en los racks del motor

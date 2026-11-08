@@ -2137,3 +2137,17 @@ def test_poner_cadenas_una_vez_por_pista(entorno):
     n = len(live.cargas)
     motor.poner_cadenas()
     assert len(live.cargas) == n  # no la vuelve a poner
+
+
+def test_aplicar_mezcla_forzada_reinicia_lo_movido(entorno):
+    live, motor = entorno
+    _set_para_armar(live, motor)
+    kick = next(p for p in live.pistas if p["name"] == "KICK")
+    kick.update(volume_db=-1.0, pan=0.4, sends=[-5.0] + [float("-inf")] * 5)
+    motor.aplicar_mezcla()
+    assert kick["volume_db"] == -1.0  # por defecto, lo movido se respeta
+    motor.aplicar_mezcla(forzar=True)
+    assert kick["volume_db"] == -3.0 and kick["pan"] == 0.0 and kick["sends"][3] == -18.0
+    assert len(motor.estado["registros"]) == 1  # registró antes de reiniciar
+    sc = next(p for p in live.pistas if p["name"] == "SC GHOST")
+    assert "volume_db" not in sc

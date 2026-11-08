@@ -61,8 +61,9 @@ def _igual(a: float, b: float, tol: float) -> bool:
     return abs(a - b) <= tol
 
 
-def plan(pistas: list[dict], retornos: list[str], escrito: dict[str, dict]) -> list[dict]:
-    """Qué se pondría en cada pista y qué se salta por la regla 6. No escribe nada."""
+def plan(pistas: list[dict], retornos: list[str], escrito: dict[str, dict], forzar: bool = False) -> list[dict]:
+    """Qué se pondría en cada pista y qué se salta por la regla 6. No escribe nada.
+    `forzar`: Juan pidió reiniciar todo a la partida, incluido lo que movió."""
     salida = []
     for p in pistas:
         nombre = p["name"]
@@ -74,14 +75,14 @@ def plan(pistas: list[dict], retornos: list[str], escrito: dict[str, dict]) -> l
         propio = previo is not None and previo.get("volume_db") is not None
         esperado_fader = previo["volume_db"] if propio else 0.0  # sin registro propio: el valor por defecto de Live
         esperado_pan = previo["pan"] if propio else 0.0
-        mover = _igual(p["volume_db"], esperado_fader, 0.3) and _igual(p["pan"], esperado_pan, 0.02)
+        mover = forzar or (_igual(p["volume_db"], esperado_fader, 0.3) and _igual(p["pan"], esperado_pan, 0.02))
         sends, saltados = {}, []
         for i, db in envios.items():
             if i >= len(retornos) or i >= len(p["sends"]):
                 saltados.append(f"envío {'ABCDEF'[i]} (no hay ese retorno)")
                 continue
             esperado = (previo or {}).get("sends", {}).get(str(i), float("-inf"))
-            if _igual(p["sends"][i], esperado, 0.3):
+            if forzar or _igual(p["sends"][i], esperado, 0.3):
                 sends[i] = db
             else:
                 saltados.append(f"envío {'ABCDEF'[i]} (lo moviste)")

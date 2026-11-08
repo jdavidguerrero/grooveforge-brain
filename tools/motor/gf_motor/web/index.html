@@ -694,7 +694,9 @@ function pintarMezcla(m) {
   });
   const b = document.createElement("button"); b.textContent = "Aplicar mezcla de partida";
   b.onclick = () => { if (confirm("¿Aplicar fader, paneo y envíos de partida? Lo que ya moviste no se toca.")) accion("mezcla_aplicar", {}, b); };
-  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b, botonCadenas(m));
+  const todo = document.createElement("button"); todo.className = "sec"; todo.textContent = "Aplicar a todas (reinicia lo que moviste)";
+  todo.onclick = () => { if (confirm("¿Poner la mezcla de partida en TODAS las pistas, incluidas las que moviste? Antes se registra el set; SC GHOST, ARRANGE y BRAIN no se tocan.")) accion("mezcla_aplicar", {forzar: true}, todo); };
+  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b, todo, botonCadenas(m));
 }
 function botonCadenas(m) {
   const caja = document.createElement("div");

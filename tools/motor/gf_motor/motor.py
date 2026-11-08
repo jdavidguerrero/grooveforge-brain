@@ -1141,21 +1141,25 @@ class Motor:
         if self.live.version() < minima:
             raise ValueError(f"Live tiene cargado un GFMotor anterior: cierra y abre Live una vez para {para}")
 
-    def proponer_mezcla(self) -> dict:
+    def proponer_mezcla(self, forzar: bool = False) -> dict:
         """Solo lee Live: qué se pondría en cada pista y qué se salta porque Juan ya lo movió."""
         e = self._exigir_estado()
         self._exigir_version(4, "leer y poner la mezcla")
         m = e["mezcla"]
         leido = self.live.leer_mezcla()
         m["retornos"] = leido["returns"]
-        m["plan"] = plan_mezcla(leido["tracks"], leido["returns"], m["escrito"])
+        m["plan"] = plan_mezcla(leido["tracks"], leido["returns"], m["escrito"], forzar)
         self._guardar()
         return e
 
-    def aplicar_mezcla(self) -> dict:
+    def aplicar_mezcla(self, forzar: bool = False) -> dict:
+        """Por defecto respeta lo que Juan movió (regla 6). Con `forzar`, que Juan pide explícitamente, reinicia
+        todas las pistas con rol a la partida; antes registra el set."""
         e = self._exigir_estado()
         self._exigir_set_editable()
-        self.proponer_mezcla()
+        if forzar:
+            self.registrar(nota="antes de reiniciar la mezcla de partida")
+        self.proponer_mezcla(forzar)
         m = e["mezcla"]
         for p in m["plan"]:
             if p["volume_db"] is None and not p["sends"]:
@@ -1169,7 +1173,7 @@ class Motor:
             previo["sends"] = {**previo.get("sends", {}), **{str(i): db for i, db in p["sends"].items()}}
             m["escrito"][p["pista"]] = previo
         self._guardar()
-        self._evento("borrador", parte="mezcla", plan=m["plan"])
+        self._evento("borrador", parte="mezcla", plan=m["plan"], forzar=forzar)
         return e
 
     def poner_cadenas(self) -> dict:
