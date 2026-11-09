@@ -136,7 +136,7 @@ def midi(monkeypatch):
         callback(nota(94))
         return puerto
 
-    modulo = SimpleNamespace(get_input_names=lambda: ["Teensy MIDI", "Otro"], open_input=abrir)
+    modulo = SimpleNamespace(get_input_names=lambda: ["Teensy MIDI:Teensy MIDI MIDI 1 28:0", "GF Superficie:GF Superficie MIDI 1 32:0", "Otro"], open_input=abrir)
     monkeypatch.setitem(sys.modules, "mido", modulo)
     return modulo, puertos
 
@@ -145,7 +145,7 @@ def test_cola_callback_y_consumidor(midi):
     _, puertos = midi
     with s.Superficie() as superficie:
         puerto = puertos[0]
-        assert puerto.nombre == "Teensy MIDI"
+        assert puerto.nombre == "GF Superficie:GF Superficie MIDI 1 32:0"  # elige la S aunque la A también esté conectada
         assert superficie.poll() == s.Boton("PLAY", True)
         assert superficie.poll() is None
         with ThreadPoolExecutor() as hilos:
@@ -162,7 +162,7 @@ def test_cola_callback_y_consumidor(midi):
 
 
 def test_cierre_despierta_iterador(midi):
-    superficie = s.Superficie("Teensy")
+    superficie = s.Superficie("GF Superficie")
     superficie.poll()
     with ThreadPoolExecutor() as hilos:
         consumidor = hilos.submit(lambda: list(superficie))
@@ -176,7 +176,7 @@ def test_seleccion_no_ambigua(midi):
         assert puertos[-1].nombre == "Otro"
     with pytest.raises(ValueError, match="coincidencias"):
         s.Superficie("Ausente")
-    modulo.get_input_names = lambda: ["Teensy A", "Teensy S"]
+    modulo.get_input_names = lambda: ["GF Superficie 1", "GF Superficie 2"]
     with pytest.raises(ValueError, match="coincidencias"):
         s.Superficie()
 

@@ -48,7 +48,7 @@ Los tests nativos cubren extremos CC, cadencia 40 ms, rechazo de ruido/deadband,
 
 ## 3. USB y mapa MIDI
 
-USB `MIDI+Serial`, canal **1** (mido `channel=0`). Sin SysEx ni driver propio para E4.
+USB `MIDI+Serial`, canal **1** (mido `channel=0`). Nombre USB propio **«GF Superficie»** (`src/consola_s/usb_names.c`) para distinguirla de la Teensy A en el Pi. Sin SysEx ni driver propio para E4.
 
 | Control | Mensaje |
 |---|---|

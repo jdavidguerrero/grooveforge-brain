@@ -15,7 +15,7 @@ BOTONES = (
     "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
 )
 PERILLAS = ("MASTER", "CUE", "IN")
-PUERTO = "Teensy"
+PUERTO = "GF Superficie"  # nombre USB propio de la S (src/consola_s/usb_names.c)
 
 
 @dataclass(frozen=True)

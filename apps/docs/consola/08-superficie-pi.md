@@ -31,7 +31,7 @@ Note-on con velocidad positiva representa presión/entrada; note-off o note-on c
 | 94–101 | PLAY, STOP, REC, LOOP, UNDO, NEW, SHIFT, METRO |
 | 102–107 | MCP2_8 … MCP2_13 |
 
-**Pendientes de Juan:** 06 no asigna nombres a las doce funciones adicionales ni publica un nombre USB de S. Juan autoriza estos identificadores físicos (índice lógico de entrada, no pin GPIO MCP) y el filtro predeterminado `Teensy`; las funciones del panel final siguen sin asignar. `BOTONES` permite cambiar todos los nombres en un lugar. `--puerto` cambia el filtro; cero coincidencias o varias producen error para no abrir otra Teensy por accidente.
+**Pendientes de Juan:** 06 no asigna nombres a las doce funciones adicionales. Juan autoriza estos identificadores físicos (índice lógico de entrada, no pin GPIO MCP); las funciones del panel final siguen sin asignar. `BOTONES` permite cambiar todos los nombres en un lugar. **Nombre USB:** la S se presenta como «GF Superficie» (`apps/consola/processor/src/consola_s/usb_names.c`, mecanismo de nombres propios de Teensyduino), porque con la Teensy A conectada al Pi las dos se llamarían «Teensy MIDI». Es el filtro por defecto. `--puerto` cambia el filtro; cero coincidencias o varias producen error para no abrir otra Teensy por accidente.
 
 ## 2. Hilos y ciclo de vida
 
@@ -46,7 +46,7 @@ Note-on con velocidad positiva representa presión/entrada; note-off o note-on c
 ```sh
 cd tools/consola
 python superficie.py --listar
-python superficie.py --monitor --puerto Teensy
+python superficie.py --monitor --puerto "GF Superficie"
 python superficie.py --stats /dev/ttyACM1
 uv run pytest
 ```
@@ -65,4 +65,4 @@ No cubre motor, GUI, significado de LIVE/MIXER, macros, escala/theremin, mezcla 
 - [Arquitectura y alcance MVP](03-arquitectura-capas.md), §2 y §4.1.
 - [GUI y sensores de mano](07-gui.md), §3.
 - [Formato CDC del firmware custom, `prepare_stats()` y `poll_serial()`](../../consola/processor/src/consola_s/main.cpp).
-- Juan, conversación de esta entrega (2026-11-09): nombres físicos provisionales y filtro `Teensy` autorizados; funciones finales y nombre USB pendientes.
+- Juan, conversación de esta entrega (2026-11-09): nombres físicos provisionales autorizados; funciones finales pendientes. Nombre USB propio «GF Superficie» (Juan, 2026-11-09).
