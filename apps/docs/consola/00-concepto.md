@@ -39,7 +39,7 @@ MIDI IN/OUT · Link ────────────────┘   · reg
 |---|---|---|
 | **Raspberry Pi 5 (8 GB)** | Cerebro: motor, UI, sampler, mezcla, registro | `tools/motor`, `perc-synth`, presets, racks; la experiencia de `studio-head` (LVGL en Pi) |
 | **Teensy A** | Motor de sonido del Brain: synths, capas HYBRID y FX. Envía su audio al Pi por **USB audio** (2 canales por defecto en la Audio Library) | Todo `firmware-teensy` |
-| **Teensy B** | Lee la superficie y maneja los LEDs; habla con el Pi por USB | Código de UI del Brain (encoders, debounce, LEDs) |
+| **Teensy B** | Lee la superficie y maneja los LEDs; habla con el Pi por USB. **Podría fusionarse con la Teensy A** (§10.2.3) | Código de UI del Brain (encoders, debounce, LEDs) |
 | **Interfaz de audio** | 4 salidas: estéreo de sala y estéreo de **cue** para audífonos, como en un mixer de DJ | Una interfaz USB compatible de clase, o un HAT (opción a estudiar) |
 
 **Alternativa a estudiar:** compilar el motor del VST (JUCE) para Linux ARM y que el Pi haga también los synths. Ahorraría el Teensy A, pero hay reportes de problemas (un AudioPluginHost headless de JUCE 8 que fallaba en un Pi 5) y de compilación lenta en el Pi. Por eso el plan base mantiene el Teensy.
@@ -162,6 +162,14 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 | MIDI TRS in/out + sync | 3 digitales |
 
 Quedan unos 25 digitales y 6 analógicos libres, así que el número de botones puede subir sin cambiar de microcontrolador.
+
+### 10.2.3 ¿Una Teensy o dos? (pregunta de Juan, 2026-11-09)
+
+**Hipótesis: una sola alcanza.** Pines: el audio usa I2S y el I2C del SGTL5000 (0x0A); el NeoTrellis (0x2E/0x2F) y los MCP23017 (0x20/0x21) comparten ese bus con otras direcciones, y los controles del panel del Brain los reemplaza la superficie. CPU: el presupuesto del Brain es ≤60 % (`01-architecture.md` §5.2) y la superficie cuesta poco; la Audio Library corre por interrupciones, con prioridad. USB: una Teensy puede ser MIDI + audio + serie en un solo cable.
+
+**Riesgos:** un solo firmware para todo; el I2C compartido entre códec y NeoTrellis puede meter retardos en la lectura de pads.
+
+**Decisión:** el prototipo de mesa empieza con **una** Teensy y mide: CPU con 6 voces y 5 FX, clics de audio y latencia de pads con la superficie al máximo. Si pasa, la consola queda con una; la segunda queda de repuesto o para separar la superficie si la medición lo pide. Si el Pi termina corriendo los synths (P4), la Teensy queda solo para superficie y audio de cue y entrada.
 
 ### 10.3 Conexiones
 
