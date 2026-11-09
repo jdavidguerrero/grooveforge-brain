@@ -52,6 +52,22 @@ MIDI IN/OUT · Link ────────────────┘   · reg
 | **LIVE** | Set en vivo, sin laptop | El motor genera en el Pi y tú mezclas lo que va entrando (§5) |
 | **SECUENCIADOR** | Escribir y editar a mano | Step sequencer de 16 pasos por carril; el motor rellena o varía lo que pidas |
 
+### 4.1 HÍBRIDO: tocar y producir al mismo tiempo (Juan, 2026-11-09)
+
+Juan preguntó si ESTUDIO y LIVE pueden ir a la vez. Sí, como un tercer modo:
+
+| | ESTUDIO | LIVE | HÍBRIDO |
+|---|---|---|---|
+| Genera | Motor en el Mac | Motor en el Pi | Motor en el Pi |
+| Suena | Live y el VST | La consola | La consola, en tempo con Live |
+| Para | Producir | Set sin laptop | Set con Live grabando |
+
+**En HÍBRIDO:** tempo y fase por **Ableton Link**. La consola manda a Live el MIDI de lo que suena, **un canal por rol**, por MIDI de red (RTP-MIDI: integrado en macOS; en el Pi con un servicio como `rtpmidid`, a verificar) o por cable. Para el audio hay **una sola mezcla final**, en uno de dos sentidos: el Mac entra por la entrada de línea de la consola y ella mezcla, o la salida de sala de la consola entra a la interfaz del Mac y mezcla Live (y se suman cosas que la consola no tiene, como Tribe original o voces).
+
+**Por qué importa:** cada set queda grabado en Live como **MIDI ordenado por rol**, listo para terminarlo en estudio con el motor, y las decisiones del set (aceptar, saltar) entran al registro. Tocar y producir se vuelven un mismo ciclo.
+
+**Orden de construcción:** LIVE (núcleo) → HÍBRIDO (Link y MIDI a Live) → ESTUDIO (control del motor del Mac por red).
+
 ## 5. El set en vivo: un DJ de música generada
 
 1. Por cada rol (kick, drums, perc, bajo, acordes, lead, pad), el motor tiene **la siguiente opción lista**, generada con tus reglas y tus registros.
