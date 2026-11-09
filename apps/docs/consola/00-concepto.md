@@ -111,7 +111,7 @@ El cue exige **dos salidas estéreo independientes** (sala y audífonos). Ningun
 | **CUE** (audífonos) | SGTL5000 del Teensy A, que recibe la mezcla de cue del Pi por USB audio | Ya tiene amplificador de audífonos. Si la sincronía entre los dos relojes produce algún clic, se oye solo en audífonos |
 | **ENTRADA** (e-drum, marimba, voz) | Line-in del SGTL5000 → Teensy → Pi por USB | El Teensy ya envía su audio (el Brain) al Pi; la entrada viaja igual |
 
-**A verificar:** el modelo exacto del HAT. Si su PCM es solo DAC (por ejemplo PCM5102), sirve para sala. Si tiene ADC, también podría ser la entrada. Prueba P3 ampliada: medir clics en el cue con los dos relojes durante una hora.
+**HAT de Juan: Raspiaudio Audio+ V2.** Es **solo salida** (DAC estéreo, 32 bit / 384 kHz, 112 dB de relación señal/ruido). El fabricante no nombra el chip; esas cifras coinciden con las de un PCM5102A, sin confirmar. Sin entrada, el plan de la tabla queda así: Audio+ V2 para **sala**, SGTL5000 para **cue y entrada**. Prueba P3 ampliada: medir clics en el cue con los dos relojes durante una hora.
 
 ### 10.2 Superficie con NeoTrellis 8×4
 
@@ -124,6 +124,19 @@ Los pads NeoTrellis son botones de silicona con LED RGB: detectan pulsado o suel
 | **ESTUDIO** | Opciones de la pestaña activa del motor | Elegir, poner y navegar |
 
 Botones fijos (propuesta): Play/Stop, Shift, Modo, **Cambio de sección** (build, drop, break), Tap, Cue maestro. Encoders: 8 bajo la pantalla, como en Push (parámetros de lo seleccionado). Faders: 4 por grupos (RITMO, BAJO, MÚSICA, FX), más perillas de MASTER y CUE.
+
+### 10.2.1 Diez FSR 402: pads con fuerza
+
+Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redondas de ½"). Bajan su resistencia al apretar: empiezan a responder hacia 0,2 N, llegan a unos 20 N y suben en menos de 3 µs. Le dan a la consola lo que el NeoTrellis no tiene:
+
+| Uso | Cuántos | Qué hace |
+|---|---|---|
+| **Pads con velocity** | 8 | Una fila tipo MPC para tocar en vivo: kick, perc y golpes de Tribe con dinámica real, o grabar acentos en el secuenciador |
+| **Expresión** | 2 | Apretar y sostener: uno abre el filtro o la macro MOVE del Brain; el otro manda un throw al Echo o empuja un riser |
+
+**Cómo se leen:** cada FSR en un divisor con una resistencia fija (≈10 kΩ, a ajustar) hacia una entrada analógica del Teensy B. La **velocity** es el pico de la lectura en los primeros 3–5 ms después de cruzar el umbral; la **presión** sostenida se lee continua, como aftertouch.
+
+**Para que se sientan bien:** un FSR responde distinto según cómo se reparte la fuerza (Interlink). Hace falta un **actuador**: una tapa de silicona o goma con un disco rígido pequeño encima del área activa, sobre una base plana y firme. Cada pad se calibra con su propia curva, porque no son sensores de precisión. Para golpes fuertes y rápidos, como un e-drum, un piezo suele ser mejor; para dedos, el FSR sirve.
 
 ### 10.3 Conexiones
 
@@ -162,3 +175,5 @@ Plan: grabar cada articulación del kit de Tribe a varias velocities y cargarlas
 - Ableton Link en Python: [aalink (PyPI)](https://pypi.org/project/aalink/), [aalink en piwheels](https://www.piwheels.org/project/aalink), [LinkPython](https://github.com/thegamecracks/link-python).
 - SGTL5000: [hoja de datos](https://pjrc.com/teensy/SGTL5000.pdf), [mezclador digital con segundo codec para auriculares](https://blog.brixit.nl/digital-audio-mixer-pt-2/), [foro PJRC, salida de línea](https://forum.pjrc.com/threads/66630-What-are-the-Line-OUT-pins-on-Audio-Adaptor-Board-Teensy-3-x-for).
 - Alimentación del Pi 5: [CanaKit, fuente oficial 27 W](https://canakit.com/official-raspberry-pi-5-power-supply-27w-usb-c.html), [Yahboom, alimentar el Pi 5](https://www.yahboom.net/public/upload/upload-html/1703664332/3.%20Powering%20the%20Raspberry%20PI%205.html).
+- FSR 402: [Interlink, guía de integración (MIT)](https://courses.media.mit.edu/2022spring/mas836/readings/fsrguide.pdf), [Adafruit](https://learn.adafruit.com/force-sensitive-resistor-fsr/overview), [Rapid Online, especificaciones](https://rapidonline.com/interlink-electronics-fsr402-0-5-diameter-force-sensing-resistor-78-4002).
+- Raspiaudio Audio+: [pinout.xyz](https://pinout.xyz/pinout/raspiaudio_audio).
