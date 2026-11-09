@@ -6,7 +6,7 @@
 
 > «Producir más rápido… el motor automatiza cosas y me deja dedicarme al proceso creativo de escoger sonidos, organizar y pensar ideas muy rápido. Quiero un hardware específico para esto… para tocar liveset… como un DJ que va mezclando música que se va generando, escogiendo si va o no, ya haciendo lectura de todo lo que llevamos de mi estilo.»
 
-Prioridades, en orden: **(1) producir más rápido, (2) tocar en vivo**, y con eso contenido, imagen y comunidad. **No es para vender** por ahora. Restricción: **un solo dispositivo**, para bajar el costo de PCB, usando lo que ya tiene: Raspberry Pi 5, pantalla de 10", dos Teensy 4.1, potenciómetros, encoders, faders y botones. Juan pide además un **step sequencer**.
+Prioridades, en orden: **(1) producir más rápido, (2) tocar en vivo**, y con eso contenido, imagen y comunidad. **No es para vender** por ahora. Restricción: **un solo dispositivo**, para bajar el costo de PCB, usando lo que ya tiene: Raspberry Pi 5 de 8 GB, pantalla táctil de 7" (1280×720, 10 puntos), dos Teensy 4.1, NeoTrellis de 32 pads, potenciómetros, encoders, faders y botones. Juan pide además un **step sequencer**.
 
 ## 2. Qué hay en el mercado y qué se aprende de cada uno
 
@@ -25,7 +25,7 @@ Prioridades, en orden: **(1) producir más rápido, (2) tocar en vivo**, y con e
 ## 3. Arquitectura propuesta (un solo dispositivo)
 
 ```
-            pantalla 10" (UI: opciones, cuadrícula, mezcla)
+            pantalla 7" táctil (UI: opciones, cuadrícula, mezcla)
                          │
 superficie ─USB─ Teensy B ─┐
 (pads, encoders,           ├─ Raspberry Pi 5 ── interfaz de audio (4 salidas: SALA + CUE)
@@ -37,7 +37,7 @@ MIDI IN/OUT · Link ────────────────┘   · reg
 
 | Pieza | Rol | Reutiliza |
 |---|---|---|
-| **Raspberry Pi 5** | Cerebro: motor, UI, sampler, mezcla, registro | `tools/motor`, `perc-synth`, presets, racks; la experiencia de `studio-head` (LVGL en Pi) |
+| **Raspberry Pi 5 (8 GB)** | Cerebro: motor, UI, sampler, mezcla, registro | `tools/motor`, `perc-synth`, presets, racks; la experiencia de `studio-head` (LVGL en Pi) |
 | **Teensy A** | Motor de sonido del Brain: synths, capas HYBRID y FX. Envía su audio al Pi por **USB audio** (2 canales por defecto en la Audio Library) | Todo `firmware-teensy` |
 | **Teensy B** | Lee la superficie y maneja los LEDs; habla con el Pi por USB | Código de UI del Brain (encoders, debounce, LEDs) |
 | **Interfaz de audio** | 4 salidas: estéreo de sala y estéreo de **cue** para audífonos, como en un mixer de DJ | Una interfaz USB compatible de clase, o un HAT (opción a estudiar) |
@@ -97,6 +97,54 @@ El filtro analógico externo, el mezclador tipo Xone y el Push separado quedan f
 6. **Tribe en vivo:** no corre en el Pi. ¿Se reemplaza con muestras propias, o se graban sus patrones como audio?
 7. **Batería:** ¿sí o no?
 
+## 10. Refinamiento (2026-11-09)
+
+Respuestas de Juan: pantalla **7" 1280×720 táctil de 10 puntos**; Raspberry Pi 5 de **8 GB**; forma **lo más portátil posible, estilo MPC o Push 3**; pads: **NeoTrellis de 32** (8×4) y el resto botones; quiere **varias conexiones, Ableton Link incluido**; Tribe: **sacar sus samples**; audio: tiene un **HAT con un PCM** para el Pi y el **SGTL5000** del Teensy.
+
+### 10.1 Audio: los dos, cada uno con su trabajo
+
+El cue exige **dos salidas estéreo independientes** (sala y audífonos). Ninguno de los dos solo las da: el SGTL5000 tiene salida de línea y de audífonos, pero las dos salen del **mismo DAC**, con volúmenes separados y la misma mezcla. Propuesta:
+
+| Salida | Por dónde | Por qué |
+|---|---|---|
+| **SALA** (main) | HAT del Pi | Directo del Pi, sin pasar por USB: la menor latencia y un solo reloj para lo que oye el público |
+| **CUE** (audífonos) | SGTL5000 del Teensy A, que recibe la mezcla de cue del Pi por USB audio | Ya tiene amplificador de audífonos. Si la sincronía entre los dos relojes produce algún clic, se oye solo en audífonos |
+| **ENTRADA** (e-drum, marimba, voz) | Line-in del SGTL5000 → Teensy → Pi por USB | El Teensy ya envía su audio (el Brain) al Pi; la entrada viaja igual |
+
+**A verificar:** el modelo exacto del HAT. Si su PCM es solo DAC (por ejemplo PCM5102), sirve para sala. Si tiene ADC, también podría ser la entrada. Prueba P3 ampliada: medir clics en el cue con los dos relojes durante una hora.
+
+### 10.2 Superficie con NeoTrellis 8×4
+
+Los pads NeoTrellis son botones de silicona con LED RGB: detectan pulsado o suelto, **sin velocity**. Para el directo y el secuenciador basta; la dinámica se da con un acento por paso o con un encoder. Dos placas 4×4 en I2C (direcciones 0x2E y 0x2F) forman el 8×4, con la biblioteca seesaw de Adafruit.
+
+| Modo | Columnas (8) | Filas (4) |
+|---|---|---|
+| **LIVE** | Un rol por columna: KICK, DRUMS, PERC, TOP, BASS, CHORDS, LEAD, FX | 1 encendido/silencio · 2 escuchar la siguiente por cue · 3 **aceptar** · 4 saltar u otra variación |
+| **SECUENCIADOR** | 8 pasos (con página para 16) | 4 carriles; Shift + pad = acento |
+| **ESTUDIO** | Opciones de la pestaña activa del motor | Elegir, poner y navegar |
+
+Botones fijos (propuesta): Play/Stop, Shift, Modo, **Cambio de sección** (build, drop, break), Tap, Cue maestro. Encoders: 8 bajo la pantalla, como en Push (parámetros de lo seleccionado). Faders: 4 por grupos (RITMO, BAJO, MÚSICA, FX), más perillas de MASTER y CUE.
+
+### 10.3 Conexiones
+
+| Conexión | Para qué | Cómo |
+|---|---|---|
+| **Ableton Link** | Tempo y fase con Live, otras apps y otros equipos, por red | En el Pi, con `aalink` (asyncio, GPL-3, tiene builds ARM64) o `LinkPython` |
+| **Wi-Fi / Ethernet** | Modo ESTUDIO: hablar con el motor del Mac | El motor ya es un servidor HTTP local |
+| **USB host** (Pi) | Controladores, e-drum USB, memoria | Puertos USB-A del Pi |
+| **MIDI TRS in/out** | e-drum, marimba, synths | UART del Teensy B, jacks de 3,5 mm |
+| **Sync analógico** | Pocket Operator, Volca | Un pulso desde el Teensy B |
+| **CV** | Filtro ladder externo | La salida CV del Brain (pin 29) que ya existe |
+| **Audio in/out** | §10.1 | — |
+
+### 10.4 Energía y portabilidad
+
+El Pi 5 necesita **5,1 V a 5 A** (fuente oficial de 27 W). Con 3 A, los puertos USB quedan limitados a 600 mA en total, y ahí van los dos Teensy. Muchas baterías USB-C llegan a sus vatios subiendo el voltaje, no entregando 5 A a 5 V. Por eso la primera versión va **con fuente de pared**, y la batería se estudia después, como en el Push 3. Medida orientativa: pantalla de 7" (~15,5 × 8,7 cm), NeoTrellis 8×4 (~12 × 6 cm) y faders: una caja del orden de **32 × 22 cm**, menor que una MPC Live II.
+
+### 10.5 Tribe en el directo
+
+Plan: grabar cada articulación del kit de Tribe a varias velocities y cargarlas en el sampler del Pi con **el mismo mapa de notas** de `kits/tribe_colombia.json`. Así los patrones y fills que ya escribe el motor suenan igual en la consola. **A revisar:** la licencia de Tribe. La ficha del kit marca «samplear: revisar licencia»; el uso en sets propios suele estar permitido y la redistribución no, pero hay que leer su EULA.
+
 ## Fuentes
 
 - Push 3: [Ableton, especificaciones](https://www.ableton.com/en/push/tech-specs/), [MusicRadar](https://musicradar.com/news/ableton-push-3-standalone-live), [Sweetwater](https://www.sweetwater.com/store/detail/Push3WP). MIDI Tools y Push 3: [Manifest Audio](https://manifestaudio.gumroad.com/l/midi-toolset-001).
@@ -110,3 +158,7 @@ El filtro analógico externo, el mezclador tipo Xone y el Push separado quedan f
 - JUCE en ARM: [Elk, compilar plugins](https://elk-audio.github.io/elk-docs/html/embedded/building_plugins_for_elk.html), [foro JUCE, AudioPluginHost headless en Pi 5](https://forum.juce.com/t/headless-aph-on-raspberry-pi/65054), [foro JUCE, compilación cruzada](https://forum.juce.com/t/crosscompile-to-arm-raspberry/31183).
 - Teensy como interfaz USB: [foro PJRC](https://forum.pjrc.com/showthread.php?p=327016), [foro Zynthian](https://discourse.zynthian.org/t/foss-digital-audio-mixer/9881).
 - Live 12 y herramientas generativas: [Attack Magazine](https://www.attackmagazine.com/reviews/gear-software/live-12s-midi-tools-midi-revolution/), [Sound On Sound](https://www.soundonsound.com/news/ableton-launch-live-12).
+- NeoTrellis: [Adafruit Learn](https://learn.adafruit.com/adafruit-neotrellis), [proyecto en Hackaday](https://hackaday.io/project/186327-neotrellis-explorations).
+- Ableton Link en Python: [aalink (PyPI)](https://pypi.org/project/aalink/), [aalink en piwheels](https://www.piwheels.org/project/aalink), [LinkPython](https://github.com/thegamecracks/link-python).
+- SGTL5000: [hoja de datos](https://pjrc.com/teensy/SGTL5000.pdf), [mezclador digital con segundo codec para auriculares](https://blog.brixit.nl/digital-audio-mixer-pt-2/), [foro PJRC, salida de línea](https://forum.pjrc.com/threads/66630-What-are-the-Line-OUT-pins-on-Audio-Adaptor-Board-Teensy-3-x-for).
+- Alimentación del Pi 5: [CanaKit, fuente oficial 27 W](https://canakit.com/official-raspberry-pi-5-power-supply-27w-usb-c.html), [Yahboom, alimentar el Pi 5](https://www.yahboom.net/public/upload/upload-html/1703664332/3.%20Powering%20the%20Raspberry%20PI%205.html).
