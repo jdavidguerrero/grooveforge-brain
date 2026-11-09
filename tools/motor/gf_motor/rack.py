@@ -39,8 +39,12 @@ def _apuntar_a(branch: ET.Element, wav: Path) -> None:
                 control.set("Value", "0")
 
 
-def crear_rack(wavs: list[Path], nombre: str, destino: Path, plantilla: Path | None = None) -> list[int]:
-    """Escribe un .adg con un pad por WAV. Devuelve la nota MIDI de cada uno."""
+def crear_rack(
+    wavs: list[Path], nombre: str, destino: Path, plantilla: Path | None = None, notas: list[int] | None = None, choke: dict[int, int] | None = None,
+    volumenes: dict[int, float] | None = None,
+) -> list[int]:
+    """Escribe un .adg con un pad por WAV y devuelve sus notas. `choke` da el grupo por nota; 0 es sin grupo.
+    `volumenes` da el volumen de la cadena en dB por nota (motor-mezcla.md §3); Live lo guarda como ganancia lineal."""
     fuente = plantilla or plantilla_por_defecto()
     if not fuente.exists():
         raise ValueError(f"No encuentro el rack de plantilla: {fuente}")
@@ -52,16 +56,24 @@ def crear_rack(wavs: list[Path], nombre: str, destino: Path, plantilla: Path | N
 
     for b in list(pads):
         pads.remove(b)
-    notas = []
+    usadas = []
     for i, wav in enumerate(wavs):
         pad = ET.fromstring(clone_branch(molde, viejo, wav.stem, wav, i + 1))
         _apuntar_a(pad, wav)
-        nota = NOTA_PRIMER_PAD + i
+        nota = notas[i] if notas else NOTA_PRIMER_PAD + i
         pad.find("ZoneSettings/ReceivingNote").set("Value", str(128 - nota))  # Live guarda 128 − nota.
+        grupo = pad.find("ZoneSettings/ChokeGroup")
+        if grupo is not None:
+            grupo.set("Value", str((choke or {}).get(nota, 0)))
+        if volumenes and nota in volumenes:
+            mixer = next(pad.iter("MixerPreset"), None)
+            control = mixer.find(".//Volume/Manual") if mixer is not None else None
+            if control is not None:
+                control.set("Value", f"{10 ** (volumenes[nota] / 20):.6f}")
         pads.append(pad)
-        notas.append(nota)
+        usadas.append(nota)
     raiz.find(".//DrumGroupDevice/UserName").set("Value", nombre)
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_bytes(gzip.compress(('<?xml version="1.0" encoding="UTF-8"?>\n' + a_texto(raiz)).encode("utf-8")))
-    return notas
+    return usadas

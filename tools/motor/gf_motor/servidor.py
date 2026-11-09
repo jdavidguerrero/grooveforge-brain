@@ -6,7 +6,7 @@ import argparse
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from .borrador import COLORES, PLANTILLAS
 from .live import PUERTO, ClienteLive, ErrorLive
@@ -30,6 +30,36 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
         "bajo_capas": lambda d: motor.cargar_capas(),
         "bajo_capa": lambda d: motor.usar_capa(d["nombre"]),
         "bajo_revisar": lambda d: motor.revisar_bajo(),
+        "drums": lambda d: motor.generar_drums(),
+        "drum_patrones": lambda d: motor.proponer_patrones_drums(),
+        "drum_poner": lambda d: motor.poner_patron_drums(d["nombre"]),
+        "tops_proponer": lambda d: motor.proponer_tops(d["rol"]),
+        "tops_poner": lambda d: motor.poner_top(d["rol"], d["id"]),
+        "motivo_generar": lambda d: motor.generar_motivos(),
+        "motivo_poner": lambda d: motor.poner_motivo(d["id"]),
+        "motivo_capas": lambda d: motor.cargar_capas_motivo(),
+        "motivo_capa": lambda d: motor.usar_capa_motivo(d["nombre"]),
+        "acordes_proponer": lambda d: motor.proponer_acordes(),
+        "acordes_poner": lambda d: motor.poner_acordes(d["id"]),
+        "pads_proponer": lambda d: motor.proponer_pads(),
+        "pads_poner": lambda d: motor.poner_pad(d["parte"], d["id"]),
+        "detalles_proponer": lambda d: motor.proponer_detalles(),
+        "detalles_poner": lambda d: motor.poner_detalle(d["parte"], d["id"]),
+        "transiciones_proponer": lambda d: motor.proponer_transiciones(),
+        "recomendar": lambda d: motor.recomendar(),
+        "mezcla_proponer": lambda d: motor.proponer_mezcla(),
+        "mezcla_aplicar": lambda d: motor.aplicar_mezcla(bool(d.get("forzar"))),
+        "cadenas_poner": lambda d: motor.poner_cadenas(),
+        "racks_reponer": lambda d: motor.reponer_racks(),
+        "idea_aplicar": lambda d: motor.aplicar_idea(d["pista"], d["accion"]),
+        "armado_proponer": lambda d: motor.proponer_armado(),
+        "armado_presencia": lambda d: motor.cambiar_presencia(d["rol"], int(d["i"]), d["valor"]),
+        "armado_llenar": lambda d: motor.llenar_armado(),
+        "roll_sonido": lambda d: motor.sonido_roll(d["material"]),
+        "subdrop_sonido": lambda d: motor.sonido_subdrop(d["variante"]),
+        "transiciones_poner": lambda d: motor.poner_transicion(d["elemento"], d["id"]),
+        "drum_elegir": lambda d: motor.elegir_drum(d["id"]),
+        "tonalidad": lambda d: motor.cambiar_tonalidad(d["raiz"], d["modo"]),
         "registrar": lambda d: motor.registrar(d.get("sonido", ""), d.get("kick", ""), d.get("nota", "")),
     }
 
@@ -68,6 +98,12 @@ def crear_servidor(motor: Motor, puerto: int = 8765) -> ThreadingHTTPServer:
                     g: [{"nombre": n, "compases": c, "color": f"#{COLORES[n]:06X}"} for n, c in bloques] for g, bloques in PLANTILLAS.items()
                 }
                 return self._json(200, {"live": live, "sesion": motor.estado, "plantillas": plantillas})
+            if ruta.startswith("/drum/"):
+                try:
+                    _, _, ident, voz = ruta.split("/")
+                    return self._enviar(200, motor.ruta_drum(unquote(ident), unquote(voz)).read_bytes(), "audio/wav")
+                except (ValueError, OSError) as exc:
+                    return self._json(404, {"error": str(exc)})
             if ruta.startswith("/audio/"):
                 try:
                     return self._enviar(200, motor.ruta_opcion(ruta.rsplit("/", 1)[-1]).read_bytes(), "audio/wav")

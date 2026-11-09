@@ -232,3 +232,17 @@ El cuerpo no viene de saturar: viene de **sostener el nivel** y de una nota más
 - **Nota:** dos de los tres favoritos se eligieron en 55 Hz. Por eso el modo grave deja de ser el predeterminado y se quita el selector.
 
 **Pendiente tras la escucha de §16:** Juan sigue oyendo rara la familia INICIAL y la madera, y prefiere seguir refinando con sus elecciones. No está resuelto.
+
+## 17. Rev. 9: todo a la fundamental
+
+**Regla de Juan (2026-11-06):** en lo posible, todo lo que se genera va a la nota fundamental. Reemplaza la elección entre tónica y quinta de §14 para el kick y la de `percusion-generos-tonalidad.md` para clave y snare en el motor.
+
+| Voz | Cómo se afina |
+|---|---|
+| Kick | Tónica en C#1–C2 (34,6–65,4 Hz). En La menor, A1. Ya no sale en la quinta |
+| Clave y snare | Tónica más cercana a su registro natural |
+| Clap y hats | No tienen una nota clara, así que su resonancia principal se alinea con la tónica o con su tercer armónico. Se oirá como color más que como nota, y abierto y cerrado comparten afinación |
+
+**Consecuencia:** `CUERPO MIX SECA` nace de 1H, que Juan eligió en E1. Ahora va en A1, así que ya no es idéntico a aquel. El archivo original sigue en `00 Elegidos`.
+
+**Por qué no solo octavas en clap y hats.** Con una octava entre opciones, una resonancia tendría que moverse hasta un 41 %, y eso cambia el carácter del instrumento. Es la única excepción a «solo fundamental»: el tercer armónico pertenece a la serie de la tónica y deja el movimiento por debajo del 25 %. Por lo mismo, la clave sí se mueve mucho (de unos 2,5 kHz a 1,76 kHz en La), porque ahí la nota se oye; hay que comprobar de oído que siga sonando a clave.

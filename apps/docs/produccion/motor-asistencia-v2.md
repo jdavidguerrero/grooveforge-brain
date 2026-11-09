@@ -120,7 +120,18 @@ Valores exactos, rumble, pista fantasma y envíos de partida: `template-envios-v
 Se agregan cuando el flujo los necesite:
 
 - Volúmenes y envíos, para los niveles por rol.
-- Cargar plugins, para el VST del Brain en el paso de bajo.
+- ~~Cargar plugins~~: hecho el 2026-11-08 (`load_plugin`, GFMotor versión 2), ver abajo.
+
+**Instrumento en las pistas que crea el motor (Juan, 2026-11-08).** Juan elige el preset dentro del plugin; lo que no quiere es insertar el plugin pista por pista. Al poner un clip, el motor carga el instrumento **solo si la pista todavía no tiene uno** (nunca reemplaza un sonido elegido):
+
+| Pistas | Instrumento |
+|---|---|
+| `FILL`, `ROLL TRIBE` | TRIBE Player 2 |
+| `CHORDS`, `PAD`, `ATMOS`, `STABS`, `PLUCKS`, `RISER`, `FX`, `EAR CANDY` (y sus `propuesta`) | GrooveForge Brain Prototype |
+| `ROLL` | El rack de la drum machine (`sonido_roll`) |
+| `BASS`, `LEAD` | Nada: pueden salir al Brain por MIDI |
+
+Se prefiere el VST3 si el plugin está en varios formatos. Si la carga falla, el clip se escribe igual y el motivo queda en el estado.
 
 ## 10. Entradas de Juan
 

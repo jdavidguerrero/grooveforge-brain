@@ -418,6 +418,21 @@ def cmd_desde_vst(a):
         print("No se subió al Brain: repite con --subir cuando quieras.")
 
 
+def cmd_hacia_vst(a):
+    """Escribe presets de la librería como .gfl (capa) o .gfp para importarlos en el VST. No toca el Brain."""
+    destino = Path(a.destino)
+    destino.mkdir(parents=True, exist_ok=True)
+    for archivo in a.files:
+        d = json.loads(Path(archivo).read_text())
+        capa = "engine_a" in d
+        raw = load_layer(archivo) if capa else load_entry(archivo)[1]
+        ruta = destino / f"{slug(d['name'])}.{'gfl' if capa else 'gfp'}"
+        if ruta.exists() and ruta.read_bytes() != raw:
+            sys.exit(f"Ya existe {ruta} con otro sonido: no lo piso")
+        ruta.write_bytes(raw)
+        print(ruta)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description="Bibliotecario de presets del GrooveForge Brain")
     p.add_argument("--port", help="puerto serie (por defecto el primer /dev/cu.usbmodem*)")
@@ -444,6 +459,10 @@ def main(argv=None):
     s.add_argument("--rol", choices=ROLES)
     s.add_argument("--subir", action="store_true", help="subirlo también al final del banco")
     s.set_defaults(fn=cmd_desde_vst)
+    s = sub.add_parser("hacia-vst", help="escribir presets de la librería como .gfl/.gfp para el VST")
+    s.add_argument("destino")
+    s.add_argument("files", nargs="+")
+    s.set_defaults(fn=cmd_hacia_vst)
     s = sub.add_parser("format", help="BORRA todos los presets del Brain y regenera los de fábrica")
     s.add_argument("--si", action="store_true", help="confirmar")
     s.set_defaults(fn=cmd_format)

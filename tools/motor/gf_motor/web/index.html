@@ -76,6 +76,16 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button data-ir="arrangement" class="tab">Arrangement<i></i></button>
     <button data-ir="kick" class="tab">Kick<i></i></button>
     <button data-ir="bajo" class="tab">Bajo<i></i></button>
+    <button data-ir="drums" class="tab">Drums<i></i></button>
+    <button data-ir="tops" class="tab">Tops<i></i></button>
+    <button data-ir="motivo" class="tab">Motivo<i></i></button>
+    <button data-ir="acordes" class="tab">Acordes<i></i></button>
+    <button data-ir="pads" class="tab">Pads<i></i></button>
+    <button data-ir="detalles" class="tab">Stabs<i></i></button>
+    <button data-ir="transiciones" class="tab">Transiciones<i></i></button>
+    <button data-ir="armado" class="tab">Armado<i></i></button>
+    <button data-ir="mezcla" class="tab">Mezcla<i></i></button>
+    <button data-ir="ideas" class="tab">Ideas<i></i></button>
     <button data-ir="registro" class="tab">Registro<i></i></button>
   </nav>
   <div class="aviso" id="protegido" role="status"></div>
@@ -88,7 +98,7 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <div class="campos">
       <label>Género <select id="genero"><option value="organic">Organic</option></select></label>
       <label>Tonalidad <select id="raiz"></select></label>
-      <label>Modo <select id="modo"><option value="menor">Menor</option><option value="dorico">Dórico</option><option value="frigio">Frigio</option><option value="mayor">Mayor</option></select></label>
+      <label>Modo <select id="modo"><option value="menor">Menor</option><option value="dorico">Dórico</option><option value="frigio">Frigio</option><option value="lidia_dominante">Lidia dominante</option><option value="mayor">Mayor</option></select></label>
       <label>BPM <input id="bpm" type="number" min="60" max="200" step="0.5" value="122"></label>
     </div>
     <button id="b-partida">Empezar</button>
@@ -151,6 +161,110 @@ pre{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0 0;font:inherit;fon
     <button id="b-bajo-revisar" disabled>Registrar lo que cambié</button>
     <div id="r-bajo-revisar"></div>
   </section>
+  <section id="s-drums" class="bloq" data-seccion="drums">
+    <div class="num">1</div>
+    <h2>Rack de batería</h2>
+    <p>Elige un sonido para clave, snare, clap y hats. Al completar los cuatro, el rack queda puesto en <code>DRUMS</code>; si cambias uno, se reemplaza. Usa las notas de tus patrones (47, 48, 49, 52, 53), y el hat cerrado corta al abierto.</p>
+    <div class="fila"><button id="b-drums" disabled>Generar</button><span id="contador-drums" class="contador"></span></div>
+    <div id="r-drums"></div>
+  </section>
+
+  <section id="s-drum-patron" class="bloq" data-seccion="drums">
+    <div class="num">2</div>
+    <h2>Patrón</h2>
+    <p>Lee tu <code>KICK</code> y tu <code>BASS</code> y propone claves que dialogan con ellos, con clap y hats de base. Pon uno en <code>DRUMS</code> y edítalo. Vuelve a leer si cambias el bajo.</p>
+    <button id="b-drum-patrones" disabled>Leer kick y bajo</button>
+    <div id="r-drum-patrones"></div>
+  </section>
+
+  <section id="s-tops-perc" class="bloq" data-seccion="tops">
+    <div class="num">1</div>
+    <h2>Perc</h2>
+    <p>Tus patrones para Tribe, con lo que ya elegiste primero. Quedan como clip editable de 16 compases en <code>PERC</code>. Carga Tribe a mano una vez en esa pista.</p>
+    <button id="b-tops-perc" disabled>Ver opciones</button>
+    <div id="r-tops-perc"></div>
+  </section>
+
+  <section id="s-tops-top" class="bloq" data-seccion="tops">
+    <div class="num">2</div>
+    <h2>Top</h2>
+    <p>Lo mismo para el movimiento continuo, en la pista <code>TOP</code>.</p>
+    <button id="b-tops-top" disabled>Ver opciones</button>
+    <div id="r-tops-top"></div>
+  </section>
+
+  <section id="s-motivo" class="bloq" data-seccion="motivo">
+    <div class="num">1</div>
+    <h2>Motivo</h2>
+    <p>Motivos de 2 compases, en forma A A A B, en tu escala. Respuesta y Con clave salen de tu groove. Pon uno en <code>LEAD</code> y edítalo: es solo un punto de partida.</p>
+    <button id="b-motivo" disabled>Generar</button>
+    <div id="r-motivo"></div>
+  </section>
+
+  <section id="s-motivo-sonido" class="bloq" data-seccion="motivo">
+    <div class="num">2</div>
+    <h2>Sonido en el Brain</h2>
+    <p>Opcional, si <code>LEAD</code> sale al Brain. Cambia la capa al instante; si prefieres el VST u otro instrumento, cárgalo en la pista.</p>
+    <button id="b-motivo-capas" disabled>Leer capas del Brain</button>
+    <div id="r-motivo-capas"></div>
+  </section>
+
+  <section id="s-acordes" class="bloq" data-seccion="acordes">
+    <div class="num">1</div>
+    <h2>Acordes</h2>
+    <p>Lee tu groove y tu melodía, y propone progresiones de tu escala con tríadas, séptimas y décimas. Queda como clip editable de 16 compases en <code>CHORDS</code>; carga ahí tu VST. Los choques con la melodía son información: pueden ser justo el color que buscas.</p>
+    <button id="b-acordes" disabled>Leer groove y melodía</button>
+    <div id="r-acordes"></div>
+  </section>
+
+  <section id="s-pads" class="bloq" data-seccion="pads">
+    <div class="num">1</div>
+    <h2>Pad y atmósfera</h2>
+    <p>Sigue la progresión que dejaste en Acordes. El pad sostiene la armonía en <code>PAD</code>; la atmósfera es textura sin ritmo en <code>ATMOS</code>. Son material de intro y break: mueve los clips donde quieras. Sonidos para el VST en <code>presets/pads</code> de la Library; en la mezcla, envío Hall a −16 dB.</p>
+    <button id="b-pads" disabled>Leer acordes</button>
+    <div id="r-pads"></div>
+  </section>
+
+  <section id="s-detalles" class="bloq" data-seccion="detalles">
+    <div class="num">1</div>
+    <h2>Stabs y plucks</h2>
+    <p>Lee tus acordes, tu lead y tu kick. Los stabs y el riff caen donde el lead calla: pregunta y respuesta. Si otra pista ya hace ese papel, te aviso; decides tú. Van a <code>STABS</code> y <code>PLUCKS</code>; sonidos en <code>presets/stabs-plucks</code>, envío Delay.</p>
+    <button id="b-detalles" disabled>Leer acordes y lead</button>
+    <div id="r-detalles"></div>
+  </section>
+
+  <section id="s-transiciones" class="bloq" data-seccion="transiciones">
+    <div class="num">1</div>
+    <h2>Transiciones</h2>
+    <p>Lee los bloques de <code>ARRANGE</code> y pone cada elemento justo antes de cada llegada, en su propia pista: <code>ROLL</code>, <code>RISER</code>, <code>FILL</code> y <code>EAR CANDY</code>. Si mueves los bloques, vuelve a leer.</p>
+    <button id="b-transiciones" disabled>Leer arreglo</button>
+    <div id="r-transiciones"></div>
+  </section>
+
+  <section id="s-armado" class="bloq" data-seccion="armado">
+    <div class="num">1</div>
+    <h2>Armado</h2>
+    <p>Reparte tus materiales (el primer clip de cada pista, hasta 16 compases) por los bloques de <code>ARRANGE</code>. Cambia cada casilla con un clic: <b>●</b> todo · <b>◐</b> parcial (entra escalonado en la intro, sale en el outro, primera mitad en el resto) · <b>·</b> nada. Antes de llenar se registra el set. Lo que hayas puesto tú no se toca; las transiciones tampoco.</p>
+    <button id="b-armado" disabled>Leer arreglo y materiales</button>
+    <div id="r-armado"></div>
+  </section>
+
+  <section id="s-mezcla" class="bloq" data-seccion="mezcla">
+    <div class="num">1</div>
+    <h2>Mezcla de partida</h2>
+    <p>Fader, paneo y envíos a tus retornos (A Office … F Echo) por rol, según el nombre de cada pista. Es un punto de partida: cada instrumento sale con su propio nivel. Lo que ya moviste no se toca. Míralo después en GrooveScope (The Room).</p>
+    <button id="b-mezcla" disabled>Leer mezcla</button>
+    <div id="r-mezcla"></div>
+  </section>
+
+  <section id="s-ideas" class="bloq" data-seccion="ideas">
+    <div class="num">1</div>
+    <h2>Ideas: voces y anchura</h2>
+    <p>Lee la carga de cada sección (qué bandas ocupan tus pistas melódicas, cuánto calla el lead, cuánta percusión hay) y sugiere dónde cabe una voz y de qué tipo, y qué pistas abrir o duplicar. Solo recomienda: no escribe nada en Live.</p>
+    <button id="b-ideas" disabled>Leer la carga</button>
+    <div id="r-ideas"></div>
+  </section>
+
   <section id="s-registro" class="bloq" data-seccion="registro">
     <div class="num">1</div>
     <h2>Registrar lo que quedó</h2>
@@ -221,6 +335,24 @@ for (const b of document.querySelectorAll(".tab")) b.onclick = () => irA(b.datas
 function marcar(nombre, lista) { document.querySelector(`.tab[data-ir="${nombre}"]`).classList.toggle("lista", lista); }
 function pintar(s) {
   marcar("registro", !!s?.registros?.length);
+  marcar("drums", !!s?.drums?.rack);
+  if (s) { pintarDrums(s.drums); pintarPatronDrums(s.drums.patrones); pintarTops("perc", s.tops.perc); pintarTops("top", s.tops.top); }
+  marcar("tops", !!(s?.tops?.perc?.clip || s?.tops?.top?.clip));
+  marcar("motivo", !!s?.motivo?.clip);
+  marcar("acordes", !!s?.acordes?.clip);
+  if (s) pintarAcordes(s.acordes);
+  marcar("pads", !!(s?.pads?.pad?.clip || s?.pads?.atmos?.clip));
+  if (s) pintarPads(s.pads);
+  marcar("detalles", !!(s?.detalles?.stab?.clip || s?.detalles?.pluck?.clip));
+  if (s) pintarDetalles(s.detalles);
+  marcar("transiciones", !!s && ["roll","riser","fill","ear","tribe","fx","subdrop"].some(k => s.transiciones[k]?.clips));
+  if (s) pintarTransiciones(s.transiciones);
+  marcar("armado", !!s?.armado && Object.keys(s.armado.escritos || {}).length > 0);
+  if (s) pintarArmado(s.armado);
+  marcar("mezcla", !!s?.mezcla && Object.keys(s.mezcla.escrito || {}).length > 0);
+  if (s) pintarMezcla(s.mezcla);
+  if (s) pintarIdeas(s.recomendaciones);
+  if (s) pintarMotivo(s.motivo);
   if (s) {
     $("genero").value = s.partida.genero; $("raiz").value = s.partida.raiz; $("modo").value = s.partida.modo; $("bpm").value = s.partida.bpm;
     $("b-partida").textContent = "Nueva sesión";
@@ -230,8 +362,8 @@ function pintar(s) {
     pintarRegistros(s.registros);
   }
   marcar("partida", !!s); marcar("arrangement", !!s?.guia); marcar("kick", !!s?.rack); marcar("bajo", !!s?.bajo?.clip);
-  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar"]) {
-    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro"}[n] || n;
+  for (const n of ["guia","borrador","kicks","revisar","bajo-patrones","bajo-capas","bajo-revisar","registrar","drums","drum-patrones","tops-perc","tops-top","motivo","motivo-capas","acordes","pads","detalles","transiciones","armado","mezcla","ideas"]) {
+    const seccion = {"bajo-patrones":"bajo-patron","bajo-capas":"bajo-sonido","registrar":"registro","drum-patrones":"drum-patron","motivo-capas":"motivo-sonido"}[n] || n;
     $(`s-${seccion}`).classList.toggle("bloq", !s);
     $(`b-${n}`).disabled = !s;
   }
@@ -247,6 +379,370 @@ function pintar(s) {
   pintarBajo(s.bajo);
   $("s-revisar").classList.toggle("hecho", !!s.ultima_revision);
   if (s.ultima_revision) { const p=document.createElement("pre"); p.textContent=s.ultima_revision.map(resumen).join("\n"); $("r-revisar").replaceChildren(p); }
+}
+const GRUPOS_DRUM = ["CLAVE","SNARE","CLAP","HATS"];
+function pintarDrums(d) {
+  $("s-drums").classList.toggle("hecho", !!d.rack);
+  if (d.tandas) $("b-drums").textContent = "Otra tanda";
+  $("contador-drums").textContent = !d.tandas ? "" : d.rack?.cargado ? `4 de 4 · rack puesto en ${d.rack.pista} (R${d.racks.length})` : `${Object.keys(d.seleccion).length} de 4 elegidos`;
+  const nodos = [];
+  if (d.rack) {
+    const r = document.createElement("p"); r.className = "ok";
+    r.textContent = d.rack.cargado ? `Rack ${d.rack.nombre} puesto en ${d.rack.pista}. Aún no suena solo: la pista no tiene clip. Pads: clave B1, snare C2, clap C#2, hat cerrado E2, hat abierto F2.` : `Rack creado, pero no pude ponerlo en ${d.rack.pista}: ${d.rack.motivo}. Arrástralo desde GrooveForge_Library › 00 Motor.`;
+    nodos.push(r);
+  }
+  for (const g of GRUPOS_DRUM) {
+    const opciones = d.opciones.filter(o => o.grupo === g);
+    if (!opciones.length) continue;
+    const t = document.createElement("div"); t.className = "tanda"; t.textContent = g; nodos.push(t);
+    for (const o of opciones) {
+      const elegido = d.seleccion[g] === o.id;
+      for (const voz of Object.keys(o.archivos)) {
+        const f = document.createElement("div"); f.className = "op" + (elegido ? " sel" : "");
+        const l = document.createElement("b"); l.textContent = `${o.material} ${o.tanda}`;
+        const c = document.createElement("small"); c.textContent = g === "HATS" ? (voz === "hat_abierto" ? "ABIERTO" : "CERRADO") : `${o.raiz} ${o.modo}`; l.append(c);
+        const a = document.createElement("audio"); a.controls = true; a.preload = "none"; a.src = `/drum/${encodeURIComponent(o.id)}/${voz}`;
+        f.append(l, a);
+        if (voz === Object.keys(o.archivos)[0]) {
+          const b = document.createElement("button"); b.className = "sec"; b.textContent = elegido ? "Elegido" : "Elegir"; b.disabled = elegido;
+          b.onclick = () => accion("drum_elegir", {id:o.id}, b);
+          f.append(b);
+        } else f.append(document.createElement("span"));
+        nodos.push(f);
+      }
+    }
+  }
+  $("r-drums").replaceChildren(...nodos);
+}
+function rejilla(pasos) {
+  const set = new Set(pasos);
+  return Array.from({length:16}, (_, i) => set.has(i) ? "X" : (i % 4 ? "·" : "|")).join(" ");
+}
+function pintarPatronDrums(p) {
+  if (!p) return;
+  $("s-drum-patron").classList.toggle("hecho", !!p.clip);
+  const nodos = [];
+  if (p.analisis) {
+    const r = document.createElement("pre");
+    r.textContent = `KICK   ${rejilla(p.analisis.kick)}\nBASS   ${rejilla(p.analisis.bajo)}` + (p.sin_bajo ? "\n(no encontré notas en BASS)" : "");
+    nodos.push(r);
+    for (const o of p.opciones) {
+      const f = document.createElement("div"); f.className = "patron" + (p.actual === o.nombre ? " sel" : "");
+      const n = document.createElement("pre"); n.style.margin = "0"; n.textContent = `${o.nombre.padEnd(10)}\nCLAVE  ${rejilla(o.clave)}`;
+      const x = document.createElement("button"); x.className = "sec"; x.textContent = p.actual === o.nombre ? "Puesto" : "Poner"; x.disabled = p.actual === o.nombre;
+      x.onclick = () => accion("drum_poner", {nombre:o.nombre}, x);
+      f.append(n, x); nodos.push(f);
+    }
+    if (p.pista && p.pista !== "DRUMS") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${p.pista}. Esa pista aún no tiene rack.`; nodos.push(a); }
+    $("b-drum-patrones").textContent = "Volver a leer";
+  }
+  $("r-drum-patrones").replaceChildren(...nodos);
+}
+function pintarTops(rol, t) {
+  $(`s-tops-${rol}`).classList.toggle("hecho", !!t.clip);
+  if (t.opciones.length) $(`b-tops-${rol}`).textContent = "Volver a leer";
+  const nodos = t.opciones.map(o => {
+    const f = document.createElement("div"); f.className = "patron" + (t.actual === o.id ? " sel" : "");
+    const n = document.createElement("span");
+    const marca = o.decision_juan === "seleccion" ? " · tu selección" : o.decision_juan === "favorito" ? " · tu favorito" : "";
+    n.textContent = `${o.nombre}${marca}`;
+    const e = document.createElement("small"); e.style.display = "block"; e.style.color = "var(--monitor)";
+    e.textContent = o.encaje ? `Cae con kick ${o.encaje.kick} % · bajo ${o.encaje.bajo} % · clave ${o.encaje.clave} %` : "";
+    n.append(e);
+    const x = document.createElement("button"); x.className = "sec"; x.textContent = t.actual === o.id ? "Puesto" : "Poner"; x.disabled = t.actual === o.id;
+    x.onclick = () => accion("tops_poner", {rol, id:o.id}, x);
+    f.append(n, x); return f;
+  });
+  if (t.pista && t.pista !== rol.toUpperCase()) { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Ese clip ya tenía cambios, así que va en ${t.pista}. Esa pista aún no tiene Tribe.`; nodos.push(a); }
+  $(`r-tops-${rol}`).replaceChildren(...nodos);
+}
+function pintarMotivo(m) {
+  $("s-motivo").classList.toggle("hecho", !!m.clip);
+  if (m.tandas) $("b-motivo").textContent = "Otra tanda";
+  const nodos = [];
+  for (let t = 1; t <= m.tandas; t++) {
+    const c = document.createElement("div"); c.className = "tanda"; c.textContent = `Tanda ${t}`; nodos.push(c);
+    for (const o of m.opciones.filter(x => x.tanda === t)) {
+      const f = document.createElement("div"); f.className = "patron" + (m.actual === o.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = o.nombre;
+      const e = document.createElement("small"); e.style.display = "block"; e.style.color = "var(--monitor)"; e.textContent = `${o.raiz} ${o.modo}`; n.append(e);
+      const x = document.createElement("button"); x.className = "sec"; x.textContent = m.actual === o.id ? "Puesto" : "Poner"; x.disabled = m.actual === o.id;
+      x.onclick = () => accion("motivo_poner", {id:o.id}, x);
+      f.append(n, x); nodos.push(f);
+    }
+  }
+  if (m.pista && m.pista !== "LEAD") { const a = document.createElement("p"); a.className = "ok"; a.textContent = `Editaste el clip, así que este va en ${m.pista}.`; nodos.unshift(a); }
+  $("r-motivo").replaceChildren(...nodos);
+  $("s-motivo-sonido").classList.toggle("hecho", !!m.capa);
+  $("r-motivo-capas").replaceChildren(...m.capas.map(c => {
+    const f = document.createElement("div"); f.className = "patron" + (m.capa === c.nombre ? " sel" : "");
+    const n = document.createElement("span"); n.textContent = c.nombre;
+    const x = document.createElement("button"); x.className = "sec"; x.textContent = m.capa === c.nombre ? "En el Brain" : "Usar"; x.disabled = m.capa === c.nombre;
+    x.onclick = () => accion("motivo_capa", {nombre:c.nombre}, x);
+    f.append(n, x); return f;
+  }));
+}
+function pintarAcordes(a) {
+  $("s-acordes").classList.toggle("hecho", !!a.clip);
+  if (a.opciones.length) $("b-acordes").textContent = "Volver a leer";
+  const nodos = [];
+  if (a.opciones.length) {
+    const m = document.createElement("p"); m.className = "ok";
+    m.textContent = a.melodia ? `Melodía leída de ${a.melodia}.` : "No encontré melodía: los choques no se calculan.";
+    nodos.push(m);
+  }
+  if (a.pista && a.pista !== "CHORDS") { const x = document.createElement("p"); x.className = "ok"; x.textContent = `Editaste el clip, así que este va en ${a.pista}.`; nodos.push(x); }
+  for (const prog of [...new Set(a.opciones.map(o => o.progresion))]) {
+    const ops = a.opciones.filter(o => o.progresion === prog);
+    const t = document.createElement("div"); t.className = "tanda"; t.textContent = ops[0].acordes; nodos.push(t);
+    for (const o of ops) {
+      const f = document.createElement("div"); f.className = "patron" + (a.actual === o.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = o.patron;
+      const e = document.createElement("small"); e.style.display = "block"; e.style.color = "var(--monitor)";
+      e.textContent = o.choques.porcentaje === null ? "" : `Choca con la melodía ${o.choques.porcentaje} %` + (o.choques.frecuentes.length ? ` · ${o.choques.frecuentes.join(", ")}` : "");
+      n.append(e);
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = a.actual === o.id ? "Puesto" : "Poner"; b.disabled = a.actual === o.id;
+      b.onclick = () => accion("acordes_poner", {id:o.id}, b);
+      f.append(n, b); nodos.push(f);
+    }
+  }
+  $("r-acordes").replaceChildren(...nodos);
+}
+const PADS_INFO = {
+  "DRON": "La + Mi sostenidos: el piso que no cambia",
+  "LINEA GUIA": "3.ª y 7.ª de cada acorde, despacio: el color lidio cantado",
+  "ABIERTO ALTO": "Fundamental, quinta y décima, por encima de tus acordes",
+  "NUBE": "Notas sueltas y largas, fuera del pulso. Volver a leer da otra nube",
+  "SWELL": "Las notas del acorde entran una a una: para el build",
+  "RAIZ GRAVE": "Un La grave sostenido, para un preset que se mueve solo",
+};
+function pintarPads(p) {
+  $("s-pads").classList.toggle("hecho", !!(p.pad.clip || p.atmos.clip));
+  if (p.pad.opciones.length) $("b-pads").textContent = "Volver a leer";
+  const nodos = [];
+  if (p.pad.opciones.length) {
+    const m = document.createElement("p"); m.className = "ok";
+    m.textContent = p.progresion ? `Sobre tu progresión ${p.progresion}.` : "No hay acordes puestos: todo va sobre la tónica.";
+    nodos.push(m);
+  }
+  for (const [parte, titulo, base] of [["pad", "Pad", "PAD"], ["atmos", "Atmósfera", "ATMOS"]]) {
+    const e = p[parte];
+    if (!e.opciones.length) continue;
+    const t = document.createElement("div"); t.className = "tanda"; t.textContent = titulo; nodos.push(t);
+    if (e.pista && e.pista !== base) { const x = document.createElement("p"); x.className = "ok"; x.textContent = `Editaste el clip, así que este va en ${e.pista}.`; nodos.push(x); }
+    for (const o of e.opciones) {
+      const f = document.createElement("div"); f.className = "patron" + (e.actual === o.id ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = o.patron;
+      const d = document.createElement("small"); d.style.display = "block"; d.style.color = "var(--monitor)"; d.textContent = PADS_INFO[o.patron] || "";
+      n.append(d);
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = e.actual === o.id ? "Puesto" : "Poner"; b.disabled = e.actual === o.id;
+      b.onclick = () => accion("pads_poner", {parte, id:o.id}, b);
+      f.append(n, b); nodos.push(f);
+    }
+  }
+  $("r-pads").replaceChildren(...nodos);
+}
+function filaOpcion(texto, info, puesta, onclick) {
+  const f = document.createElement("div"); f.className = "patron" + (puesta ? " sel" : "");
+  const n = document.createElement("span"); n.textContent = texto;
+  const d = document.createElement("small"); d.style.display = "block"; d.style.color = "var(--monitor)"; d.textContent = info || "";
+  n.append(d);
+  const b = document.createElement("button"); b.className = "sec"; b.textContent = puesta ? "Puesto" : "Poner"; b.disabled = puesta;
+  b.onclick = () => onclick(b);
+  f.append(n, b); return f;
+}
+function nota(texto) { const p = document.createElement("p"); p.className = "ok"; p.textContent = texto; return p; }
+function tanda(texto) { const t = document.createElement("div"); t.className = "tanda"; t.textContent = texto; return t; }
+const DETALLES_INFO = {
+  "GANCHO": "Hasta 3 golpes fijos cada 2 compases, en los huecos del lead",
+  "RESPUESTA": "Un golpe justo después de cada frase del lead",
+  "ANTICIPO": "La última «y» de cada 2 compases, con el acorde que viene",
+  "ARPEGIO 16": "1 3 5 8 5 3 en semicorcheas",
+  "ARPEGIO 3-3-2": "El acorde subiendo, en 3-3-2",
+  "RIFF EN HUECOS": "Frase de 2 compases solo donde el lead calla. Volver a leer da otra",
+};
+function pintarDetalles(d) {
+  $("s-detalles").classList.toggle("hecho", !!(d.stab.clip || d.pluck.clip));
+  if (!d.stab.opciones.length) { $("r-detalles").replaceChildren(); return; }
+  $("b-detalles").textContent = "Volver a leer";
+  const nodos = [nota((d.progresion ? `Sobre ${d.progresion}` : "Sin acordes: sobre la tónica") + (d.lead ? `, con los huecos de ${d.lead}.` : ", sin lead."))];
+  if (d.recomendacion?.length) {
+    nodos.push(tanda("Recomendación"));
+    for (const r of d.recomendacion) {
+      const f = document.createElement("div"); f.className = "patron" + (r.anadir ? " sel" : "");
+      const n = document.createElement("span"); n.textContent = (r.anadir ? "Añadir " : "No hace falta: ") + (r.parte === "stab" ? "stab " : "pluck ") + r.patron;
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)"; x.textContent = r.razon;
+      n.append(x); f.append(n);
+      if (r.anadir) { const b = document.createElement("button"); b.className = "sec"; b.textContent = "Poner"; b.onclick = () => accion("detalles_poner", {parte:r.parte, id:r.patron}, b); f.append(b); }
+      nodos.push(f);
+    }
+  }
+  for (const [parte, titulo, base] of [["stab", "Stabs", "STABS"], ["pluck", "Plucks", "PLUCKS"]]) {
+    const e = d[parte];
+    nodos.push(tanda(titulo));
+    if (e.aviso) { const a = nota(e.aviso); a.style.color = "var(--monitor)"; nodos.push(a); }
+    if (parte === "pluck" && d.riff_aviso) { const a = nota(d.riff_aviso); a.style.color = "var(--monitor)"; nodos.push(a); }
+    if (e.pista && e.pista !== base) nodos.push(nota(`Editaste el clip, así que este va en ${e.pista}.`));
+    for (const o of e.opciones) nodos.push(filaOpcion(o.patron, DETALLES_INFO[o.patron], e.actual === o.id, b => accion("detalles_poner", {parte, id:o.id}, b)));
+  }
+  $("r-detalles").replaceChildren(...nodos);
+}
+const TRANS = [["roll", "Roll (drum machine) · antes de cada drop", "ROLL"], ["tribe", "Roll y riser con Tribe · antes de cada drop", "ROLL TRIBE"], ["riser", "Riser · durante el build", "RISER"], ["fill", "Fills con Tribe · al final de cada frase de 8 compases", "FILL"], ["subdrop", "Subdrop · seno que cae a La", "SUBDROP"], ["ear", "Ear candy", "EAR CANDY"], ["fx", "FX", "FX"]];
+const TRANS_INFO = {
+  "ROLL 4": "4 compases: negras, corcheas, semicorcheas, fusas", "ROLL 8": "8 compases, dos por subdivisión", "ROLL 2": "2 compases, corto",
+  "RISER NOTA": "La tónica sostenida: la subida la pone el preset", "RISER ESCALERA": "Las notas del acorde entran una a una", "RISER OCTAVAS": "La tónica sube de octava",
+  "CAJA": "Caja vallenata: fondo en semicorcheas, quemao y latigazo",
+  "ROLL TRESILLO": "3-3-2, tresillos, sextillos y fusas: tu tresillo acelerando", "ROLL CON SILENCIO": "Se corta un tiempo antes del drop", "ROLL FLAM": "Golpes dobles, más orgánico",
+  "LLAMADOR": "Llamador abierto y bajoneo acelerando hacia el drop", "ALEGRE QUE LLAMA": "La llamada del alegre en el último compás de la frase", "TAMBORA": "Apagado que abre en remate, en los 2 últimos compases", "GUACHE RAIN": "Guache en trémolo creciendo: un riser orgánico",
+  "CAIDA": "Ruido que se cierra al entrar el drop (JD CAIDA)", "SWELL INVERSO": "Ruido que crece un compás y corta en el drop (JD SWELL)", "STUTTER": "La tónica repetida cada vez más rápido", "NATURALEZA": "Agua o aire en intro y break (JD RIO, JD AIRE)",
+  "SUBDROP INTER": "En el silencio del INTER, antes del drop", "SUBDROP EN DROP": "En el primer tiempo de cada drop", "STAB ANTES DEL DROP": "Un golpe y silencio antes del drop", "GOTA EN EL BREAK": "Nota aguda larga para un eco",
+};
+// Motor del VST y preset sugerido (librería del Brain). HYBRID = capa de dos motores.
+const SONIDOS = {
+  "RISER NOTA": "ARP 2600 · GF NOISE RISER o JD AIRE", "RISER ESCALERA": "OB-6 · GF DARK DRONE, o Juno-106 · GF STRING SWELL", "RISER OCTAVAS": "ARP 2600 · GF NOISE RISER",
+  "STAB ANTES DEL DROP": "HYBRID (Juno + Prophet) · FRENCH STAB, OB-6 · GF BRASS HIT o DX7 · GF FM DISCO STAB",
+  "GOTA EN EL BREAK": "DX7 · GF KALIMBA TINE, GF CHONTA o BELLS; ARP 2600 · RING BELL o JD GOTAS",
+  "CAIDA": "ARP 2600 · JD CAIDA", "SWELL INVERSO": "ARP 2600 · JD SWELL", "STUTTER": "El de tu lead, o un stab (DX7 · GF FM DISCO STAB)",
+  "NATURALEZA": "HYBRID (ARP 2600 + OB-6) · JD RIO o JD CASCADA; ARP 2600 · JD AIRE",
+  "SUBDROP INTER": "Rack de la drum machine (botones de arriba)", "SUBDROP EN DROP": "Rack de la drum machine (botones de arriba)",
+};
+function pintarTransiciones(t) {
+  const hay = TRANS.some(([k]) => t[k].opciones.length);
+  $("s-transiciones").classList.toggle("hecho", TRANS.some(([k]) => t[k].clips));
+  if (!hay) { $("r-transiciones").replaceChildren(); return; }
+  $("b-transiciones").textContent = "Volver a leer";
+  const nodos = [nota("Secciones: " + (t.secciones.map(s => `${s.nombre} ${s.inicio / 4 + 1}`).join(" · ") || "ninguna con nombre"))];
+  for (const [k, titulo, base] of TRANS) {
+    const e = t[k];
+    nodos.push(tanda(titulo));
+    if (e.pista && e.pista !== base) nodos.push(nota(`Editaste esa pista, así que esto va en ${e.pista}.`));
+    if (k === "subdrop") {
+      const f = document.createElement("div"); f.className = "patron";
+      const n = document.createElement("span"); n.textContent = "Sonido";
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+      x.textContent = t.rack_subdrop ? `${t.rack_subdrop.nombre}` + (t.rack_subdrop.cargado.length ? " · en SUBDROP" : ` · no se cargó: ${t.rack_subdrop.motivo || ""}`) : "CORTA (1,8 s) cabe en un INTER de un compás; LARGA cae más lento; 808 casi no cae";
+      n.append(x); f.append(n);
+      for (const v of ["CORTA", "LARGA", "808"]) {
+        const b = document.createElement("button"); b.className = "sec"; b.textContent = v; b.disabled = t.rack_subdrop?.variante === v;
+        b.onclick = () => accion("subdrop_sonido", {variante:v}, b); f.append(b);
+      }
+      nodos.push(f);
+    }
+    if (k === "roll") {
+      const f = document.createElement("div"); f.className = "patron";
+      const n = document.createElement("span"); n.textContent = "Sonido de la drum machine";
+      const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+      x.textContent = t.rack_roll ? `${t.rack_roll.nombre}` + (t.rack_roll.cargado.length ? ` · en ${t.rack_roll.cargado.join(" y ")}` : ` · no se cargó: ${t.rack_roll.motivo || ""}`) : "Snare y clap afinados a La, en un rack para ROLL";
+      n.append(x); f.append(n);
+      for (const m of ["MADERA", "PIEL", "808"]) {
+        const b = document.createElement("button"); b.className = "sec"; b.textContent = m; b.disabled = t.rack_roll?.material === m;
+        b.onclick = () => accion("roll_sonido", {material:m}, b); f.append(b);
+      }
+      nodos.push(f);
+    }
+    for (const o of e.opciones) {
+      const info = (TRANS_INFO[o.patron] || "") + ` · ${o.clips} ${o.clips === 1 ? "punto" : "puntos"} del arreglo` + (SONIDOS[o.patron] ? ` · Sonido: ${SONIDOS[o.patron]}` : "");
+      const fila = filaOpcion(o.patron, info, e.actual === o.id, b => accion("transiciones_poner", {elemento:k, id:o.id}, b));
+      if (!o.clips) fila.querySelector("button").disabled = true;
+      nodos.push(fila);
+    }
+  }
+  $("r-transiciones").replaceChildren(...nodos);
+}
+function pintarArmado(a) {
+  if (!a || !a.roles.length) { $("r-armado").replaceChildren(); return; }
+  $("b-armado").textContent = "Volver a leer";
+  $("s-armado").classList.toggle("hecho", Object.keys(a.escritos).length > 0);
+  const marca = {todo: "●", parcial: "◐", nada: "·"};
+  const sig = {todo: "nada", nada: "parcial", parcial: "todo"};
+  const tabla = document.createElement("table"); tabla.style.borderCollapse = "collapse"; tabla.style.fontSize = "12px"; tabla.style.width = "100%";
+  const cab = document.createElement("tr"); cab.append(document.createElement("th"));
+  for (const s of a.secciones) { const th = document.createElement("th"); th.textContent = `${s.nombre} ${s.inicio / 4 + 1}`; th.style.padding = "2px 4px"; th.style.writingMode = "vertical-rl"; cab.append(th); }
+  tabla.append(cab);
+  for (const rol of a.roles) {
+    const tr = document.createElement("tr");
+    const n = document.createElement("td"); n.textContent = rol; n.style.whiteSpace = "nowrap"; n.style.paddingRight = "8px"; tr.append(n);
+    a.presencia[rol].forEach((v, i) => {
+      const td = document.createElement("td"); td.style.textAlign = "center";
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = marca[v]; b.style.minWidth = "28px"; b.style.padding = "2px";
+      b.title = `${rol} · ${a.secciones[i].nombre}: ${v}`;
+      b.onclick = () => accion("armado_presencia", {rol, i, valor: sig[v]}, b);
+      td.append(b); tr.append(td);
+    });
+    tabla.append(tr);
+  }
+  const envoltura = document.createElement("div"); envoltura.style.overflowX = "auto"; envoltura.append(tabla);
+  const llenar = document.createElement("button"); llenar.textContent = Object.keys(a.escritos).length ? "Volver a llenar" : "Llenar el arreglo";
+  llenar.onclick = () => { if (confirm("¿Llenar el arreglo? Se registra el set antes, y solo se reemplaza lo que escribió el motor.")) accion("armado_llenar", {}, llenar); };
+  const nodos = [envoltura, llenar];
+  if (a.saltados?.length) { const p = nota(`Saltados porque ahí hay clips tuyos: ${a.saltados.join(", ")}`); p.style.color = "var(--monitor)"; nodos.push(p); }
+  $("r-armado").replaceChildren(...nodos);
+}
+function pintarMezcla(m) {
+  if (!m || !m.plan.length) { $("r-mezcla").replaceChildren(...(m ? [botonCadenas(m)] : [])); return; }
+  $("b-mezcla").textContent = "Volver a leer";
+  $("s-mezcla").classList.toggle("hecho", Object.keys(m.escrito).length > 0);
+  const pan = v => v === null ? "—" : Math.abs(v) < 0.005 ? "C" : `${Math.round(Math.abs(v) * 100)} % ${v < 0 ? "izq." : "der."}`;
+  const nodos = m.plan.map(p => {
+    const envios = Object.entries(p.sends).map(([i, db]) => `${"ABCDEF"[i]} ${db}`).join(" · ") || "sin envíos";
+    const saltos = [...p.saltado, ...p.saltados_envios];
+    const f = document.createElement("div"); f.className = "patron";
+    const n = document.createElement("span"); n.textContent = `${p.pista} (${p.rol})`;
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+    x.textContent = `${p.volume_db === null ? "fader sin tocar" : p.volume_db + " dB"} · ${pan(p.pan)} · ${envios}` + (saltos.length ? ` · se salta: ${saltos.join(", ")}` : "");
+    n.append(x); f.append(n); return f;
+  });
+  const b = document.createElement("button"); b.textContent = "Aplicar mezcla de partida";
+  b.onclick = () => { if (confirm("¿Aplicar fader, paneo y envíos de partida? Lo que ya moviste no se toca.")) accion("mezcla_aplicar", {}, b); };
+  const todo = document.createElement("button"); todo.className = "sec"; todo.textContent = "Aplicar a todas (reinicia lo que moviste)";
+  todo.onclick = () => { if (confirm("¿Poner la mezcla de partida en TODAS las pistas, incluidas las que moviste? Antes se registra el set; SC GHOST, ARRANGE y BRAIN no se tocan.")) accion("mezcla_aplicar", {forzar: true}, todo); };
+  $("r-mezcla").replaceChildren(nota(`Retornos: ${m.retornos.join(" · ") || "ninguno"}`), ...nodos, b, todo, botonCadenas(m));
+}
+function botonCadenas(m) {
+  const caja = document.createElement("div");
+  const b = document.createElement("button"); b.className = "sec"; b.textContent = "Poner cadena por rol (GF ROL)";
+  b.onclick = () => { if (confirm("¿Poner la cadena GF ROL en cada pista con rol? Una vez por pista; si la quitas, no vuelve.")) accion("cadenas_poner", {}, b); };
+  caja.append(nota("Cadena por rol: EQ (cortes), Compressor y Saturator solo donde hacen falta, Delay solo para el Haas, Utility con mono en el grave."), b);
+  for (const r of m.ultimo_cadenas || []) caja.append(nota(`${r.pista}: ${r.cargado ? "GF ROL " + r.rol : "no se cargó (" + r.motivo + ")"}`));
+  const r = document.createElement("button"); r.className = "sec"; r.textContent = "Reponer racks del motor que falten";
+  r.onclick = () => accion("racks_reponer", {}, r);
+  caja.append(r);
+  if (m.repuestos) caja.append(nota(m.repuestos.length ? `Repuestos: ${m.repuestos.join(" · ")}` : "No faltaba ningún rack del motor."));
+  return caja;
+}
+function pintarIdeas(r) {
+  if (!r) { $("r-ideas").replaceChildren(); return; }
+  $("b-ideas").textContent = "Volver a leer";
+  const pct = v => `${Math.round(v * 100)} %`;
+  const nodos = [tanda("Voces por sección")];
+  for (const f of r.secciones) {
+    const fila = document.createElement("div"); fila.className = "patron";
+    const n = document.createElement("span");
+    n.textContent = `${f.seccion} ${f.inicio / 4 + 1}: ` + (f.voz ? `${f.voz.forma} · voz ${f.voz.tipo}` : "sin voz (silencio del subdrop o salida)");
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)";
+    const b = f.carga.bandas;
+    x.textContent = (f.voz ? f.voz.razon + (f.voz.extra ? `. ${f.voz.extra}` : "") + ". " : "")
+      + `Carga: grave ${pct(b.grave)}, medio-grave ${pct(b["medio-grave"])}, medio ${pct(b.medio)}, agudo ${pct(b.agudo)}; lead calla ${pct(f.carga.lead_calla)}; percusión ${f.carga.perc_por_compas} notas/compás`;
+    n.append(x); fila.append(n); nodos.push(fila);
+  }
+  const ap = r.secciones.find(f => f.voz);
+  if (ap) nodos.push(nota(`Cómo aplicarla: ${ap.voz.aplicar}`));
+  nodos.push(tanda("Duplicación y anchura"));
+  for (const a of r.anchura) {
+    const fila = document.createElement("div"); fila.className = "patron";
+    const n = document.createElement("span"); n.textContent = `${a.pista}: ${a.que}`;
+    const x = document.createElement("small"); x.style.display = "block"; x.style.color = "var(--monitor)"; x.textContent = a.como;
+    n.append(x); fila.append(n);
+    if (a.accion) {
+      const b = document.createElement("button"); b.className = "sec"; b.textContent = "Aplicar";
+      const que = {doble: `duplicar ${a.pista} como ${a.pista} DOBLE`, octava: `duplicar ${a.pista} una octava arriba (${a.pista} OCT)`, cadena: `poner GF ROL en ${a.pista}`}[a.accion];
+      b.onclick = () => { if (confirm(`¿${que}?`)) accion("idea_aplicar", {pista: a.pista, accion: a.accion}, b); };
+      fila.append(b);
+    }
+    nodos.push(fila);
+  }
+  nodos.push(nota("Revisa siempre la mezcla en mono: el Haas de más de 30–40 ms se oye como eco y en mono crea filtro peine."));
+  $("r-ideas").replaceChildren(...nodos);
 }
 function pintarRegistros(lista) {
   $("s-registro").classList.toggle("hecho", lista.length > 0);
@@ -349,6 +845,22 @@ $("b-guia").onclick = e => accion("guia", {}, e.target);
 $("b-borrador").onclick = e => accion("borrador", {}, e.target);
 $("b-kicks").onclick = e => accion("kicks", {}, e.target);
 $("b-revisar").onclick = e => accion("revisar", {}, e.target);
+$("b-drums").onclick = e => accion("drums", {}, e.target);
+$("b-acordes").onclick = e => accion("acordes_proponer", {}, e.target);
+$("b-pads").onclick = e => accion("pads_proponer", {}, e.target);
+$("b-detalles").onclick = e => accion("detalles_proponer", {}, e.target);
+$("b-transiciones").onclick = e => accion("transiciones_proponer", {}, e.target);
+$("b-armado").onclick = e => accion("armado_proponer", {}, e.target);
+$("b-mezcla").onclick = e => accion("mezcla_proponer", {}, e.target);
+$("b-ideas").onclick = e => accion("recomendar", {}, e.target);
+$("b-motivo").onclick = e => accion("motivo_generar", {}, e.target);
+$("b-motivo-capas").onclick = e => accion("motivo_capas", {}, e.target);
+$("b-tops-perc").onclick = e => accion("tops_proponer", {rol:"perc"}, e.target);
+$("b-tops-top").onclick = e => accion("tops_proponer", {rol:"top"}, e.target);
+$("b-drum-patrones").onclick = e => accion("drum_patrones", {}, e.target);
+for (const id of ["raiz","modo"]) $(id).onchange = () => {
+  if ($("b-partida").textContent === "Nueva sesión") accion("tonalidad", {raiz:$("raiz").value, modo:$("modo").value}, $("b-partida"));
+};
 $("b-registrar").onclick = e => accion("registrar", {sonido:$("reg-sonido").value, kick:$("reg-kick").value, nota:$("reg-nota").value}, e.target);
 $("b-bajo-patrones").onclick = e => accion("bajo_patrones", {}, e.target);
 $("b-bajo-capas").onclick = e => accion("bajo_capas", {}, e.target);

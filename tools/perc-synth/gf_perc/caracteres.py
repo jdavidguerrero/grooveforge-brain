@@ -8,7 +8,7 @@ import numpy as np
 
 from .core import SR
 from .generos import notas_de
-from .kit import Ajuste, sintetizar_voz
+from .kit import Ajuste, base_hz, sintetizar_voz
 from .tonalidad import MODOS, clase_de
 
 VARIACION = 0.8
@@ -37,50 +37,90 @@ class Cola:
     decay: float
     seca: bool
     semilla: int
-    grave: bool
     cuerpo: float = 1.0
 
 
-# §16. Familia CUERPO: recetas exactas de los tres que eligió Juan. Familia INICIAL: la base de §13, en tónica.
+# §16-17. Familia CUERPO: recetas de los tres que eligió Juan. Familia INICIAL: la base de §13. Todas en la tónica.
 # La madera con la base de §14 sonó rara, así que aquí no se combina.
 COLAS_KICK = {
-    "CUERPO MIX SECA": Cola("cola_mixta", 0.6, True, 1000, True),
-    "CUERPO PIEL CORTA": Cola("cola_piel", 1.2, False, 2000, False),
-    "CUERPO PIEL LIGERA": Cola("cola_piel", 0.6, True, 2000, False, 0.4),
-    "INICIAL MADERA CORTA": Cola("inicial_madera", 1.2, False, 1000, False),
-    "INICIAL PIEL CORTA": Cola("inicial_piel", 1.2, False, 1000, False),
-    "INICIAL MIX": Cola("inicial_mixta", 1.8, False, 1000, False),
-    "INICIAL MADERA SECA": Cola("inicial_madera", 0.6, True, 1000, False),
-    "INICIAL PIEL SECA": Cola("inicial_piel", 0.6, True, 1000, False),
+    "CUERPO MIX SECA": Cola("cola_mixta", 0.6, True, 1000),
+    "CUERPO PIEL CORTA": Cola("cola_piel", 1.2, False, 2000),
+    "CUERPO PIEL LIGERA": Cola("cola_piel", 0.6, True, 2000, 0.4),
+    "INICIAL MADERA CORTA": Cola("inicial_madera", 1.2, False, 1000),
+    "INICIAL PIEL CORTA": Cola("inicial_piel", 1.2, False, 1000),
+    "INICIAL MIX": Cola("inicial_mixta", 1.8, False, 1000),
+    "INICIAL MADERA SECA": Cola("inicial_madera", 0.6, True, 1000),
+    "INICIAL PIEL SECA": Cola("inicial_piel", 0.6, True, 1000),
 }
 
 
-# Las dos referencias de Juan terminan entre 35 y 40 Hz (C#1 = 34,6 Hz; G#1 = 51,9 Hz).
-_GRAVE_MIN, _GRAVE_MAX = 25, 32
+# Regla de Juan: todo lo generado va a la fundamental. C#1–C2 (34,6–65,4 Hz) contiene una vez cada tónica.
+_GRAVE_MIN, _GRAVE_MAX = 25, 36
 
 
 def nota_grave(raiz: str, modo: str) -> int:
-    """Tónica o quinta dentro del registro grave. Todas las escalas de MODOS tienen quinta justa."""
+    """La tónica en el registro de kick. Si cae dos veces en el rango, la más grave."""
     if modo not in MODOS:
         raise ValueError(f"modo desconocido: {modo!r}")
     clase = clase_de(raiz)
-    for c in (clase, (clase + 7) % 12):
-        for nota in range(_GRAVE_MIN, _GRAVE_MAX + 1):
-            if nota % 12 == c:
-                return nota
-    raise ValueError(f"sin nota grave para {raiz} {modo}")
+    return next(n for n in range(_GRAVE_MIN, _GRAVE_MAX + 1) if n % 12 == clase)
 
 
 def sintetizar_cola(cola: str, genero: str, raiz: str, modo: str, tanda: int = 1, velocity: float = 0.85) -> tuple[np.ndarray, dict]:
     """La tanda 1 de CUERPO reproduce los kicks elegidos; las siguientes cambian el golpe y conservan la receta."""
     c = COLAS_KICK[cola]
     semilla = c.semilla + (tanda - 1) * 1000
-    nota = nota_grave(raiz, modo) if c.grave else notas_de(genero, raiz, modo)["kick"]
+    nota = nota_grave(raiz, modo)
     y, meta = sintetizar_voz(
         "kick", "piel", velocity, semilla, 1, 0.0, room=0.0 if c.seca else 0.08,
         centro=Ajuste(decay=c.decay, capa=2.2 if c.seca else 1.0, gordura=c.cuerpo), afinar_hz=440.0 * 2 ** ((nota - 69) / 12), modelo=c.modelo,
     )
     return y, {**meta, "cola": cola, "seca": c.seca, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": nota}
+
+
+# §Motor de drums: `apps/docs/produccion/motor-drums.md`.
+MATERIALES_DRUMS = {"MADERA": "madera", "PIEL": "piel", "808": "clasico"}
+GRUPOS_DRUMS = {"CLAVE": ("clave",), "SNARE": ("snare",), "CLAP": ("clap",), "HATS": ("hat_cerrado", "hat_abierto")}
+_VARIACION_DRUMS = 0.6
+
+
+# Resonancia principal de las voces sin nota clara (kit.py), que se mueve a la fundamental más cercana.
+_RESONANCIA_HZ = {
+    ("clap", "madera"): 780.0, ("clap", "piel"): 1250.0, ("clap", "clasico"): 1050.0,
+    ("hat_cerrado", "madera"): 6100.0, ("hat_cerrado", "piel"): 5200.0, ("hat_cerrado", "clasico"): 7200.0,
+    ("hat_abierto", "madera"): 6100.0, ("hat_abierto", "piel"): 5200.0, ("hat_abierto", "clasico"): 7200.0,
+}
+
+
+def _tonica_cercana(hz: float, raiz: str) -> int:
+    clase = clase_de(raiz)
+    return min((n for n in range(12, 128) if n % 12 == clase), key=lambda n: abs(69 + 12 * np.log2(hz / 440.0) - n))
+
+
+def _armonico_cercano(hz: float, raiz: str) -> float:
+    """Tónica o su tercer armónico: con solo octavas, una resonancia se movería hasta un 41 % y cambiaría de carácter."""
+    tonicas = [_hz(n) for n in range(12, 128) if n % 12 == clase_de(raiz)]
+    return min((f * k for f in tonicas for k in (1.0, 1.5)), key=lambda f: abs(np.log2(f / hz)))
+
+
+def _hz(nota: int) -> float:
+    return 440.0 * 2 ** ((nota - 69) / 12)
+
+
+def sintetizar_drum(voz: str, material: str, genero: str, raiz: str, modo: str, tanda: int = 1, velocity: float = 0.85) -> tuple[np.ndarray, dict]:
+    """Todas las voces van a la fundamental. La tanda 1 es la versión base; las siguientes varían con la semilla."""
+    if modo not in MODOS:
+        raise ValueError(f"modo desconocido: {modo!r}")
+    mat = MATERIALES_DRUMS[material]
+    base = base_hz(voz, mat)
+    if base:
+        nota = _tonica_cercana(base, raiz)
+        afinar, factor, destino = _hz(nota), None, _hz(nota)
+    else:
+        destino = _armonico_cercano(_RESONANCIA_HZ[(voz, mat)], raiz)
+        nota, afinar, factor = None, None, destino / _RESONANCIA_HZ[(voz, mat)]
+    y, meta = sintetizar_voz(voz, mat, velocity, tanda * 1000, 1, _VARIACION_DRUMS if tanda > 1 else 0.0, afinar_hz=afinar, factor_afinacion=factor)
+    return y, {**meta, "genero": genero, "raiz": raiz, "modo": modo, "nota_midi": nota, "afinado": "nota" if base else "resonancia", "resonancia_hz": round(destino, 1)}
 
 
 def sintetizar_caracter(caracter: str, genero: str, raiz: str, modo: str, seed_timbre: int = 1, velocity: float = 0.85, variacion: float = VARIACION) -> tuple[np.ndarray, dict]:

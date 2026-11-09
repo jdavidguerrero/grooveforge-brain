@@ -46,7 +46,7 @@ def test_build_escribe_presets_y_capa(tmp_path):
         (lib / engine / f"{g.slug(name)}.json").write_text(json.dumps(g.entry_from_raw(raw)))
     out = mk.build(lib)
     assert {"juno_106/jd-keys-juno.json", "prophet_5/jd-keys-prophet.json", "layers/jd-keys-capa.json"} <= set(out)
-    assert len(out) == 3 + len(mk.LAYERS)
+    assert len(out) == 3 + len(mk.LAYERS) + len(mk.LAYERS_PROPHET)
     for rel, e in out.items():
         if rel.startswith(("layers/jd-plk", "layers/jd-sus")):
             continue                                                         # test_capas_por_familia
@@ -101,3 +101,18 @@ def test_capas_por_familia(tmp_path):
         assert j["sub"] < dark["sub"] and j["cutoff"] > dark["cutoff"] and j.get("hpf", 1) > 1   # menos grave
         assert by[n][1] > by["JD SUS DARK"][1]                                                    # más tine
     assert by["JD SUS DARK3"][2]["cutoff"] > by["JD SUS DARK2"][2]["cutoff"]
+
+
+def test_capas_prophet_dx7_sostenidas():
+    for name, _, ga, gb, pa, db in mk.LAYERS_PROPHET:
+        raw = mk.layer_raw(name, ga, gb, mk.prophet_half(blank(), **pa), mk.dx7_half(blank(), **db), "prophet_5")
+        e = g.layer_entry_from_raw(raw)
+        assert e["name"] == name and e["engine_a"] == "prophet_5" and e["engine_b"] == "dx7"
+        p = mk.prophet_half(blank(), **pa)
+        assert p["sustain"] >= 0.4 and p["release_ms"] >= 500                 # largo: sostiene y respira
+        a, b, mix = p["osc"][0], p["osc"][1], p["osc"][2]
+        assert a[2] + a[3] == 1 and b[4] + b[5] + b[6] == 1                   # una onda por oscilador
+        assert -50 <= b[1] <= 50 and -24 <= b[0] <= 24 and p["mod"][0][0] == 0
+        t = mk.dx7_half(blank(), **db)
+        assert t["osc"][0][1] == 0 and t["osc"][2][1] > 0                     # DX7: solo la tine
+        assert gb <= -5

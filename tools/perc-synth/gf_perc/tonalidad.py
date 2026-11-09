@@ -13,6 +13,7 @@ MODOS = {
     "mayor": (0, 2, 4, 5, 7, 9, 11),
     "dorico": (0, 2, 3, 5, 7, 9, 10),
     "frigio": (0, 1, 3, 5, 7, 8, 10),
+    "lidia_dominante": (0, 2, 4, 6, 7, 9, 10),
 }
 KICK_MIN, KICK_MAX = 28, 36  # 41,2 a 65,4 Hz
 # Grados de la escala (0 = tónica) permitidos por voz.
