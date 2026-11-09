@@ -66,7 +66,7 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 | Pi 5 | Motor, secuenciador, sampler, **mezcla**, GUI Qt 7", Ethernet |
 | Audio | Audio+ V2 (sala); SGTL5000 en la Teensy A (cue y entrada de línea) |
 | Teensy A | Synths y FX del Brain; USB al Pi; enlace con S |
-| Teensy S | 8 encoders, 4 faders + **crossfader** (ADS1115 #1), 4 FSR de velocity (ADC propio), NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
+| Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: crossfader + 2 FSR de expresión + 1 libre; ADC propio (rápido): 4 FSR de velocity + perillas MASTER y CUE; NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
 | Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal, crossfader). HÍBRIDO y ESTUDIO después |
 
 ### 4.2 Preparado en la placa, sin poblar (para versiones siguientes)
@@ -77,8 +77,7 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 | **Mixer completo**: ecualizador aislador de 3 bandas + filtro de una perilla por canal, envíos, bancos | Solo firmware: usa los encoders y faders del MVP | — |
 | **4 entradas de trigger** (piezo, zona de pad y aro) para e-drum y **la marimba** | Conector con 8 pines analógicos de S + huellas del acondicionamiento (resistencia, diodos, pico) | S |
 | **MIDI DIN in/out + clock + sync analógico** | Huellas del optoacoplador de entrada y de los jacks TRS | S |
-| **ADS1115 #2** (2 FSR de expresión + 2 perillas) | Huella en el I2C de S | S |
-| **Segundo códec o códec multicanal** (CS42448) | El segundo puerto I2S (SAI2) de A llevado a un conector | A |
+| **Segundo códec o códec multicanal** (segundo SGTL5000 o CS42448): todo el audio en la Teensy A, con un solo reloj, sin el Audio+ | El segundo puerto I2S (SAI2) de A llevado a un conector. Se decide después de E3 (clics del cue con dos relojes). Dos SGTL5000 en una Teensy piden otra dirección I2C para uno | A |
 | **Pedal** (aceptar o saltar) | Un jack TRS a un pin libre de S | S |
 | **Línea de 5 V propia para LEDs** | Puente y pads para separar la alimentación de los LEDs | — |
 
