@@ -48,7 +48,7 @@ def test_pad_fila_columna(indice):
 NOMBRES = (
     "ENCODER_1", "ENCODER_2", "ENCODER_3", "ENCODER_4",
     "ENCODER_5", "ENCODER_6", "ENCODER_7", "ENCODER_8",
-    "MCP1_8", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
+    "JOG", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
     "PLAY", "STOP", "REC", "LOOP", "UNDO", "NEW", "SHIFT", "METRO",
     "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
 )
@@ -106,11 +106,16 @@ def test_otros_canales(canal):
         assert s.decodificar(cc(numero, 127, canal)) is None
 
 
+@pytest.mark.parametrize("valor,delta", [(0, 0), (1, 1), (127, -1), (5, 5), (123, -5)])
+def test_jog(valor, delta):
+    assert s.decodificar(cc(35, valor)) == (s.Jog(delta) if delta else None)
+
+
 def test_numeros_y_tipos_desconocidos():
     for numero in range(128):
         if numero not in [*range(36, 40), *range(48, 110)]:
             assert s.decodificar(nota(numero)) is None
-        if numero not in range(16, 35):
+        if numero not in range(16, 36):
             assert s.decodificar(cc(numero, 127)) is None
     for tipo in ("clock", "sysex", "pitchwheel", "aftertouch", "program_change"):
         assert s.decodificar(SimpleNamespace(type=tipo, channel=0)) is None
@@ -153,7 +158,7 @@ def test_cola_callback_y_consumidor(midi):
             puerto.callback(cc(16, 127))
             assert consumidor.result(timeout=2) == s.Encoder(0, -1)
         puerto.callback(nota(94, "note_on", 0))
-        puerto.callback(cc(35, 1))
+        puerto.callback(cc(36, 1))  # CC sin asignar: se ignora
         puerto.callback(cc(24, 127))
     assert puerto.cerrado
     assert list(superficie) == [s.Boton("PLAY", False), s.Fader(0, 1)]

@@ -23,11 +23,14 @@ FsrVelocity pads[] = {
     FsrVelocity({160,3000,100}), FsrVelocity({160,3000,100}),
     FsrVelocity({160,3000,100}), FsrVelocity({160,3000,100})
 };
+// 8 encoders del panel + rueda jog EC11 (29/36, cable directo en la protoboard).
 Encoder encoders[] = {
-    {2,3}, {4,5}, {9,10}, {11,12}, {22,24}, {26,30}, {31,32}, {34,35}
+    {2,3}, {4,5}, {9,10}, {11,12}, {22,24}, {26,30}, {31,32}, {34,35}, {29,36}
 };
-RelativeEncoder relative[8];
-int32_t encoder_positions[8] = {};
+constexpr uint8_t ENCODER_COUNT = sizeof(encoders) / sizeof(encoders[0]);
+constexpr uint8_t ENCODER_CC[ENCODER_COUNT] = {16,17,18,19,20,21,22,23,35};
+RelativeEncoder relative[ENCODER_COUNT];
+int32_t encoder_positions[ENCODER_COUNT] = {};
 AnalogChange pots[3];
 AnalogChange ads_controls[] = {
     AnalogChange(26400), AnalogChange(26400), AnalogChange(26400),
@@ -284,7 +287,7 @@ void setup() {
     analogReadAveraging(1);
     for (const auto pin : FSR_PINS) pinMode(pin,INPUT_DISABLE);
     for (const auto pin : POT_PINS) pinMode(pin,INPUT_DISABLE);
-    for (uint8_t i = 0; i < 8; ++i) encoder_positions[i] = encoders[i].read();
+    for (uint8_t i = 0; i < ENCODER_COUNT; ++i) encoder_positions[i] = encoders[i].read();
     analogRead(FSR_PINS[0]); // Finish PJRC ADC calibration before enabling ISR.
     reset_stats();
     fsr_timer.begin(scan_fsr,400);
@@ -294,12 +297,12 @@ void loop() {
     const uint32_t start = micros();
     drain_pads();
     poll_m4();
-    for (uint8_t i = 0; i < 8; ++i) {
+    for (uint8_t i = 0; i < ENCODER_COUNT; ++i) {
         const int32_t position = encoders[i].read();
         const int32_t delta = int32_t(uint32_t(position)-uint32_t(encoder_positions[i]));
         encoder_positions[i] = position;
         const uint8_t cc = relative[i].update(delta);
-        if (cc) send_cc(16+i,cc);
+        if (cc) send_cc(ENCODER_CC[i],cc);
     }
     if (start - last_pots >= 1000) {
         last_pots = start;

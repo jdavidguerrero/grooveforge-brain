@@ -11,6 +11,7 @@ S recoge controles y envía MIDI USB estándar al Pi. Firmware custom C++17, sin
 | Uso | Pines / dirección |
 |---|---|
 | Encoders 1–8 A/B | 2/3, 4/5, 9/10, 11/12, 22/24, 26/30, 31/32, 34/35 |
+| Rueda jog EC11 A/B | 29/36, cables directos (Juan, 2026-11-09); el clic va a la entrada 8 del MCP #1 (nota 88) |
 | Wire SDA/SCL | 18/19, 400 kHz; todo a 3,3 V y tierra común |
 | MCP #1/#2 | 0x20/0x21; 14 entradas cada uno: 0–6, 8–14; nunca 7/15 |
 | M4 Serial5 TX/RX | 20/21, 1 Mbaud; framing GroovePush existente |
@@ -55,6 +56,7 @@ USB `MIDI+Serial`, canal **1** (mido `channel=0`). Nombre USB propio **«GF Supe
 | FSR 1–4 | Note 36–39, velocity calculada; off velocity 0 |
 | M4 pad 0–31 | Note 48–79, velocity 100; off 0; índice fila × 8 + columna |
 | Encoders 1–8 | CC 16–23 relativo; cero no envía |
+| Rueda jog (EC11, pines 29/36) | CC 35 relativo; clic = nota 88 `JOG` |
 | Faders 1–4 | CC 24–27 absoluto |
 | Expresión 1–2 | CC 28–29 absoluto |
 | MASTER / CUE / IN | CC 30 / 31 / 32 absoluto |

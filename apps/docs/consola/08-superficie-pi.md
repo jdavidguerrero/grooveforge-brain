@@ -12,6 +12,7 @@
 | Notas 48–79 | `Pad(indice, presionado, velocidad)` |
 | Notas 80–107 | `Boton(nombre, presionado)` |
 | CC 16–23 | `Encoder(indice, delta)` |
+| CC 35 | `Jog(delta)`, rueda jog EC11; la aceleración la decide el consumidor |
 | CC 24–27 | `Fader(indice, valor)` |
 | CC 28–29 | `Expresion(indice, valor)` |
 | CC 30/31/32 | `Perilla(nombre, valor)`, MASTER/CUE/IN |
@@ -27,7 +28,8 @@ Note-on con velocidad positiva representa presión/entrada; note-off o note-on c
 | Notas | Nombres, en orden |
 |---|---|
 | 80–87 | ENCODER_1 … ENCODER_8 |
-| 88–93 | MCP1_8 … MCP1_13 |
+| 88 | JOG (clic de la rueda jog) |
+| 89–93 | MCP1_9 … MCP1_13 |
 | 94–101 | PLAY, STOP, REC, LOOP, UNDO, NEW, SHIFT, METRO |
 | 102–107 | MCP2_8 … MCP2_13 |
 

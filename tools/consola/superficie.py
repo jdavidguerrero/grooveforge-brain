@@ -10,7 +10,7 @@ from typing import Iterator
 BOTONES = (
     "ENCODER_1", "ENCODER_2", "ENCODER_3", "ENCODER_4",
     "ENCODER_5", "ENCODER_6", "ENCODER_7", "ENCODER_8",
-    "MCP1_8", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
+    "JOG", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
     "PLAY", "STOP", "REC", "LOOP", "UNDO", "NEW", "SHIFT", "METRO",
     "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
 )
@@ -45,6 +45,11 @@ class Encoder:
 
 
 @dataclass(frozen=True)
+class Jog:
+    delta: int
+
+
+@dataclass(frozen=True)
 class Fader:
     indice: int
     valor: float
@@ -74,7 +79,7 @@ class ManoPresencia:
     presente: bool
 
 
-Evento = Pad | Fsr | Boton | Encoder | Fader | Expresion | Perilla | Mano | ManoPresencia
+Evento = Pad | Fsr | Boton | Encoder | Jog | Fader | Expresion | Perilla | Mano | ManoPresencia
 
 
 def decodificar(msg) -> Evento | None:
@@ -96,6 +101,9 @@ def decodificar(msg) -> Evento | None:
         if 16 <= cc <= 23:
             delta = valor if valor < 64 else valor - 128
             return Encoder(cc - 16, delta) if delta else None
+        if cc == 35:
+            delta = valor if valor < 64 else valor - 128
+            return Jog(delta) if delta else None
         if 24 <= cc <= 27:
             return Fader(cc - 24, valor / 127)
         if 28 <= cc <= 29:
