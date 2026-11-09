@@ -66,12 +66,12 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 | Pi 5 | Motor, secuenciador, sampler, **mezcla**, GUI Qt 7", Ethernet |
 | Audio | Audio+ V2 (sala); SGTL5000 en la Teensy A (cue y entrada de línea) |
 | Teensy A | Synths y FX del Brain; USB al Pi; enlace con S |
-| Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: crossfader + 2 FSR de expresión + 1 libre; ADC propio (rápido): 4 FSR de velocity + perillas **MASTER** (sala, volumen digital en el Pi: el Audio+ no tiene volumen propio), **CUE** (amplificador de audífonos del SGTL5000, vía el enlace con A; Shift + CUE = mezcla de cue, cuánto de la sala se oye en audífonos) e **IN** (ganancia de la entrada de línea del SGTL5000, como el pot IN del Brain Studio); NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
-| Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal, crossfader). HÍBRIDO y ESTUDIO después |
+| Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: 2 FSR de expresión + 2 libres (uno reservado para un crossfader futuro); ADC propio (rápido): 4 FSR de velocity + perillas **MASTER** (sala, volumen digital en el Pi: el Audio+ no tiene volumen propio), **CUE** (amplificador de audífonos del SGTL5000, vía el enlace con A; Shift + CUE = mezcla de cue, cuánto de la sala se oye en audífonos) e **IN** (ganancia de la entrada de línea del SGTL5000, como el pot IN del Brain Studio); NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
+| Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal). HÍBRIDO y ESTUDIO después. **Sin crossfader** (Juan, 2026-11-09): el set es por capas, no por dos decks; ACEPTAR en la frase y los 4 faders de grupo cubren las transiciones |
 
 **Alcance del mixer (Juan, 2026-11-09):** el MVP es un **mixer interno**: mezcla los canales que genera la consola dentro del Pi, sin hardware extra. Mezclar **CDJs o Traktor** (cuyo audio llega analógico desde la tarjeta del laptop) pide **una entrada estéreo por deck**; el SGTL5000 tiene una sola entrada estéreo de línea. Esas entradas van en la v2 con un códec multicanal (CS42448: 6 entradas, 8 salidas) en el conector SAI2 reservado. Un mixer de DJ para fuentes externas (ruido bajo, margen, entradas balanceadas) es casi un proyecto propio: la idea del mixer estilo Xone de Juan.
 
-**Prototipo con lo que hay:** las 2 placas MCP23017 del Push; crossfader con cualquier potenciómetro deslizante lineal B10K (45 o 60 mm) o uno de los 4 faders Alps (B = curva lineal; el crossfader definitivo se elige para la caja); CV con **MCP4725** (1 salida de 12 bits, hasta 2 en el mismo I2C: cutoff y resonancia) en lugar del MCP4728 de 4 salidas. Marimba y e-drum quedan para después.
+**Prototipo con lo que hay:** las 2 placas MCP23017 del Push; sin crossfader en el MVP (no hace falta comprar el B10K); CV con **MCP4725** (1 salida de 12 bits, hasta 2 en el mismo I2C: cutoff y resonancia) en lugar del MCP4728 de 4 salidas. Marimba y e-drum quedan para después.
 
 ### 4.2 Preparado en la placa, sin poblar (para versiones siguientes)
 
