@@ -177,7 +177,7 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 | Qué | Pines |
 |---|---|
 | NeoTrellis 8×4 + expansores de botones | I2C: 2 (bus compartido) |
-| 22 botones | **2 expansores MCP23017** en el mismo I2C (16 entradas cada uno: quedan 10 libres para crecer) |
+| 22 botones | **2 expansores MCP23017** en el mismo I2C. **Corrección (inventario de GroovePush):** cada MCP23017 tiene **14 entradas útiles**, no 16 (GPA7 y GPB7 solo son salidas); GroovePush ADR-0004 ya los llena con 8 clics de encoder + 20 botones. Más botones = un tercer MCP en 0x22 |
 | LEDs de los 22 botones | 1 pin: cadena WS2812 bajo tapas translúcidas |
 | 8 encoders con clic | 24 digitales |
 | 4 FSR de fuerza + 2 de expresión | 6 analógicos |
@@ -187,6 +187,8 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 Quedan unos 25 digitales y 6 analógicos libres, así que el número de botones puede subir sin cambiar de microcontrolador.
 
 ### 10.2.3 ¿Una Teensy o dos? (pregunta de Juan, 2026-11-09)
+
+> **Actualización (inventario de GroovePush, `02-inventario-groovepush.md` §4):** las placas del panel ya diseñadas usan los pines 20 y 21 (I2S del Audio Shield) como UART hacia la NeoTrellis M4. Con ese diseño, la consola es de **dos Teensy**, cada una en una copia de la misma portadora. La hipótesis de una sola queda abierta solo si se rediseña la PCB-S.
 
 **Hipótesis: una sola alcanza.** Pines: el audio usa I2S y el I2C del SGTL5000 (0x0A); el NeoTrellis (0x2E/0x2F) y los MCP23017 (0x20/0x21) comparten ese bus con otras direcciones, y los controles del panel del Brain los reemplaza la superficie. CPU: el presupuesto del Brain es ≤60 % (`01-architecture.md` §5.2) y la superficie cuesta poco; la Audio Library corre por interrupciones, con prioridad. USB: una Teensy puede ser MIDI + audio + serie en un solo cable.
 
