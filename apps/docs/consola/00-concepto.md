@@ -64,6 +64,13 @@ Juan preguntó si ESTUDIO y LIVE pueden ir a la vez. Sí, como un tercer modo:
 
 **En HÍBRIDO:** tempo y fase por **Ableton Link**. La consola manda a Live el MIDI de lo que suena, **un canal por rol**, por MIDI de red (RTP-MIDI: integrado en macOS; en el Pi con un servicio como `rtpmidid`, a verificar) o por cable. Para el audio hay **una sola mezcla final**, en uno de dos sentidos: el Mac entra por la entrada de línea de la consola y ella mezcla, o la salida de sala de la consola entra a la interfaz del Mac y mezcla Live (y se suman cosas que la consola no tiene, como Tribe original o voces).
 
+**Decisión de Juan (2026-11-09): en HÍBRIDO mezcla Live**, porque tiene más cómputo y no carga la consola. Consecuencias:
+
+- La salida de **sala** de la consola entra **estéreo** a la interfaz del Mac; Live hace la mezcla final y la saca a la sala. Mandar cada rol por separado (stems por red) queda para después.
+- El **cue** sigue en los audífonos de la consola: Live no conoce las opciones hasta que se aceptan.
+- Como Live recibe el MIDI por rol, **cada rol puede sonar en la consola o en Live** (el VST o Tribe original), y así se pasa trabajo al Mac. Se elige por rol.
+- La entrada de línea de la consola no hace falta en HÍBRIDO; sigue siendo útil en LIVE.
+
 **Por qué importa:** cada set queda grabado en Live como **MIDI ordenado por rol**, listo para terminarlo en estudio con el motor, y las decisiones del set (aceptar, saltar) entran al registro. Tocar y producir se vuelven un mismo ciclo.
 
 **Orden de construcción:** LIVE (núcleo) → HÍBRIDO (Link y MIDI a Live) → ESTUDIO (control del motor del Mac por red).
