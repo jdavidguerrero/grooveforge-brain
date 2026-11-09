@@ -221,13 +221,22 @@ void NeoTrellisController::handleKeyPress(int key) {
     int track = key % GRID_TRACKS;
     int scene = key / GRID_TRACKS;
     Serial.printf("M4: Key press -> track %d scene %d\n", track, scene);
+#ifdef GF_CONSOLA_S_M4
+    uint8_t payload[] = {uint8_t(track), uint8_t(scene), 1};
+    uartInterface.sendToTeensy(CMD_GRID_PAD_PRESS, payload, sizeof(payload));
+#else
     sendPadEvent(CMD_CLIP_TRIGGER, track, scene);
+#endif
 }
 
 void NeoTrellisController::handleKeyRelease(int key) {
     int track = key % GRID_TRACKS;
     int scene = key / GRID_TRACKS;
     Serial.printf("M4: Key release -> track %d scene %d\n", track, scene);
+#ifdef GF_CONSOLA_S_M4
+    uint8_t payload[] = {uint8_t(track), uint8_t(scene), 0};
+    uartInterface.sendToTeensy(CMD_GRID_PAD_PRESS, payload, sizeof(payload));
+#endif
 }
 
 void NeoTrellisController::sendPadEvent(uint8_t command, uint8_t track, uint8_t scene) {

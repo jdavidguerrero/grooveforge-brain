@@ -166,3 +166,25 @@ the M4. The Pi 5 + 7" display use their own 27 W supply; grounds are joined thro
 28     LED chain (J5.26, buffered)  40,41  MCP INT (J5, optional)
 spare via J15/J16: 7, 8, 23         unavailable: 29 (Brain CV out, R18); 6, 25, 27, 33, 36-39 (NC)
 ```
+
+## Consola E4 — entorno separado `consola_s` (2026-11-09)
+
+El mapa GroovePush anterior sigue vigente para sus entornos. E4 usa protoboard
+sin portadora: Juan autoriza cable directo a pines marcados NC arriba. La futura
+placa principal debe rutear todas las señales y reservas de esta tabla.
+Encoders, Wire 18/19, Serial5 20/21 y LED 28 conservan cableado.
+
+| Uso E4 | Pines / canales |
+|---|---|
+| FSR velocity 1–4 | 14–17/A0–A3, faders trasladados al ADS |
+| MASTER, CUE, IN | 23/A9, 38/A14, 39/A15 |
+| ADS1115 #1 0x48 | Wire 18/19, ch0–3: faders 1–4 |
+| ADS1115 #2 0x49 | ch0–1: expresión; ch2–3: Sharp GP2Y0A41 manos 1–2 |
+| Enlace S↔A reservado | Serial2 RX2=7, TX2=8; sync=13 |
+| MIDI DIN reservado | Serial1 RX1=0, TX1=1; Pi usa USB en E4 |
+| Pedal reservado | 6 |
+| Triggers reservados | 25/A11, 27/A13, 40/A16, 41/A17 |
+
+Las reservas no se configuran ni leen. E4 sondea los MCP sin INT: por eso puede
+reservar 40/41 para triggers futuros. El GPIO 29 sigue sin uso (CV heredado).
+El mapa, MIDI y calibración están en `apps/docs/consola/06-teensy-s-e4.md`.
