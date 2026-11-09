@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+fonts/*.ttf
+fonts/*.otf
+fonts/*.zip
+fonts/general-sans/
