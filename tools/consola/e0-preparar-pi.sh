@@ -6,12 +6,13 @@
 #   sudo reboot
 #   bash tools/consola/e0-preparar-pi.sh verificar    # tarjeta de audio, tono de prueba y latencia del sistema
 #
-# Overlay del Audio+ V2: el fabricante no lo publica de forma clara; se prueba `hifiberry-dac`, el habitual
-# para DAC PCM5102A por I2S. Si `verificar` no encuentra la tarjeta, se prueba otro con OVERLAY=<nombre>.
+# Overlay del Audio+ V2: `hifiberry-dac`, confirmado en la SD anterior de Juan (tools/consola/pi/). La pantalla 7"
+# también sale de ahí. Si `verificar` no encuentra la tarjeta, se prueba otro con OVERLAY=<nombre>.
 set -euo pipefail
 
 OVERLAY="${OVERLAY:-hifiberry-dac}"
 CONFIG=/boot/firmware/config.txt
+CMDLINE=/boot/firmware/cmdline.txt
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 SALIDA="$REPO/apps/docs/consola/mediciones/e0-$(hostname)-$(date +%Y%m%d-%H%M).md"
 
@@ -24,13 +25,23 @@ configurar() {
   pipx install uv || pipx upgrade uv
   pipx ensurepath
 
-  sudo cp "$CONFIG" "$CONFIG.bak-$(date +%Y%m%d-%H%M%S)"
+  marca="$(date +%Y%m%d-%H%M%S)"
+  sudo cp "$CONFIG" "$CONFIG.bak-$marca"
+  sudo cp "$CMDLINE" "$CMDLINE.bak-$marca"
+  # Pantalla 7" y Audio+, rescatados de la SD anterior (tools/consola/pi/). Solo si faltan.
+  if ! grep -q "vc4-kms-dsi-waveshare-panel-v2" "$CONFIG"; then
+    { echo; echo "# --- GrooveForge consola (tools/consola/pi/config-consola.txt) ---"; cat "$REPO/tools/consola/pi/config-consola.txt"; } | sudo tee -a "$CONFIG" >/dev/null
+  fi
   if ! grep -q "^dtoverlay=$OVERLAY" "$CONFIG"; then
     echo "dtoverlay=$OVERLAY" | sudo tee -a "$CONFIG" >/dev/null
   fi
   # El audio integrado se apaga para que el Audio+ sea la salida por defecto (documentación oficial del Pi).
   sudo sed -i 's/^dtparam=audio=on/#dtparam=audio=on/' "$CONFIG"
-  echo "Listo. Respaldo de config.txt junto al original. Reinicia (sudo reboot) y corre: $0 verificar"
+  # cmdline.txt es UNA línea con el PARTUUID de esta tarjeta: solo se agregan parámetros que falten.
+  for p in $(cat "$REPO/tools/consola/pi/cmdline-consola.txt"); do
+    grep -q -- "$p" "$CMDLINE" || sudo sed -i "1 s|\$| $p|" "$CMDLINE"
+  done
+  echo "Listo. Respaldos de config.txt y cmdline.txt junto a los originales. Reinicia (sudo reboot) y corre: $0 verificar"
 }
 
 verificar() {
