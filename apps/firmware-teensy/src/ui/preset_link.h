@@ -43,7 +43,9 @@ inline size_t hex_decode(const char* s, uint8_t* out, size_t cap) {
 
 struct LinkCmd {
     /// LEXPORT / LPUT / LTRUNC: presets de capa de HYBRID SYNTH (theory/12 §3d)
-    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc } kind = None;
+    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc, Ruta, Cue } kind = None;
+    /// RUTA (0 = synths, 1 = entrada de línea → USB) y CUE (0/1): prototipo de la consola (apps/docs/consola/05-e3-teensy-a.md)
+    uint8_t valor = 0;
     uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda · LPUT / LTRUNC: index
     const char* hex = nullptr;       ///< PUT / LPUT: el binario en hex (apunta dentro de la línea)
 };
@@ -85,6 +87,12 @@ inline LinkCmd parse_link_cmd(char* line) {
     } else if (!strcmp(tok[0], "LPUT") && nt == 3 && num(tok[1], &c.index)) {
         c.kind = LinkCmd::LayerPut;
         c.hex = tok[2];
+    } else if (!strcmp(tok[0], "RUTA") && nt == 2 && (!strcmp(tok[1], "SINTE") || !strcmp(tok[1], "LINEA"))) {
+        c.kind = LinkCmd::Ruta;
+        c.valor = !strcmp(tok[1], "LINEA") ? 1 : 0;
+    } else if (!strcmp(tok[0], "CUE") && nt == 2 && (!strcmp(tok[1], "0") || !strcmp(tok[1], "1"))) {
+        c.kind = LinkCmd::Cue;
+        c.valor = tok[1][0] == '1' ? 1 : 0;
     } else if (!strcmp(tok[0], "LTRUNC") && nt == 2 && num(tok[1], &c.index)) {
         c.kind = LinkCmd::LayerTrunc;
     }

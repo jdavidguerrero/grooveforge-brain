@@ -1938,6 +1938,22 @@ void librarian_command(char* line) {
                 Serial.println("@GF ERR ESCRITURA");
             }
             break;
+        case studio::LinkCmd::Ruta:
+#ifdef GF_CONSOLA
+            audio_graph::set_usb_out_source(c.valor);
+            Serial.printf("@GF OK RUTA %s\n", c.valor ? "LINEA" : "SINTE");
+#else
+            Serial.println("@GF ERR CONSOLA");
+#endif
+            break;
+        case studio::LinkCmd::Cue:
+#ifdef GF_CONSOLA
+            audio_graph::set_usb_passthrough(c.valor);
+            Serial.printf("@GF OK CUE %u\n", c.valor);
+#else
+            Serial.println("@GF ERR CONSOLA");
+#endif
+            break;
         case studio::LinkCmd::LayerExport:
             Serial.printf("@GF BEGIN %u\n", layers.count());
             for (uint8_t i = 0; i < layers.count(); ++i) {

@@ -37,6 +37,14 @@ AudioInputI2S         g_audio_in;
 // Por defecto silenciado (ch3 gain=0). Activar con set_usb_passthrough(true).
 AudioInputUSB         g_usb_in;
 
+#ifdef GF_CONSOLA
+// Consola: la Teensy A le manda audio al Pi por USB. Un selector por lado elige la mezcla de los synths (ch0) o la
+// entrada de línea (ch1, para medir la latencia de ida y vuelta). Sin esto el Pi recibe silencio.
+AudioMixer4           g_usb_sel_l;
+AudioMixer4           g_usb_sel_r;
+AudioOutputUSB        g_usb_out;
+#endif
+
 // ── Conexiones backbone (estáticas, viven todo el programa) ───────────────────
 //   g_engine_mix_a → g_engine_bus(ch0): submix Moog/Juno/Prophet/OB6
 //   g_engine_mix_b → g_engine_bus(ch1): submix DX7/ARP (sprints 39/40)
@@ -58,6 +66,14 @@ static AudioConnection c_mixRAToBus      (g_engine_mix_ra, 0, g_engine_bus_r, 0)
 static AudioConnection c_mixRBToBus      (g_engine_mix_rb, 0, g_engine_bus_r, 1);
 static AudioConnection c_busRToMaster    (g_engine_bus_r,  0, g_master_mix_r, 0);
 static AudioConnection c_audioInToMasterR(g_audio_in,      1, g_master_mix_r, 2);   // LINE IN R
+#ifdef GF_CONSOLA
+static AudioConnection c_masterToUsbSelL (g_master_mix,   0, g_usb_sel_l, 0);
+static AudioConnection c_masterToUsbSelR (g_master_mix_r, 0, g_usb_sel_r, 0);
+static AudioConnection c_lineToUsbSelL   (g_audio_in,     0, g_usb_sel_l, 1);
+static AudioConnection c_lineToUsbSelR   (g_audio_in,     1, g_usb_sel_r, 1);
+static AudioConnection c_usbSelToOutL    (g_usb_sel_l,    0, g_usb_out,   0);
+static AudioConnection c_usbSelToOutR    (g_usb_sel_r,    0, g_usb_out,   1);
+#endif
 static AudioConnection c_usbInToMasterR  (g_usb_in,        1, g_master_mix_r, 3);
 static AudioConnection c_masterToI2sR    (g_master_mix_r,  0, g_i2s, 1);
 
@@ -121,6 +137,11 @@ bool audio_graph::init(float volume) {
     set_master_gain(1, 0.0f);
     set_master_gain(2, 0.0f);  // line-in direct — off por defecto (SYNTH mode)
     set_master_gain(3, 0.0f);
+#ifdef GF_CONSOLA
+    // Consola: el cue llega del Pi por USB y sale por los audífonos; al Pi va la mezcla de los synths.
+    set_usb_passthrough(true);
+    set_usb_out_source(0);
+#endif
 
     // 5. Engine inicial: Moog activo (matches default de DeviceState).
     //    Esto se sobrescribe luego desde main.cpp cuando EEPROM restore corre.
@@ -234,6 +255,17 @@ void audio_graph::set_usb_passthrough(bool enable) {
 bool audio_graph::get_usb_passthrough() {
     return s_usb_passthrough;
 }
+
+#ifdef GF_CONSOLA
+void audio_graph::set_usb_out_source(uint8_t fuente) {
+    for (uint8_t i = 0; i < 4; i++) {
+        const float g = (i == fuente) ? 1.0f : 0.0f;
+        g_usb_sel_l.gain(i, g);
+        g_usb_sel_r.gain(i, g);
+    }
+    Serial.printf("[audio_graph] USB → Pi: %s\n", fuente ? "entrada de línea" : "synths");
+}
+#endif
 
 void audio_graph::set_volume(float v) {
     if (v < 0.0f) v = 0.0f;

@@ -187,6 +187,14 @@ void set_usb_passthrough(bool enable);
  */
 bool get_usb_passthrough();
 
+#ifdef GF_CONSOLA
+/**
+ * @brief Qué manda la Teensy al Pi por USB (consola, apps/docs/consola/05-e3-teensy-a.md).
+ * @param fuente 0 = la mezcla de los synths (por defecto), 1 = la entrada de línea del SGTL5000 (bucle de latencia).
+ */
+void set_usb_out_source(uint8_t fuente);
+#endif
+
 /**
  * @brief Volume master del codec (afecta jack 3.5mm headphones).
  *
