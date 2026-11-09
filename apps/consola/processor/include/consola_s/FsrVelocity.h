@@ -9,7 +9,7 @@ public:
     /** Resultado de una muestra; velocity=0 para note-off. */
     struct Event { bool changed; bool on; uint8_t velocity; };
     /** Construye detector con calibración explícita y tiempos en microsegundos. */
-    explicit FsrVelocity(Calibration calibration, uint32_t window_us = 4000,
+    explicit FsrVelocity(Calibration calibration, uint32_t window_us = 3000,
                          uint32_t guard_us = 12000);
     /** Procesa una muestra monotónica (micros unsigned, permite wrap). */
     Event sample(uint16_t value, uint32_t now_us);

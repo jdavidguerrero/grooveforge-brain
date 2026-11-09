@@ -20,7 +20,7 @@ S recoge controles y envía MIDI USB estándar al Pi. Firmware custom C++17, sin
 | ADS #1 | 0x48, canales 0–3: faders 1–4 |
 | ADS #2 | 0x49, canales 0–1: expresión 1–2; 2–3: Sharp GP2Y0A41 manos 1–2 |
 | LEDs | 28 reservado, sin animaciones locales en S |
-| Reserva S↔A | Serial2 RX/TX 7/8, sync 13; sin `begin` ni pulsos |
+| Reserva S↔A | Serial2 RX/TX 7/8, sync 37 (cable directo; el 13 es el LED de la placa); sin `begin` ni pulsos |
 | MIDI DIN reservado | Serial1 RX/TX 0/1 (USB reemplaza UART al Pi); sin driver DIN |
 | Pedal / triggers reservados | Pedal 6; triggers 25/A11, 27/A13, 40/A16, 41/A17; MCP se sondea sin INT. Sin acondicionamiento ni lectura |
 
@@ -28,7 +28,7 @@ S recoge controles y envía MIDI USB estándar al Pi. Firmware custom C++17, sin
 
 ## 2. Captura y teoría
 
-FSR: 3,3 V → FSR 402 → ADC → ≈10 kΩ → GND. ADC nativo de 12 bits. Cada pad tiene umbral inicial 160, máximo 3000 y liberación 100 (ajustar individualmente con su actuador). Se muestrea el grupo cada 400 µs (objetivo 2,5 kHz/pad). Al cruzar umbral, se captura el máximo durante 4000 µs. `velocity = 1 + 126 × (pico − umbral)/(máximo − umbral)`, saturada 1–127. El pico evita que la primera muestra mida solo el inicio del ataque; el ADS no alcanza para los cuatro pads rápidos. Una sola nota por golpe; al caer a liberación se envía note-off. No se rearma hasta liberar y cumplir 12 ms desde el ataque. Si se libera dentro de la ventana se emite on al cerrarla y off en la muestra siguiente. Resta de tiempos unsigned tolera wrap de micros.
+FSR: 3,3 V → FSR 402 → ADC → ≈10 kΩ → GND. ADC nativo de 12 bits. Cada pad tiene umbral inicial 160, máximo 3000 y liberación 100 (ajustar individualmente con su actuador). Se muestrea el grupo cada 400 µs (objetivo 2,5 kHz/pad). Al cruzar umbral, se captura el máximo durante 3000 µs (Juan, 2026-11-09: de 4 a 3 ms para dejar margen al objetivo de <5 ms). `velocity = 1 + 126 × (pico − umbral)/(máximo − umbral)`, saturada 1–127. El pico evita que la primera muestra mida solo el inicio del ataque; el ADS no alcanza para los cuatro pads rápidos. Una sola nota por golpe; al caer a liberación se envía note-off. No se rearma hasta liberar y cumplir 12 ms desde el ataque. Si se libera dentro de la ventana se emite on al cerrarla y off en la muestra siguiente. Resta de tiempos unsigned tolera wrap de micros.
 
 El ADC se calibra en setup; en ISR se leen los registros ADC1 directamente (canales 7/8/12/11 para pines 14–17), evitando los callbacks de yield de analogRead. El escaneo FSR va en un IntervalTimer; solo ADC y máquina de estados dentro de la interrupción. Una cola fija lleva eventos a loop: MIDI, I2C y texto nunca corren en ISR. Overflow y separación máxima entre scans son visibles en STATS. Esto permite verificar el requisito de ≥2 kHz incluso con I2C ocupado; hay que medirlo en placa.
 
@@ -74,7 +74,7 @@ El firmware S no maneja brillo en pin 28. El entorno adicional `consola_s_m4` li
 
 Unity nativo prueba ventana/pico, mapeo y saturación velocity, histéresis, retrigger y wrap de tiempo; también EMA/deadband, CC relativo y la lógica de manos descrita arriba. No demuestra ruido eléctrico, timing de ISR ni latencia USB. Compilar todos los entornos existentes es la regresión; nunca ejecutar upload.
 
-En placa, después de calibrar: registrar STATS mientras se mueven todos los controles; mínimo scan ≥2 kHz/pad, intervalo máximo ≤500 µs, cero drops. Con mido abrir el puerto MIDI clase estándar y registrar notas/CC; medir golpe→evento (<5 ms, objetivo E4) con referencia eléctrica y reloj compartido. La ventana consume 4 ms del presupuesto: no se afirma pasar sin medir. Comparar 10 golpes suaves y 10 fuertes, buscar rangos separados. CPU de audio ≤60 % y ausencia de clics se verifican en A con el sistema completo; S no tiene AudioProcessorUsageMax. No se marca E4 aprobado sin esa demo.
+En placa, después de calibrar: registrar STATS mientras se mueven todos los controles; mínimo scan ≥2 kHz/pad, intervalo máximo ≤500 µs, cero drops. Con mido abrir el puerto MIDI clase estándar y registrar notas/CC; medir golpe→evento (<5 ms, objetivo E4) con referencia eléctrica y reloj compartido. La ventana consume 3 ms del presupuesto: no se afirma pasar sin medir. Comparar 10 golpes suaves y 10 fuertes, buscar rangos separados. CPU de audio ≤60 % y ausencia de clics se verifican en A con el sistema completo; S no tiene AudioProcessorUsageMax. No se marca E4 aprobado sin esa demo.
 
 Fuera de alcance: flash, mido/GUI del Pi, synths/FX, semántica LIVE/MIXER, bridge final, UART A↔S activo, MIDI DIN, pedal, triggers, diseño PCB, animaciones LED y calibración física.
 

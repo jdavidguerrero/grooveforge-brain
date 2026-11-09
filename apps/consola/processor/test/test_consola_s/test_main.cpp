@@ -11,12 +11,20 @@ void peak_window() {
     TEST_ASSERT_FALSE(pad.sample(99,0).changed);
     TEST_ASSERT_FALSE(pad.sample(100,1000).changed);
     TEST_ASSERT_FALSE(pad.sample(600,2000).changed);
-    TEST_ASSERT_FALSE(pad.sample(200,4999).changed);
-    const auto event = pad.sample(100,5000);
+    TEST_ASSERT_FALSE(pad.sample(200,3999).changed);
+    const auto event = pad.sample(100,4000);
     TEST_ASSERT_TRUE(event.changed);
     TEST_ASSERT_TRUE(event.on);
     TEST_ASSERT_EQUAL_UINT8(64,event.velocity);
-    TEST_ASSERT_FALSE(pad.sample(1100,6000).changed);
+    TEST_ASSERT_FALSE(pad.sample(1100,5000).changed);
+}
+void window_closes_at_3ms() {
+    FsrVelocity pad({100,1100,60});
+    pad.sample(600,0);
+    TEST_ASSERT_FALSE(pad.sample(600,2999).changed);
+    const auto event = pad.sample(600,3000);
+    TEST_ASSERT_TRUE(event.changed);
+    TEST_ASSERT_TRUE(event.on);
 }
 void velocity_endpoints() {
     FsrVelocity soft({100,1100,60}), hard({100,1100,60});
@@ -46,8 +54,8 @@ void hysteresis_and_retrigger() {
 void micros_wrap_and_bad_calibration() {
     FsrVelocity pad({100,1100,60});
     pad.sample(1100,UINT32_MAX-2000);
-    TEST_ASSERT_FALSE(pad.sample(400,1000).changed);
-    TEST_ASSERT_EQUAL_UINT8(127,pad.sample(400,1999).velocity);
+    TEST_ASSERT_FALSE(pad.sample(400,500).changed);
+    TEST_ASSERT_EQUAL_UINT8(127,pad.sample(400,999).velocity);
     FsrVelocity bad({100,100,60}), inverted({100,1100,100});
     TEST_ASSERT_FALSE(bad.sample(500,0).changed);
     TEST_ASSERT_FALSE(bad.sample(500,4000).changed);
@@ -174,6 +182,7 @@ void hand_timeout_wrap_and_invalid() {
 int main() {
     UNITY_BEGIN();
     RUN_TEST(peak_window);
+    RUN_TEST(window_closes_at_3ms);
     RUN_TEST(velocity_endpoints);
     RUN_TEST(hysteresis_and_retrigger);
     RUN_TEST(micros_wrap_and_bad_calibration);
