@@ -131,12 +131,37 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 
 | Uso | Cuántos | Qué hace |
 |---|---|---|
-| **Pads con velocity** | 8 | Una fila tipo MPC para tocar en vivo: kick, perc y golpes de Tribe con dinámica real, o grabar acentos en el secuenciador |
+| **Pads con velocity** | 4 (decisión de Juan, 2026-11-09) | Para tocar en vivo kick, perc y golpes de Tribe con dinámica real, o grabar acentos en el secuenciador |
 | **Expresión** | 2 | Apretar y sostener: uno abre el filtro o la macro MOVE del Brain; el otro manda un throw al Echo o empuja un riser |
 
 **Cómo se leen:** cada FSR en un divisor con una resistencia fija (≈10 kΩ, a ajustar) hacia una entrada analógica del Teensy B. La **velocity** es el pico de la lectura en los primeros 3–5 ms después de cruzar el umbral; la **presión** sostenida se lee continua, como aftertouch.
 
 **Para que se sientan bien:** un FSR responde distinto según cómo se reparte la fuerza (Interlink). Hace falta un **actuador**: una tapa de silicona o goma con un disco rígido pequeño encima del área activa, sobre una base plana y firme. Cada pad se calibra con su propia curva, porque no son sensores de precisión. Para golpes fuertes y rápidos, como un e-drum, un piezo suele ser mejor; para dedos, el FSR sirve.
+
+### 10.2.2 Botones
+
+**Propuesta: 22 botones con LED**, agrupados por función, más los 8 clics de los encoders. MPC Live tiene una treintena y Push 3 más de cincuenta; con el NeoTrellis haciendo gran parte del trabajo, 22 cubren el directo sin menús.
+
+| Grupo | Botones | Cuántos |
+|---|---|---|
+| **Transporte** | PLAY, STOP, REC, TAP | 4 |
+| **Modo y navegación** | MODO (LIVE / SECUENCIADOR / ESTUDIO), SHIFT, ◀ ▶ ▲ ▼, ATRÁS | 7 |
+| **Motor en vivo** | CUE, ACEPTAR, SALTAR, GENERAR (otra tanda), y cambio de sección: BUILD, DROP, BREAK | 7 |
+| **Edición** | DUPLICAR, BORRAR, DESHACER, FILL (el motor escribe un fill) | 4 |
+
+**Pines del Teensy B (4.1: 55 digitales, 18 analógicos):**
+
+| Qué | Pines |
+|---|---|
+| NeoTrellis 8×4 + expansores de botones | I2C: 2 (bus compartido) |
+| 22 botones | **2 expansores MCP23017** en el mismo I2C (16 entradas cada uno: quedan 10 libres para crecer) |
+| LEDs de los 22 botones | 1 pin: cadena WS2812 bajo tapas translúcidas |
+| 8 encoders con clic | 24 digitales |
+| 4 FSR de fuerza + 2 de expresión | 6 analógicos |
+| 4 faders + perillas MASTER y CUE | 6 analógicos |
+| MIDI TRS in/out + sync | 3 digitales |
+
+Quedan unos 25 digitales y 6 analógicos libres, así que el número de botones puede subir sin cambiar de microcontrolador.
 
 ### 10.3 Conexiones
 
