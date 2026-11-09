@@ -1,0 +1,27 @@
+[
+  {
+    "board": "pcb-a",
+    "exit_code": 0,
+    "stdout": "pcb-a: 0 v\u00edas sobre pads SMD"
+  },
+  {
+    "board": "pcb-f",
+    "exit_code": 0,
+    "stdout": "pcb-f: 0 v\u00edas sobre pads SMD"
+  },
+  {
+    "board": "pcb-k1",
+    "exit_code": 0,
+    "stdout": "pcb-k1: 0 v\u00edas sobre pads SMD"
+  },
+  {
+    "board": "pcb-k2",
+    "exit_code": 0,
+    "stdout": "pcb-k2: 0 v\u00edas sobre pads SMD"
+  },
+  {
+    "board": "pcb-s",
+    "exit_code": 0,
+    "stdout": "pcb-s: 0 v\u00edas sobre pads SMD"
+  }
+]

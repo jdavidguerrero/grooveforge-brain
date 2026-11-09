@@ -1,0 +1,146 @@
+{
+  "pcb-a": [
+    {
+      "ref": "RE8",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE8",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE2",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE2",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE7",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE7",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE1",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE1",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE4",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE4",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE3",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE3",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE6",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE6",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE5",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RE5",
+      "net": "/GND",
+      "solid": true
+    }
+  ],
+  "pcb-f": [
+    {
+      "ref": "RV3",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV3",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV3",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV2",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV2",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV2",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV4",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV4",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV4",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV1",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV1",
+      "net": "/GND",
+      "solid": true
+    },
+    {
+      "ref": "RV1",
+      "net": "/GND",
+      "solid": true
+    }
+  ]
+}

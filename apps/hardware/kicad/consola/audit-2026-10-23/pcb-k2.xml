@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/Users/juandavidguerrerocastro/Documents/PROJECTS/groovepush/hardware/boards/pcb-k2/pcb-k2.kicad_sch</source>
+    <date>2026-10-23T06:08:37</date>
+    <tool>Eeschema 10.0.6</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>pcb-k2.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="C1">
+      <value>47uF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C96123</field>
+        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C96123"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ee117cfe-617d-4ac7-9193-d50691b815a6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C10">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>00188aa1-b368-48d4-8810-16c5553f1b82</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C11">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>342119ef-e3f3-4852-86b7-b6b0a8e5e6d0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C12">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7ee5021f-d1e0-4671-b445-f937121099ed</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C13">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>89973d24-7729-413a-a1dd-25de9e602566</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C14">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <description>Unpolarized capacitor</description>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5c29d352-b720-4316-b5a6-38331a140f14</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D1">
+      <value>SK6812MINI-EA (BROWSE, idx 0)</value>
+      <footprint>LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</footprint>
+      <datasheet>https://www.lcsc.com/datasheet/C5149201.pdf</datasheet>
+      <description>RGB LED with integrated controller</description>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0489564d-b942-4bf7-a78e-a1c1c354bb70</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D2">
+      <value>SK6812MINI-EA (MIX, idx 1)</value>
+      <footprint>LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</footprint>
+      <datasheet>https://www.lcsc.com/datasheet/C5149201.pdf</datasheet>
+      <description>RGB LED with integrated controller</description>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a67560a1-1679-4770-bf75-4f6e9946c46a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D3">
+      <value>SK6812MINI-EA (DEVICE, idx 2)</value>
+      <footprint>LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</footprint>
+      <datasheet>https://www.lcsc.com/datasheet/C5149201.pdf</datasheet>
+      <description>RGB LED with integrated controller</description>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>55fb007e-dba2-4041-b692-dc7747c69c8f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D4">
+      <value>SK6812MINI-EA (NOTE, idx 3)</value>
+      <footprint>LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</footprint>
+      <datasheet>https://www.lcsc.com/datasheet/C5149201.pdf</datasheet>
+      <description>RGB LED with integrated controller</description>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9ab0d4a4-00be-42e8-8d4b-af93113d67ec</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D5">
+      <value>SK6812MINI-EA (SESSION, idx 4)</value>
+      <footprint>LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</footprint>
+      <datasheet>https://www.lcsc.com/datasheet/C5149201.pdf</datasheet>
+      <description>RGB LED with integrated controller</description>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5a5ce67f-ff72-41f7-9c0c-cc91afd152db</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="H1">
+      <value>M2.5</value>
+      <footprint>MountingHole:MountingHole_2.7mm_M2.5</footprint>
+      <description>Mounting Hole without connection</description>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_2.7mm_M2.5</field>
+        <field name="Datasheet"/>
+        <field name="Description">Mounting Hole without connection</field>
+      </fields>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="mounting hole"/>
+      <property name="ki_fp_filters" value="MountingHole*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>506b17ee-65e3-445c-8149-1dbbbbf67f13</tstamps>
+      <units>
+        <unit name="A">
+          <pins/>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="H2">
+      <value>M2.5</value>
+      <footprint>MountingHole:MountingHole_2.7mm_M2.5</footprint>
+      <description>Mounting Hole without connection</description>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_2.7mm_M2.5</field>
+        <field name="Datasheet"/>
+        <field name="Description">Mounting Hole without connection</field>
+      </fields>
+      <libsource lib="Mechanical" part="MountingHole" description="Mounting Hole without connection"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="mounting hole"/>
+      <property name="ki_fp_filters" value="MountingHole*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>641c16ff-3df2-4b90-920d-087cc912b88b</tstamps>
+      <units>
+        <unit name="A">
+          <pins/>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J1">
+      <value>from PCB-K1 J2 (JST-SH 10)</value>
+      <footprint>Connector_JST:JST_SH_SM10B-SRSS-TB_1x10-1MP_P1.00mm_Horizontal</footprint>
+      <description>Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <fields>
+        <field name="LCSC">C160409</field>
+        <field name="Footprint">Connector_JST:JST_SH_SM10B-SRSS-TB_1x10-1MP_P1.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description">Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x10" description="Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C160409"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>057cd0c9-1bc1-44f5-97e5-9112c030565c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW1">
+      <value>BROWSE</value>
+      <footprint>groovepush:SW_Kailh_Choc_V2_1u</footprint>
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Footprint">groovepush:SW_Kailh_Choc_V2_1u</field>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ac5704cd-f934-433c-8e0c-70ec57b73255</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW2">
+      <value>MIX</value>
+      <footprint>groovepush:SW_Kailh_Choc_V2_1u</footprint>
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Footprint">groovepush:SW_Kailh_Choc_V2_1u</field>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>33667b76-adb5-4a0c-89fa-4211945c24cd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW3">
+      <value>DEVICE</value>
+      <footprint>groovepush:SW_Kailh_Choc_V2_1u</footprint>
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Footprint">groovepush:SW_Kailh_Choc_V2_1u</field>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6e3a65e7-3e81-4f38-99d2-f327fe5d9495</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW4">
+      <value>NOTE</value>
+      <footprint>groovepush:SW_Kailh_Choc_V2_1u</footprint>
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Footprint">groovepush:SW_Kailh_Choc_V2_1u</field>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>85c48c45-2d33-4bd0-8e13-f694b6f57c67</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW5">
+      <value>SESSION</value>
+      <footprint>groovepush:SW_Kailh_Choc_V2_1u</footprint>
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Footprint">groovepush:SW_Kailh_Choc_V2_1u</field>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="Sheetname" value="pcb-k2"/>
+      <property name="Sheetfile" value="pcb-k2.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3a5bb111-ce62-45e0-a7ca-6d58f124189b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector_Generic" part="Conn_01x10">
+      <description>Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x10</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C">
+      <description>Unpolarized capacitor</description>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="LED" part="SK6812MINI-E">
+      <description>RGB LED with integrated controller</description>
+      <docs>https://www.lcsc.com/datasheet/C5149201.pdf</docs>
+      <footprints>
+        <fp>LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">SK6812MINI-E</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VSS" type="power_in"/>
+        <pin num="2" name="DIN" type="input"/>
+        <pin num="3" name="VDD" type="power_in"/>
+        <pin num="4" name="DOUT" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="Mechanical" part="MountingHole">
+      <description>Mounting Hole without connection</description>
+      <footprints>
+        <fp>MountingHole*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MountingHole</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Mounting Hole without connection</field>
+      </fields>
+    </libpart>
+    <libpart lib="Switch" part="SW_Push">
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_Push</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>${KICAD9_SYMBOL_DIR}/Connector_Generic.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>${KICAD9_SYMBOL_DIR}/Device.kicad_sym</uri>
+    </library>
+    <library logical="LED">
+      <uri>${KICAD9_SYMBOL_DIR}/LED.kicad_sym</uri>
+    </library>
+    <library logical="Mechanical">
+      <uri>${KICAD9_SYMBOL_DIR}/Mechanical.kicad_sym</uri>
+    </library>
+    <library logical="Switch">
+      <uri>${KICAD9_SYMBOL_DIR}/Switch.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="/+5V" class="Default">
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="C10" pin="1" pintype="passive"/>
+      <node ref="C11" pin="1" pintype="passive"/>
+      <node ref="C12" pin="1" pintype="passive"/>
+      <node ref="C13" pin="1" pintype="passive"/>
+      <node ref="C14" pin="1" pintype="passive"/>
+      <node ref="D1" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D2" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D3" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D4" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D5" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="J1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="2" name="/GND" class="Default">
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C10" pin="2" pintype="passive"/>
+      <node ref="C11" pin="2" pintype="passive"/>
+      <node ref="C12" pin="2" pintype="passive"/>
+      <node ref="C13" pin="2" pintype="passive"/>
+      <node ref="C14" pin="2" pintype="passive"/>
+      <node ref="D1" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D2" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D3" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D4" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D5" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="J1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
+      <node ref="J1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="SW1" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW2" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW3" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW4" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW5" pin="2" pinfunction="2_2" pintype="passive"/>
+    </net>
+    <net code="3" name="/KEY_BROWSE" class="Default">
+      <node ref="J1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+      <node ref="SW1" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="4" name="/KEY_DEVICE" class="Default">
+      <node ref="J1" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
+      <node ref="SW3" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="5" name="/KEY_MIX" class="Default">
+      <node ref="J1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="SW2" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="6" name="/KEY_NOTE" class="Default">
+      <node ref="J1" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+      <node ref="SW4" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="7" name="/KEY_SESSION" class="Default">
+      <node ref="J1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
+      <node ref="SW5" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="8" name="/LED_1" class="Default">
+      <node ref="D1" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D2" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="9" name="/LED_2" class="Default">
+      <node ref="D2" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D3" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="10" name="/LED_3" class="Default">
+      <node ref="D3" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D4" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="11" name="/LED_4" class="Default">
+      <node ref="D4" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D5" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="12" name="/LED_DIN" class="Default">
+      <node ref="D1" pin="2" pinfunction="DIN_2" pintype="input"/>
+      <node ref="J1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+    </net>
+    <net code="13" name="/LED_K2_RET" class="Default">
+      <node ref="D5" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="J1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+    </net>
+  </nets>
+</export>

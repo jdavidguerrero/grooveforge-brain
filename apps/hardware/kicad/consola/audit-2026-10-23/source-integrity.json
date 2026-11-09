@@ -1,0 +1,12 @@
+{
+  "changed_during_review": [],
+  "boards_checked": [
+    "pcb-a",
+    "pcb-f",
+    "pcb-k1",
+    "pcb-k2",
+    "pcb-s"
+  ],
+  "head_reviewed": "1cad391",
+  "fix_commit": "125762ad28ad1d17150447d73a9a7aac78681ff9"
+}
