@@ -1,0 +1,7 @@
+(version 1)
+
+# El footprint del SK6812MINI-E (montaje invertido) deja 0.25 mm entre sus pads y la ventana
+# por donde sale la luz. Es la geometría del fabricante; el resto de la placa sigue en 0.3 mm.
+(rule "sk6812_ventana"
+    (constraint edge_clearance (min 0.2mm))
+    (condition "A.memberOfFootprint('D*') && B.memberOfFootprint('D*')"))

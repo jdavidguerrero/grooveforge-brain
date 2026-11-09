@@ -1,0 +1,87 @@
+ref,kind,group,board,x_mm,y_mm,w_mm,h_mm,notes
+E1,encoder,Encoders,PCB-A,35.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E2,encoder,Encoders,PCB-A,61.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E3,encoder,Encoders,PCB-A,87.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E4,encoder,Encoders,PCB-A,113.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E5,encoder,Encoders,PCB-A,139.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E6,encoder,Encoders,PCB-A,165.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E7,encoder,Encoders,PCB-A,191.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+E8,encoder,Encoders,PCB-A,217.00,111.00,18,18,ALPS EC11 push; panel hole Ø7.1; knob Ø18
+BROWSE,key,Modos,PCB-K2,21.00,135.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+MIX,key,Modos,PCB-K2,21.00,153.50,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+DEVICE,key,Modos,PCB-K2,21.00,172.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+NOTE,key,Modos,PCB-K2,21.00,190.50,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+SESSION,key,Modos,PCB-K2,21.00,209.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+DELETE,key,Edición,PCB-K1,52.50,48.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+DUPLICATE,key,Edición,PCB-K1,52.50,66.50,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+QUANTIZE,key,Edición,PCB-K1,52.50,85.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+NEW,key,Edición,PCB-K1,33.00,57.25,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+UNDO,key,Edición,PCB-K1,33.00,75.75,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+SHIFT,key,Modificador,PCB-K1,33.00,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+PLAY,key,Transporte,PCB-K1,58.50,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+STOP,key,Transporte,PCB-K1,78.00,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+RECORD,key,Transporte,PCB-K1,97.50,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+LOOP,key,Transporte,PCB-K1,117.00,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+METRO,key,Transporte,PCB-K1,136.50,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+BANK_L,key,Navegación,PCB-K1,162.00,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+BANK_R,key,Navegación,PCB-K1,181.50,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+OCT_DN,key,Navegación,PCB-K1,201.00,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+OCT_UP,key,Navegación,PCB-K1,220.50,24.00,18,17,Kailh Choc V2 1u; plate cutout 14x14 + 16x16x0.8 pocket; SK6812MINI-E under key
+F1,fader,Faders,PCB-F,234.50,72.50,9,75,ALPS RS6011, 60 mm travel; slot 3x63
+F2,fader,Faders,PCB-F,245.50,72.50,9,75,ALPS RS6011, 60 mm travel; slot 3x63
+F3,fader,Faders,PCB-F,256.50,72.50,9,75,ALPS RS6011, 60 mm travel; slot 3x63
+F4,fader,Faders,PCB-F,267.50,72.50,9,75,ALPS RS6011, 60 mm travel; slot 3x63
+PAD11,pad,Pads,NeoTrellis M4,73.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD12,pad,Pads,NeoTrellis M4,88.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD13,pad,Pads,NeoTrellis M4,103.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD14,pad,Pads,NeoTrellis M4,118.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD15,pad,Pads,NeoTrellis M4,133.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD16,pad,Pads,NeoTrellis M4,148.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD17,pad,Pads,NeoTrellis M4,163.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD18,pad,Pads,NeoTrellis M4,178.50,44.50,11,11,elastomer button 10x10, cutout 11x11
+PAD21,pad,Pads,NeoTrellis M4,73.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD22,pad,Pads,NeoTrellis M4,88.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD23,pad,Pads,NeoTrellis M4,103.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD24,pad,Pads,NeoTrellis M4,118.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD25,pad,Pads,NeoTrellis M4,133.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD26,pad,Pads,NeoTrellis M4,148.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD27,pad,Pads,NeoTrellis M4,163.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD28,pad,Pads,NeoTrellis M4,178.50,59.50,11,11,elastomer button 10x10, cutout 11x11
+PAD31,pad,Pads,NeoTrellis M4,73.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD32,pad,Pads,NeoTrellis M4,88.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD33,pad,Pads,NeoTrellis M4,103.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD34,pad,Pads,NeoTrellis M4,118.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD35,pad,Pads,NeoTrellis M4,133.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD36,pad,Pads,NeoTrellis M4,148.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD37,pad,Pads,NeoTrellis M4,163.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD38,pad,Pads,NeoTrellis M4,178.50,74.50,11,11,elastomer button 10x10, cutout 11x11
+PAD41,pad,Pads,NeoTrellis M4,73.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD42,pad,Pads,NeoTrellis M4,88.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD43,pad,Pads,NeoTrellis M4,103.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD44,pad,Pads,NeoTrellis M4,118.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD45,pad,Pads,NeoTrellis M4,133.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD46,pad,Pads,NeoTrellis M4,148.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD47,pad,Pads,NeoTrellis M4,163.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+PAD48,pad,Pads,NeoTrellis M4,178.50,89.50,11,11,elastomer button 10x10, cutout 11x11
+M4_H1,hole,NeoTrellis M4,M4,68.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H2,hole,NeoTrellis M4,M4,68.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H3,hole,NeoTrellis M4,M4,94.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H4,hole,NeoTrellis M4,M4,94.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H5,hole,NeoTrellis M4,M4,98.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H6,hole,NeoTrellis M4,M4,98.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H7,hole,NeoTrellis M4,M4,124.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H8,hole,NeoTrellis M4,M4,124.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H9,hole,NeoTrellis M4,M4,128.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H10,hole,NeoTrellis M4,M4,128.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H11,hole,NeoTrellis M4,M4,154.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H12,hole,NeoTrellis M4,M4,154.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H13,hole,NeoTrellis M4,M4,158.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H14,hole,NeoTrellis M4,M4,158.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H15,hole,NeoTrellis M4,M4,184.00,52.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+M4_H16,hole,NeoTrellis M4,M4,184.00,82.00,2.8,2.8,M2.5 mount; M4 PCB x 66-186 y 37-97, connector edge (micro-USB/JST/TRRS) facing front (y 37)
+MOD_H1,hole,Display,Waveshare 7in,56.00,145.65,2.5,2.5,module rear M2.5 (140 x 70.71, centred)
+MOD_H2,hole,Display,Waveshare 7in,196.00,145.65,2.5,2.5,module rear M2.5 (140 x 70.71, centred)
+MOD_H3,hole,Display,Waveshare 7in,56.00,216.36,2.5,2.5,module rear M2.5 (140 x 70.71, centred)
+MOD_H4,hole,Display,Waveshare 7in,196.00,216.36,2.5,2.5,module rear M2.5 (140 x 70.71, centred)
+MOD,outline,Display,Waveshare 7in,126.00,181.00,189.32,120.24,189.32 x 120.24 R8; active 155 x 88 centred; Pi 5 pattern 58x49 centred
+PANEL,outline,Panel,aluminium,142.00,124.50,284,249,2 mm aluminium, flat-panel coords (x from left edge, y from front edge, along the slope)

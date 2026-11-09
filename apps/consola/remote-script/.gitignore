@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Bulky external reference material (available upstream)
+*.pdf
+
+# Local Claude settings
+.claude/settings.local.json

@@ -1,0 +1,2 @@
+module PushClone
+singleton PushCloneTheme 1.0 PushCloneTheme.qml

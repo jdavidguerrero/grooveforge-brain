@@ -1,0 +1,11 @@
+{
+  "name": "@groovepush/gui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GroovePush GUI — Qt6/QML front-end for the 5\" DSI display on Raspberry Pi 5.",
+  "scripts": {
+    "build": "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build -j",
+    "run": "cmake --build build -j && ./build/appPushClone",
+    "clean": "rm -rf build"
+  }
+}

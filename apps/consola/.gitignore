@@ -1,0 +1,42 @@
+# ---- Node / monorepo tooling ----
+node_modules/
+.pnpm-store/
+*.log
+
+# ---- GUI (Qt / CMake) ----
+apps/gui/build/
+apps/gui/build-*/
+cmake-build-*/
+*.qmlc
+*.jsc
+.qmake.stash
+moc_*.cpp
+qrc_*.cpp
+.qt/
+.rcc/
+
+# ---- Processor (PlatformIO) ----
+apps/processor/.pio/
+apps/processor/.pioenvs/
+apps/processor/.piolibdeps/
+
+# ---- Hardware (KiCad) ----
+hardware/**/*-backups/
+hardware/**/*.kicad_prl
+hardware/**/fp-info-cache
+hardware/**/*.bak
+hardware/**/_autosave-*
+
+# ---- OS / IDE ----
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# ---- Local, machine-specific Claude settings ----
+.claude/settings.local.json
+
+# Stray duplicate clone of the remote-script (lives in apps/remote-script)
+/ableton_midi_api_integration/

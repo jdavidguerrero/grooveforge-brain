@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(qmake:*)",
+      "Bash(cmake:*)",
+      "Bash(cmake --build:*)",
+      "Bash(find:*)",
+      "Bash(brew list:*)",
+      "Bash(tar:*)",
+      "Bash(./appPushClone.app/Contents/MacOS/appPushClone)",
+      "Bash(./build/appPushClone.app/Contents/MacOS/appPushClone)",
+      "Bash(killall:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

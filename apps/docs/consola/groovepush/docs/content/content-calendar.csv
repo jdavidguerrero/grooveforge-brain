@@ -1,0 +1,14 @@
+Block,Milestone,Topic,Format,Status,Video,Depends On
+Block 0,Source of truth + bench,Anatomy of a DIY MIDI controller,Concept + bench tour,Ready to record,Board tour + power rails,-
+Block 1,First USB-MIDI note,What is USB-MIDI?,Code screencast + Ableton demo,Not started,Button to note demo,Block 0
+Block 2,ADC / faders to CC,ADC explained,Build + code,Not started,Wiring faders + smoothing,Block 1
+Block 3,Encoders / quadrature,Relative CC vs absolute,Code + logic analyzer,Not started,A/B signals scope,Block 2
+Block 4,MCP23017 / I2C - 16 botones (8+8),GPIO expanders (encoders + transporte + UNDO),Build + I2C scan,Not started,MCP on protoboard,Block 3
+Block 5,N/A - no es parte de GroovePush,[REMOVIDO del alcance] Piezo/IR - movido a futuro modulo e-drum,Build,Not started,Drum-pad build (futuro proyecto),Block 4
+Block 6,NeoTrellis grid (LEDs nativos); WS2812B externa = Fase 3,Pads RGB (grid NeoTrellis por I2C) - tira WS2812B diferida a PCB,Build,Not started,Grid build + LED sweep,Block 4 (Block 5 removido)
+Block 7,UART Teensy to RPi,Serial protocols,Code both sides,Not started,Reconnect demo,Block 6
+Block 8,Qt/QML + Theme,The instrument display,RPi setup + design system,Not started,First screen,Block 7
+Block 9,gp-bridged + ZeroMQ,Clean architecture,Diagram + pytest,Not started,Offline-state demo,Block 8
+Block 10,Pairing + backend,mDNS tokens and keys,Demo,Not started,Pairing flow,Block 9
+Block 11,Score + spectrum + FIX,Mix copilot,Demo,Not started,Score rises on fix,Block 10
+Block 12,GEN + COPILOT + SOUND,AI patterns to clip,Demo,Not started,Generate + commit,Block 11

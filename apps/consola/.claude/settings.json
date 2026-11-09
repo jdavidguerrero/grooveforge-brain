@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(pnpm:*)",
+      "Bash(make:*)",
+      "Bash(cmake:*)",
+      "Bash(cmake --build:*)",
+      "Bash(qmake:*)",
+      "Bash(pio run:*)",
+      "Bash(pio check:*)",
+      "Bash(platformio run:*)",
+      "Bash(~/.platformio/penv/bin/platformio run:*)",
+      "Bash(~/.platformio/penv/bin/platformio device monitor:*)",
+      "Bash(git status:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git mv:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:docs.platformio.org)",
+      "WebFetch(domain:www.pjrc.com)",
+      "WebFetch(domain:learn.adafruit.com)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
