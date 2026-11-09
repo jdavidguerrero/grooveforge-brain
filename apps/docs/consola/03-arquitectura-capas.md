@@ -69,6 +69,10 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 | Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: crossfader + 2 FSR de expresión + 1 libre; ADC propio (rápido): 4 FSR de velocity + perillas MASTER y CUE; NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
 | Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal, crossfader). HÍBRIDO y ESTUDIO después |
 
+**Alcance del mixer (Juan, 2026-11-09):** el MVP es un **mixer interno**: mezcla los canales que genera la consola dentro del Pi, sin hardware extra. Mezclar **CDJs o Traktor** (cuyo audio llega analógico desde la tarjeta del laptop) pide **una entrada estéreo por deck**; el SGTL5000 tiene una sola entrada estéreo de línea. Esas entradas van en la v2 con un códec multicanal (CS42448: 6 entradas, 8 salidas) en el conector SAI2 reservado. Un mixer de DJ para fuentes externas (ruido bajo, margen, entradas balanceadas) es casi un proyecto propio: la idea del mixer estilo Xone de Juan.
+
+**Prototipo con lo que hay:** las 2 placas MCP23017 del Push; crossfader con cualquier potenciómetro deslizante lineal B10K (45 o 60 mm) o uno de los 4 faders Alps (el crossfader definitivo se elige para la caja); CV con **MCP4725** (1 salida de 12 bits, hasta 2 en el mismo I2C: cutoff y resonancia) en lugar del MCP4728 de 4 salidas. Marimba y e-drum quedan para después.
+
 ### 4.2 Preparado en la placa, sin poblar (para versiones siguientes)
 
 | Ampliación | Qué se deja en la placa | Teensy |
