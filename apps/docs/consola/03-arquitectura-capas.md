@@ -26,6 +26,8 @@
 
 **A medir en el prototipo:** latencia y throughput de `bridge-protocol` por CDC frente a SysEx, con el mismo mensaje.
 
+**Prototipo de la Teensy S (E4, 2026-11-09):** mientras se asignan los comandos de consola en `bridge-protocol`, la S habla con el Pi por **MIDI USB estándar** con nombre propio «GF Superficie», más una línea de texto `@S STATS` por CDC para diagnóstico (`06-teensy-s-e4.md` §3, lector en `08-superficie-pi.md`). El paso a `bridge-protocol` queda para cuando el mapa de controles esté estable.
+
 **Contradicción a resolver con Juan:** `02-bridge-protocol.md` define el enlace como UART a 921 600 baudios entre Teensy y ESP32. Usar las mismas tramas por CDC hacia el Pi es otro transporte del mismo protocolo; hace falta su visto bueno para documentarlo así (es spec SSoT).
 
 ## 3. Sistema operativo del Pi
@@ -66,7 +68,7 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 | Pi 5 | Motor, secuenciador, sampler, **mezcla**, GUI Qt 7", Ethernet |
 | Audio | Audio+ V2 (sala); SGTL5000 en la Teensy A (cue y entrada de línea) |
 | Teensy A | Synths y FX del Brain; USB al Pi; enlace con S |
-| Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: 2 FSR de expresión + 2 libres; ADC propio (rápido): 4 FSR de velocity + perillas **MASTER** (sala, volumen digital en el Pi: el Audio+ no tiene volumen propio), **CUE** (amplificador de audífonos del SGTL5000, vía el enlace con A; Shift + CUE = mezcla de cue, cuánto de la sala se oye en audífonos) e **IN** (ganancia de la entrada de línea del SGTL5000, como el pot IN del Brain Studio); NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
+| Teensy S | 8 encoders; **ADS1115 #1**: 4 faders; **ADS1115 #2**: 2 FSR de expresión + 2 sensores de mano Sharp GP2Y0A41 (canales 2–3, `07-gui.md` §3); ADC propio (rápido): 4 FSR de velocity + perillas **MASTER** (sala, volumen digital en el Pi: el Audio+ no tiene volumen propio), **CUE** (amplificador de audífonos del SGTL5000, vía el enlace con A; Shift + CUE = mezcla de cue, cuánto de la sala se oye en audífonos) e **IN** (ganancia de la entrada de línea del SGTL5000, como el pot IN del Brain Studio); NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
 | Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal). HÍBRIDO y ESTUDIO después. **Sin crossfader, descartado del todo** (Juan, 2026-11-09): el set es por capas; las transiciones se hacen intercambiando capas (`00-concepto.md` §5.1) |
 
 **Alcance del mixer (Juan, 2026-11-09):** el MVP es un **mixer interno**: mezcla los canales que genera la consola dentro del Pi, sin hardware extra. Mezclar **CDJs o Traktor** (cuyo audio llega analógico desde la tarjeta del laptop) pide **una entrada estéreo por deck**; el SGTL5000 tiene una sola entrada estéreo de línea. Esas entradas van en la v2 con un códec multicanal (CS42448: 6 entradas, 8 salidas) en el conector SAI2 reservado. Un mixer de DJ para fuentes externas (ruido bajo, margen, entradas balanceadas) es casi un proyecto propio: la idea del mixer estilo Xone de Juan.
@@ -79,7 +81,8 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 |---|---|---|
 | **CV/Gate** (MCP4728: 4 CV + 2 gates) para el filtro analógico y synths externos | Huella del MCP4728 en el I2C, huellas del amplificador y protección por salida, conector a una placa de jacks | A |
 | **Mixer completo**: ecualizador aislador de 3 bandas + filtro de una perilla por canal, envíos, bancos | Solo firmware: usa los encoders y faders del MVP | — |
-| **4 entradas de trigger** (piezo, zona de pad y aro) para e-drum y **la marimba** | Conector con 8 pines analógicos de S + huellas del acondicionamiento (resistencia, diodos, pico) | S |
+| **4 entradas de trigger rápidas** (piezo) para el **e-drum** | Un conector multipolar al armazón (DB15 o RJ45) con 4 señales a los pines analógicos reservados de S (25, 27, 40, 41), tierra y 5 V, más huellas del acondicionamiento por canal (resistencia, diodos, retención de pico). Se leen con el ADC propio de la Teensy, como los FSR: **no con un ADS1115**, que con 4 canales lee cada uno solo cada ~5 ms y pierde el golpe de un piezo (Juan, 2026-11-09: solo triggers rápidos, sin otro ADS) | S |
+| **Marimba** | Nada en la placa: la marimba lleva **su propio microcontrolador** y manda MIDI a la consola por el MIDI DIN o por USB (Juan, 2026-11-09) | — |
 | **MIDI DIN in/out + clock + sync analógico** | Huellas del optoacoplador de entrada y de los jacks TRS | S |
 | **Segundo códec o códec multicanal** (segundo SGTL5000 o CS42448): todo el audio en la Teensy A, con un solo reloj, sin el Audio+ | El segundo puerto I2S (SAI2) de A llevado a un conector. Se decide después de E3 (clics del cue con dos relojes). Dos SGTL5000 en una Teensy piden otra dirección I2C para uno | A |
 | **Pedal** (aceptar o saltar) | Un jack TRS a un pin libre de S | S |

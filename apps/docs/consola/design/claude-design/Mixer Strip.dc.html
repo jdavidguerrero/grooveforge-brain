@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></helmet>
+<div style="box-sizing:border-box;width:100%;height:100%;background:#141414;border:{{ obd }};border-radius:6px;display:flex;flex-direction:column;overflow:hidden;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">
+  <div style="height:30px;flex:none;background:{{ hbg }};color:{{ hfg }};display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:12px;font-weight:600;letter-spacing:.08em"><span>{{ label }}</span><span style="font-size:9px;letter-spacing:.06em">{{ chTag }}</span></div>
+  <div style="padding:8px;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0">
+    <div style="display:flex;flex-direction:column;gap:5px;padding:5px;border-radius:4px;border:{{ eqBd }}">
+      <sc-for list="{{ eqRows }}" as="e" hint-placeholder-count="3">
+        <div style="display:grid;grid-template-columns:24px minmax(0,1fr);align-items:center;gap:6px">
+          <span style="font-size:10px;color:#5A5A6E;letter-spacing:.04em">{{ e.n }}</span>
+          <div style="position:relative;height:14px;background:#0C0C0C;border:{{ e.bd }};border-radius:2px;box-sizing:border-box">
+            <div style="position:absolute;left:50%;top:2px;bottom:2px;width:1px;background:#2E2E2E"></div>
+            <div style="position:absolute;top:3px;bottom:3px;left:{{ e.left }}%;width:{{ e.w }}%;background:{{ color }}"></div>
+            <sc-if value="{{ e.kill }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;letter-spacing:.12em;color:#9A9AA6">KILL</span></sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="border:{{ fBd }};border-radius:4px;background:#0C0C0C;padding:6px;display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:.04em"><span style="color:#5A5A6E">FILTER</span><span style="font-weight:600">{{ fLabel }}</span></div>
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none" style="width:100%;height:34px;display:block"><path d="{{ fFill }}" fill="{{ dim }}"></path><path d="{{ fPath }}" fill="none" stroke="{{ color }}" stroke-width="2" vector-effect="non-scaling-stroke"></path></svg>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;padding:5px;border-radius:4px;border:{{ sBd }}">
+      <sc-for list="{{ sends }}" as="s" hint-placeholder-count="2">
+        <div style="display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:6px"><span style="font-size:10px;color:#5A5A6E">{{ s.n }}</span><div style="height:6px;background:#0C0C0C;border-radius:1px;overflow:hidden"><div style="height:100%;width:{{ s.w }}%;background:#9A9AA6"></div></div></div>
+      </sc-for>
+    </div>
+    <div style="height:26px;flex:none;border-radius:4px;border:1px solid {{ cueBd }};background:{{ cueBg }};color:{{ cueFg }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;letter-spacing:.12em">CUE</div>
+    <div style="flex:1;min-height:60px;display:flex;gap:10px;justify-content:center;position:relative">
+      <div style="position:relative;width:28px">
+        <div style="position:absolute;left:12px;width:4px;top:0;bottom:0;background:#242424;border-radius:2px"></div>
+        <div style="position:absolute;left:0;width:28px;height:12px;bottom:calc({{ volPct }}% - 6px);background:linear-gradient(180deg,#E6E6E6,#BDBDBD);border-radius:2px;box-shadow:0 1px 0 #000"><div style="position:absolute;left:4px;right:4px;top:5px;height:2px;background:#0A0A0A"></div></div>
+      </div>
+      <div style="display:flex;gap:3px;position:relative">
+        <sc-for list="{{ meters }}" as="m" hint-placeholder-count="2"><div style="position:relative;width:6px;background:#0C0C0C;border-radius:1px;overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:{{ m.h }}%;background:linear-gradient(0deg,#0E5040 0%,#1D9E75 55%,#5DCAA5 100%)"></div><div style="position:absolute;left:0;right:0;height:2px;bottom:{{ m.pk }}%;background:#5DCAA5"></div></div></sc-for>
+        <sc-if value="{{ clip }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:-8px;left:3px;width:9px;height:4px;background:#E84A4A;border-radius:1px"></div></sc-if>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:14px;font-weight:600">{{ db }}</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:120,&quot;height&quot;:520},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;BASS&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;color&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3D8CFF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;dim&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#182E4F&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;filter&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:-1,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:-0.4,&quot;tsType&quot;:&quot;number&quot;},&quot;vol&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:0.75,&quot;tsType&quot;:&quot;number&quot;},&quot;meter&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:0.7,&quot;tsType&quot;:&quot;number&quot;},&quot;echo&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:0.2,&quot;tsType&quot;:&quot;number&quot;},&quot;verb&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:0.1,&quot;tsType&quot;:&quot;number&quot;},&quot;cue&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;sel&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;focus&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;eq&quot;,&quot;filter&quot;,&quot;sends&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;chTag&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;peak&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:0,&quot;tsType&quot;:&quot;number&quot;},&quot;eq&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;number[]&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, c = p.color ?? '#3D8CFF', d = p.dim ?? '#182E4F', focus = p.focus ?? 'none';
+    const eq = p.eq ?? [0, 0, 0];
+    const eqRows = ['HI', 'MID', 'LO'].map((n, i) => {
+      const v = eq[i], kill = v <= -1;
+      return { n, kill, left: kill ? 50 : (v < 0 ? 50 + 50 * v : 50), w: kill ? 0 : Math.abs(v) * 50, bd: kill ? '1px dashed #3A3A44' : '1px solid #1E1E1E' };
+    });
+    const f = p.filter ?? 0;
+    const fmt = hz => hz >= 1000 ? (hz / 1000).toFixed(1) + 'k' : String(hz);
+    let fPath, fFill, fLabel;
+    if (Math.abs(f) < 0.03) { fPath = 'M0 10 L100 10'; fFill = 'M0 10 L100 10 L100 40 L0 40 Z'; fLabel = 'OPEN'; }
+    else if (f < 0) { const x = 100 * (1 + f); fPath = `M0 10 L${x - 12} 10 Q${x} 8 ${x + 6} 40`; fFill = fPath + ' L0 40 Z'; fLabel = 'LP ' + fmt(Math.round(20000 * Math.pow(10, f * 2.5) / 10) * 10); }
+    else { const x = 100 * f; fPath = `M${x - 6} 40 Q${x} 8 ${x + 12} 10 L100 10`; fFill = fPath + ' L100 40 Z'; fLabel = 'HP ' + fmt(Math.round(20 * Math.pow(10, f * 3))); }
+    const vol = p.vol ?? 0.8, m = p.meter ?? 0.6, muted = vol <= 0;
+    const hl = '1px solid #F2F2F2';
+    return {
+      color: c, dim: d, label: p.label ?? 'BASS', chTag: p.chTag ?? '',
+      obd: p.sel ? `2px solid ${c}` : '1px solid #242424',
+      hbg: muted ? d : c, hfg: muted ? '#F2F2F2' : '#0A0A0A',
+      eqRows, eqBd: focus === 'eq' ? hl : '1px solid transparent',
+      fPath, fFill, fLabel, fBd: focus === 'filter' ? hl : '1px solid #1E1E1E',
+      sends: [{ n: 'ECHO', w: (p.echo ?? 0) * 100 }, { n: 'VERB', w: (p.verb ?? 0) * 100 }], sBd: focus === 'sends' ? hl : '1px solid transparent',
+      cueBg: p.cue ? '#F2F2F2' : 'transparent', cueFg: p.cue ? '#0A0A0A' : '#9A9AA6', cueBd: p.cue ? '#F2F2F2' : '#2E2E2E',
+      volPct: Math.round(vol * 100),
+      meters: [m, m * 0.94].map(v => ({ h: Math.round(v * 100), pk: Math.min(98, Math.round(Math.min(1, v + 0.06) * 100)) })),
+      clip: (p.peak ?? 0) >= 1,
+      db: muted ? '−∞' : ((v => (v >= 0 ? '+' : '') + v.toFixed(1))(20 * Math.log10(vol / 0.8)))
+    };
+  }
+}
+</script>
+</body>
+</html>

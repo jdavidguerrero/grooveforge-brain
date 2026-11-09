@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>:root{--disp:'Big Shoulders Display',sans-serif;--dispw:100%}body{margin:0;background:#050505}a{color:#5DCAA5}a:hover{color:#F2F2F2}</style>
+</helmet>
+<div style="width:2736px;box-sizing:border-box;padding:72px;background:#050505;color:#F2F2F2;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:72px">
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:13px;letter-spacing:.2em;color:#5DCAA5">GROOVEFORGE CONSOLE · STANDALONE + COMMON · 1280×720</div>
+    <div style="font-family:var(--disp);font-stretch:var(--dispw);font-size:88px;line-height:84px;font-weight:800;text-transform:uppercase">Standalone screens 10–20</div>
+    <div style="font-size:15px;line-height:22px;color:#9A9AA6">Same chrome and 8-column geometry as the MVP file. Components: Top Bar, Soft Keys, Grid Cell, Option Card.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1280px);gap:64px 48px">
+
+    <div data-screen-label="10 Search" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">10</span><span style="font-size:18px;font-weight:600">SEARCH / BROWSER</span><span style="font-size:12px;color:#5A5A6E">COMMON · TOUCH KEYBOARD</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="SEARCH" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:56px;flex:none;display:flex;gap:8px">
+            <div style="flex:1;box-sizing:border-box;border-radius:6px;background:#141414;border:2px solid #5DCAA5;display:flex;align-items:center;gap:4px;padding:0 16px"><span style="font-size:22px;font-weight:600">kalim</span><div style="width:2px;height:26px;background:#5DCAA5"></div><div style="flex:1"></div><span style="font-size:12px;color:#9A9AA6;letter-spacing:.08em">38 RESULTS</span></div>
+            <sc-for list="{{ sChips }}" as="c" hint-placeholder-count="5"><div style="box-sizing:border-box;min-width:104px;padding:0 14px;border-radius:6px;background:{{ c.bg }};border:1px solid {{ c.bd }};display:flex;flex-direction:column;justify-content:center;gap:2px"><span style="font-size:12px;font-weight:600;letter-spacing:.08em;color:{{ c.fg }}">{{ c.n }}</span><span style="font-size:11px;color:#5A5A6E">{{ c.k }}</span></div></sc-for>
+          </div>
+          <div style="height:236px;flex:none;display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:8px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <sc-for list="{{ sRes }}" as="r" hint-placeholder-count="4">
+                <div style="box-sizing:border-box;height:56px;border-radius:6px;background:{{ r.bg }};border:1px solid {{ r.bd }};display:grid;grid-template-columns:96px minmax(0,1fr) 200px 96px;align-items:center;gap:12px;padding:0 14px">
+                  <span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#9A9AA6">{{ r.t }}</span>
+                  <span style="font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.a }}<span style="color:#5DCAA5">{{ r.m }}</span>{{ r.b }}</span>
+                  <span style="font-size:12px;color:#5A5A6E">{{ r.meta }}</span>
+                  <span style="justify-self:end;font-size:10px;font-weight:600;letter-spacing:.08em;padding:3px 6px;border-radius:3px;background:{{ r.rc }};color:#0A0A0A">{{ r.role }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">PREVIEW · IN CUE</span>
+              <span style="font-size:20px;font-weight:600">Kalimba Glass</span>
+              <span style="font-size:12px;color:#9FE1CB">PRESET · BRAIN CHORUS POLY · LEAD</span>
+              <div style="height:52px;display:flex;align-items:center;gap:2px"><sc-for list="{{ sWave }}" as="w" hint-placeholder-count="40"><div style="flex:1;height:{{ w.h }}%;background:{{ w.c }};border-radius:1px"></div></sc-for></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><div style="height:48px;border-radius:6px;background:#1D9E75;color:#0A0A0A;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.08em">LOAD TO LEAD</div><div style="height:48px;border-radius:6px;border:1px solid #2E2E2E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:.08em">STOP CUE</div></div>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ kbd }}" as="row" hint-placeholder-count="4">
+              <div style="display:flex;gap:6px;height:48px;padding:0 {{ row.pad }}px">
+                <sc-for list="{{ row.keys }}" as="k" hint-placeholder-count="10"><div style="flex:{{ k.f }};border-radius:6px;background:{{ k.bg }};border:1px solid #2A2A2A;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;color:{{ k.fg }}">{{ k.k }}</div></sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kSearch }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="11 Live Arrange" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">11</span><span style="font-size:18px;font-weight:600">LIVE · ARRANGE</span><span style="font-size:12px;color:#5A5A6E">RIVERS OF LAYERS · SWAP RUNNING</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="LIVE · ARRANGE" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:96px;flex:none;box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;display:grid;grid-template-columns:112px minmax(0,1fr) 96px;gap:8px;align-items:center;padding:0 0 0 12px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">SET ENERGY</span><span style="font-size:16px;font-weight:600">0:42</span><span style="font-size:11px;color:#5A5A6E">of 1:30 plan</span></div>
+            <div style="position:relative;height:72px">
+              <svg viewBox="0 0 1000 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%"><path d="{{ eFill }}" fill="rgba(242,242,242,.06)"></path><path d="{{ ePath }}" fill="none" stroke="#F2F2F2" stroke-width="2" vector-effect="non-scaling-stroke"></path></svg>
+              <div style="position:absolute;top:-4px;bottom:-4px;left:46%;width:2px;background:#5DCAA5"></div>
+              <sc-for list="{{ eSecs }}" as="s" hint-placeholder-count="6"><span style="position:absolute;bottom:0;left:{{ s.x }}%;font-size:9px;letter-spacing:.08em;color:{{ s.c }}">{{ s.n }}</span></sc-for>
+            </div>
+            <div style="position:relative;width:72px;height:72px"><div style="position:absolute;inset:0;border-radius:50%;background:{{ ring5 }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px));mask:radial-gradient(farthest-side,transparent calc(100% - 8px),#000 calc(100% - 7px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:800">5</div></div>
+          </div>
+          <div style="position:relative;flex:1;display:flex;flex-direction:column;gap:4px">
+            <sc-for list="{{ lanes }}" as="l" hint-placeholder-count="8">
+              <div style="height:50px;display:grid;grid-template-columns:112px minmax(0,1fr);gap:8px">
+                <div style="box-sizing:border-box;border-radius:4px;background:{{ l.d }};padding:6px 10px;display:flex;flex-direction:column;justify-content:space-between"><span style="font-size:12px;font-weight:600;letter-spacing:.08em;color:{{ l.c }}">{{ l.k }}</span><span style="font-size:11px;color:#F2F2F2">{{ l.lv }}</span></div>
+                <div style="position:relative;background:#0F0F0F;border-radius:4px;overflow:hidden">
+                  <sc-if value="{{ l.hasNext }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;bottom:0;left:{{ l.nx }}%;right:0;background:#181818;border-left:2px dashed #F2F2F2"></div><span style="position:absolute;top:3px;left:calc({{ l.nx }}% + 8px);font-size:9px;font-weight:600;letter-spacing:.08em;color:#F2F2F2">KALIMBA DUSK ▸</span></sc-if>
+                  <div style="position:absolute;inset:6px 4px;display:flex;align-items:center;gap:2px"><sc-for list="{{ l.bars }}" as="b" hint-placeholder-count="96"><div style="flex:1;height:{{ b.h }}%;background:{{ b.c }};opacity:{{ b.o }};border-radius:1px"></div></sc-for></div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-for list="{{ phraseLines }}" as="p" hint-placeholder-count="3"><div style="position:absolute;top:0;bottom:0;left:{{ p }}px;width:1px;background:#3A3A44"></div></sc-for>
+            <div style="position:absolute;top:-6px;bottom:0;left:548px;width:2px;background:#F2F2F2"></div>
+            <div style="position:absolute;top:-14px;left:528px;padding:1px 6px;background:#F2F2F2;color:#0A0A0A;font-size:9px;font-weight:700;letter-spacing:.1em;border-radius:2px">NOW</div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kArr }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="12 Sequencer Steps" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">12</span><span style="font-size:18px;font-weight:600">SEQUENCER · STEPS</span><span style="font-size:12px;color:#5A5A6E">DRUMS + PERC · VELOCITY, PROBABILITY, MICROTIMING</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="SEQ · STEPS" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="position:relative;display:flex;flex-direction:column;gap:4px">
+            <div style="height:24px;display:grid;grid-template-columns:128px repeat(16,minmax(0,1fr));gap:4px">
+              <span style="font-size:11px;letter-spacing:.08em;color:#5A5A6E;align-self:center">BAR 1 · 1/16</span>
+              <sc-for list="{{ ruler }}" as="r" hint-placeholder-count="16"><div style="border-radius:3px;background:{{ r.bg }};color:{{ r.fg }};font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center">{{ r.n }}</div></sc-for>
+            </div>
+            <sc-for list="{{ stepLanes }}" as="l" hint-placeholder-count="8">
+              <div style="height:56px;display:grid;grid-template-columns:128px repeat(16,minmax(0,1fr));gap:4px">
+                <div style="box-sizing:border-box;border-radius:4px;background:{{ l.d }};padding:6px 10px;display:flex;flex-direction:column;justify-content:space-between"><span style="font-size:13px;font-weight:600">{{ l.n }}</span><span style="font-size:10px;font-weight:600;letter-spacing:.08em;color:{{ l.c }}">{{ l.role }}</span></div>
+                <sc-for list="{{ l.steps }}" as="s" hint-placeholder-count="16">
+                  <div style="position:relative;box-sizing:border-box;border-radius:4px;background:{{ s.bg }};border:{{ s.bd }}">
+                    <sc-if value="{{ s.on }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;left:5px;right:5px;bottom:5px;height:{{ s.h }}%;background:{{ s.c }};border-radius:2px"></div>
+                      <span style="position:absolute;top:3px;right:4px;font-size:9px;font-weight:600;color:#F2F2F2">{{ s.prob }}</span>
+                      <div style="position:absolute;top:4px;left:calc(30% + {{ s.mi }}px);width:2px;height:7px;background:{{ s.mc }}"></div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ padWin }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;left:132px;top:28px;width:564px;height:236px;box-sizing:border-box;border:2px solid #F2F2F2;border-radius:6px;pointer-events:none"></div><div style="position:absolute;left:142px;top:20px;padding:0 6px;background:#F2F2F2;color:#0A0A0A;font-size:9px;font-weight:700;letter-spacing:.1em;border-radius:2px">PADS 8×4</div></sc-if>
+          </div>
+          <div style="display:flex;gap:28px;align-items:center;font-size:11px;color:#9A9AA6;padding:4px 4px 0">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#FF9A2E;border-radius:2px"></span>YOU</span>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;background:#7A6FE0;border-radius:2px"></span>ENGINE FILL</span>
+            <span>bar height = velocity</span><span>70 = probability %</span><span>tick = microtiming</span><span>white frame = what the pads show · ◀ ▶ ▲ ▼ moves it</span>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kSteps }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="13 Sequencer Piano Roll" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">13</span><span style="font-size:18px;font-weight:600">SEQUENCER · PIANO ROLL</span><span style="font-size:12px;color:#5A5A6E">BASS · PADS EDIT, TOUCH ONLY NAVIGATES</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="SEQ · PIANO ROLL" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:32px;flex:none;display:flex;align-items:center;gap:24px;padding:0 4px;font-size:12px">
+            <span style="font-weight:600;color:#3D8CFF;letter-spacing:.08em">BASS</span><span style="color:#9A9AA6">BARS 1–4 OF 8 · A1–A3 · A MINOR</span><div style="flex:1"></div>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:8px;background:#3D8CFF;border-radius:2px"></span>YOU · 14 · locked from engine</span>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:12px;height:8px;background:#7A6FE0;border-radius:2px"></span>ENGINE · 6</span>
+            <span style="color:#5A5A6E">PINCH ZOOM · DRAG TO SCROLL</span>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px;min-height:0">
+            <div style="display:flex;flex-direction:column;gap:1px">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="25"><div style="flex:1;border-radius:2px;background:{{ k.bg }};display:flex;align-items:center;justify-content:space-between;padding:0 6px;font-size:10px;font-weight:600;color:{{ k.fg }}"><span>{{ k.n }}</span><span style="width:5px;height:5px;border-radius:50%;background:{{ k.dot }}"></span></div></sc-for>
+            </div>
+            <div style="position:relative;background:#0C0C0C;border-radius:4px;overflow:hidden">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="25"><div style="position:absolute;left:0;right:0;top:{{ k.t }}%;height:{{ k.h }}%;background:{{ k.row }};border-bottom:1px solid #0A0A0A;box-sizing:border-box"></div></sc-for>
+              <sc-for list="{{ rollLines }}" as="g" hint-placeholder-count="16"><div style="position:absolute;top:0;bottom:0;left:{{ g.x }}%;width:1px;background:{{ g.c }}"></div></sc-for>
+              <div style="position:absolute;left:25%;width:12.5%;top:68%;height:32%;background:rgba(242,242,242,.05);border:2px solid #F2F2F2;box-sizing:border-box;border-radius:3px"></div>
+              <span style="position:absolute;left:calc(25% + 6px);top:calc(68% - 16px);padding:0 6px;background:#F2F2F2;color:#0A0A0A;font-size:9px;font-weight:700;letter-spacing:.1em;border-radius:2px">PADS 8 STEPS × 4 NOTES</span>
+              <sc-for list="{{ rollNotes }}" as="n" hint-placeholder-count="20"><div style="position:absolute;left:calc({{ n.l }}% + 1px);width:calc({{ n.w }}% - 2px);top:calc({{ n.t }}% + 2px);height:calc({{ n.h }}% - 4px);background:{{ n.c }};border-radius:2px;box-shadow:{{ n.sh }}"></div></sc-for>
+              <div style="position:absolute;top:0;bottom:0;left:32.8%;width:2px;background:#5DCAA5"></div>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kRoll }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="14 Pads" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">14</span><span style="font-size:18px;font-weight:600">PADS · PLAY IN KEY</span><span style="font-size:12px;color:#5A5A6E">LEAD · 4THS · MIRRORS THE 8×4 GRID</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="PADS" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:168px;flex:none;display:grid;grid-template-columns:minmax(0,1fr) 624px;gap:8px">
+            <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:16px 20px;display:flex;align-items:center;gap:28px">
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:136px;line-height:120px;font-weight:800;color:#B6F23D">E4</span>
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">LAST NOTE · VEL 104</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;line-height:40px;font-weight:800">A MINOR</span><span style="font-size:13px;color:#9FE1CB">IN KEY · 4THS · OCT 3 · LEAD</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) 120px;gap:8px">
+              <sc-for list="{{ fsrPads }}" as="f" hint-placeholder-count="4">
+                <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:1px solid #242424;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:{{ f.c }}">{{ f.n }}</span>
+                  <div style="flex:1;position:relative;background:#0C0C0C;border-radius:3px;overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:{{ f.v }}%;background:{{ f.c }}"></div></div>
+                  <span style="font-size:11px;color:#9A9AA6">{{ f.s }}</span>
+                </div>
+              </sc-for>
+              <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:1px solid #242424;padding:10px;display:flex;flex-direction:column;gap:8px">
+                <span style="font-size:11px;font-weight:600;letter-spacing:.08em">EXPRESSION</span>
+                <sc-for list="{{ expr }}" as="e" hint-placeholder-count="2"><div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:10px;color:#9A9AA6">{{ e.n }}</span><div style="height:8px;background:#0C0C0C;border-radius:2px"><div style="width:{{ e.v }}%;height:100%;background:#5DCAA5;border-radius:2px"></div></div></div></sc-for>
+              </div>
+            </div>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ pads }}" as="p" hint-placeholder-count="32"><div style="box-sizing:border-box;border-radius:8px;background:{{ p.bg }};border:2px solid {{ p.bd }};padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;color:{{ p.fg }}"><span style="font-size:10px;font-weight:600;letter-spacing:.1em">{{ p.tag }}</span><span style="font-size:20px;font-weight:600">{{ p.n }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kPads }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="15 Brain Engine" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">15</span><span style="font-size:18px;font-weight:600">BRAIN · ENGINE</span><span style="font-size:12px;color:#5A5A6E">SYNTH · 6 ENGINES · MACROS ON ENCODERS</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="BRAIN · LEAD" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:44px;flex:none;display:flex;gap:4px">
+            <sc-for list="{{ brainTabs }}" as="t" hint-placeholder-count="7"><div style="flex:1;border-radius:6px;background:{{ t.bg }};border:1px solid {{ t.bd }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:.1em;color:{{ t.fg }}">{{ t.n }}</div></sc-for>
+          </div>
+          <div style="height:240px;flex:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ engines }}" as="e" hint-placeholder-count="6">
+              <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:2px solid {{ e.bd }};padding:8px;display:flex;flex-direction:column;gap:8px">
+                <div style="height:140px;border-radius:4px;background:repeating-linear-gradient(135deg,#161616 0 8px,#1A1A1A 8px 16px);display:flex;align-items:flex-end;padding:8px;box-sizing:border-box;font-size:9px;letter-spacing:.08em;color:#5A5A6E">ILLUSTRATION · {{ e.n }}</div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:600">{{ e.n }}</span><sc-if value="{{ e.on }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 5px;border-radius:3px;background:#1D9E75;color:#0A0A0A">ACTIVE</span></sc-if></div>
+                <span style="font-size:11px;color:#5A5A6E">{{ e.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ brainArcs }}" as="a" hint-placeholder-count="8">
+              <div style="box-sizing:border-box;border-radius:6px;background:#141414;border:1px solid {{ a.bd }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+                <div style="position:relative;width:104px;height:104px"><div style="position:absolute;inset:0;border-radius:50%;background:{{ a.bg }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600">{{ a.v }}</div></div>
+                <span style="font-size:12px;font-weight:600;letter-spacing:.08em;color:#9A9AA6">{{ a.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kBrain }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="16 Brain Hybrid" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">16</span><span style="font-size:18px;font-weight:600">BRAIN · HYBRID</span><span style="font-size:12px;color:#5A5A6E">TWO ENGINES · HYBRID BLUE REPLACES BRAIN TEAL</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="BRAIN · HYBRID" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:44px;flex:none;display:flex;gap:4px">
+            <sc-for list="{{ hybTabs }}" as="t" hint-placeholder-count="7"><div style="flex:1;border-radius:6px;background:{{ t.bg }};border:1px solid {{ t.bd }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:.1em;color:{{ t.fg }}">{{ t.n }}</div></sc-for>
+          </div>
+          <div style="height:276px;flex:none;display:grid;grid-template-columns:minmax(0,1fr) 400px minmax(0,1fr);gap:8px">
+            <sc-for list="{{ hybA }}" as="e" hint-placeholder-count="1">
+              <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:2px solid #1E90C0;padding:10px;display:flex;flex-direction:column;gap:8px">
+                <div style="flex:1;border-radius:4px;background:repeating-linear-gradient(135deg,#121A1E 0 8px,#15202A 8px 16px);display:flex;align-items:flex-end;padding:8px;font-size:9px;letter-spacing:.08em;color:#6CC4EA">ILLUSTRATION · {{ e.n }}</div>
+                <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;font-weight:800;color:#6CC4EA">{{ e.l }}</span><span style="font-size:16px;font-weight:600">{{ e.n }}</span></div>
+                <span style="font-size:11px;color:#5A5A6E">{{ e.d }}</span>
+              </div>
+            </sc-for>
+            <div style="box-sizing:border-box;border-radius:8px;background:#0E3F55;padding:20px;display:flex;flex-direction:column;gap:16px">
+              <span style="font-size:11px;letter-spacing:.12em;color:#6CC4EA">LAYER MODE</span>
+              <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px"><sc-for list="{{ hybModes }}" as="m" hint-placeholder-count="3"><div style="height:48px;border-radius:6px;background:{{ m.bg }};color:{{ m.fg }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.08em">{{ m.n }}</div></sc-for></div>
+              <span style="font-size:11px;letter-spacing:.12em;color:#6CC4EA">BLEND</span>
+              <div style="position:relative;height:40px"><div style="position:absolute;left:0;right:0;top:17px;height:6px;border-radius:3px;background:linear-gradient(90deg,#6CC4EA,#1E90C0)"></div><div style="position:absolute;top:4px;left:calc(38% - 16px);width:32px;height:32px;border-radius:50%;background:#F2F2F2;box-shadow:0 2px 0 #000"></div></div>
+              <div style="display:flex;justify-content:space-between;font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;font-weight:800"><span>A 62</span><span style="color:#6CC4EA">B 38</span></div>
+            </div>
+            <sc-for list="{{ hybB }}" as="e" hint-placeholder-count="1">
+              <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:2px solid #1E90C0;padding:10px;display:flex;flex-direction:column;gap:8px">
+                <div style="flex:1;border-radius:4px;background:repeating-linear-gradient(135deg,#121A1E 0 8px,#15202A 8px 16px);display:flex;align-items:flex-end;padding:8px;font-size:9px;letter-spacing:.08em;color:#6CC4EA">ILLUSTRATION · {{ e.n }}</div>
+                <div style="display:flex;align-items:baseline;gap:10px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;font-weight:800;color:#6CC4EA">{{ e.l }}</span><span style="font-size:16px;font-weight:600">{{ e.n }}</span></div>
+                <span style="font-size:11px;color:#5A5A6E">{{ e.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ hybArcs }}" as="a" hint-placeholder-count="8">
+              <div style="box-sizing:border-box;border-radius:6px;background:#141414;border:1px solid {{ a.bd }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+                <div style="position:relative;width:96px;height:96px"><div style="position:absolute;inset:0;border-radius:50%;background:{{ a.bg }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px));mask:radial-gradient(farthest-side,transparent calc(100% - 9px),#000 calc(100% - 8px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600">{{ a.v }}</div></div>
+                <span style="font-size:11px;font-weight:600;letter-spacing:.08em;color:#9A9AA6">{{ a.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kHyb }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="17 Kit" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">17</span><span style="font-size:18px;font-weight:600">KIT · DRUM MACHINE</span><span style="font-size:12px;color:#5A5A6E">MATERIALS · TUNED TO THE TONIC · GENERATE</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="KIT" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;flex:none;box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;display:flex;align-items:center;gap:28px;padding:0 20px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">KIT</span><span style="font-size:22px;font-weight:600">Selva Woods</span></div>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">TUNED TO</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:44px;line-height:44px;font-weight:800">A</span></div>
+            <div style="display:flex;gap:6px"><sc-for list="{{ mats }}" as="m" hint-placeholder-count="3"><div style="height:48px;min-width:96px;box-sizing:border-box;border-radius:6px;background:{{ m.bg }};border:1px solid {{ m.bd }};color:{{ m.fg }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.1em">{{ m.n }}</div></sc-for></div>
+            <div style="flex:1"></div>
+            <span style="font-size:12px;color:#9A9AA6">Selected: <span style="color:#F2F2F2;font-weight:600">CONGA HI</span> · GENERATE asks for 3 sounds</span>
+          </div>
+          <div style="height:264px;flex:none;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ voices }}" as="v" hint-placeholder-count="8">
+              <div style="box-sizing:border-box;border-radius:6px;background:#141414;border:2px solid {{ v.bd }};overflow:hidden;display:flex;flex-direction:column">
+                <div style="height:28px;background:{{ v.c }};color:#0A0A0A;display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:700;letter-spacing:.08em">{{ v.n }}</div>
+                <div style="padding:10px;display:flex;flex-direction:column;gap:8px;flex:1">
+                  <span style="font-size:10px;letter-spacing:.1em;color:#9A9AA6">{{ v.m }}</span>
+                  <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:44px;line-height:40px;font-weight:800">{{ v.p }}</span>
+                  <span style="font-size:11px;color:#9FE1CB">{{ v.o }}</span>
+                  <div style="height:40px;background:{{ v.c }};opacity:.85;clip-path:polygon(0 100%,4% 0,{{ v.dec }}% 100%)"></div>
+                  <span style="font-size:10px;color:#5A5A6E">DECAY {{ v.dms }}</span>
+                  <sc-if value="{{ v.gen }}" hint-placeholder-val="{{ false }}"><span style="align-self:flex-start;font-size:9px;font-weight:700;letter-spacing:.08em;padding:2px 5px;border-radius:3px;background:#534AB7">ENGINE</span></sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;letter-spacing:.12em;color:#7A6FE0">ENGINE · ALTERNATIVES FOR CONGA HI · TAP PAD TO AUDITION</span>
+            <div style="flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+              <sc-for list="{{ alts }}" as="a" hint-placeholder-count="4">
+                <div style="box-sizing:border-box;border-radius:6px;background:{{ a.bg }};border:2px {{ a.bs }} {{ a.bd }};padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:28px;font-weight:800">{{ a.l }}</span><span style="font-size:10px;font-weight:600;letter-spacing:.08em;color:{{ a.tc }}">{{ a.t }}</span></div>
+                  <span style="font-size:14px;font-weight:600">{{ a.n }}</span>
+                  <span style="font-size:11px;color:#9A9AA6">{{ a.d }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kKit }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="18 Library Sets" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">18</span><span style="font-size:18px;font-weight:600">LIBRARY / SETS</span><span style="font-size:12px;color:#5A5A6E">STUDIO TRACKS LOADED BY LAYER</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="LIBRARY" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:264px minmax(0,1fr) 336px;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E;padding:4px 4px 6px">SETS · 6</span>
+            <sc-for list="{{ sets }}" as="s" hint-placeholder-count="6"><div style="box-sizing:border-box;height:60px;border-radius:6px;background:{{ s.bg }};border:1px solid {{ s.bd }};padding:8px 12px;display:flex;flex-direction:column;justify-content:center;gap:3px"><span style="font-size:15px;font-weight:600">{{ s.n }}</span><span style="font-size:11px;color:#5A5A6E">{{ s.m }}</span></div></sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="height:24px;display:grid;grid-template-columns:28px minmax(0,1fr) 64px 48px 72px 128px 84px;gap:10px;align-items:center;padding:0 12px;font-size:10px;letter-spacing:.1em;color:#5A5A6E"><span>#</span><span>TRACK</span><span>KEY</span><span>BPM</span><span>ENERGY</span><span>LAYERS</span><span>SOURCE</span></div>
+            <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="9">
+              <div style="box-sizing:border-box;height:54px;border-radius:6px;background:{{ t.bg }};border:1px solid {{ t.bd }};display:grid;grid-template-columns:28px minmax(0,1fr) 64px 48px 72px 128px 84px;gap:10px;align-items:center;padding:0 12px">
+                <span style="font-size:12px;color:#5A5A6E">{{ t.i }}</span>
+                <span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.n }}</span>
+                <span style="font-size:12px;color:{{ t.kc }}">{{ t.k }}</span>
+                <span style="font-size:12px;color:{{ t.bc }}">{{ t.b }}</span>
+                <div style="display:flex;gap:2px"><sc-for list="{{ t.e }}" as="e" hint-placeholder-count="5"><div style="width:10px;height:10px;border-radius:1px;background:{{ e }}"></div></sc-for></div>
+                <div style="display:flex;gap:3px"><sc-for list="{{ t.l }}" as="l" hint-placeholder-count="8"><div style="width:12px;height:12px;border-radius:2px;background:{{ l }}"></div></sc-for></div>
+                <span style="font-size:10px;font-weight:600;letter-spacing:.08em;color:{{ t.sc }}">{{ t.s }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">SELECTED</span>
+            <span style="font-size:22px;font-weight:600">Río Lento</span>
+            <span style="font-size:12px;color:#5DCAA5">A MIN ✓ · 123 → 124 ✓ · STUDIO</span>
+            <div style="display:flex;flex-direction:column;gap:4px;margin-top:4px">
+              <sc-for list="{{ selLayers }}" as="l" hint-placeholder-count="8"><div style="height:28px;display:grid;grid-template-columns:12px 64px minmax(0,1fr);gap:8px;align-items:center;font-size:12px"><div style="width:12px;height:12px;border-radius:2px;background:{{ l.c }}"></div><span style="font-weight:600;color:{{ l.tc }}">{{ l.k }}</span><span style="color:#9A9AA6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ l.s }}</span></div></sc-for>
+            </div>
+            <div style="flex:1"></div>
+            <div style="height:56px;border-radius:6px;background:#1D9E75;color:#0A0A0A;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.1em">LOAD AS NEXT</div>
+            <div style="height:48px;border-radius:6px;border:1px solid #2E2E2E;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:.1em">LOAD ONE LAYER…</div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kLib }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="19 Log" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">19</span><span style="font-size:18px;font-weight:600">SET LOG</span><span style="font-size:12px;color:#5A5A6E">WHAT WAS ACCEPTED · EXPORT TO LIVE</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="SET LOG" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:88px;flex:none;box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;display:flex;align-items:center;gap:36px;padding:0 20px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">TONIGHT</span><span style="font-size:22px;font-weight:600">Saturday · video set</span></div>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">RUNNING</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;line-height:40px;font-weight:800">0:42:18</span></div>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">ACCEPTED</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;line-height:40px;font-weight:800">23</span></div>
+            <div style="flex:1"></div>
+            <div style="height:56px;padding:0 24px;border-radius:6px;background:#1D9E75;color:#0A0A0A;display:flex;align-items:center;font-size:13px;font-weight:700;letter-spacing:.1em">EXPORT TO LIVE · .ALS</div>
+          </div>
+          <div style="position:relative;height:48px;flex:none;background:#0F0F0F;border-radius:6px">
+            <div style="position:absolute;left:12px;right:12px;top:23px;height:2px;background:#242424"></div>
+            <sc-for list="{{ logDots }}" as="d" hint-placeholder-count="23"><div style="position:absolute;top:17px;left:calc(12px + {{ d.x }}% * .97);width:14px;height:14px;border-radius:3px;background:{{ d.c }};border:2px solid #0F0F0F"></div></sc-for>
+            <div style="position:absolute;right:12px;top:8px;bottom:8px;width:2px;background:#F2F2F2"></div>
+          </div>
+          <div style="height:24px;display:grid;grid-template-columns:80px 72px 100px minmax(0,1fr) 96px 200px;gap:12px;align-items:center;padding:0 14px;font-size:10px;letter-spacing:.1em;color:#5A5A6E"><span>TIME</span><span>BAR</span><span>LAYER</span><span>EVENT</span><span>SOURCE</span><span>TRACK</span></div>
+          <sc-for list="{{ logRows }}" as="r" hint-placeholder-count="7">
+            <div style="box-sizing:border-box;height:46px;border-radius:6px;background:#141414;display:grid;grid-template-columns:80px 72px 100px minmax(0,1fr) 96px 200px;gap:12px;align-items:center;padding:0 14px;font-size:13px">
+              <span style="color:#9A9AA6">{{ r.t }}</span><span style="color:#9A9AA6">{{ r.b }}</span>
+              <span style="justify-self:start;font-size:10px;font-weight:700;letter-spacing:.08em;padding:3px 6px;border-radius:3px;background:{{ r.c }};color:#0A0A0A">{{ r.k }}</span>
+              <span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.e }}</span>
+              <span style="font-size:10px;font-weight:700;letter-spacing:.08em;color:{{ r.sc }}">{{ r.s }}</span>
+              <span style="color:#5A5A6E;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.tr }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kLog }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="20 Routing" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">20</span><span style="font-size:18px;font-weight:600">ROUTING · HYBRID MODE</span><span style="font-size:12px;color:#5A5A6E">PER LAYER: CONSOLE OR LIVE · LINK · MIDI</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="ROUTING" conn="{{ connHyb }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ routeHead }}" as="h" hint-placeholder-count="8"><div style="height:40px;border-radius:4px;background:{{ h.c }};color:#0A0A0A;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:700;letter-spacing:.08em">{{ h.k }}</div></sc-for>
+          </div>
+          <sc-for list="{{ routeRows }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <span style="font-size:11px;letter-spacing:.12em;color:#9A9AA6;padding:0 4px">{{ r.n }}</span>
+              <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;height:60px">
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="8"><div style="box-sizing:border-box;border-radius:6px;background:{{ c.bg }};border:1px solid {{ c.bd }};display:flex;flex-direction:column;justify-content:center;padding:0 10px;gap:2px"><span style="font-size:14px;font-weight:600;color:{{ c.fg }}">{{ c.v }}</span><span style="font-size:10px;color:#5A5A6E">{{ c.s }}</span></div></sc-for>
+              </div>
+            </div>
+          </sc-for>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px">
+            <sc-for list="{{ routeCards }}" as="c" hint-placeholder-count="3">
+              <div style="box-sizing:border-box;border-radius:8px;background:#141414;border:1px solid #242424;padding:16px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:28px;font-weight:800">{{ c.n }}</span><span style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:{{ c.sc }}"><span style="width:8px;height:8px;border-radius:50%;background:{{ c.sc }}"></span>{{ c.s }}</span></div>
+                <sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;font-size:12px;border-top:1px solid #1E1E1E;padding-top:6px"><span style="color:#9A9AA6">{{ r.a }}</span><span style="font-weight:600">{{ r.b }}</span></div></sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kRoute }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:48px;font-weight:800;text-transform:uppercase">Layout notes · 10–20</span><span style="font-size:13px;color:#5A5A6E">CHROME AND COLUMN GEOMETRY AS IN THE MVP FILE</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <sc-for list="{{ notes }}" as="n" hint-placeholder-count="11">
+        <div style="background:#0D0D0D;border:1px solid #242424;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:13px;color:#5DCAA5;font-weight:600">{{ n.id }}</span><span style="font-size:15px;font-weight:600">{{ n.t }}</span></div>
+          <sc-for list="{{ n.items }}" as="i" hint-placeholder-count="3"><div style="font-size:12px;line-height:18px;color:#9A9AA6;text-wrap:pretty">{{ i }}</div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;displayFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Big Shoulders&quot;,&quot;Archivo Expanded&quot;],&quot;default&quot;:&quot;Big Shoulders&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;View&quot;},&quot;showPadWindow&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.applyFont(); }
+  componentDidUpdate() { this.applyFont(); }
+  applyFont() {
+    const a = (this.props.displayFont ?? 'Big Shoulders') === 'Archivo Expanded';
+    const s = document.documentElement.style;
+    s.setProperty('--disp', a ? "'Archivo',sans-serif" : "'Big Shoulders Display',sans-serif");
+    s.setProperty('--dispw', a ? '125%' : '100%');
+  }
+  renderVals() {
+    const R = { KICK: ['#FF4560', '#4F1B22'], DRUMS: ['#FF9A2E', '#4F3214'], PERC: ['#F5E04A', '#4C461C'], TOP: ['#E8F0FF', '#484A4F'], BASS: ['#3D8CFF', '#182E4F'], CHORDS: ['#FF6FC8', '#4F263F'], LEAD: ['#B6F23D', '#3A4B18'], PAD: ['#F2C9A0', '#4B3F34'], FX: ['#8E9AAF', '#2F3238'] };
+    const ORD = ['KICK', 'DRUMS', 'PERC', 'TOP', 'BASS', 'CHORDS', 'LEAD', 'PAD'];
+    const rnd = s => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const ring = n => { const p = []; for (let i = 0; i < 8; i++) { const s = i * 45 + 2, e = s + 41, col = i < n - 1 ? '#1D9E75' : i === n - 1 ? '#F2F2F2' : '#242424'; p.push(`transparent ${i * 45}deg ${s}deg`, `${col} ${s}deg ${e}deg`, `transparent ${e}deg ${(i + 1) * 45}deg`); } return `conic-gradient(${p.join(',')})`; };
+    const arc = (v, c) => `conic-gradient(from 225deg, ${c} 0deg ${v * 270}deg, #262626 ${v * 270}deg 270deg, transparent 270deg 360deg)`;
+    const rk = (k, v, x) => ({ l: k, v, c: R[k][0], d: R[k][1], ...x });
+    const off = { l: '—', off: true };
+
+    // 10 search
+    const sChips = [['ALL', '38', 1], ['SOUNDS', '12'], ['PRESETS', '9'], ['SAMPLES', '11'], ['TRACKS', '6']].map(([n, k, on]) => ({ n, k, bg: on ? '#1C1C1C' : '#141414', bd: on ? '#F2F2F2' : '#242424', fg: on ? '#F2F2F2' : '#9A9AA6' }));
+    const sRes = [
+      ['PRESET', 'Kalim', 'ba Glass', 'Brain · Chorus poly', 'LEAD', 1], ['TRACK', 'Kalim', 'ba Dusk', 'A min · 124 · generated', 'ALL'], ['SAMPLE', 'Kalim', 'ba Loop 03', '124 · 2 bars · A', 'PERC'], ['SOUND', 'Kalim', 'ba Pluck Low', 'Brain · FM 6-op', 'CHORDS']
+    ].map(([t, m, b, meta, role, sel]) => ({ t, a: '', m, b, meta, role, rc: role === 'ALL' ? '#9A9AA6' : R[role][0], bg: sel ? '#1C1C1C' : '#141414', bd: sel ? '#F2F2F2' : 'transparent' }));
+    const sWave = Array.from({ length: 40 }, (_, i) => ({ h: 20 + rnd(i + 3) * 80 * (1 - i / 60), c: i < 14 ? '#B6F23D' : '#3A4B18' }));
+    const kb = (s, extra = []) => [...s.split('').map(k => ({ k, f: 1, bg: '#1C1C1C', fg: '#F2F2F2' })), ...extra];
+    const kbd = [
+      { pad: 0, keys: kb('QWERTYUIOP', [{ k: '⌫', f: 1.4, bg: '#242424', fg: '#F2F2F2' }]) },
+      { pad: 28, keys: kb('ASDFGHJKL', [{ k: 'ENTER', f: 1.8, bg: '#1D9E75', fg: '#0A0A0A' }]) },
+      { pad: 56, keys: kb('ZXCVBNM', [{ k: '-', f: 1, bg: '#1C1C1C', fg: '#F2F2F2' }, { k: '.', f: 1, bg: '#1C1C1C', fg: '#F2F2F2' }]) },
+      { pad: 0, keys: [{ k: '123', f: 1.4, bg: '#242424', fg: '#9A9AA6' }, { k: 'SPACE', f: 6, bg: '#1C1C1C', fg: '#9A9AA6' }, { k: 'CLOSE', f: 1.4, bg: '#242424', fg: '#9A9AA6' }] }
+    ];
+    const kSearch = [{ l: 'Type', v: 'All' }, { l: 'Results', v: '1 / 38', turn: true, p: .03 }, { l: 'Sort', v: 'Match' }, { l: 'Key', v: 'Any' }, { l: 'BPM', v: '120–128' }, { l: 'Cue', v: 'On', on: true, c: '#F2F2F2' }, { l: 'Load', v: 'Lead', on: true }, { l: 'Back', v: '' }];
+
+    // 11 arrange
+    const ev = [10, 14, 22, 30, 28, 40, 55, 70, 78, 62, 50, 66, 82, 88, 74, 60, 70, 84, 66, 40, 20];
+    const ePts = ev.map((v, i) => [i / (ev.length - 1) * 1000, 100 - v]);
+    const ePath = 'M' + ePts.map(p => p.join(' ')).join(' L');
+    const eFill = ePath + ' L1000 100 L0 100 Z';
+    const eSecs = [['INTRO', 0], ['BUILD', 12], ['DROP', 30], ['BREAK', 46], ['DROP', 60], ['OUTRO', 88]].map(([n, x]) => ({ n, x, c: x === 46 ? '#5DCAA5' : '#5A5A6E' }));
+    const swapAt = { KICK: 50, BASS: 75 };
+    const lanes = ORD.map((k, li) => {
+      const nx = swapAt[k];
+      const bars = Array.from({ length: 96 }, (_, i) => {
+        const x = i / 96 * 100, past = x < 37.5, inNext = nx != null && x >= nx;
+        let h;
+        if (k === 'LEAD' && !inNext) h = 6;
+        else if (k === 'KICK') h = i % 3 === 0 ? 92 : 14;
+        else if (k === 'PAD') h = 40 + 25 * Math.sin(i / 7 + li);
+        else h = 18 + rnd(i * 7 + li * 31 + (inNext ? 5 : 0)) * 70;
+        return { h: Math.round(h), c: k === 'LEAD' && !inNext ? '#3A3A44' : R[k][0], o: inNext ? .95 : past ? 1 : .42 };
+      });
+      return { k, c: R[k][0], d: R[k][1], lv: k === 'LEAD' ? 'MUTE' : String([82, 74, 61, 58, 77, 64, 0, 52][li]), hasNext: nx != null, nx: nx ?? 0, bars };
+    });
+    // river starts at 120px within content; width 1144 → phrase lines at 25/50/75 %
+    const phraseLines = [0.25, 0.5, 0.75].map(f => Math.round(120 + 4 + f * 1136));
+    const kArr = [rk('KICK', 'SWAP PH 3'), rk('DRUMS', 'PH 5'), rk('PERC', 'PH 6'), rk('TOP', 'PH 7'), rk('BASS', 'SWAP PH 4', { turn: true, p: .5 }), rk('CHORDS', 'PH 8'), rk('LEAD', 'MUTE'), rk('PAD', 'PH 9')];
+
+    // 12 steps
+    const lanesDef = [['KICK', 'KICK', 'x...x...x...x...'], ['CLAP', 'DRUMS', '....x.......x...'], ['RIM', 'DRUMS', '..e....e..e....e'], ['SNARE GH', 'DRUMS', '.......o.o......'], ['HAT C', 'TOP', 'x.x.x.x.x.x.x.x.'], ['HAT O', 'TOP', '..x...x...p...x.'], ['CONGA', 'PERC', '..x..e....x..e.x'], ['SHAKER', 'PERC', 'oeoeoeoeoeoeoeoe']];
+    const ruler = Array.from({ length: 16 }, (_, i) => ({ n: i + 1, bg: i === 5 ? '#0E5040' : i % 4 === 0 ? '#1C1C1C' : 'transparent', fg: i === 5 ? '#5DCAA5' : i % 4 === 0 ? '#F2F2F2' : '#5A5A6E' }));
+    const stepLanes = lanesDef.map(([n, role, pat], li) => ({
+      n, role, c: R[role][0], d: R[role][1],
+      steps: pat.split('').map((ch, i) => {
+        const on = ch !== '.', eng = ch === 'e', sel = li === 5 && i === 10;
+        const vel = ch === 'o' ? 40 : ch === 'e' ? 55 + rnd(i + li) * 20 : 70 + rnd(i * 3 + li) * 30;
+        const prob = ch === 'p' ? '70' : (eng && i % 3 === 0 ? '85' : '');
+        return { on, h: Math.round(vel), c: eng ? '#7A6FE0' : R[role][0], prob, mi: on ? Math.round((rnd(i * 11 + li) - .5) * 12) : 0, mc: eng ? '#A9A0F2' : '#F2F2F2', bg: i === 5 ? '#10241E' : i % 4 === 0 ? '#191919' : '#131313', bd: sel ? '2px solid #F2F2F2' : '1px solid transparent' };
+      })
+    }));
+    const kSteps = [{ l: 'Steps', v: '◀ roll', on: true }, { l: 'Velocity', v: '70', turn: true, p: .55 }, { l: 'Prob', v: '70 %' }, { l: 'Micro', v: '+6 ms' }, { l: 'Lane', v: 'Hat O' }, { l: 'Fill', v: 'engine', ai: true }, { l: 'Vary', v: 'engine', ai: true }, { l: 'Length', v: '1 bar' }];
+
+    // 13 piano roll
+    const NN = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+    const inScale = [0, 2, 3, 5, 7, 8, 10];
+    const keys = Array.from({ length: 25 }, (_, r) => {
+      const n = 24 - r, pc = n % 12, oct = 1 + Math.floor((n + 9) / 12);
+      const sc = inScale.includes(pc), root = pc === 0, black = NN[pc].includes('#');
+      return { n: NN[pc] + oct, t: r / 25 * 100, h: 100 / 25, bg: root ? '#0E5040' : sc ? '#1C1C1C' : '#101010', fg: root ? '#5DCAA5' : sc ? '#F2F2F2' : '#3A3A44', dot: root ? '#5DCAA5' : sc ? '#5A5A6E' : 'transparent', row: root ? '#0F1A17' : sc ? '#121212' : black ? '#0A0A0A' : '#0D0D0D' };
+    });
+    const rollLines = Array.from({ length: 16 }, (_, i) => ({ x: i / 16 * 100, c: i % 4 === 0 ? '#2E2E2E' : '#1A1A1A' }));
+    const nDef = [[0, 0, 2], [3, 0, 1], [6, 12, 1, 1], [8, 0, 2], [11, 3, 1], [14, 5, 2], [16, 0, 2], [19, 7, 1, 0, 1], [22, 12, 1, 1], [24, 0, 2], [27, 10, 1, 1], [30, 7, 2], [32, 0, 2], [35, 3, 1], [38, 5, 1, 1], [40, 0, 2], [44, 7, 2], [48, 0, 2], [51, 7, 1], [54, 10, 2, 1], [58, 12, 1, 1], [61, 5, 2]];
+    const rollNotes = nDef.map(([s, n, l, eng, sel]) => ({ l: s / 64 * 100, w: l / 64 * 100, t: (24 - n) / 25 * 100, h: 100 / 25, c: eng ? '#7A6FE0' : '#3D8CFF', sh: sel ? '0 0 0 2px #F2F2F2' : 'none' }));
+    const kRoll = [{ l: 'Piano roll', v: 'steps ▶', on: true }, rk('BASS', 'E2', { l: 'Note', turn: true, p: .3 }), { l: 'Position', v: '2.1.4' }, { l: 'Length', v: '1/16' }, { l: 'Velocity', v: '104' }, { l: 'Micro', v: '−4 ms' }, { l: 'Vary', v: 'engine', ai: true }, { l: 'Zoom', v: '4 bars' }];
+
+    // 14 pads
+    const semis = [0, 2, 3, 5, 7, 8, 10];
+    const NN2 = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const pads = [];
+    for (let r = 3; r >= 0; r--) for (let c = 0; c < 8; c++) {
+      const d = c + 3 * r, midi = 57 + 12 * Math.floor(d / 7) + semis[d % 7];
+      const name = NN2[midi % 12] + (Math.floor(midi / 12) - 1), root = d % 7 === 0, hit = name === 'E4' && r === 1;
+      pads.push({ n: name, tag: hit ? 'PLAYING' : root ? 'ROOT' : '', bg: hit ? '#F2F2F2' : root ? '#B6F23D' : '#3A4B18', bd: hit ? '#F2F2F2' : root ? '#B6F23D' : '#3A4B18', fg: hit || root ? '#0A0A0A' : '#F2F2F2' });
+    }
+    const fsrPads = [['KICK', 'KICK', 0, 'vel 112 · last'], ['CONGA LO', 'PERC', 0, 'ready'], ['CONGA HI', 'PERC', 58, 'vel 74'], ['RIM', 'DRUMS', 0, 'ready']].map(([n, k, v, s]) => ({ n, c: R[k][0], v, s }));
+    const expr = [{ n: 'EXP 1 · FILTER', v: 34 }, { n: 'EXP 2 · ECHO SEND', v: 0 }];
+    const kPads = [rk('LEAD', 'Lead', { l: 'Layer', on: true }), { l: 'Scale', v: 'A minor' }, { l: 'Root', v: 'A' }, { l: 'Layout', v: '4ths', turn: true, p: .33 }, { l: 'Octave', v: '3' }, { l: 'Vel curve', v: 'Soft' }, { l: 'FSR 1–4', v: 'Kick · Perc' }, { l: 'In key', v: 'On', on: true }];
+
+    // 15 brain
+    const tabs = (act, c, dim) => ['ENGINE', 'OSC', 'FILTER', 'ENV · LFO', 'FX', 'HYBRID', 'PRESETS'].map(n => ({ n, bg: n === act ? dim : '#141414', bd: n === act ? c : '#242424', fg: n === act ? '#F2F2F2' : '#9A9AA6' }));
+    const engines = [['LADDER MONO', 'after Moog Model D · mono'], ['CHORUS POLY', 'after Juno-106 · 6 voices', 1], ['VINTAGE POLY', 'after Prophet-5 · 5 voices'], ['SEM POLY', 'after OB-6 · 6 voices'], ['FM 6-OP', 'after DX7 · 8 voices'], ['MODULAR', 'after ARP 2600 · duo']].map(([n, d, on]) => ({ n, d, on: !!on, bd: on ? '#1D9E75' : '#242424' }));
+    const brainArcs = [['CUTOFF', .62, '2.4k'], ['RESO', .35, '35'], ['ENV AMT', .5, '+50'], ['CHORUS', .66, 'II'], ['ATTACK', .08, '4 ms'], ['RELEASE', .4, '620'], ['DRIVE', .2, '20'], ['DRY/WET', .3, '30']].map(([n, v, t], i) => ({ n, v: t, bg: arc(v, i === 0 ? '#5DCAA5' : '#1D9E75'), bd: i === 0 ? '#5DCAA5' : '#242424' }));
+    const kBrain = [{ l: 'Cutoff', v: '2.4k', turn: true, p: .62 }, { l: 'Reso', v: '35' }, { l: 'Env amt', v: '+50' }, { l: 'Chorus', v: 'II' }, { l: 'Attack', v: '4 ms' }, { l: 'Release', v: '620 ms' }, { l: 'Drive', v: '20' }, { l: 'Dry/wet', v: '30' }];
+
+    // 16 hybrid
+    const hybTabs = tabs('HYBRID', '#1E90C0', '#0E3F55');
+    const hybA = [{ l: 'A', n: 'LADDER MONO', d: 'Sub and body · plays below C3' }];
+    const hybB = [{ l: 'B', n: 'FM 6-OP', d: 'Bell top · plays from C3' }];
+    const hybModes = [['STACK', 0], ['SPLIT', 1], ['VELOCITY', 0]].map(([n, on]) => ({ n, bg: on ? '#1E90C0' : 'transparent', fg: on ? '#0A0A0A' : '#6CC4EA' }));
+    const hybArcs = [['A CUTOFF', .45, '900'], ['A DRIVE', .3, '30'], ['A LEVEL', .8, '−2 dB'], ['SPLIT', .5, 'C3'], ['B RATIO', .6, '3.5'], ['B FM AMT', .4, '40'], ['B LEVEL', .62, '−5 dB'], ['BLEND', .38, '62/38']].map(([n, v, t], i) => ({ n, v: t, bg: arc(v, i === 3 || i === 7 ? '#6CC4EA' : '#1E90C0'), bd: i === 3 ? '#6CC4EA' : '#242424' }));
+    const kHyb = [{ l: 'A cutoff', v: '900', c: '#6CC4EA' }, { l: 'A drive', v: '30' }, { l: 'A level', v: '−2 dB' }, { l: 'Split', v: 'C3', turn: true, p: .5, c: '#6CC4EA' }, { l: 'B ratio', v: '3.5' }, { l: 'B FM amt', v: '40' }, { l: 'B level', v: '−5 dB' }, { l: 'Blend', v: '62/38', c: '#6CC4EA' }];
+
+    // 17 kit
+    const mats = [['WOOD', 1], ['SKIN', 0], ['808', 0]].map(([n, on]) => ({ n, bg: on ? '#F2F2F2' : 'transparent', fg: on ? '#0A0A0A' : '#9A9AA6', bd: on ? '#F2F2F2' : '#2E2E2E' }));
+    const voices = [['KICK', 'KICK', '808 · BODY', 'A1', '+0 st', 70, '380 ms'], ['RIM', 'DRUMS', 'WOOD', 'E4', '+7 st', 18, '60 ms'], ['CLAP', 'DRUMS', 'SKIN', 'A3', '+0 st', 32, '180 ms'], ['SNARE', 'DRUMS', 'SKIN', 'C4', '+3 st', 40, '210 ms'], ['CONGA LO', 'PERC', 'SKIN', 'A2', '+0 st', 50, '260 ms', 0, 0], ['CONGA HI', 'PERC', 'SKIN', 'E3', '+7 st', 42, '220 ms', 1, 1], ['SHAKER', 'PERC', 'WOOD', '—', 'noise', 14, '70 ms'], ['HAT', 'TOP', 'METAL', '—', 'noise', 22, '90 ms']].map(([n, k, m, p, o, dec, dms, sel, gen]) => ({ n, c: R[k][0], m, p, o, dec, dms, bd: sel ? '#F2F2F2' : '#242424', gen: !!gen }));
+    const alts = [['A', 'Conga Hi · teak', 'WOOD · E3 · 190 ms', 'ENGINE', '#7A6FE0', '#2B2758', '#534AB7', 'solid'], ['B', 'Conga Hi · goat', 'SKIN · E3 · 240 ms', 'IN CUE', '#F2F2F2', '#1C1C1C', '#F2F2F2', 'dashed'], ['C', 'Conga Hi · tight', 'SKIN · G3 · 150 ms', 'ENGINE', '#7A6FE0', '#2B2758', '#534AB7', 'solid'], ['+', 'Generate more', 'GENERATE button · 3 per ask', '', '#5A5A6E', '#141414', '#242424', 'dashed']].map(([l, n, d, t, tc, bg, bd, bs]) => ({ l, n, d, t, tc, bg, bd, bs }));
+    const kKit = [rk('PERC', 'E3', { l: 'Tune', turn: true, p: .58 }), { l: 'Decay', v: '220 ms' }, { l: 'Tone', v: '48' }, { l: 'Snap', v: '30' }, { l: 'Material', v: 'Skin' }, { l: 'Generate', v: '3 sounds', ai: true }, { l: 'Audition', v: '' }, { l: 'Save kit', v: '' }];
+
+    // 18 library
+    const sets = [['Saturday · video', '14 tracks · 1:30', 1], ['Organic warm-up', '10 tracks · 1:00'], ['Afro indie', '12 tracks · 1:15'], ['Studio sketches', '22 tracks'], ['Generated · keepers', '9 tracks'], ['Closing', '6 tracks · 0:40']].map(([n, m, on]) => ({ n, m, bg: on ? '#1C1C1C' : '#141414', bd: on ? '#F2F2F2' : 'transparent' }));
+    const layerMap = (mask) => ORD.map((k, i) => mask[i] === '1' ? R[k][0] : '#242424');
+    const energySegs = e => Array.from({ length: 5 }, (_, i) => i < e ? '#F2F2F2' : '#2A2A2A');
+    const tracks = [['Selva Nocturna', 'A min', 124, 4, '11111111', 'STUDIO', 0, 'ROOM'], ['Kalimba Dusk', 'A min', 124, 3, '11111110', 'GENERATED', 0, 'NEXT'], ['Río Lento', 'A min', 123, 3, '11011111', 'STUDIO', 1], ['Mangle', 'C maj', 122, 2, '11101101', 'STUDIO'], ['Tierra Roja', 'E min', 125, 4, '11111011', 'STUDIO'], ['Pulso 7', 'D min', 126, 5, '11110110', 'GENERATED'], ['Noche Azul', 'F maj', 122, 2, '10011111', 'STUDIO'], ['Humo', 'A min', 124, 3, '11111101', 'STUDIO'], ['Agua Clara', 'G maj', 121, 2, '10101111', 'STUDIO']].map(([n, k, b, e, m, s, sel, now], i) => ({
+      i: now ?? String(i + 1), n, k, b, kc: k === 'A min' || k === 'C maj' ? '#5DCAA5' : '#9A9AA6', bc: Math.abs(b - 124) <= 2 ? '#5DCAA5' : '#E8B84A', e: energySegs(e), l: layerMap(m), s, sc: s === 'GENERATED' ? '#7A6FE0' : '#9A9AA6', bg: sel ? '#1C1C1C' : '#141414', bd: sel ? '#F2F2F2' : 'transparent'
+    }));
+    const selLayers = [['KICK', 'Kick Río'], ['DRUMS', 'Clap + shaker'], ['PERC', '— none'], ['TOP', 'Hat ride'], ['BASS', 'Sub Prophet'], ['CHORDS', 'Rhodes Am7'], ['LEAD', 'Flute motif'], ['PAD', 'Strings low']].map(([k, s]) => ({ k, s, c: s.startsWith('—') ? '#242424' : R[k][0], tc: s.startsWith('—') ? '#5A5A6E' : '#F2F2F2' }));
+    const kLib = [{ l: 'Set', v: 'Saturday' }, { l: 'Track', v: '3 / 14', turn: true, p: .2 }, { l: 'Sort', v: 'Key match' }, { l: 'BPM', v: '±2' }, { l: 'Cue', v: 'Preview' }, { l: 'Load next', v: '', on: true }, { l: 'Load layer', v: '' }, { l: 'Back', v: '' }];
+
+    // 19 log
+    const logEv = [['0:41:52', '305', 'BASS', 'Accepted option B · Moog Round', 'ENGINE', 'Selva Nocturna'], ['0:41:20', '289', 'KICK', 'Swap step 1 · Kick Dusk', 'LIBRARY', 'Kalimba Dusk'], ['0:39:04', '257', 'LEAD', 'Muted', 'YOU', 'Selva Nocturna'], ['0:37:48', '241', 'CHORDS', 'Accepted option A · Juno Stabs', 'ENGINE', 'Selva Nocturna'], ['0:35:10', '209', 'PERC', 'Filter sweep · hand L', 'YOU', 'Selva Nocturna'], ['0:33:40', '193', 'PAD', 'Accepted option C · OB Pad Warm', 'ENGINE', 'Selva Nocturna'], ['0:31:02', '161', 'TOP', 'Accepted option A · Hat Open 2', 'ENGINE', 'Selva Nocturna']];
+    const SC = { ENGINE: '#7A6FE0', LIBRARY: '#9A9AA6', YOU: '#5DCAA5' };
+    const logRows = logEv.map(([t, b, k, e, s, tr]) => ({ t, b, k, c: R[k][0], e, s, sc: SC[s], tr }));
+    const logDots = Array.from({ length: 23 }, (_, i) => ({ x: (i / 22) * 100, c: R[ORD[Math.floor(rnd(i + 9) * 8)]][0] }));
+    const kLog = [{ l: 'Scroll', v: '1 / 23', turn: true, p: .05 }, { l: 'Layer', v: 'All' }, { l: 'Source', v: 'All' }, { l: 'Undo', v: '' }, off, off, { l: 'Export', v: '.als', on: true }, { l: 'Back', v: '' }];
+
+    // 20 routing
+    const routeHead = ORD.map(k => ({ k, c: R[k][0] }));
+    const cons = [1, 1, 1, 1, 1, 0, 0, 1], live = [0, 0, 0, 0, 0, 1, 1, 0];
+    const cell = (on, v, s) => ({ v: on ? v : '—', s: on ? s : 'off', bg: on ? '#0E5040' : '#141414', bd: on ? '#1D9E75' : '#242424', fg: on ? '#F2F2F2' : '#5A5A6E' });
+    const routeRows = [
+      { n: 'SOUNDS ON CONSOLE · MAIN OUT', cells: cons.map((o, i) => cell(o, 'CONSOLE', 'out 1–2')) },
+      { n: 'AUDIO TO LIVE · USB', cells: live.map((o, i) => cell(o, 'LIVE', 'usb ' + (i * 2 + 1) + '–' + (i * 2 + 2))) },
+      { n: 'MIDI TO LIVE · NOTES', cells: [0, 0, 0, 0, 1, 1, 1, 0].map((o, i) => cell(o, 'MIDI', 'ch ' + (i + 1))) }
+    ];
+    const routeCards = [
+      { n: 'LINK', s: '3 PEERS', sc: '#1D9E75', rows: [{ a: 'Tempo', b: '124.0' }, { a: 'Start / stop sync', b: 'On' }, { a: 'Peers', b: 'Live · CDJ-3000 · iPad' }, { a: 'Quantum', b: '4 beats' }] },
+      { n: 'MIDI', s: 'CLOCK OUT', sc: '#1D9E75', rows: [{ a: 'Clock out', b: 'USB · DIN 1' }, { a: 'Clock in', b: 'None (Link leads)' }, { a: 'Notes out', b: 'USB · ch 5–7' }, { a: 'Transport', b: 'Sent' }] },
+      { n: 'LIVE', s: 'CONNECTED', sc: '#1D9E75', rows: [{ a: 'Host', b: 'studio-mac.local' }, { a: 'Audio', b: 'USB 16 ch · 48 kHz' }, { a: 'Round trip', b: '6.8 ms' }, { a: 'Buffer', b: '128' }] }
+    ];
+    const kRoute = ORD.map((k, i) => rk(k, cons[i] ? 'Console' : 'Live', cons[i] ? { on: true } : {}));
+    kRoute[5] = rk('CHORDS', 'Live', { turn: true, p: 1 });
+
+    const notes = [
+      { id: '10', t: 'Search', items: ['Field 56 high, focus = 2 px teal border. Type chips 104 min.', 'Results rows 56 (touch). Match highlighted in teal+.', 'Keyboard rows 48, gap 6; ENTER teal. Encoder 2 scrolls results.'] },
+      { id: '11', t: 'Live · Arrange', items: ['Energy strip 96: whole set, NOW at its time position, sections as labels.', 'Lanes 8 × 50, label 112. River = 32 bars; NOW fixed at 37.5 %; phrase lines every 8 bars.', 'Past = role 100 %, room future 42 %, next track 95 % on a lighter ground behind a dashed white entry line.'] },
+      { id: '12', t: 'Steps', items: ['Label 128 + 16 steps (67 wide), lanes 56. Bar height = velocity.', 'User steps in lane role colour; engine fills in violet. Probability top-right, microtiming tick top.', 'Pad window 8 × 4 white frame, moves with arrows.'] },
+      { id: '13', t: 'Piano roll', items: ['Keyboard 72 with scale rows lit, root teal. 25 semitones, 4 bars (64 sixteenths).', 'User notes role colour, engine notes violet. The engine never writes over a user-edited note.', 'Pad window = 8 steps × 4 scale notes. Touch only zooms and scrolls.'] },
+      { id: '14', t: 'Pads', items: ['8 × 4 grid in the content columns, 1:1 with the pads. Root = role full, in key = role dim, hit = white.', 'Info strip 168: last note display 136, scale and layout; FSR tiles show velocity; expression bars.'] },
+      { id: '15–16', t: 'Brain', items: ['Tabs 44. Engine cards 6 × 240 with illustration slot 140 (art to be supplied).', 'Macros: 8 arcs (270° sweep, 104 Ø) in the encoder columns. Brain teal; HYBRID page switches to blue.', 'Hybrid: engine A / blend panel 400 / engine B; STACK · SPLIT · VELOCITY.'] },
+      { id: '17', t: 'Kit', items: ['8 voice cards in the encoder columns; header in the voice role colour; pitch in display 44.', 'Envelope sketch: triangle, decay = width. Engine alternatives row below, cue dashed white.'] },
+      { id: '18', t: 'Library', items: ['Sets 264 / tracks / detail 336. Rows 54–60.', 'Key and BPM go teal when compatible with ROOM, amber outside ±2 BPM.', 'Layer squares show which roles a track can supply.'] },
+      { id: '19', t: 'Log', items: ['Header 88 with export (56 high). Timeline 48: one square per accepted event in role colour.', 'Source: ENGINE violet, YOU teal, LIBRARY grey.'] },
+      { id: '20', t: 'Routing', items: ['Columns = layers. Three rows of toggles: console out, audio to Live, MIDI to Live.', 'Encoder per layer flips console ↔ Live. Status cards for Link, MIDI and Live.'] }
+    ];
+
+    return {
+      padWin: this.props.showPadWindow ?? true, ring5: ring(5),
+      sChips, sRes, sWave, kbd, kSearch,
+      ePath, eFill, eSecs, lanes, phraseLines, kArr,
+      ruler, stepLanes, kSteps,
+      keys, rollLines, rollNotes, kRoll,
+      pads, fsrPads, expr, kPads,
+      brainTabs: tabs('ENGINE', '#1D9E75', '#0E5040'), engines, brainArcs, kBrain,
+      hybTabs, hybA, hybB, hybModes, hybArcs, kHyb,
+      mats, voices, alts, kKit,
+      sets, tracks, selLayers, kLib,
+      logRows, logDots, kLog,
+      connHyb: [{ n: 'BRAIN', s: 'ok' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'ok' }, { n: 'NET', s: 'ok' }],
+      routeHead, routeRows, routeCards, kRoute,
+      notes
+    };
+  }
+}
+</script>
+</body>
+</html>

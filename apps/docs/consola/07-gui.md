@@ -50,3 +50,11 @@ Dos **Sharp GP2Y0A41** (IR, 4–30 cm, salida analógica) en los canales libres 
 ## 4. Piano roll en standalone (Juan, 2026-11-09)
 
 El SECUENCIADOR tiene dos vistas: **PASOS** (batería) y **PIANO ROLL** (bajo, lead, acordes). En el piano roll, los pads son una ventana de 8 pasos × 4 notas, los encoders editan la nota seleccionada (posición, largo, velocity, microtiming) y **el touch solo navega** (zoom, desplazarse, rango), sin dibujar notas. Las notas del motor se distinguen de las de Juan y el motor no pisa sus ediciones.
+
+## 5. Diseño entregado y decisiones (Juan, 2026-11-09)
+
+- **Diseño completo** de Claude Design guardado en `design/claude-design/`: `Console MVP Screens`, `Console Standalone Screens`, `Console Controller Screens`, `Console Design System` y los componentes (Top Bar, Soft Keys, Grid Cell, Option Card, Mixer Strip). Las *Layout notes for QML* de `Console MVP Screens` son el contrato de geometría (barra 56 · contenido 568 · teclas 96; columnas x = 8 + i·160). Las capturas de referencia de terceros en `uploads/` quedan en disco y fuera del repo público (`.gitignore`).
+- **Textos de la interfaz en inglés.**
+- **ACCEPT, GENERATE, SKIP y DROP no son botones de hardware dedicados**: son acciones de la GUI, en la barra de teclas de pantalla (Soft Keys) según la pantalla, accionadas por los clics de encoder o por touch. No ocupan entradas de los MCP.
+- **Mixer:** los 4 faders son 4 grupos fijos (RHYTHM, BASS, MUSIC, FX) en standalone; los encoders, los canales. Se implementa el diseño completo y en el MVP las páginas de EQ, filtro y envíos pueden quedar sin conectar (`03-arquitectura-capas.md` §4.1).
+- **Lenguaje:** QML con backend en PySide6, con compuerta de rendimiento en el Pi: `adr/ADR-007-gui-consola-pyside6.md`.

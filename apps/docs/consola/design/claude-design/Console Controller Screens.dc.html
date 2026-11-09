@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>:root{--disp:'Big Shoulders Display',sans-serif;--dispw:100%}body{margin:0;background:#050505}a{color:#5DCAA5}a:hover{color:#F2F2F2}</style>
+</helmet>
+<div style="width:2736px;box-sizing:border-box;padding:72px;background:#050505;color:#F2F2F2;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:72px">
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:13px;letter-spacing:.2em;color:#5DCAA5">GROOVEFORGE CONSOLE · CONTROLLER MODE · 1280×720</div>
+    <div style="font-family:var(--disp);font-stretch:var(--dispw);font-size:88px;line-height:84px;font-weight:800;text-transform:uppercase">Controller screens 21–30</div>
+    <div style="font-size:15px;line-height:22px;color:#9A9AA6;max-width:1400px">Ableton Live drives the colours here: track and clip colours come from the Live set and only ever fill. State keeps the console language: teal = playing, white edge = queued, orange = recording, violet = the Mac engine.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1280px);gap:64px 48px">
+
+    <div data-screen-label="21 Session" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">21</span><span style="font-size:18px;font-weight:600">SESSION</span><span style="font-size:12px;color:#5A5A6E">LIVE CLIP GRID · 8 TRACKS × 6 SCENES</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="SESSION" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:6px">
+          <div style="height:44px;flex:none;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ tracks }}" as="t" hint-placeholder-count="8"><div style="position:relative;box-sizing:border-box;border-radius:4px;background:#141414;padding:8px 10px 0;overflow:hidden"><div style="position:absolute;left:0;right:0;top:0;height:4px;background:{{ t.c }}"></div><div style="font-size:13px;font-weight:600">{{ t.n }}</div><div style="font-size:10px;color:#5A5A6E">{{ t.d }}</div></div></sc-for>
+          </div>
+          <sc-for list="{{ scenes }}" as="s" hint-placeholder-count="6">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <div style="height:14px;display:flex;gap:10px;align-items:center;padding:0 4px;font-size:10px;letter-spacing:.12em"><span style="color:{{ s.lc }};font-weight:600">{{ s.n }}</span><span style="color:#5A5A6E">{{ s.sub }}</span></div>
+              <div style="height:58px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+                <sc-for list="{{ s.clips }}" as="c" hint-placeholder-count="8">
+                  <div style="position:relative;box-sizing:border-box;border-radius:5px;background:{{ c.bg }};border:2px {{ c.bs }} {{ c.bd }};padding:5px 8px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;color:{{ c.fg }}">
+                    <div style="display:flex;justify-content:space-between;gap:4px"><span style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.n }}</span><span style="font-size:10px;font-weight:700">{{ c.g }}</span></div>
+                    <div style="height:16px;display:flex;align-items:center;gap:1px"><sc-for list="{{ c.w }}" as="w" hint-placeholder-count="20"><div style="flex:1;height:{{ w }}%;background:{{ c.wc }};border-radius:1px"></div></sc-for></div>
+                    <sc-if value="{{ c.play }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;bottom:0;height:3px;width:{{ c.pr }}%;background:#5DCAA5"></div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kSess }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="21b Session no Live" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">21b</span><span style="font-size:18px;font-weight:600">SESSION — LIVE NOT CONNECTED</span><span style="font-size:12px;color:#5A5A6E">EMPTY / OFFLINE STATE</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="SESSION" section="—" conn="{{ connNoLive }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ ghost48 }}" as="g" hint-placeholder-count="48"><div style="border-radius:5px;border:2px dashed #1C1C1C"></div></sc-for>
+        </div>
+        <div style="position:absolute;left:320px;top:150px;width:640px;box-sizing:border-box;background:#141414;border:1px solid #2E2E2E;border-radius:10px;padding:28px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 64px rgba(0,0,0,.7)">
+          <div style="display:flex;align-items:center;gap:12px"><div style="width:12px;height:12px;border-radius:50%;background:#E8B84A;box-shadow:0 0 8px #E8B84A"></div><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:800;text-transform:uppercase">Looking for Live</span></div>
+          <span style="font-size:14px;line-height:22px;color:#9A9AA6">Open Live on the Mac and pick GrooveForge as a control surface. The console is on 10.0.0.24.</span>
+          <div style="display:flex;flex-direction:column;gap:6px;border-top:1px solid #242424;padding-top:12px">
+            <sc-for list="{{ checks }}" as="c" hint-placeholder-count="3"><div style="display:flex;gap:12px;font-size:13px"><span style="width:16px;color:{{ c.c }}">{{ c.i }}</span><span style="color:#F2F2F2;width:200px">{{ c.n }}</span><span style="color:#5A5A6E">{{ c.v }}</span></div></sc-for>
+          </div>
+          <span style="font-size:12px;color:#9FE1CB">Searching · 0:14 · STANDALONE is one press away (MODE)</span>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kNoLive }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="22 Note" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">22</span><span style="font-size:18px;font-weight:600">NOTE · DRUM RACK</span><span style="font-size:12px;color:#5A5A6E">LEFT 4×4 = PADS · RIGHT 4×4 = 16 STEPS OF THE SELECTED PAD</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="NOTE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:104px;flex:none;box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;display:flex;align-items:center;gap:32px;padding:0 20px">
+            <div style="width:8px;height:64px;border-radius:2px;background:#E8875A"></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">TRACK 1 · DRUM RACK</span><span style="font-size:22px;font-weight:600">Drums</span></div>
+            <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">SELECTED PAD</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:48px;line-height:46px;font-weight:800">CLAP 909</span></div>
+            <div style="flex:1"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">CLIP</span><span style="font-size:16px;font-weight:600">Groove A · 1 bar · 1/16</span><span style="font-size:12px;color:#9FE1CB">LAYOUT ▸ DRUM · SCALE A MIN FOR MELODIC TRACKS</span></div>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ noteGrid }}" as="p" hint-placeholder-count="32"><div style="position:relative;box-sizing:border-box;border-radius:8px;background:{{ p.bg }};border:2px solid {{ p.bd }};padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;color:{{ p.fg }}"><span style="font-size:10px;font-weight:600;letter-spacing:.08em">{{ p.t }}</span><span style="font-size:15px;font-weight:600">{{ p.n }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kNote }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="23 Clip" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">23</span><span style="font-size:18px;font-weight:600">CLIP · PIANO ROLL</span><span style="font-size:12px;color:#5A5A6E">EDIT A LIVE CLIP · STEPS ABOVE, ROLL BELOW</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="CLIP" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:40px;flex:none;display:flex;align-items:center;gap:20px;padding:0 4px">
+            <div style="width:14px;height:14px;border-radius:3px;background:#6E9BE8"></div><span style="font-size:15px;font-weight:600">Bass · Groove A</span><span style="font-size:12px;color:#9A9AA6">LOOP 1.1.1 – 3.1.1 · 2 BARS · A MIN</span><div style="flex:1"></div>
+            <div style="position:relative;width:420px;height:14px;background:#141414;border-radius:3px"><div style="position:absolute;left:0;width:50%;top:0;bottom:0;background:#28406A;border-radius:3px"></div><div style="position:absolute;left:12.5%;width:12.5%;top:-3px;bottom:-3px;border:2px solid #F2F2F2;border-radius:3px;box-sizing:border-box"></div></div>
+            <span style="font-size:11px;color:#5A5A6E">VIEW 1.1–1.3</span>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:72px minmax(0,1fr);gap:4px;min-height:0">
+            <div style="display:flex;flex-direction:column;gap:1px"><sc-for list="{{ keys }}" as="k" hint-placeholder-count="13"><div style="flex:1;border-radius:2px;background:{{ k.bg }};display:flex;align-items:center;padding:0 8px;font-size:11px;font-weight:600;color:{{ k.fg }}">{{ k.n }}</div></sc-for></div>
+            <div style="position:relative;background:#0C0C0C;border-radius:4px;overflow:hidden">
+              <sc-for list="{{ keys }}" as="k" hint-placeholder-count="13"><div style="position:absolute;left:0;right:0;top:{{ k.t }}%;height:{{ k.h }}%;background:{{ k.row }};border-bottom:1px solid #0A0A0A;box-sizing:border-box"></div></sc-for>
+              <sc-for list="{{ clipLines }}" as="g" hint-placeholder-count="8"><div style="position:absolute;top:0;bottom:0;left:{{ g.x }}%;width:1px;background:{{ g.c }}"></div></sc-for>
+              <sc-for list="{{ clipNotes }}" as="n" hint-placeholder-count="12"><div style="position:absolute;left:calc({{ n.l }}% + 1px);width:calc({{ n.w }}% - 2px);top:calc({{ n.t }}% + 3px);height:calc({{ n.h }}% - 6px);background:#6E9BE8;opacity:{{ n.o }};border-radius:3px;box-shadow:{{ n.sh }}"></div></sc-for>
+              <div style="position:absolute;top:0;bottom:0;left:41%;width:2px;background:#5DCAA5"></div>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kClip }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="24 Device" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">24</span><span style="font-size:18px;font-weight:600">DEVICE</span><span style="font-size:12px;color:#5A5A6E">CHAIN · 8 PARAMETERS PER BANK AS ARCS</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="DEVICE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:56px;flex:none;display:flex;align-items:center;gap:8px">
+            <div style="width:6px;height:40px;border-radius:2px;background:#6E9BE8"></div><span style="font-size:13px;font-weight:600;padding-right:8px">Bass</span>
+            <sc-for list="{{ chain }}" as="d" hint-placeholder-count="5"><div style="height:44px;box-sizing:border-box;padding:0 16px;border-radius:6px;background:{{ d.bg }};border:1px solid {{ d.bd }};display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:{{ d.fg }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ d.on }}"></span>{{ d.n }}</div></sc-for>
+            <div style="flex:1"></div>
+            <div style="display:flex;gap:6px;align-items:center"><span style="font-size:11px;color:#9A9AA6;letter-spacing:.08em">BANK 1 / 3 · FILTER</span><sc-for list="{{ bankDots }}" as="b" hint-placeholder-count="3"><div style="width:8px;height:8px;border-radius:2px;background:{{ b }}"></div></sc-for></div>
+          </div>
+          <div style="height:268px;flex:none;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ devArcs }}" as="a" hint-placeholder-count="8">
+              <div style="box-sizing:border-box;border-radius:6px;background:#141414;border:1px solid {{ a.bd }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+                <div style="position:relative;width:124px;height:124px"><div style="position:absolute;inset:0;border-radius:50%;background:{{ a.bg }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 11px),#000 calc(100% - 10px));mask:radial-gradient(farthest-side,transparent calc(100% - 11px),#000 calc(100% - 10px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600">{{ a.v }}</div></div>
+                <span style="font-size:12px;font-weight:600;letter-spacing:.08em;color:{{ a.lc }}">{{ a.n }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex:1;box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;color:#5A5A6E"><span>AUTO FILTER · RESPONSE</span><span>LP 24 · 1.2k · RES 38 %</span></div>
+            <svg viewBox="0 0 1000 100" preserveAspectRatio="none" style="flex:1;width:100%;display:block"><path d="M0 40 L380 40 Q450 22 470 40 Q520 100 600 100 L0 100 Z" fill="rgba(93,202,165,.12)"></path><path d="M0 40 L380 40 Q450 22 470 40 Q520 100 600 100" fill="none" stroke="#5DCAA5" stroke-width="2" vector-effect="non-scaling-stroke"></path></svg>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:#5A5A6E"><span>20</span><span>100</span><span>1k</span><span>10k</span><span>20k</span></div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kDev }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="25 Mix" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">25</span><span style="font-size:18px;font-weight:600">MIX</span><span style="font-size:12px;color:#5A5A6E">LIVE TRACKS · VOLUME, PAN, SENDS, METERS</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="MIX" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+          <sc-for list="{{ mixStrips }}" as="s" hint-placeholder-count="8">
+            <div style="box-sizing:border-box;border-radius:6px;background:#141414;border:1px solid {{ s.obd }};display:flex;flex-direction:column;overflow:hidden">
+              <div style="height:30px;flex:none;background:{{ s.c }};color:#0A0A0A;display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:700;letter-spacing:.06em">{{ s.n }}</div>
+              <div style="padding:10px 8px;display:flex;flex-direction:column;gap:10px;flex:1">
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px">
+                  <sc-for list="{{ s.knobs }}" as="k" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:36px;height:36px;border-radius:50%;background:{{ k.bg }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px))"></div><span style="font-size:9px;color:#9A9AA6">{{ k.n }}</span></div></sc-for>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:#9A9AA6"><span>PAN {{ s.pan }}</span><span>A {{ s.a }} · B {{ s.b }}</span></div>
+                <div style="flex:1;display:flex;gap:10px;justify-content:center">
+                  <div style="position:relative;width:28px"><div style="position:absolute;left:12px;width:4px;top:0;bottom:0;background:#242424;border-radius:2px"></div><div style="position:absolute;left:0;width:28px;height:12px;bottom:calc({{ s.vol }}% - 6px);background:linear-gradient(180deg,#E6E6E6,#BDBDBD);border-radius:2px"></div></div>
+                  <div style="display:flex;gap:3px"><sc-for list="{{ s.m }}" as="m" hint-placeholder-count="2"><div style="position:relative;width:6px;background:#0C0C0C;border-radius:1px;overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:{{ m }}%;background:linear-gradient(0deg,#0E5040,#1D9E75 55%,#5DCAA5)"></div></div></sc-for></div>
+                </div>
+                <div style="text-align:center;font-size:14px;font-weight:600">{{ s.db }}</div>
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px">
+                  <sc-for list="{{ s.btn }}" as="b" hint-placeholder-count="3"><div style="height:28px;border-radius:4px;background:{{ b.bg }};color:{{ b.fg }};border:1px solid {{ b.bd }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">{{ b.n }}</div></sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kMix }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="26 Browse" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">26</span><span style="font-size:18px;font-weight:600">BROWSE</span><span style="font-size:12px;color:#5A5A6E">LIVE BROWSER · CATEGORY / LIST / PREVIEW</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="BROWSE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:312px minmax(0,1fr) 312px;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:4px"><sc-for list="{{ cats }}" as="c" hint-placeholder-count="8"><div style="box-sizing:border-box;height:56px;border-radius:6px;background:{{ c.bg }};border:1px solid {{ c.bd }};display:flex;align-items:center;justify-content:space-between;padding:0 14px"><span style="font-size:15px;font-weight:600;color:{{ c.fg }}">{{ c.n }}</span><span style="font-size:11px;color:#5A5A6E">{{ c.k }}</span></div></sc-for></div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="height:32px;display:flex;align-items:center;gap:8px;padding:0 6px;font-size:12px;color:#9A9AA6"><span>Drums</span><span style="color:#3A3A44">›</span><span>Drum Rack</span><span style="color:#3A3A44">›</span><span style="color:#F2F2F2;font-weight:600">House</span></div>
+            <sc-for list="{{ items }}" as="i" hint-placeholder-count="8"><div style="box-sizing:border-box;height:56px;border-radius:6px;background:{{ i.bg }};border:1px solid {{ i.bd }};display:grid;grid-template-columns:minmax(0,1fr) 120px;align-items:center;padding:0 14px"><span style="font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ i.n }}</span><span style="font-size:11px;color:#5A5A6E;text-align:right">{{ i.m }}</span></div></sc-for>
+          </div>
+          <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">PREVIEW</span>
+            <span style="font-size:20px;font-weight:600">Organic House Kit</span>
+            <span style="font-size:12px;color:#9FE1CB">DRUM RACK · 16 PADS · CORE LIBRARY</span>
+            <div style="height:56px;display:flex;align-items:center;gap:2px"><sc-for list="{{ bWave }}" as="w" hint-placeholder-count="40"><div style="flex:1;height:{{ w.h }}%;background:{{ w.c }};border-radius:1px"></div></sc-for></div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ tags }}" as="t" hint-placeholder-count="4"><span style="font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid #2E2E2E;color:#9A9AA6">{{ t }}</span></sc-for></div>
+            <div style="flex:1"></div>
+            <div style="height:56px;border-radius:6px;background:#1D9E75;color:#0A0A0A;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.1em">LOAD ON DRUMS</div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kBrowse }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="27 Scale window" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">27</span><span style="font-size:18px;font-weight:600">SCALE · WINDOW</span><span style="font-size:12px;color:#5A5A6E">ROOT, SCALE, LAYOUT</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="NOTE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:8px;opacity:.25"><sc-for list="{{ ghost32 }}" as="g" hint-placeholder-count="32"><div style="border-radius:8px;background:{{ g }}"></div></sc-for></div>
+        <div style="position:absolute;left:160px;top:88px;width:960px;height:504px;box-sizing:border-box;background:#141414;border:1px solid #2E2E2E;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.7);display:flex;flex-direction:column">
+          <div style="height:72px;flex:none;display:flex;align-items:center;gap:20px;padding:0 24px;border-bottom:1px solid #242424"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;font-weight:800">SCALE</span><span style="font-size:15px;font-weight:600">A Minor · In key · 4ths</span><div style="flex:1"></div><span style="font-size:12px;color:#5A5A6E">SCALE BUTTON OR BACK CLOSES</span></div>
+          <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px;flex:1">
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">ROOT · ENC 1</span><div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px"><sc-for list="{{ roots }}" as="r" hint-placeholder-count="12"><div style="height:52px;border-radius:6px;background:{{ r.bg }};color:{{ r.fg }};border:1px solid {{ r.bd }};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700">{{ r.n }}</div></sc-for></div></div>
+            <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">SCALE · ENC 2</span><div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px"><sc-for list="{{ scalesL }}" as="s" hint-placeholder-count="8"><div style="height:52px;border-radius:6px;background:{{ s.bg }};color:{{ s.fg }};border:1px solid {{ s.bd }};display:flex;align-items:center;padding:0 14px;font-size:14px;font-weight:600">{{ s.n }}</div></sc-for></div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">MODE · ENC 3</span><div style="display:flex;gap:6px"><sc-for list="{{ inKey }}" as="s" hint-placeholder-count="2"><div style="flex:1;height:52px;border-radius:6px;background:{{ s.bg }};color:{{ s.fg }};border:1px solid {{ s.bd }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.08em">{{ s.n }}</div></sc-for></div></div>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">LAYOUT · ENC 4</span><div style="display:flex;gap:6px"><sc-for list="{{ layouts }}" as="s" hint-placeholder-count="3"><div style="flex:1;height:52px;border-radius:6px;background:{{ s.bg }};color:{{ s.fg }};border:1px solid {{ s.bd }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.08em">{{ s.n }}</div></sc-for></div></div>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kScale }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="28 Repeat window" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">28</span><span style="font-size:18px;font-weight:600">REPEAT · WINDOW</span><span style="font-size:12px;color:#5A5A6E">NOTE REPEAT RATES ON THE 8 ENCODER COLUMNS</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="NOTE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:8px;opacity:.25"><sc-for list="{{ ghost32 }}" as="g" hint-placeholder-count="32"><div style="border-radius:8px;background:{{ g }}"></div></sc-for></div>
+        <div style="position:absolute;left:8px;right:8px;top:248px;height:368px;box-sizing:border-box;background:#141414;border:1px solid #2E2E2E;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.7);display:flex;flex-direction:column">
+          <div style="height:64px;flex:none;display:flex;align-items:center;gap:20px;padding:0 20px;border-bottom:1px solid #242424"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:34px;font-weight:800">REPEAT</span><span style="font-size:14px;font-weight:600">1/16 · swing 56 % · held</span><div style="flex:1"></div><span style="font-size:12px;color:#5A5A6E">HOLD REPEAT + PAD · LATCH WITH SHIFT</span></div>
+          <div style="padding:16px 8px 0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ rates }}" as="r" hint-placeholder-count="8"><div style="box-sizing:border-box;height:120px;border-radius:8px;background:{{ r.bg }};border:2px solid {{ r.bd }};color:{{ r.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:44px;line-height:40px;font-weight:800">{{ r.n }}</span><span style="font-size:11px;letter-spacing:.08em">{{ r.s }}</span></div></sc-for>
+          </div>
+          <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px">
+            <sc-for list="{{ repOpts }}" as="o" hint-placeholder-count="3"><div style="display:flex;flex-direction:column;gap:8px"><div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:#9A9AA6;letter-spacing:.08em">{{ o.n }}</span><span style="font-weight:600">{{ o.v }}</span></div><div style="height:8px;background:#0C0C0C;border-radius:2px"><div style="width:{{ o.p }}%;height:100%;background:#5DCAA5;border-radius:2px"></div></div></div></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kRep }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="29 Tempo window" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">29</span><span style="font-size:18px;font-weight:600">TEMPO · WINDOW</span><span style="font-size:12px;color:#5A5A6E">TAP · NUDGE · LINK</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER" view="SESSION" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:repeat(6,minmax(0,1fr));gap:8px;opacity:.22"><sc-for list="{{ ghost48c }}" as="g" hint-placeholder-count="48"><div style="border-radius:5px;background:{{ g }}"></div></sc-for></div>
+        <div style="position:absolute;left:160px;top:88px;width:960px;height:504px;box-sizing:border-box;background:#141414;border:1px solid #2E2E2E;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.7);display:grid;grid-template-columns:minmax(0,1fr) 340px">
+          <div style="padding:28px;display:flex;flex-direction:column;gap:16px;border-right:1px solid #242424">
+            <span style="font-size:12px;letter-spacing:.14em;color:#5A5A6E">TEMPO · ENC 1 COARSE · SHIFT FINE</span>
+            <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:200px;line-height:170px;font-weight:800">124.00</span>
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:12px;letter-spacing:.1em;color:#9A9AA6">TAP</span><sc-for list="{{ taps }}" as="t" hint-placeholder-count="4"><div style="width:28px;height:28px;border-radius:50%;background:{{ t }}"></div></sc-for><span style="font-size:12px;color:#5A5A6E">4 taps · 123.96</span></div>
+            <div style="flex:1"></div>
+            <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px"><sc-for list="{{ tempoBtns }}" as="b" hint-placeholder-count="3"><div style="height:56px;border-radius:6px;background:{{ b.bg }};color:{{ b.fg }};border:1px solid #2E2E2E;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;letter-spacing:.08em">{{ b.n }}</div></sc-for></div>
+          </div>
+          <div style="padding:28px 24px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:30px;font-weight:800">LINK</span><span style="font-size:11px;font-weight:600;color:#5DCAA5">● ON · 3 PEERS</span></div>
+            <sc-for list="{{ peers }}" as="p" hint-placeholder-count="3"><div style="height:44px;border-radius:6px;background:#1C1C1C;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:13px"><span style="font-weight:600">{{ p.n }}</span><span style="color:#9A9AA6">{{ p.v }}</span></div></sc-for>
+            <div style="flex:1"></div>
+            <sc-for list="{{ tempoOpts }}" as="o" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;font-size:13px;border-top:1px solid #1E1E1E;padding-top:8px"><span style="color:#9A9AA6">{{ o.a }}</span><span style="font-weight:600">{{ o.b }}</span></div></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kTempo }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="30 Engine Mac" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">30</span><span style="font-size:18px;font-weight:600">ENGINE · MAC</span><span style="font-size:12px;color:#5A5A6E">STUDIO MODE · 14 STEPS · CHOOSE WITHOUT TOUCHING THE MAC</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" mode="CONTROLLER · STUDIO" view="ENGINE" section="SCENE 4" conn="{{ connC }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="flex:none;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px">
+            <sc-for list="{{ steps14 }}" as="s" hint-placeholder-count="14"><div style="box-sizing:border-box;height:52px;border-radius:6px;background:{{ s.bg }};border:{{ s.bd }};padding:6px 10px;display:flex;flex-direction:column;justify-content:space-between"><span style="font-size:10px;color:{{ s.ic }};letter-spacing:.08em">{{ s.i }}</span><span style="font-size:13px;font-weight:600;color:{{ s.fg }}">{{ s.n }}</span></div></sc-for>
+          </div>
+          <div style="height:40px;flex:none;display:flex;align-items:center;gap:16px;padding:0 4px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:32px;font-weight:800">STEP 4 · BASS</span><span style="font-size:12px;color:#9A9AA6">Project: Selva Nocturna · A min · 124 · writes to track 3 in Live</span><div style="flex:1"></div><span style="font-size:12px;color:#7A6FE0">3 OPTIONS · 1 GENERATING</span></div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;min-height:0">
+            <sc-for list="{{ engCards }}" as="o" hint-placeholder-count="4"><dc-import name="Option Card" state="{{ o.state }}" letter="{{ o.letter }}" color="#6E9BE8" sound="{{ o.sound }}" sub="{{ o.sub }}" energy="{{ o.energy }}" enc-txt="{{ o.enc }}" hint="{{ o.hint }}" notes="{{ o.notes }}" roll-h="{{ 150 }}" rows="{{ 7 }}" hint-size="100%,100%"></dc-import></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ kEng }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:48px;font-weight:800;text-transform:uppercase">Layout notes · 21–30</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px">
+      <sc-for list="{{ notes }}" as="n" hint-placeholder-count="8">
+        <div style="background:#0D0D0D;border:1px solid #242424;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:13px;color:#5DCAA5;font-weight:600">{{ n.id }}</span><span style="font-size:15px;font-weight:600">{{ n.t }}</span></div>
+          <sc-for list="{{ n.items }}" as="i" hint-placeholder-count="3"><div style="font-size:12px;line-height:18px;color:#9A9AA6;text-wrap:pretty">{{ i }}</div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;displayFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Big Shoulders&quot;,&quot;Archivo Expanded&quot;],&quot;default&quot;:&quot;Big Shoulders&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.applyFont(); }
+  componentDidUpdate() { this.applyFont(); }
+  applyFont() {
+    const a = (this.props.displayFont ?? 'Big Shoulders') === 'Archivo Expanded';
+    const s = document.documentElement.style;
+    s.setProperty('--disp', a ? "'Archivo',sans-serif" : "'Big Shoulders Display',sans-serif");
+    s.setProperty('--dispw', a ? '125%' : '100%');
+  }
+  renderVals() {
+    const rnd = s => { const x = Math.sin(s * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const mix = (hex, t) => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = (n >> 8) & 255, b = n & 255; const m = v => Math.round(v * t + 10 * (1 - t)); return '#' + [m(r), m(g), m(b)].map(v => v.toString(16).padStart(2, '0')).join(''); };
+    const arc = (v, c) => `conic-gradient(from 225deg, ${c} 0deg ${v * 270}deg, #262626 ${v * 270}deg 270deg, transparent 270deg 360deg)`;
+    const TC = ['#E8875A', '#E6C35C', '#6E9BE8', '#9FD067', '#E37FB0', '#C9A27A', '#B7B7B7', '#D9D46A'];
+    const TN = [['Drums', 'Drum Rack'], ['Perc', 'Drum Rack'], ['Bass', 'Operator'], ['Keys', 'Electric'], ['Lead', 'Wavetable'], ['Pads', 'Drift'], ['Vox', 'Simpler'], ['FX', 'Audio']];
+    const tracks = TN.map(([n, d], i) => ({ n, d, c: TC[i] }));
+    const connC = [{ n: 'BRAIN', s: 'ok' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'ok' }, { n: 'NET', s: 'ok' }];
+    const off = { l: '—', off: true };
+
+    // 21 session
+    const SC = [['INTRO', '11011010'], ['GROOVE A', '11111110'], ['BUILD', '11101111'], ['DROP', '11111111'], ['BREAK', '00011101'], ['DROP 2', '11111011']];
+    const playing = [3, 3, 3, 1, 3, 3, -1, 2], queued = { 3: 4 }, rec = { 6: 3 };
+    const names = ['Kick Loop', 'Shaker', 'Sub Line', 'Rhodes', 'Hook', 'Air Pad', 'Vox Chop', 'Riser'];
+    const scenes = SC.map(([n, mask], si) => ({
+      n, lc: si === 3 ? '#5DCAA5' : '#9A9AA6', sub: si === 3 ? '▶ PLAYING · BAR 37' : '',
+      clips: mask.split('').map((m, ti) => {
+        const c = TC[ti], has = m === '1', play = playing[ti] === si, q = queued[ti] === si, r = rec[ti] === si;
+        if (!has && !r) return { n: '', g: '', bg: '#101010', bd: '#1A1A1A', bs: 'dashed', fg: '#3A3A44', w: [], wc: '#242424', play: false, pr: 0 };
+        const full = play || q || r;
+        return { n: r ? 'Recording…' : names[ti] + ' ' + String.fromCharCode(65 + si), g: play ? '▶' : q ? '▷' : r ? '●' : '', bg: full ? c : mix(c, .3), bd: r ? '#FF6A35' : q ? '#F2F2F2' : full ? c : mix(c, .3), bs: q ? 'dashed' : 'solid', fg: full ? '#0A0A0A' : '#F2F2F2', w: Array.from({ length: 20 }, (_, i) => Math.round(25 + rnd(ti * 50 + si * 7 + i) * 75)), wc: full ? 'rgba(10,10,10,.45)' : mix(c, .7), play, pr: 46 };
+      })
+    }));
+    const kSess = tracks.map((t, i) => ({ l: t.n, v: playing[i] >= 0 ? '▶ ' + SC[playing[i]][0].split(' ')[0] : 'stopped', c: t.c, d: mix(t.c, .3), on: playing[i] >= 0 }));
+    kSess[6] = { l: 'Vox', v: '● rec', c: '#FF6A35', on: true };
+
+    // 21b
+    const ghost48 = Array.from({ length: 48 }, (_, i) => i);
+    const checks = [{ i: '✓', c: '#5DCAA5', n: 'Network', v: 'Ethernet · 10.0.0.24' }, { i: '✓', c: '#5DCAA5', n: 'Ableton Link', v: '1 peer (no Live)' }, { i: '…', c: '#E8B84A', n: 'Remote Script', v: 'waiting for Live' }];
+    const kNoLive = [{ l: 'Retry', v: 'now' }, { l: 'Host', v: 'auto' }, off, off, off, off, { l: 'Standalone', v: 'switch', on: true }, { l: 'Settings', v: '' }];
+
+    // 22 note drum rack
+    const rack = ['Kick 808', 'Kick Wood', 'Rim', 'Clap 909', 'Snare', 'Snare Gh', 'Hat C', 'Hat O', 'Conga L', 'Conga H', 'Shaker', 'Tamb', 'Tom L', 'Tom H', 'Crash', 'FX Hit'];
+    const pat = '....x.......x..x';
+    const noteGrid = [];
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 8; c++) {
+      if (c < 4) {
+        const idx = (3 - r) * 4 + c, n = rack[idx], sel = n === 'Clap 909', hit = n === 'Kick 808';
+        noteGrid.push({ n, t: sel ? 'SELECTED' : hit ? 'HIT' : '', bg: sel ? '#F2F2F2' : hit ? '#E8875A' : mix('#E8875A', .3), bd: sel ? '#F2F2F2' : hit ? '#E8875A' : mix('#E8875A', .3), fg: sel || hit ? '#0A0A0A' : '#F2F2F2' });
+      } else {
+        const s = r * 4 + (c - 4), on = pat[s] === 'x', ph = s === 5;
+        noteGrid.push({ n: String(s + 1), t: ph ? 'PLAYHEAD' : on ? 'ON' : '', bg: on ? '#E8875A' : ph ? '#0E5040' : '#141414', bd: ph ? '#5DCAA5' : on ? '#E8875A' : '#242424', fg: on ? '#0A0A0A' : ph ? '#5DCAA5' : '#5A5A6E' });
+      }
+    }
+    const kNote = [{ l: 'Layout', v: 'Drum', on: true }, { l: 'Pad', v: 'Clap 909', c: '#E8875A', turn: true, p: .2 }, { l: 'Velocity', v: '110' }, { l: 'Length', v: '1/16' }, { l: 'Nudge', v: '0 ms' }, { l: 'Swing', v: '54 %' }, { l: 'Repeat', v: 'Off' }, { l: 'Scale', v: 'A min' }];
+
+    // 23 clip
+    const NN = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+    const scl = [0, 2, 3, 5, 7, 8, 10];
+    const keys = Array.from({ length: 13 }, (_, r) => { const n = 12 - r, pc = n % 12, oct = 1 + Math.floor((n + 9) / 12), sc = scl.includes(pc), root = pc === 0; return { n: NN[pc] + oct, t: r / 13 * 100, h: 100 / 13, bg: root ? '#0E5040' : sc ? '#1C1C1C' : '#101010', fg: root ? '#5DCAA5' : sc ? '#F2F2F2' : '#3A3A44', row: root ? '#0F1A17' : sc ? '#121212' : '#0C0C0C' }; });
+    const clipLines = Array.from({ length: 8 }, (_, i) => ({ x: i / 8 * 100, c: i % 4 === 0 ? '#2E2E2E' : '#1A1A1A' }));
+    const cn = [[0, 0, 3], [3, 0, 1, .7], [4, 3, 2], [6, 0, 2], [10, 7, 1, .6, 1], [11, 5, 3], [14, 0, 2], [16, 0, 3], [19, 0, 1, .7], [20, 3, 2], [22, 10, 2], [24, 12, 2], [27, 7, 3], [30, 5, 2]];
+    const clipNotes = cn.map(([s, n, l, o, sel]) => ({ l: s / 32 * 100, w: l / 32 * 100, t: (12 - n) / 13 * 100, h: 100 / 13, o: o ?? 1, sh: sel ? '0 0 0 2px #F2F2F2' : 'none' }));
+    const kClip = [{ l: 'Note', v: 'E2', c: '#6E9BE8', turn: true, p: .4 }, { l: 'Position', v: '1.3.3' }, { l: 'Length', v: '1/16' }, { l: 'Velocity', v: '76' }, { l: 'Nudge', v: '+3 ms' }, { l: 'Loop start', v: '1.1.1' }, { l: 'Loop len', v: '2 bars' }, { l: 'Zoom', v: '1/2 bar' }];
+
+    // 24 device
+    const chain = [['EQ Eight', 1], ['Saturator', 1], ['Auto Filter', 1, 1], ['Echo', 0], ['+', 0, 0, 1]].map(([n, on, sel, add]) => ({ n, bg: sel ? '#1C1C1C' : '#141414', bd: sel ? '#F2F2F2' : '#242424', fg: add ? '#5A5A6E' : '#F2F2F2', on: add ? 'transparent' : on ? '#5DCAA5' : '#3A3A44' }));
+    const bankDots = ['#F2F2F2', '#3A3A44', '#3A3A44'];
+    const devArcs = [['FREQ', .55, '1.2k'], ['RES', .38, '38 %'], ['DRIVE', .2, '4 dB'], ['TYPE', .25, 'LP 24'], ['ENV AMT', .6, '+12'], ['LFO AMT', .1, '6'], ['LFO RATE', .45, '1/4'], ['DRY/WET', 1, '100 %']].map(([n, v, t], i) => ({ n, v: t, bg: arc(v, i === 0 ? '#5DCAA5' : '#1D9E75'), bd: i === 0 ? '#5DCAA5' : '#242424', lc: i === 0 ? '#F2F2F2' : '#9A9AA6' }));
+    const kDev = [{ l: 'Freq', v: '1.2k', turn: true, p: .55 }, { l: 'Res', v: '38 %' }, { l: 'Drive', v: '4 dB' }, { l: 'Type', v: 'LP 24' }, { l: 'Env amt', v: '+12' }, { l: 'LFO amt', v: '6' }, { l: 'LFO rate', v: '1/4' }, { l: 'Dry/wet', v: '100 %' }];
+
+    // 25 mix
+    const vols = [.82, .7, .78, .6, .66, .52, .58, .4], pans = ['C', 'L12', 'C', 'R8', 'L4', 'C', 'R20', 'C'];
+    const mixStrips = tracks.map((t, i) => {
+      const v = vols[i], m = Math.round(v * 90 * (playing[i] >= 0 || i === 6 ? 1 : 0));
+      const sa = rnd(i + 2) * .6, sb = rnd(i + 7) * .5;
+      return {
+        n: t.n, c: t.c, obd: i === 2 ? t.c : '#242424', vol: Math.round(v * 100), m: [m, Math.round(m * .94)], pan: pans[i], a: Math.round(sa * 100), b: Math.round(sb * 100),
+        db: ((x => (x >= 0 ? '+' : '') + x.toFixed(1))(20 * Math.log10(v / 0.8))),
+        knobs: [{ n: 'PAN', bg: arc(.5 + (i % 3 - 1) * .1, '#9A9AA6') }, { n: 'SEND A', bg: arc(sa, '#1D9E75') }, { n: 'SEND B', bg: arc(sb, '#1D9E75') }],
+        btn: [{ n: 'M', on: i === 7 }, { n: 'S', on: false }, { n: 'A', on: i === 6 }].map(b => ({ n: b.n, bg: b.on ? (b.n === 'A' ? '#FF6A35' : '#E8B84A') : 'transparent', fg: b.on ? '#0A0A0A' : '#9A9AA6', bd: b.on ? 'transparent' : '#2E2E2E' }))
+      };
+    });
+    const kMix = tracks.map((t, i) => ({ l: t.n, v: mixStrips[i].db, c: t.c, d: mix(t.c, .3), turn: i === 2, p: i === 2 ? vols[2] : undefined }));
+
+    // 26 browse
+    const cats = [['Sounds', '412'], ['Drums', '186', 1], ['Instruments', '64'], ['Audio Effects', '58'], ['MIDI Effects', '22'], ['Samples', '3.2k'], ['Packs', '18'], ['User Library', '240']].map(([n, k, on]) => ({ n, k, bg: on ? '#1C1C1C' : '#141414', bd: on ? '#F2F2F2' : 'transparent', fg: on ? '#F2F2F2' : '#9A9AA6' }));
+    const items = [['Organic House Kit', '16 pads', 1], ['Deep Wood Kit', '16 pads'], ['Afro Perc Kit', '12 pads'], ['Dusty 909 Kit', '16 pads'], ['Shaker Room', '8 pads'], ['Conga Session', '10 pads'], ['Tape Hats', '8 pads'], ['Minimal Rim Kit', '12 pads']].map(([n, m, on]) => ({ n, m, bg: on ? '#1C1C1C' : '#141414', bd: on ? '#F2F2F2' : 'transparent' }));
+    const bWave = Array.from({ length: 40 }, (_, i) => ({ h: i % 4 === 0 ? 90 : 20 + rnd(i) * 40, c: i < 12 ? '#E8875A' : mix('#E8875A', .35) }));
+    const tags = ['house', 'organic', 'wood', '124 bpm'];
+    const kBrowse = [{ l: 'Category', v: 'Drums' }, { l: 'Folder', v: 'House' }, { l: 'Item', v: '1 / 8', turn: true, p: .1 }, { l: 'Preview', v: 'On', on: true, c: '#F2F2F2' }, { l: 'Volume', v: '−6 dB' }, off, { l: 'Load', v: 'Drums', on: true }, { l: 'Back', v: '' }];
+
+    // windows
+    const ghost32 = Array.from({ length: 32 }, (_, i) => mix(TC[i % 8], .5));
+    const ghost48c = Array.from({ length: 48 }, (_, i) => SC[Math.floor(i / 8)][1][i % 8] === '1' ? mix(TC[i % 8], .5) : '#141414');
+    const roots = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'].map(n => ({ n, bg: n === 'A' ? '#5DCAA5' : '#1C1C1C', fg: n === 'A' ? '#0A0A0A' : n.includes('#') ? '#9A9AA6' : '#F2F2F2', bd: n === 'A' ? '#5DCAA5' : '#242424' }));
+    const pick = (list, act) => list.map(n => ({ n, bg: n === act ? '#0E2A22' : '#1C1C1C', fg: n === act ? '#F2F2F2' : '#9A9AA6', bd: n === act ? '#5DCAA5' : '#242424' }));
+    const scalesL = pick(['Major', 'Minor', 'Dorian', 'Mixolydian', 'Phrygian', 'Lydian', 'Harmonic minor', 'Minor pentatonic'], 'Minor');
+    const inKey = pick(['IN KEY', 'CHROMATIC'], 'IN KEY');
+    const layouts = pick(['4THS', '3RDS', 'SEQUENTIAL'], '4THS');
+    const kScale = [{ l: 'Root', v: 'A', turn: true, p: .75 }, { l: 'Scale', v: 'Minor' }, { l: 'Mode', v: 'In key' }, { l: 'Layout', v: '4ths' }, off, off, off, { l: 'Close', v: '' }];
+    const rates = ['1/4', '1/4T', '1/8', '1/8T', '1/16', '1/16T', '1/32', '1/32T'].map(n => ({ n, s: n === '1/16' ? 'ACTIVE' : 'ENC · PRESS', bg: n === '1/16' ? '#0E5040' : '#1C1C1C', bd: n === '1/16' ? '#5DCAA5' : '#242424', fg: n === '1/16' ? '#F2F2F2' : '#9A9AA6' }));
+    const repOpts = [{ n: 'SWING', v: '56 %', p: 56 }, { n: 'GATE', v: '70 %', p: 70 }, { n: 'PRESSURE → VELOCITY', v: 'On', p: 100 }];
+    const kRep = rates.map(r => ({ l: r.n, v: r.n === '1/16' ? 'on' : '', on: r.n === '1/16' }));
+    const taps = ['#5DCAA5', '#5DCAA5', '#5DCAA5', '#F2F2F2'];
+    const tempoBtns = [{ n: 'NUDGE −', bg: '#1C1C1C', fg: '#F2F2F2' }, { n: 'TAP', bg: '#F2F2F2', fg: '#0A0A0A' }, { n: 'NUDGE +', bg: '#1C1C1C', fg: '#F2F2F2' }];
+    const peers = [{ n: 'Live · studio-mac', v: 'leader' }, { n: 'CDJ-3000', v: '124.00' }, { n: 'iPad · Loopy', v: '124.00' }];
+    const tempoOpts = [{ a: 'Start / stop sync', b: 'On' }, { a: 'Metronome', b: 'Cue only' }, { a: 'Count-in', b: '1 bar' }];
+    const kTempo = [{ l: 'Tempo', v: '124.00', turn: true, p: .5 }, { l: 'Fine', v: '±0.01' }, { l: 'Nudge', v: '0' }, { l: 'Link', v: 'On', on: true }, { l: 'Sync', v: 'On' }, { l: 'Metro', v: 'Cue' }, { l: 'Count-in', v: '1 bar' }, { l: 'Close', v: '' }];
+
+    // 30 engine
+    const S14 = ['Start', 'Arrangement', 'Kick', 'Bass', 'Drums', 'Tops', 'Motif', 'Chords', 'Pads', 'Stabs', 'Transitions', 'Assembly', 'Mix', 'Ideas'];
+    const steps14 = S14.map((n, i) => { const done = i < 3, now = i === 3; return { n, i: (i + 1) + (done ? ' · ✓' : now ? ' · NOW' : ''), bg: now ? '#2B2758' : done ? '#141414' : '#101010', bd: now ? '2px solid #7A6FE0' : '1px solid ' + (done ? '#242424' : '#1A1A1A'), fg: done || now ? '#F2F2F2' : '#5A5A6E', ic: now ? '#A9A0F2' : done ? '#5DCAA5' : '#3A3A44' }; });
+    const engCards = [
+      { state: 'option', letter: 'A', sound: 'Operator · Sub Round', sub: 'A1 · 16 steps · offbeat', energy: 3, enc: 'ENC 1–2', hint: 'ENC 1 AUDITION IN LIVE', notes: [{ s: 0, n: 0, l: 2 }, { s: 3, n: 2, l: 1 }, { s: 6, n: 0, l: 2 }, { s: 10, n: 3, l: 1 }, { s: 12, n: 0, l: 2 }] },
+      { state: 'cue', letter: 'B', sound: 'Wavetable · Pluck Bass', sub: 'A1 · 16 steps · syncopated', energy: 4, enc: 'ENC 3–4', hint: 'AUDITIONING · ACCEPT WRITES CLIP', notes: [{ s: 0, n: 0, l: 1 }, { s: 2, n: 2, l: 1 }, { s: 5, n: 4, l: 2 }, { s: 9, n: 2, l: 1 }, { s: 11, n: 0, l: 2 }, { s: 14, n: 5, l: 1 }] },
+      { state: 'option', letter: 'C', sound: 'Drift · Warm Mono', sub: 'A1 · 8 steps · long', energy: 2, enc: 'ENC 5–6', hint: 'ENC 5 AUDITION IN LIVE', notes: [{ s: 0, n: 0, l: 4 }, { s: 8, n: 3, l: 4 }] },
+      { state: 'loading', letter: 'D', enc: 'ENC 7–8', hint: 'GENERATE ▸ ANOTHER', progress: '1/3' }
+    ];
+    const kEng = [{ l: 'Audition A', v: '' }, { l: 'Energy', v: '3' }, { l: 'Audition B', v: 'playing', on: true, c: '#F2F2F2' }, { l: 'Energy', v: '4', turn: true, p: .8 }, { l: 'Audition C', v: '' }, { l: 'Energy', v: '2' }, { l: 'Option D', v: '1/3', ai: true }, { l: 'Next step', v: 'Drums' }];
+
+    const notes = [
+      { id: '21', t: 'Session', items: ['Track headers 44 with 4 px Live colour stripe. 6 scenes × (14 label + 58 clip).', 'Clip with content = Live colour at 30 %; playing / queued / recording = full colour. Playing adds a 3 px teal progress bar; queued = dashed white edge; recording = orange edge.', 'Encoders = track volume; keys show what each track is playing.'] },
+      { id: '21b', t: 'No Live', items: ['Grid becomes dashed placeholders. Centre card 640 wide lists the three checks and offers STANDALONE.'] },
+      { id: '22', t: 'Note · drum rack', items: ['Columns 1–4: 16 rack pads (selected = white). Columns 5–8: the 16 steps of the selected pad, 4 per row.', 'Melodic tracks use the PADS layout from the standalone file with Live colours.'] },
+      { id: '23', t: 'Clip', items: ['Loop bar 420 wide with the view window framed in white. Notes in the clip colour; velocity = opacity.'] },
+      { id: '24', t: 'Device', items: ['Chain chips 44; selected device white edge; on-dot teal. Bank dots right.', '8 arcs 124 Ø in the encoder columns. Response graph when the device has one.'] },
+      { id: '25', t: 'Mix', items: ['Strips 152 in the encoder columns. Pan and 2 sends as 36 Ø arcs, fader + stereo meter, M / S / A (solo amber, arm orange).'] },
+      { id: '26', t: 'Browse', items: ['Category 312 / list / preview 312, rows 56. Preview waveform in the target track colour.'] },
+      { id: '27–29', t: 'Windows', items: ['Scale and Tempo: 960 × 504 centred. Repeat sits at the bottom so its 8 rate tiles line up with the encoders.', 'Selected option = teal-dim fill + teal edge. Tempo in display 200.'] },
+      { id: '30', t: 'Engine · Mac', items: ['14 steps in 2 rows of 7 (52 high): done ✓ teal, current violet edge, later dim.', 'Options: 4 cards on encoder pairs, same Option Card as LAYER. ACCEPT writes the clip into Live.'] }
+    ];
+
+    return { connC, connNoLive: [{ n: 'BRAIN', s: 'ok' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'warn' }, { n: 'NET', s: 'ok' }], tracks, scenes, kSess, ghost48, checks, kNoLive, noteGrid, kNote, keys, clipLines, clipNotes, kClip, chain, bankDots, devArcs, kDev, mixStrips, kMix, cats, items, bWave, tags, kBrowse, ghost32, ghost48c, roots, scalesL, inKey, layouts, kScale, rates, repOpts, kRep, taps, tempoBtns, peers, tempoOpts, kTempo, steps14, engCards, kEng, notes };
+  }
+}
+</script>
+</body>
+</html>

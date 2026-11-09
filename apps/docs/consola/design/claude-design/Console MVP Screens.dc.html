@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>:root{--disp:'Big Shoulders Display',sans-serif;--dispw:100%}body{margin:0;background:#050505}a{color:#5DCAA5}a:hover{color:#F2F2F2}</style>
+</helmet>
+<div style="width:2736px;box-sizing:border-box;padding:72px;background:#050505;color:#F2F2F2;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:72px">
+
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="font-size:13px;letter-spacing:.2em;color:#5DCAA5">GROOVEFORGE CONSOLE · MVP SCREENS · 1280×720</div>
+    <div style="font-family:var(--disp);font-stretch:var(--dispw);font-size:88px;line-height:84px;font-weight:800;text-transform:uppercase">The 9 MVP screens</div>
+    <div style="font-size:15px;line-height:22px;color:#9A9AA6">Common chrome: top bar 56 · content 568 · encoder keys 96. Tweaks: role encoding A/B, display face, hand halos. Layout notes for QML at the bottom.</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1280px);gap:64px 48px">
+
+    <div data-screen-label="01 Boot" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">01</span><span style="font-size:18px;font-weight:600">BOOT</span><span style="font-size:12px;color:#5A5A6E">GROOVEPILOT OS · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#09090B;overflow:hidden">
+        <div style="position:absolute;left:0;right:0;top:250px;display:flex;flex-direction:column;align-items:center;gap:20px">
+          <div style="position:relative;width:72px;height:72px;border-radius:50%;border:3px solid #00D4AA;box-sizing:border-box;box-shadow:0 0 40px rgba(0,212,170,.35)"><div style="position:absolute;left:50%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;background:#00D4AA"></div></div>
+          <div style="font-family:'General Sans',sans-serif;font-size:48px;line-height:52px;font-weight:600;color:#FAFAFA;letter-spacing:-.01em">GroovePilot</div>
+          <div style="font-family:'General Sans',sans-serif;font-size:18px;font-weight:500;color:#A1A1AA">GrooveForge Console</div>
+          <div style="width:320px;height:2px;background:#1A1A1F;border-radius:1px;margin-top:20px;overflow:hidden"><div style="width:62%;height:100%;background:linear-gradient(90deg,#00A88A,#00F5C8)"></div></div>
+        </div>
+        <div style="position:absolute;left:48px;bottom:40px;display:flex;flex-direction:column;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px">
+          <sc-for list="{{ bootLog }}" as="b" hint-placeholder-count="4"><div style="display:flex;gap:16px"><span style="width:180px;color:#71717A">{{ b.n }}</span><span style="color:{{ b.c }}">{{ b.v }}</span></div></sc-for>
+        </div>
+        <div style="position:absolute;right:48px;bottom:40px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#52525B">OS 0.9.2 · GUI 0.1.0</div>
+      </div>
+    </div>
+
+    <div data-screen-label="02 Mode select" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">02</span><span style="font-size:18px;font-weight:600">MODE SELECT</span><span style="font-size:12px;color:#5A5A6E">GROOVEPILOT OS · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#09090B;overflow:hidden">
+        <dc-import name="Top Bar" brand="gp" mode="GROOVEPILOT" view="Choose a mode" show-music="{{ false }}" conn="{{ connModes }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:40px 48px 24px;display:flex;flex-direction:column;gap:24px;font-family:'General Sans',sans-serif">
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;flex:1">
+            <sc-for list="{{ modes }}" as="m" hint-placeholder-count="2">
+              <div style="box-sizing:border-box;border-radius:12px;background:{{ m.bg }};border:2px solid {{ m.bd }};padding:32px;display:flex;flex-direction:column;gap:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:#71717A">{{ m.enc }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:999px;background:{{ m.pillBg }};color:{{ m.pillFg }}">{{ m.pill }}</span></div>
+                <div style="font-size:44px;line-height:48px;font-weight:600;color:#FAFAFA">{{ m.n }}</div>
+                <div style="font-size:17px;line-height:24px;color:#A1A1AA;max-width:440px">{{ m.d }}</div>
+                <div style="flex:1"></div>
+                <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #27272A;padding-top:16px">
+                  <sc-for list="{{ m.st }}" as="s" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:10px;font-size:15px"><div style="width:8px;height:8px;border-radius:50%;background:{{ s.c }}"></div><span style="color:#FAFAFA;width:110px">{{ s.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ s.tc }}">{{ s.v }}</span></div></sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#71717A;text-align:center">TURN ENC 1–2 OR TAP · PRESS TO ENTER · LAST MODE STARTS AFTER 8 S</div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" brand="gp" keys="{{ keysModes }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="03 Toasts" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">03</span><span style="font-size:18px;font-weight:600">TOASTS</span><span style="font-size:12px;color:#5A5A6E">OVER LIVE · SESSION · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:104px 132px 116px 84px 84px;gap:8px">
+          <div style="grid-column:1 / span 8;background:#141414;border:1px solid #242424;border-radius:8px"></div>
+          <sc-for list="{{ flatLive }}" as="c" hint-placeholder-count="32"><div style="padding-top:{{ c.pt }}px;box-sizing:border-box"><dc-import name="Grid Cell" color="{{ c.c }}" dim="{{ c.d }}" label="{{ c.label }}" title="{{ c.name }}" sub="{{ c.sub }}" state="{{ c.state }}" enc="{{ enc }}" steps="{{ c.steps }}" level="{{ c.level }}" compact="{{ c.compact }}" hint-size="100%,100%"></dc-import></div></sc-for>
+        </div>
+        <div style="position:absolute;left:360px;bottom:112px;width:560px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ toastsNow }}" as="t" hint-placeholder-count="2">
+            <div style="height:64px;box-sizing:border-box;display:flex;align-items:center;gap:14px;padding:0 16px 0 12px;background:#1C1C1C;border:1px solid #2E2E2E;border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.6);opacity:{{ t.o }}">
+              <div style="width:40px;height:40px;border-radius:4px;background:{{ t.c }};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:{{ t.tc }}">{{ t.i }}</div>
+              <span style="flex:1;font-size:17px;font-weight:600">{{ t.m }}</span>
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:24px;font-weight:700;color:{{ t.rc }}">{{ t.r }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysLive }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="04 Settings" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">04</span><span style="font-size:18px;font-weight:600">SETTINGS · SURFACE</span><span style="font-size:12px;color:#5A5A6E">GROOVEPILOT OS · MVP MINIMUM</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#09090B;overflow:hidden;font-family:'General Sans',sans-serif">
+        <dc-import name="Top Bar" brand="gp" mode="SETTINGS" view="Surface" show-music="{{ false }}" conn="{{ connModes }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:24px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <sc-for list="{{ setNav }}" as="n" hint-placeholder-count="4">
+              <div style="height:56px;box-sizing:border-box;border-radius:8px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:{{ n.bg }};border:1px solid {{ n.bd }}"><span style="font-size:17px;font-weight:{{ n.w }};color:{{ n.c }}">{{ n.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#52525B">{{ n.k }}</span></div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:20px;min-width:0">
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+              <sc-for list="{{ leds }}" as="l" hint-placeholder-count="2">
+                <div style="background:#141418;border:1px solid #27272A;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:600">{{ l.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500">{{ l.v }}%</span></div>
+                  <div style="position:relative;height:8px;border-radius:999px;background:#222228"><div style="width:{{ l.v }}%;height:100%;border-radius:999px;background:#00D4AA"></div><div style="position:absolute;top:-8px;left:calc({{ l.v }}% - 12px);width:24px;height:24px;border-radius:50%;background:#FAFAFA"></div></div>
+                  <span style="font-size:13px;color:#71717A">{{ l.d }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="background:#141418;border:1px solid #27272A;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:600">Force pads</span><span style="font-size:13px;color:#A1A1AA">Hit each pad softly, then hard. The marker is the trigger threshold.</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+                <sc-for list="{{ fsr }}" as="f" hint-placeholder-count="4">
+                  <div style="box-sizing:border-box;border-radius:8px;border:1px solid {{ f.bd }};background:#09090B;padding:12px;display:flex;flex-direction:column;gap:10px">
+                    <div style="display:flex;justify-content:space-between"><span style="font-size:14px;font-weight:600">{{ f.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ f.sc }}">{{ f.s }}</span></div>
+                    <div style="position:relative;height:72px;background:#1A1A1F;border-radius:4px;overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:{{ f.v }}%;background:linear-gradient(0deg,#00A88A,#00F5C8)"></div><div style="position:absolute;left:0;right:0;height:2px;bottom:{{ f.t }}%;background:#FAFAFA"></div></div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#A1A1AA">THR {{ f.t }} · VEL {{ f.vel }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+              <sc-for list="{{ irs }}" as="h" hint-placeholder-count="2">
+                <div style="background:#141418;border:1px solid #27272A;border-radius:8px;padding:16px 20px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:16px;font-weight:600">{{ h.n }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ h.sc }}">{{ h.s }}</span></div>
+                  <div style="position:relative;height:24px;border-radius:4px;background:#1A1A1F"><div style="position:absolute;top:0;bottom:0;left:{{ h.a }}%;width:{{ h.w }}%;background:#003D33;border-left:2px solid #00D4AA;border-right:2px solid #00D4AA;box-sizing:border-box"></div><div style="position:absolute;top:-4px;bottom:-4px;width:3px;left:{{ h.x }}%;background:#FAFAFA;border-radius:2px"></div></div>
+                  <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:#71717A"><span>4 cm</span><span>{{ h.r }}</span><span>30 cm</span></div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" brand="gp" keys="{{ keysSet }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div id="live" data-screen-label="05 Live Session" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">05</span><span style="font-size:18px;font-weight:600">LIVE · SESSION</span><span style="font-size:12px;color:#5A5A6E">STANDALONE · MVP · MAIN SCREEN</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:104px;flex:none;box-sizing:border-box;display:flex;align-items:center;gap:24px;padding:0 20px 0 12px;background:#141414;border:1px solid #242424;border-radius:8px">
+            <div style="position:relative;width:88px;height:88px;flex:none"><div style="position:absolute;inset:0;border-radius:50%;background:{{ ring5 }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px));mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-stretch:var(--dispw);font-size:52px;font-weight:800">5</div></div>
+            <div style="display:flex;flex-direction:column;gap:2px;width:220px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">BAR 5 OF 8</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:44px;line-height:44px;font-weight:800">DROP</span><span style="font-size:12px;color:#9FE1CB">NEXT PHRASE IN 4 BARS</span></div>
+            <div style="width:1px;height:64px;background:#242424"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:11px;letter-spacing:.12em;color:#5DCAA5">● ROOM</span><span style="font-size:22px;font-weight:600;white-space:nowrap">Selva Nocturna</span><span style="font-size:12px;color:#5A5A6E">LIBRARY · A MIN · 124</span></div>
+            <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;color:#3A3A44">→</span>
+            <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-size:11px;letter-spacing:.12em;color:#F2F2F2">NEXT</span><span style="font-size:22px;font-weight:600;white-space:nowrap">Kalimba Dusk</span><div style="display:flex;gap:8px;font-size:12px"><span style="color:#7A6FE0">GENERATED</span><span style="color:#5DCAA5">A MIN ✓</span><span style="color:#5DCAA5">124 ✓</span></div></div>
+            <div style="flex:1"></div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">TRANSITION</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:28px;font-weight:700">SWAP · 8 PH</span><span style="font-size:12px;color:#9A9AA6">READY · TRANSITION BUTTON</span></div>
+          </div>
+          <sc-for list="{{ rowsLive }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="height:16px;display:flex;align-items:center;gap:10px;padding:0 4px;font-size:11px;letter-spacing:.12em"><span style="color:{{ r.lc }};font-weight:600">{{ r.label }}</span><span style="color:#5A5A6E">{{ r.sub }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;height:{{ r.h }}px">
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="8"><dc-import name="Grid Cell" color="{{ c.c }}" dim="{{ c.d }}" label="{{ c.label }}" title="{{ c.name }}" sub="{{ c.sub }}" state="{{ c.state }}" enc="{{ enc }}" steps="{{ c.steps }}" level="{{ c.level }}" compact="{{ c.compact }}" hint-size="100%,100%"></dc-import></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ halo }}" hint-placeholder-val="{{ true }}">
+          <div style="position:absolute;left:0;top:56px;height:568px;width:100px;background:radial-gradient(50px 110px at 0% 62%,rgba(93,202,165,.4),transparent);pointer-events:none"></div>
+          <div style="position:absolute;left:0;top:56px;height:568px;width:4px;background:linear-gradient(180deg,transparent 45%,#5DCAA5 62%,transparent 79%)"></div>
+        </sc-if>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysLive }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="05b Live Session offline" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">05b</span><span style="font-size:18px;font-weight:600">LIVE · SESSION — BRAIN OFFLINE</span><span style="font-size:12px;color:#5A5A6E">STATE · ROOM KEEPS PLAYING</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" conn="{{ connOff }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:104px;flex:none;box-sizing:border-box;display:flex;align-items:center;gap:24px;padding:0 20px 0 12px;background:#141414;border:1px solid #242424;border-radius:8px">
+            <div style="position:relative;width:88px;height:88px;flex:none"><div style="position:absolute;inset:0;border-radius:50%;background:{{ ring5 }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px));mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px))"></div><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-stretch:var(--dispw);font-size:52px;font-weight:800">5</div></div>
+            <div style="display:flex;flex-direction:column;gap:2px;width:220px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">BAR 5 OF 8</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:44px;line-height:44px;font-weight:800">DROP</span><span style="font-size:12px;color:#9FE1CB">NEXT PHRASE IN 4 BARS</span></div>
+            <div style="width:1px;height:64px;background:#242424"></div>
+            <div style="display:flex;align-items:center;gap:16px;flex:1;min-width:0"><div style="width:12px;height:12px;border-radius:50%;background:#E8B84A;box-shadow:0 0 8px #E8B84A;flex:none"></div><div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:20px;font-weight:600;color:#E8B84A">Brain offline · reconnecting</span><span style="font-size:13px;color:#9A9AA6">ROOM and NEXT keep playing from memory. New options pause until the Brain is back.</span></div></div>
+            <div style="height:48px;padding:0 18px;border-radius:6px;border:1px solid #2E2E2E;display:flex;align-items:center;font-size:13px;font-weight:600;letter-spacing:.1em">RETRY · 0:12</div>
+          </div>
+          <sc-for list="{{ rowsOff }}" as="r" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="height:16px;display:flex;align-items:center;gap:10px;padding:0 4px;font-size:11px;letter-spacing:.12em"><span style="color:{{ r.lc }};font-weight:600">{{ r.label }}</span><span style="color:#5A5A6E">{{ r.sub }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;height:{{ r.h }}px">
+                <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="8"><dc-import name="Grid Cell" color="{{ c.c }}" dim="{{ c.d }}" label="{{ c.label }}" title="{{ c.name }}" sub="{{ c.sub }}" state="{{ c.state }}" enc="{{ enc }}" steps="{{ c.steps }}" level="{{ c.level }}" compact="{{ c.compact }}" hint-size="100%,100%"></dc-import></sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysLive }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="06 Layer" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">06</span><span style="font-size:18px;font-weight:600">LAYER · BASS</span><span style="font-size:12px;color:#5A5A6E">STANDALONE · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="LAYER · BASS" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:96px;flex:none;box-sizing:border-box;display:flex;align-items:center;gap:28px;padding:0 20px;background:#141414;border:1px solid #242424;border-radius:8px">
+            <div style="display:flex;align-items:center;gap:16px"><div style="width:16px;height:56px;border-radius:3px;background:#3D8CFF"></div><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:64px;line-height:60px;font-weight:800;color:#3D8CFF">BASS</span></div>
+            <div style="width:1px;height:56px;background:#242424"></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:11px;letter-spacing:.12em;color:#5DCAA5">● IN ROOM</span><span style="font-size:20px;font-weight:600">Sub Model D</span><span style="font-size:12px;color:#5A5A6E">A1 · round · energy 3 · since bar 17</span></div>
+            <div style="display:flex;flex-direction:column;gap:6px;width:200px"><span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">LEVEL</span><div style="height:8px;background:#0C0C0C;border-radius:2px;overflow:hidden"><div style="width:77%;height:100%;background:linear-gradient(90deg,#0E5040,#1D9E75 60%,#5DCAA5)"></div></div><span style="font-size:12px;color:#9A9AA6">−3.2 dB</span></div>
+            <div style="flex:1"></div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;font-size:12px;letter-spacing:.06em"><span><span style="color:#5DCAA5;font-weight:600">ACCEPT</span><span style="color:#9A9AA6"> cued option enters next phrase</span></span><span><span style="color:#7A6FE0;font-weight:600">GENERATE</span><span style="color:#9A9AA6"> ask the engine for another</span></span><span><span style="color:#F2F2F2;font-weight:600">SKIP</span><span style="color:#9A9AA6"> discard the cued option</span></span></div>
+          </div>
+          <div style="flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;min-height:0">
+            <sc-for list="{{ layerCards }}" as="o" hint-placeholder-count="4"><dc-import name="Option Card" state="{{ o.state }}" letter="{{ o.letter }}" color="#3D8CFF" sound="{{ o.sound }}" sub="{{ o.sub }}" energy="{{ o.energy }}" enc-txt="{{ o.enc }}" hint="{{ o.hint }}" notes="{{ o.notes }}" roll-h="{{ 190 }}" rows="{{ 7 }}" hint-size="100%,100%"></dc-import></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysLayer }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="07 Transition" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">07</span><span style="font-size:18px;font-weight:600">TRANSITION</span><span style="font-size:12px;color:#5A5A6E">WINDOW OVER LIVE · RUNNING, STEP 3 OF 8 · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" phrase="{{ 5 }}" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));grid-template-rows:104px 132px 116px 84px 84px;gap:8px;opacity:.28">
+          <div style="grid-column:1 / span 8;background:#141414;border-radius:8px"></div>
+          <sc-for list="{{ flatLive }}" as="c" hint-placeholder-count="32"><div style="padding-top:{{ c.pt }}px;box-sizing:border-box"><dc-import name="Grid Cell" color="{{ c.c }}" dim="{{ c.d }}" label="{{ c.label }}" title="{{ c.name }}" state="{{ c.state }}" enc="{{ enc }}" compact="{{ true }}" tag="{{ false }}" hint-size="100%,100%"></dc-import></div></sc-for>
+        </div>
+        <div style="position:absolute;left:160px;top:96px;width:960px;height:488px;box-sizing:border-box;background:#141414;border:1px solid #2E2E2E;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.7);display:flex;flex-direction:column">
+          <div style="height:72px;flex:none;display:flex;align-items:center;gap:20px;padding:0 24px;border-bottom:1px solid #242424">
+            <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:36px;font-weight:800;text-transform:uppercase">Transition</span>
+            <span style="font-size:15px;font-weight:600">Selva Nocturna → Kalimba Dusk</span>
+            <div style="flex:1"></div>
+            <span style="font-size:12px;color:#5DCAA5;letter-spacing:.06em">A MIN ✓ · 124 ✓</span>
+          </div>
+          <div style="padding:20px 24px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ trTypes }}" as="t" hint-placeholder-count="3">
+              <div style="box-sizing:border-box;height:124px;border-radius:8px;background:{{ t.bg }};border:2px solid {{ t.bd }};padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:30px;font-weight:800;color:{{ t.c }}">{{ t.n }}</span><span style="font-size:11px;color:#5A5A6E">{{ t.k }}</span></div>
+                <span style="font-size:13px;line-height:18px;color:#9A9AA6">{{ t.d }}</span>
+                <div style="display:flex;gap:3px;margin-top:auto"><sc-for list="{{ t.bars }}" as="b" hint-placeholder-count="8"><div style="flex:1;height:6px;border-radius:1px;background:{{ b }}"></div></sc-for></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="padding:0 24px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:12px;letter-spacing:.12em;color:#5A5A6E">ORDER · ONE LAYER PER PHRASE</span><span style="font-size:13px;font-weight:600">STEP 3 OF 8 · DRUMS SWAPS IN 4 BARS</span></div>
+            <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+              <sc-for list="{{ trSteps }}" as="s" hint-placeholder-count="8">
+                <div style="box-sizing:border-box;height:72px;border-radius:6px;background:{{ s.bg }};border:2px {{ s.bs }} {{ s.bd }};padding:8px;display:flex;flex-direction:column;justify-content:space-between;color:{{ s.fg }}">
+                  <span style="font-size:12px;font-weight:600;letter-spacing:.06em">{{ s.n }}</span>
+                  <span style="font-size:11px">{{ s.t }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="height:6px;background:#0C0C0C;border-radius:3px;overflow:hidden"><div style="width:31%;height:100%;background:#5DCAA5"></div></div>
+          </div>
+          <div style="flex:1"></div>
+          <div style="height:52px;flex:none;display:flex;align-items:center;gap:12px;padding:0 24px;border-top:1px solid #242424"><span style="font-size:14px;color:#9FE1CB">The engine runs it. Touch a fader and you take over that group.</span><div style="flex:1"></div><span style="font-size:12px;color:#5A5A6E">FADERS: ENGINE</span></div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysTr }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="08 Mixer" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">08</span><span style="font-size:18px;font-weight:600">MIXER · FILTER PAGE</span><span style="font-size:12px;color:#5A5A6E">STANDALONE · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="MIXER" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px;display:flex;flex-direction:column;gap:8px">
+          <div style="height:64px;flex:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) 312px;gap:8px">
+            <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+              <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;justify-content:space-between">
+                <div style="display:flex;align-items:center;gap:8px"><span style="font-size:12px;font-weight:600;letter-spacing:.08em">{{ g.n }}</span><div style="display:flex;gap:2px"><sc-for list="{{ g.sw }}" as="s" hint-placeholder-count="2"><div style="width:8px;height:8px;border-radius:1px;background:{{ s }}"></div></sc-for></div><div style="flex:1"></div><span style="font-size:11px;color:#9A9AA6">FADER {{ g.f }}</span></div>
+                <div style="height:8px;background:#0C0C0C;border-radius:2px;overflow:hidden"><div style="width:{{ g.m }}%;height:100%;background:linear-gradient(90deg,#0E5040,#1D9E75 60%,#5DCAA5)"></div></div>
+              </div>
+            </sc-for>
+            <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:6px;padding:8px 12px;display:flex;flex-direction:column;justify-content:space-between">
+              <div style="display:flex;gap:16px;font-size:11px;letter-spacing:.06em"><span style="font-weight:600">MASTER</span><span style="color:#9A9AA6">ROOM 78</span><span style="color:#9A9AA6">CUE 60 · MIX 40/60</span></div>
+              <div style="display:flex;flex-direction:column;gap:2px"><div style="height:3px;background:#0C0C0C"><div style="width:84%;height:100%;background:#5DCAA5"></div></div><div style="height:3px;background:#0C0C0C"><div style="width:81%;height:100%;background:#5DCAA5"></div></div></div>
+            </div>
+          </div>
+          <div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px">
+            <sc-for list="{{ strips }}" as="s" hint-placeholder-count="8"><dc-import name="Mixer Strip" label="{{ s.label }}" color="{{ s.c }}" dim="{{ s.d }}" eq="{{ s.eq }}" filter="{{ s.f }}" vol="{{ s.vol }}" meter="{{ s.m }}" peak="{{ s.pk }}" echo="{{ s.echo }}" verb="{{ s.verb }}" cue="{{ s.cue }}" sel="{{ s.sel }}" focus="filter" ch-tag="{{ s.tag }}" hint-size="100%,100%"></dc-import></sc-for>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysMix }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+
+    <div data-screen-label="09 Hands" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:14px;color:#5DCAA5;font-weight:600">09</span><span style="font-size:18px;font-weight:600">HANDS</span><span style="font-size:12px;color:#5A5A6E">IR SENSORS · MVP</span></div>
+      <div style="position:relative;width:1280px;height:720px;background:#0A0A0A;overflow:hidden">
+        <dc-import name="Top Bar" view="HANDS" hint-size="1280px,56px"></dc-import>
+        <div style="position:absolute;left:0;top:56px;width:1280px;height:568px;box-sizing:border-box;padding:8px 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px">
+          <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:20px 24px;display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12px;letter-spacing:.14em;color:#5A5A6E">LEFT HAND</span>
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:64px;line-height:62px;font-weight:800">FILTER</span>
+              <span style="font-size:14px;color:#9A9AA6">One-knob filter on the master · near = closed</span>
+              <div style="flex:1"></div>
+              <span style="font-size:12px;letter-spacing:.12em;color:#5DCAA5">● HAND IN RANGE</span>
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:96px;line-height:88px;font-weight:800;color:#5DCAA5">12<span style="font-size:40px"> CM</span></span>
+              <span style="font-size:22px;font-weight:600">LP 1.8k</span>
+              <div style="display:flex;gap:16px;font-size:12px;color:#5A5A6E;padding-top:8px"><span>RANGE 6–26 CM</span><span>CURVE EXP</span><span>RETURN 300 MS</span></div>
+            </div>
+            <div style="position:relative;border-left:1px solid #242424">
+              <sc-for list="{{ ticks }}" as="t" hint-placeholder-count="14"><div style="position:absolute;left:0;width:{{ t.w }}px;height:1px;bottom:{{ t.b }}%;background:#3A3A44"></div><div style="position:absolute;left:28px;bottom:calc({{ t.b }}% - 7px);font-size:10px;color:#5A5A6E">{{ t.l }}</div></sc-for>
+              <div style="position:absolute;left:0;width:10px;bottom:{{ rangeL.a }}%;height:{{ rangeL.h }}%;background:#0E5040"></div>
+              <div style="position:absolute;left:-4px;right:0;height:3px;bottom:{{ rangeL.x }}%;background:#5DCAA5;box-shadow:0 0 10px #5DCAA5"></div>
+            </div>
+          </div>
+          <div style="box-sizing:border-box;background:#141414;border:1px solid #242424;border-radius:8px;padding:20px 24px;display:grid;grid-template-columns:minmax(0,1fr) 200px;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:12px;letter-spacing:.14em;color:#5A5A6E">RIGHT HAND</span>
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:64px;line-height:62px;font-weight:800">NOTES</span>
+              <span style="font-size:14px;color:#9A9AA6">Theremin in A minor · plays the LEAD layer</span>
+              <div style="flex:1"></div>
+              <span style="font-size:12px;letter-spacing:.12em;color:#5DCAA5">● HAND IN RANGE</span>
+              <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:96px;line-height:88px;font-weight:800;color:#B6F23D">C4</span>
+              <span style="font-size:22px;font-weight:600">17 cm</span>
+              <div style="display:flex;gap:16px;font-size:12px;color:#5A5A6E;padding-top:8px"><span>RANGE 6–28 CM</span><span>1 OCTAVE</span><span>QUANTISE ON</span></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <sc-for list="{{ ladder }}" as="n" hint-placeholder-count="8"><div style="flex:1;box-sizing:border-box;border-radius:4px;background:{{ n.bg }};border:1px solid {{ n.bd }};display:flex;align-items:center;justify-content:space-between;padding:0 12px;color:{{ n.fg }}"><span style="font-size:16px;font-weight:600">{{ n.n }}</span><span style="font-size:10px;color:{{ n.sc }}">{{ n.cm }}</span></div></sc-for>
+            </div>
+          </div>
+        </div>
+        <div style="position:absolute;left:0;top:56px;height:568px;width:110px;background:radial-gradient(52px 110px at 0% 69%,rgba(93,202,165,.45),transparent)"></div>
+        <div style="position:absolute;left:0;top:56px;height:568px;width:4px;background:linear-gradient(180deg,transparent 53%,#5DCAA5 69%,transparent 85%)"></div>
+        <div style="position:absolute;right:0;top:56px;height:568px;width:110px;background:radial-gradient(52px 110px at 100% 47%,rgba(93,202,165,.45),transparent)"></div>
+        <div style="position:absolute;right:0;top:56px;height:568px;width:4px;background:linear-gradient(180deg,transparent 31%,#5DCAA5 47%,transparent 63%)"></div>
+        <div style="position:absolute;left:0;bottom:0;width:1280px"><dc-import name="Soft Keys" keys="{{ keysHands }}" hint-size="1280px,96px"></dc-import></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:28px;max-width:2592px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:48px;font-weight:800;text-transform:uppercase">Layout notes for QML</span><span style="font-size:13px;color:#5A5A6E">PX AT 1280×720 · ORIGIN TOP-LEFT · ALL VALUES FROM THEME</span></div>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:20px">
+      <sc-for list="{{ notes }}" as="n" hint-placeholder-count="10">
+        <div style="background:#0D0D0D;border:1px solid #242424;border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:13px;color:#5DCAA5;font-weight:600">{{ n.id }}</span><span style="font-size:15px;font-weight:600">{{ n.t }}</span></div>
+          <sc-for list="{{ n.items }}" as="i" hint-placeholder-count="5"><div style="font-size:12px;line-height:18px;color:#9A9AA6;text-wrap:pretty">{{ i }}</div></sc-for>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;roleEncoding&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;A · fill&quot;,&quot;B · stripe&quot;],&quot;default&quot;:&quot;A · fill&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;View&quot;},&quot;displayFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Big Shoulders&quot;,&quot;Archivo Expanded&quot;],&quot;default&quot;:&quot;Big Shoulders&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;View&quot;},&quot;showHalo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;View&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.applyFont(); }
+  componentDidUpdate() { this.applyFont(); }
+  applyFont() {
+    const a = (this.props.displayFont ?? 'Big Shoulders') === 'Archivo Expanded';
+    const s = document.documentElement.style;
+    s.setProperty('--disp', a ? "'Archivo',sans-serif" : "'Big Shoulders Display',sans-serif");
+    s.setProperty('--dispw', a ? '125%' : '100%');
+  }
+  renderVals() {
+    const enc = this.props.roleEncoding === 'B · stripe' ? 'stripe' : 'fill';
+    const R = { KICK: ['#FF4560', '#4F1B22'], DRUMS: ['#FF9A2E', '#4F3214'], PERC: ['#F5E04A', '#4C461C'], TOP: ['#E8F0FF', '#484A4F'], BASS: ['#3D8CFF', '#182E4F'], CHORDS: ['#FF6FC8', '#4F263F'], LEAD: ['#B6F23D', '#3A4B18'], PAD: ['#F2C9A0', '#4B3F34'] };
+    const ORD = Object.keys(R);
+    const P = { KICK: 'x...x...x...x...', DRUMS: '....x..x....x..x', PERC: '..x..x....x..x.x', TOP: '..x...x...x...x.', BASS: 'x..x..x.x..x..x.', CHORDS: 'x.....x...x.....', LEAD: '..x.x...x..x.x..', PAD: 'x...............' };
+    const st = s => s.split('').map(ch => ch === 'x' ? 1 : 0);
+    const rot = (s, n) => s.slice(n) + s.slice(0, n);
+    const row = (defs, compact, shift) => ORD.map((k, i) => { const [state, name, sub, level] = defs[i]; return { c: R[k][0], d: R[k][1], label: k, state, name, sub, steps: st(shift ? rot(P[k], shift) : P[k]), level: level ?? 0.7, compact }; });
+    const room = row([['playing', 'Wood Kick 04', 'A1 · 808 body', .82], ['playing', 'Clap Room', '+ shaker', .74], ['playing', 'Congas Lo', 'skin · tuned A', .61], ['playing', 'Hat Open 2', 'offbeat', .58], ['playing', 'Sub Model D', 'A1 · round', .77], ['playing', 'Juno Stabs', 'Am9 · Fmaj7', .64], ['muted', 'Kalimba Arp', 'muted'], ['playing', 'OB Pad Warm', 'Am · slow', .52]]);
+    const next = row([['queued', 'Kick Dusk', 'enters phrase'], ['idle', 'Clap Dry', 'ready'], ['idle', 'Bongo Hi', 'ready'], ['idle', 'Hat Tight', 'ready'], ['cue', 'Bass Prophet', 'A1 · pluck'], ['idle', 'DX Bells', 'ready'], ['idle', 'Kalimba Lead', 'ready'], ['empty', null, 'no pad']], false, 2);
+    const optA = row([['option', 'Kick B · E3'], ['option', 'Rim Clap · E4'], ['option', 'Shaker · E2'], ['option', 'Ride · E4'], ['option', 'Moog Round · E4'], ['option', 'Prophet Chord · E3'], ['option', 'Kalimba B · E4'], ['option', 'Juno Air · E2']], true);
+    const optB = row([['option', 'Kick C · E4'], ['option', 'Snare Lo · E3'], ['option', 'Cowbell · E3'], ['loading'], ['option', 'DX Bass · E3'], ['option', 'Organ · E2'], ['loading'], ['option', 'Strings · E3']], true);
+    const off = (r) => r.map(c => ({ ...c, state: 'empty', name: 'Paused', sub: '' }));
+    const rowsLive = [
+      { label: 'ROOM', sub: 'SELVA NOCTURNA · WHAT THE ROOM HEARS', lc: '#5DCAA5', h: 112, cells: room },
+      { label: 'NEXT', sub: 'KALIMBA DUSK · KICK ENTERS NEXT PHRASE · BASS IN CUE', lc: '#F2F2F2', h: 96, cells: next },
+      { label: 'ENGINE OPTIONS', sub: 'PATTERN + SOUND + ENERGY · PRESS ENC TO CUE', lc: '#7A6FE0', h: 64, cells: optA },
+      { label: '', sub: '', lc: '#5A5A6E', h: 64, cells: optB }
+    ];
+    const rowsOff = [rowsLive[0], { ...rowsLive[1], sub: 'KALIMBA DUSK · LOADED' , cells: next.map(c => c.state === 'queued' ? { ...c, state: 'idle', sub: 'ready' } : c) }, { label: 'ENGINE OPTIONS', sub: 'PAUSED · BRAIN OFFLINE', lc: '#5A5A6E', h: 64, cells: off(optA) }, { label: '', sub: '', lc: '#5A5A6E', h: 64, cells: off(optB) }];
+    const flatLive = [...room.map(c => ({ ...c, pt: 20 })), ...next.map(c => ({ ...c, pt: 20 })), ...optA.map(c => ({ ...c, pt: 20 })), ...optB.map(c => ({ ...c, pt: 20 }))];
+    const ring = n => { const p = []; for (let i = 0; i < 8; i++) { const s = i * 45 + 2, e = s + 41, col = i < n - 1 ? '#1D9E75' : i === n - 1 ? '#F2F2F2' : '#242424'; p.push(`transparent ${i * 45}deg ${s}deg`, `${col} ${s}deg ${e}deg`, `transparent ${e}deg ${(i + 1) * 45}deg`); } return `conic-gradient(${p.join(',')})`; };
+    const rk = (k, v, extra) => ({ l: k, v, c: R[k][0], d: R[k][1], ...extra });
+    const keysLive = [rk('KICK', '82', { on: true }), rk('DRUMS', '74', { on: true }), rk('PERC', '61', { on: true }), rk('TOP', '58', { on: true }), rk('BASS', '77', { turn: true, p: .77 }), rk('CHORDS', '64', { on: true }), rk('LEAD', 'MUTE'), rk('PAD', '52', { on: true })];
+    const sw = ks => ks.map(k => R[k][0]);
+    const ladderN = ['A4', 'G4', 'F4', 'E4', 'D4', 'C4', 'B3', 'A3'];
+    return {
+      enc, halo: this.props.showHalo ?? true, ring5: ring(5),
+      bootLog: [{ n: 'BRAIN 2.4.1', v: 'OK', c: '#10B981' }, { n: 'ENGINE MODELS', v: '6 / 8', c: '#FAFAFA' }, { n: 'SURFACE · PADS · FSR · IR', v: 'OK', c: '#10B981' }, { n: 'ABLETON LINK', v: 'SEARCHING…', c: '#A1A1AA' }],
+      connModes: [{ n: 'BRAIN', s: 'ok' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'warn' }, { n: 'NET', s: 'ok' }],
+      connOff: [{ n: 'BRAIN', s: 'warn' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'off' }, { n: 'NET', s: 'ok' }],
+      modes: [
+        { n: 'Controller', enc: 'ENC 1', d: 'Push-style control of Ableton Live, plus the Mac engine in studio mode.', pill: 'LIVE NOT FOUND', pillBg: '#2A220F', pillFg: '#F59E0B', bg: '#141418', bd: '#27272A', st: [{ n: 'Live', v: 'not found on network', c: '#F59E0B', tc: '#F59E0B' }, { n: 'Link', v: '3 peers', c: '#10B981', tc: '#A1A1AA' }, { n: 'USB / MIDI', v: 'host ready', c: '#10B981', tc: '#A1A1AA' }] },
+        { n: 'Standalone', enc: 'ENC 2', d: 'No computer. The Brain generates every layer; you play it like a DJ set.', pill: 'READY', pillBg: '#003D33', pillFg: '#00F5C8', bg: '#141418', bd: '#00D4AA', st: [{ n: 'Brain', v: 'ready · 6/8 models', c: '#10B981', tc: '#A1A1AA' }, { n: 'Library', v: '42 tracks · 6 sets', c: '#10B981', tc: '#A1A1AA' }, { n: 'Network', v: 'Ethernet 10.0.0.24', c: '#10B981', tc: '#A1A1AA' }] }
+      ],
+      keysModes: [{ l: 'Controller', v: '' }, { l: 'Standalone', v: 'enter', on: true }, { l: '—', off: true }, { l: '—', off: true }, { l: '—', off: true }, { l: '—', off: true }, { l: 'Settings', v: '' }, { l: 'Power', v: '' }],
+      toastsNow: [
+        { i: 'LINK', c: '#0E5040', tc: '#5DCAA5', m: 'Link: 3 devices', r: '124.0', rc: '#5DCAA5', o: .6 },
+        { i: 'KICK', c: '#FF4560', tc: '#0A0A0A', m: 'KICK enters on the phrase', r: 'IN 4 BARS', rc: '#F2F2F2', o: 1 }
+      ],
+      flatLive,
+      setNav: [['Audio', '1'], ['Connections', '2'], ['Surface', '3'], ['System', '4']].map(([n, k]) => ({ n, k: 'ENC ' + k, bg: n === 'Surface' ? '#141418' : 'transparent', bd: n === 'Surface' ? '#00D4AA' : 'transparent', c: n === 'Surface' ? '#FAFAFA' : '#A1A1AA', w: n === 'Surface' ? 600 : 500 })),
+      leds: [{ n: 'Pad LED brightness', v: 70, d: 'Stage: 85 % or more. Studio at night: 40 %.' }, { n: 'Button LED brightness', v: 55, d: 'Off-state glow stays at 12 % of this.' }],
+      fsr: [{ n: 'Pad 1 · KICK', s: 'OK', sc: '#10B981', v: 0, t: 18, vel: 'SOFT', bd: '#27272A' }, { n: 'Pad 2 · PERC', s: 'PRESS HARD', sc: '#00D4AA', v: 64, t: 22, vel: '96', bd: '#00D4AA' }, { n: 'Pad 3 · PERC', s: 'NOT SET', sc: '#71717A', v: 0, t: 20, vel: '—', bd: '#27272A' }, { n: 'Pad 4 · PERC', s: 'NOT SET', sc: '#71717A', v: 0, t: 20, vel: '—', bd: '#27272A' }],
+      irs: [{ n: 'Left hand sensor', s: '12.1 cm', sc: '#00F5C8', a: 7.7, w: 76.9, x: 30.8, r: 'RANGE 6–26' }, { n: 'Right hand sensor', s: 'no hand', sc: '#71717A', a: 7.7, w: 84.6, x: 100, r: 'RANGE 6–28' }],
+      keysSet: [{ l: 'Pad LEDs', v: '70 %', turn: true, p: .7 }, { l: 'Button LEDs', v: '55 %' }, { l: 'FSR pad', v: '2 / 4' }, { l: 'Threshold', v: '22' }, { l: 'Curve', v: 'Soft' }, { l: 'Hand L', v: '6–26' }, { l: 'Hand R', v: '6–28' }, { l: 'Back', v: '' }],
+      rowsLive, rowsOff, keysLive,
+      layerCards: [
+        { state: 'option', letter: 'A', sound: 'Sub Prophet', sub: 'A1 · pluck · 16 steps', energy: 3, enc: 'ENC 1–2', hint: 'ENC 1 CUE · ENC 2 ENERGY', notes: [{ s: 0, n: 0, l: 2 }, { s: 3, n: 2, l: 1 }, { s: 6, n: 0, l: 2 }, { s: 10, n: 3, l: 1 }, { s: 12, n: 0, l: 2 }, { s: 15, n: 4, l: 1 }] },
+        { state: 'cue', letter: 'B', sound: 'Moog Round', sub: 'A1 · legato · 16 steps', energy: 4, enc: 'ENC 3–4', hint: 'IN CUE · ACCEPT ▸ NEXT PHRASE', notes: [{ s: 0, n: 0, l: 3 }, { s: 4, n: 2, l: 1 }, { s: 6, n: 4, l: 2 }, { s: 9, n: 2, l: 1 }, { s: 12, n: 0, l: 3 }, { s: 15, n: 6, l: 1 }] },
+        { state: 'option', letter: 'C', sound: 'DX Bass', sub: 'A1 · FM · 16 steps', energy: 2, enc: 'ENC 5–6', hint: 'ENC 5 CUE · ENC 6 ENERGY', notes: [{ s: 0, n: 0, l: 4 }, { s: 8, n: 0, l: 4 }, { s: 6, n: 3, l: 1 }, { s: 14, n: 2, l: 1 }] },
+        { state: 'loading', letter: 'D', enc: 'ENC 7–8', hint: 'GENERATE ▸ ANOTHER', progress: '2/3' }
+      ],
+      keysLayer: [rk('BASS', 'CUE A'), rk('BASS', 'ENERGY 3'), rk('BASS', 'IN CUE', { on: true, c: '#F2F2F2' }), rk('BASS', 'ENERGY 4', { turn: true, p: .8 }), rk('BASS', 'CUE C'), rk('BASS', 'ENERGY 2'), { l: 'Option D', v: '2/3', ai: true }, { l: '—', off: true }],
+      trTypes: [
+        { n: 'SWAP', k: 'ENC 1', d: 'Layer by layer, one per phrase. Low end swaps as one move.', bg: '#0E2A22', bd: '#5DCAA5', c: '#F2F2F2', bars: ['#1D9E75', '#1D9E75', '#5DCAA5', '#2E2E2E', '#2E2E2E', '#2E2E2E', '#2E2E2E', '#2E2E2E'] },
+        { n: 'BREAK', k: 'ENC 2', d: 'Room strips to pad and tops, next track lands on the drop.', bg: '#141414', bd: '#242424', c: '#9A9AA6', bars: ['#2E2E2E', '#2E2E2E', '#2E2E2E', '#2E2E2E', '#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44'] },
+        { n: 'CUT', k: 'ENC 3', d: 'Hard cut on the next phrase line. Every layer at once.', bg: '#141414', bd: '#242424', c: '#9A9AA6', bars: ['#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44', '#3A3A44'] }
+      ],
+      trSteps: [['KICK', 'done', 'PH 1 ✓'], ['BASS', 'done', 'PH 2 ✓'], ['DRUMS', 'now', 'PH 3 · NOW'], ['PERC', 'wait', 'PH 4'], ['TOP', 'wait', 'PH 5'], ['CHORDS', 'wait', 'PH 6'], ['PAD', 'wait', 'PH 7'], ['LEAD', 'wait', 'PH 8']].map(([n, s, t]) => ({ n, t, bg: s === 'done' ? R[n][0] : R[n][1], fg: s === 'done' ? '#0A0A0A' : '#F2F2F2', bd: s === 'now' ? '#F2F2F2' : s === 'done' ? R[n][0] : R[n][1], bs: s === 'now' ? 'dashed' : 'solid' })),
+      keysTr: [{ l: 'Swap', v: 'running', on: true }, { l: 'Break', v: '' }, { l: 'Cut', v: '' }, { l: 'Length', v: '8 PH' }, { l: 'Order', v: 'Auto' }, { l: 'Hold', v: 'step 3' }, { l: '—', off: true }, { l: 'Abort', v: '' }],
+      groups: [{ n: 'RHYTHM', sw: sw(['KICK', 'DRUMS', 'PERC', 'TOP']), f: '82', m: 78 }, { n: 'BASS', sw: sw(['BASS']), f: '74', m: 70 }, { n: 'MUSIC', sw: sw(['CHORDS', 'LEAD', 'PAD']), f: '68', m: 58 }, { n: 'FX', sw: ['#8E9AAF'], f: '40', m: 30 }],
+      strips: [
+        { label: 'KICK', eq: [0.1, 0, 0.3], f: 0, vol: .82, m: .82, pk: 0, echo: .05, verb: .05 },
+        { label: 'DRUMS', eq: [0.2, 0, 0], f: 0.12, vol: .74, m: .7, pk: 0, echo: .2, verb: .25 },
+        { label: 'PERC', eq: [0.3, 0.1, -0.3], f: 0.22, vol: .61, m: .6, pk: 0, echo: .35, verb: .3 },
+        { label: 'TOP', eq: [0.2, 0, -1], f: 0.35, vol: .58, m: .55, pk: 0, echo: .1, verb: .2 },
+        { label: 'BASS', eq: [-1, -0.2, 0.2], f: -0.4, vol: .77, m: .74, pk: 0, echo: 0, verb: 0, cue: true, sel: true, tag: 'CUE' },
+        { label: 'CHORDS', eq: [0.1, -0.2, -0.6], f: 0, vol: .64, m: .62, pk: 0, echo: .4, verb: .5 },
+        { label: 'LEAD', eq: [0, 0, -0.5], f: 0, vol: 0, m: 0, pk: 0, echo: .3, verb: .4, tag: 'MUTE' },
+        { label: 'PAD', eq: [0.2, 0, -0.7], f: -0.15, vol: .52, m: .48, pk: 0, echo: .2, verb: .7 }
+      ].map(s => ({ ...s, c: R[s.label][0], d: R[s.label][1], cue: !!s.cue, sel: !!s.sel, tag: s.tag ?? '' })),
+      keysMix: [rk('KICK', 'OPEN'), rk('DRUMS', 'HP 46'), rk('PERC', 'HP 92'), rk('TOP', 'HP 220'), rk('BASS', 'LP 2.0k', { turn: true, p: .3 }), rk('CHORDS', 'OPEN'), rk('LEAD', 'OPEN'), rk('PAD', 'LP 8.4k')],
+      ticks: Array.from({ length: 14 }, (_, i) => { const cm = 4 + i * 2; return { b: (cm - 4) / 26 * 100, w: i % 2 ? 6 : 14, l: i % 2 ? '' : cm + ' cm' }; }),
+      rangeL: { a: (6 - 4) / 26 * 100, h: 20 / 26 * 100, x: (12 - 4) / 26 * 100 },
+      ladder: ladderN.map((n, i) => { const act = n === 'C4', root = n[0] === 'A'; return { n, cm: (28 - i * 2.75).toFixed(0) + ' cm', bg: act ? '#B6F23D' : '#0C0C0C', bd: act ? '#B6F23D' : root ? '#1D9E75' : '#242424', fg: act ? '#0A0A0A' : '#F2F2F2', sc: act ? '#0A0A0A' : '#5A5A6E' }; }),
+      keysHands: [{ l: 'L target', v: 'Filter', on: true }, { l: 'L range', v: '6–26 cm' }, { l: 'L curve', v: 'Exp' }, { l: 'L return', v: '300 ms' }, { l: 'R target', v: 'Notes', on: true }, rk('LEAD', 'A MIN', { l: 'R scale' }), { l: 'R octave', v: '4', turn: true, p: .5 }, { l: 'Hold', v: 'Off' }],
+      notes: [
+        { id: 'ALL', t: 'Chrome', items: ['Root 1280×720. TopBar y0 h56 · Content y56 h568 · SoftKeys y624 h96.', 'Content columns: x = 8 + i·160, w 152 (8 gap). Same geometry as SoftKeys cells; never break it on music screens.', 'Keycap 152×80 at y632, radius 6, LED bar 4 px at y+6 inset 12. Lit = role colour + glow; turning = 1 px border in role colour + 2 px position track.', 'Windows: 960 wide max, radius 10, scrim = content at 28 % opacity. Encoders rebind while open.'] },
+        { id: '01', t: 'Boot', items: ['GroovePilot brand. bgBase #09090B, General Sans, JetBrains Mono.', 'Glyph 72 at y250 centred, wordmark 48/600, subtitle 18/500.', 'Progress 320×2, teal gradient, single pulse on glyph (no loop after ready).', 'Boot log bottom-left x48, 12 px mono, 4 rows max.'] },
+        { id: '02', t: 'Mode select', items: ['Two cards, each (1280−96−24)/2 = 580 wide, padding 32, radius 12.', 'Selected = 2 px #00D4AA border. ENC 1 / ENC 2 select, press enters.', 'Status rows from conn state; pill shows the blocking issue for that mode.', 'Auto-enter last mode after 8 s idle.'] },
+        { id: '03', t: 'Toasts', items: ['560×64 at x360, bottom 112 (16 above keys). Stack up to 2, newest at bottom, older at 60 %.', 'Icon 40×40: role colour for layer events, teal-dim for Link, violet for engine, amber for warnings.', 'Right value in display 24: countdown in bars or the short fact.', 'In 150 ms / hold 4 s / out 300 ms. No bounce.'] },
+        { id: '04', t: 'Settings', items: ['Nav 240 wide, rows 56 (≥48 target), ENC 1–4 jump to sections.', 'Cards #141418 / 1 px #27272A / radius 8; sliders 8 px pill track, 24 px thumb.', 'FSR tiles show live pressure and the threshold line; calibration runs from encoder 3–4.', 'IR row: 4–30 cm bar, range band, live hand tick.'] },
+        { id: '05', t: 'Live · Session', items: ['Info strip h104: ring 88 (stroke 10) + count display 52 · section display 44 · ROOM → NEXT names 22 · transition summary right.', 'Rows: label 16 + gap 4 + ROOM 112 · NEXT 96 · OPTIONS 2 × 64 (compact, no steps).', 'Column i = layer i = pad column i = encoder i. Encoder turns layer level; press opens LAYER.', 'Cell state per DS §03. Playhead not drawn here; the ring carries time.'] },
+        { id: '05b', t: 'Offline / empty / loading', items: ['Brain down: info strip swaps to an amber status + RETRY countdown; ROOM and NEXT unchanged.', 'Option cells become empty with "Paused". Top-bar BRAIN dot amber.', 'Loading: cell with violet-dim edge and GENERATING tag. Empty: 2 px dashed #242424.'] },
+        { id: '06', t: 'Layer', items: ['Header h96: role swatch 16×56, name display 64 in role colour, IN ROOM summary, level bar 200.', '4 cards, each spans 2 encoder columns (312 wide). ENC odd = cue, ENC even = energy.', 'Roll 190 high, 7 lanes, beat lines at 25/50/75 %. Notes in role colour.', 'ACCEPT / GENERATE / SKIP are hardware buttons; header repeats what they do.'] },
+        { id: '07', t: 'Transition', items: ['Window 960×488 at x160 y96. Header 72, type tiles 3 × 124, order row 8 × 72, footer 52.', 'Type tile selected = teal-dim fill + 2 px #5DCAA5. Order chips: done = full role, now = dashed white, waiting = role dim.', 'Progress bar = position inside the current step, 6 px teal.', 'Touching a fader hands that group back to the player; footer flips to "FADERS: YOU · RHYTHM".'] },
+        { id: '08 · 09', t: 'Mixer · Hands', items: ['Mixer: groups strip h64 (4 groups + master 312). 8 strips 152 wide under the 8 encoders; the encoder page outlines its row in white.', 'Meters teal gradient, 80 ms behaviour on value; clip only as a 9×4 red tick.', 'Hands: 2 panels 604 wide. Readout display 96. Ruler 4–30 cm, near = bottom. Ladder rows = scale notes, root outlined teal.', 'Edge halos: 4 px core + 52×110 radial bloom, y = hand distance.'] }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
