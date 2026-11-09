@@ -15,4 +15,4 @@ Raspberry Pi 5 (8 GB), Debian 13, kernel 6.18 PREEMPT, Python 3.13, uv 0.13.
 
 **Ajuste:** `python-rtmidi` no tiene paquete compilado para ARM64 con Python 3.13 y se compila al instalar; necesita `libasound2-dev` y `pkg-config`. Agregados a `e0-preparar-pi.sh`.
 
-**Pendiente de E1:** abrir la web del motor desde el Mac por la red (servidor en el Pi).
+**Paso descartado (Juan, 2026-11-09):** abrir la web del motor desde el Mac. En la consola la interfaz es la app de Qt, que habla con el motor en el mismo Pi; la web sigue siendo la del Mac en el estudio. **E1 pasa.**
