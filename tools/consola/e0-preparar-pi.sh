@@ -21,7 +21,7 @@ configurar() {
   grep -q "Raspberry Pi 5" /proc/device-tree/model || echo "Aviso: no parece un Raspberry Pi 5 ($(tr -d '\0' </proc/device-tree/model))"
 
   sudo apt-get update
-  sudo apt-get install -y git rt-tests alsa-utils pipewire-bin pipx python3-dev libsndfile1
+  sudo apt-get install -y git rt-tests alsa-utils pipewire-bin pipx python3-dev libsndfile1 libasound2-dev pkg-config
   pipx install uv || pipx upgrade uv
   pipx ensurepath
 
