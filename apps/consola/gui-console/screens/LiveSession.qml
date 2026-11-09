@@ -6,17 +6,17 @@ Item {
     Panel { x: Theme.summaryX; y: Theme.summaryY; width: Theme.summaryWidth; height: Theme.infoHeight
         Canvas { x: Theme.ringX; anchors.verticalCenter: parent.verticalCenter; width: Theme.ringSize; height: width
             onPaint: { let c=getContext('2d'); c.reset(); c.lineWidth=Theme.ringStroke; for(let i=0;i<Theme.columns;i++){ c.strokeStyle=i<console.phrase-1?Theme.teal:i===console.phrase-1?Theme.white:Theme.line; c.beginPath();c.arc(width/2,height/2,(width-Theme.ringStroke)/2,(i*Theme.ringSegment+Theme.ringStart)*Math.PI/180,(i*Theme.ringSegment+Theme.ringEnd)*Math.PI/180);c.stroke() } }
-            Label { anchors.centerIn: parent; text: console.phrase; font.family: Theme.displayFont; font.pixelSize: Theme.ringCount }
+            Label { anchors.centerIn: parent; text: console.phrase; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.ringCount }
         }
         Column { x: Theme.phraseX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.edge
-            Label { text: "BAR 5 OF 8"; color: Theme.mon; font.pixelSize: Theme.m11 }
-            Label { text: console.section; font.family: Theme.displayFont; font.pixelSize: Theme.sectionSize }
+            Label { text: "BAR 5 OF 8"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m11 }
+            Label { text: console.section; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.sectionSize }
             Label { text: "NEXT PHRASE IN 4 BARS"; color: Theme.gray; font.pixelSize: Theme.m12 }
         }
         Column { x: Theme.roomTitleX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s1
             Label { text: "● ROOM"; color: Theme.tealPlus; font.pixelSize: Theme.m11 }
             Label { text: console.roomTitle; font.pixelSize: Theme.trackSize }
-            Label { text: "LIBRARY · A MIN · 124"; color: Theme.mon; font.pixelSize: Theme.m12 }
+            Label { text: "LIBRARY · A MIN · 124"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
         }
         Label { x: Theme.nextTitleX-Theme.dL; anchors.verticalCenter: parent.verticalCenter; text: "→"; color: Theme.off; font.pixelSize: Theme.dM }
         Column { x: Theme.nextTitleX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s1
@@ -26,7 +26,7 @@ Item {
         }
         Column { x: Theme.transitionSummaryX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s1
             Label { text: console.liveState === "offline" ? "BRAIN OFFLINE" : "TRANSITION"; font.pixelSize: Theme.m11; color: console.liveState === "offline" ? Theme.amber : Theme.mon }
-            Label { text: console.liveState === "offline" ? "RETRY · 4 S" : "SWAP · 8 PH"; font.family: Theme.displayFont; font.pixelSize: Theme.m28; color: console.liveState === "offline" ? Theme.amber : Theme.white }
+            Label { text: console.liveState === "offline" ? "RETRY · 4 S" : "SWAP · 8 PH"; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.m28; color: console.liveState === "offline" ? Theme.amber : Theme.white }
             Label { text: "READY · TRANSITION"; font.pixelSize: Theme.m11; color: Theme.grayN }
         }
     }
@@ -36,7 +36,7 @@ Item {
         {y:Theme.optionAY,t:"ENGINE OPTIONS",s:console.liveState === "offline" ? "PAUSED · BRAIN OFFLINE" : "PATTERN + SOUND + ENERGY · PRESS ENC TO CUE",c:Theme.purpleBright}]
         Row { x: Theme.s3; y: modelData.y-Theme.rowLabelHeight-Theme.rowLabelGap; spacing: Theme.s3
             Label { text: modelData.t; color: modelData.c; font.pixelSize: Theme.m11 }
-            Label { text: modelData.s; color: Theme.mon; font.pixelSize: Theme.m11 }
+            Label { text: modelData.s; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m11 }
         }
     }
     Repeater { model: console.cells

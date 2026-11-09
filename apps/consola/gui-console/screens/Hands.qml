@@ -14,10 +14,10 @@ Item {
             required property int rangeMax
             x: Theme.handsPanelX+index*(Theme.handsPanelWidth+Theme.s5); y: Theme.handsPanelY; width: Theme.handsPanelWidth; height: Theme.handsPanelHeight
             Label { x: Theme.s5; y: Theme.s5; text: hand.side; font.pixelSize: Theme.m12; color: Theme.mon }
-            Label { x: Theme.s5; y: Theme.topHeight; text: hand.target; font.pixelSize: Theme.dXl; font.family: Theme.displayFont }
+            Label { x: Theme.s5; y: Theme.topHeight; text: hand.target; font.pixelSize: Theme.dXl; face: Theme.displayFont }
             Label { x: Theme.s5; y: Theme.modalTileHeight; width: hand.index ? Theme.handsLadderX-2*x : Theme.handsRulerX-2*x; height: Theme.topHeight; wrapMode: Text.WordWrap; text: hand.index ? "Theremin in A minor · plays the LEAD layer" : "One-knob filter on the master · near = closed"; font.pixelSize: Theme.m14; color: Theme.grayN }
             Label { x: Theme.s5; y: Theme.handsReadoutY-Theme.s5; text: hand.inRange ? "● HAND IN RANGE" : "NO HAND"; color: Theme.tealPlus; font.pixelSize: Theme.m12 }
-            Label { x: Theme.s5; y: Theme.handsReadoutY; text: hand.index ? hand.value : hand.distance+" CM"; color: hand.index ? Theme.roleColor("LEAD") : Theme.tealPlus; font.pixelSize: Theme.handsReadoutSize; font.family: Theme.displayFont }
+            Label { x: Theme.s5; y: Theme.handsReadoutY; text: hand.index ? hand.value : hand.distance+" CM"; color: hand.index ? Theme.roleColor("LEAD") : Theme.tealPlus; font.pixelSize: Theme.handsReadoutSize; face: Theme.displayFont }
             Label { x: Theme.s5; y: Theme.handsValueY; text: hand.index ? hand.distance+" cm" : hand.value; font.pixelSize: Theme.trackSize }
             Label { x: Theme.s5; y: Theme.handsFootY; width: hand.width-2*x; text: hand.index ? "RANGE 6–28 CM · 1 OCTAVE · QUANTISE ON" : "RANGE 6–26 CM · CURVE EXP · RETURN 300 MS"; font.pixelSize: Theme.m11; color: Theme.mon }
             Item { visible: hand.index === 0; x: Theme.handsRulerX; y: Theme.s5; width: Theme.topHeight+Theme.s5; height: parent.height-2*y

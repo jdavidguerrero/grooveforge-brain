@@ -13,7 +13,7 @@ Panel {
         Label { anchors.centerIn: parent; text: root.icon; font.pixelSize: Theme.tiny; color: root.tone === "link" ? Theme.tealPlus : Theme.bg }
     }
     Label { x: Theme.toastIcon+Theme.s3+Theme.m14; width: parent.width-x-Theme.columnWidth; anchors.verticalCenter: parent.verticalCenter; text: root.message; font.pixelSize: Theme.m14 }
-    Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; anchors.verticalCenter: parent.verticalCenter; text: root.value; font.family: Theme.displayFont; font.pixelSize: Theme.s5 }
+    Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; anchors.verticalCenter: parent.verticalCenter; text: root.value; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.s5 }
     SequentialAnimation {
         running: root.animate
         OpacityAnimator { target: root; from: 0; to: 1; duration: Theme.enterMs }

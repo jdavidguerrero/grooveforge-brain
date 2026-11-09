@@ -1,6 +1,8 @@
 import copy
 from PySide6.QtCore import QObject, Property, Signal, Slot, QTimer
 from models import SnapshotModel
+from registry import SCREENS, screen_id
+from review_data import ReviewData
 
 ROLES = ['KICK', 'DRUMS', 'PERC', 'TOP', 'BASS', 'CHORDS', 'LEAD', 'PAD']
 PATTERNS = ['x...x...x...x...', '....x..x....x..x', '..x..x....x..x.x', '..x...x...x...x.',
@@ -58,6 +60,17 @@ class ConsoleState(QObject):
     def __init__(self):
         super().__init__()
         self._screen = 5
+        self._return_screen = 5
+        self._query = "kalim"
+        self._keyboard = True
+        self._pad_step = 16
+        self._pad_note = 0
+        self._step_lane = 5
+        self._step_column = 10
+        self._zoom = 1.0
+        self._standalone = ReviewData("s", self)
+        self._controller = ReviewData("c", self)
+        self._review_selection = 0
         self._live_state = 'normal'
         self._selected = 4
         self._mode = 1
@@ -108,6 +121,18 @@ class ConsoleState(QObject):
     connections = Property(QObject, lambda s: s._connections, constant=True)
     hands = Property(QObject, lambda s: s._hands, constant=True)
     toasts = Property(QObject, lambda s: s._toasts, constant=True)
+    standalone = Property(QObject, lambda s: s._standalone, constant=True)
+    controller = Property(QObject, lambda s: s._controller, constant=True)
+    screenSource = Property(str, lambda s: SCREENS[s._screen-1].qml, notify=changed)
+    screenName = Property(str, lambda s: SCREENS[s._screen-1].name, notify=changed)
+    screenTitle = Property(str, lambda s: SCREENS[s._screen-1].title, notify=changed)
+    screenMode = Property(str, lambda s: ('CONTROLLER' if not s._mode else 'STANDALONE')
+                          if SCREENS[s._screen-1].mode == 'SHARED' else SCREENS[s._screen-1].mode, notify=changed)
+    query = Property(str, lambda s: s._query, notify=changed)
+    keyboardVisible = Property(bool, lambda s: s._keyboard, notify=changed)
+    padStep = Property(int, lambda s: s._pad_step, notify=changed)
+    padNote = Property(int, lambda s: s._pad_note, notify=changed)
+    rollZoom = Property(float, lambda s: s._zoom, notify=changed)
     screen = Property(int, lambda s: s._screen, notify=changed)
     liveState = Property(str, lambda s: s._live_state, notify=changed)
     selectedEncoder = Property(int, lambda s: s._selected, notify=changed)
@@ -124,10 +149,122 @@ class ConsoleState(QObject):
 
     @Slot(int)
     def setScreen(self, value):
-        if 1 <= value <= 9:
+        if 1 <= value <= len(SCREENS):
+            descriptor = SCREENS[value-1]
+            if descriptor.mode == 'SHARED' and SCREENS[self._screen-1].mode != 'SHARED':
+                self._return_screen = self._screen
+            if descriptor.mode.startswith('CONTROLLER'):
+                self._mode = 0
+            elif descriptor.mode == 'STANDALONE':
+                self._mode = 1
             self._screen = value
+            live_state = descriptor.state if descriptor.state in ('offline', 'empty', 'loading') else 'normal'
+            if live_state != self._live_state:
+                self.setLiveState(live_state)
+            self._connections.queue_update(2, {'status': 'warn' if descriptor.state == 'no-live' else
+                                             'ok' if not self._mode or descriptor.name == 'Routing' else 'off'})
             self.refresh_keys()
             self.changed.emit()
+
+    @Slot(str)
+    def navigate(self, name):
+        self.setScreen(screen_id(name))
+
+    @Slot(int)
+    def cycleScreen(self, direction):
+        self.setScreen((self._screen - 1 + direction) % len(SCREENS) + 1)
+
+    @Slot(str)
+    def typeKey(self, value):
+        if value == '⌫':
+            self._query = self._query[:-1]
+        elif value in ('ENTER', 'CLOSE'):
+            self._keyboard = False
+        elif value == '123':
+            self._query += '1'
+        else:
+            self._query += ' ' if value == 'SPACE' else value.lower()
+        self.changed.emit()
+
+    @Slot(int, int)
+    def panRoll(self, steps, notes):
+        step_view = self.screenName == 'SequencerSteps'
+        self._pad_step = max(16 if step_view else 0, min(24 if step_view else 56, self._pad_step + steps))
+        self._pad_note = max(0, min(4 if step_view else 17, self._pad_note + notes))
+        self.changed.emit()
+
+    @Slot(float)
+    def zoomRoll(self, scale):
+        self._zoom = max(1., min(4., scale))
+        self.changed.emit()
+
+    @Slot(int, int)
+    def pressPad(self, column, row):
+        if not (0 <= column < 8 and 0 <= row < 4):
+            return
+        if self.screenName == 'SequencerSteps':
+            self._step_lane = min(7, self._pad_note+row)
+            self._step_column = min(15, max(0, self._pad_step-16)+column)
+            self.edit_step(0, 0)
+            return
+        if self.screenName != 'SequencerPianoRoll':
+            return
+        model = self._standalone._models['rollNotes']
+        model.flush()
+        step, pitch = self._pad_step + column, self._pad_note + [0, 2, 3, 5][row]
+        found = next((i for i, r in enumerate(model.rows) if r['entry']['step'] == step and r['entry']['pitch'] == pitch), None)
+        for i in range(model.rowCount()):
+            self._standalone.update_entry('rollNotes', i, {'selected': i == found, 'sh': 'selected' if i == found else 'none'})
+        if found is None:
+            model.flush()
+            note = dict(step=step, pitch=pitch, length=1, velocity=104, micro=0, owner='you', selected=True,
+                        l=step / .64, t=(24-pitch)*4., w=1/.64, h=4., c='#3D8CFF', sh='selected')
+            model.replace(model.rows + [{'entry': note}])
+
+    def edit_step(self, index, delta):
+        model = self._standalone._models['stepLanes']
+        entry = copy.deepcopy(model._pending.get(self._step_lane, {}).get('entry', model.rows[self._step_lane]['entry']))
+        step = entry['steps'][self._step_column]
+        if index == 0:
+            step['on'] = not step['on']
+        elif index == 1:
+            step['h'] = max(1, min(100, step['h']+delta))
+        elif index == 2:
+            step['prob'] = str(max(1, min(100, int(step['prob'] or 100)+delta)))
+        elif index == 3:
+            step['mi'] = max(-50, min(50, step['mi']+delta))
+        step['c'] = entry['c']
+        step['mc'] = '#F2F2F2'
+        model.queue_update(self._step_lane, {'entry': entry})
+        if index:
+            self._softKeys.queue_update(index, {'value': str(step[{1:'h', 2:'prob', 3:'mi'}[index]])})
+
+    def edit_note(self, index, delta):
+        model = self._standalone._models['rollNotes']
+        selected = next((i for i, r in enumerate(model.rows) if r['entry']['selected']), None)
+        if selected is None:
+            return
+        note = dict(model._pending.get(selected, {}).get('entry', model.rows[selected]['entry']))
+        field, low, high = {1: ('pitch', 0, 24), 2: ('step', 0, 63), 3: ('length', 1, 16),
+                            4: ('velocity', 1, 127), 5: ('micro', -50, 50)}[index]
+        note[field] = max(low, min(high, note[field] + delta))
+        note['length'] = min(note['length'], 64-note['step'])
+        note.update(l=note['step']/.64, w=note['length']/.64, t=(24-note['pitch'])*4.,
+                    owner='you', c='#3D8CFF')
+        model.queue_update(selected, {'entry': note})
+        self._softKeys.queue_update(index, {'value': str(note[field])})
+
+    def vary_engine(self):
+        model = self._standalone._models['rollNotes']
+        model.flush()
+        occupied = {(step, r['entry']['pitch']) for r in model.rows if r['entry']['owner'] == 'you'
+                    for step in range(r['entry']['step'], r['entry']['step'] + r['entry']['length'])}
+        for i, row in enumerate(model.rows):
+            note = row['entry']
+            if note['owner'] == 'engine':
+                step = (note['step'] + 1) % (65-note['length'])
+                if not any((s, note['pitch']) in occupied for s in range(step, step+note['length'])):
+                    self._standalone.update_entry('rollNotes', i, {'step': step, 'l': step/.64})
 
     @Slot(str)
     def setLiveState(self, value):
@@ -160,6 +297,17 @@ class ConsoleState(QObject):
             self._mode = index % 2
             self._property_dirty = True
             return
+        if self._screen > 9 and SCREENS[self._screen-1].source != 'LiveSession':
+            if self.screenName == 'SequencerSteps' and index in (1, 2, 3):
+                self.edit_step(index, delta)
+            elif self.screenName == 'SequencerPianoRoll' and index in (1, 2, 3, 4, 5):
+                self.edit_note(index, delta)
+            elif self.screenName == 'SequencerPianoRoll' and index == 7:
+                self.zoomRoll(self._zoom + delta * .25)
+            else:
+                self._review_selection = max(0, self._review_selection + delta)
+                self._softKeys.queue_update(index, {'value': str(self._review_selection), 'turning': True})
+            return
         if self._screen == 6 and index < 4:
             option = self._options.rows[index]
             energy = self._options._pending.get(index, {}).get('energy', option['energy'])
@@ -181,13 +329,43 @@ class ConsoleState(QObject):
 
     @Slot(str)
     def triggerAction(self, action):
-        if action.startswith('screen:'):
+        if action.startswith('nav:'):
+            self.navigate(action[4:])
+        elif action == 'back':
+            self.setScreen(self._return_screen if SCREENS[self._screen-1].mode == 'SHARED' else 5 if self._mode else screen_id('Session'))
+        elif action == 'close-window':
+            self.setScreen(self._return_screen)
+        elif action == 'vary-notes':
+            self.vary_engine()
+        elif action == 'keyboard':
+            self._keyboard = not self._keyboard
+            self.changed.emit()
+        elif action.startswith('review:'):
+            self._review_selection = int(action.split(':')[1])
+            if self.screenName == 'Motor':
+                model = self._controller._models['engCards']
+                model.flush()
+                if self._review_selection < 4:
+                    for i in range(4):
+                        if self._controller.rows('engCards')[i]['state'] != 'loading':
+                            self._controller.update_entry('engCards', i, {'state': 'cue' if i == self._review_selection else 'option'})
+                elif self._review_selection == 4:
+                    template = copy.deepcopy(self._controller.rows('engCards')[0])
+                    template.update(letter='D', state='option', sound='Operator · Sub D', enc='ENC 4 CUE')
+                    self._controller.update_entry('engCards', 3, template)
+                elif self._review_selection in (5, 6):
+                    for i, row in enumerate(self._controller.rows('engCards')):
+                        if row['state'] == 'cue':
+                            self._controller.update_entry('engCards', i, {'state': 'room' if self._review_selection == 5 else 'option'})
+            self._softKeys.queue_update(self._review_selection, {'lit': True, 'value': 'selected'})
+        elif action.startswith('screen:'):
             self.setScreen(int(action.split(':')[1]))
         elif action.startswith('mode:'):
             self._mode = int(action[-1])
-            self.setScreen(5 if self._mode else 2)
+            self.setScreen(5 if self._mode else screen_id("Session"))
         elif action.startswith('settings:'):
             self._settings = action.split(':')[1]
+            self.refresh_keys()
             self.changed.emit()
         elif action.startswith('cue:'):
             selected = int(action[-1])
@@ -212,7 +390,31 @@ class ConsoleState(QObject):
             self.changed.emit()
 
     def refresh_keys(self):
-        if self._screen in (3,5):
+        descriptor = SCREENS[self._screen-1]
+        if descriptor.keys:
+            collection, name = descriptor.keys.split('.')
+            data = self._standalone if collection == 's' else self._controller
+            actions = {
+                'Search': {0: 'keyboard', 7: 'nav:LiveSession'},
+                'SequencerSteps': {0: 'nav:SequencerPianoRoll'},
+                'SequencerPianoRoll': {0: 'nav:SequencerSteps', 6: 'vary-notes'},
+                'Pads': {1: 'nav:Scale'}, 'NoteMelodic': {1: 'nav:Scale'}, 'Note': {6: 'nav:Repeat', 7: 'nav:Scale'},
+                'SessionNoLive': {0: 'nav:Session', 6: 'mode:1', 7: 'screen:4'},
+                'Scale': {7: 'close-window'}, 'Tempo': {7: 'close-window'},
+                'Repeat': {}, 'Library': {7: 'nav:LiveSession'}, 'Log': {7: 'nav:LiveSession'},
+                'Browse': {7: 'nav:Session'},
+            }.get(descriptor.name, {})
+            keys = [key(r.get('l', '—'), r.get('v', ''), r.get('c', 'PURPLE' if r.get('ai') else ''),
+                        r.get('on', False), actions.get(i, f'review:{i}'), r.get('turn', False), r.get('p', -1))
+                    for i, r in enumerate(data.rows(name))]
+            if descriptor.name == 'NoteMelodic':
+                keys[0]['roleName'] = '#E37FB0'
+            if descriptor.name == 'Motor':
+                keys = [key('Option '+chr(65+i), 'CUE', '#6E9BE8', i == 1, f'review:{i}') for i in range(4)]
+                keys += [key('Generate', 'another', 'PURPLE', action='review:4'),
+                         key('Accept', 'write clip', lit=True, action='review:5'),
+                         key('Skip', action='review:6'), key('Back', action='nav:Session')]
+        elif self._screen in (3,5) or descriptor.source == 'LiveSession':
             keys = [key(r, 'MUTE' if i == 6 else str(round(LEVELS[i]*100)), r, i != 6,
                         'screen:6', i == 4, LEVELS[i] if i == 4 else -1) for i,r in enumerate(ROLES)]
         elif self._screen == 2:

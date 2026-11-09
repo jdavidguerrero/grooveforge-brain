@@ -23,6 +23,9 @@ QtObject {
     readonly property color hybDim: "#0E3F55"
     readonly property color red: "#E84A4A"
     readonly property color amber: "#E8B84A"
+    readonly property color liveLead: "#E37FB0"
+    readonly property color liveBass: "#6E9BE8"
+    readonly property color liveDrums: "#E8875A"
     readonly property color orange: "#FF6A35"
     readonly property color gpBgBase: "#09090B"
     readonly property color gpBgCard: "#141418"
@@ -222,18 +225,21 @@ QtObject {
     readonly property color keyBottom: "#161616"
     readonly property color off: "#3A3A44"
     readonly property color aiText: "#A9A0F2"
-    property FontLoader displayLoader: FontLoader { source: localFonts.display || "" }
-    property FontLoader monoLoader: FontLoader { source: localFonts.mono || "" }
-    property FontLoader archivoLoader: FontLoader { source: localFonts.archivo || "" }
-    property FontLoader osLoader: FontLoader { source: localFonts.os || "" }
-    property FontLoader osMonoLoader: FontLoader { source: localFonts.osMono || "" }
+    property FontAsset displayLoader: FontAsset { source: localFonts.display || "" }
+    property FontAsset monoLoader: FontAsset { source: localFonts.mono || "" }
+    property FontAsset monoMediumLoader: FontAsset { source: localFonts.monoMedium || "" }
+    property FontAsset monoSemiBoldLoader: FontAsset { source: localFonts.monoSemiBold || "" }
+    property FontAsset monoBoldLoader: FontAsset { source: localFonts.monoBold || "" }
+    property FontAsset archivoLoader: FontAsset { source: localFonts.archivo || "" }
+    property FontAsset osLoader: FontAsset { source: localFonts.os || "" }
+    property FontAsset osMonoLoader: FontAsset { source: localFonts.osMono || "" }
     readonly property string displayFont: displayLoader.status === FontLoader.Ready ? displayLoader.name : fallbackFonts.sans
     readonly property string monoFont: monoLoader.status === FontLoader.Ready ? monoLoader.name : fallbackFonts.mono
     readonly property string osFont: osLoader.status === FontLoader.Ready ? osLoader.name : fallbackFonts.sans
     readonly property string osMonoFont: osMonoLoader.status === FontLoader.Ready ? osMonoLoader.name : fallbackFonts.mono
     readonly property string archivoFont: archivoLoader.status === FontLoader.Ready ? archivoLoader.name : displayFont
     function ledGlow(name) { return Qt.resolvedUrl("../assets/led-"+(roleColors[name] ? name : name === "PURPLE" || name === "WHITE" ? name : "TEAL")+".png") }
-    function roleColor(name) { return roleColors[name] || tealPlus }
-    function roleDim(name) { return roleDims[name] || line2 }
+    function roleColor(name) { return name[0] === "#" ? name : roleColors[name] || (name === "PURPLE" ? purpleBright : tealPlus) }
+    function roleDim(name) { return name[0] === "#" ? Qt.darker(name, 3) : roleDims[name] || line2 }
     function columnX(i) { return s2 + i * columnPitch }
 }

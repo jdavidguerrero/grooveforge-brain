@@ -5,13 +5,14 @@ from PySide6.QtQuick import QQuickItem
 from PySide6.QtTest import QTest
 import shiboken6
 from main import ROOT, SCREEN_NAMES
+from registry import SCREENS
 
 
 @pytest.mark.parametrize('screen,name', list(enumerate(SCREEN_NAMES,1)))
 def test_every_screen_ready_and_warning_free(gui, screen, name):
     engine,state,window,messages = gui
     state.setScreen(screen)
-    component = QQmlComponent(engine, QUrl.fromLocalFile(str(ROOT/'screens'/f'{name}.qml')))
+    component = QQmlComponent(engine, QUrl.fromLocalFile(str(ROOT/'screens'/SCREENS[screen-1].qml)))
     assert component.status() == QQmlComponent.Ready, [e.toString() for e in component.errors()]
     QTest.qWait(40)
     assert not messages

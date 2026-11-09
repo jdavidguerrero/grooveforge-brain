@@ -35,7 +35,13 @@ def google(directories, filename):
 
 
 google(['bigshouldersdisplay', 'bigshoulders'], 'BigShouldersDisplay.ttf')
-google(['ibmplexmono'], 'IBMPlexMono.ttf')
+listing = json.loads(get('https://api.github.com/repos/google/fonts/contents/ofl/ibmplexmono'))
+for weight in ('Regular', 'Medium', 'SemiBold', 'Bold'):
+    name = f'IBMPlexMono-{weight}.ttf'
+    font = next(f for f in listing if f['name'] == name)
+    Path(name).write_bytes(get(font['download_url']))
+license_file = next(f for f in listing if f['name'] == 'OFL.txt')
+Path('ibmplexmono-OFL.txt').write_bytes(get(license_file['download_url']))
 google(['archivo'], 'Archivo.ttf')
 google(['jetbrainsmono'], 'JetBrainsMono.ttf')
 archive = zipfile.ZipFile(io.BytesIO(get('https://api.fontshare.com/v2/fonts/download/general-sans')))

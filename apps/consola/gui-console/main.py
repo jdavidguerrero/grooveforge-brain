@@ -9,7 +9,7 @@ from PySide6.QtQml import QQmlApplicationEngine
 from fake_data import ConsoleState
 
 ROOT = Path(__file__).resolve().parent
-SCREEN_NAMES = ['Boot','ModeSelect','Toasts','Settings','LiveSession','Layer','Transition','Mixer','Hands']
+from registry import SCREEN_NAMES, screen_id
 
 
 def create_engine(state=None, frameless=False):
@@ -22,10 +22,13 @@ def create_engine(state=None, frameless=False):
     QGuiApplication.setFont(QFont(sans_name))
     engine = QQmlApplicationEngine()
     state = state or ConsoleState()
+    state.setParent(engine)
+    engine.console_state = state
     engine.rootContext().setContextProperty('console', state)
     engine.rootContext().setContextProperty('frameless', frameless)
     engine.rootContext().setContextProperty('fallbackFonts', {'sans': sans_name, 'mono': mono_name})
-    fonts = {'display':'BigShouldersDisplay.ttf', 'mono':'IBMPlexMono.ttf', 'archivo':'Archivo.ttf',
+    fonts = {'display':'BigShouldersDisplay.ttf', 'mono':'IBMPlexMono-Regular.ttf', 'monoMedium':'IBMPlexMono-Medium.ttf',
+             'monoSemiBold':'IBMPlexMono-SemiBold.ttf', 'monoBold':'IBMPlexMono-Bold.ttf', 'archivo':'Archivo.ttf',
              'os':'GeneralSans.ttf', 'osMono':'JetBrainsMono.ttf'}
     engine.rootContext().setContextProperty('localFonts', {
         key: QUrl.fromLocalFile(str(ROOT/'fonts'/name)) for key,name in fonts.items()
@@ -37,8 +40,12 @@ def create_engine(state=None, frameless=False):
 def main():
     parser = argparse.ArgumentParser(description='GrooveForge Console fake-data desktop demo')
     parser.add_argument('--frameless', action='store_true')
-    parser.add_argument('--screen', type=int, choices=range(1,10), default=5)
+    parser.add_argument('--screen', type=screen_id, default=5, metavar='NAME', help=', '.join(SCREEN_NAMES))
+    parser.add_argument('--list-screens', action='store_true')
     args = parser.parse_args()
+    if args.list_screens:
+        print('\n'.join(SCREEN_NAMES))
+        return 0
     app = QGuiApplication(sys.argv[:1])
     engine, state = create_engine(frameless=args.frameless)
     if not engine.rootObjects():

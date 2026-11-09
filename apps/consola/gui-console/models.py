@@ -10,7 +10,7 @@ class SnapshotModel(QAbstractListModel):
         self._timer = QTimer(self)
         self._timer.setInterval(16)
         self._timer.timeout.connect(self.flush)
-        self._timer.start()
+        self._timer.setSingleShot(True)
 
     def roleNames(self):
         return self._roles
@@ -31,8 +31,11 @@ class SnapshotModel(QAbstractListModel):
         if unknown:
             raise ValueError(f'Unknown roles: {unknown}')
         self._pending.setdefault(row, {}).update(values)
+        if not self._timer.isActive():
+            self._timer.start()
 
     def flush(self):
+        self._timer.stop()
         if not self._pending:
             return
         changed = sorted(self._pending)
@@ -47,5 +50,6 @@ class SnapshotModel(QAbstractListModel):
     def replace(self, rows):
         self.beginResetModel()
         self._pending.clear()
+        self._timer.stop()
         self.rows = [dict(row) for row in rows]
         self.endResetModel()

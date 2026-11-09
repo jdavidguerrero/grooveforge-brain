@@ -41,7 +41,7 @@ Panel {
     Column { x: Theme.s3; y: Theme.mixerSendsY; width: parent.width-2*x; spacing: Theme.s2
         Repeater { model: [{n:"ECHO",v:strip.echo},{n:"VERB",v:strip.verb}]
             Row { spacing: Theme.s2
-                Label { width: Theme.dL; text: modelData.n; color: Theme.mon; font.pixelSize: Theme.tiny }
+                Label { width: Theme.dL; text: modelData.n; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.tiny }
                 Rectangle { width: strip.width-2*Theme.s3-Theme.dL-Theme.s2; height: Theme.rCell; color: Theme.rollBg; anchors.verticalCenter: parent.verticalCenter; Rectangle { width: parent.width*modelData.v; height: parent.height; color: Theme.grayN } }
             }
         }

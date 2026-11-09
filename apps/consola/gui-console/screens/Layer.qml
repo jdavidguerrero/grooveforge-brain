@@ -4,14 +4,14 @@ import "../components"
 Item {
     Panel { x: Theme.s2; y: Theme.s2; width: Theme.summaryWidth; height: Theme.layerHeader
         Rectangle { x: Theme.s5; y: Theme.s5-Theme.s1; width: Theme.s4; height: Theme.topHeight; radius: Theme.edge; color: Theme.roleColor("BASS") }
-        Label { x: Theme.topHeight; anchors.verticalCenter: parent.verticalCenter; text: "BASS"; color: Theme.roleColor("BASS"); font.family: Theme.displayFont; font.pixelSize: Theme.dXl }
+        Label { x: Theme.topHeight; anchors.verticalCenter: parent.verticalCenter; text: "BASS"; color: Theme.roleColor("BASS"); face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.dXl }
         Column { x: Theme.modeWidth/2; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s1
             Label { text: "● IN ROOM"; color: Theme.tealPlus; font.pixelSize: Theme.m11 }
             Label { text: "Sub Model D"; font.pixelSize: Theme.m20 }
-            Label { text: "A1 · round · energy 3 · since bar 17"; color: Theme.mon; font.pixelSize: Theme.m12 }
+            Label { text: "A1 · round · energy 3 · since bar 17"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
         }
         Column { x: Theme.nextTitleX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s2
-            Label { text: "LEVEL"; color: Theme.mon; font.pixelSize: Theme.m11 }
+            Label { text: "LEVEL"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m11 }
             Meter { width: Theme.handsLadderWidth; height: Theme.s2; value: .77 }
             Label { text: "−3.2 dB"; font.pixelSize: Theme.m12; color: Theme.grayN }
         }

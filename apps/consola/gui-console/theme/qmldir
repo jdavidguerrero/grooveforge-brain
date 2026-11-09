@@ -1,2 +1,3 @@
 module ConsoleTheme
 singleton Theme 1.0 Theme.qml
+singleton Layout 1.0 Layout.qml
