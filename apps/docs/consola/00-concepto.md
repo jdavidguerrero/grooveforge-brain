@@ -83,6 +83,24 @@ Juan preguntó si ESTUDIO y LIVE pueden ir a la vez. Sí, como un tercer modo:
 4. Los faders mezclan grupos; un botón por sección pide **cambio**, y el motor pone la transición: roll, riser, fill de llamador, subdrop.
 5. Todo lo que aceptas o saltas va al registro: la consola **aprende de tus sets**, no solo del estudio.
 
+### 5.1 Transición entre tracks: por capas (Juan, 2026-11-09)
+
+Un track no es un audio: es un **conjunto de capas** (kick, drums, perc, bajo, acordes, lead, pad). La consola tiene siempre **dos tracks**: el que suena (**SALA**) y el **siguiente**, que puede venir **generado** (el motor lo deriva del que suena: mismo ADN, otra progresión, otro motivo, otra energía) o **ya hecho** (un track del estudio cargado por capas desde el registro del motor). El motor comprueba que tonalidad y tempo sean compatibles.
+
+**En el NeoTrellis:** fila de arriba = capas de SALA (brillo fuerte); segunda fila = capas del siguiente (tenues). Pad del siguiente con CUE = escuchar esa capa en audífonos encima de lo que suena.
+
+| Manera | Cómo va | Para |
+|---|---|---|
+| **Intercambio de capas** (~32 compases) | Entran hats y perc del siguiente; luego **el bajo se intercambia en un solo golpe** en la frase; luego acordes y lead mientras bajan los faders del viejo; el kick viejo sale con echo | La transición de DJ |
+| **Por el break** | El que suena va a su break (sin kick ni bajo, pad abierto); entra la atmósfera del siguiente; el **tempo se desliza** si hace falta; build, subdrop y el drop es del nuevo | La más emocional |
+| **Corte en la frase** | Echo sobre el último compás y cambio completo en el uno | Sets enérgicos |
+
+**Regla del grave:** nunca suenan dos bajos ni dos kicks a la vez; el motor intercambia el grave en un golpe.
+
+**Botón TRANSICIÓN:** ofrece las tres maneras y el motor la ejecuta sola (cambios en la frase, roll, riser, subdrop). **Si Juan toca un fader o un pad, manda Juan** y el motor se adapta.
+
+**Sin crossfader** (descartado): el intercambio capa por capa con pads y faders hace mejor ese trabajo.
+
 ## 6. Step sequencer
 
 Una cuadrícula de pads funciona como en Deluge o MPC: cada fila es un carril (instrumento o nota) y cada columna un paso. La diferencia: **el motor puede escribir en ella**. Le pides «un fill de llamador» o «otra clave», y aparece en los pasos, editable. Por paso: velocity, microtiming y probabilidad (como el parameter lock del OP-XY), para que los patrones respiren como tus ghosts.
