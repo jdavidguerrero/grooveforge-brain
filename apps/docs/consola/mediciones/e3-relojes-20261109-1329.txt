@@ -1,0 +1,24 @@
+E3 relojes Mon  9 Nov 13:29:12 -05 2026
+temp=45.0'C
+minutos: 60.0
+segundos_con_saltos: 2617
+saltos_totales: 21277
+segundos_sin_senal: 0
+underflow: 0
+overflow: 0
+primeros_eventos(min, saltos): [(0.02, 2287), (0.17, 175), (0.28, 1), (0.3, 2), (0.32, 2), (0.33, 3), (0.35, 172), (0.38, 2), (0.4, 2), (0.42, 2), (0.43, 2), (0.45, 3), (0.47, 2), (0.53, 161), (0.55, 3), (0.57, 2), (0.58, 3), (0.6, 2), (0.62, 2), (0.67, 1)]
+== sala (Audio+)
+minutos: 61.0
+bloque: 256
+carga: False
+bpm: 122.0
+callbacks: 686253
+cortes: 0
+latencia_salida_ms: 5.33
+callback_media_us: 35.6
+callback_p99_us: 74.2
+callback_max_us: 149.5
+carga_max_pct: 2.8
+temp=48.8'C
+throttled=0x0
+FIN

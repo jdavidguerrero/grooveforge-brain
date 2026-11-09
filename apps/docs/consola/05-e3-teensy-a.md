@@ -21,7 +21,7 @@ El firmware normal (`sketch49`) compila igual y responde `@GF ERR CONSOLA` a eso
 
 ## 3. Datos a tener en cuenta
 
-- **Frecuencia:** el audio de la Teensy corre a 44 117,647 Hz y su USB se presenta como 44,1 kHz; el Pi y el Audio+ van a 48 kHz. Pi y Teensy tienen **relojes distintos**: los posibles clics del cue en E3 vienen de ahí.
+- **Frecuencia:** el audio de la Teensy corre a 44,1 kHz nominales (`AUDIO_SAMPLE_RATE_EXACT` = 44100 en Teensyduino 1.60; corregido el 2026-11-09, antes decía 44 117,647 Hz) con su propio cristal; el Pi y el Audio+ van a 48 kHz. Pi y Teensy tienen **relojes distintos**: los posibles clics del cue en E3 vienen de ahí.
 - **Nivel de entrada:** el código fija `lineInLevel(5)`. Su comentario dice que 0 es la máxima sensibilidad; la documentación de PJRC indica lo contrario (0 = 3,12 Vpp, la menos sensible). **Contradicción a revisar**; en la prueba la señal va a −20 dBFS para no saturar.
 
 ## 4. Pruebas

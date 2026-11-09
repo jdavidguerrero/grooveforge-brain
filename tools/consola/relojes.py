@@ -6,6 +6,7 @@ incluye el cue: `@GF RUTA SINTE` y `@GF CUE 1`). Si una muestra se pierde o se r
 saltos. Mientras tanto, el reproductor de E2 toca la batería por el Audio+ (sala) en otro proceso.
 
     uv run --project tools/consola python tools/consola/relojes.py --minutos 60
+    uv run --project tools/consola python tools/consola/relojes.py --minutos 60 --dispositivo pipewire --sr 48000
 """
 
 from __future__ import annotations
@@ -33,13 +34,13 @@ def saltos_de_fase(x: np.ndarray) -> np.ndarray:
     return np.nonzero(np.abs(d - np.median(d)) > SALTO_RAD)[0] + borde
 
 
-def correr(minutos: float, dispositivo: str, bloque: int) -> dict:
+def correr(minutos: float, dispositivo: str, bloque: int, sr: int = SR) -> dict:
     import sounddevice as sd
 
     cola: queue.Queue = queue.Queue()
     fase = [0.0]
     flags = {"underflow": 0, "overflow": 0}
-    paso = 2 * np.pi * F / SR
+    paso = 2 * np.pi * F / sr
 
     def cb(indata, outdata, frames, _t, status):
         if status.output_underflow:
@@ -64,9 +65,9 @@ def correr(minutos: float, dispositivo: str, bloque: int) -> dict:
             if parte is None:
                 return
             buf = np.concatenate([buf, parte])
-            if len(buf) >= SR + 400:
-                trozo = buf[: SR + 400]
-                buf = buf[SR:]  # se solapan 400 muestras para no perder saltos en el borde
+            if len(buf) >= sr + 400:
+                trozo = buf[: sr + 400]
+                buf = buf[sr:]  # se solapan 400 muestras para no perder saltos en el borde
                 if np.sqrt(np.mean(trozo ** 2)) < NIVEL * 0.2:
                     sin_senal[0] += 1
                     continue
@@ -76,7 +77,7 @@ def correr(minutos: float, dispositivo: str, bloque: int) -> dict:
 
     hilo = threading.Thread(target=analizar, daemon=True)
     hilo.start()
-    with sd.Stream(device=dispositivo, samplerate=SR, blocksize=bloque, channels=2, dtype="float32", callback=cb):
+    with sd.Stream(device=dispositivo, samplerate=sr, blocksize=bloque, channels=2, dtype="float32", callback=cb):
         fin = time.time() + minutos * 60
         while time.time() < fin:
             time.sleep(1)
@@ -91,8 +92,9 @@ def main() -> None:
     ap.add_argument("--minutos", type=float, default=60)
     ap.add_argument("--dispositivo", default="hw:3,0")
     ap.add_argument("--bloque", type=int, default=256)
+    ap.add_argument("--sr", type=int, default=SR, help="48000 al pasar por PipeWire (el grafo corre al reloj del Audio+)")
     a = ap.parse_args()
-    for k, v in correr(a.minutos, a.dispositivo, a.bloque).items():
+    for k, v in correr(a.minutos, a.dispositivo, a.bloque, a.sr).items():
         print(f"{k}: {v}")
 
 
