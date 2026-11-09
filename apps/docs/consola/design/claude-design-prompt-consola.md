@@ -94,7 +94,9 @@ Tonalidad y modo · BPM y estado de Ableton Link · compás, frase (n de 8) y se
 17. **TRANSICIÓN** (MVP, ventana) — elegir intercambio, break o corte; progreso paso a paso; «el motor lo hace, si tocas un fader mandas tú».
 18. **MIXER** (MVP) — tiras por grupo y canal: volumen, ecualizador aislador de 3 bandas, filtro de una perilla (curva que se dobla), envíos, cue por canal, medidores.
 19. **MANOS** (MVP) — los dos sensores: qué controla cada uno, rango, escala del modo theremin, y la mano en vivo.
-20. **SECUENCIADOR** — pasos por carril, velocity, probabilidad y microtiming por paso; el motor rellena o varía.
+20. **SECUENCIADOR** — dos vistas, como en Push; se cambia entre ellas con una tecla de la barra:
+    - **PASOS**: pasos por carril, velocity, probabilidad y microtiming por paso; el motor rellena o varía. Para batería y percusión.
+    - **PIANO ROLL**: para bajo, lead, acordes y arpegios. La rejilla de pads muestra una ventana del piano roll (8 pasos × 4 notas) y la pantalla dibuja esa ventana resaltada dentro de un rango más amplio. Tocar un pad pone o quita una nota; los encoders mueven la nota seleccionada, su largo, velocity y microtiming. **El touch solo navega** (zoom, desplazarse, elegir rango de notas y compases); no dibuja ni borra notas. Las notas que puso el motor se ven en otro tono que las de Juan, y el motor nunca pisa una nota que Juan editó. Teclado lateral con la escala activa resaltada.
 21. **PADS** — tocar en la escala con los pads y los pads de fuerza.
 22. **BRAIN** — páginas del synth: motor (selector con ilustración de cada uno), osciladores, filtro, envolventes y LFO, FX, capas HYBRID, presets.
 23. **KIT** — drum machine: materiales (madera, piel, 808), afinación, generar sonidos.
