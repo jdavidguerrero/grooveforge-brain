@@ -50,3 +50,38 @@ Como el tiempo real duro está en las Teensy y el Pi planifica por adelantado, *
 - Elk Audio OS: [hardware soportado](https://elk-audio.github.io/elk-docs/html/intro/supported_hw.html), [versiones de elk-pi](https://www.github.com/elk-audio/elk-pi/releases).
 - Patchbox OS: [beta Bookworm ARM64 2024](https://community.blokas.io/t/beta-patchbox-os-bookworm-arm64-2024-04-04/5163), [kernel RT](https://community.blokas.io/t/real-time-kernel/1134).
 - Teensy por USB: [PJRC, USB MIDI](https://www.pjrc.com/teensy/td_midi.html).
+
+## 4. Decisiones de Juan (2026-11-09) y alcance del MVP
+
+**Decidido:**
+- **Conexión con el Mac por Ethernet con cable** (aislada por transformador, misma red para Link, motor y MIDI por red). Wi-Fi no se usa para tocar. Un USB directo trasero solo si una medición lo pide.
+- **Dos Teensy con firmware separado**: A (audio) y S (superficie e I/O). Se **rediseña la PCB** para tener menos placas: una placa principal con las dos Teensy reemplaza a las dos portadoras, la PCB-S y la PCB-A. Las placas de botones y faders de GroovePush se mantienen.
+- **Enlace directo A ↔ S** por UART con `bridge-protocol` (tercer transporte del mismo protocolo), tierra común y **un pin de sincronía reservado**. Permite pad → sonido en menos de 1 ms y seguir sonando si el Pi se reinicia.
+- **Construir en orden: primero un MVP**, con la placa preparada para crecer (conectores y huellas reservadas, sin poblar).
+
+### 4.1 MVP (versión 1)
+
+| Bloque | Incluye |
+|---|---|
+| Pi 5 | Motor, secuenciador, sampler, **mezcla**, GUI Qt 7", Ethernet |
+| Audio | Audio+ V2 (sala); SGTL5000 en la Teensy A (cue y entrada de línea) |
+| Teensy A | Synths y FX del Brain; USB al Pi; enlace con S |
+| Teensy S | 8 encoders, 4 faders + **crossfader** (ADS1115 #1), 4 FSR de velocity (ADC propio), NeoTrellis M4, botones Choc (MCP23017), LEDs al 20–25 %; USB al Pi; enlace con A |
+| Modos | LIVE y **MIXER básico** (volumen por grupo, cue por canal, crossfader). HÍBRIDO y ESTUDIO después |
+
+### 4.2 Preparado en la placa, sin poblar (para versiones siguientes)
+
+| Ampliación | Qué se deja en la placa | Teensy |
+|---|---|---|
+| **CV/Gate** (MCP4728: 4 CV + 2 gates) para el filtro analógico y synths externos | Huella del MCP4728 en el I2C, huellas del amplificador y protección por salida, conector a una placa de jacks | A |
+| **Mixer completo**: ecualizador aislador de 3 bandas + filtro de una perilla por canal, envíos, bancos | Solo firmware: usa los encoders y faders del MVP | — |
+| **4 entradas de trigger** (piezo, zona de pad y aro) para e-drum y **la marimba** | Conector con 8 pines analógicos de S + huellas del acondicionamiento (resistencia, diodos, pico) | S |
+| **MIDI DIN in/out + clock + sync analógico** | Huellas del optoacoplador de entrada y de los jacks TRS | S |
+| **ADS1115 #2** (2 FSR de expresión + 2 perillas) | Huella en el I2C de S | S |
+| **Segundo códec o códec multicanal** (CS42448) | El segundo puerto I2S (SAI2) de A llevado a un conector | A |
+| **Pedal** (aceptar o saltar) | Un jack TRS a un pin libre de S | S |
+| **Línea de 5 V propia para LEDs** | Puente y pads para separar la alimentación de los LEDs | — |
+
+**Regla para el diseño de la placa:** cada ampliación tiene sus **pines reservados en el mapa** desde la versión 1, aunque no se usen. Nada de la versión 1 puede ocupar un pin reservado.
+
+**Siguiente paso de diseño** (después de E3 y E4, con mediciones): el mapa de pines de A y S con las reservas, y el esquema de la placa principal.
