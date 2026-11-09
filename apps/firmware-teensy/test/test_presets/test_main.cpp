@@ -444,6 +444,10 @@ void test_parseo_de_comandos() {
 }
 
 void test_comandos_de_la_consola() {
+    char usb[] = "@GF USB\r";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::Usb, studio::parse_link_cmd(usb).kind);
+    char usb_arg[] = "@GF USB RESET";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::None, studio::parse_link_cmd(usb_arg).kind);
     char a[] = "@GF RUTA LINEA";
     studio::LinkCmd c = studio::parse_link_cmd(a);
     TEST_ASSERT_EQUAL(studio::LinkCmd::Ruta, c.kind);

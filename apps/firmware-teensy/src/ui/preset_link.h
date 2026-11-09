@@ -43,7 +43,7 @@ inline size_t hex_decode(const char* s, uint8_t* out, size_t cap) {
 
 struct LinkCmd {
     /// LEXPORT / LPUT / LTRUNC: presets de capa de HYBRID SYNTH (theory/12 §3d)
-    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc, Ruta, Cue } kind = None;
+    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc, Ruta, Cue, Usb } kind = None;
     /// RUTA (0 = synths, 1 = entrada de línea → USB) y CUE (0/1): prototipo de la consola (apps/docs/consola/05-e3-teensy-a.md)
     uint8_t valor = 0;
     uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda · LPUT / LTRUNC: index
@@ -75,6 +75,7 @@ inline LinkCmd parse_link_cmd(char* line) {
     };
     if (!strcmp(tok[0], "HELLO") && nt == 1) c.kind = LinkCmd::Hello;
     else if (!strcmp(tok[0], "EXPORT") && nt == 1) c.kind = LinkCmd::Export;
+    else if (!strcmp(tok[0], "USB") && nt == 1) c.kind = LinkCmd::Usb;
     else if (!strcmp(tok[0], "FS") && nt == 1) c.kind = LinkCmd::Fs;
     else if (!strcmp(tok[0], "FORMAT") && nt == 2 && !strcmp(tok[1], "YES")) c.kind = LinkCmd::Format;   // borra todo: pide YES
     else if (!strcmp(tok[0], "PUT") && nt == 4 && num(tok[1], &c.engine) && num(tok[2], &c.index)) {

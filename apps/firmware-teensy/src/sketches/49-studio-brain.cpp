@@ -38,6 +38,10 @@
  */
 #include <Arduino.h>
 #include <Audio.h>
+#if defined(GF_CONSOLA) && !defined(GF_USB_ASYNC)
+extern volatile uint32_t usb_audio_underrun_count;
+extern volatile uint32_t usb_audio_overrun_count;
+#endif
 #include <Bounce2.h>
 #include <Encoder.h>
 #include <FastLED.h>
@@ -1942,6 +1946,36 @@ void librarian_command(char* line) {
 #ifdef GF_CONSOLA
             audio_graph::set_usb_out_source(c.valor);
             Serial.printf("@GF OK RUTA %s\n", c.valor ? "LINEA" : "SINTE");
+#else
+            Serial.println("@GF ERR CONSOLA");
+#endif
+            break;
+        case studio::LinkCmd::Usb:
+#ifdef GF_CONSOLA
+#ifdef GF_USB_ASYNC
+            {
+                const auto rx = g_usb_in.getStatus();
+                const auto tx = g_usb_out.getStatus();
+                Serial.printf("@GF USB RX_UND %lu RX_OVR %lu RX_MEM %lu TX_UND %lu TX_OVR %lu "
+                              "TX_SKIP %lu TX_PAD %lu TX_LESS %lu TX_MORE %lu RX_ACTIVE %u TX_ACTIVE %u\n",
+                              (unsigned long)rx.usb_audio_underrun_count,
+                              (unsigned long)rx.usb_audio_overrun_count,
+                              (unsigned long)rx.audio_memory_underrun_count,
+                              (unsigned long)tx.usb_audio_underrun_count,
+                              (unsigned long)tx.usb_audio_overrun_count,
+                              (unsigned long)tx.num_skipped_Samples,
+                              (unsigned long)tx.num_padded_Samples,
+                              (unsigned long)tx.num_send_one_less,
+                              (unsigned long)tx.num_send_one_more,
+                              unsigned(rx.receivingData), unsigned(tx.transmittingData));
+            }
+#else
+            {
+                const uint32_t under = usb_audio_underrun_count;
+                const uint32_t over = usb_audio_overrun_count;
+                Serial.printf("@GF USB RX_UND %lu RX_OVR %lu\n", (unsigned long)under, (unsigned long)over);
+            }
+#endif
 #else
             Serial.println("@GF ERR CONSOLA");
 #endif
