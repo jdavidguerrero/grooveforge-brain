@@ -42,6 +42,13 @@ bool decode_supported_preset(const uint8_t* data, size_t size, studio::Preset& o
     return false;
 }
 
+bool decode_engine_preset(const uint8_t* data, size_t size, EnginePreset& out) {
+    EnginePreset candidate;
+    if (dx7six::decode_gfp(data, size, candidate.dx7_6op)) candidate.engine = dx7six::ENGINE_ID;
+    else if (!decode_supported_preset(data, size, candidate.studio, candidate.engine)) return false;
+    out = candidate; return true;
+}
+
 bool factory_prophet_preset(uint8_t index, studio::Preset& out) {
     studio::Preset candidate;
     if (!studio::factory_preset(PROPHET_ENGINE, index, &candidate) || !finite_preset(candidate)) return false;

@@ -100,7 +100,8 @@ static constexpr uint8_t ENGINE_PROPHET = 2;
 static constexpr uint8_t ENGINE_OB6     = 3;
 static constexpr uint8_t ENGINE_DX7     = 4;
 static constexpr uint8_t ENGINE_ARP     = 5;
-static constexpr uint8_t NUM_ENGINES    = 6;
+static constexpr uint8_t ENGINE_DX7_6OP = 7;  ///< 6 reserved; Studio UI still exposes engines 0–5
+static constexpr uint8_t NUM_ENGINES    = 8;
 
 /** Gain nominal de un engine activo en g_engine_mix. 0.7 evita clipping al sumar. */
 static constexpr float ENGINE_ACTIVE_GAIN = 0.7f;

@@ -3,6 +3,7 @@
 #include "hybrid_preview.h"
 #include "prophet_preset.h"
 #include "dx7_preset.h"
+#include "dx7_6op_preview.h"
 #include "juno_preset.h"
 #include "ob6_preset.h"
 #include "model_d_preset.h"
@@ -19,7 +20,7 @@ namespace {
 constexpr unsigned RATE = 48000;
 constexpr double WARMUP = 2.0;
 constexpr unsigned FIXTURE_FRAMES = 3 * RATE;
-const std::array<std::string, 7> ENGINES{"prophet", "dx7", "juno", "ob6", "model-d", "arp2600", "hybrid"};
+const std::array<std::string, 8> ENGINES{"prophet", "dx7", "juno", "ob6", "model-d", "arp2600", "hybrid", "dx7_6op"};
 
 int engine_id(const std::string& name) {
     if (name == "model-d") return 0;
@@ -29,10 +30,11 @@ int engine_id(const std::string& name) {
     if (name == "dx7") return 4;
     if (name == "arp2600") return 5;
     if (name == "hybrid") return 6;
+    if (name == "dx7_6op") return 7;
     throw std::runtime_error("Unknown engine: " + name);
 }
 unsigned max_voices(const std::string& name) {
-    constexpr unsigned counts[] = {1, 6, 5, 6, 6, 4, 6};
+    constexpr unsigned counts[] = {1, 6, 5, 6, 6, 4, 6, 6};
     return counts[engine_id(name)];
 }
 
@@ -71,7 +73,28 @@ class Engine {
 public:
     Engine(std::string name, unsigned voices, unsigned root, bool wet)
         : name_(std::move(name)), id_(engine_id(name_)), voices_(voices), root_(root) {
-        if (id_ == 6) {
+        if (id_ == 7) {
+            six_ = std::make_unique<gf::Dx7SixPreview>(); six_->prepare(RATE);
+            auto p = gf::dx7six::init_patch();
+            p.vced[134] = 4; p.vced[135] = 5;
+            for (int op = 0; op < 6; ++op) {
+                p.vced[op * 21 + 16] = (op & 1) ? 90 : 72;
+                p.vced[op * 21 + 18] = (op & 1) ? 1 : 3;
+                p.vced[op * 21 + 15] = 3;
+            }
+            six_->set_patch(p); preset_ = "GF SIX PAIRS";
+            bus_ = std::make_unique<gf::ProphetPreview>(); bus_->prepare(RATE);
+            delay_l_.assign(RATE + 2, 0); delay_r_.assign(RATE + 2, 0);
+            plate_.assign(gf::PlateReverbPreview::required_samples(RATE), 0);
+            bus_->set_delay_memory(delay_l_.data(), delay_r_.data(), RATE + 2);
+            bus_->set_plate_memory(plate_.data(), plate_.size());
+            studio::Preset effects; studio::factory_preset(2, 0, &effects);
+            configure_workload(effects, 2, wet);
+            gf::apply_synth_fx_preview(*bus_, effects, 2);
+            bus_->set_voice_sink(this,
+                [](void* ctx, uint8_t n, float v) { static_cast<Engine*>(ctx)->voice_on(n,v); },
+                [](void* ctx, uint8_t n) { static_cast<Engine*>(ctx)->voice_off(n); });
+        } else if (id_ == 6) {
             studio::LayerPreset layer;
             if (!studio::factory_layer(7, &layer)) throw std::runtime_error("Factory layer 7 missing");
             configure_workload(layer.a, layer.eng_a, wet);
@@ -168,6 +191,7 @@ public:
                 case 4: dx7_->set_pitch_bend(bend); break;
                 case 5: arp_->set_pitch_bend(bend); break;
                 case 6: hybrid_->set_pitch_bend(bend); break;
+                case 7: six_->set_pitch_bend(bend); break;
             }
         }
         l = r = 0;
@@ -185,6 +209,7 @@ public:
                 case 3: ob6_->set_tape_pitch(tape); input = ob6_->process_sample(); break;
                 case 4: dx7_->set_tape_pitch(tape); input = dx7_->process_sample(); break;
                 case 5: arp_->set_tape_pitch(tape); input = arp_->process_sample(); break;
+                case 7: input = six_->process_sample(); break;
             }
             if (id_ != 1) bus_->process_external_frame(input, l, r);
         }
@@ -199,13 +224,13 @@ private:
     void voice_on(uint8_t n, float v) {
         switch (id_) {
             case 0: model_->note_on(n,v); break; case 1: juno_->note_on(n,v); break;
-            case 3: ob6_->note_on(n,v); break; case 4: dx7_->note_on(n,v); break; case 5: arp_->note_on(n,v); break;
+            case 3: ob6_->note_on(n,v); break; case 4: dx7_->note_on(n,v); break; case 5: arp_->note_on(n,v); break; case 7: six_->note_on(n,v); break;
         }
     }
     void voice_off(uint8_t n) {
         switch (id_) {
             case 0: model_->note_off(n); break; case 1: juno_->note_off(n); break;
-            case 3: ob6_->note_off(n); break; case 4: dx7_->note_off(n); break; case 5: arp_->note_off(n); break;
+            case 3: ob6_->note_off(n); break; case 4: dx7_->note_off(n); break; case 5: arp_->note_off(n); break; case 7: six_->note_off(n); break;
         }
     }
     std::string name_, preset_;
@@ -217,6 +242,7 @@ private:
     std::unique_ptr<gf::JunoPreview> juno_;
     std::unique_ptr<gf::Ob6Preview> ob6_;
     std::unique_ptr<gf::Dx7Preview> dx7_;
+    std::unique_ptr<gf::Dx7SixPreview> six_;
     std::unique_ptr<gf::Arp2600Preview> arp_;
     std::unique_ptr<gf::HybridPreview> hybrid_;
     float dc_coefficient_ = 0;
@@ -385,7 +411,7 @@ int main(int argc, char** argv) {
         for (int a = 1; a < argc; ++a) {
             const std::string option = argv[a];
             if (option == "--help") {
-                std::cout << "gf_engine_bench [--seconds 20] [--block 128|256] [--engine prophet|dx7|juno|ob6|model-d|arp2600|hybrid|four-part]\n"
+                std::cout << "gf_engine_bench [--seconds 20] [--block 128|256] [--engine prophet|dx7|juno|ob6|model-d|arp2600|hybrid|dx7_6op|four-part]\n"
                     "                [--json path] [--threads 1] [--self-test]\n"
                     "Defaults: full matrix, dry+wet, 48 kHz, 2 s warm-up/case; WAV and PCM SHA-256 beside JSON.\n"
                     "RTF = render wall / audio duration (lower is better). Timing gate is provisional; no realtime host.\n";

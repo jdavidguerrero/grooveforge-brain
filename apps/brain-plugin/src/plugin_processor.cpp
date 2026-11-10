@@ -20,6 +20,8 @@
 #include "prophet_preset.h"
 #include "preset_import.h"
 #include "dx7_preview.h"
+#include "dx7_6op_preview.h"
+#include "dx7_6op_view.h"
 #include "juno_preview.h"
 #include "ob6_preview.h"
 #include "model_d_preview.h"
@@ -285,6 +287,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout make_layout() {
         NormalisableRange<float>{1.0f, 10000.0f, 0.0f, 0.35f}, 500.0f));
     parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"lfo_sync", 1}, "LFO Sync", false));
     parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"dx7_preview", 1}, "DX7 Preview", false));
+    parameters.push_back(std::make_unique<AudioParameterBool>(ParameterID{"dx7_6op_preview", 1}, "DX7 6-OP", false));
+    parameters.push_back(std::make_unique<AudioParameterInt>(ParameterID{"dx7_6op.sysex_voice", 1}, "DX7 SysEx bank voice", 0, 31, 0));
+    for (size_t i = 0; i < gf::dx7six::param_count; ++i) {
+        const auto& q = gf::dx7six::params[i];
+        parameters.push_back(std::make_unique<AudioParameterInt>(ParameterID{juce::String("dx7_6op.") + q.id, 1},
+            juce::String("DX7 6-OP ") + q.page + " " + q.name, q.minimum, q.maximum, q.initial));
+    }
+
     parameters.push_back(std::make_unique<AudioParameterInt>(ParameterID{"dx7.algorithm", 1}, "DX7 Algorithm", 1, 8, 5));
     parameters.push_back(std::make_unique<AudioParameterInt>(ParameterID{"dx7.feedback", 1}, "DX7 Feedback", 0, 7, 2));
     parameters.push_back(std::make_unique<AudioParameterFloat>(ParameterID{"dx7.kbd_level", 1}, "DX7 Keyboard Level", NormalisableRange<float>{0, 99}, 0));
@@ -493,6 +503,9 @@ public:
         release_ = state_.getRawParameterValue("release");
         lfo_sync_ = state_.getRawParameterValue("lfo_sync");
         dx7_enabled_ = state_.getRawParameterValue("dx7_preview");
+        six_enabled_ = state_.getRawParameterValue("dx7_6op_preview");
+        for (size_t i = 0; i < gf::dx7six::param_count; ++i)
+            six_values_.push_back(state_.getRawParameterValue(juce::String("dx7_6op.") + gf::dx7six::params[i].id));
         juno_enabled_ = state_.getRawParameterValue("juno_preview");
         ob6_enabled_ = state_.getRawParameterValue("ob6_preview");
         modeld_enabled_ = state_.getRawParameterValue("modeld_preview");
@@ -664,6 +677,7 @@ public:
         modeld_bus_.prepare(sample_rate);
         arp2600_bus_.prepare(sample_rate);
         dx7_.prepare(sample_rate);
+        six_.prepare(sample_rate);
         juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         juno_.prepare(sample_rate);
         ob6_.prepare(sample_rate);
@@ -725,27 +739,32 @@ public:
         applied_sequence_ = 0;
         last_juno_mode_ = false; last_dx7_mode_ = false; last_ob6_mode_ = false; last_modeld_mode_ = false; last_arp2600_mode_ = false; last_hybrid_mode_ = false;
     }
-    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); }
-    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); reset_dc_blocker(); }
+    void releaseResources() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); six_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); }
+    void reset() override { engine_.reset(); dx_bus_.reset(); dx7_.reset(); six_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); reset_dc_blocker(); }
     void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi) override {
         juce::ScopedNoDenormals guard;
         const auto started = juce::Time::getHighResolutionTicks();
         buffer.clear();
-        const bool hybrid_mode = hybrid_enabled_->load() >= 0.5f;
-        const bool arp2600_mode = !hybrid_mode && arp2600_enabled_->load() >= 0.5f;
-        const bool modeld_mode = !hybrid_mode && !arp2600_mode && modeld_enabled_->load() >= 0.5f;
-        const bool ob6_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && ob6_enabled_->load() >= 0.5f;
-        const bool juno_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
-        const bool dx7_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
-        const bool prophet_mode = !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && !dx7_mode;
+        const bool six_mode = six_enabled_->load() >= 0.5f;
+        const bool hybrid_mode = !six_mode && hybrid_enabled_->load() >= 0.5f;
+        const bool arp2600_mode = !six_mode && !hybrid_mode && arp2600_enabled_->load() >= 0.5f;
+        const bool modeld_mode = !six_mode && !hybrid_mode && !arp2600_mode && modeld_enabled_->load() >= 0.5f;
+        const bool ob6_mode = !six_mode && !hybrid_mode && !arp2600_mode && !modeld_mode && ob6_enabled_->load() >= 0.5f;
+        const bool juno_mode = !six_mode && !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && juno_enabled_->load() >= 0.5f;
+        const bool dx7_mode = !six_mode && !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && dx7_enabled_->load() >= 0.5f;
+        const bool prophet_mode = !six_mode && !hybrid_mode && !arp2600_mode && !modeld_mode && !ob6_mode && !juno_mode && !dx7_mode;
         if (juno_mode) {
             for (size_t i = 0; i < 2; ++i)
                 if (juno_filter_override_[i].load(std::memory_order_acquire) && !juno_filter_override_active(i))
                     juno_filter_override_[i].store(false, std::memory_order_release);
             juno_.set_parameters(juno_effective_cutoff(), juno_effective_resonance(), attack_->load(), juno_effective_env().release_ms);
         }
-        if (dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_ || hybrid_mode != last_hybrid_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; hybrid_.reset(); last_hybrid_mode_ = hybrid_mode; keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
+        if (six_mode != last_six_mode_ || dx7_mode != last_dx7_mode_ || juno_mode != last_juno_mode_ || ob6_mode != last_ob6_mode_ || modeld_mode != last_modeld_mode_ || arp2600_mode != last_arp2600_mode_ || hybrid_mode != last_hybrid_mode_) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); six_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); last_six_mode_ = six_mode; last_dx7_mode_ = dx7_mode; last_juno_mode_ = juno_mode; last_ob6_mode_ = ob6_mode; last_modeld_mode_ = modeld_mode; arp2600_.reset(); arp2600_bus_.reset(); last_arp2600_mode_ = arp2600_mode; hybrid_.reset(); last_hybrid_mode_ = hybrid_mode; keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
         apply_pending_preset();
+        if (six_mode) {
+            const auto p = six_parameter_patch();
+            if (p.vced != six_.patch().vced || p.enabled != six_.patch().enabled) six_.edit_patch(p);
+        }
         apply_pending_hybrid();
         if (hybrid_mode) {
             std::array<float, 21> groove{}; std::array<float, 25> effects{};
@@ -858,7 +877,8 @@ public:
         arp2600_.set_lfo_control(arp2600_wheel_, arp2600_pressure_, bpm, lfo_sync_->load() >= 0.5f);
         float meter_left = 0.0f, meter_right = 0.0f;
         auto note_on = [&](uint8_t note, float velocity) {
-            if (hybrid_mode) hybrid_.note_on(note, velocity);
+            if (six_mode) six_.note_on(note, velocity);
+            else if (hybrid_mode) hybrid_.note_on(note, velocity);
             else if (arp2600_mode) arp2600_bus_.note_on(note, velocity);
             else if (modeld_mode) modeld_bus_.note_on(note, velocity);
             else if (ob6_mode) ob6_bus_.note_on(note, velocity);
@@ -867,7 +887,8 @@ public:
             else engine_.note_on(note, velocity);
         };
         auto note_off = [&](uint8_t note) {
-            if (hybrid_mode) hybrid_.note_off(note);
+            if (six_mode) six_.note_off(note);
+            else if (hybrid_mode) hybrid_.note_off(note);
             else if (arp2600_mode) arp2600_bus_.note_off(note);
             else if (modeld_mode) modeld_bus_.note_off(note);
             else if (ob6_mode) ob6_bus_.note_off(note);
@@ -888,7 +909,8 @@ public:
             end = juce::jlimit(position, buffer.getNumSamples(), end);
             while (position < end) {
                 float left, right;
-                if (hybrid_mode) hybrid_.process_frame(left, right);
+                if (six_mode) left = right = six_.process_sample();
+                else if (hybrid_mode) hybrid_.process_frame(left, right);
                 else if (arp2600_mode) {
                     arp2600_.set_tape_pitch(arp2600_bus_.tape_pitch_ratio());
                     arp2600_bus_.process_external_frame(arp2600_.process_sample(), left, right);
@@ -925,7 +947,8 @@ public:
                 host_note_playing_[size_t(message.getNoteNumber())] = false;
                 if (!keyboard_playing_[size_t(message.getNoteNumber())]) note_off(uint8_t(message.getNoteNumber()));
             } else if (message.isPitchWheel()) {
-                if (hybrid_mode) hybrid_.set_pitch_bend(message.getPitchWheelValue());
+                if (six_mode) six_.set_pitch_bend(message.getPitchWheelValue());
+                else if (hybrid_mode) hybrid_.set_pitch_bend(message.getPitchWheelValue());
                 else if (arp2600_mode) arp2600_.set_pitch_bend(message.getPitchWheelValue());
                 else if (modeld_mode) modeld_.set_pitch_bend(message.getPitchWheelValue());
                 else if (ob6_mode) ob6_.set_pitch_bend(message.getPitchWheelValue());
@@ -959,7 +982,8 @@ public:
                 ob6_.set_lfo_control(ob6_wheel_, bpm, lfo_sync_->load() >= 0.5f, ob6_pressure_);
             }
             else if (message.isController() && message.getControllerNumber() == 64) {
-                if (hybrid_mode) hybrid_.set_sustain(message.getControllerValue() >= 64);
+                if (six_mode) six_.set_sustain(message.getControllerValue() >= 64);
+                else if (hybrid_mode) hybrid_.set_sustain(message.getControllerValue() >= 64);
                 else if (arp2600_mode) arp2600_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (modeld_mode) modeld_bus_.set_sustain(message.getControllerValue() >= 64);
                 else if (ob6_mode) ob6_bus_.set_sustain(message.getControllerValue() >= 64);
@@ -1144,7 +1168,7 @@ public:
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 apply_dx7_automation(); apply_dx7_general(true); apply_dx7_fx();
                 dx_macro_last_ = dx_macro_current_;
-            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
+            } else if (message.isAllNotesOff() || message.isAllSoundOff()) { engine_.reset(); dx_bus_.reset(); dx7_.reset(); six_.reset(); juno_.reset(); juno_bus_.reset(); ob6_.reset(); ob6_bus_.reset(); modeld_.reset(); modeld_bus_.reset(); arp2600_.reset(); arp2600_bus_.reset(); hybrid_.reset(); keyboard_playing_.fill(false); host_note_playing_.fill(false); reset_dc_blocker(); }
         }
         render_until(buffer.getNumSamples());
         // Antes de mezclar la preescucha: esa instancia filtra su propia salida y la memoria del filtro no la arrastra.
@@ -1523,8 +1547,12 @@ public:
         studio::Preset decoded;
         uint8_t engine = 0;
         if (tree.hasProperty("gfPreset")) {
-            if (!raw.fromBase64Encoding(tree.getProperty("gfPreset").toString()) ||
-                !gf::decode_supported_preset(static_cast<const uint8_t*>(raw.getData()), raw.getSize(), decoded, engine)) return;
+            if (!raw.fromBase64Encoding(tree.getProperty("gfPreset").toString())) return;
+            gf::dx7six::Patch six_patch;
+            if (gf::dx7six::decode_gfp(static_cast<const uint8_t*>(raw.getData()), raw.getSize(), six_patch)) {
+                engine = gf::dx7six::ENGINE_ID;
+                std::copy_n(six_patch.vced.data() + 145, 10, decoded.name); decoded.name[10] = 0;
+            } else if (!gf::decode_supported_preset(static_cast<const uint8_t*>(raw.getData()), raw.getSize(), decoded, engine)) return;
             tree.removeProperty("gfPreset", nullptr);
         }
         std::lock_guard<std::mutex> guard(preset_mutex_);
@@ -1626,11 +1654,40 @@ public:
         preset_name_ = raw.getSize() ? juce::String::fromUTF8(decoded.name) : juce::String();
         publish_preset(raw);
     }
+    gf::dx7six::Patch six_parameter_patch() const {
+        auto p = six_.patch();
+        for (size_t i = 0; i < six_values_.size(); ++i) {
+            const auto& q = gf::dx7six::params[i];
+            const auto v = uint8_t(std::lround(std::clamp(six_values_[i]->load(), float(q.minimum), float(q.maximum))));
+            if (q.enable_bit < 0) p.vced[q.offset] = v;
+            else p.enabled = (p.enabled & ~(1 << q.enable_bit)) | (v << q.enable_bit);
+        }
+        return p;
+    }
+    bool six_enabled() const { return six_enabled_->load() >= .5f; }
     bool import_preset(const void* data, size_t size) override {
+        gf::dx7six::Patch six_patch;
+        if (gf::decode_dx7_6op_preset(static_cast<const uint8_t*>(data), size, six_patch, uint8_t(state_.getRawParameterValue("dx7_6op.sysex_voice")->load()))) {
+            std::array<uint8_t, gf::dx7six::GFP_BYTES> bytes{};
+            gf::dx7six::encode_gfp(six_patch, bytes.data(), bytes.size());
+            for (size_t i = 0; i < gf::dx7six::param_count; ++i) {
+                const auto& q = gf::dx7six::params[i]; float value = 0;
+                gf::dx7six::get_param(six_patch, q.id, value);
+                auto* parameter = state_.getParameter(juce::String("dx7_6op.") + q.id);
+                parameter->setValueNotifyingHost(parameter->convertTo0to1(value));
+            }
+            auto* enabled = state_.getParameter("dx7_6op_preview"); enabled->setValueNotifyingHost(1);
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            preset_raw_.replaceAll(bytes.data(), bytes.size());
+            preset_name_ = juce::String::fromUTF8(reinterpret_cast<const char*>(six_patch.vced.data() + 145), 10);
+            publish_preset(preset_raw_); return true;
+        }
+
         if (data && size >= 3 && std::memcmp(data, "GFL", 3) == 0) return import_hybrid(data, size);
         studio::Preset preset;
         uint8_t engine = 0;
         if (!gf::decode_supported_preset(static_cast<const uint8_t*>(data), size, preset, engine)) return false;
+        state_.getParameter("dx7_6op_preview")->setValueNotifyingHost(0);
         clear_cc_pending();
         const auto patch = studio::macro_patch(preset.patch, engine);
         const float move = studio::macro_amount(preset.patch, GF_MACRO_MOVE);
@@ -1673,6 +1730,7 @@ public:
     bool import_hybrid(const void* data, size_t size) {
         studio::LayerPreset layer;
         if (!gf::decode_hybrid_layer(static_cast<const uint8_t*>(data), size, layer)) return false;
+        state_.getParameter("dx7_6op_preview")->setValueNotifyingHost(0);
         auto set = [&](const char* id, float value) { auto* p = state_.getParameter(id); p->setValueNotifyingHost(p->convertTo0to1(value)); };
         hybrid_morph_delivered_.store(hybrid_morph_sequence_.load(std::memory_order_acquire), std::memory_order_release);
         for (size_t i = 0; i < hybrid_filter_parameters_.size(); ++i) hybrid_filter_delivered_[i].store(hybrid_filter_sequence_[i].load(std::memory_order_acquire), std::memory_order_release);
@@ -2082,6 +2140,19 @@ public:
         return true;
     }
     bool export_dx7_preset(std::vector<uint8_t>& data) override {
+        if (six_enabled()) {
+            // Read atomics only: export may run on the GUI thread while audio is rendering.
+            auto p = gf::dx7six::init_patch();
+            for (size_t i = 0; i < six_values_.size(); ++i)
+                gf::dx7six::set_param(p, gf::dx7six::params[i].id, six_values_[i]->load());
+            std::lock_guard<std::mutex> guard(preset_mutex_);
+            gf::dx7six::Patch original;
+            if (gf::dx7six::decode_gfp(static_cast<const uint8_t*>(preset_raw_.getData()), preset_raw_.getSize(), original))
+                std::copy_n(original.vced.data()+145, 10, p.vced.data()+145);
+            data.resize(gf::dx7six::GFP_BYTES);
+            return gf::dx7six::encode_gfp(p, data.data(), data.size()) != 0;
+        }
+
         if (dx7_enabled_->load() < 0.5f || lfo_sync_->load() >= 0.5f) return false;
         studio::Preset preset;
         {
@@ -2475,7 +2546,7 @@ private:
         }
         if (!changed) return;
         const auto& v = dx_general_last_;
-        if (std::isfinite(old_on) && (old_on != v[14] || old_count != v[15])) { dx_bus_.reset(); dx7_.reset(); }
+        if (std::isfinite(old_on) && (old_on != v[14] || old_count != v[15])) { dx_bus_.reset(); dx7_.reset(); six_.reset(); }
         studio::Patch macro_patch;
         macro_patch.drive = (v[2] - 0.5f) / 3.5f; macro_patch.decay_ms = v[4]; macro_patch.release_ms = v[6];
         macro_patch.vel_amp = v[7] * 100.0f;
@@ -3082,6 +3153,10 @@ private:
         std::array<uint8_t, studio::PRESET_BYTES> bytes{};
         for (size_t i = 0; i < size; ++i) bytes[i] = preset_bytes_[i].load(std::memory_order_relaxed);
         if (sequence != preset_sequence_.load(std::memory_order_acquire)) return;
+        gf::dx7six::Patch six_patch;
+        if (gf::dx7six::decode_gfp(bytes.data(), size, six_patch)) {
+            six_.set_patch(six_patch); applied_sequence_ = sequence; return;
+        }
         if (size == 0) {
             studio::patch_init(arp2600_base_.patch, 5);
             arp2600_osc_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -3136,7 +3211,7 @@ private:
                 gf::apply_groove_preview(juno_bus_, preset, false);
                 juno_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
             } else if (preset_engine == 4) {
-                dx7_.reset(); dx_bus_.reset(); gf::apply_dx7_preset_preview(dx7_, preset);
+                dx7_.reset(); six_.reset(); dx_bus_.reset(); gf::apply_dx7_preset_preview(dx7_, preset);
                 dx_general_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 dx_fx_last_.fill(std::numeric_limits<float>::quiet_NaN());
                 dx_groove_last_.fill(std::numeric_limits<float>::quiet_NaN());
@@ -3155,6 +3230,10 @@ private:
     gf::ProphetPreview modeld_bus_;
     gf::ProphetPreview arp2600_bus_;
     gf::Dx7Preview dx7_;
+    gf::Dx7SixPreview six_;
+    std::vector<std::atomic<float>*> six_values_;
+    std::atomic<float>* six_enabled_ = nullptr;
+    bool last_six_mode_ = false;
     gf::JunoPreview juno_;
     gf::Ob6Preview ob6_;
     gf::ModelDPreview modeld_;
@@ -3508,6 +3587,10 @@ public:
             owner.parameters(), "lfo_sync", sync_);
         dx7_toggle_.setButtonText("DX7 PREVIEW");
         dx7_toggle_.setColour(juce::ToggleButton::textColourId, juce::Colour(0xff9fe1cb));
+        addAndMakeVisible(six_toggle_);
+        six_toggle_.setButtonText("DX7 6-OP");
+        six_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(owner.parameters(), "dx7_6op_preview", six_toggle_);
+        six_toggle_.onClick = [this] { update_status(); };
         addAndMakeVisible(dx7_toggle_);
         dx7_attachment_ = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(
             owner.parameters(), "dx7_preview", dx7_toggle_);
@@ -4033,6 +4116,7 @@ public:
         }
         import_.setBounds(720 - 145, 12, 115, 25);
         sync_.setBounds(720 - 260, 12, 105, 25);
+        six_toggle_.setBounds(590, 42, 125, 24);
         dx7_toggle_.setBounds(720 - 380, 12, 115, 25);
         juno_toggle_.setBounds(720 - 510, 12, 125, 25);
         hybrid_toggle_.setBounds(490, 295, 180, 25);
@@ -4223,6 +4307,7 @@ private:
     }
     void update_legacy_status() {
         const auto name = owner_.preset_name();
+        displayed_six_ = owner_.six_enabled();
         displayed_preset_ = name;
         const bool hybrid = hybrid_toggle_.getToggleState();
         studio_look_.set_hybrid(hybrid);
@@ -4341,7 +4426,7 @@ private:
             const bool visible = modeld && (modeld_page_index_ == 2 || (modeld_page_index_ == 6 && i >= 10 && i <= 15));
             modeld_voice_labels_[i].setVisible(visible); modeld_voice_sliders_[i].setVisible(visible);
         }
-        export_.setVisible(dx7 || juno || ob6 || modeld || arp2600 || hybrid);
+        export_.setVisible(owner_.six_enabled() || dx7 || juno || ob6 || modeld || arp2600 || hybrid);
         dx_page_.setButtonText(dx_ops ? "VOICE" : dx_voice ? "FX" : dx_fx ? "GROOVE" : dx_groove ? "MACROS" : "OPERATORS");
         for (auto& knob : knobs_) knob.setVisible(!hybrid && !dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0) && !(arp2600 && arp2600_page_index_ != 0));
         for (auto& label : labels_) label.setVisible(!hybrid && !dx7 && !(juno && juno_page_index_ != 0) && !(ob6 && ob6_page_index_ != 0) && !(modeld && modeld_page_index_ != 0) && !(arp2600 && arp2600_page_index_ != 0));
@@ -4431,7 +4516,7 @@ private:
             const bool modified = owner_.hybrid_modified();
             if (modified != displayed_modified_) { displayed_modified_ = modified; update_status(); }
         }
-        if (owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState() || displayed_modeld_ != modeld_toggle_.getToggleState() || displayed_arp2600_ != arp2600_toggle_.getToggleState() || displayed_hybrid_ != hybrid_toggle_.getToggleState() || displayed_hybrid_revision_ != owner_.hybrid_revision() || displayed_hybrid_bank_revision_ != owner_.hybrid_bank_revision() || (hybrid_toggle_.getToggleState() && displayed_hybrid_focus_ != (owner_.parameters().getRawParameterValue("hybrid.focus")->load() >= 0.5f ? 1 : 0))) update_status();
+        if (owner_.six_enabled() != displayed_six_ || owner_.preset_name() != displayed_preset_ || displayed_dx7_ != dx7_toggle_.getToggleState() || displayed_juno_ != juno_toggle_.getToggleState() || displayed_ob6_ != ob6_toggle_.getToggleState() || displayed_modeld_ != modeld_toggle_.getToggleState() || displayed_arp2600_ != arp2600_toggle_.getToggleState() || displayed_hybrid_ != hybrid_toggle_.getToggleState() || displayed_hybrid_revision_ != owner_.hybrid_revision() || displayed_hybrid_bank_revision_ != owner_.hybrid_bank_revision() || (hybrid_toggle_.getToggleState() && displayed_hybrid_focus_ != (owner_.parameters().getRawParameterValue("hybrid.focus")->load() >= 0.5f ? 1 : 0))) update_status();
     }
 
     // ---- Armazón de la referencia (apps/docs/sprints/gemelo-vst-ui-migracion.md, corte 1) ----
@@ -4724,6 +4809,9 @@ private:
         }
         setup_perform();
         add(perform_page_, "studio.perform", false);
+        six_view_.bind(owner_.parameters());
+        add(six_view_, "studio.dx7_6op", false);
+        shell_.push_back(&six_toggle_);
         studio_browser_.on_engine = [this](int engine) { fill_browser(engine); };
         studio_browser_.on_preview = [this](int engine, int index) { return owner_.preview_bank_item(engine, unsigned(index)); };
         studio_browser_.on_cancel_preview = [this] { owner_.stop_preset_preview(); };
@@ -5036,6 +5124,17 @@ private:
         if (hybrid && !fx_view_ && owner_.hybrid_modified()) act_save_layer_.style(m.mc, m.mc, m.on);
         save_dialog_.mode = m;
         if (save_dialog_.isVisible()) save_dialog_.toFront(false);
+        const bool six = owner_.six_enabled();
+        six_view_.setVisible(six && !fx_view_ && !engine_view_);
+        if (six_view_.isVisible()) {
+            six_view_.toFront(false);
+            for (auto& tab : studio_tabs_) tab.setEnabled(false);
+            for (auto& tab : sub_tabs_) tab.setVisible(false);
+            for (auto& bank : bank_buttons_) bank.setVisible(false);
+            for (auto* b : {&preset_prev_, &preset_next_, &preset_menu_}) b->setEnabled(false);
+            act_save_layer_.setVisible(false);
+            act_import_.setVisible(true); act_export_.setVisible(true);
+        }
         studio_browser_.mode = m;
         if (studio_browser_.isVisible()) studio_browser_.toFront(false);
         engine_select_.repaint();
@@ -5044,6 +5143,8 @@ private:
         repaint();
     }
     void layout_shell() {
+        six_toggle_.setBounds(930, 602, 160, 22);
+        six_view_.setBounds(0,112,1200,488);
         mode_buttons_[0].setBounds(152, 16, 72, 32); mode_buttons_[1].setBounds(228, 16, 80, 32); mode_buttons_[2].setBounds(312, 16, 96, 32);
         engine_badge_.setBounds(424, 12, 184, 40);
         preset_prev_.setBounds(616, 12, 32, 40); preset_name_area_.setBounds(648, 12, 224, 40);
@@ -5103,6 +5204,7 @@ private:
                 if (name.isEmpty()) name = "INIT";
             }
         }
+        if (owner_.six_enabled() && !fx_view_) line1 = "DX7 6-OP";
         g.setColour(colour::GRAY); g.setFont(mono(11.0f)); g.drawText(line1, 656, 15, 208, 14, juce::Justification::left);
         g.setColour(colour::WHITE); g.setFont(mono(16.0f, true)); g.drawText(name.toUpperCase(), 656, 30, 208, 18, juce::Justification::left);
         if (hybrid && !fx_view_) {
@@ -5313,7 +5415,7 @@ private:
             });
     }
     void choose_preset() {
-        chooser_ = std::make_unique<juce::FileChooser>("Importar preset GFP o capa GFL", juce::File(), "*.gfp;*.gfl");
+        chooser_ = std::make_unique<juce::FileChooser>("Importar GFP, GFL o SysEx DX7", juce::File(), "*.gfp;*.gfl;*.syx");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles,
             [safe](const juce::FileChooser& chooser) {
@@ -5336,11 +5438,11 @@ private:
         const bool juno = juno_toggle_.getToggleState();
         const bool ob6 = ob6_toggle_.getToggleState();
         const bool modeld = modeld_toggle_.getToggleState();
-        if (!(hybrid ? owner_.export_hybrid_preset(bytes) : arp2600 ? owner_.export_arp2600_preset(bytes) : modeld ? owner_.export_model_d_preset(bytes) : ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
+        if (!(owner_.six_enabled() ? owner_.export_dx7_preset(bytes) : hybrid ? owner_.export_hybrid_preset(bytes) : arp2600 ? owner_.export_arp2600_preset(bytes) : modeld ? owner_.export_model_d_preset(bytes) : ob6 ? owner_.export_ob6_preset(bytes) : juno ? owner_.export_juno_preset(bytes) : owner_.export_dx7_preset(bytes))) {
             status_.setText("EXPORT: DESACTIVA LFO SYNC Y CARGA UN GFP DEL ENGINE", juce::dontSendNotification);
             return;
         }
-        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(hybrid ? "Hybrid.gfl" : arp2600 ? "ARP2600.gfp" : modeld ? "ModelD.gfp" : ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), hybrid ? "*.gfl" : "*.gfp");
+        chooser_ = std::make_unique<juce::FileChooser>("Guardar preset GFP", juce::File(owner_.six_enabled() ? "DX7-6OP.gfp" : hybrid ? "Hybrid.gfl" : arp2600 ? "ARP2600.gfp" : modeld ? "ModelD.gfp" : ob6 ? "OB6.gfp" : juno ? "Juno.gfp" : "DX7.gfp"), !owner_.six_enabled() && hybrid ? "*.gfl" : "*.gfp");
         juce::Component::SafePointer<BrainEditor> safe(this);
         chooser_->launchAsync(juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles |
                               juce::FileBrowserComponent::warnAboutOverwriting,
@@ -5497,6 +5599,10 @@ private:
     juce::ToggleButton juno_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> juno_attachment_;
     bool displayed_juno_ = false;
+    gf::Dx7SixView six_view_;
+    bool displayed_six_ = false;
+    juce::ToggleButton six_toggle_;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> six_attachment_;
     juce::ToggleButton dx7_toggle_;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> dx7_attachment_;
     bool displayed_dx7_ = false;
