@@ -34,7 +34,9 @@ def saltos_de_fase(x: np.ndarray) -> np.ndarray:
     return np.nonzero(np.abs(d - np.median(d)) > SALTO_RAD)[0] + borde
 
 
-def correr(minutos: float, dispositivo: str, bloque: int, sr: int = SR) -> dict:
+def correr(minutos: float, dispositivo: str, bloque: int, sr: int = SR, modo: str = "bucle") -> dict:
+    """modo «bucle»: sale y vuelve por el mismo dispositivo. «salida»: solo toca el seno (p. ej. por el Audio+).
+    «entrada»: solo graba y analiza (p. ej. la Teensy devolviendo por USB lo que entra por su línea)."""
     import sounddevice as sd
 
     cola: queue.Queue = queue.Queue()
@@ -42,16 +44,32 @@ def correr(minutos: float, dispositivo: str, bloque: int, sr: int = SR) -> dict:
     flags = {"underflow": 0, "overflow": 0}
     paso = 2 * np.pi * F / sr
 
+    def seno(frames):
+        n = np.arange(frames)
+        s = (NIVEL * np.sin(fase[0] + paso * n)).astype(np.float32)
+        fase[0] = (fase[0] + paso * frames) % (2 * np.pi)
+        return s
+
     def cb(indata, outdata, frames, _t, status):
         if status.output_underflow:
             flags["underflow"] += 1
         if status.input_overflow:
             flags["overflow"] += 1
-        n = np.arange(frames)
-        s = (NIVEL * np.sin(fase[0] + paso * n)).astype(np.float32)
-        fase[0] = (fase[0] + paso * frames) % (2 * np.pi)
+        s = seno(frames)
         outdata[:, 0] = s
         outdata[:, 1] = s
+        cola.put(indata[:, 0].copy())
+
+    def cb_salida(outdata, frames, _t, status):
+        if status.output_underflow:
+            flags["underflow"] += 1
+        s = seno(frames)
+        outdata[:, 0] = s
+        outdata[:, 1] = s
+
+    def cb_entrada(indata, frames, _t, status):
+        if status.input_overflow:
+            flags["overflow"] += 1
         cola.put(indata[:, 0].copy())
 
     eventos: list[tuple[float, int]] = []
@@ -68,16 +86,27 @@ def correr(minutos: float, dispositivo: str, bloque: int, sr: int = SR) -> dict:
             if len(buf) >= sr + 400:
                 trozo = buf[: sr + 400]
                 buf = buf[sr:]  # se solapan 400 muestras para no perder saltos en el borde
-                if np.sqrt(np.mean(trozo ** 2)) < NIVEL * 0.2:
+                if np.sqrt(np.mean(trozo ** 2)) < umbral:
                     sin_senal[0] += 1
                     continue
                 n = len(saltos_de_fase(trozo))
                 if n:
                     eventos.append((round((time.time() - inicio) / 60, 2), n))
 
+    # En «entrada» el nivel depende de la ganancia analógica: basta con que haya señal clara.
+    umbral = NIVEL * 0.2 if modo == "bucle" else 10 ** (-50 / 20)
     hilo = threading.Thread(target=analizar, daemon=True)
     hilo.start()
-    with sd.Stream(device=dispositivo, samplerate=sr, blocksize=bloque, channels=2, dtype="float32", callback=cb):
+    if modo == "salida":
+        stream = sd.OutputStream(device=dispositivo, samplerate=sr, blocksize=bloque, channels=2, dtype="float32",
+                                 callback=cb_salida)
+    elif modo == "entrada":
+        stream = sd.InputStream(device=dispositivo, samplerate=sr, blocksize=bloque, channels=2, dtype="float32",
+                                callback=cb_entrada)
+    else:
+        stream = sd.Stream(device=dispositivo, samplerate=sr, blocksize=bloque, channels=2, dtype="float32",
+                           callback=cb)
+    with stream:
         fin = time.time() + minutos * 60
         while time.time() < fin:
             time.sleep(1)
@@ -92,9 +121,10 @@ def main() -> None:
     ap.add_argument("--minutos", type=float, default=60)
     ap.add_argument("--dispositivo", default="hw:3,0")
     ap.add_argument("--bloque", type=int, default=256)
+    ap.add_argument("--modo", choices=("bucle", "salida", "entrada"), default="bucle")
     ap.add_argument("--sr", type=int, default=SR, help="48000 al pasar por PipeWire (el grafo corre al reloj del Audio+)")
     a = ap.parse_args()
-    for k, v in correr(a.minutos, a.dispositivo, a.bloque, a.sr).items():
+    for k, v in correr(a.minutos, a.dispositivo, a.bloque, a.sr, a.modo).items():
         print(f"{k}: {v}")
 
 
