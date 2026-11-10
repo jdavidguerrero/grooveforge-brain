@@ -134,6 +134,52 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
     return resumen
 
 
+# Rangos de velocity de cada capa (las velocities muestreadas quedan dentro de su rango).
+RANGOS = {40: (1, 55), 70: (56, 85), 100: (86, 113), 127: (114, 127)}
+
+
+def armar_racks(kit: Path, data_dir: Path) -> list[str]:
+    """Dos racks de 16 pads (las 32 articulaciones en el orden del mapa), con 4 capas de velocity por pad.
+
+    Usa el formato y el almacén de samples del servicio de kits del modo DRUM (`tools/drum-kits`). Solo la primera
+    repetición de cada velocity: el rack no combina capas de velocity con round-robin.
+    """
+    import sys
+    from uuid import uuid4
+
+    import soundfile as sf
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "drum-kits"))
+    import drum_kits as dk
+
+    man = json.loads((kit / "manifiesto.json").read_text())
+    por_art: dict[str, dict[int, str]] = {}
+    for g in man["golpes"]:
+        if g["rr"] == 1:
+            por_art.setdefault(g["articulacion"], {})[g["velocity"]] = g["archivo"]
+    fuente = dict(id=uuid4().hex, name="Tribe Colombian Percussion (muestreo)", kind="IMPORTED",
+                  licence_note=man["licencia"], original_folder=str(kit))
+    articulaciones = [a for a in TRIBE if a in por_art]
+    rutas = []
+    for n, bloque in enumerate((articulaciones[:16], articulaciones[16:32]), start=1):
+        rack = dk.empty_rack(f"TRIBE {n}", source=fuente)
+        for i, art in enumerate(bloque):
+            capas = []
+            for vel, archivo in sorted(por_art[art].items()):
+                pcm, sr = sf.read(kit / archivo, dtype="float32", always_2d=True)
+                capa = dk.store_sample(data_dir, pcm, sr)
+                capa["velocity_min"], capa["velocity_max"] = RANGOS[vel]
+                capas.append(capa)
+            cat = dk.category(art)
+            pad = rack["pads"][i]
+            pad.update(name=art.upper(), category=cat, source_id=fuente["id"], layers=capas, layer_mode="velocity",
+                       tribe_note=TRIBE[art])
+            larga = max(c["frames"] for c in capas) / 48_000 * 1000
+            pad["params"].update(group=dk.group_for(cat), decay=max(2000.0, larga))
+        rutas.append(dk.save_rack(data_dir, rack))
+    return rutas
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -146,6 +192,9 @@ def main() -> None:
     c.add_argument("--pico-db", type=float, default=-1.0, help="pico del golpe más fuerte tras la ganancia global")
     c.add_argument("--sin-normalizar", action="store_true")
     c.add_argument("--bpm-export", type=float, help="tempo del proyecto de Ableton al exportar, si no era el del plan")
+    rk = sub.add_parser("rack", help="arma los racks TRIBE 1 y TRIBE 2 en el almacén del modo DRUM")
+    rk.add_argument("--kit", type=Path, required=True)
+    rk.add_argument("--data-dir", type=Path, required=True)
     a = ap.parse_args()
     if a.cmd == "midi":
         a.out.mkdir(parents=True, exist_ok=True)
@@ -155,6 +204,9 @@ def main() -> None:
                                                      "repeticiones": REPETICIONES, "golpes": plan}, indent=1))
         fin = plan[-1]["inicio"] + plan[-1]["espacio"]
         print(f"{len(plan)} golpes, {fin / 60:.1f} min a {BPM} BPM → {a.out}/muestreo_tribe.mid")
+    elif a.cmd == "rack":
+        for ruta in armar_racks(a.kit, a.data_dir):
+            print(ruta)
     else:
         r = cortar(a.audio, a.plan, a.out, pico_objetivo_db=None if a.sin_normalizar else a.pico_db,
                    bpm_export=a.bpm_export)
