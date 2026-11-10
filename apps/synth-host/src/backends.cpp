@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 #include <thread>
 #ifdef GF_HAVE_JACK
@@ -11,6 +12,7 @@
 #ifdef GF_HAVE_PIPEWIRE
 #include <pipewire/pipewire.h>
 #include <pipewire/filter.h>
+#include <pipewire/impl-module.h>
 #include <pipewire/thread-loop.h>
 #include <spa/control/control.h>
 #include <spa/pod/iter.h>
@@ -87,6 +89,8 @@ class PipeWire final:public Backend {
     Audio& audio_;
     pw_thread_loop* loop_=nullptr;
     pw_filter* filter_=nullptr;
+    pw_context* context_=nullptr;
+    spa_hook listener_{};
     std::array<void*,10> ports_{};
     void* midi_=nullptr;
     std::array<Midi,MAX_MIDI> events_{};
@@ -136,9 +140,10 @@ class PipeWire final:public Backend {
     }
     void close() noexcept {
         if(started_)pw_thread_loop_stop(loop_);
-        if(filter_)pw_filter_destroy(filter_);
+        if(filter_) { spa_hook_remove(&listener_); pw_filter_destroy(filter_); }
+        if(context_)pw_context_destroy(context_);
         if(loop_)pw_thread_loop_destroy(loop_);
-        filter_=nullptr;loop_=nullptr;started_=false;
+        filter_=nullptr;context_=nullptr;loop_=nullptr;started_=false;
     }
 public:
     PipeWire(Audio& a,unsigned block):audio_(a) {
@@ -147,8 +152,17 @@ public:
             loop_=pw_thread_loop_new("gf-synth-pw",nullptr);if(!loop_)throw std::runtime_error("cannot create PipeWire loop");
             callbacks_.version=PW_VERSION_FILTER_EVENTS;callbacks_.process=process;callbacks_.state_changed=state;
             const auto latency=std::to_string(block)+"/48000";
-            filter_=pw_filter_new_simple(pw_thread_loop_get_loop(loop_),"gf-synth-host",pw_properties_new(PW_KEY_NODE_NAME,"gf-synth-host",PW_KEY_MEDIA_TYPE,"Audio",PW_KEY_MEDIA_CATEGORY,"Source",PW_KEY_MEDIA_ROLE,"DSP",PW_KEY_MEDIA_CLASS,"Audio/Source",PW_KEY_NODE_AUTOCONNECT,"false","node.always-process","true","node.rate","1/48000","node.lock-rate","true",PW_KEY_NODE_LATENCY,latency.c_str(),nullptr),&callbacks_,this);
+            // One explicit RT module; only the data loop requests RT. Control
+            // and the separately launched GUI retain normal scheduling.
+            context_=pw_context_new(pw_thread_loop_get_loop(loop_),pw_properties_new(
+                "module.rt","false","loop.rt-prio","70",nullptr),0);
+            if(!context_)throw std::runtime_error("cannot create PipeWire context");
+            if(!pw_context_load_module(context_,"libpipewire-module-rt",
+                "rt.prio=70 rlimits.enabled=true rtkit.enabled=true rtportal.enabled=true",nullptr))
+                std::cerr<<"PipeWire RT module unavailable; check rtkit/limits and data-loop policy with chrt\n";
+            filter_=pw_filter_new(context_,"gf-synth-host",pw_properties_new(PW_KEY_NODE_NAME,"gf-synth-host",PW_KEY_MEDIA_TYPE,"Audio",PW_KEY_MEDIA_CATEGORY,"Source",PW_KEY_MEDIA_ROLE,"DSP",PW_KEY_MEDIA_CLASS,"Audio/Source",PW_KEY_NODE_AUTOCONNECT,"false","node.always-process","true","node.rate","1/48000","node.lock-rate","true",PW_KEY_NODE_LATENCY,latency.c_str(),nullptr));
             if(!filter_)throw std::runtime_error("cannot create PipeWire filter");
+            pw_filter_add_listener(filter_,&listener_,&callbacks_,this);
             for(size_t i=0;i<10;++i) {
                 ports_[i]=pw_filter_add_port(filter_,PW_DIRECTION_OUTPUT,PW_FILTER_PORT_FLAG_MAP_BUFFERS,1,pw_properties_new(PW_KEY_FORMAT_DSP,"32 bit float mono audio",PW_KEY_PORT_NAME,port_names[i],nullptr),nullptr,0);
                 if(!ports_[i])throw std::runtime_error("cannot create PipeWire audio port");

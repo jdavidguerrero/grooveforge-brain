@@ -53,7 +53,7 @@ No se promete que socket sea tan rápido como MIDI ni se ocultan errores de puer
 Parámetros/navegación/medidores entran por SurfaceBatcher, máximo un commit por
 frame. MIDI no toca QObject de presentación desde el callback: recibe un snapshot
 inmutable de parte/escala. Objetivo USB MIDI→audio p95 <5 ms (CLAUDE.md/01): USB y puente <1 ms,
-bloque128/48k ≤2,67 ms y resto de salida <1,33 ms. El detector FSR de 18
+bloque128/48k ≤2,67 ms y resto de salida <1,33 ms. Ese presupuesto corresponde a128; el default estable actual es256 (5,33ms sólo de quantum), por lo que aún no se certifica p95<5ms. El detector FSR de 18
 añade hasta 3 ms de adquisición antes del mensaje; medir pad/FSR por separado. Son presupuestos,
 no mediciones; verificar con audio físico y carga de GUI en Pi (ADR-007).
 
@@ -89,14 +89,14 @@ sigue necesaria para detectar nuevos elementos que parezcan clicables sin marcar
 ## Desarrollo y puerta física
 
 `--surface-port 'GF Consola' --host-midi-port <puerto>`; `--external-midi-port`
-repetible y explícito, excluyendo la superficie para evitar bucles. `--surface-cdc`
+repetible: substring explícito, `auto` para todos los teclados externos, `none` para desactivar. `--surface-cdc`
 habilita HP/IN. `--fake-surface` no abre hardware: 1–8 / QWERTYUI / ASDFGHJK / ZXCVBNM, (de arriba abajo)
 simulan los 32 pads, flechas encoders, SHIFT fino, [/] octava, F3 PARTS. Teclas liberan notas;
 no autorrepeat musical; perder foco de ventana libera las notas simuladas.
 ALT+flechas/Enter simula recorrer/activar destinos touch. `--preview` es diseño sin sonido.
 
 `pi/run_synth.sh` no instala: touch invertx:rotate=0 e imagen QML90, socket
-$XDG_RUNTIME_DIR/gf-synth.sock, puerto GF Consola. Dependencias MIDI opcionales
+$XDG_RUNTIME_DIR/gf-synth.sock, puerto GF Consola. Pasa `--external-midi-port "${GF_EXTERNAL_MIDI_PORT:-auto}"`: sin flags abre todos los inputs externos (p.ej.Arturia MiniLab); excluye GF Consola/GF Superficie, Midi Through, puertos propios RtMidi/GUI y host. Un `--external-midi-port` explícito prevalece sobre el default/env. Resolución deduplicada; un patrón ambiguo sigue siendo error. `GF_EXTERNAL_MIDI_PORT=none` desactiva descubrimiento. Descubrimiento al arrancar, sin promesa de hotplug automático. Dependencias MIDI opcionales
 mido/python-rtmidi y pyserial para CDC, instaladas previamente por el usuario.
 
 Preguntas abiertas para Juan: ¿FSR batería o acordes? ¿Aprobar formato LED y
@@ -105,7 +105,7 @@ Se propone como opción futura; esta entrega sólo tap para foco. Falta medir Pi
 latencia, xruns, touch físico y receptor LED; capturas desktop no certifican hardware.
 
 
-## Resultado de escritorio
+## Resultado de escritorio previo a la corrección de hardware
 
 GUI: **305 passed, 13 skipped**; tools/consola: **450 passed**. Los skips existentes
 son listener Unix restringido y General Sans local. `uv run pytest` encontró caché
@@ -118,3 +118,12 @@ Dos intentos de staging fallaron con `.git/index.lock: Operation not permitted`:
 spec y código quedan **sin commits**, rama `codex/modo-synth`, base `7f106b0`, sin push.
 No se modificaron otros checkouts, docs00–06 ni doc19. Puertas físicas y preguntas
 abiertas siguen pendientes; no se declara aprobado ADR-007 desde desktop.
+
+
+## Banco mínimo y RT tras medición del Pi (2026-11-10)
+
+Con `consola_uno` (sin flag diag) probar FSR1/2 en14/15: la superficie envía notas36/37 con velocity y note-off; `synth_surface.py` las transforma en36/38 en la parte seleccionada. Sharp **ADS0x48 AIN2** envía CC33 y nota108 para presencia: la GUI conserva el último cutoff al salir; no controla MOVE (segundo Sharp). AIN0 sigue como fader1 CC24. MASTER22 al aire está **deshabilitado** (`pot_mask=0`), al igual que CUE/IN/selector en mínimo; conectar pot y habilitar `GF_CONSOLA_WIRED_POTS=1` sólo si se quiere probar MASTER. No cambia el cableado.
+
+`run_synth.sh` garantiza GUI SCHED_OTHER. Host/data-loop solicita RT mediante PipeWire y usa256 por defecto; permisos, límites y comprobación **por TID** en [16, sección RT](16-synth-host.md#corrección-pi-con-gui-y-prioridad-rt-2026-11-10). Conservar el quantum persistido256;128 es opción después de verificar RT y repetir xruns con GUI. Las pruebas de escritorio cubren mensajes MIDI reales decodificados de los dos FSR/Sharp, selección de varios teclados con auto y override/env del launcher; no prueban latencia física.
+
+Corrección actual: **308 passed, 13 skipped** en la suite GUI aislada; builds y tests firmware/host en la [medición](mediciones/synth-pi-20261110.md#verificación-de-esta-corrección). No hubo flash ni cambios de configuración en Pi.

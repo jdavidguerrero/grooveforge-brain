@@ -118,7 +118,7 @@ def main():
             observer = extra_clients.pop(0) if inherited else Client(path)
             clients.append(observer)
             hello = request(c, "hello", client="contract-test")
-            check(hello["sample_rate"] == 48000 and hello["block"] == 128, "hello clock")
+            check(hello["sample_rate"] == 48000 and hello["block"] == 256, "hello default clock")
             check(set(hello["engines"]) == {"prophet", "dx7", "dx7_6op", "juno", "ob6", "model_d", "arp2600", "hybrid"}, "registry")
             state = request(c, "get_state")["parts"]
             check(len(state) == 4 and [p["role"] for p in state] == ["BASS", "CHORDS", "LEAD", "PAD"], "parts/roles")

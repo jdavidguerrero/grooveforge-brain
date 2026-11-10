@@ -10,9 +10,13 @@ USB compuesto **MIDI + Audio 4ch + Serial**, producto **«GF Consola»**. `super
 
 ## 2. Tiempo real y bus compartido
 
-Prioridad NVIC (menor número gana): USB **112**, DMA I2S **128** (valor del core), FSR IntervalTimer **160**, actualización AudioStream **208** (oficial). Cada **400 µs** se escanean solo los FSR habilitados: ADC1 por registros, detector de pico de 3 ms y cola fija. Ninguna transacción I2C, MIDI o Serial en ISR. Las conversiones lentas que comparten ADC1 (MASTER canal 13, CUE canal 1, selector canal 10) bloquean solamente PIT durante una conversión; audio/USB siguen habilitados. IN usa ADC2 canal 3. Esto corrige la suposición de 06: **CUE en 24 comparte ADC1**, ya no está en ADC2 como en 38. Hay que medir scan_gap y latencia con audio dúplex: compilar no demuestra ≥2 kHz ni <5 ms.
+Prioridad NVIC (menor número gana): USB **112**, DMA I2S **128** (core), FSR IntervalTimer **160**, AudioStream **208**. La prioridad del timer se fija **antes de begin()**. `IntervalTimer` comparte IRQ_PIT entre sus cuatro canales: se toma la prioridad más alta solicitada; STATS publica `pit_priority`. I2S asume `update_setup()` en su constructor global; `AudioMemory` sólo crea un IntervalTimer de respaldo si ningún I/O asumió la actualización. No hay evidencia de otro PIT activo en este grafo (véase §7), ni se enmascara el PIT desde loop.
 
-Wire 18/19 a **400 kHz**, todo el acceso en setup/loop: SGTL5000 0x0A, ADS 0x48/49, MCP 0x20–22 y DAC CV 0x60. El SGTL se configura al arrancar y solo se vuelve a tocar al cambiar HP/IN o recuperarse. Pots filtrados y deduplicación de valores evitan escrituras inútiles. ADS single-shot sin esperar la conversión; MCP se alternan cada 1 ms con debounce 5 ms. Fallos: no imprimir por intento, marcar ausente y reintentar tras **1 s** (M4 handshake también 1 s); STATS publica presencia y errores acumulados. Una caída MCP libera notas sostenidas. Los timeouts síncronos de Wire pueden alargar loop; las ISR siguen funcionando. Al recuperar el códec, `AudioControlSGTL5000::enable()` oficial añade 5 + 400 ms de espera en loop: el audio/FSR por ISR sigue, pero la entrega de controles puede retrasarse o desbordar la cola durante esa recuperación; `loop_max_us` incluye ese trabajo. No se promete reconexión transparente durante un set.
+ADC1 tiene **un único dueño**, `AdcScan` en la ISR de 50 µs. Cada trama de 400 µs programa FSR habilitados; CUE24 (canal1) y selector41 (canal10) se intercalan cada 10 ms. Una interrupción inicia la conversión y otra recoge R0: **no hay busy-wait**. Si no llega COCO en 100 µs, aborta HC0=31, incrementa `adc1_timeouts`, omite esa muestra y continúa. No fabrica un cero ni un golpe. El loop sólo lee buzones de CUE/selector. MASTER22 usa **ADC2 canal13**, IN26 ADC2 canal3; ADC2 pertenece al loop, con plazo DWT de **20 µs** y `adc2_timeouts`. Tampoco `consola_s` comparte ADC1 con pots. Se conserva la calibración/reloj asíncrono PJRC realizada por `analog_init` antes de setup, resolución12, sin averaging/trigger externo/continuous/compare/DMA ADC. No hay `analogRead` después de tomar posesión. No cambia ningún pin.
+
+Wire18/19 a **400 kHz**: I2C sólo en setup/loop. El perfil decide qué dispositivos existen: mínimo **no sondea** ADS0x49, MCP0x22 ni DAC0x60. ADS0x48 convierte sólo AIN0/AIN2. NACK/fallo usa backoff exponencial **1, 2, 4, 8, 16, 32 s**, reiniciado después de una operación completa correcta. MCP libera notas al caer. Codec/CV aplican el mismo backoff. Todos los CC tienen cadencia máxima **100 Hz por control**; valores absolutos se coalescen, encoders/jog retienen pasos pendientes. Las actualizaciones locales de CUE/IN comparten esa cadencia.
+
+**Timeout real de Wire:** Teensyduino1.160.0 `WireIMXRT` no tiene `setWireTimeout`; `Stream::setTimeout` no limita `endTransmission/requestFrom`. `surface/tools/wire_timeout.py` crea un **framework privado en .pio/build**, conserva el driver PJRC y añade `setWireTimeout(250)` / `getWireTimeoutCount()`. El plazo de **250 µs** cubre adquisición de bus y transferencia juntos; pin-low también250µs. Recuperar bus ocupado añade como máximo nueve pulsos de10µs más10µs iniciales; siguiente intento respeta backoff. El script valida los sitios que parchea y nunca modifica `~/.platformio`. Se aplica a uno/full/brain/diag y `consola_s`; consola/USB/sketch49 conservan su framework. `wire_timeout_us`, `wire_timeouts`, `retry_max_us` y retries codec/CV en STATS permiten contrastarlo. **Objetivo medible: loop_max_us<2000 en régimen estable**, pendiente de Pi/Teensy; el arranque y la recuperación SGTL con `enable()` oficial (5+400ms) quedan fuera de régimen estable y sí aparecen en el máximo si ocurren durante loop. Hacer `@S RESET` después de setup/recuperación antes de medir. No se afirma que un build mida latencia.
 
 Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Sin accesos concurrentes al bus desde callbacks MIDI. CV por MCP4725, escritura volátil, nunca EEPROM; `@GF CV <0–4095>` controla 0x60, inicialmente cero. El segundo DAC 0x61 queda reservado.
 
@@ -20,7 +24,7 @@ Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Si
 
 Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. DIN 0/1 y triggers 25/27/38/39 permanecen reservados.
 
-No hay contradicción de asignación en 17. Restricciones del shield reutilizado: **sin microSD SPI ni flash opcional**, porque 6/10/11/12/13 son superficie; no montar el pot de volumen opcional del shield en 15 (FSR2). La función analógica de CUE requiere protección ADC1 descrita arriba. La escalera del selector no tenía resistencias/umbrales definidos: se fija aquí como contrato de prototipo, calibrable antes de PCB.
+No hay contradicción de asignación en 17. Restricciones del shield reutilizado: **sin microSD SPI ni flash opcional**, porque 6/10/11/12/13 son superficie; no montar el pot de volumen opcional del shield en 15 (FSR2). CUE usa el buzón del planificador ADC1 descrito arriba. La escalera del selector no tenía resistencias/umbrales definidos: se fija aquí como contrato de prototipo, calibrable antes de PCB.
 
 Canal MIDI 1; se conservan FSR notas 36–39, M4 48–79, encoders CC16–23, jog CC35, faders CC24–27, expresión CC28–29, MASTER/CUE/IN CC30/31/32, manos CC33/34 y presencia notas108/109. MCP usa orden GPIO **0–6, 8–14**; GPA7/GPB7 no son entradas:
 
@@ -38,7 +42,7 @@ Selector: común a 41; tres posiciones a GND, mitad de 3,3 V (divisor 10k/10k), 
 
 Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A, CJMCU-2317 0x20/21 (solo GPA0–GPA6 cableados) y ADS de dirección fija 0x48 (fader A0, Sharp A2). No se trasladó ni se modificó el sketch50 que vive en otra rama.
 
-`GF_CONSOLA_MINIMAL=1` predeterminado; el entorno `consola_uno_full` lo pone a 0 y activa el mapa completo. Cinco encoders **incluido jog** = encoder1–4 + jog; dos FSR; solo pot MASTER. Los periféricos I2C opcionales se detectan y reportan aunque no tengan controles habilitados. No se puede autodetectar si un pot/FSR analógico está cableado: las máscaras desactivan entradas flotantes.
+`GF_CONSOLA_MINIMAL=1` predeterminado; el entorno `consola_uno_full` lo pone a 0 y activa el mapa completo. Cinco encoders **incluido jog** = encoder1–4 + jog; dos FSR; **ningún pot** (MASTER22 está al aire en esta mesa). Los periféricos I2C excluidos no se sondean. No se puede autodetectar si un pot/FSR analógico está cableado: las máscaras desactivan entradas flotantes.
 
 | Conectar | Cableado mínimo |
 |---|---|
@@ -46,7 +50,7 @@ Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A
 | Encoder1–4 + jog | A/B 2/3, 4/5, 6/9, 10/11, 37/40; común GND |
 | MCP0x20/21 | SDA18/SCL19, 3,3 V, GND, RESET alto; A2/A1/A0=000/001; módulos CJMCU-2317, solo GPA0–GPA6 cableados y habilitados; clics encoder1–4 en GPA0–GPA3, pulsadores a GND |
 | FSR1/2 | 3,3 V → FSR → 14/15; cada ADC → 10k → GND |
-| MASTER | extremos 3,3 V/GND, cursor22 |
+| MASTER (opcional, deshabilitado) | extremos 3,3 V/GND, cursor22; habilitar `-DGF_CONSOLA_WIRED_POTS=1` sólo al cablearlo |
 | ADS0x48 | 3,3 V/GND, SDA18/SCL19, dirección fija 0x48 sin pin ADDR en el módulo de Juan; fader1 cursor AIN0 (extremos 3,3 V/GND); Sharp1 salida AIN2 |
 | Sharp1 | alimentación5 V, ≥10µF local y GND común; verificar salida dentro de 0–3,3 V antes del ADS |
 | M4 | TX M4 → RX28; RX M4 ← TX29; GND común, alimentación adecuada; firmware M4 existente de press/release |
@@ -62,7 +66,7 @@ Tests nativos: mapa MCP completo/pedal/libre y ausencia de colisiones, ladder co
 La validación 0 dropouts de [E3](mediciones/e3-usb-async-20261109.md) corresponde a `consola_usb`, **no certifica este firmware combinado**. Después de cablear: audio dúplex ≥60 min + todos los controles, cero drops de cola/USB, scan ≥2kHz y gap≤500µs, carga total≤60%, reconexión de cada I2C y M4. Medir latencia y calibrar FSR/Sharp/ladder; falta hardware para aprobar la puerta. No usar animaciones LED síncronas. No cambia ningún SSoT00–06.
 
 
-## 6. Resultado de escritorio (esta entrega)
+## 6. Resultado de escritorio anterior (antes del fallo físico)
 
 Se escribió este documento antes del código. Commit del documento bloqueado por `Unable to create .git/index.lock: Operation not permitted`; por la misma restricción quedan **documento y código sin commits** sobre `codex/teensy-unica`, HEAD `2695044`. Sin push, upload ni cambios al checkout host.
 
@@ -87,3 +91,18 @@ Para reproducir aquí, usar el ejecutable `~/.platformio/penv/bin/pio` y el pref
 Logs: `/tmp/gf-unica-firmware-native.log`, `/tmp/gf-unica-processor-native.log`, `/tmp/gf-unica-python.log`, `/tmp/gf-unica-firmware-builds-final.log`, `/tmp/gf-unica-consola_s.log`. Compilaciones completas de los tres entornos nuevos: `/tmp/gf-unica-uno-builds.log`.
 
 **Pendiente físico:** probar este firmware combinado bajo audio dúplex, medir jitter/latencia/carga total y reconexión. Los pines de 17 se respetan; las salvedades del shield y ADC1 se explican en §2–3. CV requiere conectar un MCP4725; la mesa actual no lo tiene. La falta de esos ensayos no se oculta tras el resultado E3 del firmware anterior.
+
+
+## 7. Corrección tras la prueba física del 10 de noviembre
+
+Evidencia de entrada: [medición Pi](mediciones/synth-pi-20261110.md). Con FSR activo enumera pero CDC/MIDI no avanzan; la misma imagen con `GF_DIAG_NO_FSR` avanza. En HEAD5ded9db `read_adc1` y `read_adc2` esperan COCO **sin ningún plazo**; la ISR puede por tanto retener el procesador indefinidamente si ADC no termina. Éste es el defecto de vivacidad comprobable en código y la ruta aislada por el A/B. **El disparador exacto de la falta de COCO no está demostrado**: no hay dump de ADC ni reproducción con placa en esta sesión. No se presenta la sospecha MASTER como causa probada: ese HEAD ya deshabilitaba IRQ_PIT alrededor de MASTER/CUE/selector, y el `analogRead(14)` de setup precedía al timer. Fijar prioridades por sí solo tampoco demuestra una solución.
+
+Se contrastó el paquete instalado `framework-arduinoteensy1.160.0`: `cores/teensy4/analog.c` (`pin_to_channel`, `analog_init`, `analogRead`), `IntervalTimer.cpp`, `AudioStream.cpp:initialize_memory/update_setup`, `libraries/Audio/output_i2s.cpp`, `libraries/ADC/ADC.cpp`. MASTER22 ADC1/2 canal13; CUE24 sólo ADC1 canal1; IN26 sólo ADC2 canal3; selector41 ADC1/2 canal10. La tabla de ADC incluida sí expone ADC2 para41 aunque PJRC `analogRead(41)` elige ADC1. El SGTL usa su ADC de audio por I2S, no ADC1 del MCU. El overlay alex6679 no sustituye analog.c ni IntervalTimer.cpp. Fuentes primarias: [core PJRC](https://github.com/PaulStoffregen/cores/blob/master/teensy4/analog.c), [ADC incluido](https://github.com/pedvide/ADC/blob/master/ADC.cpp). La versión instalada prevalece sobre cambios posteriores de esas ramas.
+
+El nuevo planificador elimina las esperas y todos los accesos concurrentes al mismo ADC; tests nativos inyectan COCO ausente permanente, recuperación y wrap; verifican tramas2,5kHz, slots lentos100Hz y velocity. El fake Wire ejecuta el **AdsScanner de producción**: máscara vacía=0 transacciones, sólo AIN0/2, NACK/read-fault, backoff y recuperación. Cadencia se prueba con10000 actualizaciones/s y conservación de todos los detents. `fsr0_sps`…`fsr3_sps` cuentan muestras reales, además de `fsr_hz` (tramas), errores ADC, `fsr_timer`, `adc1_cfg/gc` y prioridad PIT. Una frecuencia de tramas correcta con SPS0 **no** aprueba FSR.
+
+`consola_uno_diag` se **conserva como A/B de aislamiento** (sin timer, con trazas y espera inicial de USB); no sirve para probar pads. `GF_DIAG_NO_FSR` está ausente de `consola_uno/full/brain`; esas imágenes no incluyen las trazas diag ni su espera USB. La salida existente de audio_graph al arrancar se conserva.
+
+Pots: filtro EMA y deadband2 MIDI, más techo100Hz, no pueden identificar eléctricamente una entrada flotante. Por eso mínimo las deja deshabilitadas; completo supone cableado completo. Al habilitar un cursor, conectar ambos extremos; si puede quedar desconectado, poner pull-down externo (p.ej.100k a GND, verificando carga/calibración). No usar un pin al aire como detector de pot. No hay cambios de pin que Juan deba recablear.
+
+Prueba pendiente con firmware de producción: FSR1/2 en14/15 con divisor10k, Sharp0x48 AIN2, `@S RESET`, `@S STATS` después de60s y audio dúplex. Esperar `pot_mask=0`, `ads_mask=1`, `mcp_mask=3`, `cv_enabled=0`, `cv_errors=0`, `ads1_sps=0`, `fsr_timer=1`, muestras de cada pad≥2000/s, `adc1_timeouts=adc2_timeouts=0`, cero drops y loop_max<2000µs. Enviar notas36/37 con velocity y liberación; CC33/nota108 de Sharp; SYNTH transforma el segundo FSR en nota38 (doc21). Si aparece timeout, guardar STATS completo: aún falta determinar el disparador físico original. Resultados de escritorio de esta corrección: ver medición enlazada (no reemplazan el ensayo físico).

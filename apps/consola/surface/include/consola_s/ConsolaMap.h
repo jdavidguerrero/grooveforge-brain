@@ -4,6 +4,10 @@
 #ifndef GF_CONSOLA_MINIMAL
 #define GF_CONSOLA_MINIMAL 1
 #endif
+// Explicit opt-in only after wiring MASTER to 22, 3.3 V and GND.
+#ifndef GF_CONSOLA_WIRED_POTS
+#define GF_CONSOLA_WIRED_POTS 0
+#endif
 namespace consola {
 /// One identity used by the actual USB descriptor and native tests.
 #define GF_CONSOLA_PRODUCT_CHARS {'G','F',' ','C','o','n','s','o','l','a'}
@@ -24,7 +28,7 @@ struct Profile {
     uint16_t mcp_inputs[3];
     bool selector;
 };
-inline constexpr Profile MINIMAL{0x10f, 0x03, 0x01, {0x05,0x00}, {0x007f,0x007f,0x0000}, false};
+inline constexpr Profile MINIMAL{0x10f, 0x03, GF_CONSOLA_WIRED_POTS & 0x07, {0x05,0x00}, {0x007f,0x007f,0x0000}, false};
 inline constexpr Profile FULL{0x1ff, 0x0f, 0x07, {0x0f,0x0f}, {0x7f7f,0x7f7f,0x3f7f}, true};
 /// Minimal ADS0 AIN2 is Sharp1; full-panel hands remain on ADS1 AIN2/3.
 constexpr int8_t hand_index(bool minimal, uint8_t chip, uint8_t channel) {

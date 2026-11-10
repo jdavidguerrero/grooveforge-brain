@@ -7,7 +7,7 @@ StartLimitBurst=10
 
 [Service]
 Type=notify
-ExecStart=%h/.local/bin/gf-synth-host --backend pipewire
+ExecStart=%h/.local/bin/gf-synth-host --backend pipewire --block 256
 Restart=on-failure
 RestartSec=2
 WatchdogSec=10
@@ -15,6 +15,8 @@ TimeoutStartSec=15
 TimeoutStopSec=5
 UMask=0077
 NoNewPrivileges=yes
+LimitRTPRIO=70
+LimitMEMLOCK=268435456
 
 [Install]
 WantedBy=default.target

@@ -91,7 +91,7 @@ def main():
     parser.add_argument('--fake-surface', action='store_true', help='Desktop pad/encoder simulation, no surface input')
     parser.add_argument('--host-midi-port', default='gf-synth-host', help='Host MIDI output substring')
     parser.add_argument('--note-transport', choices=['auto', 'midi', 'socket'], default='auto')
-    parser.add_argument('--external-midi-port', action='append', default=[], help='External keyboard input substring')
+    parser.add_argument('--external-midi-port', action='append', default=[], help='External input substring; auto opens external keyboards, none disables discovery')
     parser.add_argument('--surface-cdc', help='Explicit GF Consola CDC device for HP/IN')
     parser.add_argument('--room-node', default='@DEFAULT_AUDIO_SINK@', help='PipeWire room sink node for MASTER')
     parser.add_argument('--list-screens', action='store_true')

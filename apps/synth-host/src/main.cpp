@@ -58,11 +58,11 @@ int main(int argc,char** argv) {
 #else
         std::string backend="offline";
 #endif
-        std::vector<int> connected_fds;unsigned block=128;double seconds=0;bool wet=false,no_state=false;
+        std::vector<int> connected_fds;unsigned block=256;double seconds=0;bool wet=false,no_state=false;
         for(int i=1;i<argc;++i) {
             const std::string arg=argv[i];auto value=[&](){if(i+1>=argc)throw std::runtime_error("missing value: "+arg);return std::string(argv[++i]);};
             if(arg=="--control-fd")connected_fds.push_back(std::stoi(value()));else if(arg=="--backend")backend=value();else if(arg=="--socket")socket=value();else if(arg=="--presets")presets=value();else if(arg=="--state")state=value();else if(arg=="--repo-presets")repo=value();else if(arg=="--block")block=unsigned(std::stoul(value()));else if(arg=="--seconds")seconds=std::stod(value());else if(arg=="--render")wav=value();else if(arg=="--report")report=value();else if(arg=="--benchmark")wet=true;else if(arg=="--no-state")no_state=true;
-            else if(arg=="--help") {std::cout<<"gf-synth-host [--backend pipewire|jack|offline] [--socket PATH] [--presets DIR]\n  [--state PATH|--no-state] [--repo-presets DIR] [--block 128] [--seconds N] [--benchmark]\n  --render FILE.wav --seconds 20 [--report FILE.json]   deterministic wet benchmark\n  --control-fd FD (repeatable): inherit connected Unix sockets, for sandbox tests\n";return 0;}else throw std::runtime_error("unknown argument: "+arg);
+            else if(arg=="--help") {std::cout<<"gf-synth-host [--backend pipewire|jack|offline] [--socket PATH] [--presets DIR]\n  [--state PATH|--no-state] [--repo-presets DIR] [--block 256] [--seconds N] [--benchmark]\n  --render FILE.wav --seconds 20 [--report FILE.json]   deterministic wet benchmark\n  --control-fd FD (repeatable): inherit connected Unix sockets, for sandbox tests\n";return 0;}else throw std::runtime_error("unknown argument: "+arg);
         }
         if(block<16||block>MAX_FRAMES||!std::isfinite(seconds)||seconds<0)throw std::runtime_error("invalid block or duration");
         initialize_catalogs();

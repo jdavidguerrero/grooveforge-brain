@@ -5,6 +5,8 @@
 #include <IntervalTimer.h>
 #include <cstring>
 #include "consola_s/Surface.h"
+#include "consola_s/AdcScan.h"
+#include "consola_s/CcCadence.h"
 #include "consola_s/ConsolaMap.h"
 #include "consola_s/PadSelector.h"
 #include "consola_s/McpButtons.h"
@@ -19,7 +21,7 @@
 namespace {
 constexpr uint8_t MIDI_CHANNEL = consola::MIDI_CHANNEL;
 constexpr uint8_t FSR_PINS[] = {14, 15, 16, 17};
-constexpr uint8_t FSR_ADC_CHANNELS[] = {7, 8, 12, 11};
+constexpr uint8_t ADC1_CHANNELS[] = {7, 8, 12, 11, 1, 10};
 #ifdef GF_CONSOLA_UNO
 constexpr uint8_t POT_PINS[] = {22,24,26};
 constexpr auto PROFILE = GF_CONSOLA_MINIMAL ? consola::MINIMAL : consola::FULL;
@@ -35,6 +37,20 @@ surface::CommandHandler command_handler = nullptr;
 surface::PotHandler pot_handler = nullptr;
 surface::StatsHandler stats_handler = nullptr;
 PadSelector selector;
+#ifdef GF_CONSOLA_UNO
+constexpr uint8_t ADC1_MASK = PROFILE.fsrs | ((PROFILE.pots & 2) ? 0x10 : 0) | (PROFILE.selector ? 0x20 : 0);
+#else
+constexpr uint8_t ADC1_MASK = PROFILE.fsrs;
+#endif
+AdcScan adc_scan(ADC1_MASK);
+volatile uint16_t slow_adc[2] = {};
+volatile uint8_t slow_valid = 0;
+volatile uint32_t adc1_timeouts = 0;
+uint32_t adc2_timeouts = 0;
+bool fsr_timer_ok = false;
+CcCadence cc_cadence[128];
+uint8_t cc_latest[128] = {};
+bool cc_pending[128] = {};
 constexpr uint8_t QUEUE_SIZE = 64;
 FsrVelocity pads[] = {
     FsrVelocity({160,3000,100}), FsrVelocity({160,3000,100}),
@@ -67,7 +83,7 @@ uint8_t m4_tx_memory[256];
 struct PadEvent { uint8_t pad; bool on; uint8_t velocity; };
 volatile PadEvent queue[QUEUE_SIZE];
 volatile uint8_t queue_head = 0, queue_tail = 0;
-volatile uint32_t scans = 0, scan_gap_max = 0, queue_drops = 0;
+volatile uint32_t scans = 0, scan_gap_max = 0, queue_drops = 0, fsr_samples[4] = {};
 uint32_t last_scan = 0;
 uint32_t stats_start = 0, loop_max = 0, midi_events = 0, ads_reads[2] = {};
 uint32_t ads_error_base[2] = {}, mcp_errors = 0;
@@ -77,6 +93,7 @@ uint8_t next_ads = 0, next_mcp = 0;
 uint32_t last_selector = 0;
 #endif
 RetryGate mcp[MCP_COUNT];
+bool mcp_configured[MCP_COUNT] = {};
 McpButtons buttons[] = {McpButtons(0,PROFILE.mcp_inputs[0]), McpButtons(1,PROFILE.mcp_inputs[1])
 #ifdef GF_CONSOLA_UNO
     ,McpButtons(2,PROFILE.mcp_inputs[2])
@@ -92,37 +109,56 @@ uint32_t m4_byte_time = 0;
 char command[32];
 size_t command_size = 0;
 bool command_overflow = false;
-char response[768];
+char response[1024];
 size_t response_size = 0, response_sent = 0;
 
-uint16_t read_adc1(uint8_t channel) {
-    // PJRC analogRead calls yield while waiting; ISR must never run host callbacks.
-    ADC1_HC0 = channel;
-    while (!(ADC1_HS & ADC_HS_COCO0)) {}
-    return ADC1_R0;
-}
-uint16_t read_adc2(uint8_t channel) {
+// ADC2 belongs to loop only. 20 us is well above a 12-bit single conversion.
+// DWT keeps the bound independent of SysTick priority; no yield/callbacks here.
+bool read_adc2(uint8_t channel, uint16_t& value) {
+    const uint32_t began = ARM_DWT_CYCCNT;
     ADC2_HC0 = channel;
-    while (!(ADC2_HS & ADC_HS_COCO0)) {}
-    return ADC2_R0;
+    while (!(ADC2_HS & ADC_HS_COCO0)) {
+        if (uint32_t(ARM_DWT_CYCCNT - began) >= F_CPU_ACTUAL / 50000) {
+            ADC2_HC0 = 31;
+            ++adc2_timeouts;
+            return false;
+        }
+    }
+    value = ADC2_R0;
+    return true;
 }
 void scan_fsr() {
     const uint32_t now = micros();
-    if (scans && now - last_scan > scan_gap_max) scan_gap_max = now - last_scan;
-    last_scan = now;
-    ++scans;
-    for (uint8_t i = 0; i < 4; ++i) {
-        if (!(PROFILE.fsrs & (1u << i))) continue;
-        const auto event = pads[i].sample(read_adc1(FSR_ADC_CHANNELS[i]), now);
-        if (!event.changed) continue;
-        const uint8_t next = (queue_head + 1) % QUEUE_SIZE;
-        if (next == queue_tail) { ++queue_drops; continue; }
-        queue[queue_head].pad = i;
-        queue[queue_head].on = event.on;
-        queue[queue_head].velocity = event.velocity;
-        __asm__ volatile("dmb" ::: "memory");
-        queue_head = next;
+    const auto step = adc_scan.tick(now, ADC1_HS & ADC_HS_COCO0);
+    if (step.timeout) { ADC1_HC0 = 31; ++adc1_timeouts; }
+    if (step.frame) {
+        if (scans && now - last_scan > scan_gap_max) scan_gap_max = now - last_scan;
+        last_scan = now;
+        ++scans;
     }
+    if (step.sample >= 0) {
+        const uint16_t raw = ADC1_R0;
+        const uint8_t i = step.sample;
+        if (i >= 4) {
+            slow_adc[i-4] = raw;
+            slow_valid |= 1u << (i-4);
+        } else {
+            ++fsr_samples[i];
+            const auto event = pads[i].sample(raw,now);
+            if (event.changed) {
+                const uint8_t next = (queue_head + 1) % QUEUE_SIZE;
+                if (next == queue_tail) ++queue_drops;
+                else {
+                    queue[queue_head].pad = i;
+                    queue[queue_head].on = event.on;
+                    queue[queue_head].velocity = event.velocity;
+                    __asm__ volatile("dmb" ::: "memory");
+                    queue_head = next;
+                }
+            }
+        }
+    }
+    if (step.start >= 0) ADC1_HC0 = ADC1_CHANNELS[step.start];
 }
 void send_note(uint8_t note, bool on, uint8_t velocity) {
     if (on) usbMIDI.sendNoteOn(note, velocity, MIDI_CHANNEL);
@@ -130,8 +166,19 @@ void send_note(uint8_t note, bool on, uint8_t velocity) {
     ++midi_events;
 }
 void send_cc(uint8_t cc, uint8_t value) {
-    usbMIDI.sendControlChange(cc, value, MIDI_CHANNEL);
-    ++midi_events;
+    cc_latest[cc] = value;
+    cc_pending[cc] = true;
+}
+void flush_cc() {
+    const uint32_t now = micros();
+    for (uint8_t cc = 0; cc < 128; ++cc) {
+        if (!cc_pending[cc] || !cc_cadence[cc].due(now)) continue;
+        usbMIDI.sendControlChange(cc,cc_latest[cc],MIDI_CHANNEL);
+        ++midi_events;
+        if (pot_handler && cc >= 30 && cc <= 32) pot_handler(cc-30,cc_latest[cc]);
+        cc_cadence[cc].sent(now);
+        cc_pending[cc] = false;
+    }
 }
 void send_hand(uint8_t index, const HandSensor::Event& event) {
     if (event.presence_changed) send_note(108+index,event.present,127);
@@ -162,15 +209,15 @@ void poll_buttons(uint32_t now) {
     last_buttons = now;
     const uint8_t chip = next_mcp;
     next_mcp = (next_mcp + 1) % MCP_COUNT;
-    if (!mcp[chip].due(now)) return;
-    if (!mcp[chip].online()) {
+    if (!PROFILE.mcp_inputs[chip] || !mcp[chip].due(now)) return;
+    if (!mcp_configured[chip]) {
         // BANK=0 power-on register layout; output-only A7/B7 stay outputs.
         if (!mcp_write(chip,0x00,0x7f7f) || !mcp_write(chip,0x0c,0x7f7f)) {
             ++mcp_errors;
             mcp[chip].failed(now);
             return;
         }
-        mcp[chip].succeeded();
+        mcp_configured[chip] = true; // Reset backoff only after GPIO read succeeds.
         return;
     }
     Wire.beginTransmission(0x20 + chip);
@@ -178,11 +225,13 @@ void poll_buttons(uint32_t now) {
     if (Wire.endTransmission(false) || Wire.requestFrom(uint8_t(0x20 + chip),uint8_t(2)) != 2) {
         ++mcp_errors;
         mcp[chip].failed(now);
+        mcp_configured[chip] = false;
         McpButtons::Event events[14];
         const uint8_t count = buttons[chip].disconnect(events);
         send_buttons(events,count);
         return;
     }
+    mcp[chip].succeeded();
     uint16_t value = Wire.read();
     value |= uint16_t(Wire.read()) << 8;
     McpButtons::Event events[14];
@@ -256,7 +305,9 @@ void poll_m4() {
 }
 void reset_stats() {
     noInterrupts();
-    scans = scan_gap_max = queue_drops = 0;
+    scans = scan_gap_max = queue_drops = adc1_timeouts = 0;
+    adc2_timeouts = 0;
+    for (auto& samples : fsr_samples) samples = 0;
     interrupts();
     stats_start = millis();
     loop_max = midi_events = ads_reads[0] = ads_reads[1] = mcp_errors = 0;
@@ -264,7 +315,9 @@ void reset_stats() {
 }
 void prepare_stats() {
     noInterrupts();
-    const uint32_t count = scans, gap = scan_gap_max, drops = queue_drops;
+    const uint32_t count = scans, gap = scan_gap_max, drops = queue_drops, adc_errors = adc1_timeouts;
+    uint32_t samples[4];
+    for (uint8_t i=0;i<4;++i) samples[i] = fsr_samples[i];
     interrupts();
     const uint32_t elapsed = max(uint32_t(1), millis() - stats_start);
     response_size = snprintf(response,sizeof(response),
@@ -278,11 +331,21 @@ void prepare_stats() {
     if (response_size >= sizeof(response)) response_size = sizeof(response)-1;
     if (response_size && response[response_size-1] == '\n') --response_size;
     uint8_t mcp_mask = 0;
-    for (uint8_t i = 0; i < MCP_COUNT; ++i) if (mcp[i].online()) mcp_mask |= 1u << i;
+    uint32_t retry_max = max(ads[0].retry_us(),ads[1].retry_us());
+    for (uint8_t i = 0; i < MCP_COUNT; ++i) {
+        if (mcp[i].online()) mcp_mask |= 1u << i;
+        retry_max = max(retry_max,mcp[i].retry_us());
+    }
     const int n = snprintf(response+response_size,sizeof(response)-response_size,
-        " mcp_mask=%u ads_mask=%u m4=%u encoder_mask=%u fsr_mask=%u pot_mask=%u ads0_channels=%u ads1_channels=%u selector=%u mcp0_inputs=%u mcp1_inputs=%u mcp2_inputs=%u",
+        " mcp_mask=%u ads_mask=%u m4=%u encoder_mask=%u fsr_mask=%u pot_mask=%u ads0_channels=%u ads1_channels=%u selector=%u mcp0_inputs=%u mcp1_inputs=%u mcp2_inputs=%u adc1_timeouts=%lu adc2_timeouts=%lu fsr_timer=%u wire_timeout_us=%u wire_timeouts=%lu retry_max_us=%lu fsr0_sps=%lu fsr1_sps=%lu fsr2_sps=%lu fsr3_sps=%lu adc1_cfg=%lx adc1_gc=%lx pit_priority=%u",
         mcp_mask, unsigned(ads[0].online() | (ads[1].online() << 1)), unsigned(m4_connected),
-        PROFILE.encoders, PROFILE.fsrs, PROFILE.pots, PROFILE.ads_channels[0], PROFILE.ads_channels[1], unsigned(PROFILE.selector), PROFILE.mcp_inputs[0], PROFILE.mcp_inputs[1], PROFILE.mcp_inputs[2]);
+        PROFILE.encoders, PROFILE.fsrs, PROFILE.pots, PROFILE.ads_channels[0], PROFILE.ads_channels[1], unsigned(PROFILE.selector), PROFILE.mcp_inputs[0], PROFILE.mcp_inputs[1], PROFILE.mcp_inputs[2],
+        (unsigned long)adc_errors,(unsigned long)adc2_timeouts,unsigned(fsr_timer_ok),
+        unsigned(GF_WIRE_TIMEOUT_US),(unsigned long)Wire.getWireTimeoutCount(),
+        (unsigned long)retry_max,
+        (unsigned long)(uint64_t(samples[0])*1000/elapsed),(unsigned long)(uint64_t(samples[1])*1000/elapsed),
+        (unsigned long)(uint64_t(samples[2])*1000/elapsed),(unsigned long)(uint64_t(samples[3])*1000/elapsed),
+        (unsigned long)ADC1_CFG,(unsigned long)ADC1_GC,unsigned(NVIC_GET_PRIORITY(IRQ_PIT)));
     response_size += min(size_t(max(0,n)),sizeof(response)-response_size-1);
     if (stats_handler) {
         stats_handler(response+response_size,sizeof(response)-response_size);
@@ -344,16 +407,22 @@ void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHand
     digitalWrite(13,LOW);
     if (PROFILE.selector) pinMode(41,INPUT_DISABLE);
 #endif
-    analogRead(FSR_PINS[0]); // Finish PJRC ADC calibration before enabling ISR.
+    // PJRC startup analog_init has already calibrated both ADCs synchronously.
+    // Keep its async clock setup; software trigger, no continuous conversion,
+    // comparison, DMA or ADC interrupts. No analogRead after taking ownership.
+    ADC1_CFG &= ~ADC_CFG_ADTRG;
+    ADC2_CFG &= ~ADC_CFG_ADTRG;
+    ADC1_GC = 0;
+    ADC2_GC = 0;
+    ADC1_HC0 = ADC2_HC0 = 31;
+    Wire.setWireTimeout(GF_WIRE_TIMEOUT_US);
     reset_stats();
-#ifndef GF_DIAG_NO_FSR
-    fsr_timer.begin(scan_fsr,400);
-#endif
+    fsr_timer.priority(160); // Set BEFORE begin, which enables the shared PIT IRQ.
 #ifdef GF_CONSOLA_UNO
-    fsr_timer.priority(160); // DMA/USB preempt the FSR scan; no I2C in this ISR.
     NVIC_SET_PRIORITY(IRQ_USB1,112);
-#else
-    fsr_timer.priority(64);
+#endif
+#ifndef GF_DIAG_NO_FSR
+    fsr_timer_ok = fsr_timer.begin(scan_fsr,50);
 #endif
 }
 void surface::poll() {
@@ -365,43 +434,37 @@ void surface::poll() {
         const int32_t position = encoders[i].read();
         const int32_t delta = int32_t(uint32_t(position)-uint32_t(encoder_positions[i]));
         encoder_positions[i] = position;
-        const uint8_t cc = relative[i].update(delta);
-        if (cc) send_cc(ENCODER_CC[i],cc);
+        const uint8_t cc = ENCODER_CC[i];
+        // Keep detents in RelativeEncoder until this control's next send slot.
+        if (cc_cadence[cc].due(start)) {
+            const uint8_t value = relative[i].update(delta);
+            if (value) send_cc(cc,value);
+        } else relative[i].accumulate(delta);
     }
     if (start - last_pots >= 1000) {
         last_pots = start;
         for (uint8_t i = 0; i < sizeof(POT_PINS); ++i) {
             if (!(PROFILE.pots & (1u << i))) continue;
-            int raw;
+            uint16_t raw;
 #ifdef GF_CONSOLA_UNO
-            if (i < 2) {
-                // ADC1 is owned by FSR; mask only PIT, leaving audio/USB live.
-                NVIC_DISABLE_IRQ(IRQ_PIT);
-                raw = read_adc1(i == 0 ? 13 : 1);
-                NVIC_ENABLE_IRQ(IRQ_PIT);
-            } else raw = read_adc2(3);
+            if (i == 1) {
+                if (!(slow_valid & 1)) continue;
+                raw = slow_adc[0]; // ISR mailbox; ADC1 never touched by loop.
+            } else if (!read_adc2(i == 0 ? 13 : 3,raw)) continue;
 #else
-            if (i == 0) {
-                noInterrupts();
-                raw = read_adc1(14);
-                interrupts();
-            } else raw = read_adc2(i);
+            if (!read_adc2(i == 0 ? 14 : i,raw)) continue;
 #endif
             uint8_t value;
             if (pots[i].sample(raw,value)) {
                 send_cc(30+i,value);
-                if (pot_handler) pot_handler(i,value);
             }
         }
     }
 #ifdef GF_CONSOLA_UNO
     if (PROFILE.selector && start - last_selector >= 10000) {
         last_selector = start;
-        NVIC_DISABLE_IRQ(IRQ_PIT);
-        const uint16_t raw_selector = read_adc1(10);
-        NVIC_ENABLE_IRQ(IRQ_PIT);
         uint8_t value;
-        if (selector.sample(raw_selector,value)) send_cc(36,value);
+        if ((slow_valid & 2) && selector.sample(slow_adc[1],value)) send_cc(36,value);
     }
 #endif
     uint8_t channel;
@@ -426,6 +489,7 @@ void surface::poll() {
     poll_buttons(micros());
     poll_serial();
     for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {}
+    flush_cc();
     usbMIDI.send_now();
     const uint32_t duration = micros()-start;
     record_loop_duration(duration);
