@@ -123,16 +123,29 @@ bool command(char* line, char* out, size_t size) {
     return true;
 }
 }
+#ifdef GF_DIAG_NO_FSR
+#define DIAG(msg) do { Serial.println(msg); Serial.send_now(); } while (0)
+#else
+#define DIAG(msg) do {} while (0)
+#endif
 void setup() {
+#ifdef GF_DIAG_NO_FSR
+    Serial.begin(115200);
+    while (!Serial && millis() < 4000) {}
+    DIAG("diag: setup inicio");
+#endif
     surface::begin(command,pot_changed,stats);
+    DIAG("diag: surface::begin listo");
     // Reuse the existing graph, with no engine/FX objects unless explicitly enabled.
     if (audio_graph::init(hp_volume/127.0f)) {
         codec.succeeded();
         applied_input = input_gain;
         applied_hp = hp_volume;
     } else codec.failed(micros());
+    DIAG("diag: audio_graph::init listo");
     Wire.setClock(400000);
     audio_graph::set_usb_out_source(1);
+    DIAG("diag: setup fin");
 #ifdef GF_CONSOLA_BRAIN
     brain.begin();
     usbMIDI.setHandleNoteOn(note_on);
@@ -142,11 +155,22 @@ void setup() {
 }
 void loop() {
     const uint32_t start = micros();
+#ifdef GF_DIAG_NO_FSR
+    static uint32_t beat = 0, stage = 0;
+    if (millis() - beat > 1000) { beat = millis(); Serial.printf("diag: latido etapa %lu\n", (unsigned long)stage); Serial.send_now(); }
+    stage = 1;
+#endif
     surface::poll();
+#ifdef GF_DIAG_NO_FSR
+    stage = 2;
+#endif
 #ifdef GF_CONSOLA_BRAIN
     brain.update();
 #endif
     poll_codec(micros());
+#ifdef GF_DIAG_NO_FSR
+    stage = 3;
+#endif
     poll_cv(micros());
     surface::record_loop_duration(micros()-start);
 }

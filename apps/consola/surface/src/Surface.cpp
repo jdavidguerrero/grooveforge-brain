@@ -346,7 +346,9 @@ void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHand
 #endif
     analogRead(FSR_PINS[0]); // Finish PJRC ADC calibration before enabling ISR.
     reset_stats();
+#ifndef GF_DIAG_NO_FSR
     fsr_timer.begin(scan_fsr,400);
+#endif
 #ifdef GF_CONSOLA_UNO
     fsr_timer.priority(160); // DMA/USB preempt the FSR scan; no I2C in this ISR.
     NVIC_SET_PRIORITY(IRQ_USB1,112);
