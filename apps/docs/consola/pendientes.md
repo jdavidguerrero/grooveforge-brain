@@ -26,3 +26,15 @@ FM 4-OP sigue disponible. Falta la medición Pi/Teensy y la calibración AMD/AMS
   Apache 2.0); Dexed es GPL y no conviene mezclarlo.
 - **Condición para retomar:** gemelo funcionando en el Pi (benchmark de `12-gemelo-pi.md` aprobado) y E5 cerrado.
   Requiere enmienda a ADR-005 y theory doc antes del código. No es del MVP.
+
+## Chips de la superficie soldados en la PCB por JLCPCB (Juan, 2026-11-10)
+
+- **Decisión:** en la placa principal van los chips soldados por JLC, no módulos. Los módulos (CJMCU-2317, ADS1115 de
+  8 pines) son solo para el prototipo de protoboard. No se compran más módulos.
+- **Piezas (LCSC, precios unitarios del 2026-11-10):** ADS1115IDGSR **C37593** (VSSOP-10, USD 1,40) ×2 · MCP23017T-E/SS
+  **C558584** (SSOP-28, USD 1,72) ×3 + huella del 4.º sin poblar · MCP4725A0T-E/CH **C144198** (SOT-23-6, USD 0,96) ×2
+  (0x60/0x61 con su pata A0). Las tres son «extended»: cargo de ~USD 3 por tipo y pedido, a confirmar al cotizar.
+- **Direcciones por pista** (ADS 0x48/0x49 con ADDR a GND/3,3 V; MCP 0x20–0x23 con A0–A2) y **un solo par de pull-ups**
+  en el bus I2C de la placa.
+- **Prototipo actual:** 2 MCP (módulos, puerto A) y 1 ADS1115 (dirección fija 0x48, sin pata ADDR): basta para validar
+  el bus compartido con el SGTL5000. El Sharp se prueba en A2 del mismo ADS.
