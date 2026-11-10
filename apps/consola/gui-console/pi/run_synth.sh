@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-export GUI_TOUCH_DEVICE="${GUI_TOUCH_DEVICE:-invertx}"
+export GUI_TOUCH_DEVICE="${GUI_TOUCH_DEVICE-}"  # medido 2026-11-10: sin inversión (crudo = imagen con rotación QML 90)
 export GUI_TOUCH_ROTATION="${GUI_TOUCH_ROTATION:-0}"
 : "${XDG_RUNTIME_DIR:?Set XDG_RUNTIME_DIR for the synth host socket}"
 # An explicit CLI selection overrides the environment/default auto discovery.

@@ -214,3 +214,11 @@ derecha) y el touch con `QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=invertx:rotate=0` (
 `GUI_TOUCH_DEVICE=invertx GUI_TOUCH_ROTATION=0`). Probado por Juan: 90 → invertido, 270 → espejo, 270+invertx → mal,
 **0+invertx → correcto**. Faltaban en el Pi los módulos QML (`qml6-module-qtquick`, `-qtquick-window`, `-qtqml`,
 `-qtqml-workerscript`) que ya lista `setup_pi.sh`: correr el script completo antes de la primera prueba.
+
+### Corrección (2026-11-10, medida con coordenadas crudas)
+
+La calibración anterior (`invertx:rotate=0`) estaba mal; en SYNTH no se notó porque las cards tocadas estaban al
+centro. Medido en `/dev/input/event1` (Goodix): esquina superior izquierda de la imagen = crudo (685, 65), inferior
+derecha = (53, 1216). Con la imagen rotada 90° en QML, esas esquinas caen en (720, 0) y (0, 1280) del panel vertical:
+**el crudo ya coincide, sin inversión ni rotación** (`QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=rotate=0`). `run_synth.sh` y
+`run_drum.sh` usan ese valor por defecto.
