@@ -9,6 +9,7 @@
 #include <iostream>
 #include <numeric>
 #include <unistd.h>
+#include <stdexcept>
 namespace {
 volatile sig_atomic_t stopping=0;
 void stop(int) {stopping=1;}

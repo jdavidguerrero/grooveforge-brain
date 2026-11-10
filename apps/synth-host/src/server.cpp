@@ -19,6 +19,7 @@
 #include <unistd.h>
 #ifdef GF_HAVE_SYSTEMD
 #include <systemd/sd-daemon.h>
+#include <stdexcept>
 #endif
 namespace host {
 namespace fs=std::filesystem;

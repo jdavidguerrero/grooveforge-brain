@@ -10,6 +10,7 @@
 #include "ui/groove_macros.h"
 #include <algorithm>
 #include <cmath>
+#include <stdexcept>
 namespace host {
 namespace {
 class PreviewEngine final:public Engine {
