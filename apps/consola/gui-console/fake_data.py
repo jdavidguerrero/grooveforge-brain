@@ -163,6 +163,8 @@ class ConsoleState(QObject):
                 self.setLiveState(live_state)
             self._connections.queue_update(2, {'status': 'warn' if descriptor.state == 'no-live' else
                                              'ok' if not self._mode or descriptor.name == 'Routing' else 'off'})
+            if hasattr(self, 'synth'):
+                self.synth.configure(descriptor.name)
             self.refresh_keys()
             self.changed.emit()
 
@@ -292,6 +294,9 @@ class ConsoleState(QObject):
         if self._selected != index:
             self._selected = index
             self._property_dirty = True
+        if hasattr(self, 'synth') and self.screenName.startswith('Synth'):
+            self.synth.turn(index, delta)
+            return
         if self._screen == 2:
             self._mode = index % 2
             self._property_dirty = True
@@ -328,7 +333,9 @@ class ConsoleState(QObject):
 
     @Slot(str)
     def triggerAction(self, action):
-        if action.startswith('nav:'):
+        if action.startswith('synth:') and hasattr(self, 'synth'):
+            self.synth.action(action[6:])
+        elif action.startswith('nav:'):
             self.navigate(action[4:])
         elif action == 'back':
             self.setScreen(self._return_screen if SCREENS[self._screen-1].mode == 'SHARED' else 5 if self._mode else screen_id('Session'))
@@ -390,6 +397,9 @@ class ConsoleState(QObject):
 
     def refresh_keys(self):
         descriptor = SCREENS[self._screen-1]
+        if descriptor.name.startswith('Synth') and hasattr(self, 'synth'):
+            self._softKeys.replace(self.synth.keys())
+            return
         if descriptor.keys:
             collection, name = descriptor.keys.split('.')
             data = self._standalone if collection == 's' else self._controller

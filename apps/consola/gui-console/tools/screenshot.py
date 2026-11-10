@@ -16,7 +16,7 @@ from main import ROOT, create_engine
 from registry import SCREENS, screen_id
 
 
-def capture(names=None):
+def capture(names=None, synth_only=False):
     app = QGuiApplication.instance() or QGuiApplication([])
     messages = []
     def collect(kind, context, message):
@@ -30,7 +30,7 @@ def capture(names=None):
         window = engine.rootObjects()[0]
         destination = ROOT/'screenshots'
         destination.mkdir(exist_ok=True)
-        ids = [screen_id(n) for n in names] if names else list(range(1, len(SCREENS)+1))
+        ids = [screen_id(n) for n in names] if names else [i for i,s in enumerate(SCREENS,1) if not synth_only or s.name.startswith('Synth')]
         manifest = []
         for i in ids:
             descriptor = SCREENS[i-1]
@@ -43,12 +43,14 @@ def capture(names=None):
             path = destination/f'{i:02d}-{descriptor.name}.png'
             if (image.width(), image.height()) != (1280, 720) or not image.save(str(path)):
                 raise RuntimeError(f'Capture failed: {path}, {image.size()}')
-            manifest.append(dict(name=descriptor.name, file=path.name, mode=descriptor.mode, width=1280, height=720))
+            manifest.append(dict(name=descriptor.name, file=path.name, mode=descriptor.mode, design=descriptor.design, width=1280, height=720))
             print(path)
         if not names:
-            (destination/'manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+            manifest_name='synth-manifest.json' if synth_only else 'manifest.json'
+            gallery_name='synth-index.html' if synth_only else 'index.html'
+            (destination/manifest_name).write_text(json.dumps(manifest, indent=2)+'\n')
             figures = '\n'.join(f'<figure id="{r["name"]}"><figcaption>{r["file"]} · {r["mode"]}</figcaption><a href="{r["file"]}"><img loading="lazy" width="1280" height="720" src="{r["file"]}" alt="{html.escape(r["name"])}"></a></figure>' for r in manifest)
-            (destination/'index.html').write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>GrooveForge · Phase 2 review</title><style>body{margin:24px;background:#09090b;color:#f2f2f2;font:14px monospace}img{width:100%;height:auto;display:block}figure{margin:24px 0;max-width:1280px}figcaption{padding:12px 0;color:#5dcaa5}a{color:#5dcaa5}</style><h1>GrooveForge Console · Phase 2</h1><p>Deterministic fake snapshots · 1280×720 · <a href="manifest.json">Manifest</a></p>'+figures+'</html>\n')
+            (destination/gallery_name).write_text('<!doctype html><html lang="en"><meta charset="utf-8"><title>GrooveForge Console review</title><style>body{margin:24px;background:#09090b;color:#f2f2f2;font:14px monospace}img{width:100%;height:auto;display:block}figure{margin:24px 0;max-width:1280px}figcaption{padding:12px 0;color:#5dcaa5}a{color:#5dcaa5}</style><h1>GrooveForge Console · Synth review</h1><p>Deterministic fake snapshots · 1280×720 · <a href="'+manifest_name+'">Manifest</a></p>'+figures+'</html>\n')
         window.close()
     finally:
         import shiboken6
@@ -60,4 +62,6 @@ def capture(names=None):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--screen', action='append', help='Capture only this registry name; repeatable')
-    capture(parser.parse_args().screen)
+    parser.add_argument('--synth',action='store_true',help='Capture the 25 synth views and a separate synth gallery')
+    args=parser.parse_args()
+    capture(args.screen,args.synth)

@@ -14,7 +14,7 @@ fi
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
   python3 python3-pyside6.qtcore python3-pyside6.qtgui python3-pyside6.qtqml \
-  python3-pyside6.qtquick python3-pyside6.qtopengl python3-pytest \
+  python3-pyside6.qtquick python3-pyside6.qtnetwork python3-pyside6.qtopengl python3-pytest \
   qml6-module-qtquick qml6-module-qtquick-window qml6-module-qtquick-layouts \
   qml6-module-qtqml qml6-module-qtqml-models qml6-module-qtqml-workerscript \
   libqt6opengl6 libegl1 libegl-mesa0 libgles2 libgbm1 libdrm2 libgl1-mesa-dri \
@@ -32,6 +32,7 @@ from PySide6.QtCore import QLibraryInfo, qVersion
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
+from PySide6.QtNetwork import QLocalSocket
 import shiboken6
 plugins = Path(QLibraryInfo.path(QLibraryInfo.PluginsPath))
 for relative in ('platforms/libqeglfs.so', 'egldeviceintegrations/libqeglfs-kms-integration.so'):

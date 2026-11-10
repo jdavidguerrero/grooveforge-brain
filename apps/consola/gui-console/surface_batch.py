@@ -70,7 +70,13 @@ class SurfaceBatcher(QObject):
     def apply(self, event):
         s, f, kind = self.state, event.fields, event.kind
         index = f.get('indice', 0)
-        if kind in ('Encoder', 'Jog'):
+        if kind == 'Encoder' and s.screenName.startswith('Synth') and hasattr(s, 'synth'):
+            s._selected = index
+            s._property_dirty = True
+            s.synth.turn(index, f['delta'])
+        elif kind == 'Boton' and s.screenName.startswith('Synth') and hasattr(s, 'synth') and f.get('nombre') == 'SHIFT':
+            s.synth.setFine(f['presionado'])
+        elif kind in ('Encoder', 'Jog'):
             index = index if kind == 'Encoder' else 0
             old = self.value(s.channels, index, 'level')
             level = max(0., min(1., old + f['delta'] * .01))
@@ -103,15 +109,26 @@ class SurfaceBatcher(QObject):
 
     @Slot()
     def drain_frame(self):
+        synth = getattr(self.state, "synth", None)
+        if synth and synth.client:
+            synth.client.drain_frame()
         with self._lock:
             batch, self._queue = self._queue, deque()
-        for event in batch:
-            self.apply(event)
-            self.applied += 1
-            self.kind_counts[event.kind] = self.kind_counts.get(event.kind, 0) + 1
+        if synth:
+            synth.in_surface_batch = True
+        try:
+            for event in batch:
+                self.apply(event)
+                self.applied += 1
+                self.kind_counts[event.kind] = self.kind_counts.get(event.kind, 0) + 1
+        finally:
+            if synth:
+                synth.in_surface_batch = False
         for model in self.models:
             model.flush()
         self.state.flush_properties()
+        if hasattr(self.state, "synth"):
+            self.state.synth.flush_frame()
         self.last_batch = tuple(batch)
         if batch:
             self._serial = batch[-1].sequence

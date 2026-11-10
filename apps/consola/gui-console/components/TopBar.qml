@@ -2,12 +2,12 @@ import QtQuick
 import "../theme"
 Rectangle {
     id: root
-    property bool os: console.screen === 2 || console.screen === 4
+    property bool os: console.screen === 2 || console.screen === 4 || console.screenName.indexOf("SynthSettings") === 0
     property string view: console.screen === 4 ? console.settingsSection : console.screenTitle
     property string sectionName: console.screenName === 'SessionNoLive' ? '—' : console.screenMode.indexOf('CONTROLLER') === 0 ? 'SCENE 4' : console.section
     height: Theme.topHeight
     color: os ? Theme.gpBgBase : Theme.bg
-    Label { x: Theme.m20; y: Theme.s1; text: root.os ? (console.screen === 4 ? "SETTINGS" : "GROOVEPILOT") : console.screenMode; color: Theme.mon; font.pixelSize: Theme.tiny; weight: Font.Normal }
+    Label { x: Theme.m20; y: Theme.s1; text: root.os ? (console.screen === 4 || console.screenName.indexOf("SynthSettings") === 0 ? "SETTINGS" : "GROOVEPILOT") : console.screenMode; color: Theme.mon; font.pixelSize: Theme.tiny; weight: Font.Normal }
     Label { x: Theme.m20; y: Theme.s5; text: root.view; face: root.os ? Theme.osFont : Theme.displayFont; font.pixelSize: root.os ? Theme.m20 : Theme.dM; weight: Font.Bold; height: Theme.lineM }
     Row {
         anchors.right: separator.left; anchors.rightMargin: Theme.m28; anchors.verticalCenter: parent.verticalCenter
@@ -39,10 +39,14 @@ Rectangle {
     Row {
         id: connRow
         anchors.right: parent.right; anchors.rightMargin: Theme.m20; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.m14
+        Row {visible:console.screenName.indexOf('Synth')===0;spacing:6
+            Rectangle {anchors.verticalCenter:parent.verticalCenter;width:8;height:8;radius:4;color:Theme.teal}
+            Label {text:'ENGINE';font.pixelSize:10;color:Theme.grayN}
+        }
         Repeater {
             model: console.connections
             Row { required property string title; required property string status; spacing: Theme.rCell
-                Rectangle { anchors.verticalCenter: parent.verticalCenter; width: Theme.s2; height: Theme.s2; radius: Theme.s1; color: status === "ok" ? (root.os ? Theme.gpTeal : Theme.teal) : status === "warn" ? Theme.amber : status === "down" ? Theme.red : Theme.off }
+                Rectangle { property string effectiveStatus: title === "BRAIN" && console.screenName.indexOf("Synth") === 0 ? (synth.status === "not_responding" ? "warn" : synth.status === "ready" || synth.status === "preview" || synth.status === "loading" ? "ok" : "off") : status; anchors.verticalCenter: parent.verticalCenter; width: Theme.s2; height: Theme.s2; radius: Theme.s1; color: effectiveStatus === "ok" ? (root.os ? Theme.gpTeal : Theme.teal) : effectiveStatus === "warn" ? Theme.amber : effectiveStatus === "down" ? Theme.red : Theme.off }
                 Label { text: title; face: root.os ? Theme.osMonoFont : Theme.monoFont; font.pixelSize: Theme.tiny; color: status === "off" ? Theme.mon : status === "warn" ? Theme.amber : Theme.grayN }
             }
         }

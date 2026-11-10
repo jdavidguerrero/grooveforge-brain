@@ -9,7 +9,7 @@ QtWindow.Window {
     width: eglfsMode ? QtWindow.Screen.width : (qmlRotation % 180 ? Theme.rootHeight : Theme.rootWidth)
     height: eglfsMode ? QtWindow.Screen.height : (qmlRotation % 180 ? Theme.rootWidth : Theme.rootHeight)
     visible: true
-    title: "GrooveForge Console · Phase 2"
+    title: "GrooveForge Console"
     color: console.screen === 2 || console.screen === 4 ? Theme.gpBgBase : Theme.bg
     flags: frameless ? Qt.FramelessWindowHint : Qt.Window
     Item {
@@ -31,11 +31,17 @@ QtWindow.Window {
         Loader { anchors.fill: parent; active: console.screen === 1 && !perfMode; source: "screens/Boot.qml" }
         Item {
             anchors.fill: parent; focus: true
+            Keys.onReleased: function(event) { if(event.key === Qt.Key_Shift) synth.setFine(false) }
             Keys.onPressed: function(event) {
                 if((event.modifiers & Qt.ShiftModifier) && (console.screenName === "SequencerPianoRoll" || console.screenName === "SequencerSteps") && [Qt.Key_Left,Qt.Key_Right,Qt.Key_Up,Qt.Key_Down].indexOf(event.key) >= 0) console.panRoll(event.key === Qt.Key_Left ? -1 : event.key === Qt.Key_Right ? 1 : 0, event.key === Qt.Key_Up ? 1 : event.key === Qt.Key_Down ? -1 : 0)
                 else if(event.key >=  Qt.Key_1 && event.key <= Qt.Key_9) console.setScreen(event.key-Qt.Key_0)
                 else if(event.key === Qt.Key_Tab) console.cycleScreen(event.modifiers & Qt.ShiftModifier ? -1 : 1)
                 else if(event.key === Qt.Key_Backtab) console.cycleScreen(-1)
+                else if(event.key === Qt.Key_F3) console.navigate('SynthParts')
+                else if(event.key === Qt.Key_F4) console.navigate('SynthSettingsAudio')
+                else if(event.key === Qt.Key_Shift) synth.setFine(true)
+                else if(event.key === Qt.Key_PageUp && console.screenName.indexOf('Synth') === 0) synth.nextPage(-1)
+                else if(event.key === Qt.Key_PageDown && console.screenName.indexOf('Synth') === 0) synth.nextPage(1)
                 else if(event.key === Qt.Key_F2) console.setScreen(2)
                 else if(event.key === Qt.Key_Left) console.selectEncoder(console.selectedEncoder-1)
                 else if(event.key === Qt.Key_Right) console.selectEncoder(console.selectedEncoder+1)
@@ -47,7 +53,7 @@ QtWindow.Window {
                 else if(event.key === Qt.Key_L) console.setLiveState("loading")
                 else if(event.key === Qt.Key_N) console.setLiveState("normal")
                 else if(event.key === Qt.Key_B) console.triggerAction("encoding")
-                else if(event.key === Qt.Key_Escape) console.triggerAction("back")
+                else if(event.key === Qt.Key_Escape) console.triggerAction(console.screenName.indexOf("Synth") === 0 ? "nav:SynthParts" : "back")
                 else return
                 event.accepted = true
             }
