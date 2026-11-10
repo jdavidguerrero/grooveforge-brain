@@ -128,9 +128,31 @@ bool ads_read(uint8_t channel, int16_t& value) {
     return true;
 }
 
+// Protocolo binario de la M4 (processor/include/shared/BinaryProtocol.h): [0xAA][CMD][LEN][PAYLOAD][XOR de CMD, LEN y
+// payload]. La M4 ignora sus teclas hasta recibir la rejilla completa de colores (CMD_LED_GRID_UPDATE 0xA0, 96 bytes).
+void m4_send(uint8_t cmd, const uint8_t* payload, uint8_t len) {
+    uint8_t x = cmd ^ len;
+    for (uint8_t i = 0; i < len; ++i) x ^= payload[i];
+    Serial7.write(0xAA); Serial7.write(cmd); Serial7.write(len);
+    Serial7.write(payload, len);
+    Serial7.write(x);
+}
+
+void m4_grid_init() {
+    uint8_t rgb[96];
+    for (uint8_t i = 0; i < 32; ++i) {  // colores 7 bits, tenues: una fila por color
+        const uint8_t row = i / 8;
+        rgb[i * 3 + 0] = row == 0 || row == 3 ? 24 : 0;
+        rgb[i * 3 + 1] = row == 1 || row == 3 ? 24 : 0;
+        rgb[i * 3 + 2] = row == 2 || row == 3 ? 24 : 0;
+    }
+    m4_send(0xA0, rgb, sizeof(rgb));
+    Serial.println("M4: rejilla enviada (deben encenderse los pads)");
+}
+
 void help() {
     Serial.println("\n== GrooveForge consola · prueba de hardware ==");
-    Serial.println("s: buscar I2C · t: tono 440 Hz en audífonos · a: FSR y MASTER sí/no · ?: ayuda");
+    Serial.println("s: buscar I2C · t: tono 440 Hz · a: FSR y MASTER · g: iniciar rejilla de la M4 · ?: ayuda");
 }
 
 }  // namespace
@@ -170,6 +192,7 @@ void loop() {
         const char c = Serial.read();
         if (c == 's') i2c_scan();
         else if (c == 't') { tone_on = !tone_on; tone_.amplitude(tone_on ? 0.2f : 0.0f); Serial.printf("tono %s\n", tone_on ? "ON" : "OFF"); }
+        else if (c == 'g') m4_grid_init();
         else if (c == 'a') { analog_on = !analog_on; Serial.printf("analógicos %s\n", analog_on ? "ON" : "OFF"); }
         else if (c == '?') help();
     }
@@ -229,6 +252,17 @@ void loop() {
     }
 
     static uint32_t m4_bytes = 0, last_m4 = 0;
-    while (Serial7.available()) { Serial7.read(); ++m4_bytes; }
+    static uint8_t m4_buf[8]; static uint8_t m4_n = 0;
+    while (Serial7.available()) {
+        const uint8_t b = Serial7.read(); ++m4_bytes;
+        if (m4_n == 0 && b != 0xAA) continue;
+        m4_buf[m4_n++] = b;
+        if (m4_n >= 3 && m4_n == m4_buf[2] + 4) {
+            if (m4_buf[1] == 0x62 && m4_buf[2] >= 2)
+                Serial.printf("M4 pad track %u scene %u %s\n", m4_buf[3], m4_buf[4], m4_buf[2] >= 3 && !m4_buf[5] ? "suelto" : "PULSADO");
+            else Serial.printf("M4 trama cmd 0x%02X len %u\n", m4_buf[1], m4_buf[2]);
+            m4_n = 0;
+        } else if (m4_n >= sizeof(m4_buf)) m4_n = 0;
+    }
     if (m4_bytes != last_m4 && now % 500 < 5) { Serial.printf("M4: %lu bytes recibidos\n", (unsigned long)m4_bytes); last_m4 = m4_bytes; }
 }

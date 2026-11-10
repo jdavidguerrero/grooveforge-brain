@@ -4,6 +4,24 @@
 > la condición para retomarla. Las decisiones abiertas de arquitectura están en la auditoría
 > (`auditoria/auditoria-fable-2026-11.md` §8).
 
+## Respuesta del touch: lenta e imprecisa (Juan, 2026-11-10) — **siguiente tarea**
+
+Juan, probando DRUM en la Pi: con los encoders todo responde bien, pero tocando la pantalla (teclas de menú,
+browse de racks) la respuesta tarda o el toque se pierde. Diagnóstico (2026-11-10):
+
+1. `components/TouchTarget.qml` es un `MouseArea` que actúa en `onClicked` (al soltar) y no muestra estado
+   presionado: mientras el dedo está apoyado no hay respuesta visual.
+2. Dentro de `Flickable`/`ListView` (browse, listas) un movimiento de pocos píxeles del dedo lo toma el Flickable
+   como arrastre y el toque se cancela (`preventStealing: false`).
+3. `load_rack` en el host tarda 0,38 s (TRIBE 1, 30 MB) y 0,53 s (TRIBE 2, 45 MB): lee, verifica SHA-256 y
+   remuestrea los 64 WAV en el hilo de control, sin aviso de carga en la GUI; después la GUI recibe el rack
+   completo y redibuja todo.
+4. La GUI (Python, hilo principal) promedia ~50 % de un núcleo (9 min de CPU en 19 min); en reposo ~14 %.
+
+**Propuesta:** estado presionado inmediato en todos los toques; teclas de menú/soft keys actúan al presionar;
+mayor umbral de arrastre en las listas; aviso «cargando rack» inmediato; perfilar el hilo principal y redibujar
+solo lo que cambió (meters/clock sin reconstruir modelos). Validar en la Pi con el mismo browse de TRIBE.
+
 ## ~~DX7 de 6 operadores como modo adicional~~ → modo implementado; validación física pendiente (ADR-008 §4)
 
 Juan decidió implementarlo ya; queda como registro de la discusión.
