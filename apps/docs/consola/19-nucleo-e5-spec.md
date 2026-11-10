@@ -518,3 +518,16 @@ sí su aprobación o la ampliación correspondiente):
 
 Los puntos técnicos nuevos se aprueban con este documento; no autorizan código
 hasta el visto bueno de Juan. Ningún spec SSoT00–06 ni contrato14 se cambia aquí.
+
+## 12. Decisiones de Juan (2026-11-10)
+
+| # | Decisión | Efecto sobre este spec |
+|---|---|---|
+| D1 | **El sampler y el secuenciador van dentro de `gf-synth-host`**, no en un `gf-sampler` aparte | Un solo proceso de audio en tiempo real y un solo reloj para synths, sampler y transporte. §2 y §7 se leen sobre el host: los comandos `prepare_layer`, `schedule`, `cancel`, `set_cue`, `set_transport` se agregan a su contrato (`14`), versionado. Motivo: la prueba del 2026-11-10 mostró cortes con varios procesos compitiendo por la CPU |
+| D2 | **El modo DRUM va antes que E5** | DRUM (racks de samples + secuenciador por pasos para jam, spec `22-modo-drum.md`) construye el sampler, el reloj y el transporte que E5 reutiliza. E5 se implementa después, sobre esa base |
+| D3 | **ACCEPT y SKIP solo como teclas de pantalla** (clic de encoder o touch), no en pads | Cierra la contradicción C3: `01-prototipo-mesa.md` y `00-concepto.md` quedan desactualizados en ese punto |
+| D4 | **Tras un reinicio la consola vuelve detenida y espera PLAY** | Confirma §2: carga lo último aceptado y no suena nada hasta PLAY |
+
+**Con la recomendación de Claude, pendientes de que Juan las confirme:** DROP deshabilitado en E5 (después abrirá
+el selector de transición); alcance E5 = KICK + DRUMS, frase de 8 compases, máximo 2 opciones por rol; registro del set
+local en el Pi y recogido por el Mac, sin terceros; mapa de LEDs de §8.
