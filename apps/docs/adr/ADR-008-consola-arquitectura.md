@@ -73,6 +73,9 @@ eligió **NVMe de 128 GB en un HAT** como almacenamiento.
   placa más simple.
 - El audio del gemelo **no es idéntico bit a bit** entre Mac (Clang) y Pi (GCC); falta medir si la diferencia es
   audible. La fidelidad frente al Brain físico sigue sin medir.
+- **MIDI externo (Juan, 2026-11-10):** un teclado MIDI USB se conecta **al Pi**, no a la Teensy: las notas llegan
+  directo al host de synths. La Teensy de la consola no hace USB host (el Brain como producto lo conserva). El MIDI
+  DIN reservado (Serial1) entra por la Teensy y se reenvía al Pi por su USB MIDI.
 - Docs a actualizar: `03-arquitectura-capas.md` (capas, protocolos), `06-teensy-s-e4.md` y un mapa de pines único de
   la Teensy; `pendientes.md` (el DX7 6-OP sale de pendientes).
 - Siguiente medición: el host real con 4 partes + GUI del synth + sampler en el Pi durante 60 min (puerta de ADR-007
