@@ -1,7 +1,7 @@
 # GrooveForge Console
 
 QML/PySide6 console GUI with a contract-14 synth host client and deterministic
-review snapshots. Motor, Live and hardware connections remain future work.
+review snapshots. SYNTH connects the physical surface and synth host; Motor and Live remain local design demos.
 Coverage, absent designs and visual review: [11-gui-fase2.md](../../docs/consola/11-gui-fase2.md).
 
 ```sh
@@ -19,8 +19,8 @@ see [13-gui-pi.md](../../docs/consola/13-gui-pi.md) and `pi/`. Runtime needs no 
 `--screen` accepts a case-insensitive registry name or a legacy numeric ID.
 
 1–9 retain Boot, ModeSelect, Toasts, Settings, LiveSession, Layer, Transition,
-Mixer, Hands. **Tab / Shift+Tab** cycle all 60 entries. F2 opens mode selection;
-its Controller and Standalone cards enter the corresponding session screens.
+Mixer, Hands. **Tab / Shift+Tab** cycle all 61 entries. F2 opens mode selection;
+Controller and Standalone enter their session screens; Synth enters PARTS.
 Left/right select an encoder, up/down turn it, Enter presses its soft key.
 Escape returns to the mode's session, or closes a shared Scale/Repeat/Tempo window.
 O/E/L/N select offline/empty/loading/normal live data; B selects fill/stripe.
@@ -34,8 +34,7 @@ batched velocity/probability/microtiming edits. Touch never draws or plays notes
 Layer and Motor use four cue keys plus Generate/Accept/Skip/Back. Motor actions only
 change local option states; Accept never writes a Live clip. Library/export, audio
 and calibration controls are visual previews, with no persistence or backend.
-The eight-second mode auto-entry caption is retained from the artwork; its timer
-remains disabled for deterministic review. The old Brain ENGINE/HYBRID views remain available for comparison; their tabs
+The old Brain ENGINE/HYBRID views remain available for comparison; their tabs
 lead into the new synth catalog described below.
 
 `registry.py` is the screen source of truth; `fake_data.py` owns commands and MVP
@@ -94,7 +93,7 @@ the semantic IDs described in [15-gui-synth.md](../../docs/consola/15-gui-synth.
 unknown metadata still builds usable generic controls, with visualization marked
 unavailable. No fake values are substituted into a live host's control model.
 
-**F3** opens Parts; **F4** opens Audio settings. Tab/Shift+Tab cycle all 60 views.
+**F3** opens Parts; **F4** opens Audio settings. Tab/Shift+Tab cycle all 61 views.
 PageUp/PageDown change parameter pages; encoder click 3 changes bank. Encoder turns
 edit the corresponding metadata cell; SHIFT gives ×0.1 steps for continuous and
 bipolar parameters, with integral enum/bool steps. Clicks fire the independent soft
@@ -121,3 +120,50 @@ Review [synth screenshots](screenshots/synth-index.html),
 [comparison notes](screenshots/SYNTH-COMPARISON.md), and
 [test output](screenshots/synth-test-results.txt). Pi GPU/audio performance still
 requires the ADR-007 hardware gate. GeneralSans.ttf remains local and gitignored.
+
+## SYNTH performance mode and auxiliary touch
+
+Spec and hardware equivalence table: [21-modo-synth.md](../../docs/consola/21-modo-synth.md).
+No motor, phrases or ACCEPT in this mode. Surface MIDI is decoded with
+`tools/consola/superficie.py`; notes go straight to the host MIDI output before
+visual feedback is queued. Control edits use the existing once-per-frame seam.
+`--note-transport auto` prefers MIDI and reports a dedicated JSON-lines fallback
+when the host MIDI graph port is unavailable through the MIDI backend. Use
+`--note-transport midi` to require MIDI or `--note-transport socket` to force the fallback.
+No automatic graph wiring, installation or firmware flashing is performed.
+
+```sh
+# Offline Mac development: 32 physical keyboard pad substitutes; no audio.
+python3 apps/consola/gui-console/main.py --preview --synth-mode --fake-surface
+# Pi: calibrated touch and 90-degree QML image rotation; host already running.
+bash apps/consola/gui-console/pi/run_synth.sh --surface-cdc /dev/ttyACM0 \
+  --external-midi-port 'Keystep' --room-node 'AUDIO_PLUS_NODE_ID'
+# Explicit note socket fallback if no ALSA/JACK-visible host MIDI output exists.
+bash apps/consola/gui-console/pi/run_synth.sh --note-transport socket
+python3 apps/consola/gui-console/tools/synth_mode_review.py
+```
+
+Preinstalled optional dependencies: `mido`, `python-rtmidi`; `pyserial` for CDC.
+The surface and host MIDI names must each match exactly one port. Configure the
+PipeWire/ALSA bridge or JACK graph to expose the host destination; do not connect
+the raw console note map directly to the synth. External keyboard inputs are
+explicit and exclude the surface. `--external-midi-port` is repeatable.
+MASTER uses `wpctl set-volume` with the configured `--room-node`; CUE/IN send existing `@GF HP/IN` CDC
+commands. `@GF MASTER` is absent from firmware18 and is never sent.
+
+F3 enters SYNTH; F2 returns to modes. Arrows select/turn encoders, Enter clicks
+the soft key, SHIFT is fine, [/] changes octave. In `--fake-surface`, four rows
+1–8 / QWERTYUI / ASDFGHJK / ZXCVBNM, map to all 32 pads (release sends off).
+Numbers select catalog screens only when fake surface is off. ALT+left/right and
+ALT+Enter traverse/activate the same targets as SHIFT+jog and jog click.
+Touch knobs select focus, bool switches toggle, list rows select, and browsers
+support drag/flick; screen pads and piano keys never play music. SYNTH SCALE
+changes the real pad model through touch, encoders or soft keys. Existing screens
+without backend services show explicit local selection/detail, not successful
+system/audio operations. Notes remember their original part/pitch until release;
+STOP, mode exit, MIDI input loss and close release held notes.
+
+The LED output protocol is a proposal (doc21); a Teensy/M4 receiver and physical
+validation remain open. [SYNTH screenshots](screenshots/modo-synth/index.html) use
+fake host data. No desktop test certifies Pi/audio latency, touch calibration or
+ADR-007 performance.

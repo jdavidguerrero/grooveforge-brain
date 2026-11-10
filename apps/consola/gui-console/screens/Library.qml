@@ -8,7 +8,7 @@ Item {
         Label { x: Theme.s3; text: '#   TRACK'; font.pixelSize: Theme.tiny; color: Theme.mon }
         Label { x: Layout.library.keyX; text: 'KEY     BPM    ENERGY   LAYERS       SOURCE'; font.pixelSize: Theme.tagSize; color: Theme.mon }
         Repeater { model: console.standalone.tracks
-            Panel { required property int index; required property var entry; y: Layout.library.headerH+index*Layout.library.pitch; width: parent.width; height: Layout.library.rowH; color: entry.bg; border.color: entry.bd
+            Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; y: Layout.library.headerH+index*Layout.library.pitch; width: parent.width; height: Layout.library.rowH; color: entry.bg; border.color: entry.bd
                 Label { x: Theme.s3; height: parent.height; width: Theme.dL; text: entry.i; font.pixelSize: Theme.tagSize; color: Theme.mon }
                 Label { x: Theme.topHeight; height: parent.height; width: Layout.library.keyX-x-Theme.s2; text: entry.n; font.pixelSize: Theme.m14 }
                 Label { x: Layout.library.keyX; height: parent.height; text: entry.k; font.pixelSize: Theme.m12; color: entry.kc }
@@ -19,7 +19,7 @@ Item {
             }
         }
     }
-    Panel { x: Layout.library.previewX; y: Theme.s2; width: Layout.library.previewW; height: parent.height-Theme.s4
+    Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: Layout.library.previewX; y: Theme.s2; width: Layout.library.previewW; height: parent.height-Theme.s4
         Label { x: Theme.s4; y: Theme.s3; text: 'SELECTED'; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m11 }
         Label { x: Theme.s4; y: Theme.dL; text: 'Río Lento'; font.pixelSize: Theme.trackSize }
         Label { x: Theme.s4; y: Theme.mixerStripsY; text: 'A MIN ✓ · 123 → 124 ✓ · STUDIO'; color: Theme.tealPlus; font.pixelSize: Theme.m12 }

@@ -79,6 +79,7 @@ SCREENS = (
     Screen('SynthSettingsAudio', 'Audio', 'COMMON', source='SynthSettings', design='43'),
     Screen('SynthSettingsConnections', 'Connections', 'COMMON', source='SynthSettings', design='44'),
     Screen('SynthSettingsSystem', 'System', 'COMMON', source='SynthSettings', design='45'),
+    Screen('SynthScale', 'SYNTH · SCALE', 'STANDALONE', source='SynthScale'),
 )
 SCREEN_NAMES = [s.name for s in SCREENS]
 SCREEN_BY_NAME = {s.name.casefold(): i for i, s in enumerate(SCREENS, 1)}

@@ -2,6 +2,8 @@ import QtQuick
 import "../theme"
 Panel {
     id: strip
+    touchKind:"parameter"
+    touchCallback:function(){console.selectEncoder(Math.round((strip.x-8)/160));touch.inspect(strip.roleName+" · encoder/fader selected")}
     property string roleName: "BASS"
     property real level: 0.77
     property real meter: 0.74
@@ -46,7 +48,7 @@ Panel {
             }
         }
     }
-    Panel { x: Theme.s2; y: Theme.mixerCueY; width: parent.width-2*x; height: Theme.dM; color: strip.cue ? Theme.white : "transparent"; radius: Theme.s1
+    Panel { touchKind:"choice";touchCallback:function(){strip.cue=!strip.cue};x: Theme.s2; y: Theme.mixerCueY; width: parent.width-2*x; height: Theme.dM; color: strip.cue ? Theme.white : "transparent"; radius: Theme.s1
         Label { anchors.centerIn: parent; text: "CUE"; color: strip.cue ? Theme.bg : Theme.grayN; font.pixelSize: Theme.m11 }
     }
     Item { x: Theme.topHeight; y: Theme.mixerFaderY; width: Theme.dL+Theme.s4; height: Theme.mixerFaderHeight

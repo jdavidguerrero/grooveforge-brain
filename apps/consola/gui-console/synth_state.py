@@ -7,6 +7,7 @@ from fm_visuals import keyboard_scaling
 from synth_catalog import ENGINE_LABELS
 
 SYNTH_SCREENS = {
+    'SynthScale': ('juno','FILTER',0),
     'SynthParts': ('juno','FILTER',0), 'SynthPartsStates': ('juno','FILTER',0),
     'SynthFilter': ('juno','FILTER',0), 'SynthNotResponding': ('juno','FILTER',0),
     'SynthLoading': ('juno','FILTER',0), 'SynthOsc': ('arp2600','OSC 1',0),
@@ -288,7 +289,7 @@ class SynthState(QObject):
             return
         self._screen = name
         engine, page, bank = SYNTH_SCREENS[name]
-        if self.preview and not self._preserve_selection:
+        if self.preview and not self._preserve_selection and not self.console.synthMode:
             self._part = 4 if engine == 'hybrid' else 2 if engine in ('dx7','dx7_6op') else 1 if engine == 'model_d' else 3
             if self.current_part.get('engine') != engine:
                 self.request('set_engine',part=self._part,engine=engine)
@@ -298,7 +299,8 @@ class SynthState(QObject):
         else:
             self._variant = ''
         self._preserve_selection = False
-        self._page, self._bank = page, bank
+        if not self.console.synthMode:
+            self._page, self._bank = page, bank
         self._focus = 0
         if name in ('SynthPresets','SynthSaveAs'):
             self.filterPresets(self._engine_filter,self._tag_filter)
@@ -388,6 +390,20 @@ class SynthState(QObject):
             self._dirty = True
             self.wakeRequested.emit()
 
+    @Slot(int)
+    def focusParameter(self, index):
+        if 0 <= index < len(self.bank):
+            self._focus = index
+            self.console.selectEncoder(index)
+            meta = self.bank[index]
+            if meta['kind'] == 'bool' and self.status in ('ready','preview'):
+                old = self.values.get(meta['id'], meta['default'])
+                value = meta['max'] if old == meta['min'] else meta['min']
+                self._values.setdefault(self._part,{})[meta['id']] = value
+                self._outbound[(self._part, meta['id'])] = value
+            self._dirty = True
+            self.wakeRequested.emit()
+
     @Slot(str)
     def changeEngine(self, name):
         if name in self._engines and self.status in ('ready','preview'):
@@ -469,13 +485,15 @@ class SynthState(QObject):
     def keys(self):
         from fake_data import key
         nav = lambda label, action, value='': key(label,value,action='synth:'+action)
+        if self._screen == 'SynthScale':
+            return [key('Root', action='synth:root-next'),key('Scale', action='synth:scale-next'),key('Oct −', action='synth:oct-minus'),key('Oct +', action='synth:oct-plus')]+[key(),key(),key(),key('Back',action='synth:nav:SynthParts')]
         if self._screen.startswith('SynthSettings'):
             return [key(n,action='nav:'+dest,lit=self._screen==dest) for n,dest in [
                 ('Audio','SynthSettingsAudio'),('Connections','SynthSettingsConnections'),('Surface','Settings'),('System','SynthSettingsSystem')]] + [key(),key(),nav('Retry','retry'),key('Back',action='nav:SynthParts')]
         if self._screen in ('SynthParts','SynthPartsStates'):
             keys = [key(p['role'],ENGINE_LABELS.get(p['engine'],p['engine']),p['role'],p['part']==self._part,'synth:open:'+str(p['part'])) for p in self._parts]
             keys += [key() for _ in range(4-len(keys))]
-            keys += [key('BRAIN','OFFLINE',action='nav:SynthSettingsConnections'),key('Engine',self.engineLabel),key('Mute','ON' if self.current_part.get('mute') else 'OFF',action='synth:mute'),key('Level',f"{self.current_part.get('level_db',0):g} dB")]
+            keys += [key('BRAIN','OFFLINE',action='nav:SynthSettingsConnections'),key('Engine',self.engineLabel,action='synth:engine-next'),key('Mute','ON' if self.current_part.get('mute') else 'OFF',action='synth:mute'),key('Scale', action='synth:nav:SynthScale')]
             return keys
         if self._screen == 'SynthHybrid':
             return [nav('Edit A','half-a'),key(),key(),key('Morph',str(self.values.get('layer.morph',0))),
@@ -484,12 +502,12 @@ class SynthState(QObject):
         if self._screen == 'SynthSaveAs':
             return [key() for _ in range(5)]+[nav('Save','save'),key(),key('Cancel',action='synth:nav:SynthPresets')]
         if self._screen == 'SynthPresets':
-            return [nav('Scroll · load','load',str(self._preset_index+1)+' / '+str(len(self._presets))),key('Engine',self.engineFilter),key('Tag',self.tagFilter),key(),key(),key('Save as',action='synth:nav:SynthSaveAs'),key(),key('Back',action='nav:SynthParts')]
+            return [nav('Scroll · load','load',str(self._preset_index+1)+' / '+str(len(self._presets))),key('Engine',self.engineFilter,action='synth:filter-engine'),key('Tag',self.tagFilter,action='synth:filter-tag'),key(),key(),key('Save as',action='synth:nav:SynthSaveAs'),key(),key('Back',action='nav:SynthParts')]
         pages = self.pages
         index = pages.index(self._page) if self._page in pages else 0
         prev = pages[(index-1)%len(pages)] if pages else ''
         nxt = pages[(index+1)%len(pages)] if pages else ''
-        keys = [nav('Page ◂','prev',prev),nav('Page ▸','next',nxt),nav('Bank','bank',f'{self._bank+1} / {max(1,self.bankCount)}'),nav('Fine','fine','SHIFT' if self._fine else 'Hold SHIFT'),key(),key(),key('Presets',action='synth:nav:SynthPresets'),key('Back',action='nav:SynthParts')]
+        keys = [nav('Page ◂','prev',prev),nav('Page ▸','next',nxt),nav('Bank','bank',f'{self._bank+1} / {max(1,self.bankCount)}'),nav('Fine','fine','SHIFT' if self._fine else 'Hold SHIFT'),key('Scale',action='synth:nav:SynthScale'),key(),key('Presets',action='synth:nav:SynthPresets'),key('Back',action='nav:SynthParts')]
         if self.engine in ('dx7','dx7_6op'):
             keys[4] = nav('Op ◂','op-prev')
             keys[5] = nav('Op ▸','op-next')
@@ -504,13 +522,24 @@ class SynthState(QObject):
         return keys
 
     def action(self, value):
-        if value.startswith('nav:'):
+        if value in ('root-next','scale-next','oct-minus','oct-plus'):
+            surface = self.console.surface
+            if value == 'root-next': surface.setRoot((surface.root+1)%12)
+            elif value == 'scale-next':
+                names = surface.scales
+                surface.setScale(names[(names.index(surface.scale)+1)%len(names)])
+            else: surface.transpose(-1 if value == 'oct-minus' else 1)
+        elif value.startswith('nav:'):
             self.openScreen(value[4:])
         elif value in ('half-a','half-b'):
             self.openScreen('SynthHybrid'+value[-1].upper())
         elif value.startswith('open:'):
             self.selectPart(int(value.split(':')[1]))
             self.openScreen('SynthHybrid' if self.engine == 'hybrid' else 'SynthFilter')
+        elif value == 'engine-next' and self._engines:
+            self.changeEngine(self._engines[(self._engines.index(self.engine)+1)%len(self._engines)])
+        elif value == 'filter-engine': self.turn(1,1)
+        elif value == 'filter-tag': self.turn(2,1)
         elif value == 'prev': self.nextPage(-1)
         elif value == 'next': self.nextPage(1)
         elif value == 'bank': self.nextBank()

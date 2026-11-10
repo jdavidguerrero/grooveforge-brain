@@ -11,7 +11,7 @@ Item {
                     x: {let units=0;for(let i=0;i<index;i++)units+=entry.keys[i].f;return units*(parent.width-(entry.keys.length-1)*Layout.search.gap)/parent.units+index*Layout.search.gap}
                     width: modelData.f*(parent.width-(entry.keys.length-1)*Layout.search.gap)/parent.units; height: parent.height; color: modelData.bg
                     Label { anchors.centerIn: parent; text: modelData.k; color: modelData.fg; font.pixelSize: Theme.m18 }
-                    MouseArea { anchors.fill: parent; onClicked: console.typeKey(modelData.k) }
+                    TouchTarget { hardwareAction: "text"; anchors.fill: parent; callback: function() { console.typeKey(modelData.k) }}
                 }
             }
         }

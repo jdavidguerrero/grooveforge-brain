@@ -102,11 +102,18 @@ class ConsoleState(QObject):
             dict(icon='KICK',message='KICK enters on the phrase',value='IN 4 BARS',tone='KICK',opacity=1.)],
             'icon message value tone opacity'.split(), self)
         self._property_dirty = False
+        self._in_surface_batch = False
         self._frame_timer = QTimer(self)
         self._frame_timer.setInterval(16)
         self._frame_timer.timeout.connect(self.flush_properties)
         self._frame_timer.start()
         self.refresh_keys()
+
+    def _notify(self):
+        if self._in_surface_batch:
+            self._property_dirty = True
+        else:
+            self.changed.emit()
 
     def flush_properties(self):
         if self._property_dirty:
@@ -126,8 +133,9 @@ class ConsoleState(QObject):
     screenSource = Property(str, lambda s: SCREENS[s._screen-1].qml, notify=changed)
     screenName = Property(str, lambda s: SCREENS[s._screen-1].name, notify=changed)
     screenTitle = Property(str, lambda s: SCREENS[s._screen-1].title, notify=changed)
-    screenMode = Property(str, lambda s: ('CONTROLLER' if not s._mode else 'STANDALONE')
-                          if SCREENS[s._screen-1].mode == 'SHARED' else SCREENS[s._screen-1].mode, notify=changed)
+    screenMode = Property(str, lambda s: 'SYNTH' if s._mode == 2 and s.screenName.startswith('Synth') else
+                          ('CONTROLLER' if not s._mode else 'STANDALONE') if SCREENS[s._screen-1].mode == 'SHARED'
+                          else SCREENS[s._screen-1].mode, notify=changed)
     query = Property(str, lambda s: s._query, notify=changed)
     keyboardVisible = Property(bool, lambda s: s._keyboard, notify=changed)
     padStep = Property(int, lambda s: s._pad_step, notify=changed)
@@ -136,6 +144,7 @@ class ConsoleState(QObject):
     screen = Property(int, lambda s: s._screen, notify=changed)
     liveState = Property(str, lambda s: s._live_state, notify=changed)
     selectedEncoder = Property(int, lambda s: s._selected, notify=changed)
+    synthMode = Property(bool, lambda s: s._mode == 2, notify=changed)
     selectedMode = Property(int, lambda s: s._mode, notify=changed)
     settingsSection = Property(str, lambda s: s._settings, notify=changed)
     encoding = Property(str, lambda s: s._encoding, notify=changed)
@@ -155,7 +164,7 @@ class ConsoleState(QObject):
                 self._return_screen = self._screen
             if descriptor.mode.startswith('CONTROLLER'):
                 self._mode = 0
-            elif descriptor.mode == 'STANDALONE':
+            elif descriptor.mode == 'STANDALONE' and not (self._mode == 2 and descriptor.name.startswith('Synth')):
                 self._mode = 1
             self._screen = value
             live_state = descriptor.state if descriptor.state in ('offline', 'empty', 'loading') else 'normal'
@@ -166,7 +175,7 @@ class ConsoleState(QObject):
             if hasattr(self, 'synth'):
                 self.synth.configure(descriptor.name)
             self.refresh_keys()
-            self.changed.emit()
+            self._notify()
 
     @Slot(str)
     def navigate(self, name):
@@ -186,19 +195,19 @@ class ConsoleState(QObject):
             self._query += '1'
         else:
             self._query += ' ' if value == 'SPACE' else value.lower()
-        self.changed.emit()
+        self._notify()
 
     @Slot(int, int)
     def panRoll(self, steps, notes):
         step_view = self.screenName == 'SequencerSteps'
         self._pad_step = max(16 if step_view else 0, min(24 if step_view else 56, self._pad_step + steps))
         self._pad_note = max(0, min(4 if step_view else 17, self._pad_note + notes))
-        self.changed.emit()
+        self._notify()
 
     @Slot(float)
     def zoomRoll(self, scale):
         self._zoom = max(1., min(4., scale))
-        self.changed.emit()
+        self._notify()
 
     @Slot(int, int)
     def pressPad(self, column, row):
@@ -222,6 +231,14 @@ class ConsoleState(QObject):
             note = dict(step=step, pitch=pitch, length=1, velocity=104, micro=0, owner='you', selected=True,
                         l=step / .64, t=(24-pitch)*4., w=1/.64, h=4., c='#3D8CFF', sh='selected')
             model.replace(model.rows + [{'entry': note}])
+
+    @Slot(int,int)
+    def selectStep(self, lane, column):
+        self._step_lane = max(0,min(7,lane))
+        self._step_column = max(0,min(15,column))
+        self.selectEncoder(1)
+        if hasattr(self, 'surface'):
+            self.surface.touch.inspect(f'Step {self._step_column+1} · lane {self._step_lane+1} · encoder edits')
 
     def edit_step(self, index, delta):
         model = self._standalone._models['stepLanes']
@@ -280,12 +297,12 @@ class ConsoleState(QObject):
                             title='Paused' if value == 'offline' else 'Generating…' if value == 'loading' else '—',
                             subtitle='')
         self._cells.replace(rows)
-        self.changed.emit()
+        self._notify()
 
     @Slot(int)
     def selectEncoder(self, value):
         self._selected = value % 8
-        self.changed.emit()
+        self._notify()
 
     @Slot(int, int)
     def turnEncoder(self, index, delta):
@@ -295,10 +312,14 @@ class ConsoleState(QObject):
             self._selected = index
             self._property_dirty = True
         if hasattr(self, 'synth') and self.screenName.startswith('Synth'):
-            self.synth.turn(index, delta)
+            if self.screenName == 'SynthScale' and hasattr(self, 'surface'):
+                self.surface.apply_frame('Encoder', dict(indice=index, delta=delta))
+            else:
+                self.synth.turn(index, delta)
             return
         if self._screen == 2:
-            self._mode = index % 2
+            self._mode = index % 3
+            self.refresh_keys()
             self._property_dirty = True
             return
         if self._screen > 9 and SCREENS[self._screen-1].source != 'LiveSession':
@@ -329,11 +350,13 @@ class ConsoleState(QObject):
             return
         self._softKeys.flush()
         action = self._softKeys.rows[index]['action']
-        self.triggerAction(action)
+        self.triggerAction(action or 'demo:'+self._softKeys.rows[index]['label'])
 
     @Slot(str)
     def triggerAction(self, action):
-        if action.startswith('synth:') and hasattr(self, 'synth'):
+        if action.startswith('demo:') and hasattr(self, 'surface'):
+            self.surface.touch.inspect('DEMO · '+action[5:]+' · no connected service')
+        elif action.startswith('synth:') and hasattr(self, 'synth'):
             self.synth.action(action[6:])
         elif action.startswith('nav:'):
             self.navigate(action[4:])
@@ -345,7 +368,7 @@ class ConsoleState(QObject):
             self.vary_engine()
         elif action == 'keyboard':
             self._keyboard = not self._keyboard
-            self.changed.emit()
+            self._notify()
         elif action.startswith('review:'):
             self._review_selection = int(action.split(':')[1])
             if self.screenName == 'Motor':
@@ -368,11 +391,11 @@ class ConsoleState(QObject):
             self.setScreen(int(action.split(':')[1]))
         elif action.startswith('mode:'):
             self._mode = int(action[-1])
-            self.setScreen(5 if self._mode else screen_id("Session"))
+            self.setScreen(screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
         elif action.startswith('settings:'):
             self._settings = action.split(':')[1]
             self.refresh_keys()
-            self.changed.emit()
+            self._notify()
         elif action.startswith('cue:'):
             selected = int(action[-1])
             for i in range(4):
@@ -393,7 +416,7 @@ class ConsoleState(QObject):
             self.setScreen(7)
         elif action == 'encoding':
             self._encoding = 'stripe' if self._encoding == 'fill' else 'fill'
-            self.changed.emit()
+            self._notify()
 
     def refresh_keys(self):
         descriptor = SCREENS[self._screen-1]
@@ -427,8 +450,8 @@ class ConsoleState(QObject):
             keys = [key(r, 'MUTE' if i == 6 else str(round(LEVELS[i]*100)), r, i != 6,
                         'screen:6', i == 4, LEVELS[i] if i == 4 else -1) for i,r in enumerate(ROLES)]
         elif self._screen == 2:
-            keys = [key('Controller',action='mode:0'),key('Standalone','enter',lit=True,action='mode:1')]
-            keys += [key() for _ in range(4)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
+            keys = [key('Controller',lit=self._mode==0,action='mode:0'),key('Standalone','enter',lit=self._mode==1,action='mode:1'),key('Synth','play',lit=self._mode==2,action='mode:2')]
+            keys += [key() for _ in range(3)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
         elif self._screen == 4:
             keys = [key(n,lit=n == self._settings,action='settings:'+n) for n in ['Audio','Connections','Surface','System']]
             keys += [key(),key(),key('Calibrate','FSR 2',action='settings:Surface'),key('Back',action='screen:2')]

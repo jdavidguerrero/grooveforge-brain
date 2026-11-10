@@ -5,6 +5,8 @@ Panel {
     property bool compact: false
     property int rollHeight: Theme.rollHeight
     property string roleName: "BASS"
+    touchKind:"choice"
+    touchCallback:function(){card.optionState="cue";touch.inspect(card.title+" · design cue")}
     property string letter: "A"
     property string title: "Sub Prophet"
     property string subtitle: "A1 · pluck · 16 steps"

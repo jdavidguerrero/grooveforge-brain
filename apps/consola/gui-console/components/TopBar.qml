@@ -11,7 +11,7 @@ Rectangle {
     Label { x: Theme.m20; y: Theme.s5; text: root.view; face: root.os ? Theme.osFont : Theme.displayFont; font.pixelSize: root.os ? Theme.m20 : Theme.dM; weight: Font.Bold; height: Theme.lineM }
     Row {
         anchors.right: separator.left; anchors.rightMargin: Theme.m28; anchors.verticalCenter: parent.verticalCenter
-        spacing: Theme.s5; visible: !root.os
+        spacing: Theme.s5; visible: !root.os && !console.synthMode
         Column { spacing: Theme.edge
             Label { text: 'KEY'; color: Theme.mon; font.pixelSize: Theme.tiny; weight: Font.Normal }
             Label { text: console.keyName; font.pixelSize: Theme.s4 }
@@ -35,11 +35,15 @@ Rectangle {
             Label { id: sectionText; anchors.centerIn: parent; text: root.sectionName; face: Theme.displayFont; weight: Font.Bold; font.pixelSize: Theme.m20 }
         }
     }
-    Rectangle { id: separator; anchors.right: connRow.left; anchors.rightMargin: Theme.m28; anchors.verticalCenter: parent.verticalCenter; width: Theme.hairline; height: Theme.m28; color: Theme.line; visible: !root.os }
+    Row { x:480;anchors.verticalCenter:parent.verticalCenter;spacing:24;visible:console.synthMode
+        Label {text:(synth.partInfo.role || 'PART')+' · '+surface.roots[surface.root]+' '+surface.scale; font.pixelSize:14;color:Theme.tealPlus}
+        Label {text:surface.status;font.pixelSize:11;color:Theme.grayN}
+    }
+    Rectangle { id: separator; anchors.right: connRow.left; anchors.rightMargin: Theme.m28; anchors.verticalCenter: parent.verticalCenter; width: Theme.hairline; height: Theme.m28; color: Theme.line; visible: !root.os && !console.synthMode }
     Row {
         id: connRow
         anchors.right: parent.right; anchors.rightMargin: Theme.m20; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.m14
-        Row {visible:console.screenName.indexOf('Synth')===0;spacing:6
+        Row {visible:console.screenName.indexOf('Synth')===0 && !console.synthMode;spacing:6
             Rectangle {anchors.verticalCenter:parent.verticalCenter;width:8;height:8;radius:4;color:Theme.teal}
             Label {text:'ENGINE';font.pixelSize:10;color:Theme.grayN}
         }
@@ -51,5 +55,6 @@ Rectangle {
             }
         }
     }
+    TouchTarget { width:180;height:56;anchors.fill:null;hardwareAction:"navigation";callback:function(){console.navigate('ModeSelect')} }
     Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: Theme.hairline; color: Theme.surface2 }
 }

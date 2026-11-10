@@ -3,7 +3,7 @@ import "../theme"
 import "../components"
 Item {
     id: live
-    Panel { x: Theme.summaryX; y: Theme.summaryY; width: Theme.summaryWidth; height: Theme.infoHeight
+    Panel {touchKind:"navigation";touchCallback:function(){console.navigate("Transition")};x: Theme.summaryX; y: Theme.summaryY; width: Theme.summaryWidth; height: Theme.infoHeight
         Canvas { x: Theme.ringX; anchors.verticalCenter: parent.verticalCenter; width: Theme.ringSize; height: width
             onPaint: { let c=getContext('2d'); c.reset(); c.lineWidth=Theme.ringStroke; for(let i=0;i<Theme.columns;i++){ c.strokeStyle=i<console.phrase-1?Theme.teal:i===console.phrase-1?Theme.white:Theme.line; c.beginPath();c.arc(width/2,height/2,(width-Theme.ringStroke)/2,(i*Theme.ringSegment+Theme.ringStart)*Math.PI/180,(i*Theme.ringSegment+Theme.ringEnd)*Math.PI/180);c.stroke() } }
             Label { anchors.centerIn: parent; text: console.phrase; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.ringCount }
@@ -53,7 +53,7 @@ Item {
             x: Theme.columnX(channel); y: [Theme.roomY,Theme.nextY,Theme.optionAY,Theme.optionBY][row]
             width: Theme.columnWidth; height: [Theme.roomHeight,Theme.nextHeight,Theme.optionHeight,Theme.optionHeight][row]
             compact: row>=2
-            MouseArea { anchors.fill: parent; onClicked: console.setScreen(6) }
+            TouchTarget { hardwareAction: "navigation"; anchors.fill: parent; callback: function() { console.setScreen(6) }}
         }
     }
     Image { y: Theme.handsReadoutY; width: Theme.handHaloWidth; height: Theme.handHaloHeight; source: "../assets/halo.png" }

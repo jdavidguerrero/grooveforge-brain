@@ -17,7 +17,7 @@ Item {
             color: root.selection ? (root.selection === entry.n ? Theme.tealDim : Theme.surface2) : entry.bg
             border.color: root.selection ? (root.selection === entry.n ? Theme.tealPlus : Theme.line) : (entry.bd || Theme.line)
             Label { anchors.fill: parent; anchors.margins: Theme.s3; text: entry.n; color: root.selection ? Theme.white : (entry.fg || Theme.white); horizontalAlignment: root.centered ? Text.AlignHCenter : Text.AlignLeft; face: root.display ? Theme.displayFont : Theme.monoFont; font.pixelSize: root.display ? Theme.dL : Theme.m14 }
-            MouseArea { anchors.fill: parent; onClicked: {root.selection = entry.n; root.chosen(entry.n)} }
+            TouchTarget { hardwareAction: "choice"; anchors.fill: parent; callback: function() {root.selection = entry.n; root.chosen(entry.n);touch.inspect(entry.n+" · selected")} }
         }
     }
 }

@@ -2,27 +2,20 @@ import QtQuick
 import "../theme"
 import "../components"
 Item {
-    Repeater { model: 2
+    Repeater { model: ['Controller','Standalone','Synth']
         Panel {
             required property int index
-            property bool standalone: index === 1
-            x: Theme.modeX+index*(Theme.modeWidth+Theme.modeGap); y: Theme.modeY
-            width: Theme.modeWidth; height: Theme.modeHeight; color: Theme.gpBgCard; radius: Theme.rOs
-            border.width: Theme.edge; border.color: console.selectedMode === index ? Theme.gpTeal : Theme.gpBorder
-            Label { x: Theme.modePad; y: Theme.modePad; text: "ENC "+(index+1); color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
-            Label { anchors.right: parent.right; anchors.rightMargin: Theme.modePad; y: Theme.modePad; text: parent.standalone ? "READY" : "LIVE NOT FOUND"; color: parent.standalone ? Theme.gpTeal : Theme.amber; font.pixelSize: Theme.m11 }
-            Label { x: Theme.modePad; y: Theme.modeTitleY; text: parent.standalone ? "Standalone" : "Controller"; face: Theme.osFont; font.pixelSize: Theme.modeTitleSize }
-            Label { x: Theme.modePad; y: Theme.modeDescY; width: parent.width-2*x; height: Theme.infoHeight; wrapMode: Text.WordWrap; face: Theme.osFont; font.pixelSize: Theme.m18; weight: Font.Normal; color: Theme.gpTextSec; text: parent.standalone ? "No computer. The engine generates every layer; you play it like a DJ set." : "Push-style control of Ableton Live, plus the Mac engine in studio mode." }
-            Column { x: Theme.modePad; y: Theme.modeStatusY; spacing: Theme.s3
-                Repeater { model: index === 1 ? ["Engine     ready · 6/8 models", "Library    42 tracks · 6 sets", "Network    Ethernet 10.0.0.24"] : ["Live       not found on network", "Link       3 peers", "USB / MIDI host ready"]
-                    Row { spacing: Theme.s3
-                        Rectangle { width: Theme.s2; height: width; radius: width/2; color: Theme.gpTeal; anchors.verticalCenter: parent.verticalCenter }
-                        Label { text: modelData; color: Theme.gpTextSec; font.pixelSize: Theme.m14 }
-                    }
-                }
-            }
-            MouseArea { anchors.fill: parent; onClicked: console.triggerAction("mode:"+parent.index) }
+            required property string modelData
+            x: 24+index*420; y: 40; width: 392; height: 448
+            color: Theme.gpBgCard; radius: Theme.rOs
+            border.width: 2; border.color: console.selectedMode === index ? Theme.gpTeal : Theme.gpBorder
+            Label { x: 24; y: 24; text: 'ENC '+(index+1); color: Theme.mon; font.pixelSize: 12 }
+            Label { x: 24; y: 84; text: modelData; face: Theme.osFont; font.pixelSize: 40 }
+            Label { x: 24; y: 160; width: 344; height: 160; wrapMode: Text.WordWrap; elide: Text.ElideNone; font.pixelSize: 18; color: Theme.gpTextSec
+                text: index === 2 ? 'Play four synth parts. Pads, keys, faders and hands control the sound directly.' : index === 1 ? 'The engine generates layers; you perform the set.' : 'Push-style control of Ableton Live, plus the Mac engine.' }
+            Label { x:24; y:350; width:344; height:72; wrapMode:Text.WordWrap; elide:Text.ElideNone; font.pixelSize:13; color:Theme.gpTeal; text: index===2 ? 'PARTS → ENGINE → PRESETS\nPlay directly. Shape every part.' : 'DESIGN DEMO' }
+            TouchTarget { hardwareAction:'choice'; callback:function(){ console.triggerAction('mode:'+parent.index) } }
         }
     }
-    Label { y: Theme.modeHintY; width: parent.width; horizontalAlignment: Text.AlignHCenter; text: "TURN ENC 1–2 OR TAP · PRESS TO ENTER · LAST MODE STARTS AFTER 8 S"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
+    Label { y: 520; width:parent.width; horizontalAlignment:Text.AlignHCenter; text:'ENC 1–3 TO SELECT · PRESS TO ENTER · OR TAP'; font.pixelSize:12; color:Theme.mon }
 }

@@ -3,7 +3,7 @@ import "../theme"
 import "../components"
 Item {
     Repeater { model: console.groups
-        Panel { required property int index; required property string title; required property real level; required property real meter; required property var members
+        Panel { touchKind:"parameter"; touchCallback:function(){console.selectEncoder(index);touch.inspect(title+" · use physical fader")}; required property int index; required property string title; required property real level; required property real meter; required property var members
             x: Theme.s2+index*(Theme.mixerGroupWidth+Theme.s2); y: Theme.s2; width: Theme.mixerGroupWidth; height: Theme.mixerGroupHeight
             Label { x: Theme.s3; y: Theme.s2; text: title; font.pixelSize: Theme.m12 }
             Label { anchors.right: parent.right; anchors.rightMargin: Theme.s3; y: Theme.s2; text: "FADER "+Math.round(level*100); font.pixelSize: Theme.m11; color: Theme.grayN }

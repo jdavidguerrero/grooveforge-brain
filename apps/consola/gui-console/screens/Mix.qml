@@ -7,7 +7,7 @@ Item {
         Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; height: parent.height; text: 'MASTER  −1.2 dB  ·  CUE −6.0'; color: Theme.grayN; font.pixelSize: Theme.m12 }
     }
     Repeater { model: console.controller.mixStrips
-        Panel { required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Layout.mix.stripsY; width: Theme.columnWidth; height: Layout.mix.stripsH; border.color: entry.obd
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Layout.mix.stripsY; width: Theme.columnWidth; height: Layout.mix.stripsH; border.color: entry.obd
             Rectangle { width: parent.width; height: Theme.s1; color: entry.c }
             Label { x: Theme.s3; y: Theme.s3; text: entry.n; font.pixelSize: Theme.keyLabel }
             Repeater { model: entry.knobs

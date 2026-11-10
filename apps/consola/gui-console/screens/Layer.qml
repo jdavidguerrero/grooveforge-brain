@@ -34,7 +34,7 @@ Item {
             required encoder
             objectName: "optionCard"+index
             x: Theme.columnX(index*2); y: Theme.layerCardsY; width: Theme.optionWidth; height: Theme.layerCardsHeight
-            MouseArea { anchors.fill: parent; onClicked: console.triggerAction("cue:"+parent.index) }
+            TouchTarget { hardwareAction: "navigation"; anchors.fill: parent; callback: function() { console.triggerAction("cue:"+parent.index) }}
         }
     }
 }

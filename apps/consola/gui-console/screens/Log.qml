@@ -11,7 +11,7 @@ Item {
         Label { x: Theme.nextTitleX; y: Theme.dL; text: '23'; face: Theme.displayFont; font.pixelSize: Theme.dL; weight: Font.ExtraBold }
         ActionButton { anchors.right: parent.right; anchors.rightMargin: Theme.s4; y: Theme.s4; width: Theme.optionWidth; height: Theme.topHeight; text: 'EXPORT TO LIVE · .ALS'; active: true }
     }
-    Panel { x: Theme.s2; y: Layout.log.timelineY; width: Theme.summaryWidth; height: Layout.log.timelineH; color: Theme.rollAlt
+    Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: Theme.s2; y: Layout.log.timelineY; width: Theme.summaryWidth; height: Layout.log.timelineH; color: Theme.rollAlt
         Rectangle { x: Theme.s3; y: parent.height/2; width: parent.width-2*x; height: Theme.edge; color: Theme.line }
         Repeater { model: console.standalone.logDots
             Rectangle { required property int index; required property var entry; x: Theme.s3+entry.x*(parent.width-Theme.s5-Layout.log.dotSize)/100; y: (parent.height-height)/2; width: Layout.log.dotSize; height: width; color: entry.c; radius: Theme.edge }
@@ -26,7 +26,7 @@ Item {
         Label { x: Layout.log.trackX; text: 'TRACK'; font.pixelSize: Theme.tiny; color: Theme.mon }
     }
     Repeater { model: console.standalone.logRows
-        Panel { required property int index; required property var entry; x: Theme.s2; y: Layout.log.rowsY+index*Layout.log.pitch; width: Theme.summaryWidth; height: Layout.log.rowH
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; x: Theme.s2; y: Layout.log.rowsY+index*Layout.log.pitch; width: Theme.summaryWidth; height: Layout.log.rowH
             Label { x: Theme.s3; height: parent.height; text: entry.t; color: Theme.grayN; font.pixelSize: Theme.keyLabel }
             Label { x: Layout.log.barX; height: parent.height; text: entry.b; color: Theme.grayN; font.pixelSize: Theme.keyLabel }
             Label { x: Layout.log.roleX; height: parent.height; text: entry.k; color: entry.c; font.pixelSize: Theme.m11; weight: Font.Bold }

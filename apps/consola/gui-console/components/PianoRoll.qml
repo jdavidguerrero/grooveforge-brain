@@ -39,6 +39,7 @@ Item {
             }
             Rectangle { x: parent.width*(root.clipView ? Layout.roll.clipHead : Layout.roll.playhead); width: Theme.edge; height: parent.height; color: Theme.tealPlus }
         }
+        TouchTarget { hardwareAction:"navigation"; callback:function(){ touch.inspect("Piano roll · drag to navigate · pinch to zoom") } }
         PinchHandler { id: pinch; target: null; enabled: !root.clipView; onActiveScaleChanged: console.zoomRoll(activeScale) }
     }
 }

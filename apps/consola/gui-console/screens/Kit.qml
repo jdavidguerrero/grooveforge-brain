@@ -9,7 +9,7 @@ Item {
         Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; anchors.verticalCenter: parent.verticalCenter; text: 'Selected: CONGA HI · GENERATE asks for 3 sounds'; color: Theme.grayN; font.pixelSize: Theme.m12 }
     }
     Repeater { model: console.standalone.voices
-        Panel { required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Layout.kit.voicesY; width: Theme.columnWidth; height: Layout.kit.voicesH; border.color: entry.bd; border.width: Theme.edge; clip: true
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Layout.kit.voicesY; width: Theme.columnWidth; height: Layout.kit.voicesH; border.color: entry.bd; border.width: Theme.edge; clip: true
             Rectangle { width: parent.width; height: Layout.kit.voiceHeaderH; color: entry.c
                 Label { x: Theme.s2; height: parent.height; text: entry.n; color: Theme.bg; font.pixelSize: Theme.m11; weight: Font.Bold }
             }
@@ -23,7 +23,7 @@ Item {
     }
     Label { x: Theme.s3; y: Layout.kit.alternativesTitleY; text: 'ENGINE · ALTERNATIVES FOR CONGA HI · TAP PAD TO AUDITION'; color: Theme.purpleBright; font.pixelSize: Theme.m11 }
     Repeater { model: console.standalone.alts
-        Panel { required property int index; required property var entry; x: Theme.columnX(index*2); y: Layout.kit.alternativesY; width: Theme.optionWidth; height: Layout.kit.alternativesH; color: entry.bg; border.color: entry.bd; border.width: entry.bs === 'dashed' ? 0 : Theme.edge
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; x: Theme.columnX(index*2); y: Layout.kit.alternativesY; width: Theme.optionWidth; height: Layout.kit.alternativesH; color: entry.bg; border.color: entry.bd; border.width: entry.bs === 'dashed' ? 0 : Theme.edge
             DashedOutline { anchors.fill: parent; visible: entry.bs === 'dashed'; stroke: entry.bd }
             Label { x: Theme.s3; y: Theme.s2; text: entry.l; face: Theme.displayFont; font.pixelSize: Theme.m28; weight: Font.ExtraBold }
             Label { anchors.right: parent.right; anchors.rightMargin: Theme.s3; y: Theme.s3; text: entry.t; color: entry.tc; font.pixelSize: Theme.tiny }

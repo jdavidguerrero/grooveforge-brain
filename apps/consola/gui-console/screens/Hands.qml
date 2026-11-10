@@ -3,7 +3,7 @@ import "../theme"
 import "../components"
 Item {
     Repeater { model: console.hands
-        Panel { id: hand
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; id: hand
             required property int index
             required property string side
             required property string target
@@ -32,7 +32,7 @@ Item {
             }
             Column { visible: hand.index === 1; x: Theme.handsLadderX; y: Theme.s5; width: Theme.handsLadderWidth; spacing: Theme.s1
                 Repeater { model: ["A4","G4","F4","E4","D4","C4","B3","A3"]
-                    Panel { width: Theme.handsLadderWidth; height: (Theme.handsPanelHeight-2*Theme.s5-7*Theme.s1)/Theme.columns; color: modelData === hand.value ? Theme.roleColor("LEAD") : Theme.rollBg; border.color: modelData.startsWith("A") ? Theme.teal : Theme.line; radius: Theme.s1
+                    Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; width: Theme.handsLadderWidth; height: (Theme.handsPanelHeight-2*Theme.s5-7*Theme.s1)/Theme.columns; color: modelData === hand.value ? Theme.roleColor("LEAD") : Theme.rollBg; border.color: modelData.startsWith("A") ? Theme.teal : Theme.line; radius: Theme.s1
                         Label { x: Theme.s3; anchors.verticalCenter: parent.verticalCenter; text: modelData; font.pixelSize: Theme.m18; color: modelData === hand.value ? Theme.bg : Theme.white }
                         Label { anchors.right: parent.right; anchors.rightMargin: Theme.s3; anchors.verticalCenter: parent.verticalCenter; text: Math.round(hand.rangeMax-index*Theme.noteCmStep)+" cm"; font.pixelSize: Theme.tiny; color: modelData === hand.value ? Theme.bg : Theme.mon }
                     }
