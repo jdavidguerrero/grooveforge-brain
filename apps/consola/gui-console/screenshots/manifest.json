@@ -1,0 +1,247 @@
+[
+  {
+    "name": "Boot",
+    "file": "01-Boot.png",
+    "mode": "COMMON",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "ModeSelect",
+    "file": "02-ModeSelect.png",
+    "mode": "COMMON",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Toasts",
+    "file": "03-Toasts.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Settings",
+    "file": "04-Settings.png",
+    "mode": "COMMON",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "LiveSession",
+    "file": "05-LiveSession.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Layer",
+    "file": "06-Layer.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Transition",
+    "file": "07-Transition.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Mixer",
+    "file": "08-Mixer.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Hands",
+    "file": "09-Hands.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Search",
+    "file": "10-Search.png",
+    "mode": "COMMON",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "LiveArrange",
+    "file": "11-LiveArrange.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SequencerSteps",
+    "file": "12-SequencerSteps.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SequencerPianoRoll",
+    "file": "13-SequencerPianoRoll.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Pads",
+    "file": "14-Pads.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "BrainEngine",
+    "file": "15-BrainEngine.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "BrainHybrid",
+    "file": "16-BrainHybrid.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Kit",
+    "file": "17-Kit.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Library",
+    "file": "18-Library.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Log",
+    "file": "19-Log.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Routing",
+    "file": "20-Routing.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Session",
+    "file": "21-Session.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Note",
+    "file": "22-Note.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Clip",
+    "file": "23-Clip.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Device",
+    "file": "24-Device.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Mix",
+    "file": "25-Mix.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Browse",
+    "file": "26-Browse.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Scale",
+    "file": "27-Scale.png",
+    "mode": "SHARED",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Repeat",
+    "file": "28-Repeat.png",
+    "mode": "SHARED",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Tempo",
+    "file": "29-Tempo.png",
+    "mode": "SHARED",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "Motor",
+    "file": "30-Motor.png",
+    "mode": "CONTROLLER \u00b7 STUDIO",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "LiveSessionOffline",
+    "file": "31-LiveSessionOffline.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SessionNoLive",
+    "file": "32-SessionNoLive.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "LiveSessionEmpty",
+    "file": "33-LiveSessionEmpty.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "LiveSessionLoading",
+    "file": "34-LiveSessionLoading.png",
+    "mode": "STANDALONE",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "NoteMelodic",
+    "file": "35-NoteMelodic.png",
+    "mode": "CONTROLLER",
+    "width": 1280,
+    "height": 720
+  }
+]
