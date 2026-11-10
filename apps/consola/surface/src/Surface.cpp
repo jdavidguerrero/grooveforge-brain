@@ -53,8 +53,10 @@ uint8_t cc_latest[128] = {};
 bool cc_pending[128] = {};
 constexpr uint8_t QUEUE_SIZE = 64;
 FsrVelocity pads[] = {
-    FsrVelocity({160,3000,100}), FsrVelocity({160,3000,100}),
-    FsrVelocity({160,3000,100}), FsrVelocity({160,3000,100})
+    // 12-bit ADC: 600 ≈ 0.48 V on, 400 ≈ 0.32 V off. 160/100 (0.13/0.08 V) false-triggered on the breadboard with the
+    // Sharp pulsing on the shared ground (2026-11-10, ~2800 notes/min untouched); per-pad calibration still pending.
+    FsrVelocity({600,3000,400}), FsrVelocity({600,3000,400}),
+    FsrVelocity({600,3000,400}), FsrVelocity({600,3000,400})
 };
 
 Encoder encoders[] = {

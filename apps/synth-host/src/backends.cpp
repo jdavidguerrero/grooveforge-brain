@@ -90,6 +90,7 @@ class PipeWire final:public Backend {
     pw_thread_loop* loop_=nullptr;
     pw_filter* filter_=nullptr;
     pw_context* context_=nullptr;
+    pw_core* core_=nullptr;
     spa_hook listener_{};
     std::array<void*,10> ports_{};
     void* midi_=nullptr;
@@ -141,9 +142,10 @@ class PipeWire final:public Backend {
     void close() noexcept {
         if(started_)pw_thread_loop_stop(loop_);
         if(filter_) { spa_hook_remove(&listener_); pw_filter_destroy(filter_); }
+        if(core_)pw_core_disconnect(core_);
         if(context_)pw_context_destroy(context_);
         if(loop_)pw_thread_loop_destroy(loop_);
-        filter_=nullptr;context_=nullptr;loop_=nullptr;started_=false;
+        filter_=nullptr;core_=nullptr;context_=nullptr;loop_=nullptr;started_=false;
     }
 public:
     PipeWire(Audio& a,unsigned block):audio_(a) {
@@ -160,7 +162,10 @@ public:
             if(!pw_context_load_module(context_,"libpipewire-module-rt",
                 "rt.prio=70 rlimits.enabled=true rtkit.enabled=true rtportal.enabled=true",nullptr))
                 std::cerr<<"PipeWire RT module unavailable; check rtkit/limits and data-loop policy with chrt\n";
-            filter_=pw_filter_new(context_,"gf-synth-host",pw_properties_new(PW_KEY_NODE_NAME,"gf-synth-host",PW_KEY_MEDIA_TYPE,"Audio",PW_KEY_MEDIA_CATEGORY,"Source",PW_KEY_MEDIA_ROLE,"DSP",PW_KEY_MEDIA_CLASS,"Audio/Source",PW_KEY_NODE_AUTOCONNECT,"false","node.always-process","true","node.rate","1/48000","node.lock-rate","true",PW_KEY_NODE_LATENCY,latency.c_str(),nullptr));
+            // pw_filter_new needs a connected core, not the context (GCC/PipeWire 1.4 on the Pi rejects the latter).
+            core_=pw_context_connect(context_,nullptr,0);
+            if(!core_)throw std::runtime_error("cannot connect to PipeWire");
+            filter_=pw_filter_new(core_,"gf-synth-host",pw_properties_new(PW_KEY_NODE_NAME,"gf-synth-host",PW_KEY_MEDIA_TYPE,"Audio",PW_KEY_MEDIA_CATEGORY,"Source",PW_KEY_MEDIA_ROLE,"DSP",PW_KEY_MEDIA_CLASS,"Audio/Source",PW_KEY_NODE_AUTOCONNECT,"false","node.always-process","true","node.rate","1/48000","node.lock-rate","true",PW_KEY_NODE_LATENCY,latency.c_str(),nullptr));
             if(!filter_)throw std::runtime_error("cannot create PipeWire filter");
             pw_filter_add_listener(filter_,&listener_,&callbacks_,this);
             for(size_t i=0;i<10;++i) {
