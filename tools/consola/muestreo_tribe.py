@@ -138,7 +138,7 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
 RANGOS = {40: (1, 55), 70: (56, 85), 100: (86, 113), 127: (114, 127)}
 
 
-def armar_racks(kit: Path, data_dir: Path) -> list[str]:
+def armar_racks(kit: Path, data_dir: Path, pico_pad_db: float | None = -3.0) -> list[str]:
     """Dos racks de 16 pads (las 32 articulaciones en el orden del mapa), con 4 capas de velocity por pad.
 
     Usa el formato y el almacén de samples del servicio de kits del modo DRUM (`tools/drum-kits`). Solo la primera
@@ -165,9 +165,14 @@ def armar_racks(kit: Path, data_dir: Path) -> list[str]:
         rack = dk.empty_rack(f"TRIBE {n}", source=fuente)
         for i, art in enumerate(bloque):
             capas = []
-            for vel, archivo in sorted(por_art[art].items()):
-                pcm, sr = sf.read(kit / archivo, dtype="float32", always_2d=True)
-                capa = dk.store_sample(data_dir, pcm, sr)
+            audios = {vel: sf.read(kit / archivo, dtype="float32", always_2d=True)
+                      for vel, archivo in sorted(por_art[art].items())}
+            # Una ganancia por pad (su capa más fuerte a pico_pad_db): iguala pads de nivel muy distinto en Tribe
+            # (Guache Rain ~ -33 dB frente a Tambora ~ -1 dB) sin cambiar la diferencia entre sus capas de velocity.
+            pico = max(float(np.abs(a).max()) for a, _ in audios.values())
+            g_pad = 1.0 if pico_pad_db is None or pico <= 0 else 10 ** (pico_pad_db / 20) / pico
+            for vel, (pcm, sr) in audios.items():
+                capa = dk.store_sample(data_dir, pcm * g_pad, sr)
                 capa["velocity_min"], capa["velocity_max"] = RANGOS[vel]
                 capas.append(capa)
             cat = dk.category(art)
@@ -195,6 +200,7 @@ def main() -> None:
     rk = sub.add_parser("rack", help="arma los racks TRIBE 1 y TRIBE 2 en el almacén del modo DRUM")
     rk.add_argument("--kit", type=Path, required=True)
     rk.add_argument("--data-dir", type=Path, required=True)
+    rk.add_argument("--pico-pad-db", type=float, default=-3.0, help="pico de la capa más fuerte de cada pad")
     a = ap.parse_args()
     if a.cmd == "midi":
         a.out.mkdir(parents=True, exist_ok=True)
@@ -205,7 +211,7 @@ def main() -> None:
         fin = plan[-1]["inicio"] + plan[-1]["espacio"]
         print(f"{len(plan)} golpes, {fin / 60:.1f} min a {BPM} BPM → {a.out}/muestreo_tribe.mid")
     elif a.cmd == "rack":
-        for ruta in armar_racks(a.kit, a.data_dir):
+        for ruta in armar_racks(a.kit, a.data_dir, a.pico_pad_db):
             print(ruta)
     else:
         r = cortar(a.audio, a.plan, a.out, pico_objetivo_db=None if a.sin_normalizar else a.pico_db,
