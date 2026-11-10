@@ -5,7 +5,7 @@ Item {
     id: root
     property bool offline: console.screenName === 'SessionNoLive'
     Repeater { model: console.controller.tracks
-        Panel { required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Theme.s2; width: Theme.columnWidth; height: Layout.session.headH; visible: !root.offline; clip: true
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; objectName: 'column'+index; x: Theme.columnX(index); y: Theme.s2; width: Theme.columnWidth; height: Layout.session.headH; visible: !root.offline; clip: true
             Rectangle { width: parent.width; height: Theme.s1; color: entry.c }
             Label { x: Theme.s3; y: Theme.s2; text: entry.n; font.pixelSize: Theme.keyLabel }
             Label { x: Theme.s3; y: Theme.s2+Theme.m18; text: entry.d; font.pixelSize: Theme.tiny; color: Theme.mon }
@@ -15,7 +15,7 @@ Item {
         Item { required property int index; required property var entry; property var scene: entry; y: Layout.session.sceneY+index*Layout.session.scenePitch; width: parent.width; height: Layout.session.scenePitch; visible: !root.offline
             Label { x: Theme.s3; height: Layout.session.labelH; text: scene.n+'   '+scene.sub; font.pixelSize: Theme.tiny; color: scene.lc }
             Repeater { model: scene.clips
-                Panel { required property int index; required property var modelData; x: Theme.columnX(index); y: Layout.session.clipY; width: Theme.columnWidth; height: Layout.session.clipH; color: modelData.bg; border.color: modelData.bd; border.width: Theme.edge
+                Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var modelData; x: Theme.columnX(index); y: Layout.session.clipY; width: Theme.columnWidth; height: Layout.session.clipH; color: modelData.bg; border.color: modelData.bd; border.width: Theme.edge
                     DashedOutline { anchors.fill: parent; visible: modelData.bs === 'dashed'; stroke: modelData.bd }
                     Label { x: Theme.s2; y: Theme.s1; width: parent.width-Theme.s5; text: modelData.n; color: modelData.fg; font.pixelSize: Theme.m11 }
                     Label { anchors.right: parent.right; anchors.rightMargin: Theme.s1; y: Theme.s1; text: modelData.g; color: modelData.fg; font.pixelSize: Theme.tiny }

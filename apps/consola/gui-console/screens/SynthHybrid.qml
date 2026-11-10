@@ -5,7 +5,7 @@ Item {
     property var vals:synth.values
     Panel {x:8;y:8;width:152;height:44;color:Theme.roleColor('PAD');Label{anchors.centerIn:parent;text:'PAD  ·  '+synth.selectedPart+'/4';face:Theme.displayFont;font.pixelSize:28;color:Theme.bg}}
     Repeater {model:['Woodbass','Kalimba','Woodglass','French stab','Acid arp','Desert lead','Roller sub','Retro brass','CUSTOM']
-        Panel {required property int index;required property string modelData;x:168+index*123;y:8;width:115;height:44;border.color:synth.demo && index===7?Theme.hybHi:Theme.line2
+        Panel { touchKind:"navigation"; touchCallback:function(){synth.openScreen("SynthPresets")};required property int index;required property string modelData;x:168+index*123;y:8;width:115;height:44;border.color:synth.demo && index===7?Theme.hybHi:Theme.line2
             Label {x:6;y:0;width:103;height:18;text:index===8?'CUSTOM':'F'+(index+1);font.pixelSize:10;color:Theme.hybHi}
             Label {x:6;y:18;width:103;height:20;text:modelData;font.pixelSize:11}
         }

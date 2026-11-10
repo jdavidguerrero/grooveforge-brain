@@ -15,7 +15,7 @@ from rotation import add_rotation_arguments, configure_rotation
 from surface_batch import SurfaceBatcher
 
 
-def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None):
+def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None, fake_surface=False):
     sans = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
     mono = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     families = QFontDatabase.families()
@@ -43,6 +43,15 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     engine.rootContext().setContextProperty('synth', synth)
     batcher = SurfaceBatcher(state, engine)
     engine.surface_batcher = batcher
+    from touch_controller import TouchController
+    from synth_surface import SynthSurface
+    touch = TouchController(state, engine)
+    surface = SynthSurface(state, synth, batcher, touch, parent=engine)
+    engine.touch_controller, engine.synth_surface = touch, surface
+    state.surface = surface
+    engine.rootContext().setContextProperty('touch', touch)
+    engine.rootContext().setContextProperty('surface', surface)
+    engine.rootContext().setContextProperty('fakeSurface', fake_surface)
     engine.rootContext().setContextProperty('surfaceBatch', batcher)
     engine.rootContext().setContextProperty('fallbackFonts', {'sans': sans_name, 'mono': mono_name})
     fonts = {'display':'BigShouldersDisplay.ttf', 'mono':'IBMPlexMono-Regular.ttf', 'monoMedium':'IBMPlexMono-Medium.ttf',
@@ -77,6 +86,14 @@ def main():
     parser.add_argument('--synth-socket', help='Real/fake contract-14 Unix socket (default: XDG_RUNTIME_DIR/gf-synth.sock)')
     parser.add_argument('--preview', action='store_true', help='Deterministic offline design review')
     parser.add_argument('--fake-synth', action='store_true', help='Launch a separate fake host process; no audio')
+    parser.add_argument('--synth-mode', action='store_true', help='Enter SYNTH performance mode')
+    parser.add_argument('--surface-port', help='MIDI input/output substring, e.g. GF Consola')
+    parser.add_argument('--fake-surface', action='store_true', help='Desktop pad/encoder simulation, no surface input')
+    parser.add_argument('--host-midi-port', default='gf-synth-host', help='Host MIDI output substring')
+    parser.add_argument('--note-transport', choices=['auto', 'midi', 'socket'], default='auto')
+    parser.add_argument('--external-midi-port', action='append', default=[], help='External keyboard input substring')
+    parser.add_argument('--surface-cdc', help='Explicit GF Consola CDC device for HP/IN')
+    parser.add_argument('--room-node', default='@DEFAULT_AUDIO_SINK@', help='PipeWire room sink node for MASTER')
     parser.add_argument('--list-screens', action='store_true')
     args = parser.parse_args()
     if args.list_screens:
@@ -99,13 +116,32 @@ def main():
         if not ready:
             raise RuntimeError('Fake host failed to start')
         print(ready.strip())
-    engine, state = create_engine(synth_socket=synth_socket, frameless=args.frameless, rotation=rotation, display_screen=args.display_screen)
+    engine, state = create_engine(synth_socket=synth_socket, frameless=args.frameless, rotation=rotation, display_screen=args.display_screen, fake_surface=args.fake_surface)
     if not engine.rootObjects():
         return 1
-    state.setScreen(args.screen)
+    if args.synth_mode:
+        state._mode = 2
+    state.setScreen(screen_id('SynthParts') if args.synth_mode and args.screen == 5 else args.screen)
+    if args.surface_port or args.fake_surface:
+        from synth_surface import open_note_output, RoomControls
+        try:
+            if not args.preview:
+                engine.synth_surface.notes, route = open_note_output(args.note_transport, args.host_midi_port,
+                                                                      synth_socket, args.fake_surface)
+                engine.synth_surface._status = ('FAKE SURFACE · ' if args.fake_surface else '')+route
+                engine.synth_surface.changed.emit()
+                print('Note route:', route)
+            if args.surface_port:
+                engine.synth_surface.room = RoomControls(args.surface_cdc, args.room_node)
+                engine.synth_surface.open_ports(args.surface_port, args.external_midi_port)
+        except (OSError, ValueError, ImportError, RuntimeError) as exc:
+            engine.synth_surface.close()
+            engine.synth_surface._failure(str(exc))
+            print(f'Surface unavailable: {exc}', file=sys.stderr)
     try:
         return app.exec()
     finally:
+        engine.synth_surface.close()
         if engine.synth_state.client:
             engine.synth_state.client.stop()
         import shiboken6

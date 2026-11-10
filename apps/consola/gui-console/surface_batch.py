@@ -46,7 +46,7 @@ class SurfaceBatcher(QObject):
         kind = event['type'] if isinstance(event, dict) else type(event).__name__
         fields = {k: v for k, v in event.items() if k != 'type'} if isinstance(event, dict) else vars(event).copy()
         if kind not in ('Pad', 'Fsr', 'Boton', 'Encoder', 'Jog', 'Fader', 'Expresion',
-                        'Perilla', 'Mano', 'ManoPresencia'):
+                        'Perilla', 'Mano', 'ManoPresencia', 'SelectorPad'):
             raise ValueError(f'Unsupported surface event: {kind}')
         with self._lock:
             was_empty = not self._queue
@@ -70,6 +70,9 @@ class SurfaceBatcher(QObject):
     def apply(self, event):
         s, f, kind = self.state, event.fields, event.kind
         index = f.get('indice', 0)
+        surface = getattr(self, 'synth_surface', None)
+        if surface and surface.apply_frame(kind, f):
+            return
         if kind == 'Encoder' and s.screenName.startswith('Synth') and hasattr(s, 'synth'):
             s._selected = index
             s._property_dirty = True
@@ -116,12 +119,14 @@ class SurfaceBatcher(QObject):
             batch, self._queue = self._queue, deque()
         if synth:
             synth.in_surface_batch = True
+        self.state._in_surface_batch = True
         try:
             for event in batch:
                 self.apply(event)
                 self.applied += 1
                 self.kind_counts[event.kind] = self.kind_counts.get(event.kind, 0) + 1
         finally:
+            self.state._in_surface_batch = False
             if synth:
                 synth.in_surface_batch = False
         for model in self.models:

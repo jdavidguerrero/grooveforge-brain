@@ -30,25 +30,26 @@ Item {
         Panel {required property int index;required property string modelData;x:24;y:24+index*64;width:216;height:56;color:console.screenTitle===modelData?Theme.gpBgCard:'transparent';border.color:console.screenTitle===modelData?Theme.gpTeal:'transparent'
             Label {x:16;y:0;height:56;text:modelData;face:Theme.osFont;font.pixelSize:18;color:Theme.gpText}
             Label {anchors.right:parent.right;anchors.rightMargin:12;height:56;text:String(parent.index+1);face:Theme.osMonoFont;font.pixelSize:12;color:Theme.gpTextSec}
-            MouseArea {anchors.fill:parent;onClicked:console.navigate(['SynthSettingsAudio','SynthSettingsConnections','Settings','SynthSettingsSystem'][parent.index])}
+            TouchTarget { hardwareAction: "navigation";anchors.fill:parent;callback: function() { console.navigate(['SynthSettingsAudio','SynthSettingsConnections','Settings','SynthSettingsSystem'][parent.index]) }}
         }
     }
     Label {x:288;y:10;width:968;height:22;text:preview?'DESIGN PREVIEW · SAMPLE DATA':'SYNTH HOST · '+synth.status.toUpperCase()+' · OTHER SERVICES UNAVAILABLE';face:Theme.osMonoFont;font.pixelSize:11;color:Theme.gpTextSec}
     Repeater {model:root.cards
         Panel {required property int index;required property var modelData
+            touchCallback:function(){touch.inspect(modelData.title+" · "+modelData.note)}
             x:288+index%2*492;y:40+Math.floor(index/2)*(root.cards.length>4?172:254);width:476;height:root.cards.length>4?160:238;color:Theme.gpBgCard;border.color:Theme.gpBorder
             Label {x:16;y:10;width:300;height:24;text:modelData.title;face:Theme.osFont;font.pixelSize:16;color:Theme.gpText}
             Label {x:318;y:10;width:142;height:24;text:modelData.pill;face:Theme.osMonoFont;font.pixelSize:10;color:modelData.pill==='UNAVAILABLE'?Theme.gpTextSec:Theme.gpTeal;horizontalAlignment:Text.AlignRight}
             Row {x:16;y:46;spacing:8;visible:modelData.choices!==undefined
                 Repeater {model:modelData.choices || []
-                    Panel {required property int index;required property string modelData;width:100;height:44;color:index===parent.parent.modelData.active?'#003D33':Theme.gpBgBase;border.color:index===parent.parent.modelData.active?Theme.gpTeal:Theme.gpBorder
+                    Panel {required property int index;required property string modelData;touchCallback:function(){touch.inspect("Host audio setting · read only")};width:100;height:44;color:index===parent.parent.modelData.active?'#003D33':Theme.gpBgBase;border.color:index===parent.parent.modelData.active?Theme.gpTeal:Theme.gpBorder
                         Label {anchors.centerIn:parent;text:modelData;face:Theme.osMonoFont;font.pixelSize:12}
                     }
                 }
             }
             Column {x:16;y:44;spacing:8;visible:modelData.rows!==undefined
                 Repeater {model:modelData.rows || []
-                    Item {required property string modelData;width:444;height:root.cards.length>4?20:32
+                    Panel {required property string modelData;touchCallback:function(){touch.inspect(modelData.replace("|", " · ")+" · read only")};width:444;height:root.cards.length>4?20:32
                         Rectangle {x:0;anchors.verticalCenter:parent.verticalCenter;width:8;height:8;radius:4;color:root.preview?Theme.gpTeal:Theme.gpTextSec}
                         Label {x:20;y:0;height:parent.height;width:218;text:modelData.split('|')[0];face:Theme.osFont;font.pixelSize:12;color:Theme.gpText}
                         Label {x:242;y:0;width:202;height:parent.height;text:modelData.split('|')[1] || '';face:Theme.osMonoFont;font.pixelSize:11;horizontalAlignment:Text.AlignRight;color:Theme.gpTextSec}
@@ -68,7 +69,7 @@ Item {
             Rectangle {x:16;y:90;width:444;height:8;visible:modelData.bar!==undefined;color:Theme.gpBorder;Rectangle{width:parent.width*(root.preview?modelData.bar || 0:0);height:8;color:Theme.gpTeal}}
             Row {x:16;y:52;spacing:12;visible:modelData.buttons!==undefined
                 Repeater {model:modelData.buttons || []
-                    ActionButton {required property string modelData;width:210;height:48;text:modelData;enabled:false;opacity:.4}
+                    ActionButton {required property string modelData;width:210;height:48;text:modelData;opacity:.6;callback:function(){touch.inspect(modelData+" · service unavailable")}}
                 }
             }
             Label {x:16;y:parent.height-34;width:444;height:28;text:modelData.note || '';wrapMode:Text.WordWrap;face:Theme.osFont;font.pixelSize:11;color:Theme.gpTextSec}

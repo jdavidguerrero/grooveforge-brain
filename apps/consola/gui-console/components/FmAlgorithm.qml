@@ -28,7 +28,7 @@ Item {
             color:(root.table.carriers || []).indexOf(op)>=0 ? Theme.teal : Theme.surface2
             border.color:root.selected === op ? Theme.white : Theme.tealPlus;border.width:root.selected === op ? 2 : 1
             Label {anchors.centerIn:parent;text:'OP '+parent.op;font.pixelSize:12}
-            MouseArea {anchors.fill:parent;onClicked:synth.focusOperator(parent.op)}
+            TouchTarget { hardwareAction: "choice";anchors.fill:parent;callback: function() { synth.focusOperator(parent.op) }}
         }
     }
 }

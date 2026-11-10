@@ -8,7 +8,7 @@ Item {
         FmAlgorithm {x:8;width:488;height:160}
         Item {x:512;y:12;visible:synth.selectedOperator===0
             Repeater {model:synth.operatorCount===6?32:8
-                ActionButton {required property int index;x:(index%8)*65;y:Math.floor(index/8)*34;width:57;height:28;text:String(index+1);active:synth.algorithm.number===index+1;onClicked:synth.chooseAlgorithm(index+1)}
+                ActionButton {hardwareAction:"choice";required property int index;x:(index%8)*65;y:Math.floor(index/8)*34;width:57;height:28;text:String(index+1);active:synth.algorithm.number===index+1;callback:function(){synth.chooseAlgorithm(index+1)}}
             }
         }
         Label {x:1060;y:20;width:188;visible:synth.selectedOperator===0;text:'ALGORITHM '+synth.algorithm.number+'\nFEEDBACK '+synth.fmFeedback+'\n'+synth.operatorCount+' OPERATORS';lineHeight:1.8;font.pixelSize:13;color:Theme.tealPlus}
@@ -24,7 +24,7 @@ Item {
             Rectangle {x:12;y:100;width:parent.width-24;height:5;color:Theme.line2
                 Rectangle {width:parent.width*modelData.level/99;height:5;color:Theme.tealPlus}
             }
-            MouseArea {anchors.fill:parent;onClicked:synth.focusOperator(modelData.op)}
+            TouchTarget { hardwareAction: "navigation";anchors.fill:parent;callback: function() { synth.focusOperator(modelData.op) }}
         }
     }
     Panel {y:168;width:1264;height:128;visible:synth.selectedOperator>0
@@ -32,9 +32,9 @@ Item {
         Label {x:16;y:52;width:1220;text:synth.operatorCount===6?'R1 → L1   ·   R2 → L2   ·   R3 → L3 (HOLD)   ·   KEY UP: R4 → L4     /     KEYBOARD SCALING: BREAKPOINT + 17':'ATTACK · DECAY · SUSTAIN · RELEASE';font.pixelSize:12;color:Theme.grayN}
         Row {x:16;y:80;spacing:12
             Repeater {model:synth.operatorCount===6?['TUNING / SENS','R1–R4 / L1–L4','KEY SCALING']:['RATIO / ADSR / WAVE']
-                ActionButton {required property string modelData;required property int index;width:240;height:36;text:modelData;active:synth.bankIndex===index;onClicked:synth.chooseBank(index)}
+                ActionButton {hardwareAction:"choice";required property string modelData;required property int index;width:240;height:36;text:modelData;active:synth.bankIndex===index;callback:function(){synth.chooseBank(index)}}
             }
-            ActionButton {width:160;height:36;text:'ALL OPERATORS';onClicked:synth.selectPage('OPS')}
+            ActionButton {hardwareAction:"choice";width:160;height:36;text:'ALL OPERATORS';callback:function(){synth.selectPage('OPS')}}
         }
     }
 }

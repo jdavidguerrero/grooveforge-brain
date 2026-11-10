@@ -32,7 +32,7 @@ Rectangle {
             Rectangle { visible: cap.position >= 0; x: Theme.keyInset; y: Theme.keyPositionY; width: parent.width-2*x; height: Theme.edge; color: Theme.line2
                 Rectangle { width: parent.width * Math.max(0, cap.position); height: parent.height; color: cap.tint }
             }
-            MouseArea { anchors.fill: parent; enabled: cap.enabled; onClicked: console.pressEncoder(cap.index); onWheel: function(event) { console.turnEncoder(cap.index, event.angleDelta.y > 0 ? 1 : -1) } }
+            TouchTarget { hardwareAction: "soft-key"; anchors.fill: parent; enabled: cap.enabled; callback: function() { console.pressEncoder(cap.index) }; onWheel: function(event) { console.turnEncoder(cap.index, event.angleDelta.y > 0 ? 1 : -1) } }
         }
     }
 }

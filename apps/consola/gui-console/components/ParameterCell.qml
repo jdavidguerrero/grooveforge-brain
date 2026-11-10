@@ -4,6 +4,8 @@ Panel {
     id: root
     property var entry: ({empty:true, name:"—", text:"—", unit:"",kind:"empty",amount:0})
     property color tint: Theme.tealPlus
+    property int encoderIndex: 0
+    TouchTarget { hardwareAction:"parameter"; enabled:!root.entry.empty && !root.loading; callback:function(){synth.focusParameter(root.encoderIndex)} }
     property bool focused: false
     property bool loading: false
     radius: 6

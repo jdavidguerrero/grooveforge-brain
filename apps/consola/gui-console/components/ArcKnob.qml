@@ -2,6 +2,8 @@ import QtQuick
 import "../theme"
 Item {
     id: root
+    property int encoderIndex: console.selectedEncoder
+    TouchTarget { hardwareAction:"parameter"; callback:function(){console.selectEncoder(root.encoderIndex);touch.inspect("ENC "+(root.encoderIndex+1)+" · turn to edit")} }
     property real value: .5
     property color tint: Theme.teal
     property string text: ""

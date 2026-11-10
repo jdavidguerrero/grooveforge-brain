@@ -4,7 +4,7 @@ import "../components"
 Item {
     BrainTabs { y: Theme.s2; width: parent.width; height: Layout.brain.tabH; hybrid: true }
     Repeater { model: console.standalone.hybridEngines
-        Panel { required property int index; required property var entry; x: index ? Layout.brain.hybridRightX : Theme.s2; y: Layout.brain.engineY; width: Layout.brain.hybridSideW; height: Layout.brain.hybridH; border.color: Theme.hyb
+        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; required property int index; required property var entry; x: index ? Layout.brain.hybridRightX : Theme.s2; y: Layout.brain.engineY; width: Layout.brain.hybridSideW; height: Layout.brain.hybridH; border.color: Theme.hyb
             Label { x: Theme.s4; y: Theme.s3; text: entry.l+'  '+entry.n; face: Theme.displayFont; font.pixelSize: Theme.dL; weight: Font.ExtraBold; color: Theme.hybHi }
             Label { x: Theme.s4; y: Theme.dXl; text: entry.d; color: Theme.grayN; font.pixelSize: Theme.m12 }
             GraphPlot { x: Theme.s4; y: Theme.layerCardsY; width: parent.width-2*x; height: Theme.dXl; tint: Theme.hybHi; points: index ? [40,5,90,10,80,20,70,30,60,40] : [90,70,50,30,10,90,70,50,30,10] }
