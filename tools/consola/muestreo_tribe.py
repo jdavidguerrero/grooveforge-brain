@@ -84,10 +84,14 @@ def primer_golpe(x: np.ndarray, sr: int, umbral_db: float = -45.0) -> int:
 
 
 def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.0,
-           pico_objetivo_db: float | None = -1.0) -> dict:
+           pico_objetivo_db: float | None = -1.0, bpm_export: float | None = None) -> dict:
     import soundfile as sf
 
-    plan = json.loads(plan_ruta.read_text())["golpes"]
+    datos = json.loads(plan_ruta.read_text())
+    plan = datos["golpes"]
+    # Ableton toca el MIDI en compases: si el proyecto estaba a otro tempo, todos los tiempos se escalan igual.
+    escala = 1.0 if bpm_export is None else datos.get("bpm", BPM) / bpm_export
+    plan = [{**g, "inicio": g["inicio"] * escala, "espacio": g["espacio"] * escala} for g in plan]
     x, sr = sf.read(audio, always_2d=True, dtype="float32")
     if sr != 48_000:
         raise ValueError(f"exporta a 48 kHz (llegó {sr} Hz)")
@@ -106,6 +110,9 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
         a = max(0, round(g["inicio"] * sr) + desfase - pre)
         b = min(len(x), a + round(g["espacio"] * sr) - pre)
         trozo = x[a:b].copy()
+        if len(trozo) < int(0.05 * sr):  # el export terminó antes que el plan
+            vacios.append(f'{g["articulacion"]} v{g["velocity"]} rr{g["rr"]} (fuera del export)')
+            continue
         env = np.abs(trozo).max(axis=1)
         if env.max() < pico_global * 10 ** (-60 / 20):
             vacios.append(f'{g["articulacion"]} v{g["velocity"]} rr{g["rr"]}')
@@ -121,7 +128,7 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
                            "pico_db": round(20 * np.log10(float(np.abs(trozo).max())), 1)})
     resumen = {"fuente": "Tribe Player 2 · Tribe Instruments Map · preset 01 Original Recording (Clean)",
                "licencia": LICENCIA, "frecuencia": sr, "desfase_muestras": int(desfase),
-               "ganancia_db": round(20 * np.log10(ganancia), 1),
+               "ganancia_db": round(20 * np.log10(ganancia), 1), "escala_tempo": round(escala, 5),
                "golpes": manifiesto, "vacios": vacios}
     (out / "manifiesto.json").write_text(json.dumps(resumen, ensure_ascii=False, indent=1))
     return resumen
@@ -138,6 +145,7 @@ def main() -> None:
     c.add_argument("--out", type=Path, required=True)
     c.add_argument("--pico-db", type=float, default=-1.0, help="pico del golpe más fuerte tras la ganancia global")
     c.add_argument("--sin-normalizar", action="store_true")
+    c.add_argument("--bpm-export", type=float, help="tempo del proyecto de Ableton al exportar, si no era el del plan")
     a = ap.parse_args()
     if a.cmd == "midi":
         a.out.mkdir(parents=True, exist_ok=True)
@@ -148,7 +156,8 @@ def main() -> None:
         fin = plan[-1]["inicio"] + plan[-1]["espacio"]
         print(f"{len(plan)} golpes, {fin / 60:.1f} min a {BPM} BPM → {a.out}/muestreo_tribe.mid")
     else:
-        r = cortar(a.audio, a.plan, a.out, pico_objetivo_db=None if a.sin_normalizar else a.pico_db)
+        r = cortar(a.audio, a.plan, a.out, pico_objetivo_db=None if a.sin_normalizar else a.pico_db,
+                   bpm_export=a.bpm_export)
         print(f'{len(r["golpes"])} golpes en {a.out}; vacíos: {len(r["vacios"])}; desfase {r["desfase_muestras"]} muestras; '
               f'ganancia global {r["ganancia_db"]:+.1f} dB')
 
