@@ -35,6 +35,22 @@ struct Receiver {
 static bool near(float a, float b) { return std::fabs(a - b) < 1.0e-5f; }
 
 int main() {
+    {
+        gf::EnginePreset decoded;
+        std::array<uint8_t, studio::PRESET_BYTES> bytes{};
+        auto six = gf::dx7six::init_patch(); six.enabled = 21;
+        const size_t n = gf::dx7six::encode_gfp(six, bytes.data(), bytes.size());
+        if (!check(gf::decode_engine_preset(bytes.data(),n,decoded) && decoded.engine==7 && decoded.dx7_6op.enabled==21,"GFP v6 tagged decoder")) return 1;
+        bytes[4]=4;
+        if (!check(!gf::decode_engine_preset(bytes.data(),n,decoded) && decoded.engine==7,"invalid GFP preserves tagged preset")) return 1;
+        studio::Preset four; studio::factory_preset(4,0,&four);
+        studio::preset_encode(four,4,bytes.data(),bytes.size());
+        for (uint8_t version : {2,3,4,5}) {
+            bytes[3]=version;
+            const size_t length=version==2 ? studio::PRESET_BYTES_V2 : version==3 ? studio::PRESET_BYTES_V3 : version==4 ? studio::PRESET_BYTES_V4 : studio::PRESET_BYTES;
+            if (!check(gf::decode_engine_preset(bytes.data(),length,decoded) && decoded.engine==4,"tagged decoder preserves FM 4-OP versions")) return 1;
+        }
+    }
     constexpr uint8_t prophet = 2;
     const auto count = gf::factory_prophet_count();
     if (!check(count > 0, "factory bank empty")) return 1;

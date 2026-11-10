@@ -88,13 +88,21 @@ MoogModelD moog;
 Juno106 juno;
 Prophet5 prophet;
 OB6 ob6;
+#include "../engines/dx7_6op.h"
+#include "../engines/dx7_6op_sysex.h"
+#include "../engines/dx7_6op_params.h"
 DX7Engine dx7;
+DX7SixEngine dx7_six;
+bool dx7_six_active = false;
+uint8_t dx7_six_bank_index = 0;
 ARP2600 arp;
 // Globales para que existan antes de que arranque el DMA del I2S (mismo orden de canales que audio_graph.h)
 AudioConnection c_moog(moog.getOutput(), 0, g_engine_mix_a, 0);
 AudioConnection c_juno(juno.getOutput(), 0, g_engine_mix_a, 1);
 AudioConnection c_prophet(prophet.getOutput(), 0, g_engine_mix_a, 2);
 AudioConnection c_ob6(ob6.getOutput(), 0, g_engine_mix_a, 3);
+AudioConnection c_dx7_six(dx7_six.getOutput(), 0, g_engine_mix_b, 3);
+AudioConnection c_dx7_six_r(dx7_six.getOutput(), 0, g_engine_mix_rb, 3);
 AudioConnection c_dx7(dx7.getOutput(), 0, g_engine_mix_b, 0);
 AudioConnection c_arp(arp.getOutput(), 0, g_engine_mix_b, 1);
 // Lado derecho (fidelidad §9.3): los engines mono a los dos lados; el Juno manda su chorus en estéreo
@@ -383,6 +391,7 @@ uint8_t preset_loaded[GF_ENGINE_COUNT] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 // ── Engines ─────────────────────────────────────────────────────────────────────────────────────
 
 void engine_note_on(uint8_t e, uint8_t note, float vel) {
+    if (dx7_six_active || e == audio_graph::ENGINE_DX7_6OP) { dx7_six.noteOn(note, vel); return; }
     switch (e) {
         // El Model D y el Juno-106 originales no tienen velocity (fidelidad §11.6): suenan siempre a fondo
         // La respuesta a la velocity la decide cada preset (theory/10): 0 % en el Model D y el Juno por defecto
@@ -402,6 +411,7 @@ void engine_note_on(uint8_t e, uint8_t note, float vel) {
 }
 
 void engine_note_off(uint8_t e, uint8_t note) {
+    if (dx7_six_active || e == audio_graph::ENGINE_DX7_6OP) { dx7_six.noteOff(note); return; }
     switch (e) {
         case 0: moog.noteOff(note); break;
         case 1: juno.noteOff(note); break;
@@ -413,6 +423,7 @@ void engine_note_off(uint8_t e, uint8_t note) {
 }
 
 void all_notes_off() {
+    dx7_six.allNotesOff();
     groove_reset();
     memset(sustained, 0, sizeof(sustained));
     notes_held = 0;
@@ -603,6 +614,7 @@ void engine_dsp(uint8_t e, bool on) {
         case 3: ob6.set_dsp_enabled(on); break;
         case 4: dx7.set_dsp_enabled(on); break;
         case 5: arp.set_dsp_enabled(on); break;
+        case audio_graph::ENGINE_DX7_6OP: dx7_six.set_dsp_enabled(on); break;
     }
 }
 
@@ -1402,6 +1414,7 @@ void bridge_poll() {
 /// Cambia de engine: apaga notas, enciende los filtros del nuevo, crossfade y apaga los demás.
 void activate_engine(uint8_t e) {
     all_notes_off();
+    dx7_six_active = false; dx7_six.set_dsp_enabled(false);
     engine_dsp(e, true);
     audio_graph::set_active_engine(e);
     for (uint8_t i = 0; i < GF_ENGINE_COUNT; i++)
@@ -1648,6 +1661,7 @@ void note_off(byte ch, byte note, byte vel);
 
 void note_on(byte ch, byte note, byte vel) {
     if (vel == 0) { note_off(ch, note, 0); return; }
+    if (dx7_six_active) { dx7_six.noteOn(note, vel / 127.0f); return; }
     if (sustained[note >> 5] & (1u << (note & 31))) {   // sostenida por el pedal: se suelta lo que disparó antes
         sustained[note >> 5] &= ~(1u << (note & 31));
         play_off(note);
@@ -1661,6 +1675,7 @@ void note_on(byte ch, byte note, byte vel) {
 }
 
 void note_off(byte ch, byte note, byte vel) {
+    if (dx7_six_active) { dx7_six.noteOff(note); return; }
     if (notes_held) --notes_held;
     for (uint8_t i = 0; i < keys_n; ++i)
         if (keys_down[i] == note) {
@@ -1671,7 +1686,7 @@ void note_off(byte ch, byte note, byte vel) {
     play_off(note);
 }
 
-void pitch_bend(byte ch, int bend) { bend_st = BEND_RANGE_ST * bend / 8192.0f; }   // −8192…8191
+void pitch_bend(byte ch, int bend) { if (dx7_six_active) dx7_six.setPitchBend(bend + 8192); bend_st = BEND_RANGE_ST * bend / 8192.0f; }   // −8192…8191
 void after_touch(byte ch, byte pressure) { aftertouch = pressure / 127.0f; }
 
 void release_sustained() {
@@ -1681,6 +1696,11 @@ void release_sustained() {
 }
 
 void control_change(byte ch, byte cc, byte val) {
+    if (dx7_six_active) {
+        if (cc == 64) dx7_six.setSustain(val >= 64);
+        else if (cc == 123 || cc == 120) dx7_six.allNotesOff();
+        return;
+    }
     session_mark();
     const uint8_t e = ui.engine();
     if (cc == 64) {
@@ -1776,6 +1796,32 @@ void clock_song_position(uint16_t sixteenths) { gclock.midi_song_position(sixtee
 
 // ── Arduino ─────────────────────────────────────────────────────────────────────────────────────
 
+void dx7_six_select(bool enabled) {
+    all_notes_off();
+    dx7_six_active = enabled;
+    dx7_six.set_dsp_enabled(enabled);
+    if (enabled) {
+        for (uint8_t e = 0; e < GF_ENGINE_COUNT; ++e) engine_dsp(e, false);
+        audio_graph::set_active_engine(audio_graph::ENGINE_DX7_6OP);
+        audio_graph::set_synth_mode();
+    } else activate_engine(ui.engine());
+}
+void dx7_six_sysex(const uint8_t* data, uint16_t length, bool complete) {
+    static uint8_t message[gf::dx7six::BANK_SYSEX_BYTES];
+    static size_t used = 0;
+    static bool overflow = false;
+    if (length && data[0] == 0xf0) { used = 0; overflow = false; }
+    if (length > sizeof(message) - used) overflow = true;
+    if (!overflow) { memcpy(message + used, data, length); used += length; }
+    if (!complete) return;
+    gf::dx7six::Patch patch;
+    if (!overflow && gf::dx7six::parse_sysex(message, used, patch, used == gf::dx7six::SINGLE_SYSEX_BYTES ? 0 : dx7_six_bank_index)) {
+        dx7_six.setPatch(patch); dx7_six_select(true);
+        Serial.println("@GF OK DX7_6OP SYSEX");
+    } else Serial.println("@GF ERR DX7_6OP SYSEX");
+    used = 0; overflow = false;
+}
+
 void setup() {
     Serial.begin(115200);
     while (!Serial && millis() < 1500) {
@@ -1795,6 +1841,7 @@ void setup() {
     prophet.begin();
     ob6.begin();
     dx7.begin();
+    dx7_six.begin();
     arp.begin();
     // Los 6 engines encendidos a la vez llevan el audio al 99 % de CPU y el setup no avanza (2026-10-27, tras la
     // fase 2): se apagan ya los que no suenan; en uso nunca hay más de dos (capa híbrida)
@@ -1874,6 +1921,8 @@ void setup() {
     midi.setHandleStop(clock_stop);
     midi.setHandleSongPosition(clock_song_position);
     // MIDI del computador por el USB de la Teensy (piano roll de Ableton, clock de la sesión)
+    usbMIDI.setHandleSystemExclusive(dx7_six_sysex);
+    midi.setHandleSystemExclusive(dx7_six_sysex);
     usbMIDI.setHandleNoteOn(note_on);
     usbMIDI.setHandleNoteOff(note_off);
     usbMIDI.setHandleControlChange(usb_control_change);
@@ -1900,6 +1949,35 @@ void librarian_bank_changed(uint8_t e) {
 }
 
 void librarian_command(char* line) {
+    if (!strcmp(line, "@GF DX7_GFP")) {
+        uint8_t bytes[gf::dx7six::GFP_BYTES]; char hex[2 * gf::dx7six::GFP_BYTES + 1];
+        gf::dx7six::encode_gfp(dx7_six.patch(), bytes, sizeof(bytes));
+        studio::hex_encode(bytes, sizeof(bytes), hex);
+        Serial.printf("@GF GFP7 %s\n", hex); return;
+    }
+    if (!strncmp(line, "@GF DX7_GFP ", 12)) {
+        uint8_t bytes[gf::dx7six::GFP_BYTES]; gf::dx7six::Patch p;
+        const size_t n = studio::hex_decode(line + 12, bytes, sizeof(bytes));
+        const bool ok = gf::dx7six::decode_gfp(bytes, n, p) && dx7_six.setPatch(p);
+        if (ok) dx7_six_select(true);
+        Serial.println(ok ? "@GF OK DX7_GFP" : "@GF ERR DX7_GFP"); return;
+    }
+
+    if (!strcmp(line, "@GF ENGINE dx7_6op")) { dx7_six_select(true); Serial.println("@GF OK ENGINE 7"); return; }
+    if (!strcmp(line, "@GF ENGINE studio")) { dx7_six_select(false); Serial.println("@GF OK ENGINE STUDIO"); return; }
+    unsigned voice = 0;
+    if (sscanf(line, "@GF DX7_BANK %u", &voice) == 1) {
+        if (voice < 32) { dx7_six_bank_index = uint8_t(voice); Serial.println("@GF OK DX7_BANK"); }
+        else Serial.println("@GF ERR DX7_BANK");
+        return;
+    }
+    char param[48]; float value = 0;
+    if (sscanf(line, "@GF DX7_PARAM %47s %f", param, &value) == 2) {
+        auto p = dx7_six.patch();
+        const bool ok = gf::dx7six::set_param(p, param, value) && dx7_six.editPatch(p);
+        Serial.println(ok ? "@GF OK DX7_PARAM" : "@GF ERR DX7_PARAM"); return;
+    }
+
     static char hex[2 * studio::LAYER_BYTES + 1];      // el preset de capa es el binario más largo
     static uint8_t bin[studio::LAYER_BYTES];
     const studio::LinkCmd c = studio::parse_link_cmd(line);

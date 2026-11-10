@@ -158,3 +158,12 @@ Se verificaron los flags efectivos de las **23 unidades de compilación** del ar
 Comando ejecutado en este Mac: `bash tools/gemelo-pi/run_on_pi.sh /tmp/gf-gemelo-pi-mac-v2 20`. Los WAV y logs completos quedan en `/tmp/gf-gemelo-pi-mac-v2`; builds en `/tmp/gf-gemelo-pi-build.wOJDzU` (O2/O3). Se guardan JSON/tablas/hashes en el repo y se evitan ~106 MiB de WAV binarios versionados; el script los regenera en cada máquina. No hay `vcgencmd` en macOS: no se declara validación térmica Pi.
 
 **Entrega Git:** documento escrito antes de implementar; intento de `git add` rechazado al crear `.git/index.lock` (`Operation not permitted`). Todo queda **sin commits** en `codex/gemelo-pi`, conforme a la excepción solicitada. Sin push, instalaciones, red, cambios de firmware ni modificaciones a los specs `00–06`. No se implementa el host de audio.
+
+## DX7 6-OP (ADR-008 §4)
+
+El target adicional `gf_dx7_6op` compila el núcleo compartido del firmware y el preview sin JUCE.
+`gf_engine_bench --engine dx7_6op` mide 1/4/6 voces, seco y con FX, bloques 128/256 a 48 kHz; el runner
+`tools/gemelo-pi/run_on_pi.sh` lo incluye automáticamente en la matriz. Las cifras históricas de este
+informe corresponden al DX7 de cuatro operadores. Véanse [modelo/APIs](../theory/dx7-6op.md) y
+[mediciones Mac/golden](../theory/dx7-6op-validation.md). `dx7_6op_params.h` exporta la tabla estática
+para `list_params`; `preset_codec.h` ofrece `decode_engine_preset` (GFP 2–6 con engine explícito).

@@ -180,7 +180,7 @@ static uint8_t _chan_for(uint8_t id) {
 }
 
 void audio_graph::set_engine_gains(uint8_t a, float ga, uint8_t b, float gb) {
-    if (a >= NUM_ENGINES) return;
+    if (a >= NUM_ENGINES || a == 6) return;
     AudioNoInterrupts();
     for (uint8_t id = 0; id < NUM_ENGINES; ++id) {
         const float g = id == a ? ga * ENGINE_ACTIVE_GAIN : (id == b ? gb * ENGINE_ACTIVE_GAIN : 0.0f);
@@ -192,7 +192,7 @@ void audio_graph::set_engine_gains(uint8_t a, float ga, uint8_t b, float gb) {
 }
 
 void audio_graph::set_active_engine(uint8_t engine_id) {
-    if (engine_id >= NUM_ENGINES) return;
+    if (engine_id >= NUM_ENGINES || engine_id == 6) return;
     if (engine_id == s_active_engine) {   // puede venir de una capa: B queda en silencio igual
         set_engine_gains(engine_id, 1.0f, 0xFF, 0.0f);
         return;

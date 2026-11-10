@@ -72,9 +72,12 @@ target_link_libraries(gf_engine_bench PRIVATE gf_prophet_preset)
 target_compile_definitions(gf_engine_bench PRIVATE GF_BENCH_BUILD_TYPE="$<CONFIG>")
 # Keep the executable alongside existing JUCE-free test binaries for a stable CLI.
 set_target_properties(gf_engine_bench PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
-foreach(target gf_engine_bench gf_prophet_preview gf_prophet_preset gf_preset_codec)
+foreach(target gf_engine_bench gf_prophet_preview gf_prophet_preset gf_preset_codec gf_dx7_6op)
     target_compile_options(${target} PRIVATE "$<$<CONFIG:Release>:${GF_BENCH_FLAGS}>")
 endforeach()
 add_test(NAME engine_bench_self_test COMMAND gf_engine_bench --self-test)
 add_test(NAME engine_bench_four_part_smoke COMMAND gf_engine_bench --seconds 0.1 --block 128
     --engine four-part --json "${CMAKE_CURRENT_BINARY_DIR}/smoke/results.json" --threads 1)
+
+add_test(NAME engine_bench_dx7_6op_smoke COMMAND gf_engine_bench --seconds 0.1 --block 128
+    --engine dx7_6op --json "${CMAKE_CURRENT_BINARY_DIR}/dx7-6op-smoke/results.json" --threads 1)

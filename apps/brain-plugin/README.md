@@ -75,3 +75,10 @@ En el Pi: `bash tools/gemelo-pi/run_on_pi.sh` construye en `/tmp`, ejecuta O2/O3
 compara hashes y registra temperatura/throttling si existe `vcgencmd`; no instala nada.
 Método, presets, límites y puerta de decisión: [consola/12-gemelo-pi.md](../docs/consola/12-gemelo-pi.md).
 El arnés mide los previews y sus buses, no valida fidelidad del firmware ni latencia de un host real.
+
+DX7 6-OP (ADR-008 §4) es un modo adicional: `gf_dx7_6op` / `gf::Dx7SixPreview`, engine id 7,
+`dx7_6op` en el bench. FM 4-OP conserva id 4 y sus GFP antiguos. El VST ofrece un selector **DX7 6-OP**
+y bancos de ocho controles creados desde `engines/dx7_6op_params.h` (la misma tabla para `list_params`).
+Importa `.syx` VCED o VMEM; **SYX voice 1–32** elige la voz del banco antes de importar. Exporta GFP 6,
+que también puede leer `decode_engine_preset`; no usa la estructura de cuatro operadores para seis.
+[Modelo/APIs](../docs/theory/dx7-6op.md) · [validación y comparación MSFA](../docs/theory/dx7-6op-validation.md).
