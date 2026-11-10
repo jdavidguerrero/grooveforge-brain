@@ -2,71 +2,377 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/monorepo-groovepush, 'codex/**']
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build-teensy:
-    name: Build & Test Teensy 4.1
+  changes:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      teensy: ${{ steps.filter.outputs.teensy }}
+      esp32: ${{ steps.filter.outputs.esp32 }}
+      processor: ${{ steps.filter.outputs.processor }}
+      consola: ${{ steps.filter.outputs.consola }}
+      motor: ${{ steps.filter.outputs.motor }}
+      perc: ${{ steps.filter.outputs.perc }}
+      brain: ${{ steps.filter.outputs.brain }}
+      synth: ${{ steps.filter.outputs.synth }}
+      gui: ${{ steps.filter.outputs.gui }}
+      training: ${{ steps.filter.outputs.training }}
+      native_projects: ${{ steps.matrix.outputs.native_projects }}
+      tool_projects: ${{ steps.matrix.outputs.tool_projects }}
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/cache@v4
         with:
-          path: ~/.platformio/.cache
-          key: ${{ runner.os }}-pio-teensy-${{ hashFiles('apps/firmware-teensy/platformio.ini') }}
+          fetch-depth: 0
+      - uses: dorny/paths-filter@v3
+        id: filter
+        if: github.event_name != 'workflow_dispatch'
+        with:
+          # Empty token selects local Git diff, including for fork PRs.
+          token: ''
+          base: ${{ github.event_name == 'push' && github.ref || 'main' }}
+          filters: |
+            teensy:
+              - '.github/workflows/ci.yml'
+              - 'apps/firmware-teensy/**'
+              - 'apps/bridge-protocol/**'
+              - 'apps/consola/surface/**'
+              - 'apps/consola/processor/**'
+            esp32:
+              - '.github/workflows/ci.yml'
+              - 'apps/firmware-esp32/**'
+              - 'apps/bridge-protocol/**'
+            processor:
+              - '.github/workflows/ci.yml'
+              - 'apps/consola/processor/**'
+              - 'apps/consola/surface/**'
+            consola:
+              - '.github/workflows/ci.yml'
+              - 'tools/consola/**'
+              - 'tools/motor/**'
+              - 'tools/perc-synth/**'
+              - 'tools/paleta-lab/**'
+              - 'tools/preset-librarian/**'
+            motor:
+              - '.github/workflows/ci.yml'
+              - 'tools/motor/**'
+              - 'tools/perc-synth/**'
+              - 'tools/paleta-lab/**'
+              - 'tools/preset-librarian/**'
+            perc:
+              - '.github/workflows/ci.yml'
+              - 'tools/perc-synth/**'
+            brain:
+              - '.github/workflows/ci.yml'
+              - 'apps/brain-plugin/**'
+              - 'apps/firmware-teensy/**'
+              - 'apps/bridge-protocol/**'
+              - 'tools/gemelo-baseline/**'
+            synth:
+              - '.github/workflows/ci.yml'
+              - 'apps/synth-host/**'
+              - 'apps/brain-plugin/**'
+              - 'apps/firmware-teensy/**'
+              - 'apps/bridge-protocol/**'
+              - 'apps/consola/gui-console/synth-metadata.json'
+            gui:
+              - '.github/workflows/ci.yml'
+              - 'apps/consola/gui-console/**'
+              - 'apps/synth-host/**'
+              - 'apps/brain-plugin/**'
+              - 'apps/firmware-teensy/**'
+              - 'apps/bridge-protocol/**'
+            training:
+              - '.github/workflows/ci.yml'
+              - 'apps/training/**'
+      - name: Select affected matrix entries
+        id: matrix
+        env:
+          EVENT: ${{ github.event_name }}
+          TEENSY: ${{ steps.filter.outputs.teensy }}
+          ESP32: ${{ steps.filter.outputs.esp32 }}
+          PROCESSOR: ${{ steps.filter.outputs.processor }}
+          CONSOLA: ${{ steps.filter.outputs.consola }}
+          MOTOR: ${{ steps.filter.outputs.motor }}
+          PERC: ${{ steps.filter.outputs.perc }}
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          import os
+          manual = os.environ['EVENT'] == 'workflow_dispatch'
+          pr = os.environ['EVENT'] == 'pull_request'
+          native = [path for key, path in (
+              ('TEENSY', 'apps/firmware-teensy'),
+              ('ESP32', 'apps/firmware-esp32'),
+              ('PROCESSOR', 'apps/consola/processor'))
+              if manual or os.environ[key] == 'true' or (pr and key != 'PROCESSOR')]
+          tools = [path for key, path in (
+              ('CONSOLA', 'tools/consola'), ('MOTOR', 'tools/motor'), ('PERC', 'tools/perc-synth'))
+              if manual or os.environ[key] == 'true']
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              for name, projects in (('native_projects', native), ('tool_projects', tools)):
+                  print(f'{name}={json.dumps(projects)}', file=output)
+          PYTHON
 
+  build-teensy:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.teensy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [sketch, sketch49, consola, consola_usb, consola_uno, consola_hw_test]
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+          cache: pip
+          cache-dependency-path: apps/firmware-teensy/platformio.ini
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-${{ runner.arch }}-pio-6.2.0-teensy-5.1.0-${{ hashFiles('**/platformio.ini') }}
       - name: Install PlatformIO
-        run: pip install platformio
+        run: python -m pip install platformio==6.2.0
+      - name: Pin the platform expected by the audited USB overlay
+        run: pio pkg install --global --platform platformio/teensy@5.1.0 --skip-dependencies
+      - name: Build firmware (no upload)
+        working-directory: apps/firmware-teensy
+        run: pio run -e "${{ matrix.environment }}"
+      - name: Verify private USB framework was rebuilt from vendor
+        if: matrix.environment == 'consola_usb' || matrix.environment == 'consola_uno'
+        working-directory: apps/firmware-teensy
+        run: |
+          python - <<'PYTHON'
+          import hashlib
+          import json
+          from pathlib import Path
+          private = Path('.pio/build/framework-consola-usb')
+          assert json.loads((private / 'package.json').read_text())['version'] == '1.160.0'
+          assert (private / '.gf-overlay-sha256').is_file()
+          vendor = Path('vendor/usb-audio-alex6679/changedCorefiles')
+          sources = [p for p in vendor.rglob('*') if p.is_file()]
+          assert sources, 'Missing versioned USB overlay'
+          for source in sources:
+              target = private / 'cores/teensy4' / source.relative_to(vendor)
+              assert hashlib.sha256(source.read_bytes()).digest() == hashlib.sha256(target.read_bytes()).digest(), source
+          PYTHON
 
-      - name: Build Teensy firmware
-        run: cd apps/firmware-teensy && pio run -e sketch
-
-      - name: Run native tests (Teensy)
-        run: cd apps/firmware-teensy && pio test -e native
+  build-processor:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.processor == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [consola_s, consola_s_m4, teensy41, neotrellis_m4]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: apps/consola/processor/platformio.ini
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-${{ runner.arch }}-pio-6.2.0-processor-teensy-5.1.0-${{ hashFiles('**/platformio.ini') }}
+      - name: Install PlatformIO
+        run: python -m pip install platformio==6.2.0
+      - name: Use the same Teensy platform as the Brain
+        if: matrix.environment == 'teensy41' || matrix.environment == 'consola_s'
+        run: pio pkg install --global --platform platformio/teensy@5.1.0 --skip-dependencies
+      - name: Build firmware (no upload)
+        working-directory: apps/consola/processor
+        run: pio run -e "${{ matrix.environment }}"
 
   build-esp32:
-    name: Build & Test ESP32-S3
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.esp32 == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/cache@v4
-        with:
-          path: ~/.platformio/.cache
-          key: ${{ runner.os }}-pio-esp32-${{ hashFiles('apps/firmware-esp32/platformio.ini') }}
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
+          cache: pip
+          cache-dependency-path: apps/firmware-esp32/platformio.ini
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-${{ runner.arch }}-pio-6.2.0-esp32-${{ hashFiles('**/platformio.ini') }}
       - name: Install PlatformIO
-        run: pip install platformio
-
+        run: python -m pip install platformio==6.2.0
       - name: Build ESP32-S3 firmware
-        run: cd apps/firmware-esp32 && pio run -e esp32s3
+        working-directory: apps/firmware-esp32
+        run: pio run -e esp32s3
 
-      - name: Run native tests (ESP32)
-        run: cd apps/firmware-esp32 && pio test -e native
+  test-native:
+    needs: changes
+    # Bridge suites are mandatory on every PR, including docs-only PRs.
+    if: needs.changes.outputs.native_projects != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.changes.outputs.native_projects) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: ${{ matrix.project }}/platformio.ini
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-${{ runner.arch }}-pio-6.2.0-native-${{ hashFiles('**/platformio.ini') }}
+      - name: Install PlatformIO
+        run: python -m pip install platformio==6.2.0
+      - name: Run native tests
+        working-directory: ${{ matrix.project }}
+        run: pio test -e native
+
+  test-tools:
+    needs: changes
+    if: needs.changes.outputs.tool_projects != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.changes.outputs.tool_projects) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.11.23'
+          enable-cache: true
+          cache-dependency-glob: '${{ matrix.project }}/uv.lock'
+          python-version: '3.14'
+      - name: Install audio and MIDI system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev libjack-jackd2-dev libportaudio2 libsndfile1
+      - name: Run locked Python tests
+        working-directory: ${{ matrix.project }}
+        run: uv run --python 3.14 --frozen pytest
+
+  test-gui:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.gui == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_QUICK_BACKEND: software
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: apps/consola/gui-console/pyproject.toml
+      - name: Install GUI and real host dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ pkg-config libjson-c-dev libegl1 libgl1 libxkbcommon0
+          python -m pip install 'PySide6>=6.8' 'pytest>=8'
+      - name: Run QML and real host tests without a display
+        run: python3 -m pytest apps/consola/gui-console/tests -q
+
+  test-synth-host:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.synth == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install host dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ pkg-config libjson-c-dev
+      - name: Configure offline backend
+        run: cmake -S apps/synth-host -B build/synth-host -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DGF_HOST_PIPEWIRE=OFF -DGF_HOST_JACK=OFF
+      - run: cmake --build build/synth-host --parallel 2
+      - run: ctest --test-dir build/synth-host --output-on-failure --timeout 120
+
+  build-pipewire:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.synth == 'true'
+    runs-on: ubuntu-latest
+    # The host requires PipeWire >=1.4; older SDKs silently select offline.
+    container: debian:trixie
+    timeout-minutes: 15
+    steps:
+      - name: Install PipeWire SDK and build tools
+        run: |
+          apt-get update
+          apt-get install -y ca-certificates git cmake g++ pkg-config libjson-c-dev libpipewire-0.3-dev
+          pkg-config --atleast-version=1.4 libpipewire-0.3
+      - uses: actions/checkout@v4
+      - name: Configure PipeWire backend (no audio server needed)
+        run: cmake -S apps/synth-host -B build/pipewire -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DGF_HOST_PIPEWIRE=ON -DGF_HOST_JACK=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Require the backend to be compiled
+        shell: bash
+        run: grep -q -- '-DGF_HAVE_PIPEWIRE' build/pipewire/compile_commands.json
+      - run: cmake --build build/pipewire --parallel 2
+
+  test-brain-plugin:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.brain == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Configure JUCE-free engines and benchmark
+        run: cmake -S apps/brain-plugin -B build/brain-plugin -DCMAKE_BUILD_TYPE=Release -DGF_BUILD_VST3=OFF -DGF_BUILD_ENGINE_BENCH=ON
+      - run: cmake --build build/brain-plugin --parallel 2
+      - run: ctest --test-dir build/brain-plugin --output-on-failure --timeout 120
 
   test-ml:
     name: ML Model Tests
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.training == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
-      - uses: astral-sh/setup-uv@v3
+      - uses: astral-sh/setup-uv@v6
         with:
-          version: "latest"
-
+          version: '0.11.23'
+          enable-cache: true
+          cache-dependency-glob: apps/training/uv.lock
+          python-version: '3.11'
       - name: Install Python dependencies
-        run: cd apps/training && uv sync
-
+        working-directory: apps/training
+        run: uv sync --python 3.11 --frozen
       - name: Run ML tests
-        run: cd apps/training && uv run pytest --tb=short
+        working-directory: apps/training
+        run: uv run --frozen pytest --tb=short
