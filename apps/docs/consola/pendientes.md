@@ -4,7 +4,9 @@
 > la condición para retomarla. Las decisiones abiertas de arquitectura están en la auditoría
 > (`auditoria/auditoria-fable-2026-11.md` §8).
 
-## DX7 de 6 operadores como modo adicional (Juan, 2026-11-09)
+## ~~DX7 de 6 operadores como modo adicional~~ → en curso (ADR-008 §4, Juan 2026-11-10)
+
+Juan decidió implementarlo ya; queda como registro de la discusión.
 
 - **Origen:** el diseño de Claude Design mostraba «FM 6-OP»; ADR-005 fijó 4 operadores. Juan preguntó si agregar
   los dos que faltan para acercarlo al DX7.
