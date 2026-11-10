@@ -206,3 +206,11 @@ locales en `apps/consola/gui-console/perf-results/mac-*.{json,qt.log}` (ignorado
 Commit documental intentado antes del código: `.git/index.lock: Operation not
 permitted`. Todo queda sin commit en codex/gui-pi; no push. No se tocó el checkout
 USB ni archivos fuera del alcance solicitado.
+
+## Calibración medida en el Pi (2026-11-10)
+
+Panel Waveshare 7" DSI montado en vertical nativo: la imagen se rota con `--rotate 90 --rotation-method qml` (queda
+derecha) y el touch con `QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=invertx:rotate=0` (con `run_gui.sh`:
+`GUI_TOUCH_DEVICE=invertx GUI_TOUCH_ROTATION=0`). Probado por Juan: 90 → invertido, 270 → espejo, 270+invertx → mal,
+**0+invertx → correcto**. Faltaban en el Pi los módulos QML (`qml6-module-qtquick`, `-qtquick-window`, `-qtqml`,
+`-qtqml-workerscript`) que ya lista `setup_pi.sh`: correr el script completo antes de la primera prueba.
