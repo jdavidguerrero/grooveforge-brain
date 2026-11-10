@@ -1,0 +1,113 @@
+48 kHz | 1 thread | 20 s/case + 2 s warm-up | O3 | GNU 14.2.0
+Flags:  -O3 -DNDEBUG -O3 -fno-fast-math -ffp-contract=off -mcpu=cortex-a76
+engine       mode notes block    RTF    mean%     p99%     max%  misses
+prophet      dry      1   128   0.011     1.13     1.47     2.41       0
+prophet      dry      4   128   0.028     2.81     3.51     4.41       0
+prophet      dry      5   128   0.034     3.37     4.33     5.31       0
+PCM_SHA256 b59bcae173cd150bc6cc3efce7ca6808479aef4cdef55f7f4cb5616a7f4fef79  prophet-dry-b128-v5.wav
+prophet      wet      1   128   0.022     2.22     2.57     3.50       0
+prophet      wet      4   128   0.039     3.90     4.82     5.83       0
+prophet      wet      5   128   0.045     4.46     5.74     6.40       0
+PCM_SHA256 f2aea7d8a11a16afe3f309734dac953e49cad50b1e1c2ec27fba30a198c9bea1  prophet-wet-b128-v5.wav
+dx7          dry      1   128   0.018     1.80     2.27     3.20       0
+dx7          dry      4   128   0.043     4.32     5.75     6.67       0
+dx7          dry      6   128   0.060     5.98     8.10     9.02       0
+PCM_SHA256 3abbdeb7c99000456cdb82c9dfea66dab3578895a6c0d9a306dce10f6887c13a  dx7-dry-b128-v6.wav
+dx7          wet      1   128   0.029     2.88     3.36     4.28       0
+dx7          wet      4   128   0.054     5.40     7.07     7.77       0
+dx7          wet      6   128   0.071     7.07     9.23    10.29       0
+PCM_SHA256 85e2d8674bc829c0ff5ed9059fc9e945f766f8c612d2a2fd489b9fd1acba0c87  dx7-wet-b128-v6.wav
+juno         dry      1   128   0.039     3.93     4.42     5.36       0
+juno         dry      4   128   0.039     3.95     4.43     5.35       0
+juno         dry      6   128   0.040     3.96     4.45     5.38       0
+PCM_SHA256 61a18f15f08fb6a1b32fc00c1321126d1c36d6b2ce15a8fe4bf0677a6b2eddd5  juno-dry-b128-v6.wav
+juno         wet      1   128   0.054     5.41     6.24     6.81       0
+juno         wet      4   128   0.054     5.43     6.26     7.21       0
+juno         wet      6   128   0.054     5.43     6.26     6.87       0
+PCM_SHA256 1a923346d7f18d7b82284c42d1ed1b09de4b7506a94663170566b9f2b478f8f0  juno-wet-b128-v6.wav
+ob6          dry      1   128   0.030     2.98     3.27     4.51       0
+ob6          dry      4   128   0.030     3.01     3.29     4.32       0
+ob6          dry      6   128   0.030     3.01     3.31     4.22       0
+PCM_SHA256 57ea4d4eb888598a33246ffe3e163771d10f8078a1ce9ba78533ffdd17af2c05  ob6-dry-b128-v6.wav
+ob6          wet      1   128   0.041     4.06     4.57     5.48       0
+ob6          wet      4   128   0.041     4.09     4.59     5.51       0
+ob6          wet      6   128   0.041     4.10     4.62     7.66       0
+PCM_SHA256 d09a6611236feb3cb8cc4b529b5083ae1374a1f13fa593f37f6953df18afa315  ob6-wet-b128-v6.wav
+model-d      dry      1   128   0.012     1.22     1.46     2.38       0
+PCM_SHA256 ebe98bba642ac180b00ce715b27dc3f8d8fa074c3cb290c7218863a08a4f2dae  model-d-dry-b128-v1.wav
+model-d      wet      1   128   0.023     2.30     2.55     3.56       0
+PCM_SHA256 50264633a250b65e1d27107b049432b0907db310eb1251e2856fbbaa67a66fca  model-d-wet-b128-v1.wav
+arp2600      dry      1   128   0.031     3.10     3.40     4.25       0
+arp2600      dry      4   128   0.031     3.11     3.40     4.27       0
+PCM_SHA256 99bdadc5232757f35a8d9958ab654889e4da56a97f813c8654bc296d7c2b23f1  arp2600-dry-b128-v4.wav
+arp2600      wet      1   128   0.042     4.19     4.67     5.60       0
+arp2600      wet      4   128   0.042     4.19     4.67     5.59       0
+PCM_SHA256 8871550f147ecb9460057f92baf58246d2a17aba79249ad7ce0bc478243e012a  arp2600-wet-b128-v4.wav
+hybrid       dry      1   128   0.047     4.71     5.31     6.23       0
+hybrid       dry      4   128   0.064     6.43     7.66     8.49       0
+hybrid       dry      6   128   0.070     6.99     8.33     9.12       0
+PCM_SHA256 6105cdcfe6b70cb69d44e4ff6fc4ac4ab7b8d364604171c1381487c4fc7dbdb5  hybrid-dry-b128-v6.wav
+hybrid       wet      1   128   0.062     6.19     7.14     7.70       0
+hybrid       wet      4   128   0.079     7.92     9.18    10.57       0
+hybrid       wet      6   128   0.085     8.48     9.85    10.65       0
+PCM_SHA256 ba4943231e212a9ddddc0c69c40aafab4900f664428606bdb9c853a6368e8106  hybrid-wet-b128-v6.wav
+four-part    dry    mix   128   0.153    15.26    17.26    17.99       0
+PCM_SHA256 2d9958adbc6f20f8ac1d5fd9314ce1f3e734a19bc1cae5f76a917f3815d540f7  four-part-dry-b128-v0.wav
+four-part    wet    mix   128   0.204    20.36    21.54    23.55       0
+PCM_SHA256 9381965a513ed10666c80974058fb8895cc5b22406064ddc6ebd57aeff438167  four-part-wet-b128-v0.wav
+prophet      dry      1   256   0.011     1.12     1.26     1.81       0
+prophet      dry      4   256   0.028     2.81     3.42     3.55       0
+prophet      dry      5   256   0.034     3.35     4.05     4.43       0
+PCM_SHA256 b59bcae173cd150bc6cc3efce7ca6808479aef4cdef55f7f4cb5616a7f4fef79  prophet-dry-b256-v5.wav
+prophet      wet      1   256   0.022     2.20     2.43     2.59       0
+prophet      wet      4   256   0.039     3.88     4.51     4.66       0
+prophet      wet      5   256   0.044     4.43     5.15     5.31       0
+PCM_SHA256 f2aea7d8a11a16afe3f309734dac953e49cad50b1e1c2ec27fba30a198c9bea1  prophet-wet-b256-v5.wav
+dx7          dry      1   256   0.018     1.79     2.06     2.25       0
+dx7          dry      4   256   0.043     4.30     5.37     5.61       0
+dx7          dry      6   256   0.060     5.96     7.44     7.67       0
+PCM_SHA256 3abbdeb7c99000456cdb82c9dfea66dab3578895a6c0d9a306dce10f6887c13a  dx7-dry-b256-v6.wav
+dx7          wet      1   256   0.029     2.87     3.31     3.39       0
+dx7          wet      4   256   0.054     5.39     6.48     6.86       0
+dx7          wet      6   256   0.070     7.04     8.56     8.97       0
+PCM_SHA256 85e2d8674bc829c0ff5ed9059fc9e945f766f8c612d2a2fd489b9fd1acba0c87  dx7-wet-b256-v6.wav
+juno         dry      1   256   0.039     3.91     4.14     4.29       0
+juno         dry      4   256   0.039     3.93     4.15     4.36       0
+juno         dry      6   256   0.039     3.94     4.16     4.32       0
+PCM_SHA256 61a18f15f08fb6a1b32fc00c1321126d1c36d6b2ce15a8fe4bf0677a6b2eddd5  juno-dry-b256-v6.wav
+juno         wet      1   256   0.054     5.38     5.62     5.95       0
+juno         wet      4   256   0.054     5.40     5.64     5.89       0
+juno         wet      6   256   0.054     5.41     5.65     5.86       0
+PCM_SHA256 1a923346d7f18d7b82284c42d1ed1b09de4b7506a94663170566b9f2b478f8f0  juno-wet-b256-v6.wav
+ob6          dry      1   256   0.030     2.96     3.18     3.38       0
+ob6          dry      4   256   0.030     2.99     3.22     3.36       0
+ob6          dry      6   256   0.030     3.00     3.21     3.40       0
+PCM_SHA256 57ea4d4eb888598a33246ffe3e163771d10f8078a1ce9ba78533ffdd17af2c05  ob6-dry-b256-v6.wav
+ob6          wet      1   256   0.040     4.04     4.28     4.43       0
+ob6          wet      4   256   0.041     4.07     4.30     4.42       0
+ob6          wet      6   256   0.041     4.08     4.32     4.51       0
+PCM_SHA256 d09a6611236feb3cb8cc4b529b5083ae1374a1f13fa593f37f6953df18afa315  ob6-wet-b256-v6.wav
+model-d      dry      1   256   0.012     1.21     1.27     1.53       0
+PCM_SHA256 ebe98bba642ac180b00ce715b27dc3f8d8fa074c3cb290c7218863a08a4f2dae  model-d-dry-b256-v1.wav
+model-d      wet      1   256   0.023     2.29     2.51     2.61       0
+PCM_SHA256 50264633a250b65e1d27107b049432b0907db310eb1251e2856fbbaa67a66fca  model-d-wet-b256-v1.wav
+arp2600      dry      1   256   0.031     3.08     3.31     3.43       0
+arp2600      dry      4   256   0.031     3.09     3.31     3.44       0
+PCM_SHA256 99bdadc5232757f35a8d9958ab654889e4da56a97f813c8654bc296d7c2b23f1  arp2600-dry-b256-v4.wav
+arp2600      wet      1   256   0.042     4.16     4.39     4.53       0
+arp2600      wet      4   256   0.042     4.16     4.39     4.69       0
+PCM_SHA256 8871550f147ecb9460057f92baf58246d2a17aba79249ad7ce0bc478243e012a  arp2600-wet-b256-v4.wav
+hybrid       dry      1   256   0.047     4.69     5.02     5.20       0
+hybrid       dry      4   256   0.064     6.40     7.05     7.37       0
+hybrid       dry      6   256   0.070     6.97     7.72     8.02       0
+PCM_SHA256 6105cdcfe6b70cb69d44e4ff6fc4ac4ab7b8d364604171c1381487c4fc7dbdb5  hybrid-dry-b256-v6.wav
+hybrid       wet      1   256   0.062     6.17     6.51     6.78       0
+hybrid       wet      4   256   0.079     7.89     8.54     9.34       0
+hybrid       wet      6   256   0.084     8.45     9.21     9.55       0
+PCM_SHA256 ba4943231e212a9ddddc0c69c40aafab4900f664428606bdb9c853a6368e8106  hybrid-wet-b256-v6.wav
+four-part    dry    mix   256   0.152    15.19    16.00    16.48       0
+PCM_SHA256 2d9958adbc6f20f8ac1d5fd9314ce1f3e734a19bc1cae5f76a917f3815d540f7  four-part-dry-b256-v0.wav
+four-part    wet    mix   256   0.203    20.34    21.22    21.77       0
+PCM_SHA256 9381965a513ed10666c80974058fb8895cc5b22406064ddc6ebd57aeff438167  four-part-wet-b256-v0.wav
+JSON: "/home/juan/gemelo-pi-results/O3/run-1/results.json"
+Provisional 4-part timing gate: PASS; hardware decision remains pending Pi and realtime tests.
