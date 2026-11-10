@@ -2122,6 +2122,11 @@ void librarian_command(char* line) {
                 Serial.println("@GF ERR ESCRITURA");
             }
             break;
+        case studio::LinkCmd::In:
+        case studio::LinkCmd::Hp:
+        case studio::LinkCmd::Cv:
+            Serial.println("@GF ERR CONSOLA_UNO");
+            break;
         case studio::LinkCmd::None: break;
     }
 }

@@ -54,12 +54,12 @@ NOMBRES = (
 )
 
 
-@pytest.mark.parametrize("numero,nombre", enumerate(NOMBRES, 80))
+@pytest.mark.parametrize("numero,nombre", list(enumerate(NOMBRES, 80)))
 def test_botones(numero, nombre):
     assert s.decodificar(nota(numero)) == s.Boton(nombre, True)
 
 
-@pytest.mark.parametrize("numero", [*range(36, 40), *range(48, 110)])
+@pytest.mark.parametrize("numero", [*range(36, 40), *range(48, 123)])
 @pytest.mark.parametrize("tipo,velocidad", [("note_off", 0), ("note_off", 64), ("note_on", 0)])
 def test_liberaciones(numero, tipo, velocidad):
     evento = s.decodificar(nota(numero, tipo, velocidad))
@@ -100,7 +100,7 @@ def test_presencia_no_se_infiere_del_cc(indice):
 
 @pytest.mark.parametrize("canal", range(1, 16))
 def test_otros_canales(canal):
-    for numero in [*range(36, 40), *range(48, 110)]:
+    for numero in [*range(36, 40), *range(48, 123)]:
         assert s.decodificar(nota(numero, canal=canal)) is None
     for numero in range(16, 35):
         assert s.decodificar(cc(numero, 127, canal)) is None
@@ -113,9 +113,9 @@ def test_jog(valor, delta):
 
 def test_numeros_y_tipos_desconocidos():
     for numero in range(128):
-        if numero not in [*range(36, 40), *range(48, 110)]:
+        if numero not in [*range(36, 40), *range(48, 123)]:
             assert s.decodificar(nota(numero)) is None
-        if numero not in range(16, 36):
+        if numero not in range(16, 37):
             assert s.decodificar(cc(numero, 127)) is None
     for tipo in ("clock", "sysex", "pitchwheel", "aftertouch", "program_change"):
         assert s.decodificar(SimpleNamespace(type=tipo, channel=0)) is None
@@ -141,7 +141,7 @@ def midi(monkeypatch):
         callback(nota(94))
         return puerto
 
-    modulo = SimpleNamespace(get_input_names=lambda: ["Teensy MIDI:Teensy MIDI MIDI 1 28:0", "GF Superficie:GF Superficie MIDI 1 32:0", "Otro"], open_input=abrir)
+    modulo = SimpleNamespace(get_input_names=lambda: ["Teensy MIDI:Teensy MIDI MIDI 1 28:0", "GF Consola:GF Consola MIDI 1 32:0", "Otro"], open_input=abrir)
     monkeypatch.setitem(sys.modules, "mido", modulo)
     return modulo, puertos
 
@@ -150,7 +150,7 @@ def test_cola_callback_y_consumidor(midi):
     _, puertos = midi
     with s.Superficie() as superficie:
         puerto = puertos[0]
-        assert puerto.nombre == "GF Superficie:GF Superficie MIDI 1 32:0"  # elige la S aunque la A también esté conectada
+        assert puerto.nombre == "GF Consola:GF Consola MIDI 1 32:0"  # elige la S aunque la A también esté conectada
         assert superficie.poll() == s.Boton("PLAY", True)
         assert superficie.poll() is None
         with ThreadPoolExecutor() as hilos:
@@ -167,7 +167,7 @@ def test_cola_callback_y_consumidor(midi):
 
 
 def test_cierre_despierta_iterador(midi):
-    superficie = s.Superficie("GF Superficie")
+    superficie = s.Superficie("GF Consola")
     superficie.poll()
     with ThreadPoolExecutor() as hilos:
         consumidor = hilos.submit(lambda: list(superficie))
@@ -181,7 +181,7 @@ def test_seleccion_no_ambigua(midi):
         assert puertos[-1].nombre == "Otro"
     with pytest.raises(ValueError, match="coincidencias"):
         s.Superficie("Ausente")
-    modulo.get_input_names = lambda: ["GF Superficie 1", "GF Superficie 2"]
+    modulo.get_input_names = lambda: ["GF Consola 1", "GF Consola 2"]
     with pytest.raises(ValueError, match="coincidencias"):
         s.Superficie()
 
@@ -243,3 +243,33 @@ def test_cliente_stats_serial_perezoso(monkeypatch):
     SerialFalso.respuesta = b"@S PROTOTYPE drops=0"
     with pytest.raises(TimeoutError):
         cliente.consultar()
+
+
+@pytest.mark.parametrize("numero,nombre", list(enumerate((
+    "KAILH_20", "LEFT", "RIGHT", "BACK", "PAGE_LEFT", "PAGE_RIGHT", "OCT_MINUS",
+    "OCT_PLUS", "MENU", "SEARCH", "SESSION_ARRANGE", "DUPLICATE", "PEDAL"), 110)))
+def test_tercer_mcp_y_pedal(numero, nombre):
+    assert s.decodificar(nota(numero)) == s.Boton(nombre, True)
+    assert s.decodificar(nota(numero, "note_off")) == s.Boton(nombre, False)
+
+
+@pytest.mark.parametrize("valor,db", [(0, 0), (64, -10), (127, -20)])
+def test_selector_pad(valor, db):
+    assert s.decodificar(cc(36, valor)) == s.SelectorPad(db)
+
+
+def test_stats_con_presencia_y_mascaras():
+    extra = dict(mcp_mask=3, ads_mask=1, m4=1, encoder_mask=271, fsr_mask=3,
+                 pot_mask=1, ads0_channels=5, ads1_channels=0, codec=1, cv=0)
+    respuesta = RESPUESTA.rstrip() + " " + " ".join(f"{k}={v}" for k,v in extra.items())
+    assert s.Stats.parsear(respuesta) == ESPERADOS | extra
+
+
+def test_filtro_y_override_s_antigua(midi):
+    modulo, puertos = midi
+    assert s.PUERTO == "GF Consola"
+    modulo.get_input_names = lambda: ["GF Superficie", "GF Consola"]
+    with s.Superficie():
+        assert puertos[-1].nombre == "GF Consola"
+    with s.Superficie("GF Superficie"):
+        assert puertos[-1].nombre == "GF Superficie"

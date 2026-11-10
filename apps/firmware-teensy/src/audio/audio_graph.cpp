@@ -249,7 +249,9 @@ void audio_graph::set_fx_select_mode() {
 void audio_graph::set_usb_passthrough(bool enable) {
     s_usb_passthrough = enable;
     set_master_gain(3, enable ? 1.0f : 0.0f);
+#ifndef GF_CONSOLA_UNO
     Serial.printf("[audio_graph] USB passthrough %s\n", enable ? "ON" : "OFF");
+#endif
 }
 
 bool audio_graph::get_usb_passthrough() {
@@ -263,7 +265,9 @@ void audio_graph::set_usb_out_source(uint8_t fuente) {
         g_usb_sel_l.gain(i, g);
         g_usb_sel_r.gain(i, g);
     }
+#ifndef GF_CONSOLA_UNO
     Serial.printf("[audio_graph] USB → Pi: %s\n", fuente ? "entrada de línea" : "synths");
+#endif
 }
 #endif
 

@@ -1,7 +1,8 @@
+#ifdef ARDUINO
 #include "consola_s/AdsScanner.h"
 #include <Wire.h>
-AdsScanner::AdsScanner(TwoWire& wire, uint8_t address, uint8_t channels)
-    : wire_(wire), address_(address), channels_(channels) {}
+AdsScanner::AdsScanner(TwoWire& wire, uint8_t address, uint8_t channels, uint8_t channel_mask)
+    : wire_(wire), address_(address), channels_(channels), channel_mask_(channel_mask) {}
 bool AdsScanner::write_config() {
     const uint16_t config = 0x8000 | ((4 + channel_) << 12) | 0x0200 | 0x0100 | 0x00e0 | 3;
     wire_.beginTransmission(address_);
@@ -20,6 +21,17 @@ bool AdsScanner::read_register(uint8_t reg, uint16_t& value) {
     return true;
 }
 bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
+    if (!retry_.due(now_us)) return false;
+    if (!channel_mask_) {
+        // Probe optional chips once a second without converting floating inputs.
+        if (retry_.online() && now_us - since_ < 1000000) return false;
+        since_ = now_us;
+        wire_.beginTransmission(address_);
+        if (wire_.endTransmission() == 0) retry_.succeeded();
+        else { retry_.failed(now_us); ++errors_; }
+        return false;
+    }
+    while (!(channel_mask_ & (1u << channel_))) channel_ = (channel_ + 1) % channels_;
     if (state_ == State::Backoff) {
         if (now_us - since_ < 1000000) return false;
         state_ = State::Start;
@@ -30,7 +42,7 @@ bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
     case State::Start:
         ok = write_config();
         since_ = now_us;
-        if (ok) state_ = State::Wait;
+        if (ok) { retry_.succeeded(); state_ = State::Wait; }
         break;
     case State::Wait:
         if (now_us - since_ < 1300) return false;
@@ -52,9 +64,12 @@ bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
     }
     if (!ok) {
         ++errors_;
+        retry_.failed(now_us);
         since_ = now_us;
         state_ = State::Backoff;
     }
     return false;
 }
 uint32_t AdsScanner::errors() const { return errors_; }
+
+#endif

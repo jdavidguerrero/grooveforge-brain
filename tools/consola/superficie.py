@@ -15,7 +15,11 @@ BOTONES = (
     "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
 )
 PERILLAS = ("MASTER", "CUE", "IN")
-PUERTO = "GF Superficie"  # nombre USB propio de la S (src/consola_s/usb_names.c)
+BOTONES_EXTRA = (
+    "KAILH_20", "LEFT", "RIGHT", "BACK", "PAGE_LEFT", "PAGE_RIGHT",
+    "OCT_MINUS", "OCT_PLUS", "MENU", "SEARCH", "SESSION_ARRANGE", "DUPLICATE", "PEDAL",
+)
+PUERTO = "GF Consola"  # consola_uno; --puerto 'GF Superficie' permite usar consola_s
 
 
 @dataclass(frozen=True)
@@ -79,7 +83,12 @@ class ManoPresencia:
     presente: bool
 
 
-Evento = Pad | Fsr | Boton | Encoder | Jog | Fader | Expresion | Perilla | Mano | ManoPresencia
+@dataclass(frozen=True)
+class SelectorPad:
+    db: int
+
+
+Evento = SelectorPad | Pad | Fsr | Boton | Encoder | Jog | Fader | Expresion | Perilla | Mano | ManoPresencia
 
 
 def decodificar(msg) -> Evento | None:
@@ -94,6 +103,8 @@ def decodificar(msg) -> Evento | None:
             return Pad(msg.note - 48, presionado, velocidad)
         if 80 <= msg.note <= 107:
             return Boton(BOTONES[msg.note - 80], presionado)
+        if 110 <= msg.note <= 122:
+            return Boton(BOTONES_EXTRA[msg.note - 110], presionado)
         if 108 <= msg.note <= 109:
             return ManoPresencia(msg.note - 108, presionado)
     elif msg.type == "control_change":
@@ -101,6 +112,8 @@ def decodificar(msg) -> Evento | None:
         if 16 <= cc <= 23:
             delta = valor if valor < 64 else valor - 128
             return Encoder(cc - 16, delta) if delta else None
+        if cc == 36 and valor in (0, 64, 127):
+            return SelectorPad({0: 0, 64: -10, 127: -20}[valor])
         if cc == 35:
             delta = valor if valor < 64 else valor - 128
             return Jog(delta) if delta else None
@@ -194,7 +207,7 @@ class Stats:
             campos[nombre] = int(valor)
         if not set(Stats.CAMPOS) <= campos.keys():
             raise ValueError("Respuesta STATS incompleta")
-        return {nombre: campos[nombre] for nombre in Stats.CAMPOS}
+        return campos
 
     def _abrir(self):
         import serial
