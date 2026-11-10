@@ -48,6 +48,6 @@ int main(){
             }
         }
         require(!audio->fault.load(),"audio fault");require(energy>1e-8,"silent audio");require(violations.load()==0,"heap allocation/free on realtime thread");
-        std::cout<<"RT: 7 engines, params, swaps, 4-part notes/CC/sustain/bend; allocations/frees="<<violations<<"; energy="<<energy<<"; mix verified\n";return 0;
+        std::cout<<"RT: "<<registry().size()<<" engines, params, swaps, 4-part notes/CC/sustain/bend; allocations/frees="<<violations<<"; energy="<<energy<<"; mix verified\n";return 0;
     }catch(const std::exception& e){realtime=false;std::cerr<<e.what()<<'\n';return 1;}
 }

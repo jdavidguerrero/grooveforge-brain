@@ -12,7 +12,7 @@ import threading
 import time
 import sys
 
-from synth_catalog import ENGINES, all_params, list_pages
+from synth_catalog import ENGINES, METADATA, all_params, list_pages
 
 
 def socket_path():
@@ -84,7 +84,9 @@ class FakeSynth:
                 raise ValueError('value must be finite')
             value = max(meta['min'],min(meta['max'],value))
             if meta['kind'] in ('enum','bool'):
-                value = round(value)
+                value = meta['min'] + math.floor((value-meta['min'])/meta['step']+.5)*meta['step']
+            if r['param'] in METADATA['integer_params'][part['engine']]:
+                value = math.floor(value+.5) if value >= 0 else math.ceil(value-.5)
             self.values[number][r['param']] = value
             part['modified'] = True
             return dict(part=number,param=r['param'],value=value), [
@@ -113,7 +115,7 @@ class FakeSynth:
             db = float(r['db'])
             if not math.isfinite(db):
                 raise ValueError('db must be finite')
-            part['level_db'] = max(-60,min(6,db))
+            part['level_db'] = max(-60,min(12,db))
         elif cmd == 'set_mute':
             if type(r['mute']) is not bool:
                 raise ValueError('mute must be boolean')

@@ -1,6 +1,9 @@
 #include "server.h"
+#include "metadata.h"
+#include "dx7_6op_preview.h"
 #include <algorithm>
 #include <chrono>
+#include <cctype>
 #include <cerrno>
 #include <cstring>
 #include <fcntl.h>
@@ -47,12 +50,14 @@ std::vector<uint8_t> unhex(const std::string& s) {if(s.size()%2||s.size()>16000)
 Json config_json(const Config& c) {
     const auto& entry=registry().at(size_t(c.engine));
     const auto data=entry.encode(c);
-    return object({{"engine",entry.name},{"data",hex(data.data(),data.size())}});
+    Json values;for(const auto& p:catalog(c.engine))values.set(p.id,p.read(c));
+    return object({{"engine",entry.name},{"data",hex(data.data(),data.size())},{"values",values}});
 }
 Config config_from(const Json& j) {
     const int e=engine_index(j.at("engine").str());const auto data=unhex(j.at("data").str());
     Config c=registry()[size_t(e)].decode(e,data.data(),data.size());
     if(c.engine!=e)throw std::runtime_error("preset adapter returned wrong engine");
+    if(j.has("values"))for(const auto& p:catalog(e))if(j.at("values").has(p.id))p.write(c,float(j.at("values").at(p.id).number()));
     // Metadata/codec constraints are checked before an engine can reach audio.
     for(const auto& p:catalog(e)) if(!std::isfinite(p.read(c)))throw std::runtime_error("nonfinite patch");
     return c;
@@ -67,20 +72,6 @@ Preset preset_from(const Json& j) {
 Json values(const PartState& p,const std::string& page="") {
     Json result;bool found=page.empty();for(const auto& d:catalog(p.config.engine))if(page.empty()||d.page==page){result.set(d.id,d.read(p.config));found=true;}
     if(!found)throw std::runtime_error("unknown page: "+page);return result;
-}
-Json params_json(int e) {
-    Json pages=Json::array();std::vector<std::string> names;
-    for(const auto& p:catalog(e))if(std::find(names.begin(),names.end(),p.page)==names.end())names.push_back(p.page);
-    for(const auto& name:names) {
-        Json banks=Json::array(),bank=Json::array();
-        for(const auto& p:catalog(e))if(p.page==name) {
-            Json param=object({{"id",p.id},{"name",p.name},{"unit",p.unit},{"min",p.min},{"max",p.max},{"default",p.initial},{"step",p.step},{"kind",p.kind()}});
-            if(p.options>0){Json opts=Json::array();for(int i=0;i<p.options;++i)opts.push(i<int(p.labels.size())?p.labels[size_t(i)]:std::to_string(p.min+float(i)*p.step));param.set("options",opts);}
-            bank.push(param);if(bank.size()==8){banks.push(bank);bank=Json::array();}
-        }
-        if(bank.size())banks.push(bank);pages.push(object({{"name",name},{"banks",banks}}));
-    }
-    return object({{"pages",pages}});
 }
 unsigned part_number(const Json& j) {const auto p=j.at("part").integer();if(p<1||p>4)throw std::runtime_error("part must be 1..4");return unsigned(p-1);}
 int midi_number(const Json& j,const char* key) {const auto x=j.at(key).integer();if(x<0||x>127)throw std::runtime_error(std::string(key)+" must be 0..127");return int(x);}
@@ -104,11 +95,29 @@ Presets::Presets(const std::string& directory,const std::string& repo):directory
         for(const auto& f:fs::recursive_directory_iterator(dir,fs::directory_options::skip_permission_denied)) {
             if(++seen>4096)throw std::runtime_error("preset scan exceeds 4096 entries");
             if(!f.is_regular_file()||f.is_symlink())continue;
-            const auto ext=f.path().extension().string();
-            if(ext!=".json"&&ext!=".gfp"&&ext!=".gfl")continue;
+            auto ext=f.path().extension().string();
+            std::transform(ext.begin(),ext.end(),ext.begin(),[](unsigned char c){return char(std::tolower(c));});
+            if(ext!=".json"&&ext!=".gfp"&&ext!=".gfl"&&ext!=".syx")continue;
+            if(ext==".gfp"&&f.path().stem().string().rfind("user-",0)==0&&fs::exists(f.path().parent_path()/(f.path().stem().string()+".json")))continue;
             if(f.path().filename()=="last-state.json")continue;
             try {
                 Preset p;
+                if(ext==".syx") {
+                    const auto bytes=read_file(f.path());
+                    const auto* data=reinterpret_cast<const uint8_t*>(bytes.data());
+                    const int engine=engine_index("dx7_6op");
+                    const unsigned count=bytes.size()==gf::dx7six::BANK_SYSEX_BYTES?32:1;
+                    // Validate the complete bank before publishing any entries.
+                    std::vector<Preset> voices;
+                    for(unsigned i=0;i<count;++i) {
+                        Preset voice;voice.config=six_defaults(engine);
+                        if(!gf::dx7six::parse_sysex(data,bytes.size(),voice.config.six,uint8_t(i)))throw std::runtime_error("invalid DX7 SysEx");
+                        voice.name="dx7_6op:"+f.path().stem().string()+(count==32?":"+std::to_string(i+1):"")+":"+six_preset_name(voice.config);
+                        voice.role=role_for(voice.name);voice.tags.push("imported");voice.tags.push(voice.role);voices.push_back(std::move(voice));
+                    }
+                    for(auto& voice:voices)if(!entries.emplace(voice.name,voice).second)std::cerr<<"preset duplicate skipped: "<<voice.name<<'\n';
+                    continue;
+                }
                 if(ext==".json")p=preset_from(Json::parse(read_file(f.path())));
                 else {
                     const auto bytes=read_file(f.path());const auto* data=reinterpret_cast<const uint8_t*>(bytes.data());
@@ -129,7 +138,16 @@ void Presets::save(const Preset& p) {
     if(!valid_name(p.name))throw std::runtime_error("invalid preset name");
     if(entries.count(p.name))throw std::runtime_error("preset exists");
     const auto filename="user-"+hex(reinterpret_cast<const uint8_t*>(p.name.data()),p.name.size())+".json";
-    atomic_write(directory_/filename,preset_json(p).dump()+"\n",true);entries.emplace(p.name,p);
+    const auto json=preset_json(p).dump()+"\n";
+    fs::path native;
+    if(registry()[size_t(p.config.engine)].firmware==7) {
+        native=directory_/(fs::path(filename).stem().string()+".gfp");
+        const auto bytes=six_encode(p.config);
+        atomic_write(native,std::string(bytes.begin(),bytes.end()),true);
+    }
+    try {atomic_write(directory_/filename,json,true);}
+    catch(...) {if(!native.empty()){std::error_code ignored;fs::remove(native,ignored);}throw;}
+    entries.emplace(p.name,p);
 }
 Json part_json(const PartState& p,unsigned part) {return object({{"part",int(part+1)},{"engine",registry()[size_t(p.config.engine)].name},{"preset",p.preset},{"role",p.role},{"level_db",p.level},{"mute",p.mute},{"modified",p.modified}});}
 State restore_state(const std::string& file,bool wet) {

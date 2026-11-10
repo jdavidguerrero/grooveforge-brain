@@ -1,0 +1,29 @@
+{
+  "transport": "QLocalSocket to C++ gf-synth-host over inherited AF_UNIX socketpair",
+  "backend": "offline",
+  "engine": "dx7_6op",
+  "sample_rate": 48000,
+  "build": "/tmp/gf-host-six-build",
+  "base_commit": "26950446e843721aca1b5bbb6cb3eaaa92466cab",
+  "working_tree": "DX7 wiring changes",
+  "images": [
+    {
+      "file": "dx7-6op-overview.png",
+      "width": 1280,
+      "height": 720,
+      "page": "OPS",
+      "bank": 0,
+      "algorithm": 5,
+      "sha256": "9fe5749b56b5cd32d97d5abedf9b24ca6f75783bc46dd60cf100f56303c1d088"
+    },
+    {
+      "file": "dx7-6op-operator-focus.png",
+      "width": 1280,
+      "height": 720,
+      "page": "OP 6",
+      "bank": 1,
+      "algorithm": 5,
+      "sha256": "2eb2db7531d8ca130334f267d0a23f099288dfbc03423a92459024fa86904449"
+    }
+  ]
+}

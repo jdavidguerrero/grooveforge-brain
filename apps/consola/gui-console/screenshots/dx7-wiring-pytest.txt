@@ -1,0 +1,12 @@
+........................................................................ [ 33%]
+...............s........................................................ [ 66%]
+.................................s........ssssssss.ss.s................. [ 99%]
+.                                                                        [100%]
+=========================== short test summary info ============================
+SKIPPED [1] apps/consola/gui-console/tests/test_phase2.py:64: General Sans is a local, gitignored Fontshare download
+SKIPPED [1] apps/consola/gui-console/tests/test_synth.py:169: Sandbox prohibits Unix socket bind; pipe protocol harness is tested separately
+SKIPPED [8] apps/consola/gui-console/tests/test_synth.py:222: Sandbox prohibits Unix socket bind; pipe protocol harness is tested separately
+SKIPPED [1] apps/consola/gui-console/tests/test_synth.py:48: Sandbox prohibits Unix socket bind; pipe protocol harness is tested separately
+SKIPPED [1] apps/consola/gui-console/tests/test_synth.py:287: Sandbox prohibits Unix socket bind; pipe protocol harness is tested separately
+SKIPPED [1] apps/consola/gui-console/tests/test_synth.py:327: Sandbox prohibits Unix socket bind; pipe protocol harness is tested separately
+204 passed, 13 skipped in 42.45s

@@ -183,19 +183,20 @@ def test_every_command_round_trip_and_events(app,host):
         pages=call('list_params',engine='model_d')['pages']
         assert len(next(p for p in pages if p['name']=='ENV')['banks'])==2
         params=call('get_params',part=1,page='FILTER')['values']
-        assert params and all(p.startswith('filter.') for p in params)
-        applied=call('set_param',part=1,param='filter.cutoff',value=999999)
-        assert applied['value']==20000
-        assert call('get_params',part=1)['values']['filter.cutoff']==20000
+        assert set(params)=={p['id'] for pg in pages if pg['name']=='FILTER' for bank in pg['banks'] for p in bank}
+        cutoff=next(p for pg in pages for bank in pg['banks'] for p in bank if p['id']=='cutoff')
+        applied=call('set_param',part=1,param='cutoff',value=999999)
+        assert applied['value']==cutoff['max']
+        assert call('get_params',part=1)['values']['cutoff']==cutoff['max']
         presets=call('list_presets',role='BASS',tag='SUB')['presets']
         assert presets and all('BASS' in p['tags'] and 'SUB' in p['tags'] for p in presets)
         state=call('load_preset',part=1,name='Moog Round')['part']
         assert state['preset']=='Moog Round' and not state['modified']
-        call('set_param',part=1,param='filter.cutoff',value=3210)
+        call('set_param',part=1,param='cutoff',value=3210)
         call('save_preset',part=1,name='Round Trip User')
-        call('set_param',part=1,param='filter.cutoff',value=500)
+        call('set_param',part=1,param='cutoff',value=500)
         call('load_preset',part=1,name='Round Trip User')
-        assert call('get_params',part=1)['values']['filter.cutoff']==3210
+        assert call('get_params',part=1)['values']['cutoff']==3210
         assert call('set_level',part=1,db=-12)['part']['level_db']==-12
         assert call('set_mute',part=1,mute=True)['part']['mute']
         call('note',part=1,note=60,velocity=100)
@@ -204,7 +205,7 @@ def test_every_command_round_trip_and_events(app,host):
         assert seen==COMMANDS
         meters=next(m for m in messages if m.get('event')=='meters')
         assert len(meters['parts'])==4 and set(meters['mix'])=={'peak_db','rms_db'}
-        assert any(m.get('event')=='param' and m.get('value')==20000 for m in messages)
+        assert any(m.get('event')=='param' and m.get('value')==cutoff['max'] for m in messages)
         assert not rpc(client,messages,'save_preset',part=1,name='Round Trip User')['ok']
         assert not rpc(client,messages,'set_engine',part=1,engine='missing')['ok']
         assert not rpc(client,messages,'set_param',part=1,param='missing',value=10)['ok']
@@ -229,7 +230,7 @@ def test_remote_metadata_builds_parameter_banks_for_every_engine(app,host,engine
         state.navigate('SynthFilter')
         until(lambda:len(synth._parts)==4 and bool(synth.current_pages),synth.flush_frame)
         synth.changeEngine(engine)
-        until(lambda:synth.engine==engine and bool(synth.current_pages) and bool(synth.values),synth.flush_frame)
+        until(lambda:synth.engine==engine and bool(synth.current_pages) and set(synth.values)=={p['id'] for pg in synth.current_pages for bank in pg['banks'] for p in bank} and not client.pending,synth.flush_frame)
         pages=rpc(client,messages,'list_params',engine=engine)['pages']
         assert synth.pages==[p['name'] for p in pages]
         for page in pages:
@@ -242,7 +243,7 @@ def test_remote_metadata_builds_parameter_banks_for_every_engine(app,host,engine
                 assert all(row['empty'] for row in rows[len(bank):])
                 for row,meta in zip(rows,bank):
                     assert all(row[k]==meta[k] for k in meta)
-        synth.selectPage('OPS' if engine in ('dx7','dx7_6op') else 'FILTER' if engine!='hybrid' else 'HYBRID')
+        synth.selectPage('OPS' if engine in ('dx7','dx7_6op') else 'FILTER' if engine!='hybrid' else 'LAYER')
         meta=synth.bank[0]
         before=synth.values[meta['id']]
         synth.turn(0,1)
@@ -331,7 +332,7 @@ def test_multiclient_changes_broadcast_without_touching_other_parts(app,unix_hos
         rpc(first,a,'subscribe',topics=['state'])
         rpc(second,b,'subscribe',topics=['state'])
         before=deepcopy(rpc(second,b,'get_params',part=2)['values'])
-        rpc(first,a,'set_param',part=1,param='filter.cutoff',value=740)
+        rpc(first,a,'set_param',part=1,param='cutoff',value=740)
         until(lambda:any(m.get('event')=='param' and m.get('value')==740 for m in b),second.drain_frame)
         assert rpc(second,b,'get_params',part=2)['values']==before
         rpc(second,b,'subscribe',topics=[])
@@ -482,13 +483,13 @@ def test_hybrid_navigation_preserves_part_and_settings_do_not_edit(gui):
     state.triggerAction('synth:open:1')
     assert synth.selectedPart==1 and state.screenName=='SynthHybrid'
     state.pressEncoder(0)
-    assert synth.selectedPart==1 and synth.pageName=='A FILTER'
+    assert synth.selectedPart==1 and synth.pageName=='a.FILTER'
     state.pressEncoder(4)
-    assert synth.pageName=='B FILTER'
+    assert synth.pageName=='b.FILTER'
     state.pressEncoder(7)
     assert synth.selectedPart==1 and state.screenName=='SynthHybrid'
     state.pressEncoder(7)
-    assert synth.selectedPart==1 and synth.pageName=='B FILTER'
+    assert synth.selectedPart==1 and synth.pageName=='b.FILTER'
     for screen in ('SynthSettingsAudio','SynthSettingsConnections','SynthSettingsSystem'):
         state.navigate(screen)
         before=deepcopy(synth.values)
@@ -508,18 +509,20 @@ def test_encoder_burst_sends_one_absolute_value_per_frame_and_save_orders_edits(
         calls.append(deepcopy(req))
         return actual(req)
     synth.fake.request=traced
+    meta=synth.bank[0]
+    expected=relative_value(meta,synth.values[meta['id']],1000)
     for _ in range(1000):
         synth.turn(0,1)
     assert not calls
     synth.flush_frame()
     writes=[r for r in calls if r['cmd']=='set_param']
-    assert len(writes)==1 and writes[0]['value']==11100
+    assert len(writes)==1 and writes[0]['value']==expected
     calls.clear()
     synth.turn(0,-1)
     synth._name='Saved after encoder'
     synth.savePreset()
     assert [r['cmd'] for r in calls][:2]==['set_param','save_preset']
-    assert synth.fake.saved['Saved after encoder']['filter.cutoff']==11090
+    assert synth.fake.saved['Saved after encoder']['cutoff']==expected-meta['step']
 
 
 def test_meters_do_not_reset_parameter_or_preset_models(gui):

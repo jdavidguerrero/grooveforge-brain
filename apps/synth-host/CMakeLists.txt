@@ -24,7 +24,7 @@ add_subdirectory(../brain-plugin brain-engines EXCLUDE_FROM_ALL)
 add_library(gf_host_core STATIC src/params.cpp src/engine.cpp src/audio.cpp)
 target_include_directories(gf_host_core PUBLIC src ../brain-plugin/bench)
 target_link_libraries(gf_host_core PUBLIC gf_prophet_preset Threads::Threads)
-add_executable(gf-synth-host src/main.cpp src/server.cpp src/backends.cpp)
+add_executable(gf-synth-host src/main.cpp src/server.cpp src/backends.cpp src/metadata.cpp)
 target_link_libraries(gf-synth-host PRIVATE gf_host_core PkgConfig::JSONC)
 target_compile_definitions(gf-synth-host PRIVATE
     GF_HOST_BUILD_TYPE="$<CONFIG>"
@@ -54,7 +54,7 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
         list(APPEND host_flags ${host_cpu})
     endif()
 endif()
-foreach(t gf-synth-host gf_host_core gf_prophet_preview gf_prophet_preset gf_preset_codec)
+foreach(t gf-synth-host gf_host_core gf_prophet_preview gf_prophet_preset gf_preset_codec gf_dx7_6op)
     target_compile_options(${t} PRIVATE "$<$<CONFIG:Release>:${host_flags}>")
 endforeach()
 target_compile_options(gf_host_core PRIVATE -Wall -Wextra -Wpedantic)
@@ -73,4 +73,23 @@ if(BUILD_TESTING)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME host_contract COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/contract_test.py $<TARGET_FILE:gf-synth-host>)
     add_test(NAME host_render COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/tests/render_test.py $<TARGET_FILE:gf-synth-host>)
+endif()
+
+add_executable(gf-export-metadata src/metadata_export.cpp src/metadata.cpp)
+target_link_libraries(gf-export-metadata PRIVATE gf_host_core PkgConfig::JSONC)
+add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/synth-metadata.json"
+    COMMAND gf-export-metadata "${CMAKE_CURRENT_BINARY_DIR}/synth-metadata.json"
+    DEPENDS gf-export-metadata VERBATIM)
+add_custom_target(synth_metadata ALL DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/synth-metadata.json")
+if(BUILD_TESTING)
+    add_test(NAME metadata_snapshot COMMAND ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/tests/metadata_test.py
+        ${CMAKE_CURRENT_BINARY_DIR}/synth-metadata.json
+        ${CMAKE_CURRENT_SOURCE_DIR}/../consola/gui-console/synth-metadata.json)
+endif()
+if(BUILD_TESTING)
+    add_executable(gf_host_dx7_test tests/dx7_test.cpp)
+    target_link_libraries(gf_host_dx7_test PRIVATE gf_host_core)
+    target_compile_options(gf_host_dx7_test PRIVATE "$<$<CONFIG:Release>:${host_flags}>")
+    add_test(NAME host_dx7 COMMAND gf_host_dx7_test)
 endif()

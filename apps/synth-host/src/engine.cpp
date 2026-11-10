@@ -2,6 +2,7 @@
 #include "hybrid_preview.h"
 #include "prophet_preset.h"
 #include "dx7_preset.h"
+#include "dx7_6op_preview.h"
 #include "juno_preset.h"
 #include "ob6_preset.h"
 #include "model_d_preset.h"
@@ -18,16 +19,25 @@ class PreviewEngine final:public Engine {
     std::unique_ptr<gf::JunoPreview> juno_;
     std::unique_ptr<gf::Ob6Preview> ob6_;
     std::unique_ptr<gf::Dx7Preview> dx_;
+    std::unique_ptr<gf::Dx7SixPreview> six_;
+    float low_=0, band_=0, filter_g_=0, filter_k_=1;
+    float six_tape_=1;
+    int six_bend_=8192;
+    void six_expression() noexcept {
+        // Native bend has ±3 semitones: reserve the remaining range for tape wow/flutter.
+        const int tape=int(std::lround(std::log2(six_tape_)*32768.f));
+        six_->set_pitch_bend(8192+(six_bend_-8192)*2/3+tape);
+    }
     std::unique_ptr<gf::Arp2600Preview> arp_;
     std::unique_ptr<gf::HybridPreview> hybrid_;
     std::vector<int16_t> dl_,dr_,plate_;
     std::array<float,2> dc_x_{},dc_y_{};
     const float dc_=float(std::exp(-2.0*3.141592653589793*5.0/48000));
     void voice_on(uint8_t n,float v) noexcept {
-        switch(id_) { case 0:model_->note_on(n,v);break; case 1:juno_->note_on(n,v);break; case 3:ob6_->note_on(n,v);break; case 4:dx_->note_on(n,v);break; case 5:arp_->note_on(n,v);break; }
+        switch(id_) { case 0:model_->note_on(n,v);break; case 1:juno_->note_on(n,v);break; case 3:ob6_->note_on(n,v);break; case 4:dx_->note_on(n,v);break; case 5:arp_->note_on(n,v);break; case 7:six_->note_on(n,v);break; }
     }
     void voice_off(uint8_t n) noexcept {
-        switch(id_) { case 0:model_->note_off(n);break; case 1:juno_->note_off(n);break; case 3:ob6_->note_off(n);break; case 4:dx_->note_off(n);break; case 5:arp_->note_off(n);break; }
+        switch(id_) { case 0:model_->note_off(n);break; case 1:juno_->note_off(n);break; case 3:ob6_->note_off(n);break; case 4:dx_->note_off(n);break; case 5:arp_->note_off(n);break; case 7:six_->note_off(n);break; }
     }
     void apply_hybrid() noexcept {
         const auto& l=config.layer;
@@ -70,6 +80,7 @@ public:
                 case 1:juno_=std::make_unique<gf::JunoPreview>();juno_->prepare(48000);break;
                 case 3:ob6_=std::make_unique<gf::Ob6Preview>();ob6_->prepare(48000);break;
                 case 4:dx_=std::make_unique<gf::Dx7Preview>();dx_->prepare(48000);break;
+                case 7:six_=std::make_unique<gf::Dx7SixPreview>();six_->prepare(48000);six_->set_patch(c.six);break;
                 case 5:arp_=std::make_unique<gf::Arp2600Preview>();arp_->prepare(48000);break;
             }
             if(id_!=2) bus_->set_voice_sink(this,[](void* p,uint8_t n,float v){static_cast<PreviewEngine*>(p)->voice_on(n,v);},[](void* p,uint8_t n){static_cast<PreviewEngine*>(p)->voice_off(n);});
@@ -87,9 +98,10 @@ public:
     void apply() noexcept override {
         if(hybrid_) { apply_hybrid(); return; }
         const auto& p=config.layer.a;
-        const auto patch=studio::macro_patch(p.patch,uint8_t(id_));
+        const int bus_id=id_==7?4:id_;
+        const auto patch=studio::macro_patch(p.patch,uint8_t(bus_id));
         const float move=studio::macro_amount(p.patch,GF_MACRO_MOVE);
-        const float cutoff=std::clamp(p.cutoff_hz*studio::move_cutoff_mul(move),GF_CUTOFF_RANGE[id_].lo,GF_CUTOFF_RANGE[id_].hi);
+        const float cutoff=std::clamp(p.cutoff_hz*studio::move_cutoff_mul(move),id_==7?20.f:GF_CUTOFF_RANGE[bus_id].lo,GF_CUTOFF_RANGE[bus_id].hi);
         const float res=studio::move_resonance(studio::macro_resonance(p.reso_norm,p.patch),move);
         const float q=std::clamp(id_==3?.7f+4.3f*res:.1f+4.9f*res,.707f,5.f);
         switch(id_) {
@@ -98,14 +110,37 @@ public:
             case 2:gf::apply_prophet_preset_preview(*bus_,p);break;
             case 3:ob6_->set_parameters(cutoff,q,patch.attack_ms,patch.release_ms);gf::apply_ob6_preset_preview(*ob6_,p);break;
             case 4:gf::apply_dx7_preset_preview(*dx_,p);break;
+            case 7:{
+                auto voice=config.six;
+                // DRIFT affects per-operator detune; raw patch/automation remains unchanged.
+                const int drift=int(std::lround(studio::macro_amount(p.patch,GF_MACRO_DRIFT)*2));
+                const float grit=studio::macro_amount(p.patch,GF_MACRO_GRIT)*studio::macro_amount(p.patch,GF_MACRO_GRIT_MOD);
+                const float pocket=studio::macro_amount(p.patch,GF_MACRO_POCKET);
+                const float velocity=pocket*studio::macro_amount(p.patch,GF_MACRO_POCKET_VEL);
+                const auto& route=gf::dx7six::algorithms[voice.vced[134]];
+                for(int op=0;op<6;++op) {
+                    auto* o=voice.vced.data()+op*21;
+                    o[20]=uint8_t(std::clamp(int(o[20])+(op%2?drift:-drift),0,14));
+                    if(route.ops[op]&3)o[16]=uint8_t(std::min(99,int(std::lround(o[16]+20*grit))));
+                    o[1]=uint8_t(std::lround(o[1]+(99-o[1])*pocket));
+                    o[3]=uint8_t(std::lround(o[3]+(99-o[3])*pocket));
+                    o[6]=uint8_t(std::lround(o[6]*(1-pocket)));
+                    o[15]=uint8_t(std::min(7,int(std::lround(o[15]+4*velocity))));
+                }
+                voice.vced[135]=uint8_t(std::min(7,int(std::lround(voice.vced[135]+3*grit))));
+                six_->edit_patch(voice);
+                filter_g_=std::tan(float(3.141592653589793)*std::min(cutoff,20000.f)/48000);
+                filter_k_=1.f/std::max(.707f,.7f+2.3f*res);
+                break;
+            }
             case 5:arp_->set_parameters(cutoff,q,patch.attack_ms,patch.release_ms);arp_->set_patch(gf::make_arp2600_patch(p));arp_->set_ring_mix(std::clamp(patch.osc[0][2]*.01f,0.f,1.f));break;
         }
-        if(id_!=2) { auto effects=p;effects.patch=studio::move_sfx(p.patch,move);gf::apply_synth_fx_preview(*bus_,effects,uint8_t(id_));gf::apply_groove_preview(*bus_,p,false); }
+        if(id_!=2) { auto effects=p;effects.patch=studio::move_sfx(p.patch,move);gf::apply_synth_fx_preview(*bus_,effects,uint8_t(bus_id));gf::apply_groove_preview(*bus_,p,false); }
     }
     void note(uint8_t n,float v) noexcept override { if(hybrid_) { if(v>0)hybrid_->note_on(n,v);else hybrid_->note_off(n); } else { if(v>0)bus_->note_on(n,v);else bus_->note_off(n); } }
-    void sustain(bool down) noexcept override { if(hybrid_) hybrid_->set_sustain(down);else bus_->set_sustain(down); }
+    void sustain(bool down) noexcept override { if(six_)six_->set_sustain(down); if(hybrid_) hybrid_->set_sustain(down);else bus_->set_sustain(down); }
     void bend(int value) noexcept override {
-        switch(id_) {case 0:model_->set_pitch_bend(value);break;case 1:juno_->set_pitch_bend(value);break;case 2:bus_->set_pitch_bend(value);break;case 3:ob6_->set_pitch_bend(value);break;case 4:dx_->set_pitch_bend(value);break;case 5:arp_->set_pitch_bend(value);break;case 6:hybrid_->set_pitch_bend(value);break;}
+        switch(id_) {case 0:model_->set_pitch_bend(value);break;case 1:juno_->set_pitch_bend(value);break;case 2:bus_->set_pitch_bend(value);break;case 3:ob6_->set_pitch_bend(value);break;case 4:dx_->set_pitch_bend(value);break;case 5:arp_->set_pitch_bend(value);break;case 6:hybrid_->set_pitch_bend(value);break;case 7:six_bend_=value;six_expression();break;}
     }
     void frame(float& l,float& r) noexcept override {
         l=r=0;
@@ -118,6 +153,15 @@ public:
                 case 1:{float jl,jr;juno_->set_tape_pitch(tape);juno_->process_frame(jl,jr);bus_->process_external_stereo(jl,jr,l,r);break;}
                 case 3:ob6_->set_tape_pitch(tape);input=ob6_->process_sample();break;
                 case 4:dx_->set_tape_pitch(tape);input=dx_->process_sample();break;
+                case 7:{
+                    if(tape!=six_tape_){six_tape_=tape;six_expression();}
+                    const float x=six_->process_sample();
+                    // TPT state-variable post-filter: the DX7 core itself has no filter.
+                    const float a=1.f/(1.f+filter_g_*(filter_g_+filter_k_));
+                    const float b=a*(band_+filter_g_*(x-low_));
+                    const float l=low_+filter_g_*b;band_=2*b-band_;low_=2*l-low_;input=l;
+                    break;
+                }
                 case 5:arp_->set_tape_pitch(tape);input=arp_->process_sample();break;
             }
             if(id_!=1) bus_->process_external_frame(input,l,r);
@@ -129,7 +173,7 @@ public:
 std::unique_ptr<Engine> create_preview(const Config& c) {return std::make_unique<PreviewEngine>(c);}
 }
 const std::vector<Registration>& registry() {
-    static const std::vector<Registration> r={{"prophet",2,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"dx7",4,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"juno",1,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"ob6",3,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"model_d",0,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"arp2600",5,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"hybrid",6,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode}};
+    static const std::vector<Registration> r={{"prophet",2,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"dx7",4,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"juno",1,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"ob6",3,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"model_d",0,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"arp2600",5,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode},{"dx7_6op",7,create_preview,six_defaults,six_catalog,six_presets,six_preset_name,six_encode,six_decode},{"hybrid",6,create_preview,preview_defaults,preview_catalog,preview_presets,preview_preset_name,preview_encode,preview_decode}};
     return r;
 }
 std::unique_ptr<Engine> make_engine(const Config& c) { return registry().at(size_t(c.engine)).create(c); }

@@ -1,3 +1,4 @@
+#include <set>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "preset_import.h"
 #include "output_meter.h"
@@ -3508,9 +3509,20 @@ int main() {
             std::unique_ptr<juce::AudioProcessorEditor> editor(six->createEditor());
             auto* page = editor->findChildWithID("studio.dx7_6op");
             if (!check(page && page->isVisible() && page->findChildWithID("dx7_6op.bank"), "DX7 6-OP bank editor")) return 1;
-            if (!check(page->findChildWithID("dx7_6op.op1.r1") && page->findChildWithID("dx7_6op.op1.l4"), "DX7 6-OP eight-parameter bank")) return 1;
+            if (!check(page->findChildWithID("dx7_6op.op1.level") && page->findChildWithID("dx7_6op.op6.level"), "DX7 6-OP eight-parameter bank")) return 1;
             auto* bank = dynamic_cast<juce::ComboBox*>(page->findChildWithID("dx7_6op.bank"));
             bank->setSelectedId(2, juce::sendNotificationSync);
+            std::set<std::string> exposed;
+            for(int b=1;b<=bank->getNumItems();++b) {
+                bank->setSelectedId(b,juce::sendNotificationSync);
+                for(size_t i=0;i<gf::dx7six::param_count;++i) {
+                    const auto& p=gf::dx7six::params[i];
+                    auto* control=page->findChildWithID(juce::String("dx7_6op.")+p.id);
+                    if(control&&control->isVisible())exposed.insert(p.id);
+                }
+            }
+            if(!check(exposed.size()==gf::dx7six::param_count,"All 151 DX7 controls and six operators exposed"))return 1;
+            bank->setSelectedId(2,juce::sendNotificationSync);
             auto* coarse = dynamic_cast<juce::Slider*>(page->findChildWithID("dx7_6op.op1.coarse"));
             if (!check(coarse != nullptr,"DX7 6-OP frequency bank")) return 1;
             coarse->setValue(3,juce::sendNotificationSync);

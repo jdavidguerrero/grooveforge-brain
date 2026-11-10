@@ -1,5 +1,6 @@
 #pragma once
 #include "ui/layer_bank.h"
+#include "engines/dx7_6op_core.h"
 #include <array>
 #include <memory>
 #include <string>
@@ -11,15 +12,17 @@ constexpr unsigned MAX_PARAMS=512;
 struct Config {
     studio::LayerPreset layer;
     int engine=0;
+    gf::dx7six::Patch six{};
     // New adapters can store their own parameter values without extending the host protocol.
     std::array<float,MAX_PARAMS> extension{};
 };
-enum class Storage { Float, Bool, U8, I8 };
+enum class Storage { Float, Bool, U8, I8, Bit };
 /** @brief One descriptor is used for metadata, validation, patch read and patch write. */
 struct Param {
     std::string id,name,page,unit;
     float min=0,max=1,initial=0,step=.01f;
     int options=0;
+    int bank=-1, slot=-1, bit=0;
     bool toggle=false;
     size_t offset=0;
     Storage storage=Storage::Float;
@@ -50,6 +53,13 @@ std::vector<Config> preview_presets(int engine);
 std::string preview_preset_name(const Config&);
 std::vector<uint8_t> preview_encode(const Config&);
 Config preview_decode(int engine,const uint8_t* data,size_t size);
+/** @brief DX7 six-operator adapter codecs and metadata, shared with firmware/VST. */
+Config six_defaults(int engine);
+std::vector<Param> six_catalog(int engine);
+std::vector<Config> six_presets(int engine);
+std::string six_preset_name(const Config&);
+std::vector<uint8_t> six_encode(const Config&);
+Config six_decode(int engine,const uint8_t*,size_t);
 /** @brief Registry is the only list of available engines. */
 const std::vector<Registration>& registry();
 /** @brief Resolves a public contract name; throws on unavailable engines. */
