@@ -22,11 +22,11 @@
 | 18, 19 | **I2C** SDA/SCL (Wire) | bus | SGTL5000, 2 ADS1115, 3 MCP23017, MCP4725 |
 | 20 | **I2S1 LRCLK** | audio | Fijo |
 | 21 | **I2S1 BCLK** | audio | Fijo |
-| 22 (A8) | Perilla **MASTER** | analógico | |
+| 22 (A8) | Perilla **MASTER** | analógico, ADC2 canal13 | También ADC1; firmware usa ADC2. Deshabilitada en mínimo mientras esté al aire |
 | 23 | **I2S1 MCLK** | audio | Fijo |
-| 24 (A10) | Perilla **CUE** | analógico | |
+| 24 (A10) | Perilla **CUE** | analógico, sólo ADC1 canal1 | Buzón desde ISR, sin lectura ADC en loop |
 | 25 (A11) | Trigger e-drum 1 | reservado | Acondicionamiento en huellas sin poblar |
-| 26 (A12) | Perilla **IN** | analógico | |
+| 26 (A12) | Perilla **IN** | analógico, sólo ADC2 canal3 | |
 | 27 (A13) | Trigger e-drum 2 | reservado | |
 | 28 / 29 | **NeoTrellis M4** RX/TX (Serial7) | UART | Antes Serial5 (20/21), que choca con I2S |
 | 31, 32 | Encoder 6 A/B | digital | |
@@ -35,7 +35,7 @@
 | 37, 40 | **Rueda jog** A/B (EC11) | digital | 40 es A16, usado como digital |
 | 38 (A14) | Trigger e-drum 3 | reservado | |
 | 39 (A15) | Trigger e-drum 4 | reservado | |
-| 41 (A17) | **Selector del pad de entrada** (0 / −10 / −20 dB) | analógico | Escalera de resistencias: una sola entrada para 3 posiciones (ADR-004) |
+| 41 (A17) | **Selector del pad de entrada** (0 / −10 / −20 dB) | analógico | ADC1/2 canal10; firmware usa buzón ADC1. Escalera para3 posiciones (ADR-004) |
 
 **Ocupación:** 42 de 42. Más pines, si hicieran falta, en los pads inferiores de la 4.1 (42–47 de la microSD y 48–54
 de la PSRAM, solo si no se usan esas funciones).
@@ -86,3 +86,8 @@ de la pantalla si hace falta liberar entradas; el touch sigue siendo auxiliar (0
 - [PJRC, Teensy 4.1: pines, serie, analógicos e I2S](https://www.pjrc.com/teensy/pinout.html).
 - Microchip MCP23017, hoja de datos (revisión actual: GPA7/GPB7 solo salida).
 - `01-architecture.md` §3 (pines del Brain y su audio shield), `06-teensy-s-e4.md`, ADR-003, ADR-004, ADR-008.
+
+
+## Corrección de firmware del banco (2026-11-10)
+
+**Sin cambios de pines.** La propiedad ADC pasa a un único planificador por unidad (18§2/7). Mínimo: MASTER22 sin habilitar; FSR14/15 con divisor10k, Sharp en ADS0x48 AIN2 y fader en AIN0. ADS0x49/MCP0x22/MCP4725 no se sondean en ese perfil. Un cursor que pueda desconectarse necesita pull-down externo; el deadband no demuestra cableado. ADC2 en22 se verificó contra `libraries/ADC/ADC.cpp` del paquete Teensyduino1.160.0; CUE24 no tiene ADC2, por eso no basta cambiar todas las lecturas a ADC2 manteniendo los pines.

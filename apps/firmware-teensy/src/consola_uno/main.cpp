@@ -4,6 +4,7 @@
 #include "../ui/preset_link.h"
 #include "consola_s/Surface.h"
 #include "consola_s/RetryGate.h"
+#include "consola_s/ConsolaMap.h"
 #ifdef GF_CONSOLA_BRAIN
 #include "../engines/moog_model_d.h"
 #endif
@@ -57,7 +58,7 @@ void poll_codec(uint32_t now) {
     }
 }
 void poll_cv(uint32_t now) {
-    if (!dac.due(now)) return;
+    if (GF_CONSOLA_MINIMAL || !dac.due(now)) return;
     if (!dac.online() || applied_cv != cv) {
         // Fast mode writes the DAC register only; never program its EEPROM.
         Wire.beginTransmission(0x60);
@@ -77,8 +78,9 @@ void pot_changed(uint8_t pot, uint8_t value) {
     if (pot == 2) input_gain = uint16_t(value)*15/127;
 }
 void stats(char* out, size_t size) {
-    snprintf(out,size," codec=%u cv=%u codec_errors=%lu cv_errors=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
+    snprintf(out,size," codec=%u cv=%u codec_errors=%lu cv_errors=%lu cv_enabled=%u codec_retry_us=%lu cv_retry_us=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
         unsigned(codec.online()),unsigned(dac.online()),(unsigned long)codec.errors(),(unsigned long)dac.errors(),
+        unsigned(!GF_CONSOLA_MINIMAL),(unsigned long)codec.retry_us(),(unsigned long)dac.retry_us(),
         (unsigned long)(AudioProcessorUsageMax()*100),unsigned(AudioMemoryUsageMax()));
 }
 bool command(char* line, char* out, size_t size) {
@@ -103,6 +105,10 @@ bool command(char* line, char* out, size_t size) {
         snprintf(out,size,"@GF OK HP %u\n",c.valor);
         break;
     case Cmd::Cv:
+        if (GF_CONSOLA_MINIMAL) {
+            snprintf(out,size,"@GF ERR CV DISABLED\n");
+            break;
+        }
         cv = c.cv;
         snprintf(out,size,"@GF OK CV %u\n",cv);
         break;

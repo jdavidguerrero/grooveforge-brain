@@ -21,19 +21,9 @@ bool AdsScanner::read_register(uint8_t reg, uint16_t& value) {
     return true;
 }
 bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
-    if (!retry_.due(now_us)) return false;
-    if (!channel_mask_) {
-        // Probe optional chips once a second without converting floating inputs.
-        if (retry_.online() && now_us - since_ < 1000000) return false;
-        since_ = now_us;
-        wire_.beginTransmission(address_);
-        if (wire_.endTransmission() == 0) retry_.succeeded();
-        else { retry_.failed(now_us); ++errors_; }
-        return false;
-    }
+    if (!channel_mask_ || !retry_.due(now_us)) return false;
     while (!(channel_mask_ & (1u << channel_))) channel_ = (channel_ + 1) % channels_;
     if (state_ == State::Backoff) {
-        if (now_us - since_ < 1000000) return false;
         state_ = State::Start;
     }
     bool ok = true;
@@ -42,7 +32,7 @@ bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
     case State::Start:
         ok = write_config();
         since_ = now_us;
-        if (ok) { retry_.succeeded(); state_ = State::Wait; }
+        if (ok) state_ = State::Wait;
         break;
     case State::Wait:
         if (now_us - since_ < 1300) return false;
@@ -53,6 +43,7 @@ bool AdsScanner::poll(uint32_t now_us, uint8_t& channel, int16_t& sample) {
     case State::Read:
         ok = read_register(0, value);
         if (ok) {
+            retry_.succeeded(); // Only a complete conversion resets backoff.
             channel = channel_;
             sample = int16_t(value);
             channel_ = (channel_ + 1) % channels_;

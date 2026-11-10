@@ -12,7 +12,7 @@ con entradas independientes en hello, presets y list_params.
 Un hilo de control atiende varios clientes Unix JSON-lines, disco y JSON (json-c).
 Un hilo de audio (más el bucle auxiliar de PipeWire cuando corresponde) procesa
 cuatro instancias independientes y diez salidas float:
-`part1_L/R` … `part4_L/R`, `mix_L/R`. 48 kHz, quantum sugerido 128; el backend
+`part1_L/R` … `part4_L/R`, `mix_L/R`. 48 kHz, quantum predeterminado **256**; `--block 128` es opt-in tras comprobar RT; el backend
 puede negociar otro tamaño. Cada parte aplica nivel y mute antes de sus salidas;
 mix suma esas salidas, sin normalización ni limitador implícito. Inicio: Model D,
 Juno, OB-6, HYBRID; roles BASS/CHORDS/LEAD/PAD, −12.0412 dB (ganancia 0.25).
@@ -378,3 +378,36 @@ regresión de enums FX normalizados. Build VST3:
 Entrega Git de este cableado: `git add` volvió a fallar creando `.git/index.lock`
 con `Operation not permitted`; cambios y artefactos quedan **sin commit**, sin push.
 [Informe de archivos, pruebas y límites](../../synth-host/tests/results/dx7-wiring-report.md).
+
+
+## Corrección Pi con GUI y prioridad RT (2026-11-10)
+
+La [medición física](mediciones/synth-pi-20261110.md) dio1176xruns con GUI/bloque128 y0 con256. Se conserva256 como default del binario y del servicio. `--block` solicita latencia al grafo, no vence `clock.force-quantum` del servidor. No se modifica desde este checkout el archivo del Pi `~/.config/pipewire/pipewire.conf.d/50-consola.conf` (quantum/min-quantum256).
+
+El backend crea un contexto PipeWire propio. Desactiva únicamente su carga automática de `module.rt` y carga una instancia explícita de **libpipewire-module-rt**, con `rt.prio=70`, `loop.rt-prio=70`, rlimits/rtkit/portal habilitados, antes de conectar el filter con `PW_FILTER_FLAG_RT_PROCESS`. El módulo solicita RT para el **data-loop de audio**; control/socket siguen con política normal. Si falta módulo se informa por stderr; una concesión fallida/clamp de RTKit se diagnostica con PipeWire/chrt: solicitar70 no prueba obtener70. No hay syscalls de scheduling añadidas al callback. [API primaria RT](https://docs.pipewire.org/page_module_rt.html), [client.conf1.4.2](https://github.com/PipeWire/pipewire/blob/1.4.2/src/daemon/client.conf.in), [filter1.4.2](https://github.com/PipeWire/pipewire/blob/1.4.2/src/pipewire/filter.c).
+
+El módulo puede conceder RT mediante RTKit sin privilegios de root; comprobar `systemctl status rtkit-daemon`. Para permiso directo, el usuario del host debe pertenecer a `audio`; configurar manualmente **`/etc/security/limits.d/90-grooveforge-audio.conf`**:
+
+```text
+@audio - rtprio 70
+@audio - memlock 262144
+```
+
+`sudo usermod -aG audio "$USER"`, cerrar sesión completa y volver a entrar (reiniciar Pi también renueva el gestor systemd de usuario). Verificar `id`, `ulimit -r` (≥70) y `ulimit -l` (KiB). La unidad de usuario pide `LimitRTPRIO=70` y `LimitMEMLOCK=268435456` bytes; una unidad de usuario no puede elevar el límite duro del gestor padre. Si no se heredó, comprobar `/proc/$(pgrep -xo gf-synth-host)/limits` y renovar la sesión/gestor. No ejecutar GUI con sudo, nice negativo ni SCHED_FIFO; `run_synth.sh` la inicia explícitamente con **`chrt --other 0`** cuando chrt está disponible.
+
+Verificar **cada hilo**, no sólo el PID principal:
+
+```sh
+host_pid=$(pgrep -xo gf-synth-host)
+ps -L -p "$host_pid" -o pid,tid,cls,rtprio,comm
+chrt -a -p "$host_pid"
+# También se puede consultar un TID concreto mostrado por ps:
+chrt -p TID_DEL_DATA_LOOP
+# El PID principal debe seguir OTHER/0; el data-loop debe tener FIFO/RT concedida.
+chrt -p "$host_pid"
+pw-top
+```
+
+En `pw-top` comprobar nodo `gf-synth-host`, RATE48000, QUANT256, carga y ERR estable con patrón4partes + GUI. Comprobar también política de los hilos de `pipewire`; priorizar sólo el cliente no arregla un driver sin RT. El PID de Python/Qt debe mostrar OTHER/0 con `chrt -p PID_GUI`. RTKit puede limitar la prioridad por debajo de70: anotar la concedida.
+
+Sólo después de confirmar RT y cero errores en256, probar temporalmente128: arrancar host con `--backend pipewire --block 128` (o sustituir ExecStart mediante override del servicio, sin dos hosts simultáneos) y en otra terminal `pw-metadata -n settings 0 clock.force-quantum 128`. Comprobar QUANT real en pw-top; la configuración persistida256 sigue intacta. Volver con `pw-metadata -n settings 0 clock.force-quantum 256` y `--block 256`. No promover128 hasta repetir ensayo con GUI, notas sostenidas y patrón4partes sin xruns. No se declara aprobado RT ni latencia Pi desde CTest de Mac; esta plataforma no dispone de SDK PipeWire/JACK y esas ramas necesitan compilación/ejecución Linux.

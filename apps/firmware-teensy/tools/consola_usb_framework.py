@@ -15,7 +15,7 @@ if version != "1.160.0":
 
 project = Path(env.subst("$PROJECT_DIR"))
 overlay = project / "vendor/usb-audio-alex6679/changedCorefiles"
-private = Path(env.subst("$PROJECT_BUILD_DIR")) / "framework-consola-usb"
+private = Path(env.subst("$BUILD_DIR")) / "framework-consola-usb"
 # Include the installed core and Audio library in the key: local package edits must
 # not silently leave an older private framework in use.
 digest = hashlib.sha256()

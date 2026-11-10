@@ -3,10 +3,18 @@
 #include <cstdio>
 #include <climits>
 #include "consola_s/ConsolaMap.h"
+#include "consola_s/AdcScan.h"
+#include "consola_s/CcCadence.h"
+#include "consola_s/FsrVelocity.h"
+#include "consola_s/RelativeEncoder.h"
 #include "consola_s/McpButtons.h"
 #include "consola_s/PadSelector.h"
 #include "consola_s/RetryGate.h"
 #include "ui/preset_link.h"
+// Compile the production I2C adapter against a fault-injection Wire in this TU.
+#define ARDUINO 1
+#include "../../../consola/surface/src/AdsScanner.cpp"
+#undef ARDUINO
 void setUp() {}
 void tearDown() {}
 
@@ -111,7 +119,7 @@ void selector_hysteresis_both_directions() {
 void prototype_masks_midi_and_pins() {
     TEST_ASSERT_EQUAL_UINT16(0x10f,consola::MINIMAL.encoders);
     TEST_ASSERT_EQUAL_UINT8(3,consola::MINIMAL.fsrs);
-    TEST_ASSERT_EQUAL_UINT8(1,consola::MINIMAL.pots);
+    TEST_ASSERT_EQUAL_UINT8(0,consola::MINIMAL.pots);
     TEST_ASSERT_EQUAL_UINT8(5,consola::MINIMAL.ads_channels[0]);
     TEST_ASSERT_EQUAL_UINT8(0,consola::MINIMAL.ads_channels[1]);
     TEST_ASSERT_EQUAL_UINT16(0x7f,consola::MINIMAL.mcp_inputs[0]);
@@ -153,6 +161,136 @@ void retry_backoff_reconnect_and_wrap() {
     TEST_ASSERT_TRUE(gate.due(1800000));
     TEST_ASSERT_EQUAL_UINT32(2,gate.errors());
 }
+
+void adc_frames_slow_mailboxes_and_missing_coco() {
+    // Full panel: 4 pads at 2.5 kHz, CUE/selector at 100 Hz. COCO on next tick.
+    AdcScan scan(0x3f);
+    unsigned samples[6] = {}, frames = 0;
+    bool converting = false;
+    for (uint32_t now=0; now<20000; now+=50) {
+        const auto step = scan.tick(now,converting);
+        TEST_ASSERT_FALSE(step.timeout);
+        if (step.sample >= 0) ++samples[step.sample];
+        if (step.frame) ++frames;
+        converting = step.start >= 0;
+    }
+    TEST_ASSERT_EQUAL_UINT(50,frames);
+    for (unsigned i=0;i<4;++i) TEST_ASSERT_EQUAL_UINT(50,samples[i]);
+    TEST_ASSERT_EQUAL_UINT(2,samples[4]);
+    TEST_ASSERT_EQUAL_UINT(2,samples[5]);
+    // A permanently silent ADC cannot block USB/loop; skip faults and retry.
+    AdcScan broken(3);
+    unsigned timeouts=0, starts=0;
+    for (uint32_t now=0;now<2000;now+=50) {
+        const auto step = broken.tick(now,false);
+        TEST_ASSERT_EQUAL_INT8(-1,step.sample);
+        timeouts += step.timeout;
+        starts += step.start >= 0;
+    }
+    TEST_ASSERT_EQUAL_UINT(10,timeouts);
+    TEST_ASSERT_EQUAL_UINT(10,starts);
+}
+void adc_wrap_velocity_and_recovery() {
+    AdcScan scan(3);
+    FsrVelocity pad({100,1100,60});
+    unsigned hits=0, releases=0;
+    bool converting=false;
+    uint32_t began=UINT32_MAX-1000;
+    for (uint32_t t=0;t<10000;t+=50) {
+        const auto step=scan.tick(began+t,converting);
+        TEST_ASSERT_FALSE(step.timeout);
+        if (step.sample == 0) {
+            const auto event=pad.sample(t<6000 ? 1100 : 0,began+t);
+            if (event.changed && event.on) { ++hits; TEST_ASSERT_EQUAL_UINT8(127,event.velocity); }
+            if (event.changed && !event.on) ++releases;
+        }
+        TEST_ASSERT_TRUE(step.start < 2); // Disabled slots never scheduled.
+        converting=step.start>=0;
+    }
+    TEST_ASSERT_EQUAL_UINT(1,hits);
+    TEST_ASSERT_EQUAL_UINT(1,releases);
+    AdcScan stalled(3);
+    TEST_ASSERT_EQUAL_INT8(0,stalled.tick(UINT32_MAX-20,false).start);
+    TEST_ASSERT_FALSE(stalled.tick(28,false).timeout);
+    TEST_ASSERT_TRUE(stalled.tick(79,false).timeout);
+    const auto recovered=stalled.tick(129,true);
+    TEST_ASSERT_EQUAL_INT8(1,recovered.sample); // Never relabel late/missing FSR0.
+}
+void cc_flood_is_bounded_and_relative_steps_survive() {
+    CcCadence rate;
+    RelativeEncoder encoder;
+    unsigned sends=0, detents=0;
+    for (uint32_t now=0;now<1000000;now+=100) {
+        if (rate.due(now)) {
+            detents += encoder.update(4);
+            rate.sent(now);
+            ++sends;
+        } else encoder.accumulate(4);
+    }
+    TEST_ASSERT_EQUAL_UINT(100,sends);
+    // Saturation retains the untransmitted detents in RelativeEncoder as well.
+    for (unsigned n=0;n<100;++n) detents += encoder.update(0);
+    TEST_ASSERT_EQUAL_UINT(10000,detents);
+    rate.sent(UINT32_MAX-5000);
+    TEST_ASSERT_FALSE(rate.due(4998));
+    TEST_ASSERT_TRUE(rate.due(4999));
+}
+void retry_exponential_caps_and_success_resets() {
+    RetryGate gate;
+    uint32_t now=UINT32_MAX-2000;
+    uint32_t delay=1000000;
+    for (unsigned n=0;n<12;++n) {
+        gate.failed(now);
+        TEST_ASSERT_EQUAL_UINT32(delay,gate.retry_us());
+        TEST_ASSERT_FALSE(gate.due(now+delay-1));
+        TEST_ASSERT_TRUE(gate.due(now+delay));
+        now += delay;
+        if (delay<32000000) delay*=2;
+    }
+    gate.succeeded();
+    TEST_ASSERT_EQUAL_UINT32(0,gate.retry_us());
+    gate.failed(now);
+    TEST_ASSERT_EQUAL_UINT32(1000000,gate.retry_us());
+}
+
+void ads_disabled_has_no_bus_traffic_and_recovers_after_backoff() {
+    TwoWire bus;
+    AdsScanner absent(bus,0x49,4,0);
+    uint8_t channel=255; int16_t sample=0;
+    for (uint32_t t=0;t<40000000;t+=1000) absent.poll(t,channel,sample);
+    TEST_ASSERT_EQUAL_UINT(0,bus.transactions);
+    AdsScanner sharp(bus,0x48,4,5);
+    bus.nack=true;
+    TEST_ASSERT_FALSE(sharp.poll(0,channel,sample));
+    TEST_ASSERT_EQUAL_UINT(1,bus.transactions);
+    TEST_ASSERT_FALSE(sharp.poll(999999,channel,sample));
+    TEST_ASSERT_EQUAL_UINT(1,bus.transactions);
+    TEST_ASSERT_FALSE(sharp.poll(1000000,channel,sample));
+    TEST_ASSERT_EQUAL_UINT32(2000000,sharp.retry_us());
+    TEST_ASSERT_EQUAL_UINT(2,bus.transactions);
+    bus.nack=false;
+    bool got_fader=false, got_hand=false;
+    for (uint32_t t=3000000;t<3010000;t+=500) {
+        if (!sharp.poll(t,channel,sample)) continue;
+        TEST_ASSERT_EQUAL_INT16(8192,sample);
+        TEST_ASSERT_TRUE(channel==0 || channel==2);
+        if (channel==0) got_fader=true;
+        if (channel==2) got_hand=true;
+    }
+    TEST_ASSERT_TRUE(got_fader);
+    TEST_ASSERT_TRUE(got_hand);
+    TEST_ASSERT_TRUE(sharp.online());
+    TEST_ASSERT_EQUAL_UINT32(0,sharp.retry_us());
+    // ACKing config does not reset backoff when reads are broken.
+    bus.read_fault=true;
+    for (uint32_t t=3010000;t<3025000;t+=500) sharp.poll(t,channel,sample);
+    TEST_ASSERT_FALSE(sharp.online());
+    const auto count=bus.transactions;
+    sharp.poll(3500000,channel,sample);
+    TEST_ASSERT_EQUAL_UINT(count,bus.transactions);
+    for (uint32_t t=4025000;t<4040000;t+=500) sharp.poll(t,channel,sample);
+    TEST_ASSERT_EQUAL_UINT32(2000000,sharp.retry_us());
+}
 studio::LinkCmd parse(const char* text) {
     char line[96];
     strcpy(line,text);
@@ -189,5 +327,10 @@ int main() {
     RUN_TEST(usb_product_name_matches_descriptor);
     RUN_TEST(retry_backoff_reconnect_and_wrap);
     RUN_TEST(codec_and_cv_command_ranges);
+    RUN_TEST(adc_frames_slow_mailboxes_and_missing_coco);
+    RUN_TEST(adc_wrap_velocity_and_recovery);
+    RUN_TEST(cc_flood_is_bounded_and_relative_steps_survive);
+    RUN_TEST(retry_exponential_caps_and_success_resets);
+    RUN_TEST(ads_disabled_has_no_bus_traffic_and_recovers_after_backoff);
     return UNITY_END();
 }

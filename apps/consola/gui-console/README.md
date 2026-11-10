@@ -136,8 +136,9 @@ No automatic graph wiring, installation or firmware flashing is performed.
 # Offline Mac development: 32 physical keyboard pad substitutes; no audio.
 python3 apps/consola/gui-console/main.py --preview --synth-mode --fake-surface
 # Pi: calibrated touch and 90-degree QML image rotation; host already running.
-bash apps/consola/gui-console/pi/run_synth.sh --surface-cdc /dev/ttyACM0 \
-  --external-midi-port 'Keystep' --room-node 'AUDIO_PLUS_NODE_ID'
+# GF_SURFACE_CDC must identify the Teensy via /dev/serial/by-id/ (M4 can take ttyACM0).
+bash apps/consola/gui-console/pi/run_synth.sh --surface-cdc "$GF_SURFACE_CDC" \
+  --room-node 'AUDIO_PLUS_NODE_ID'
 # Explicit note socket fallback if no ALSA/JACK-visible host MIDI output exists.
 bash apps/consola/gui-console/pi/run_synth.sh --note-transport socket
 python3 apps/consola/gui-console/tools/synth_mode_review.py
@@ -146,8 +147,14 @@ python3 apps/consola/gui-console/tools/synth_mode_review.py
 Preinstalled optional dependencies: `mido`, `python-rtmidi`; `pyserial` for CDC.
 The surface and host MIDI names must each match exactly one port. Configure the
 PipeWire/ALSA bridge or JACK graph to expose the host destination; do not connect
-the raw console note map directly to the synth. External keyboard inputs are
-explicit and exclude the surface. `--external-midi-port` is repeatable.
+the raw console note map directly to the synth. `run_synth.sh` defaults to
+`--external-midi-port auto`: all external inputs, excluding the surface, Midi Through,
+and host/GUI ports. Use `GF_EXTERNAL_MIDI_PORT='Arturia'` to select a substring or
+`GF_EXTERNAL_MIDI_PORT=none` to disable discovery. Explicit repeatable
+`--external-midi-port` flags override the launcher default. Inputs are discovered at startup.
+The GUI uses SCHED_OTHER; audio requests RT through PipeWire and defaults to 256 frames.
+See [RT permissions and per-thread verification](../../docs/consola/16-synth-host.md#corrección-pi-con-gui-y-prioridad-rt-2026-11-10)
+before trying `--block 128` on the host.
 MASTER uses `wpctl set-volume` with the configured `--room-node`; CUE/IN send existing `@GF HP/IN` CDC
 commands. `@GF MASTER` is absent from firmware18 and is never sent.
 

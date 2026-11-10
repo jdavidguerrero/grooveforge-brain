@@ -190,6 +190,28 @@ def led_messages(index, rgb):
         dict(type='note_on', channel=15, note=48+index, velocity=1 if any(rgb) else 0)]
 
 
+def external_input_names(names, patterns, surface_name, own_ports=()):
+    """Resolve explicit substrings, or every external ALSA input with 'auto'."""
+    selected = []
+    excluded = ('gf consola', 'gf superficie', 'midi through', 'gf-synth-host',
+                'gf-synth-gui', 'gui-console', 'rtmidi input', 'rtmidi output',
+                'rtmidiin client', 'rtmidiout client')
+    for pattern in patterns:
+        if pattern.lower() == 'none':
+            continue
+        if pattern.lower() == 'auto':
+            matches = [n for n in names if n != surface_name and n not in own_ports and
+                       not any(token in n.lower() for token in excluded)]
+        else:
+            matches = [n for n in names if pattern in n and n != surface_name]
+            if len(matches) != 1:
+                raise ValueError(f'External MIDI {pattern!r}: select one distinct input, found {matches}')
+        for name in matches:
+            if name not in selected:
+                selected.append(name)
+    return selected
+
+
 class SynthSurface(QObject):
     changed = Signal()
     failed = Signal(str)
@@ -467,11 +489,8 @@ class SynthSurface(QObject):
                 self.receive(event)
         self.ports.append(mido.open_input(surface_name, callback=callback))
         self.input_names.append(surface_name)
-        for pattern in external_ports:
-            matches = [n for n in names if pattern in n and n != surface_name]
-            if len(matches) != 1 or any(getattr(p, 'name', None) == matches[0] for p in self.ports):
-                raise ValueError(f'External MIDI {pattern!r}: select one distinct input, found {matches}')
-            name = matches[0]
+        own_ports = (getattr(getattr(self.notes,'port',None),'name',None),)
+        for name in external_input_names(names,external_ports,surface_name,own_ports):
             self.ports.append(mido.open_input(name, callback=lambda msg, n=name:self.external(n, msg)))
             self.input_names.append(name)
         if led:

@@ -326,3 +326,67 @@ def test_note_transport_prefers_midi_and_announces_socket_fallback(monkeypatch):
     assert sink is fallback and 'MIDI unavailable' in description
     with pytest.raises(ValueError): module.open_note_output('midi','host','socket')
     assert module.open_note_output('socket','host','socket')[0] is fallback
+
+
+def test_auto_external_ports_exclude_surface_through_host_and_gui():
+    from synth_surface import external_input_names
+    names = ['GF Consola:0', 'Midi Through:0', 'gf-synth-host:midi_in',
+             'gf-synth-gui:0', 'RtMidi Input Client:0', 'Arturia MiniLab:0',
+             'Other keyboard:0', 'GF Superficie:0']
+    assert external_input_names(names, ['auto'], names[0]) == names[5:7]
+    assert external_input_names(names, ['MiniLab'], names[0]) == [names[5]]
+    assert external_input_names(names, ['none'], names[0]) == []
+    assert external_input_names(names, ['auto', 'MiniLab'], names[0]) == names[5:7]
+    assert external_input_names(names[:5], ['auto'], names[0]) == []
+    assert external_input_names(names + ['Custom host:0'], ['auto'], names[0], ('Custom host:0',)) == names[5:7]
+    with pytest.raises(ValueError):
+        external_input_names(names, ['keyboard', 'missing'], names[0])
+
+
+def test_minimal_fsr_and_sharp_wire_messages_reach_synth(gui):
+    import mido
+    surface, synth, batcher = enter(gui)
+    for note, pitch in ((36, 36), (37, 38)):
+        surface.receive(decodificar(mido.Message('note_on', channel=0, note=note, velocity=87)))
+        assert surface.notes.events[-1] == (1, pitch, 87)
+        surface.receive(decodificar(mido.Message('note_off', channel=0, note=note, velocity=0)))
+        assert surface.notes.events[-1] == (1, pitch, 0)
+    synth.selectPage('FILTER')
+    surface.receive(decodificar(mido.Message('note_off', note=108)))
+    batcher.drain_frame()
+    before = synth.values['cutoff']
+    surface.receive(decodificar(mido.Message('control_change', control=33, value=127)))
+    batcher.drain_frame()
+    assert synth.values['cutoff'] == before
+    surface.receive(decodificar(mido.Message('note_on', note=108, velocity=127)))
+    surface.receive(decodificar(mido.Message('control_change', control=33, value=127)))
+    batcher.drain_frame()
+    meta = next(p for page in synth.current_pages for bank in page['banks'] for p in bank if p['id'] == 'cutoff')
+    assert synth.values['cutoff'] == meta['max']
+
+
+def test_run_synth_external_environment_default_and_explicit_override(tmp_path):
+    import os
+    import shutil
+    import subprocess
+    script = Path(__file__).resolve().parents[1] / 'pi' / 'run_synth.sh'
+    shutil.copy(script, tmp_path / script.name)
+    (tmp_path / 'run_gui.sh').write_text('printf "%s\\n" "$@"\n')
+    # Exercise the normal-priority wrapper on macOS as well as Linux.
+    bin_dir = tmp_path / 'bin'
+    bin_dir.mkdir()
+    chrt = bin_dir / 'chrt'
+    chrt.write_text('#!/bin/sh\n[ "$1" = --other ] && [ "$2" = 0 ] || exit 99\nshift 2\nexec "$@"\n')
+    chrt.chmod(0o755)
+    env = dict(os.environ, XDG_RUNTIME_DIR=str(tmp_path), PATH=f'{bin_dir}:/usr/bin:/bin')
+    env.pop('GF_EXTERNAL_MIDI_PORT', None)
+    def run(*args):
+        return subprocess.check_output(['bash', str(tmp_path / script.name), *args], env=env, text=True).splitlines()
+    args = run()
+    assert args[args.index('--external-midi-port')+1] == 'auto'
+    env['GF_EXTERNAL_MIDI_PORT'] = 'Arturia MiniLab'
+    args = run()
+    assert args[args.index('--external-midi-port')+1] == 'Arturia MiniLab'
+    args = run('--external-midi-port', 'Other keyboard')
+    assert args.count('--external-midi-port') == 1
+    assert args[args.index('--external-midi-port')+1] == 'Other keyboard'
