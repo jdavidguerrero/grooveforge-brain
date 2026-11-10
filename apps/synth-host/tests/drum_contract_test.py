@@ -13,6 +13,8 @@ import time
 import wave
 
 REPO = Path(__file__).resolve().parents[3]
+# The kit worker needs numpy/scipy/soundfile: use the tools/drum-kits uv venv when present (`uv sync` there).
+KIT_PYTHON = str(REPO/'tools/drum-kits/.venv/bin/python') if (REPO/'tools/drum-kits/.venv/bin/python').exists() else sys.executable
 sys.path.insert(0, str(REPO/'tools/synth-host'))
 sys.path.insert(0, str(REPO/'tools/drum-kits'))
 from ctl import Client
@@ -52,7 +54,7 @@ def main(binary):
         def start():
             parent, child = socket.socketpair()
             args = [binary, '--backend', 'offline', '--presets', str(root/'presets'), '--drum-data', str(data),
-                    '--drum-kit-python', sys.executable, '--drum-kit-script', str(REPO/'tools/drum-kits/drum_kits.py'),
+                    '--drum-kit-python', KIT_PYTHON, '--drum-kit-script', str(REPO/'tools/drum-kits/drum_kits.py'),
                     '--control-fd', str(child.fileno())]
             p = subprocess.Popen(args, pass_fds=(child.fileno(),), stdout=log, stderr=log)
             child.close()
@@ -128,9 +130,9 @@ def main(binary):
             client.request('subscribe', topics=['drum_job'])
             job = client.request('import_folder', path=str(source), licence_note='Juan — pending', trim=True)
             done = None
-            deadline = time.monotonic()+15
+            deadline = time.monotonic()+60  # first run imports numpy/scipy in the worker (~6 s cold)
             while time.monotonic() < deadline:
-                event = client.receive(timeout=15)
+                event = client.receive(timeout=60)
                 if event.get('event') == 'drum_job' and event.get('job_id') == job['job_id']:
                     assert event.get('status') != 'error', event
                     if event.get('status') == 'done':
