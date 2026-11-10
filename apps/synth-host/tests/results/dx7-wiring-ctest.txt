@@ -1,0 +1,68 @@
+Internal ctest changing into directory: /tmp/gf-host-six-build
+UpdateCTestConfiguration  from :/tmp/gf-host-six-build/DartConfiguration.tcl
+Parse Config file:/tmp/gf-host-six-build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/tmp/gf-host-six-build/DartConfiguration.tcl
+Parse Config file:/tmp/gf-host-six-build/DartConfiguration.tcl
+Test project /tmp/gf-host-six-build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: host_rt
+
+1: Test command: /tmp/gf-host-six-build/gf_host_rt_test
+1: Working Directory: /tmp/gf-host-six-build
+1: Test timeout computed to be: 1500
+1: RT: 8 engines, params, swaps, 4-part notes/CC/sustain/bend; allocations/frees=0; energy=1996.25; mix verified
+1/6 Test #1: host_rt ..........................   Passed    3.31 sec
+test 2
+    Start 2: host_audio
+
+2: Test command: /tmp/gf-host-six-build/gf_host_audio_test
+2: Working Directory: /tmp/gf-host-six-build
+2: Test timeout computed to be: 1500
+2: Audio: SPSC 200000 ordered transfers, note timestamps, level/mute/mix, channels/CC and feedback backpressure: PASS
+2/6 Test #2: host_audio .......................   Passed    0.36 sec
+test 3
+    Start 3: host_contract
+
+3: Test command: /opt/homebrew/Frameworks/Python.framework/Versions/3.13/bin/python3.13 "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/tests/contract_test.py" "/tmp/gf-host-six-build/gf-synth-host"
+3: Working Directory: /tmp/gf-host-six-build
+3: Test timeout computed to be: 1500
+3: Sandbox blocks bind(): protocol tested with 3 inherited Unix socketpairs; pathname listener and duplicate-bind test require Pi/unsandboxed run
+3: Contract: 13 commands; 918 parameter round-trips; errors, UTF-8, subscriptions, clients, crash recovery: PASS
+3: Telemetry: 39 meters / 1.25 s; CPU windows=1; peak=-15.48 dBFS
+3/6 Test #3: host_contract ....................   Passed    5.58 sec
+test 4
+    Start 4: host_render
+
+4: Test command: /opt/homebrew/Frameworks/Python.framework/Versions/3.13/bin/python3.13 "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/tests/render_test.py" "/tmp/gf-host-six-build/gf-synth-host"
+4: Working Directory: /tmp/gf-host-six-build
+4: Test timeout computed to be: 1500
+4: Offline deterministic PCM SHA-256: 525b02c8281117f3eb64e20c1c280411753b349d153ca20f2db0658b56d1d4c6
+4: Repeat and blocks 128/256/512: identical; four parts wet; nonfinite=0
+4: {"scenario": "four-part", "variant": "wet", "parts": [{"engine": "model_d", "held_notes": 1}, {"engine": "juno", "held_notes": 6}, {"engine": "ob6", "held_notes": 4}, {"engine": "hybrid", "held_notes": 6}], "sample_rate": 48000, "block_frames": 128, "audio_seconds": 3.0, "warmup_seconds": 2, "render_wall_seconds": 0.46916853700000016, "real_time_factor": 0.1563895123333334, "core_percent_mean": 15.638951233333339, "core_percent_p99": 17.90625, "core_percent_max": 18.685950000000002, "deadline_misses": 0, "pcm_sha256": "525b02c8281117f3eb64e20c1c280411753b349d153ca20f2db0658b56d1d4c6", "nonfinite_samples": 0, "clipped_samples": 0, "peak": 0.2237306535243988, "rms": 0.05147671737977667, "compiler": "Apple LLVM 17.0.0 (clang-1700.4.4.1)", "build_type": "Release", "policy": "O2 -fno-fast-math -ffp-contract=off + FTZ"}
+4/6 Test #4: host_render ......................   Passed    3.25 sec
+test 5
+    Start 5: metadata_snapshot
+
+5: Test command: /opt/homebrew/Frameworks/Python.framework/Versions/3.13/bin/python3.13 "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/tests/metadata_test.py" "/tmp/gf-host-six-build/synth-metadata.json" "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/../consola/gui-console/synth-metadata.json"
+5: Working Directory: /tmp/gf-host-six-build
+5: Test timeout computed to be: 1500
+5: All eight engines: compiled metadata/routing equals committed fake-host snapshot
+5/6 Test #5: metadata_snapshot ................   Passed    0.03 sec
+test 6
+    Start 6: host_dx7
+
+6: Test command: /tmp/gf-host-six-build/gf_host_dx7_test
+6: Working Directory: /tmp/gf-host-six-build
+6: Test timeout computed to be: 1500
+6: DX7: all 151 firmware descriptors, clamp/round, note timestamps, sustain, bend, six CCs, shared FX and finite non-silent render: PASS
+6/6 Test #6: host_dx7 .........................   Passed    0.28 sec
+
+100% tests passed, 0 tests failed out of 6
+
+Total Test time (real) =  12.81 sec

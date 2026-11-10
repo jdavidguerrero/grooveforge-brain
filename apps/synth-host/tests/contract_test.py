@@ -38,6 +38,37 @@ def main():
         extra_clients = []
         (root / "imports").mkdir()
         clients = []
+        (root / "presets").mkdir()
+        # Own voices, never ROM data: construct Yamaha VMEM and VCED fixtures independently.
+        voices=[]
+        for index in range(32):
+            voice=bytearray(128)
+            for op in range(6):
+                base=op*17
+                voice[base:base+11]=bytes([99,75,65,90,99,85,75,0,39,0,0])
+                voice[base+12]=7<<3  # centered detune, no rate scaling
+                voice[base+14]=99 if op==5 else index*3
+                voice[base+15]=2  # ratio mode, coarse 1
+            voice[102:110]=bytes([99]*4+[50]*4)
+            voice[110]=index
+            voice[111]=8  # feedback 0, OSC SYNC 1
+            voice[112]=35
+            voice[116]=9  # LFO sync, sine
+            voice[117]=24
+            voice[118:128]=f"SELF{index:02d}    ".encode()
+            voices.append(voice)
+        payload=b"".join(voices)
+        bank=bytes([0xf0,0x43,0,9,0x20,0])+payload+bytes([(-sum(payload))&127,0xf7])
+        (root / "presets" / "self-bank.SYX").write_bytes(bank)
+        broken=bytearray(bank);broken[-2]^=1
+        (root / "imports" / "broken-bank.syx").write_bytes(broken)
+        vced=bytearray()
+        for op in range(6):
+            vced.extend([99,75,65,90,99,85,75,0,39,0,0,0,0,0,0,0,99 if op==5 else 0,0,1,0,7])
+        vced.extend([99]*4+[50]*4+[31,0,1,35,0,0,0,1,4,0,24])
+        vced.extend(b"OWN SINGLE")
+        single=bytes([0xf0,0x43,0,0,1,0x1b])+vced+bytes([(-sum(vced))&127,0xf7])
+        (root / "imports" / "self-single.syx").write_bytes(single)
 
         def start():
             args = [binary, "--backend", "offline", "--socket", path,
@@ -88,7 +119,7 @@ def main():
             clients.append(observer)
             hello = request(c, "hello", client="contract-test")
             check(hello["sample_rate"] == 48000 and hello["block"] == 128, "hello clock")
-            check(set(hello["engines"]) == {"prophet", "dx7", "juno", "ob6", "model_d", "arp2600", "hybrid"}, "registry")
+            check(set(hello["engines"]) == {"prophet", "dx7", "dx7_6op", "juno", "ob6", "model_d", "arp2600", "hybrid"}, "registry")
             state = request(c, "get_state")["parts"]
             check(len(state) == 4 and [p["role"] for p in state] == ["BASS", "CHORDS", "LEAD", "PAD"], "parts/roles")
             # Exercise every catalog, every value read/write, page filters and defaults.
@@ -122,6 +153,39 @@ def main():
                 check(clipped["value"] == selected["max"], "parameter clipping")
                 actual = request(c, "get_params", part=1)["values"][selected["id"]]
                 check(actual == selected["max"], "ACK/read consistency")
+            # Core descriptors are complete and share the VST/firmware grouping.
+            six_pages=request(c,"list_params",engine="dx7_6op")["pages"]
+            core_pages=[p for p in six_pages if p["name"] in ["OPS",*[f"OP {i}" for i in range(1,7)],"ALGO/FB","PITCH EG","LFO"]]
+            check(sum(len(b) for p in core_pages for b in p["banks"])==151,"151 core descriptors")
+            check([len(b) for p in core_pages if p["name"]=="OP 6" for b in p["banks"]]==[7,8,6],"operator bank layout")
+            request(c,"set_engine",part=1,engine="dx7_6op")
+            for key,source,expected in [("op6.r1",-4,0),("op6.r1",104,99),("op6.coarse",2.6,3),("op6.on",.6,1),("algorithm",60,31),("lfo.wave",-1,0)]:
+                check(request(c,"set_param",part=1,param=key,value=source)["value"]==expected,"DX7 raw clamp/round")
+                check(request(c,"get_params",part=1)["values"][key]==expected,"DX7 clamped read")
+            imports=request(c,"list_presets",engine="dx7_6op",tag="imported")["presets"]
+            bank_presets=[p for p in imports if p["name"].startswith("dx7_6op:self-bank:")]
+            check(len(bank_presets)==32 and len(imports)==33,"bank all-or-nothing import / VCED single")
+            check(not any("broken-bank" in p["name"] for p in imports),"bad checksum published voices")
+            for i in range(32):
+                preset=next(p for p in bank_presets if p["name"].split(":")[2]==str(i+1))
+                request(c,"load_preset",part=1,name=preset["name"])
+                current=request(c,"get_params",part=1)["values"]
+                check(current["algorithm"]==i and current["op6.level"]==i*3 and current["op1.level"]==99,"VMEM voice decode/order")
+            single_preset=next(p for p in imports if "self-single" in p["name"])
+            request(c,"load_preset",part=1,name=single_preset["name"])
+            check(request(c,"get_params",part=1)["values"]["algorithm"]==31,"VCED single decode")
+            request(c,"set_param",part=1,param="op6.coarse",value=8)
+            request(c,"set_param",part=1,param="fx.0.mix",value=.63)
+            request(c,"save_preset",part=1,name="Own six voice")
+            six_saved=next(json.loads(p.read_text()) for p in (root / "presets").glob("user-*.json") if json.loads(p.read_text())["name"]=="Own six voice")
+            six_bytes=bytes.fromhex(six_saved["patch"]["data"])
+            check(six_bytes[:5]==b"GFP\x06\x07" and len(six_bytes)==162,"GFP6 save")
+            check(any(p.read_bytes()==six_bytes for p in (root / "presets").glob("user-*.gfp")),"standalone GFP6 save")
+            (root / "imports" / "six-fixture.gfp").write_bytes(six_bytes)
+            request(c,"set_engine",part=1,engine="dx7")
+            request(c,"load_preset",part=1,name="Own six voice")
+            six_values=request(c,"get_params",part=1)["values"]
+            check(six_values["op6.coarse"]==8 and abs(six_values["fx.0.mix"]-.63)<1e-6,"six GFP / bus roundtrip")
             # Stress the ACK/event ordering with pipelined engine and parameter edits.
             expected_ids = []
             for index in range(35):
@@ -156,7 +220,7 @@ def main():
             time.sleep(.04)
             check(not request(c, "get_state")["parts"][0]["modified"], "late parameter echo marked saved preset modified")
             # Import the real shared-codec GFP payload on restart, plus a corrupt file.
-            saved = next(json.loads(p.read_text()) for p in (root / "presets").glob("user-*.json"))
+            saved = next(json.loads(p.read_text()) for p in (root / "presets").glob("user-*.json") if json.loads(p.read_text())["name"]=="Test ñ patch")
             (root / "imports" / "binary-fixture.gfp").write_bytes(bytes.fromhex(saved["patch"]["data"]))
             (root / "imports" / "broken.gfp").write_bytes(b"bad GFP")
             bad(c, dict(cmd="save_preset", part=1, name="Test ñ patch"))
@@ -204,7 +268,7 @@ def main():
                      dict(cmd="hello"), dict(cmd="get_params", part=0), dict(cmd="get_params", part=5),
                      dict(cmd="get_params", part=True), dict(cmd="get_params", part=1.0),
                      dict(cmd="get_params", part=1, page="missing"),
-                     dict(cmd="set_engine", part=1, engine="dx7_6op"),
+                     dict(cmd="set_engine", part=1, engine="missing"),
                      dict(cmd="list_params", engine="missing"), dict(cmd="set_param", part=1, param="missing", value=2),
                      dict(cmd="set_param", part=1, param="cutoff", value="2"),
                      dict(cmd="set_mute", part=1, mute=1), dict(cmd="note", part=1, note=128, velocity=0),
@@ -253,6 +317,10 @@ def main():
             check(request(c, "get_params", part=1)["values"]["cutoff"] == 1900, "restart parameter state")
             check(any(p["name"] == "model_d:binary-fixture" for p in request(c, "list_presets")["presets"]), "GFP import")
             check(any(p["name"] == "Test ñ patch" for p in request(c, "list_presets")["presets"]), "restart user preset")
+            request(c,"load_preset",part=2,name="dx7_6op:six-fixture")
+            check(request(c,"get_params",part=2)["values"]["op6.coarse"]==8,"GFP6 import after restart")
+            request(c,"load_preset",part=2,name="Own six voice")
+            check(abs(request(c,"get_params",part=2)["values"]["fx.0.mix"]-.63)<1e-6,"persisted six FX")
             process.terminate()
             check(process.wait(timeout=5) == 0, "clean shutdown")
             # Corrupt checkpoint is diagnosed and factory state resumes safely.

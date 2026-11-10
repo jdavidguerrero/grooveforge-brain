@@ -3,19 +3,20 @@ from copy import deepcopy
 from PySide6.QtCore import QObject, Property, Signal, Slot
 from models import SnapshotModel
 from fm_algorithms import algorithm
+from fm_visuals import keyboard_scaling
 from synth_catalog import ENGINE_LABELS
 
 SYNTH_SCREENS = {
     'SynthParts': ('juno','FILTER',0), 'SynthPartsStates': ('juno','FILTER',0),
     'SynthFilter': ('juno','FILTER',0), 'SynthNotResponding': ('juno','FILTER',0),
-    'SynthLoading': ('juno','FILTER',0), 'SynthOsc': ('arp2600','OSC',0),
+    'SynthLoading': ('juno','FILTER',0), 'SynthOsc': ('arp2600','OSC 1',0),
     'SynthEnv': ('model_d','ENV',0), 'SynthEnvBank2': ('model_d','ENV',1),
     'SynthLfo': ('juno','LFO',0), 'SynthFm': ('dx7','OPS',0), 'SynthFmFocus': ('dx7','OP 2',0),
-    'SynthDx7': ('dx7_6op','OPS',0), 'SynthDx7Bank2': ('dx7_6op','OPS',1),
+    'SynthDx7': ('dx7_6op','OPS',0), 'SynthDx7Bank2': ('dx7_6op','ALGO/FB',0),
     'SynthDx7Focus': ('dx7_6op','OP 2',1), 'SynthGroove': ('juno','GROOVE',0),
-    'SynthFx': ('dx7','FX',1), 'SynthMacros': ('model_d','MACROS',0),
-    'SynthHybrid': ('hybrid','HYBRID',0), 'SynthHybridA': ('hybrid','A FILTER',0),
-    'SynthHybridB': ('hybrid','B FILTER',0), 'SynthPresets': ('model_d','FILTER',0),
+    'SynthFx': ('dx7','FX Tape',0), 'SynthMacros': ('model_d','MACROS',0),
+    'SynthHybrid': ('hybrid','LAYER',0), 'SynthHybridA': ('hybrid','a.FILTER',0),
+    'SynthHybridB': ('hybrid','b.FILTER',0), 'SynthPresets': ('model_d','FILTER',0),
     'SynthSaveAs': ('model_d','FILTER',0), 'SynthSettingsAudio': ('juno','FILTER',0),
     'SynthSettingsConnections': ('juno','FILTER',0), 'SynthSettingsSystem': ('juno','FILTER',0),
 }
@@ -23,9 +24,9 @@ SYNTH_SCREENS = {
 
 def relative_value(meta, value, delta, fine=False):
     discrete = meta['kind'] in ('enum','bool')
-    step = max(1,meta['step']) if discrete else meta['step'] * (.1 if fine else 1)
+    step = meta['step'] * (1 if discrete else (.1 if fine else 1))
     value = max(meta['min'], min(meta['max'], value + delta*step))
-    return int(round(value)) if discrete else round(value,8)
+    return round(meta['min']+round((value-meta['min'])/meta['step'])*meta['step'],8) if discrete else round(value,8)
 
 
 def formatted(meta, value):
@@ -33,7 +34,7 @@ def formatted(meta, value):
         return 'ON' if value else 'OFF'
     if meta['kind'] == 'enum':
         options = meta.get('options',[])
-        return str(options[int(value)]) if 0 <= int(value) < len(options) else str(value)
+        return str(options[int(round((value-meta['min'])/meta['step']))]) if 0 <= int(round((value-meta['min'])/meta['step'])) < len(options) else str(value)
     return f'{value:+g}' if meta['kind'] == 'bipolar' else f'{value:g}'
 
 
@@ -106,9 +107,12 @@ class SynthState(QObject):
     error = Property(str,lambda s:s._error,notify=changed)
     fine = Property(bool,lambda s:s._fine,notify=changed)
     focusedCell = Property(int,lambda s:s._focus,notify=changed)
-    operatorCount = Property(int,lambda s:6 if s.engine == 'dx7_6op' else 4,notify=changed)
+    operatorCount = Property(int,lambda s:s.fm_operator_count(),notify=changed)
     selectedOperator = Property(int,lambda s:int(s._page[3:]) if s._page.startswith('OP ') and s._page[3:].isdigit() else 0,notify=changed)
-    algorithm = Property('QVariantMap',lambda s:deepcopy(algorithm(s.operatorCount,s._values.get(s._part,{}).get('fm.algorithm',1))),notify=changed)
+    algorithm = Property('QVariantMap',lambda s:deepcopy(algorithm(s.operatorCount,s.fm_algorithm_number)),notify=changed)
+    fmOperators = Property('QVariantList',lambda s:s.fm_operators(),notify=changed)
+    fmFeedback = Property(float,lambda s:s.fm_value('feedback'),notify=changed)
+    fmSupported = Property(bool,lambda s:s.fm_supported(),notify=changed)
     saveName = Property(str,lambda s:s._name,notify=changed)
     presetIndex = Property(int,lambda s:s._preset_index,notify=changed)
     cpu = Property('QVariantMap',lambda s:s._cpu,notify=changed)
@@ -133,6 +137,63 @@ class SynthState(QObject):
     def bank(self):
         banks = self.current_page.get('banks',[])
         return banks[min(self._bank,len(banks)-1)] if banks else []
+
+    def fm_operator_count(self):
+        ids={p['id'] for pg in self.current_pages for bank in pg['banks'] for p in bank}
+        if self.engine=='dx7_6op':
+            return sum(f'op{op}.level' in ids and f'op{op}.r1' in ids for op in range(1,7))
+        if self.engine=='dx7':
+            return sum(f'osc.{op}.1' in ids for op in range(4))
+        return 0
+
+    def fm_id(self, field, op=1):
+        if self.engine == 'dx7_6op':
+            return field if field in ('algorithm','feedback') else f'op{op}.{field}'
+        slots = {'ratio':0,'level':1,'attack':4,'decay':5,'sustain':6,'release':7}
+        if field in ('algorithm','feedback'):
+            return 'osc.0.'+('2' if field=='algorithm' else '3')
+        if field in slots:
+            return f'osc.{op-1}.{slots[field]}'
+        return f'mod.0.{op+3}' if field=='detune' else ''
+
+    def fm_meta(self, field, op=1):
+        id = self.fm_id(field,op)
+        return next((p for pg in self.current_pages for bank in pg['banks'] for p in bank if p['id']==id),None)
+
+    def fm_value(self, field, op=1):
+        meta = self.fm_meta(field,op)
+        return self.values.get(meta['id'],meta['default']) if meta else 0
+
+    @property
+    def fm_algorithm_number(self):
+        meta = self.fm_meta('algorithm')
+        return round((self.fm_value('algorithm')-meta['min'])/meta['step'])+1 if meta else 1
+
+    def fm_supported(self):
+        return self.operatorCount in (4,6) and bool(self.fm_meta('algorithm')) and all(
+            self.fm_meta('level',op) and self.fm_id('level',op) in self.values for op in range(1,self.operatorCount+1))
+
+    def fm_operators(self):
+        result=[]
+        if not self.fm_supported():
+            return result
+        for op in range(1,self.operatorCount+1):
+            val=lambda field:self.fm_value(field,op)
+            if self.operatorCount==6:
+                coarse,fine=val('coarse'),val('fine')
+                hz=10**(coarse%4+fine/100)
+                ratio=(coarse if coarse else .5)*(1+fine/100)
+                tuning=f'{hz:.2f} Hz' if val('mode') else f'× {ratio:.2f}'
+                eg=[dict(rate=val('r'+str(i)),level=val('l'+str(i))) for i in range(1,5)]
+            else:
+                tuning=f'× {val("ratio"):.2f}'
+                eg=[dict(name=k,value=val(k)) for k in ('attack','decay','sustain','release')]
+            scaling={k:int(val(k)) for k in ('breakpoint','left_depth','right_depth','left_curve','right_curve','rate_scaling')}
+            scaling['points']=[keyboard_scaling(note,**{k:v for k,v in scaling.items() if k!='rate_scaling'}) for note in range(128)]
+            result.append(dict(op=op,tuning=tuning,level=val('level'),detune=val('detune')-(7 if self.operatorCount==6 else 0),
+                               on=bool(val('on')) if self.operatorCount==6 else True,eg=eg,
+                               scaling=scaling))
+        return result
 
     def request(self, cmd, **fields):
         if self.client:
@@ -190,6 +251,9 @@ class SynthState(QObject):
                     self._fetch_part(p)
                 self.request('list_presets',role=self.current_part.get('role',''))
             elif cmd == 'set_engine':
+                p = msg.get('part')
+                if isinstance(p,dict):
+                    self._parts = [p if o['part'] == p['part'] else o for o in self._parts]
                 # The host resets the part to the engine defaults even when the engine name did not change,
                 # so no state event may follow: refetch here instead of relying on it.
                 self._values.pop(fields['part'],None)
@@ -256,7 +320,7 @@ class SynthState(QObject):
     @Slot(str)
     def selectPage(self, page):
         if page in self.pages:
-            if page == 'HYBRID' and self._screen != 'SynthHybrid':
+            if page == 'LAYER' and self._screen != 'SynthHybrid':
                 self.openScreen('SynthHybrid')
                 return
             self._page, self._bank = page, 0
@@ -337,9 +401,9 @@ class SynthState(QObject):
 
     @Slot(int)
     def chooseAlgorithm(self, number):
-        p = next((p for pg in self.current_pages for b in pg['banks'] for p in b if p['id'] == 'fm.algorithm'),None)
+        p = self.fm_meta('algorithm')
         if p and self.status in ('ready','preview'):
-            self.request('set_param',part=self._part,param=p['id'],value=max(p['min'],min(p['max'],number)))
+            self.request('set_param',part=self._part,param=p['id'],value=max(p['min'],min(p['max'],p['min']+(number-1)*p['step'])))
 
     @Slot(str,str)
     def filterPresets(self, engine, tag):
@@ -414,8 +478,8 @@ class SynthState(QObject):
             keys += [key('BRAIN','OFFLINE',action='nav:SynthSettingsConnections'),key('Engine',self.engineLabel),key('Mute','ON' if self.current_part.get('mute') else 'OFF',action='synth:mute'),key('Level',f"{self.current_part.get('level_db',0):g} dB")]
             return keys
         if self._screen == 'SynthHybrid':
-            return [nav('Edit A','half-a'),key(),key(),key('Morph',str(self.values.get('hybrid.morph',0))),
-                    key('Layer',formatted(self.bank[4],self.values.get('hybrid.layer',0)) if len(self.bank)>4 else ''),
+            return [nav('Edit A','half-a'),key(),key(),key('Morph',str(self.values.get('layer.morph',0))),
+                    key('Layer',self.current_part.get('preset','')),
                     key(),key('Presets',action='synth:nav:SynthPresets'),nav('Edit B','half-b')]
         if self._screen == 'SynthSaveAs':
             return [key() for _ in range(5)]+[nav('Save','save'),key(),key('Cancel',action='synth:nav:SynthPresets')]
@@ -461,7 +525,7 @@ class SynthState(QObject):
         elif value in ('fx-prev','fx-next'):
             self.chooseBank((self._bank+(-1 if value=='fx-prev' else 1))%max(1,self.bankCount))
         elif value == 'half':
-            self.selectPage(('B' if self._page.startswith('A ') else 'A')+' FILTER')
+            self.selectPage(('b.' if self._page.startswith('a.') else 'a.')+'FILTER')
 
     def _send_edits(self):
         outgoing, self._outbound = self._outbound, {}

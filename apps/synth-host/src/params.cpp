@@ -1,6 +1,8 @@
 #include "params.h"
 #include "preset_codec.h"
 #include "hybrid_codec.h"
+#include "dx7_6op_preview.h"
+#include <sstream>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -14,11 +16,13 @@ float Param::read(const Config& c) const noexcept {
         case Storage::Float: { float v; std::memcpy(&v,p,sizeof v); return v; }
         case Storage::Bool: return *reinterpret_cast<const bool*>(p)?1:0;
         case Storage::U8: return *p;
+        case Storage::Bit: return (*p >> bit)&1;
         case Storage::I8: return *reinterpret_cast<const int8_t*>(p);
     }
     return 0;
 }
 float Param::write(Config& c,float value) const noexcept {
+    if(!std::isfinite(value)) return read(c);
     value=std::clamp(value,min,max);
     // Continuous values are clamped, not snapped: step is an encoder increment.
     if(options>0) value=min+std::round((value-min)/step)*step;
@@ -26,6 +30,7 @@ float Param::write(Config& c,float value) const noexcept {
     switch(storage) {
         case Storage::Float: std::memcpy(p,&value,sizeof value); break;
         case Storage::Bool: *reinterpret_cast<bool*>(p)=value>=.5f; break;
+        case Storage::Bit: *p=uint8_t((*p & ~(1<<bit)) | (int(value>=.5f)<<bit)); break;
         case Storage::U8: *p=uint8_t(std::lround(value)); break;
         case Storage::I8: *reinterpret_cast<int8_t*>(p)=int8_t(std::lround(value)); break;
     }
@@ -191,6 +196,16 @@ std::vector<Param> build(int engine) {
         add(out,c,c.layer.gain_b_db,"layer.gain_b","Gain B","LAYER",-60,12,1,0,"dB");
         add(out,c,c.layer.b.patch.groove[4][7],"b.move","MOVE B","LAYER",0,100,1,0,"%");
     } else half(out,c,c.layer.a,id,"");
+    if(id==4) {
+        for(auto& p:out) {
+            if(p.id.rfind("osc.",0)==0) {
+                const int op=p.id[4]-'0',slot=p.id[6]-'0';
+                p.page=slot==1?"OPS":op==0&&(slot==2||slot==3)?"ALGO/FB":"OP "+std::to_string(op+1);
+                if(slot==1)p.name="OP "+std::to_string(op+1)+" LEVEL";
+            } else if(p.id.rfind("mod.0.",0)==0) p.page="OP "+std::to_string((p.id[6]-'0')%4+1);
+        }
+        std::stable_partition(out.begin(),out.end(),[](const Param& p){return p.page=="OPS";});
+    }
     bus(out,c,id==6);
     return out;
 }
@@ -198,6 +213,42 @@ const std::vector<std::vector<Param>>& catalogs() {
     static const auto result=[] { std::vector<std::vector<Param>> r; for(size_t i=0;i<registry().size();++i) r.push_back(registry()[i].parameters(int(i))); return r; }();
     return result;
 }
+}
+Config six_defaults(int engine) {
+    Config c=preview_defaults(engine_index("dx7")); c.engine=engine;
+    c.six=gf::dx7six::init_patch(); return c;
+}
+std::vector<Config> six_presets(int engine) {return {six_defaults(engine)};}
+std::string six_preset_name(const Config& c) {
+    std::string name(c.six.vced.begin()+145,c.six.vced.end());
+    while(!name.empty()&&name.back()==' ')name.pop_back(); return name;
+}
+std::vector<uint8_t> six_encode(const Config& c) {
+    std::vector<uint8_t> bytes(gf::dx7six::GFP_BYTES);
+    if(!gf::dx7six::encode_gfp(c.six,bytes.data(),bytes.size()))throw std::runtime_error("cannot encode DX7 GFP");
+    return bytes;
+}
+Config six_decode(int engine,const uint8_t* data,size_t size) {
+    auto c=six_defaults(engine);
+    if(!gf::decode_dx7_6op_preset(data,size,c.six))throw std::runtime_error("invalid DX7 GFP/SysEx");
+    return c;
+}
+std::vector<Param> six_catalog(int engine) {
+    Config c=six_defaults(engine); std::vector<Param> out;
+    for(size_t i=0;i<gf::dx7six::param_count;++i) {
+        const auto& q=gf::dx7six::params[i]; Param p;
+        p.id=q.id;p.name=q.name;p.unit=q.unit;p.page=q.page;p.bank=q.bank;p.slot=q.slot;
+        p.min=q.minimum;p.max=q.maximum;p.initial=q.initial;p.step=q.step;
+        p.toggle=std::string(q.kind)=="bool";
+        if(q.options[0]){std::istringstream options(q.options);std::string label;while(std::getline(options,label,'|'))p.labels.push_back(label);p.options=int(p.labels.size());}
+        p.storage=q.enable_bit<0?Storage::U8:Storage::Bit;p.bit=std::max(0,int(q.enable_bit));
+        const auto* field=q.enable_bit<0?&c.six.vced[q.offset]:&c.six.enabled;
+        p.offset=size_t(field-reinterpret_cast<const uint8_t*>(&c));out.push_back(std::move(p));
+    }
+    add(out,c,c.layer.a.cutoff_hz,"cutoff","Bus cutoff","GLOBAL",20,20000,1,0,"Hz");
+    add(out,c,c.layer.a.reso_norm,"resonance","Bus resonance","GLOBAL",0,1);
+    bus(out,c,false);
+    return out;
 }
 std::vector<Param> preview_catalog(int engine) {return build(engine);}
 const std::vector<Param>& catalog(int engine) { return catalogs().at(size_t(engine)); }

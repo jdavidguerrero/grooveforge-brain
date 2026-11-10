@@ -1,10 +1,11 @@
 # gf-synth-host: diseño y verificación
 
 Fecha: 2026-11-10. Contrato autoritativo: `14-synth-host-contrato.md`.
-Implementación C++17 custom, sin JUCE ni Python/Qt en audio. Reutiliza las tres
+Implementación C++17 custom, sin JUCE ni Python/Qt en audio. Reutiliza las
 bibliotecas de `brain-plugin` mediante `add_subdirectory`; una opción temprana
 `GF_ENGINE_LIBRARIES_ONLY` evita compilar referencias, pruebas y VST del plugin.
-No duplica DSP. DX7 es **4-OP**; `dx7_6op` no se anuncia hasta integrar su adaptador.
+No duplica DSP. `dx7` conserva FM **4-OP** y `dx7_6op` registra el core **6-OP**,
+con entradas independientes en hello, presets y list_params.
 
 ## Arquitectura y tiempo real
 
@@ -39,10 +40,11 @@ Cambiar engine/preset corta sus voces/colas; editar parámetros conserva voces.
 Registro desacoplado (`params.h`, `registry()` en `engine.cpp`): nombre, ID firmware,
 fábrica, defaults, catálogo, banco de fábrica, nombre y codecs. Un adaptador nuevo
 implementa `Engine` y esos callbacks; una entrada lo anuncia sin cambiar socket,
-persistencia ni backend. `Config::extension` reserva 512 valores float para patches
-ajenos a GFP (p. ej. 6-OP). Integración futura: enlazar su biblioteca y registrar
-`{"dx7_6op", -1, create, defaults, params, presets, name, encode, decode}`; no se
-implementa ese motor aquí. Los engines existentes usan los previews y el bus FX/GROOVE del
+persistencia ni backend. `Config::six` guarda VCED y máscara de enable como POD; el adaptador 6-OP usa
+`Dx7SixPreview` y los codecs compartidos (firmware id 7). `Config::extension`
+conserva espacio para adaptadores futuros. La tabla 6-OP se convierte a offsets
+POD U8/bit, con clamping y redondeo idénticos al setter de firmware.
+Los engines existentes usan los previews y el bus FX/GROOVE del
 bench; bloqueador DC de 5 Hz por salida de parte. No certifica fidelidad al hardware.
 
 ## Backends y MIDI
@@ -132,8 +134,6 @@ IDs enteros de 64 bits, validación de tipos/rangos, tamaño de línea/clientes 
   `name` identificador global presentado por list_presets (factory `engine:NAME`).
 - Rango de nivel y escala velocity no definidos: propuesta db −60..+12 (clip),
   velocity entero MIDI 0..127, note entero 0..127; part entero 1..4.
-- `dx7_6op` contractual pero aún no disponible: hello solo anuncia engines
-  implementados; set_engine dx7_6op devuelve error explícito.
 - HYBRID arbitrario: propuesta extender list_params con `part?` o fijar catálogo
   por pareja; en esta entrega solo se aceptan capas Prophet/Juno para editar con
   catálogo estable. No se finge que otro catálogo representa sus parámetros.
@@ -211,7 +211,7 @@ El servicio usa `%h/.local/bin/gf-synth-host`; copiar binario/unidad y habilitar
 es operación manual. Sin sd_notify: `systemctl --user edit gf-synth-host` con
 `[Service]`, `Type=simple`, `WatchdogSec=0`. Nada se instala automáticamente.
 
-## Resultado Mac y bloqueos (2026-11-10)
+## Resultado Mac anterior al cableado 6-OP (2026-11-10)
 
 AppleClang 17, Darwin arm64, Release O2. Salida real tras compilar:
 
@@ -265,3 +265,116 @@ ruteo/clock Audio+, MIDI real, watchdog systemd y prueba de 60 min con GUI.
 Git: el intento de commit documental previo al código falló al crear
 `.git/index.lock` (`Operation not permitted`). No se empuja la rama; si el
 sandbox sigue bloqueando, doc y código quedan sin commit.
+
+## Cableado DX7 6-OP (2026-11-10)
+
+`registry()` anuncia ocho engines. La fábrica instancia `Dx7SixPreview` con
+`prepare(48000)` fuera de audio; la voz recibe note on/off y velocity mediante
+el sink del bus compartido. Ediciones usan `edit_patch`, conservan voces/EG y
+se aplican al principio del bloque. Sustain llega al core y al scheduler del
+bus; el bend convierte el rango nativo ±3 del core a **±2 semitonos** del host.
+CC14/15/16/19 editan DRIFT/GRIT/POCKET/MOVE; CC71/74 editan resonancia/cutoff
+del filtro post-voz. Todos publican los mismos eventos param que otros engines.
+
+El core no tiene filtro analógico ni ADSR adicional: su salida pasa por un
+filtro de bus TPT de dos polos, luego por el mismo `ProphetPreview` usado por
+los otros adaptadores para drive/tape/chorus-phaser/delay/reverb y GROOVE. GLOBAL
+expone ese filtro por separado (20–20000 Hz, resonancia 0–1); no es un parámetro
+Yamaha. DRIFT desplaza detune de operadores sin modificar VCED guardado; GRIT aumenta nivel de moduladores/feedback y resonancia de bus; POCKET acelera
+R2/R4, reduce L3 y aumenta sensibilidad de velocity según POCKET VEL; MOVE usa
+las funciones de bus compartidas. Las macros son desplazamientos de interpretación
+sobre la voz, no parámetros Yamaha adicionales, y nunca reescriben VCED guardado. No se añade otro oscilador.
+El pitch de wow/flutter se combina con el bend MIDI antes de llegar al core;
+se actualiza al cambiar el multiplicador del bus, sin recalcular log2 por muestra
+cuando permanece constante. No se promete identidad de bus con el VST.
+
+### Agrupación y fuente única
+
+`metadata.cpp::params_json()` sirve list_params y `gf-export-metadata`.
+Los **151 descriptores reales** de `dx7_6op_params.cpp` conservan todos sus IDs,
+rangos, unidades, defaults, kinds y offsets. Sólo cambia su distribución de páginas:
+
+| Página | Contenido |
+|---|---|
+| OPS | `op1.level` … `op6.level`, seis controles |
+| OP 1 … OP 6, banco 1 | mode, coarse, fine, detune, velocity, ams, on (7) |
+| OP 1 … OP 6, banco 2 | r1–r4, l1–l4 (8) |
+| OP 1 … OP 6, banco 3 | breakpoint, left_depth, right_depth, left_curve, right_curve, rate_scaling (6) |
+| ALGO/FB | algorithm, feedback, osc_sync, transpose (4) |
+| PITCH EG | pitch.r1–r4 / pitch.l1–l4 (8) |
+| LFO | speed, delay, pmd, amd, sync, wave, pms (7) |
+
+No hay IDs duplicados para crear la vista general: el GUI los enlaza desde el
+catálogo completo. Un total de **56 controles de host** se añade en GLOBAL,
+GROOVE, MACROS y FX Drive/Tape/Chorus/Delay/Reverb: **207 controles**, todos en
+bancos ≤8. U8 y bool se redondean/recortan; enum respeta min/step; valores no
+finitos se rechazan. Algoritmo crudo 0–31, opciones 1–32; detune 7 = centro,
+transpose 24 = centro. FM 4-OP mantiene `osc.*`/`mod.*`, ahora agrupados por operador.
+
+El JSON versionado en `gui-console/synth-metadata.json` se genera desde el binario,
+no desde otra tabla Python ni parseando el texto C++. `cmake --build` produce la
+exportación en el build; `metadata_snapshot` compara su contenido completo contra
+el archivo de repo. El fake carga ese archivo. La GUI de producción consulta el
+socket y usa el JSON sólo para tablas gráficas de routing de compilación, con
+consistencia probada contra los flags de `dx7_6op_algorithms.cpp`.
+
+### GFP y SysEx sin cambiar el contrato 14
+
+El scanner de `--presets` y `--repo-presets` acepta `.gfp`, `.syx` (también en
+mayúsculas), además de los formatos previos. El trabajo de disco/checksum está
+en control. VCED single publica una entrada; VMEM de 32 voces publica las 32,
+con nombre `dx7_6op:archivo:índice1–32:nombreVCED`. Un banco completo debe ser
+válido antes de publicar voces: checksum/formato erróneo no deja entradas parciales.
+La GUI usa **list_presets/load_preset**; no necesita import_sysex ni otro comando.
+El scan ocurre al arrancar: tras colocar archivos hay que reiniciar el host.
+
+save_preset crea el JSON de host y un **GFP v6/id7 de 162 bytes** de la voz,
+`user-<nombre-hex>.gfp`, junto al JSON del mismo stem. JSON conserva engine, nombre,
+role y valores de bus; GFP lleva VCED y máscara de operadores. Al importar el
+GFP por sí solo, el bus empieza en sus defaults. La pareja se importa una vez,
+leyendo el JSON; no hay preset duplicado por el GFP acompañante. No se sobrescribe
+un nombre existente. Si falla publicar el JSON, se retira el GFP recién creado.
+Checkpoint y user presets conservan también los valores del bus sin truncarlos
+al formato Yamaha. GFP 2–5 y GFL conservan sus codecs.
+
+### VST y pruebas
+
+JUCE local **8.0.3**: build VST3 y **14/14 CTest** (incluye MSFA local y plugin smoke).
+`Dx7SixView` ya usa directamente los mismos 151 descriptores; su selector ahora
+muestra OPS y tres bancos por operador, ALGO/FB, PITCH EG y LFO. Automatización
+DAW agrega el namespace existente `dx7_6op.` a cada ID del contrato. El smoke
+recorre todos los bancos, comprueba 151 controles visibles y modifica coarse/detune
+mediante sus attachments. El VST no añade los controles GLOBAL/GROOVE/FX del host
+a esta vista de parámetros Yamaha.
+
+Pruebas de host: **6/6 CTest**, sin asignaciones/liberaciones en audio, tablas reales,
+clamping comparado con firmware, SysEx propio (32 VMEM + VCED), rechazo de checksum,
+GFP standalone/JSON/reinicio, eventos y render aislado no silencioso/sin NaN.
+Firmware nativo: **166/166** en 13 suites. Se usó `~/.platformio/penv/bin/pio test
+-e native` con `PLATFORMIO_CORE_DIR=/tmp/gf-host-six-pio`; se copió la plataforma
+native local y se reutilizó Unity 2.6.1 del caché local. Sin descargas ni flash.
+La caché global es de sólo lectura en el sandbox.
+
+Pruebas GUI: comparación contra exportación C++ recién compilada, cada página y
+banco FM 4/6-OP por QLocalSocket al host real, selección repetida del mismo engine,
+32 algoritmos, todos los focos, curvas de scaling y capturas. Listener por ruta
+sigue bloqueado por sandbox: se usan socketpairs AF_UNIX heredados (mismo servidor,
+cliente Qt y audio offline), sin atribuirles cobertura de PipeWire/listener físico.
+Capturas y comandos: [15-gui-synth.md](15-gui-synth.md).
+
+No se editó el contrato 14 ni los specs 00–06; no se tocó el checkout USB ni se
+hizo push. Quedan las puertas físicas ya descritas: Pi/PipeWire/MIDI/latencia,
+xruns con GUI, AMD/AMS y feedback con Yamaha real. La envolvente GUI muestra
+control R/L, no una medición del tiempo no lineal del DSP.
+
+Salidas finales guardadas: [host CTest](../../synth-host/tests/results/dx7-wiring-ctest.txt),
+[VST CTest](../../synth-host/tests/results/dx7-wiring-vst-ctest.txt),
+[firmware native](../../synth-host/tests/results/dx7-wiring-firmware.txt).
+Host: 918 round-trips de parámetros; RT: ocho engines, cero asignaciones/liberaciones.
+GUI: **204 passed, 13 skipped**, incluidos los tres tests nuevos de wiring y la
+regresión de enums FX normalizados. Build VST3:
+`/tmp/gf-host-six-vst/GrooveForgeBrainPrototype_artefacts/Release/VST3/GrooveForge Brain Prototype.vst3`.
+
+Entrega Git de este cableado: `git add` volvió a fallar creando `.git/index.lock`
+con `Operation not permitted`; cambios y artefactos quedan **sin commit**, sin push.
+[Informe de archivos, pruebas y límites](../../synth-host/tests/results/dx7-wiring-report.md).

@@ -5,16 +5,9 @@ Operators execute 6→1; edges run modulator→carrier. FB input/output may diff
 for algorithms 4 and 6: retain both endpoints rather than inventing a self-loop.
 """
 # The six hexadecimal flags encode bus input, bus output, add, feedback in/out.
-_DX7_BUSES = (
- 'c1 11 11 14 01 14', '01 11 11 14 c1 14', 'c1 11 14 01 11 14', '41 11 94 01 11 14',
- 'c1 14 01 14 01 14', '41 94 01 14 01 14', 'c1 11 05 14 01 14', '01 11 c5 14 01 14',
- '01 11 05 14 c1 14', '01 05 14 c1 11 14', 'c1 05 14 01 11 14', '01 05 05 14 c1 14',
- 'c1 05 05 14 01 14', 'c1 05 11 14 01 14', '01 05 11 14 c1 14', 'c1 11 02 25 05 14',
- '01 11 02 25 c5 14', '01 11 11 c5 05 14', 'c1 14 14 01 11 14', '01 05 14 c1 14 14',
- '01 14 14 c1 14 14', 'c1 14 14 14 01 14', 'c1 14 14 01 14 04', 'c1 14 14 14 04 04',
- 'c1 14 14 04 04 04', 'c1 05 14 01 14 04', '01 05 14 c1 14 04', '04 c1 11 14 01 14',
- 'c1 14 01 14 04 04', '04 c1 11 14 04 04', 'c1 14 04 04 04 04', 'c4 04 04 04 04 04',
-)
+from synth_catalog import METADATA
+
+_DX7_BUSES = tuple(' '.join(f'{flag:02x}' for flag in route) for route in METADATA['dx7_algorithms'])
 
 
 def _decode(number, flags):
