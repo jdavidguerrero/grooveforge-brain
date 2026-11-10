@@ -278,7 +278,6 @@ class ConsoleState(QObject):
                             title='Paused' if value == 'offline' else 'Generating…' if value == 'loading' else '—',
                             subtitle='')
         self._cells.replace(rows)
-        self._connections.queue_update(0, {'status': 'warn' if value == 'offline' else 'ok'})
         self.changed.emit()
 
     @Slot(int)

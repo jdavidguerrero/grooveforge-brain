@@ -69,7 +69,8 @@ def test_live_states_keep_room_and_next(app,live_state):
     assert state.cells.rows[:16] == before
     if live_state != 'normal':
         assert {r['cellState'] for r in state.cells.rows[16:]} == {'loading' if live_state == 'loading' else 'empty'}
-    assert state.connections.rows[0]['status'] == ('warn' if live_state == 'offline' else 'ok')
+    # ENGINE offline is independent of the Teensy BRAIN connection.
+    assert state.connections.rows[0]['status'] == 'ok'
 
 
 def test_soft_key_navigation_and_actions(app):

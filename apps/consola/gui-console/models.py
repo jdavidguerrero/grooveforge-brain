@@ -7,6 +7,7 @@ class SnapshotModel(QAbstractListModel):
         self.rows = [dict(row) for row in rows]
         self._roles = {Qt.UserRole + i + 1: name.encode() for i, name in enumerate(roles)}
         self._pending = {}
+        self.frame_managed = False
         self._timer = QTimer(self)
         self._timer.setInterval(16)
         self._timer.timeout.connect(self.flush)
@@ -31,7 +32,7 @@ class SnapshotModel(QAbstractListModel):
         if unknown:
             raise ValueError(f'Unknown roles: {unknown}')
         self._pending.setdefault(row, {}).update(values)
-        if not self._timer.isActive():
+        if not self.frame_managed and not self._timer.isActive():
             self._timer.start()
 
     def flush(self):

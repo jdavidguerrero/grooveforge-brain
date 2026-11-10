@@ -12,9 +12,9 @@ Item {
             Label { x: Theme.modePad; y: Theme.modePad; text: "ENC "+(index+1); color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
             Label { anchors.right: parent.right; anchors.rightMargin: Theme.modePad; y: Theme.modePad; text: parent.standalone ? "READY" : "LIVE NOT FOUND"; color: parent.standalone ? Theme.gpTeal : Theme.amber; font.pixelSize: Theme.m11 }
             Label { x: Theme.modePad; y: Theme.modeTitleY; text: parent.standalone ? "Standalone" : "Controller"; face: Theme.osFont; font.pixelSize: Theme.modeTitleSize }
-            Label { x: Theme.modePad; y: Theme.modeDescY; width: parent.width-2*x; height: Theme.infoHeight; wrapMode: Text.WordWrap; face: Theme.osFont; font.pixelSize: Theme.m18; weight: Font.Normal; color: Theme.gpTextSec; text: parent.standalone ? "No computer. The Brain generates every layer; you play it like a DJ set." : "Push-style control of Ableton Live, plus the Mac engine in studio mode." }
+            Label { x: Theme.modePad; y: Theme.modeDescY; width: parent.width-2*x; height: Theme.infoHeight; wrapMode: Text.WordWrap; face: Theme.osFont; font.pixelSize: Theme.m18; weight: Font.Normal; color: Theme.gpTextSec; text: parent.standalone ? "No computer. The engine generates every layer; you play it like a DJ set." : "Push-style control of Ableton Live, plus the Mac engine in studio mode." }
             Column { x: Theme.modePad; y: Theme.modeStatusY; spacing: Theme.s3
-                Repeater { model: index === 1 ? ["Brain      ready · 6/8 models", "Library    42 tracks · 6 sets", "Network    Ethernet 10.0.0.24"] : ["Live       not found on network", "Link       3 peers", "USB / MIDI host ready"]
+                Repeater { model: index === 1 ? ["Engine     ready · 6/8 models", "Library    42 tracks · 6 sets", "Network    Ethernet 10.0.0.24"] : ["Live       not found on network", "Link       3 peers", "USB / MIDI host ready"]
                     Row { spacing: Theme.s3
                         Rectangle { width: Theme.s2; height: width; radius: width/2; color: Theme.gpTeal; anchors.verticalCenter: parent.verticalCenter }
                         Label { text: modelData; color: Theme.gpTextSec; font.pixelSize: Theme.m14 }

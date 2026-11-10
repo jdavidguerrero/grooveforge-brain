@@ -1,0 +1,28 @@
+# Substitute @USER@ and @GUI_DIR@; install/start manually. No network required.
+[Unit]
+Description=GrooveForge Console GUI (visual demo)
+After=systemd-user-sessions.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=simple
+User=@USER@
+SupplementaryGroups=video render input
+WorkingDirectory=@GUI_DIR@
+ExecStart=/bin/bash @GUI_DIR@/pi/run_gui.sh --rotate 90 --rotation-method qml --screen LiveSession
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+TTYPath=/dev/tty1
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+Environment=PYTHONUNBUFFERED=1
+# Optional EnvironmentFile for GUI_KMS_CONFIG, GUI_TOUCH_DEVICE, GUI_INPUT_BACKEND.
+EnvironmentFile=-/etc/default/consola-gui
+
+[Install]
+WantedBy=multi-user.target

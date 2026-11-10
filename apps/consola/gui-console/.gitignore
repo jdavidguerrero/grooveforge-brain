@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 fonts/*.zip
 fonts/general-sans/
+fonts/GeneralSans.ttf
+perf-results/

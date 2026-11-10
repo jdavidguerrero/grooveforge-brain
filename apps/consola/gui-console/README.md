@@ -14,7 +14,8 @@ python3 apps/consola/gui-console/tools/screenshot.py
 python3 apps/consola/gui-console/tools/screenshot.py --screen Kit
 ```
 
-Use system Python with PySide6 6.11.1; no pip/uv setup or network is needed.
+Desktop verification uses Python 3.14 / PySide6 6.11.1. Pi setup uses apt Qt 6.8 / Python 3.13;
+see [13-gui-pi.md](../../docs/consola/13-gui-pi.md) and `pi/`. Runtime needs no network.
 `--screen` accepts a case-insensitive registry name or a legacy numeric ID.
 
 1–9 retain Boot, ModeSelect, Toasts, Settings, LiveSession, Layer, Transition,
@@ -42,8 +43,9 @@ or remain visual tabs (see the coverage doc).
 models; `review_data.py` supplies `SnapshotModel` lists with a stable `entry` role.
 `review_samples.json` is deterministic sample content extracted from the supplied
 Standalone/Controller HTML, including nested steps, notes and clips. No export JS
-or HTML runs in the application. Model timers start on pending changes, emitting
-one bounding dataChanged range per 16 ms instead of polling every idle list.
+or HTML runs in the application. Standalone model timers start on pending changes. In a GUI window, `SurfaceBatcher`
+owns a thread-safe FIFO, wakes the window on new input, drains at `afterAnimating`,
+and flushes each model once before scenegraph sync. Independent model timers are disabled.
 The engine owns the state QObject to keep its lifetime safe across engine teardown.
 
 [fonts/README.md](fonts/README.md) describes local FontLoaders, explicit variable
@@ -54,3 +56,15 @@ The screenshot tool fails on QML warnings, renders 35 PNGs at 1280×720 with Qt'
 offscreen/software backend and produces [an offline gallery](screenshots/index.html)
 and [a complete manifest](screenshots/manifest.json). These captures and desktop
 tests do not establish the Pi 5 performance gate required by ADR-007.
+
+Pi rotation: `main.py --rotate 90 --rotation-method qml`. Qt Quick requires a QML
+transform; EGLFS's rotation environment variable only affects software widgets.
+`--rotation-method eglfs` is an explicitly unverified diagnostic comparison.
+
+```sh
+python3 apps/consola/gui-console/tools/perf_gate.py --duration 3 --warmup 0 --offscreen --output /tmp/gf-gate.json
+```
+
+The harness returns 1 for smoke/FAIL/UNVERIFIED and 0 only for a complete Pi gate.
+It saves JSON and Qt logs, checks frame pacing, QSG p99, enqueue-to-swap latency
+and single-core CPU. `pi/run_perf.sh` also records temperature/throttling.

@@ -25,7 +25,7 @@ Item {
             Label { text: "GENERATED   A MIN ✓   124 ✓"; color: Theme.tealPlus; font.pixelSize: Theme.m12 }
         }
         Column { x: Theme.transitionSummaryX; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.s1
-            Label { text: console.liveState === "offline" ? "BRAIN OFFLINE" : "TRANSITION"; font.pixelSize: Theme.m11; color: console.liveState === "offline" ? Theme.amber : Theme.mon }
+            Label { text: console.liveState === "offline" ? "ENGINE OFFLINE" : "TRANSITION"; font.pixelSize: Theme.m11; color: console.liveState === "offline" ? Theme.amber : Theme.mon }
             Label { text: console.liveState === "offline" ? "RETRY · 4 S" : "SWAP · 8 PH"; face: Theme.displayFont; weight: Font.ExtraBold; font.pixelSize: Theme.m28; color: console.liveState === "offline" ? Theme.amber : Theme.white }
             Label { text: "READY · TRANSITION"; font.pixelSize: Theme.m11; color: Theme.grayN }
         }
@@ -33,7 +33,7 @@ Item {
     Repeater { model: [
         {y:Theme.roomY,t:"ROOM",s:"SELVA NOCTURNA · WHAT THE ROOM HEARS",c:Theme.tealPlus},
         {y:Theme.nextY,t:"NEXT",s:"KALIMBA DUSK · KICK ENTERS NEXT PHRASE · BASS IN CUE",c:Theme.white},
-        {y:Theme.optionAY,t:"ENGINE OPTIONS",s:console.liveState === "offline" ? "PAUSED · BRAIN OFFLINE" : "PATTERN + SOUND + ENERGY · PRESS ENC TO CUE",c:Theme.purpleBright}]
+        {y:Theme.optionAY,t:"ENGINE OPTIONS",s:console.liveState === "offline" ? "PAUSED · ENGINE OFFLINE" : "PATTERN + SOUND + ENERGY · PRESS ENC TO CUE",c:Theme.purpleBright}]
         Row { x: Theme.s3; y: modelData.y-Theme.rowLabelHeight-Theme.rowLabelGap; spacing: Theme.s3
             Label { text: modelData.t; color: modelData.c; font.pixelSize: Theme.m11 }
             Label { text: modelData.s; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m11 }
