@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <cstdint>
 #include "params.h"
 #include "preset_codec.h"
 #include "hybrid_codec.h"

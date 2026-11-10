@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "drum.h"
 #include <algorithm>
 #include <cmath>

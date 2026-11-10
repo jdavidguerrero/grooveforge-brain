@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "metadata.h"
 #include "params.h"
 #include <algorithm>

@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "drum_service.h"
 #include <algorithm>
 #include <cstdlib>

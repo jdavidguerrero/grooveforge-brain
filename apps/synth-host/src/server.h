@@ -1,4 +1,7 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "audio.h"
 #include "drum_service.h"
 #include "json.h"

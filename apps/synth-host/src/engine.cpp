@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <cstdint>
 #include "engine.h"
 #include "hybrid_preview.h"
 #include "prophet_preset.h"

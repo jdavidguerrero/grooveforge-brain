@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "drum_files.h"
 #include "bench_support.h"
 #include <cstring>

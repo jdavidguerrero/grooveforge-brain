@@ -1,4 +1,7 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "rt_queue.h"
 #include <vector>
 #include <memory>

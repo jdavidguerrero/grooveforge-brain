@@ -1,4 +1,6 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
 #include <json-c/json.h>
 #include <cmath>
 #include <stdexcept>

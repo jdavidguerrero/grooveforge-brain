@@ -1,3 +1,6 @@
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "metadata.h"
 #include "params.h"
 #include "engines/dx7_6op_core.h"

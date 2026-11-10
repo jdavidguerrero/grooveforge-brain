@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <cstdint>
 #include "backends.h"
 #include "server.h"
 #include "bench_support.h"

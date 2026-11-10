@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <cstdint>
 #include "server.h"
 #include "metadata.h"
 #include "dx7_6op_preview.h"

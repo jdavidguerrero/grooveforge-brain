@@ -1,4 +1,7 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "drum_files.h"
 #include <functional>
 #include <chrono>

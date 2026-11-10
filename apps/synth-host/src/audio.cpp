@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <cstdint>
 #include "audio.h"
 #include "bench_support.h"
 #include <algorithm>

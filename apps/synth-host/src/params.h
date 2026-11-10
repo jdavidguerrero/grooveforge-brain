@@ -1,4 +1,7 @@
 #pragma once
+#include <cstddef>
+#include <cstdint>
+#include <stdexcept>
 #include "ui/layer_bank.h"
 #include "engines/dx7_6op_core.h"
 #include <array>
