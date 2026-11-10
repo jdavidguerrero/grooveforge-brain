@@ -20,7 +20,7 @@ class Screen:
 
 SCREENS = (
     Screen('Boot', 'GROOVEPILOT', 'COMMON'),
-    Screen('ModeSelect', 'Choose a mode', 'COMMON'),
+    Screen('ModeSelect', 'Choose a mode', 'COMMON', design='55'),
     Screen('Toasts', 'LIVE · SESSION'),
     Screen('Settings', 'Surface', 'COMMON'),
     Screen('LiveSession', 'LIVE · SESSION', columns=True),
@@ -80,6 +80,19 @@ SCREENS = (
     Screen('SynthSettingsConnections', 'Connections', 'COMMON', source='SynthSettings', design='44'),
     Screen('SynthSettingsSystem', 'System', 'COMMON', source='SynthSettings', design='45'),
     Screen('SynthScale', 'SYNTH · SCALE', 'STANDALONE', source='SynthScale'),
+    Screen('DrumRack', 'RACK', 'DRUM', source='DrumRack', design='46'),
+    Screen('DrumRackStates', 'RACK', 'DRUM', source='DrumRack', design='46b'),
+    Screen('DrumRackEmpty', 'RACK', 'DRUM', source='DrumRack', design='46c'),
+    Screen('DrumPad', 'PAD EDIT', 'DRUM', source='DrumPad', design='47'),
+    Screen('DrumBrowser', 'BROWSER', 'DRUM', source='DrumBrowser', design='48'),
+    Screen('DrumBrowserEmpty', 'BROWSER', 'DRUM', source='DrumBrowser', design='48b'),
+    Screen('DrumImport', 'IMPORT', 'DRUM', source='DrumImport', design='49'),
+    Screen('DrumSteps', 'STEPS', 'DRUM', source='DrumSteps', design='50'),
+    Screen('DrumProbability', 'STEPS · PROBABILITY', 'DRUM', source='DrumSteps', design='50b'),
+    Screen('DrumPerform', 'PERFORM', 'DRUM', source='DrumPerform', design='51'),
+    Screen('DrumMixer', 'MIXER', 'DRUM', source='DrumMixer', design='52'),
+    Screen('DrumSave', 'SAVE RACK', 'DRUM', source='DrumSave', design='53'),
+    Screen('DrumVariations', 'GENERATE VARIATIONS', 'DRUM', source='DrumVariations', design='54'),
 )
 SCREEN_NAMES = [s.name for s in SCREENS]
 SCREEN_BY_NAME = {s.name.casefold(): i for i, s in enumerate(SCREENS, 1)}

@@ -15,7 +15,7 @@ from rotation import add_rotation_arguments, configure_rotation
 from surface_batch import SurfaceBatcher
 
 
-def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None, fake_surface=False):
+def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None, fake_surface=False, drum_socket=None, drum_transport=None):
     sans = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
     mono = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     families = QFontDatabase.families()
@@ -41,6 +41,13 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     state.synth = synth
     engine.synth_state = synth
     engine.rootContext().setContextProperty('synth', synth)
+    from drum_state import DrumState
+    from drum_client import DrumClient
+    drum_client = DrumClient(drum_socket, engine, timeout_ms=5000, transport=drum_transport) if drum_socket else None
+    drum = DrumState(state, drum_client, engine)
+    state.drum = drum
+    engine.drum_state = drum
+    engine.rootContext().setContextProperty('drum', drum)
     batcher = SurfaceBatcher(state, engine)
     engine.surface_batcher = batcher
     from touch_controller import TouchController
@@ -48,6 +55,10 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     touch = TouchController(state, engine)
     surface = SynthSurface(state, synth, batcher, touch, parent=engine)
     engine.touch_controller, engine.synth_surface = touch, surface
+    from drum_surface import DrumSurface
+    drum_surface = DrumSurface(state, drum, batcher, touch, surface, parent=engine)
+    engine.drum_surface = drum_surface
+    engine.rootContext().setContextProperty("drumSurface", drum_surface)
     state.surface = surface
     engine.rootContext().setContextProperty('touch', touch)
     engine.rootContext().setContextProperty('surface', surface)
@@ -72,6 +83,9 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
         window.afterAnimating.connect(batcher.drain_frame)
         batcher.wakeRequested.connect(window.update, Qt.QueuedConnection)
         synth.wakeRequested.connect(window.update, Qt.QueuedConnection)
+        drum.wakeRequested.connect(window.update, Qt.QueuedConnection)
+        if drum_client:
+            drum_client.start()
         if client:
             client.start()
     return engine, state
@@ -86,6 +100,9 @@ def main():
     parser.add_argument('--synth-socket', help='Real/fake contract-14 Unix socket (default: XDG_RUNTIME_DIR/gf-synth.sock)')
     parser.add_argument('--preview', action='store_true', help='Deterministic offline design review')
     parser.add_argument('--fake-synth', action='store_true', help='Launch a separate fake host process; no audio')
+    parser.add_argument('--drum-mode', action='store_true', help='Enter DRUM rack performance mode')
+    parser.add_argument('--drum-socket', help='DRUM v1 host socket (same host as SYNTH)')
+    parser.add_argument('--fake-drum', action='store_true', help='Separate fake DRUM host process, no audio')
     parser.add_argument('--synth-mode', action='store_true', help='Enter SYNTH performance mode')
     parser.add_argument('--surface-port', help='MIDI input/output substring, e.g. GF Consola')
     parser.add_argument('--fake-surface', action='store_true', help='Desktop pad/encoder simulation, no surface input')
@@ -108,39 +125,56 @@ def main():
     fake_process = None
     fake_dir = None
     synth_socket = None if args.preview else args.synth_socket or socket_path()
-    if args.fake_synth:
+    if args.fake_synth and args.fake_drum:
+        parser.error("Select only one fake host")
+    if args.fake_synth or args.fake_drum:
         fake_dir = tempfile.TemporaryDirectory(prefix='gf-synth-')
         synth_socket = str(Path(fake_dir.name)/'host.sock')
-        fake_process = subprocess.Popen([sys.executable, str(ROOT/'fake_synth_host.py'), '--socket', synth_socket], stdout=subprocess.PIPE, text=True)
+        fake_process = subprocess.Popen([sys.executable, str(ROOT/('fake_drum_host.py' if args.fake_drum else 'fake_synth_host.py')), '--socket', synth_socket], stdout=subprocess.PIPE, text=True)
         ready = fake_process.stdout.readline()
         if not ready:
             raise RuntimeError('Fake host failed to start')
         print(ready.strip())
-    engine, state = create_engine(synth_socket=synth_socket, frameless=args.frameless, rotation=rotation, display_screen=args.display_screen, fake_surface=args.fake_surface)
+    drum_socket = None if args.preview else args.drum_socket or synth_socket
+    engine, state = create_engine(drum_socket=drum_socket, synth_socket=None if args.fake_drum else synth_socket, frameless=args.frameless, rotation=rotation, display_screen=args.display_screen, fake_surface=args.fake_surface)
     if not engine.rootObjects():
         return 1
     if args.synth_mode:
         state._mode = 2
-    state.setScreen(screen_id('SynthParts') if args.synth_mode and args.screen == 5 else args.screen)
+    if args.drum_mode:
+        state._mode = 3
+    state.setScreen(screen_id('DrumRack') if args.drum_mode and args.screen == 5 else screen_id('SynthParts') if args.synth_mode and args.screen == 5 else args.screen)
     if args.surface_port or args.fake_surface:
         from synth_surface import open_note_output, RoomControls
         try:
             if not args.preview:
-                engine.synth_surface.notes, route = open_note_output(args.note_transport, args.host_midi_port,
-                                                                      synth_socket, args.fake_surface)
-                engine.synth_surface._status = ('FAKE SURFACE · ' if args.fake_surface else '')+route
-                engine.synth_surface.changed.emit()
-                print('Note route:', route)
+                from drum_surface import open_drum_notes
+                if not args.fake_drum:
+                    engine.synth_surface.notes, route = open_note_output(args.note_transport, args.host_midi_port,
+                                                                          synth_socket, args.fake_surface)
+                    engine.synth_surface._status = ('FAKE SURFACE · ' if args.fake_surface else '')+route
+                    engine.synth_surface.changed.emit()
+                    print('Synth note route:', route)
+                if not args.fake_synth:
+                    engine.drum_surface.notes, route = open_drum_notes(args.note_transport, args.host_midi_port,
+                                                                        drum_socket, args.fake_surface)
+                    engine.drum_surface._route = route
+                    engine.drum_surface.changed.emit()
+                    print('Drum note route:', route)
             if args.surface_port:
                 engine.synth_surface.room = RoomControls(args.surface_cdc, args.room_node)
                 engine.synth_surface.open_ports(args.surface_port, args.external_midi_port)
         except (OSError, ValueError, ImportError, RuntimeError) as exc:
             engine.synth_surface.close()
             engine.synth_surface._failure(str(exc))
+            engine.drum_surface.failure(str(exc))
             print(f'Surface unavailable: {exc}', file=sys.stderr)
     try:
         return app.exec()
     finally:
+        engine.drum_surface.close()
+        if engine.drum_state.client:
+            engine.drum_state.client.stop()
         engine.synth_surface.close()
         if engine.synth_state.client:
             engine.synth_state.client.stop()

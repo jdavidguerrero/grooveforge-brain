@@ -1,26 +1,12 @@
 #pragma once
 #include "engine.h"
+#include "drum.h"
 #include <atomic>
 #include <array>
 #include <cstdint>
 #include <type_traits>
 namespace host {
 constexpr unsigned RATE=48000,MAX_FRAMES=8192,MAX_MIDI=2048;
-/** @brief Bounded single producer/single consumer queue; no overwrite of unread data. */
-template<class T,size_t N> class Spsc {
-    static_assert(std::is_trivially_copyable_v<T>);
-    static_assert(std::atomic<uint32_t>::is_always_lock_free);
-    std::array<T,N> data_{};
-    alignas(64) std::atomic<uint32_t> read_{0};
-    alignas(64) std::atomic<uint32_t> write_{0};
-public:
-    size_t free_slots() const noexcept {
-        const auto w=write_.load(std::memory_order_relaxed),r=read_.load(std::memory_order_acquire);
-        return (r+N-w-1)%N;
-    }
-    bool push(const T& v) noexcept {const auto w=write_.load(std::memory_order_relaxed);const auto next=(w+1)%N;if(next==read_.load(std::memory_order_acquire))return false;data_[w]=v;write_.store(uint32_t(next),std::memory_order_release);return true;}
-    bool pop(T& v) noexcept {const auto r=read_.load(std::memory_order_relaxed);if(r==write_.load(std::memory_order_acquire))return false;v=data_[r];read_.store(uint32_t((r+1)%N),std::memory_order_release);return true;}
-};
 enum class Operation { Param,Swap,Level,Mute,Note };
 struct Command {Operation op=Operation::Note;uint64_t token=0;unsigned part=0,param=0;float value=0;Engine* engine=nullptr;};
 struct Midi {uint32_t frame=0;uint8_t status=0,a=0,b=0;};
@@ -49,12 +35,13 @@ class Audio {
     void midi_control(const Midi&) noexcept;
     void midi_note(const Midi&) noexcept;
 public:
+    Drum drum;
     Spsc<Command,256> commands;
     Spsc<Ack,4096> acknowledgements;
     Spsc<Telemetry,128> telemetry;
     std::atomic<uint64_t> xruns{0},deadline_misses{0},backend_xruns{0},clock_gaps{0},dropped{0},heartbeat{0};
     std::atomic<unsigned> block{128};
-    std::atomic<bool> fault{false};
+    std::atomic<bool> fault{false},clock_reset_requested{false};
     /** @brief Prepares the four initial patches and meter/CC tables. */
     explicit Audio(const std::array<Config,4>& configs);
     ~Audio();
@@ -62,8 +49,8 @@ public:
     Engine* identity(unsigned part) const noexcept {return engines_[part];}
     Audio(const Audio&)=delete;
     Audio& operator=(const Audio&)=delete;
-    /** @brief Main callback, ten planar outputs; MIDI sorted by frame, bounded to MAX_MIDI. */
-    void process(unsigned frames,const std::array<float*,10>& outputs,const Midi* midi=nullptr,unsigned count=0) noexcept;
+    /** @brief Main callback, ten legacy outputs plus optional stereo cue; MIDI sorted by frame, bounded to MAX_MIDI. */
+    void process(unsigned frames,const std::array<float*,10>& outputs,const Midi* midi=nullptr,unsigned count=0,const std::array<float*,2>& cue={}) noexcept;
 };
 /** @brief Default part engines in role order; benchmark enables the measured wet workload. */
 std::array<Config,4> initial_configs(bool benchmark=false);

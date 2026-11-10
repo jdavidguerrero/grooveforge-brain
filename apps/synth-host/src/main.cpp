@@ -58,22 +58,22 @@ int main(int argc,char** argv) {
 #else
         std::string backend="offline";
 #endif
-        std::vector<int> connected_fds;unsigned block=256;double seconds=0;bool wet=false,no_state=false;
+        DrumOptions drum_options;std::vector<int> connected_fds;unsigned block=256;double seconds=0;bool wet=false,no_state=false;
         for(int i=1;i<argc;++i) {
             const std::string arg=argv[i];auto value=[&](){if(i+1>=argc)throw std::runtime_error("missing value: "+arg);return std::string(argv[++i]);};
-            if(arg=="--control-fd")connected_fds.push_back(std::stoi(value()));else if(arg=="--backend")backend=value();else if(arg=="--socket")socket=value();else if(arg=="--presets")presets=value();else if(arg=="--state")state=value();else if(arg=="--repo-presets")repo=value();else if(arg=="--block")block=unsigned(std::stoul(value()));else if(arg=="--seconds")seconds=std::stod(value());else if(arg=="--render")wav=value();else if(arg=="--report")report=value();else if(arg=="--benchmark")wet=true;else if(arg=="--no-state")no_state=true;
-            else if(arg=="--help") {std::cout<<"gf-synth-host [--backend pipewire|jack|offline] [--socket PATH] [--presets DIR]\n  [--state PATH|--no-state] [--repo-presets DIR] [--block 256] [--seconds N] [--benchmark]\n  --render FILE.wav --seconds 20 [--report FILE.json]   deterministic wet benchmark\n  --control-fd FD (repeatable): inherit connected Unix sockets, for sandbox tests\n";return 0;}else throw std::runtime_error("unknown argument: "+arg);
+            if(arg=="--drum-data")drum_options.data=value();else if(arg=="--drum-kit-script")drum_options.script=value();else if(arg=="--drum-kit-python")drum_options.python=value();else if(arg=="--control-fd")connected_fds.push_back(std::stoi(value()));else if(arg=="--backend")backend=value();else if(arg=="--socket")socket=value();else if(arg=="--presets")presets=value();else if(arg=="--state")state=value();else if(arg=="--repo-presets")repo=value();else if(arg=="--block")block=unsigned(std::stoul(value()));else if(arg=="--seconds")seconds=std::stod(value());else if(arg=="--render")wav=value();else if(arg=="--report")report=value();else if(arg=="--benchmark")wet=true;else if(arg=="--no-state")no_state=true;
+            else if(arg=="--help") {std::cout<<"gf-synth-host [--backend pipewire|jack|offline] [--socket PATH] [--presets DIR]\n  [--state PATH|--no-state] [--repo-presets DIR] [--block 256] [--seconds N] [--benchmark]\n  --render FILE.wav --seconds 20 [--report FILE.json]   deterministic wet benchmark\n  [--drum-data DIR] [--drum-kit-python PYTHON] [--drum-kit-script FILE]\n  --control-fd FD (repeatable): inherit connected Unix sockets, for sandbox tests\n";return 0;}else throw std::runtime_error("unknown argument: "+arg);
         }
         if(block<16||block>MAX_FRAMES||!std::isfinite(seconds)||seconds<0)throw std::runtime_error("invalid block or duration");
         initialize_catalogs();
         if(!wav.empty()){render(wav,report,seconds?seconds:20,block);return 0;}
-        if(state.empty())state=(std::filesystem::path(presets)/"last-state.json").string();if(no_state)state.clear();
+        if(state.empty())state=(std::filesystem::path(presets)/"last-state.json").string();if(no_state){state.clear();drum_options.checkpoint=false;}
         Presets library(presets,repo);State current=restore_state(state,wet);std::array<Config,4> configs;for(unsigned p=0;p<4;++p)configs[p]=current[p].config;
         auto audio=std::make_unique<Audio>(configs);
         for(unsigned p=0;p<4;++p){current[p].identity=audio->identity(p);audio->commands.push({Operation::Level,0,p,0,current[p].level,nullptr});audio->commands.push({Operation::Mute,0,p,0,float(current[p].mute),nullptr});}
         std::signal(SIGINT,stop);std::signal(SIGTERM,stop);std::signal(SIGPIPE,SIG_IGN);
         auto connection=start_backend(backend,*audio,block);
         std::cerr<<"gf-synth-host 0.1.0 backend="<<backend<<" rate=48000 socket="<<socket<<'\n';
-        serve(*audio,current,library,socket,state,stopping,seconds,connected_fds);return 0;
+        serve(*audio,current,library,socket,state,stopping,seconds,connected_fds,drum_options);return 0;
     }catch(const std::exception& e){std::cerr<<"gf-synth-host: "<<e.what()<<'\n';return 1;}
 }

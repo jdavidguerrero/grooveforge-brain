@@ -411,3 +411,32 @@ pw-top
 En `pw-top` comprobar nodo `gf-synth-host`, RATE48000, QUANT256, carga y ERR estable con patrón4partes + GUI. Comprobar también política de los hilos de `pipewire`; priorizar sólo el cliente no arregla un driver sin RT. El PID de Python/Qt debe mostrar OTHER/0 con `chrt -p PID_GUI`. RTKit puede limitar la prioridad por debajo de70: anotar la concedida.
 
 Sólo después de confirmar RT y cero errores en256, probar temporalmente128: arrancar host con `--backend pipewire --block 128` (o sustituir ExecStart mediante override del servicio, sin dos hosts simultáneos) y en otra terminal `pw-metadata -n settings 0 clock.force-quantum 128`. Comprobar QUANT real en pw-top; la configuración persistida256 sigue intacta. Volver con `pw-metadata -n settings 0 clock.force-quantum 256` y `--block 256`. No promover128 hasta repetir ensayo con GUI, notas sostenidas y patrón4partes sin xruns. No se declara aprobado RT ni latencia Pi desde CTest de Mac; esta plataforma no dispone de SDK PipeWire/JACK y esas ramas necesitan compilación/ejecución Linux.
+
+## Extensión DRUM (2026-11-10)
+
+[22](22-modo-drum.md) y14§7 incorporan sampler, secuenciador y transporte al mismo
+callback. Se mantienen las10salidas previas y se añaden cue_L/R; mix suma ROOM
+synth+drums. MIDI canal10 notas0..15 dispara pads, sin tocar synth1..4. El backend
+conserva el core PipeWire conectado y quantum256. Discontinuidad real del backend
+pide reset mediante atomic; sólo el dueño de audio cambia epoch, detiene DRUM y
+rechaza comandos DRUM del epoch anterior, devolviendo memoria retirada a control.
+No se reimplementa reloj musical en Python.
+
+Voces64 totales, layers/RR4,256MiB de PCM residente incluyendo preparación y cue.
+Hash, rutas contenidas y WAV PCM16/24/32/float se validan antes de swap. Muestras
+importadas por el servicio tienen WAVfloat48k canónico (sin timestamp PEAK en el
+hash); carga directa PCM tiene remuestreo lineal offline. Parametrización, pasos,
+choke, grupos y audición se aplican por SPSC; ningún heap/IO/lock nuevo en audio.
+CUE no roba voces ROOM; al saturarse se rechaza audición antes de cortar sala.
+REC lleno desarma y cuenta el error; jamás pisa un step ocupado.
+
+Servidor envía deltas pequeños por edición, no los8patrones completos por giro.
+JSON completo sólo al cargar/consultar/guardar. Checkpoint de trabajo restaura
+rack/params/steps/grupos/patrón seleccionado con transporte y REC apagados, queued
+vacío. Espera el ACK inicial antes de responder a clientes. Generación/import son
+procesos worker Python vía posix_spawn, sin shell ni ejecución en audio.
+
+Opciones: `--drum-data DIR`, `--drum-kit-python PYTHON`, `--drum-kit-script FILE`.
+Default desarrollo ~/.local/share/gf-drum o GF_DRUM_DATA; Pi configurar /data/drum.
+No cambiar ExecStart/instalar/flash automáticamente. Resultados, comandos Pi y
+límites: [informe DRUM](../../consola/gui-console/screenshots/modo-drum/REPORT.md).

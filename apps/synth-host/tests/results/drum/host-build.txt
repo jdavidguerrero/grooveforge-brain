@@ -1,0 +1,16 @@
+[  7%] Built target gf_drum_led_return_test
+[  8%] Built target gf_prophet_preview
+[ 25%] Built target gf_dx7_6op
+[ 35%] Built target gf_preset_codec
+[ 55%] Built target gf_prophet_preset
+[ 62%] Built target gf_host_core
+[ 67%] Built target gf-export-metadata
+[ 72%] Built target gf_host_rt_test
+[ 72%] Built target gf_host_audio_test
+[ 82%] Built target gf-synth-host
+[ 85%] Built target gf_host_dx7_test
+[ 87%] Built target synth_metadata
+[ 91%] Built target gf-export-drum-metadata
+[ 95%] Built target gf_host_drum_test
+[ 98%] Built target gf-drum-bench
+[100%] Built target drum_metadata

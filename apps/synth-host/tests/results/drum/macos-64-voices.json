@@ -1,0 +1,18 @@
+{
+  "scenario": "sampler-64-stereo-voices-clock",
+  "sample_rate": 48000,
+  "block": 256,
+  "warmup_seconds": 2,
+  "measured_seconds": 20,
+  "mean_pct": 5.264865175000005,
+  "p99_pct": 6.910931250000001,
+  "max_pct": 8.76249375,
+  "deadline_misses": 0,
+  "voice_steals": 0,
+  "clipped": 0,
+  "checksum": 1.758064902282058,
+  "compiler": "Apple LLVM 17.0.0 (clang-1700.4.4.1)",
+  "policy": "Release -O2 -fno-fast-math -ffp-contract=off + FTZ; no RT scheduling",
+  "machine": "arm64",
+  "os": "macOS-27.0.1-arm64-arm-64bit-Mach-O"
+}

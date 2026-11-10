@@ -1,0 +1,14 @@
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/46-DrumRack.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/46b-DrumRackStates.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/46c-DrumRackEmpty.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/47-DrumPad.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/48-DrumBrowser.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/48b-DrumBrowserEmpty.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/49-DrumImport.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/50-DrumSteps.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/50b-DrumProbability.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/51-DrumPerform.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/52-DrumMixer.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/53-DrumSave.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/54-DrumVariations.png
+/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/consola/gui-console/screenshots/modo-drum/55-ModeSelect.png

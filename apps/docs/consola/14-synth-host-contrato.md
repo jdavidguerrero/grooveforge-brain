@@ -65,3 +65,13 @@ Toda petición lleva `"id"` (entero del cliente) y el host responde `{"id":…, 
 
 El núcleo de la consola (estado del set, frases, ACCEPT), el sampler, la parte del Brain físico (Teensy) y la
 grabación. La parte del Brain físico aparece en PARTS por el estado USB de la Teensy, no por este host.
+
+## 7. Extensión DRUM v1 (2026-11-10)
+
+D1/D2/D4 de19§12 incorporan sampler, secuenciador y transporte al mismo host.
+Contrato aditivo completo: [22§5](22-modo-drum.md#5-extensión-del-contrato14).
+`hello` conserva version0.1.0 y añade drum_version1/capacidades; comandos synth
+sin cambios. Se agregan cue_L/R; mix_L/R incluye ROOM del rack. Canal10 MIDI
+notas0..15 dispara pads0..15, sin reasignar canales1..4. Índices DRUM0-based.
+Carga/preview/edición/clock/jobs y recuperación detenida se definen en22; §6 se
+mantiene como alcance original de synth, ampliado por esta sección.

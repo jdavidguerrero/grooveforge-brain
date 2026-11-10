@@ -54,7 +54,7 @@ class TouchController(QObject):
     def focus_targets(self):
         targets = [t for t in self.targets if t.isVisible() and t.property('enabled') and
                    (self.available(t) or any(self.scroll_ancestors(t)))]
-        modal_names = {'modal','reviewModal','synthSaveWindow'}
+        modal_names = {'modal','reviewModal','synthSaveWindow','drumTempoWindow'}
         modals = {a for t in targets for a in self.ancestors(t) if a.objectName() in modal_names}
         if modals:
             targets = [t for t in targets if any(a in modals or a.objectName() in ('topBar','softKeys')
