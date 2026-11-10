@@ -1,0 +1,32 @@
+Internal ctest changing into directory: /tmp/gf-gemelo-pi-build.wOJDzU/O2
+Test project /tmp/gf-gemelo-pi-build.wOJDzU/O2
+      Start  1: juno_comparison_smoke
+ 1/13 Test  #1: juno_comparison_smoke ............   Passed    2.97 sec
+      Start  2: ob6_comparison_smoke
+ 2/13 Test  #2: ob6_comparison_smoke .............   Passed    1.42 sec
+      Start  3: prophet_preview
+ 3/13 Test  #3: prophet_preview ..................   Passed    3.36 sec
+      Start  4: juno_preview
+ 4/13 Test  #4: juno_preview .....................   Passed    6.08 sec
+      Start  5: ob6_preview
+ 5/13 Test  #5: ob6_preview ......................   Passed    0.97 sec
+      Start  6: model_d_preview
+ 6/13 Test  #6: model_d_preview ..................   Passed    0.31 sec
+      Start  7: arp2600_preview
+ 7/13 Test  #7: arp2600_preview ..................   Passed    0.54 sec
+      Start  8: hybrid_preview
+ 8/13 Test  #8: hybrid_preview ...................   Passed    0.78 sec
+      Start  9: hybrid_router
+ 9/13 Test  #9: hybrid_router ....................   Passed    0.18 sec
+      Start 10: hybrid_codec
+10/13 Test #10: hybrid_codec .....................   Passed    0.21 sec
+      Start 11: preset_codec
+11/13 Test #11: preset_codec .....................   Passed    0.21 sec
+      Start 12: engine_bench_self_test
+12/13 Test #12: engine_bench_self_test ...........   Passed    0.29 sec
+      Start 13: engine_bench_four_part_smoke
+13/13 Test #13: engine_bench_four_part_smoke .....   Passed    1.68 sec
+
+100% tests passed, 0 tests failed out of 13
+
+Total Test time (real) =  19.01 sec
