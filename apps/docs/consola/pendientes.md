@@ -38,3 +38,10 @@ FM 4-OP sigue disponible. Falta la medición Pi/Teensy y la calibración AMD/AMS
   en el bus I2C de la placa.
 - **Prototipo actual:** 2 MCP (módulos, puerto A) y 1 ADS1115 (dirección fija 0x48, sin pata ADDR): basta para validar
   el bus compartido con el SGTL5000. El Sharp se prueba en A2 del mismo ADS.
+
+## Entrada MIDI del host en UMP (2026-11-10)
+
+PipeWire 1.4 publica los teclados USB (p. ej. Arturia MiniLab mkII) como **MIDI 2.0 / UMP de 32 bits**, y
+`gf-synth-host:midi_in` se declara como MIDI 1.0 de 8 bits: `pw-link` no los conecta. Mientras tanto, un puente
+provisional (`~/midi_to_host.py` en el Pi: ALSA → comando `note` del socket) hace sonar el teclado; probado por Juan
+con el Model D. Arreglo: el host debe declarar su puerto en UMP (y convertir), o aceptar ambos formatos.
