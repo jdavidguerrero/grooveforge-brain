@@ -481,6 +481,8 @@ class DrumState(QObject):
         if name=='tempo': self._tempo=not self._tempo
         elif name=='tempo-close': self._tempo=False
         elif name=='bank': self._page=(self._page+1)%len(self._pages) if self._pages else 0
+        elif name=='layer-next': self._layer_index=(self._layer_index+1)%max(1,len(self.pad_info()['layers']))
+        elif name=='level': self._page=0
         elif name=='step-page': self._step_page=1-self._step_page
         elif name=='lane-bank': self._lane_bank=1-self._lane_bank
         elif name=='mixer-bank': self._mixer_bank=1-self._mixer_bank
@@ -579,7 +581,7 @@ class DrumState(QObject):
         nav=lambda label,screen,lit=False:key(label,action='nav:'+screen,lit=lit)
         screen=self._screen
         if screen=='DrumPad':
-            return [key('Bank',str(self._page+1)+'/4','bank',True),key('Layer',str(self._layer_index+1),'audition'),key('Fine','ON' if self._fine else 'OFF','fine'),key('Audition','Cue','audition'),key('Stop cue','','cue-stop'),key(),key('Revert','','revert'),nav('Back','DrumRack')]
+            return [key('Bank',str(self._page+1)+'/4','bank',True),key('Layer',str(self._layer_index+1),'layer-next'),key('Fine','ON' if self._fine else 'OFF','fine'),key('Audition','Cue','audition'),key('Stop cue','','cue-stop'),key(),key('Revert','','revert'),nav('Back','DrumRack')]
         if screen in ('DrumBrowser','DrumBrowserEmpty'):
             return [key('Load','→ Pad '+str(self._pad+1),'load',True,enabled=bool(self.filtered_samples())),key('Audition','CUE ONLY','preview',enabled=bool(self.filtered_samples())),key('Stop cue','','cue-stop'),key('Search','','text:query'),nav('Import','DrumImport'),key('Engine kit','Render','render'),nav('Rack','DrumRack'),nav('Back','DrumRack')]
         if screen=='DrumImport':
@@ -589,7 +591,7 @@ class DrumState(QObject):
         if screen=='DrumPerform':
             return [nav('Pads','DrumRack'),nav('Steps','DrumSteps'),key('Record','','record',self._clock['armed']),key('Mute','Hold + pad','mute',self._hold=='mute'),key('Solo','Hold + pad','solo',self._hold=='solo'),key('Stop','','stop'),key('Play','','play',self._clock['running']),nav('Back','DrumRack')]
         if screen=='DrumMixer':
-            return [key('Bank',str(self._mixer_bank+1)+'/2','mixer-bank',True),key('Groups','Selected pad','groups'),key('Send','Reserved','send'),key('Pan','','pan'),key('Mute','+ pad','mute'),key('Solo','+ pad','solo'),key('Level','','bank'),nav('Back','DrumRack')]
+            return [key('Bank',str(self._mixer_bank+1)+'/2','mixer-bank',True),key('Groups','Selected pad','groups'),key('Send','Reserved','send'),key('Pan','','pan'),key('Mute','+ pad','mute'),key('Solo','+ pad','solo'),key('Level','','level'),nav('Back','DrumRack')]
         if screen=='DrumSave':
             return [key('Rack','','save-rack',self._save_kind=='RACK'),key('Pattern',chr(65+self._clock['pattern']),'save-pattern',self._save_kind=='PATTERN'),key('Name','','text:save'),key(),key(),key('Save','Replace','save',True,'#E8B84A'),key('Save as new','','save-new',False,'#5DCAA5'),nav('Cancel','DrumRack')]
         if screen=='DrumVariations':

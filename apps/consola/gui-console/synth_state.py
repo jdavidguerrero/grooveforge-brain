@@ -489,15 +489,15 @@ class SynthState(QObject):
             return [key('Root', action='synth:root-next'),key('Scale', action='synth:scale-next'),key('Oct −', action='synth:oct-minus'),key('Oct +', action='synth:oct-plus')]+[key(),key(),key(),key('Back',action='synth:nav:SynthParts')]
         if self._screen.startswith('SynthSettings'):
             return [key(n,action='nav:'+dest,lit=self._screen==dest) for n,dest in [
-                ('Audio','SynthSettingsAudio'),('Connections','SynthSettingsConnections'),('Surface','Settings'),('System','SynthSettingsSystem')]] + [key(),key(),nav('Retry','retry'),key('Back',action='nav:SynthParts')]
+                ('Audio','SynthSettingsAudio'),('Connections','SynthSettingsConnections'),('Surface','Settings'),('System','SynthSettingsSystem')]] + [key(),key(),nav('Retry','retry'),key('Back',action='nav:'+('DrumRack' if self.console.drumMode else 'SynthParts' if self.console.synthMode else 'ModeSelect'))]
         if self._screen in ('SynthParts','SynthPartsStates'):
             keys = [key(p['role'],ENGINE_LABELS.get(p['engine'],p['engine']),p['role'],p['part']==self._part,'synth:open:'+str(p['part'])) for p in self._parts]
             keys += [key() for _ in range(4-len(keys))]
             keys += [key('BRAIN','OFFLINE',action='nav:SynthSettingsConnections'),key('Engine',self.engineLabel,action='synth:engine-next'),key('Mute','ON' if self.current_part.get('mute') else 'OFF',action='synth:mute'),key('Scale', action='synth:nav:SynthScale')]
             return keys
         if self._screen == 'SynthHybrid':
-            return [nav('Edit A','half-a'),key(),key(),key('Morph',str(self.values.get('layer.morph',0))),
-                    key('Layer',self.current_part.get('preset','')),
+            return [nav('Edit A','half-a'),key(),key(),key('Morph',str(self.values.get('layer.morph',0)),action='synth:morph-focus'),
+                    key('Layer',self.current_part.get('preset',''),action='synth:nav:SynthPresets'),
                     key(),key('Presets',action='synth:nav:SynthPresets'),nav('Edit B','half-b')]
         if self._screen == 'SynthSaveAs':
             return [key() for _ in range(5)]+[nav('Save','save'),key(),key('Cancel',action='synth:nav:SynthPresets')]
@@ -553,6 +553,11 @@ class SynthState(QObject):
             self.focusOperator((op-1+(-1 if value == 'op-prev' else 1))%self.operatorCount+1)
         elif value in ('fx-prev','fx-next'):
             self.chooseBank((self._bank+(-1 if value=='fx-prev' else 1))%max(1,self.bankCount))
+        elif value == 'morph-focus':
+            self.selectPage('LAYER')
+            self._focus = 0
+            self._dirty = True
+            self.flush_frame()
         elif value == 'half':
             self.selectPage(('b.' if self._page.startswith('a.') else 'a.')+'FILTER')
 

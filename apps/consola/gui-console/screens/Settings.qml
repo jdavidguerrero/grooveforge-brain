@@ -2,55 +2,36 @@ import QtQuick
 import "../theme"
 import "../components"
 Item {
-    Column { x: Theme.s5; y: Theme.s5; spacing: Theme.s1
-        Repeater { model: ["Audio","Connections","Surface","System"]
-            Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; width: Theme.settingsNavWidth; height: Theme.settingsRow; color: Theme.gpBgCard; border.color: console.settingsSection === modelData ? Theme.gpTeal : Theme.gpBorder
-                Label { x: Theme.s4; anchors.verticalCenter: parent.verticalCenter; text: modelData; face: Theme.osFont; font.pixelSize: Theme.m18 }
-                Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; anchors.verticalCenter: parent.verticalCenter; text: "ENC "+(index+1); font.pixelSize: Theme.m11; color: Theme.mon }
-                TouchTarget { hardwareAction: "navigation"; anchors.fill: parent; callback: function() { console.triggerAction("settings:"+modelData) }}
+    Rectangle { anchors.fill: parent; color: Theme.gpBgBase }
+    Column { x:24; y:24; spacing:8
+        Repeater { model:["Audio","Connections","Surface","System"]
+            Panel { required property int index; required property string modelData
+                width:216; height:56; color:modelData==='Surface'?Theme.gpBgCard:'transparent'; border.color:modelData==='Surface'?Theme.gpTeal:Theme.gpBorder
+                Label { x:16; height:56; text:modelData; face:Theme.osFont; font.pixelSize:18 }
+                TouchTarget { hardwareAction:'navigation'; callback:function(){console.triggerAction('settings:'+parent.modelData)} }
             }
         }
     }
-    Item { x: Theme.settingsBodyX; width: Theme.settingsBodyWidth; height: parent.height; visible: console.settingsSection === "Surface"
-        Repeater { model: [{n:"Pad LEDs",v:80,d:"Screen, pads and key LEDs share role colours."},{n:"Key LEDs",v:65,d:"Dim the keys without losing their state."}]
-            Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: index*(Theme.settingsBodyWidth+Theme.s4)/2; y: Theme.s5; width: (Theme.settingsBodyWidth-Theme.s4)/2; height: Theme.settingsLedHeight; color: Theme.gpBgCard; border.color: Theme.gpBorder
-                Label { x: Theme.s4; y: Theme.s4; text: modelData.n; font.pixelSize: Theme.m18; face: Theme.osFont }
-                Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; y: Theme.s4; text: modelData.v+"%"; font.pixelSize: Theme.m20 }
-                Meter { x: Theme.s4; y: Theme.topHeight; width: parent.width-2*x; height: Theme.osSliderHeight; clip: false; value: modelData.v/100; tint: Theme.gpTeal
-                    Rectangle { x: parent.width*modelData.v/100-width/2; anchors.verticalCenter: parent.verticalCenter; width: Theme.osThumb; height: width; radius: width/2; color: Theme.gpText }
-                }
-                Label { x: Theme.s4; y: Theme.mixerStripsY; width: parent.width-2*x; text: modelData.d; font.pixelSize: Theme.m11; color: Theme.mon }
-            }
+    Label { x:288; y:24; text:'Surface / Hands'; face:Theme.osFont; font.pixelSize:26 }
+    Label { x:288; y:66; text:'Local preferences · applied in SYNTH, DRUM and LIVE'; font.pixelSize:13; color:Theme.gpTextSec }
+    Repeater { model:[{title:'Hands · master',on:preferences.handsEnabled},{title:'Left IR',on:preferences.leftHand},{title:'Right IR',on:preferences.rightHand}]
+        Panel { required property int index; required property var modelData
+            x:288+index*324; y:110; width:308; height:148; color:Theme.gpBgCard; border.color:modelData.on?Theme.gpTeal:Theme.gpBorder
+            Label { x:20; y:18; text:modelData.title; face:Theme.osFont; font.pixelSize:20 }
+            Label { x:20; y:60; text:modelData.on?'ON':'OFF'; font.pixelSize:28; color:modelData.on?Theme.gpTeal:Theme.gpTextSec }
+            Label { x:20; y:112; text:'TAP OR PRESS ENC '+(parent.index+1); font.pixelSize:11; color:Theme.mon }
+            TouchTarget { objectName:'handsToggle'+parent.index; hardwareAction:'choice'; callback:function(){preferences.toggleHand(parent.index)} }
         }
-        Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; y: Theme.settingsForceY; width: parent.width; height: Theme.settingsForceHeight; color: Theme.gpBgCard; border.color: Theme.gpBorder
-            Label { x: Theme.s4; y: Theme.s3; text: "Force pads"; face: Theme.osFont; font.pixelSize: Theme.m18 }
-            Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; y: Theme.s4; text: "Hit each pad softly, then hard. Marker = trigger threshold."; font.pixelSize: Theme.m11; color: Theme.gpTextSec }
-            Repeater { model: [0.18,0.72,0.42,0.08]
-                Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: Theme.s4+index*(Theme.fsrTileWidth+Theme.s4); y: Theme.topHeight; width: Theme.fsrTileWidth; height: Theme.settingsForceHeight-Theme.topHeight-Theme.s4; color: Theme.gpBgBase; border.color: index === 1 ? Theme.gpTeal : Theme.gpBorder
-                    Label { x: Theme.s3; y: Theme.s2; text: "FSR "+(index+1); font.pixelSize: Theme.m14 }
-                    Rectangle { x: Theme.s3; y: Theme.dL; width: parent.width-2*x; height: Theme.fsrHeight; color: Theme.surface2
-                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: parent.height*modelData; color: Theme.gpTeal }
-                        Rectangle { y: parent.height*.72; width: parent.width; height: Theme.edge; color: Theme.white }
-                    }
-                    Label { x: Theme.s3; anchors.bottom: parent.bottom; anchors.bottomMargin: Theme.s2; text: "THR 28 · VEL "+Math.round(modelData*127); color: Theme.gpTextSec; font.pixelSize: Theme.m12 }
-                }
-            }
-        }
-        Repeater { model: ["Left IR", "Right IR"]
-            Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: index*(Theme.settingsBodyWidth+Theme.s4)/2; y: Theme.settingsIrY; width: (Theme.settingsBodyWidth-Theme.s4)/2; height: Theme.settingsIrHeight; color: Theme.gpBgCard; border.color: Theme.gpBorder
-                Label { x: Theme.s4; y: Theme.s4; text: modelData; face: Theme.osFont; font.pixelSize: Theme.m18 }
-                Label { anchors.right: parent.right; anchors.rightMargin: Theme.s4; y: Theme.s4; text: index ? "17 cm · READY" : "12 cm · READY"; color: Theme.gpTeal; font.pixelSize: Theme.m12 }
-                Meter { x: Theme.s4; y: Theme.topHeight; width: parent.width-2*x; height: Theme.s5; value: 0; tint: Theme.gpTeal
-                    Rectangle { x: parent.width*(6-Theme.handMin)/(Theme.handMax-Theme.handMin); width: parent.width*(26-6)/(Theme.handMax-Theme.handMin); height: parent.height; color: Theme.tealDim; radius: Theme.s1 }
-                    Rectangle { x: parent.width*((index ? 17 : 12)-Theme.handMin)/(Theme.handMax-Theme.handMin); width: Theme.edge; height: parent.height; color: Theme.gpTeal }
-                }
-                Label { x: Theme.s4; y: Theme.layerHeader; text: "4 cm        RANGE 6–26 CM        30 cm"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
+    }
+    Label { x:288; y:280; width:940; text:'Master and the individual hand must be ON. Disabled sensors ignore hand movement and presence in every mode. Expression pedals remain active.'; wrapMode:Text.WordWrap; font.pixelSize:14; color:Theme.gpTextSec }
+    Panel { x:288; y:348; width:956; height:138; color:Theme.gpBgCard; border.color:Theme.gpBorder
+        Label { x:20; y:16; text:'DRUM · M4 pad velocity'; face:Theme.osFont; font.pixelSize:20 }
+        Label { x:20; y:58; text:'Global fixed velocity: '+preferences.padVelocity+'   ·   FSR pads keep their measured velocity'; font.pixelSize:14; color:Theme.gpTextSec }
+        Row { x:20; y:88; spacing:12
+            Repeater { model:[64,100,127]
+                ActionButton { required property int modelData; width:140; height:38; text:String(modelData)+(preferences.padVelocity===modelData?' · ACTIVE':''); callback:function(){preferences.setPadVelocity(modelData)} }
             }
         }
     }
-    Panel { touchKind:"detail"; touchCallback:function(panel){panel.reviewSelected=!panel.reviewSelected;touch.inspect(console.screenTitle+" · selection · design demo")}; x: Theme.settingsBodyX; y: Theme.s5; width: Theme.settingsBodyWidth; height: Theme.settingsForceHeight; visible: console.settingsSection !== "Surface"; color: Theme.gpBgCard; border.color: Theme.gpBorder
-        Label { x: Theme.s5; y: Theme.s5; text: console.settingsSection; face: Theme.osFont; font.pixelSize: Theme.dL }
-        Label { x: Theme.s5; y: Theme.layerHeader; text: ({Audio:"48 kHz · 128 samples · Stereo room + cue",Connections:"Brain ready · Link 3 peers · Ethernet 10.0.0.24",System:"GroovePilot OS 0.9.2 · Console GUI 0.1.0 · Demo data"})[console.settingsSection] || ""; color: Theme.gpTextSec; font.pixelSize: Theme.m18 }
-        Label { x: Theme.s5; y: Theme.settingsForceY; text: "DEMO · NO HARDWARE CONNECTED"; color: Theme.mon; weight: Font.Normal; font.pixelSize: Theme.m12 }
-    }
+    Label { x:288; y:508; width:956; text:preferences.error || 'Saved on this console · hands default OFF · pad velocity default 100'; font.pixelSize:12; color:preferences.error?Theme.amber:Theme.mon }
 }

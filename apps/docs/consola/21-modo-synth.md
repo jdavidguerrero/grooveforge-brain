@@ -20,7 +20,7 @@ los modos de demostración existentes ni los specs 00–06.
 | NeoTrellis 4×8 | Teclado in-key: grado = columna + 3×fila desde abajo, como cuartas diatónicas Push; raíz y escala seleccionables; OCT −/+ desplaza 12 semitonos |
 | FSR notas36–39 | Propuesta inicial implementada: cuatro notas MIDI 36/38/42/46 con velocity en la parte elegida (referencia GM; el engine sigue siendo synth); alternativa pendiente: acordes diatónicos |
 | Faders CC24–27 | Nivel partes1–4, −60…+12 dB lineal en dB |
-| Sharp CC33/34 + presencia108/109 | Cutoff / MOVE de parte elegida según descriptor (HYBRID: cutoff de ambas mitades); presencia falsa inhibe cambios; ausencia mantiene último valor |
+| Sharp CC33/34 + presencia108/109 | OFF por defecto; requiere master + mano ON en Settings. Cutoff / MOVE de parte elegida según descriptor (HYBRID: cutoff de ambas mitades); presencia falsa inhibe cambios; ausencia mantiene último valor |
 | Expresión CC28/29 | Mismas macros cutoff/MOVE, sin gate de presencia |
 | MASTER / CUE / IN | Sala PipeWire / @GF HP 0–127 / @GF IN 0–15 (misma dirección que firmware18; mayor índice = menor sensibilidad) |
 | USB MIDI externo en Pi | Notas, velocity y liberaciones a parte seleccionada; con transporte MIDI también bend y sustain |
@@ -95,7 +95,7 @@ simulan los 32 pads, flechas encoders, SHIFT fino, [/] octava, F3 PARTS. Teclas 
 no autorrepeat musical; perder foco de ventana libera las notas simuladas.
 ALT+flechas/Enter simula recorrer/activar destinos touch. `--preview` es diseño sin sonido.
 
-`pi/run_synth.sh` no instala: touch invertx:rotate=0 e imagen QML90, socket
+`pi/run_synth.sh` no instala: touch rotate=0 (identidad, sin invertx) e imagen QML90, socket
 $XDG_RUNTIME_DIR/gf-synth.sock, puerto GF Consola. Pasa `--external-midi-port "${GF_EXTERNAL_MIDI_PORT:-auto}"`: sin flags abre todos los inputs externos (p.ej.Arturia MiniLab); excluye GF Consola/GF Superficie, Midi Through, puertos propios RtMidi/GUI y host. Un `--external-midi-port` explícito prevalece sobre el default/env. Resolución deduplicada; un patrón ambiguo sigue siendo error. `GF_EXTERNAL_MIDI_PORT=none` desactiva descubrimiento. Descubrimiento al arrancar, sin promesa de hotplug automático. Dependencias MIDI opcionales
 mido/python-rtmidi y pyserial para CDC, instaladas previamente por el usuario.
 
@@ -127,3 +127,35 @@ Con `consola_uno` (sin flag diag) probar FSR1/2 en14/15: la superficie envía no
 `run_synth.sh` garantiza GUI SCHED_OTHER. Host/data-loop solicita RT mediante PipeWire y usa256 por defecto; permisos, límites y comprobación **por TID** en [16, sección RT](16-synth-host.md#corrección-pi-con-gui-y-prioridad-rt-2026-11-10). Conservar el quantum persistido256;128 es opción después de verificar RT y repetir xruns con GUI. Las pruebas de escritorio cubren mensajes MIDI reales decodificados de los dos FSR/Sharp, selección de varios teclados con auto y override/env del launcher; no prueban latencia física.
 
 Corrección actual: **308 passed, 13 skipped** en la suite GUI aislada; builds y tests firmware/host en la [medición](mediciones/synth-pi-20261110.md#verificación-de-esta-corrección). No hubo flash ni cambios de configuración en Pi.
+
+
+## Corrección de soft keys y preferencias de superficie (2026-11-10)
+
+Los clics MCP **notas80–87** activan las ocho soft keys rotuladas; la nota88 es
+JOG, no encoder8. Touch y MIDI pasan por `ConsoleState.pressEncoder`. El modelo
+de teclas ahora actualiza roles sin recrear los delegates: un evento de reloj o
+medidores entre press/release ya no destruye el destino touch. Las teclas
+inhabilitadas tampoco ejecutan acciones por MIDI. HYBRID: MORPH abre el foco de
+morph en LAYER; LAYER abre presets. Los ajustes comunes regresan al modo activo.
+La prueba funcional recorre cada pantalla SYNTH y DRUM, cada tecla rotulada,
+touch real sintetizado a **90° QML** con telemetría durante press/release, y MIDI
+80–87 decodificado por el puente; verifica navegación, estado o comando del host.
+
+**Settings → Surface / Hands** (MENU, o Settings desde Mode Select) ofrece
+Hands master, Left IR y Right IR. **Los tres vienen OFF**: para usar una mano,
+activar master y esa mano. Touch o clics de encoder1/2/3 conmutan los mismos
+valores; persisten localmente en `~/.config/gf-console/settings.json`
+(`$XDG_CONFIG_HOME/gf-console/settings.json` si se define; override de pruebas
+`GF_CONSOLE_SETTINGS`). Un error de lectura vuelve a defaults seguros y muestra
+el error; un error de escritura se muestra sin simular persistencia.
+
+Con master o mano OFF, **CC33/34 y notas108/109 se ignoran** en SYNTH, DRUM y
+LIVE, tanto al recibir MIDI como al aplicar la cola pendiente. No se envían al
+host, no mueven macros ni muestran halos. Deshabilitar borra presencia; al
+reactivar hace falta una presencia nueva. CC28/29 (pedales de expresión) conserva
+su función independiente. No cambia el firmware ni el cableado Sharp.
+La fila Pad velocity de esta misma pantalla configura sólo M4 en DRUM (doc22).
+
+Capturas de la corrección y condiciones de escritorio:
+[Surface/Hands y rotación90](../../consola/gui-console/screenshots/surface-controls/index.html).
+La simulación no certifica touch físico, audio ni latencia del Pi.

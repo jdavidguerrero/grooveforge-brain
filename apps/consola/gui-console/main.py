@@ -28,6 +28,7 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     state.setParent(engine)
     engine.console_state = state
     engine.rootContext().setContextProperty('console', state)
+    engine.rootContext().setContextProperty('preferences', state.preferences)
     engine.rootContext().setContextProperty('frameless', frameless)
     rotation = rotation or configure_rotation(0, 'auto')
     engine.rootContext().setContextProperty('qmlRotation', rotation['qml_angle'])

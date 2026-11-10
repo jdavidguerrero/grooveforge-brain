@@ -27,6 +27,7 @@ class SurfaceBatcher(QObject):
     def __init__(self, state, parent=None):
         super().__init__(parent)
         self.state = state
+        state.preferences.changed.connect(self.reset_hands)
         self._queue = deque()
         self._lock = Lock()
         self.enqueued = self.applied = self.batch_count = self.max_depth = 0
@@ -67,9 +68,16 @@ class SurfaceBatcher(QObject):
     def value(model, row, role):
         return model._pending.get(row, {}).get(role, model.rows[row][role])
 
+    def reset_hands(self):
+        for i in range(2):
+            if not self.state.preferences.hand_allowed(i):
+                self.state.hands.queue_update(i, dict(inRange=False, value='OFF'))
+                self.state.channels.queue_update(i+6, dict(peak=0.))
+
     def apply(self, event):
         s, f, kind = self.state, event.fields, event.kind
         index = f.get('indice', 0)
+        if kind in ('Mano', 'ManoPresencia') and not s.preferences.hand_allowed(index): return
         drum_surface = getattr(self, 'drum_surface', None)
         if drum_surface and drum_surface.apply_frame(kind, f):
             return

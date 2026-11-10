@@ -44,6 +44,8 @@ class DrumSurface(QObject):
         self._shift=False
         self._presence=[False,False]
         self._leds={}
+        self._pad_velocity=console.preferences.padVelocity
+        console.preferences.changed.connect(self.preferences_changed)
         self.failed.connect(self.failure)
         self.console.changed.connect(self.publish)
         self.drum.changed.connect(self.publish)
@@ -68,6 +70,13 @@ class DrumSurface(QObject):
             self._hold=self.drum.holdMode
             self._screen=self.console.screenName
 
+    @Slot()
+    def preferences_changed(self):
+        with self.lock:
+            self._pad_velocity=self.console.preferences.padVelocity
+            self._presence=[present and self.console.preferences.hand_allowed(i)
+                            for i,present in enumerate(self._presence)]
+
     def receive(self,event):
         try:
             with self.lock:
@@ -77,7 +86,7 @@ class DrumSurface(QObject):
                 if isinstance(event,(Pad,Fsr)) and event.presionado:
                     pad=event.indice if isinstance(event,Pad) else self._fsr[event.indice]
                     if pad<16 and not self._hold:
-                        self.notes.note(10,pad,max(1,min(127,round(event.velocidad*127))))
+                        self.notes.note(10,pad,self._pad_velocity if isinstance(event,Pad) else max(1,min(127,round(event.velocidad*127))))
                     if isinstance(event,Pad) and pad<16: self._selected=pad
             self.batcher.enqueue(event)
             return True
@@ -87,6 +96,7 @@ class DrumSurface(QObject):
     def apply_frame(self,kind,fields):
         if not self.console.drumMode or not self.console.screenName.startswith('Drum'): return False
         d=self.drum;i=fields.get('indice',0)
+        if kind in ('Mano','ManoPresencia') and not self.console.preferences.hand_allowed(i): return True
         if kind in ('Pad','Fsr'):
             if fields['presionado']:
                 if kind=='Pad' and i>=16:
@@ -105,11 +115,11 @@ class DrumSurface(QObject):
             if name=='SHIFT': self._shift=down;d._fine=down;d._touch()
             elif name.startswith('ENCODER_'):
                 encoder=int(name.split('_')[1])-1
-                if d._screen=='DrumVariations' and not self._shift:
+                if d._screen=='DrumVariations' and self._shift:
                     if down: d.auditionVariant(encoder)
-                elif d._screen=='DrumPerform' and encoder in (3,4):
-                    d._hold=('mute' if encoder==3 else 'solo') if down else '';d._touch()
                 elif down: self.console.pressEncoder(encoder)
+                elif d._screen=='DrumPerform' and encoder in (3,4):
+                    d._hold='';d._touch()
             elif down:
                 if name=='PLAY': d.play()
                 elif name=='STOP': d.stop()
@@ -122,7 +132,7 @@ class DrumSurface(QObject):
                 elif name in ('PAGE_LEFT','PAGE_RIGHT'): d.action('step-page' if d._screen in ('DrumSteps','DrumProbability') else 'bank')
                 elif name=='SEARCH': self.console.navigate('DrumBrowser')
                 elif name=='BACK': self.console.navigate('DrumRack' if d._screen!='DrumRack' else 'ModeSelect')
-                elif name=='MENU': self.console.navigate('ModeSelect')
+                elif name=='MENU': self.console.navigate('Settings')
         elif kind=='ManoPresencia': self._presence[i]=fields['presente']
         elif kind in ('Mano','Expresion'):
             if kind=='Expresion' or self._presence[i]:

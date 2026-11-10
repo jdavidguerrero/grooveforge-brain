@@ -56,6 +56,6 @@ Item {
             TouchTarget { hardwareAction: "navigation"; anchors.fill: parent; callback: function() { console.setScreen(6) }}
         }
     }
-    Image { y: Theme.handsReadoutY; width: Theme.handHaloWidth; height: Theme.handHaloHeight; source: "../assets/halo.png" }
+    Image { y: Theme.handsReadoutY; width: Theme.handHaloWidth; height: Theme.handHaloHeight; source: "../assets/halo.png"; visible: preferences.handsEnabled && preferences.leftHand }
     Rectangle { width: Theme.s1; height: Theme.handHaloHeight; y: Theme.handsReadoutY; opacity: 0.6; gradient: Gradient { GradientStop { position: 0; color: "transparent" } GradientStop { position: .5; color: Theme.tealPlus } GradientStop { position: 1; color: "transparent" } } }
 }

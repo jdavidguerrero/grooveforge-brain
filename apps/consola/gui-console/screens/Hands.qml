@@ -41,6 +41,6 @@ Item {
         }
     }
     Repeater { model: 2
-        Image { x: index ? Theme.rootWidth-Theme.handHaloWidth : 0; y: index ? Theme.handsReadoutY-Theme.s6 : Theme.handsReadoutY+Theme.s6; width: Theme.handHaloWidth; height: Theme.handHaloHeight; mirror: index === 1; source: "../assets/halo.png" }
+        Image { x: index ? Theme.rootWidth-Theme.handHaloWidth : 0; y: index ? Theme.handsReadoutY-Theme.s6 : Theme.handsReadoutY+Theme.s6; width: Theme.handHaloWidth; height: Theme.handHaloHeight; mirror: index === 1; source: "../assets/halo.png"; visible: preferences.handsEnabled && (index ? preferences.rightHand : preferences.leftHand) }
     }
 }

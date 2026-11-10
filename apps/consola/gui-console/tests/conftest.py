@@ -35,3 +35,8 @@ def gui(app):
     app.processEvents()
     qInstallMessageHandler(previous)
     assert messages == []
+
+
+@pytest.fixture(autouse=True)
+def isolated_preferences(tmp_path, monkeypatch):
+    monkeypatch.setenv('GF_CONSOLE_SETTINGS', str(tmp_path/'settings.json'))

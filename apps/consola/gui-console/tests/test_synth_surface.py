@@ -108,6 +108,9 @@ def test_encoder_step_clamp_fine_and_frame_coalescing(gui):
 
 def test_faders_hands_presence_expression_and_pots(gui):
     surface, synth, batcher = enter(gui)
+    for i in range(3): surface.console.preferences.toggleHand(i)
+    surface.receive(ManoPresencia(0, True))
+    surface.receive(ManoPresencia(1, True))
     calls = []
     original = synth.request
     synth.request = lambda cmd, **f: (calls.append((cmd, f)), original(cmd, **f))[1]
@@ -305,6 +308,9 @@ def test_common_surface_settings_do_not_edit_stale_synth_bank(gui):
 @pytest.mark.parametrize('engine',['prophet','dx7','dx7_6op','juno','ob6','model_d','arp2600','hybrid'])
 def test_sharp_macros_cover_all_host_engines_including_both_hybrid_filters(gui,engine):
     surface,synth,batcher=enter(gui)
+    for i in range(3): surface.console.preferences.toggleHand(i)
+    surface.receive(ManoPresencia(0, True))
+    surface.receive(ManoPresencia(1, True))
     synth.changeEngine(engine)
     surface.receive(Mano(0,1))
     surface.receive(Mano(1,1))
@@ -346,6 +352,9 @@ def test_auto_external_ports_exclude_surface_through_host_and_gui():
 def test_minimal_fsr_and_sharp_wire_messages_reach_synth(gui):
     import mido
     surface, synth, batcher = enter(gui)
+    for i in range(3): surface.console.preferences.toggleHand(i)
+    surface.receive(ManoPresencia(0, True))
+    surface.receive(ManoPresencia(1, True))
     for note, pitch in ((36, 36), (37, 38)):
         surface.receive(decodificar(mido.Message('note_on', channel=0, note=note, velocity=87)))
         assert surface.notes.events[-1] == (1, pitch, 87)

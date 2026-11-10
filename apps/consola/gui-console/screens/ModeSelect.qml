@@ -21,4 +21,5 @@ Item {
         }
     }
     Label { y: 520; width:parent.width; horizontalAlignment:Text.AlignHCenter; text:'ENC 1–4 TO SELECT · PRESS TO ENTER · OR TAP'; font.pixelSize:12; color:Theme.mon }
+    ActionButton { x:1080; y:512; width:176; height:44; text:'SETTINGS'; callback:function(){console.navigate('Settings')} }
 }

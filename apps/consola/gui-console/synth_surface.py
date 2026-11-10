@@ -230,7 +230,8 @@ class SynthSurface(QObject):
         self.shift = False
         self.route_shift = False
         self.route_screen = console.screenName
-        self.presence = [True, True]
+        self.presence = [False, False]
+        console.preferences.changed.connect(self.reset_hands)
         self.ports = []
         self.input_names = []
         self.led_port = None
@@ -330,7 +331,14 @@ class SynthSurface(QObject):
                     del self.refs[destination]
                     self.notes.note(*destination, 0)
 
+    @Slot()
+    def reset_hands(self):
+        self.presence = [present and self.console.preferences.hand_allowed(i)
+                         for i, present in enumerate(self.presence)]
+
     def receive(self, event):
+        if type(event).__name__ in ('Mano', 'ManoPresencia') and not self.console.preferences.hand_allowed(event.indice):
+            return
         drum = getattr(self, "drum_surface", None)
         if drum and drum.receive(event):
             return
@@ -390,6 +398,7 @@ class SynthSurface(QObject):
     def apply_frame(self, kind, fields):
         s, c = self.synth, self.console
         index = fields.get('indice', 0)
+        if kind in ('Mano', 'ManoPresencia') and not c.preferences.hand_allowed(index): return True
         if kind == 'Boton':
             name, down = fields['nombre'], fields['presionado']
             if name == 'SHIFT':

@@ -36,7 +36,7 @@ def test_mode_select_fourth_entry_and_immediate_percussion(gui):
     e,d,s,b=enter(gui)
     assert e.console_state.drumMode and e.console_state.screenName=='DrumRack'
     e.synth_surface.receive(Pad(7,True,.5))
-    assert s.notes.events==[(10,7,64)] and b.pending==1
+    assert s.notes.events==[(10,7,100)] and b.pending==1
     assert e.synth_surface.notes.events==[]
     e.synth_surface.receive(Fsr(0,True,1.))
     assert s.notes.events[-1]==(10,0,127)
@@ -80,6 +80,8 @@ def test_grid_bottom_steps_page_polymeter_and_encoder_layers(gui):
 
 def test_host_parameters_frame_coalescing_groups_and_presence(gui):
     e,d,s,b=enter(gui)
+    e.console_state.preferences.toggleHand(0)
+    e.console_state.preferences.toggleHand(1)
     calls=[]
     request=d.request
     d.request=lambda cmd,**f:(calls.append((cmd,f)),request(cmd,**f))[1]
@@ -140,7 +142,7 @@ def test_decoded_physical_map_and_hold_mute(gui):
     e,d,s,b=enter(gui)
     for note in (36,37,38,39,48,63,64,79):
         e.synth_surface.receive(decodificar(mido.Message('note_on',channel=0,note=note,velocity=97)))
-    assert [v for _,_,v in s.notes.events]==[97]*6
+    assert [v for _,_,v in s.notes.events]==[97]*4+[100]*2
     b.drain_frame()
     e.console_state.navigate('DrumPerform')
     e.synth_surface.receive(Boton('ENCODER_4',True));b.drain_frame()
@@ -178,7 +180,7 @@ def test_pad_socket_fallback_sends_drum_command_not_synth_notes():
 
 def test_drum_launcher_calibrated_and_normal_scheduler():
     script=(ROOT/'pi/run_drum.sh').read_text()
-    assert 'GUI_TOUCH_DEVICE:-invertx' in script and 'GUI_TOUCH_ROTATION:-0' in script
+    assert 'GUI_TOUCH_DEVICE-}' in script and 'GUI_TOUCH_ROTATION:-0' in script
     assert '--rotate 90 --rotation-method qml' in script and 'chrt --other 0' in script
     assert '--drum-mode' in script and '--drum-socket' in script
     subprocess.run(['bash','-n',str(ROOT/'pi/run_drum.sh')],check=True)

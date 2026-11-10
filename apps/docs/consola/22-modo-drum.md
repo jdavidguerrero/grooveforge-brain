@@ -168,14 +168,14 @@ directamente al host en DRUM. MIDI timestamps se conservan dentro del callback.
 
 | Control | DRUM |
 |---|---|
-| M4 notas48..63 | Pads1..16, golpe inmediato + selección visual; velocity física si disponible |
+| M4 notas48..63 | Pads1..16, golpe inmediato + selección visual; velocity global fija de Settings (default100) |
 | M4 notas64..79 | Steps1..16 de lane seleccionada/página actual, conmutar off/velocity100 |
 | FSR36..39 | Kick/snare/hat/perc, asignación de pad por categoría, velocity íntegra; detector18 umbrales600/400 ADC12 |
 | CC16..23 | Parámetros del pad/página, steps o mixer según pantalla, relativo y clamp por tabla host |
 | Jog CC35/clic | Browser desplaza/carga; SHIFT+jog foco auxiliar touch como SYNTH |
 | Faders CC24..27 | Grupos KICKS/SKINS/WOODS/METALS; no restaurar nivel al generar/cargar sonido |
 | PLAY/STOP/REC | Transporte/record arm del host; botones del lector18, sin reasignar notas80..122 |
-| Manos CC33/34 +108/109 | Cutoff/send del pad elegido, gate presencia; expresión28/29 equivalente sin gate |
+| Manos CC33/34 +108/109 | OFF por defecto; master + mano ON en Settings. Cutoff/send del pad elegido, gate presencia; expresión28/29 equivalente sin gate |
 | MASTER/CUE/IN | Misma ruta RoomControls de SYNTH; no inventar @GF MASTER |
 
 Golpes por MIDI directo antes del frame; fallback socket independiente con ACK
@@ -266,10 +266,52 @@ el quantum dura5.33ms; p95<5ms no certificado.128 opt-in después de medir RT.
 - Diseño Browser vacío dice `/data/samples`, tarea pide racks en `/data` y default
   configurable. UI muestra directorio efectivo; no mover archivos de Juan.
 - Diseño54 asigna clic de encoder a audición de cada tarjeta y a soft keys distintas
-  en la misma columna. Provisional: clic simple=CUE tarjeta; SHIFT+clic=soft key,
-  touch conserva ambas acciones. Confirmar con Juan; no cambia el diseño fuente.
+  en la misma columna. Resuelto por la corrección pedida: clic simple=soft key; SHIFT+clic=CUE tarjeta.
+  Touch conserva ambas acciones; no cambia el diseño fuente.
 - Diseño47 incluye RESO/env AD-HD; sampler simple no equivale a filtro analógico.
   Pitch por resampling cambia duración, contrario a re-render afinado de la teoría:
   son controles manuales distintos, sin prometer síntesis live ni time-stretch.
 - CLAUDE de apps/consola describe GroovePush/Live/serial y nube; ADR007/008 y esta
   tarea definen consola local. No modificar ese archivo ni inferir servicios cloud.
+
+
+## Corrección tras prueba física: teclas, manos y velocity (2026-11-10)
+
+El problema touch no era la calibración ni un overlay: cada actualización DRUM
+reemplazaba el modelo completo de soft keys. El reloj de30Hz destruía el delegate
+que tenía el press antes del release. Ahora se actualizan los roles en el mismo
+modelo, conservando el destino. BACK vuelve a RACK, y desde RACK a Mode Select.
+El touch permanece **identidad `rotate=0`**, sin invertx, con imagen QML90
+(doc13, medición cruda). No volver a aplicar la calibración anterior.
+
+**Clic encoder N = soft key N**, notas80–87, también en PERFORM y VARIATIONS.
+PERFORM mantiene MUTE/SOLO con encoder4/5 presionado + pad; touch conmuta el
+mismo modo hasta el siguiente toque. VARIATIONS mueve la audición de tarjeta a
+**SHIFT+clic**, dejando el clic simple para Count/Spread/Audition/Render/Keep/
+Discard/Back como indica la fila. PAD: Layer avanza la layer seleccionada;
+MIXER: Level vuelve al nivel (no avanza un banco de parámetros).
+MENU abre Surface/Hands; Settings también está disponible por touch en Mode Select.
+
+Las manos están **OFF por defecto** en todos los modos. Settings → Surface /
+Hands ofrece master + Left IR + Right IR persistidos localmente; para usar una
+mano se requieren master y mano ON. OFF descarta CC33/34 y presencia108/109,
+incluidos eventos pendientes, sin cutoff/send, macros ni halos. Al reactivar se
+requiere presencia nueva. Expresión28/29 y FSR permanecen independientes. Detalle
+de persistencia y errores en doc21.
+
+**M4 envía velocity100 fija**: antes siempre elegía la layer que contiene100.
+Settings → Surface / Hands → **DRUM · M4 pad velocity** permite64/100/127 por
+touch; encoder4 recorre esas opciones. La preferencia es **global local** (no
+forma parte del rack ni se envía al host como parámetro), default100, persistida
+junto a Hands. Se aplica al golpe inmediato MIDI canal10 y al fallback socket,
+incluido overdub en el host. Los FSR36–39 conservan su velocity medida sin
+reescalar; pasos M4 de las filas inferiores siguen conmutando off/100 y no
+cambian con este ajuste. El ajuste sólo selecciona otra layer si sus rangos
+incluyen esa velocity; no crea capas ni normaliza el nivel del rack.
+
+Pruebas: todas las soft keys rotuladas en cada pantalla DRUM/SYNTH con touch
+sintético renderizado a90°, telemetría entre press/release y notas MIDI80–87;
+se comprueban efectos y comandos, no sólo presencia de callbacks. También
+persistencia, filtrado por mano/master en LIVE/SYNTH/DRUM y velocity M4/FSR.
+[Capturas y condiciones](../../consola/gui-console/screenshots/surface-controls/index.html).
+No se cambió el host C++ ni se certifica el hardware desde escritorio.

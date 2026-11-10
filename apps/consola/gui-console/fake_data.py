@@ -59,6 +59,9 @@ class ConsoleState(QObject):
 
     def __init__(self):
         super().__init__()
+        from local_settings import LocalSettings
+        self.preferences = LocalSettings(self)
+        self.preferences.changed.connect(self.refresh_keys)
         self._screen = 5
         self._return_screen = 5
         self._query = "kalim"
@@ -94,8 +97,8 @@ class ConsoleState(QObject):
         self._connections = SnapshotModel([dict(title=n, status=s) for n,s in
             [('BRAIN','ok'), ('LINK','ok'), ('LIVE','off'), ('NET','ok')]], ['title','status'], self)
         self._hands = SnapshotModel([
-            dict(side='LEFT HAND',target='FILTER',distance=12,inRange=True,value='LP 1.8k',rangeMin=6,rangeMax=26),
-            dict(side='RIGHT HAND',target='NOTES',distance=17,inRange=True,value='C4',rangeMin=6,rangeMax=28)],
+            dict(side='LEFT HAND',target='FILTER',distance=12,inRange=False,value='OFF',rangeMin=6,rangeMax=26),
+            dict(side='RIGHT HAND',target='NOTES',distance=17,inRange=False,value='OFF',rangeMin=6,rangeMax=28)],
             'side target distance inRange value rangeMin rangeMax'.split(), self)
         self._toasts = SnapshotModel([
             dict(icon='LINK',message='Link: 3 devices',value='124.0',tone='link',opacity=.6),
@@ -357,12 +360,17 @@ class ConsoleState(QObject):
         if not 0 <= index < 8:
             return
         self._softKeys.flush()
+        if not self._softKeys.rows[index]['enabled']: return
         action = self._softKeys.rows[index]['action']
         self.triggerAction(action or 'demo:'+self._softKeys.rows[index]['label'])
 
     @Slot(str)
     def triggerAction(self, action):
-        if action.startswith('demo:') and hasattr(self, 'surface'):
+        if action.startswith('hands:'):
+            self.preferences.toggleHand(int(action.split(':')[1]))
+        elif action == 'pad-velocity':
+            self.preferences.cyclePadVelocity()
+        elif action.startswith('demo:') and hasattr(self, 'surface'):
             self.surface.touch.inspect('DEMO · '+action[5:]+' · no connected service')
         elif action.startswith('drum:') and hasattr(self, 'drum'):
             self.drum.action(action[5:])
@@ -404,6 +412,9 @@ class ConsoleState(QObject):
             self.setScreen(screen_id("DrumRack") if self._mode == 3 else screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
         elif action.startswith('settings:'):
             self._settings = action.split(':')[1]
+            if self._settings != 'Surface':
+                self.navigate('SynthSettings'+self._settings)
+                return
             self.refresh_keys()
             self._notify()
         elif action.startswith('cue:'):
@@ -431,10 +442,10 @@ class ConsoleState(QObject):
     def refresh_keys(self):
         descriptor = SCREENS[self._screen-1]
         if descriptor.name.startswith('Drum') and hasattr(self, 'drum'):
-            self._softKeys.replace(self.drum.keys())
+            self.update_soft_keys(self.drum.keys())
             return
         if descriptor.name.startswith('Synth') and hasattr(self, 'synth'):
-            self._softKeys.replace(self.synth.keys())
+            self.update_soft_keys(self.synth.keys())
             return
         if descriptor.keys:
             collection, name = descriptor.keys.split('.')
@@ -466,8 +477,15 @@ class ConsoleState(QObject):
             keys = [key('Controller',lit=self._mode==0,action='mode:0'),key('Standalone','enter',lit=self._mode==1,action='mode:1'),key('Synth','play',lit=self._mode==2,action='mode:2'),key('Drum','jam',lit=self._mode==3,action='mode:3')]
             keys += [key() for _ in range(2)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
         elif self._screen == 4:
-            keys = [key(n,lit=n == self._settings,action='settings:'+n) for n in ['Audio','Connections','Surface','System']]
-            keys += [key(),key(),key('Calibrate','FSR 2',action='settings:Surface'),key('Back',action='screen:2')]
+            prefs = self.preferences
+            keys = [key('Hands', 'ON' if prefs.handsEnabled else 'OFF', action='hands:0'),
+                    key('Left IR', 'ON' if prefs.leftHand else 'OFF', action='hands:1'),
+                    key('Right IR', 'ON' if prefs.rightHand else 'OFF', action='hands:2'),
+                    key('Pad velocity', str(prefs.padVelocity), action='pad-velocity'),
+                    key('Audio', action='nav:SynthSettingsAudio'),
+                    key('Connections', action='nav:SynthSettingsConnections'),
+                    key('System', action='nav:SynthSettingsSystem'),
+                    key('Back', action='nav:'+('DrumRack' if self.drumMode else 'SynthParts' if self.synthMode else 'ModeSelect'))]
         elif self._screen == 6:
             keys = [key('Option '+chr(65+i),'CUE','BASS',i == 1,'cue:'+str(i)) for i in range(4)]
             keys += [key('Generate','another',action='generate'),key('Accept','next phrase',lit=True,action='accept'),
@@ -484,4 +502,14 @@ class ConsoleState(QObject):
                 ('R target','Notes'),('R scale','A MIN'),('R octave','4'),('Hold','Off')])]
         else:
             keys = [key() for _ in range(8)]
-        self._softKeys.replace(keys)
+        self.update_soft_keys(keys)
+
+    def update_soft_keys(self, rows):
+        # Preserve pressed QML delegates across clock/meter/parameter updates.
+        if len(self._softKeys.rows) != len(rows):
+            self._softKeys.replace(rows)
+        else:
+            for i, row in enumerate(rows):
+                if self._softKeys.rows[i] != row:
+                    self._softKeys.queue_update(i, row)
+            self._softKeys.flush()
