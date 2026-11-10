@@ -83,6 +83,9 @@ extern AudioInputI2S         g_audio_in;   ///< ADC del SGTL5000 — fuente para
 // NO conflictúa con AudioOutputI2S — comparten el mismo interrupt del SAI.
 // La diferencia de clock (44100 Hz USB vs 44117.647 Hz I2S) se absorbe en el FIFO interno.
 extern AudioInputUSB         g_usb_in;     ///< USB audio in (Mac passthrough, off by default)
+#ifdef GF_CONSOLA
+extern AudioOutputUSB g_usb_out;  ///< Teensy to Pi output; custom async status in consola_usb.
+#endif
 
 namespace audio_graph {
 
