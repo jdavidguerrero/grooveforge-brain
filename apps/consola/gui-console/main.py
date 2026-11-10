@@ -15,7 +15,7 @@ from rotation import add_rotation_arguments, configure_rotation
 from surface_batch import SurfaceBatcher
 
 
-def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False):
+def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None):
     sans = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
     mono = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     families = QFontDatabase.families()
@@ -34,6 +34,13 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     engine.rootContext().setContextProperty('perfMode', perf_mode)
     engine.rootContext().setContextProperty('cycleScreens', cycle_screens)
     engine.rootContext().setContextProperty('eglfsMode', os.environ.get('QT_QPA_PLATFORM') == 'eglfs')
+    from synth_state import SynthState
+    from synth_client import SynthClient
+    client = SynthClient(synth_socket, engine, transport=synth_transport) if synth_socket else None
+    synth = SynthState(state, client, engine)
+    state.synth = synth
+    engine.synth_state = synth
+    engine.rootContext().setContextProperty('synth', synth)
     batcher = SurfaceBatcher(state, engine)
     engine.surface_batcher = batcher
     engine.rootContext().setContextProperty('surfaceBatch', batcher)
@@ -55,6 +62,9 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
             window.setScreen(match)
         window.afterAnimating.connect(batcher.drain_frame)
         batcher.wakeRequested.connect(window.update, Qt.QueuedConnection)
+        synth.wakeRequested.connect(window.update, Qt.QueuedConnection)
+        if client:
+            client.start()
     return engine, state
 
 
@@ -64,6 +74,9 @@ def main():
     parser.add_argument('--display-screen', help='QScreen name; select DRM outputs with GUI_KMS_CONFIG')
     parser.add_argument('--frameless', action='store_true')
     parser.add_argument('--screen', type=screen_id, default=5, metavar='NAME', help=', '.join(SCREEN_NAMES))
+    parser.add_argument('--synth-socket', help='Real/fake contract-14 Unix socket (default: XDG_RUNTIME_DIR/gf-synth.sock)')
+    parser.add_argument('--preview', action='store_true', help='Deterministic offline design review')
+    parser.add_argument('--fake-synth', action='store_true', help='Launch a separate fake host process; no audio')
     parser.add_argument('--list-screens', action='store_true')
     args = parser.parse_args()
     if args.list_screens:
@@ -72,14 +85,36 @@ def main():
     rotation = configure_rotation(args.rotate, args.rotation_method)
     print('Rotation:', rotation)
     app = QGuiApplication(sys.argv[:1])
-    engine, state = create_engine(frameless=args.frameless, rotation=rotation, display_screen=args.display_screen)
+    import subprocess
+    import tempfile
+    from fake_synth_host import socket_path
+    fake_process = None
+    fake_dir = None
+    synth_socket = None if args.preview else args.synth_socket or socket_path()
+    if args.fake_synth:
+        fake_dir = tempfile.TemporaryDirectory(prefix='gf-synth-')
+        synth_socket = str(Path(fake_dir.name)/'host.sock')
+        fake_process = subprocess.Popen([sys.executable, str(ROOT/'fake_synth_host.py'), '--socket', synth_socket], stdout=subprocess.PIPE, text=True)
+        ready = fake_process.stdout.readline()
+        if not ready:
+            raise RuntimeError('Fake host failed to start')
+        print(ready.strip())
+    engine, state = create_engine(synth_socket=synth_socket, frameless=args.frameless, rotation=rotation, display_screen=args.display_screen)
     if not engine.rootObjects():
         return 1
     state.setScreen(args.screen)
-    result = app.exec()
-    import shiboken6
-    shiboken6.delete(engine)
-    return result
+    try:
+        return app.exec()
+    finally:
+        if engine.synth_state.client:
+            engine.synth_state.client.stop()
+        import shiboken6
+        shiboken6.delete(engine)
+        if fake_process:
+            fake_process.terminate()
+            fake_process.wait(timeout=5)
+        if fake_dir:
+            fake_dir.cleanup()
 
 
 if __name__ == '__main__':

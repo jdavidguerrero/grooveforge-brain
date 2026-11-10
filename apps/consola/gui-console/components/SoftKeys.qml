@@ -2,7 +2,7 @@ import QtQuick
 import "../theme"
 Rectangle {
     id: root
-    property bool os: console.screen === 2 || console.screen === 4
+    property bool os: console.screen === 2 || console.screen === 4 || console.screenName.indexOf("SynthSettings") === 0
     color: os ? Theme.gpBgBase : Theme.bg
     height: Theme.keysHeight
     Repeater {
