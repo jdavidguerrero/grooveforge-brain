@@ -25,7 +25,7 @@ cuadro:
    **0 saltos en 60 min en cada sentido**; la deriva real entre relojes es ~56 ppm y se absorbe sin tirar muestras
    (`e3-usb-async-20261109.md`).
 
-Además: los reinicios espontáneos del Pi del 2026-11-09 fueron **por alimentación** (Juan, 2026-11-10), y Juan
+Además: los reinicios espontáneos del Pi del 2026-11-09 fueron **por cortes de luz en la casa de Juan** (aclarado el 2026-11-10; no era la fuente del Pi), y Juan
 eligió **NVMe de 128 GB en un HAT** como almacenamiento.
 
 ## Decision
@@ -46,8 +46,9 @@ eligió **NVMe de 128 GB en un HAT** como almacenamiento.
    Theory doc antes del código.
 5. **Almacenamiento:** NVMe de 128 GB en HAT; arranque desde NVMe; raíz de solo lectura y partición `/data` para sets,
    registro, samples y modelos.
-6. **Alimentación:** fuente oficial de 27 W para el Pi y presupuesto de consumo por riel **obligatorio antes de la
-   placa** (auditoría G30); journal persistente en el Pi para diagnosticar cortes.
+6. **Alimentación y cortes de luz:** presupuesto de consumo por riel **obligatorio antes de la placa** (auditoría G30).
+   Ante cortes de luz: raíz de solo lectura con `/data` aparte (§5), journal persistente y, a evaluar, una UPS pequeña
+   o apagado seguro al detectar el corte.
 7. **Nombres y controles:** BRAIN = synth (partes, engines, presets); ENGINE = motor generativo. ACCEPT, GENERATE,
    SKIP y DROP son teclas de pantalla (clic de encoder o touch), no botones dedicados.
 8. **Control del host de synths:** la GUI y el núcleo hablan con `gf-synth-host` por un socket local (JSON por líneas):

@@ -45,3 +45,10 @@ PipeWire 1.4 publica los teclados USB (p. ej. Arturia MiniLab mkII) como **MIDI 
 `gf-synth-host:midi_in` se declara como MIDI 1.0 de 8 bits: `pw-link` no los conecta. Mientras tanto, un puente
 provisional (`~/midi_to_host.py` en el Pi: ALSA → comando `note` del socket) hace sonar el teclado; probado por Juan
 con el Model D. Arreglo: el host debe declarar su puerto en UMP (y convertir), o aceptar ambos formatos.
+
+## Contradicción: TX/RX de la NeoTrellis M4 en el conector STEMMA (2026-11-10)
+
+`processor/UART_CONNECTIONS.md` dice SDA (pin 21) = RX y SCL (pin 22) = TX; el código
+(`lib/neotrellis_m4/UartInterface/UartInterface.cpp`, Serial1 SERCOM4) dice pin 21 (SDA) = TX y 22 (SCL) = RX. Se
+cablea según el código (SDA → Teensy RX7 pin 28, SCL ← Teensy TX7 pin 29) y se confirma en la protoboard; luego se
+corrige el documento que esté mal. El pin 3V del conector no se conecta (salida del regulador de la M4).
