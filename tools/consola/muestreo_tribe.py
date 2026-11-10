@@ -83,7 +83,8 @@ def primer_golpe(x: np.ndarray, sr: int, umbral_db: float = -45.0) -> int:
     return int(sobre[0])
 
 
-def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.0) -> dict:
+def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.0,
+           pico_objetivo_db: float | None = -1.0) -> dict:
     import soundfile as sf
 
     plan = json.loads(plan_ruta.read_text())["golpes"]
@@ -92,6 +93,11 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
         raise ValueError(f"exporta a 48 kHz (llegó {sr} Hz)")
     desfase = primer_golpe(x, sr) - round(plan[0]["inicio"] * sr)  # alinea el plan con el audio exportado
     pico_global = float(np.abs(x).max())
+    # Una sola ganancia para todo el kit (el golpe más fuerte queda en pico_objetivo_db): recupera nivel si el export
+    # salió bajo sin alterar la diferencia entre velocities.
+    ganancia = 1.0 if pico_objetivo_db is None else 10 ** (pico_objetivo_db / 20) / pico_global
+    x *= ganancia
+    pico_global *= ganancia
     out.mkdir(parents=True, exist_ok=True)
     manifiesto, vacios = [], []
     pre = int(0.002 * sr)  # 2 ms antes del golpe para no cortar el ataque
@@ -115,6 +121,7 @@ def cortar(audio: Path, plan_ruta: Path, out: Path, umbral_cola_db: float = -60.
                            "pico_db": round(20 * np.log10(float(np.abs(trozo).max())), 1)})
     resumen = {"fuente": "Tribe Player 2 · Tribe Instruments Map · preset 01 Original Recording (Clean)",
                "licencia": LICENCIA, "frecuencia": sr, "desfase_muestras": int(desfase),
+               "ganancia_db": round(20 * np.log10(ganancia), 1),
                "golpes": manifiesto, "vacios": vacios}
     (out / "manifiesto.json").write_text(json.dumps(resumen, ensure_ascii=False, indent=1))
     return resumen
@@ -129,6 +136,8 @@ def main() -> None:
     c.add_argument("--audio", type=Path, required=True)
     c.add_argument("--plan", type=Path, required=True)
     c.add_argument("--out", type=Path, required=True)
+    c.add_argument("--pico-db", type=float, default=-1.0, help="pico del golpe más fuerte tras la ganancia global")
+    c.add_argument("--sin-normalizar", action="store_true")
     a = ap.parse_args()
     if a.cmd == "midi":
         a.out.mkdir(parents=True, exist_ok=True)
@@ -139,8 +148,9 @@ def main() -> None:
         fin = plan[-1]["inicio"] + plan[-1]["espacio"]
         print(f"{len(plan)} golpes, {fin / 60:.1f} min a {BPM} BPM → {a.out}/muestreo_tribe.mid")
     else:
-        r = cortar(a.audio, a.plan, a.out)
-        print(f'{len(r["golpes"])} golpes escritos en {a.out}; vacíos: {len(r["vacios"])}; desfase {r["desfase_muestras"]} muestras')
+        r = cortar(a.audio, a.plan, a.out, pico_objetivo_db=None if a.sin_normalizar else a.pico_db)
+        print(f'{len(r["golpes"])} golpes en {a.out}; vacíos: {len(r["vacios"])}; desfase {r["desfase_muestras"]} muestras; '
+              f'ganancia global {r["ganancia_db"]:+.1f} dB')
 
 
 if __name__ == "__main__":

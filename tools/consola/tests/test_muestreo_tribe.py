@@ -47,3 +47,21 @@ def test_cortar_alinea_y_conserva_niveles(tmp_path):
     assert picos[40] < picos[70] < picos[100] < picos[127]  # las capas de velocity no se normalizan
     assert all((tmp_path / "kit" / g["archivo"]).exists() for g in r["golpes"])
     assert "uso personal" in r["licencia"]
+
+
+def test_normalizacion_global_sube_todo_igual(tmp_path):
+    sr = 48_000
+    plan = mt.plan_de_muestreo()[:8]
+    t = np.arange(int(0.3 * sr)) / sr
+    x = np.zeros((int((plan[-1]["inicio"] + 2) * sr), 2), dtype=np.float32)
+    for g in plan:
+        a = int(g["inicio"] * sr)
+        golpe = 0.01 * (g["velocity"] / 127) * np.sin(2 * np.pi * 200 * t) * np.exp(-t * 20)  # export ~ -40 dB
+        x[a:a + len(golpe)] += golpe[:, None]
+    sf.write(tmp_path / "e.wav", x, sr, subtype="FLOAT")
+    (tmp_path / "p.json").write_text(json.dumps({"golpes": plan}))
+    r = mt.cortar(tmp_path / "e.wav", tmp_path / "p.json", tmp_path / "k")
+    picos = {g["velocity"]: g["pico_db"] for g in r["golpes"] if g["rr"] == 1}
+    assert abs(max(picos.values()) + 1.0) < 0.2  # el más fuerte queda en -1 dBFS
+    assert picos[127] - picos[40] > 9  # la diferencia entre velocities se conserva (~10 dB)
+    assert r["ganancia_db"] > 30
