@@ -21,7 +21,11 @@
 #define DEVICE_ID 0x00       // Device channel (matches Live Remote Script)
 
 // === LED BRIGHTNESS ===
+#ifdef GF_CONSOLA_S_M4
+#define LED_BRIGHTNESS 63
+#else
 #define LED_BRIGHTNESS 100 // 0-255
+#endif
 #define NEOPIXEL_PIN 28    // LED chain data: Brain carrier U1 buffer -> R3 -> J5.26 (LED_DIN). See PIN_MAP.md.
 
 // === COLORS (RGB values) ===
