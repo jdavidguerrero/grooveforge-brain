@@ -18,6 +18,11 @@ add_library(gf_prophet_preset STATIC src/prophet_preset.cpp src/dx7_preview.cpp 
 target_link_libraries(gf_prophet_preset PUBLIC gf_prophet_preview gf_preset_codec)
 set_target_properties(gf_prophet_preset PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+option(GF_ENGINE_LIBRARIES_ONLY "Export only the JUCE-free engine libraries to a parent project" OFF)
+if(GF_ENGINE_LIBRARIES_ONLY)
+    return()
+endif()
+
 add_executable(gf_juno_preview_reference "${CMAKE_CURRENT_LIST_DIR}/../../tools/gemelo-baseline/juno_preview_reference.cpp")
 target_link_libraries(gf_juno_preview_reference PRIVATE gf_prophet_preset)
 add_executable(gf_ob6_preview_reference "${CMAKE_CURRENT_LIST_DIR}/../../tools/gemelo-baseline/ob6_preview_reference.cpp")

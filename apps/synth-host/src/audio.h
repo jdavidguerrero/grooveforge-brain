@@ -1,0 +1,72 @@
+#pragma once
+#include "engine.h"
+#include <atomic>
+#include <array>
+#include <cstdint>
+#include <type_traits>
+namespace host {
+constexpr unsigned RATE=48000,MAX_FRAMES=8192,MAX_MIDI=2048;
+/** @brief Bounded single producer/single consumer queue; no overwrite of unread data. */
+template<class T,size_t N> class Spsc {
+    static_assert(std::is_trivially_copyable_v<T>);
+    static_assert(std::atomic<uint32_t>::is_always_lock_free);
+    std::array<T,N> data_{};
+    alignas(64) std::atomic<uint32_t> read_{0};
+    alignas(64) std::atomic<uint32_t> write_{0};
+public:
+    size_t free_slots() const noexcept {
+        const auto w=write_.load(std::memory_order_relaxed),r=read_.load(std::memory_order_acquire);
+        return (r+N-w-1)%N;
+    }
+    bool push(const T& v) noexcept {const auto w=write_.load(std::memory_order_relaxed);const auto next=(w+1)%N;if(next==read_.load(std::memory_order_acquire))return false;data_[w]=v;write_.store(uint32_t(next),std::memory_order_release);return true;}
+    bool pop(T& v) noexcept {const auto r=read_.load(std::memory_order_relaxed);if(r==write_.load(std::memory_order_acquire))return false;v=data_[r];read_.store(uint32_t((r+1)%N),std::memory_order_release);return true;}
+};
+enum class Operation { Param,Swap,Level,Mute,Note };
+struct Command {Operation op=Operation::Note;uint64_t token=0;unsigned part=0,param=0;float value=0;Engine* engine=nullptr;};
+struct Midi {uint32_t frame=0;uint8_t status=0,a=0,b=0;};
+struct ParamChange {Engine* engine=nullptr;unsigned part=0,param=0;float value=0;};
+// A single FIFO preserves ordering between retired engines, ACKs and parameter events.
+struct Ack {uint64_t token=0;Engine* retired=nullptr;bool parameter=false;ParamChange change;};
+struct Telemetry {
+    bool cpu=false;
+    std::array<float,5> peak{},rms{};
+    double mean=0,max=0,p99_upper=0;
+};
+/** @brief Audio owner. Construction/destruction and all engine preparation belong to control. */
+class Audio {
+    std::array<Engine*,4> engines_{};
+    std::array<float,4> gain_{};
+    std::array<bool,4> mute_{};
+    std::array<std::array<int,6>,4> cc_{};
+    std::array<std::array<bool,MAX_PARAMS>,4> changed_{};
+    std::array<double,5> squares_{};
+    std::array<float,5> peaks_{};
+    uint64_t meter_frames_=0,cpu_frames_=0,meter_clock_=0,meter_due_=RATE/30;
+    double cpu_seconds_=0,cpu_max_=0;
+    std::array<uint32_t,512> cpu_histogram_{};
+    uint32_t cpu_blocks_=0;
+    void map_cc(unsigned p) noexcept;
+    void midi_control(const Midi&) noexcept;
+    void midi_note(const Midi&) noexcept;
+public:
+    Spsc<Command,256> commands;
+    Spsc<Ack,4096> acknowledgements;
+    Spsc<Telemetry,128> telemetry;
+    std::atomic<uint64_t> xruns{0},deadline_misses{0},backend_xruns{0},clock_gaps{0},dropped{0},heartbeat{0};
+    std::atomic<unsigned> block{128};
+    std::atomic<bool> fault{false};
+    /** @brief Prepares the four initial patches and meter/CC tables. */
+    explicit Audio(const std::array<Config,4>& configs);
+    ~Audio();
+    /** @brief Initial identity, called only before starting the backend. */
+    Engine* identity(unsigned part) const noexcept {return engines_[part];}
+    Audio(const Audio&)=delete;
+    Audio& operator=(const Audio&)=delete;
+    /** @brief Main callback, ten planar outputs; MIDI sorted by frame, bounded to MAX_MIDI. */
+    void process(unsigned frames,const std::array<float*,10>& outputs,const Midi* midi=nullptr,unsigned count=0) noexcept;
+};
+/** @brief Default part engines in role order; benchmark enables the measured wet workload. */
+std::array<Config,4> initial_configs(bool benchmark=false);
+/** @brief Deterministic MIDI fixture for one frame, used by offline benchmark and safety test. */
+unsigned pattern(uint64_t frame,Midi* out) noexcept;
+}

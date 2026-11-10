@@ -1,0 +1,209 @@
+{
+  "date": "2026-11-10",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "revision": "006684dae26f0daba61fefc06651d5a731df3cc0",
+  "working_tree": "uncommitted; .git writes blocked by sandbox",
+  "binary_sha256": "e0a1c2fc9abb58ba9e5f90fc1da8cc3a85a955e5d203546050a8ec09686a245a",
+  "commands": [
+    "cmake -S apps/synth-host -B /tmp/gf-synth-build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON",
+    "cmake --build /tmp/gf-synth-build -j4",
+    "ctest --test-dir /tmp/gf-synth-build --output-on-failure",
+    "/tmp/gf-synth-build/gf-synth-host --render /tmp/gf-host-final-b128.wav --seconds 20 --block 128 --report /tmp/gf-host-final-b128.json",
+    "/tmp/gf-synth-build/gf-synth-host --render /tmp/gf-host-final-b256.wav --seconds 20 --block 256 --report /tmp/gf-host-final-b256.json"
+  ],
+  "host": [
+    {
+      "scenario": "four-part",
+      "variant": "wet",
+      "parts": [
+        {
+          "engine": "model_d",
+          "held_notes": 1
+        },
+        {
+          "engine": "juno",
+          "held_notes": 6
+        },
+        {
+          "engine": "ob6",
+          "held_notes": 4
+        },
+        {
+          "engine": "hybrid",
+          "held_notes": 6
+        }
+      ],
+      "sample_rate": 48000,
+      "block_frames": 128,
+      "audio_seconds": 20.0,
+      "warmup_seconds": 2,
+      "render_wall_seconds": 3.1647847949999917,
+      "real_time_factor": 0.1582392397499996,
+      "core_percent_mean": 15.823923974999959,
+      "core_percent_p99": 21.1125,
+      "core_percent_max": 276.5093625,
+      "deadline_misses": 1,
+      "pcm_sha256": "8e23bfb4d31b548f484e9a1f81f15f190e97dfcd904424d8377283e821a0a4d1",
+      "nonfinite_samples": 0,
+      "clipped_samples": 0,
+      "peak": 0.22933772206306458,
+      "rms": 0.04859237348036839,
+      "compiler": "Apple LLVM 17.0.0 (clang-1700.4.4.1)",
+      "build_type": "Release",
+      "policy": "O2 -fno-fast-math -ffp-contract=off + FTZ"
+    },
+    {
+      "scenario": "four-part",
+      "variant": "wet",
+      "parts": [
+        {
+          "engine": "model_d",
+          "held_notes": 1
+        },
+        {
+          "engine": "juno",
+          "held_notes": 6
+        },
+        {
+          "engine": "ob6",
+          "held_notes": 4
+        },
+        {
+          "engine": "hybrid",
+          "held_notes": 6
+        }
+      ],
+      "sample_rate": 48000,
+      "block_frames": 256,
+      "audio_seconds": 20.0,
+      "warmup_seconds": 2,
+      "render_wall_seconds": 3.155192249000002,
+      "real_time_factor": 0.1577596124500001,
+      "core_percent_mean": 15.775961245000008,
+      "core_percent_p99": 19.342200000000002,
+      "core_percent_max": 27.803906249999997,
+      "deadline_misses": 0,
+      "pcm_sha256": "8e23bfb4d31b548f484e9a1f81f15f190e97dfcd904424d8377283e821a0a4d1",
+      "nonfinite_samples": 0,
+      "clipped_samples": 0,
+      "peak": 0.22933772206306458,
+      "rms": 0.04859237348036839,
+      "compiler": "Apple LLVM 17.0.0 (clang-1700.4.4.1)",
+      "build_type": "Release",
+      "policy": "O2 -fno-fast-math -ffp-contract=off + FTZ"
+    }
+  ],
+  "engine_bench": {
+    "compiler": "AppleClang 17.0.0.17000404",
+    "system": "Darwin 27.0.0 arm64",
+    "flags": " -O3 -DNDEBUG -O2 -fno-fast-math -ffp-contract=off -mcpu=apple-m1",
+    "sample_rate": 48000,
+    "warmup_audio_seconds": 2,
+    "requested_audio_seconds": 20,
+    "results": [
+      {
+        "engine": "four-part",
+        "variant": "dry",
+        "held_notes": 0,
+        "block_frames": 128,
+        "parts": [
+          {
+            "engine": "model-d",
+            "held_notes": 1,
+            "root": 36,
+            "preset": "INIT"
+          },
+          {
+            "engine": "juno",
+            "held_notes": 6,
+            "root": 48,
+            "preset": "INIT"
+          },
+          {
+            "engine": "ob6",
+            "held_notes": 4,
+            "root": 60,
+            "preset": "INIT"
+          },
+          {
+            "engine": "hybrid",
+            "held_notes": 6,
+            "root": 48,
+            "preset": "RETRO BRASS: HY RETRO BRASS A + HY RETRO BRASS B"
+          }
+        ],
+        "frames": 960000,
+        "audio_seconds": 20,
+        "blocks": 7500,
+        "render_wall_seconds": 2.578513128,
+        "real_time_factor": 0.1289256564,
+        "core_percent_mean": 12.89256564,
+        "core_percent_p99": 17.0593875,
+        "core_percent_max": 75.7046625,
+        "deadline_misses": 0,
+        "timing_gate_pass": true,
+        "audio": {
+          "peak": 0.247124642134,
+          "rms": 0.0499138184304,
+          "nonfinite_samples": 0,
+          "clipped_samples": 0
+        }
+      },
+      {
+        "engine": "four-part",
+        "variant": "wet",
+        "held_notes": 0,
+        "block_frames": 128,
+        "parts": [
+          {
+            "engine": "model-d",
+            "held_notes": 1,
+            "root": 36,
+            "preset": "INIT"
+          },
+          {
+            "engine": "juno",
+            "held_notes": 6,
+            "root": 48,
+            "preset": "INIT"
+          },
+          {
+            "engine": "ob6",
+            "held_notes": 4,
+            "root": 60,
+            "preset": "INIT"
+          },
+          {
+            "engine": "hybrid",
+            "held_notes": 6,
+            "root": 48,
+            "preset": "RETRO BRASS: HY RETRO BRASS A + HY RETRO BRASS B"
+          }
+        ],
+        "frames": 960000,
+        "audio_seconds": 20,
+        "blocks": 7500,
+        "render_wall_seconds": 3.085072026,
+        "real_time_factor": 0.1542536013,
+        "core_percent_mean": 15.42536013,
+        "core_percent_p99": 19.5796875,
+        "core_percent_max": 70.490625,
+        "deadline_misses": 0,
+        "timing_gate_pass": true,
+        "audio": {
+          "peak": 0.229304343462,
+          "rms": 0.0485842322116,
+          "nonfinite_samples": 0,
+          "clipped_samples": 0
+        }
+      }
+    ]
+  },
+  "limitations": [
+    "No PipeWire/JACK/systemd SDK on Mac: native backends were not compiled or exercised.",
+    "Sandbox denies pathname Unix socket bind; contract tested using three inherited AF_UNIX socketpairs. Listener and duplicate-bind branch remain for unsandboxed/Pi tests.",
+    "SSH to configured Pi was denied by sandbox (Operation not permitted). No 60-minute GUI/Audio+ run was performed.",
+    "Host MIDI velocities use 7-bit integers; benchmark drives float velocities directly; PCM hash is not expected to equal gf_engine_bench. Both use the same wet patches, 1/6/4/6 notes, 2s warm-up and O2/FTZ.",
+    "Wall render CPU is percentage of one core, not process CPU or a latency measurement."
+  ]
+}

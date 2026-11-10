@@ -1,0 +1,71 @@
+Start testing: Nov 10 07:25 -05
+----------------------------------------------------------
+1/4 Testing: host_rt
+1/4 Test: host_rt
+Command: "/tmp/gf-synth-build/gf_host_rt_test"
+Directory: /tmp/gf-synth-build
+"host_rt" start time: Nov 10 07:25 -05
+Output:
+----------------------------------------------------------
+RT: 7 engines, params, swaps, 4-part notes/CC/sustain/bend; allocations/frees=0; energy=1309.51; mix verified
+<end of output>
+Test time =   3.05 sec
+----------------------------------------------------------
+Test Passed.
+"host_rt" end time: Nov 10 07:25 -05
+"host_rt" time elapsed: 00:00:03
+----------------------------------------------------------
+
+2/4 Testing: host_audio
+2/4 Test: host_audio
+Command: "/tmp/gf-synth-build/gf_host_audio_test"
+Directory: /tmp/gf-synth-build
+"host_audio" start time: Nov 10 07:25 -05
+Output:
+----------------------------------------------------------
+Audio: SPSC 200000 ordered transfers, note timestamps, level/mute/mix, channels/CC and feedback backpressure: PASS
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"host_audio" end time: Nov 10 07:25 -05
+"host_audio" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/4 Testing: host_contract
+3/4 Test: host_contract
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.13/bin/python3.13" "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/tests/contract_test.py" "/tmp/gf-synth-build/gf-synth-host"
+Directory: /tmp/gf-synth-build
+"host_contract" start time: Nov 10 07:25 -05
+Output:
+----------------------------------------------------------
+Sandbox blocks bind(): protocol tested with 3 inherited Unix socketpairs; pathname listener and duplicate-bind test require Pi/unsandboxed run
+Contract: 13 commands; 711 parameter round-trips; errors, UTF-8, subscriptions, clients, crash recovery: PASS
+Telemetry: 39 meters / 1.25 s; CPU windows=2; peak=-15.38 dBFS
+<end of output>
+Test time =   4.96 sec
+----------------------------------------------------------
+Test Passed.
+"host_contract" end time: Nov 10 07:26 -05
+"host_contract" time elapsed: 00:00:04
+----------------------------------------------------------
+
+4/4 Testing: host_render
+4/4 Test: host_render
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.13/bin/python3.13" "/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-codex-host/apps/synth-host/tests/render_test.py" "/tmp/gf-synth-build/gf-synth-host"
+Directory: /tmp/gf-synth-build
+"host_render" start time: Nov 10 07:26 -05
+Output:
+----------------------------------------------------------
+Offline deterministic PCM SHA-256: 525b02c8281117f3eb64e20c1c280411753b349d153ca20f2db0658b56d1d4c6
+Repeat and blocks 128/256/512: identical; four parts wet; nonfinite=0
+{"scenario": "four-part", "variant": "wet", "parts": [{"engine": "model_d", "held_notes": 1}, {"engine": "juno", "held_notes": 6}, {"engine": "ob6", "held_notes": 4}, {"engine": "hybrid", "held_notes": 6}], "sample_rate": 48000, "block_frames": 128, "audio_seconds": 3.0, "warmup_seconds": 2, "render_wall_seconds": 0.4816478789999999, "real_time_factor": 0.16054929299999995, "core_percent_mean": 16.054929299999994, "core_percent_p99": 21.156262499999997, "core_percent_max": 25.874999999999996, "deadline_misses": 0, "pcm_sha256": "525b02c8281117f3eb64e20c1c280411753b349d153ca20f2db0658b56d1d4c6", "nonfinite_samples": 0, "clipped_samples": 0, "peak": 0.2237306535243988, "rms": 0.05147671737977667, "compiler": "Apple LLVM 17.0.0 (clang-1700.4.4.1)", "build_type": "Release", "policy": "O2 -fno-fast-math -ffp-contract=off + FTZ"}
+<end of output>
+Test time =   3.34 sec
+----------------------------------------------------------
+Test Passed.
+"host_render" end time: Nov 10 07:26 -05
+"host_render" time elapsed: 00:00:03
+----------------------------------------------------------
+
+End testing: Nov 10 07:26 -05
