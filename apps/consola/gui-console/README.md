@@ -174,3 +174,57 @@ The LED output protocol is a proposal (doc21); a Teensy/M4 receiver and physical
 validation remain open. [SYNTH screenshots](screenshots/modo-synth/index.html) use
 fake host data. No desktop test certifies Pi/audio latency, touch calibration or
 ADR-007 performance.
+
+## DRUM mode (spec22)
+
+```sh
+python3 main.py --preview --drum-mode --screen DrumRack --fake-surface
+python3 main.py --fake-drum --drum-mode --fake-surface
+python3 main.py --drum-mode --drum-socket "$XDG_RUNTIME_DIR/gf-synth.sock" --surface-port 'GF Consola'
+bash pi/run_drum.sh
+python3 tools/drum_mode_review.py
+```
+
+Run from this directory. Preview is deterministic and silent; the separate fake
+also has no audio. The real path uses the same `gf-synth-host` process as SYNTH.
+`--note-transport auto` prefers graph MIDI channel10 notes0..15; the announced
+fallback uses an independent socket and a background ACK reader. Never connect
+raw GF Consola channel1 directly to the host while in DRUM: surface notes overlap
+synth notes/CCs. One surface reader routes between SYNTH and DRUM; there is no
+second capture of the hardware.
+
+Top2M4rows play16pads, bottom2rows toggle16steps of the selected lane/page.
+FSR1..4 resolve kick/snare/hat/perc by category. Faders control the four drum
+groups. Encoders use the host's `list_pad_params` pages; all note hits precede
+frame-batched presentation. Touch selects pads/steps/handles, double tap opens
+pad edit, and does not play musical notes. In variations, plain encoder click
+cues its candidate; SHIFT+click activates the bottom soft key. The conflict in
+the design is recorded in spec22§9. ALT+arrows/Enter retain auxiliary focus.
+Space toggles transport in DRUM; F5 enters DRUM. Desktop fake-surface pad keys
+use the same32-key layout as SYNTH, with their new DRUM meanings.
+
+The browser auditions only in cue. Pad audition uses the pad DSP; browser sound
+preview uses its raw layer. Engine generation/import runs in the separately
+spawned kit service. Enter a local folder and free-text licence note on IMPORT;
+the path keyboard is auxiliary, and jobs continue when returning to the jam.
+Completed jobs only update the catalog: LOAD/KEEP is a separate choice. Imported
+folders larger than16sounds produce multiple racks. No third-party samples or
+GeneralSans are included by this change.
+
+The RGB return is the existing SYNTH21 proposal (channel16 CC20..22 then pad
+note48..79). `surface/PadLedReturn.h` and `Surface.cpp` now consume it and forward
+a bounded/coalesced32-pad snapshot over the existing M4 binary protocol, <=30Hz,
+max31/127 brightness. `consola_uno` was built without flashing. Actual LED return,
+M4 firmware compatibility, PipeWire routing, touch and latency need the Pi/Teensy
+validation in the [report](screenshots/modo-drum/REPORT.md). The old E5 palette
+proposal is still a documented question, not an implicit firmware remap.
+
+[All14captures and source manifest](screenshots/modo-drum/index.html) use fake
+snapshots, including explicit RAM/missing/empty examples; they are not audio or
+hardware measurements. The real GUI integration test uses freshly rendered
+own ENGINE audio and inherited Unix sockets to the compiled host.
+
+Tap the DRUM BPM readout to open the auxiliary tempo control (encoder1 or touch
+−/+); transport must be stopped. Browser results use bounded catalog pages and a
+ListView, so jog selection scrolls into view and large imports do not create all
+rows at once. Catalog refreshes discard replies from an older browsing request.

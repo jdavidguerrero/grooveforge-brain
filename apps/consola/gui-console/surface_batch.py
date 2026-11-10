@@ -70,6 +70,9 @@ class SurfaceBatcher(QObject):
     def apply(self, event):
         s, f, kind = self.state, event.fields, event.kind
         index = f.get('indice', 0)
+        drum_surface = getattr(self, 'drum_surface', None)
+        if drum_surface and drum_surface.apply_frame(kind, f):
+            return
         surface = getattr(self, 'synth_surface', None)
         if surface and surface.apply_frame(kind, f):
             return
@@ -115,6 +118,9 @@ class SurfaceBatcher(QObject):
         synth = getattr(self.state, "synth", None)
         if synth and synth.client:
             synth.client.drain_frame()
+        drum = getattr(self.state, "drum", None)
+        if drum and drum.client:
+            drum.client.drain_frame()
         with self._lock:
             batch, self._queue = self._queue, deque()
         if synth:
@@ -134,6 +140,8 @@ class SurfaceBatcher(QObject):
         self.state.flush_properties()
         if hasattr(self.state, "synth"):
             self.state.synth.flush_frame()
+        if drum:
+            drum.flush_frame()
         self.last_batch = tuple(batch)
         if batch:
             self._serial = batch[-1].sequence

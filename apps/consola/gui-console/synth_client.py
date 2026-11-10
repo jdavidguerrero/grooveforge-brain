@@ -12,6 +12,13 @@ COMMANDS = frozenset(('hello','get_state','list_params','get_params','set_param'
 
 
 class SynthClient(QObject):
+    commands = COMMANDS
+    event_names = frozenset(("meters", "state", "param", "cpu"))
+
+    def initial_requests(self):
+        return [("hello", dict(client="grooveforge-console")),
+                ("subscribe", dict(topics=["meters", "state", "cpu"])), ("get_state", {})]
+
     wakeRequested = Signal()
     message = Signal(object)
     stateChanged = Signal()
@@ -90,9 +97,8 @@ class SynthClient(QObject):
         self._buffer.clear()
         self._status('ready')
         self.health.start()
-        self.request('hello',client='grooveforge-console')
-        self.request('subscribe',topics=['meters','state','cpu'])
-        self.request('get_state')
+        for cmd, fields in self.initial_requests():
+            self.request(cmd, **fields)
 
     def _lost(self, *_):
         if not self._running:
@@ -109,7 +115,7 @@ class SynthClient(QObject):
             self.backoff = min(5000,self.backoff*2)
 
     def request(self, cmd, **fields):
-        if cmd not in COMMANDS:
+        if cmd not in self.commands:
             raise ValueError(f'Unsupported synth command: {cmd}')
         self._serial += 1
         rid = self._serial
@@ -170,10 +176,10 @@ class SynthClient(QObject):
                         continue
                     _,msg['_cmd'],msg['_fields'] = pending
                     if msg['_cmd']=='subscribe' and msg.get('ok'):
-                        self._watch_events = 'meters' in msg['_fields']['topics']
+                        self._watch_events = bool(set(msg['_fields']['topics']) & self.event_names)
                         if not self._watch_events:
                             self.health.stop()
-                elif msg.get('event') not in ('meters','state','param','cpu'):
+                elif msg.get('event') not in self.event_names:
                     continue
                 if self._watch_events:
                     self.health.start()

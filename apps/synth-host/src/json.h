@@ -45,6 +45,7 @@ public:
     bool boolean() const { if(!is(json_type_boolean)) throw std::runtime_error("expected boolean"); return json_object_get_boolean(p_); }
     void set(const std::string& k,Json v) { if(!is(json_type_object)) throw std::runtime_error("expected object"); json_object_object_add(p_,k.c_str(),json_object_get(v.p_)); }
     void push(Json v) { if(!is(json_type_array)) throw std::runtime_error("expected array"); json_object_array_add(p_,json_object_get(v.p_)); }
+    void set_at(size_t i,Json v) { if(!is(json_type_array)||i>=size()) throw std::runtime_error("invalid array index"); json_object_array_put_idx(p_,i,json_object_get(v.p_)); }
     size_t fields() const { if(!is(json_type_object)) throw std::runtime_error("expected object"); return json_object_object_length(p_); }
 };
 inline Json object(std::initializer_list<std::pair<std::string,Json>> fields) { Json j; for(const auto& f:fields) j.set(f.first,f.second); return j; }

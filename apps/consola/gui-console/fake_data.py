@@ -144,6 +144,7 @@ class ConsoleState(QObject):
     screen = Property(int, lambda s: s._screen, notify=changed)
     liveState = Property(str, lambda s: s._live_state, notify=changed)
     selectedEncoder = Property(int, lambda s: s._selected, notify=changed)
+    drumMode = Property(bool, lambda s: s._mode == 3, notify=changed)
     synthMode = Property(bool, lambda s: s._mode == 2, notify=changed)
     selectedMode = Property(int, lambda s: s._mode, notify=changed)
     settingsSection = Property(str, lambda s: s._settings, notify=changed)
@@ -162,6 +163,8 @@ class ConsoleState(QObject):
             descriptor = SCREENS[value-1]
             if descriptor.mode == 'SHARED' and SCREENS[self._screen-1].mode != 'SHARED':
                 self._return_screen = self._screen
+            if descriptor.mode == 'DRUM':
+                self._mode = 3
             if descriptor.mode.startswith('CONTROLLER'):
                 self._mode = 0
             elif descriptor.mode == 'STANDALONE' and not (self._mode == 2 and descriptor.name.startswith('Synth')):
@@ -174,6 +177,8 @@ class ConsoleState(QObject):
                                              'ok' if not self._mode or descriptor.name == 'Routing' else 'off'})
             if hasattr(self, 'synth'):
                 self.synth.configure(descriptor.name)
+            if hasattr(self, "drum"):
+                self.drum.configure(descriptor.name)
             self.refresh_keys()
             self._notify()
 
@@ -311,6 +316,9 @@ class ConsoleState(QObject):
         if self._selected != index:
             self._selected = index
             self._property_dirty = True
+        if hasattr(self, 'drum') and self.screenName.startswith('Drum'):
+            self.drum.turn(index, delta)
+            return
         if hasattr(self, 'synth') and self.screenName.startswith('Synth'):
             if self.screenName == 'SynthScale' and hasattr(self, 'surface'):
                 self.surface.apply_frame('Encoder', dict(indice=index, delta=delta))
@@ -318,7 +326,7 @@ class ConsoleState(QObject):
                 self.synth.turn(index, delta)
             return
         if self._screen == 2:
-            self._mode = index % 3
+            self._mode = index % 4
             self.refresh_keys()
             self._property_dirty = True
             return
@@ -356,6 +364,8 @@ class ConsoleState(QObject):
     def triggerAction(self, action):
         if action.startswith('demo:') and hasattr(self, 'surface'):
             self.surface.touch.inspect('DEMO · '+action[5:]+' · no connected service')
+        elif action.startswith('drum:') and hasattr(self, 'drum'):
+            self.drum.action(action[5:])
         elif action.startswith('synth:') and hasattr(self, 'synth'):
             self.synth.action(action[6:])
         elif action.startswith('nav:'):
@@ -391,7 +401,7 @@ class ConsoleState(QObject):
             self.setScreen(int(action.split(':')[1]))
         elif action.startswith('mode:'):
             self._mode = int(action[-1])
-            self.setScreen(screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
+            self.setScreen(screen_id("DrumRack") if self._mode == 3 else screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
         elif action.startswith('settings:'):
             self._settings = action.split(':')[1]
             self.refresh_keys()
@@ -420,6 +430,9 @@ class ConsoleState(QObject):
 
     def refresh_keys(self):
         descriptor = SCREENS[self._screen-1]
+        if descriptor.name.startswith('Drum') and hasattr(self, 'drum'):
+            self._softKeys.replace(self.drum.keys())
+            return
         if descriptor.name.startswith('Synth') and hasattr(self, 'synth'):
             self._softKeys.replace(self.synth.keys())
             return
@@ -450,8 +463,8 @@ class ConsoleState(QObject):
             keys = [key(r, 'MUTE' if i == 6 else str(round(LEVELS[i]*100)), r, i != 6,
                         'screen:6', i == 4, LEVELS[i] if i == 4 else -1) for i,r in enumerate(ROLES)]
         elif self._screen == 2:
-            keys = [key('Controller',lit=self._mode==0,action='mode:0'),key('Standalone','enter',lit=self._mode==1,action='mode:1'),key('Synth','play',lit=self._mode==2,action='mode:2')]
-            keys += [key() for _ in range(3)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
+            keys = [key('Controller',lit=self._mode==0,action='mode:0'),key('Standalone','enter',lit=self._mode==1,action='mode:1'),key('Synth','play',lit=self._mode==2,action='mode:2'),key('Drum','jam',lit=self._mode==3,action='mode:3')]
+            keys += [key() for _ in range(2)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
         elif self._screen == 4:
             keys = [key(n,lit=n == self._settings,action='settings:'+n) for n in ['Audio','Connections','Surface','System']]
             keys += [key(),key(),key('Calibrate','FSR 2',action='settings:Surface'),key('Back',action='screen:2')]

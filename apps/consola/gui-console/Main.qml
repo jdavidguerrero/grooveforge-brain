@@ -43,6 +43,8 @@ QtWindow.Window {
                 else if(event.key >=  Qt.Key_1 && event.key <= Qt.Key_9) console.setScreen(event.key-Qt.Key_0)
                 else if(event.key === Qt.Key_Tab) console.cycleScreen(event.modifiers & Qt.ShiftModifier ? -1 : 1)
                 else if(event.key === Qt.Key_Backtab) console.cycleScreen(-1)
+                else if(event.key === Qt.Key_F5) console.triggerAction('mode:3')
+                else if(event.key === Qt.Key_Space && console.drumMode) { if(drum.clock.running)drum.stop();else drum.play() }
                 else if(event.key === Qt.Key_F3) console.triggerAction('mode:2')
                 else if(event.key === Qt.Key_F4) console.navigate('SynthSettingsAudio')
                 else if(event.key === Qt.Key_Shift) synth.setFine(true)
@@ -62,7 +64,7 @@ QtWindow.Window {
                 else if(event.key === Qt.Key_L) console.setLiveState("loading")
                 else if(event.key === Qt.Key_N) console.setLiveState("normal")
                 else if(event.key === Qt.Key_B) console.triggerAction("encoding")
-                else if(event.key === Qt.Key_Escape) console.triggerAction(console.screenName.indexOf("Synth") === 0 ? "nav:SynthParts" : "back")
+                else if(event.key === Qt.Key_Escape) console.triggerAction(console.screenName.indexOf("Drum") === 0 ? "nav:DrumRack" : console.screenName.indexOf("Synth") === 0 ? "nav:SynthParts" : "back")
                 else return
                 event.accepted = true
             }
@@ -71,6 +73,7 @@ QtWindow.Window {
             Label { anchors.fill: parent; anchors.margins: 12; text: touch.detail; font.pixelSize: 12 }
             TouchTarget { hardwareAction: "detail"; callback: function() { touch.dismiss() } }
         }
+        DrumTempo {x:420;y:72;width:440;height:236;z:220;visible:console.drumMode && console.screenName.indexOf('Drum')===0 && drum.tempoVisible}
         // Visible acknowledgement is synchronized with the same frame as the models.
         Rectangle { objectName: "surfaceProbe"; visible: perfMode; x: 0; y: 718; width: 1280; height: 2
             color: Qt.rgba((surfaceBatch.serial % 256)/255, (Math.floor(surfaceBatch.serial/256) % 256)/255, .6, 1)

@@ -166,9 +166,11 @@ void persist_state(const std::string& file,const State& state) {
 }
 namespace {
 struct Client {int fd=-1;uint64_t serial=0;std::string input,output;unsigned topics=0;};
-constexpr unsigned METERS=1,STATE=2,CPU=4,PARAM=8;
+constexpr unsigned METERS=1,STATE=2,CPU=4,PARAM=8,DRUM=16,DRUM_CLOCK=32,DRUM_METERS=64,DRUM_JOB=128;
 class Server {
     Audio& audio_;State& state_;Presets& presets_;
+    std::unique_ptr<DrumService> drum_;
+    bool pending() const {return pending_||(drum_&&drum_->pending());}
     std::string socket_,state_file_;
     int listener_=-1,lock_=-1;bool bound_=false;
     std::vector<Client> clients_;
@@ -184,6 +186,7 @@ class Server {
     void dirty() {if(!dirty_)dirty_since_=Clock::now();dirty_=true;}
     void state_changed(unsigned p) {dirty();broadcast(STATE,object({{"event","state"},{"part",part_json(state_[p],p)}}));}
     void drain() {
+        drum_->poll();
         Ack ack;
         while(audio_.acknowledgements.pop(ack)) {
             if(ack.parameter) {
@@ -224,8 +227,10 @@ class Server {
         const auto id=j.at("id").integer();const auto cmd=j.at("cmd").str();
         Json response=object({{"id",id},{"ok",true}});
         auto merge=[&](const char* key,Json value){response.set(key,std::move(value));};
+        if(drum_->request(j,[this,serial=client.serial](Json r){if(auto* c=this->client(serial))send(*c,r);}))return;
         if(cmd=="hello") {
             (void)j.at("client").str();Json engines=Json::array();for(const auto& e:registry())engines.push(e.name);
+            merge("audio_epoch",drum_->epoch());Json drum_outputs=Json::array();for(const char* port:{"mix_L","mix_R","cue_L","cue_R"})drum_outputs.push(port);merge("drum_outputs",drum_outputs);merge("drum_version",1);merge("drum_voices",int(DRUM_VOICES));merge("drum_ram_bytes",int64_t(DRUM_RAM));Json capabilities=Json::array();capabilities.push("drum");merge("capabilities",capabilities);
             merge("version","0.1.0");merge("sample_rate",int(RATE));merge("block",int(audio_.block.load()));merge("engines",engines);
         } else if(cmd=="get_state") {Json parts=Json::array();for(unsigned p=0;p<4;++p)parts.push(part_json(state_[p],p));merge("parts",parts);}
         else if(cmd=="list_params")merge("pages",params_json(engine_index(j.at("engine").str())).at("pages"));
@@ -235,7 +240,7 @@ class Server {
             if(!engine.empty())(void)engine_index(engine);Json list=Json::array();
             for(const auto& pair:presets_.entries) {const auto& p=pair.second;if(!engine.empty()&&engine!=registry()[size_t(p.config.engine)].name)continue;if(!role.empty()&&role!=p.role)continue;bool found=tag.empty();for(size_t i=0;i<p.tags.size();++i)found|=p.tags.at(i).str()==tag;if(!found)continue;list.push(object({{"name",p.name},{"engine",registry()[size_t(p.config.engine)].name},{"tags",p.tags},{"favorite",p.favorite}}));}merge("presets",list);
         } else if(cmd=="subscribe") {
-            const auto topics=j.at("topics");unsigned mask=0;for(size_t i=0;i<topics.size();++i) {const auto s=topics.at(i).str();if(s=="meters")mask|=METERS;else if(s=="state")mask|=STATE;else if(s=="cpu")mask|=CPU;else if(s=="param")mask|=PARAM;else throw std::runtime_error("unknown topic: "+s);}client.topics=mask;
+            const auto topics=j.at("topics");unsigned mask=0;for(size_t i=0;i<topics.size();++i) {const auto s=topics.at(i).str();if(s=="meters")mask|=METERS;else if(s=="state")mask|=STATE;else if(s=="cpu")mask|=CPU;else if(s=="param")mask|=PARAM;else if(s=="drum")mask|=DRUM;else if(s=="clock")mask|=DRUM_CLOCK;else if(s=="drum_meters")mask|=DRUM_METERS;else if(s=="drum_job")mask|=DRUM_JOB;else throw std::runtime_error("unknown topic: "+s);}client.topics=mask;
         } else {
             const auto p=part_number(j);auto& s=state_[p];Command command;command.part=p;
             if(cmd=="set_param") {
@@ -264,7 +269,8 @@ class Server {
         catch(const std::exception& e){send(c,object({{"id",id},{"ok",false},{"error",e.what()}}));}
     }
 public:
-    Server(Audio& a,State& s,Presets& p,std::string path,std::string file,const std::vector<int>& connected_fds):audio_(a),state_(s),presets_(p),socket_(std::move(path)),state_file_(std::move(file)) {
+    Server(Audio& a,State& s,Presets& p,std::string path,std::string file,const std::vector<int>& connected_fds,const DrumOptions& drum_options):audio_(a),state_(s),presets_(p),socket_(std::move(path)),state_file_(std::move(file)) {
+        drum_=std::make_unique<DrumService>(audio_.drum,drum_options,[this](Json e){const auto event=e.at("event").str();broadcast(event=="clock"?DRUM_CLOCK:event=="drum_meters"?DRUM_METERS:event=="drum_job"?DRUM_JOB:DRUM,e);});
         if(!connected_fds.empty()){for(int fd:connected_fds){if(fd<0||fcntl(fd,F_SETFL,O_NONBLOCK)!=0)throw std::runtime_error("invalid inherited control fd");clients_.push_back({fd,++serial_,"","",0});}return;}
         if(socket_.size()>=sizeof(sockaddr_un::sun_path))throw std::runtime_error("socket path too long");
         lock_=open((socket_+".lock").c_str(),O_CREAT|O_RDWR,0600);if(lock_<0||flock(lock_,LOCK_EX|LOCK_NB)!=0){if(lock_>=0)close(lock_);lock_=-1;throw std::runtime_error("socket already owned or runtime directory unavailable");}
@@ -298,7 +304,7 @@ public:
 #else
             (void)last_notify;
 #endif
-            if(dirty_&&!pending_&&now-dirty_since_>std::chrono::milliseconds(100)) {persist_state(state_file_,state_);dirty_=false;}
+            if(dirty_&&!pending()&&now-dirty_since_>std::chrono::milliseconds(100)) {persist_state(state_file_,state_);dirty_=false;}
             std::vector<pollfd> fds{{listener_,POLLIN,0}};for(const auto& c:clients_)fds.push_back({c.fd,short(POLLIN|(c.output.empty()?0:POLLOUT)),0});
             const int result=poll(fds.data(),nfds_t(fds.size()),2);if(result<0&&errno!=EINTR)throw std::runtime_error("poll failed");
             // Handle clients before accept, so fds and clients have matching indices.
@@ -312,12 +318,12 @@ public:
                 const int fd=accept(listener_,nullptr,nullptr);if(fd>=0){if(clients_.size()>=32||fcntl(fd,F_SETFL,O_NONBLOCK)!=0)close(fd);else clients_.push_back({fd,++serial_,"","",0});}
             }
             // At most one in-flight mutation globally: state reads follow all previous ACKs.
-            if(!pending_&&!clients_.empty())for(size_t n=0;n<clients_.size();++n){const auto index=(cursor_+n)%clients_.size();auto& c=clients_[index];if(c.fd<0)continue;const auto end=c.input.find('\n');if(end!=std::string::npos){const auto line=c.input.substr(0,end);c.input.erase(0,end+1);cursor_=(index+1)%clients_.size();handle_line(c,line);break;}}
+            if(!pending()&&!clients_.empty())for(size_t n=0;n<clients_.size();++n){const auto index=(cursor_+n)%clients_.size();auto& c=clients_[index];if(c.fd<0||!c.output.empty())continue;const auto end=c.input.find('\n');if(end!=std::string::npos){const auto line=c.input.substr(0,end);c.input.erase(0,end+1);cursor_=(index+1)%clients_.size();handle_line(c,line);break;}}
             clients_.erase(std::remove_if(clients_.begin(),clients_.end(),[](const Client& c){return c.fd<0;}),clients_.end());
         }
         // Drain a final submitted command before persisting and releasing ownership.
         const auto until=Clock::now()+std::chrono::milliseconds(500);
-        while(pending_&&Clock::now()<until){drain();usleep(1000);}
+        while(pending()&&Clock::now()<until){drain();usleep(1000);}
         persist_state(state_file_,state_);
 #ifdef GF_HAVE_SYSTEMD
         sd_notify(0,"STOPPING=1");
@@ -325,5 +331,5 @@ public:
     }
 };
 }
-void serve(Audio& audio,State& state,Presets& presets,const std::string& socket,const std::string& file,volatile sig_atomic_t& stop,double seconds,const std::vector<int>& connected_fds) {Server server(audio,state,presets,socket,file,connected_fds);server.run(stop,seconds);}
+void serve(Audio& audio,State& state,Presets& presets,const std::string& socket,const std::string& file,volatile sig_atomic_t& stop,double seconds,const std::vector<int>& connected_fds,const DrumOptions& drum_options) {Server server(audio,state,presets,socket,file,connected_fds,drum_options);server.run(stop,seconds);}
 }

@@ -1,0 +1,284 @@
+Verbosity level can be increased via `-v, -vv, or -vvv` option
+Collected 14 tests
+
+Processing test_dsp_10x in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_dsp_10x/test_main.cpp:393: test_tape_silencio_limpio_y_ganancia_moderada	[PASSED]
+test/test_dsp_10x/test_main.cpp:394: test_drive_tres_tipos_acotados	[PASSED]
+test/test_dsp_10x/test_main.cpp:395: test_pingpong_alterna_l_r_con_feedback	[PASSED]
+test/test_dsp_10x/test_main.cpp:396: test_pingpong_tone_oscuro_baja_los_agudos	[PASSED]
+test/test_dsp_10x/test_main.cpp:397: test_phaser_quieto_con_depth_0_y_acotado	[PASSED]
+test/test_dsp_10x/test_main.cpp:398: test_juno_hiss_apagado_igual_y_encendido_acotado	[PASSED]
+test/test_dsp_10x/test_main.cpp:399: test_model_d_shark_y_rev_saw	[PASSED]
+test/test_dsp_10x/test_main.cpp:400: test_fast_exp2_precision	[PASSED]
+test/test_dsp_10x/test_main.cpp:401: test_xmod_fm_de_audio_dobla_la_frecuencia	[PASSED]
+test/test_dsp_10x/test_main.cpp:402: test_xmod_pwm_en_rango_y_sin_nan	[PASSED]
+test/test_dsp_10x/test_main.cpp:403: test_polyblep_waves_bounded_and_zero_dc	[PASSED]
+test/test_dsp_10x/test_main.cpp:404: test_analog_env_release_sin_salto_y_legato	[PASSED]
+test/test_dsp_10x/test_main.cpp:405: test_sem_svf_lp_notch_hp_bp	[PASSED]
+test/test_dsp_10x/test_main.cpp:406: test_juno_chorus_bbd_and_hpf	[PASSED]
+test/test_dsp_10x/test_main.cpp:407: test_dx7_velocity_mod_index	[PASSED]
+---------------- native:test_dsp_10x [PASSED] Took 2.05 seconds ----------------
+
+Processing test_studio_ui in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_studio_ui/test_main.cpp:626: test_arranque_en_perform	[PASSED]
+test/test_studio_ui/test_main.cpp:627: test_nav_recorre_las_vistas	[PASSED]
+test/test_studio_ui/test_main.cpp:628: test_panel_tarjetas_navegables	[PASSED]
+test/test_studio_ui/test_main.cpp:629: test_p1_push_forma_del_lfo	[PASSED]
+test/test_studio_ui/test_main.cpp:630: test_b1_abre_osc_y_vuelve_a_la_ultima_vista	[PASSED]
+test/test_studio_ui/test_main.cpp:631: test_b4_presets_engine_perform_y_carga_engine	[PASSED]
+test/test_studio_ui/test_main.cpp:632: test_engine_cursor_da_la_vuelta	[PASSED]
+test/test_studio_ui/test_main.cpp:633: test_presets_save_y_load	[PASSED]
+test/test_studio_ui/test_main.cpp:634: test_osc_recorre_los_osciladores_del_engine	[PASSED]
+test/test_studio_ui/test_main.cpp:635: test_shift_momentaneo_y_bypass	[PASSED]
+test/test_studio_ui/test_main.cpp:636: test_lfo_push_alterna_sync	[PASSED]
+test/test_studio_ui/test_main.cpp:637: test_lfo_nav_cambia_la_forma	[PASSED]
+test/test_studio_ui/test_main.cpp:638: test_b4_abre_synth_fx_cursor_y_encendido	[PASSED]
+test/test_studio_ui/test_main.cpp:639: test_shift_nav_push_abre_engine_select	[PASSED]
+test/test_studio_ui/test_main.cpp:640: test_nav_largo_vuelve_a_home	[PASSED]
+test/test_studio_ui/test_main.cpp:641: test_mode_fx_y_vuelta	[PASSED]
+test/test_studio_ui/test_main.cpp:642: test_fx_slots_ruteo_hold_y_favorito	[PASSED]
+test/test_studio_ui/test_main.cpp:643: test_ui_state_roundtrip	[PASSED]
+test/test_studio_ui/test_main.cpp:644: test_detent_con_histeresis	[PASSED]
+test/test_studio_ui/test_main.cpp:645: test_groove_shift_b3_nav_push_y_tap	[PASSED]
+test/test_studio_ui/test_main.cpp:646: test_estado_del_reloj_en_flags	[PASSED]
+test/test_studio_ui/test_main.cpp:647: test_volumen_desde_la_cabeza	[PASSED]
+test/test_studio_ui/test_main.cpp:648: test_modo_hybrid	[PASSED]
+test/test_studio_ui/test_main.cpp:649: test_hybrid_custom	[PASSED]
+test/test_studio_ui/test_main.cpp:650: test_shift_b4_sale_de_presets	[PASSED]
+test/test_studio_ui/test_main.cpp:651: test_cada_modo_vuelve_a_su_pagina	[PASSED]
+test/test_studio_ui/test_main.cpp:652: test_layer_state_ida_y_vuelta	[PASSED]
+test/test_studio_ui/test_main.cpp:653: test_presets_saltos_de_banco	[PASSED]
+test/test_studio_ui/test_main.cpp:654: test_hybrid_presets_de_la_mitad_en_foco	[PASSED]
+test/test_studio_ui/test_main.cpp:655: test_hybrid_engine_select_salta_la_otra_mitad	[PASSED]
+test/test_studio_ui/test_main.cpp:656: test_hybrid_groove_b4_es_tap	[PASSED]
+--------------- native:test_studio_ui [PASSED] Took 0.75 seconds ---------------
+
+Processing test_tercera_vuelta in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_tercera_vuelta/test_main.cpp:119: test_forma_continua_extremos	[PASSED]
+test/test_tercera_vuelta/test_main.cpp:120: test_hard_sync_sigue_al_maestro	[PASSED]
+test/test_tercera_vuelta/test_main.cpp:121: test_ruido_rosa_inclinado	[PASSED]
+test/test_tercera_vuelta/test_main.cpp:122: test_pila_mono_ultima_nota	[PASSED]
+test/test_tercera_vuelta/test_main.cpp:123: test_etapa_de_salida_quita_dc	[PASSED]
+------------ native:test_tercera_vuelta [PASSED] Took 0.78 seconds ------------
+
+Processing test_panel_leds in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_panel_leds/test_main.cpp:65: test_arco_reparte_los_12_leds	[PASSED]
+test/test_panel_leds/test_main.cpp:66: test_nav_por_pagina_y_fx	[PASSED]
+test/test_panel_leds/test_main.cpp:67: test_teclas_fijas_segun_pagina_y_shift	[PASSED]
+-------------- native:test_panel_leds [PASSED] Took 0.74 seconds --------------
+
+Processing test_page_params in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_page_params/test_main.cpp:362: test_perform_p1_env_amt_p2_lfo_cutoff	[PASSED]
+test/test_page_params/test_main.cpp:363: test_groove_encoders_toggle_y_macros_cc	[PASSED]
+test/test_page_params/test_main.cpp:364: test_env_shift_velocity	[PASSED]
+test/test_page_params/test_main.cpp:365: test_perform_shift_glide_y_drive	[PASSED]
+test/test_page_params/test_main.cpp:366: test_lfo_cutoff_es_el_mismo_valor_en_perform_y_lfo	[PASSED]
+test/test_page_params/test_main.cpp:367: test_lfo_shift_pitch_y_tercer_destino_por_engine	[PASSED]
+test/test_page_params/test_main.cpp:368: test_lfo_p1_rate_libre_o_division_con_sync	[PASSED]
+test/test_page_params/test_main.cpp:369: test_env_cuatro_celdas_y_rangos	[PASSED]
+test/test_page_params/test_main.cpp:370: test_fx_y_paginas_sin_encoders_no_editan	[PASSED]
+test/test_page_params/test_main.cpp:371: test_forma_sin_dar_la_vuelta_y_patch_completo	[PASSED]
+test/test_page_params/test_main.cpp:372: test_synth_fx_mix_principal_y_discretos	[PASSED]
+test/test_page_params/test_main.cpp:373: test_synth_fx_encendido	[PASSED]
+test/test_page_params/test_main.cpp:374: test_env_filter_y_osc	[PASSED]
+test/test_page_params/test_main.cpp:375: test_prophet_osc_shift_mod_y_shape	[PASSED]
+test/test_page_params/test_main.cpp:376: test_nuevos_slots_juno_ob6_arp	[PASSED]
+test/test_page_params/test_main.cpp:377: test_cc_entrada	[PASSED]
+test/test_page_params/test_main.cpp:378: test_cc_ida_y_vuelta	[PASSED]
+test/test_page_params/test_main.cpp:379: test_cutoff_cc_logaritmico	[PASSED]
+-------------- native:test_page_params [PASSED] Took 0.77 seconds --------------
+
+Processing test_ladder in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_ladder/test_main.cpp:148: test_cutoff_suavizado_sin_zipper	[PASSED]
+test/test_ladder/test_main.cpp:149: test_ladder_stage_respeta_frecuencia_de_muestreo	[PASSED]
+test/test_ladder/test_main.cpp:150: test_suavizado_en_milisegundos_independiente_de_fs	[PASSED]
+test/test_ladder/test_main.cpp:151: test_pade_contra_tanhf	[PASSED]
+test/test_ladder/test_main.cpp:152: test_resonancia_afinada_en_todo_el_rango	[PASSED]
+test/test_ladder/test_main.cpp:153: test_pendiente_24db_y_corte	[PASSED]
+test/test_ladder/test_main.cpp:154: test_caracter_compensa_graves	[PASSED]
+test/test_ladder/test_main.cpp:155: test_estable_con_barrido_y_senal_fuerte	[PASSED]
+---------------- native:test_ladder [PASSED] Took 1.01 seconds ----------------
+
+Processing test_dx7_6op in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_dx7_6op/test_main.cpp:195: test_algorithms_all_routes	[PASSED]
+test/test_dx7_6op/test_main.cpp:195: test_eg_original_msfa_timings	[PASSED]
+test/test_dx7_6op/test_main.cpp:195: test_keyboard_curves	[PASSED]
+test/test_dx7_6op/test_main.cpp:196: test_sysex_gfp_roundtrip_and_reject	[PASSED]
+test/test_dx7_6op/test_main.cpp:196: test_metadata_complete_and_banked	[PASSED]
+test/test_dx7_6op/test_main.cpp:197: test_finite_all_algorithms_and_sample_rates	[PASSED]
+test/test_dx7_6op/test_main.cpp:197: test_block_independence_and_instance_rates	[PASSED]
+test/test_dx7_6op/test_main.cpp:197: test_pitch_velocity_and_live_edit	[PASSED]
+test/test_dx7_6op/test_main.cpp:197: test_cpu_estimate	[PASSED]
+---------------- native:test_dx7_6op [PASSED] Took 1.73 seconds ----------------
+
+Processing test_groove in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_groove/test_main.cpp:447: test_clock_midi_bpm_and_position	[PASSED]
+test/test_groove/test_main.cpp:448: test_clock_midi_start_stop_spp	[PASSED]
+test/test_groove/test_main.cpp:449: test_clock_tap_sets_bpm_and_phase	[PASSED]
+test/test_groove/test_main.cpp:450: test_clock_source_priority	[PASSED]
+test/test_groove/test_main.cpp:451: test_clock_ai_position_continuous	[PASSED]
+test/test_groove/test_main.cpp:452: test_clock_midi_lost_keeps_phase_and_tempo	[PASSED]
+test/test_groove/test_main.cpp:453: test_clock_stop_stays_stopped	[PASSED]
+test/test_groove/test_main.cpp:454: test_clock_ai_to_internal_no_jump	[PASSED]
+test/test_groove/test_main.cpp:455: test_pump_kick_curve	[PASSED]
+test/test_groove/test_main.cpp:456: test_pump_offset_and_shapes	[PASSED]
+test/test_groove/test_main.cpp:457: test_arp_up_and_division	[PASSED]
+test/test_groove/test_main.cpp:458: test_arp_triplets_and_dotted	[PASSED]
+test/test_groove/test_main.cpp:459: test_arp_swing_delays_odd_steps	[PASSED]
+test/test_groove/test_main.cpp:460: test_arp_octaves_and_updown	[PASSED]
+test/test_groove/test_main.cpp:461: test_arp_smart_never_repeats	[PASSED]
+test/test_groove/test_main.cpp:462: test_arp_latch_and_release	[PASSED]
+test/test_groove/test_main.cpp:463: test_chord_default_learn_and_transpose	[PASSED]
+test/test_groove/test_main.cpp:464: test_chord_inversion	[PASSED]
+test/test_groove/test_main.cpp:465: test_chord_key_triads	[PASSED]
+test/test_groove/test_main.cpp:466: test_unison_symmetric_spread_and_gain	[PASSED]
+test/test_groove/test_main.cpp:467: test_macros_neutral_at_zero	[PASSED]
+test/test_groove/test_main.cpp:468: test_macro_pocket_and_grit	[PASSED]
+test/test_groove/test_main.cpp:469: test_macro_depths_and_pocket_only_shortens	[PASSED]
+test/test_groove/test_main.cpp:470: test_drift_bounded	[PASSED]
+---------------- native:test_groove [PASSED] Took 0.79 seconds ----------------
+
+Processing test_dx7 in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_dx7/test_main.cpp:159: test_ocho_algoritmos_finitos_con_feedback_maximo	[PASSED]
+test/test_dx7/test_main.cpp:160: test_algoritmo_8_op1_solo_es_un_seno_a_la_nota	[PASSED]
+test/test_dx7/test_main.cpp:161: test_modulador_en_cero_no_cambia_la_portadora	[PASSED]
+test/test_dx7/test_main.cpp:162: test_release_apaga_la_voz	[PASSED]
+test/test_dx7/test_main.cpp:163: test_portadoras_por_algoritmo	[PASSED]
+test/test_dx7/test_main.cpp:164: test_envolvente_lineal_en_db	[PASSED]
+test/test_dx7/test_main.cpp:165: test_ataque_y_d2_rate	[PASSED]
+test/test_dx7/test_main.cpp:166: test_ocho_formas_tx81z	[PASSED]
+test/test_dx7/test_main.cpp:167: test_detune_y_escalado_de_teclado	[PASSED]
+------------------ native:test_dx7 [PASSED] Took 0.85 seconds ------------------
+
+Processing test_lfo in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_lfo/test_main.cpp:69: test_rate_se_recorta_al_rango	[PASSED]
+test/test_lfo/test_main.cpp:70: test_salida_bipolar_en_todas_las_formas	[PASSED]
+test/test_lfo/test_main.cpp:71: test_triangulo_pasa_por_los_extremos	[PASSED]
+test/test_lfo/test_main.cpp:72: test_sync_sigue_el_bpm	[PASSED]
+test/test_lfo/test_main.cpp:73: test_sample_hold_cambia_solo_al_cerrar_el_ciclo	[PASSED]
+------------------ native:test_lfo [PASSED] Took 0.77 seconds ------------------
+
+Processing test_prophet_osc in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_prophet_osc/test_main.cpp:84: test_exp2_rapido	[PASSED]
+test/test_prophet_osc/test_main.cpp:85: test_salida_finita_en_todas_las_combinaciones	[PASSED]
+test/test_prophet_osc/test_main.cpp:86: test_saw_con_polyblep_en_frecuencia	[PASSED]
+test/test_prophet_osc/test_main.cpp:87: test_poly_mod_env_sube_la_frecuencia_de_a	[PASSED]
+test/test_prophet_osc/test_main.cpp:88: test_sync_reinicia_a_con_b	[PASSED]
+-------------- native:test_prophet_osc [PASSED] Took 0.79 seconds --------------
+
+Processing test_consola_uno in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_consola_uno/test_main.cpp:322: mcp_full_map_and_reserved_pins	[PASSED]
+test/test_consola_uno/test_main.cpp:323: mcp_noise_wrap_unplug_and_minimal_port_a	[PASSED]
+test/test_consola_uno/test_main.cpp:324: selector_initial_thresholds_and_jumps	[PASSED]
+test/test_consola_uno/test_main.cpp:325: selector_hysteresis_both_directions	[PASSED]
+test/test_consola_uno/test_main.cpp:326: prototype_masks_midi_and_pins	[PASSED]
+test/test_consola_uno/test_main.cpp:327: usb_product_name_matches_descriptor	[PASSED]
+test/test_consola_uno/test_main.cpp:328: retry_backoff_reconnect_and_wrap	[PASSED]
+test/test_consola_uno/test_main.cpp:329: codec_and_cv_command_ranges	[PASSED]
+test/test_consola_uno/test_main.cpp:330: adc_frames_slow_mailboxes_and_missing_coco	[PASSED]
+test/test_consola_uno/test_main.cpp:331: adc_wrap_velocity_and_recovery	[PASSED]
+test/test_consola_uno/test_main.cpp:332: cc_flood_is_bounded_and_relative_steps_survive	[PASSED]
+test/test_consola_uno/test_main.cpp:333: retry_exponential_caps_and_success_resets	[PASSED]
+test/test_consola_uno/test_main.cpp:334: ads_disabled_has_no_bus_traffic_and_recovers_after_backoff	[PASSED]
+-------------- native:test_consola_uno [PASSED] Took 0.75 seconds --------------
+
+Processing test_presets in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_presets/test_main.cpp:776: test_roundtrip_completo	[PASSED]
+test/test_presets/test_main.cpp:777: test_rechaza_otro_engine_version_y_tamano	[PASSED]
+test/test_presets/test_main.cpp:778: test_banco_vacio_escribe_fabrica	[PASSED]
+test/test_presets/test_main.cpp:779: test_save_new_hasta_16	[PASSED]
+test/test_presets/test_main.cpp:780: test_fabrica_dentro_de_rango	[PASSED]
+test/test_presets/test_main.cpp:781: test_presets_del_track	[PASSED]
+test/test_presets/test_main.cpp:782: test_migra_formato_2	[PASSED]
+test/test_presets/test_main.cpp:783: test_migra_formato_3_con_velocity_del_engine	[PASSED]
+test/test_presets/test_main.cpp:784: test_banco_existente_conserva_y_agrega_fabrica	[PASSED]
+test/test_presets/test_main.cpp:785: test_pilotos_signature	[PASSED]
+test/test_presets/test_main.cpp:786: test_fabrica_de_a_uno_y_se_retoma	[PASSED]
+test/test_presets/test_main.cpp:787: test_trunc_durante_la_escritura_de_fabrica	[PASSED]
+test/test_presets/test_main.cpp:788: test_hibridos_en_pares	[PASSED]
+test/test_presets/test_main.cpp:789: test_capas_apuntan_a_sus_mitades	[PASSED]
+test/test_presets/test_main.cpp:790: test_morph_igual_potencia_y_cc18	[PASSED]
+test/test_presets/test_main.cpp:791: test_banco_de_64_y_anotacion_en_64	[PASSED]
+test/test_presets/test_main.cpp:792: test_un_archivo_por_engine	[PASSED]
+test/test_presets/test_main.cpp:793: test_tamanos_iguales_al_script_de_la_mac	[PASSED]
+test/test_presets/test_main.cpp:794: test_sesion_ida_y_vuelta	[PASSED]
+test/test_presets/test_main.cpp:795: test_signature_en_el_banco_de_fabrica	[PASSED]
+test/test_presets/test_main.cpp:796: test_move_solo_en_los_fx_encendidos	[PASSED]
+test/test_presets/test_main.cpp:797: test_migra_formato_4_a_5_fx	[PASSED]
+test/test_presets/test_main.cpp:798: test_archivos_viejos_se_leen_enteros	[PASSED]
+test/test_presets/test_main.cpp:799: test_hex_ida_y_vuelta	[PASSED]
+test/test_presets/test_main.cpp:800: test_parseo_de_comandos	[PASSED]
+test/test_presets/test_main.cpp:801: test_comandos_de_la_consola	[PASSED]
+test/test_presets/test_main.cpp:802: test_put_y_trunc_del_banco	[PASSED]
+test/test_presets/test_main.cpp:803: test_presets_de_capa	[PASSED]
+---------------- native:test_presets [PASSED] Took 0.77 seconds ----------------
+
+Processing test_envelope_rc in native environment
+--------------------------------------------------------------------------------
+Building...
+Testing...
+test/test_envelope_rc/test_main.cpp:98: test_ataque_carga_rc_hacia_1_5	[PASSED]
+test/test_envelope_rc/test_main.cpp:99: test_decay_y_release_exponenciales	[PASSED]
+test/test_envelope_rc/test_main.cpp:100: test_redisparo_sin_salto	[PASSED]
+test/test_envelope_rc/test_main.cpp:101: test_vca_por_muestra_continuo	[PASSED]
+test/test_envelope_rc/test_main.cpp:102: test_chorus_estereo_en_antifase	[PASSED]
+test/test_envelope_rc/test_main.cpp:103: test_voice_cards_acotadas_y_distintas	[PASSED]
+-------------- native:test_envelope_rc [PASSED] Took 0.77 seconds --------------
+
+=================================== SUMMARY ===================================
+Environment    Test                 Status    Duration
+-------------  -------------------  --------  ------------
+native         test_dsp_10x         PASSED    00:00:02.050
+native         test_studio_ui       PASSED    00:00:00.749
+native         test_tercera_vuelta  PASSED    00:00:00.784
+native         test_panel_leds      PASSED    00:00:00.742
+native         test_page_params     PASSED    00:00:00.773
+native         test_ladder          PASSED    00:00:01.010
+native         test_dx7_6op         PASSED    00:00:01.728
+native         test_groove          PASSED    00:00:00.788
+native         test_dx7             PASSED    00:00:00.855
+native         test_lfo             PASSED    00:00:00.766
+native         test_prophet_osc     PASSED    00:00:00.792
+native         test_consola_uno     PASSED    00:00:00.753
+native         test_presets         PASSED    00:00:00.766
+native         test_envelope_rc     PASSED    00:00:00.768
+================ 179 test cases: 179 succeeded in 00:00:13.324 ================

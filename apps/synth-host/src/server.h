@@ -1,5 +1,6 @@
 #pragma once
 #include "audio.h"
+#include "drum_service.h"
 #include "json.h"
 #include <array>
 #include <csignal>
@@ -24,7 +25,7 @@ State restore_state(const std::string& file,bool wet=false);
 /** @brief Atomic fsync+rename snapshot outside audio. */
 void persist_state(const std::string& file,const State&);
 /** @brief Unix JSON-lines event loop, bounded clients/buffers and audio ACKs. */
-void serve(Audio&,State&,Presets&,const std::string& socket,const std::string& state_file,volatile sig_atomic_t& stop,double seconds=0,const std::vector<int>& connected_fds={});
+void serve(Audio&,State&,Presets&,const std::string& socket,const std::string& state_file,volatile sig_atomic_t& stop,double seconds=0,const std::vector<int>& connected_fds={},const DrumOptions& drum_options={});
 /** @brief Public part serialization required by contract §2. */
 Json part_json(const PartState&,unsigned part);
 }

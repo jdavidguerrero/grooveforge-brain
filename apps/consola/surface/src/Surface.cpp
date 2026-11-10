@@ -5,6 +5,7 @@
 #include <IntervalTimer.h>
 #include <cstring>
 #include "consola_s/Surface.h"
+#include "consola_s/PadLedReturn.h"
 #include "consola_s/AdcScan.h"
 #include "consola_s/CcCadence.h"
 #include "consola_s/ConsolaMap.h"
@@ -37,6 +38,8 @@ surface::CommandHandler command_handler = nullptr;
 surface::PotHandler pot_handler = nullptr;
 surface::StatsHandler stats_handler = nullptr;
 PadSelector selector;
+PadLedReturn pad_led_return;
+uint32_t last_led_return=0;
 #ifdef GF_CONSOLA_UNO
 constexpr uint8_t ADC1_MASK = PROFILE.fsrs | ((PROFILE.pots & 2) ? 0x10 : 0) | (PROFILE.selector ? 0x20 : 0);
 #else
@@ -240,10 +243,11 @@ void poll_buttons(uint32_t now) {
     const uint8_t count = buttons[chip].sample(value,now,events);
     send_buttons(events,count);
 }
-void m4_send(uint8_t cmd, const uint8_t* data, uint8_t size) {
+bool m4_send(uint8_t cmd, const uint8_t* data, uint8_t size) {
     uint8_t frame[100];
     const auto length = BinaryProtocol::buildMessage(cmd,data,size,frame,sizeof(frame));
-    if (length && M4_SERIAL.availableForWrite() >= length) M4_SERIAL.write(frame,length);
+    if (length && M4_SERIAL.availableForWrite() >= length) return M4_SERIAL.write(frame,length)==length;
+    return false;
 }
 void m4_note(uint8_t pad, bool on) {
     if (pad >= 32 || m4_held[pad] == on) return;
@@ -257,6 +261,7 @@ void m4_frame() {
     m4_last_rx = millis();
     if (cmd == CMD_HANDSHAKE_REPLY) {
         m4_connected = true;
+        pad_led_return.reconnect();
         uint8_t black[96] = {};
         m4_send(CMD_LED_GRID_UPDATE,black,sizeof(black));
         m4_send(CMD_ENABLE_KEYS,nullptr,0);
@@ -490,7 +495,16 @@ void surface::poll() {
     for (uint8_t i = 0; i < 2; ++i) send_hand(i,hands[i].expire(millis()));
     poll_buttons(micros());
     poll_serial();
-    for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {}
+    for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {
+        pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2());
+    }
+    const uint32_t led_now=millis();
+    if (m4_connected && pad_led_return.dirty() && led_now-last_led_return>=34) {
+        if (m4_send(CMD_LED_GRID_UPDATE,pad_led_return.colors(),96)) {
+            pad_led_return.sent();
+            last_led_return=led_now;
+        }
+    }
     flush_cc();
     usbMIDI.send_now();
     const uint32_t duration = micros()-start;

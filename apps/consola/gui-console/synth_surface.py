@@ -331,6 +331,9 @@ class SynthSurface(QObject):
                     self.notes.note(*destination, 0)
 
     def receive(self, event):
+        drum = getattr(self, "drum_surface", None)
+        if drum and drum.receive(event):
+            return
         try:
             musical_applied = False
             if isinstance(event, Boton):
@@ -503,6 +506,8 @@ class SynthSurface(QObject):
         self.changed.emit()
 
     def update_leds(self):
+        if getattr(self, "drum_surface", None) and self.drum_surface.active:
+            return
         if not self.led_port:
             return
         # Theme.qml roleColors, reduced from RGB8 to the proposed MIDI RGB7.

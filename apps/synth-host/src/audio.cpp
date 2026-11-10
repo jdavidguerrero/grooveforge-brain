@@ -54,17 +54,19 @@ void Audio::midi_control(const Midi& m) noexcept {
     }
 }
 void Audio::midi_note(const Midi& m) noexcept {
-    const unsigned p=m.status&15u;if(p>=4)return;
+    const unsigned p=m.status&15u;if(p==9){if((m.status&0xf0u)==0x90u&&m.b)drum.trigger(m.a,m.b);return;}if(p>=4)return;
     const auto type=m.status&0xf0u;
     if(type==0x80||type==0x90) engines_[p]->note(m.a,type==0x90?float(m.b)/127:0);
     else if(type==0xe0)engines_[p]->bend(int(m.a)|(int(m.b)<<7));
     else if(type==0xb0&&m.a==64)engines_[p]->sustain(m.b>=64);
 }
-void Audio::process(unsigned frames,const std::array<float*,10>& out,const Midi* midi,unsigned count) noexcept {
+void Audio::process(unsigned frames,const std::array<float*,10>& out,const Midi* midi,unsigned count,const std::array<float*,2>& cue) noexcept {
     bench::FlushToZero ftz;
     const auto start=std::chrono::steady_clock::now();
     if(frames==0||frames>MAX_FRAMES) {fault.store(true);return;}
     block.store(frames,std::memory_order_relaxed);
+    if(clock_reset_requested.exchange(false,std::memory_order_acq_rel))drum.discontinuity();
+    drum.begin_block();
     std::array<Ack,255> acks{};unsigned ack_count=0;
     Command command; unsigned handled=0;
     const auto command_limit=std::min<size_t>(255,acknowledgements.free_slots());
@@ -99,6 +101,8 @@ void Audio::process(unsigned frames,const std::array<float*,10>& out,const Midi*
             mix_l+=l;mix_r+=r;
             peaks_[p]=std::max(peaks_[p],std::max(std::abs(l),std::abs(r)));squares_[p]+=(double(l)*l+double(r)*r)*.5;
         }
+        float cue_l=0,cue_r=0;drum.frame(mix_l,mix_r,cue_l,cue_r);
+        if(cue[0])cue[0][f]=cue_l;if(cue[1])cue[1][f]=cue_r;
         if(out[8])out[8][f]=mix_l;if(out[9])out[9][f]=mix_r;
         peaks_[4]=std::max(peaks_[4],std::max(std::abs(mix_l),std::abs(mix_r)));squares_[4]+=(double(mix_l)*mix_l+double(mix_r)*mix_r)*.5;
     }
@@ -108,6 +112,7 @@ void Audio::process(unsigned frames,const std::array<float*,10>& out,const Midi*
         if(acknowledgements.push(event)) changed_[p][j]=false;
         else dropped.fetch_add(1,std::memory_order_relaxed);
     }
+    drum.end_block();
     meter_frames_+=frames;meter_clock_+=frames;
     if(meter_clock_>=meter_due_) {
         Telemetry t;

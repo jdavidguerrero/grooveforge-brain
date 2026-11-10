@@ -19,7 +19,7 @@
 #endif
 namespace host {
 namespace {
-[[maybe_unused]] constexpr const char* port_names[]={"part1_L","part1_R","part2_L","part2_R","part3_L","part3_R","part4_L","part4_R","mix_L","mix_R"};
+[[maybe_unused]] constexpr const char* port_names[]={"part1_L","part1_R","part2_L","part2_R","part3_L","part3_R","part4_L","part4_R","mix_L","mix_R","cue_L","cue_R"};
 class Offline final:public Backend {
     std::atomic<bool> stop_{false};
     std::thread thread_;
@@ -40,7 +40,7 @@ public:
 };
 #if defined(GF_HAVE_JACK) || defined(GF_HAVE_PIPEWIRE)
 void append_midi(Audio& audio,Midi* events,unsigned& count,unsigned frame,uint8_t status,uint8_t a,uint8_t b) noexcept {
-    if((status&15u)>=4||a>127||b>127)return;
+    if(((status&15u)>=4&&(status&15u)!=9)||a>127||b>127)return;
     const auto type=status&0xf0u;
     if(type!=0x80&&type!=0x90&&type!=0xb0&&type!=0xe0)return;
     if(count==MAX_MIDI){audio.dropped.fetch_add(1);return;}
@@ -51,7 +51,7 @@ void append_midi(Audio& audio,Midi* events,unsigned& count,unsigned frame,uint8_
 class Jack final:public Backend {
     Audio& audio_;
     jack_client_t* client_=nullptr;
-    std::array<jack_port_t*,10> ports_{};
+    std::array<jack_port_t*,12> ports_{};
     jack_port_t* midi_=nullptr;
     std::array<Midi,MAX_MIDI> events_{};
     static int process(jack_nframes_t n,void* ctx) noexcept {
@@ -63,7 +63,7 @@ class Jack final:public Backend {
         const auto total=jack_midi_get_event_count(buffer);
         for(unsigned i=0;i<std::min(total,MAX_MIDI);++i){jack_midi_event_t ev{};if(jack_midi_event_get(&ev,buffer,i)==0&&ev.size>=3&&ev.time<n)append_midi(self.audio_,self.events_.data(),count,ev.time,ev.buffer[0],ev.buffer[1],ev.buffer[2]);}
         if(total>MAX_MIDI)self.audio_.dropped.fetch_add(total-MAX_MIDI);
-        self.audio_.process(n,outputs,self.events_.data(),count);return 0;
+        self.audio_.process(n,outputs,self.events_.data(),count,{static_cast<float*>(jack_port_get_buffer(self.ports_[10],n)),static_cast<float*>(jack_port_get_buffer(self.ports_[11],n))});return 0;
     }
     void close() noexcept {if(client_){jack_deactivate(client_);jack_client_close(client_);client_=nullptr;}}
 public:
@@ -72,10 +72,10 @@ public:
         if(!client_)throw std::runtime_error("cannot open JACK server");
         try {
             if(jack_get_sample_rate(client_)!=RATE)throw std::runtime_error("JACK graph must run at 48000 Hz");
-            for(size_t i=0;i<10;++i){ports_[i]=jack_port_register(client_,port_names[i],JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);if(!ports_[i])throw std::runtime_error("cannot create JACK output");}
+            for(size_t i=0;i<12;++i){ports_[i]=jack_port_register(client_,port_names[i],JACK_DEFAULT_AUDIO_TYPE,JackPortIsOutput,0);if(!ports_[i])throw std::runtime_error("cannot create JACK output");}
             midi_=jack_port_register(client_,"midi_in",JACK_DEFAULT_MIDI_TYPE,JackPortIsInput,0);if(!midi_)throw std::runtime_error("cannot create JACK MIDI input");
             if(jack_set_process_callback(client_,process,this)!=0)throw std::runtime_error("cannot register JACK callback");
-            jack_set_xrun_callback(client_,[](void* p)->int{auto& audio=static_cast<Jack*>(p)->audio_;audio.xruns.fetch_add(1);audio.backend_xruns.fetch_add(1);return 0;},this);
+            jack_set_xrun_callback(client_,[](void* p)->int{auto& audio=static_cast<Jack*>(p)->audio_;audio.xruns.fetch_add(1);audio.backend_xruns.fetch_add(1);audio.clock_reset_requested.store(true,std::memory_order_release);return 0;},this);
             jack_set_sample_rate_callback(client_,[](jack_nframes_t rate,void* p)->int{if(rate!=RATE)static_cast<Jack*>(p)->audio_.fault.store(true);return 0;},this);
             jack_on_shutdown(client_,[](void* p){static_cast<Jack*>(p)->audio_.fault.store(true);},this);
             if(jack_activate(client_)!=0)throw std::runtime_error("cannot activate JACK");
@@ -92,7 +92,7 @@ class PipeWire final:public Backend {
     pw_context* context_=nullptr;
     pw_core* core_=nullptr;
     spa_hook listener_{};
-    std::array<void*,10> ports_{};
+    std::array<void*,12> ports_{};
     void* midi_=nullptr;
     std::array<Midi,MAX_MIDI> events_{};
     pw_filter_events callbacks_{};
@@ -112,6 +112,9 @@ class PipeWire final:public Backend {
         for(size_t i=0;i<10;++i)outputs[i]=static_cast<float*>(pw_filter_get_dsp_buffer(s.ports_[i],uint32_t(n)));
         if(pos->clock.flags&SPA_IO_CLOCK_FLAG_XRUN_RECOVER){s.audio_.xruns.fetch_add(1);s.audio_.backend_xruns.fetch_add(1);}
         else if(s.clock_==pos->clock.id&&s.expected_&&pos->clock.position!=s.expected_){s.audio_.xruns.fetch_add(1);s.audio_.clock_gaps.fetch_add(1);}
+        if((pos->clock.flags&SPA_IO_CLOCK_FLAG_XRUN_RECOVER)||
+           (s.clock_!=SPA_ID_INVALID&&(s.clock_!=pos->clock.id||(s.expected_&&pos->clock.position!=s.expected_))))
+            s.audio_.clock_reset_requested.store(true,std::memory_order_release);
         s.clock_=pos->clock.id;s.expected_=pos->clock.position+n;
         unsigned count=0;
         if(auto* b=pw_filter_dequeue_buffer(s.midi_)) {
@@ -137,7 +140,7 @@ class PipeWire final:public Backend {
             }
             pw_filter_queue_buffer(s.midi_,b);
         }
-        s.audio_.process(unsigned(n),outputs,s.events_.data(),count);
+        s.audio_.process(unsigned(n),outputs,s.events_.data(),count,{static_cast<float*>(pw_filter_get_dsp_buffer(s.ports_[10],uint32_t(n))),static_cast<float*>(pw_filter_get_dsp_buffer(s.ports_[11],uint32_t(n)))});
     }
     void close() noexcept {
         if(started_)pw_thread_loop_stop(loop_);
@@ -168,7 +171,7 @@ public:
             filter_=pw_filter_new(core_,"gf-synth-host",pw_properties_new(PW_KEY_NODE_NAME,"gf-synth-host",PW_KEY_MEDIA_TYPE,"Audio",PW_KEY_MEDIA_CATEGORY,"Source",PW_KEY_MEDIA_ROLE,"DSP",PW_KEY_MEDIA_CLASS,"Audio/Source",PW_KEY_NODE_AUTOCONNECT,"false","node.always-process","true","node.rate","1/48000","node.lock-rate","true",PW_KEY_NODE_LATENCY,latency.c_str(),nullptr));
             if(!filter_)throw std::runtime_error("cannot create PipeWire filter");
             pw_filter_add_listener(filter_,&listener_,&callbacks_,this);
-            for(size_t i=0;i<10;++i) {
+            for(size_t i=0;i<12;++i) {
                 ports_[i]=pw_filter_add_port(filter_,PW_DIRECTION_OUTPUT,PW_FILTER_PORT_FLAG_MAP_BUFFERS,1,pw_properties_new(PW_KEY_FORMAT_DSP,"32 bit float mono audio",PW_KEY_PORT_NAME,port_names[i],nullptr),nullptr,0);
                 if(!ports_[i])throw std::runtime_error("cannot create PipeWire audio port");
             }
