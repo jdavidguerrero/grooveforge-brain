@@ -53,7 +53,7 @@ de la PSRAM, solo si no se usan esas funciones).
 | MCP23017 #1 | 0x20 (A2 A1 A0 = 0 0 0) | Clics de encoders (PCB-A) |
 | MCP23017 #2 | 0x21 (0 0 1) | Transporte, página/octava (PCB-K1) |
 | MCP23017 #3 | 0x22 (0 1 0) | Edición, SHIFT, navegación de K2 (PCB-K1) |
-| MCP23017 #4 | 0x23 (0 1 1) | Motor en vivo, sección, jog, pedal (PCB-M) |
+| MCP23017 #4 | 0x23 (0 1 1) | Motor en vivo, sección, jog, pedal (PCB-K; Juan, 2026-11-11) |
 | MCP4725 | 0x60 / 0x61 | CV |
 
 Un solo par de pull-ups activo en el bus; quitar las de los módulos si el total baja de ~1,5 kΩ.
@@ -65,9 +65,9 @@ Un solo par de pull-ups activo en el bus; quitar las de los módulos si el total
 | Chip | Placa | Entradas | Contenido |
 |---|---|---|---|
 | #1 (0x20) | PCB-A | 8 + 6 libres | Clics de los encoders 1–8 |
-| #2 (0x21) | PCB-K1 | 9 + 5 libres | OCT +, OCT −, PAGE ▶, PAGE ◀; METRO, LOOP, REC, STOP, PLAY |
-| #3 (0x22) | PCB-K1 (+ K2) | 11 + 3 libres | UNDO, BACK, MENU, ◀, ▶, BROWSE (las 5 de K2, antes modos), SHIFT; DELETE, DUPLICATE, QUANTIZE, NEW |
-| #4 (0x23) | **PCB-M** | 8 + 6 libres | CUE, FILL, TAP, BUILD, DROP, BREAK, clic del jog, pedal |
+| #2 (0x21) | PCB-K | 9 + 5 libres | OCT +, OCT −, PAGE ▶, PAGE ◀; METRO, LOOP, REC, STOP, PLAY |
+| #3 (0x22) | PCB-K | 11 + 3 libres | UNDO, BACK, MENU, ◀, ▶, BROWSE (las 5 de K2, antes modos), SHIFT; DELETE, DUPLICATE, QUANTIZE, NEW |
+| #4 (0x23) | **PCB-K** | 8 + 6 libres | CUE, FILL, TAP, BUILD, DROP, BREAK; clic del jog y pedal llegan desde PCB-M por el cable PCB-M ↔ PCB-K |
 | **Total** | | **36 / 56** | |
 
 Los modos se eligen en la pantalla (MENU). El orden exacto de pines dentro de cada chip es el de
@@ -81,7 +81,7 @@ Los modos se eligen en la pantalla (MENU). El orden exacto de pines dentro de ca
 | M4 en Serial5 (20/21) | Serial7 (28/29) |
 | MASTER en 23 | 22 (23 es MCLK) |
 | Jog en 29/36 | 37/40 |
-| 2 MCP | 4 MCP: 0x20 en PCB-A, 0x21/0x22 en PCB-K1, 0x23 en PCB-M |
+| 2 MCP | 4 MCP: 0x20 en PCB-A; 0x21, 0x22 y 0x23 en la PCB-K única (Juan, 2026-11-11) |
 | CV por PWM en 29 | MCP4725 por I2C |
 
 ## Fuentes

@@ -121,3 +121,9 @@ I2C ve 0x0A, 0x20–0x23, 0x48, 0x49, 0x60, 0x61; audio dúplex ≥ 60 min sin c
 | **D5** | Salida del Audio+: **cable RCA macho → dos jacks hembra de 6,35 mm** en el panel trasero, o soldado directo al Audio+ |
 | **D6** | **Una sola fuente: la oficial del Pi.** Todo se alimenta desde el Pi (reparto en §5); plan B con huella sin poblar |
 | **D7** | **MIDI DIN poblado** en v1 |
+
+## 9. Cambio 2026-11-11: el 4.º MCP pasa a PCB-K
+
+Con la distribución v1 (`25` §7) las 26 teclas van en **una sola PCB-K**; Juan decidió poner ahí también el **MCP
+0x23** junto a 0x21 y 0x22. PCB-M ya no lleva MCP: el clic del jog y el pedal (que entran a PCB-M por cable) viajan
+a PCB-K por el cable PCB-M ↔ PCB-K, junto con I2C, LED_DIN, +5 V de LEDs y GND. PCB-K reemplaza a K1/K2.
