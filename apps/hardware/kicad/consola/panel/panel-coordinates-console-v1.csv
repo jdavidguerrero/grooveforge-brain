@@ -1,14 +1,14 @@
 ref,kind,group,board,x_mm,y_mm,w_mm,h_mm,notes
 PANEL,outline,Panel,aluminium,170,170,340,340,"2 mm aluminium CNC; x from left edge, y from front edge; body printed in one piece for a 350x350 bed"
 MOD,outline,Display,Waveshare 7in,170,268,189.32,120.24,"module outline; active area 155x88 centred; Pi stack on the floor, DSI flex up"
-E1,encoder,Encoders,PCB-A,79,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E2,encoder,Encoders,PCB-A,105,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E3,encoder,Encoders,PCB-A,131,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E4,encoder,Encoders,PCB-A,157,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E5,encoder,Encoders,PCB-A,183,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E6,encoder,Encoders,PCB-A,209,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E7,encoder,Encoders,PCB-A,235,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
-E8,encoder,Encoders,PCB-A,261,190,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E1,encoder,Encoders,PCB-A,79,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E2,encoder,Encoders,PCB-A,105,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E3,encoder,Encoders,PCB-A,131,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E4,encoder,Encoders,PCB-A,157,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E5,encoder,Encoders,PCB-A,183,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E6,encoder,Encoders,PCB-A,209,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E7,encoder,Encoders,PCB-A,235,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E8,encoder,Encoders,PCB-A,261,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
 PAD11,pad,Pads,NeoTrellis M4,117.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
 PAD12,pad,Pads,NeoTrellis M4,132.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
 PAD13,pad,Pads,NeoTrellis M4,147.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
@@ -61,19 +61,19 @@ STOP,key,Transporte,PCB-K,151,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the
 REC,key,Transporte,PCB-K,170,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
 LOOP,key,Transporte,PCB-K,189,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
 METRO,key,Transporte,PCB-K,208,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
-BACK,key,Navegación,PCB-K,64,310,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
-MENU,key,Navegación,PCB-K,64,291.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
-NAV_L,key,Navegación,PCB-K,64,273,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
-NAV_R,key,Navegación,PCB-K,64,254.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
-BROWSE,key,Navegación,PCB-K,64,236,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+BACK,key,Navegación,PCB-K,64,305,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+MENU,key,Navegación,PCB-K,64,286.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+NAV_L,key,Navegación,PCB-K,64,268,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+NAV_R,key,Navegación,PCB-K,64,249.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+BROWSE,key,Navegación,PCB-K,64,231,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
 SHARP_L,sensor,Manos,bracket,25.5,320.75,31,14.5,"GP2Y0A41 horizontal, IR window 31x14.5; free gesture zone around it"
 SHARP_R,sensor,Manos,bracket,314.5,320.75,31,14.5,GP2Y0A41 horizontal
-CUE_ENG,key,Motor en vivo,PCB-K,20,182,13.5,13.5,Choc V2; LED teal
-FILL,key,Motor en vivo,PCB-K,39,182,13.5,13.5,Choc V2; LED teal
-TAP,key,Motor en vivo,PCB-K,58,182,13.5,13.5,Choc V2; LED teal
-BUILD,key,Sección,PCB-K,20,163,13.5,13.5,Choc V2; LED teal
-DROP,key,Sección,PCB-K,39,163,13.5,13.5,Choc V2; LED teal
-BREAK,key,Sección,PCB-K,58,163,13.5,13.5,Choc V2; LED teal
+CUE_ENG,key,Motor en vivo,PCB-K,20,174,13.5,13.5,Choc V2; LED teal
+FILL,key,Motor en vivo,PCB-K,39,174,13.5,13.5,Choc V2; LED teal
+TAP,key,Motor en vivo,PCB-K,58,174,13.5,13.5,Choc V2; LED teal
+BUILD,key,Sección,PCB-K,20,155,13.5,13.5,Choc V2; LED teal
+DROP,key,Sección,PCB-K,39,155,13.5,13.5,Choc V2; LED teal
+BREAK,key,Sección,PCB-K,58,155,13.5,13.5,Choc V2; LED teal
 SHIFT,key,Modificador,PCB-K,20,132.5,13.5,13.5,Choc V2
 UNDO,key,Edición,PCB-K,39,132.5,13.5,13.5,Choc V2; SHIFT+UNDO = redo
 JOG,encoder,Navegación,"panel, cable to PCB-M",300,260,40,40,EC11 push + 3D printed jog knob 40
