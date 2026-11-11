@@ -28,6 +28,9 @@ No hay contradicción de asignación en 17. Restricciones del shield reutilizado
 
 Canal MIDI 1; se conservan FSR notas 36–39, M4 48–79, encoders CC16–23, jog CC35, faders CC24–27, expresión CC28–29, MASTER/CUE/IN CC30/31/32, manos CC33/34 y presencia notas108/109. MCP usa orden GPIO **0–6, 8–14**; GPA7/GPB7 no son entradas:
 
+> **Pendiente (2026-11-11):** el reparto físico cambió (17 §3 corregido). Esta tabla describe el firmware actual y se
+> reescribe con el próximo cambio de firmware; los rangos de notas 80–122 se conservan.
+
 | Chip | Índices lógicos → notas y función |
 |---|---|
 | 0x20 | 0–7 → 80–87 clics encoder; 8 → 88 JOG; 9–13 → 89–93 Kailh1–5 |

@@ -50,25 +50,28 @@ de la PSRAM, solo si no se usan esas funciones).
 | SGTL5000 | 0x0A | Control del códec (cue, entrada de línea) |
 | ADS1115 #1 | 0x48 | Faders 1–4 |
 | ADS1115 #2 | 0x49 | Expresión 1–2, manos Sharp 1–2 |
-| MCP23017 #1 | 0x20 (A2 A1 A0 = 0 0 0) | Clics de encoders + jog, Kailh |
-| MCP23017 #2 | 0x21 (0 0 1) | Kailh |
-| MCP23017 #3 | 0x22 (0 1 0) | Kailh + navegación + pedal |
-| MCP23017 #4 | 0x23 (0 1 1) | **Reservado** (huella sin soldar) |
+| MCP23017 #1 | 0x20 (A2 A1 A0 = 0 0 0) | Clics de encoders (PCB-A) |
+| MCP23017 #2 | 0x21 (0 0 1) | Transporte, página/octava (PCB-K1) |
+| MCP23017 #3 | 0x22 (0 1 0) | Edición, SHIFT, navegación de K2 (PCB-K1) |
+| MCP23017 #4 | 0x23 (0 1 1) | Motor en vivo, sección, jog, pedal (PCB-M) |
 | MCP4725 | 0x60 / 0x61 | CV |
 
 Un solo par de pull-ups activo en el bus; quitar las de los módulos si el total baja de ~1,5 kΩ.
 
 ## 3. Entradas de los MCP23017 (14 por chip; GPA7 y GPB7 sin usar)
 
-| Chip | Entradas | Contenido |
-|---|---|---|
-| #1 (0x20) | 14 | Clics de los encoders 1–8, clic del jog (JOG), Kailh 1–5 |
-| #2 (0x21) | 14 | Kailh 6–19 |
-| #3 (0x22) | 13 + 1 libre | Kailh 20; navegación: ◀, ▶, BACK, PAGE ◀, PAGE ▶, OCT −, OCT +, MENU, SEARCH, SESSION/ARRANGE, DUPLICATE; pedal |
-| **Total** | **41 / 42** | |
+**Corregido 2026-11-11 (D1 de `24`, inventario de `25` §3):** el reparto sigue el cableado de las placas existentes.
 
-**La rueda jog reemplaza ↑, ↓ y OK** (girar y pulsar). Juan (2026-11-10): parte de la navegación puede pasar al touch
-de la pantalla si hace falta liberar entradas; el touch sigue siendo auxiliar (07-gui §1).
+| Chip | Placa | Entradas | Contenido |
+|---|---|---|---|
+| #1 (0x20) | PCB-A | 8 + 6 libres | Clics de los encoders 1–8 |
+| #2 (0x21) | PCB-K1 | 9 + 5 libres | OCT +, OCT −, PAGE ▶, PAGE ◀; METRO, LOOP, REC, STOP, PLAY |
+| #3 (0x22) | PCB-K1 (+ K2) | 11 + 3 libres | UNDO, BACK, MENU, ◀, ▶, BROWSE (las 5 de K2, antes modos), SHIFT; DELETE, DUPLICATE, QUANTIZE, NEW |
+| #4 (0x23) | **PCB-M** | 8 + 6 libres | CUE, FILL, TAP, BUILD, DROP, BREAK, clic del jog, pedal |
+| **Total** | | **36 / 56** | |
+
+Los modos se eligen en la pantalla (MENU). El orden exacto de pines dentro de cada chip es el de
+`kicad/consola/boards/CONNECTORS.md`; el mapa de notas de 18 se actualiza con el firmware.
 
 ## 4. Cambios frente a lo anterior
 
@@ -78,7 +81,7 @@ de la pantalla si hace falta liberar entradas; el touch sigue siendo auxiliar (0
 | M4 en Serial5 (20/21) | Serial7 (28/29) |
 | MASTER en 23 | 22 (23 es MCLK) |
 | Jog en 29/36 | 37/40 |
-| 2 MCP | 3 MCP + huella del 4.º |
+| 2 MCP | 4 MCP: 0x20 en PCB-A, 0x21/0x22 en PCB-K1, 0x23 en PCB-M |
 | CV por PWM en 29 | MCP4725 por I2C |
 
 ## Fuentes

@@ -17,6 +17,15 @@ prioridad pasa a lo core (pruebas de hardware, fabricación de PCB, diseños).
   pad; (d) opción de fijar posiciones por categoría (kick siempre en el pad 1) al cargar un rack.
 - **Manual de uso** del modo DRUM/SYNTH (pantallas, NeoTrellis, encoders, PLAY/REC) cuando la UX esté estable.
 
+## Secciones del set: BUILD, DROP, BREAK (Juan, 2026-11-11)
+
+Tres teclas Choc físicas (`25` §3) que cambian la sección del set completo: la tecla queda armada (LED parpadea) y se
+ejecuta al cambio de frase; SHIFT la ejecuta al siguiente compás; presionarla de nuevo la cancela. Cada sección es
+una **receta de Juan por set** (roles que entran o salen, macro de FX, largo del build) y fija la energía objetivo
+para la siguiente generación del motor; el motor no decide nada musical. Juan quiere usarlas también para
+**arreglos en la composición** (armar la estructura del tema con secciones). **Condición:** spec en el núcleo
+(extensión de 19) después de E5; hardware y mapa MIDI ya reservados.
+
 ## Respuesta del touch: lenta e imprecisa (Juan, 2026-11-10) — **siguiente tarea**
 
 Juan, probando DRUM en la Pi: con los encoders todo responde bien, pero tocando la pantalla (teclas de menú,

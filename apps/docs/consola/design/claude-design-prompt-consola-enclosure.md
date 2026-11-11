@@ -57,7 +57,7 @@ de la pantalla, pasan a ser **navegación: BACK · MENU · ◀ · ▶ · BROWSE*
 | Control | Cant. | Medidas de referencia | Notas de uso |
 |---|---|---|---|
 | Teclas Choc V2 con LED, grupo **Motor en vivo**: CUE · FILL · TAP | 3 | como las 20 | Cerca del transporte |
-| Teclas Choc V2 con LED, grupo **Sección** (propuesta): BUILD · DROP · BREAK | 3 | como las 20 | Cambio de sección del set; ubícalas junto al motor en vivo y marca que son opcionales |
+| Teclas Choc V2 con LED, grupo **Sección** (propuesta): BUILD · DROP · BREAK | 3 | como las 20 | Cambio de sección del set (break, build, drop): junto al motor en vivo, fáciles de tocar en vivo sin mirar |
 | **Rueda jog** (EC11 con clic, **perilla propia impresa en 3D**, Ø35–45, ver §3.1) | 1 | agujero Ø7,1 | Reemplaza ↑ ↓ OK; navega listas de la pantalla |
 | **Pads FSR con velocity** (FSR 402, Ø18 activo, con actuador de silicona y disco rígido) | 4 | pad visible ~25 × 25 mm, alto ~4 mm sobre el panel | Para tocar kick/perc con dinámica: junto a la NeoTrellis, al alcance de la mano de los pads |
 | **FSR de expresión** (presión sostenida) | 2 | mismos FSR 402, pad ~25 × 25 | Abrir filtro, empujar un riser: fáciles de sostener mientras la otra mano trabaja |
@@ -94,7 +94,7 @@ Reglas nuevas (además de las 13):
 | Pieza | Medidas | Notas |
 |---|---|---|
 | **PCB-M** (placa principal, reemplaza la portadora y la PCB-S) | **[a definir por ti]**, 2 capas | Teensy 4.1 en zócalo + módulo Audio Shield Rev D en headers (~20 mm de alto sobre la placa). Lleva los jacks del panel trasero en su borde. Propón tamaño y ubicación |
-| **PCB-N** (navegación) | si hace falta | Si las 3–6 teclas nuevas, el jog, las 3 perillas y el selector no caen sobre PCB-M, van en esta placa pequeña |
+| **PCB-N** (navegación) | si hace falta | Si las 6 teclas nuevas, el jog, las 3 perillas y el selector no caen sobre PCB-M, van en esta placa pequeña |
 | **PCB-P** (base de los 6 FSR) | plana, rígida | Sin componentes activos; los FSR se pegan encima |
 | PCB-A, PCB-F, PCB-K1, PCB-K2 | ya diseñadas | **No cambian de forma** salvo que el layout plano lo exija; si las mueves, dilo |
 | NeoTrellis M4 | 120 × 60 mm | Conectores hacia el frente como en la v2 |

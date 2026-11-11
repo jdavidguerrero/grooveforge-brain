@@ -1,6 +1,6 @@
 # Consola: panel — controles, entradas y salidas
 
-> **Fecha:** 2026-11-11. **Estado:** propuesta para Juan y entrada del prompt de Claude Design
+> **Fecha:** 2026-11-11. **Estado:** aprobado por Juan (2026-11-11) y entrada del prompt de Claude Design
 > (`design/claude-design-prompt-consola-enclosure.md`). **Base:** diseño de GroovePush v2
 > (`groovepush/docs/design/claude-design-2026-10-19-v2/`, `kicad/consola/panel/panel-coordinates.csv`),
 > `00-concepto.md` §10.2, `07-gui.md` §3, `17`, `18`, `24-placa-principal.md` (D1–D7).
@@ -24,7 +24,7 @@ consola agrega lo que hace falta para producir y tocar sin computador, y Juan pi
 | Pads NeoTrellis M4 8×4 | 32 | M4 | Existe |
 | Faders RS6011 60 mm | 4 | PCB-F | Existe |
 | Teclas Kailh Choc V2 con LED | 20 | PCB-K1 / K2 | Existe (K2 pasa a navegación, §3) |
-| **Teclas nuevas** con LED (§3) | 3–6 | **nueva** (PCB-M o PCB-N) | **Nuevo** |
+| **Teclas nuevas** con LED (§3) | 6 | **nueva** (PCB-M o PCB-N) | **Nuevo** |
 | **Rueda jog** (encoder con clic, perilla grande Ø30–40) | 1 | **nueva** | **Nuevo** |
 | **Pads FSR con velocity** (FSR 402 + actuador de silicona) | 4 | base rígida **PCB-P** | **Nuevo** |
 | **FSR de expresión** (presión sostenida) | 2 | base rígida PCB-P | **Nuevo** |
@@ -46,11 +46,11 @@ que no necesitan tecla directa. Las 5 teclas de **PCB-K2** (columna a la izquier
 | Edición (5) | K1 | UNDO · DELETE · DUPLICATE · QUANTIZE · NEW | |
 | Página / octava (4) | K1 | PAGE ◀ ▶ · OCT − + | |
 | **Motor en vivo (3)** | **nueva** | CUE · FILL · TAP | CUE escucha lo siguiente por audífonos; TAP parpadea al tempo |
-| **Sección (3, propuesta)** | **nueva** | BUILD · DROP · BREAK | Cambio de sección del set (`00` §10.2.2); si no, quedan libres |
+| **Sección (3)** | **nueva** | BUILD · DROP · BREAK | Cambio de sección del set (`00` §10.2.2), cuantizado a la frase; SHIFT = al siguiente compás. Recetas de Juan por set; función especificada después de E5 (`pendientes.md`) |
 
-**MCP 0x23:** CUE, FILL, TAP (+ BUILD, DROP, BREAK) + clic del jog + pedal = 5 a 8 de 14. Total: 8 clics + 20 + 3–6
-+ jog + pedal = **33–36**. Todas las teclas Choc V2 con LED (una sola familia de keycaps y moldes): hacen falta
-**3–6 Choc más** que las 20 de Juan, más repuestos.
+**MCP 0x23:** CUE, FILL, TAP, BUILD, DROP, BREAK + clic del jog + pedal = **8 de 14**. Total: 8 clics + 20 + 6 + jog +
+pedal = **36**. Todas las teclas Choc V2 con LED (una sola familia de keycaps y moldes): hacen falta
+**6 Choc más** que las 20 de Juan (pedir 10 con repuestos, mismo modelo).
 
 Esto reemplaza la lista de 11 de 17 §3, que repetía teclas que ya existen en K1/K2. **Al aprobarse, se corrigen 17
 §3 y el mapa de notas de 18** (D1).
@@ -79,7 +79,7 @@ Esto reemplaza la lista de 11 de 17 §3, que repetía teclas que ya existen en K
 |---|---|---|
 | PCB-A, PCB-F, PCB-K1, PCB-K2 | Existen (sin cambios eléctricos; serigrafía de K1/K2 nueva) | §2 |
 | **PCB-M** | Nueva (spec 24) | Teensy, códec, ADS ×2, MCP 0x23, MCP4725 ×2, MIDI, jacks traseros |
-| **PCB-N** (motor en vivo) | Nueva **si** las 3–6 teclas, el jog y las perillas no caen sobre PCB-M | Choc V2 + LEDs (continúa la cadena), jog, 3 perillas, selector; un JST-SH a PCB-M |
+| **PCB-N** (motor en vivo) | Nueva **si** las 6 teclas, el jog y las perillas no caen sobre PCB-M | Choc V2 + LEDs (continúa la cadena), jog, 3 perillas, selector; un JST-SH a PCB-M |
 | **PCB-P** (pads de fuerza) | Nueva, sencilla | Base plana y rígida para 6 FSR (sin componentes activos) y un JST a PCB-M |
 
 Claude Design decide la ubicación; con eso se cierra si PCB-N existe o se integra en PCB-M.
