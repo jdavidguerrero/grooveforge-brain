@@ -531,3 +531,10 @@ Opciones: `--drum-data DIR`, `--drum-kit-python PYTHON`, `--drum-kit-script FILE
 Default desarrollo ~/.local/share/gf-drum o GF_DRUM_DATA; Pi configurar /data/drum.
 No cambiar ExecStart/instalar/flash automáticamente. Resultados, comandos Pi y
 límites: [informe DRUM](../../consola/gui-console/screenshots/modo-drum/REPORT.md).
+
+## Tiempo real en la Pi (2026-11-11)
+
+El usuario `juan` se agregó al grupo `pipewire` (`/etc/security/limits.d/25-pw-rlimits.conf`: rtprio 95, memlock
+4 MiB) y se reinició la Pi. Resultado: `ulimit -r` = 95; hilo de audio del host `data-loop.0` en **SCHED_FIFO 70**,
+PipeWire en FIFO 88. Medición con DRUM cargado y la GUI corriendo: **0 xruns en 60 s**, CPU del host 11 % media,
+11,8 % máx. MiniLab enlazado directo por UMP con `tools/synth-host/link_midi.py` (sin el puente provisional).
