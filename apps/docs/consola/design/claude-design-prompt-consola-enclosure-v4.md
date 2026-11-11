@@ -12,11 +12,14 @@
 1. **El escalón losa + quilla no va.** Juan quiere un **bloque macizo**: cara superior plana, alto parejo en todo el
    cuerpo, sin escalones ni quillas. Referencia de carácter: **Akai MPC X** (cuerpo grande, sólido, plano), no la
    Push. Puede ser más grande que la v3.
-2. **La Pi se desapila y se queda detrás de la pantalla.** Juan ya probó cables DSI largos y son difíciles de manejar:
-   la Pi va **atornillada detrás del módulo** con el FFC corto de Waveshare, como en la v2. Para bajar el alto, el
-   **Audio+ V2 sale del apilado**: va al lado, conectado por un **cable plano de GPIO de 40 pines** (10–15 cm). Detrás
-   de la pantalla queda solo **Pi 5 + Active Cooler + HAT NVMe** (estimado ~35 mm desde la Pi; a verificar cuando llegue
-   el HAT). Diseña la ventilación de esa zona (entrada abajo, salida atrás) porque el calor queda bajo la pantalla.
+2. **La Pi va en el piso, con su apilado completo.** Pi 5 + Active Cooler + HAT NVMe (con su regleta apilable) +
+   Audio+ V2 encima, todo junto, **apoyado en el piso del cuerpo** (no detrás de la pantalla). Alto estimado del apilado
+   **60 mm desde la base de la Pi** (a verificar cuando llegue el HAT; deja ≥ 10 mm de margen y las varillas roscadas
+   de la v3 para ajustarlo). De ahí sube el **flex DSI** a la pantalla: ubica la Pi **debajo o muy cerca del módulo de
+   pantalla** para que el recorrido sea corto y simple (una sola curva amplia, sin pliegues en filo; regla 8), y elige
+   el largo comercial (200 / 300 mm). Como el apilado vive en el piso, **el cuerpo entero toma ese alto de forma pareja**
+   (bloque macizo de ~80–90 mm, como una MPC X), no solo una quilla. Diseña la ventilación de la bahía de la Pi
+   (entrada abajo o al frente, salida atrás) separada de PCB-M por un tabique.
 3. **Organización nueva** (§2): pantalla y NeoTrellis al centro, todo lo demás alrededor, por mano.
 4. **Keycaps más chicos**: **15 × 15 mm** (antes 18 × 17) sobre el mismo paso de las PCB-K existentes; ajusta la
    familia de moldes a ese tamaño.
@@ -26,11 +29,10 @@
 
 El cuerpo **ya no tiene que salir de la Ender 3 V3**. Entrega el diseño para:
 
-- **A (preferido): fabricado afuera en una sola pieza o en dos** — impresión 3D industrial (MJF / SLS en PA12, o FDM
-  de cama grande de un servicio local en Bogotá) o **JLC3DP** junto con el pedido de las PCB. Indica el tamaño de
-  pieza que pide cada opción, el proceso que recomiendas, el acabado (negro mate) y las reglas de diseño del proceso
-  (pared, radios, insertos, tolerancias).
-- **B (respaldo): partido para la Ender** (piezas ≤ 210 × 210) con uniones ocultas, como la v2, **sin que eso cambie
+- **A (preferido): impresión local en Bogotá, en impresoras 3D de cama grande** (servicios con camas de ~350–500 mm).
+  Divide el cuerpo en el **menor número de piezas** que permita una cama de **350 × 350 mm** (y di cómo queda con una
+  de 500 × 500), con uniones ocultas, en PETG o ASA negro mate. Indica pared, insertos, tolerancias y orientación.
+- **B (respaldo): partido para la Ender 3 V3** (piezas ≤ 210 × 210) con uniones ocultas, como la v2, **sin que eso cambie
   la forma exterior**: la división es interna.
 
 Panel superior de aluminio 2 mm CNC como siempre.
@@ -41,6 +43,7 @@ Pantalla y NeoTrellis forman el **eje central**; alrededor, los grupos según la
 referencia (valídala o corrígela con números):
 
 ```
+[Sharp]                                                                   [Sharp]
           ┌BACK──┐ ┌────────── pantalla 7" ──────────┐ ( JOG )      MASTER   CUE
  [EXP1]   │MENU  │ │                                 │  ◀    ▶      IN   [pad]
  [EXP2]   │BROWSE│ └─────────────────────────────────┘
@@ -50,16 +53,15 @@ referencia (valídala o corrígela con números):
  SHIFT             │                                  │  [FSR][FSR]   faders
  PLAY STOP REC     └──────────────────────────────────┘
  LOOP METRO          UNDO DELETE DUPLICATE QUANTIZE NEW   PAGE ◀ ▶  OCT − +
- [Sharp]                                                                 [Sharp]
 ```
 
 - **Navegación junto a la pantalla:** columna K2 a la izquierda; **jog con ◀ ▶ a la derecha**, como en la MPC.
 - **Mano izquierda:** transporte, SHIFT, motor en vivo (CUE · FILL · TAP), sección (BUILD · DROP · BREAK) y los 2 FSR de
   expresión (se sostienen mientras la derecha trabaja).
 - **Mano derecha:** 4 FSR de velocity junto a los pads, faders, y MASTER / CUE / IN arriba, como en un mixer DJ.
-- **Sharp en las esquinas delanteras** (pedido de Juan): radio libre de 45 mm alrededor de cada lente, nada más en esa
-  esquina, lente inclinada unos grados hacia afuera para que la mano que toca pads o transporte no los dispare.
-  Valida la regla 15 con eso (en firmware los Sharp vienen apagados por defecto y se activan en Settings).
+- **Sharp en las esquinas traseras (superiores)**, detrás de todos los controles, con radio libre de 45 mm alrededor de
+  cada lente y nada más en esa esquina (regla 15). Juan los probó: en las esquinas delanteras la mano camino a pads o
+  transporte los dispara.
 
 ## 3. Lo que se conserva de la v3
 
@@ -75,5 +77,5 @@ renders, medidas a verificar, familia de perillas y moldes), y además:
 
 1. **Comparación de los caminos A y B** de fabricación: tamaño de pieza, proceso, ventajas y riesgos (sin precios
    inventados: lista lo que hay que cotizar).
-2. **Alto del cuerpo** con el apilado desapilado y de dónde sale cada mm.
+2. **Alto del cuerpo** con la Pi apilada en el piso y de dónde sale cada mm.
 3. **Tabla de cambios contra la v3.**
