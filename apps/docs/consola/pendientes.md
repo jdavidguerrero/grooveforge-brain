@@ -4,6 +4,19 @@
 > la condición para retomarla. Las decisiones abiertas de arquitectura están en la auditoría
 > (`auditoria/auditoria-fable-2026-11.md` §8).
 
+## Backlog de UX (detalles menores, se arreglan en bloque al final)
+
+Decisión de Juan (2026-11-11): los detalles de UX se documentan aquí y se resuelven juntos más adelante; la
+prioridad pasa a lo core (pruebas de hardware, fabricación de PCB, diseños).
+
+- **DRUM: no se sabe qué sonido hay en cada pad ni cuál está seleccionado sin navegar.** Con 16 sonidos, si se
+  reordena no se sabe dónde quedó el kick. Propuestas: (a) label fijo y grande en la pantalla con el pad
+  seleccionado (nombre + categoría + número), visible en todas las vistas DRUM; (b) colores por categoría en la
+  NeoTrellis y en la rejilla de pantalla (kick, snare, hats, perc, toms… con la paleta de doc 23), así el kick
+  se reconoce por color; (c) al tocar un pad, el nombre aparece un instante aunque no se esté en la vista del
+  pad; (d) opción de fijar posiciones por categoría (kick siempre en el pad 1) al cargar un rack.
+- **Manual de uso** del modo DRUM/SYNTH (pantallas, NeoTrellis, encoders, PLAY/REC) cuando la UX esté estable.
+
 ## Respuesta del touch: lenta e imprecisa (Juan, 2026-11-10) — **siguiente tarea**
 
 Juan, probando DRUM en la Pi: con los encoders todo responde bien, pero tocando la pantalla (teclas de menú,
