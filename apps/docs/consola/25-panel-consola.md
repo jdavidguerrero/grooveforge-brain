@@ -13,7 +13,7 @@ consola agrega lo que hace falta para producir y tocar sin computador, y Juan pi
 - **Diseño plano**, estilo MPC / Ableton Push: cara superior horizontal, sin cuña.
 - **Pi separada de la pantalla** con un cable DSI más largo, para no acumular calor detrás del módulo: la Pi 5 lleva
   Active Cooler, **HAT NVMe** y **Audio+ V2**, y va en una zona con ventilación propia.
-- **Todos los botones del doc 17** (41 entradas) contemplados en el panel, con el 4.º MCP.
+- **Todos los botones del doc 17** (36 entradas) contemplados en el panel, con el 4.º MCP.
 
 ## 2. Inventario de controles
 
@@ -52,8 +52,7 @@ que no necesitan tecla directa. Las 5 teclas de **PCB-K2** (columna a la izquier
 pedal = **36**. Todas las teclas Choc V2 con LED (una sola familia de keycaps y moldes): hacen falta
 **6 Choc más** que las 20 de Juan (pedir 10 con repuestos, mismo modelo).
 
-Esto reemplaza la lista de 11 de 17 §3, que repetía teclas que ya existen en K1/K2. **Al aprobarse, se corrigen 17
-§3 y el mapa de notas de 18** (D1).
+Contrato v1 implementado en18 §3: cuatro MCP, 36 entradas. El pinout provisional de0x23 y los nombres heredados de K2 se señalan allí. Las recetas de sección y los LEDs de teclas siguen pendientes.
 
 ## 4. Entradas y salidas
 

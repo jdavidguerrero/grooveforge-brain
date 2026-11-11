@@ -62,6 +62,7 @@ class ConsoleState(QObject):
         from local_settings import LocalSettings
         self.preferences = LocalSettings(self)
         self.preferences.changed.connect(self.refresh_keys)
+        self._history = []
         self._screen = 5
         self._return_screen = 5
         self._query = "kalim"
@@ -163,6 +164,8 @@ class ConsoleState(QObject):
     @Slot(int)
     def setScreen(self, value):
         if 1 <= value <= len(SCREENS):
+            if value != self._screen:
+                self._history.append((self._screen, self._mode))
             descriptor = SCREENS[value-1]
             if descriptor.mode == 'SHARED' and SCREENS[self._screen-1].mode != 'SHARED':
                 self._return_screen = self._screen
@@ -184,6 +187,16 @@ class ConsoleState(QObject):
                 self.drum.configure(descriptor.name)
             self.refresh_keys()
             self._notify()
+
+    @Slot()
+    def goBack(self):
+        if self._history:
+            target, mode = self._history.pop()
+            self._mode = mode
+            self.setScreen(target)
+            self._history.pop()  # setScreen recorded the screen we just left.
+        else:
+            self.navigate('DrumRack' if self.drumMode else 'SynthParts' if self.synthMode else 'ModeSelect')
 
     @Slot(str)
     def navigate(self, name):
@@ -329,7 +342,8 @@ class ConsoleState(QObject):
                 self.synth.turn(index, delta)
             return
         if self._screen == 2:
-            self._mode = index % 4
+            self.buttons._menu_index = index % 7
+            self.buttons.changed.emit()
             self.refresh_keys()
             self._property_dirty = True
             return
@@ -408,8 +422,9 @@ class ConsoleState(QObject):
         elif action.startswith('screen:'):
             self.setScreen(int(action.split(':')[1]))
         elif action.startswith('mode:'):
-            self._mode = int(action[-1])
-            self.setScreen(screen_id("DrumRack") if self._mode == 3 else screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
+            mode = int(action.split(':')[1])
+            self._mode = mode if mode < 4 else 1 if mode == 4 else 0
+            self.setScreen(screen_id(('Session','LiveSession','SynthParts','DrumRack','SequencerSteps','Mix')[mode]))
         elif action == 'led-brightness': self.preferences.cycleLedBrightness()
         elif action == 'led-animations': self.preferences.toggleLedAnimations()
         elif action.startswith('settings:'):
@@ -476,8 +491,7 @@ class ConsoleState(QObject):
             keys = [key(r, 'MUTE' if i == 6 else str(round(LEVELS[i]*100)), r, i != 6,
                         'screen:6', i == 4, LEVELS[i] if i == 4 else -1) for i,r in enumerate(ROLES)]
         elif self._screen == 2:
-            keys = [key('Controller',lit=self._mode==0,action='mode:0'),key('Standalone','enter',lit=self._mode==1,action='mode:1'),key('Synth','play',lit=self._mode==2,action='mode:2'),key('Drum','jam',lit=self._mode==3,action='mode:3')]
-            keys += [key() for _ in range(2)] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
+            keys = [key(label, action='mode:'+str(i)) for i,label in enumerate(('Live / controller','Live','Synth','Drum','Seq','Mix'))] + [key('Settings',action='screen:4'),key('Power',action='screen:1')]
         elif self._screen == 4:
             prefs = self.preferences
             keys = [key('Hands', 'ON' if prefs.handsEnabled else 'OFF', action='hands:0'),

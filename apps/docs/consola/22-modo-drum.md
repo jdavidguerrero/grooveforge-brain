@@ -290,7 +290,7 @@ mismo modo hasta el siguiente toque. VARIATIONS mueve la audición de tarjeta a
 **SHIFT+clic**, dejando el clic simple para Count/Spread/Audition/Render/Keep/
 Discard/Back como indica la fila. PAD: Layer avanza la layer seleccionada;
 MIXER: Level vuelve al nivel (no avanza un banco de parámetros).
-MENU abre Surface/Hands; Settings también está disponible por touch en Mode Select.
+MENU abre Mode Select → Settings → Surface/Hands; Settings también está disponible por touch en Mode Select.
 
 Las manos están **OFF por defecto** en todos los modos. Settings → Surface /
 Hands ofrece master + Left IR + Right IR persistidos localmente; para usar una
@@ -341,3 +341,13 @@ tienen señales propias; no invalidan listas de racks/fuentes, pasos ni soft key
 Cambio real de patrón actualiza los pasos; cambios de play/rec sólo los roles de
 las teclas existentes. LED23 sigue recibiendo eventos/counters completos.
 [Resultados y límites](../../consola/gui-console/screenshots/touch/REPORT.md).
+
+
+## Botones consola v1 (2026-11-11, spec previa al código)
+
+MENU abre Mode Select y sus ajustes; BACK regresa al contexto anterior. Los cinco contactos de K2 son BACK/MENU/LEFT/RIGHT/BROWSE, nunca modos físicos. LEFT/RIGHT cambian pestaña/página; BROWSE abre presets SYNTH o browser de sonidos/racks DRUM; jog desplaza selección y clic confirma. SHIFT+jog mantiene navegación touch auxiliar.
+La columna derecha usa OCT+/OCT−/PAGE◀/PAGE▶: en LIVE/controller emite intenciones scene1–4 mediante hook explícito sin núcleo conectado; SYNTH transpone ±12 y cambia página; DRUM no define octavas (sólo16 pads fijos): OCT± emite hook drum_octave pendiente, sin afinar samples ni inventar bancos, PAGE◀/▶ recorre páginas del editor/steps. Colores previstos verde LIVE, azul SYNTH, ámbar DRUM; LEDs de teclas pendientes de PCB-K, doc23 sólo acepta pads M4.
+TAP estima BPM60–200 con hasta4 intervalos monotónicos, reinicia tras2s. DRUM usa transport host detenido: corriendo conserva el contrato22 (rechaza cambio con aviso visible); otros modos emiten hook host pendiente. CUE usa preview DRUM cuando existe; fuera de DRUM y FILL muestran aviso de hook pendiente.
+BUILD/DROP/BREAK arman una sola intención local, segunda pulsación cancela; SHIFT pide próximo compás, sin SHIFT próxima frase. Indicador parpadeante en pantalla en todos los modos. Hook de ejecución pendiente, sin reloj Qt que ejecute recetas ni cambios musicales; pendientes.md «Secciones del set» sigue abierto. ACCEPT permanece soft key E5 (19), nunca se reasigna a una de estas teclas.
+
+Alineación: pantalla x92,5–247,5mm; ejes79+26i proyectan a[-111,49;103,23;317,95;532,66;747,38;962,09;1176,81;1391,53]px. **Contradicción geométrica:** los ejes extremos están fuera del área activa; no es posible centrar ocho etiquetas exactamente sobre ellos. El layout usa celdas extremas ensanchadas y seis interiores iguales, compartido por todas las soft keys; documentar en REPORT el compromiso visible y la necesidad de revisar geometría física antes de certificar alineación.

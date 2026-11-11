@@ -2,24 +2,21 @@ import QtQuick
 import "../theme"
 import "../components"
 Item {
-    Repeater { model: ['Controller','Standalone','Synth','Drum']
+    Repeater { model: ['LIVE · CTRL','LIVE','SYNTH','DRUM','SEQ','MIX']
         Panel {
             required property int index
             required property string modelData
-            x: 48+index*300; y: 40; width: 284; height: 448
+            x: 24+index*207; y: 64; width: 197; height: 400
             color: Theme.gpBgCard; radius: Theme.rOs
-            border.width: 2; border.color: console.selectedMode === index ? Theme.gpTeal : Theme.gpBorder
-            Label { x: 22; y: 22; text: 'ENC '+(index+1); color: Theme.mon; font.pixelSize: 12 }
-            Label { x: 22; y: 78; text: modelData; face: Theme.osFont; font.pixelSize: 34 }
-            Label { x: 22; y: 140; width: 240; height: 130; wrapMode: Text.WordWrap; elide: Text.ElideNone; font.pixelSize: 15; color: Theme.gpTextSec
-                text: index===3 ? 'Play sample racks. Shape each pad, sequence polymeters and jam.' : index === 2 ? 'Play four synth parts. Pads, keys, faders and hands shape the sound.' : index === 1 ? 'The engine offers layers. You decide and perform the set.' : 'Push-style control of Ableton Live, plus the Mac engine.' }
-            Label { x:22; y:300; text:index===3?'RACK':index===2?'PARTS':'CONNECTION';font.pixelSize:10;color:Theme.mon }
-            Label { x:22; y:322; width:240;text:index===3?drum.rack.name:index===2?'4 · gf-synth-host':'DESIGN DEMO';font.pixelSize:12;color:Theme.gpTeal }
-            Label { x:22; y:366; text:index===3?'SAMPLES RAM':index===2?'PLAY DIRECTLY':'MODE';font.pixelSize:10;color:Theme.mon }
-            Label { x:22; y:388; width:240;text:index===3?drum.ramText:index===2?'PARTS → ENGINE → PRESETS':'CONTROLLER / STANDALONE';font.pixelSize:12;color:Theme.gpTextSec }
+            border.width: 2; border.color: buttons.menuIndex === index ? Theme.gpTeal : Theme.gpBorder
+            Label { x: 16; y: 22; text: 'ENC '+(index+1); color: Theme.mon; font.pixelSize: 12 }
+            Label { x: 16; y: 78; text: modelData; face: Theme.osFont; font.pixelSize: 25 }
+            Label { x: 16; y: 140; width: 165; height: 140; wrapMode: Text.WordWrap; elide: Text.ElideNone; font.pixelSize: 15; color: Theme.gpTextSec
+                text: ['Control Live scenes and racks. Connection pending.', 'Perform the set. Núcleo integration pending.', 'Play four synth parts. Edit engines and presets.', 'Play sample racks, sequence steps and jam.', 'Sequence steps and piano roll. Design preview.', 'Mix controller tracks. Connection pending.'][index] }
+            Label { x:16; y:326; width:165; text: index===2?'SYNTH HOST':index===3?'DRUM HOST':'DESIGN PREVIEW'; font.pixelSize:12; color:Theme.gpTeal }
             TouchTarget { hardwareAction:'choice'; callback:function(){ console.triggerAction('mode:'+parent.index) } }
         }
     }
-    Label { y: 520; width:parent.width; horizontalAlignment:Text.AlignHCenter; text:'ENC 1–4 TO SELECT · PRESS TO ENTER · OR TAP'; font.pixelSize:12; color:Theme.mon }
-    ActionButton { x:1080; y:512; width:176; height:44; text:'SETTINGS'; callback:function(){console.navigate('Settings')} }
+    Label { y: 510; width:1000; horizontalAlignment:Text.AlignHCenter; text:'JOG TO SELECT · CLICK OK · ENCODER 1–6 OR TOUCH'; font.pixelSize:12; color:Theme.mon }
+    ActionButton { x:1059; y:492; width:197; height:60; text:'SETTINGS'; border.color:buttons.menuIndex===6?Theme.gpTeal:Theme.gpBorder; callback:function(){console.navigate('Settings')} }
 }

@@ -7,17 +7,18 @@ from queue import Empty, SimpleQueue
 from threading import Lock
 from typing import Iterator
 
+# Console v1, doc18 §3. Unassigned notes decode to None.
 BOTONES = (
     "ENCODER_1", "ENCODER_2", "ENCODER_3", "ENCODER_4",
     "ENCODER_5", "ENCODER_6", "ENCODER_7", "ENCODER_8",
-    "JOG", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
+    "JOG", "OCT_PLUS", "OCT_MINUS", "PAGE_RIGHT", "PAGE_LEFT", None,
     "PLAY", "STOP", "REC", "LOOP", "UNDO", "NEW", "SHIFT", "METRO",
-    "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
+    "BACK", "MENU", "LEFT", "RIGHT", "BROWSE", "DELETE",
 )
 PERILLAS = ("MASTER", "CUE", "IN")
 BOTONES_EXTRA = (
-    "KAILH_20", "LEFT", "RIGHT", "BACK", "PAGE_LEFT", "PAGE_RIGHT",
-    "OCT_MINUS", "OCT_PLUS", "MENU", "SEARCH", "SESSION_ARRANGE", "DUPLICATE", "PEDAL",
+    "DUPLICATE", "QUANTIZE", "CUE", "FILL", "TAP", "BUILD", "DROP", "BREAK",
+    None, None, None, None, "PEDAL",
 )
 PUERTO = "GF Consola"  # consola_uno; --puerto 'GF Superficie' permite usar consola_s
 
@@ -102,9 +103,11 @@ def decodificar(msg) -> Evento | None:
         if 48 <= msg.note <= 79:
             return Pad(msg.note - 48, presionado, velocidad)
         if 80 <= msg.note <= 107:
-            return Boton(BOTONES[msg.note - 80], presionado)
+            name = BOTONES[msg.note - 80]
+            return Boton(name, presionado) if name else None
         if 110 <= msg.note <= 122:
-            return Boton(BOTONES_EXTRA[msg.note - 110], presionado)
+            name = BOTONES_EXTRA[msg.note - 110]
+            return Boton(name, presionado) if name else None
         if 108 <= msg.note <= 109:
             return ManoPresencia(msg.note - 108, presionado)
     elif msg.type == "control_change":

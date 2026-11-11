@@ -241,5 +241,11 @@ QtObject {
     function ledGlow(name) { return Qt.resolvedUrl("../assets/led-"+(roleColors[name] ? name : name === "PURPLE" || name === "WHITE" ? name : "TEAL")+".png") }
     function roleColor(name) { return name[0] === "#" ? name : roleColors[name] || (name === "PURPLE" ? purpleBright : tealPlus) }
     function roleDim(name) { return name[0] === "#" ? Qt.darker(name, 3) : roleDims[name] || line2 }
+    // 26 mm pitch / 0.12109 mm per px; outer encoder axes lie off screen.
+    // Wider edge caps are a readable compromise, not physical 1:1 alignment.
+    readonly property real softOuterWidth: 26 / 0.12109
+    readonly property real softInnerWidth: (rootWidth - 2 * softOuterWidth) / 6
+    function softKeyWidth(i) { return i === 0 || i === 7 ? softOuterWidth - s2 : softInnerWidth - s2 }
+    function softKeyX(i) { return s1 + (i === 0 ? 0 : softOuterWidth + (i-1)*softInnerWidth) }
     function columnX(i) { return s2 + i * columnPitch }
 }

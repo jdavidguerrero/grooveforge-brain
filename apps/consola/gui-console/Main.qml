@@ -73,6 +73,16 @@ QtWindow.Window {
             Label { anchors.fill: parent; anchors.margins: 12; text: touch.detail; font.pixelSize: 12 }
             TouchTarget { hardwareAction: "detail"; callback: function() { touch.dismiss() } }
         }
+        Rectangle {
+            objectName: "sectionArmed"
+            x: 450; y: 58; width: 490; height: 40; z: 210
+            visible: buttons.armed.length > 0; color: Theme.surface2; border.color: Theme.amber
+            Label { anchors.centerIn:parent; text:buttons.armed+' ARMED · NEXT '+buttons.boundary.toUpperCase(); color:Theme.amber; font.pixelSize:16 }
+            SequentialAnimation on opacity { running:buttons.armed.length>0; loops:Animation.Infinite
+                NumberAnimation { to:0.35; duration:400 }
+                NumberAnimation { to:1; duration:400 }
+            }
+        }
         DrumTempo {x:420;y:72;width:440;height:236;z:220;visible:console.drumMode && console.screenName.indexOf('Drum')===0 && drum.tempoVisible}
         Rectangle {
             objectName: "loadingFeedback"

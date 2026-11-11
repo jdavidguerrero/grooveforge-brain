@@ -39,7 +39,11 @@ def test_geometry_contract(gui):
         found={i.objectName():i for i in visual_items(window.contentItem()) if i.objectName()}
         for i in range(8):
             cap=found[f'keycap{i}']
-            assert (cap.x(),cap.y(),cap.width(),cap.height()) == (8+i*160,8,152,80)
+            outer = 26 / .12109
+            inner = (1280-2*outer)/6
+            x = 4 + (0 if i == 0 else outer+(i-1)*inner)
+            width = (outer if i in (0,7) else inner)-8
+            assert (cap.x(), cap.y(), cap.width(), cap.height()) == pytest.approx((x,8,width,80))
             item=found[f'cell0_{i}' if screen == 5 else f'strip{i}']
             assert (item.x(),item.width()) == (8+i*160,152)
     state.setScreen(7)

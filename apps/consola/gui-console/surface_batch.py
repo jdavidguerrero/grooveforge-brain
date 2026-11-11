@@ -78,6 +78,8 @@ class SurfaceBatcher(QObject):
         s, f, kind = self.state, event.fields, event.kind
         index = f.get('indice', 0)
         if kind in ('Mano', 'ManoPresencia') and not s.preferences.hand_allowed(index): return
+        if hasattr(s, 'buttons') and s.buttons.handle(kind, f):
+            return
         drum_surface = getattr(self, 'drum_surface', None)
         if drum_surface and drum_surface.apply_frame(kind, f):
             return

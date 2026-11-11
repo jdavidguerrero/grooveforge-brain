@@ -19,13 +19,19 @@ void setUp() {}
 void tearDown() {}
 
 void mcp_full_map_and_reserved_pins() {
+    constexpr uint8_t map[4][14] = {
+        {84,85,86,87,255,255,255,80,81,82,83,255,255,255},
+        {89,90,91,92,255,255,255,101,97,96,95,94,255,255},
+        {98,102,103,104,105,106,100,107,110,111,99,255,255,255},
+        {112,113,114,115,116,117,88,122,255,255,255,255,255,255}};
     bool used[128] = {};
     McpButtons::Event events[14];
-    for (uint8_t chip = 0; chip < 3; ++chip) {
+    for (uint8_t chip = 0; chip < 4; ++chip) {
         for (uint8_t input = 0; input < 14; ++input) {
             McpButtons buttons(chip);
-            const uint8_t expected = chip < 2 ? 80+chip*14+input : input < 13 ? 110+input : 0xff;
+            const uint8_t expected = map[chip][input];
             TEST_ASSERT_EQUAL_UINT8(expected,consola::mcp_note(chip,input));
+            TEST_ASSERT_EQUAL(expected != 0xff, bool(consola::FULL.mcp_inputs[chip] & (1u << consola::MCP_PINS[input])));
             const uint16_t gpio = 0xffff ^ (1u << consola::MCP_PINS[input]);
             TEST_ASSERT_EQUAL_UINT8(0,buttons.sample(gpio,100,events));
             TEST_ASSERT_EQUAL_UINT8(0,buttons.sample(gpio,5099,events));
@@ -48,17 +54,20 @@ void mcp_full_map_and_reserved_pins() {
         buttons.sample(0x7f7f,0,events); // GPA7/GPB7 are never inputs.
         TEST_ASSERT_EQUAL_UINT8(0,buttons.sample(0x7f7f,6000,events));
     }
+    unsigned count = 0;
+    for (unsigned i=0; i<128; ++i) if (used[i]) { ++count; TEST_ASSERT_TRUE(i>=80 && i<=122); }
+    TEST_ASSERT_EQUAL_UINT(36,count);
     TEST_ASSERT_FALSE(used[108]);
     TEST_ASSERT_FALSE(used[109]);
     TEST_ASSERT_TRUE(used[88]); // jog click
-    TEST_ASSERT_TRUE(used[122]); // pedal, chip 3 physical GPB5
-    TEST_ASSERT_EQUAL_UINT8(0xff,consola::mcp_note(3,0));
+    TEST_ASSERT_TRUE(used[122]); // pedal, chip 4 physical GPB0
+    TEST_ASSERT_EQUAL_UINT8(0xff,consola::mcp_note(4,0));
     TEST_ASSERT_EQUAL_UINT8(0xff,consola::mcp_note(0,14));
 }
 void mcp_noise_wrap_unplug_and_minimal_port_a() {
-    McpButtons buttons(2);
+    McpButtons buttons(3);
     McpButtons::Event events[14];
-    constexpr uint16_t PEDAL = 0xffff ^ (1u << 13);
+    constexpr uint16_t PEDAL = 0xffff ^ (1u << 8);
     buttons.sample(PEDAL,UINT32_MAX-2000,events);
     TEST_ASSERT_EQUAL_UINT8(0,buttons.sample(PEDAL,2998,events));
     TEST_ASSERT_EQUAL_UINT8(1,buttons.sample(PEDAL,2999,events));
@@ -71,13 +80,21 @@ void mcp_noise_wrap_unplug_and_minimal_port_a() {
     buttons.sample(PEDAL,6000,events);
     TEST_ASSERT_EQUAL_UINT8(0,buttons.sample(PEDAL,10999,events));
     TEST_ASSERT_EQUAL_UINT8(1,buttons.sample(PEDAL,11000,events));
+    for (uint8_t chip = 0; chip < 4; ++chip) {
+        McpButtons absent(chip);
+        TEST_ASSERT_EQUAL_UINT8(0,absent.disconnect(events));
+        TEST_ASSERT_EQUAL_UINT8(0,absent.disconnect(events));
+        McpButtons disabled(chip,0);
+        disabled.sample(0,0,events);
+        TEST_ASSERT_EQUAL_UINT8(0,disabled.sample(0,6000,events));
+    }
     for (uint8_t chip = 0; chip < 2; ++chip) {
         McpButtons minimal(chip,consola::MINIMAL.mcp_inputs[chip]);
         minimal.sample(0x00ff,0,events); // floating/unwired port B is ignored
         TEST_ASSERT_EQUAL_UINT8(0,minimal.sample(0x00ff,6000,events));
         minimal.sample(0xfffe,7000,events);
         TEST_ASSERT_EQUAL_UINT8(1,minimal.sample(0xfffe,12000,events));
-        TEST_ASSERT_EQUAL_UINT8(chip == 0 ? 80 : 94,events[0].note);
+        TEST_ASSERT_EQUAL_UINT8(chip == 0 ? 84 : 89,events[0].note);
     }
 }
 void selector_initial_thresholds_and_jumps() {

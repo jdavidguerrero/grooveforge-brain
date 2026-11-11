@@ -26,7 +26,7 @@ constexpr uint8_t ADC1_CHANNELS[] = {7, 8, 12, 11, 1, 10};
 #ifdef GF_CONSOLA_UNO
 constexpr uint8_t POT_PINS[] = {22,24,26};
 constexpr auto PROFILE = GF_CONSOLA_MINIMAL ? consola::MINIMAL : consola::FULL;
-constexpr uint8_t MCP_COUNT = 3;
+constexpr uint8_t MCP_COUNT = 4;
 #define M4_SERIAL Serial7
 #else
 constexpr uint8_t POT_PINS[] = {23,38,39};
@@ -101,7 +101,7 @@ RetryGate mcp[MCP_COUNT];
 bool mcp_configured[MCP_COUNT] = {};
 McpButtons buttons[] = {McpButtons(0,PROFILE.mcp_inputs[0]), McpButtons(1,PROFILE.mcp_inputs[1])
 #ifdef GF_CONSOLA_UNO
-    ,McpButtons(2,PROFILE.mcp_inputs[2])
+    ,McpButtons(2,PROFILE.mcp_inputs[2]), McpButtons(3,PROFILE.mcp_inputs[3])
 #endif
 };
 bool m4_held[32] = {}, legacy_pulse[32] = {};
@@ -344,9 +344,9 @@ void prepare_stats() {
         retry_max = max(retry_max,mcp[i].retry_us());
     }
     const int n = snprintf(response+response_size,sizeof(response)-response_size,
-        " mcp_mask=%u ads_mask=%u m4=%u encoder_mask=%u fsr_mask=%u pot_mask=%u ads0_channels=%u ads1_channels=%u selector=%u mcp0_inputs=%u mcp1_inputs=%u mcp2_inputs=%u adc1_timeouts=%lu adc2_timeouts=%lu fsr_timer=%u wire_timeout_us=%u wire_timeouts=%lu retry_max_us=%lu fsr0_sps=%lu fsr1_sps=%lu fsr2_sps=%lu fsr3_sps=%lu adc1_cfg=%lx adc1_gc=%lx pit_priority=%u",
+        " mcp_mask=%u ads_mask=%u m4=%u encoder_mask=%u fsr_mask=%u pot_mask=%u ads0_channels=%u ads1_channels=%u selector=%u mcp0_inputs=%u mcp1_inputs=%u mcp2_inputs=%u mcp3_inputs=%u adc1_timeouts=%lu adc2_timeouts=%lu fsr_timer=%u wire_timeout_us=%u wire_timeouts=%lu retry_max_us=%lu fsr0_sps=%lu fsr1_sps=%lu fsr2_sps=%lu fsr3_sps=%lu adc1_cfg=%lx adc1_gc=%lx pit_priority=%u",
         mcp_mask, unsigned(ads[0].online() | (ads[1].online() << 1)), unsigned(m4_connected),
-        PROFILE.encoders, PROFILE.fsrs, PROFILE.pots, PROFILE.ads_channels[0], PROFILE.ads_channels[1], unsigned(PROFILE.selector), PROFILE.mcp_inputs[0], PROFILE.mcp_inputs[1], PROFILE.mcp_inputs[2],
+        PROFILE.encoders, PROFILE.fsrs, PROFILE.pots, PROFILE.ads_channels[0], PROFILE.ads_channels[1], unsigned(PROFILE.selector), PROFILE.mcp_inputs[0], PROFILE.mcp_inputs[1], PROFILE.mcp_inputs[2], PROFILE.mcp_inputs[3],
         (unsigned long)adc_errors,(unsigned long)adc2_timeouts,unsigned(fsr_timer_ok),
         unsigned(GF_WIRE_TIMEOUT_US),(unsigned long)Wire.getWireTimeoutCount(),
         (unsigned long)retry_max,

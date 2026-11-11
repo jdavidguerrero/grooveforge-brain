@@ -48,21 +48,24 @@ def test_pad_fila_columna(indice):
 NOMBRES = (
     "ENCODER_1", "ENCODER_2", "ENCODER_3", "ENCODER_4",
     "ENCODER_5", "ENCODER_6", "ENCODER_7", "ENCODER_8",
-    "JOG", "MCP1_9", "MCP1_10", "MCP1_11", "MCP1_12", "MCP1_13",
+    "JOG", "OCT_PLUS", "OCT_MINUS", "PAGE_RIGHT", "PAGE_LEFT", None,
     "PLAY", "STOP", "REC", "LOOP", "UNDO", "NEW", "SHIFT", "METRO",
-    "MCP2_8", "MCP2_9", "MCP2_10", "MCP2_11", "MCP2_12", "MCP2_13",
+    "BACK", "MENU", "LEFT", "RIGHT", "BROWSE", "DELETE",
 )
 
 
 @pytest.mark.parametrize("numero,nombre", list(enumerate(NOMBRES, 80)))
 def test_botones(numero, nombre):
-    assert s.decodificar(nota(numero)) == s.Boton(nombre, True)
+    assert s.decodificar(nota(numero)) == (s.Boton(nombre, True) if nombre else None)
 
 
 @pytest.mark.parametrize("numero", [*range(36, 40), *range(48, 123)])
 @pytest.mark.parametrize("tipo,velocidad", [("note_off", 0), ("note_off", 64), ("note_on", 0)])
 def test_liberaciones(numero, tipo, velocidad):
     evento = s.decodificar(nota(numero, tipo, velocidad))
+    if evento is None:
+        assert numero in (93,118,119,120,121)
+        return
     if isinstance(evento, s.ManoPresencia):
         assert not evento.presente
     else:
@@ -246,11 +249,11 @@ def test_cliente_stats_serial_perezoso(monkeypatch):
 
 
 @pytest.mark.parametrize("numero,nombre", list(enumerate((
-    "KAILH_20", "LEFT", "RIGHT", "BACK", "PAGE_LEFT", "PAGE_RIGHT", "OCT_MINUS",
-    "OCT_PLUS", "MENU", "SEARCH", "SESSION_ARRANGE", "DUPLICATE", "PEDAL"), 110)))
+    "DUPLICATE", "QUANTIZE", "CUE", "FILL", "TAP", "BUILD", "DROP", "BREAK",
+    None, None, None, None, "PEDAL"), 110)))
 def test_tercer_mcp_y_pedal(numero, nombre):
-    assert s.decodificar(nota(numero)) == s.Boton(nombre, True)
-    assert s.decodificar(nota(numero, "note_off")) == s.Boton(nombre, False)
+    assert s.decodificar(nota(numero)) == (s.Boton(nombre, True) if nombre else None)
+    assert s.decodificar(nota(numero, "note_off")) == (s.Boton(nombre, False) if nombre else None)
 
 
 @pytest.mark.parametrize("valor,db", [(0, 0), (64, -10), (127, -20)])

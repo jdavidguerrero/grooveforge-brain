@@ -33,7 +33,11 @@ def test_all_chrome_and_design_columns(gui, screen, descriptor):
         assert obj.isVisible() == (screen != 1)
     for i in range(8):
         obj = found[f'keycap{i}']
-        assert (obj.x(), obj.y(), obj.width(), obj.height()) == (8+i*160, 8, 152, 80)
+        outer = 26 / .12109
+        inner = (1280-2*outer)/6
+        x = 4 + (0 if i == 0 else outer+(i-1)*inner)
+        width = (outer if i in (0,7) else inner)-8
+        assert (obj.x(), obj.y(), obj.width(), obj.height()) == pytest.approx((x,8,width,80))
     if descriptor.columns:
         for i in range(8):
             name = f'cell0_{i}' if descriptor.source == 'LiveSession' or descriptor.name == 'LiveSession' else f'strip{i}' if descriptor.name == 'Mixer' else f'column{i}'

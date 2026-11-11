@@ -28,16 +28,19 @@ No hay contradicción de asignación en 17. Restricciones del shield reutilizado
 
 Canal MIDI 1; se conservan FSR notas 36–39, M4 48–79, encoders CC16–23, jog CC35, faders CC24–27, expresión CC28–29, MASTER/CUE/IN CC30/31/32, manos CC33/34 y presencia notas108/109. MCP usa orden GPIO **0–6, 8–14**; GPA7/GPB7 no son entradas:
 
-> **Pendiente (2026-11-11):** el reparto físico cambió (17 §3 corregido). Esta tabla describe el firmware actual y se
-> reescribe con el próximo cambio de firmware; los rangos de notas 80–122 se conservan.
+Contrato v1 (2026-11-11), notas decimales, entradas activas a GND. Cada celda enumera GPIO físico → nota / función; los demás GPIO están libres y no emiten eventos.
 
-| Chip | Índices lógicos → notas y función |
-|---|---|
-| 0x20 | 0–7 → 80–87 clics encoder; 8 → 88 JOG; 9–13 → 89–93 Kailh1–5 |
-| 0x21 | 0–13 → 94–107 Kailh6–19 (nombres históricos del lector conservados) |
-| 0x22 | 0 → 110 Kailh20; 1–11 → 111–121 LEFT, RIGHT, BACK, PAGE_LEFT, PAGE_RIGHT, OCT_MINUS, OCT_PLUS, MENU, SEARCH, SESSION_ARRANGE, DUPLICATE; 12 → 122 PEDAL; 13 libre |
+| Chip / placa | GPA0–6 | GPB0–6 |
+|---|---|---|
+| 0x20 / PCB-A | 0→84 ENC5; 1→85 ENC6; 2→86 ENC7; 3→87 ENC8 | 0→80 ENC1; 1→81 ENC2; 2→82 ENC3; 3→83 ENC4 |
+| 0x21 / PCB-K1 | 0→89 OCT+ / escena1; 1→90 OCT− / escena2; 2→91 PAGE▶ / escena4; 3→92 PAGE◀ / escena3 | 0→101 METRO; 1→97 LOOP; 2→96 REC; 3→95 STOP; 4→94 PLAY |
+| 0x22 / PCB-K1+K2 | 0→98 UNDO; 1→102 BACK; 2→103 MENU; 3→104 LEFT; 4→105 RIGHT; 5→106 BROWSE; 6→100 SHIFT | 0→107 DELETE; 1→110 DUPLICATE; 2→111 QUANTIZE; 3→99 NEW |
+| 0x23 / PCB-M | 0→112 CUE; 1→113 FILL; 2→114 TAP; 3→115 BUILD; 4→116 DROP; 5→117 BREAK; 6→88 JOG | 0→122 PEDAL |
 
-La nota110 salta 108/109 para no colisionar con las manos. El pedal usa nota on/off, sin invertir ni convertir a sustain. La semántica de Kailh conserva los identificadores históricos de 08: no se reasignan PLAY/STOP/etc. sin otro contrato del panel.
+36 notas únicas entre80 y122; 93,118–121 libres; 108/109 siguen siendo presencia de manos. JOG88, encoder80–87 y transporte histórico conservan identidad MIDI. Pedal envía on/off sin conversión a sustain.
+**Diferencia de spec:** CONNECTORS sólo define hasta0x22 y conserva nombres antiguos de K2; aquí se explicita BACK←BROWSE, MENU←MIX, LEFT←DEVICE, RIGHT←NOTE, BROWSE←SESSION. Para0x23 se fija provisionalmente GPA0–6 en el orden de17 y pedal GPB0: validar al diseñar PCB-M, no afirmar cableado existente.
+
+Mínimo conserva sólo GPA0–6 de0x20/21 y excluye0x22/23; por cableado real los clics disponibles ahí son ENC5–8, no ENC1–4. No se reasignan GPIO para simular la mesa anterior. Completo sondea los cuatro chips; NACK nunca se interpreta como pulsación y libera una sola vez cualquier nota mantenida.
 
 Selector: común a 41; tres posiciones a GND, mitad de 3,3 V (divisor 10k/10k), 3,3 V; masa común, nunca 5 V. ADC12: umbrales **1365/2730**, histéresis **±80 cuentas**. Posiciones 0/1/2 representan 0/−10/−20 dB y envían **CC36 = 0/64/127** inicial y al cambiar. Solo informa la posición física: no aplica otra atenuación digital. El lector añade `SelectorPad(db)`.
 
@@ -51,14 +54,14 @@ Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A
 |---|---|
 | Teensy 4.1 + SGTL5000 shield compatible T4 | I2S7/8/20/21/23, I2C18/19, alimentación y GND; USB al Pi/host |
 | Encoder1–4 + jog | A/B 2/3, 4/5, 6/9, 10/11, 37/40; común GND |
-| MCP0x20/21 | SDA18/SCL19, 3,3 V, GND, RESET alto; A2/A1/A0=000/001; módulos CJMCU-2317, solo GPA0–GPA6 cableados y habilitados; clics encoder1–4 en GPA0–GPA3, pulsadores a GND |
+| MCP0x20/21 | SDA18/SCL19, 3,3 V, GND, RESET alto; A2/A1/A0=000/001; módulos CJMCU-2317, solo GPA0–GPA6 cableados y habilitados; clics ENC5–8 en GPA0–GPA3 (contradicción de la mesa anterior: ENC1–4 son GPB0–3), pulsadores a GND |
 | FSR1/2 | 3,3 V → FSR → 14/15; cada ADC → 10k → GND |
 | MASTER (opcional, deshabilitado) | extremos 3,3 V/GND, cursor22; habilitar `-DGF_CONSOLA_WIRED_POTS=1` sólo al cablearlo |
 | ADS0x48 | 3,3 V/GND, SDA18/SCL19, dirección fija 0x48 sin pin ADDR en el módulo de Juan; fader1 cursor AIN0 (extremos 3,3 V/GND); Sharp1 salida AIN2 |
 | Sharp1 | alimentación5 V, ≥10µF local y GND común; verificar salida dentro de 0–3,3 V antes del ADS |
 | M4 | TX M4 → RX28; RX M4 ← TX29; GND común, alimentación adecuada; firmware M4 existente de press/release |
 
-En mínimo el Sharp se traslada de ADS0x49 AIN2 a **0x48 AIN2**, manteniendo CC33/nota108. Los otros canales ADS se omiten. El clic jog está en GPB1 según 17 y no está cableado en esta mesa: queda desactivado en mínimo; no se reasigna a otro GPIO. Sin tercer MCP, segundo ADS, DAC, CUE/IN o selector conectados no se generan eventos falsos ni logs repetidos. STATS informa máscaras habilitadas y presencia; ausencia M4 significa sin respuesta válida, no diagnóstico eléctrico.
+En mínimo el Sharp se traslada de ADS0x49 AIN2 a **0x48 AIN2**, manteniendo CC33/nota108. Los otros canales ADS se omiten. El clic jog está en 0x23 GPA6 según el contrato v1 y no está cableado en esta mesa: queda desactivado en mínimo; no se reasigna a otro GPIO. Sin MCP0x22/23, segundo ADS, DAC, CUE/IN o selector conectados no se generan eventos falsos ni logs repetidos. STATS informa máscaras habilitadas y presencia; ausencia M4 significa sin respuesta válida, no diagnóstico eléctrico.
 
 Mismo CDC: `@S STATS` y `@S RESET` mantienen los campos de 06/08 y agregan presencia/máscaras, CPU/memoria audio y errores codec/DAC. `@GF RUTA LINEA|SINTE` (LINEA inicial; SINTE silencio sin Brain), `@GF CUE 0|1` (1 inicial), `@GF USB` mantiene contadores async; **`@GF IN 0–15`** llama `lineInLevel` (5 inicial; número mayor = menor sensibilidad), **`@GF HP 0–127`** volumen de audífonos (64 inicial). En completo CUE/IN envían sus CC y actualizan HP/IN; MASTER sigue siendo CC para la sala del Pi. OK confirma el estado solicitado; la escritura física se atiende en loop y su disponibilidad se consulta en STATS. Respuestas acotadas/fraccionadas sin esperar al host. RESET reinicia los contadores históricos de superficie; los errores codec/CV y máximos de audio añadidos se acumulan desde arranque. Sin protocolos bridge nuevos.
 

@@ -51,6 +51,10 @@ def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, d
     state.drum = drum
     engine.drum_state = drum
     engine.rootContext().setContextProperty('drum', drum)
+    from console_buttons import ConsoleButtons
+    engine.console_buttons = state.buttons = ConsoleButtons(state, engine)
+    state.changed.connect(state.buttons.changed)
+    engine.rootContext().setContextProperty("buttons", state.buttons)
     batcher = SurfaceBatcher(state, engine)
     engine.surface_batcher = batcher
     from touch_controller import TouchController

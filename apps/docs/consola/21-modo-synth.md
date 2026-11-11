@@ -16,7 +16,7 @@ los modos de demostración existentes ni los specs 00–06.
 | Encoders CC16–23 | Ocho parámetros del banco; relativo → absoluto con step/kind y clamp del host; SHIFT ×0,1 en continuos, discretos conservan step |
 | Clic encoder 1–8 | Soft key correspondiente; PARTS abre parte; páginas: anterior/siguiente/banco/fino/escala/—/presets/back |
 | Jog CC35 / clic | Presets: desplazar/cargar; PARTS: parte; parámetros: páginas; SHIFT+jog y clic: recorrer/activar cualquier destino touch |
-| LEFT/RIGHT, PAGE_LEFT/RIGHT | Foco auxiliar / páginas; BACK vuelve a PARTS; MENU abre ajustes; SEARCH presets |
+| LEFT/RIGHT, PAGE_LEFT/RIGHT | Páginas; SHIFT+LEFT/RIGHT foco auxiliar; BACK vuelve; MENU abre selector de modos/ajustes; BROWSE presets |
 | NeoTrellis 4×8 | Velocity M4 global (default100); SHIFT+pad = accent127. Teclado in-key: grado = columna + 3×fila desde abajo, como cuartas diatónicas Push; raíz y escala seleccionables; OCT −/+ desplaza 12 semitonos |
 | FSR notas36–39 | Propuesta inicial implementada: cuatro notas MIDI 36/38/42/46 con velocity en la parte elegida (referencia GM; el engine sigue siendo synth); alternativa pendiente: acordes diatónicos |
 | Faders CC24–27 | Nivel partes1–4, −60…+12 dB lineal en dB; SHIFT+fader4 = velocity M4 global 1–127 |
@@ -77,7 +77,7 @@ como demo/read-only; no simulan una operación de sistema o audio exitosa.
 |---|---|
 | soft-key | Clic de encoder correspondiente |
 | parameter | Encoder correspondiente selecciona/edita; clic para toggle si procede |
-| navigation | SHIFT+jog recorre destinos visibles; clic JOG activa (LEFT/RIGHT también recorre) |
+| navigation | SHIFT+jog recorre destinos visibles; clic JOG activa (SHIFT+LEFT/RIGHT también recorre) |
 | choice | SHIFT+jog + JOG selecciona tab/banco/algoritmo/escala/modo/tile/toggle |
 | list | Jog desplaza selección; JOG activa fila; drag/flick touch desplaza |
 | text | SHIFT+jog + JOG pulsa tecla del teclado de texto; SAVE/CANCEL también soft keys |
@@ -143,7 +143,7 @@ La prueba funcional recorre cada pantalla SYNTH y DRUM, cada tecla rotulada,
 touch real sintetizado a **90° QML** con telemetría durante press/release, y MIDI
 80–87 decodificado por el puente; verifica navegación, estado o comando del host.
 
-**Settings → Surface / Hands** (MENU, o Settings desde Mode Select) ofrece
+**Settings → Surface / Hands** (MENU → Settings desde Mode Select) ofrece
 Hands master, Left IR y Right IR. **Los tres vienen OFF**: para usar una mano,
 activar master y esa mano. Touch o clics de encoder1/2/3 conmutan los mismos
 valores; persisten localmente en `~/.config/gf-console/settings.json`
@@ -179,3 +179,13 @@ Las cargas de preset/engine muestran `LOADING PRESET` / `LOADING ENGINE` desde l
 intención hasta su ACK/error/desconexión. No se borra el aviso con meters ni otras
 respuestas. [Teoría y contrato](../theory/consola-touch-velocity.md),
 [pruebas y mediciones](../../consola/gui-console/screenshots/touch/REPORT.md).
+
+
+## Botones consola v1 (2026-11-11, spec previa al código)
+
+MENU abre Mode Select y sus ajustes; BACK regresa al contexto anterior. Los cinco contactos de K2 son BACK/MENU/LEFT/RIGHT/BROWSE, nunca modos físicos. LEFT/RIGHT cambian pestaña/página; BROWSE abre presets SYNTH o browser de sonidos/racks DRUM; jog desplaza selección y clic confirma. SHIFT+jog mantiene navegación touch auxiliar.
+La columna derecha usa OCT+/OCT−/PAGE◀/PAGE▶: en LIVE/controller emite intenciones scene1–4 mediante hook explícito sin núcleo conectado; SYNTH transpone ±12 y cambia página; DRUM no define octavas (sólo16 pads fijos): OCT± emite hook drum_octave pendiente, sin afinar samples ni inventar bancos, PAGE◀/▶ recorre páginas del editor/steps. Colores previstos verde LIVE, azul SYNTH, ámbar DRUM; LEDs de teclas pendientes de PCB-K, doc23 sólo acepta pads M4.
+TAP estima BPM60–200 con hasta4 intervalos monotónicos, reinicia tras2s. DRUM usa transport host detenido: corriendo conserva el contrato22 (rechaza cambio con aviso visible); otros modos emiten hook host pendiente. CUE usa preview DRUM cuando existe; fuera de DRUM y FILL muestran aviso de hook pendiente.
+BUILD/DROP/BREAK arman una sola intención local, segunda pulsación cancela; SHIFT pide próximo compás, sin SHIFT próxima frase. Indicador parpadeante en pantalla en todos los modos. Hook de ejecución pendiente, sin reloj Qt que ejecute recetas ni cambios musicales; pendientes.md «Secciones del set» sigue abierto. ACCEPT permanece soft key E5 (19), nunca se reasigna a una de estas teclas.
+
+Alineación: pantalla x92,5–247,5mm; ejes79+26i proyectan a[-111,49;103,23;317,95;532,66;747,38;962,09;1176,81;1391,53]px. **Contradicción geométrica:** los ejes extremos están fuera del área activa; no es posible centrar ocho etiquetas exactamente sobre ellos. El layout usa celdas extremas ensanchadas y seis interiores iguales, compartido por todas las soft keys; documentar en REPORT el compromiso visible y la necesidad de revisar geometría física antes de certificar alineación.
