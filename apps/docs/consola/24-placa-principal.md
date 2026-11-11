@@ -87,8 +87,8 @@ para sus USB-A**. Reparto propuesto, todo desde el Pi:
 | Fuente → Pi (núcleo, NVMe, Audio+, pantalla) | — | 2,5 A | 3,4 A |
 | USB-A 1 (datos + 5 V) | Teensy y la lógica de 3,3 V de PCB-M | 0,15 A | 0,25 A |
 | USB-A 2 (datos + 5 V) | NeoTrellis M4 | 0,5 A | 0,6 A (brillo ≤ 25 %) |
-| USB-A 3 (solo 5 V, cable de alimentación) | LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,35 A | 0,6 A (brillo ≤ 25 %) |
-| **Suma de USB** | | **1,0 A** | **1,45 A ≤ 1,6 A** |
+| USB-A 3 (solo 5 V, cable de alimentación) | 30 LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,5 A | 0,6 A (brillo ≤ 25 %) |
+| **Suma de USB** | | **1,15 A** | **1,45 A ≤ 1,6 A** |
 
 Condiciones: brillo de LEDs **limitado por firmware sin excepción** (teclas y M4), polyfuse de 0,75 A en la entrada
 de 5 V de LEDs de PCB-M, los 5 V de la Teensy y los de LEDs **no se unen** (corte VUSB–VIN, diodo o separación por
