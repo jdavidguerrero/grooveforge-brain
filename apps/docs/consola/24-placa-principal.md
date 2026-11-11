@@ -1,7 +1,7 @@
 # Consola: placa principal (PCB-M)
 
-> **Fecha:** 2026-11-11. **Estado:** borrador para aprobación de Juan; ningún esquema antes de aprobar las decisiones
-> de §8. **Base:** ADR-008 §2 y §6 (una Teensy; presupuesto de consumo obligatorio antes de la placa, auditoría G30),
+> **Fecha:** 2026-11-11. **Estado:** decisiones D1–D7 tomadas por Juan (§8); falta el panel (`25-panel-consola.md` y
+> Claude Design) para fijar dimensiones y qué va en PCB-M o en placas nuevas. Ningún esquema antes del panel. **Base:** ADR-008 §2 y §6 (una Teensy; presupuesto de consumo obligatorio antes de la placa, auditoría G30),
 > `03-arquitectura-capas.md` §4 (una placa principal reemplaza portadora + PCB-S + PCB-A; se mantienen las placas de
 > botones y faders), `17-mapa-pines-teensy.md` (pines e I2C), `18-teensy-unica-firmware.md`,
 > `pendientes.md` (chips soldados por JLC), placas existentes en `apps/hardware/kicad/consola/boards/` y su contrato
@@ -43,9 +43,9 @@ otros 3 ya vienen en PCB-A y PCB-K1 (ensamble JLC de esas placas).
 | Teensy 4.1 | Zócalo 2×24 + fila inferior que haga falta; USB micro-B de la Teensy al Pi con cable | — | Corte del puente VUSB-VIN si se alimenta de 5 V de PCB-M (§5) |
 | Códec | **D2**: módulo Audio Shield Rev D en headers (como el banco) **o** SGTL5000 soldado | I2S1 7/8/20/21/23, I2C 0x0A | HP out = cue; LINE IN = entrada |
 | ADS1115 #1 0x48 | FADER1–4 | I2C | Desde PCB-A J1 |
-| ADS1115 #2 0x49 | Expresión 1–2 (TRS), manos Sharp 1–2 (JST) | I2C | Sharp a 5 V con 10 µF local; salida verificada ≤ 3,3 V (divisor si hace falta) |
+| ADS1115 #2 0x49 | Expresión 1–2 (**FSR de presión sostenida en el panel**, `00` §10.2.1), manos Sharp 1–2 (JST) | I2C | FSR en divisor a 3,3 V; Sharp a 5 V con 10 µF local, salida verificada ≤ 3,3 V |
 | MCP23017 0x23 | 11 navegación + clic jog + pedal | I2C | Huellas de botón en PCB-M o conector a una placa de navegación (D3) |
-| MCP4725 ×2 0x60/0x61 | CV 1–2 | I2C | Buffer y escala según D4 |
+| MCP4725 ×2 0x60/0x61 | CV 1–2 | I2C | Buffer rail-to-rail con ganancia 1,5 → **0–5 V**, 1 kΩ en serie y diodos de protección por salida (D4) |
 | FSR 1–4 | Divisor 3,3 V → FSR → pin → 10 kΩ → GND | 14–17 | 4 × JST-PH 2 hacia los pads del panel |
 | Perillas | MASTER, CUE, IN (10 kΩ lineales, 3,3 V) | 22, 24, 26 | Montadas en PCB-M o por cable (D3); RC 1 kΩ/100 nF por cursor |
 | Selector de pad | 0 / −10 / −20 dB: conmutador de 3 posiciones que atenúa LINE IN **y** da la escalera a 41 | 41 | Escalera de 18 |
@@ -60,7 +60,7 @@ otros 3 ya vienen en PCB-A y PCB-K1 (ensamble JLC de esas placas).
 
 ## 4. Conectores al exterior (panel trasero, en el borde de PCB-M)
 
-Entrada de alimentación · USB de la Teensy (interno, cable corto al Pi) · audífonos cue (HP out) · LINE IN estéreo ·
+Sin entrada de alimentación propia (D6) · USB de la Teensy (interno, cable corto al Pi) · audífonos cue (HP out) · LINE IN estéreo ·
 CV 1–2 · MIDI in/out TRS · pedal · expresión 1–2 · e-drum (reservado). La salida de sala es la del **Audio+ del
 Pi**, no de PCB-M; si se quiere en el mismo panel trasero, cable interno del Audio+ a jacks de panel (D5).
 
@@ -72,12 +72,29 @@ Pi**, no de PCB-M; si se quiere en el mismo panel trasero, cable interno del Aud
 | Pantalla 7" DSI | 5 V (desde el Pi) | 0,5 A | 0,7 A | incluida en el Pi si cuelga del conector DSI |
 | Teensy 4.1 a 600 MHz | 5 V | 0,10 A | 0,15 A | PJRC |
 | Códec, ADS ×2, MCP, MCP4725 ×2, FSR | 3,3 V | 0,04 A | 0,06 A | hojas de datos |
-| 20 SK6812MINI-E (botones) | 5 V | 0,30 A (brillo 25 %) | 1,2 A | 60 mA × 20 |
+| 30 SK6812MINI-E (20 teclas + 10 nuevas, `25` §3) | 5 V | 0,45 A (brillo 25 %) | 1,8 A | 60 mA × 30 |
 | NeoTrellis M4 (32 NeoPixel) | 5 V por USB | 0,5 A (brillo 25 %) | 1,9 A | 60 mA × 32 |
 | Sharp GP2Y0A41 ×2 | 5 V | 0,03 A | 0,05 A | hoja de datos |
 | **Total** | 5 V | **≈ 3,5 A** | **≈ 9 A** | |
 
-Con el brillo limitado en firmware (doc 23, 20–25 %) el peor caso realista es **≈ 6 A**. Propuesta en D6.
+Con el brillo limitado en firmware (doc 23, 20–25 %) el peor caso realista es **≈ 6 A**.
+
+**Con una sola fuente (D6: la oficial del Pi, 27 W = 5 V 5 A).** El Pi 5 con esa fuente habilita **1,6 A en total
+para sus USB-A**. Reparto propuesto, todo desde el Pi:
+
+| Rama | Alimenta | Típico | Tope |
+|---|---|---|---|
+| Fuente → Pi (núcleo, NVMe, Audio+, pantalla) | — | 2,5 A | 3,4 A |
+| USB-A 1 (datos + 5 V) | Teensy y la lógica de 3,3 V de PCB-M | 0,15 A | 0,25 A |
+| USB-A 2 (datos + 5 V) | NeoTrellis M4 | 0,5 A | 0,6 A (brillo ≤ 25 %) |
+| USB-A 3 (solo 5 V, cable de alimentación) | LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,35 A | 0,6 A (brillo ≤ 25 %) |
+| **Suma de USB** | | **1,0 A** | **1,45 A ≤ 1,6 A** |
+
+Condiciones: brillo de LEDs **limitado por firmware sin excepción** (teclas y M4), polyfuse de 0,75 A en la entrada
+de 5 V de LEDs de PCB-M, los 5 V de la Teensy y los de LEDs **no se unen** (corte VUSB–VIN, diodo o separación por
+rama). Riesgo: en el peor caso del Pi (CPU al 100 % + NVMe + USB al tope) la fuente queda al límite: **medir en banco
+con medidor USB antes de fabricar**; si no alcanza, el plan B es una segunda entrada de 5 V para PCB-M (huella
+prevista, sin poblar).
 
 ## 6. Mecánica
 
@@ -91,14 +108,16 @@ ERC/DRC limpios; `sync_from_netlist` y `export_fab` como en las otras placas; re
 netlist (cada pin de 17 aparece una vez); auditoría del Hardware Engineer; prueba de humo en banco con la Teensy:
 I2C ve 0x0A, 0x20–0x23, 0x48, 0x49, 0x60, 0x61; audio dúplex ≥ 60 min sin cortes con todos los controles (18).
 
-## 8. Decisiones para Juan
+## 8. Decisiones
 
 | # | Decisión | Recomendación |
 |---|---|---|
-| **D1** | Reparto de los MCP: firmware sigue a las placas existentes (0x20 clics, 0x21/0x22 Kailh, **0x23 en PCB-M** = navegación + jog + pedal) en vez de 17 §3 | **Sí**: reutiliza PCB-A/K1/K2 tal cual; actualizar 17 §3 y 18 con tu visto bueno |
-| **D2** | Códec: módulo Audio Shield Rev D en headers vs SGTL5000 soldado | **Módulo** en v1: es lo probado en banco y el chip de 32 pines no tiene stock en JLC (el de 20 pines sí, USD 9,3) |
-| **D3** | Navegación (11 teclas), jog y perillas: ¿en PCB-M o en una placa pequeña de navegación junto a la pantalla? | Depende del panel: si la pantalla queda sobre PCB-M, en PCB-M; si no, **PCB-N** pequeña por JST-SH |
-| **D4** | CV: MCP4725 ×2 (17, pendientes) vs MCP4728 4 CV + 2 gates (03 §4.2). **Contradicción entre docs** | MCP4725 ×2 como dice 17 (es lo más reciente) con buffer a 0–5 V; huella de gates opcional |
-| **D5** | Salida de sala del Audio+ en el panel trasero por cable interno | Sí, jacks de panel para todo en un solo lado |
-| **D6** | Alimentación: una entrada de **5 V 8–10 A** para todo (Pi por su pin de 5 V) vs **dos fuentes** (USB-C oficial al Pi + 5 V 3 A a PCB-M) | **Dos fuentes en v1**: el Pi conserva su protección y su PD; una sola entrada se evalúa con el consumo medido |
-| **D7** | MIDI DIN poblado en v1 | Sí (la marimba y synths externos) |
+| # | Decisión (Juan, 2026-11-11) |
+|---|---|
+| **D1** | **Sí:** el firmware sigue el cableado de las placas existentes (0x20 clics en PCB-A, 0x21/0x22 Kailh en K1/K2) y el **4.º MCP (0x23) se puebla** para lo que no tiene placa. 17 §3 y 18 se actualizan cuando el inventario de `25` quede aprobado |
+| **D2** | **Módulo Audio Shield Rev D** en headers (Juan lo tiene; ya estaba en la portadora) |
+| **D3** | **Panel por definir:** se revisa con Claude Design (`25` + prompt de enclosure de la consola). PCB-M o placas nuevas según ese resultado |
+| **D4** | **MCP4725 ×2**, salida 0–5 V con buffer (resuelve la contradicción con 03 §4.2: MCP4728 queda descartado) |
+| **D5** | Salida del Audio+: **cable RCA macho → dos jacks hembra de 6,35 mm** en el panel trasero, o soldado directo al Audio+ |
+| **D6** | **Una sola fuente: la oficial del Pi.** Todo se alimenta desde el Pi (reparto en §5); plan B con huella sin poblar |
+| **D7** | **MIDI DIN poblado** en v1 |
