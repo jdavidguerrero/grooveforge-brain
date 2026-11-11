@@ -74,6 +74,13 @@ QtWindow.Window {
             TouchTarget { hardwareAction: "detail"; callback: function() { touch.dismiss() } }
         }
         DrumTempo {x:420;y:72;width:440;height:236;z:220;visible:console.drumMode && console.screenName.indexOf('Drum')===0 && drum.tempoVisible}
+        Rectangle {
+            objectName: "loadingFeedback"
+            property string message: console.drumMode ? drum.loadingText : console.synthMode ? synth.loadingText : ""
+            x: 400; y: 64; width: 480; height: 48; z: 230
+            visible: message.length > 0; color: Theme.surface2; border.color: Theme.amber
+            Label { anchors.centerIn: parent; text: parent.message; font.pixelSize: 18; color: Theme.amber }
+        }
         // Visible acknowledgement is synchronized with the same frame as the models.
         Rectangle { objectName: "surfaceProbe"; visible: perfMode; x: 0; y: 718; width: 1280; height: 2
             color: Qt.rgba((surfaceBatch.serial % 256)/255, (Math.floor(surfaceBatch.serial/256) % 256)/255, .6, 1)

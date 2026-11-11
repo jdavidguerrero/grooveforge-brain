@@ -14,7 +14,7 @@ import shiboken6
 from main import ROOT, create_engine
 from drum_surface import DrumSocketNotes
 from fake_drum_host import metadata
-from synth_surface import Fsr
+from synth_surface import Fsr, Pad, Boton
 from test_dx7_wiring import real_host
 from tools.real_synth_review import InheritedSocket, until
 
@@ -56,6 +56,16 @@ def test_real_host_drums_load_edit_record_cue_and_save(app,real_host,tmp_path):
         engine.synth_surface.receive(Fsr(0,True,.8))
         assert engine.surface_batcher.pending>0  # C++ note command was already sent.
         until(lambda:any(s['velocity']==102 for s in d._rack['patterns'][0]['lanes'][0]['steps']),d.flush_frame)
+        # A SHIFT+M4 hit must reach the real host overdub as velocity 127.
+        lane=d.lane(15)
+        for step in lane['steps']: step['velocity']=0
+        d.put_lane(15,lane);d.flush_frame()
+        until(lambda:not d.client.pending,d.flush_frame)
+        engine.synth_surface.receive(Boton('SHIFT',True))
+        engine.synth_surface.receive(Pad(15,True,100/127))
+        engine.synth_surface.receive(Pad(15,False,0))
+        engine.synth_surface.receive(Boton('SHIFT',False))
+        until(lambda:any(s['velocity']==127 for s in d._rack['patterns'][0]['lanes'][15]['steps']),d.flush_frame)
         d.selectPattern(3)
         until(lambda:d.clock['queued']==3 and not d.client.pending,d.flush_frame)
         ram=d.ramBytes
@@ -68,6 +78,7 @@ def test_real_host_drums_load_edit_record_cue_and_save(app,real_host,tmp_path):
         assert saved['pads'][0]['params']['tune']==3
         assert saved['patterns'][0]['lanes'][0]['steps'][4]['velocity']==100
         assert any(s['velocity']==102 for s in saved['patterns'][0]['lanes'][0]['steps'])
+        assert any(s['velocity']==127 for s in saved['patterns'][0]['lanes'][15]['steps'])
         d.stop()
         until(lambda:not d.clock['running'] and not d.client.pending,d.flush_frame)
         assert d.error=='' and not d.clock['armed'] and d.clock['queued']==-1

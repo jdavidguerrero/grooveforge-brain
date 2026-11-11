@@ -33,7 +33,7 @@ para la siguiente generación del motor; el motor no decide nada musical. Juan q
 **arreglos en la composición** (armar la estructura del tema con secciones). **Condición:** spec en el núcleo
 (extensión de 19) después de E5; hardware y mapa MIDI ya reservados.
 
-## Respuesta del touch: lenta e imprecisa (Juan, 2026-11-10) — **siguiente tarea**
+## ✅ Respuesta del touch: lenta e imprecisa (Juan, 2026-11-10) — **resuelto en GUI, 2026-11-11**
 
 Juan, probando DRUM en la Pi: con los encoders todo responde bien, pero tocando la pantalla (teclas de menú,
 browse de racks) la respuesta tarda o el toque se pierde. Diagnóstico (2026-11-10):
@@ -47,9 +47,23 @@ browse de racks) la respuesta tarda o el toque se pierde. Diagnóstico (2026-11-
    completo y redibuja todo.
 4. La GUI (Python, hilo principal) promedia ~50 % de un núcleo (9 min de CPU en 19 min); en reposo ~14 %.
 
-**Propuesta:** estado presionado inmediato en todos los toques; teclas de menú/soft keys actúan al presionar;
-mayor umbral de arrastre en las listas; aviso «cargando rack» inmediato; perfilar el hilo principal y redibujar
-solo lo que cambió (meters/clock sin reconstruir modelos). Validar en la Pi con el mismo browse de TRIBE.
+**Implementado:** press visible en todos los TouchTarget; menú/soft keys/tabs al presionar, listas y destinos
+dentro de scroll al soltar; umbral25px (~3mm). Avisos LOADING desde la petición hasta ACK/error/desconexión.
+Clock/meters actualizan sus propiedades sin reconstruir controles; caché del resumen de rack y soft keys estables.
+
+Comparación controlada en **macOS, Qt6.11.1 offscreen/software, QML90**, 30clock+30meters/s,
+6s por pantalla +1s warmup, cProfile activo (CPU de un núcleo; no comparar directamente con el Pi histórico):
+
+| Pantalla | ms/evento antes → después | CPU hilo principal antes → después |
+|---|---|---|
+| DrumBrowser | 2,409 → 0,281 | 18,93% → 2,97% |
+| DrumSteps | 5,240 → 0,988 | 46,52% → 8,20% |
+| DrumMixer | 5,032 → 0,631 | 50,55% → 5,70% |
+
+[Reporte, perfiles crudos, capturas y pruebas](../../consola/gui-console/screenshots/touch/REPORT.md).
+La carga simulada con respuesta a530ms conserva el aviso mientras llegan clock/meters. La carga real del host
+no se acelera. **Resta validación física** EGLFS+evdev/Qt6.8 en el Pi con el mismo browse TRIBE: sensación del
+touch, scroll, CPU y audio simultáneo. Calibración identidad y LEDs23 conservados.
 
 ## ~~DX7 de 6 operadores como modo adicional~~ → modo implementado; validación física pendiente (ADR-008 §4)
 

@@ -168,12 +168,12 @@ directamente al host en DRUM. MIDI timestamps se conservan dentro del callback.
 
 | Control | DRUM |
 |---|---|
-| M4 notas48..63 | Pads1..16, golpe inmediato + selección visual; velocity global fija de Settings (default100) |
-| M4 notas64..79 | Steps1..16 de lane seleccionada/página actual, conmutar off/velocity100 |
+| M4 notas48..63 | Pads1..16, golpe inmediato + selección visual; velocity M4 global1–127 (default100), SHIFT+pad=accent127 |
+| M4 notas64..79 | Steps1..16 de lane seleccionada/página actual, conmutar off/velocity100; SHIFT escribe127 |
 | FSR36..39 | Kick/snare/hat/perc, asignación de pad por categoría, velocity íntegra; detector18 umbrales600/400 ADC12 |
 | CC16..23 | Parámetros del pad/página, steps o mixer según pantalla, relativo y clamp por tabla host |
 | Jog CC35/clic | Browser desplaza/carga; SHIFT+jog foco auxiliar touch como SYNTH |
-| Faders CC24..27 | Grupos KICKS/SKINS/WOODS/METALS; no restaurar nivel al generar/cargar sonido |
+| Faders CC24..27 | Grupos KICKS/SKINS/WOODS/METALS; SHIFT+fader4=velocity M4; no restaurar nivel al generar/cargar sonido |
 | PLAY/STOP/REC | Transporte/record arm del host; botones del lector18, sin reasignar notas80..122 |
 | Manos CC33/34 +108/109 | OFF por defecto; master + mano ON en Settings. Cutoff/send del pad elegido, gate presencia; expresión28/29 equivalente sin gate |
 | MASTER/CUE/IN | Misma ruta RoomControls de SYNTH; no inventar @GF MASTER |
@@ -299,7 +299,7 @@ incluidos eventos pendientes, sin cutoff/send, macros ni halos. Al reactivar se
 requiere presencia nueva. Expresión28/29 y FSR permanecen independientes. Detalle
 de persistencia y errores en doc21.
 
-**M4 envía velocity100 fija**: antes siempre elegía la layer que contiene100.
+**Estado previo (2026-11-10; actualizado abajo): M4 enviaba velocity100 fija** y siempre elegía la layer que contiene100.
 Settings → Surface / Hands → **DRUM · M4 pad velocity** permite64/100/127 por
 touch; encoder4 recorre esas opciones. La preferencia es **global local** (no
 forma parte del rack ni se envía al host como parámetro), default100, persistida
@@ -315,3 +315,29 @@ se comprueban efectos y comandos, no sólo presencia de callbacks. También
 persistencia, filtrado por mano/master en LIVE/SYNTH/DRUM y velocity M4/FSR.
 [Capturas y condiciones](../../consola/gui-console/screenshots/surface-controls/index.html).
 No se cambió el host C++ ni se certifica el hardware desde escritorio.
+
+
+## Touch, velocity live y accent (2026-11-11)
+
+SHIFT+fader4 (CC27) fija velocity M4 global1–127, compartida con SYNTH y persistida
+en LocalSettings (`drum_pad_velocity`, default100). TopBar muestra `M4 VEL N`;
+Settings64/100/127 son accesos rápidos al mismo valor. Fader4 sin SHIFT sigue siendo
+nivel METALS. Los parámetros de los ocho encoders, SHIFT fino y MASTER/CUE/IN conservan
+su función. El snapshot cambia antes del próximo golpe, sin esperar el frame.
+
+SHIFT+M4 pad1–16 envía127: el host graba ese127 como paso acentuado cuando el
+transporte corre con REC armado, en un paso vacío (mantiene la regla de overdub
+que no pisa pasos existentes). Las dos filas de steps conservan off/100; SHIFT+step
+escribe127 incluso si ya estaba encendido, conservando probabilidad/micro. No existía
+SHIFT+pad musical: VARIATIONS usa SHIFT+**clic de encoder** para CUE. PERFORM
+MUTE/SOLO+pad conserva prioridad sobre tocar, también con SHIFT. Los FSR conservan
+su velocity medida y no reciben accent ni reescalado.
+
+Touch: menú/soft keys/tabs al presionar; listas y cualquier control bajo scroll al
+soltar, con feedback presionado inmediato y umbral25px (~3mm). `LOADING RACK`,
+`LOADING SAMPLE` y `LOADING PREVIEW` aparecen desde la petición hasta su respuesta,
+error o desconexión; el trabajo del host sigue tardando380–530ms. Clock y meters
+tienen señales propias; no invalidan listas de racks/fuentes, pasos ni soft keys.
+Cambio real de patrón actualiza los pasos; cambios de play/rec sólo los roles de
+las teclas existentes. LED23 sigue recibiendo eventos/counters completos.
+[Resultados y límites](../../consola/gui-console/screenshots/touch/REPORT.md).

@@ -41,6 +41,7 @@ def formatted(meta, value):
 
 class SynthState(QObject):
     changed = Signal()
+    loadingChanged = Signal()
     wakeRequested = Signal()
 
     def __init__(self, console, client=None, parent=None):
@@ -61,6 +62,8 @@ class SynthState(QObject):
         self._engines = []
         self._status = 'preview' if self.preview else 'connecting'
         self._loading = False
+        self._loading_text = ''
+        self._loading_request = None
         self._error = ''
         self._part = 3
         self._page = 'FILTER'
@@ -105,6 +108,7 @@ class SynthState(QObject):
     engineOptions = Property('QVariantList',lambda s:s._engines,notify=changed)
     partInfo = Property('QVariantMap',lambda s:s.current_part,notify=changed)
     status = Property(str,lambda s:s._variant or ('loading' if s._loading else s._status),notify=changed)
+    loadingText = Property(str,lambda s:s._loading_text,notify=loadingChanged)
     error = Property(str,lambda s:s._error,notify=changed)
     fine = Property(bool,lambda s:s._fine,notify=changed)
     focusedCell = Property(int,lambda s:s._focus,notify=changed)
@@ -197,6 +201,12 @@ class SynthState(QObject):
         return result
 
     def request(self, cmd, **fields):
+        if cmd in ('load_preset','set_engine'):
+            if self._loading_request is not None: return None
+            self._loading_request = (cmd,dict(fields))
+            self._loading = True
+            self._loading_text = 'LOADING PRESET' if cmd=='load_preset' else 'LOADING ENGINE'
+            self.loadingChanged.emit()
         if self.client:
             return self.client.request(cmd,**fields)
         self._serial += 1
@@ -214,6 +224,13 @@ class SynthState(QObject):
 
     def _handle(self, msg):
         event, cmd, fields = msg.get('event'),msg.get('_cmd'),msg.get('_fields',{})
+        if (self._loading_request is not None and
+            ((cmd,fields)==self._loading_request or
+             (event=='connection' and msg['state']!='ready'))):
+            self._loading_request = None
+            self._loading = False
+            self._loading_text = ''
+            self.loadingChanged.emit()
         if event == 'connection':
             self._status = msg['state']
             if self._status == 'ready':

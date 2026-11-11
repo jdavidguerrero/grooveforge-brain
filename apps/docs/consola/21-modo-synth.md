@@ -17,9 +17,9 @@ los modos de demostración existentes ni los specs 00–06.
 | Clic encoder 1–8 | Soft key correspondiente; PARTS abre parte; páginas: anterior/siguiente/banco/fino/escala/—/presets/back |
 | Jog CC35 / clic | Presets: desplazar/cargar; PARTS: parte; parámetros: páginas; SHIFT+jog y clic: recorrer/activar cualquier destino touch |
 | LEFT/RIGHT, PAGE_LEFT/RIGHT | Foco auxiliar / páginas; BACK vuelve a PARTS; MENU abre ajustes; SEARCH presets |
-| NeoTrellis 4×8 | Teclado in-key: grado = columna + 3×fila desde abajo, como cuartas diatónicas Push; raíz y escala seleccionables; OCT −/+ desplaza 12 semitonos |
+| NeoTrellis 4×8 | Velocity M4 global (default100); SHIFT+pad = accent127. Teclado in-key: grado = columna + 3×fila desde abajo, como cuartas diatónicas Push; raíz y escala seleccionables; OCT −/+ desplaza 12 semitonos |
 | FSR notas36–39 | Propuesta inicial implementada: cuatro notas MIDI 36/38/42/46 con velocity en la parte elegida (referencia GM; el engine sigue siendo synth); alternativa pendiente: acordes diatónicos |
-| Faders CC24–27 | Nivel partes1–4, −60…+12 dB lineal en dB |
+| Faders CC24–27 | Nivel partes1–4, −60…+12 dB lineal en dB; SHIFT+fader4 = velocity M4 global 1–127 |
 | Sharp CC33/34 + presencia108/109 | OFF por defecto; requiere master + mano ON en Settings. Cutoff / MOVE de parte elegida según descriptor (HYBRID: cutoff de ambas mitades); presencia falsa inhibe cambios; ausencia mantiene último valor |
 | Expresión CC28/29 | Mismas macros cutoff/MOVE, sin gate de presencia |
 | MASTER / CUE / IN | Sala PipeWire / @GF HP 0–127 / @GF IN 0–15 (misma dirección que firmware18; mayor índice = menor sensibilidad) |
@@ -65,8 +65,10 @@ formato. No se afirma feedback físico hasta implementar/validar receptor Teensy
 
 ## Touch en todo el registro
 
-Un `TouchTarget` común declara callback y categoría de acción hardware. Tap activa;
-arrastre/flick desplaza listas; los knobs sólo seleccionan el encoder/foco (bool
+Un `TouchTarget` común declara callback y categoría de acción hardware. Menú, soft keys,
+tabs y teclas de texto actúan al presionar; listas y cualquier destino dentro de scroll
+actúan al soltar. Todos muestran press inmediato. Arrastre/flick desplaza listas
+con umbral25px (~3mm en el panel de7”); los knobs sólo seleccionan el encoder/foco (bool
 puede conmutar). Pads como notas y teclas de piano no tienen activación musical;
 piano roll sólo desplaza/zoom. Controles sin servicio abren detalle local rotulado
 como demo/read-only; no simulan una operación de sistema o audio exitosa.
@@ -159,3 +161,21 @@ La fila Pad velocity de esta misma pantalla configura sólo M4 en DRUM (doc22).
 Capturas de la corrección y condiciones de escritorio:
 [Surface/Hands y rotación90](../../consola/gui-console/screenshots/surface-controls/index.html).
 La simulación no certifica touch físico, audio ni latencia del Pi.
+
+
+## Touch y dinámica M4 (2026-11-11)
+
+**SHIFT+fader4 (CC27)** fija la velocity de los siguientes golpes M4 en SYNTH y
+DRUM, 1–127; TopBar muestra `M4 VEL N`. Sin SHIFT sigue siendo nivel de parte4.
+No consume los ocho encoders ni su modo fino. Una sola preferencia local, default100,
+persistida atómicamente con la clave existente `drum_pad_velocity`: Settings ofrece
+64/100/127 como accesos rápidos al mismo valor y ahora nombra ambos modos. El valor
+entra en el snapshot MIDI antes del siguiente golpe; guardar/mostrar ocurre por frame.
+SHIFT+pad envía127 sin cambiar la preferencia; note-off conserva su destino original.
+FSR y teclados externos conservan su velocity íntegra. La combinación nueva de fader
+evita reasignar un encoder de parámetros; al soltar SHIFT el fader vuelve a nivel absoluto.
+
+Las cargas de preset/engine muestran `LOADING PRESET` / `LOADING ENGINE` desde la
+intención hasta su ACK/error/desconexión. No se borra el aviso con meters ni otras
+respuestas. [Teoría y contrato](../theory/consola-touch-velocity.md),
+[pruebas y mediciones](../../consola/gui-console/screenshots/touch/REPORT.md).

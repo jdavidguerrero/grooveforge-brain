@@ -19,6 +19,9 @@ def key(label='', value='', action='', lit=False, role='', enabled=True):
 
 class DrumState(QObject):
     changed = Signal()
+    clockChanged = Signal()
+    metersChanged = Signal()
+    loadingChanged = Signal()
     wakeRequested = Signal()
 
     def __init__(self,console,client=None,parent=None):
@@ -27,10 +30,13 @@ class DrumState(QObject):
         self.preview=client is None
         self.fake=FakeDrum() if self.preview else None
         self._rack=metadata()['empty_rack']
+        self._rack_view=self.rack_summary()
         self._clock=dict(running=False,armed=False,pattern=0,queued=-1,bpm=122.,swing=0.,bar=1,step=0)
         self._pages=[]
         self._status='preview' if self.preview else 'connecting'
         self._loading=False
+        self._loading_text=''
+        self._loading_request=None
         self._tempo=False
         self._error=''
         self._screen=''
@@ -53,6 +59,9 @@ class DrumState(QObject):
         self._limit=256*1024**2
         self._data_dir='/data/drum'
         self._meters={}
+        self._shown_clock={}
+        self._shown_meters={}
+        self._shown_keys_clock=()
         self._hits=[[] for _ in range(4)]
         self._outbound={}
         self._desired={}
@@ -81,8 +90,10 @@ class DrumState(QObject):
     cells = Property(QObject,lambda s:s.cellsModel,constant=True)
     lanes = Property(QObject,lambda s:s.lanesModel,constant=True)
     sounds = Property(QObject,lambda s:s.samplesModel,constant=True)
-    rack = Property('QVariantMap',lambda s:s.rack_summary(),notify=changed)
-    clock = Property('QVariantMap',lambda s:dict(s._clock),notify=changed)
+    rack = Property('QVariantMap',lambda s:s._rack_view,notify=changed)
+    clock = Property('QVariantMap',lambda s:dict(s._clock,pattern_step=s._clock.get('pattern_step',s._clock['step'])),notify=clockChanged)
+    meters = Property('QVariantMap',lambda s:dict(s._shown_meters),notify=metersChanged)
+    loadingText = Property(str,lambda s:s._loading_text,notify=loadingChanged)
     selectedPad = Property(int,lambda s:s._pad,notify=changed)
     selectedStep = Property(int,lambda s:s._step,notify=changed)
     selectedLayer = Property(int,lambda s:min(s._layer_index,max(0,len(s.pad_info()["layers"])-1)),notify=changed)
@@ -153,6 +164,13 @@ class DrumState(QObject):
         self.wakeRequested.emit()
 
     def request(self,cmd,**fields):
+        label={'load_rack':'LOADING RACK','set_pad_sample':'LOADING SAMPLE',
+               'preview':'LOADING PREVIEW'}.get(cmd) if not fields.get('stop') else None
+        if label:
+            if self._loading_request==(cmd,fields): return None
+            self._loading_request=(cmd,deepcopy(fields))
+            self._loading=True;self._loading_text=label
+            self.loadingChanged.emit()
         if self.client:
             return self.client.request(cmd,**fields)
         self._serial+=1
@@ -168,6 +186,12 @@ class DrumState(QObject):
 
     def _handle(self,msg):
         event,cmd=msg.get('event'),msg.get('_cmd')
+        if (self._loading_request is not None and
+            ((cmd,msg.get('_fields',{}))==self._loading_request or
+             (event=='connection' and msg['state']!='ready'))):
+            self._loading_request=None
+            self._loading=False;self._loading_text=''
+            self.loadingChanged.emit()
         if event=='connection':
             self._status=msg['state']
             if self._status=='ready':self._catalog_generation=0
@@ -175,13 +199,20 @@ class DrumState(QObject):
         elif event=='clock':
             if msg['clock'].get('record_overruns',0)>self._clock.get('record_overruns',0):
                 self._error='Recording stopped: event queue full'
+                self._touch()
+            if msg['clock']['pattern']!=self._clock['pattern']: self._touch()
             self._clock=msg['clock']
+            self.wakeRequested.emit()
+            return
         elif event=='drum':
             if 'rack' in msg: self._rack=deepcopy(msg['rack'])
             elif msg.get('kind')=='pad_param': self._rack['pads'][msg['pad']]['params'][msg['param']]=msg['value']
             elif msg.get('kind')=='steps': self._rack['patterns'][msg['pattern']]['lanes'][msg['lane']]=deepcopy(msg['data'])
             elif msg.get('kind')=='group': self._rack['groups'][msg['group']]=deepcopy(msg['data'])
-        elif event=='drum_meters': self._meters=msg
+        elif event=='drum_meters':
+            self._meters={k:v for k,v in msg.items() if k!='event'}
+            self.wakeRequested.emit()
+            return
         elif event=='recorded':
             self._rack['patterns'][msg['pattern']]['lanes'][msg['lane']]['steps'][msg['step']]=msg['hit']
             self._modified=True
@@ -193,7 +224,6 @@ class DrumState(QObject):
                 self.request('list_racks');self.refresh_samples()
             if msg.get('status')=='error': self._error=msg.get('error','Worker failed')
         elif msg.get('ok') is False:
-            if cmd=='load_rack': self._loading=False
             if cmd=='set_pad_sample': self._keep_pending=None
             self._error=msg.get('error','DRUM command failed')
             if 'stale audio epoch' in self._error: self.request('get_drum_state')
@@ -225,7 +255,7 @@ class DrumState(QObject):
                         self._variants[index]['state']='kept'
                     self._keep_pending=None
             elif cmd=='load_rack':
-                self._loading=False;self._modified=False;self.refresh_samples()
+                self._modified=False;self.refresh_samples()
             elif cmd in ('save_rack','save_pattern'):
                 self._modified=False;self.request('list_racks')
             elif cmd in ('import_folder','generate_variations','render_rack'):
@@ -358,7 +388,6 @@ class DrumState(QObject):
 
     @Slot(str)
     def loadRack(self,path):
-        self._loading=True;self._touch()
         self.request('load_rack',path=path)
 
     @Slot(str)
@@ -547,7 +576,7 @@ class DrumState(QObject):
         for i in range(self._step_page*16,self._step_page*16+16):
             s=lane['steps'][i]
             result.append(dict(index=i,**s,selected=pad==self._pad and i==self._step,
-                               active=i<lane['length'],playhead=self._clock['running'] and i==int(self._clock.get('pattern_step',self._clock['step']))%lane['length'],
+                               active=i<lane['length'],laneLength=lane['length'],playhead=self._clock['running'] and i==int(self._clock.get('pattern_step',self._clock['step']))%lane['length'],
                                amount=s['velocity']/127 if self._layer=='VEL' else s['probability'] if self._layer=='PROB' else abs(s['micro'])*2,
                                text=str(s['velocity']) if self._layer=='VEL' else f'{s["probability"]:.0%}' if self._layer=='PROB' else f'{s["micro"]:+.2f}'))
         return result
@@ -612,8 +641,22 @@ class DrumState(QObject):
         if self.client: self.client.drain_frame()
         outgoing,self._outbound=self._outbound,{}
         for cmd,fields in outgoing.values(): self.request(cmd,**fields)
+        # Audio counters/LED payload stay in _clock; only visible clock fields notify QML.
+        clock={k:self._clock[k] for k in ('running','armed','pattern','queued','bpm','swing','bar','step')}
+        clock['pattern_step']=self._clock.get('pattern_step',self._clock['step'])
+        if clock!=self._shown_clock:
+            self._shown_clock=clock
+            self.clockChanged.emit()
+        if self._meters!=self._shown_meters:
+            self._shown_meters=deepcopy(self._meters)
+            self.metersChanged.emit()
+        keys_clock=tuple(clock[k] for k in ('running','armed','pattern'))
+        if keys_clock!=self._shown_keys_clock:
+            self._shown_keys_clock=keys_clock
+            if self.console.screenName.startswith('Drum'): self.console.refresh_keys()
         if not self._dirty: return
         self._dirty=False
+        self._rack_view=self.rack_summary()
         pads=self.pad_entries();self._model('pads',self.padsModel,pads)
         cells=[]
         if self._pages:

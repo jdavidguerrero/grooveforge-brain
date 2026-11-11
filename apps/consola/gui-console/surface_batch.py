@@ -47,7 +47,7 @@ class SurfaceBatcher(QObject):
         kind = event['type'] if isinstance(event, dict) else type(event).__name__
         fields = {k: v for k, v in event.items() if k != 'type'} if isinstance(event, dict) else vars(event).copy()
         if kind not in ('Pad', 'Fsr', 'Boton', 'Encoder', 'Jog', 'Fader', 'Expresion',
-                        'Perilla', 'Mano', 'ManoPresencia', 'SelectorPad'):
+                        'Perilla', 'Mano', 'ManoPresencia', 'SelectorPad', 'M4Velocity'):
             raise ValueError(f'Unsupported surface event: {kind}')
         with self._lock:
             was_empty = not self._queue

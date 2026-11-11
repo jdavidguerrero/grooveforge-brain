@@ -1,5 +1,6 @@
 """DRUM surface bridge: graph MIDI pad hits precede frame-batched UI work."""
 from threading import RLock
+from dataclasses import replace
 import json
 from PySide6.QtCore import QObject, Property, Signal, Slot, QTimer
 from synth_surface import (MidiNotes, SocketNotes, PreviewNotes, led_messages,
@@ -45,7 +46,6 @@ class DrumSurface(QObject):
         self._presence=[False,False]
         self._leds={}
         shared.led_output.attach_drum(drum)
-        self._pad_velocity=console.preferences.padVelocity
         console.preferences.changed.connect(self.preferences_changed)
         self.failed.connect(self.failure)
         self.console.changed.connect(self.publish)
@@ -74,7 +74,6 @@ class DrumSurface(QObject):
     @Slot()
     def preferences_changed(self):
         with self.lock:
-            self._pad_velocity=self.console.preferences.padVelocity
             self._presence=[present and self.console.preferences.hand_allowed(i)
                             for i,present in enumerate(self._presence)]
 
@@ -85,9 +84,13 @@ class DrumSurface(QObject):
                 if isinstance(event,Boton) and self._screen=='DrumPerform' and event.nombre in ('ENCODER_4','ENCODER_5'):
                     self._hold=('mute' if event.nombre=='ENCODER_4' else 'solo') if event.presionado else ''
                 if isinstance(event,(Pad,Fsr)) and event.presionado:
+                    if isinstance(event,Pad):
+                        with self.shared.lock:
+                            velocity=127 if self.shared.route_shift else self.shared._pad_velocity
+                        event=replace(event,velocidad=velocity/127)
                     pad=event.indice if isinstance(event,Pad) else self._fsr[event.indice]
                     if pad<16 and not self._hold:
-                        self.notes.note(10,pad,self._pad_velocity if isinstance(event,Pad) else max(1,min(127,round(event.velocidad*127))))
+                        self.notes.note(10,pad,max(1,min(127,round(event.velocidad*127))))
                     if isinstance(event,Pad) and pad<16: self._selected=pad
             self.batcher.enqueue(event)
             return True
@@ -95,13 +98,21 @@ class DrumSurface(QObject):
             self.failed.emit(str(exc));return True
 
     def apply_frame(self,kind,fields):
+        if kind=='M4Velocity': return False
         if not self.console.drumMode or not self.console.screenName.startswith('Drum'): return False
         d=self.drum;i=fields.get('indice',0)
         if kind in ('Mano','ManoPresencia') and not self.console.preferences.hand_allowed(i): return True
         if kind in ('Pad','Fsr'):
             if fields['presionado']:
                 if kind=='Pad' and i>=16:
-                    d.toggleStep(d.selectedPad,(i-16)+d.stepPage*16)
+                    step=(i-16)+d.stepPage*16
+                    if self._shift:
+                        d.selectStep(d.selectedPad,step)
+                        lane=d.lane(d.selectedPad)
+                        if step<lane['length']:
+                            lane['steps'][step]['velocity']=127
+                            d.put_lane(d.selectedPad,lane)
+                    else: d.toggleStep(d.selectedPad,step)
                 else:
                     pad=i if kind=='Pad' else d.fsr[i]['pad']
                     if d.holdMode: d.togglePad(pad,d.holdMode)

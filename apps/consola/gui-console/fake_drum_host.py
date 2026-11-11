@@ -5,7 +5,9 @@ import json
 import math
 from pathlib import Path
 import signal
+import sys
 import threading
+from types import SimpleNamespace
 
 from fake_synth_host import FakeSynthServer, socket_path
 
@@ -138,10 +140,42 @@ class FakeDrumServer(FakeSynthServer):
                 c['pattern_step']=str(int(steps))
                 if c['step']==0 and c['queued']>=0: c['pattern'],c['queued']=c['queued'],-1
             self.publish(dict(event='clock',clock=deepcopy(c)))
+            # Match gf-synth-host: one clock and one meter event per 1600 samples.
+            phase=int(c['sample_counter'])/48000
+            pads=[max(0.,math.sin(phase*8+i))*.8 if c['running'] else 0. for i in range(16)]
+            self.publish(dict(event='drum_meters',pads=pads,
+                              groups=[max(pads[i::4]) for i in range(4)],room=max(pads),cue=0.))
+
+
+def serve_stdio(load_delay=.4):
+    """Same JSONL contract over pipes where the sandbox prohibits socket bind."""
+    topics=set();lock=threading.Lock();stopping=threading.Event()
+    def send(message):
+        with lock: print(json.dumps(message,ensure_ascii=False),flush=True)
+    def publish(message):
+        if message['event'] in topics: send(message)
+    server=SimpleNamespace(synth=FakeDrum(),stopping=stopping,publish=publish)
+    threading.Thread(target=FakeDrumServer.event_loop,args=(server,),daemon=True).start()
+    print('FAKE drum host (pipe protocol harness, no audio)',file=sys.stderr,flush=True)
+    try:
+        for line in sys.stdin:
+            req=json.loads(line)
+            if req.get('cmd')=='load_rack': stopping.wait(load_delay)
+            response,events=server.synth.request(req)
+            if req.get('cmd')=='subscribe' and response['ok']:
+                topics.clear();topics.update(req['topics'])
+            send(response)
+            for event in events: publish(event)
+    finally: stopping.set()
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--socket',default=socket_path());args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--socket',default=socket_path())
+    p.add_argument('--stdio',action='store_true')
+    p.add_argument('--load-delay-ms',type=float,default=400)
+    args=p.parse_args()
+    if args.stdio:
+        serve_stdio(args.load_delay_ms/1000);return
     with FakeDrumServer(args.socket) as server:
         worker=threading.Thread(target=server.serve_forever,daemon=True);worker.start()
         threading.Thread(target=server.event_loop,daemon=True).start()

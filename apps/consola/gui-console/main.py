@@ -16,6 +16,8 @@ from surface_batch import SurfaceBatcher
 
 
 def create_engine(state=None, frameless=False, rotation=None, perf_mode=False, display_screen=None, cycle_screens=False, synth_socket=None, synth_transport=None, fake_surface=False, drum_socket=None, drum_transport=None):
+    # ~3 mm on the 7-inch 720x1280 panel (~210 dpi), shared with Flickable stealing.
+    QGuiApplication.styleHints().setStartDragDistance(25)
     sans = QFontDatabase.systemFont(QFontDatabase.GeneralFont)
     mono = QFontDatabase.systemFont(QFontDatabase.FixedFont)
     families = QFontDatabase.families()

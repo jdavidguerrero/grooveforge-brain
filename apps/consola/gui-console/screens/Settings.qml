@@ -25,8 +25,8 @@ Item {
     }
     Label { x:288; y:272; width:940; text:'Master and the individual hand must be ON. Disabled sensors ignore hand movement and presence in every mode. Expression pedals remain active.'; wrapMode:Text.WordWrap; font.pixelSize:14; color:Theme.gpTextSec }
     Panel { x:288; y:322; width:956; height:122; color:Theme.gpBgCard; border.color:Theme.gpBorder
-        Label { x:20; y:16; text:'DRUM · M4 pad velocity'; face:Theme.osFont; font.pixelSize:20 }
-        Label { x:20; y:58; text:'Global fixed velocity: '+preferences.padVelocity+'   ·   FSR pads keep their measured velocity'; font.pixelSize:14; color:Theme.gpTextSec }
+        Label { x:20; y:16; text:'SYNTH / DRUM · M4 velocity'; face:Theme.osFont; font.pixelSize:20 }
+        Label { x:20; y:58; text:'M4: '+preferences.padVelocity+' · SHIFT + fader 4: 1–127 · SHIFT + pad: accent · FSR unchanged'; font.pixelSize:14; color:Theme.gpTextSec }
         Row { x:20; y:78; spacing:12
             Repeater { model:[64,100,127]
                 ActionButton { required property int modelData; width:140; height:38; text:String(modelData)+(preferences.padVelocity===modelData?' · ACTIVE':''); callback:function(){preferences.setPadVelocity(modelData)} }

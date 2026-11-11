@@ -6,10 +6,11 @@ Rectangle {
     property color tint: drum.tint
     property int padIndex: drum.selectedPad
     property bool toggle: false
+    property bool playhead: drum.clock.running && entry.index === Number(drum.clock.pattern_step) % (entry.laneLength || 16)
     color:entry.index%4===0?Theme.surface2:Theme.surface
     radius:3
-    border.width:entry.playhead || entry.selected?2:1
-    border.color:entry.playhead?Theme.tealPlus:entry.selected?Theme.white:Theme.line2
+    border.width:playhead || entry.selected?2:1
+    border.color:playhead?Theme.tealPlus:entry.selected?Theme.white:Theme.line2
     opacity:entry.active?1:.3
     Rectangle {x:3;y:drum.layer==='MICRO'?parent.height*.35:parent.height-(parent.height-6)*root.entry.amount-3;width:drum.layer==='MICRO'?parent.width*.4:parent.width-6;height:drum.layer==='MICRO'?parent.height*.3:(parent.height-6)*root.entry.amount;radius:2;color:root.tint;opacity:root.entry.velocity?1:.12
         anchors.horizontalCenter:drum.layer==='MICRO'?undefined:parent.horizontalCenter

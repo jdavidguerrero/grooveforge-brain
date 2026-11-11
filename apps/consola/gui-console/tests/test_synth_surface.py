@@ -45,7 +45,7 @@ def test_immediate_notes_bypass_frame_and_release_original_part_pitch(gui):
     surface, synth, batcher = enter(gui)
     surface.setRoot(0)
     surface.fakePad(24, True)
-    assert surface.notes.events == [(1, 48, 102)]
+    assert surface.notes.events == [(1, 48, 100)]
     assert batcher.pending == 1  # Sound was sent before GUI drain.
     synth.selectPart(2)
     surface.transpose(1)
@@ -53,7 +53,7 @@ def test_immediate_notes_bypass_frame_and_release_original_part_pitch(gui):
     surface.fakePad(24, False)
     assert surface.notes.events[-1] == (1, 48, 0)
     surface.fakePad(24, True)
-    assert surface.notes.events[-1] == (2, 60, 102)
+    assert surface.notes.events[-1] == (2, 60, 100)
     surface.panic()
     assert surface.notes.events[-1] == (2, 60, 0)
 
@@ -175,7 +175,7 @@ def test_socket_notes_sent_without_qt_event_loop_or_ack(gui):
         surface.fakePad(24, True)
         raw = receiver.recv(4096)
         command = json.loads(raw)
-        assert command['cmd'] == 'note' and command['part'] == 1 and command['velocity'] == 102
+        assert command['cmd'] == 'note' and command['part'] == 1 and command['velocity'] == 100
         # No processEvents, drain_frame or ACK was needed before note-off either.
         surface.fakePad(24, False)
         assert json.loads(receiver.recv(4096))['velocity'] == 0
@@ -270,7 +270,7 @@ def test_octave_and_part_buttons_affect_music_before_next_frame(gui):
     surface.receive(Boton('OCT_PLUS',True))
     surface.receive(Boton('ENCODER_2',True))
     surface.fakePad(24,True)
-    assert surface.notes.events[-1] == (2,60,102)
+    assert surface.notes.events[-1] == (2,60,100)
     batcher.drain_frame()
     assert surface.octave==4 and synth.selectedPart==2
     surface.fakePad(24,False)

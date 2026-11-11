@@ -9,6 +9,8 @@ Rectangle {
     color: os ? Theme.gpBgBase : Theme.bg
     Label { x: Theme.m20; y: Theme.s1; text: root.os ? (console.screen === 4 || console.screenName.indexOf("SynthSettings") === 0 ? "SETTINGS" : "GROOVEPILOT") : console.screenMode; color: Theme.mon; font.pixelSize: Theme.tiny; weight: Font.Normal }
     Label { x: Theme.m20; y: Theme.s5; text: root.view; face: root.os ? Theme.osFont : Theme.displayFont; font.pixelSize: root.os ? Theme.m20 : Theme.dM; weight: Font.Bold; height: Theme.lineM }
+    Label { x:245;y:10;text:'M4 VEL '+preferences.padVelocity;visible:console.synthMode || console.drumMode;font.pixelSize:16;color:Theme.tealPlus }
+    Label { x:245;y:33;text:'SHIFT + FADER 4';visible:console.synthMode || console.drumMode;font.pixelSize:9;color:Theme.grayN }
     Row {
         anchors.right: separator.left; anchors.rightMargin: Theme.m28; anchors.verticalCenter: parent.verticalCenter
         spacing: Theme.s5; visible: !root.os && !console.synthMode && !console.drumMode

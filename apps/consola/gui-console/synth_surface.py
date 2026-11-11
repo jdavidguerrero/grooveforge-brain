@@ -16,7 +16,7 @@ from PySide6.QtCore import QObject, Property, Signal, Slot, QTimer
 from scale_keyboard import ScaleKeyboard, ROOTS, SCALES
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'tools' / 'consola'))
-from superficie import decodificar, Pad, Fsr, Boton, Encoder, Jog
+from superficie import decodificar, Pad, Fsr, Boton, Encoder, Jog, Fader
 
 
 class PreviewNotes:
@@ -229,6 +229,7 @@ class SynthSurface(QObject):
         self.active = False
         self.shift = False
         self.route_shift = False
+        self._pad_velocity = console.preferences.padVelocity
         self.route_screen = console.screenName
         self.presence = [False, False]
         console.preferences.changed.connect(self.reset_hands)
@@ -339,13 +340,23 @@ class SynthSurface(QObject):
 
     @Slot()
     def reset_hands(self):
-        self.presence = [present and self.console.preferences.hand_allowed(i)
-                         for i, present in enumerate(self.presence)]
+        with self.lock:
+            self._pad_velocity = self.console.preferences.padVelocity
+            self.presence = [present and self.console.preferences.hand_allowed(i)
+                             for i, present in enumerate(self.presence)]
 
     def receive(self, event):
         if type(event).__name__ in ('Mano', 'ManoPresencia') and not self.console.preferences.hand_allowed(event.indice):
             return
         drum = getattr(self, "drum_surface", None)
+        with self.lock:
+            if isinstance(event, Boton) and event.nombre == 'SHIFT':
+                self.route_shift = event.presionado
+            if isinstance(event, Fader) and event.indice == 3 and self.route_shift and (self.active or (drum and drum.active)):
+                # Subsequent hits must see this value even before the GUI frame/save.
+                self._pad_velocity = max(1, min(127, round(event.valor*126)+1))
+                self.batcher.enqueue(dict(type='M4Velocity', value=self._pad_velocity))
+                return
         if drum and drum.receive(event):
             return
         try:
@@ -369,7 +380,9 @@ class SynthSurface(QObject):
             if isinstance(event, (Pad, Fsr)):
                 with self.lock:
                     note = self.keyboard.note(event.indice) if isinstance(event, Pad) else (36, 38, 42, 46)[event.indice]
-                    self._note((type(event).__name__, event.indice), event.presionado, event.velocidad, note)
+                    velocity = ((127 if self.route_shift else self._pad_velocity)/127
+                                if isinstance(event, Pad) else event.velocidad)
+                    self._note((type(event).__name__, event.indice), event.presionado, velocity, note)
             # Feedback and every non-musical action commit through the frame seam.
             if musical_applied:
                 self.batcher.enqueue(dict(type='Boton', nombre=event.nombre, presionado=event.presionado,
@@ -403,6 +416,9 @@ class SynthSurface(QObject):
 
     def apply_frame(self, kind, fields):
         s, c = self.synth, self.console
+        if kind == 'M4Velocity':
+            c.preferences.setPadVelocity(fields['value'])
+            return True
         index = fields.get('indice', 0)
         if kind in ('Mano', 'ManoPresencia') and not c.preferences.hand_allowed(index): return True
         if kind == 'Boton':

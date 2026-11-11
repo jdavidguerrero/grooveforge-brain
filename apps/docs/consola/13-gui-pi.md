@@ -222,3 +222,17 @@ centro. Medido en `/dev/input/event1` (Goodix): esquina superior izquierda de la
 derecha = (53, 1216). Con la imagen rotada 90° en QML, esas esquinas caen en (720, 0) y (0, 1280) del panel vertical:
 **el crudo ya coincide, sin inversión ni rotación** (`QT_QPA_EVDEV_TOUCHSCREEN_PARAMETERS=rotate=0`). `run_synth.sh` y
 `run_drum.sh` usan ese valor por defecto.
+
+
+## Respuesta touch (2026-11-11)
+
+TouchTarget muestra press inmediato. Menú/soft keys/tabs actúan al presionar;
+listas y cualquier destino dentro de Flickable/ListView esperan release y ceden
+al scroll. `QStyleHints.startDragDistance=25` equivale a~3mm al DPI del panel7”.
+No se añade pressDelay ni se bloquea stealing. Conserva calibración identidad
+`rotate=0`, imagen QML90 y TouchController/jog/clic hardware. Cargas muestran aviso
+desde la petición, hasta ACK/error/desconexión. Clock/meters tienen notificación
+independiente de modelos estructurales. Harness reproducible y comparación de
+CPU/ms por evento en [REPORT](../../consola/gui-console/screenshots/touch/REPORT.md).
+Las cifras son de macOS offscreen; resta confirmar sensación, orientación y
+CPU en el Pi con EGLFS+evdev y el mismo browse TRIBE.

@@ -68,7 +68,7 @@ class LocalSettings(QObject):
 
     @Slot(int)
     def setPadVelocity(self, value):
-        if 1 <= value <= 127:
+        if 1 <= value <= 127 and value != self._velocity:
             self._velocity = value
             self.save()
 

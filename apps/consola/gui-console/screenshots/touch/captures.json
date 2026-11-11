@@ -1,0 +1,32 @@
+{
+  "qpa": "offscreen",
+  "backend": "software",
+  "rotation": 90,
+  "input": "QTest synthetic touch/MIDI dataclasses; preview, no hardware/audio",
+  "captures": [
+    {
+      "file": "rack-pressed-90.png",
+      "condition": "Finger down on TRIBE 1; no load until release",
+      "width": 720,
+      "height": 1280
+    },
+    {
+      "file": "rack-loading-90.png",
+      "condition": "Deferred host reply; LOADING RACK published on release",
+      "width": 720,
+      "height": 1280
+    },
+    {
+      "file": "drum-velocity-90.png",
+      "condition": "SHIFT+fader4 sets global M4 VEL 64; FSR remains measured",
+      "width": 720,
+      "height": 1280
+    },
+    {
+      "file": "synth-velocity-90.png",
+      "condition": "SYNTH shares the persisted global M4 VEL 64",
+      "width": 720,
+      "height": 1280
+    }
+  ]
+}
