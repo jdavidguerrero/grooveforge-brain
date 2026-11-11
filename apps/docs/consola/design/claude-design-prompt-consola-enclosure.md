@@ -49,14 +49,15 @@ En la v2 la Pi iba atornillada detrás del módulo de pantalla y el apilado (~50
 
 Los existentes se mantienen con sus medidas (tabla de la v1 y coordenadas de la v2): pantalla 7", 8 encoders EC11
 bajo la pantalla (regla 6), NeoTrellis M4 8×4, 4 faders RS6011, 20 teclas Choc V2 en sus grupos (con los rótulos
-nuevos de `25` §3: **LIVE · SYNTH · DRUM · SEQ · MIX** en los modos, PAGE ◀ ▶ y OCT − + en página/octava).
+nuevos de `25` §3). **Los modos ya no tienen teclas** (se eligen en la pantalla): las 5 teclas de K2, a la izquierda
+de la pantalla, pasan a ser **navegación: BACK · MENU · ◀ · ▶ · BROWSE**.
 
 **Nuevos (ubícalos tú; los grupos no se mezclan):**
 
 | Control | Cant. | Medidas de referencia | Notas de uso |
 |---|---|---|---|
-| Teclas Choc V2 con LED, grupo **Navegación**: BACK · MENU · ◀ · ▶ · BROWSE | 5 | como las 20 | Junto al jog, a mano de la pantalla |
 | Teclas Choc V2 con LED, grupo **Motor en vivo**: CUE · FILL · TAP | 3 | como las 20 | Cerca del transporte |
+| Teclas Choc V2 con LED, grupo **Sección** (propuesta): BUILD · DROP · BREAK | 3 | como las 20 | Cambio de sección del set; ubícalas junto al motor en vivo y marca que son opcionales |
 | **Rueda jog** (EC11 con clic, **perilla propia impresa en 3D**, Ø35–45, ver §3.1) | 1 | agujero Ø7,1 | Reemplaza ↑ ↓ OK; navega listas de la pantalla |
 | **Pads FSR con velocity** (FSR 402, Ø18 activo, con actuador de silicona y disco rígido) | 4 | pad visible ~25 × 25 mm, alto ~4 mm sobre el panel | Para tocar kick/perc con dinámica: junto a la NeoTrellis, al alcance de la mano de los pads |
 | **FSR de expresión** (presión sostenida) | 2 | mismos FSR 402, pad ~25 × 25 | Abrir filtro, empujar un riser: fáciles de sostener mientras la otra mano trabaja |
@@ -73,7 +74,7 @@ silicona**. Diseña la familia completa, con la misma identidad:
 |---|---|---|
 | Perilla de encoder (8) y de MASTER / CUE / IN (3) | 11 | Ø18, eje D de 6 mm (EC11 y pot 9 mm: **verificar** el eje), indicador de posición visible desde arriba y desde el frente |
 | Perilla del jog | 1 | Ø35–45, con hoyuelo para el dedo y borde estriado; peso o inercia opcional (inserto metálico) |
-| Keycap Choc V2 | 30 | Vástago Choc V2 (cruz de 2 patas, **verificar** con la tecla), ~18 × 17 mm, ventana o material translúcido para el LED de abajo, rótulo grabado o en relieve |
+| Keycap Choc V2 | 26 | Vástago Choc V2 (cruz de 2 patas, **verificar** con la tecla), ~18 × 17 mm, ventana o material translúcido para el LED de abajo, rótulo grabado o en relieve |
 | Tapa / actuador de FSR | 6 | Silicona sobre disco rígido Ø ≥ 14 mm centrado en el área activa del FSR 402 (Ø 12,7); que no toque el borde del sensor |
 
 Para cada pieza: **versión para imprimir** (FDM o resina, tolerancias del encaje al eje o vástago, orientación de
@@ -85,7 +86,7 @@ Reglas nuevas (además de las 13):
 
 14. Los 4 pads FSR y las 2 de expresión: ≥ 6 mm entre bordes y entre ellos y los pads de la M4; base rígida debajo.
 15. Ningún Sharp mira hacia donde la mano toca encoders o faders (no debe dispararse al tocar otro control).
-16. Las 10 teclas nuevas se ubican sin mirar, por grupo, como la regla 13.
+16. Las teclas nuevas se ubican sin mirar, por grupo, como la regla 13.
 17. El jog se alcanza con la mano derecha sin cruzar los faders.
 
 ## 4. Electrónica interna
@@ -93,7 +94,7 @@ Reglas nuevas (además de las 13):
 | Pieza | Medidas | Notas |
 |---|---|---|
 | **PCB-M** (placa principal, reemplaza la portadora y la PCB-S) | **[a definir por ti]**, 2 capas | Teensy 4.1 en zócalo + módulo Audio Shield Rev D en headers (~20 mm de alto sobre la placa). Lleva los jacks del panel trasero en su borde. Propón tamaño y ubicación |
-| **PCB-N** (navegación) | si hace falta | Si las 8 teclas nuevas, el jog, las 3 perillas y el selector no caen sobre PCB-M, van en esta placa pequeña |
+| **PCB-N** (navegación) | si hace falta | Si las 3–6 teclas nuevas, el jog, las 3 perillas y el selector no caen sobre PCB-M, van en esta placa pequeña |
 | **PCB-P** (base de los 6 FSR) | plana, rígida | Sin componentes activos; los FSR se pegan encima |
 | PCB-A, PCB-F, PCB-K1, PCB-K2 | ya diseñadas | **No cambian de forma** salvo que el layout plano lo exija; si las mueves, dilo |
 | NeoTrellis M4 | 120 × 60 mm | Conectores hacia el frente como en la v2 |
@@ -101,7 +102,8 @@ Reglas nuevas (además de las 13):
 
 ## 5. Panel trasero y frontal
 
-Trasero: USB-C de alimentación · salida de sala L/R (2 × 6,35 mm) · LINE IN L/R (2 × 6,35 mm) · CV 1–2
+Trasero: USB-C de alimentación · salida de sala L/R (2 × 6,35 mm) · LINE IN L/R (2 × 6,35 mm) · LINE OUT L/R del
+códec (2 × 6,35 mm, modo procesador de FX) · CV 1–2
 (2 × 3,5 mm) · MIDI IN/OUT (2 × TRS 3,5 mm) · pedal (6,35 mm) · e-drum (DB15 o RJ45, tapa ciega) · USB-A ·
 Ethernet. Frente: audífonos cue (6,35 mm). Regla 10 para todos, con cables enchufados.
 

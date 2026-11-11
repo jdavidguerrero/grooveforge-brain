@@ -41,7 +41,7 @@ otros 3 ya vienen en PCB-A y PCB-K1 (ensamble JLC de esas placas).
 | Bloque | Contenido | Pines / bus (17) | Nota |
 |---|---|---|---|
 | Teensy 4.1 | Zócalo 2×24 + fila inferior que haga falta; USB micro-B de la Teensy al Pi con cable | — | Corte del puente VUSB-VIN si se alimenta de 5 V de PCB-M (§5) |
-| Códec | **D2**: módulo Audio Shield Rev D en headers (como el banco) **o** SGTL5000 soldado | I2S1 7/8/20/21/23, I2C 0x0A | HP out = cue; LINE IN = entrada |
+| Códec | **D2**: módulo Audio Shield Rev D en headers (como el banco) **o** SGTL5000 soldado | I2S1 7/8/20/21/23, I2C 0x0A | HP out = cue; LINE IN = entrada; LINE OUT = salida del modo procesador de FX. **Frente analógico copiado de la portadora del Brain Studio** (NRJ3HF-1, DP3T de pad, MCP6004, BAT54S, VREF): `25` §6 |
 | ADS1115 #1 0x48 | FADER1–4 | I2C | Desde PCB-A J1 |
 | ADS1115 #2 0x49 | Expresión 1–2 (**FSR de presión sostenida en el panel**, `00` §10.2.1), manos Sharp 1–2 (JST) | I2C | FSR en divisor a 3,3 V; Sharp a 5 V con 10 µF local, salida verificada ≤ 3,3 V |
 | MCP23017 0x23 | 11 navegación + clic jog + pedal | I2C | Huellas de botón en PCB-M o conector a una placa de navegación (D3) |
@@ -72,7 +72,7 @@ Pi**, no de PCB-M; si se quiere en el mismo panel trasero, cable interno del Aud
 | Pantalla 7" DSI | 5 V (desde el Pi) | 0,5 A | 0,7 A | incluida en el Pi si cuelga del conector DSI |
 | Teensy 4.1 a 600 MHz | 5 V | 0,10 A | 0,15 A | PJRC |
 | Códec, ADS ×2, MCP, MCP4725 ×2, FSR | 3,3 V | 0,04 A | 0,06 A | hojas de datos |
-| 30 SK6812MINI-E (20 teclas + 10 nuevas, `25` §3) | 5 V | 0,45 A (brillo 25 %) | 1,8 A | 60 mA × 30 |
+| 26 SK6812MINI-E (20 teclas + hasta 6 nuevas, `25` §3) | 5 V | 0,4 A (brillo 25 %) | 1,6 A | 60 mA × 26 |
 | NeoTrellis M4 (32 NeoPixel) | 5 V por USB | 0,5 A (brillo 25 %) | 1,9 A | 60 mA × 32 |
 | Sharp GP2Y0A41 ×2 | 5 V | 0,03 A | 0,05 A | hoja de datos |
 | **Total** | 5 V | **≈ 3,5 A** | **≈ 9 A** | |
@@ -87,7 +87,7 @@ para sus USB-A**. Reparto propuesto, todo desde el Pi:
 | Fuente → Pi (núcleo, NVMe, Audio+, pantalla) | — | 2,5 A | 3,4 A |
 | USB-A 1 (datos + 5 V) | Teensy y la lógica de 3,3 V de PCB-M | 0,15 A | 0,25 A |
 | USB-A 2 (datos + 5 V) | NeoTrellis M4 | 0,5 A | 0,6 A (brillo ≤ 25 %) |
-| USB-A 3 (solo 5 V, cable de alimentación) | 30 LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,5 A | 0,6 A (brillo ≤ 25 %) |
+| USB-A 3 (solo 5 V, cable de alimentación) | 26 LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,5 A | 0,6 A (brillo ≤ 25 %) |
 | **Suma de USB** | | **1,15 A** | **1,45 A ≤ 1,6 A** |
 
 Condiciones: brillo de LEDs **limitado por firmware sin excepción** (teclas y M4), polyfuse de 0,75 A en la entrada
