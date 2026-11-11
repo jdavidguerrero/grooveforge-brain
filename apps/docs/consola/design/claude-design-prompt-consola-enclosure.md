@@ -4,7 +4,7 @@
 > `claude-design-2026-10-19-v1/` y `-v2/`), pegar lo que está debajo de la línea. Adjuntar:
 > `GroovePush Enclosure v2.dc.html`, `groovepush-geometry-v2.js`, `REVIEW.md` de la v2,
 > `kicad/consola/panel/panel-coordinates.csv` y el doc `apps/docs/consola/25-panel-consola.md`.
-> Antes de pegarlo, completar las medidas marcadas **[Juan]**.
+> Ya no tiene campos pendientes: el apilado de la Pi va estimado hasta que llegue el HAT NVMe.
 > Base: `24-placa-principal.md` (D1–D7) y `25-panel-consola.md` (2026-11-11).
 
 ---
@@ -23,8 +23,10 @@ nuevos** y **panel trasero completo**. Rehaz el layout con eso; conserva todo lo
 - Alto total objetivo **≤ 60 mm** en la zona de controles; donde vaya la Pi el cuerpo puede crecer por debajo
   (justifícalo con el apilado).
 - Patas de goma; evalúa un ángulo opcional con patas traseras plegables (no cambia la geometría del cuerpo).
-- Huella: compárala con Push 3 (378 × 293 mm) y con MPC Live II (410 × 245 mm). Con los controles nuevos se espera más
-  ancho que la v2 (284 × 251); no hay límite fijo, pero cada mm extra se justifica.
+- Huella: **la consola puede crecer** frente a la v2 (284 × 251): los botones nuevos, los 6 FSR y los 2 Sharp
+  necesitan aire, y Juan prefiere comodidad a compacidad. Compárala con Push 3 (378 × 293 mm) y MPC Live II
+  (410 × 245 mm) como referencia, no como límite. Prioriza: manos que no chocan, grupos claros, pads FSR cómodos,
+  Sharp sin disparos falsos.
 
 ## 2. Pi separada de la pantalla (calor)
 
@@ -33,9 +35,11 @@ En la v2 la Pi iba atornillada detrás del módulo de pantalla y el apilado (~50
 - La Pi 5 va en **su propio compartimento** con ventilación de entrada y salida (regla 9), unida a la pantalla por un
   **cable DSI largo** (FFC 22 pines, 0,5 mm; largos comerciales 200 / 300 / 500 mm: elige y justifica con el radio
   de curvatura de la regla 8).
-- Apilado de la Pi: **Pi 5 + Active Cooler + HAT NVMe + RaspiAudio Audio+ V2**. Modelo y alto del HAT NVMe:
-  **[Juan: modelo, y si va arriba o debajo de la Pi]**; alto total medido: **[Juan]**. Si el HAT NVMe va arriba,
-  el Audio+ necesita header apilable: verifica que el Active Cooler sigue teniendo aire.
+- Apilado de la Pi: **Pi 5 + Active Cooler + HAT NVMe (arriba de la Pi, trae su regleta apilable) + RaspiAudio
+  Audio+ V2 encima**. El HAT todavía no llega: **usa un alto estimado de 55–60 mm** desde la base de la Pi hasta el
+  tope del Audio+ y deja el compartimento con **≥ 10 mm de margen** y tornillería que admita ajustar el alto. Marca
+  esta medida como «a verificar». Verifica que el Active Cooler sigue teniendo aire bajo el HAT y que el FFC del
+  PCIe y el DSI no se cruzan.
 - Puertos de la Pi que deben salir al panel trasero con extensiones de panel: **USB-C de alimentación** (la única
   entrada de energía de toda la consola), **1 USB-A** (teclado MIDI) y **Ethernet**. Los otros 3 USB-A quedan
   internos (Teensy, NeoTrellis M4 y alimentación de LEDs de la placa principal).
@@ -53,12 +57,29 @@ nuevos de `25` §3: **LIVE · SYNTH · DRUM · SEQ · MIX** en los modos, PAGE �
 |---|---|---|---|
 | Teclas Choc V2 con LED, grupo **Navegación**: BACK · MENU · ◀ · ▶ · BROWSE | 5 | como las 20 | Junto al jog, a mano de la pantalla |
 | Teclas Choc V2 con LED, grupo **Motor en vivo**: CUE · FILL · TAP | 3 | como las 20 | Cerca del transporte |
-| **Rueda jog** (EC11 con clic, perilla Ø35, **[Juan: verificar perilla]**) | 1 | agujero Ø7,1 | Reemplaza ↑ ↓ OK; navega listas de la pantalla |
+| **Rueda jog** (EC11 con clic, **perilla propia impresa en 3D**, Ø35–45, ver §3.1) | 1 | agujero Ø7,1 | Reemplaza ↑ ↓ OK; navega listas de la pantalla |
 | **Pads FSR con velocity** (FSR 402, Ø18 activo, con actuador de silicona y disco rígido) | 4 | pad visible ~25 × 25 mm, alto ~4 mm sobre el panel | Para tocar kick/perc con dinámica: junto a la NeoTrellis, al alcance de la mano de los pads |
 | **FSR de expresión** (presión sostenida) | 2 | mismos FSR 402, pad ~25 × 25 | Abrir filtro, empujar un riser: fáciles de sostener mientras la otra mano trabaja |
 | **Sensores de mano Sharp GP2Y0A41** (miran hacia arriba) | 2 | módulo 29,5 × 13 × 13,5 mm, ventana IR con cristal o ranura | Uno a cada lado o en las esquinas superiores; la mano pasa por encima a 4–30 cm **sin tapar la pantalla** (regla 5) |
 | **Perillas** MASTER · CUE · IN (potenciómetro 9 mm, perilla Ø18) | 3 | | MASTER y CUE juntas, como en un mixer DJ |
 | **Selector de pad de entrada** 0 / −10 / −20 dB | 1 | conmutador deslizante de 3 posiciones | Cerca de IN |
+
+### 3.1 Perillas, keycaps y tapas de los FSR: diseño propio
+
+Juan no compra perillas ni keycaps: **los diseña e imprime en 3D**, y piensa hacer **moldes para fundirlos en
+silicona**. Diseña la familia completa, con la misma identidad:
+
+| Pieza | Cant. | Requisitos |
+|---|---|---|
+| Perilla de encoder (8) y de MASTER / CUE / IN (3) | 11 | Ø18, eje D de 6 mm (EC11 y pot 9 mm: **verificar** el eje), indicador de posición visible desde arriba y desde el frente |
+| Perilla del jog | 1 | Ø35–45, con hoyuelo para el dedo y borde estriado; peso o inercia opcional (inserto metálico) |
+| Keycap Choc V2 | 30 | Vástago Choc V2 (cruz de 2 patas, **verificar** con la tecla), ~18 × 17 mm, ventana o material translúcido para el LED de abajo, rótulo grabado o en relieve |
+| Tapa / actuador de FSR | 6 | Silicona sobre disco rígido Ø ≥ 14 mm centrado en el área activa del FSR 402 (Ø 12,7); que no toque el borde del sensor |
+
+Para cada pieza: **versión para imprimir** (FDM o resina, tolerancias del encaje al eje o vástago, orientación de
+impresión) y **versión para molde de silicona** (ángulos de desmoldeo, paredes, línea de partición, canal de
+colado, molde en dos partes imprimible). Indica qué partes conviene en silicona (keycaps translúcidos, tapas de FSR,
+grip del jog) y cuáles rígidas (núcleo con el encaje al eje).
 
 Reglas nuevas (además de las 13):
 
@@ -101,4 +122,6 @@ insertos; aluminio CNC de 2 mm.
    notas) con la placa de cada control: de ahí salen PCB-M, PCB-N y PCB-P.
 8. **Recomendación: ¿PCB-N existe o todo cae en PCB-M?**, con el motivo.
 9. Dos renders de producto terminado (3/4 frente y trasera).
-10. Lista de medidas a verificar con calibre.
+10. Lista de medidas a verificar con calibre (incluido el apilado de la Pi cuando llegue el HAT).
+11. **Familia de perillas, keycaps y tapas de FSR** (§3.1): geometría de cada pieza, versión impresa y versión para
+    molde de silicona, con el molde en dos partes.
