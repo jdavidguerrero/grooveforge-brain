@@ -42,7 +42,10 @@ int main(){
                 std::array<Midi,128> midi{};unsigned count=0;
                 for(unsigned f=0;f<128;++f){Midi tmp[32];auto n=pattern(uint64_t(block)*128+f,tmp);for(unsigned i=0;i<n;++i){tmp[i].frame=f;midi[count++]=tmp[i];}}
                 if(block%30==0){const uint8_t ccs[]={14,15,16,19,71,74,64};for(unsigned p=0;p<4;++p)for(auto cc:ccs)midi[count++]={0,uint8_t(0xb0|p),cc,uint8_t(block%2?0:90)};std::stable_sort(midi.begin(),midi.begin()+count,[](const Midi&a,const Midi&b){return a.frame<b.frame;});}
-                realtime=true;audio->process(128,outputs,midi.data(),count);realtime=false;
+                realtime=true;
+                const uint32_t ump[]={0x40b04a00,0x80000000};Midi converted;
+                if(decode_ump(ump,sizeof(ump),0,converted)!=8||!routed_midi(converted))++violations;
+                audio->process(128,outputs,midi.data(),count);realtime=false;
                 Ack a;while(audio->acknowledgements.pop(a))delete a.retired;Telemetry t;while(audio->telemetry.pop(t)){};
                 for(unsigned f=0;f<128;++f){require(std::isfinite(data[8][f]),"nonfinite audio");require(std::abs((data[0][f]+data[2][f]+data[4][f]+data[6][f])-data[8][f])<1e-6f,"mix differs from part sum");energy+=double(data[8][f])*data[8][f];}
             }

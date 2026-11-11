@@ -70,7 +70,7 @@ static void cue_buses_and_capacity(){
     c.flag=true;d->commands.push(c);process(*d,1);require(d->inspect().dropped==1,"CUE stole a ROOM voice at capacity");
     DrumCommand param;param.op=DrumOp::Param;param.pad=0;param.param=Level;param.value=0;d->commands.push(param);require(process(*d,32)==0,"live pad level did not affect active voices");
     auto audio=std::make_unique<Audio>(initial_configs());DrumCommand load_command;load_command.op=DrumOp::Rack;load_command.rack=fixture().release();audio->drum.commands.push(load_command);
-    std::array<std::array<float,128>,10> data{};std::array<float*,10> output{};for(unsigned i=0;i<10;++i)output[i]=data[i].data();Midi note{37,0x99,0,127};
+    std::array<std::array<float,128>,10> data{};std::array<float*,10> output{};for(unsigned i=0;i<10;++i)output[i]=data[i].data();Midi note;const uint32_t ump[]={0x40990000,0xffff0000};require(decode_ump(ump,sizeof(ump),37,note)==8&&routed_midi(note),"UMP drum routing failed");
     realtime=true;audio->process(128,output,&note,1);realtime=false;
     for(unsigned i=0;i<37;++i)require(data[8][i]==0,"channel10 MIDI fired before timestamp");require(data[8][37]>0,"channel10 MIDI timestamp was delayed");
 }

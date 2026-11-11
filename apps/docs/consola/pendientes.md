@@ -100,12 +100,18 @@ FM 4-OP sigue disponible. Falta la medición Pi/Teensy y la calibración AMD/AMS
 - **Prototipo actual:** 2 MCP (módulos, puerto A) y 1 ADS1115 (dirección fija 0x48, sin pata ADDR): basta para validar
   el bus compartido con el SGTL5000. El Sharp se prueba en A2 del mismo ADS.
 
-## Entrada MIDI del host en UMP (2026-11-10)
+## ✅ Entrada MIDI del host en UMP (2026-11-10) — resuelto en código, validación Pi pendiente (2026-11-11)
 
-PipeWire 1.4 publica los teclados USB (p. ej. Arturia MiniLab mkII) como **MIDI 2.0 / UMP de 32 bits**, y
-`gf-synth-host:midi_in` se declara como MIDI 1.0 de 8 bits: `pw-link` no los conecta. Mientras tanto, un puente
-provisional (`~/midi_to_host.py` en el Pi: ALSA → comando `note` del socket) hace sonar el teclado; probado por Juan
-con el Model D. Arreglo: el host debe declarar su puerto en UMP (y convertir), o aceptar ambos formatos.
+PipeWire 1.4 publica teclados USB (p. ej. Arturia MiniLab mkII) en UMP de words de
+32 bits; pueden llevar MIDI1 tipo `0x2` o MIDI2 tipo `0x4`. El puerto del host sólo
+anunciaba MIDI1 de 8 bits y no enlazaba. Ahora anuncia UMP con alternativa legacy,
+convierte ambos tipos en RT y conserva el mapa synth 1–4 / drum canal 10.
+`tools/synth-host/link_midi.py` enlaza inputs externos al host; `run_on_pi.sh`
+lo invoca al arrancar. Especificación, instrucciones y exclusión del reenvío GUI:
+[16, entrada USB MIDI / UMP](16-synth-host.md#entrada-usb-midi--ump-2026-11-11).
+El puente provisional `~/midi_to_host.py` (ALSA → socket `note`, probado con Model D)
+ya no es necesario para esta ruta. **No se ha tocado el Pi**: falta compilar/enlazar
+allí y validar teclado real, hotplug y latencia antes de dar la puerta física por pasada.
 
 ## Contradicción: TX/RX de la NeoTrellis M4 en el conector STEMMA (2026-11-10)
 

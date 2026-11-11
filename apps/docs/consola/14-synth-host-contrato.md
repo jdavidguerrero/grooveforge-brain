@@ -12,6 +12,7 @@ del Audio+ a 48 kHz. Una salida estéreo por parte (`part1_L/R` … `part4_L/R`)
 
 - **MIDI:** un puerto de entrada; **canal 1–4 = parte 1–4**. Note on/off, velocity, pitch bend, sustain (CC 64) y los
   CC que ya entiende el VST (14 DRIFT, 15 GRIT, 16 POCKET, 19 MOVE, 71 reso, 74 cutoff).
+  Formatos MIDI1 y UMP (MIDI1/MIDI2), conversión y límites: [16, entrada USB MIDI / UMP](16-synth-host.md#entrada-usb-midi--ump-2026-11-11). Canal 10 → pads según §7.
 - **Control:** socket Unix `$XDG_RUNTIME_DIR/gf-synth.sock`, **JSON por líneas** (UTF-8, una petición o evento por
   línea). Varios clientes a la vez (GUI, núcleo, herramientas de prueba).
 - **Tiempo real:** el hilo de audio no toma locks ni reserva memoria; los cambios del socket pasan por una cola sin

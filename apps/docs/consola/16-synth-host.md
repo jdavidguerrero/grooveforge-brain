@@ -63,13 +63,104 @@ notas/velocity, bend ±2 semitonos, sustain CC64 y CC14 DRIFT, 15 GRIT, 16 POCKE
 19 MOVE, 71 resonancia normalizada, 74 cutoff logarítmico con límites firmware.
 CC modifica parámetros al inicio del bloque y publica `param`. Los timestamps de
 notas, bend y sustain del puerto se respetan dentro del bloque. Otros canales/mensajes se ignoran.
-PipeWire 1.4 puede transportar UMP: el puerto solicita MIDI1 y acepta UMP MIDI1
-channel voice. El backend offline tiene reloj de pared para pruebas del servidor;
+El backend offline tiene reloj de pared para pruebas del servidor;
 `--render` usa reloj de muestras, sin dormir, y escribe WAV fuera de audio.
 
 Referencias API: [pw_filter 1.4](https://docs.pipewire.org/1.4/group__pw__filter.html),
 [MIDI PipeWire](https://docs.pipewire.org/page_midi.html),
 [JACK API](https://jackaudio.org/api/).
+
+### Entrada USB MIDI / UMP (2026-11-11)
+
+Spec de esta corrección: `midi_in` anuncia `application/control`, preferencia
+`SPA_CONTROL_UMP` (`format.dsp = 32 bit raw UMP`) y una alternativa
+`SPA_CONTROL_Midi` mediante `SPA_PARAM_EnumFormat` / `SPA_FORMAT_CONTROL_types`.
+En PipeWire 1.4 `pw_filter_add_port` deriva la máscara del nombre DSP; anunciar
+sólo `8 bit raw midi` restringe la negociación a Midi. El nombre publicado puede
+seguir apareciendo como `8 bit raw midi`: comprobar EnumFormat, no sólo la etiqueta.
+Cada item de la secuencia selecciona su decoder por `control.type`; el payload
+es `SPA_TYPE_Bytes`, UMP contiene words uint32 en orden nativo de CPU, no bytes
+MIDI concatenados. Conservamos `control.offset` y orden de eventos.
+
+Conversión custom C++17 independiente del backend, sin heap ni locks:
+
+- MIDI 1.0 crudo: mensajes channel voice completos de 2/3 bytes (sin running status).
+  UMP tipo `0x2` (1 word): conserva status, canal y datos MIDI 1.0.
+- UMP tipo `0x4` (2 words): Note On/Off, CC, bend, Program Change y Channel Pressure.
+  Velocity: bits superiores `velocity16 >> 9`; CC y pressure: `value32 >> 25`;
+  bend: `value32 >> 18`, dividido LSB/MSB MIDI de 7 bits. Se conservan extremos
+  y centro sin redondeo. Note On MIDI 1.0 velocity 0 sigue siendo off; Note On
+  MIDI 2.0 que reduce a 0 usa 1 (en MIDI 2.0 cero también es Note On).
+  Program Change extrae program del segundo word; bank select opcional se descarta.
+  Los atributos de nota se descartan. Group UMP no crea partes: todos los groups
+  comparten el mapa de canales existente.
+- Se ignoran utility/JR, system realtime/common, SysEx7/8, flex/stream, mensajes
+  reservados y controles MIDI 2.0 por nota (incluido pressure/bend), RPN/NRPN y
+  relativos: el motor no ofrece esos destinos ni estado para traducirlos. No se
+  ejecuta SysEx/preset ni se cambia transporte en RT. Program/Channel Pressure
+  se convierten pero el motor actual no les asigna acción, igual que en MIDI1.
+- Canal 1–4 → synth 1–4; canal 10 Note On notas 0..15 → pads 0..15 según
+  [22 §5](22-modo-drum.md#5-extensión-del-contrato14). Otros canales se filtran.
+  Una lista UMP puede contener varios paquetes: se saltan tipos no soportados
+  por su longitud de 1/2/3/4 words; un paquete truncado detiene ese item, nunca
+  se reinterpretan words de continuación como nuevas notas. Datos fuera de
+  rango o mensajes malformados se rechazan. Límite compartido de 2048 items/
+  paquetes escaneados y 2048 eventos por bloque, incluso si se ignoran mensajes.
+
+Prueba nativa: vectores de mensajes/escala/extremos/velocity cero, longitudes y
+paquetes inválidos; recorrido mixto UMP, orden/timestamps/canales, disparo de pad
+en su muestra exacta y hook RT sin heap. No sustituye negociación real, hotplug
+ni latencia en el Pi.
+
+Referencias: [PipeWire 1.4.9 filter.c, add_control_dsp_port_params / pw_filter_add_port](https://raw.githubusercontent.com/PipeWire/pipewire/1.4.9/src/pipewire/filter.c),
+[MIDI en PipeWire](https://docs.pipewire.org/page_midi.html),
+[UMP y MIDI 2.0, M2-104-UM §3/4 y traducción](https://amei.or.jp/midistandardcommittee/MIDI2.0/MIDI2.0-DOCS/M2-104-UM_v1-0_UMP_and_MIDI_2-0_Protocol_Specification.pdf),
+[regla de velocity cero al traducir](https://microsoft.github.io/MIDI/kb/data-translation/#translating-note-on-with-zero-velocity-to-note-off).
+
+### Enlazar teclados USB en el Pi
+
+Con el host PipeWire ya iniciado, desde la raíz del repo, en la misma sesión de
+usuario PipeWire (sin sudo):
+
+```bash
+# Inspección sin cambiar enlaces:
+python3 tools/synth-host/link_midi.py --dry-run
+# Enlazar todos los inputs externos físicos MIDI/UMP actualmente presentes:
+python3 tools/synth-host/link_midi.py
+# O seleccionar los puertos de un controlador por substring:
+python3 tools/synth-host/link_midi.py --external-midi-port 'Arturia MiniLab'
+pw-link -l
+# Alternativa manual, nombre exacto mostrado por pw-link -o:
+pw-link 'PUERTO_MIDI_ORIGEN' gf-synth-host:midi_in
+```
+
+El helper usa `pw-dump` y `pw-link`, sin ALSA→socket ni dependencias Python extra.
+`auto` selecciona outputs físicos MIDI/UMP (USB y otros puertos físicos), excluye
+GF Consola/GF Superficie/consola_s_m4, Midi Through y puertos host/GUI/RtMidi.
+`none` desactiva enlaces. El substring puede seleccionar varios puertos de un
+controlador; nombres personalizados deben revisarse con `--dry-run`. No desconecta
+rutas existentes y omite enlaces ya creados. Volver a ejecutarlo tras hotplug o
+reinicio del host; no instala reglas ni daemon. `run_on_pi.sh` lo ejecuta al
+arrancar con `GF_EXTERNAL_MIDI_PORT=auto` (default), substring o `none`, y guarda
+`midi-links.txt`; su patrón socket de benchmark sigue ejecutándose aparte.
+
+Para tocar en directo, detener manualmente el puente temporal `~/midi_to_host.py`
+y evitar una segunda ruta para el mismo teclado. En este checkout la opción
+`--external-midi-port` existente **es de la GUI** (`pi/run_synth.sh`), no del
+binario host. Al enlazar directamente, lanzar la GUI con
+`--external-midi-port none` o `GF_EXTERNAL_MIDI_PORT=none` para que no reenvíe
+las mismas notas. La superficie sigue entrando a la GUI para su traducción.
+La entrada directa conserva el canal enviado por el teclado; no sigue la parte
+seleccionada en la GUI. Configurar canales 1–4 para synth y canal 10 notas 0..15
+para DRUM. Una fuente USB MIDI1 publicada en UMP normalmente usa tipo `0x2`;
+la etiqueta UMP no implica que envíe mensajes MIDI2 tipo `0x4`.
+
+Validación pendiente en Pi: compilar con PipeWire ≥1.4; inspeccionar EnumFormat
+con `pw-cli enum-params <id-del-puerto-midi_in> EnumFormat`; enlazar MiniLab,
+verificar Note On/Off, sustain/CC74/bend, canales synth y pad, desconectar/reconectar
+y repetir el helper. Comparar MIDI1 legacy y UMP sin puente y sin dobles notas,
+comprobar xruns/latencia con el audio real. CTest nativo valida la conversión;
+no certifica el enlace físico ni el callback PipeWire en macOS.
 
 ## Parámetros y presets
 

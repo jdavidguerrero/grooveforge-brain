@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <stdexcept>
 #include "engine.h"
+#include "midi.h"
 #include "drum.h"
 #include <atomic>
 #include <array>
@@ -11,7 +12,6 @@ namespace host {
 constexpr unsigned RATE=48000,MAX_FRAMES=8192,MAX_MIDI=2048;
 enum class Operation { Param,Swap,Level,Mute,Note };
 struct Command {Operation op=Operation::Note;uint64_t token=0;unsigned part=0,param=0;float value=0;Engine* engine=nullptr;};
-struct Midi {uint32_t frame=0;uint8_t status=0,a=0,b=0;};
 struct ParamChange {Engine* engine=nullptr;unsigned part=0,param=0;float value=0;};
 // A single FIFO preserves ordering between retired engines, ACKs and parameter events.
 struct Ack {uint64_t token=0;Engine* retired=nullptr;bool parameter=false;ParamChange change;};

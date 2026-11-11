@@ -18,6 +18,8 @@
 #include <pipewire/thread-loop.h>
 #include <spa/control/control.h>
 #include <spa/pod/iter.h>
+#include <spa/pod/builder.h>
+#include <spa/param/format.h>
 #endif
 namespace host {
 namespace {
@@ -41,12 +43,10 @@ public:
     ~Offline() override {stop_.store(true);thread_.join();}
 };
 #if defined(GF_HAVE_JACK) || defined(GF_HAVE_PIPEWIRE)
-void append_midi(Audio& audio,Midi* events,unsigned& count,unsigned frame,uint8_t status,uint8_t a,uint8_t b) noexcept {
-    if(((status&15u)>=4&&(status&15u)!=9)||a>127||b>127)return;
-    const auto type=status&0xf0u;
-    if(type!=0x80&&type!=0x90&&type!=0xb0&&type!=0xe0)return;
+void append_midi(Audio& audio,Midi* events,unsigned& count,const Midi& event) noexcept {
+    if(!routed_midi(event))return;
     if(count==MAX_MIDI){audio.dropped.fetch_add(1);return;}
-    events[count++]={frame,status,a,b};
+    events[count++]=event;
 }
 #endif
 #ifdef GF_HAVE_JACK
@@ -63,7 +63,11 @@ class Jack final:public Backend {
         if(n>MAX_FRAMES){for(auto* p:outputs)if(p)std::fill_n(p,n,0.f);self.audio_.fault.store(true);return 0;}
         auto* buffer=jack_port_get_buffer(self.midi_,n);unsigned count=0;
         const auto total=jack_midi_get_event_count(buffer);
-        for(unsigned i=0;i<std::min(total,MAX_MIDI);++i){jack_midi_event_t ev{};if(jack_midi_event_get(&ev,buffer,i)==0&&ev.size>=3&&ev.time<n)append_midi(self.audio_,self.events_.data(),count,ev.time,ev.buffer[0],ev.buffer[1],ev.buffer[2]);}
+        for(unsigned i=0;i<std::min(total,MAX_MIDI);++i) {
+            jack_midi_event_t ev{};Midi event;
+            if(jack_midi_event_get(&ev,buffer,i)==0&&ev.time<n&&decode_midi1(ev.buffer,ev.size,ev.time,event))
+                append_midi(self.audio_,self.events_.data(),count,event);
+        }
         if(total>MAX_MIDI)self.audio_.dropped.fetch_add(total-MAX_MIDI);
         self.audio_.process(n,outputs,self.events_.data(),count,{static_cast<float*>(jack_port_get_buffer(self.ports_[10],n)),static_cast<float*>(jack_port_get_buffer(self.ports_[11],n))});return 0;
     }
@@ -127,15 +131,24 @@ class PipeWire final:public Backend {
                     if(spa_pod_is_sequence(&seq->pod)&&SPA_POD_SIZE(&seq->pod)<=d.chunk->size) {
                         spa_pod_control* ctl;unsigned scanned=0;
                         SPA_POD_SEQUENCE_FOREACH(seq,ctl) {
-                            if(scanned++==MAX_MIDI){s.audio_.dropped.fetch_add(1);break;}
-                            if(ctl->offset>=n)continue;
-                            if(ctl->type==SPA_CONTROL_Midi&&SPA_POD_BODY_SIZE(&ctl->value)>=3) {
-                                const auto* m=static_cast<const uint8_t*>(SPA_POD_BODY(&ctl->value));
-                                append_midi(s.audio_,s.events_.data(),count,ctl->offset,m[0],m[1],m[2]);
-                            } else if(ctl->type==SPA_CONTROL_UMP&&SPA_POD_BODY_SIZE(&ctl->value)>=4) {
-                                uint32_t word=0;std::memcpy(&word,SPA_POD_BODY(&ctl->value),sizeof(word));
-                                if((word>>28)==2)append_midi(s.audio_,s.events_.data(),count,ctl->offset,uint8_t(word>>16),uint8_t(word>>8),uint8_t(word));
-                            }
+                            if(scanned==MAX_MIDI){s.audio_.dropped.fetch_add(1);break;}
+                            if(ctl->offset>=n||ctl->value.type!=SPA_TYPE_Bytes){++scanned;continue;}
+                            const auto* data=static_cast<const uint8_t*>(SPA_POD_BODY(&ctl->value));
+                            size_t size=SPA_POD_BODY_SIZE(&ctl->value);
+                            Midi event;
+                            if(ctl->type==SPA_CONTROL_Midi) {
+                                ++scanned;
+                                if(decode_midi1(data,size,ctl->offset,event))append_midi(s.audio_,s.events_.data(),count,event);
+                            } else if(ctl->type==SPA_CONTROL_UMP) {
+                                do {
+                                    ++scanned;
+                                    const auto consumed=decode_ump(data,size,ctl->offset,event);
+                                    if(!consumed)break;
+                                    append_midi(s.audio_,s.events_.data(),count,event);
+                                    data+=consumed;size-=consumed;
+                                } while(size&&scanned<MAX_MIDI);
+                                if(size&&scanned==MAX_MIDI)s.audio_.dropped.fetch_add(1);
+                            } else ++scanned;
                         }
                     }
                 }
@@ -177,7 +190,16 @@ public:
                 ports_[i]=pw_filter_add_port(filter_,PW_DIRECTION_OUTPUT,PW_FILTER_PORT_FLAG_MAP_BUFFERS,1,pw_properties_new(PW_KEY_FORMAT_DSP,"32 bit float mono audio",PW_KEY_PORT_NAME,port_names[i],nullptr),nullptr,0);
                 if(!ports_[i])throw std::runtime_error("cannot create PipeWire audio port");
             }
-            midi_=pw_filter_add_port(filter_,PW_DIRECTION_INPUT,PW_FILTER_PORT_FLAG_MAP_BUFFERS,1,pw_properties_new(PW_KEY_FORMAT_DSP,"8 bit raw midi",PW_KEY_PORT_NAME,"midi_in",nullptr),nullptr,0);
+            uint8_t midi_format_buffer[256];
+            spa_pod_builder midi_builder=SPA_POD_BUILDER_INIT(midi_format_buffer,sizeof(midi_format_buffer));
+            const spa_pod* midi_formats[]={static_cast<const spa_pod*>(spa_pod_builder_add_object(&midi_builder,
+                SPA_TYPE_OBJECT_Format,SPA_PARAM_EnumFormat,
+                SPA_FORMAT_mediaType,SPA_POD_Id(SPA_MEDIA_TYPE_application),
+                SPA_FORMAT_mediaSubtype,SPA_POD_Id(SPA_MEDIA_SUBTYPE_control),
+                SPA_FORMAT_CONTROL_types,SPA_POD_CHOICE_FLAGS_Int(1u<<SPA_CONTROL_Midi)))};
+            // PipeWire 1.4 keeps the DSP-derived EnumFormat (UMP) and appends this legacy alternative.
+            midi_=pw_filter_add_port(filter_,PW_DIRECTION_INPUT,PW_FILTER_PORT_FLAG_MAP_BUFFERS,1,
+                pw_properties_new(PW_KEY_FORMAT_DSP,"32 bit raw UMP",PW_KEY_PORT_NAME,"midi_in",nullptr),midi_formats,1);
             if(!midi_||pw_filter_connect(filter_,PW_FILTER_FLAG_RT_PROCESS,nullptr,0)<0)throw std::runtime_error("cannot connect PipeWire filter");
             if(pw_thread_loop_start(loop_)<0)throw std::runtime_error("cannot start PipeWire loop");started_=true;
         } catch(...) {close();pw_deinit();throw;}

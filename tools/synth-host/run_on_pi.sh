@@ -45,6 +45,8 @@ else
     echo 'Set GF_AUDIO_LEFT and GF_AUDIO_RIGHT to the Audio+ playback ports (pw-link -i).' >&2
     exit 1
 fi
+# Discovery runs outside audio; rerun link_midi.py after USB hotplug.
+python3 "$repo/tools/synth-host/link_midi.py" --external-midi-port "${GF_EXTERNAL_MIDI_PORT:-auto}" >"$result_dir/midi-links.txt" 2>&1
 seconds=$(python3 -c 'import sys; print(float(sys.argv[1])*60)' "$minutes")
 python3 "$repo/tools/synth-host/collect.py" --socket "$run_dir/gf-synth.sock" --seconds "$seconds" --output "$result_dir/run.json" &
 collector_pid=$!
