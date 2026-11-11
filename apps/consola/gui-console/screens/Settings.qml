@@ -23,15 +23,20 @@ Item {
             TouchTarget { objectName:'handsToggle'+parent.index; hardwareAction:'choice'; callback:function(){preferences.toggleHand(parent.index)} }
         }
     }
-    Label { x:288; y:280; width:940; text:'Master and the individual hand must be ON. Disabled sensors ignore hand movement and presence in every mode. Expression pedals remain active.'; wrapMode:Text.WordWrap; font.pixelSize:14; color:Theme.gpTextSec }
-    Panel { x:288; y:348; width:956; height:138; color:Theme.gpBgCard; border.color:Theme.gpBorder
+    Label { x:288; y:272; width:940; text:'Master and the individual hand must be ON. Disabled sensors ignore hand movement and presence in every mode. Expression pedals remain active.'; wrapMode:Text.WordWrap; font.pixelSize:14; color:Theme.gpTextSec }
+    Panel { x:288; y:322; width:956; height:122; color:Theme.gpBgCard; border.color:Theme.gpBorder
         Label { x:20; y:16; text:'DRUM · M4 pad velocity'; face:Theme.osFont; font.pixelSize:20 }
         Label { x:20; y:58; text:'Global fixed velocity: '+preferences.padVelocity+'   ·   FSR pads keep their measured velocity'; font.pixelSize:14; color:Theme.gpTextSec }
-        Row { x:20; y:88; spacing:12
+        Row { x:20; y:78; spacing:12
             Repeater { model:[64,100,127]
                 ActionButton { required property int modelData; width:140; height:38; text:String(modelData)+(preferences.padVelocity===modelData?' · ACTIVE':''); callback:function(){preferences.setPadVelocity(modelData)} }
             }
         }
     }
-    Label { x:288; y:508; width:956; text:preferences.error || 'Saved on this console · hands default OFF · pad velocity default 100'; font.pixelSize:12; color:preferences.error?Theme.amber:Theme.mon }
+    Panel { x:288; y:456; width:956; height:70; color:Theme.gpBgCard; border.color:Theme.gpBorder
+        Label { x:20; y:12; text:'NeoTrellis LEDs'; face:Theme.osFont; font.pixelSize:18 }
+        ActionButton { x:256; y:16; width:300; height:40; text:'Brightness · '+Math.round(preferences.ledBrightness*100/127)+'% · ENC 5'; callback:function(){preferences.cycleLedBrightness()} }
+        ActionButton { x:572; y:16; width:364; height:40; text:'Animations · '+(preferences.ledAnimations?'ON':'OFF')+' · ENC 6'; callback:function(){preferences.toggleLedAnimations()} }
+    }
+    Label { x:288; y:540; width:956; text:preferences.error || 'Saved on this console · hands default OFF · pad velocity default 100'; font.pixelSize:12; color:preferences.error?Theme.amber:Theme.mon }
 }

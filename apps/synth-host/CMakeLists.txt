@@ -113,11 +113,17 @@ add_executable(gf-drum-bench tests/drum_bench.cpp)
 target_link_libraries(gf-drum-bench PRIVATE gf_host_core PkgConfig::JSONC)
 target_compile_options(gf-drum-bench PRIVATE "$<$<CONFIG:Release>:${host_flags}>")
 if(BUILD_TESTING)
-    add_executable(gf_drum_led_return_test tests/drum_led_return_test.cpp)
+    add_executable(gf_drum_led_return_test tests/drum_led_return_test.cpp ../consola/surface/src/PadLedReturn.cpp)
     target_include_directories(gf_drum_led_return_test PRIVATE ../consola/surface/include)
     add_test(NAME drum_led_return COMMAND gf_drum_led_return_test)
     add_test(NAME drum_metadata_snapshot COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/metadata_test.py
         ${CMAKE_CURRENT_BINARY_DIR}/drum-metadata.json
         ${CMAKE_CURRENT_SOURCE_DIR}/../consola/gui-console/drum-metadata.json)
+endif()
+
+if(BUILD_TESTING)
+    add_executable(gf_led_telemetry_test tests/led_telemetry_test.cpp)
+    target_link_libraries(gf_led_telemetry_test PRIVATE gf_host_core)
+    add_test(NAME led_telemetry COMMAND gf_led_telemetry_test)
 endif()

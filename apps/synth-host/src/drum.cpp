@@ -65,7 +65,7 @@ void Drum::configure_voice(Voice& v,const DrumParams& params) noexcept {
 bool Drum::start_voice(const DrumSample* sample,const DrumParams& params,unsigned pad,unsigned velocity,bool cue,unsigned layer) noexcept {
     if(!sample||sample->frames()<2)return false;
     const auto& p=params.v;const unsigned choke=unsigned(p[Choke]);
-    if(choke)for(auto& v:voices_)if(v.sample&&v.cue==cue&&v.choke==choke)v.sample=nullptr;
+    if(choke)for(auto& v:voices_)if(v.sample&&v.cue==cue&&v.choke==choke){if(!cue&&v.pad<16)state_.led_choked[v.pad]=1;v.sample=nullptr;}
     Voice* voice=nullptr;for(auto& v:voices_)if(!v.sample){voice=&v;break;}
     if(!voice){
         for(auto& v:voices_)if(v.cue==cue&&(!voice||v.age<voice->age))voice=&v;
@@ -133,7 +133,11 @@ void Drum::frame(float& room_l,float& room_r,float& cue_l,float& cue_r) noexcept
         }
         v.position+=v.ratio;x[0]*=v.left;x[1]*=v.right;
         if(v.cue){cue_l+=x[0];cue_r+=x[1];}
-        else if(v.pad<16&&!pads_[v.pad].params.v[Mute]&&(!solo||pads_[v.pad].params.v[Solo])){groups[v.group][0]+=x[0];groups[v.group][1]+=x[1];state_.pads[v.pad]=std::max(state_.pads[v.pad],std::max(std::abs(x[0]),std::abs(x[1])));}
+        else if(v.pad<16&&!pads_[v.pad].params.v[Mute]&&(!solo||pads_[v.pad].params.v[Solo])){// Observe the first audible ROOM sample, after probability, choke and output gates.
+            if(!v.led_reported&&!groups_[v.group].mute&&groups_[v.group].level>0&&(x[0]!=0||x[1]!=0)){
+                v.led_reported=true;++state_.led_hits[v.pad];state_.led_velocity[v.pad]=uint8_t(v.velocity);state_.led_choked[v.pad]=0;
+            }
+            groups[v.group][0]+=x[0];groups[v.group][1]+=x[1];state_.pads[v.pad]=std::max(state_.pads[v.pad],std::max(std::abs(x[0]),std::abs(x[1])));}
     }
     for(unsigned g=0;g<4;++g){const float gain=groups_[g].mute?0:groups_[g].level;const float l=groups[g][0]*gain,r=groups[g][1]*gain;room_l+=l;room_r+=r;state_.groups[g]=std::max(state_.groups[g],std::max(std::abs(l),std::abs(r)));}
     state_.room=std::max(state_.room,std::max(std::abs(room_l),std::abs(room_r)));state_.cue=std::max(state_.cue,std::max(std::abs(cue_l),std::abs(cue_r)));

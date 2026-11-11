@@ -207,18 +207,20 @@ def test_led_output_roots_color_dedup_and_channel_isolation(gui):
     sent=[]
     surface.led_port = SimpleNamespace(send=sent.append,close=lambda:None)
     surface.update_leds()
-    assert len(sent) == 128
+    assert len(sent) == 230
     # Physical non-root colors match the selected BASS card (#3D8CFF).
-    assert [m.value for m in sent[4:7]] == [30,70,127]
+    assert [m.value for m in sent[13:16]] == [30,70,127]
     assert all(m.channel == 15 for m in sent)
     assert all(decodificar(m) is None for m in sent)
     surface.update_leds()
-    assert len(sent) == 128
+    assert len(sent) == 230
     surface.setRoot(0)
     # Scale degrees stay at the same physical positions when root changes.
-    assert len(sent) == 128
+    assert len(sent) == 230
     synth.selectPart(2)
-    assert len(sent) > 128
+    surface.led_output.last_send -= .034
+    surface.update_leds()
+    assert len(sent) > 230
     assert led_messages(24,(127,127,127))[-1] == dict(type='note_on',channel=15,note=72,velocity=1)
     surface.led_port = None
 

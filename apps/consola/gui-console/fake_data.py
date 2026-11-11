@@ -410,6 +410,8 @@ class ConsoleState(QObject):
         elif action.startswith('mode:'):
             self._mode = int(action[-1])
             self.setScreen(screen_id("DrumRack") if self._mode == 3 else screen_id("SynthParts") if self._mode == 2 else 5 if self._mode else screen_id("Session"))
+        elif action == 'led-brightness': self.preferences.cycleLedBrightness()
+        elif action == 'led-animations': self.preferences.toggleLedAnimations()
         elif action.startswith('settings:'):
             self._settings = action.split(':')[1]
             if self._settings != 'Surface':
@@ -482,8 +484,8 @@ class ConsoleState(QObject):
                     key('Left IR', 'ON' if prefs.leftHand else 'OFF', action='hands:1'),
                     key('Right IR', 'ON' if prefs.rightHand else 'OFF', action='hands:2'),
                     key('Pad velocity', str(prefs.padVelocity), action='pad-velocity'),
-                    key('Audio', action='nav:SynthSettingsAudio'),
-                    key('Connections', action='nav:SynthSettingsConnections'),
+                    key('LED brightness', str(round(prefs.ledBrightness*100/127))+'%', action='led-brightness'),
+                    key('Animations', 'ON' if prefs.ledAnimations else 'OFF', action='led-animations'),
                     key('System', action='nav:SynthSettingsSystem'),
                     key('Back', action='nav:'+('DrumRack' if self.drumMode else 'SynthParts' if self.synthMode else 'ModeSelect'))]
         elif self._screen == 6:

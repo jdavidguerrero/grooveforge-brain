@@ -158,11 +158,12 @@ def test_led_return_deduplicates_and_playhead(gui):
     sent=[]
     e.synth_surface.led_port=SimpleNamespace(send=sent.append)
     s.update_leds()
-    assert len(sent)==128 and all(m.channel==15 for m in sent)
+    assert len(sent)==230 and all(m.channel==15 for m in sent)
     assert [m.note for m in sent if m.type=='note_on']==list(range(48,80))
-    s.update_leds();assert len(sent)==128
+    s.update_leds();assert len(sent)==230
     d._clock.update(running=True,step=2,pattern_step='2');d._touch();b.drain_frame()
-    s.update_leds();assert len(sent)==132
+    e.synth_surface.led_output.last_send -= .034
+    s.update_leds();assert len(sent)==237
     e.synth_surface.led_port=None
 
 

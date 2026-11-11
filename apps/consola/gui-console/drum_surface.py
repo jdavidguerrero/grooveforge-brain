@@ -44,6 +44,7 @@ class DrumSurface(QObject):
         self._shift=False
         self._presence=[False,False]
         self._leds={}
+        shared.led_output.attach_drum(drum)
         self._pad_velocity=console.preferences.padVelocity
         console.preferences.changed.connect(self.preferences_changed)
         self.failed.connect(self.failure)
@@ -144,20 +145,8 @@ class DrumSurface(QObject):
 
     def update_leds(self):
         if not self.active: return
-        port=self.shared.led_port
-        if not port: return
         try:
-            import mido
-            pads=self.drum.pad_entries();steps=self.drum.steps
-            for index in range(32):
-                if index<16:
-                    p=pads[index];rgb=tuple(round(int(p['tint'][i:i+2],16)/255*(45 if index==self._selected else 16)) for i in (1,3,5)) if not p['empty'] else (0,0,0)
-                    if p['mute']: rgb=tuple(v//4 for v in rgb)
-                else:
-                    s=steps[index-16];rgb=(15,80,55) if s['playhead'] else (30,30,30) if s['velocity'] and s['active'] else (0,0,0)
-                if self._leds.get(index)!=rgb:
-                    for msg in led_messages(index,rgb): port.send(mido.Message(**msg))
-                    self._leds[index]=rgb
+            self.shared.led_output.update(self.shared.led_port, 2)
             error=getattr(self.notes,'error','')
             if error: self.failure(error)
         except (OSError,ValueError,RuntimeError) as exc: self.failure(str(exc))

@@ -155,6 +155,7 @@ def main():
                                                                           synth_socket, args.fake_surface)
                     engine.synth_surface._status = ('FAKE SURFACE · ' if args.fake_surface else '')+route
                     engine.synth_surface.changed.emit()
+                    engine.synth_surface.led_output.bind_notes()
                     print('Synth note route:', route)
                 if not args.fake_synth:
                     engine.drum_surface.notes, route = open_drum_notes(args.note_transport, args.host_midi_port,

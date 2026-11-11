@@ -59,6 +59,8 @@ def assert_result(action,e,c,before,calls):
     commands=[cmd for cmd,_ in calls]
     if op.startswith('hands:'): assert c.preferences._hands[int(op[-1])]!=before['hands'][int(op[-1])]
     elif op=='pad-velocity': assert c.preferences.padVelocity!=before['velocity']
+    elif op=='led-brightness': assert c.preferences.ledBrightness!=before['ledBrightness']
+    elif op=='led-animations': assert c.preferences.ledAnimations!=before['ledAnimations']
     elif op.startswith('nav:'): assert c.screenName==op[4:]
     elif op.startswith('open:'): assert s.selectedPart==int(op[-1]) and c.screenName in ('SynthFilter','SynthHybrid')
     elif op in ('play','stop'): assert d.clock['running']==(op=='play') and 'transport' in commands
@@ -128,7 +130,7 @@ def test_every_labeled_performance_key_has_documented_effect(rotated,name,route)
         d.request,s.request=map(spy,originals)
         pages=s.pages;pi=pages.index(s._page) if s._page in pages else 0
         op=s.selectedOperator or 1
-        before=dict(hands=c.preferences._hands,velocity=c.preferences.padVelocity,armed=d.clock['armed'],laneBank=d.laneBank,stepPage=d.stepPage,mixerBank=d.mixerBank,
+        before=dict(hands=c.preferences._hands,velocity=c.preferences.padVelocity,ledBrightness=c.preferences.ledBrightness,ledAnimations=c.preferences.ledAnimations,armed=d.clock['armed'],laneBank=d.laneBank,stepPage=d.stepPage,mixerBank=d.mixerBank,
             bank=d.page if name.startswith('Drum') else s._bank,banks=len(d._pages) if name.startswith('Drum') else max(1,s.bankCount),
             layer=d.selectedLayer,fine=d.fine if name.startswith('Drum') else s._fine,group=d.params['group'],
             mute=s.current_part.get('mute',False),engine=s.engine,engineFilter=s.engineFilter,tagFilter=s.tagFilter,

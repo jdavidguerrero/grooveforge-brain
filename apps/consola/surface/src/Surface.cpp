@@ -496,9 +496,10 @@ void surface::poll() {
     poll_buttons(micros());
     poll_serial();
     for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {
-        pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2());
+        pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2(),millis());
     }
     const uint32_t led_now=millis();
+    pad_led_return.render(led_now);
     if (m4_connected && pad_led_return.dirty() && led_now-last_led_return>=34) {
         if (m4_send(CMD_LED_GRID_UPDATE,pad_led_return.colors(),96)) {
             pad_led_return.sent();

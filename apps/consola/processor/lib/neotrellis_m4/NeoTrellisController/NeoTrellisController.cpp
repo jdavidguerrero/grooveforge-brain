@@ -1,3 +1,4 @@
+#include "shared/ConsolaLed.h"
 #include <Arduino.h>
 #include <math.h>
 #include "NeoTrellisController.h"
@@ -82,8 +83,10 @@ void NeoTrellisController::applyGridColors7bit(const uint8_t* rgb7, int length) 
 
     int pad = 0;
     for (int i = 0; i < length && pad < TOTAL_KEYS; i += 3, ++pad) {
+#ifndef GF_CONSOLA_S_M4
         unsigned long now = millis();
         if (now - lastPadUpdateMs[pad] < PAD_SUPPRESS_MS) continue;
+#endif
         applyPadColor7bit(pad, rgb7[i + 0], rgb7[i + 1], rgb7[i + 2], false);
     }
     pixels.show();
@@ -126,9 +129,15 @@ uint8_t NeoTrellisController::gamma8(uint8_t v8) const {
 void NeoTrellisController::applyPadColor7bit(int pad, uint8_t r7, uint8_t g7, uint8_t b7, bool pushNow) {
     if (pad < 0 || pad >= TOTAL_KEYS) return;
     const float WB_R = 1.00f, WB_G = 0.92f, WB_B = 1.00f;
+#ifdef GF_CONSOLA_S_M4
+    static_assert(LED_BRIGHTNESS==63,"Consola RGB7 compensation requires the 25% hardware scaler");
+    // LED23 is already linear and capped; double gamma would erase low levels.
+    uint8_t r = consola_led_raw(r7), g = consola_led_raw(g7), b = consola_led_raw(b7);
+#else
     uint8_t r = gamma7To8(r7);
     uint8_t g = gamma7To8(g7);
     uint8_t b = gamma7To8(b7);
+#endif
     int rW = (int)roundf(r * WB_R);
     int gW = (int)roundf(g * WB_G);
     int bW = (int)roundf(b * WB_B);

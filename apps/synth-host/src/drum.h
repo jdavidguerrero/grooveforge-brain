@@ -30,12 +30,12 @@ struct DrumRack {
 };
 enum class DrumOp {Rack,Param,Steps,Select,Transport,Record,Group,Preview,Trigger};
 struct DrumCommand {DrumOp op=DrumOp::Trigger;uint64_t token=0,epoch=std::numeric_limits<uint64_t>::max();unsigned pad=0,param=0,pattern=0;float value=0,extra=0;bool flag=false;DrumRack* rack=nullptr;DrumSample* sample=nullptr;DrumLane lane;};
-struct DrumClock {uint64_t sample=0,origin=0,pattern_origin=0,epoch=0,rev=0,steals=0,clipped=0,dropped=0,record_overruns=0;bool running=false,armed=false;unsigned pattern=0;int queued=-1;double bpm=122,swing=0;std::array<float,16> pads{};std::array<float,4> groups{};float room=0,cue=0;};
+struct DrumClock {uint64_t sample=0,origin=0,pattern_origin=0,epoch=0,rev=0,steals=0,clipped=0,dropped=0,record_overruns=0;bool running=false,armed=false;unsigned pattern=0;int queued=-1;double bpm=122,swing=0;std::array<uint64_t,16> led_hits{};std::array<uint8_t,16> led_velocity{},led_choked{};std::array<float,16> pads{};std::array<float,4> groups{};float room=0,cue=0;};
 struct DrumAck {uint64_t token=0;DrumRack* retired=nullptr;DrumSample* retired_preview=nullptr;bool recorded=false,rejected=false,stale=false;unsigned pattern=0,pad=0,step=0;DrumStep hit;DrumClock clock;};
 struct DrumHit {uint64_t sample=0;unsigned pad=0,layer=0;bool cue=false;};
 /** @brief Sampler and sample-domain sequencer. Methods below never allocate or lock. */
 class Drum {
-    struct Voice {const DrumSample* sample=nullptr;DrumParams params;double position=0,ratio=1;float gain=0,left=1,right=1,coefficient=1;float z[2]{},band[2]{};uint64_t age=0,elapsed_frames=0;unsigned pad=0,group=0,choke=0,velocity=127;bool cue=false;};
+    struct Voice {const DrumSample* sample=nullptr;DrumParams params;double position=0,ratio=1;float gain=0,left=1,right=1,coefficient=1;float z[2]{},band[2]{};uint64_t age=0,elapsed_frames=0;unsigned pad=0,group=0,choke=0,velocity=127;bool cue=false,led_reported=false;};
     DrumRack* rack_=nullptr;DrumSample* preview_=nullptr;
     std::array<Voice,64> voices_{};
     std::array<DrumPad,16> pads_{};

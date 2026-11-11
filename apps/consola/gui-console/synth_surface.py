@@ -236,6 +236,12 @@ class SynthSurface(QObject):
         self.input_names = []
         self.led_port = None
         self.last_leds = None
+        from pad_leds import LedOutput
+        self.led_output = LedOutput(self)
+        self.led_timer = QTimer(self)
+        self.led_timer.setInterval(34)
+        self.led_timer.timeout.connect(self.update_leds)
+        self.led_timer.start()
         self._status = 'FAKE SURFACE' if notes is None else 'SURFACE READY'
         self.failed.connect(self._failure)
         console.changed.connect(self.publish)
@@ -517,23 +523,9 @@ class SynthSurface(QObject):
     def update_leds(self):
         if getattr(self, "drum_surface", None) and self.drum_surface.active:
             return
-        if not self.led_port:
-            return
-        # Theme.qml roleColors, reduced from RGB8 to the proposed MIDI RGB7.
-        colors = tuple(tuple(round(int(color[i:i+2],16)*127/255) for i in (0,2,4))
-                       for color in ('3D8CFF','FF6FC8','B6F23D','F2C9A0'))
-        frame = tuple((0,0,0) if self.keyboard.note(i) is None else (127,127,127) if self.keyboard.is_root(i) else colors[self.part-1] for i in range(32)) if self.active else ((0, 0, 0),)*32
-        if frame == self.last_leds:
-            return
         try:
-            import mido
-            # RGB latches + note trigger, proposed in doc21; no sleep/animations.
-            for index, rgb in enumerate(frame):
-                if self.last_leds is None or self.last_leds[index] != rgb:
-                    for msg in led_messages(index, rgb):
-                        self.led_port.send(mido.Message(**msg))
-            self.last_leds = frame
-        except (OSError, RuntimeError) as exc:
+            self.led_output.update(self.led_port, 1 if self.active else 0)
+        except (OSError, ValueError, RuntimeError) as exc:
             self.failed.emit(str(exc))
 
     @Slot()
@@ -563,6 +555,7 @@ class SynthSurface(QObject):
         self.receive(Encoder(index, delta))
 
     def close(self):
+        self.led_timer.stop()
         self.health.stop()
         for port in self.ports:
             port.close()
