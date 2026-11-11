@@ -17,6 +17,13 @@ prioridad pasa a lo core (pruebas de hardware, fabricación de PCB, diseños).
   pad; (d) opción de fijar posiciones por categoría (kick siempre en el pad 1) al cargar un rack.
 - **Manual de uso** del modo DRUM/SYNTH (pantallas, NeoTrellis, encoders, PLAY/REC) cuando la UX esté estable.
 
+## Pads de la v2 (Juan, 2026-11-11)
+
+La NeoTrellis (pads de 10 mm, sin fuerza) vale para la v1, pero no es lo mejor para tocar con expresión. En vivo Juan
+probablemente usará un **controlador MIDI externo con mejores pads** (conectado al Pi), y la NeoTrellis quedará más
+como **secuenciador** y rejilla de escenas. Para una v2: evaluar pads más grandes con velocity/presión propios.
+**Condición:** después de usar la v1 en sets reales.
+
 ## Secciones del set: BUILD, DROP, BREAK (Juan, 2026-11-11)
 
 Tres teclas Choc físicas (`25` §3) que cambian la sección del set completo: la tecla queda armada (LED parpadea) y se

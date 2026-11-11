@@ -95,3 +95,27 @@ Dos caminos para el modo FX, sin hardware extra:
 - **FX en la Teensy** (baja latencia, < 3 ms): LINE IN → FX de la Teensy → **LINE OUT del códec** (por eso los jacks
   de LINE OUT quedan poblados).
 - **FX en el Pi** (más FX, más latencia): LINE IN → USB asíncrono → Pi → Audio+.
+
+## 7. Distribución v1 (Juan, 2026-11-11) — fijada
+
+Coordenadas: `apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv` (x desde el borde izquierdo, y desde
+el frente, mm). Panel de **340 × 340 mm**; cuerpo macizo impreso **en una pieza** en una cama local de 35 × 35 (si el
+servicio pide más margen, 336 o dos piezas con unión oculta). Se diseñó aquí a escala, no en Claude Design, que solo
+hace el cuerpo.
+
+| Zona | Contenido | Por qué |
+|---|---|---|
+| Eje central | Pantalla, 8 encoders (paso 26, PCB-A sin cambios), NeoTrellis, 4 FSR de velocity, transporte al frente | Lo que se mira y se toca a la vez, centrado |
+| Alrededor de la rejilla | Izquierda: DELETE · DUPLICATE · QUANTIZE · NEW; derecha: **escenas 1–4** en modo controller / OCT ± y PAGE ◀ ▶ en SYNTH y DRUM | Alineadas con las 4 filas de pads (paso 15), como Push |
+| Izquierda | Columna de navegación junto a la pantalla (BACK · MENU · ◀ · ▶ · BROWSE); motor (CUE · FILL · TAP) y sección (BUILD · DROP · BREAK); SHIFT · UNDO; 2 FSR de expresión; **IN + selector de pad** en la esquina delantera | La mano que dirige el set; la entrada se ajusta y se deja |
+| Derecha | Jog Ø40 junto a la pantalla; 4 faders paso 20; **CUE + MASTER** en la esquina delantera (MASTER en la esquina, protegido); audífonos en el frente bajo CUE | La mano que mezcla y escucha |
+| Esquinas traseras | Sharp horizontales; arriba a la izquierda queda libre como zona de gesto | |
+
+Ajustes aplicados: faders 5 mm más abajo (13 mm de aire con el encoder 8), transporte 4 mm más al frente y keycaps del
+transporte 1 mm más bajos (los FSR de velocity quedan a 25 mm), un solo keycap de **13,5 mm** para las 26 teclas (un
+molde), LED por zona (verde = tocar, violeta = navegar/editar; escenas cambian de color con el modo).
+
+**Placas (propuesta a cerrar en el esquema):** una **PCB-K única** bajo el panel a −3,4 mm con las 26 Choc, sus LEDs y
+los MCP, con ventanas para la M4, los encoders, los faders y los FSR (como la placa principal de un Push), en lugar
+de K1/K2 y varias placas sueltas; PCB-A (encoders) sin cambios; **PCB-F nueva** (paso 20); **PCB-P** en una sola tira
+con los 6 FSR; jog, perillas, selector y audífonos montados en el panel y cableados a PCB-M (sin placa).
