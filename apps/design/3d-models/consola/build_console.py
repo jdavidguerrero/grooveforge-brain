@@ -54,13 +54,32 @@ def load_csv(repo):
         return list(csv.DictReader(f))
 
 
-def panel_cuts(rows):
-    """Sólidos a restar de la chapa: pasantes + rebajes de Choc por debajo."""
+# Variante láser (2026-11-12): sin rebajes de Choc (piden fresado por la otra cara); corte pasante que deja pasar
+# la carcasa superior de la tecla, que queda sostenida solo por PCB-K. Ajustar con el cupón de prueba.
+CHOC_CUT_LASER = 15.4
+# Agujeros de montaje de los PEM (hoja PEM: FH-M2.5 → 2,5; BSO-M2.5 / BSO-M3 → 4,2). Se prensan a mano en tornillo de
+# banco con un yunque plano; verificar diámetros con la hoja del proveedor antes de cortar.
+PEM_HOLE = {'PCB-K': 2.5, 'PCB-P': 4.2, 'PCB-F': 4.2, 'CUERPO': 4.2}
+
+
+def pem_holes(outlines):
+    """Agujeros de la chapa para los espárragos y separadores PEM de las placas y de las torres del cuerpo."""
+    holes = []
+    for r in outlines:
+        if r['board'] in PEM_HOLE and (r['item'] == 'agujero' or r['item'].startswith('pozo')):
+            holes.append((float(r['x_mm']), float(r['y_mm']), PEM_HOLE[r['board']]))
+    return holes
+
+
+def panel_cuts(rows, outlines=(), laser=True):
+    """Sólidos a restar de la chapa. laser=True: solo pasantes (corte 2D); False: CNC con rebajes de Choc por debajo."""
     z0, h = BODY_H - 1, PANEL_T + 2
-    cuts = []
+    cuts = [cylinder(x, y, d, z0, h) for x, y, d in pem_holes(outlines)]
     for r in rows:
         k, x, y = r['kind'], float(r['x_mm']), float(r['y_mm'])
-        if k == 'key':
+        if k == 'key' and laser:
+            cuts.append(rounded_rect(x, y, CHOC_CUT_LASER, CHOC_CUT_LASER, 0.5, z0, h))
+        elif k == 'key':
             cuts.append(rounded_rect(x, y, CHOC_CUT, CHOC_CUT, 0, z0, h))
             cuts.append(rounded_rect(x, y, CHOC_POCKET, CHOC_POCKET, 0, BODY_H - 1, 1 + CHOC_POCKET_D))
         elif k in ('encoder', 'pot'):
@@ -80,9 +99,29 @@ def panel_cuts(rows):
     return cuts
 
 
-def make_panel(rows):
+def make_panel(rows, outlines=(), laser=True):
     plate = rounded_rect(W / 2, D / 2, W, D, CORNER_R, BODY_H, PANEL_T)
-    return plate.cut(Part.makeCompound(panel_cuts(rows)))
+    return plate.cut(Part.makeCompound(panel_cuts(rows, outlines, laser)))
+
+
+def make_coupon():
+    """Cupón de prueba de 120 × 60 para el taller láser: tecla en 5 medidas, EC11, fader, PEM. Cortar antes del panel."""
+    plate = rounded_rect(60, 30, 120, 60, 3, 0, PANEL_T)
+    cuts = [rounded_rect(12 + 22 * i, 44, s, s, 0.5, -1, PANEL_T + 2) for i, s in enumerate((14.0, 14.6, 15.0, 15.4, 16.0))]
+    cuts += [cylinder(12, 18, ROUND_HOLE, -1, PANEL_T + 2), cylinder(30, 18, 7.4, -1, PANEL_T + 2)]
+    cuts += [cylinder(48 + 9 * i, 18, d, -1, PANEL_T + 2) for i, d in enumerate((2.5, 2.6, 4.2, 4.3))]
+    cuts.append(rounded_rect(100, 18, FADER_SLOT[0], 24, FADER_R, -1, PANEL_T + 2))
+    return plate.cut(Part.makeCompound(cuts))
+
+
+def export_profile(shape, z, path):
+    """Perfil 2D de una chapa (corte a media altura) a DXF para el láser."""
+    import importDXF
+    doc = App.ActiveDocument
+    obj = doc.addObject('Part::Feature', 'tmp_perfil')
+    obj.Shape = Part.makeCompound(shape.slice(App.Vector(0, 0, 1), z))
+    importDXF.export([obj], path)
+    doc.removeObject(obj.Name)
 
 
 def make_body():
@@ -166,6 +205,50 @@ def body_details(rows, body):
     return body.cut(Part.makeCompound(cuts)).removeSplitter()
 
 
+# Partido para la Ender 3 V3 (cama 220 × 220): piezas de 160/180 × 165/175 × 83, impresas con el piso abajo.
+# x = 160 pasa entre los jacks LINE IN L/R (148 y 172) y las torres de PCB-M; y = 165 deja libre la torre de (332, 178).
+SPLIT_X, SPLIT_Y = 160.0, 165.0
+BOSS_T, BOSS_L = 8.0, 16.0        # cada mitad del tope: 8 hacia su lado de la junta, 16 a lo largo
+INSERT_D, INSERT_DEPTH, BOLT_D = 4.0, 6.0, 3.4
+
+# (eje, posición a lo largo, z0, alto, lado del inserto). Lado del inserto = -1 (x o y menores) o +1; la cabeza del M3
+# queda del otro lado, por donde entra la llave. Alturas fuera de PCB-M (≤ 30), faders (≥ 58) y pantalla (≥ 68).
+SEAM_BOSSES = [
+    ('x', 40, FLOOR, 10, -1), ('x', 110, FLOOR, 10, -1), ('x', 230, FLOOR, 10, -1), ('x', 262, FLOOR, 10, -1),
+    ('x', WALL + BOSS_L / 2, 12, 14, -1), ('x', WALL + BOSS_L / 2, 50, 14, -1),
+    ('x', D - WALL - BOSS_L / 2, 45, 13, -1),
+    ('y', 40, FLOOR, 10, +1), ('y', 110, FLOOR, 10, +1), ('y', 210, FLOOR, 10, +1), ('y', 280, FLOOR, 10, +1),
+    ('y', WALL + BOSS_L / 2, 12, 14, +1), ('y', WALL + BOSS_L / 2, 50, 14, +1),
+    ('y', W - WALL - BOSS_L / 2, 12, 14, +1), ('y', W - WALL - BOSS_L / 2, 36, 14, +1),
+]
+
+
+def seam_joints(body):
+    """Topes atornillados a cada lado de las juntas: M3 × 16 a inserto Ø4 × 6, invisibles desde fuera."""
+    adds, cuts = [], []
+    for axis, along, z0, h, side in SEAM_BOSSES:
+        if axis == 'x':
+            adds.append(Part.makeBox(2 * BOSS_T, BOSS_L, h, App.Vector(SPLIT_X - BOSS_T, along - BOSS_L / 2, z0)))
+            c, d = App.Vector(SPLIT_X - BOSS_T - 1, along, z0 + h / 2), App.Vector(1, 0, 0)
+            ins = App.Vector(SPLIT_X, along, z0 + h / 2) if side > 0 else App.Vector(SPLIT_X - INSERT_DEPTH, along, z0 + h / 2)
+        else:
+            adds.append(Part.makeBox(BOSS_L, 2 * BOSS_T, h, App.Vector(along - BOSS_L / 2, SPLIT_Y - BOSS_T, z0)))
+            c, d = App.Vector(along, SPLIT_Y - BOSS_T - 1, z0 + h / 2), App.Vector(0, 1, 0)
+            ins = App.Vector(along, SPLIT_Y, z0 + h / 2) if side > 0 else App.Vector(along, SPLIT_Y - INSERT_DEPTH, z0 + h / 2)
+        cuts.append(Part.makeCylinder(BOLT_D / 2, 2 * BOSS_T + 2, c, d))
+        cuts.append(Part.makeCylinder(INSERT_D / 2, INSERT_DEPTH, ins, d))
+    body = body.fuse(Part.makeCompound(adds)).removeSplitter()
+    return body.cut(Part.makeCompound(cuts))
+
+
+def split_body(body):
+    """Cuatro piezas: FI (frente izq.), FD, TI (trasera izq.), TD."""
+    quads = {'FI': (0, 0, SPLIT_X, SPLIT_Y), 'FD': (SPLIT_X, 0, W - SPLIT_X, SPLIT_Y),
+             'TI': (0, SPLIT_Y, SPLIT_X, D - SPLIT_Y), 'TD': (SPLIT_X, SPLIT_Y, W - SPLIT_X, D - SPLIT_Y)}
+    return {k: body.common(Part.makeBox(w, h, BODY_H + 2, App.Vector(x, y, -1))).removeSplitter()
+            for k, (x, y, w, h) in quads.items()}
+
+
 def export_board_dxf(rows, folder):
     """Contorno + agujeros de cada placa en z = 0 para importar como Edge.Cuts en KiCad (coordenadas del panel)."""
     import importDXF
@@ -190,10 +273,14 @@ def build(repo, doc_name='GrooveForgeConsole'):
     rows = load_csv(repo)
     outlines = load_outlines(repo)
     doc = App.newDocument(doc_name)
-    parts = {'Panel_aluminio': make_panel(rows), 'Cuerpo_PETG': body_details(outlines, make_body())}
+    body = seam_joints(body_details(outlines, make_body()))
+    parts = {'Panel_aluminio': make_panel(rows, outlines, laser=True)}
+    parts.update({'Cuerpo_' + k: v for k, v in split_body(body).items()})
     parts.update(make_boards(outlines))
     parts.update(make_placeholders())
-    colors = {'Panel_aluminio': (0.15, 0.15, 0.17), 'Cuerpo_PETG': (0.08, 0.08, 0.08)}
+    shades = {'FI': .07, 'FD': .11, 'TI': .11, 'TD': .07}
+    colors = {'Panel_aluminio': (0.15, 0.15, 0.17)}
+    colors.update({'Cuerpo_' + k: (s, s, s) for k, s in shades.items()})
     for name, shape in parts.items():
         obj = doc.addObject('Part::Feature', name)
         obj.Shape = shape
