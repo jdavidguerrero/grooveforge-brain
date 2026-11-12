@@ -129,3 +129,29 @@ esa limitación. PCB-A se exporta/verifica sin regenerar su fuente congelada. La
 `--export-pcb-a` deja una copia de XML junto al informe para reproducir la revisión del mazo.
 MIDI de hoja 07 y TP/ajustes MIDI tienen `dnp yes` y `in_bom no`; otras opciones DNP mantienen su
 BOM de referencia. El atributo independiente `Symbol.in_bom` evita alterar compras históricas.
+
+
+## Corrección de revisión 2026-11-12 (D24–D37)
+
+Teoría previa: [THEORY-fixrev.md](THEORY-fixrev.md). Resultado y compras sin confirmar:
+[REPORT-fixrev.md](REPORT-fixrev.md). `schgen/bom.py` coloca identidades del catálogo
+`lcsc_catalog.json` en símbolos; LCSC no confirmado queda vacío. La BOM se exporta del
+esquema, no de tablas de README. No se eliminan sufijos «?» al exportar ni en tests.
+PCB-M conserva el nombre lógico en Function y usa Reference anotada (mapa en docs de M).
+
+```sh
+python3 apps/hardware/kicad/consola/tools/check_bom.py
+# Solo M:
+python3 apps/hardware/kicad/consola/tools/check_bom.py --board pcb-m
+```
+
+El checker lee XML real: ausencia de LCSC, código sin catálogo o encapsulado/huella/valor
+incompatible impiden PASS. TP/NT/SJ/agujeros de cobre no son compras; componentes DNP
+se excluyen del cierre de población. `check_netlist` compara también valor, huella, DNP y
+campos del XML contra descripción: mismo cableado con pieza cambiada ahora falla.
+
+En un clon con layoutF o layoutP bajo otra tarea: regenerar/verificar todas con
+`--all --regenerate --directory .fixrev-validation`, copiando antes PCB-A a ese directorio
+(es existente, sin factory). No sobrescribir boards/pcb-f ni *.kicad_pcb de P.
+Para entregar esquemas/XML/ERC/PDF M/K/P usar las rutas definitivas y regenerar ahí sus
+fp-lib-table/placement mediante write_artifacts; no copiar tablas relativas de un temporal.

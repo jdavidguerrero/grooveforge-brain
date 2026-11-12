@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-k-right/pcb-k-right.kicad_sch</source>
-    <date>2026-11-12T11:23:11</date>
+    <date>2026-11-12T14:08:55</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -137,12 +137,18 @@
       <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
       <fields>
         <field name="LCSC">C12891</field>
+        <field name="MPN">CL31A226KAHNNNE</field>
+        <field name="Manufacturer">Samsung Electro-Mechanics</field>
+        <field name="Package">1206</field>
         <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C12891"/>
+      <property name="MPN" value="CL31A226KAHNNNE"/>
+      <property name="Manufacturer" value="Samsung Electro-Mechanics"/>
+      <property name="Package" value="1206"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -162,11 +168,19 @@
       <value>DESDE IZQUIERDA</value>
       <footprint>Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical</footprint>
       <fields>
+        <field name="LCSC">C131342</field>
+        <field name="MPN">B6B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x06" description="Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C131342"/>
+      <property name="MPN" value="B6B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,P=2mm"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -191,12 +205,18 @@
       <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C17634</field>
+        <field name="MPN">0805W8F330JT5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="LCSC" value="C17634"/>
+      <property name="MPN" value="0805W8F330JT5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -217,12 +237,18 @@
       <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C17520</field>
+        <field name="MPN">0805W8F2201T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="LCSC" value="C17520"/>
+      <property name="MPN" value="0805W8F2201T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="dnp"/>
@@ -244,12 +270,18 @@
       <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C17520</field>
+        <field name="MPN">0805W8F2201T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="LCSC" value="C17520"/>
+      <property name="MPN" value="0805W8F2201T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="dnp"/>
@@ -271,12 +303,18 @@
       <footprint>Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</footprint>
       <fields>
         <field name="LCSC">C506653</field>
+        <field name="MPN">MCP23017-E/SS</field>
+        <field name="Manufacturer">MICROCHIP</field>
+        <field name="Package">SSOP-28(5.3x10.2x0.65)</field>
         <field name="Footprint">Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Interface_Expansion" part="MCP23017x-x-SS" description="16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28"/>
       <property name="LCSC" value="C506653"/>
+      <property name="MPN" value="MCP23017-E/SS"/>
+      <property name="Manufacturer" value="MICROCHIP"/>
+      <property name="Package" value="SSOP-28(5.3x10.2x0.65)"/>
       <property name="Sheetname" value="mcp-21"/>
       <property name="Sheetfile" value="sheets/mcp-21.kicad_sch"/>
       <property name="ki_keywords" value="Microchip port-expander GPIO"/>
@@ -323,12 +361,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -349,12 +393,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C5137478</field>
+        <field name="MPN">FCC0805B105K500FT</field>
+        <field name="Manufacturer">FOJAN</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C5137478"/>
+      <property name="MPN" value="FCC0805B105K500FT"/>
+      <property name="Manufacturer" value="FOJAN"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -375,12 +425,18 @@
       <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C17414</field>
+        <field name="MPN">0805W8F1002T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="LCSC" value="C17414"/>
+      <property name="MPN" value="0805W8F1002T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -400,11 +456,15 @@
       <value>SPARE_21_GPB5</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -423,11 +483,15 @@
       <value>SPARE_21_GPB6</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -446,11 +510,15 @@
       <value>INTB_21</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -469,11 +537,15 @@
       <value>INTA_21</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -492,11 +564,15 @@
       <value>SPARE_21_GPA4</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -515,11 +591,15 @@
       <value>SPARE_21_GPA5</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -538,11 +618,15 @@
       <value>SPARE_21_GPA6</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
         <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="test point tp"/>
@@ -562,12 +646,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -588,12 +678,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -614,12 +710,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -640,12 +742,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -666,12 +774,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -694,12 +808,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -722,12 +842,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -750,12 +876,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -777,11 +909,13 @@
       <value>PLAY</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -800,11 +934,13 @@
       <value>STOP</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -823,11 +959,13 @@
       <value>REC</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -846,11 +984,13 @@
       <value>LOOP</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -870,12 +1010,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -896,12 +1042,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -922,12 +1074,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -948,12 +1106,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -974,12 +1138,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1002,12 +1172,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1030,12 +1206,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1058,12 +1240,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1085,11 +1273,13 @@
       <value>METRO</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1108,11 +1298,13 @@
       <value>SCENE4_PAGE_R</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1131,11 +1323,13 @@
       <value>SCENE3_PAGE_L</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1154,11 +1348,13 @@
       <value>SCENE2_OCT-</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1178,12 +1374,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1204,12 +1406,18 @@
       <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
         <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
         <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
       <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1231,11 +1439,13 @@
       <value>SCENE1_OCT+</value>
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
+        <field name="LCSC"/>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>

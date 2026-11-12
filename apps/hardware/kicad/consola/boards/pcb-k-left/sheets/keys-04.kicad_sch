@@ -493,6 +493,12 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 49465aee-19ed-5d90-91ee-f5165df67da3))
     (pin "2"
@@ -613,6 +619,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 467c7d89-4de1-5d22-bf8e-93a56db5e85e))
     (pin "2"
@@ -700,6 +724,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 51a2557f-4bae-5554-a0d5-7c67d819ecbd))
     (pin "2"
@@ -772,6 +814,12 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
       (at 76.2 114.3 0)
       (effects
         (font
@@ -890,6 +938,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 0f4a3eca-65f3-54ab-8166-036a60cc0676))
     (pin "2"
@@ -977,6 +1043,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 4557c517-eced-5e9c-861a-1130f8870ec3))
     (pin "2"
@@ -1049,6 +1133,12 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
       (at 76.2 165.1 0)
       (effects
         (font
@@ -1167,6 +1257,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 6fe15c32-eeeb-5bbf-8a3e-28258c00a140))
     (pin "2"
@@ -1254,6 +1362,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid ae9b47bd-7291-5e66-ba0e-cfe3ca1405dd))
     (pin "2"
@@ -1326,6 +1452,12 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
       (at 76.2 215.9 0)
       (effects
         (font
@@ -1451,6 +1583,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid af10f76f-5b49-5c69-9eb2-33a0ad45c1f1))
     (pin "2"
@@ -1533,6 +1683,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C49678"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 304.8 215.9 0)
       (effects
         (font

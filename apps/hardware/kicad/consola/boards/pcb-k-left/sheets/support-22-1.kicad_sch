@@ -372,6 +372,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "0805W8F1002T5E"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 7b73c183-06f7-5d50-aaaf-17cfddf65812))
     (pin "2"
@@ -450,6 +468,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C49678"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 190.5 63.5 0)
       (effects
         (font
@@ -538,6 +574,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "FCC0805B105K500FT"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "FOJAN"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 0d8ea19c-9a3d-5240-a742-07413f9067cf))
     (pin "2"
@@ -588,6 +642,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 76.2 114.3 0)
       (effects
         (font
@@ -646,6 +712,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid e7c68ff0-497c-5a51-a548-ac527d4b8e23))
     (instances
@@ -694,6 +772,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 304.8 114.3 0)
       (effects
         (font
@@ -752,6 +842,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 39fed343-17b8-5679-b5a8-a939839cd7f3))
     (instances
@@ -800,6 +902,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 190.5 165.1 0)
       (effects
         (font

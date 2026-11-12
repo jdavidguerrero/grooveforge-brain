@@ -4,7 +4,7 @@ from .generator import Board
 from .pcb_k import capacitor, packed, part
 
 FADER_FP = 'groovepush:ALPS_RS6011P_60mm'
-FSR_FP = 'gf_consola:FSR402_SolderTail_Provisional'
+FSR_FP = 'gf_consola:FSR402_Socket_1x02_P2.54mm'
 FSR_NAMES = ('V1', 'V2', 'V3', 'V4', 'X1', 'X2')
 FSR_TARGETS = ('J_FSR1', 'J_FSR2', 'J_FSR3', 'J_FSR4', 'J7_EXP1', 'J8_EXP2')
 
@@ -37,4 +37,4 @@ def pcb_p():
                          {'1': supply, '2': signal})]
     return Board('pcb-p', packed('fsr-passive', symbols, [
         '6 circuitos independientes. Pin 1: +3V3; pin 2: senal. Sin divisor ni filtro aqui.',
-        'Pads de cola provisionales: verificar variante/longitud y proceso de soldadura del FSR real.']))
+        'FSR Juan: machos prensados 2.54 mm -> hembra 1x2 THT o soldar. Datum disco CSV; validar acomodo cola/altura.']))

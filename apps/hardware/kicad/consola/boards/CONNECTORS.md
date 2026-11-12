@@ -49,8 +49,8 @@ pin; no parts besides the connectors. Only these socket pins are used, the rest 
 |---|---|---|---|---|
 | P1.6 | J15.6 | 18 | SDA | J1.3 |
 | P1.7 | J15.7 | 19 | SCL | J1.4 |
-| P1.8 | J15.8 | 20 (TX5) | TX5 | J2.3 (M4 SDA = its RX) |
-| P1.9 | J15.9 | 21 (RX5) | RX5 | J2.4 (M4 SCL = its TX) |
+| P1.8 | J15.8 | 20 (TX5) | TX5 | J2.3 (M4 SCL = its RX22) |
+| P1.9 | J15.9 | 21 (RX5) | RX5 | J2.4 (M4 SDA = its TX21) |
 | P1.12 | J15.12 | — | +3V3 | J1.2 |
 | P1.13 / P2.14 | J15.13 / J16.14 | — | GND | J1.1, J2.1 |
 

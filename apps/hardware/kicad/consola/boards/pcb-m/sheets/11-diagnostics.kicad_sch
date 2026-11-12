@@ -693,7 +693,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0b78847b-dee7-5312-bc18-d0c89503c3e0))
+    (uuid a48eb9e9-cf19-56e5-9dab-4311ea9090ab))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 55.88 63.5 0)
@@ -701,7 +701,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e604a5a9-71c7-5308-9d67-a0e4c3484193)
+    (uuid 25ca31a0-334d-5e50-be99-bad037ed5bcf)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 63.5 0)
       (effects
@@ -715,7 +715,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 44f2c7e0-68b5-50e2-b9a5-5dda6f06c34c))
+    (uuid c8299b1f-ce2e-5ad8-93e0-a6a1819810d3))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 71.12 63.5 180)
@@ -723,7 +723,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid bff79478-0b8f-5f5f-96ea-e180ac84f275)
+    (uuid 0039425e-b40a-543e-a5cc-28253d16dabf)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 71.12 63.5 0)
       (effects
@@ -737,8 +737,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 852b2a97-ce72-501a-998d-1bcedbb77c9f)
-    (property "Reference" "SJ_FRONT"
+    (uuid 669462ae-4bfd-5ca3-9234-7f908d21d22e)
+    (property "Reference" "SJ_FRONT1"
       (at 63.5 57.404 0)
       (effects
         (font
@@ -754,14 +754,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_FRONT"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 9e4bfeb0-c636-5322-94b0-4260b1a0f231))
+      (uuid 860dce2a-a900-5e2f-8d0a-bdad6ebc9fb7))
     (pin "2"
-      (uuid 87afc656-166b-5c7b-ac5c-199fa70d52cb))
+      (uuid b4ea5068-b8fc-5da9-8d76-a167cbe6609e))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_FRONT")
+          (reference "SJ_FRONT1")
           (unit 1)))))
   (wire
     (pts
@@ -770,7 +788,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 9afa5f3c-3ff5-59e9-9c87-b735e9bd15cd))
+    (uuid 861cdcf4-d45f-52e4-a7e5-614c31f89f73))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 144.78 63.5 0)
@@ -778,7 +796,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 42c96a98-bc41-573b-8440-932cd12aaf4f)
+    (uuid 63ea2504-80c0-5aac-9788-b8e0483ebeb9)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 63.5 0)
       (effects
@@ -792,7 +810,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0ef974e0-a151-5bef-a8ff-3b4945c63a07))
+    (uuid 3431b12d-7d12-516a-9484-6bdc584d809c))
   (global_label "+5V_CV_IN"
     (shape bidirectional)
     (at 160.02 63.5 180)
@@ -800,7 +818,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 85a08bf7-655e-51f5-ae66-2423a2c2cda3)
+    (uuid f8664acd-b27b-5301-88a1-cd7a7b24642d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 160.02 63.5 0)
       (effects
@@ -814,8 +832,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid c7e97b8c-27f3-5ed0-99c1-e4e32ed6b7ff)
-    (property "Reference" "SJ_CV"
+    (uuid db5ea881-9718-5849-a63d-0610f15e6638)
+    (property "Reference" "SJ_CV1"
       (at 152.4 57.404 0)
       (effects
         (font
@@ -831,14 +849,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_CV"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 1b46a72a-50ec-5ea2-849e-3b5f3d361b86))
+      (uuid 6fe01307-061a-581a-b3ae-f1267281419c))
     (pin "2"
-      (uuid 597c6dc6-7f99-5e36-b4b5-db3f79eec873))
+      (uuid 95c7db11-8865-5f70-84f3-f65fe953ed08))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_CV")
+          (reference "SJ_CV1")
           (unit 1)))))
   (wire
     (pts
@@ -847,7 +883,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dca90a07-9f52-5188-a144-e11efe603bce))
+    (uuid dcaaef96-0629-52a0-b871-2fbe02dab4ad))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 233.68 63.5 0)
@@ -855,7 +891,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 522de9a5-9284-52a5-9acc-683b64eea0c8)
+    (uuid 6e910044-c8e1-521b-a959-8432d5e2b5e4)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 233.68 63.5 0)
       (effects
@@ -869,7 +905,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c8efbd6b-d21c-529c-b057-36efda6d3718))
+    (uuid c915dfad-4f9b-55ae-98ba-79fa60e2ee42))
   (global_label "+5V_LED_K"
     (shape bidirectional)
     (at 248.92 63.5 180)
@@ -877,7 +913,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f91e657b-8033-5939-8371-82321c01a5da)
+    (uuid 62fef741-0886-5658-9f89-83a7b79f4480)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 248.92 63.5 0)
       (effects
@@ -891,8 +927,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a897017c-68e1-5f78-8f8e-8432939d1ab7)
-    (property "Reference" "SJ_LED_K"
+    (uuid 94152b25-b68f-5eab-a54c-883f9e3232e2)
+    (property "Reference" "SJ_LED_K1"
       (at 241.3 57.404 0)
       (effects
         (font
@@ -908,14 +944,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_LED_K"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f6f12b58-8973-5314-bef4-8b1db2c41695))
+      (uuid 9e3bb82f-e3e6-5af8-842d-dae847b10aa5))
     (pin "2"
-      (uuid 1bd2a11f-cccd-526d-8496-bbe95adcd052))
+      (uuid 26782aec-9416-5de9-a063-8dae594d1520))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_LED_K")
+          (reference "SJ_LED_K1")
           (unit 1)))))
   (wire
     (pts
@@ -924,7 +978,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d519260d-e904-5df0-8401-a7767c065ee3))
+    (uuid 1e553abf-3278-51b5-bc8b-a2cc792ad0d6))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 322.58 63.5 0)
@@ -932,7 +986,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 618ed358-4d25-5da3-9926-6387aca8000d)
+    (uuid a982a58d-fadb-59f4-9fff-59602a128b71)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 322.58 63.5 0)
       (effects
@@ -946,7 +1000,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid bbedcbc7-13e2-5966-86dd-5af89d296cae))
+    (uuid 7bfcbbea-3caf-5ac1-b199-63c28e027dba))
   (global_label "+5V_LED_SHARP"
     (shape bidirectional)
     (at 337.82 63.5 180)
@@ -954,7 +1008,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 6aa1a4b7-d41d-54e6-94a3-703a721e51bf)
+    (uuid a4fef3f4-6175-5902-b47e-f1a1825ed972)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 337.82 63.5 0)
       (effects
@@ -968,8 +1022,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid bd78f08d-c856-59c9-b673-92588ad84cad)
-    (property "Reference" "SJ_SHARP"
+    (uuid bc0bccec-048e-5f87-aed4-f8fef7969fcf)
+    (property "Reference" "SJ_SHARP1"
       (at 330.2 57.404 0)
       (effects
         (font
@@ -985,14 +1039,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_SHARP"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid d97d2719-cac6-5033-b7a4-a04338436ce1))
+      (uuid 7e3255d1-bb9d-5b6d-a84b-7c763c4280f3))
     (pin "2"
-      (uuid f2f96637-ff1e-5ac9-89b1-5a50c7399a3a))
+      (uuid 210c3ab2-4314-5333-a355-8086b5774995))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_SHARP")
+          (reference "SJ_SHARP1")
           (unit 1)))))
   (wire
     (pts
@@ -1001,7 +1073,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d3e72859-513b-516f-b6d1-80575622fe9c))
+    (uuid 43f1bbe8-98c5-5f9e-ad79-29a4fd5983d3))
   (global_label "I2C_SDA_B_A"
     (shape bidirectional)
     (at 411.48 63.5 0)
@@ -1009,7 +1081,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 7d5ce349-e67d-5eb9-9826-380a635fcd42)
+    (uuid 6a6e3305-01c9-5fa9-8c03-b577cbbdb8ff)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 411.48 63.5 0)
       (effects
@@ -1023,7 +1095,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3cc89f1b-3509-552b-910d-07d5c6275e1a))
+    (uuid f831ebeb-4fa2-5331-991a-037b4c8860dd))
   (global_label "I2C_SDA_A_SER"
     (shape bidirectional)
     (at 426.72 63.5 180)
@@ -1031,7 +1103,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid b191ddc6-149b-5a8c-803f-6c200ae9026b)
+    (uuid 4251e7ad-6f76-5849-9284-3421b34d1d6f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 426.72 63.5 0)
       (effects
@@ -1045,8 +1117,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 13cb750c-a9e2-5256-b2c1-b0b1f01cd2c2)
-    (property "Reference" "SJ_SDA_A"
+    (uuid a096e73e-bf45-5fd1-a58e-c19053c00e29)
+    (property "Reference" "SJ_SDA_A1"
       (at 419.1 57.404 0)
       (effects
         (font
@@ -1062,14 +1134,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_SDA_A"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid b81ee8ff-7da6-589a-a79d-7e9b36050eac))
+      (uuid c1965fb7-5c59-5c6e-a6ce-53a0fbe21b36))
     (pin "2"
-      (uuid 8892490a-ea95-5db3-8d91-013446865e09))
+      (uuid d4ad308f-f177-5d18-829e-c9ba1cd66146))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_SDA_A")
+          (reference "SJ_SDA_A1")
           (unit 1)))))
   (wire
     (pts
@@ -1078,7 +1168,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 560ec06e-483d-5820-acc2-c1854b84c194))
+    (uuid 12ba3d1a-d243-5f52-85f5-317064b4ab63))
   (global_label "I2C_SCL_B_A"
     (shape bidirectional)
     (at 500.38 63.5 0)
@@ -1086,7 +1176,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid fc359d78-a025-5871-b85c-c31c28d58ab4)
+    (uuid b6893d37-572d-549b-844b-11e5e871faaa)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 500.38 63.5 0)
       (effects
@@ -1100,7 +1190,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 9d478838-b637-57f0-ba93-36e18f862e03))
+    (uuid d4c72503-d3c9-5f15-8e07-67bf2d3bd86c))
   (global_label "I2C_SCL_A_SER"
     (shape bidirectional)
     (at 515.62 63.5 180)
@@ -1108,7 +1198,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid e393c671-c4a4-5423-a165-8307c382b6ec)
+    (uuid 9b2e570c-5921-52c5-9601-60f6ee21c60e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 515.62 63.5 0)
       (effects
@@ -1122,8 +1212,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 0bdb2597-f254-5499-8a72-a9a92c6cfe48)
-    (property "Reference" "SJ_SCL_A"
+    (uuid 30c1465b-b10c-52a3-8f01-694442cf562a)
+    (property "Reference" "SJ_SCL_A1"
       (at 508 57.404 0)
       (effects
         (font
@@ -1139,14 +1229,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_SCL_A"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 192d2b67-1032-58e2-b475-4b54f3e5b9b0))
+      (uuid 64982aa3-289d-5f3f-97a0-270a7c213f2a))
     (pin "2"
-      (uuid 18b8ac57-666a-5193-bce4-a8386e64172a))
+      (uuid bb5bf387-0aea-5ac2-b7c9-7f8f5659568d))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_SCL_A")
+          (reference "SJ_SCL_A1")
           (unit 1)))))
   (wire
     (pts
@@ -1155,7 +1263,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 95d6a371-2298-5da4-a340-d8abd6d6c758))
+    (uuid c4d591d3-55af-5914-a74b-5553fc09eae7))
   (global_label "I2C_SDA_B_K"
     (shape bidirectional)
     (at 55.88 127 0)
@@ -1163,7 +1271,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 294d8b6f-ae1d-585f-89cf-ea7c14029264)
+    (uuid 296825d9-edb1-5da5-ae49-ac50b52cb28a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 127 0)
       (effects
@@ -1177,7 +1285,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid bbc693b9-4e0e-5db9-91db-934b610e9074))
+    (uuid cfcd80f4-a3b0-56de-b726-c61614d08dfc))
   (global_label "I2C_SDA_K_SER"
     (shape bidirectional)
     (at 71.12 127 180)
@@ -1185,7 +1293,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 766938fa-479f-59ab-990f-7ee87cb6327f)
+    (uuid 9f0d970d-66b9-5e0f-a6b1-741ede16d246)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 71.12 127 0)
       (effects
@@ -1199,8 +1307,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid cb067ab0-3956-5bff-8b03-90031568c5c9)
-    (property "Reference" "SJ_SDA_K"
+    (uuid 9e69970b-bddb-5904-8575-d122a1fdcb0a)
+    (property "Reference" "SJ_SDA_K1"
       (at 63.5 120.904 0)
       (effects
         (font
@@ -1216,14 +1324,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_SDA_K"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 54bd7767-f634-5217-93ec-7526a17533bd))
+      (uuid b97807d3-4a5e-58e3-af02-9443678c6c7a))
     (pin "2"
-      (uuid e6188008-533f-5761-8b61-a666f552fdce))
+      (uuid ddb7b525-9f7d-5104-9685-4106ecd45294))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_SDA_K")
+          (reference "SJ_SDA_K1")
           (unit 1)))))
   (wire
     (pts
@@ -1232,7 +1358,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7853edeb-c593-5628-99ae-27f68b8c7ace))
+    (uuid 5741c38f-ed06-5567-8885-23b6e0805a3b))
   (global_label "I2C_SCL_B_K"
     (shape bidirectional)
     (at 144.78 127 0)
@@ -1240,7 +1366,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a4ea0c70-d1a8-59c9-a02f-cfd9258ac9e4)
+    (uuid 1266e9dc-6dc5-57a5-b8a6-2594be03e913)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 127 0)
       (effects
@@ -1254,7 +1380,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ea5f5878-b41b-596c-a3bd-01af87f997e3))
+    (uuid e4490e0b-8938-52f0-a96a-5d6f08d8a628))
   (global_label "I2C_SCL_K_SER"
     (shape bidirectional)
     (at 160.02 127 180)
@@ -1262,7 +1388,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a4d95684-0cf2-5d31-9a4d-9f466570871c)
+    (uuid 16c26523-ca2c-541a-b8a6-3808c48135d6)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 160.02 127 0)
       (effects
@@ -1276,8 +1402,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 0678139a-eec5-5259-ad0e-36a1be2ca825)
-    (property "Reference" "SJ_SCL_K"
+    (uuid b62e5c10-e0e9-52d3-8ce1-4ae3cf76b527)
+    (property "Reference" "SJ_SCL_K1"
       (at 152.4 120.904 0)
       (effects
         (font
@@ -1293,14 +1419,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_SCL_K"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 80dae647-5108-52a4-93a8-cf270a119cd4))
+      (uuid e1a24df3-00e8-5bc6-8131-69661108b2f2))
     (pin "2"
-      (uuid 4a780fe5-9201-525a-8bc6-bad4c2870956))
+      (uuid 04d41630-22e4-5400-a4a9-3aa70572c9ff))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_SCL_K")
+          (reference "SJ_SCL_K1")
           (unit 1)))))
   (wire
     (pts
@@ -1309,7 +1453,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 30c22024-ce6f-5204-adf8-eb3af77267a3))
+    (uuid 2ea4b101-1063-5fca-be4d-3ec1917f3252))
   (global_label "LED_BUF_OUT"
     (shape bidirectional)
     (at 233.68 127 0)
@@ -1317,7 +1461,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 912fde62-4c2f-517c-8d32-e54eca775320)
+    (uuid 0c954d22-0d9c-5ab8-b7ae-d4c5583f21bb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 233.68 127 0)
       (effects
@@ -1331,7 +1475,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 13d1af0c-9059-5313-bc3c-a1a3fe4544d3))
+    (uuid 82e2b9a5-350d-50e6-8c7a-346005d2325c))
   (global_label "LED_DIN_5V"
     (shape bidirectional)
     (at 248.92 127 180)
@@ -1339,7 +1483,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 993157b7-a898-5d6e-9e6e-de3dabb0b9fc)
+    (uuid 7624625d-e85e-5587-8678-c401af41ea43)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 248.92 127 0)
       (effects
@@ -1353,8 +1497,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a8c16f30-cf02-5cad-8e28-0e7b11cd92ce)
-    (property "Reference" "SJ_LED_DATA"
+    (uuid 2c3bfece-8faf-527b-862b-a8f6a768de79)
+    (property "Reference" "SJ_LED_DATA1"
       (at 241.3 120.904 0)
       (effects
         (font
@@ -1370,14 +1514,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_LED_DATA"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c575d721-7365-5a23-b458-51095da68da5))
+      (uuid 4c313cc8-fae8-5426-9f29-07e2d3cb4b9f))
     (pin "2"
-      (uuid 82801878-9b1e-596f-9ccf-7c34c4f417e1))
+      (uuid 4e0c6fb5-df29-5401-b1c2-19d290d28b2f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "SJ_LED_DATA")
+          (reference "SJ_LED_DATA1")
           (unit 1)))))
   (wire
     (pts
@@ -1442,6 +1604,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SDA_22"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 330.2 127 0)
       (effects
         (font
@@ -1517,6 +1697,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_PU_SDA_47"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 79b3c8a6-9255-52cb-ba83-241207c71799))
     (pin "2"
@@ -1582,6 +1780,36 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_SDA_47"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23162"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4701T5E"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
       (at 508 127 0)
       (effects
         (font
@@ -1664,6 +1892,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_PU_SCL_22"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 214f8cff-213d-5a75-9aa6-3bcfd3c28b2c))
     (pin "2"
@@ -1729,6 +1975,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SCL_47"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 152.4 190.5 0)
       (effects
         (font
@@ -1804,6 +2068,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SCL_47"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23162"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4701T5E"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid ad927da0-6189-545c-8d66-b183c8fe7f25))
     (pin "2"
@@ -1869,6 +2163,36 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_IND_3V3"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22843"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1501T5E"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
       (at 330.2 190.5 0)
       (effects
         (font
@@ -1944,6 +2268,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_IND_3V3"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C2286"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "KT-0603R"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Hubei KENTO Elec"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 28a689b4-cc29-5053-bd42-142ae6d68456))
     (pin "2"
@@ -1960,7 +2314,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a4bf5fc2-57e5-5fe6-88de-57e044a4ff85))
+    (uuid adc0a256-472b-5f1a-b88d-d740d5cd2d4a))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 508 184.15 270)
@@ -1968,7 +2322,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f39b26bf-4924-5e5d-a444-6270f33d166c)
+    (uuid 196c30f6-9c61-57dc-bbbb-12796cb9059b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 184.15 0)
       (effects
@@ -1982,14 +2336,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f81b493e-b6bf-5597-960a-bbe00cd9de6d))
+    (uuid 493a1504-e527-5c82-8bc7-23672ceecd0b))
   (label "IND_3V3A_A"
     (at 508 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 30854e2c-8c01-5243-99af-bb7c45cf53c2))
+    (uuid 8c36ee4e-085f-57a3-b92b-b268295f1f5e))
   (symbol
     (lib_id "Device:R")
     (at 508 190.5 0)
@@ -1997,8 +2351,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 71665009-dc11-5a22-a1db-f7dab114873f)
-    (property "Reference" "R_IND_3V3A"
+    (uuid 9ce9dd40-2733-5f72-94d3-71498d61ba26)
+    (property "Reference" "R_IND_3V3A1"
       (at 508 168.91 0)
       (effects
         (font
@@ -2014,14 +2368,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_IND_3V3A"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22843"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1501T5E"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 123a532c-1d20-56a2-a677-51085a7c9866))
+      (uuid c3671cc6-1128-5fcd-912d-ca8be429a624))
     (pin "2"
-      (uuid b3588326-f379-5a44-8bb2-d7a2dcdb1075))
+      (uuid 0b8e7811-584c-5a09-b132-10025642c849))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_IND_3V3A")
+          (reference "R_IND_3V3A1")
           (unit 1)))))
   (wire
     (pts
@@ -2030,7 +2414,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0655249b-43d2-5abd-aad2-b666fc8dacc1))
+    (uuid 1e08ef38-ee64-5b1d-b3ce-54ceb25dde1a))
   (global_label "AGND"
     (shape bidirectional)
     (at 57.15 254 0)
@@ -2038,7 +2422,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid bd5dfaa2-eb11-553c-b499-5cfb58e1142b)
+    (uuid 76b7011f-f405-5901-ac70-974cb13f2bae)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 57.15 254 0)
       (effects
@@ -2052,14 +2436,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1121be7d-1763-5bb3-975c-8eef9244310e))
+    (uuid d2c97293-0a6b-5772-8040-8882b38d078c))
   (label "IND_3V3A_A"
     (at 69.85 254 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ba391d19-e71f-541f-b1b1-be4729ac1848))
+    (uuid 29b533af-1481-5baa-8f92-d7c12e0c6d39))
   (symbol
     (lib_id "Device:LED")
     (at 63.5 254 0)
@@ -2067,8 +2451,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid cf2a9cd2-2fe4-5f5f-ba94-7c3d06481106)
-    (property "Reference" "D_IND_3V3A"
+    (uuid 3675a744-317b-5c69-a77e-2838e04f1047)
+    (property "Reference" "D_IND_3V3A1"
       (at 63.5 247.65 0)
       (effects
         (font
@@ -2084,14 +2468,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_IND_3V3A"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C2286"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "KT-0603R"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Hubei KENTO Elec"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 41a92c0f-af5a-5803-9134-1afe1c626db0))
+      (uuid 7789f605-31f7-523b-9cc4-7f9aa6c7d92d))
     (pin "2"
-      (uuid 98059231-69e5-53fd-b9cc-88af23894aeb))
+      (uuid da1ff426-4198-59db-aa4b-b710797f88f2))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "D_IND_3V3A")
+          (reference "D_IND_3V3A1")
           (unit 1)))))
   (wire
     (pts
@@ -2100,7 +2514,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7f68c00b-7a9b-52d4-a3ad-f95d3c4dec6e))
+    (uuid 4ece85a7-cc13-5384-976f-4b5dcadaf746))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 152.4 247.65 270)
@@ -2108,7 +2522,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 5a8defb6-0506-5bee-949c-ba61bd1015e8)
+    (uuid 90aa896d-a97c-51a9-8aca-c7337ba907c7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 247.65 0)
       (effects
@@ -2122,14 +2536,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid cad5238d-d060-5b54-a7ab-c73ee548c79e))
+    (uuid 25e2f6e7-4638-527b-b955-19caedac47c2))
   (label "IND_5V_LED_A"
     (at 152.4 260.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8706ff06-ff8c-55b6-9bbf-cf53e5e3adbf))
+    (uuid b8174a60-1e51-5fb1-8554-a16d3fc53c5e))
   (symbol
     (lib_id "Device:R")
     (at 152.4 254 0)
@@ -2137,8 +2551,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 591d5e14-c32e-5f55-bdd1-4a387d361736)
-    (property "Reference" "R_IND_5V_LED"
+    (uuid 8cc574b3-a0e0-5c25-8d64-fc2000dbfca1)
+    (property "Reference" "R_IND_5V_LED1"
       (at 152.4 231.14 0)
       (effects
         (font
@@ -2154,14 +2568,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_IND_5V_LED"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22978"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF3301T5E"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid a40f1805-5e7e-568e-a49f-ecffa4ead68a))
+      (uuid a94a72fb-733e-5c7f-bac0-efabe13f8429))
     (pin "2"
-      (uuid 2e4da65e-ddaa-50d5-a9ef-e33abc4fa4cd))
+      (uuid e81d5747-967c-580a-ba64-162724a23045))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_IND_5V_LED")
+          (reference "R_IND_5V_LED1")
           (unit 1)))))
   (wire
     (pts
@@ -2170,7 +2614,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 452e2049-b04d-5680-9651-c0a639ef7607))
+    (uuid 2ad11dcd-3cdf-5ab4-bc0a-d85359b42a92))
   (global_label "GND"
     (shape bidirectional)
     (at 234.95 254 0)
@@ -2178,7 +2622,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 3affb267-c56f-5a68-b712-acb147e3be05)
+    (uuid bde7132a-028c-52da-bc45-09c6740a3aa8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 234.95 254 0)
       (effects
@@ -2192,14 +2636,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 175be2de-05bc-5a1f-82d2-f9fa84ba4c31))
+    (uuid cab9cd5c-4ff4-516b-a4c1-e0c1542020fd))
   (label "IND_5V_LED_A"
     (at 247.65 254 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 9f44cd8e-aedf-5f78-8b96-f4ad4b30723e))
+    (uuid b190a268-599b-568c-82fe-47e9d64c7296))
   (symbol
     (lib_id "Device:LED")
     (at 241.3 254 0)
@@ -2207,8 +2651,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 09ef162f-9737-5ec7-bb90-d3ce25030dbc)
-    (property "Reference" "D_IND_5V_LED"
+    (uuid ac653436-fbf4-5f07-928c-2924b85f4a8b)
+    (property "Reference" "D_IND_5V_LED1"
       (at 241.3 247.65 0)
       (effects
         (font
@@ -2224,14 +2668,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_IND_5V_LED"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C2286"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "KT-0603R"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Hubei KENTO Elec"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid cb9e6209-05a2-5879-89fc-2ed80c0d05fe))
+      (uuid 58eb208a-fd92-58e9-976b-bac1f6a7b13d))
     (pin "2"
-      (uuid 134b7bed-abf2-5c8a-b692-81f864bcc621))
+      (uuid 733dc612-5382-55da-babc-07ba5c57dee6))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "D_IND_5V_LED")
+          (reference "D_IND_5V_LED1")
           (unit 1)))))
   (wire
     (pts
@@ -2240,7 +2714,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1dfd66c4-57e7-5a1f-a1cc-6eab21739c51))
+    (uuid 0597046a-7c8d-57d7-94e5-5ed4294e619e))
   (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 330.2 256.54 90)
@@ -2248,7 +2722,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 967e6bc0-ada7-58d7-8984-9f6f237ebb44)
+    (uuid 7a65595f-f0c2-56b6-b278-cdd8c576f851)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 256.54 0)
       (effects
@@ -2262,8 +2736,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a45bdcba-41b8-56b1-8f7c-92403e92b588)
-    (property "Reference" "TP_5V_TEENSY"
+    (uuid 04ad5157-0ac8-531c-a46c-2df0a40cc56d)
+    (property "Reference" "TP_5V_TEENSY1"
       (at 330.2 244.856 0)
       (effects
         (font
@@ -2279,12 +2753,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_5V_TEENSY"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid e3e44704-38ba-51ca-8862-d399aba084b7))
+      (uuid eaa686a2-0243-5181-a0be-323e6c17e7f6))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_5V_TEENSY")
+          (reference "TP_5V_TEENSY1")
           (unit 1)))))
   (wire
     (pts
@@ -2293,7 +2785,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid df486d41-398b-56ea-ad71-ba5bc06090fd))
+    (uuid c333d3ef-836f-5f51-a08b-79702ad79dc6))
   (global_label "+5V_LED_RAW"
     (shape bidirectional)
     (at 419.1 256.54 90)
@@ -2301,7 +2793,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 5c659c72-cd68-5498-89e1-73cdcf803426)
+    (uuid 77c82c66-952b-57fd-947f-62546c884056)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 256.54 0)
       (effects
@@ -2315,8 +2807,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 5158b294-5476-557f-925a-5fb04638a53c)
-    (property "Reference" "TP_5V_RAW"
+    (uuid 96fdbc26-7f34-580b-a38b-b4c3561dfefa)
+    (property "Reference" "TP_5V_RAW1"
       (at 419.1 244.856 0)
       (effects
         (font
@@ -2332,12 +2824,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_5V_RAW"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 6eff5b7b-2222-5180-aa51-8c13eca910f9))
+      (uuid 7ba1ce9d-a9fc-5581-a8bd-d9bb3651ec45))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_5V_RAW")
+          (reference "TP_5V_RAW1")
           (unit 1)))))
   (wire
     (pts
@@ -2346,7 +2856,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid fb5d026f-2407-5186-a862-2de55e1c57e1))
+    (uuid e6751839-9f8e-5501-a536-d38fc0535d0b))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 508 256.54 90)
@@ -2354,7 +2864,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0306f2a5-b6b8-556a-8829-a73dcf1b6c10)
+    (uuid cab8c174-cf65-52fd-8581-31be3a7b648e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 256.54 0)
       (effects
@@ -2368,8 +2878,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid e9c99af8-cf71-514d-b496-f6dd9ba09cbf)
-    (property "Reference" "TP_5V_LED"
+    (uuid d3bbef9f-9d53-52c1-8675-1b44704592db)
+    (property "Reference" "TP_5V_LED1"
       (at 508 244.856 0)
       (effects
         (font
@@ -2385,12 +2895,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_5V_LED"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 3c0b8478-1542-59ce-b60e-97675c317081))
+      (uuid a8ea03a4-0a65-57d2-a2e7-20d5f6ba94d2))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_5V_LED")
+          (reference "TP_5V_LED1")
           (unit 1)))))
   (wire
     (pts
@@ -2438,6 +2966,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_3V3"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 90a88027-7ea4-5e1b-962e-d3014c0f9441))
     (instances
@@ -2452,7 +2998,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7caa02f9-c460-5403-a1cb-841bd9771b8e))
+    (uuid 16f5ece6-5425-59db-b0ed-17c5eadc4d03))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 152.4 320.04 90)
@@ -2460,7 +3006,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid bc18ec3b-75f6-5d22-a276-fa7a3c7b2816)
+    (uuid 82e34379-7f27-5a37-82b9-d01e6e04afe0)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 320.04 0)
       (effects
@@ -2474,8 +3020,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 59fe7caf-3ca3-5e57-ba0d-aa51a493e5f4)
-    (property "Reference" "TP_3V3A"
+    (uuid 00919d4c-9b10-5e8c-a8e6-45e4e8262399)
+    (property "Reference" "TP_3V3A1"
       (at 152.4 308.356 0)
       (effects
         (font
@@ -2491,12 +3037,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_3V3A"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 80bbe685-f87f-5fd1-aa33-d006b321ca70))
+      (uuid 2629e653-f96a-57bd-b30e-f2cd5a6398c3))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_3V3A")
+          (reference "TP_3V3A1")
           (unit 1)))))
   (wire
     (pts
@@ -2505,7 +3069,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 74896306-457b-5aa6-9e12-8786d164560a))
+    (uuid 17748b29-63ed-51e7-bb07-961c061e1992))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 241.3 320.04 90)
@@ -2513,7 +3077,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e4127a3a-6143-52ad-9f63-b0995dbd21e8)
+    (uuid 4328a7cc-e3cf-5c15-889a-c8f1a78fceac)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 320.04 0)
       (effects
@@ -2527,8 +3091,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 8a3e095f-8575-59a3-ae4a-f00e43379f12)
-    (property "Reference" "TP_FRONT"
+    (uuid 4bbca956-777e-55f0-9e27-8f28c4286183)
+    (property "Reference" "TP_FRONT1"
       (at 241.3 308.356 0)
       (effects
         (font
@@ -2544,12 +3108,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_FRONT"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 25fe9b07-2f45-5a8d-bc90-d9c1406df2e1))
+      (uuid 77c4538a-6149-5949-b9c0-b7369d8cfddb))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_FRONT")
+          (reference "TP_FRONT1")
           (unit 1)))))
   (wire
     (pts
@@ -2558,7 +3140,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 197b75e6-cd18-5766-96d7-21359d6cf24d))
+    (uuid 4835eff6-99db-56e8-a508-3e8c27ba7f3f))
   (global_label "+5V_CV"
     (shape bidirectional)
     (at 330.2 320.04 90)
@@ -2566,7 +3148,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e5b85c0f-80f7-585e-8993-edfa941382a4)
+    (uuid 578e4303-1d43-51ca-8bd7-9e4fd879943e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 320.04 0)
       (effects
@@ -2580,8 +3162,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 01c2f949-fb00-5741-bd11-44ebc7e4acb2)
-    (property "Reference" "TP_5V_CV"
+    (uuid 27dc8db8-cc00-5cfb-8901-36a753f7cf7b)
+    (property "Reference" "TP_5V_CV1"
       (at 330.2 308.356 0)
       (effects
         (font
@@ -2597,12 +3179,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_5V_CV"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 06bc6b04-a671-5dff-8607-b92ce7b1cf28))
+      (uuid e941d2f2-a6dd-54e2-82be-1b8435ff5469))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_5V_CV")
+          (reference "TP_5V_CV1")
           (unit 1)))))
   (wire
     (pts
@@ -2611,7 +3211,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8bbd5bd9-1111-5ca4-b6d5-36a871e056f3))
+    (uuid 9896816c-f347-539a-b052-299eca96a694))
   (global_label "AGND"
     (shape bidirectional)
     (at 419.1 320.04 90)
@@ -2619,7 +3219,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid de767f55-db98-58ff-9c05-c78171efa895)
+    (uuid 02ca991a-8eb1-5a48-98ab-8e333d9c2528)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 320.04 0)
       (effects
@@ -2633,8 +3233,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 5b5a3032-c360-53a7-a0f0-4222316592d7)
-    (property "Reference" "TP_AGND"
+    (uuid cc6c1320-8eeb-57e0-8ed9-71838dfbbda1)
+    (property "Reference" "TP_AGND1"
       (at 419.1 308.356 0)
       (effects
         (font
@@ -2650,12 +3250,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_AGND"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid e58ef95c-afc1-5f3e-9381-0c22ca1ad421))
+      (uuid 0054a777-17ec-543f-8de4-2ced93e3a41f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_AGND")
+          (reference "TP_AGND1")
           (unit 1)))))
   (wire
     (pts
@@ -2664,7 +3282,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b049d170-7ed4-528a-8517-8e12e33e3b27))
+    (uuid 828ef463-1965-5b59-8151-95abe81f5134))
   (global_label "GND"
     (shape bidirectional)
     (at 508 320.04 90)
@@ -2672,7 +3290,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 25c8339e-c691-59ff-af73-338272c773e6)
+    (uuid 69ff333c-026c-5c8b-806b-644e79704517)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 320.04 0)
       (effects
@@ -2686,8 +3304,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 6ef21823-108b-51a1-ac56-aefcc33ccb9d)
-    (property "Reference" "TP_GND"
+    (uuid 675a7a35-70f0-5c4c-a476-2aa16d612548)
+    (property "Reference" "TP_GND1"
       (at 508 308.356 0)
       (effects
         (font
@@ -2703,12 +3321,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_GND"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 5312ac40-7ccc-5ac8-bd5f-608ab710f119))
+      (uuid 0f98f3f5-df91-5767-81fb-fe602a00bc9b))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_GND")
+          (reference "TP_GND1")
           (unit 1)))))
   (wire
     (pts
@@ -2717,7 +3353,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b04ce084-2497-5fd4-b8af-1312463ba115))
+    (uuid f4ade2b8-f0dc-5510-841d-31e6b6a91416))
   (global_label "I2C_SDA"
     (shape bidirectional)
     (at 63.5 383.54 90)
@@ -2725,7 +3361,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 303d355d-c6ec-56b4-a3f8-58cf32d66286)
+    (uuid fef51e00-0d6a-5c26-8a25-188331accd14)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 383.54 0)
       (effects
@@ -2739,8 +3375,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid fdb65042-f1dd-52db-a987-2313dc85f345)
-    (property "Reference" "TP_SDA"
+    (uuid decff50c-1614-5361-9e74-c5f19c0f6886)
+    (property "Reference" "TP_SDA1"
       (at 63.5 371.856 0)
       (effects
         (font
@@ -2756,12 +3392,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SDA"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 19dc8dc3-18da-5564-bf91-4d48eee2b998))
+      (uuid 65928444-9ec7-59bc-92d1-0a7d2442c1b9))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_SDA")
+          (reference "TP_SDA1")
           (unit 1)))))
   (wire
     (pts
@@ -2770,7 +3424,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4311480f-fa6e-5dc8-b2df-5f06a26ee505))
+    (uuid a519848d-abd5-55a6-a2f9-7857336729a6))
   (global_label "I2C_SCL"
     (shape bidirectional)
     (at 152.4 383.54 90)
@@ -2778,7 +3432,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 4cc22aeb-0d14-5f44-8bdb-918a57e3673a)
+    (uuid f7b462f3-b312-563d-88e3-b06fe2ee25ff)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 383.54 0)
       (effects
@@ -2792,8 +3446,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 268d155a-ee70-565b-bf97-9cf40e374f83)
-    (property "Reference" "TP_SCL"
+    (uuid a91d9eec-10cd-5bb6-9a42-265b1dd2df01)
+    (property "Reference" "TP_SCL1"
       (at 152.4 371.856 0)
       (effects
         (font
@@ -2809,12 +3463,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SCL"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 360a940d-e4d1-5d09-8405-a4241db51040))
+      (uuid 64a1ce60-8861-5c04-8942-676e677db9da))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_SCL")
+          (reference "TP_SCL1")
           (unit 1)))))
   (wire
     (pts
@@ -2823,7 +3495,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 68e90568-2dbb-5fc8-bf3f-01fe5115ccee))
+    (uuid 7532c75f-6111-533d-aaeb-6808b8cee382))
   (global_label "LED_DIN_5V"
     (shape bidirectional)
     (at 241.3 383.54 90)
@@ -2831,7 +3503,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid eff59bfe-98b5-572f-bf1e-524b1967725e)
+    (uuid 41ffaccd-48ab-544f-8b35-45b8e87c683c)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 383.54 0)
       (effects
@@ -2845,8 +3517,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 3bd4f391-d6ed-53b7-a690-ad7978707486)
-    (property "Reference" "TP_LED_DIN"
+    (uuid 4eeb6987-c692-534f-8c06-2c0fe55fb2fc)
+    (property "Reference" "TP_LED_DIN1"
       (at 241.3 371.856 0)
       (effects
         (font
@@ -2862,12 +3534,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_LED_DIN"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 2e3c8c2d-0fa3-5738-859b-37bbb5e3dfff))
+      (uuid 9f79904c-90b6-50cf-b555-b10ca0925f4a))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_LED_DIN")
+          (reference "TP_LED_DIN1")
           (unit 1)))))
   (wire
     (pts
@@ -2910,6 +3600,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "TP_CV1"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 330.2 381 0)
       (effects
         (font
@@ -2968,6 +3676,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_CV2"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid b6f2806f-529b-5ff1-8d62-84e871cdb27c))
     (instances
@@ -2982,7 +3708,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 01e8a3db-874d-55ec-a6d2-3caf94c939f8))
+    (uuid e6aebfdf-0369-5033-8a63-4e1455e2d7f3))
   (global_label "CV1_PROTECTED"
     (shape bidirectional)
     (at 508 383.54 90)
@@ -2990,7 +3716,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 57fc4c45-216a-5ede-ab3a-bb80e7463714)
+    (uuid cca8e758-30be-5a02-907a-7540da3e91be)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 383.54 0)
       (effects
@@ -3004,8 +3730,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 54a85fb7-9dc2-5c25-91e3-029c0a69d3ef)
-    (property "Reference" "TP_CV1_JACK"
+    (uuid 63266a95-5e67-5e4c-b057-477ed6dcf715)
+    (property "Reference" "TP_CV1_JACK1"
       (at 508 371.856 0)
       (effects
         (font
@@ -3021,12 +3747,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_CV1_JACK"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid aebf92a7-100b-5306-a54a-62246095dae5))
+      (uuid 0086ba50-8991-50df-84d6-c3ff5671bb66))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_CV1_JACK")
+          (reference "TP_CV1_JACK1")
           (unit 1)))))
   (wire
     (pts
@@ -3035,7 +3779,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 11780887-1ecf-58bf-9039-c8daa60856bc))
+    (uuid 10aa551f-0eb3-5743-8e89-0c4f9e569596))
   (global_label "CV2_PROTECTED"
     (shape bidirectional)
     (at 63.5 447.04 90)
@@ -3043,7 +3787,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f9843af2-e462-5649-9841-a40ed973c169)
+    (uuid fba3cb7e-f96e-55f4-8439-ea3e033f2ee4)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 447.04 0)
       (effects
@@ -3057,8 +3801,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 1a6e209f-a6c7-5208-8366-5ccd79e98d28)
-    (property "Reference" "TP_CV2_JACK"
+    (uuid ec6d81e3-58d6-5245-8512-b30e1d5d0119)
+    (property "Reference" "TP_CV2_JACK1"
       (at 63.5 435.356 0)
       (effects
         (font
@@ -3074,12 +3818,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_CV2_JACK"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 0371c818-7572-55f6-abe2-27f65962c6d6))
+      (uuid 087dfbd1-008e-597d-b6f9-b357c2e21832))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "TP_CV2_JACK")
+          (reference "TP_CV2_JACK1")
           (unit 1)))))
   (wire
     (pts
@@ -3088,7 +3850,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1d35b500-b722-521a-8961-7fb5dcccdae5))
+    (uuid 20615d87-4be8-56b8-a245-e02ad8d13b51))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 152.4 438.15 270)
@@ -3096,7 +3858,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 51314544-187c-53a2-9500-e86c757ab20b)
+    (uuid bfb0c6f5-a1d5-5d33-99d3-4c66ca1c511a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 438.15 0)
       (effects
@@ -3110,7 +3872,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8d91f3bd-ca94-589d-9566-05752b78eff0))
+    (uuid caaced7e-df96-5c1c-91f6-3c5b2d152e65))
   (global_label "VREF"
     (shape bidirectional)
     (at 152.4 450.85 90)
@@ -3118,7 +3880,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 31d2fba2-000d-5f50-a17c-670ccb8cb0b5)
+    (uuid dd67e5d6-97dc-5313-8644-f1c0942fe2b1)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 450.85 0)
       (effects
@@ -3132,8 +3894,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp yes)
-    (uuid 3caf0823-6701-590d-a515-0c2fef60bc60)
-    (property "Reference" "R_OPT_BIAS_L"
+    (uuid 48f1fe97-942c-5fa2-b6a9-6d1bee32f771)
+    (property "Reference" "R_OPT_BIAS_L1"
       (at 152.4 422.91 0)
       (effects
         (font
@@ -3149,14 +3911,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_OPT_BIAS_L"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f7d77d8e-73b6-50ef-8a48-c9f87a86718e))
+      (uuid 3fd86642-22b6-51d6-ae30-ea6183437861))
     (pin "2"
-      (uuid fb62d868-5207-59e0-801b-68fc94cf6730))
+      (uuid b0abb696-9892-5af2-8024-d9232ed8ee5f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_OPT_BIAS_L")
+          (reference "R_OPT_BIAS_L1")
           (unit 1)))))
   (wire
     (pts
@@ -3165,7 +3939,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f4083bd6-201d-5043-91d4-d91c1688281b))
+    (uuid 0fa83146-8f82-5f85-a060-b82aff710f37))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 241.3 438.15 270)
@@ -3173,7 +3947,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 8e53d750-c0c5-526d-b28c-a4b86ac905fb)
+    (uuid 1c07f0ce-d6bf-5c17-a827-10222e5b029d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 438.15 0)
       (effects
@@ -3187,7 +3961,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 128cb340-f124-5b23-9a97-4466a1431aef))
+    (uuid 18e7f0dc-ca83-5197-b6f0-1473afceacfc))
   (global_label "VREF"
     (shape bidirectional)
     (at 241.3 450.85 90)
@@ -3195,7 +3969,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 82ebaac6-e428-5649-b9df-2f52c08c94e7)
+    (uuid b7d49567-5794-5662-883c-8b858bada0e2)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 450.85 0)
       (effects
@@ -3209,8 +3983,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp yes)
-    (uuid 3b873cd1-da2d-5876-8b2d-fa1d8e5805d3)
-    (property "Reference" "R_OPT_BIAS_R"
+    (uuid 45cd143a-c26f-57e4-9d62-f12752d76f44)
+    (property "Reference" "R_OPT_BIAS_R1"
       (at 241.3 422.91 0)
       (effects
         (font
@@ -3226,14 +4000,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_OPT_BIAS_R"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f1290ef0-3de5-5554-aaa2-413bcfa48dff))
+      (uuid 16e8ee23-8695-5f49-a475-3dd724a6d322))
     (pin "2"
-      (uuid a8c43ca1-bad7-5d99-9188-abb0073f984f))
+      (uuid 075b8ec8-d853-5376-abaf-0018f91273d1))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_OPT_BIAS_R")
+          (reference "R_OPT_BIAS_R1")
           (unit 1)))))
   (wire
     (pts
@@ -3242,7 +4028,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1b3d0c83-b867-5f7d-973b-4f83476306a3))
+    (uuid 37b8a336-cb10-559c-8e8f-75eef54aea91))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 330.2 438.15 270)
@@ -3250,7 +4036,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 1d367b53-b1d9-5b1c-8d80-6bf50847041a)
+    (uuid 292e7feb-a587-5f89-9ae9-e43475e2443d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 438.15 0)
       (effects
@@ -3264,7 +4050,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c4d3719f-4147-5ced-a5e0-65f170ca80ba))
+    (uuid 4144e0a3-b2b9-5b18-ac76-898684aaf63a))
   (global_label "MIDI_RX"
     (shape bidirectional)
     (at 330.2 450.85 90)
@@ -3272,7 +4058,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 61eeddbf-a825-541f-bddd-ce2615a0e101)
+    (uuid a2df5bba-1640-5d59-bbb2-bea2712afb21)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 450.85 0)
       (effects
@@ -3286,8 +4072,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid f08c0f25-d285-54be-a19a-2524b9706357)
-    (property "Reference" "R_OPT_MIDI_RX"
+    (uuid b9deb266-07b2-5e15-bc2d-9a529461a9c8)
+    (property "Reference" "R_OPT_MIDI_RX1"
       (at 330.2 424.18 0)
       (effects
         (font
@@ -3303,14 +4089,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_OPT_MIDI_RX"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid ae0e7ed6-ace9-57f2-b56d-76f0ce3291b3))
+      (uuid 7c529b03-9a04-5341-9553-ac933184ea58))
     (pin "2"
-      (uuid 7608d08e-1eef-5dbe-af0d-d16cea96532a))
+      (uuid a3599170-c1a2-57b9-ac30-2caccf8427eb))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_OPT_MIDI_RX")
+          (reference "R_OPT_MIDI_RX1")
           (unit 1)))))
   (wire
     (pts
@@ -3319,7 +4117,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a072fa0d-c46e-512e-8880-a8c33fe9715e))
+    (uuid e564d44b-f8ef-55de-a3d4-ef790f02f882))
   (global_label "MIDI_OPTO_BASE"
     (shape bidirectional)
     (at 419.1 438.15 270)
@@ -3327,7 +4125,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 0f4b07f0-0445-58d8-82f3-7d239f54eccc)
+    (uuid af6fcadd-dd9f-5fc5-ab38-e7bc7b2cc263)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 438.15 0)
       (effects
@@ -3341,7 +4139,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7a4b8916-e05a-54cb-b1e3-2fcce171b427))
+    (uuid eade1b73-113c-587c-8223-efd40d68fbcb))
   (global_label "GND"
     (shape bidirectional)
     (at 419.1 450.85 90)
@@ -3349,7 +4147,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 6a6d1f55-86d3-5a2e-95fe-47a9d44f7aad)
+    (uuid 45eb3734-a6e1-5706-a7ce-6d0f0dc03f34)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 450.85 0)
       (effects
@@ -3363,8 +4161,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 9cc00c64-627c-54de-b8b5-82ab0da3a5fb)
-    (property "Reference" "R_OPT_MIDI_BASE"
+    (uuid 7935f7db-3027-5e47-95ee-7540e11b61d6)
+    (property "Reference" "R_OPT_MIDI_BASE1"
       (at 419.1 412.75 0)
       (effects
         (font
@@ -3380,14 +4178,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_OPT_MIDI_BASE"
+      (at 419.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 285fbd72-0dc1-5ab8-aa16-c16a2532ec4c))
+      (uuid e81d2a0f-81a1-5c81-8bb5-82491d2a9e3b))
     (pin "2"
-      (uuid 2870cb22-0e1e-54f7-8b84-bc72f7eec247))
+      (uuid 83041e44-13f7-5ec3-b460-578be4ff51d0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/2254eb97-ccb1-557b-b047-c25ba62a2b25"
-          (reference "R_OPT_MIDI_BASE")
+          (reference "R_OPT_MIDI_BASE1")
           (unit 1)))))
   (wire
     (pts

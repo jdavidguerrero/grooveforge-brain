@@ -413,6 +413,334 @@
             (effects
               (font
                 (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:D_TVS"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "D_TVS"
+        (at 0 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Bidirectional transient-voltage-suppression diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "diode TVS thyrector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "D_TVS_0_1"
+        (polyline
+          (pts
+            (xy -2.54 1.27)
+            (xy -2.54 -1.27)
+            (xy 2.54 1.27)
+            (xy 2.54 -1.27)
+            (xy -2.54 1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.508 1.27)
+            (xy 0 1.27)
+            (xy 0 -1.27)
+            (xy -0.508 -1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "D_TVS_1_1"
+        (pin passive line
+          (at -3.81 0 0)
+          (length 2.54)
+          (name "A1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 3.81 0 180)
+          (length 2.54)
+          (name "A2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
       (embedded_fonts no)))
   (wire
     (pts
@@ -421,7 +749,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b22585a9-6bfe-510f-8368-577a03984df4))
+    (uuid 66f56eed-2212-554f-bc27-fd1e339caf44))
   (global_label "LINE_IN_L_T"
     (shape bidirectional)
     (at 55.88 60.96 0)
@@ -429,7 +757,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 434247e3-a851-5ab6-b333-5e464af5dfae)
+    (uuid 66ad6682-6aae-5f45-b993-8ff98f101f1d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 60.96 0)
       (effects
@@ -443,14 +771,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1077d385-92f4-5f64-9690-3b663ec20224))
+    (uuid d74ea8e8-d33f-5aa8-8544-1d491ff6dad4))
   (label "LINE_IN_L_R"
     (at 55.88 63.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ff14808c-4386-529f-be6a-6ed57de2cc91))
+    (uuid f36bd003-57e4-59bf-b6d6-de024b1a6a9b))
   (wire
     (pts
       (xy 58.42 66.04)
@@ -458,7 +786,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b0d6fd98-d267-5424-b678-dd027fbd1b2c))
+    (uuid e96c48f7-2fb0-573a-b62a-ea7cfba6db57))
   (global_label "AGND"
     (shape bidirectional)
     (at 55.88 66.04 0)
@@ -466,7 +794,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1aadcbeb-26e0-5ad6-abfa-9ccd8f9d4a40)
+    (uuid ce8ca4cc-9e3f-5ecd-b38a-3c8e480e3120)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 66.04 0)
       (effects
@@ -480,8 +808,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 82111aa2-f369-5da9-ba35-5349233a1ad8)
-    (property "Reference" "J_LINE_IN_L"
+    (uuid 2ae7da72-9c19-5b39-9991-2b8280e5a8d0)
+    (property "Reference" "J_LINE_IN_L1"
       (at 63.5 54.61 0)
       (effects
         (font
@@ -497,16 +825,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_LINE_IN_L"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 8e17f7db-784a-5395-b9d4-56758c4ddb91))
+      (uuid 88c5cf3e-5089-5e8f-89cc-6b2494b18952))
     (pin "2"
-      (uuid f7504cc8-e06d-5bb9-bdfc-797f4bd828c7))
+      (uuid eff88e0b-311d-5bad-b46e-139f413d5045))
     (pin "3"
-      (uuid 0b696381-f2a6-582f-82cc-8680a1b0ab43))
+      (uuid aa15848a-a1ec-5e73-a8d0-e1c396cb5c96))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_LINE_IN_L")
+          (reference "J_LINE_IN_L1")
           (unit 1)))))
   (wire
     (pts
@@ -515,7 +873,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 950b3992-a5cc-59af-8195-b8d947ed30e1))
+    (uuid 1d1b4f2f-1675-56ca-b3c1-668ae6ac3025))
   (global_label "LINE_OUT_L_T"
     (shape bidirectional)
     (at 144.78 60.96 0)
@@ -523,7 +881,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 85ddec31-14b6-5616-b8b1-ceef29b21632)
+    (uuid 7c887e8f-7327-54c4-9aa6-25e3c2011719)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 60.96 0)
       (effects
@@ -532,7 +890,7 @@
         (hide yes))))
   (no_connect
     (at 147.32 63.5)
-    (uuid 3de0e061-3f2d-571c-9671-dbca6ebcc178))
+    (uuid 40fa82d0-b5d0-5847-8eef-b4621c98be20))
   (wire
     (pts
       (xy 147.32 66.04)
@@ -540,7 +898,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c3cfc6f2-e9dd-561a-9380-3e8091ce6027))
+    (uuid fc983804-4e96-5674-887e-48d569f23647))
   (global_label "AGND"
     (shape bidirectional)
     (at 144.78 66.04 0)
@@ -548,7 +906,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8a0de1ec-4844-5ed2-8500-ce409ef08f06)
+    (uuid 536e2ced-df17-59e4-a207-d7c8dc57ea94)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 66.04 0)
       (effects
@@ -562,8 +920,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid e3233003-ab86-5345-95fe-39b94062da80)
-    (property "Reference" "J_LINE_OUT_L"
+    (uuid f7c71529-52b6-5f49-bf06-07462b43ef3c)
+    (property "Reference" "J_LINE_OUT_L1"
       (at 152.4 54.61 0)
       (effects
         (font
@@ -579,16 +937,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_LINE_OUT_L"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c05ec22f-5c92-5f5e-b034-48ba749b3a15))
+      (uuid 21027317-3374-5c23-8b78-1453d91c4b24))
     (pin "2"
-      (uuid 2d4e8ee2-a13a-542a-8c0d-f88097d75876))
+      (uuid 3e2b5cf8-5125-5d33-9f83-6aa4c640c3f1))
     (pin "3"
-      (uuid fd4abd29-a3ce-5802-a991-a671f518b61a))
+      (uuid 3bbf94e4-5fbb-5105-95f7-2699187cd6de))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_LINE_OUT_L")
+          (reference "J_LINE_OUT_L1")
           (unit 1)))))
   (wire
     (pts
@@ -658,6 +1046,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_CV1"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 4807d5ce-ed50-58f2-9cfb-dfe84340d09e))
     (pin "2"
@@ -674,7 +1092,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 63f5533a-0c15-5688-9bc5-ab44dc2ca49f))
+    (uuid c2f4a136-36e0-5670-a567-f0ad8d29a4e7))
   (global_label "LINE_IN_R_T"
     (shape bidirectional)
     (at 55.88 124.46 0)
@@ -682,7 +1100,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8b851d50-d7ee-5907-b12a-96b8cf1e408f)
+    (uuid af9f39b3-b133-5e0c-8e8d-87925badd221)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 124.46 0)
       (effects
@@ -696,14 +1114,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1e7dc3e5-4a57-5cf0-a7ba-50e51ce19187))
+    (uuid 09c1553a-8334-5e95-8118-70f9f8f2e06b))
   (label "LINE_IN_R_R"
     (at 55.88 127 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid eaf218a1-365e-5c73-bdf2-22c5985401f6))
+    (uuid 5f38c2b5-56df-5a46-b95c-06cb9d850a3f))
   (wire
     (pts
       (xy 58.42 129.54)
@@ -711,7 +1129,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a6ee9317-1a32-5217-89c6-cd9664ebecbd))
+    (uuid 9cd1ecff-61a6-565e-8418-fe3eae7c5a7e))
   (global_label "AGND"
     (shape bidirectional)
     (at 55.88 129.54 0)
@@ -719,7 +1137,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a05a6b2a-b9ac-5d4b-8042-7757ae5316ff)
+    (uuid 247d1541-aea8-5e6b-a31a-2bbcae60f60b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 129.54 0)
       (effects
@@ -733,8 +1151,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid b2cd6f77-4a84-5253-8725-0926bd32ca88)
-    (property "Reference" "J_LINE_IN_R"
+    (uuid c2556f6b-4ece-515a-ae07-43bb04fc7830)
+    (property "Reference" "J_LINE_IN_R1"
       (at 63.5 118.11 0)
       (effects
         (font
@@ -750,16 +1168,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_LINE_IN_R"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 4cb3638e-290f-5b39-9b8f-291540771ab7))
+      (uuid 2533867a-43ba-5259-b576-280564969342))
     (pin "2"
-      (uuid 75808b98-d526-5d52-95d4-3c81d38b7d57))
+      (uuid 3215cb59-b02b-58bc-95f5-43623e927777))
     (pin "3"
-      (uuid 225410ff-91fe-59b6-855c-ff7ab0d3dc5c))
+      (uuid 3ce93cd2-6da5-52e4-85ac-97919e00f9d0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_LINE_IN_R")
+          (reference "J_LINE_IN_R1")
           (unit 1)))))
   (wire
     (pts
@@ -768,7 +1216,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f6949fdb-16ca-533f-a49e-06444a4c85f4))
+    (uuid 6db71730-9752-5ce9-b7e5-8e94b75f925e))
   (global_label "LINE_OUT_R_T"
     (shape bidirectional)
     (at 144.78 124.46 0)
@@ -776,7 +1224,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 26fd6efc-413b-5d6d-8ce7-714e86359d01)
+    (uuid eb54b0f5-79e5-5e81-98eb-97343de001f6)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 124.46 0)
       (effects
@@ -785,7 +1233,7 @@
         (hide yes))))
   (no_connect
     (at 147.32 127)
-    (uuid f8f2a02a-f760-5a82-a4d4-b2991b560011))
+    (uuid 93daf5eb-7bac-56a7-83a1-b7286a12614f))
   (wire
     (pts
       (xy 147.32 129.54)
@@ -793,7 +1241,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dbfd5c6f-1d89-50ab-b8c2-44e7b343e9a0))
+    (uuid 18428e4e-33a9-528a-be90-d49a22f45100))
   (global_label "AGND"
     (shape bidirectional)
     (at 144.78 129.54 0)
@@ -801,7 +1249,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 9dc7de10-4618-57ff-9c57-f9c747ae944d)
+    (uuid 4146fc53-a180-5dfe-aa9c-2ace7a1af7c1)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 129.54 0)
       (effects
@@ -815,8 +1263,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid d2366166-6ba0-58bb-9158-3931aeb766a8)
-    (property "Reference" "J_LINE_OUT_R"
+    (uuid cddb9b2a-6995-55aa-9559-cd3ecba7e7b3)
+    (property "Reference" "J_LINE_OUT_R1"
       (at 152.4 118.11 0)
       (effects
         (font
@@ -832,16 +1280,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_LINE_OUT_R"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 5610e32c-4484-51b7-897a-3af9d462b4f8))
+      (uuid dfe0ce87-ca5a-59d7-82a2-e757664ad4e5))
     (pin "2"
-      (uuid be6cb415-5201-5e98-8ae6-a3f970d945f0))
+      (uuid 3c644617-5e87-54b1-a56c-1d31f19f7c72))
     (pin "3"
-      (uuid a1996ab5-778e-58e8-bf91-ce3bfa9d6ce1))
+      (uuid b3038470-a979-5557-bcad-6eaaa64f00c4))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_LINE_OUT_R")
+          (reference "J_LINE_OUT_R1")
           (unit 1)))))
   (wire
     (pts
@@ -911,6 +1389,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_CV2"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 7fedbadb-a073-5ac8-a609-6e72e9f73ac7))
     (pin "2"
@@ -927,24 +1435,17 @@
     (stroke
       (width 0)
       (type default))
-    (uuid df2d05c9-227d-588d-9098-d164ce0da768))
-  (global_label "PEDAL_BTN"
-    (shape bidirectional)
+    (uuid f1ee512a-f4ce-5eb1-862f-1727ccae436d))
+  (label "PEDAL_RAW"
     (at 144.78 187.96 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ae402ddc-fa0c-5fd8-9c3c-4d705f40e8e3)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 144.78 187.96 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+    (uuid 45acda3e-cb89-5d14-8b09-45879945a07a))
   (no_connect
     (at 147.32 190.5)
-    (uuid 590124ea-86bb-5b1e-91b6-9b4951f8edfe))
+    (uuid 8cce0e6e-bea2-51a6-b7cd-306dd4f5dbc2))
   (wire
     (pts
       (xy 147.32 193.04)
@@ -952,7 +1453,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c298440a-ef02-5fb5-acb3-5da3ddc0bcb0))
+    (uuid 8487a841-8698-550a-bd37-8e16e00f081b))
   (global_label "GND"
     (shape bidirectional)
     (at 144.78 193.04 0)
@@ -960,7 +1461,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 29275296-a966-5563-b720-5e04d244f07c)
+    (uuid 65f219a9-eb40-510d-ab3e-04b8be1535d7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 144.78 193.04 0)
       (effects
@@ -974,8 +1475,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 218fc2d9-244b-5b12-b267-dc626991ef84)
-    (property "Reference" "J_PEDAL"
+    (uuid 7bddf98c-b794-5668-ac1a-4e61acfa9005)
+    (property "Reference" "J_PEDAL1"
       (at 152.4 181.61 0)
       (effects
         (font
@@ -991,32 +1492,483 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_PEDAL"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 913148ca-455d-56a4-9d64-988dd8510c9b))
+      (uuid 19dd8e9c-285e-5888-9203-e825163f76c2))
     (pin "2"
-      (uuid 9f826663-6f78-5414-8df7-7a56900c7491))
+      (uuid bc0c5089-2f61-5de7-a125-67a8ed20844c))
     (pin "3"
-      (uuid 1c2bf0ff-1448-52d7-9b61-59ab1b29bc7c))
+      (uuid 158a46b5-615a-55c1-9ec3-46782bbf4c46))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_PEDAL")
+          (reference "J_PEDAL1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 250.19)
+      (xy 63.5 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7efd941a-cf47-5592-a13c-7578304c8252))
+  (label "PEDAL_RAW"
+    (at 63.5 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1577d7e1-5396-53e6-9e08-0940bcb8beaf))
+  (wire
+    (pts
+      (xy 63.5 257.81)
+      (xy 63.5 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 20b25e6d-85f7-5651-9725-0650223e71b7))
+  (global_label "PEDAL_BTN"
+    (shape bidirectional)
+    (at 63.5 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 735bd2ba-5770-52e9-b9cd-82e73055593c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 53d92a6e-8921-5743-9914-466e5305a538)
+    (property "Reference" "R_PEDAL_SER1"
+      (at 63.5 228.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 63.5 231.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PEDAL_SER"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid e125c158-da9a-5725-a3c5-55aa9fc8ba78))
+    (pin "2"
+      (uuid efb0f996-e664-50d6-8854-0c3f392506c8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_PEDAL_SER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 250.19)
+      (xy 152.4 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1cfa32a0-1917-5404-a81b-daab2e4d35d3))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 152.4 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 66e530ab-8e7a-50e3-98cc-b872195f6734)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 257.81)
+      (xy 152.4 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1e86a51c-4cb1-5166-a403-69721b7a96ca))
+  (global_label "PEDAL_BTN"
+    (shape bidirectional)
+    (at 152.4 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d6d11b87-dbce-5c7c-b7f5-0e09222ecc73)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 9169e9e1-176a-5b48-a348-a47e353883fc)
+    (property "Reference" "R_PEDAL_PU1"
+      (at 152.4 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 152.4 236.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PEDAL_PU"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid eaf300de-0d38-59d1-9b72-4eee748d15ee))
+    (pin "2"
+      (uuid eaa3dd64-995d-57df-a402-f5faf703c203))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_PEDAL_PU1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 250.19)
+      (xy 241.3 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9f300d0d-50c8-504d-88e1-e4af338e7e91))
+  (global_label "PEDAL_BTN"
+    (shape bidirectional)
+    (at 241.3 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid fdd46b82-7714-559f-b574-c5e4b4d81cdd)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 257.81)
+      (xy 241.3 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9078b0ce-d63c-52cd-8097-7d4aa5762b9c))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 19781fdb-3d14-5003-bb62-e7ab0eee5e61)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 1f5ddb81-9d09-58d0-997a-7505ac07a9fe)
+    (property "Reference" "C_PEDAL1"
+      (at 241.3 228.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10nF"
+      (at 241.3 231.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_PEDAL"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1710"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21B103KBANNNC"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ce3e9456-e321-5c17-945e-65018a30f756))
+    (pin "2"
+      (uuid 91577ab4-6a4e-526c-9d0f-e690985fb11e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "C_PEDAL1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 326.39 254)
+      (xy 323.85 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9f1a466a-2486-50bd-bc22-8ce0a85fc6d4))
+  (global_label "PEDAL_BTN"
+    (shape bidirectional)
+    (at 323.85 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a66c4147-758d-508e-954e-f54cee8a8c15)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 323.85 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 334.01 254)
+      (xy 336.55 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9961a377-2ae8-577a-b419-1a6c69948050))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 336.55 254 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b43f7123-498f-53f6-a061-df222b2e0a23)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 336.55 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:D_TVS")
+    (at 330.2 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b38740f7-0e12-5798-b65f-b865ff21872e)
+    (property "Reference" "D_PEDAL_ESD1"
+      (at 330.2 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PESD3V3U1UL,315"
+      (at 330.2 250.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Diode_SMD:D_SOD-882"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_PEDAL_ESD"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C552530"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "PESD3V3U1UL,315"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "DFN1006-2(SOD-882)"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid eb844824-8d14-54b9-97c7-d87e9095461a))
+    (pin "2"
+      (uuid 6f1d1f9b-2b36-5e22-ab93-78a5e0186654))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "D_PEDAL_ESD1")
           (unit 1)))))
   (no_connect
     (at 236.22 185.42)
-    (uuid 5e4147ca-f185-540b-bea2-f907f03f13a8))
+    (uuid de268eae-8b4b-54ea-bfe2-12411408f40b))
   (no_connect
     (at 236.22 187.96)
-    (uuid bbc727f9-641f-5a8f-a36b-023fc691f91f))
+    (uuid 003ca436-162b-5d88-95da-9b81f1d9758f))
   (no_connect
     (at 236.22 190.5)
-    (uuid 85feb938-3172-59f9-ab46-40d47fa5f237))
+    (uuid 426553e4-518d-5558-b2b9-1d3f810f7792))
   (no_connect
     (at 236.22 193.04)
-    (uuid 643b42c9-4717-59b0-ba0d-d339ff37868a))
+    (uuid 55316027-93b4-5b43-a8c1-9f5c33ca98e0))
   (no_connect
     (at 236.22 195.58)
-    (uuid d8fa9890-b900-5b15-b1f9-d924445d4153))
+    (uuid a211fde1-a85c-5a2c-a23b-e7d4dcf81d7b))
   (symbol
     (lib_id "Connector_Generic:Conn_01x05")
     (at 241.3 190.5 0)
@@ -1024,8 +1976,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp yes)
-    (uuid b332ed53-bdda-5547-a2d3-de712cefff21)
-    (property "Reference" "J_EDRUM"
+    (uuid ef8e3ba5-4fda-5cd8-ae9d-e9628bc75cae)
+    (property "Reference" "J_EDRUM1"
       (at 241.3 179.07 0)
       (effects
         (font
@@ -1041,20 +1993,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_EDRUM"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 0ea8e75b-948f-5e68-a6ee-189581cf8b70))
+      (uuid 021ffc49-a464-5426-a352-e4353a2ad037))
     (pin "2"
-      (uuid ea770b00-03c2-5240-ab05-d9ac9eb0d37a))
+      (uuid c067fa41-6d6c-50a4-b510-993075907576))
     (pin "3"
-      (uuid 7c58ace4-9080-53dd-b4cc-20ac2fe4175c))
+      (uuid 2e31f264-065d-59a5-879b-83025f06a1a5))
     (pin "4"
-      (uuid bf8f9b94-db0f-5021-bc5d-4a55aa79e8d0))
+      (uuid 97aad784-1397-52f1-ba82-efa43e0ba2c1))
     (pin "5"
-      (uuid 65c398f1-c852-5913-ae7f-7dcc312339e6))
+      (uuid eff05647-26f5-5322-95bd-1694ad1e26ff))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_EDRUM")
+          (reference "J_EDRUM1")
           (unit 1)))))
   (text "D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack."
     (at 15.24 20.32 0)

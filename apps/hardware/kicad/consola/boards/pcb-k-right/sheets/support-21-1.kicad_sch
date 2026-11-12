@@ -372,6 +372,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "0805W8F1002T5E"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 8b3b0fe7-77a2-5e5f-812a-ab212a7a9e0d))
     (pin "2"
@@ -450,6 +468,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C49678"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 190.5 63.5 0)
       (effects
         (font
@@ -538,6 +574,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "FCC0805B105K500FT"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "FOJAN"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 56728256-4fbe-5aaa-b63b-9ee68262db3a))
     (pin "2"
@@ -588,6 +642,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 76.2 114.3 0)
       (effects
         (font
@@ -646,6 +712,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 83b491ec-af55-5a9a-9e3d-380c1d6881e2))
     (instances
@@ -694,6 +772,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 304.8 114.3 0)
       (effects
         (font
@@ -752,6 +842,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 89f87781-e4a9-5644-85fa-bc121e1bec18))
     (instances
@@ -800,6 +902,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 190.5 165.1 0)
       (effects
         (font
@@ -858,6 +972,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 12c6e898-e48b-5a4f-87b9-14d323441945))
     (instances
@@ -906,6 +1032,18 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 76.2 215.9 0)
       (effects
         (font

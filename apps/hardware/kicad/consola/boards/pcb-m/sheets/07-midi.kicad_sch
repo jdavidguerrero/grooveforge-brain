@@ -851,7 +851,7 @@
       (embedded_fonts no)))
   (no_connect
     (at 147.32 58.42)
-    (uuid 9d604ec7-49db-54b5-8e03-4bcca694fe2c))
+    (uuid 9343d301-b22b-55aa-aa15-b427cf718086))
   (wire
     (pts
       (xy 144.78 60.96)
@@ -859,14 +859,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6765e720-f47e-576a-a1cf-f2ceb3a3e9a2))
+    (uuid 324b9dab-fae5-53b5-b9af-300057e9b9b1))
   (label "MIDI_OPTO_A"
     (at 142.24 60.96 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1bab5bda-408b-52b6-a5ac-a7cb4b5f6eca))
+    (uuid 2e5ac9b9-e0fe-55c0-8b62-05d3c170aef1))
   (wire
     (pts
       (xy 144.78 66.04)
@@ -874,17 +874,17 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ea7dd2e6-a1ca-5b31-b883-dc44ea3abb1f))
+    (uuid 5ffc1cb9-ba04-573c-aa59-f64a67c2287f))
   (label "MIDI_IN_TIP"
     (at 142.24 66.04 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 37603873-10c9-5a68-8035-9878b37d22a3))
+    (uuid 6f9a908c-b2f9-545e-955a-d291f8653d98))
   (no_connect
     (at 147.32 68.58)
-    (uuid f4908045-fea7-5a2f-842b-1ac9441cc6fd))
+    (uuid 8e6eac51-7d7e-5756-92a2-4fe962f88e7f))
   (wire
     (pts
       (xy 160.02 68.58)
@@ -892,7 +892,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 81683b8f-ee03-56f0-bdf9-f1301762d3fd))
+    (uuid cd6e1635-08a6-5353-b218-6a1f600157d9))
   (global_label "GND"
     (shape bidirectional)
     (at 162.56 68.58 180)
@@ -900,7 +900,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f41e969b-be49-573f-91af-100d3fcfdc0b)
+    (uuid b536e3e7-2575-5936-83ba-bb3c479f72c5)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 68.58 0)
       (effects
@@ -914,7 +914,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 373c4f9c-d814-5ab9-967f-4b41e5d3fde0))
+    (uuid 1ce86ac7-82a7-5c95-9d70-c1479a7fdb7a))
   (global_label "MIDI_RX"
     (shape bidirectional)
     (at 162.56 66.04 180)
@@ -922,7 +922,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid da053743-c302-5b08-9c04-63d42c8c3810)
+    (uuid 3eb426fe-1214-5444-9a1c-d84e57a5b30e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 66.04 0)
       (effects
@@ -936,7 +936,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 777caff4-d5ac-56e1-86e4-a6d582a11cb3))
+    (uuid e0462899-22e0-5d90-95c4-bb65cdf48ac4))
   (global_label "MIDI_OPTO_BASE"
     (shape bidirectional)
     (at 162.56 60.96 180)
@@ -944,7 +944,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c5f2ee65-21ba-53e4-9f57-1f01756eac2a)
+    (uuid dafc9a05-e683-5ec7-a800-d3c950c67dd8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 60.96 0)
       (effects
@@ -958,7 +958,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 86a09fb5-6b3b-5664-8552-8538d2f383d5))
+    (uuid c79effa2-4190-5681-ad2e-2b9fda9260e7))
   (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 162.56 58.42 180)
@@ -966,7 +966,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ae84d4d0-d498-5f75-8ebc-96c6a380c042)
+    (uuid a67616c4-f51c-5604-af4a-151fd2dfa4c8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 58.42 0)
       (effects
@@ -980,8 +980,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid fb95cca3-4aa4-52e3-9fde-99cd5b812601)
-    (property "Reference" "U_OPT_MIDI"
+    (uuid 15852dd4-1dc5-5916-9573-b869d18c9048)
+    (property "Reference" "U_OPT_MIDI1"
       (at 152.4 50.8 0)
       (effects
         (font
@@ -997,26 +997,38 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OPT_MIDI"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 92791f15-0d5e-5431-b4ce-e8753c0d3919))
+      (uuid 01f48235-9f4f-5ad0-9e15-54dd86b548ad))
     (pin "2"
-      (uuid 2ca4463d-4fb4-532f-a1bb-4c3c81eca613))
+      (uuid c4c783f3-b2c2-5118-bf4a-3c18f233698c))
     (pin "3"
-      (uuid eca24f77-e532-5a80-a5a5-54b53c47bd99))
+      (uuid 718a0b49-8639-5ba8-b90d-a23077f6110d))
     (pin "4"
-      (uuid c9590580-276c-5575-8d0b-efc95313a0f2))
+      (uuid 290e9057-d43f-5f46-bd58-fdf9e84d6f83))
     (pin "5"
-      (uuid 12dfd107-1a0e-5bd3-9f35-562c6bebd725))
+      (uuid 11e9440d-4a8e-5bc5-8072-8d1af4400b9f))
     (pin "6"
-      (uuid 4c1de8d4-6327-5e43-8892-e0cf22f6d87a))
+      (uuid 6a14f538-ad44-56b1-8280-2f1e5a8be076))
     (pin "7"
-      (uuid 87ed4588-5ba2-51fb-b830-bbc7900011f7))
+      (uuid 8eccc77a-7a2c-5198-8110-e8124efc3453))
     (pin "8"
-      (uuid 21ce2748-028f-5cdb-bc43-b33a2005af14))
+      (uuid d7f3f8f4-8ea2-5cab-ad34-6b8a2d0f8753))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "U_OPT_MIDI")
+          (reference "U_OPT_MIDI1")
           (unit 1)))))
   (wire
     (pts
@@ -1025,14 +1037,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a19603e4-842a-50f6-9ac4-73e964bdee2f))
+    (uuid 65166d7c-0e75-5a85-a96a-4225ffc8994a))
   (label "MIDI_IN_TIP"
     (at 55.88 60.96 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e8575f6a-d63f-55b7-a266-cc0b871dadba))
+    (uuid f423e613-c4f1-58e7-8f83-6263edfc86af))
   (wire
     (pts
       (xy 58.42 63.5)
@@ -1040,17 +1052,17 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 45fc38ce-4458-5cfc-95e8-bd9b0a5f63fe))
+    (uuid 59a355f8-454d-51c1-919c-5b7fe2d2c5e3))
   (label "MIDI_IN_RING"
     (at 55.88 63.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 968a7997-cdca-553c-b4ca-2ac894e17014))
+    (uuid eb53a9db-5859-5b36-b132-0370c923f579))
   (no_connect
     (at 58.42 66.04)
-    (uuid f664438f-0a1a-507c-b191-be12d5cdd3d7))
+    (uuid 59ea907a-73e5-5ba4-a25f-cb987a5cd1ed))
   (symbol
     (lib_id "Connector_Generic:Conn_01x03")
     (at 63.5 63.5 0)
@@ -1058,8 +1070,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 213d5375-1d3f-5070-8f88-4884ede5224e)
-    (property "Reference" "J_MIDI_IN"
+    (uuid 49113a97-3839-579e-8387-d194543c95f2)
+    (property "Reference" "J_MIDI_IN1"
       (at 63.5 54.61 0)
       (effects
         (font
@@ -1075,16 +1087,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_MIDI_IN"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 04c15864-17d9-514d-850d-d25994ed5454))
+      (uuid f81386ef-c81d-57ca-b8b9-c2facf6837f9))
     (pin "2"
-      (uuid 44e24be0-b2f1-521b-a652-ce1c1dd9fabc))
+      (uuid f174228b-e207-547b-8e86-c7298cb9aa59))
     (pin "3"
-      (uuid bc941b67-31c4-5b2f-b8fd-8f85c4d62c20))
+      (uuid a18f749a-1658-527d-9ba2-1e2ffcd9b0f1))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "J_MIDI_IN")
+          (reference "J_MIDI_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1093,14 +1135,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 33bed709-500e-503c-b794-68abbd2a50c0))
+    (uuid 89720c71-9772-5140-8ffd-8fc8903f09e0))
   (label "MIDI_OUT_TIP"
     (at 55.88 187.96 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e1940345-532d-5c65-b6f7-4f73d2314c25))
+    (uuid c0cd0295-be26-5d5e-8b18-b789a1bdd13a))
   (wire
     (pts
       (xy 58.42 190.5)
@@ -1108,14 +1150,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0cc40394-b101-5fd7-ba9f-5364b0fb8723))
+    (uuid 26b12946-7db0-5ec4-acaa-8af5dff0c50e))
   (label "MIDI_OUT_RING"
     (at 55.88 190.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c77b28d0-c685-59d1-bfb0-81e877790b01))
+    (uuid 7ae7bab8-8e4d-5fc6-8fe8-cb819666259a))
   (wire
     (pts
       (xy 58.42 193.04)
@@ -1123,7 +1165,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1f5feacb-56bb-5ff5-8d71-19e3cb740b2c))
+    (uuid de82fca8-eff9-588b-bf14-de1a5c8be373))
   (global_label "GND"
     (shape bidirectional)
     (at 55.88 193.04 0)
@@ -1131,7 +1173,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d092bfb8-8e70-5d00-917f-4d041c24809d)
+    (uuid 6bf67d6e-7c4e-5ac7-94bf-f67782e0a4f2)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 193.04 0)
       (effects
@@ -1145,8 +1187,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 5cf67726-947b-563a-8dfa-800f0a463f1a)
-    (property "Reference" "J_MIDI_OUT"
+    (uuid eff09e3c-fbbe-5809-9db6-90f7e9c8750c)
+    (property "Reference" "J_MIDI_OUT1"
       (at 63.5 181.61 0)
       (effects
         (font
@@ -1162,16 +1204,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_MIDI_OUT"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid cb7ab423-7862-55b8-afab-e8d99b86de8d))
+      (uuid 84da541d-054e-5144-8958-76725610d715))
     (pin "2"
-      (uuid ad54c41f-c345-503f-9321-51149f2b78d8))
+      (uuid d450035c-86db-5550-935c-49871a7ad496))
     (pin "3"
-      (uuid 072f2948-0ba9-5a05-8e6c-a3d22c900ada))
+      (uuid 002e40a2-51fa-58f5-a980-bae9a05743c2))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "J_MIDI_OUT")
+          (reference "J_MIDI_OUT1")
           (unit 1)))))
   (wire
     (pts
@@ -1180,14 +1252,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b7e6d340-aae4-5db7-91e9-cf8300841318))
+    (uuid b9838694-d62c-52b7-a404-ff504f55e5d4))
   (label "MIDI_IN_RING"
     (at 241.3 57.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 4905f1d6-671f-5b43-8608-8bae033a43b8))
+    (uuid 3af0853c-a6d5-5ef3-9aca-1142c807e028))
   (wire
     (pts
       (xy 241.3 67.31)
@@ -1195,14 +1267,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 013bd676-4701-503c-8b10-8cd243a4b3a3))
+    (uuid a9c28be9-4290-55d7-8c9b-7b510613bf66))
   (label "MIDI_OPTO_A"
     (at 241.3 69.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f713cbc5-86c5-50fe-b029-26e32d537686))
+    (uuid 4a0ad7e2-bc2c-5c76-8f66-7bbd3777bb4b))
   (symbol
     (lib_id "Device:R")
     (at 241.3 63.5 0)
@@ -1210,8 +1282,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid b521d000-b677-52c7-a3ab-65d2214499d9)
-    (property "Reference" "R_MIDI_IN"
+    (uuid 98b44b30-c0dd-5334-bc0f-ee94d3654199)
+    (property "Reference" "R_MIDI_IN1"
       (at 241.3 34.29 0)
       (effects
         (font
@@ -1227,14 +1299,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_MIDI_IN"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid d4bc7ae2-c9e1-5b6e-b786-94c8bc80545e))
+      (uuid 138220a7-959a-55be-82a5-b5a9acc585ed))
     (pin "2"
-      (uuid dc4d13e9-a76c-5db0-b2c1-ab75af7ccf8c))
+      (uuid 1017d722-f4fe-5dfb-b696-d21a9da21002))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "R_MIDI_IN")
+          (reference "R_MIDI_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1243,7 +1327,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f69c8a0e-b7b6-59de-aaa8-6a8e2d6a5075))
+    (uuid 6c530491-4fc8-5abc-923f-43116bbed102))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 330.2 57.15 270)
@@ -1251,7 +1335,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 9bdaa443-4665-5bb0-b717-f4892a514dd5)
+    (uuid 4d46e5c3-7d29-5787-89c9-6cecbac3406b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 57.15 0)
       (effects
@@ -1265,7 +1349,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8ccebcb2-89f5-55dc-8cd2-80c2b82cde39))
+    (uuid 0b6be088-3ff0-5f06-9422-ef942175f939))
   (global_label "MIDI_RX"
     (shape bidirectional)
     (at 330.2 69.85 90)
@@ -1273,7 +1357,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0fb1fafd-2daf-538a-a017-47866991cc12)
+    (uuid 3749a670-5f52-5ff3-bcb5-4b4fb1426029)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 69.85 0)
       (effects
@@ -1287,8 +1371,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid dbc98df4-b0dc-5138-b507-10f62ef0b442)
-    (property "Reference" "R_MIDI_RX"
+    (uuid 47601375-12e8-5527-81a7-ca2717d69c86)
+    (property "Reference" "R_MIDI_RX1"
       (at 330.2 43.18 0)
       (effects
         (font
@@ -1304,14 +1388,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_MIDI_RX"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 3f8de11d-b96b-5d8b-b6ae-0a113c81d368))
+      (uuid d59b2063-5f48-5260-9a54-216de384ea1d))
     (pin "2"
-      (uuid a6cb8dea-4728-59dd-ba8f-32355aeff41f))
+      (uuid 9dbbf685-343c-54cd-8627-c70f5893012c))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "R_MIDI_RX")
+          (reference "R_MIDI_RX1")
           (unit 1)))))
   (wire
     (pts
@@ -1320,7 +1416,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 48d1b0e5-f55a-59be-85d7-aeabbd0f3a36))
+    (uuid 65ee483b-be76-5d83-a863-21af704d8fde))
   (global_label "MIDI_OPTO_BASE"
     (shape bidirectional)
     (at 241.3 120.65 270)
@@ -1328,7 +1424,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 9826dd00-0038-5e9c-9a73-525711961f07)
+    (uuid cef8f1a9-8b6c-5092-8698-33c946550fa3)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 120.65 0)
       (effects
@@ -1342,7 +1438,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 82ba10f0-f9e8-56e4-b9c0-661c48749299))
+    (uuid 8b1cfa63-2978-59d9-bffb-26bdab6ae2b2))
   (global_label "GND"
     (shape bidirectional)
     (at 241.3 133.35 90)
@@ -1350,7 +1446,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a5c4cb30-0ce3-5a87-be69-e0a5135d2e43)
+    (uuid d4fb99a0-3994-5247-aa28-c44302464604)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 133.35 0)
       (effects
@@ -1364,8 +1460,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 56f8f519-662a-5302-aa30-b8316931939e)
-    (property "Reference" "R_MIDI_BASE"
+    (uuid 31c461a5-ca17-55a5-8ad8-43034da39d9d)
+    (property "Reference" "R_MIDI_BASE1"
       (at 241.3 95.25 0)
       (effects
         (font
@@ -1381,14 +1477,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_MIDI_BASE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 04ee0683-8f1c-5d4d-ba85-b6c9a2661e6c))
+      (uuid cc5ae3a3-e18e-5285-9daa-7e6ad84fbb07))
     (pin "2"
-      (uuid 8c4c537b-9d8a-5064-86e5-044f513c5323))
+      (uuid 9beca146-666c-54ad-9530-aa82009c2b39))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "R_MIDI_BASE")
+          (reference "R_MIDI_BASE1")
           (unit 1)))))
   (wire
     (pts
@@ -1397,14 +1523,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 188b8af6-1f55-5dbf-8d60-d220ef487359))
+    (uuid 66c25f54-a0fb-50c2-8496-1500130075aa))
   (label "MIDI_OPTO_A"
     (at 323.85 127 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 17d12e02-4036-5f6e-8ab7-333fa0c47e8f))
+    (uuid 4b834a0b-20f5-50f1-96b4-ba7a4e42fd55))
   (wire
     (pts
       (xy 334.01 127)
@@ -1412,14 +1538,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 50e39aa3-6467-5f82-bda6-00fa5ff94322))
+    (uuid b6c7f77b-995b-5abb-84cd-25110f588c5f))
   (label "MIDI_IN_TIP"
     (at 336.55 127 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 41ee7a4d-e528-502e-bf2e-f4fbf87bee27))
+    (uuid 5e878908-3db0-53f6-9e5d-e0be6ddb669a))
   (symbol
     (lib_id "Device:D")
     (at 330.2 127 0)
@@ -1427,8 +1553,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid d73e1a85-d961-5ac6-b633-d4a5edf06265)
-    (property "Reference" "D_MIDI_IN"
+    (uuid 8b3c168e-9faf-5f2b-8bce-6835c7583a35)
+    (property "Reference" "D_MIDI_IN1"
       (at 330.2 120.65 0)
       (effects
         (font
@@ -1444,14 +1570,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_MIDI_IN"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 21662954-341f-51ed-9565-7b9c44c47710))
+      (uuid 6b888a68-10bc-5db8-86ac-3cdcd5eb9301))
     (pin "2"
-      (uuid cd61e92c-57ff-5b9f-b1b0-7b3324a238da))
+      (uuid 793692ba-3c22-5ad2-9acb-f900b5669119))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "D_MIDI_IN")
+          (reference "D_MIDI_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1460,7 +1598,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 387bf4ed-9317-57e3-819d-76c37ad733bb))
+    (uuid 7e714f1a-b538-55bf-b0c0-15764a9497ef))
   (global_label "MIDI_TX"
     (shape bidirectional)
     (at 241.3 184.15 270)
@@ -1468,7 +1606,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 731cac95-6fc2-5a53-9c28-426374633ae9)
+    (uuid 61d3914c-70b5-5468-9940-93482e746b3c)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 184.15 0)
       (effects
@@ -1482,14 +1620,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 950ab8d1-5f1d-5595-bf26-6802446593f3))
+    (uuid 7a47a38e-44a1-59b0-a704-d42dab246388))
   (label "MIDI_OUT_TIP"
     (at 241.3 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 7a372464-2d84-552e-827c-23a6dcf9dbdc))
+    (uuid 517d4d48-a8de-50aa-b1da-f7ffaf4244e4))
   (symbol
     (lib_id "Device:R")
     (at 241.3 190.5 0)
@@ -1497,8 +1635,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 174ad25e-da17-5564-92a0-191f5d3d9033)
-    (property "Reference" "R_MIDI_T"
+    (uuid 6ec3474c-ddae-5f89-b600-0a1335e54c0b)
+    (property "Reference" "R_MIDI_T1"
       (at 241.3 167.64 0)
       (effects
         (font
@@ -1514,14 +1652,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_MIDI_T"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 93ee5a05-efe0-518e-8e96-228f060c1008))
+      (uuid fd648a23-38ea-5520-97d8-3bce4eb4dffb))
     (pin "2"
-      (uuid eff8dc07-7494-54ac-8751-543357740307))
+      (uuid ac438d62-a5ec-529c-a754-4e70fe2eaad8))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "R_MIDI_T")
+          (reference "R_MIDI_T1")
           (unit 1)))))
   (wire
     (pts
@@ -1530,7 +1680,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7f1c9af5-305a-5fa4-9e6b-56b904e94382))
+    (uuid 52a0bcb8-de01-5ac6-9f6c-a86b52cb91c7))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 330.2 184.15 270)
@@ -1538,7 +1688,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 294dc4d8-5abc-5f75-8f7d-f15e214ce944)
+    (uuid 5bb89b9a-793c-567c-b1ee-000e5f19c974)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 184.15 0)
       (effects
@@ -1552,14 +1702,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7c142afa-2c80-5495-bf45-14ea9172b360))
+    (uuid bd6e56aa-e14c-5cf1-af76-f511111fb43b))
   (label "MIDI_OUT_RING"
     (at 330.2 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 5fe71290-bd8e-5324-9fe3-7c0dbfe9ed6a))
+    (uuid d3bed8e0-2cb9-51f9-99bf-482d3e8c7fee))
   (symbol
     (lib_id "Device:R")
     (at 330.2 190.5 0)
@@ -1567,8 +1717,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid c04d002d-8712-5058-864c-3b40131cb8e6)
-    (property "Reference" "R_MIDI_R"
+    (uuid 9478b7d1-7951-5205-a193-1da309ad1161)
+    (property "Reference" "R_MIDI_R1"
       (at 330.2 170.18 0)
       (effects
         (font
@@ -1584,14 +1734,26 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_MIDI_R"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 42175ab4-cc79-513a-bc5b-22e1e1f8b71d))
+      (uuid 390f6ae7-462b-56c9-813b-93451ecd4ebf))
     (pin "2"
-      (uuid 867995bf-45df-5829-8b0e-8daf32300b7a))
+      (uuid 883b579f-4902-55ee-b1d2-9cf571f81f53))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "R_MIDI_R")
+          (reference "R_MIDI_R1")
           (unit 1)))))
   (wire
     (pts
@@ -1600,7 +1762,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1bf573a5-adf6-5aee-bdb9-9ce1f2e42dfe))
+    (uuid a8cc3b89-2b0d-51f4-a343-a64219692502))
   (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 152.4 120.65 270)
@@ -1608,7 +1770,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c9c21c2d-5ad2-58f9-8c60-d8b71ab82cee)
+    (uuid 62fc140c-f897-5b3a-9ecd-0cfd9d93d7d9)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 120.65 0)
       (effects
@@ -1622,7 +1784,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e639912c-2350-5097-9a3d-e6a026062c12))
+    (uuid 9d3950a2-2df1-5f9f-8a7f-1019bc59ace8))
   (global_label "GND"
     (shape bidirectional)
     (at 152.4 133.35 90)
@@ -1630,7 +1792,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 14111288-c610-5dbf-80f5-6b41096f965d)
+    (uuid ddadbc15-a748-516a-a37c-0dea303c383c)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 133.35 0)
       (effects
@@ -1644,8 +1806,8 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 6af4acef-3626-5892-86ab-688a54a82c09)
-    (property "Reference" "C_MIDI_VCC"
+    (uuid 6c27a513-9d1e-58d2-8e9a-103e3d400cca)
+    (property "Reference" "C_MIDI_VCC1"
       (at 152.4 100.33 0)
       (effects
         (font
@@ -1661,14 +1823,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_MIDI_VCC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 30a40dbd-7510-52e6-91b3-a3e650a87154))
+      (uuid 519c0c7e-e358-52d6-a7df-483e1f9668b1))
     (pin "2"
-      (uuid a908e715-c310-5210-a8bc-08fb350a4bc8))
+      (uuid 746bb29d-4257-5f71-ae08-b66930d5f1b0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
-          (reference "C_MIDI_VCC")
+          (reference "C_MIDI_VCC1")
           (unit 1)))))
   (text "MIDI TRS Type A: ring=fuente, tip=sumidero; entrada aislada, sleeve IN NC."
     (at 15.24 20.32 0)
@@ -1691,7 +1883,7 @@
         (size 1.0 1.0))
       (justify left))
     (uuid 9cb10ab5-098e-595d-98e4-25e6612866e4))
-  (text "D20: ALL DNP / excluded assembly BOM; USB MIDI on Pi, no MIDI panel holes. Teensy 0=I2C EN; 1=NC."
+  (text "D20: ALL DNP / excluded assembly BOM; USB MIDI on Pi, no MIDI panel holes. Teensy 0=EN_K; 1=EN_A."
     (at 15.24 31.75 0)
     (effects
       (font

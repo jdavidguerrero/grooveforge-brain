@@ -54,6 +54,20 @@ def compare_netlist(board, path):
     tree = ET.parse(path)
     actual = {}
     errors = []
+    expected_parts = {s.reference: s for sheet in board.sheets for s in sheet.symbols
+                      if not s.reference.startswith('#')}
+    for component in tree.findall('./components/comp'):
+        ref = component.get('ref')
+        symbol = expected_parts.get(ref)
+        if symbol is None:
+            continue
+        fields = {f.get('name'): f.text or '' for f in component.findall('./fields/field')}
+        actual_dnp = any(p.get('name') == 'dnp' for p in component.findall('property'))
+        if (component.findtext('value', '') != symbol.value or
+                component.findtext('footprint', '') != symbol.footprint or
+                actual_dnp != symbol.dnp or
+                any(fields.get(key, '') != value for key, value in symbol.fields.items())):
+            errors.append(f'Component metadata mismatch: {ref} (value/footprint/DNP/fields)')
     expected_refs = {key[0] for key in expected}
     actual_refs = {node.attrib['ref'] for node in tree.findall('./components/comp')}
     if expected_refs != actual_refs:

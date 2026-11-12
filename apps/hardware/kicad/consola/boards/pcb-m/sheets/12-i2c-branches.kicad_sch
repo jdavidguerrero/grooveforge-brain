@@ -1204,7 +1204,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2372ade0-2b70-5c07-aec7-0c698859c1fd))
+    (uuid 3771153b-2d95-5ede-b03d-2f64e6efd752))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 60.96 48.26 270)
@@ -1212,7 +1212,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 1e3c8cf3-fafd-589f-b039-9d028b092689)
+    (uuid 815de3e9-20a9-52b2-b969-dd7f0076999b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 60.96 48.26 0)
       (effects
@@ -1226,7 +1226,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid abae2ab6-0f33-5330-a8c3-d08068896815))
+    (uuid 433d6132-5479-5c44-b2ad-1c03c6ac887c))
   (global_label "I2C_SCL"
     (shape bidirectional)
     (at 48.26 60.96 0)
@@ -1234,7 +1234,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 6aca9f90-499b-5dea-b461-0e77983d2761)
+    (uuid 3495f549-2585-50d1-856c-e19c669549af)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 48.26 60.96 0)
       (effects
@@ -1248,7 +1248,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2f5594d0-caf8-56fd-96d4-aebb88f2bd1c))
+    (uuid 050699e4-7706-5fa1-9a2d-0f48b8a7ba58))
   (global_label "I2C_SDA"
     (shape bidirectional)
     (at 48.26 66.04 0)
@@ -1256,7 +1256,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ca9dc711-a0f3-5868-9aaa-ee324e77f06c)
+    (uuid 0531ab81-2089-5678-8775-bf01b8945df7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 48.26 66.04 0)
       (effects
@@ -1270,7 +1270,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4a12e077-676a-542a-8263-1f6b85b205e6))
+    (uuid 699dc167-cfa2-5d67-99a4-5cddb48ec263))
   (global_label "GND"
     (shape bidirectional)
     (at 63.5 78.74 90)
@@ -1278,7 +1278,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d0d56292-afbf-5cda-aeec-3e666822af6c)
+    (uuid 2c4036eb-532a-5d0a-8db4-60d4842a6c42)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 78.74 0)
       (effects
@@ -1292,14 +1292,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6c40f132-f90d-5d24-9087-756386bf2eab))
-  (label "I2C_BUF_EN"
+    (uuid d7147b0d-0364-5539-99d4-f992048a27e4))
+  (label "EN_K"
     (at 78.74 71.12 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 41305dd2-8828-5ba0-b0e0-741fb4df741f))
+    (uuid f0ac1e2b-33b2-591c-9c9b-1c4ba7410ce6))
   (wire
     (pts
       (xy 76.2 66.04)
@@ -1307,7 +1307,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ab9c4f4c-8d5c-5630-84a2-3a0c109d7fc5))
+    (uuid d4a0360a-d9ba-5cce-aa99-25136dc93bca))
   (global_label "I2C_SDA_B_K"
     (shape bidirectional)
     (at 78.74 66.04 180)
@@ -1315,7 +1315,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ce90ccb0-fd96-5b3c-a00b-5d6159d18066)
+    (uuid dc3f4c84-d129-56bd-81e2-008fe4031e7f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 78.74 66.04 0)
       (effects
@@ -1329,7 +1329,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2f5e3245-af1a-5574-9af3-1a4fe0abdefd))
+    (uuid acca9b46-5f3f-5d16-af38-00854ee75ee6))
   (global_label "I2C_SCL_B_K"
     (shape bidirectional)
     (at 78.74 60.96 180)
@@ -1337,7 +1337,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid db1f24db-b2b7-53d9-b242-cbca49fe9772)
+    (uuid beb834fc-2ee9-58e9-b43c-70cfb8988ab2)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 78.74 60.96 0)
       (effects
@@ -1351,7 +1351,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 28e49465-16c3-5358-a868-9bff0f870724))
+    (uuid f0b01198-c4b3-590b-a131-7690a531e2fc))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 66.04 48.26 270)
@@ -1359,7 +1359,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ebad35fa-6eeb-5fba-a51b-bd6839fa677d)
+    (uuid 2099e1d3-6e7b-5f9c-8311-2dd25bb03b5d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 66.04 48.26 0)
       (effects
@@ -1373,8 +1373,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 93ea63a0-0d96-52ab-b858-df4f373afffc)
-    (property "Reference" "U_I2C_K"
+    (uuid 69968bbb-1c53-548a-a43b-38b823356511)
+    (property "Reference" "U_I2C_K1"
       (at 63.5 34.29 0)
       (effects
         (font
@@ -1384,7 +1384,7 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Package_SO:VSSOP-8_3x3mm_P0.65mm"
+    (property "Footprint" "Package_SO:MSOP-8_3x3mm_P0.65mm"
       (at 63.5 63.5 0)
       (effects
         (font
@@ -1396,32 +1396,56 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_I2C_K"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "LCSC" "C80799"
       (at 63.5 63.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "PCA9517ADP,118"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "NXP"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "MSOP-8"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 47ae85df-7bcc-50af-aad2-a71121a6dfeb))
+      (uuid 67f973e9-20ab-5826-be50-bf6c45094be6))
     (pin "2"
-      (uuid 2ed86dd8-a733-5257-8129-b788025490b3))
+      (uuid ff670786-fc69-56e2-bf78-104e091dcdd1))
     (pin "3"
-      (uuid 8209d426-008f-5fda-a3ef-b939886af463))
+      (uuid 5458318b-8633-5d23-876e-8e14a6a04fe2))
     (pin "4"
-      (uuid 84a55b29-f26b-5e12-82ef-52feeba60312))
+      (uuid 988eee65-eb64-5265-ba1a-b39c894c6de9))
     (pin "5"
-      (uuid c41ec219-872e-5009-9521-707e1b05a583))
+      (uuid 2033410a-1666-5a2d-8bc5-abd37fc63bb6))
     (pin "6"
-      (uuid 3c1d810e-2b50-52f1-8d8f-25fa042ec79d))
+      (uuid 4a454014-dee5-5005-af2f-eaa064edddab))
     (pin "7"
-      (uuid 82a41e2e-dc90-5697-8d40-296b18c4ae2e))
+      (uuid 79fcbca1-14ac-5421-bbfd-bf7a2a5ecb5d))
     (pin "8"
-      (uuid 0d0e82a2-7af0-578d-ae36-5053c1f039cc))
+      (uuid a4448192-e982-58f7-b896-6afe4a8c45b7))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "U_I2C_K")
+          (reference "U_I2C_K1")
           (unit 1)))))
   (wire
     (pts
@@ -1430,7 +1454,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6f1b3dce-6acc-53e0-8318-91f0c1ec30f7))
+    (uuid 0ad00e6d-8cd5-5626-a0ef-e29b66b449e4))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 177.8 57.15 270)
@@ -1438,7 +1462,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 70621777-6e6b-5480-81ee-2ac2534f3460)
+    (uuid 0bc11dce-8ac5-5b84-9c10-2971385ffae7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 177.8 57.15 0)
       (effects
@@ -1452,7 +1476,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0dc4ad3c-c469-509e-8f42-672b77600706))
+    (uuid 4d6ee79f-7378-52d4-8b2d-544593788f77))
   (global_label "GND"
     (shape bidirectional)
     (at 177.8 69.85 90)
@@ -1460,7 +1484,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d6058a08-c107-5ded-91a7-955bd16b082a)
+    (uuid e07b7760-5a9c-55cb-a10d-6b5c811a0ffd)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 177.8 69.85 0)
       (effects
@@ -1474,8 +1498,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 45089d81-d839-5776-a4b2-28ebc0fecc10)
-    (property "Reference" "C_I2C_K_A"
+    (uuid db2024bf-52f3-5248-beeb-c2f0bf8d86e0)
+    (property "Reference" "C_I2C_K_A1"
       (at 177.8 43.18 0)
       (effects
         (font
@@ -1491,14 +1515,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_I2C_K_A"
+      (at 177.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 177.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 177.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 177.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 177.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid aafc29b3-3348-505c-bb3a-9a5070006d1a))
+      (uuid a6f8f250-5673-5f32-ac9e-3dd28a77fc82))
     (pin "2"
-      (uuid 7dbc7929-f277-510d-935e-987064bb3637))
+      (uuid 2ba9f59f-7a26-52ad-ba03-ccd85de42558))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_I2C_K_A")
+          (reference "C_I2C_K_A1")
           (unit 1)))))
   (wire
     (pts
@@ -1507,7 +1561,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 72279d43-2fd9-564a-b3e3-f65c8a9b323a))
+    (uuid 69a4d064-b6b5-50eb-8747-3276136e7475))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 292.1 57.15 270)
@@ -1515,7 +1569,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c7894f45-19e2-560f-816f-88dfaaad7d76)
+    (uuid d7fd02f5-6791-5b47-9c95-d2bec5c3fb3a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 57.15 0)
       (effects
@@ -1529,7 +1583,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 910b0374-8385-5633-ae39-fc9c176cfa59))
+    (uuid 03e3884b-8ed4-5446-a161-6897172fc7ec))
   (global_label "GND"
     (shape bidirectional)
     (at 292.1 69.85 90)
@@ -1537,7 +1591,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 7024ed48-cf77-568c-9b9e-16958a16637c)
+    (uuid 8710af08-ff0b-5384-be49-ec24c0b9db37)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 69.85 0)
       (effects
@@ -1551,8 +1605,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 451c2ecf-5a22-5865-ad7a-fbf89e2ca630)
-    (property "Reference" "C_I2C_K_B"
+    (uuid 88c721fb-48af-5b75-834c-46dead5b41fe)
+    (property "Reference" "C_I2C_K_B1"
       (at 292.1 43.18 0)
       (effects
         (font
@@ -1568,14 +1622,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_I2C_K_B"
+      (at 292.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 292.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 292.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 292.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 292.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 9a885a43-858f-56d4-9ff3-fc151cf2ec1d))
+      (uuid 1ad24113-800a-55e5-af4e-74b5e372ba03))
     (pin "2"
-      (uuid 93203550-3343-5c21-bbd0-9ec7902215d4))
+      (uuid 341edddf-2803-50da-8ca7-d15a91ede2e0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_I2C_K_B")
+          (reference "C_I2C_K_B1")
           (unit 1)))))
   (wire
     (pts
@@ -1584,7 +1668,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 43a5465d-bb2a-5c2f-a35b-8c3fbf4f552a))
+    (uuid 8ccb6bc2-d179-5d58-91ae-f55af67a7821))
   (global_label "I2C_SDA_K_SER"
     (shape bidirectional)
     (at 406.4 57.15 270)
@@ -1592,7 +1676,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 98f22121-b6eb-50a6-9c7a-fa2c39260c92)
+    (uuid 381089dc-1619-57d3-98ae-cfeeada39804)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 57.15 0)
       (effects
@@ -1606,7 +1690,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 5a877d3c-d264-5bea-ae02-f149450858fa))
+    (uuid 33241013-53da-56f5-b631-5c237bd80da0))
   (global_label "I2C_SDA_K"
     (shape bidirectional)
     (at 406.4 69.85 90)
@@ -1614,7 +1698,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 9686d484-48c3-5cb9-b961-756e89af1d05)
+    (uuid e2e3afdf-2206-5132-9248-6d8ced7aff46)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 69.85 0)
       (effects
@@ -1628,8 +1712,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid c3534b85-97ff-510e-99fb-ab251a62044b)
-    (property "Reference" "R_I2C_SDA_K"
+    (uuid 4930cff5-71ad-5d5c-80e6-eee290c70fbc)
+    (property "Reference" "R_I2C_SDA_K1"
       (at 406.4 33.02 0)
       (effects
         (font
@@ -1645,6 +1729,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_I2C_SDA_K"
+      (at 406.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17714"
+      (at 406.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F470JT5E"
+      (at 406.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 406.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 406.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "Service" "0 ohm if series damping not required"
       (at 406.4 63.5 0)
       (effects
@@ -1652,13 +1766,13 @@
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid d11eaaa8-b490-540c-89fe-5abe4e50dbea))
+      (uuid e04f2212-e9c1-5152-b07c-ad3683163b73))
     (pin "2"
-      (uuid e84f2c1e-5fda-5a7d-a11f-4329444d29b3))
+      (uuid dd2cf4e8-84cf-5b27-ba36-808a16a03390))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "R_I2C_SDA_K")
+          (reference "R_I2C_SDA_K1")
           (unit 1)))))
   (wire
     (pts
@@ -1716,6 +1830,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 520.7 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SDA_K_22"
+      (at 520.7 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 520.7 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 520.7 63.5 0)
       (effects
         (font
@@ -1791,6 +1923,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SDA_K_22"
+      (at 635 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
+      (at 635 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 635 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 635 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 635 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid ec3890b5-2031-5a99-aca3-ae11d76bc35a))
     (pin "2"
@@ -1856,6 +2018,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SDA_K_47"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 63.5 127 0)
       (effects
         (font
@@ -1931,6 +2111,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SDA_K_47"
+      (at 177.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17673"
+      (at 177.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F4701T5E"
+      (at 177.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 177.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 177.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 9204fa0b-fc89-564b-831c-eead6e5dbb73))
     (pin "2"
@@ -1947,7 +2157,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b7b4e8fc-e2f2-5189-bba6-19d16ef36ba5))
+    (uuid f995ffe1-e9c7-5a23-bd4a-f8b66f850d45))
   (global_label "I2C_SDA_B_K"
     (shape bidirectional)
     (at 292.1 129.54 90)
@@ -1955,7 +2165,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a60db7ff-cc08-5c11-a51a-f3df1365239a)
+    (uuid 6437a247-c692-55f6-b564-9c09dd9e3f00)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 129.54 0)
       (effects
@@ -1969,8 +2179,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 7a88e10a-c640-5b64-9aed-5a24a3d56fa2)
-    (property "Reference" "TP_SDA_B_K"
+    (uuid e83d86ed-eab0-5b40-9dae-ba49d100a5a4)
+    (property "Reference" "TP_SDA_B_K1"
       (at 292.1 117.856 0)
       (effects
         (font
@@ -1986,12 +2196,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SDA_B_K"
+      (at 292.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 292.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 292.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 05bdcd22-e652-5d4a-b6a6-a12d897af1b3))
+      (uuid 28491655-8492-5184-802d-7fa5f36c06ec))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SDA_B_K")
+          (reference "TP_SDA_B_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2000,7 +2228,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a2afe41f-af51-5c45-b444-13d41b016592))
+    (uuid 6483412e-394f-557d-8241-613dce950026))
   (global_label "I2C_SDA_K"
     (shape bidirectional)
     (at 406.4 129.54 90)
@@ -2008,7 +2236,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 9fa4f8db-d061-529b-b9c1-bab317073573)
+    (uuid 01970503-4ce2-57b4-8b53-ffce9f07156b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 129.54 0)
       (effects
@@ -2022,8 +2250,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 4d269d28-111b-5fa1-9d2b-6ddc2e0703a5)
-    (property "Reference" "TP_SDA_K"
+    (uuid 4525cb1b-b401-5525-89da-df6e328e0208)
+    (property "Reference" "TP_SDA_K1"
       (at 406.4 117.856 0)
       (effects
         (font
@@ -2039,12 +2267,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SDA_K"
+      (at 406.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 406.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 406.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid cd309b60-b4d8-53f3-becf-c6d883b3d7f1))
+      (uuid a39c6da9-a722-5641-b322-87c4f7e52d83))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SDA_K")
+          (reference "TP_SDA_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2053,7 +2299,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 64cab2fc-85d1-598b-950e-b86706eaabb9))
+    (uuid 941f48b4-b60e-5d4a-889e-7947e38d26cf))
   (global_label "I2C_SCL_K_SER"
     (shape bidirectional)
     (at 520.7 120.65 270)
@@ -2061,7 +2307,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 1c6fcfe3-969c-5a65-adeb-9d9a90df54c6)
+    (uuid d5f91efc-4fb1-5186-b7cd-8c7a72e85ceb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 120.65 0)
       (effects
@@ -2075,7 +2321,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0719105a-5de7-5dc6-8e6d-cd4cfcaec1d3))
+    (uuid 3de5d04c-d154-5d3b-8da2-6be62b092a1e))
   (global_label "I2C_SCL_K"
     (shape bidirectional)
     (at 520.7 133.35 90)
@@ -2083,7 +2329,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 2d159ea4-1af5-5ef7-be88-d2167d63e678)
+    (uuid 7f63f75c-ef34-5cf4-9f90-a304186649aa)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 133.35 0)
       (effects
@@ -2097,8 +2343,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 39a023d8-9ec9-5619-b904-e60d80bac7f5)
-    (property "Reference" "R_I2C_SCL_K"
+    (uuid 60aa0843-23c4-5065-b9be-7accb84de9c0)
+    (property "Reference" "R_I2C_SCL_K1"
       (at 520.7 96.52 0)
       (effects
         (font
@@ -2114,6 +2360,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_I2C_SCL_K"
+      (at 520.7 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17714"
+      (at 520.7 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F470JT5E"
+      (at 520.7 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 520.7 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 520.7 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "Service" "0 ohm if series damping not required"
       (at 520.7 127 0)
       (effects
@@ -2121,13 +2397,13 @@
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid 09d498cf-7437-55e8-b5c0-0603fb3b5ac5))
+      (uuid 92a4fb3f-48ff-5869-b79a-6ea809ffa7dd))
     (pin "2"
-      (uuid 329f0820-4d5a-53c4-9fd6-a4afcb2adbac))
+      (uuid 0bee5437-b06e-5fba-9dcb-0d74c610f97a))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "R_I2C_SCL_K")
+          (reference "R_I2C_SCL_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2185,6 +2461,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 635 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SCL_K_22"
+      (at 635 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 635 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 635 127 0)
       (effects
         (font
@@ -2260,6 +2554,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SCL_K_22"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid bb899fe2-6bfe-5781-b920-1330047a3f9a))
     (pin "2"
@@ -2325,6 +2649,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 177.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SCL_K_47"
+      (at 177.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 177.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 177.8 190.5 0)
       (effects
         (font
@@ -2400,6 +2742,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SCL_K_47"
+      (at 292.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17673"
+      (at 292.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F4701T5E"
+      (at 292.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 292.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 292.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 38965673-8357-58f6-b598-f8b850d2e324))
     (pin "2"
@@ -2416,7 +2788,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4734830e-48db-5c28-94da-8ec797a0d0f5))
+    (uuid 7a9da560-85de-5bcd-9b6f-3dd30c5ced24))
   (global_label "I2C_SCL_B_K"
     (shape bidirectional)
     (at 406.4 193.04 90)
@@ -2424,7 +2796,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid db11a9ff-ee66-560b-a13b-dd29aef22804)
+    (uuid c35ff8a6-8fa1-541a-8b1a-96965dbca3d0)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 193.04 0)
       (effects
@@ -2438,8 +2810,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 22394d89-04a0-5546-928b-ed0167ef4f35)
-    (property "Reference" "TP_SCL_B_K"
+    (uuid 2fcede60-f683-5d43-b117-dfb154ecf997)
+    (property "Reference" "TP_SCL_B_K1"
       (at 406.4 181.356 0)
       (effects
         (font
@@ -2455,12 +2827,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SCL_B_K"
+      (at 406.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 406.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 406.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid be811e84-8747-540a-bc4d-d6007f164875))
+      (uuid 1ba00a5b-69ce-51ed-8910-39191d755336))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SCL_B_K")
+          (reference "TP_SCL_B_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2469,7 +2859,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 20b447b4-330a-53ae-bf38-319f839c9c0f))
+    (uuid 039d3ce1-4451-58f8-9d72-52634e467f31))
   (global_label "I2C_SCL_K"
     (shape bidirectional)
     (at 520.7 193.04 90)
@@ -2477,7 +2867,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 504ee1f0-0316-5f17-be06-fac6d6d2c2ed)
+    (uuid ada31ec1-f103-5299-9597-a9011c7c64f6)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 193.04 0)
       (effects
@@ -2491,8 +2881,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid d1c82b14-e22f-5862-8934-f3b75f2f6916)
-    (property "Reference" "TP_SCL_K"
+    (uuid 00661cdb-ce13-50ed-b545-9cf0dc2aaa62)
+    (property "Reference" "TP_SCL_K1"
       (at 520.7 181.356 0)
       (effects
         (font
@@ -2508,12 +2898,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SCL_K"
+      (at 520.7 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 520.7 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 520.7 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 59c5f25c-7e1c-5bd8-a1bf-3b51d5959eba))
+      (uuid 02ee9166-4fdc-5564-9424-80235cc3192d))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SCL_K")
+          (reference "TP_SCL_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2522,7 +2930,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e1705e04-dfd2-5139-8494-695756f66d04))
+    (uuid 73f0d188-4949-5566-9f0b-a19aa86819d9))
   (global_label "I2C_SDA_K"
     (shape bidirectional)
     (at 627.38 190.5 0)
@@ -2530,7 +2938,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b931440e-cd94-5ac9-a869-e0d8d805a8af)
+    (uuid 74903490-f581-56e2-b489-fd1349d16a50)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 627.38 190.5 0)
       (effects
@@ -2544,7 +2952,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 66702a90-0d1a-5ef0-a9ba-89e6351c17f9))
+    (uuid a8fde8a2-e4e6-553e-b557-3b0b4df949e9))
   (global_label "GND"
     (shape bidirectional)
     (at 635 200.66 90)
@@ -2552,7 +2960,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 5ec3f697-bc84-58fa-b0e8-d4f1ae93010f)
+    (uuid 3dc66997-def6-55aa-8f00-3638ef25e9cd)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 635 200.66 0)
       (effects
@@ -2566,7 +2974,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 82780c25-4af2-572b-b429-85d5b6948599))
+    (uuid 4e7adbfa-575a-5f07-a2ab-b5d06a7b1e70))
   (global_label "I2C_SCL_K"
     (shape bidirectional)
     (at 627.38 193.04 0)
@@ -2574,7 +2982,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 4600c25d-2e06-53c0-9612-15f1dd038fd5)
+    (uuid 9c753bbb-f44d-51bd-9e02-f66202682072)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 627.38 193.04 0)
       (effects
@@ -2588,7 +2996,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8fc008d7-5033-5186-bf96-8c50576460a6))
+    (uuid 224490c1-66ec-5ecf-a66c-b8252de9ba6d))
   (global_label "I2C_SCL_K"
     (shape bidirectional)
     (at 642.62 193.04 180)
@@ -2596,7 +3004,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c410ed42-0b90-53a7-8aa2-77346cd09baa)
+    (uuid a6fd46c8-7796-54af-8cdc-bc9d508552a8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 642.62 193.04 0)
       (effects
@@ -2610,7 +3018,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid cc1ffaf3-4fbf-5809-97d6-b3b6be9ef0e6))
+    (uuid f9b302de-25d2-52a0-b029-10fe872c751e))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 635 182.88 270)
@@ -2618,7 +3026,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 286abff5-cce6-57cf-9bfd-3c4f8fdfa29d)
+    (uuid e514bd10-86d3-5c3e-b542-044cb7eae38b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 635 182.88 0)
       (effects
@@ -2632,7 +3040,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8d241db7-f2eb-542a-8d33-f980bc7c9c80))
+    (uuid 9782d6f9-ddb7-5b7a-beb2-4ecfea6e3976))
   (global_label "I2C_SDA_K"
     (shape bidirectional)
     (at 642.62 190.5 180)
@@ -2640,7 +3048,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 7a249715-c147-539e-865f-7c7d39ac7981)
+    (uuid 8683206a-a96f-5d45-b1ec-aa53adbb7158)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 642.62 190.5 0)
       (effects
@@ -2654,8 +3062,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 9dace4a3-ab6e-529e-9acf-e57c01d2b313)
-    (property "Reference" "D_ESD_I2C_K"
+    (uuid a35f7671-31c9-5f59-9982-c72914756580)
+    (property "Reference" "D_ESD_I2C_K1"
       (at 635 168.91 0)
       (effects
         (font
@@ -2677,28 +3085,52 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_ESD_I2C_K"
+      (at 635 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "LCSC" "C7519"
       (at 635 190.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "USBLC6-2SC6"
+      (at 635 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "ST"
+      (at 635 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23-6L"
+      (at 635 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 606393a1-e1f5-5f3c-a7e2-4bfd08ec2098))
+      (uuid 51bd0155-a353-5e18-88a5-6313805457d0))
     (pin "2"
-      (uuid 3a8264b5-15b2-567f-a507-341432a7c490))
+      (uuid dbc2fed9-e7fb-5e38-aba6-f02dc942f85a))
     (pin "3"
-      (uuid 8e69ff19-a06b-574e-b44f-61a3745ca2b7))
+      (uuid 8d4ec748-8335-5106-91af-7707a1468701))
     (pin "4"
-      (uuid f87c88bb-8d83-53df-be83-1670e8c26094))
+      (uuid 2a9b6c83-b365-57c9-a157-dc3afe2c341f))
     (pin "5"
-      (uuid 871b09e4-ba01-5a49-89c9-e0fb401e9457))
+      (uuid e0eb99ca-f514-5266-aee3-0939c5955aab))
     (pin "6"
-      (uuid a30fdb76-203c-5a1b-a3c7-9693cc810472))
+      (uuid 827e2b77-1bac-5ac9-9d8f-ab9c71e34887))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "D_ESD_I2C_K")
+          (reference "D_ESD_I2C_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2707,7 +3139,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e2e9acb9-45dd-5ad3-b015-254f40623a21))
+    (uuid b392c1c0-3ce5-5260-b4ca-5f09f3305c44))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 63.5 247.65 270)
@@ -2715,7 +3147,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 4c46faec-6521-5bd4-b028-b07edb283d9e)
+    (uuid 689b367b-75e0-50de-af89-6d993dc6db95)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 247.65 0)
       (effects
@@ -2729,7 +3161,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ac01b978-e072-5ee1-9779-d2f998eafa8b))
+    (uuid 2b660c7e-6bab-53e2-933b-84729429ee8a))
   (global_label "GND"
     (shape bidirectional)
     (at 63.5 260.35 90)
@@ -2737,7 +3169,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 2b55776b-b90a-52e8-9e54-ec6a29ff7b92)
+    (uuid 387178c9-1997-54fd-a3e1-8d5ac62141d8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 260.35 0)
       (effects
@@ -2751,8 +3183,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 9ebcfbac-481d-57de-837a-2cd592ed8d58)
-    (property "Reference" "C_ESD_I2C_K"
+    (uuid 3d70796c-b8e3-5445-ac35-f291fde04555)
+    (property "Reference" "C_ESD_I2C_K1"
       (at 63.5 233.68 0)
       (effects
         (font
@@ -2768,14 +3200,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ESD_I2C_K"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c7d70f45-71b9-5e75-ac4c-3f0ea90a2d0d))
+      (uuid 7c34490f-9ced-59d0-b2f3-574169ef0fcc))
     (pin "2"
-      (uuid 600dea9a-1e0e-50fc-b1c3-e658f5508dc6))
+      (uuid ddbf718e-701e-5d6e-a309-c867675ba139))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_ESD_I2C_K")
+          (reference "C_ESD_I2C_K1")
           (unit 1)))))
   (wire
     (pts
@@ -2784,7 +3246,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d4f2898e-1601-5727-9b8b-855a6b7fbaa0))
+    (uuid 1d34b321-25c2-56ab-857d-b4d9b25a1641))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 175.26 238.76 270)
@@ -2792,7 +3254,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 6594fdf3-81aa-5d02-990d-2528ebca92f5)
+    (uuid 401b9e4a-29c4-52bd-94a9-8a0cbc3f81db)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 175.26 238.76 0)
       (effects
@@ -2806,7 +3268,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7677adbc-94c0-56bd-b39f-12f9df91cfe2))
+    (uuid f376f177-2c1f-5e3f-a509-b15739fa4972))
   (global_label "I2C_SCL"
     (shape bidirectional)
     (at 162.56 251.46 0)
@@ -2814,7 +3276,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 52a89d57-15e1-56a6-85b9-933bafb32528)
+    (uuid e9170cbd-e1e6-5a92-8b27-9a080c4e5dfe)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 251.46 0)
       (effects
@@ -2828,7 +3290,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c1d97aa4-c2e7-53c3-98c6-fe1f6c918966))
+    (uuid 88334049-cdda-544a-82c9-f69b9702a4b8))
   (global_label "I2C_SDA"
     (shape bidirectional)
     (at 162.56 256.54 0)
@@ -2836,7 +3298,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 10af674b-8306-57d0-b72f-5dd2bb57eb3b)
+    (uuid 99310894-c255-599a-9ed0-5cd9ca37004e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 256.54 0)
       (effects
@@ -2850,7 +3312,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4ed89a3b-2d95-5fed-a775-1380ba5b50da))
+    (uuid c6931835-9c03-5b1e-a25a-346875026ceb))
   (global_label "GND"
     (shape bidirectional)
     (at 177.8 269.24 90)
@@ -2858,7 +3320,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 59bcf900-a368-5b6d-8a4f-79de65b35a43)
+    (uuid 201e1709-2878-564b-921c-c3008a4bc129)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 177.8 269.24 0)
       (effects
@@ -2872,14 +3334,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 937e733e-212d-580f-a646-87b5e43f86c4))
-  (label "I2C_BUF_EN"
+    (uuid 3cb562ab-b656-56ba-a342-e81ec714c552))
+  (label "EN_A"
     (at 193.04 261.62 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 2a9bf8b8-1f01-5597-b14f-1e2d9fde1928))
+    (uuid 6f2d747b-d554-56d0-8b65-6a51f38c30d9))
   (wire
     (pts
       (xy 190.5 256.54)
@@ -2887,7 +3349,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0afc723b-30cc-515d-b093-c175dd34275e))
+    (uuid 5ce93dc8-198d-5f03-9012-6e49e2a140db))
   (global_label "I2C_SDA_B_A"
     (shape bidirectional)
     (at 193.04 256.54 180)
@@ -2895,7 +3357,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 0e1af7f4-2cde-5d33-8369-2f234b18e464)
+    (uuid c4117a32-030e-5a54-8e27-9c22a93c78d0)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 193.04 256.54 0)
       (effects
@@ -2909,7 +3371,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 78be57e8-f674-5b2a-a1e0-32bdf5e23bb3))
+    (uuid 67357645-9977-56c6-ae63-04ed75bb8683))
   (global_label "I2C_SCL_B_A"
     (shape bidirectional)
     (at 193.04 251.46 180)
@@ -2917,7 +3379,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 67da7ab2-14ce-5976-8894-73af5bb56faa)
+    (uuid ec202808-8917-5a65-ada5-12a9b12c18bf)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 193.04 251.46 0)
       (effects
@@ -2931,7 +3393,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e180aa78-667a-5516-8e7e-00e6c8460be2))
+    (uuid c2b656f9-522a-5804-ab65-b690f1272eb5))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 180.34 238.76 270)
@@ -2939,7 +3401,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c715d810-9608-5c19-8623-76ff94a4b54c)
+    (uuid 57784bd4-f11d-52ff-9a83-25c2123924d3)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 180.34 238.76 0)
       (effects
@@ -2953,8 +3415,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid d8834fbb-919c-5e55-8034-e8d327d65e38)
-    (property "Reference" "U_I2C_A"
+    (uuid b5ab2b55-4637-5cfd-b929-8d70507421ef)
+    (property "Reference" "U_I2C_A1"
       (at 177.8 224.79 0)
       (effects
         (font
@@ -2964,7 +3426,7 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Package_SO:VSSOP-8_3x3mm_P0.65mm"
+    (property "Footprint" "Package_SO:MSOP-8_3x3mm_P0.65mm"
       (at 177.8 254 0)
       (effects
         (font
@@ -2976,32 +3438,56 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_I2C_A"
+      (at 177.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "LCSC" "C80799"
       (at 177.8 254 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "PCA9517ADP,118"
+      (at 177.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "NXP"
+      (at 177.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "MSOP-8"
+      (at 177.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 8b258a0b-01fc-574a-93c7-76442d8459e9))
+      (uuid 8bbd3654-4ffa-5ba7-8a2f-b8b0f2ce1700))
     (pin "2"
-      (uuid cfa1a77a-2c0d-5fec-8ef9-bf34d2beab7e))
+      (uuid 29c872da-9581-5d1b-bdd5-71694bd50bc3))
     (pin "3"
-      (uuid a3db36d0-cfce-555e-802a-f4cd02621303))
+      (uuid e87cae8e-6bae-5d17-ad08-472416937392))
     (pin "4"
-      (uuid 231a2ee6-38d9-51ed-9348-a65649124d3c))
+      (uuid c41de576-d70a-5fe4-9622-d84aa6a696a8))
     (pin "5"
-      (uuid 568b27f2-d332-5522-8b97-52970f5afad5))
+      (uuid 21347af4-5726-52c1-b921-d7da61f73f26))
     (pin "6"
-      (uuid 35bd2772-1f34-51ce-ba76-8785689fbb81))
+      (uuid 7b73d8a4-a50a-50e7-94a2-87eaab000172))
     (pin "7"
-      (uuid b56b2458-ab3c-526f-b1e1-c5eef7065e68))
+      (uuid b1450327-541c-507f-ba39-80cbe74cba2d))
     (pin "8"
-      (uuid fcb90134-3c59-50dc-80a8-05fd9931469c))
+      (uuid c821cae9-624f-54e9-8b89-85596e01209c))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "U_I2C_A")
+          (reference "U_I2C_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3010,7 +3496,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 9d3335c7-b586-5114-bae5-b5e2c14b13bd))
+    (uuid 52d1fd98-f9ee-5c6a-8fa7-ae50e0612073))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 292.1 247.65 270)
@@ -3018,7 +3504,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 3c028d05-033b-5717-8344-1893ed670186)
+    (uuid d24dadbc-49e8-5ded-a1a7-b125ba3c3ecd)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 247.65 0)
       (effects
@@ -3032,7 +3518,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6c486940-4e44-5672-b7f0-c66d52d0c851))
+    (uuid 21a3d70d-a9a2-5e35-94e7-4b76e0289312))
   (global_label "GND"
     (shape bidirectional)
     (at 292.1 260.35 90)
@@ -3040,7 +3526,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 663efacf-469f-5012-a74f-0865be85819d)
+    (uuid e6fd97da-8e92-50f3-86cb-65ead5034c4d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 260.35 0)
       (effects
@@ -3054,8 +3540,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 91a3e829-2a98-546a-8655-7f341a5256c1)
-    (property "Reference" "C_I2C_A_A"
+    (uuid c71ce29f-5ef1-5efd-b735-2df4dc50f49c)
+    (property "Reference" "C_I2C_A_A1"
       (at 292.1 233.68 0)
       (effects
         (font
@@ -3071,14 +3557,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_I2C_A_A"
+      (at 292.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 292.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 292.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 292.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 292.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 04ce0876-c376-5c17-a904-377869a88995))
+      (uuid e7aa0834-48b3-5560-8d90-234bc902b214))
     (pin "2"
-      (uuid 62bbc25b-79cb-50cb-a403-9949db0e4c22))
+      (uuid ead452a1-25b0-5bb6-9ff4-291a4dab2e36))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_I2C_A_A")
+          (reference "C_I2C_A_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3087,7 +3603,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 586096ae-588c-52bb-a8fc-5eb5a4fd3f3e))
+    (uuid a553ffcd-ed39-5d9c-b380-ddc62a97f588))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 406.4 247.65 270)
@@ -3095,7 +3611,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 55d04e94-4e1a-5cf0-89ba-1b7f37062da0)
+    (uuid 9af8cf20-a8b3-52c3-99d7-89ac7b613ea1)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 247.65 0)
       (effects
@@ -3109,7 +3625,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 69e8d8d1-19ed-5200-8423-4486efa3ea5c))
+    (uuid 3652c1a1-4789-55ba-b39c-3d265a71d5bb))
   (global_label "GND"
     (shape bidirectional)
     (at 406.4 260.35 90)
@@ -3117,7 +3633,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 96d797bd-9bb5-5175-b683-dde5787c90f9)
+    (uuid 71ecd7f9-c101-5364-8c7f-b0259ee98abc)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 260.35 0)
       (effects
@@ -3131,8 +3647,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 77062db3-1b46-58f5-a16b-5d3599baa527)
-    (property "Reference" "C_I2C_A_B"
+    (uuid 6771e3b3-3f46-5607-bc88-a3becd31e987)
+    (property "Reference" "C_I2C_A_B1"
       (at 406.4 233.68 0)
       (effects
         (font
@@ -3148,14 +3664,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_I2C_A_B"
+      (at 406.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 406.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 406.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 406.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 406.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 7ca3f14b-62fd-5cb7-b056-516633dc1e39))
+      (uuid 4c5e979d-3c35-5b08-aff3-8c2d6474781e))
     (pin "2"
-      (uuid b189bc47-1a94-5c4c-b8da-3c56bacdd4e1))
+      (uuid 75a5de55-305c-5fca-8b70-55ddabc8bf67))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_I2C_A_B")
+          (reference "C_I2C_A_B1")
           (unit 1)))))
   (wire
     (pts
@@ -3164,7 +3710,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e70a462c-7dd7-5147-afbf-b26040bb35d7))
+    (uuid 5f1ca57a-7b34-55e1-aaeb-afbc6048fcde))
   (global_label "I2C_SDA_A_SER"
     (shape bidirectional)
     (at 520.7 247.65 270)
@@ -3172,7 +3718,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a60664a3-3390-5e4f-b6b4-bd2e3f9d7c62)
+    (uuid 670a19c8-11ab-544b-9656-e271d6ed6d22)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 247.65 0)
       (effects
@@ -3186,7 +3732,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e3a6588c-6de1-5c67-9b79-83e4877f4a4a))
+    (uuid 4ec01285-b89e-5473-bc12-c6ce963e5571))
   (global_label "I2C_SDA_A"
     (shape bidirectional)
     (at 520.7 260.35 90)
@@ -3194,7 +3740,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8973fe53-79ff-5392-ac50-99b215e91a63)
+    (uuid fde80175-ea53-5e2a-8d45-2a9ec00d3005)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 260.35 0)
       (effects
@@ -3208,8 +3754,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 0fe4e875-051f-5f90-b8d7-61a96a7e19fd)
-    (property "Reference" "R_I2C_SDA_A"
+    (uuid 9951ddcb-3e0b-51e9-ab89-02f03022df36)
+    (property "Reference" "R_I2C_SDA_A1"
       (at 520.7 223.52 0)
       (effects
         (font
@@ -3225,6 +3771,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_I2C_SDA_A"
+      (at 520.7 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17714"
+      (at 520.7 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F470JT5E"
+      (at 520.7 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 520.7 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 520.7 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "Service" "0 ohm if series damping not required"
       (at 520.7 254 0)
       (effects
@@ -3232,13 +3808,13 @@
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid b995337c-d827-5b9e-814e-6738ed2741f7))
+      (uuid d6abeaee-bd0a-5eef-a76b-5e1991dd75be))
     (pin "2"
-      (uuid d4667fcd-eb10-5b9b-b240-6213fdc70274))
+      (uuid cba4ad0b-1c72-5795-8969-3c0293e3eb0b))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "R_I2C_SDA_A")
+          (reference "R_I2C_SDA_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3296,6 +3872,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 635 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SDA_A_22"
+      (at 635 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 635 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 635 254 0)
       (effects
         (font
@@ -3371,6 +3965,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SDA_A_22"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid b5c44299-4f96-54f7-9336-15903a80f581))
     (pin "2"
@@ -3436,6 +4060,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 177.8 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SDA_A_47"
+      (at 177.8 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 177.8 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 177.8 317.5 0)
       (effects
         (font
@@ -3511,6 +4153,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SDA_A_47"
+      (at 292.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17673"
+      (at 292.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F4701T5E"
+      (at 292.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 292.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 292.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid a4514a44-fe77-5b54-a649-5a709a9fe392))
     (pin "2"
@@ -3527,7 +4199,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 14c951ef-2ef0-58e9-8994-ae387dde8290))
+    (uuid e79a216b-44fa-5b04-a3f6-eaa77d51422b))
   (global_label "I2C_SDA_B_A"
     (shape bidirectional)
     (at 406.4 320.04 90)
@@ -3535,7 +4207,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 17a58a47-524f-5275-b130-cbab9f8240af)
+    (uuid 52058c15-4062-50f8-a6be-0effbb71a2a7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 406.4 320.04 0)
       (effects
@@ -3549,8 +4221,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 92ea5bcf-7f2e-56d1-8baf-9975abb105ee)
-    (property "Reference" "TP_SDA_B_A"
+    (uuid 4a3a2cdd-f558-5883-b293-89d8bc94be14)
+    (property "Reference" "TP_SDA_B_A1"
       (at 406.4 308.356 0)
       (effects
         (font
@@ -3566,12 +4238,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SDA_B_A"
+      (at 406.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 406.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 406.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 06e81379-ebeb-59bb-8893-38201caa3753))
+      (uuid 12537295-51f1-5064-9759-7fad908d23c5))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SDA_B_A")
+          (reference "TP_SDA_B_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3580,7 +4270,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8f805b6d-fda6-542e-99fd-beb10cb7c288))
+    (uuid 0f27dcbc-dc99-52e1-aa0c-89f9e4faf6ec))
   (global_label "I2C_SDA_A"
     (shape bidirectional)
     (at 520.7 320.04 90)
@@ -3588,7 +4278,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d9ad87bb-457e-5dd6-9577-f69fe26a3f85)
+    (uuid 66a2c067-a367-53e0-948e-b711e0c1a562)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 320.04 0)
       (effects
@@ -3602,8 +4292,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 1810482e-e7f3-53ac-8195-f1cc52404e4d)
-    (property "Reference" "TP_SDA_A"
+    (uuid b227b435-3c3c-5f0d-adf9-f889fb21f770)
+    (property "Reference" "TP_SDA_A1"
       (at 520.7 308.356 0)
       (effects
         (font
@@ -3619,12 +4309,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SDA_A"
+      (at 520.7 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 520.7 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 520.7 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid e6a575ef-ed13-50e8-be45-a2d0e02f7044))
+      (uuid 44306cac-a36b-55d0-b794-12c31e16c0c4))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SDA_A")
+          (reference "TP_SDA_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3633,7 +4341,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 857bc27a-e38a-5e82-af3c-836b268549ec))
+    (uuid 00446307-8337-5914-842a-e88c9b6cd88a))
   (global_label "I2C_SCL_A_SER"
     (shape bidirectional)
     (at 635 311.15 270)
@@ -3641,7 +4349,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 001e6fe1-4d34-56de-8ae3-981aed1de69a)
+    (uuid 2a53ed56-b1fd-5784-b42e-131e9424f423)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 635 311.15 0)
       (effects
@@ -3655,7 +4363,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0f93f034-7d6e-5919-b62b-1f9fe8c1eef5))
+    (uuid 2bc905d2-8cb4-500b-8d23-b8011f980bad))
   (global_label "I2C_SCL_A"
     (shape bidirectional)
     (at 635 323.85 90)
@@ -3663,7 +4371,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 9f08f74a-6130-54a7-8e5e-151170081728)
+    (uuid 53bef418-0e59-5df2-a278-8691e408c4fe)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 635 323.85 0)
       (effects
@@ -3677,8 +4385,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 3bbc201c-eb60-5f08-88d0-e5560c6442e9)
-    (property "Reference" "R_I2C_SCL_A"
+    (uuid 4e3ca1f6-bb75-53d6-be89-ffabd72c4b11)
+    (property "Reference" "R_I2C_SCL_A1"
       (at 635 287.02 0)
       (effects
         (font
@@ -3694,6 +4402,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_I2C_SCL_A"
+      (at 635 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17714"
+      (at 635 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F470JT5E"
+      (at 635 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 635 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 635 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "Service" "0 ohm if series damping not required"
       (at 635 317.5 0)
       (effects
@@ -3701,13 +4439,13 @@
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid 5287580a-fc8c-5dc3-93a2-5ffdef2f1b30))
+      (uuid 9a1fa392-2706-559b-af7e-ec0a3fd2d441))
     (pin "2"
-      (uuid 433446db-b653-57d9-9c5c-356b8839849a))
+      (uuid 4eb3a8f0-d559-5604-8f3e-00ce7d5a6dc6))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "R_I2C_SCL_A")
+          (reference "R_I2C_SCL_A1")
           (unit 1)))))
   (wire
     (pts
@@ -3765,6 +4503,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SCL_A_22"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 63.5 381 0)
       (effects
         (font
@@ -3840,6 +4596,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SCL_A_22"
+      (at 177.8 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
+      (at 177.8 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 177.8 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 177.8 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 177.8 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid d6756709-4aed-5f01-b689-32143e81feb2))
     (pin "2"
@@ -3905,6 +4691,24 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 292.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_PU_SCL_A_47"
+      (at 292.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 292.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 292.1 381 0)
       (effects
         (font
@@ -3980,6 +4784,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PU_SCL_A_47"
+      (at 406.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17673"
+      (at 406.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F4701T5E"
+      (at 406.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 406.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 406.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid bfcf3bd5-06cc-587f-9155-3b90334a257a))
     (pin "2"
@@ -3996,7 +4830,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c9cc71dd-b5fc-57ad-8c8e-7d505d4954be))
+    (uuid 1716ac9c-03a4-5ee3-a6b2-de99e412402a))
   (global_label "I2C_SCL_B_A"
     (shape bidirectional)
     (at 520.7 383.54 90)
@@ -4004,7 +4838,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f6cfcd28-2b32-5405-a565-9dca6787b8ab)
+    (uuid 2ddde06a-cc7b-5473-b6fa-9f04048d1e32)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 520.7 383.54 0)
       (effects
@@ -4018,8 +4852,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 1885c520-ec64-529d-b2a8-48f5e7f52a13)
-    (property "Reference" "TP_SCL_B_A"
+    (uuid 3d0ae24e-99f3-5580-b3ed-30c2c1103d62)
+    (property "Reference" "TP_SCL_B_A1"
       (at 520.7 371.856 0)
       (effects
         (font
@@ -4035,12 +4869,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SCL_B_A"
+      (at 520.7 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 520.7 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 520.7 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 9fc3b196-2305-59cf-9279-76d9f78f0f43))
+      (uuid 2014d908-3933-570f-9298-22d142493c06))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SCL_B_A")
+          (reference "TP_SCL_B_A1")
           (unit 1)))))
   (wire
     (pts
@@ -4049,7 +4901,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 79613605-4cb9-5f29-90c6-987043ec72c7))
+    (uuid 496586d7-f457-561a-be86-02eb6e0e96f6))
   (global_label "I2C_SCL_A"
     (shape bidirectional)
     (at 635 383.54 90)
@@ -4057,7 +4909,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0b319eca-c89c-58a3-9634-fbe3d128d703)
+    (uuid 37b7ee83-2091-5ec6-9cf0-e559a7e07a3f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 635 383.54 0)
       (effects
@@ -4071,8 +4923,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a67ca724-a0cd-50c0-bb55-6cd9d90e00c9)
-    (property "Reference" "TP_SCL_A"
+    (uuid 47afd97b-e6a0-5aee-b557-5819f5bff4e4)
+    (property "Reference" "TP_SCL_A1"
       (at 635 371.856 0)
       (effects
         (font
@@ -4088,12 +4940,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_SCL_A"
+      (at 635 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 635 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 635 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 9c9c1854-59e9-5250-9d47-4ed9c594447b))
+      (uuid c789b5ea-2044-53c2-9802-f5e205034273))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_SCL_A")
+          (reference "TP_SCL_A1")
           (unit 1)))))
   (wire
     (pts
@@ -4102,7 +4972,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid abe055f9-6930-5803-bcdd-ce2c705cd979))
+    (uuid 12282118-41f1-5dc8-886c-3b14e4ac2a54))
   (global_label "I2C_SDA_A"
     (shape bidirectional)
     (at 55.88 444.5 0)
@@ -4110,7 +4980,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0a343f5d-fc3e-5365-a95d-583340793de6)
+    (uuid 02309313-6fb8-51a0-8855-7bd2dde40607)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 444.5 0)
       (effects
@@ -4124,7 +4994,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e54452c6-9dd5-5c54-8f77-a0d75d5751e5))
+    (uuid 49a05b30-ecad-5e5d-8b0c-19863660936e))
   (global_label "GND"
     (shape bidirectional)
     (at 63.5 454.66 90)
@@ -4132,7 +5002,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 61b1a7bc-bb42-505c-85aa-0b7092b53935)
+    (uuid 351ea905-226a-5b34-8259-a32e2d2231f5)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 454.66 0)
       (effects
@@ -4146,7 +5016,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d7dd8cd6-8baa-5543-9df4-62907949ddf2))
+    (uuid ad74e214-054c-58e4-a86c-5f3ff389f896))
   (global_label "I2C_SCL_A"
     (shape bidirectional)
     (at 55.88 447.04 0)
@@ -4154,7 +5024,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1f70c442-d023-5e9b-b2a8-f66c8238398d)
+    (uuid c52263da-ed3a-58e9-9901-4fd3115f4a3a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 447.04 0)
       (effects
@@ -4168,7 +5038,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8b8ef399-3cfa-5dab-b6ce-3fd159c47071))
+    (uuid 14926b38-7378-5914-bd99-a3e66edf8527))
   (global_label "I2C_SCL_A"
     (shape bidirectional)
     (at 71.12 447.04 180)
@@ -4176,7 +5046,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid eda12574-aa5d-5968-a849-c1a6c82c0684)
+    (uuid 69cdbfd2-a580-5bfc-909d-5d534c1926f9)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 71.12 447.04 0)
       (effects
@@ -4190,7 +5060,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b6d04f66-b5fd-5e55-b743-fb2a459080b7))
+    (uuid f391c3be-ab94-5d71-8ff8-bab09ebec11d))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 63.5 436.88 270)
@@ -4198,7 +5068,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 37d35f47-01e8-54cd-ae93-0707010dc38f)
+    (uuid 8f27226f-5e71-5ac5-aa4d-91f7ccbf917a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 436.88 0)
       (effects
@@ -4212,7 +5082,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3d04753b-2e12-5930-9b19-f19d0a7b7a9b))
+    (uuid 3a22e744-e9cd-5ddd-83db-5a720c0515bb))
   (global_label "I2C_SDA_A"
     (shape bidirectional)
     (at 71.12 444.5 180)
@@ -4220,7 +5090,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f3feb12e-cf5b-5c41-84b8-1b5a56d4cefd)
+    (uuid 41e52370-9099-5bb9-b052-62d3d63090f7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 71.12 444.5 0)
       (effects
@@ -4234,8 +5104,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 35f424ef-25cf-51d3-bdb3-c7c347471b08)
-    (property "Reference" "D_ESD_I2C_A"
+    (uuid 09d905ff-b4a2-5585-a7c3-cfb33984d8da)
+    (property "Reference" "D_ESD_I2C_A1"
       (at 63.5 422.91 0)
       (effects
         (font
@@ -4257,28 +5127,52 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_ESD_I2C_A"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (property "LCSC" "C7519"
       (at 63.5 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "USBLC6-2SC6"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "ST"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23-6L"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c2b1b97a-d659-57f7-9c9b-7eb9b753bc9b))
+      (uuid 19534e5d-edc4-537c-9e2d-d32d22e91959))
     (pin "2"
-      (uuid dd50564c-318a-55fd-89b2-2c15987b13e0))
+      (uuid 342d207a-7e0a-5e31-bd6e-7df4b1df38ac))
     (pin "3"
-      (uuid d4785534-bd27-5f08-9ee5-55d0108da7e1))
+      (uuid 394fb686-859b-5509-af1a-d31682b00105))
     (pin "4"
-      (uuid bf02d41c-8ddc-5e79-a3b5-1bf569132139))
+      (uuid 56936f3b-0163-5c44-b57d-ea1af994d8c1))
     (pin "5"
-      (uuid 1d384db1-faa7-5417-acd4-6f6e882ba2d6))
+      (uuid 35e7d859-77fb-5bbc-a228-8d0137180422))
     (pin "6"
-      (uuid a27b36d9-b0dd-5307-92b2-eb7aac187036))
+      (uuid f2b59230-5884-52dd-a194-38fe8a3b37d3))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "D_ESD_I2C_A")
+          (reference "D_ESD_I2C_A1")
           (unit 1)))))
   (wire
     (pts
@@ -4287,7 +5181,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f4c3072f-5d3c-57b1-89c3-8c22c7638644))
+    (uuid be384ad2-278e-53ec-97ff-3d09224843e2))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 177.8 438.15 270)
@@ -4295,7 +5189,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid bf54b8f5-b992-5078-8649-d70a68be02f6)
+    (uuid 3fad79b6-def5-519d-a825-fbc3e1446c30)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 177.8 438.15 0)
       (effects
@@ -4309,7 +5203,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f0c9df9e-60f3-59db-b450-720a91668d74))
+    (uuid 67895606-0ea5-5b72-a384-464ddd1f3455))
   (global_label "GND"
     (shape bidirectional)
     (at 177.8 450.85 90)
@@ -4317,7 +5211,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 734eae38-7c6f-5c55-abed-fc6385488cab)
+    (uuid 390c7466-cd4e-57b5-b5ef-e6073666e235)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 177.8 450.85 0)
       (effects
@@ -4331,8 +5225,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 02a18c9a-6caf-5217-ba41-29ecbe6cd751)
-    (property "Reference" "C_ESD_I2C_A"
+    (uuid ee4d641c-6fb5-5169-952c-8a5273c017f5)
+    (property "Reference" "C_ESD_I2C_A1"
       (at 177.8 424.18 0)
       (effects
         (font
@@ -4348,14 +5242,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ESD_I2C_A"
+      (at 177.8 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 177.8 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 177.8 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 177.8 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 177.8 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 391c48f7-6fb3-58e9-8495-95e0ef1b378e))
+      (uuid 9c29a36e-2c38-5d86-bc20-9858c2402cc0))
     (pin "2"
-      (uuid e7171228-b84f-50d6-a9ff-14097f3024c6))
+      (uuid 8a092918-ea77-5c20-bf2a-4823defe262f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "C_ESD_I2C_A")
+          (reference "C_ESD_I2C_A1")
           (unit 1)))))
   (wire
     (pts
@@ -4364,7 +5288,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7397740f-71fa-5473-99b4-ca57f1abe1b2))
+    (uuid 8cdcadaa-62c7-5d11-b128-e05704c84b47))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 292.1 438.15 270)
@@ -4372,7 +5296,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 24462839-603d-53ef-92a5-abb1765977bb)
+    (uuid d99e3221-66fe-5286-b8a9-9133f66653b5)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 292.1 438.15 0)
       (effects
@@ -4386,14 +5310,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a2754887-b81e-5f4c-a9cb-fccb67b07a99))
-  (label "I2C_BUF_EN"
+    (uuid 619d13d0-894c-5bf8-a833-1e6d9a2069db))
+  (label "EN_K"
     (at 292.1 450.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f3a6fa2f-1408-5e17-a854-201d9e8e6a6b))
+    (uuid e8e5b5f0-2e2c-50f9-9257-7ecf11cdc286))
   (symbol
     (lib_id "Device:R")
     (at 292.1 444.5 0)
@@ -4401,8 +5325,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a4ad2aab-7fd0-589b-b245-45c7a9b8f24d)
-    (property "Reference" "R_I2C_EN"
+    (uuid e014872c-f6c6-505b-abd7-99813b134382)
+    (property "Reference" "R_EN_K1"
       (at 292.1 424.18 0)
       (effects
         (font
@@ -4418,14 +5342,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_EN_K"
+      (at 292.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 292.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 292.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 292.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 292.1 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid cda84bfb-b65c-56ae-92de-8365c824673c))
+      (uuid 9a7f28b6-25ae-5963-81d6-8618479dedef))
     (pin "2"
-      (uuid e082d19b-2cff-5d29-a45e-258cc9b16bf0))
+      (uuid 864dfb43-6c42-53cc-9dce-497f6d0c40cb))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "R_I2C_EN")
+          (reference "R_EN_K1")
           (unit 1)))))
   (wire
     (pts
@@ -4434,15 +5388,15 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 225f979f-9ac1-5f47-8c54-1aed5fce3daf))
-  (global_label "I2C_BUF_EN_GPIO"
+    (uuid 9a677621-0b08-568e-bcd8-566f960149b4))
+  (global_label "EN_K_GPIO"
     (shape bidirectional)
     (at 398.78 444.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 671eafad-97d8-50dd-9ed5-3dc61edfe84b)
+    (uuid a8d10609-9765-5541-9204-00dab35d1538)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 398.78 444.5 0)
       (effects
@@ -4456,14 +5410,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e865145e-715c-514f-a639-7395609269bf))
-  (label "I2C_BUF_EN"
+    (uuid 3dd8e5fe-fc0d-580c-8fd5-72a09f849b51))
+  (label "EN_K"
     (at 414.02 444.5 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid e5984429-7605-5071-9095-9cdf8f20a019))
+    (uuid 24096375-5ac2-51ea-be4d-aac986740c29))
   (symbol
     (lib_id "Jumper:SolderJumper_2_Bridged")
     (at 406.4 444.5 0)
@@ -4471,13 +5425,13 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 38faad5f-1668-5cb6-9534-070908862808)
-    (property "Reference" "SJ_EN_GPIO"
+    (uuid bcddd57e-b197-59d6-a29e-4088b284ea9b)
+    (property "Reference" "SJ_EN_K_GPIO1"
       (at 406.4 438.404 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "SJ_EN_GPIO"
+    (property "Value" "SJ_EN_K_GPIO"
       (at 406.4 440.944 0)
       (effects
         (font
@@ -4488,137 +5442,220 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SJ_EN_K_GPIO"
+      (at 406.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 406.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 406.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 9bb8201f-1ef9-58fb-8c53-ffd81bc1a8b4))
+      (uuid a7b3a602-de16-5895-8193-fdf3c157f62a))
     (pin "2"
-      (uuid 3579a999-72bc-5a81-bca1-941a0271954d))
+      (uuid 4e247651-0a5f-51d0-a2ff-21750789561f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "SJ_EN_GPIO")
+          (reference "SJ_EN_K_GPIO1")
           (unit 1)))))
   (wire
     (pts
-      (xy 515.62 444.5)
-      (xy 513.08 444.5))
+      (xy 520.7 440.69)
+      (xy 520.7 438.15))
     (stroke
       (width 0)
       (type default))
-    (uuid cf29cf3f-cf93-525f-a725-12f1d5b6e150))
+    (uuid 08144806-74d6-5747-ade6-d3e4245798d2))
   (global_label "+3.3V"
     (shape bidirectional)
-    (at 513.08 444.5 0)
+    (at 520.7 438.15 270)
     (effects
       (font
         (size 1.0 1.0))
-      (justify right))
-    (uuid 8fc82a94-5e5e-5284-a694-17f3816b6510)
+      (justify left))
+    (uuid ec0f4ffc-a435-53df-b773-7ba7f8b0a299)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 513.08 444.5 0)
+      (at 520.7 438.15 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 525.78 444.5)
-      (xy 528.32 444.5))
+      (xy 520.7 448.31)
+      (xy 520.7 450.85))
     (stroke
       (width 0)
       (type default))
-    (uuid f0d4af33-4729-5ceb-a59f-1ce86586b6d2))
-  (label "I2C_BUF_EN"
-    (at 528.32 444.5 180)
+    (uuid a96988fd-1b38-5d8a-b21b-26ea43d8decf))
+  (label "EN_A"
+    (at 520.7 450.85 90)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 9af4bc5e-d8fd-50a0-955a-1221d04ae341))
+      (justify right))
+    (uuid bd6e71c1-4b10-5219-9e5d-eab8c54a1e4a))
   (symbol
-    (lib_id "Jumper:SolderJumper_2_Open")
+    (lib_id "Device:R")
     (at 520.7 444.5 0)
     (unit 1)
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 790e47ed-14fd-5aa9-b724-de733bb9fa5f)
-    (property "Reference" "SJ_EN_HIGH"
-      (at 520.7 438.404 0)
+    (uuid 3a03ca95-49f8-525b-b7fd-2525edc841f0)
+    (property "Reference" "R_EN_A1"
+      (at 520.7 424.18 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "SJ_EN_HIGH"
-      (at 520.7 440.944 0)
+    (property "Value" "10k"
+      (at 520.7 426.72 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 520.7 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_EN_A"
+      (at 520.7 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 520.7 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 520.7 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 520.7 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
       (at 520.7 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid 688bb2a1-38d0-52fb-bb0e-2df2fe798797))
+      (uuid ed95f95d-fa3e-51bb-ba77-a0549043bb0a))
     (pin "2"
-      (uuid 5176eccb-e2de-5dc5-8d44-2aef8ed6399f))
+      (uuid 13a1ae01-4f4a-5450-b2bd-4474d8ad8291))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "SJ_EN_HIGH")
+          (reference "R_EN_A1")
           (unit 1)))))
   (wire
     (pts
-      (xy 635 444.5)
-      (xy 635 447.04))
+      (xy 629.92 444.5)
+      (xy 627.38 444.5))
     (stroke
       (width 0)
       (type default))
-    (uuid d3218c9c-a053-5018-9fc7-141d6271bb3a))
-  (global_label "MIDI_RX"
+    (uuid 8cecb03a-5db8-55f4-a3f6-223e9add6911))
+  (global_label "EN_A_GPIO"
     (shape bidirectional)
-    (at 635 447.04 90)
+    (at 627.38 444.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8f535a7e-dd18-5483-bc67-f879e92a420f)
+    (uuid 10464649-da33-5eec-8827-81c92e88465c)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 635 447.04 0)
+      (at 627.38 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
+  (wire
+    (pts
+      (xy 640.08 444.5)
+      (xy 642.62 444.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c0e6181f-93f7-5e85-87b6-7b7f8082ead2))
+  (label "EN_A"
+    (at 642.62 444.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c7c0b199-657a-5e50-b83f-1b8af4971073))
   (symbol
-    (lib_id "Connector:TestPoint")
+    (lib_id "Jumper:SolderJumper_2_Bridged")
     (at 635 444.5 0)
     (unit 1)
-    (in_bom no)
+    (in_bom yes)
     (on_board yes)
-    (dnp yes)
-    (uuid ef3917f8-22be-5db0-9dec-64185d9a1d52)
-    (property "Reference" "TP_MIDI_RX"
-      (at 635 435.356 0)
+    (dnp no)
+    (uuid 3a8a4dde-3e57-5688-a550-9d79619db6e6)
+    (property "Reference" "SJ_EN_A_GPIO1"
+      (at 635 438.404 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "MIDI_RX"
-      (at 635 437.896 0)
+    (property "Value" "SJ_EN_A_GPIO"
+      (at 635 440.944 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+      (at 635 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SJ_EN_A_GPIO"
+      (at 635 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 635 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
       (at 635 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
     (pin "1"
-      (uuid 9dc2228c-d982-5420-9196-bb108bc52f78))
+      (uuid 3e14428c-87e0-5025-b6ed-60abbbe9165a))
+    (pin "2"
+      (uuid f3958f08-c089-5b2a-9293-ee627c85d4ca))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_MIDI_RX")
+          (reference "SJ_EN_A_GPIO1")
           (unit 1)))))
   (wire
     (pts
@@ -4627,15 +5664,15 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 9305a770-d8c1-50a0-9d3e-33a91d0e650e))
-  (global_label "MIDI_TX"
+    (uuid dbb24cb6-2f3d-5904-b807-5c8b4f31ac73))
+  (global_label "MIDI_RX"
     (shape bidirectional)
     (at 63.5 510.54 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 75259c47-347c-533d-b9aa-d44a02542a46)
+    (uuid 1ca165e8-4207-54d8-9ec5-a1fd03dfb33f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 510.54 0)
       (effects
@@ -4649,13 +5686,13 @@
     (in_bom no)
     (on_board yes)
     (dnp yes)
-    (uuid 9216be6a-c618-5d35-954f-04ee3765208e)
-    (property "Reference" "TP_MIDI_TX"
+    (uuid abec71cc-66fc-55f4-8792-c7a21246cf59)
+    (property "Reference" "TP_MIDI_RX1"
       (at 63.5 498.856 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "MIDI_TX"
+    (property "Value" "MIDI_RX"
       (at 63.5 501.396 0)
       (effects
         (font
@@ -4666,12 +5703,101 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_MIDI_RX"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid ab47484c-e0a2-5031-aa68-74e6e509c0f9))
+      (uuid 7f5365fc-327c-5bf7-92d9-2a2450a6700d))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
-          (reference "TP_MIDI_TX")
+          (reference "TP_MIDI_RX1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 177.8 508)
+      (xy 177.8 510.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7a03227d-59a7-56d7-b155-9e0429b2f111))
+  (global_label "MIDI_TX"
+    (shape bidirectional)
+    (at 177.8 510.54 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7f8c4d19-5ad7-5627-83da-4d096692f9cc)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 177.8 510.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 177.8 508 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 17899545-bfe4-5c84-8930-6476f91c2034)
+    (property "Reference" "TP_MIDI_TX1"
+      (at 177.8 498.856 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MIDI_TX"
+      (at 177.8 501.396 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 177.8 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "TP_MIDI_TX"
+      (at 177.8 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 177.8 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 177.8 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 20dce218-a403-562f-ad7a-6ba4a530ef38))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e10a9322-7533-510c-8de6-6cedadb311ab"
+          (reference "TP_MIDI_TX1")
           (unit 1)))))
   (text "D21: TCA9517ADGK library graphic/pins = NXP PCA9517ADP C80799 (MSOP8). VCCA=VCCB=3.3V."
     (at 15.24 20.32 0)
@@ -4687,7 +5813,7 @@
         (size 1.0 1.0))
       (justify left))
     (uuid 1783aee5-d953-53b3-8d81-dbf8aa3bcd3a))
-  (text "EN default pull-up: Teensy pin0 input. Force HIGH: open SJ_EN_GPIO BEFORE closing SJ_EN_HIGH."
+  (text "D30: EN_K=Teensy0, EN_A=Teensy1; separate 10k pull-ups / GPIO jumpers. Change EN only with bus idle."
     (at 15.24 27.94 0)
     (effects
       (font

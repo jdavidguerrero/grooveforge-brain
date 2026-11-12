@@ -958,6 +958,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "MCP23017-E/SS"
+      (at 190.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 190.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SSOP-28(5.3x10.2x0.65)"
+      (at 190.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 6fe4d5fc-6f2b-596a-9797-08e0cb9d46fd))
     (pin "2"

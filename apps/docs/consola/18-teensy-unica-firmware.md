@@ -22,8 +22,7 @@ Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Si
 
 ## 3. Pines y MIDI
 
-Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. Desde24 §10/D16+ el MIDI DIN queda DNP sin unión a Teensy: pin0 pasa a EN común de los
-PCA9517A, pin1 sigue reservado. No iniciar Serial1. Triggers25/27/38/39 permanecen reservados.
+Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. 0/1 controlan EN_K/EN_A (doc24 D30); DIN DNP, triggers 25/27/38/39 reservados.
 
 No hay contradicción de asignación en 17. Restricciones del shield reutilizado: **sin microSD SPI ni flash opcional**, porque 6/10/11/12/13 son superficie; no montar el pot de volumen opcional del shield en 15 (FSR2). CUE usa el buzón del planificador ADC1 descrito arriba. La escalera del selector no tenía resistencias/umbrales definidos: se fija aquí como contrato de prototipo, calibrable antes de PCB.
 
@@ -150,3 +149,5 @@ con LEDs/códec,60s con14/15 al aire sin notas36–39 y≤20 eventos/s por anal�
 con R a GND y confirmar golpes/release/velocity. En PCB-M inyectar tres fallos MCP, medir EN bajo≥1ms,
 contador+1, liberación de teclas y recuperación sin cortes de audio; medir loop_max_us<2000 en régimen.
 Sin placa ni flash, los tests nativos y el build sólo certifican lógica/compilación.
+
+Contrato pendiente de implementación firmware (D24/D27/D30): Serial1 de M4 usa TX21=SDA, RX22=SCL; corregir macros contrarios. Ambos DAC 0x60/0x61 poblados: cero al inicio de setup y provisionado EEPROM cero una vez. EN_K pin0 y EN_A pin1 se gestionan independientemente y solo con bus ocioso; ver lista completa en REPORT-fixrev.

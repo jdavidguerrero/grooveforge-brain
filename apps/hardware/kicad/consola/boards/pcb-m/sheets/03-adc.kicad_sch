@@ -520,6 +520,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_ADS1"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C37593"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "ADS1115IDGSR"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "TI"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "VSSOP-10"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 9bc051aa-19e6-5e12-928c-0d9ad8ea2dd4))
     (pin "2"
@@ -552,7 +582,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e334ab25-5b90-595a-b648-b04e82074640))
+    (uuid 609573bc-50ca-5b64-8721-8eb5c6ec0a05))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 63.5 120.65 270)
@@ -560,7 +590,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid af1a4335-1532-5007-b520-a3a56b067bad)
+    (uuid 9fd37028-18fd-5a68-bb4d-65516522a232)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 120.65 0)
       (effects
@@ -574,7 +604,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 823c6f00-14b3-5db0-95b8-71359481f7b5))
+    (uuid de3efb7f-50e2-5bd3-b28c-fa286759c6af))
   (global_label "GND"
     (shape bidirectional)
     (at 63.5 133.35 90)
@@ -582,7 +612,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 29d399c4-62b1-5140-a1f3-c323c9fcb8a5)
+    (uuid cf794eb9-77dc-5251-b910-0b45fa7c95cf)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 133.35 0)
       (effects
@@ -596,8 +626,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 0fbf24b1-b85d-5c00-890e-62d60c23accf)
-    (property "Reference" "C_ADS1_VCC"
+    (uuid f759361c-5e97-5c39-bbc2-446d32e7700f)
+    (property "Reference" "C_ADS1_VCC1"
       (at 63.5 105.41 0)
       (effects
         (font
@@ -613,14 +643,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ADS1_VCC"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 1b87e205-497d-55e8-8cb8-38fbb9d32c01))
+      (uuid aa470970-fd0d-5ba2-a05c-7b819fa71175))
     (pin "2"
-      (uuid 852cb0a5-0b75-5250-9aa0-290efa9f0a36))
+      (uuid 770bc684-9998-5cd0-883e-3d45a41fd26b))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
-          (reference "C_ADS1_VCC")
+          (reference "C_ADS1_VCC1")
           (unit 1)))))
   (wire
     (pts
@@ -629,7 +689,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4689a710-bc45-5351-bab6-d09b12ef4cff))
+    (uuid b499c0a5-8176-5a76-9cf5-2ef2e05e40b1))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 241.3 184.15 270)
@@ -637,7 +697,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 0e8f6a9e-e56b-5031-a4ac-f4731523b836)
+    (uuid 9436e6fb-b0a3-5d54-a439-e71174741ab6)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 184.15 0)
       (effects
@@ -651,7 +711,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6c683b8c-a116-5c17-9d71-90b075a82973))
+    (uuid 8773d6f8-3fd4-51f4-b1ae-c03e78951b76))
   (global_label "GND"
     (shape bidirectional)
     (at 241.3 196.85 90)
@@ -659,7 +719,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid af7d637c-cb8d-5f83-8b4c-7a1f8b219f1f)
+    (uuid 469a6fb0-d8b8-59f4-9d14-85a5774f996b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 196.85 0)
       (effects
@@ -673,8 +733,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid d6729071-bf6d-52b6-9e94-fdc0211104a6)
-    (property "Reference" "C_ADS1_BULK"
+    (uuid 9e4a471e-0f8f-5690-bb17-fb7bcc47b49f)
+    (property "Reference" "C_ADS1_BULK1"
       (at 241.3 168.91 0)
       (effects
         (font
@@ -690,14 +750,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ADS1_BULK"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid be4c6dbf-2733-527d-ad77-49cce9bef5af))
+      (uuid 37835feb-aba8-5ebd-aeb1-caba4c173868))
     (pin "2"
-      (uuid bf647913-777f-5bd4-a270-7bf6d34b3258))
+      (uuid 4b937b48-b0cd-506a-8188-a9c7cd3d6322))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
-          (reference "C_ADS1_BULK")
+          (reference "C_ADS1_BULK1")
           (unit 1)))))
   (wire
     (pts
@@ -924,6 +1014,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_ADS2"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C37593"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "ADS1115IDGSR"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "TI"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "VSSOP-10"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 0aa33046-609d-5be5-91b2-e934ff050256))
     (pin "2"
@@ -956,7 +1076,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d134b56e-6270-5430-98e8-a21cf0eaedd6))
+    (uuid d1d4400f-f932-5020-8804-865f029410ee))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 152.4 120.65 270)
@@ -964,7 +1084,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 30169bc0-8ed1-5aed-b92d-2f84324e689f)
+    (uuid 5d9e2bf1-c6c9-5f2f-8015-79794e4632c4)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 120.65 0)
       (effects
@@ -978,7 +1098,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3f184790-dbb0-594f-9232-4068252a2cc0))
+    (uuid acee11c7-568b-53e5-84f1-8ab0f571a53d))
   (global_label "GND"
     (shape bidirectional)
     (at 152.4 133.35 90)
@@ -986,7 +1106,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 806fe7be-73b3-55fe-8033-81b6da1b41bb)
+    (uuid 02516fb4-64bf-56b6-bebb-7083bd136242)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 133.35 0)
       (effects
@@ -1000,8 +1120,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 53866539-9f93-5e39-9c40-a031cf2c6a75)
-    (property "Reference" "C_ADS2_VCC"
+    (uuid 93bb3f70-138d-507e-a1b9-93d72a7bc176)
+    (property "Reference" "C_ADS2_VCC1"
       (at 152.4 105.41 0)
       (effects
         (font
@@ -1017,14 +1137,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ADS2_VCC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid d85c445f-e7d0-54fc-98a7-34afa48ecb7e))
+      (uuid f2db47c3-fc32-5b76-956e-819d29216cf3))
     (pin "2"
-      (uuid 410cb7fe-d3cd-56da-b23f-002a7fb21070))
+      (uuid 65e733d7-7b88-5388-a29a-7525204751c2))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
-          (reference "C_ADS2_VCC")
+          (reference "C_ADS2_VCC1")
           (unit 1)))))
   (wire
     (pts
@@ -1033,7 +1183,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 964de5f7-7b31-540b-bc5a-82968aa3897c))
+    (uuid 6b5820f9-ff55-51f8-ae88-ef002573257a))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 330.2 184.15 270)
@@ -1041,7 +1191,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c1f286d8-cd29-5ef4-8cf9-db9bcd5b2937)
+    (uuid bcb53c38-380f-5e94-8249-21515a9e5375)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 184.15 0)
       (effects
@@ -1055,7 +1205,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1062d64f-f9f8-58ac-99ca-66f3baf9c41f))
+    (uuid e4edcf78-d57c-561c-b132-b2cb1d7e80f6))
   (global_label "GND"
     (shape bidirectional)
     (at 330.2 196.85 90)
@@ -1063,7 +1213,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c68c34a7-b626-5191-ac88-9bbc851b75a2)
+    (uuid e92abd77-dc9b-5369-a6aa-43836da695cc)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 196.85 0)
       (effects
@@ -1077,8 +1227,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid ad92fbc5-a2f0-5533-8f42-db12f56a2397)
-    (property "Reference" "C_ADS2_BULK"
+    (uuid 0db36a3c-e454-5bef-b4c0-21db07f2f0bf)
+    (property "Reference" "C_ADS2_BULK1"
       (at 330.2 168.91 0)
       (effects
         (font
@@ -1094,14 +1244,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_ADS2_BULK"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid ce0fd1a7-bfe7-5eba-8ee6-33fe366627d0))
+      (uuid da7be53e-96fe-53e6-96ee-7f1e9b0c4686))
     (pin "2"
-      (uuid 01faa751-9f81-5269-a6aa-2d9d9617ee51))
+      (uuid 0ba4213e-30c8-5fd9-aa82-373f982d2317))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
-          (reference "C_ADS2_BULK")
+          (reference "C_ADS2_BULK1")
           (unit 1)))))
   (text "ADS1=0x48 (ADDR=GND); ADS2=0x49 (ADDR=VDD); ALERT/RDY no usado."
     (at 15.24 20.32 0)

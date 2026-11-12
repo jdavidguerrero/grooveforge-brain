@@ -493,6 +493,12 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid dec14c1e-8b07-5a97-86a1-7df815fd0c0a))
     (pin "2"
@@ -601,6 +607,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 8bf102a1-bb36-570a-9ca0-69290e567906))
     (pin "2"
@@ -683,6 +707,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C49678"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 304.8 63.5 0)
       (effects
         (font

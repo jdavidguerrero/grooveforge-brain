@@ -136,7 +136,7 @@ alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
 **D23 (Juan, 2026-11-12):** ambos headers B10B-PH-K-S(LF)(SN), [LCSC C158038](https://www.lcsc.com/product-detail/C158038.html), huella 1×10 PH vertical, ancho 21,9 mm. Cable PHR-10 ↔ PHR-10 1:1.
 
 - **I2C sin pull-ups en PCB-K** (huellas 2,2 kΩ sin poblar): el par activo está en el segmento B_K de PCB-M tras PCA9517A, con 2,2 kΩ por defecto o 4,7 kΩ seleccionables (doc24 D18/D21). El cable K izquierda–derecha sigue 6 vías, en el mismo dominio B_K.
-- La protección del pedal (jack externo) va en PCB-M antes del cable; PCB-K no la repite.
+- D29: junto al jack en PCB-M: 1 kΩ serie, ESD 3,3 V a GND, pull-up 10 kΩ a 3,3 V y 10 nF a GND antes de J_PCB_K. PCB-K recibe PEDAL_BTN protegido; no repite protección.
 
 ## 6. LEDs
 

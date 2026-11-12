@@ -354,6 +354,128 @@
               (font
                 (size 1.27 1.27))))))
       (embedded_fonts no))
+    (symbol "Device:D_TVS"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "D_TVS"
+        (at 0 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Bidirectional transient-voltage-suppression diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "diode TVS thyrector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "D_TVS_0_1"
+        (polyline
+          (pts
+            (xy -2.54 1.27)
+            (xy -2.54 -1.27)
+            (xy 2.54 1.27)
+            (xy 2.54 -1.27)
+            (xy -2.54 1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.508 1.27)
+            (xy 0 1.27)
+            (xy 0 -1.27)
+            (xy -0.508 -1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "D_TVS_1_1"
+        (pin passive line
+          (at -3.81 0 0)
+          (length 2.54)
+          (name "A1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 3.81 0 180)
+          (length 2.54)
+          (name "A2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
     (symbol "Device:NetTie_2"
       (pin_numbers
         (hide yes))
@@ -799,6 +921,241 @@
               (font
                 (size 1.27 1.27))))))
       (embedded_fonts no))
+    (symbol "Transistor_FET:AO3401A"
+      (pin_names
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "Q"
+        (at 5.08 1.905 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "AO3401A"
+        (at 5.08 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+        (at 5.08 -1.905 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27)
+            (italic yes))
+          (justify left)))
+      (property "Datasheet" "http://www.aosmd.com/pdfs/datasheet/AO3401A.pdf"
+        (at 5.08 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Description" "-4.0A Id, -30V Vds, P-Channel MOSFET, SOT-23"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "P-Channel MOSFET"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOT?23*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "AO3401A_0_1"
+        (polyline
+          (pts
+            (xy 0.254 1.905)
+            (xy 0.254 -1.905))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.254 0)
+            (xy -2.54 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.762 2.286)
+            (xy 0.762 1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.762 1.778)
+            (xy 3.302 1.778)
+            (xy 3.302 -1.778)
+            (xy 0.762 -1.778))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.762 0.508)
+            (xy 0.762 -0.508))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.762 -1.27)
+            (xy 0.762 -2.286))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 1.651 0)
+          (radius 2.794)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.286 0)
+            (xy 1.27 0.381)
+            (xy 1.27 -0.381)
+            (xy 2.286 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 2.54 2.54)
+            (xy 2.54 1.778))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 2.54 1.778)
+          (radius 0.254)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (circle
+          (center 2.54 -1.778)
+          (radius 0.254)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 2.54 -2.54)
+            (xy 2.54 0)
+            (xy 0.762 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.794 -0.508)
+            (xy 2.921 -0.381)
+            (xy 3.683 -0.381)
+            (xy 3.81 -0.254))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.302 -0.381)
+            (xy 2.921 0.254)
+            (xy 3.683 0.254)
+            (xy 3.302 -0.381))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "AO3401A_1_1"
+        (pin input line
+          (at -5.08 0 0)
+          (length 2.54)
+          (name "G"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 2.54 -5.08 90)
+          (length 2.54)
+          (name "S"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 2.54 5.08 270)
+          (length 2.54)
+          (name "D"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
     (symbol "power:PWR_FLAG"
       (power global)
       (pin_numbers
@@ -893,7 +1250,7 @@
       (width 0)
       (type default))
     (uuid de12847b-51d7-56c7-8c5d-70a92f7f77c3))
-  (global_label "+5V_LED"
+  (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 142.24 60.96 0)
     (effects
@@ -937,7 +1294,7 @@
       (width 0)
       (type default))
     (uuid 25502cc2-ad07-5707-bfd2-c6f207d7dd32))
-  (global_label "+5V_LED"
+  (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 142.24 63.5 0)
     (effects
@@ -1000,6 +1357,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_LDO1"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C404027"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "TLV75533PDBVR"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "TI"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23-5"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid d4ac017f-8b14-5acb-b0a7-39db3684fc3d))
     (pin "2"
@@ -1045,7 +1432,7 @@
       (width 0)
       (type default))
     (uuid a3c4327c-8b7b-5da8-abde-93db8f59c2a5))
-  (global_label "+5V_LED"
+  (global_label "+5V_LED_FUSED"
     (shape bidirectional)
     (at 63.5 69.85 90)
     (effects
@@ -1072,12 +1459,42 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "0.75A MF-MSMF075"
+    (property "Value" "0.75A MF-MSMF075/24-2"
       (at 63.5 38.1 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Fuse:Fuse_1206_3216Metric"
+    (property "Footprint" "Fuse:Fuse_1812_4532Metric"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "F1"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C208467"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MF-MSMF075/24-2"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "BOURNS"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "1812"
       (at 63.5 63.5 0)
       (effects
         (font
@@ -1094,12 +1511,357 @@
           (unit 1)))))
   (wire
     (pts
+      (xy 414.02 63.5)
+      (xy 411.48 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid aeeef9d9-51d4-5ecc-92af-8d00a5d7e54a))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 411.48 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid fd4831d8-1d08-5b79-a374-5beab2ce73e7)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 411.48 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 421.64 68.58)
+      (xy 421.64 71.12))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d8dff2cc-80d1-51b6-8cca-5041d34d4652))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 421.64 71.12 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 332f5f4f-9b31-5d4a-a8b0-d682d793ec35)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 421.64 71.12 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 421.64 58.42)
+      (xy 421.64 55.88))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 00a79051-f48d-509d-ba36-2aae0eca68e3))
+  (global_label "+5V_LED_FUSED"
+    (shape bidirectional)
+    (at 421.64 55.88 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5b4a011b-c74e-5bf3-9561-ce58d2e58798)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 421.64 55.88 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Transistor_FET:AO3401A")
+    (at 419.1 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b2de7d32-22d7-53b2-887d-8510b17025ff)
+    (property "Reference" "Q_LED_REVERSE1"
+      (at 419.1 31.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "AO3401A"
+      (at 419.1 34.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "Q_LED_REVERSE"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15127"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "AO3401A"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "AOS"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f1e2f3db-8022-5ccd-8d20-cec5b4b51f30))
+    (pin "2"
+      (uuid 4b59bcd5-4cde-5dd2-b00b-7900abff4f11))
+    (pin "3"
+      (uuid 433400d8-fa37-5bdd-bfcb-4f292de8ab7b))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
+          (reference "Q_LED_REVERSE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 415.29 127)
+      (xy 412.75 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 15d805ee-657b-5962-8c42-3d5dd85badba))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 412.75 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 968a27da-b5d2-5c5e-9b23-ef582aca7201)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 412.75 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 422.91 127)
+      (xy 425.45 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a27a32b2-5c24-56de-a6ee-39432b4ea1e7))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 425.45 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 208c2af5-103c-593f-b248-cecb46c5cdef)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 425.45 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:D_TVS")
+    (at 419.1 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 1fbbefa3-e1b3-55e8-a3c2-e40215bc6e73)
+    (property "Reference" "D_LED_TVS1"
+      (at 419.1 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SMAJ5.0A"
+      (at 419.1 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Diode_SMD:D_SMA"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_LED_TVS"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C83329"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SMAJ5.0A"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Littelfuse"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "DO-214AC(SMA)"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 23cc1aca-5825-5e42-84fe-11254c575812))
+    (pin "2"
+      (uuid c7b041eb-e486-5883-be4e-9fa59c82fe4f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
+          (reference "D_LED_TVS1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 186.69)
+      (xy 419.1 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 381c3afd-2c15-50a9-ad26-ed926b3ce74a))
+  (global_label "LED_DATA"
+    (shape bidirectional)
+    (at 419.1 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 37a657d1-70da-5389-beb6-ba021d7b6594)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 419.1 194.31)
+      (xy 419.1 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 01d9462d-2ad4-5c56-acde-6798d040c39b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 419.1 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 753d33f9-deaf-554c-84a7-6f1683c465cd)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid ba25fb78-4f71-5d5c-a8b9-a43964e5bd46)
+    (property "Reference" "R_LED_BIAS1"
+      (at 419.1 166.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 419.1 168.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_LED_BIAS"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25741"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1003TCE"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 67158ab5-1afc-5253-b048-95548f9c0542))
+    (pin "2"
+      (uuid ec220968-d280-57bd-8ca7-254fd33d2c34))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
+          (reference "R_LED_BIAS1")
+          (unit 1)))))
+  (wire
+    (pts
       (xy 58.42 190.5)
       (xy 55.88 190.5))
     (stroke
       (width 0)
       (type default))
-    (uuid 31740dcf-5d0d-51b7-9b35-e4cdfc3db30c))
+    (uuid 8b7a3cb1-e26f-5c41-9e06-2b8d1abf94f8))
   (global_label "+5V_LED_RAW"
     (shape bidirectional)
     (at 55.88 190.5 0)
@@ -1107,7 +1869,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a718a62b-6917-5cdc-8897-0ed334c9be50)
+    (uuid e18d6df7-da0c-57bf-9014-ee3cb4836155)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 190.5 0)
       (effects
@@ -1121,7 +1883,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4fbcedd3-11dd-5d63-9dbc-742fa8741d63))
+    (uuid 1ea0d2dd-7d82-5830-bd03-2d29bb11de46))
   (global_label "GND"
     (shape bidirectional)
     (at 55.88 193.04 0)
@@ -1129,7 +1891,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 2c371407-f63c-5206-b1fe-992d5e053868)
+    (uuid c706acef-3a7d-5c7a-bc2f-5dd0442606dc)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 193.04 0)
       (effects
@@ -1143,8 +1905,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 4eee2dd8-9cf2-50a7-bb72-6052819f411f)
-    (property "Reference" "J_5V_LED_IN"
+    (uuid 0d08a45c-0189-570a-9a70-f0d867511c68)
+    (property "Reference" "J_5V_LED_IN1"
       (at 63.5 184.15 0)
       (effects
         (font
@@ -1160,14 +1922,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_5V_LED_IN"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f3a91b35-cfb7-5b0f-87b8-751347fcdf52))
+      (uuid 91909a4b-9b2a-5705-8154-4fa4ff98ae5b))
     (pin "2"
-      (uuid 26a71b75-36d4-59c3-9d7e-25aeaf47b384))
+      (uuid 77d822c9-a47f-59c9-a4f0-34cfc003c758))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "J_5V_LED_IN")
+          (reference "J_5V_LED_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1237,6 +2029,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "NT1"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid dc7ed92b-c4b8-594f-8e62-7588af4f6637))
     (pin "2"
@@ -1253,7 +2063,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 603f32df-37a7-57d5-b777-801a4140c385))
+    (uuid 9609fef8-bc89-555d-8dae-f89fa86d6331))
   (global_label "+5V_LED_RAW"
     (shape bidirectional)
     (at 55.88 127 0)
@@ -1261,7 +2071,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 66e8ac97-d17d-5fb3-b5dd-b67745d52122)
+    (uuid c6d8ac44-6a71-57f2-bfb0-3f3a3279487b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 127 0)
       (effects
@@ -1275,7 +2085,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1adfd648-5118-53a1-8ea4-d68219056016))
+    (uuid 876b9d6a-4b42-5927-a4bf-71c28c810961))
   (global_label "GND"
     (shape bidirectional)
     (at 55.88 129.54 0)
@@ -1283,7 +2093,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f5958440-dcb6-5d4f-a7cf-f59d7ba2ebb1)
+    (uuid 2fe93ba7-bb60-53b8-8e17-5479d6d8935e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 55.88 129.54 0)
       (effects
@@ -1297,8 +2107,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp yes)
-    (uuid c6a698fe-5538-5ce7-96dc-91fc54a38bd8)
-    (property "Reference" "J_5V_BKUP"
+    (uuid 38232830-bf4c-57c4-99c5-501b3d26ac9f)
+    (property "Reference" "J_5V_BKUP1"
       (at 63.5 120.65 0)
       (effects
         (font
@@ -1314,14 +2124,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "J_5V_BKUP"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 83c89f1e-4a32-577d-92fd-10fff13dd5dc))
+      (uuid d42bdc46-5552-5262-b963-b0fe1365fa67))
     (pin "2"
-      (uuid d625a41c-ccac-576e-8fbc-27d684bfcdc7))
+      (uuid db5b0114-60b5-5fee-98a4-d0b3e488a55b))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "J_5V_BKUP")
+          (reference "J_5V_BKUP1")
           (unit 1)))))
   (wire
     (pts
@@ -1330,15 +2170,15 @@
     (stroke
       (width 0)
       (type default))
-    (uuid cc7e2eb7-8f9a-56d8-b0bc-3f58083946b0))
-  (global_label "+5V_LED"
+    (uuid ccf88da6-5890-5da0-9f79-de5eedc1cbe9))
+  (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 241.3 57.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ae3a9931-2804-5951-91a0-0316c19b9b9e)
+    (uuid 848d49bd-dfb4-5bfe-b2aa-4596cbf73f73)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 57.15 0)
       (effects
@@ -1352,7 +2192,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid bf9c0197-9669-5e00-9d28-0e6ee75b74e1))
+    (uuid 729889d9-47c7-5c1c-805c-8ee1d0a31136))
   (global_label "AGND"
     (shape bidirectional)
     (at 241.3 69.85 90)
@@ -1360,7 +2200,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 83b3d4ef-c5cd-5a3b-b169-6565b6b44422)
+    (uuid e7dfeb46-56f5-536e-bdb7-440a3e669d0d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 69.85 0)
       (effects
@@ -1374,14 +2214,14 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 7e3a79f0-3f95-5b29-a714-a8c00371e471)
-    (property "Reference" "C_LDO_IN"
-      (at 241.3 40.64 0)
+    (uuid a00be2cc-eff4-5b54-bb8c-5250f81c9dd6)
+    (property "Reference" "C_LDO_IN1"
+      (at 241.3 36.83 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "10uF"
-      (at 241.3 43.18 0)
+      (at 241.3 39.37 0)
       (effects
         (font
           (size 1.0 1.0))))
@@ -1391,14 +2231,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LDO_IN"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 0ed998a0-eaca-5137-a8a4-a047d7803292))
+      (uuid 50266a4d-f070-506a-9924-80eabbeed604))
     (pin "2"
-      (uuid cfeb8cc1-7409-51b2-a8e4-9e810d4a4c04))
+      (uuid f90f5cdc-ec4a-5f5f-a16e-718d632f78e0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "C_LDO_IN")
+          (reference "C_LDO_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1407,7 +2277,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 49a0b48e-e477-5088-9661-764a2c1f235c))
+    (uuid 07353734-4041-550f-a3a1-3baf1b91c20e))
   (global_label "+3.3VA"
     (shape bidirectional)
     (at 330.2 57.15 270)
@@ -1415,7 +2285,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 9ebd4d01-b333-5048-8c8b-70ed7178372d)
+    (uuid 078a53ae-e6f2-5bdd-af2a-86a6e1bb4328)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 57.15 0)
       (effects
@@ -1429,7 +2299,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f6afc454-5a70-584a-b4bb-fe9766dca83c))
+    (uuid f9ac44f9-79c8-5dac-8960-446051652ee2))
   (global_label "AGND"
     (shape bidirectional)
     (at 330.2 69.85 90)
@@ -1437,7 +2307,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 5cf69eb9-b1f2-50ac-b8f3-7372bb400ea4)
+    (uuid fea638f6-63d6-5903-b02e-027b670d8f99)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 69.85 0)
       (effects
@@ -1451,8 +2321,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 5e1e0082-be54-5d3f-b653-5cd2f7680d9f)
-    (property "Reference" "C_LDO_OUT"
+    (uuid 0662613f-33d3-5c17-87c7-fd88a39fb689)
+    (property "Reference" "C_LDO_OUT1"
       (at 330.2 41.91 0)
       (effects
         (font
@@ -1468,14 +2338,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LDO_OUT"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C52923"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05A105KA5NQNC"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid a5568878-412d-5df3-b45b-51a46a3070eb))
+      (uuid 5a5a3571-ba32-5e1f-8436-dbd42081694b))
     (pin "2"
-      (uuid 9b61b820-2da2-51ba-afd5-63b53a333577))
+      (uuid f63efe3d-e7f0-5b32-a73d-77754ef1fc31))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "C_LDO_OUT")
+          (reference "C_LDO_OUT1")
           (unit 1)))))
   (wire
     (pts
@@ -1484,7 +2384,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2719f287-be56-51b3-8ffc-e7874648fcb1))
+    (uuid 934e4a0c-e725-54ad-a9a9-eb9d925839a5))
   (global_label "GND"
     (shape bidirectional)
     (at 152.4 114.3 270)
@@ -1492,7 +2392,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 01afb300-83ce-57be-a343-6229ec866867)
+    (uuid 62d3c5e2-a948-5320-b5b5-69132afd227d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 114.3 0)
       (effects
@@ -1506,7 +2406,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6b517637-a099-5700-a104-479854d1ed65))
+    (uuid 26f60f74-6656-5d5d-8e94-14f94a136165))
   (global_label "LED_DATA"
     (shape bidirectional)
     (at 134.62 127 0)
@@ -1514,7 +2414,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 9c0cf54e-f5f7-5e1c-b78f-0f6f8ec27047)
+    (uuid cb0d662f-df61-5e87-abd7-fa0e3746bf61)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 134.62 127 0)
       (effects
@@ -1528,7 +2428,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 19160d8f-d652-57a8-93aa-677950cb93ee))
+    (uuid bbb57297-889f-5e69-aec2-30e8c7bbef0f))
   (global_label "GND"
     (shape bidirectional)
     (at 147.32 139.7 90)
@@ -1536,7 +2436,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 984fdca2-379c-5be1-858d-4d7e290c930f)
+    (uuid e55b95b9-f45d-56bd-a772-819e0083326e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 147.32 139.7 0)
       (effects
@@ -1550,7 +2450,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0de6b2ba-eda1-5f76-af2a-4b068f8f64f7))
+    (uuid cfdb6b67-6590-5635-9338-66f3defc35eb))
   (global_label "LED_BUF_OUT"
     (shape bidirectional)
     (at 167.64 127 180)
@@ -1558,7 +2458,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ee7562fb-59c2-5602-8a94-60be6152af5c)
+    (uuid cab89a3a-49fb-5734-8e65-6952a6e7a997)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 167.64 127 0)
       (effects
@@ -1572,7 +2472,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 62df1fa3-845d-5cd1-a4e7-bf1ecf43d9cc))
+    (uuid 3e307016-fa2b-566d-9073-fcff4177905e))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 147.32 114.3 270)
@@ -1580,7 +2480,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ff49f5dd-4511-5e54-b9b6-3d4d32de0e6d)
+    (uuid 13e75ba1-1bac-509d-9225-ca97011c9073)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 147.32 114.3 0)
       (effects
@@ -1594,8 +2494,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid c10f3242-c756-574e-8d91-cf701f2ddeb7)
-    (property "Reference" "U_LED_BUF"
+    (uuid 7b7c7095-31ab-52cb-8510-b1002e367e86)
+    (property "Reference" "U_LED_BUF1"
       (at 152.4 97.79 0)
       (effects
         (font
@@ -1611,20 +2511,50 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_LED_BUF"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C12495"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "74AHCT1G125GW,125"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-353"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid daa00b16-ebb9-5196-ae6d-9e918cf97b70))
+      (uuid a870636c-a880-50dc-bd37-45fd1e659680))
     (pin "2"
-      (uuid fc7dbeb1-88e3-5e8d-a348-dc47b532ae21))
+      (uuid 1f767775-a687-59c7-a679-d5b638f9adad))
     (pin "3"
-      (uuid 8cb2d3e3-5898-5e7b-a46c-33e4964fdecc))
+      (uuid cb223f06-afc2-5b86-a769-7a731f5515da))
     (pin "4"
-      (uuid 74984a4e-c972-5cfc-90ce-9fd1ed4c6126))
+      (uuid 8d2f9f2e-52e1-5442-be02-8cdf60f8c9b7))
     (pin "5"
-      (uuid a298e389-194e-5da5-9077-250f5020f015))
+      (uuid 8459f639-b6cc-5396-995e-dea9f01003cc))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "U_LED_BUF")
+          (reference "U_LED_BUF1")
           (unit 1)))))
   (wire
     (pts
@@ -1633,7 +2563,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 58d14a93-dda0-568f-a589-a95dabfde43e))
+    (uuid 6f5e745d-28fb-5e96-a97d-009f6b36d76a))
   (global_label "PU_SDA_22"
     (shape bidirectional)
     (at 241.3 120.65 270)
@@ -1641,7 +2571,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 740ca8b7-39f5-53c8-8ebd-7620004a4836)
+    (uuid e023a910-4d78-5ff1-b357-7dbf67d0ec5d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 120.65 0)
       (effects
@@ -1655,7 +2585,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dcbd58dd-8014-569e-9fbf-ddd71acae492))
+    (uuid 52ff42ad-c456-5c40-9be7-5f630877d9a3))
   (global_label "I2C_SDA"
     (shape bidirectional)
     (at 241.3 133.35 90)
@@ -1663,7 +2593,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 4f95b60a-aff3-57a2-8c3e-dcaad3421a3d)
+    (uuid 6629cbcf-6228-598a-8d1d-89f1bc915710)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 133.35 0)
       (effects
@@ -1677,8 +2607,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 7d7f3bd8-d8b8-565b-b35c-4c1e8c8970b4)
-    (property "Reference" "R_SDA"
+    (uuid 7b40302c-925d-54cf-b027-5157a3fcc66e)
+    (property "Reference" "R_SDA1"
       (at 241.3 101.6 0)
       (effects
         (font
@@ -1694,14 +2624,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SDA"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25879"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF2201TCE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid d2a4fdde-4e10-592b-b013-03a1546524a3))
+      (uuid afc19203-8571-538b-a8e4-daa681117097))
     (pin "2"
-      (uuid 9b28bde2-f6ed-52de-a587-2a7588dff6b9))
+      (uuid 8d216caa-fef0-548f-a78e-1915ed3ea8fa))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "R_SDA")
+          (reference "R_SDA1")
           (unit 1)))))
   (wire
     (pts
@@ -1710,7 +2670,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid aa4534aa-a370-50f5-98c8-027b65762c45))
+    (uuid 10d2c667-94b8-5237-9743-7b0db725e09f))
   (global_label "PU_SCL_22"
     (shape bidirectional)
     (at 330.2 120.65 270)
@@ -1718,7 +2678,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 547b4ca9-7d0f-54cf-9d1c-8cb8f5e24cd1)
+    (uuid a99a2163-cdaf-5381-b446-3badcde2c0ab)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 120.65 0)
       (effects
@@ -1732,7 +2692,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7ce869f2-51d7-5191-8f8e-27e7a9c1d483))
+    (uuid b70e6434-3b72-585f-b18e-239687943be3))
   (global_label "I2C_SCL"
     (shape bidirectional)
     (at 330.2 133.35 90)
@@ -1740,7 +2700,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid bdb4fdcd-8a58-5d0a-bbb6-c15902d11dd9)
+    (uuid 6c4220cf-1b24-595d-92a3-aba3ef757cde)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 133.35 0)
       (effects
@@ -1754,8 +2714,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid df1fa90a-a35d-59a1-afcb-120ee1e2169d)
-    (property "Reference" "R_SCL"
+    (uuid dd3bebeb-a3e2-5068-95b2-89b9827863c4)
+    (property "Reference" "R_SCL1"
       (at 330.2 101.6 0)
       (effects
         (font
@@ -1771,14 +2731,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SCL"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25879"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF2201TCE"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid ab8dca2a-2320-510c-af70-cd4becf2b330))
+      (uuid f8c18d4a-6fbd-50dc-a51e-2ccf43694e09))
     (pin "2"
-      (uuid 398501d9-906f-5771-91b7-e3da7a91e6f6))
+      (uuid 326b0097-6be5-5eca-bdc8-b7e8815ccfe5))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "R_SCL")
+          (reference "R_SCL1")
           (unit 1)))))
   (wire
     (pts
@@ -1787,7 +2777,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 0d98787c-403e-52be-be22-9323764b4c1c))
+    (uuid a30caa8b-97b2-5e13-841e-7aaf0cb5116a))
   (global_label "+5V_LED"
     (shape bidirectional)
     (at 241.3 184.15 270)
@@ -1795,7 +2785,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 37a48dd4-a506-5175-93b3-b253b6726f00)
+    (uuid ce369c41-d4df-5b61-9d90-73ed8ccac354)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 184.15 0)
       (effects
@@ -1809,7 +2799,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid e5ea6530-ec05-5dfb-badc-fa86e615503a))
+    (uuid fc8fa0c8-64ec-55d9-b07e-30336fd94437))
   (global_label "GND"
     (shape bidirectional)
     (at 241.3 196.85 90)
@@ -1817,7 +2807,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e1176c91-ec39-584e-b3d4-cf76e940684f)
+    (uuid 3ad226ee-d478-5388-b871-49d723e7ef19)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 196.85 0)
       (effects
@@ -1831,8 +2821,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid ef0f06a1-57b7-56b0-b421-ba5a8a62f46c)
-    (property "Reference" "C_LED_BUF"
+    (uuid 02230c5e-a5d2-519b-9b11-f353c3a77caa)
+    (property "Reference" "C_LED_BUF1"
       (at 241.3 167.64 0)
       (effects
         (font
@@ -1848,14 +2838,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LED_BUF"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 8a8ab271-a6b3-5253-a612-c20d425653bb))
+      (uuid 642828a1-4422-50f4-9fde-c1698ed252d4))
     (pin "2"
-      (uuid e9add65b-1de9-507c-9edc-dfb00a7e7ed2))
+      (uuid 9682cab9-eacc-58be-8e95-03ba0e9a6cbc))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
-          (reference "C_LED_BUF")
+          (reference "C_LED_BUF1")
           (unit 1)))))
   (wire
     (pts
@@ -2175,14 +3195,14 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
           (reference "#FLG006")
           (unit 1)))))
-  (text "LDO -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada."
+  (text "LDO from +5V_TEENSY -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada."
     (at 15.24 20.32 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 343d1f32-df49-5494-931e-6889923f4266))
-  (text "D9: USB-A Pi -> J_5V_LED_IN -> F1 0.75A -> +5V_LED. Backup DNP; sin TVS de entrada adecuada en BOM."
+  (text "D33: USB Pi -> F1 1812 -> PMOS D/S -> +5V_LED; SMAJ5.0A after fuse. Backup DNP."
     (at 15.24 24.13 0)
     (effects
       (font

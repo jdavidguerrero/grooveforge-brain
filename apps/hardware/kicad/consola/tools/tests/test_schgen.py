@@ -104,7 +104,7 @@ def test_pcb_m_complete_description(library):
     assert len(board.sheets) == 12
     assert not board.sheets[3].symbols
     assert all(s.symbols for s in board.sheets if s.name != '04-mcp-io')
-    by_ref = {s.reference: s for sheet in board.sheets for s in sheet.symbols}
+    by_ref = {s.fields.get('Function', s.reference): s for sheet in board.sheets for s in sheet.symbols}
     assert by_ref['J_HP'].pins['3'] == 'HP_VGND'
     assert by_ref['J_LINE_OUT_L'].pins['1'] == 'LINE_OUT_L_T'
     assert by_ref['J1_PCBA'].pins['20'] is None
@@ -194,3 +194,21 @@ def test_root_all_twelve_sheets_inside_page(tmp_path, library):
         assert x >= 10 and y >= 10
         assert x + width <= 410 and y + height <= 247
         assert float(child(children(sheet, 'property')[1], 'at')[2]) <= 247
+
+
+@pytest.mark.parametrize('attribute', ['value', 'footprint', 'dnp'])
+def test_exported_component_identity_mutation_fails(exported, attribute):
+    import xml.etree.ElementTree as ET
+    board, path = exported
+    tree = ET.parse(path)
+    component = tree.find('./components/comp')
+    if attribute == 'dnp':
+        ET.SubElement(component, 'property', name='dnp')
+    else:
+        node = component.find(attribute)
+        if node is None:
+            node = ET.SubElement(component, attribute)
+        node.text = 'WRONG'
+    tree.write(path)
+    with pytest.raises(ValueError, match='Component metadata mismatch'):
+        compare_netlist(board, path)

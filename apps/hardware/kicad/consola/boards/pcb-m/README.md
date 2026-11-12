@@ -1,6 +1,6 @@
 # PCB-M — Placa Principal GrooveForge Consola
 
-> Esquemático jerárquico KiCad 10, decisiones **D8–D23 aprobadas por Juan el 2026-11-12**
+> Esquemático jerárquico KiCad 10, decisiones **D8–D37 aprobadas por Juan el 2026-11-12**
 > (`apps/docs/consola/24-placa-principal.md` §8). Sin layout PCB; no es aprobación de fabricación.
 > Descripción eléctrica: `tools/schgen/pcb_m.py`. Firmware: `apps/consola/surface/include/consola_s/ConsolaMap.h`
 > y `apps/docs/consola/17-mapa-pines-teensy.md`. Conector fabricado: `../CONNECTORS.md`.
@@ -23,7 +23,7 @@ K1/K2. JOG_A/B van a Teensy 37/40; JOG_CLICK y PEDAL_BTN viajan por J_PCB_K al M
 | 08 | `08-connectors-panel` | IDC PCB-A, Qwiic, Serial7 M4, PCB-K, Sharp/expresión |
 | 09 | `09-connectors-rear` | JST-PH hacia LINE IN/OUT, CV, pedal; E-drum DNP |
 | 11 | `11-diagnostics` | TP, puentes de servicio, indicadores y selección de pull-ups locales |
-| 12 | `12-i2c-branches` | PCA9517A ×2, EN desde pin0, pull-ups B, 47 Ω y USBLC6-2SC6 |
+| 12 | `12-i2c-branches` | PCA9517A ×2, EN_K pin0 / EN_A pin1, pull-ups B, 47 Ω y USBLC6-2SC6 |
 | 10 | `10-power` | J_5V_LED_IN → F1; LDO +3.3VA; NT1 AGND/GND; buffer LED y pull-ups I2C |
 
 ## Cross-reference: Teensy ↔ señales de PCB-A y panel (D8)
@@ -33,7 +33,7 @@ Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actua
 
 | Teensy | Función | Net PCB-M | Ruta |
 |---|---|---|---|
-| T0 / T1 | EN I2C / libre | `I2C_BUF_EN_GPIO` / NC | T0 → SJ_EN_GPIO → EN de ambos PCA9517A; MIDI DNP, sin conexión a T0/T1 (D20/D21) |
+| T0 / T1 | EN_K / EN_A | `EN_K_GPIO` / `EN_A_GPIO` | Cada rama por su SJ_EN_K_GPIO / SJ_EN_A_GPIO y pull-up 10k (D30); MIDI DNP |
 | T2 / T3 | ENC1 A/B | `ENC1_A` / `ENC1_B` | J1_PCBA **5 / 7** |
 | T4 / T5 | ENC2 A/B | `ENC2_A` / `ENC2_B` | J1_PCBA **9 / 10** |
 | T6 / T9 | ENC3 A/B | `ENC3_A` / `ENC3_B` | J1_PCBA **13 / 15** |
@@ -48,7 +48,7 @@ Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actua
 | T22 | MASTER | `POT_MASTER` | J_POT_MASTER.2 → **1k → ADC; 100nF a GND** |
 | T24 | CUE | `POT_CUE` | J_POT_CUE.2 → **1k → ADC; 100nF a GND** |
 | T26 | IN | `POT_IN` | J_POT_IN.2 → **1k → ADC; 100nF a GND** |
-| T28 / T29 | M4 RX/TX Serial7 | `M4_RX7` / `M4_TX7` | J3_M4.4 / .3 (cruce hacia TX/RX M4) |
+| T28 / T29 | M4 RX/TX Serial7 | `M4_RX7` / `M4_TX7` | J3_M4.3 / .4 → CONN1.3 SDA/TX21 / .4 SCL/RX22 |
 | T37 / T40 | Jog A/B | `JOG_A` / `JOG_B` | J_JOG.2/.3; clic por .4 hacia PCB-K |
 | T41 | Selector pad | `PAD_SEL_ADC` | J_PAD_SEL.2 y divisor permanente 10k/10k |
 | T7 / T8 / T20 / T21 / T23 | I2S TX/RX/LRCLK/BCLK/MCLK | `I2S_*` | Internos al módulo Audio Shield; sin ruta al panel |
@@ -76,9 +76,9 @@ PH = JST-PH 2,0 mm; normalmente BnB-PH-K vertical. J_5V_LED_IN usa S2B-PH-K hori
 |---|---|---|
 | J1_PCBA | IDC 2×15 | Pinout fabricado de CONNECTORS.md; destinos en tablas anteriores |
 | J2_I2C | JST-SH 4 Qwiic | GND / +3.3V / SDA / SCL |
-| J3_M4 | PH 4 | GND / **NC** / M4_TX7 / M4_RX7; M4 alimentada por su USB al Pi |
+| J3_M4 | PH 4 | GND / **NC** / M4_RX7 / M4_TX7; M4 alimentada por su USB al Pi |
 | J_PCB_K | PH 10 C158038 | +3.3V / SDA_B_K / GND / SCL_B_K / GND / LED_DIN_5V / GND / +5V_LED_K / JOG_CLICK / PEDAL_BTN |
-| J5_SHARP1, J6_SHARP2 | PH 3 cada uno | +5V_LED / SHARPx_ADC / GND |
+| J5_SHARP1, J6_SHARP2 | PH 3 cada uno | +5V_LED / SHARPx_RAW / GND; 10k serie hacia ADS |
 | J7_EXP1, J8_EXP2 | PH 2 cada uno | +3.3V / EXPx_ADC, pulldown 10k |
 | J_JOG | PH 4 | GND / JOG_A / JOG_B / JOG_CLICK |
 | J_POT_MASTER/CUE/IN | PH 3 cada uno | +3.3V / POT_x_WIPER / GND; cursor **antes** del RC |
@@ -102,7 +102,7 @@ la tabla usa **T = tip/punta, R = ring/anillo, S = sleeve/manguito**, no la nume
 | LINE IN R 6,35 mm TRS | J_LINE_IN_R | B3B-PH-K, 3 vías | **1→T** LINE_IN_R_T, **2→R** LINE_IN_R_R, **3→S** AGND |
 | LINE OUT L 6,35 mm TS/TRS | J_LINE_OUT_L | B3B-PH-K, 3 vías | **1→T** LINE_OUT_L_T después de 10µF, **2 NC**, **3→S** AGND; ring sin cable si es TRS |
 | LINE OUT R 6,35 mm TS/TRS | J_LINE_OUT_R | B3B-PH-K, 3 vías | **1→T** LINE_OUT_R_T después de 10µF, **2 NC**, **3→S** AGND; ring sin cable si es TRS |
-| PEDAL 6,35 mm TRS | J_PEDAL | B3B-PH-K, 3 vías | **1→T** PEDAL_BTN, **2 NC** (R sin cable), **3→S** GND |
+| PEDAL 6,35 mm TRS | J_PEDAL | B3B-PH-K, 3 vías | **1→T** PEDAL_RAW (1k → PEDAL_BTN protegido), **2 NC** (R sin cable), **3→S** GND |
 | CV1 3,5 mm TS | J_CV1 | B2B-PH-K, 2 vías | **1→T** CV1_PROTECTED, **2→S** AGND |
 | CV2 3,5 mm TS | J_CV2 | B2B-PH-K, 2 vías | **1→T** CV2_PROTECTED, **2→S** AGND |
 | MIDI IN 3,5 mm TRS **tipo A** | J_MIDI_IN | B3B-PH-K, 3 vías | **1→T** MIDI_IN_TIP (DIN5), **2→R** MIDI_IN_RING (DIN4), **3 NC** (sleeve/DIN2 sin cable) |
@@ -130,13 +130,21 @@ SW_PAD representa los polos A/B del selector de panel, con header 2×4 en PCB-M:
 
 ## Alimentación, masas y protecciones (D9–D12/D14)
 
-Cable USB-A del Pi (solo alimentación): VBUS → J_5V_LED_IN.1, retorno → .2. F1 MF-MSMF075
-**0,75 A** entre +5V_LED_RAW y +5V_LED. El riel protegido alimenta LEDs de teclas (también
-J1.1/.2), Sharp, buffer LED y las cargas ya capturadas (MCP6004 CV y entrada LDO).
-+5V_TEENSY desde el USB propio permanece separado. Respetar el límite de brillo/consumo de `24` §5;
-no conectar en caliente. **No se añade TVS/diodo de entrada** porque no hay pieza adecuada en la
-BOM; BAT54S y 1N4148W son protecciones de señal, no una TVS USB ni bloqueo inverso. Pendiente
-seleccionar esa protección si se revisa la BOM.
+Cable USB-A del Pi (solo alimentación): VBUS → J_5V_LED_IN.1, GND → .2.
+F1 **MF-MSMF075/24-2, 0,75 A, 1812** → +5V_LED_FUSED → AO3401A (D entrada, S carga, G GND)
+→ +5V_LED. SMAJ5.0A unidireccional a GND después del fusible: un corto sostenido de TVS
+queda limitado por F1. El riel alimenta LEDs, buffer, Sharp y amplificador CV.
+PMOS: caída ≤43 mV a 0,5 A usando 85 mΩ, disipación ≈21 mW; evita ≈0,2–0,25 V de Schottky.
+TVS: 5 V es standoff, clamp nominal máximo 9,2 V al pulso especificado; no es regulación a 5 V.
+Medir transitorios con mazo final y no usar para aceptar sobretensión continua.
+
+**+5V_TEENSY procede solo del USB propio de la Teensy desde Pi. NO cortar VUSB–VIN.**
+PCB-M no inyecta alimentación en ese rail. IN/EN y C_IN del TLV75533 están en +5V_TEENSY;
++3.3VA alimenta ADS y frente. Faders/FSR/pots/DAC van a +3.3V de Teensy.
+Sin USB LED esos bloques siguen vivos; Sharp/LED/CV apagados. Sin USB Teensy el dominio
+analógico queda apagado aunque Sharp/CV tengan 5 V. Sharp→ADS 10k (≤0,5 mA con 5 V forzados);
+DAC→CV 2,2k (≤1,5 mA con 3,3 V). Son límites de corriente, no garantía de tensión válida ni
+lecturas correctas sin VDD. Referencias y ensayos de secuencia: doc24 D26.
 
 **NT1 Device:NetTie_2 / NetTie:NetTie-2_SMD_Pad0.5mm**, pin1 AGND, pin2 GND, es la única unión
 entre estas redes. En layout colocarlo **junto a U_LDO1**, regulador de +3.3VA; no crear puentes
@@ -145,7 +153,11 @@ de cobre admitida por DRC; el esquema no prueba la colocación física.
 
 Cada CV tiene **1k serie** desde CVx_OUT (realimentación antes del resistor) hasta
 **CVx_PROTECTED** en el cable, con **BAT54S**: pin1 GND, pin2 +5V_LED, pin3 nodo protegido.
-Cada pot lleva **1k desde el cursor y 100nF a GND en el lado ADC** (τ=100µs, corte ≈1,59kHz).
+Cada pot lleva **1k desde cursor, 100nF y 1M a GND en lado ADC**. Cable abierto decae con τ≈100ms. Pot10k: error máximo ≈0,217% FS (media escala ≈0,174% FS); cota relativa 0,349%. Entrada LED desde T13 con 100k a GND define reposo durante reset.
+
+Pedal: J_PEDAL tip → 1k → PEDAL_BTN → J_PCB_K.10, ESD PESD3V3U1UL unidireccional 3,3V (K señal/A GND), pull-up10k a 3,3V y 10nF a GND junto al conector.
+
+Ambos canales CV quedan poblados. Firmware debe inicializar **0x60 y 0x61** a cero al inicio de setup y provisionar/verificar EEPROM cero una vez. No hay mute de hardware; un reset solo MCU conserva la salida anterior hasta escritura. No escribir EEPROM en cada arranque.
 
 Reserva **DNP** MIDI OUT **3,3 V tipo A**: R_MIDI_R **33Ω ≥0,5W** de +3.3V a ring, R_MIDI_T **10Ω ≥0,25W**
 de MIDI_TX a tip. Se elimina R_MIDI_S=100Ω y la anterior pareja de 47Ω. Referencia:
@@ -157,64 +169,56 @@ Footprints 1210/1206 respectivamente; seleccionar resistores con esa potencia no
 con ambos pares quedarían 1,1k. No modificar pistas ni el pinout de PCB-A. Revisar el total de
 pull-ups de los módulos ya instalados antes de elevar el bus a 400kHz.
 
-## BOM de referencia PCB-M
+## BOM y anotación
 
-D20: **todos** los componentes de hoja 07 y TP/ajustes MIDI son DNP, `in_bom no`; el generador excluye esta reserva MIDI del BOM, conservándola en el netlist/PCB. Otras opciones DNP conservan su estado previo en el BOM de referencia. Tablas MIDI describen solo reserva histórica. Conversor USB en Pi; no perforar MIDI.
+La **BOM se exporta del esquema KiCad** con Reference, Value, Footprint, LCSC y DNP a
+`../../fab/bom-pcb-m.csv`. Este README no contiene una tabla paralela de códigos de compra.
+`../../tools/lcsc_catalog.json` registra identidades y encapsulados verificados, fuentes y fecha;
+`check_bom.py` detecta códigos ausentes/no verificados o huellas incompatibles. Componentes sin
+identidad confirmada conservan LCSC vacío y se enumeran en `../../tools/REPORT-fixrev.md`.
+No comprar desde una tabla histórica. DNP excluye ensamble; pads TP, puentes y NT son cobre,
+no piezas compradas. MIDI de hoja07/TP/ajustes permanece DNP e `in_bom no`.
 
-| DFT añadido | Pieza | LCSC | Nota |
-|---|---|---|---|
-| U_I2C_A/K | PCA9517ADP,118 ×2 | C80799 | MSOP-8 3×3 paso 0,65, símbolo TCA9517ADGK con mismo pinout |
-| D_ESD_I2C_A/K | USBLC6-2SC6 ×2 | C7519 | SOT-23-6, 3,5 pF máx./línea |
-| J_PCB_K | B10B-PH-K-S(LF)(SN) | C158038 | 10 vías, igual que PCB-K izq. J1 |
-| R_ISO_IN_L/R | 0 Ω | — | 0805, retirar para aislar códec |
+Para completar anotación KiCad se añadió **1 final a cada referencia que terminaba en letra**
+(p. ej. J_PCB_K → J_PCB_K1, U_LED_BUF → U_LED_BUF1). Las tablas del spec conservan nombres
+funcionales; el campo **Function** permite cruzarlos con Reference. No se retoca el CSV exportado
+ni se elimina «?» por posproceso; el test usa las referencias reales del exportador.
+Ver `docs/reference-map.csv` para el mapa completo. Pines y redes conservan sus identidades.
 
-Procedimientos, selección de puentes y referencias verificadas en doc24 §10.
+## Montaje del Audio Shield Rev D — contrato físico D28
 
+Los tres JST-PH de PCB-M son **funcionales hacia un mazo corto soldado**, no huellas del
+header original. Vista del **reverso**, orientada como la foto: pads a paso **2,54 mm**.
+Fila inferior izquierda→derecha: **LINE OUT L, G, R, LINE IN R, LINE IN L**.
+Fila superior: **G sobre LINE IN R, G sobre LINE IN L**; los dos pads **sin rótulo** sobre
+LINE OUT L/R se dejan **sin cable**. No deducir señales de su posición.
 
-Números LCSC heredados; comprobar stock y potencia al comprar. No se especifica referencia de
-jack de PCB: todos son de panel comprados localmente. Componentes nuevos sin SKU cerrado se
-identifican por valor, encapsulado y potencia, sin inventar equivalentes.
+| Pad del shield, visto desde reverso | Función en PCB-M | Pin JST-PH |
+|---|---|---|
+| inferior LINE IN L, extremo derecho | J_SHIELD_IN (Reference J_SHIELD_IN1) | 1 |
+| inferior LINE IN R | J_SHIELD_IN | 2 |
+| superior G sobre LINE IN L | J_SHIELD_IN | 3 GND |
+| inferior LINE OUT L, extremo izquierdo | J_SHIELD_OUT (Reference J_SHIELD_OUT1) | 1 |
+| inferior LINE OUT R | J_SHIELD_OUT | 2 |
+| inferior LINE OUT G, entre L/R | J_SHIELD_OUT | 3 GND |
+| abajo derecha L | J_SHIELD_HP (Reference J_SHIELD_HP1) | 1 |
+| abajo derecha R | J_SHIELD_HP | 2 |
+| abajo derecha VGND | J_SHIELD_HP | 3 HP_VGND |
+| superior G sobre LINE IN R | sin segundo retorno de mazo | NC (G de módulo) |
+| dos pads superiores sin rótulo | desconocidos; NO conectar | NC |
 
-| Referencia | Valor / pieza | LCSC heredado | Encapsulado / notas |
-|---|---|---|---|
-| U_ADS1/2 | ADS1115IDGSR | C37593 | TSSOP-10_3x3mm_P0.5mm de librería KiCad |
-| U_DAC1/2 | MCP4725A0T-E/CH | C144198 | SOT-23-6 |
-| U_OA_CV / U_OA_IN | MCP6004 | C510498 | SOIC-14; unidades libres como seguidores |
-| U_OPT_MIDI **DNP** | 6N138 | C3001991 | DIP-8 |
-| U_LED_BUF | 74AHCT1G125GW | C7466 | SC-70-5 |
-| U_LDO1 | TLV75533PDBV | C15578 | SOT-23-5, +3.3VA |
-| F1 | MF-MSMF075 0,75A | C17357 | 1206, según BOM vigente |
-| NT1 | NetTie_2 | — | NetTie-2_SMD_Pad0.5mm, cobre; no componente comprado |
-| R_CV_SER1/2 | 1k | — | 0402 |
-| D_CV_CLAMP1/2 | BAT54S | — | SOT-23, misma pieza de señal del frente |
-| R_POT_MASTER/CUE/IN | 1k | — | 0402 |
-| C_POT_MASTER/CUE/IN | 100nF | — | 0402 |
-| R_CV_RF1/2 / R_CV_RI1/2 | 10k / 20k | — | 0402, ganancia 1,5 |
-| R_MIDI_R / R_MIDI_T **DNP** | 33Ω ≥0,5W / 10Ω ≥0,25W, ±5% o mejor | — | **1210 / 1206**, CA-033 |
-| R_SDA / R_SCL | 2,2k 1% | C25879 | 0402; retirar R1/R2 de PCB-A |
-| R_FSR1–4 | 10k 1% | C25744 | 0402 |
-| R_SEL_T/B | 10k | — | 0603, divisor en PCB-M |
-| C_LDO_IN / C_LDO_OUT | 10µF / 1µF | C15850 / C52923 | 0805 / 0402 |
-| J_5V_LED_IN | **JST PH S2B-PH-K** | **C157929** | 2 vías, horizontal; familia ya usada por FSR |
-| J_FSR1–4, J_CV1/2 | JST PH B2B-PH-K | — | 2 vías vertical (revisar variantes frente a S2B de BOM anterior) |
-| J5_SHARP1/J6_SHARP2, J_HP, J_POT_x, J_PAD_SEL, J_LINE_IN/OUT_L/R, J_PEDAL, J_MIDI_IN/OUT | JST PH B3B-PH-K | — | 3 vías vertical; reemplazan las entradas de jacks SMD de la BOM anterior |
-| J1_PCBA | IDC 2×15 | — | IDC-Header_2x15_P2.54mm_Vertical; verificar mecánica |
+**Advertencia impresa en módulo y esquema: VGND ≠ GND; do not short VGND to GND.**
+Aislar sleeve de audífonos del chasis/GND/AGND y verificar continuidad antes de alimentar.
+Los pads G del shield comparten GND con Teensy por sus headers; llevarlos a **GND**, no añadir una segunda unión AGND/GND por el mazo. NT1 conserva la unión estrella.
+El mazo queda registrado en harness.py como cable a módulo con contactos nombrados.
 
-Desacoplos por IC capturados: ADS1115/MCP4725/MCP6004 CV 100nF + 10µF; buffer LED y opto 100nF;
-LDO y frente conservan sus capacitores. No puebla MCP23017 en PCB-M.
+![Audio Shield Rev D, frente](../../docs/fotos/audio-shield-revd-frente.webp)
 
-## Decisiones resueltas y pendientes
+![Audio Shield Rev D, reverso — usar esta orientación para los pads](../../docs/fotos/audio-shield-revd-reverso.webp)
 
-D8–D23 están registradas en `24` §8 (2026-11-12, **aprobado por Juan**). Quedan resueltos los
-antiguos conflictos de J1/cross-reference, duplicación del selector, falta de entrada primaria,
-masas sin unión, protecciones CV/pots, valores MIDI, pull-ups duplicados y montaje de jacks.
-La corrección previa HP/LINE OUT se conserva: HP_VGND aislada, LINE OUT después del capacitor.
-La ubicación MCP 0x23 y el conteo 36/56 quedan consistentes con `17` y `24` §9.
-
-Pendientes fuera de estas decisiones: terminación ring de LINE IN; función T27 frente al Brain
-(J_EDRUM DNP); selección mecánica del selector/jacks y componentes sin SKU; protección de entrada
-USB sin pieza en BOM; presupuesto de consumo medido, banco CV/audio (MIDI DNP), layout/DRC.
-Ver [REPORT.md](../../tools/REPORT.md) para el alcance exacto de la verificación.
+Checklist completa: [ASSEMBLY.md](ASSEMBLY.md). Pendientes físicos: cupones Choc/LED, montaje/altura
+FSR, terminación ring de LINE IN, arranque códec con 26LED y mediciones CV/alimentación.
+No se declara aprobación de fabricación desde ERC.
 
 ## Dimensiones y layout pendiente
 
@@ -236,15 +240,6 @@ No editar las hojas generadas; cambiar `tools/schgen/pcb_m.py`. Sin `--regenerat
 las hojas existentes sin sobrescribirlas. XML compara pines, NC y particiones/nombres de redes;
 ERC no acredita montaje ni rendimiento analógico. Son **11 páginas** (raíz + 10 subhojas).
 
-**Resultados reales (KiCad 10.0.6): 34 tests pasan; Connectivity PASS: 122 componentes,
-415 pines, 23 NC, 103 redes con nombre; ERC 0 errores y 7 avisos.** Cinco avisos son I2S
-interno al módulo y dos los anillos LINE IN aún sin terminación; no hay exclusiones nuevas.
-PDF de 11 páginas rasterizado y revisado; 11 esquemas idénticos byte a byte al regenerar.
-La CLI conserva el aviso de anotación de referencias descriptivas heredadas; no omite pines.
-Detalle íntegro en REPORT.md.
-
-| Archivo | Contenido |
-|---|---|
-| `docs/pcb-m-schematic.pdf` | Esquema completo |
-| `docs/pcb-m-netlist.xml` | Netlist XML verificado |
-| `docs/erc-report.txt` | ERC íntegro, sin exclusiones añadidas |
+Los resultados de esta corrección se registran en [REPORT-fixrev.md](../../tools/REPORT-fixrev.md).
+El netlist, ERC y PDF de `docs/` se regeneran juntos. Los siete avisos de PCB-M son cinco
+señales I2S internas al módulo y dos anillos LINE IN sin terminación. No hay exclusiones nuevas.

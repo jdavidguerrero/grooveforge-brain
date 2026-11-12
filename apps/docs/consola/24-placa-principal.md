@@ -1,6 +1,6 @@
 # Consola: placa principal (PCB-M)
 
-> **Fecha:** 2026-11-12. **Estado:** decisiones D1–D23 aprobadas por Juan (§8); esquema PCB-M en captura,
+> **Fecha:** 2026-11-12. **Estado:** decisiones D1–D37 aprobadas por Juan (§8); esquema PCB-M en captura,
 > layout pendiente del panel (`25-panel-consola.md`). **Base:** ADR-008 §2 y §6 (una Teensy; presupuesto de consumo obligatorio antes de la placa, auditoría G30),
 > `03-arquitectura-capas.md` §4 (una placa principal reemplaza portadora + PCB-S + PCB-A; se mantienen las placas de
 > botones y faders), `17-mapa-pines-teensy.md` (pines e I2C), `18-teensy-unica-firmware.md`,
@@ -45,12 +45,12 @@ propuesta anterior de 41 entradas y de montar 0x23 en PCB-M, también donde la r
 | Perillas | MASTER, CUE, IN (10 kΩ lineales, 3,3 V) | 22, 24, 26 | Panel por cable; RC 1 kΩ/100 nF por cursor |
 | Selector de pad | 0 / −10 / −20 dB: conmutador de 3 posiciones que atenúa LINE IN **y** da la escalera a 41 | 41 | Divisor 10k/10k permanente en PCB-M, J_PAD_SEL de 3 hilos (D13) |
 | Jog | EC11 o encoder de jog | 37/40 + MCP 0x23 | Panel por cable J_JOG |
-| NeoTrellis M4 | JST-PH 4: GND, n.c., TX7 (29), RX7 (28) | Serial7 | La M4 sigue con USB al Pi (alimentación y carga de firmware) |
+| NeoTrellis M4 | JST-PH 4: GND, n.c., RX7 (28), TX7 (29) | Serial7 | La M4 sigue con USB al Pi (alimentación y carga de firmware) |
 | LEDs de botones | Pin 13 → 74AHCT1G125 → J_PCB_K.6 | 13 | J1_PCBA.26 NC; no usar simultáneamente la antigua ruta por PCB-A |
-| MIDI TRS tipo A | IN 6N138; OUT 33 Ω (0,5 W) a 3,3 V y 10 Ω (0,25 W) desde TX | DNP; 0 EN I2C / 1 libre | D20 sustituye D7; D12; tip = DIN5, ring = DIN4, sleeve OUT = GND, sleeve IN NC |
+| MIDI TRS tipo A | IN 6N138; OUT 33 Ω (0,5 W) a 3,3 V y 10 Ω (0,25 W) desde TX | DNP; 0 EN_K / 1 EN_A | D20 sustituye D7; D12; tip = DIN5, ring = DIN4, sleeve OUT = GND, sleeve IN NC |
 | Pedal | Jack TRS 6,35 mm a MCP 0x23 | — | Nota 122 |
 | Triggers e-drum | Conector (DB15 o RJ45) + huellas sin poblar del acondicionamiento | 25, 27, 38, 39 | Reservado |
-| I2C | Un par seleccionable 2,2/4,7 kΩ por segmento local/B_K/B_A, dos PCA9517A en PCB-M; quitar R1/R2 de PCB-A | 18/19, EN en 0 | D18/D21; pull-ups remotos DNP |
+| I2C | Un par seleccionable 2,2/4,7 kΩ por segmento local/B_K/B_A, dos PCA9517A en PCB-M; quitar R1/R2 de PCB-A | 18/19, EN_K 0 / EN_A 1 | D18/D21; pull-ups remotos DNP |
 | Alimentación | J_5V_LED_IN desde USB-A de Pi → F1 0,75 A → +5V_LED; LDO → +3.3VA | — | §5; AGND/GND solo por NT1 junto al LDO (D9/D10) |
 
 ## 4. Conectores al exterior (jacks de panel por cable)
@@ -83,14 +83,13 @@ para sus USB-A**. Reparto propuesto, todo desde el Pi:
 | Rama | Alimenta | Típico | Tope |
 |---|---|---|---|
 | Fuente → Pi (núcleo, NVMe, Audio+, pantalla) | — | 2,5 A | 3,4 A |
-| USB-A 1 (datos + 5 V) | Teensy y la lógica de 3,3 V de PCB-M | 0,15 A | 0,25 A |
+| USB-A 1 (datos + 5 V) | Teensy, LDO analógico/ADS/frente y lógica de 3,3 V | 0,15 A | 0,25 A |
 | USB-A 2 (datos + 5 V) | NeoTrellis M4 | 0,5 A | 0,6 A (brillo ≤ 25 %) |
-| USB-A 3 (solo 5 V, cable de alimentación) | 26 LEDs de las teclas, Sharp ×2, buffer de LEDs | 0,5 A | 0,6 A (brillo ≤ 25 %) |
+| USB-A 3 (solo 5 V, cable de alimentación) | 26 LEDs de las teclas, Sharp ×2, buffer LED y amplificador CV | 0,5 A | 0,6 A (brillo ≤ 25 %) |
 | **Suma de USB** | | **1,15 A** | **1,45 A ≤ 1,6 A** |
 
 Condiciones: brillo de LEDs **limitado por firmware sin excepción** (teclas y M4), polyfuse de 0,75 A en la entrada
-de 5 V de LEDs de PCB-M, los 5 V de la Teensy y los de LEDs **no se unen** (corte VUSB–VIN, diodo o separación por
-rama). Riesgo: en el peor caso del Pi (CPU al 100 % + NVMe + USB al tope) la fuente queda al límite: **medir en banco
+de 5 V de LEDs de PCB-M, los 5 V de la Teensy y los de LEDs **no se unen**: separación por rama. **NO cortar VUSB–VIN** de Teensy (D35); su USB es la única fuente de +5V_TEENSY. Riesgo: en el peor caso del Pi (CPU al 100 % + NVMe + USB al tope) la fuente queda al límite: **medir en banco
 con medidor USB antes de fabricar**; si no alcanza, el plan B es una segunda entrada de 5 V para PCB-M (huella
 prevista, sin poblar).
 
@@ -118,7 +117,7 @@ I2C ve 0x0A, 0x20–0x23, 0x48, 0x49, 0x60, 0x61; audio dúplex ≥ 60 min sin c
 | **D6** | **Una sola fuente: la oficial del Pi.** Todo se alimenta desde el Pi (reparto en §5); plan B con huella sin poblar |
 | **D7** | ~~MIDI DIN poblado en v1~~ Sustituida por D20: MIDI hardware DNP, conversor USB en Pi |
 | **D8** | **2026-11-12, aprobado por Juan:** manda el pinout de PCB-A fabricada en CONNECTORS.md. PCB-M lleva cada ENC a ENCODER_PINS de ConsolaMap.h/17; FADER1–4 → ADS1115 0x48 AIN0–3. J1.18 (spare), .20 (INT_K), .22 (INT_A), .26 (LED_DIN) NC; LEDs por J_PCB_K |
-| **D9** | **2026-11-12, aprobado por Juan:** J_5V_LED_IN JST-PH S2B-PH-K (BOM C157929), pin1 +5V_LED_RAW / pin2 GND desde USB-A de Pi; F1 0,75 A → +5V_LED (teclas, Sharp, buffer y cargas ya capturadas). Sin TVS de entrada añadida: no hay pieza adecuada en la BOM; documentar pendiente |
+| **D9** | **2026-11-12, aprobado por Juan:** J_5V_LED_IN JST-PH S2B-PH-K (BOM histórica errónea, corregida D25: C173752), pin1 +5V_LED_RAW / pin2 GND desde USB-A de Pi; F1 0,75 A → +5V_LED (teclas, Sharp, buffer y cargas ya capturadas). Sustituida por D26/D33: LDO desde Teensy y protección TVS/PMOS en rama LED |
 | **D10** | **2026-11-12, aprobado por Juan:** AGND y GND unidas solo por NT1, símbolo Device:NetTie_2 y footprint estándar NetTie:NetTie-2_SMD_Pad0.5mm, junto a U_LDO1 (+3.3VA) en layout; HP_VGND permanece aislada |
 | **D11** | **2026-11-12, aprobado por Juan:** cada CV lleva 1 kΩ en serie y BAT54S desde el nodo del jack a GND/+5V_LED; cada pot MASTER/CUE/IN lleva 1 kΩ serie desde cursor y 100 nF a GND en el lado ADC |
 | **D12** | **2026-11-12, aprobado por Juan:** MIDI OUT a 3,3 V según MIDI Association CA-033 (2014): 33 Ω al riel (≥0,5 W), 10 Ω desde TX (≥0,25 W), sin 100 Ω adicional. TRS **tipo A**, tip DIN5, ring DIN4, sleeve DIN2; IN sleeve NC, OUT sleeve GND |
@@ -129,10 +128,48 @@ I2C ve 0x0A, 0x20–0x23, 0x48, 0x49, 0x60, 0x61; audio dúplex ≥ 60 min sin c
 | **D17** | **2026-11-12, aprobado por Juan:** SJ_FRONT/SJ_CV/SJ_LED_K/SJ_SHARP/SJ_LED_DATA cerrados; 0 Ω 0805 R_ISO_IN_L/R antes de LINE IN del shield; conservar JP_BYP. No se hace protoboard; fallo de entrada/CV se aísla y la consola continúa sin esa función |
 | **D18** | **2026-11-12, aprobado por Juan:** pull-ups seleccionables en cada segmento (local y B de A/K): 2,2 kΩ cerrados por defecto, 4,7 kΩ abiertos alternativos; remotos DNP. Sustituye el bus único de D14 |
 | **D19** | **2026-11-12, aprobado por Juan:** SJ_CV → 10 Ω + 47 µF → +5V_CV; conservar ganancia 1,5, medir margen de saturación y caída bajo carga |
-| **D20** | **2026-11-12, aprobado por Juan:** toda hoja 07 MIDI DNP, excluida del BOM de ensamble; conversor USB en Pi y cuerpo sin agujeros MIDI. Teensy 1 NC, pin 0 pasa a EN de I2C; TP/ajustes MIDI son solo reserva DNP |
-| **D21** | **2026-11-12, aprobado por Juan:** 2 × NXP PCA9517ADP,118 C80799 MSOP-8: lado A local, lado B independiente hacia K y A; VCCA/VCCB 3,3 V; EN común desde Teensy 0 con 10 kΩ pull-up y opción de forzar alto desconectando antes GPIO |
+| **D20** | **2026-11-12, aprobado por Juan:** toda hoja 07 MIDI DNP, excluida del BOM de ensamble; conversor USB en Pi y cuerpo sin agujeros MIDI. Asignación histórica sustituida por D30: Teensy 0/1 son EN_K/EN_A; TP/ajustes MIDI son solo reserva DNP |
+| **D21** | **2026-11-12, aprobado por Juan:** 2 × NXP PCA9517ADP,118 C80799 MSOP-8: lado A local, lado B independiente hacia K y A; VCCA/VCCB 3,3 V; asignación original EN común sustituida por D30: EN_K/EN_A separados desde Teensy 0/1 con 10 kΩ y puentes individuales |
 | **D22** | **2026-11-12, aprobado por Juan:** 47 Ω serie 0805 (0 Ω si no hace falta) y ESD 2 líneas <10 pF por cada salida I2C de cable. Selección verificada USBLC6-2SC6 ST C7519, SOT-23-6, 3,5 pF máx. J1_PCBA IDC no tiene I2C: su protección SDA/SCL está en J2_I2C, no se inventan pines en J1 |
 | **D23** | **2026-11-12, aprobado por Juan:** J_PCB_K y PCB-K izquierda J1 pasan a JST-PH **10 vías**, B10B-PH-K-S(LF)(SN) C158038. 1 3V3 / 2 SDA / 3 GND / 4 SCL / 5 GND / 6 LED_DIN_5V / 7 GND / 8 5V_LED / 9 JOG_CLICK / 10 PEDAL_BTN. Sustituye 8 vías y mantiene pedal |
+
+
+| **D24** | **2026-11-12, aprobado por Juan:** UART real Adafruit trellis_m4: TX21=SDA, RX22=SCL. Teensy RX7/28 a J3_M4.3/CONN1.3 SDA/TX21; TX7/29 a .4/CONN1.4 SCL/RX22. CONN1.1 GND, .2 3V3 NC. Evita TX contra TX; corregir macros discordantes en tarea firmware. |
+| **D25** | **2026-11-12, aprobado por Juan:** identidad de compra en campo LCSC de cada componente físico; catálogo verificado con fabricante/MPN/encapsulado/huellas/fecha/fuente. Código no confirmado queda vacío y bloquea cierre de compras, nunca se adivina. BOM sale del esquema, no del README. F1 MF-MSMF075/24-2 es 1812. También C157929 era S3B de tres vías: para S2B dos vías usar identidad verificada C173752. |
+| **D26** | **2026-11-12, aprobado por Juan:** LDO +3.3VA desde +5V_TEENSY (IN y EN), no LED. ADS, frente, faders y expresión comparten origen Teensy. Sharp→ADS 10 kΩ serie; DAC→MCP6004 CV **2,2 kΩ** serie (1 kΩ no limita 3,3 V/1 kΩ a ±2 mA). Ver análisis de secuencia abajo. |
+| **D27** | **2026-11-12, aprobado por Juan:** CV2 es función poblada. Firmware escribe cero a **0x60 y 0x61** al inicio de setup, antes de audio/superficie; provisionar EEPROM cero una vez y comprobarla, no escribirla cada arranque. Sin mute añadido: un switch doble requeriría alimentación/estado seguro propios; EEPROM no garantiza cero durante reset con DAC aún alimentado. |
+| **D28** | **2026-11-12, aprobado por Juan:** Audio Shield Rev D por tres mazos cortos soldados a pads reales de 2,54 mm: LINE IN L/R/G, LINE OUT L/R/G y HP L/R/VGND hacia JST-PH funcionales en PCB-M. G del shield a GND (ya común a Teensy), sin segunda unión a AGND; NT1 conserva la estrella. No son headers directos del shield. Dos pads sin rótulo NC; HP_VGND ≠ GND, advertencia en esquema y montaje. Fotos y mapa en README PCB-M. |
+| **D29** | **2026-11-12, aprobado por Juan:** pedal en PCB-M junto a J_PEDAL: 1 kΩ serie, TVS ESD unidireccional de una línea 3,3 V a GND, pull-up 10 kΩ a +3.3V y 10 nF a GND del lado protegido antes de J_PCB_K. Limita corriente/ruido del cable externo; debounce sigue en firmware. |
+| **D30** | **2026-11-12, aprobado por Juan:** EN_K en Teensy 0, EN_A en Teensy 1, cada EN con 10 kΩ pull-up y SolderJumper GPIO independiente. Sustituye EN común de D20/D21; MIDI completo DNP. NXP §6.1 exige cambiar EN **solo con bus ocioso**; firmware debe gestionar/diagnosticar cada rama y preservar audio local cuando esté aislada. Rama permanentemente baja no está ociosa: no se garantiza recuperación EN en ese estado; apagar y abrir puentes de servicio. |
+| **D31** | **2026-11-12, aprobado por Juan:** entrada A del buffer LED (Teensy 13) con 100 kΩ a GND; cada pot con 1 MΩ a GND **tras** RC. Cable suelto decae a cero (τ≈100 ms). Para pot 10 kΩ, Rth≤2,5 kΩ + serie 1 kΩ: error relativo ≤3,5k/1003,5k=0,349%; a media escala 0,174% FS, máximo ≈0,217% FS. Calibrar extremos si hace falta. |
+| **D32** | **2026-11-12, aprobado por Juan:** FSR de la foto termina en dos machos prensados de 2,54 mm. Sustituir pads SMD provisionales por landing THT 1×2 de 2,54 mm apto para zócalo hembra o soldadura. Mantener datum disco CSV y orientar landing hacia disco; cola flexible debe acomodarse sin tensión, verificar longitud/plegado y altura con pieza real antes de layout final. PCB-P .kicad_pcb pertenece a otra tarea. |
+| **D33** | **2026-11-12, aprobado por Juan:** entrada LEDs: conector → polyfuse → P-MOS AO3401A (D entrada/S carga/G GND) → +5V_LED, con SMAJ5.0A unidireccional a GND **después del fusible**. Fusible limita fallo sostenido de TVS; MOS evita pérdida Schottky: ≤0,043 V y 21 mW a 0,5 A con 85 mΩ, frente ≈0,2–0,25 V/0,10–0,125 W Schottky. TVS 5 V es standoff, no clamp ideal a 5 V; ensayar transitorios, no promete tolerancia a sobretensión continua. |
+| **D34** | **2026-11-12, aprobado por Juan:** PCA9517ADP,118 C80799 usa NXP SOT505-1/TSSOP8 (MSOP-8 comercial), 3×3 mm, paso 0,65, ancho total ≈4,9 mm. Usar KiCad MSOP-8_3x3mm_P0.65mm, no asumir identidad solo por nombre VSSOP. |
+| **D35** | **2026-11-12, aprobado por Juan:** **NO cortar VUSB–VIN** de Teensy. Su USB desde Pi es la única fuente de +5V_TEENSY; PCB-M no inyecta 5 V allí. Desoldar/no poblar R1/R2 PCB-A antes de integrar. Rev HW B-05 es incorrecta para este diseño. |
+| **D36** | **2026-11-12, aprobado por Juan:** doc27 LED_DIN es J1.6 de PCB-K, no J1.5 (GND). Corrige referencia, sin cambiar cadena. |
+| **D37** | **2026-11-12, aprobado por Juan:** completar anotación de referencias PCB-M con sufijo numérico válido conservando nombres descriptivos; BOM real sin «?», test no normaliza ni elimina ese carácter. No cambia conectividad. |
+
+### Secuencia de alimentación y límites (D26–D27)
+
+Sin USB LED: Teensy, +3.3V, +3.3VA, ADS, frente y sensores excitados por Teensy siguen activos;
+LEDs, Sharp y amplificador CV quedan sin alimentación. Las resistencias DAC→CV de 2,2 kΩ
+limitan incluso 3,3/2,2k = 1,50 mA, menor que ±2 mA absoluto MCP6004. Sin USB Teensy:
+ADS/frente/faders/expresión/DAC apagados; Sharp/LED/CV pueden seguir alimentados.
+10 kΩ limita una salida Sharp hasta 5 V a ≤0,50 mA en ADS apagado, menor que ±10 mA.
+No confundir limitar corriente con operación analógica válida: ADS AIN ≤VDD+0,3 V y
+MCP6004 VIN ≤VDD+1 V son límites absolutos; apagar/inyección requiere ensayo de rail fantasma,
+secuencia lenta, SJ_CV abierto y temperatura. No interpretar lecturas sin su alimentación.
+Para EN, tanto bus global como puerto repetidor deben estar ociosos (NXP §6.1). Timeout no equivale a bus ocioso: no conmutar arbitrariamente una rama retenida en bajo; usar aislamiento manual sin alimentación y registrar fallo.
+El DAC restaura EEPROM al POR (de fábrica media escala); un reset solo de MCU no es POR del DAC.
+Cero previo a firmware depende del provisionado y del historial de alimentación; no hay mute garantizado.
+La M4 tiene USB propio: comprobar UART y LEDs sin su rail antes de permitir conexión en caliente.
+
+Fuentes verificadas 2026-11-12: [Adafruit variant.h](https://raw.githubusercontent.com/adafruit/ArduinoCore-samd/master/variants/trellis_m4/variant.h),
+[TI ADS1115 §5.1](https://www.ti.com/lit/gpn/ADS1115),
+[Microchip MCP6004 §1/§4.1.2](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP6001-1R-1U-2-4-1-MHz-Low-Power-Op-Amp-DS20001733L.pdf),
+[MCP4725 §5.4](https://ww1.microchip.com/downloads/en/devicedoc/22039d.pdf),
+[NXP PCA9517A §6.1/§13](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf),
+[AO3401A](https://www.aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf).
 
 ## 9. Cambio 2026-11-11: el 4.º MCP pasa a PCB-K
 
@@ -252,9 +289,8 @@ VOL B ≈0,5 V; **no conectar dos lados B**. Cambiar EN solo con bus ocioso.
 Pinout MSOP-8: 1 VCCA, 2 SCLA, 3 SDAA, 4 GND, 5 EN, 6 SDAB, 7 SCLB, 8 VCCB.
 Se usa el símbolo estándar KiCad TCA9517ADGK por igualdad de pines; valor, huella y datasheet
 identifican la pieza **NXP PCA9517ADP,118, C80799**, MSOP-8 3×3 mm paso 0,65.
-EN común tiene pull-up 10 kΩ; SJ_EN_GPIO cerrado conecta Teensy 0. Para forzar alto, apagar,
-abrir SJ_EN_GPIO y cerrar SJ_EN_HIGH (abierto por defecto); nunca forzar alto contra GPIO bajo.
-No se cambia firmware aquí: dejar pin 0 como entrada/alta impedancia; no iniciar Serial1.
+D30 sustituye EN común: EN_K/EN_A con pull-up 10 kΩ y SJ_EN_K_GPIO/SJ_EN_A_GPIO cerrados a Teensy 0/1. Para forzar alto, apagar y abrir el puente GPIO correspondiente; la pull-up mantiene alto sin cortocircuitar un GPIO bajo.
+No se cambia firmware aquí: al reset pin0/1 en alta impedancia y pull-ups habilitan ramas. La tarea firmware debe gestionar EN_K/EN_A según D30; no iniciar Serial1 ni cambiar EN con bus retenido en bajo.
 
 Un par de 2,2 kΩ por segmento (local, B_K, B_A); puentes cerrados. Alternativa 4,7 kΩ con
 puentes abiertos: abrir 2,2 kΩ antes de cerrar 4,7 kΩ. No sumar los tres pares como si fueran

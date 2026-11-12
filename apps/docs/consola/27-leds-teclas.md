@@ -5,7 +5,7 @@ keyleds1. Extiende 23 sin cambiar el retorno M4 ni los SSoT 00–06.
 
 ## 1. Cadena PCB-K partida
 
-DIN pin13 → 74AHCT1G125 a 5 V → J1.5 en la placa izquierda → LED0.
+DIN pin13 → 74AHCT1G125 a 5 V → J1.6 en la placa izquierda → LED0.
 GND común; OE activo bajo. No alimentar LEDs desde 3,3 V ni unir las ramas USB
 de 24 §5. No usar SD/SPI del shield (17/18). SK6812MINI-E **RGB, GRB de 24 bits**,
 800 kHz. Orden lógico = físico, índice base cero; coordenadas exactas del CSV v1,

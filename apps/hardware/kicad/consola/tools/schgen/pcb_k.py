@@ -132,6 +132,8 @@ def pcb_k(side):
             keys += triple
         sheets.append(Sheet(f'keys-{start:02}', keys, notes=[
             'SW arriba, zocalo integrado abajo. LED inverso abajo. Orden nuevo PCB-K partida.']))
+    from .bom import populate_fields
+    populate_fields(sheets)
     return Board(f'pcb-k-{side}', sheets)
 
 

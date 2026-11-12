@@ -9,7 +9,7 @@
 
 | Pin | Función | Tipo | Nota |
 |---|---|---|---|
-| 0 / 1 | **MIDI DIN** RX/TX (Serial1) | reservado | Huellas del optoacoplador y jacks TRS (`03` §4.2) |
+| 0 / 1 | **EN_K / EN_A** PCA9517A | I2C ramas | D30 doc24; MIDI DIN DNP, no iniciar Serial1 |
 | 2, 3 | Encoder 1 A/B | digital | |
 | 4, 5 | Encoder 2 A/B | digital | |
 | 6, 9 | Encoder 3 A/B | digital | |
@@ -94,3 +94,5 @@ Los modos se eligen en la pantalla (MENU). El orden exacto de pines dentro de ca
 ## Corrección de firmware del banco (2026-11-10)
 
 **Sin cambios de pines.** La propiedad ADC pasa a un único planificador por unidad (18§2/7). Mínimo: MASTER22 sin habilitar; FSR14/15 con divisor10k, Sharp en ADS0x48 AIN2 y fader en AIN0. ADS0x49/MCP0x22/MCP4725 no se sondean en ese perfil. Un cursor que pueda desconectarse necesita pull-down externo; el deadband no demuestra cableado. ADC2 en22 se verificó contra `libraries/ADC/ADC.cpp` del paquete Teensyduino1.160.0; CUE24 no tiene ADC2, por eso no basta cambiar todas las lecturas a ADC2 manteniendo los pines.
+
+UART M4 D24: RX28 ← CONN1.3 SDA/TX21; TX29 → CONN1.4 SCL/RX22; .1 GND, .2 3V3 NC.

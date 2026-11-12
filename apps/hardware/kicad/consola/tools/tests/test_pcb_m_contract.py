@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[6]
 
 @pytest.fixture
 def parts():
-    return {s.reference: s for sheet in pcb_m().sheets for s in sheet.symbols}
+    return {s.fields.get('Function', s.reference): s for sheet in pcb_m().sheets for s in sheet.symbols}
 
 
 def test_fabricated_pcba_pinout_and_current_firmware(parts):
@@ -57,7 +57,7 @@ def test_fused_usb_power_and_unique_ground_tie(parts):
     assert parts['J_5V_LED_IN'].pins == {'1': '+5V_LED_RAW', '2': 'GND'}
     assert 'JST_PH_S2B-PH-K' in parts['J_5V_LED_IN'].footprint
     assert not parts['J_5V_LED_IN'].dnp
-    assert parts['F1'].pins == {'1': '+5V_LED_RAW', '2': '+5V_LED'}
+    assert parts['F1'].pins == {'1': '+5V_LED_RAW', '2': '+5V_LED_FUSED'}
     assert '0.75A' in parts['F1'].value
     assert parts['J_5V_BKUP'].dnp
     assert parts['U_LDO1'].pins['5'] == '+3.3VA'
@@ -123,7 +123,7 @@ def test_one_jst_per_panel_jack_with_existing_contacts(parts):
         'J_LINE_IN_R': ['LINE_IN_R_T', 'LINE_IN_R_R', 'AGND'],
         'J_LINE_OUT_L': ['LINE_OUT_L_T', None, 'AGND'],
         'J_LINE_OUT_R': ['LINE_OUT_R_T', None, 'AGND'],
-        'J_PEDAL': ['PEDAL_BTN', None, 'GND'],
+        'J_PEDAL': ['PEDAL_RAW', None, 'GND'],
         'J_CV1': ['CV1_PROTECTED', 'AGND'], 'J_CV2': ['CV2_PROTECTED', 'AGND'],
         'J_MIDI_IN': ['MIDI_IN_TIP', 'MIDI_IN_RING', None],
         'J_MIDI_OUT': ['MIDI_OUT_TIP', 'MIDI_OUT_RING', 'GND'],

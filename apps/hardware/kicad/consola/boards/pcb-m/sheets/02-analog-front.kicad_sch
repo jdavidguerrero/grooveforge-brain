@@ -1212,6 +1212,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PAD_L1"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C4216"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF3302T5E"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 2a4278a4-8082-5bb1-b4f0-18783e7ffef4))
     (pin "2"
@@ -1270,6 +1300,36 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_L2"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22790"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1202T5E"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
       (at 152.4 63.5 0)
       (effects
         (font
@@ -1345,6 +1405,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PAD_L3"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23186"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF5101T5E"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 7929f967-009c-505a-b52d-76750c54b899))
     (pin "2"
@@ -1361,7 +1451,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3697f02b-bef2-5617-a80f-7c98de52f1ff))
+    (uuid cf1d8ef3-cdca-51f7-b391-d72117bc65c8))
   (global_label "LINE_IN_L_T"
     (shape bidirectional)
     (at 337.82 60.96 180)
@@ -1369,7 +1459,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 691acabb-c818-5d2d-8401-5a0a25c0e498)
+    (uuid 1154f710-95b2-5e46-9f4d-a876787881d1)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 337.82 60.96 0)
       (effects
@@ -1383,14 +1473,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 786ed822-0aa1-5d14-b7a7-66b55368f6f9))
+    (uuid 9b7e8239-56a9-52b9-a0be-eeef2ef5abce))
   (label "TAP10_L"
     (at 337.82 63.5 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 15f17930-e01d-533e-9327-d4904bb5f8f8))
+    (uuid 31982c1f-6def-53a8-a74a-83d90342de0a))
   (wire
     (pts
       (xy 325.12 63.5)
@@ -1398,14 +1488,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1819dbbb-fead-5ea0-991d-cf201ebcda65))
+    (uuid 13a67976-8267-5fe7-a33e-26676a54a909))
   (label "PAD_L"
     (at 322.58 63.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 46223139-8d8e-5df3-9905-b58e8546142e))
+    (uuid 7885c2bc-b05d-5fbc-b99f-0411f827c473))
   (wire
     (pts
       (xy 335.28 66.04)
@@ -1413,14 +1503,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d3fb0d98-ef03-511d-9858-ed953729bb58))
+    (uuid 9a776874-6be7-5cf3-b722-4340b71dba74))
   (label "TAP20_L"
     (at 337.82 66.04 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 879c0f54-6fe7-58b6-8687-808234d9ef62))
+    (uuid cc90f22e-b244-54c0-a6f9-fd4018acd6d4))
   (symbol
     (lib_id "Switch:SW_DP3T")
     (at 330.2 63.5 0)
@@ -1428,8 +1518,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 5e959aab-6c5e-53a4-95c6-86bb577b1771)
-    (property "Reference" "SW_PAD"
+    (uuid 80e572d3-2918-5757-be94-9676a7f317a5)
+    (property "Reference" "SW_PAD1"
       (at 330.2 54.61 0)
       (effects
         (font
@@ -1445,18 +1535,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SW_PAD"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 95d766c0-8871-51df-afc8-5dc8934b0c06))
+      (uuid 598dbadd-1ea6-5a26-874a-0e948f419948))
     (pin "2"
-      (uuid e4eb474f-490c-5475-9f7d-397940a198ec))
+      (uuid 29f72edf-25bd-5553-b977-5f395f3b5a0f))
     (pin "3"
-      (uuid baaeb76a-74e1-5501-aede-26e8fa4c48f4))
+      (uuid 20640cdd-2960-51db-b92b-816b7d3aae5b))
     (pin "4"
-      (uuid cfd75e8c-ba40-506d-88b9-a6b91018ba72))
+      (uuid 15abd875-8177-5315-8d7a-964e08c5d1c7))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "SW_PAD")
+          (reference "SW_PAD1")
           (unit 1)))))
   (wire
     (pts
@@ -1465,14 +1567,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4303347d-9d51-5546-a774-009df6cbfbab))
+    (uuid f8f32dc1-51a0-5f77-8c25-53d4b17593e5))
   (label "PAD_L"
     (at 419.1 57.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f59267bb-2843-53b6-804c-5898eb6ce008))
+    (uuid 02931133-a0c5-58ba-a374-aa136616f60c))
   (wire
     (pts
       (xy 419.1 67.31)
@@ -1480,14 +1582,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 506c3bb4-e236-5432-b8c2-8e61278852e9))
+    (uuid e6e7c4bf-dc67-58c3-8e0d-9abf6082909d))
   (label "AC_L"
     (at 419.1 69.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c3f7ecc8-99eb-519a-8805-e7a000c9b613))
+    (uuid c2893258-1656-5717-a86b-9e72b9ad0a02))
   (symbol
     (lib_id "Device:C")
     (at 419.1 63.5 0)
@@ -1495,8 +1597,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 08fa694a-b7da-58ba-836f-d87ddb65f4da)
-    (property "Reference" "C_AC_L"
+    (uuid b325fb15-e3b8-5b33-8a24-ec3a0d2eaab5)
+    (property "Reference" "C_AC_L1"
       (at 419.1 43.18 0)
       (effects
         (font
@@ -1512,14 +1614,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_AC_L"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C28323"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21B105KBFNNNE"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 95b877b0-8066-54b4-b220-9537cf68c74d))
+      (uuid 7fd459e0-d0e1-5d1e-aa67-d362a657c1df))
     (pin "2"
-      (uuid 0245aac0-16d8-5096-a746-a0c85505f86c))
+      (uuid 475f103b-ba39-50e7-8b6a-8225aa4d8828))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_AC_L")
+          (reference "C_AC_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1528,14 +1660,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 659c6ddb-434e-5bc1-a5ea-bb45a8085fa2))
+    (uuid dc2f77aa-9742-5336-95ef-1be1b78f7d77))
   (label "AC_L"
     (at 508 57.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 5fedfb61-cc61-58cd-8155-5913392dea53))
+    (uuid 855579ff-f9c7-5428-80f3-048f260411b6))
   (wire
     (pts
       (xy 508 67.31)
@@ -1543,7 +1675,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid bf5249a2-0cd1-5ced-81f4-7b779556ae8c))
+    (uuid 7bc03cec-2702-54a9-b06e-517d66d932c7))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 508 69.85 90)
@@ -1551,7 +1683,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a4af86d5-c83e-5af1-9170-24284a3b5888)
+    (uuid 2c0c55f5-04fb-57b6-b32f-93539b167e58)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 69.85 0)
       (effects
@@ -1565,8 +1697,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 68357497-0a81-57af-89a6-ccac5efe47c9)
-    (property "Reference" "R_SER_L"
+    (uuid 01c3bde4-442b-5bc9-8184-086de3ee2659)
+    (property "Reference" "R_SER_L1"
       (at 508 44.45 0)
       (effects
         (font
@@ -1582,14 +1714,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SER_L"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C21190"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1001T5E"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f4bd58e4-6c39-5df5-9185-8b8e1010624a))
+      (uuid 24c44e48-c259-5066-a798-301ac5e68f7c))
     (pin "2"
-      (uuid 6a3b5b32-e784-576e-89cd-ea2096dfa019))
+      (uuid acd752c2-c66c-5643-a44d-41bc6bdf81be))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_SER_L")
+          (reference "R_SER_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1598,7 +1760,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ec4a81d2-60c7-54b5-af1a-5f8b0beaa76d))
+    (uuid 32b017cc-d76b-5524-9ec8-14a8f6339ac1))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 63.5 120.65 270)
@@ -1606,7 +1768,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 24d530ac-7c9a-59b8-9253-915fc567b984)
+    (uuid b93f9a95-b037-5ea4-8600-b93fac33e466)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 120.65 0)
       (effects
@@ -1620,7 +1782,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d81f3149-cd39-58be-9910-723b47e4191b))
+    (uuid 6a013f0b-9349-5f29-be99-3387b43ac87b))
   (global_label "VREF"
     (shape bidirectional)
     (at 63.5 133.35 90)
@@ -1628,7 +1790,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 78a70500-861e-5dc1-a6cf-9fd414ff0acf)
+    (uuid d8b7ee0b-d348-524e-8478-7cf6e85049f8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 133.35 0)
       (effects
@@ -1642,8 +1804,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid b8f3c53f-c44d-5990-83d7-74608e50abf7)
-    (property "Reference" "R_BIAS_L"
+    (uuid 49f308e9-0ed5-505f-9814-83e7e3f04453)
+    (property "Reference" "R_BIAS_L1"
       (at 63.5 105.41 0)
       (effects
         (font
@@ -1659,14 +1821,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_BIAS_L"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14675"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "RC0603FR-07100KL"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 699291c4-4d29-5f69-87cf-bc51bf4ccaae))
+      (uuid ade49ca0-1810-53f5-b479-9ee4ef2494a3))
     (pin "2"
-      (uuid ec1fb8c6-d9ee-5aad-8117-df69b2118b08))
+      (uuid 4b4da6ad-7dfd-570b-aefa-32c65d397204))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_BIAS_L")
+          (reference "R_BIAS_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1675,7 +1867,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6a5aefb3-2010-5b21-81fe-6f7bfba8c841))
+    (uuid 070c9c12-1efc-5520-ba0a-718b9d98b8ac))
   (global_label "AGND"
     (shape bidirectional)
     (at 142.24 127 0)
@@ -1683,7 +1875,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 2e51d972-61d4-50e5-9c09-68e2d1a6d08c)
+    (uuid 9840aae8-59ad-5f7d-9cfd-9f1744503c47)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 142.24 127 0)
       (effects
@@ -1697,7 +1889,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2fc2f2be-ad30-5e53-bbfb-c51841697a2b))
+    (uuid 35b795a3-5bb5-53f3-855b-5e15464bf6e8))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 162.56 127 180)
@@ -1705,7 +1897,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 44e487bc-9e64-50c9-b2d5-be4276a110cc)
+    (uuid 92ff7a1f-420d-5b0f-8317-529137061350)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 127 0)
       (effects
@@ -1719,7 +1911,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c08c9eb0-4938-5cba-ab3e-9aad0085a865))
+    (uuid e40b3089-755b-50c9-b045-501e47a8136d))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 152.4 134.62 90)
@@ -1727,7 +1919,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ace8d8c8-5688-5eb6-a547-c945b806b78c)
+    (uuid 9b0c5405-95a6-5d6c-96e4-aa4b8a22e704)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 134.62 0)
       (effects
@@ -1741,8 +1933,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid bc552c52-a964-5452-a9f2-6621906b6567)
-    (property "Reference" "D_CLAMP_L"
+    (uuid 62f01644-42ea-5ecc-8608-2bb3bb3c81ec)
+    (property "Reference" "D_CLAMP_L1"
       (at 152.4 120.65 0)
       (effects
         (font
@@ -1758,16 +1950,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_CLAMP_L"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid bfe226ad-cadf-5778-a206-8a7865de5f51))
+      (uuid a7a7a6ed-9979-59d8-966b-fd989a553959))
     (pin "2"
-      (uuid 62bc7697-b5f8-50e1-b299-adc7f09f6cfd))
+      (uuid b05982a3-b5fb-5457-ad7c-107d4115bc75))
     (pin "3"
-      (uuid c0f49fd6-8312-573b-98b9-814aa75cb942))
+      (uuid b946622a-aaad-5b97-bb57-a7945d1aa5c8))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "D_CLAMP_L")
+          (reference "D_CLAMP_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1776,7 +1998,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dc501628-cb4f-5080-b20a-777010945264))
+    (uuid e94e0e58-7b20-56a6-b2d6-46fca70b2bd5))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 233.68 127 0)
@@ -1784,7 +2006,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f8cbf6cd-c4cc-57aa-a96b-a917d5e6c7e9)
+    (uuid f8a67c1c-ff7e-56bf-832b-7a3cf124892d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 233.68 127 0)
       (effects
@@ -1798,14 +2020,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 53a55dcc-5f50-57bd-8b5e-f7d6967093ce))
+    (uuid 66c3c817-16c3-5bae-8e07-3608f13b566e))
   (label "BUF_L"
     (at 248.92 127 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c9ee1723-21a1-5427-a0a5-60e70b90821b))
+    (uuid 09077d72-a024-573f-af0f-2b8b6ce5c920))
   (symbol
     (lib_id "Jumper:SolderJumper_2_Open")
     (at 241.3 127 0)
@@ -1813,8 +2035,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 52393716-40a9-5136-9f0c-d9b8ee8c6b1a)
-    (property "Reference" "JP_BYP_L"
+    (uuid 3ad6a1d6-9f54-5a29-a4f5-a110ff381466)
+    (property "Reference" "JP_BYP_L1"
       (at 241.3 120.904 0)
       (effects
         (font
@@ -1830,14 +2052,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "JP_BYP_L"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 60ec22e2-c23a-5e62-b9be-a6dfc5bf2278))
+      (uuid 86ad30e7-7235-5543-8783-6fb0779b1be3))
     (pin "2"
-      (uuid 93040213-79bf-5318-a97b-8d1ed80c47c9))
+      (uuid 444401ea-3024-5a0c-a937-b988b88bc821))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "JP_BYP_L")
+          (reference "JP_BYP_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1846,14 +2086,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d77ad91a-327c-5ec3-ac0d-29f5deed9a22))
+    (uuid a1b5ed02-ae5e-568a-93d9-e92cd896871d))
   (label "BUF_L"
     (at 340.36 127 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid fac38c13-5bc5-5518-9061-9a39e09b1fcf))
+    (uuid 41943daf-7617-58f0-896b-5ee0f044ecb9))
   (wire
     (pts
       (xy 322.58 129.54)
@@ -1861,14 +2101,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c6058e59-d8fb-5d81-82ff-a53124e0a735))
+    (uuid a98c7d39-fe38-5ff5-82bf-7193c3eb8c78))
   (label "BUF_L"
     (at 320.04 129.54 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c538a9cf-4883-5e21-bc2e-d5b88d2b7480))
+    (uuid 0a0e4fa2-d25d-569a-b947-de424e1a44ab))
   (wire
     (pts
       (xy 322.58 124.46)
@@ -1876,7 +2116,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 813deda4-76c5-58bb-ba12-b104d2e51cb3))
+    (uuid b114cc2a-2805-50c4-a9ef-e4a6311ae439))
   (global_label "PROT_L"
     (shape bidirectional)
     (at 320.04 124.46 0)
@@ -1884,7 +2124,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c897b6da-ffc8-527a-9a96-2de4752680d5)
+    (uuid bd2ddd2f-7c7a-5720-bdc4-06f094325365)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 320.04 124.46 0)
       (effects
@@ -1898,8 +2138,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 0a4a8135-283b-5965-9ef7-c33382df2428)
-    (property "Reference" "U_OA_IN"
+    (uuid 22d45b5e-7979-5b26-97d2-e5a2b4dac1dc)
+    (property "Reference" "U_OA_IN1"
       (at 330.2 116.84 0)
       (effects
         (font
@@ -1915,16 +2155,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 62cb01ec-68d5-5a14-bb7d-3c768b072aa8))
+      (uuid be090634-37b7-5b70-9e9f-6a5dc24869a8))
     (pin "2"
-      (uuid 1b7416b8-2391-5ff1-8ef9-b823512eb034))
+      (uuid 33cc1034-6d36-58aa-8762-884c2f8adfc0))
     (pin "3"
-      (uuid d8ac5af2-db2c-506a-9992-d576ff5d2a00))
+      (uuid 47875700-88ef-5102-ae83-f4df6116aae2))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "U_OA_IN")
+          (reference "U_OA_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -1933,14 +2203,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 97e791ca-bf52-532a-94d8-963e8b986370))
+    (uuid 0eb233d8-f32c-5658-8e65-49d189082e45))
   (label "BUF_L"
     (at 419.1 129.54 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid efb51b29-b419-51a6-a8e6-5b1ce0216cae))
+    (uuid dd5cd27a-8d98-5b34-9999-8b1e312123bb))
   (symbol
     (lib_id "Connector:TestPoint")
     (at 419.1 127 0)
@@ -1948,8 +2218,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid b0c9a994-0de1-507c-9b87-a85e1a0fa3b2)
-    (property "Reference" "TP_BUF_L"
+    (uuid 013e4b82-cef2-58f7-9fae-6881530ebb59)
+    (property "Reference" "TP_BUF_L1"
       (at 419.1 117.856 0)
       (effects
         (font
@@ -1965,12 +2235,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_BUF_L"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f87632c2-ef2c-5cf4-a607-f73fccda7754))
+      (uuid 1abe411a-0e29-5fbd-9598-b0c3b6124b73))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "TP_BUF_L")
+          (reference "TP_BUF_L1")
           (unit 1)))))
   (wire
     (pts
@@ -1979,14 +2267,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c33dbb99-83ce-5b24-8637-9318d5023a85))
+    (uuid 39b7a815-6213-5ea6-9e72-b9ba76b6dac4))
   (label "BUF_L"
     (at 508 120.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c1d844c7-642b-5750-9239-267fe4f36e2f))
+    (uuid 2abf80f2-ce75-5521-b222-f2939fcced6c))
   (wire
     (pts
       (xy 508 130.81)
@@ -1994,14 +2282,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 47659c78-6430-5dc7-bcb7-92ff0ab8e104))
+    (uuid 5bd80a0e-42f0-51c2-920f-5333209d630d))
   (label "FRONT_LINE_IN_L"
     (at 508 133.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 62070681-1fc1-5644-897d-08e55161258d))
+    (uuid 6ac781a2-e0c5-538d-84f0-e707d68f6b37))
   (symbol
     (lib_id "Device:C")
     (at 508 127 0)
@@ -2009,8 +2297,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 8bf8f9a3-3c8b-51c7-ad89-503e0c2c16a0)
-    (property "Reference" "C_LIN_L"
+    (uuid d970f4f9-637c-58cb-b6a6-f740cfe851fd)
+    (property "Reference" "C_LIN_L1"
       (at 508 106.68 0)
       (effects
         (font
@@ -2026,14 +2314,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LIN_L"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1779"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A475KAQNNNE"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid fe90040e-3db9-5577-8bfc-cee54aa27df8))
+      (uuid 591379e1-f7dc-505d-8fe4-6e73415d0fcd))
     (pin "2"
-      (uuid a851f1e0-e65b-524e-b808-6b1bed64609b))
+      (uuid 23bf93d9-bed2-5edc-aa6d-8c1fa174b55f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_LIN_L")
+          (reference "C_LIN_L1")
           (unit 1)))))
   (wire
     (pts
@@ -2091,6 +2409,36 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_R1"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C4216"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF3302T5E"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
       (at 63.5 190.5 0)
       (effects
         (font
@@ -2154,6 +2502,36 @@
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_R2"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22790"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1202T5E"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
       (at 152.4 190.5 0)
       (effects
         (font
@@ -2229,6 +2607,36 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_PAD_R3"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23186"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF5101T5E"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid e0938184-a99e-5915-89b6-338ef4f6e028))
     (pin "2"
@@ -2245,7 +2653,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3015302a-b85e-58ef-9c31-551185d5d94e))
+    (uuid 865650d7-8e1d-5b69-9353-214688736403))
   (global_label "LINE_IN_R_T"
     (shape bidirectional)
     (at 337.82 187.96 180)
@@ -2253,7 +2661,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 3e1ddde8-0499-5f66-a04a-d6b24bb65935)
+    (uuid 13f78839-bfe8-5957-a391-dc5d5f332ccb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 337.82 187.96 0)
       (effects
@@ -2267,14 +2675,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 545e99ab-2171-5a82-90a1-289681ea1fbb))
+    (uuid 266d4e9b-5b26-582f-9c87-27a2124f7c27))
   (label "TAP10_R"
     (at 337.82 190.5 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid bf45d261-72a5-5c19-b347-67d8bacb07a5))
+    (uuid 476769e1-6281-5fcb-ad28-9101294afca5))
   (wire
     (pts
       (xy 325.12 190.5)
@@ -2282,14 +2690,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 82822f4e-d049-5b20-a498-8b9ec25c6dc3))
+    (uuid e5c820f4-21bd-58fd-af63-5ee16958c6e9))
   (label "PAD_R"
     (at 322.58 190.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 4f4ca81d-8f39-55db-a74d-ef1d1981831d))
+    (uuid 3b8ee2d9-c4a8-5d6f-a8f5-a7e526864511))
   (wire
     (pts
       (xy 335.28 193.04)
@@ -2297,14 +2705,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 5b579e99-69c7-517b-9844-5d8517450757))
+    (uuid 83e59753-18a7-5381-b0e1-5e1ff1f7e3e1))
   (label "TAP20_R"
     (at 337.82 193.04 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a7b1eafd-020a-5fc9-b69b-3c25aacf81b7))
+    (uuid b041b819-e854-55a0-a14b-119f499f2ae4))
   (symbol
     (lib_id "Switch:SW_DP3T")
     (at 330.2 190.5 0)
@@ -2312,8 +2720,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid ddb1fa50-b390-5128-9354-f6e7989a6e12)
-    (property "Reference" "SW_PAD"
+    (uuid 19a0539a-4915-5249-84b1-0d8e6813dbac)
+    (property "Reference" "SW_PAD1"
       (at 330.2 181.61 0)
       (effects
         (font
@@ -2329,18 +2737,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "SW_PAD"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "5"
-      (uuid 67d7e2f4-9e02-5e44-a91e-7c911b12739d))
+      (uuid 84784001-a579-55af-95ae-37d4bda2ffa0))
     (pin "6"
-      (uuid 31ebe6db-ed5d-51be-bcbb-8dba754ef4f5))
+      (uuid 73da9f0f-1c4f-53d4-8b7f-2fd47d9af372))
     (pin "7"
-      (uuid 64a22292-6c8d-5df7-8f33-39b4ee70b949))
+      (uuid 7f48604c-f965-55bb-a975-7c9ae5330291))
     (pin "8"
-      (uuid c23785b6-178e-58dc-9060-1f14face1303))
+      (uuid 4de915ed-5bc0-5de4-bad9-2e98ef9e040e))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "SW_PAD")
+          (reference "SW_PAD1")
           (unit 2)))))
   (wire
     (pts
@@ -2349,14 +2769,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6f102fc8-d427-5087-9c66-59abb366bee0))
+    (uuid 827a2a99-cdf9-535c-afb9-85e30abaa7a9))
   (label "PAD_R"
     (at 419.1 184.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid c91b15e4-6493-579f-b94b-cc875d778d11))
+    (uuid 9ea86da5-5b97-5eaf-9472-16f8fb54c3ce))
   (wire
     (pts
       (xy 419.1 194.31)
@@ -2364,14 +2784,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid ba7a72fb-0625-5666-878a-71d13dcdab0d))
+    (uuid 86be0487-4116-555f-aabb-75b1f73d19f9))
   (label "AC_R"
     (at 419.1 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b6660739-49bc-53a7-8ac0-386d3c0b92e0))
+    (uuid c12ee069-97ae-52e8-bd1f-ea61b70c5080))
   (symbol
     (lib_id "Device:C")
     (at 419.1 190.5 0)
@@ -2379,8 +2799,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid b638eb69-f5e3-501e-b592-9b2cc9acece5)
-    (property "Reference" "C_AC_R"
+    (uuid f50515d0-d5aa-5cc1-bb65-0792c16a2a48)
+    (property "Reference" "C_AC_R1"
       (at 419.1 170.18 0)
       (effects
         (font
@@ -2396,14 +2816,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_AC_R"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C28323"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21B105KBFNNNE"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid a0dedc27-7319-5203-aa4d-13010a604e43))
+      (uuid 775c7936-cc4f-5062-9f3f-0f8341ff8e93))
     (pin "2"
-      (uuid 713852ab-14a1-5478-869f-fea044753163))
+      (uuid 7eba405e-3f41-5879-98ea-419fc9ae188d))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_AC_R")
+          (reference "C_AC_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2412,14 +2862,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f2af5cc4-5355-5d4b-8933-905930d44393))
+    (uuid 026b8193-7f61-588f-ae20-2617e1b7ed55))
   (label "AC_R"
     (at 508 184.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a7843b77-4f26-5cab-8646-0dcff9ace51e))
+    (uuid 145df3c6-2de7-5cd5-b65a-eff6bc02f6c9))
   (wire
     (pts
       (xy 508 194.31)
@@ -2427,7 +2877,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 75e17b9d-322c-5045-8271-9f3ac222fae6))
+    (uuid 52991f2b-5ac2-52e5-9186-69ef25487534))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 508 196.85 90)
@@ -2435,7 +2885,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1780d312-163d-56b2-b10e-777262ed507f)
+    (uuid 471a2b78-b990-5de1-8faf-3db904081f99)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 196.85 0)
       (effects
@@ -2449,8 +2899,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 2aab264a-eb2c-5f4e-b3b1-a0b711016d35)
-    (property "Reference" "R_SER_R"
+    (uuid 528cd26b-4220-59d4-978b-28f02ab087aa)
+    (property "Reference" "R_SER_R1"
       (at 508 171.45 0)
       (effects
         (font
@@ -2466,14 +2916,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SER_R"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C21190"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1001T5E"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c3993dba-1102-5f13-8b17-0c17e3f16dd9))
+      (uuid cd082536-5cb3-55c9-90f0-13e3dcb83358))
     (pin "2"
-      (uuid 1f044dcd-bd73-59be-978e-2da37bd7b8cd))
+      (uuid 1de3bc37-c647-5e61-81c9-21986c53469e))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_SER_R")
+          (reference "R_SER_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2482,7 +2962,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2ea51c94-d6d2-5533-b3c0-f22e7eb5c397))
+    (uuid 2d96333d-2d0e-5ed1-a9f0-11cd427ac270))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 63.5 247.65 270)
@@ -2490,7 +2970,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a6e8908d-9416-59ac-a358-25ccabebb8f6)
+    (uuid 76bb040e-7904-5d1e-8dab-4a99fa01e3d9)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 247.65 0)
       (effects
@@ -2504,7 +2984,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b5026058-68b6-5d41-a01b-09a4fca4e871))
+    (uuid cc78de6e-d86d-586b-8499-db542a0768dc))
   (global_label "VREF"
     (shape bidirectional)
     (at 63.5 260.35 90)
@@ -2512,7 +2992,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 53c94f51-9e55-5f97-8cb6-913bb93ea8e0)
+    (uuid 5a8483bb-0b4f-571c-8c14-b20b1eb5c510)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 260.35 0)
       (effects
@@ -2526,8 +3006,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 2ef74352-bec9-5d9a-bf8b-f382d80f8305)
-    (property "Reference" "R_BIAS_R"
+    (uuid 46a445ee-a0cc-5c3d-9514-105eebaf98af)
+    (property "Reference" "R_BIAS_R1"
       (at 63.5 232.41 0)
       (effects
         (font
@@ -2543,14 +3023,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_BIAS_R"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14675"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "RC0603FR-07100KL"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f3422af3-344a-58d6-97ad-56162e17b75f))
+      (uuid 3c5349fd-16e2-5000-99d3-773febe9926c))
     (pin "2"
-      (uuid 8484c0cc-8db2-5f03-a9b7-38facc509d8d))
+      (uuid c7bbb534-754d-5de3-af19-470caaee6483))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_BIAS_R")
+          (reference "R_BIAS_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2559,7 +3069,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 42988d5d-f967-5906-b9af-aa414b4a8b6f))
+    (uuid 7a1ec9d6-1d22-57cb-912f-db07cef5c170))
   (global_label "AGND"
     (shape bidirectional)
     (at 142.24 254 0)
@@ -2567,7 +3077,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 5cb59f08-08ce-578c-b169-56a409157792)
+    (uuid 22c9532a-3ecf-57d9-9026-663f76b6d50e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 142.24 254 0)
       (effects
@@ -2581,7 +3091,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid cdfdf872-3892-5843-be9b-77669449fa04))
+    (uuid 452df09d-ca82-5518-a67e-e97bf79dcc6f))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 162.56 254 180)
@@ -2589,7 +3099,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 7acb39cd-55e0-5d3a-b687-b676d58a5091)
+    (uuid 4f83542f-6c03-536f-becd-bb564118627a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 162.56 254 0)
       (effects
@@ -2603,7 +3113,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 35f0c36c-89ea-5ca5-ae6f-950fedf96d35))
+    (uuid 4a619aef-bee2-5552-b102-2952d29f1f43))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 152.4 261.62 90)
@@ -2611,7 +3121,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b3cbac6e-204f-5276-81fa-b2c473649146)
+    (uuid 53148d69-b7be-5ab6-a8c0-2ca232c30ab3)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 261.62 0)
       (effects
@@ -2625,8 +3135,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 288ea5c7-25f6-59fa-aa98-d191876b9fbb)
-    (property "Reference" "D_CLAMP_R"
+    (uuid 4c382ef4-7e8e-5fb3-8648-fa4034fcde78)
+    (property "Reference" "D_CLAMP_R1"
       (at 152.4 247.65 0)
       (effects
         (font
@@ -2642,16 +3152,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "D_CLAMP_R"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid c5245711-9123-5d70-8457-f62b26b4f041))
+      (uuid 515e36f2-f4f0-55c0-aae9-1b8e266e64c9))
     (pin "2"
-      (uuid 490534b0-e516-585c-8ab1-1b907c6be349))
+      (uuid abcaeceb-ea06-528e-af7d-e4f1a126dd53))
     (pin "3"
-      (uuid ef0a9332-6208-561b-80fe-290ed4985f5c))
+      (uuid a943b6cf-4c2f-5f00-bd40-0ceebf788b23))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "D_CLAMP_R")
+          (reference "D_CLAMP_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2660,7 +3200,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid da0cddb8-2c49-5d60-882d-361366ba92f8))
+    (uuid d03be8bf-1668-5d7c-a66e-03310af0b7d7))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 233.68 254 0)
@@ -2668,7 +3208,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b616d22f-7695-545b-b67f-6b63c82899bf)
+    (uuid b8dd9c31-9ec7-52fc-878c-083b986f0238)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 233.68 254 0)
       (effects
@@ -2682,14 +3222,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 91e3a37a-010c-51ee-8360-59f008c32b19))
+    (uuid 6cd4174d-937b-5041-acc5-45166c38489c))
   (label "BUF_R"
     (at 248.92 254 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 3d617ce6-4c91-5d48-a328-26ae75685ed5))
+    (uuid e08d2822-aa41-5012-bfc7-137fdb00f02f))
   (symbol
     (lib_id "Jumper:SolderJumper_2_Open")
     (at 241.3 254 0)
@@ -2697,8 +3237,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 99c75e60-6c33-5eef-90d2-a7e8fc61f48a)
-    (property "Reference" "JP_BYP_R"
+    (uuid 36be1196-0a8b-51a6-96ce-2465abfce3ca)
+    (property "Reference" "JP_BYP_R1"
       (at 241.3 247.904 0)
       (effects
         (font
@@ -2714,14 +3254,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "JP_BYP_R"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid a59cfdb0-2722-50d7-9ad0-3fca88d10257))
+      (uuid bc48eb01-312e-55fb-9e6e-6c7b6a775258))
     (pin "2"
-      (uuid 5e4aa5bd-a359-5891-a6fe-2116866fccb3))
+      (uuid 3de2ae65-a2c3-5a2c-a372-c1842c410272))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "JP_BYP_R")
+          (reference "JP_BYP_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2730,7 +3288,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 20dbe618-9e0a-5cfb-8fa2-30a533a5176b))
+    (uuid d8653e9a-35b5-5551-bb16-f48b6291f1c5))
   (global_label "PROT_R"
     (shape bidirectional)
     (at 320.04 251.46 0)
@@ -2738,7 +3296,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 3ae7da1f-03f8-5ecb-b0bf-0533700e170a)
+    (uuid c68bec9c-f333-576c-bdd0-5a1d2424f51a)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 320.04 251.46 0)
       (effects
@@ -2752,14 +3310,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c2c24266-29e2-51b9-836f-6c160df3e11b))
+    (uuid 73d2d735-618b-5430-8cf0-01b549cbf0dd))
   (label "BUF_R"
     (at 320.04 256.54 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 2ac83cad-ce59-525d-aea8-325020f04abe))
+    (uuid 7fa28d43-96c5-549b-b90b-6fde6e0fc4e2))
   (wire
     (pts
       (xy 337.82 254)
@@ -2767,14 +3325,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 21f7f596-b17a-59cd-ad4a-aa6a55bacaf3))
+    (uuid 01f906b9-b775-5e89-9439-40004bc9c9f6))
   (label "BUF_R"
     (at 340.36 254 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid ca09e6b7-066a-5139-932c-ef383b90ec83))
+    (uuid d3c26b41-19e4-5b89-b84d-8e9e20489c99))
   (symbol
     (lib_id "Amplifier_Operational:MCP6004")
     (at 330.2 254 0)
@@ -2782,8 +3340,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 5c22b786-4562-5499-8b3b-fd3ec3a6bf5c)
-    (property "Reference" "U_OA_IN"
+    (uuid c4ee23a8-4f9e-546f-b234-01dd1df88ff1)
+    (property "Reference" "U_OA_IN1"
       (at 330.2 243.84 0)
       (effects
         (font
@@ -2799,16 +3357,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "5"
-      (uuid 26aafe44-b72e-5690-b296-1f30c2d473d0))
+      (uuid ac3e956a-84de-5172-b454-410f13dedf94))
     (pin "6"
-      (uuid 039e76d4-ab7a-5ee0-b439-476b00d0c1f8))
+      (uuid 8547e3f6-787f-5160-b1cb-b4cb225389d3))
     (pin "7"
-      (uuid 8ccf7d6b-4334-5d16-8518-b9967dfd366b))
+      (uuid a720f723-3aaf-5a49-b73f-6f492867d774))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "U_OA_IN")
+          (reference "U_OA_IN1")
           (unit 2)))))
   (wire
     (pts
@@ -2817,14 +3405,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a070130b-cc50-5921-afd7-c71824361c14))
+    (uuid dab646af-2f32-51aa-b56a-ec872cb37ec6))
   (label "BUF_R"
     (at 419.1 256.54 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c173f9d2-6dbd-5087-8d57-aae708d8cc6d))
+    (uuid 6f723621-b3d9-57a8-8615-8bfe264e1fa8))
   (symbol
     (lib_id "Connector:TestPoint")
     (at 419.1 254 0)
@@ -2832,8 +3420,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid d21166df-fdcb-56aa-bd45-47068b3bf834)
-    (property "Reference" "TP_BUF_R"
+    (uuid 276bb41e-2696-5c4b-a9f6-48ab33aecde7)
+    (property "Reference" "TP_BUF_R1"
       (at 419.1 244.856 0)
       (effects
         (font
@@ -2849,12 +3437,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_BUF_R"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 343bca85-eec3-51d4-9201-bd96e1bad956))
+      (uuid 4b66b983-a360-5429-98c1-7f5e99b1bd59))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "TP_BUF_R")
+          (reference "TP_BUF_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2863,14 +3469,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c0c4440d-dcbe-52aa-8052-4e3102a4da2a))
+    (uuid feb725c7-3b2c-5fda-a452-244375e0bee9))
   (label "BUF_R"
     (at 508 247.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f87a487d-af27-5ea6-8d47-9b065ea56cc2))
+    (uuid c45ed107-0163-5bea-b973-28336ad71162))
   (wire
     (pts
       (xy 508 257.81)
@@ -2878,14 +3484,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 5911f503-6a79-5ba2-b3bc-fd80e803641d))
+    (uuid 29d191fc-7472-5581-9a1d-58d9d1fab73c))
   (label "FRONT_LINE_IN_R"
     (at 508 260.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d0402f52-11b7-50dc-9dca-2c864bdece83))
+    (uuid 24c91f75-14e9-51c6-ac11-2d747e63b4ce))
   (symbol
     (lib_id "Device:C")
     (at 508 254 0)
@@ -2893,8 +3499,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 76a2a553-c645-5c2f-a2f5-fcc6228c5d97)
-    (property "Reference" "C_LIN_R"
+    (uuid c507ba49-f64a-5008-9b0a-7221ab7e6fcd)
+    (property "Reference" "C_LIN_R1"
       (at 508 233.68 0)
       (effects
         (font
@@ -2910,14 +3516,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LIN_R"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1779"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A475KAQNNNE"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid d0088c1c-ee37-55fb-bcaa-d30c9e066651))
+      (uuid 24d631a9-bf97-5983-934e-c9556b830cc6))
     (pin "2"
-      (uuid 82db897e-501e-5fc5-b399-b48aa72c9241))
+      (uuid b7f1f9e5-65ef-5a53-a750-c89e91f3e881))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_LIN_R")
+          (reference "C_LIN_R1")
           (unit 1)))))
   (wire
     (pts
@@ -2926,7 +3562,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6b66aa7d-471b-5766-9384-0abcee603832))
+    (uuid ee15669f-2a9f-5742-8b53-9698822a352a))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 63.5 311.15 270)
@@ -2934,7 +3570,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 43944526-7998-5b82-a0cb-dcd845657522)
+    (uuid 2a276bb7-ef11-528c-b421-083b42407fbb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 311.15 0)
       (effects
@@ -2948,14 +3584,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7c8f61d9-1816-5429-a60a-e6c55c6a1da5))
+    (uuid 455c3c5b-66cb-5114-8c94-35252824e9e7))
   (label "VREF_DIV"
     (at 63.5 323.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1cddbc7f-ff77-5002-a1c7-942298f69feb))
+    (uuid 2f352af8-9419-5d8b-af31-16abca6640a2))
   (symbol
     (lib_id "Device:R")
     (at 63.5 317.5 0)
@@ -2963,8 +3599,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid cd6a8f32-12de-57ce-87c5-96874c5481f4)
-    (property "Reference" "R_VREF_T"
+    (uuid 3de585d2-2982-54aa-abb7-d8d060c2595c)
+    (property "Reference" "R_VREF_T1"
       (at 63.5 288.29 0)
       (effects
         (font
@@ -2980,14 +3616,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_VREF_T"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f2793dd0-c0ba-5e13-a9b4-534f602917d8))
+      (uuid d6e6158b-fdcc-5683-bf00-7f9b038d2ab8))
     (pin "2"
-      (uuid 33082c5f-a42b-5821-9896-92331eb4ace2))
+      (uuid 2fb5cd11-9a8e-541b-9598-386fbf007412))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_VREF_T")
+          (reference "R_VREF_T1")
           (unit 1)))))
   (wire
     (pts
@@ -2996,14 +3662,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d020e946-5ee5-58d1-9ca7-199ba3f9da7e))
+    (uuid 1263c7ea-1473-5b4b-b80e-a5c7be0c09ec))
   (label "VREF_DIV"
     (at 152.4 311.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 4cf1280b-3ac2-550f-bfbc-39ba78eaddf1))
+    (uuid 4697ee73-e147-51f1-94b3-62c416277b5b))
   (wire
     (pts
       (xy 152.4 321.31)
@@ -3011,7 +3677,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 78405bda-c7f0-57fb-b063-1a17347d1a71))
+    (uuid 63280c16-2c86-5b95-b6c8-7997d1dfeae9))
   (global_label "AGND"
     (shape bidirectional)
     (at 152.4 323.85 90)
@@ -3019,7 +3685,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 8a44a9a6-2ea0-5915-b3dc-b6a35d4be145)
+    (uuid 12d16c15-036d-5602-9184-449e6d89cb76)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 323.85 0)
       (effects
@@ -3033,8 +3699,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 8d0db9fd-fc46-5099-b032-04de7445d8ef)
-    (property "Reference" "R_VREF_B"
+    (uuid 7c10c274-7ea0-51e9-a368-c36ba2db0816)
+    (property "Reference" "R_VREF_B1"
       (at 152.4 293.37 0)
       (effects
         (font
@@ -3050,14 +3716,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_VREF_B"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 41b14d8a-ff87-5d3b-bf36-7be5c488b31f))
+      (uuid 49fe081a-2dbd-5138-b349-967dc29658c1))
     (pin "2"
-      (uuid d22f3428-c003-553e-a20b-30681dd2acd8))
+      (uuid cd548b06-f216-502a-87a4-8d40cd82e250))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_VREF_B")
+          (reference "R_VREF_B1")
           (unit 1)))))
   (wire
     (pts
@@ -3066,14 +3762,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 5c19df5e-e98c-5cfa-a2ff-ce6cfb500549))
+    (uuid d692e12b-d4bf-5b39-bf9a-c5b9fb33e6a6))
   (label "VREF_DIV"
     (at 241.3 311.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 9671b37e-b2ee-5316-a489-d63d63f42250))
+    (uuid 407c0cd3-3e53-55a7-95d5-ddf01ea7ebc8))
   (wire
     (pts
       (xy 241.3 321.31)
@@ -3081,7 +3777,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f4abc8da-3661-5124-959a-6fb283206440))
+    (uuid e3166314-7a28-5f34-a624-8b302d611bec))
   (global_label "AGND"
     (shape bidirectional)
     (at 241.3 323.85 90)
@@ -3089,7 +3785,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c1aac6f4-d8d3-545c-83c1-5c5866065599)
+    (uuid 3263f67f-748d-5427-8b0e-698e5ab06dbe)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 323.85 0)
       (effects
@@ -3103,8 +3799,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 709d92a4-3306-5157-b149-7edf53bf4eae)
-    (property "Reference" "C_VREF"
+    (uuid 343bc4fa-1cb6-55a3-93bf-5031cd7df553)
+    (property "Reference" "C_VREF1"
       (at 241.3 293.37 0)
       (effects
         (font
@@ -3120,14 +3816,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_VREF"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 827d6dd5-d443-5e00-8f07-56b786918c09))
+      (uuid 19fe02c8-456a-5332-91f5-e2d82eb6044b))
     (pin "2"
-      (uuid 5408ecc6-fb01-55bc-9084-c278acc9c7e8))
+      (uuid 35ff5976-a083-532c-ae6a-a6fb9bff4ceb))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_VREF")
+          (reference "C_VREF1")
           (unit 1)))))
   (wire
     (pts
@@ -3136,7 +3862,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid f41a488e-fc3a-5825-8e96-7d3eb8846652))
+    (uuid efe16896-4326-548a-af69-a098bb203c92))
   (global_label "VREF"
     (shape bidirectional)
     (at 340.36 317.5 180)
@@ -3144,7 +3870,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 25071367-bca5-5a27-b047-3235e882781f)
+    (uuid ff22417d-b59b-5595-90f7-b92ed48f434e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 340.36 317.5 0)
       (effects
@@ -3158,7 +3884,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3d936e2e-568a-5807-b7df-2659bb928e8e))
+    (uuid fc76a770-d5fd-5aec-a994-bb579e439d7b))
   (global_label "VREF"
     (shape bidirectional)
     (at 320.04 320.04 0)
@@ -3166,7 +3892,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 07731663-9ade-54e7-9f4c-822789f49704)
+    (uuid 7f0dccb4-27f6-572f-b8e7-38c010bb1c18)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 320.04 320.04 0)
       (effects
@@ -3180,14 +3906,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3a029c9e-4c9e-5b48-81d3-fb089c31e084))
+    (uuid 1f5186c8-2362-549a-8dff-bfe71a3be7a8))
   (label "VREF_DIV"
     (at 320.04 314.96 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0e95b0c6-223b-5544-b1b3-d1ca42ec5c71))
+    (uuid 06901e85-4023-59a7-83b0-19cf3b45e6ab))
   (symbol
     (lib_id "Amplifier_Operational:MCP6004")
     (at 330.2 317.5 0)
@@ -3195,8 +3921,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 355cffea-be69-57af-aa86-d3ada6bda9fd)
-    (property "Reference" "U_OA_IN"
+    (uuid 3c8938a0-deba-5773-a8a0-780f0e6499ca)
+    (property "Reference" "U_OA_IN1"
       (at 330.2 307.34 0)
       (effects
         (font
@@ -3212,16 +3938,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "8"
-      (uuid 6b5d8afb-d686-5842-85e3-43b01ed43b94))
+      (uuid 6ae02a84-2777-5ed1-a3be-c4f327a9519c))
     (pin "9"
-      (uuid dafb1207-cd7f-52fe-8a88-39bef7a59fa2))
+      (uuid bdbe3365-dd43-5022-8f80-75ad8359be01))
     (pin "10"
-      (uuid 853bd257-e84f-50db-804b-335a93183b23))
+      (uuid 2476f8bd-82c9-54d7-9e88-fd2b974ea173))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "U_OA_IN")
+          (reference "U_OA_IN1")
           (unit 3)))))
   (wire
     (pts
@@ -3230,14 +3986,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid d7483bb8-f905-549a-9d19-a1ccdc3240f9))
+    (uuid 9305f744-d4b2-5f29-94f0-f1bf5314385b))
   (label "VREF_DIV"
     (at 411.48 317.5 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a226818f-5b3a-5a46-bc6e-656857e99178))
+    (uuid 818f0714-4789-5c7c-9e40-418aa3163279))
   (wire
     (pts
       (xy 424.18 317.5)
@@ -3245,7 +4001,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 5bb0c81b-0775-5f61-804a-b6f83146fbe4))
+    (uuid 7eb460ac-38ee-52c3-90af-e696b07487c1))
   (global_label "VREF"
     (shape bidirectional)
     (at 426.72 317.5 180)
@@ -3253,7 +4009,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid dac54edd-7b63-576b-a6e2-8576e6b911c5)
+    (uuid 14e15558-2942-5616-92f3-a761459b7ad8)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 426.72 317.5 0)
       (effects
@@ -3267,8 +4023,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a9137979-b332-5d30-8043-e28583b2f805)
-    (property "Reference" "JP_BYP_VREF"
+    (uuid 98a88e6a-0f89-5d0e-bf40-73655f132e14)
+    (property "Reference" "JP_BYP_VREF1"
       (at 419.1 311.404 0)
       (effects
         (font
@@ -3284,14 +4040,32 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "JP_BYP_VREF"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid ba94817b-3def-5d36-99b2-12b1ed6f5917))
+      (uuid d16f7299-1044-5ce5-bd3c-663ce4aceaa5))
     (pin "2"
-      (uuid d9b33638-6b5c-5590-aa9d-1b104a8c8aaa))
+      (uuid 012f7720-8b6d-532b-af05-e74f81d0b89f))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "JP_BYP_VREF")
+          (reference "JP_BYP_VREF1")
           (unit 1)))))
   (wire
     (pts
@@ -3300,7 +4074,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 47c0e4f1-974f-55aa-993e-036ea84cb062))
+    (uuid f8c54b03-d35e-5b15-b759-26b268eb5cba))
   (global_label "VREF"
     (shape bidirectional)
     (at 508 320.04 90)
@@ -3308,7 +4082,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid dd572701-f989-56a4-b830-ffe76e71df79)
+    (uuid c1f00562-7292-54d8-a068-c6a07d5e599e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 320.04 0)
       (effects
@@ -3322,8 +4096,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 666fcf0d-37c7-5ce2-94a7-0b89dba6a564)
-    (property "Reference" "TP_VREF"
+    (uuid baa25ffd-804b-587f-a479-6bc33813b42b)
+    (property "Reference" "TP_VREF1"
       (at 508 308.356 0)
       (effects
         (font
@@ -3339,12 +4113,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "TP_VREF"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid f49dd519-a5a8-59a3-ab34-9a88cc11f4d9))
+      (uuid ed0d1b36-10f0-5132-8b93-dbc9b08d20d7))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "TP_VREF")
+          (reference "TP_VREF1")
           (unit 1)))))
   (wire
     (pts
@@ -3353,7 +4145,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 625d4647-fc03-5cad-9014-3a910e9a2a3c))
+    (uuid 6f6726d4-4d2e-5316-bdc6-94b34910a738))
   (global_label "VREF"
     (shape bidirectional)
     (at 53.34 378.46 0)
@@ -3361,7 +4153,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 06dc06f7-7575-5ce4-bb1a-e8efeef87478)
+    (uuid d9d064f7-6cd9-5007-8761-e4c7d77ba56d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 53.34 378.46 0)
       (effects
@@ -3375,14 +4167,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid a07b3e2f-d480-5166-93da-af5c76c7784e))
+    (uuid 631a0d37-00c5-5ddb-b1db-72cae8b8bbc2))
   (label "OA_IN_D"
     (at 53.34 383.54 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 815a43b8-ee58-5143-8562-7f38c8e73021))
+    (uuid 015ca882-09f4-55bf-aaa1-e2a31adb460c))
   (wire
     (pts
       (xy 71.12 381)
@@ -3390,14 +4182,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 7a8c156c-f190-593d-b53c-3453e99722fa))
+    (uuid 5aac8115-2b56-5097-90b4-64a40a35d5df))
   (label "OA_IN_D"
     (at 73.66 381 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 28684330-6af4-5393-bb54-8ba965f556ab))
+    (uuid 169005f7-d62b-5612-8440-2c9a2ef74999))
   (symbol
     (lib_id "Amplifier_Operational:MCP6004")
     (at 63.5 381 0)
@@ -3405,8 +4197,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a01bb12b-bbeb-5eab-9177-59ea360eddeb)
-    (property "Reference" "U_OA_IN"
+    (uuid 0ab3bd56-29aa-540d-a1b2-4b2be00ed493)
+    (property "Reference" "U_OA_IN1"
       (at 63.5 370.84 0)
       (effects
         (font
@@ -3422,16 +4214,46 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "12"
-      (uuid fadd60b6-9b5e-529d-98aa-a480ab255274))
+      (uuid 1149c2d7-bc83-5e82-bb31-67c291eba403))
     (pin "13"
-      (uuid 7d4744bd-4c63-5db2-bd76-db7d5fa764f0))
+      (uuid aad8ad7f-8046-58a4-ae19-6bc85fae7158))
     (pin "14"
-      (uuid 595b0c48-0516-52f4-8fb3-4a66493fdfce))
+      (uuid 9f74cfda-3626-5245-ae85-62ed51e2f309))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "U_OA_IN")
+          (reference "U_OA_IN1")
           (unit 4)))))
   (wire
     (pts
@@ -3440,7 +4262,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 4e725084-0321-5377-a1e3-e5083c8f8904))
+    (uuid 3da2cdd8-e1ff-52fc-9679-d55c8ef36cea))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 149.86 370.84 270)
@@ -3448,7 +4270,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid efa9ca92-d457-5e05-8433-6118152d726d)
+    (uuid d402dfa5-1cc2-5f41-899f-ad234993789b)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 149.86 370.84 0)
       (effects
@@ -3462,7 +4284,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6f97e568-20e9-5589-8b30-699a0da7cb3a))
+    (uuid a7b58d72-165c-5f51-927b-463902b2e900))
   (global_label "AGND"
     (shape bidirectional)
     (at 149.86 391.16 90)
@@ -3470,7 +4292,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 4c02d23d-d422-5c1b-a016-bf0ab63ffe96)
+    (uuid 53cc8dd6-8904-5a7f-9b52-b4958fdb40eb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 149.86 391.16 0)
       (effects
@@ -3484,8 +4306,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 9fb02245-2ccc-5b44-ab1f-f766c28e33c0)
-    (property "Reference" "U_OA_IN"
+    (uuid d36e96de-cb5f-5adb-948e-b83f457bc06c)
+    (property "Reference" "U_OA_IN1"
       (at 152.4 347.98 0)
       (effects
         (font
@@ -3501,14 +4323,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "4"
-      (uuid 0b6c987b-b50f-5712-8b3b-3dfaa740be85))
+      (uuid 1d765a02-4818-5498-a73b-731ccdfe9798))
     (pin "11"
-      (uuid 25db26be-0611-59c8-a240-f8219d7b8103))
+      (uuid eac135c9-dcd5-5563-b4c9-57b0c4b94ff0))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "U_OA_IN")
+          (reference "U_OA_IN1")
           (unit 5)))))
   (wire
     (pts
@@ -3517,7 +4369,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 2ffb8b39-6884-588e-96c0-4a7e958affe5))
+    (uuid f6256097-0ae3-5893-a379-c276cdf635e6))
   (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 241.3 374.65 270)
@@ -3525,7 +4377,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid af445e73-200e-5ca1-8ac7-a59b9e5c70c9)
+    (uuid 1024b2c2-8c60-517d-8b43-60e11df41073)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 374.65 0)
       (effects
@@ -3539,7 +4391,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid c1bd7e04-fc4f-59d8-839b-4fa79f8e93d8))
+    (uuid 8d8d570f-72ac-52cf-9c29-b6a7b55884e0))
   (global_label "AGND"
     (shape bidirectional)
     (at 241.3 387.35 90)
@@ -3547,7 +4399,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 48296e0f-1e4f-5536-add5-73b0d99a7511)
+    (uuid 658b1998-055c-56bc-8459-f136974289e1)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 387.35 0)
       (effects
@@ -3561,8 +4413,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 3b8431f4-5357-5a9d-838a-7414007c390a)
-    (property "Reference" "C_OA_IN"
+    (uuid 1bfb5751-c167-5a1f-99ec-9391ffb814ce)
+    (property "Reference" "C_OA_IN1"
       (at 241.3 351.79 0)
       (effects
         (font
@@ -3578,14 +4430,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_OA_IN"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14663"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0603KRX7R9BB104"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid a3e890b2-bfa7-51b7-8b66-22fccb1e617a))
+      (uuid 9488a860-8206-5cb4-8cb7-cf381f827155))
     (pin "2"
-      (uuid dcd23a9d-17d5-52e8-8d17-54443c89843a))
+      (uuid 9782961a-5678-5403-bc72-544abaa0e5eb))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_OA_IN")
+          (reference "C_OA_IN1")
           (unit 1)))))
   (wire
     (pts
@@ -3594,7 +4476,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 52c503e1-8a32-5a99-9c4d-d9ba02898de2))
+    (uuid e7739608-690f-5de5-a8d2-c110c6222d8f))
   (global_label "SHIELD_LINE_OUT_L"
     (shape bidirectional)
     (at 330.2 374.65 270)
@@ -3602,7 +4484,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid b96b4e6b-46e5-5a70-b526-6d054aa9c3ff)
+    (uuid c8edd8f3-5f17-5d3e-8200-ef548e485fdb)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 374.65 0)
       (effects
@@ -3616,7 +4498,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dab3ff04-b73f-50a9-a141-64b799a3b6d0))
+    (uuid 73e5c6b9-e693-5cc4-99c4-04bf7002c94c))
   (global_label "LINE_OUT_L_T"
     (shape bidirectional)
     (at 330.2 387.35 90)
@@ -3624,7 +4506,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0360d3ab-8c57-5c68-90a9-2989f2cdaaa9)
+    (uuid 50d62559-8e3b-57eb-8529-2bf28d59fb2d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 330.2 387.35 0)
       (effects
@@ -3638,8 +4520,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 72f3d063-42d2-55ee-bf6a-20a13d39e63f)
-    (property "Reference" "C_LOUT_L"
+    (uuid eab19ef3-e58a-52c4-9fcf-ffac0d781a2a)
+    (property "Reference" "C_LOUT_L1"
       (at 330.2 345.44 0)
       (effects
         (font
@@ -3655,14 +4537,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LOUT_L"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid cada10fd-fca1-5c0a-8b5c-598c87a549bf))
+      (uuid 4e100ab9-c406-5099-84bb-b23b902e55c8))
     (pin "2"
-      (uuid 18c79764-074c-5946-a165-3ff3f17dc0c2))
+      (uuid 3699d4c8-4a99-554f-8662-495706235dc3))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_LOUT_L")
+          (reference "C_LOUT_L1")
           (unit 1)))))
   (wire
     (pts
@@ -3671,7 +4583,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 3624c6ea-60ca-5d88-baf6-08640c9a411f))
+    (uuid 987f5da3-e7d7-5fe9-924c-2c510b8622ff))
   (global_label "LINE_OUT_L_T"
     (shape bidirectional)
     (at 419.1 374.65 270)
@@ -3679,7 +4591,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid f2d70dba-6697-5efc-b1b0-a629606857fb)
+    (uuid 8e18e1d6-3f7f-5425-b5e6-972c270deaa6)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 374.65 0)
       (effects
@@ -3693,7 +4605,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 69c28201-ee1d-59d7-8d46-b2b2fe3ecfbf))
+    (uuid 9d22b106-6bf3-5b69-8ebf-569024002973))
   (global_label "AGND"
     (shape bidirectional)
     (at 419.1 387.35 90)
@@ -3701,7 +4613,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 700de6fc-fbf5-5caa-91a4-79239a403635)
+    (uuid f3eec8b6-b181-541b-bb78-4d4b4f24c621)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 419.1 387.35 0)
       (effects
@@ -3715,8 +4627,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a0e48f6d-659c-52b3-832f-91a454b7f401)
-    (property "Reference" "R_LOUT_L"
+    (uuid cc6ce114-a6f2-5227-8ef9-fc3250471f32)
+    (property "Reference" "R_LOUT_L1"
       (at 419.1 351.79 0)
       (effects
         (font
@@ -3732,14 +4644,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_LOUT_L"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25819"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4702T5E"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 3c017baf-cd8c-50ef-b46e-cbb51a4761c5))
+      (uuid 8d171f15-4ef7-577b-9669-1fcd2d16210b))
     (pin "2"
-      (uuid c6be8338-caa2-5b4a-8eca-0140bc0e1f04))
+      (uuid 2a4fe536-0118-5eaa-9f22-93b1b7942f9c))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_LOUT_L")
+          (reference "R_LOUT_L1")
           (unit 1)))))
   (wire
     (pts
@@ -3748,7 +4690,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 9d390c81-4cf5-5b29-a5b1-e5659221698b))
+    (uuid 8d10313b-5887-5b22-8f24-b4b461d483d8))
   (global_label "SHIELD_LINE_OUT_R"
     (shape bidirectional)
     (at 508 374.65 270)
@@ -3756,7 +4698,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 5449ea9a-87d8-5069-9324-26cc0aec7961)
+    (uuid e7250c35-d70c-5ab0-880f-f6a4c24794a2)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 374.65 0)
       (effects
@@ -3770,7 +4712,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 6aa67497-e4f0-5241-9b5e-7202b2d33264))
+    (uuid 0a16316d-b536-5da9-b9d0-0cae9e0120ca))
   (global_label "LINE_OUT_R_T"
     (shape bidirectional)
     (at 508 387.35 90)
@@ -3778,7 +4720,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 193f5f8b-abb6-5db6-86f6-cbd0645bd22c)
+    (uuid 8392ca83-b14f-5224-95a7-524115bf5323)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 508 387.35 0)
       (effects
@@ -3792,8 +4734,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a8a825e9-bd6a-5ea7-af65-231c9d325364)
-    (property "Reference" "C_LOUT_R"
+    (uuid de30a6c7-3b04-577c-a15f-e28abb0bacfc)
+    (property "Reference" "C_LOUT_R1"
       (at 508 345.44 0)
       (effects
         (font
@@ -3809,14 +4751,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "C_LOUT_R"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 21a98110-6944-55af-ade2-81b44b72ecbc))
+      (uuid 3a9abd33-06ad-5257-b9bb-e0ecebfb6063))
     (pin "2"
-      (uuid c27d8346-cf87-5c1d-a0d7-cbf5b9275c64))
+      (uuid 1c15220e-6792-5391-ac46-143e57148246))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "C_LOUT_R")
+          (reference "C_LOUT_R1")
           (unit 1)))))
   (wire
     (pts
@@ -3825,7 +4797,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 148099d4-26a7-5e22-b60d-504999a817b9))
+    (uuid b482a115-0f71-538c-b862-c64f6788ac7d))
   (global_label "LINE_OUT_R_T"
     (shape bidirectional)
     (at 63.5 438.15 270)
@@ -3833,7 +4805,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 092e6bfc-91cd-5938-8c2c-289a2c36a667)
+    (uuid b4ffcb36-82a9-5f97-82b3-e552d0839617)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 438.15 0)
       (effects
@@ -3847,7 +4819,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 47010e95-c7f8-579f-a513-8248560015d5))
+    (uuid 57c9f7a6-9b4d-54b9-aca1-fb5733c9be0e))
   (global_label "AGND"
     (shape bidirectional)
     (at 63.5 450.85 90)
@@ -3855,7 +4827,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 876813ad-444f-5fa4-ac47-c5f3abda7b98)
+    (uuid 652cc207-b596-5661-9673-54bc84248f98)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 450.85 0)
       (effects
@@ -3869,8 +4841,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid a176aa7e-302f-546f-8fa2-9100a0fb6957)
-    (property "Reference" "R_LOUT_R"
+    (uuid 30b7ca89-122e-5843-b2c4-788232c45199)
+    (property "Reference" "R_LOUT_R1"
       (at 63.5 415.29 0)
       (effects
         (font
@@ -3886,14 +4858,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_LOUT_R"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25819"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4702T5E"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid b6f0c54f-6ca4-573e-b38c-9ce250c0e7f4))
+      (uuid ff7e56c8-c381-5a59-8d95-73a6f7c7d882))
     (pin "2"
-      (uuid 631143c7-ccf6-54b4-a885-97e100dd9216))
+      (uuid 3fee1ab2-1617-5bfe-a33f-a837efc0010b))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_LOUT_R")
+          (reference "R_LOUT_R1")
           (unit 1)))))
   (wire
     (pts
@@ -3902,7 +4904,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid eebe6ffc-9f45-5eb2-97bf-e3da02812bef))
+    (uuid 9db45d49-23f1-52a0-99f5-2712a53f9469))
   (global_label "+3.3V"
     (shape bidirectional)
     (at 152.4 438.15 270)
@@ -3910,7 +4912,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 68971603-ea47-5abb-95d2-be46c923abe7)
+    (uuid ceca3a91-972b-50d3-a9c3-446323cf9c7e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 438.15 0)
       (effects
@@ -3924,7 +4926,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 8eea9a50-00aa-58e1-9a0e-00f227d632b2))
+    (uuid 0ea63483-eae8-57a1-b5e4-12de891907fd))
   (global_label "PAD_SEL_ADC"
     (shape bidirectional)
     (at 152.4 450.85 90)
@@ -3932,7 +4934,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0d5e72ae-eca3-514e-b6a3-c25e609ff012)
+    (uuid b5511c9e-3002-54e4-ba14-8ed3285e42ca)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 450.85 0)
       (effects
@@ -3946,8 +4948,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 7dc02968-80e5-50e7-9095-efbf884693a8)
-    (property "Reference" "R_SEL_T"
+    (uuid 4ada31c2-6ebd-5083-8c06-301fb2282434)
+    (property "Reference" "R_SEL_T1"
       (at 152.4 424.18 0)
       (effects
         (font
@@ -3963,14 +4965,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SEL_T"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 283f4971-c65e-50dc-b9b3-fbe85a09e55e))
+      (uuid b1399519-ee28-578f-9dcf-edf7e59ac32b))
     (pin "2"
-      (uuid 4f9f8a2b-56ef-56cd-86b8-0ce344e3a843))
+      (uuid 43bf3026-4838-5480-a636-4d2bd06ef871))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_SEL_T")
+          (reference "R_SEL_T1")
           (unit 1)))))
   (wire
     (pts
@@ -3979,7 +5011,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 1377436a-adbb-5c7a-8dcf-7896e767cfa6))
+    (uuid 2a59de86-9d36-5b30-b0d1-d721ad1b176c))
   (global_label "PAD_SEL_ADC"
     (shape bidirectional)
     (at 241.3 438.15 270)
@@ -3987,7 +5019,7 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a71d26ac-a412-509b-a82c-c34bb455ec22)
+    (uuid b3ca268d-b3ec-5346-a51d-20dd3807f578)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 438.15 0)
       (effects
@@ -4001,7 +5033,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid dddd2436-526e-541c-a585-95c3147b407b))
+    (uuid 8e5bd2d7-6c03-55f9-b892-11bbf7875393))
   (global_label "GND"
     (shape bidirectional)
     (at 241.3 450.85 90)
@@ -4009,7 +5041,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b12c6726-a0f0-5764-b706-6ccb4ea340d3)
+    (uuid d67fd959-245d-5ce6-8afb-14e8c77922e0)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 241.3 450.85 0)
       (effects
@@ -4023,8 +5055,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 60cddd19-e86f-5af8-ab22-513fe59188a2)
-    (property "Reference" "R_SEL_B"
+    (uuid 607285a4-b015-55fb-a293-7c391ed2cad3)
+    (property "Reference" "R_SEL_B1"
       (at 241.3 416.56 0)
       (effects
         (font
@@ -4040,14 +5072,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_SEL_B"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid b5d63d73-6661-5dd0-9091-5c72348363f2))
+      (uuid 7861997d-6087-5206-8795-999e2dd88363))
     (pin "2"
-      (uuid 37382067-f8f8-5e8e-a569-e049d652b546))
+      (uuid 46ee6bdb-fcb1-5a92-b694-4a8d64650a4d))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_SEL_B")
+          (reference "R_SEL_B1")
           (unit 1)))))
   (wire
     (pts
@@ -4056,14 +5118,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b2d330a1-4a5c-59ae-b23e-3902a645045d))
+    (uuid 85b97aaf-404d-50b3-a4f6-c629cfde3ef7))
   (label "FRONT_LINE_IN_L"
     (at 63.5 501.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 5a238a33-a798-5ec9-8c73-e32a89308788))
+    (uuid c1bc9ae9-669e-51f8-942e-49c34ee8ef00))
   (wire
     (pts
       (xy 63.5 511.81)
@@ -4071,7 +5133,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid b105c189-e222-52e1-af6c-126480255d0e))
+    (uuid 50d2fdc5-3f1f-53b6-964a-5021a5ab6f26))
   (global_label "SHIELD_LINE_IN_L"
     (shape bidirectional)
     (at 63.5 514.35 90)
@@ -4079,7 +5141,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ba93c22e-7764-58fd-a138-7fd1d112c7bc)
+    (uuid b2891de9-c1b3-5bac-b8c1-da5cc5e4e8d9)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 63.5 514.35 0)
       (effects
@@ -4093,8 +5155,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 7feef5ad-c7c0-5ae0-ad57-d9177c0022de)
-    (property "Reference" "R_ISO_IN_L"
+    (uuid 22e8e6aa-899e-5206-bb67-708cc098b3c3)
+    (property "Reference" "R_ISO_IN_L1"
       (at 63.5 474.98 0)
       (effects
         (font
@@ -4110,14 +5172,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_ISO_IN_L"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17477"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F0000T5E"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 23ca1715-18e3-52d8-aebb-05f29f3e43e7))
+      (uuid ba6ef1d3-914d-5af6-a806-87a0eff8a2d7))
     (pin "2"
-      (uuid 5d9a5319-3dd1-5331-87bb-06be9459cf27))
+      (uuid 8261ac75-3799-5d9e-8bb2-76edb2e1a47e))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_ISO_IN_L")
+          (reference "R_ISO_IN_L1")
           (unit 1)))))
   (wire
     (pts
@@ -4126,14 +5218,14 @@
     (stroke
       (width 0)
       (type default))
-    (uuid 541ad8bc-ea56-533f-b678-35fbb8e61cdc))
+    (uuid f19208d2-0985-508b-b3e1-a5ea3b39925c))
   (label "FRONT_LINE_IN_R"
     (at 152.4 501.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 5a136b2e-69f6-5c6f-9f23-c8b6921dba7e))
+    (uuid 773a1ddb-7c75-5604-a8f1-30582b0c253a))
   (wire
     (pts
       (xy 152.4 511.81)
@@ -4141,7 +5233,7 @@
     (stroke
       (width 0)
       (type default))
-    (uuid cf5c0628-3eb8-5bcd-9922-df080dbff72d))
+    (uuid 5eecb1c6-e89a-5b17-bcc6-c5cbb34496b4))
   (global_label "SHIELD_LINE_IN_R"
     (shape bidirectional)
     (at 152.4 514.35 90)
@@ -4149,7 +5241,7 @@
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 542990c8-a4cc-551d-acb1-ccfcea66d154)
+    (uuid fc32b148-44c6-5d13-8729-b84a33ca9824)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
       (at 152.4 514.35 0)
       (effects
@@ -4163,8 +5255,8 @@
     (in_bom yes)
     (on_board yes)
     (dnp no)
-    (uuid 96f02a47-0023-53bc-a9e7-01616f4a5c34)
-    (property "Reference" "R_ISO_IN_R"
+    (uuid 4d18b430-5a45-5872-81ee-db0ca2e1a27d)
+    (property "Reference" "R_ISO_IN_R1"
       (at 152.4 474.98 0)
       (effects
         (font
@@ -4180,14 +5272,44 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Function" "R_ISO_IN_R"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17477"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F0000T5E"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
-      (uuid 432d7d79-99e0-5eab-91b6-81be537b58e7))
+      (uuid f21e0f6d-b699-54af-8f9e-5f760eb9b6f9))
     (pin "2"
-      (uuid 4f907098-d316-569d-a4a0-a03e929bd109))
+      (uuid 4c6c00ef-068c-5543-ba6c-32882702e3a8))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "R_ISO_IN_R")
+          (reference "R_ISO_IN_R1")
           (unit 1)))))
   (text "Frente analogico de la portadora Studio conservado (doc25 seccion 6)."
     (at 15.24 20.32 0)

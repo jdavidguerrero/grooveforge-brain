@@ -1,0 +1,61 @@
+(footprint "FSR402_Socket_1x02_P2.54mm"
+  (version 20241229)
+  (generator "schgen")
+  (layer "F.Cu")
+  (descr "Juan FSR402 two crimped male pins P2.54. THT socket/solder landing. Datum = disk centre CSV; tail approaches disk toward -Y KiCad. Accommodate flexible tail; verify fold/height on actual sensor.")
+  (attr through_hole)
+  (property "Reference" "REF**"
+    (at 0 -10.5)
+    (layer "F.SilkS")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Value" "FSR402 SOCKET 2.54"
+    (at 0 14)
+    (layer "F.Fab")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12))))
+  (fp_circle
+    (center 0 0)
+    (end 9.15 0)
+    (stroke
+      (width 0.1)
+      (type solid))
+    (fill none)
+    (layer "Dwgs.User"))
+  (fp_rect
+    (start -2.54 9.73)
+    (end 2.54 12.27)
+    (stroke
+      (width 0.1)
+      (type solid))
+    (fill none)
+    (layer "F.Fab"))
+  (fp_rect
+    (start -2.8 9.45)
+    (end 2.8 12.55)
+    (stroke
+      (width 0.05)
+      (type solid))
+    (fill none)
+    (layer "F.CrtYd"))
+  (fp_text user "TAIL TOWARD DISK / 2.54"
+    (at 0 16)
+    (layer "Dwgs.User")
+    (effects
+      (font
+        (size 0.7 0.7)
+        (thickness 0.12))))
+  (pad "1" thru_hole rect
+    (at -1.27 11)
+    (size 1.8 1.8)
+    (drill 1)
+    (layers "*.Cu" "*.Mask"))
+  (pad "2" thru_hole oval
+    (at 1.27 11)
+    (size 1.8 1.8)
+    (drill 1)
+    (layers "*.Cu" "*.Mask")))

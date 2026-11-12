@@ -1,4 +1,4 @@
-"""PCB-M electrical contract: Juan-approved D8-D23 (2026-11-12) and captured analog front.
+"""PCB-M electrical contract: Juan-approved D8-D37 (2026-11-12) and captured analog front.
 
 None means intentional NC. Cell positions are on a 1.27 mm grid. Remaining source
 contradictions are listed in ../REPORT.md; this is schematic capture, not fabrication approval.
@@ -14,14 +14,6 @@ PARTS = {'J_T41L': {'lib_id': 'Connector_Generic:Conn_01x24',
             'reference': 'J_T41R',
             'value': 'Teensy41-RightRow',
             'footprint': 'Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical'},
- 'J_SHIELD_AUDIO': {'lib_id': 'Connector_Generic:Conn_01x04',
-                    'reference': 'J_SHIELD_AUDIO',
-                    'value': 'AudioShieldRevD-LineInOut',
-                    'footprint': 'Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical'},
- 'J_SHIELD_HP': {'lib_id': 'Connector_Generic:Conn_01x03',
-                 'reference': 'J_SHIELD_HP',
-                 'value': 'AudioShieldRevD-HP',
-                 'footprint': 'Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical'},
  'R_PAD_L1': {'lib_id': 'Device:R',
               'reference': 'R_PAD_L1',
               'value': '33k',
@@ -295,7 +287,7 @@ PARTS = {'J_T41L': {'lib_id': 'Connector_Generic:Conn_01x24',
             'footprint': 'Package_TO_SOT_SMD:SOT-23-5'},
  'F1': {'lib_id': 'Device:Polyfuse',
         'reference': 'F1',
-        'value': '0.75A MF-MSMF075',
+        'value': '0.75A MF-MSMF075/24-2',
         'footprint': 'Fuse:Fuse_1812_4532Metric'},
  'J_5V_BKUP': {'lib_id': 'Connector_Generic:Conn_01x02',
                'reference': 'J_5V_BKUP',
@@ -361,6 +353,11 @@ CAPACITOR = 'Capacitor_SMD:C_0402_1005Metric'
 PH = 'Connector_JST:JST_PH_B{n}B-PH-K_1x{n:02}_P2.00mm_Vertical'
 
 
+def annotated_reference(reference):
+    """KiCad needs a final numeric annotation; retain the function in its own field."""
+    return reference if reference[-1].isdigit() else reference + '1'
+
+
 def pcb_m():
     """Build PCB-M with service/I2C sheets and the intentionally empty reserved sheet 04."""
     sheets = [Sheet(name) for name in (
@@ -391,7 +388,7 @@ def pcb_m():
 
     s = sheets[0]
     connector(s, 'J_T41L', [
-        'GND', 'I2C_BUF_EN_GPIO', None, 'ENC1_A', 'ENC1_B', 'ENC2_A', 'ENC2_B', 'ENC3_A',
+        'GND', 'EN_K_GPIO', 'EN_A_GPIO', 'ENC1_A', 'ENC1_B', 'ENC2_A', 'ENC2_B', 'ENC3_A',
         'I2S_TX', 'I2S_RX', 'ENC3_B', 'ENC4_A', 'ENC4_B', 'ENC5_A', '+3.3V', 'POT_CUE',
         None, 'POT_IN', None, 'M4_RX7', 'M4_TX7', 'ENC5_B', 'ENC6_A', 'ENC6_B'], (0, 1),
         footprint=PARTS['J_T41L']['footprint'])
@@ -400,10 +397,12 @@ def pcb_m():
         'I2C_SCL', 'I2C_SDA', 'FSR4_ADC', 'FSR3_ADC', 'FSR2_ADC', 'FSR1_ADC', 'LED_DATA',
         'GND', 'PAD_SEL_ADC', 'JOG_B', None, None, 'JOG_A', 'ENC8_B', 'ENC8_A',
         'ENC7_B', 'ENC7_A'], (2, 1), footprint=PARTS['J_T41R']['footprint'])
-    connector(s, 'J_SHIELD_AUDIO', ['SHIELD_LINE_IN_L', 'SHIELD_LINE_IN_R', 'SHIELD_LINE_OUT_L',
-              'SHIELD_LINE_OUT_R'], (0, 2), footprint=PARTS['J_SHIELD_AUDIO']['footprint'])
+    connector(s, 'J_SHIELD_IN', ['SHIELD_LINE_IN_L', 'SHIELD_LINE_IN_R', 'GND'], (0, 2),
+              value='SHIELD pads LINE IN L/R/G')
+    connector(s, 'J_SHIELD_OUT', ['SHIELD_LINE_OUT_L', 'SHIELD_LINE_OUT_R', 'GND'], (1, 2),
+              value='SHIELD pads LINE OUT L/R/G')
     connector(s, 'J_SHIELD_HP', ['HP_L', 'HP_R', 'HP_VGND'], (2, 2),
-              footprint=PARTS['J_SHIELD_HP']['footprint'])
+              value='HP L/R/VGND - NEVER GND')
     s.notes = ['Teensy + Audio Shield: I2S interno al modulo; no microSD ni pot opcional del shield.',
                'NC: T25/T27/T38/T39 reservados e-drum. HP_VGND nunca se une a GND/AGND.',
                'Filas de sockets conservadas; validar mecanica del montaje antes de fabricar.']
@@ -440,9 +439,10 @@ def pcb_m():
         part(s, f'U_DAC{channel}', {1: f'DAC{channel}_RAW', 2: 'GND', 3: '+3.3V', 4: 'I2C_SDA',
              5: 'I2C_SCL', 6: 'GND' if channel == 1 else '+3.3V'}, (0, channel - 1),
              footprint='Package_TO_SOT_SMD:SOT-23-6')
+        resistor(s, f'R_DAC_LIMIT{channel}', '2.2k', f'DAC{channel}_RAW', f'DAC{channel}_LIMITED', (channel + 3, 2))
         out, negative, positive = opamp_pins[channel - 1]
         part(s, 'U_OA_CV', {out: f'CV{channel}_OUT', negative: f'CV{channel}_FB',
-             positive: f'DAC{channel}_RAW'}, (1, channel - 1), unit=channel,
+             positive: f'DAC{channel}_LIMITED'}, (1, channel - 1), unit=channel,
              footprint='Package_SO:SOIC-14_3.9x8.7mm_P1.27mm')
         resistor(s, f'R_CV_RF{channel}', '10k', f'CV{channel}_OUT', f'CV{channel}_FB', (2, channel - 1))
         resistor(s, f'R_CV_RI{channel}', '20k', f'CV{channel}_FB', 'GND', (3, channel - 1))
@@ -471,7 +471,7 @@ def pcb_m():
                'DFT: SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga.']
 
     s = sheets[5]
-    s.paper = 'A2'
+    s.paper = 'A1'
     for channel in range(1, 5):
         connector(s, f'J_FSR{channel}', ['+3.3V', f'FSR{channel}_ADC'], (channel - 1, 0))
         resistor(s, f'R_FSR{channel}', '10k', f'FSR{channel}_ADC', 'GND', (channel - 1, 1))
@@ -480,6 +480,7 @@ def pcb_m():
         connector(s, f'J_POT_{name}', ['+3.3V', f'POT_{name}_WIPER', 'GND'], (index + 1, 2))
         resistor(s, f'R_POT_{name}', '1k', f'POT_{name}_WIPER', f'POT_{name}', (index + 1, 4))
         capacitor(s, f'C_POT_{name}', '100nF', f'POT_{name}', 'GND', (index + 1, 5))
+        resistor(s, f'R_POT_BIAS_{name}', '1M', f'POT_{name}', 'GND', (index + 1, 6))
     connector(s, 'J_PAD_SEL', ['+3.3V', 'PAD_SEL_ADC', 'GND'], (0, 3))
     connector(s, 'J_HP', ['HP_L', 'HP_R', 'HP_VGND'], (2, 3))
     s.notes = ['Componentes de panel por cable. JOG_CLICK via J_PCB_K hacia MCP 0x23.',
@@ -510,7 +511,7 @@ def pcb_m():
     for symbol in s.symbols:
         symbol.dnp = True
         symbol.in_bom = False
-    s.notes.append('D20: ALL DNP / excluded assembly BOM; USB MIDI on Pi, no MIDI panel holes. Teensy 0=I2C EN; 1=NC.')
+    s.notes.append('D20: ALL DNP / excluded assembly BOM; USB MIDI on Pi, no MIDI panel holes. Teensy 0=EN_K; 1=EN_A.')
 
     s = sheets[7]
     part(s, 'J1_PCBA', dict(enumerate([
@@ -521,15 +522,16 @@ def pcb_m():
         (0, 0), footprint='Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical')
     connector(s, 'J2_I2C', ['GND', '+3.3V', 'I2C_SDA_A', 'I2C_SCL_A'], (1, 0),
               footprint='Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal')
-    connector(s, 'J3_M4', ['GND', None, 'M4_TX7', 'M4_RX7'], (2, 0))
+    connector(s, 'J3_M4', ['GND', None, 'M4_RX7', 'M4_TX7'], (2, 0))
     connector(s, 'J_PCB_K', ['+3.3V', 'I2C_SDA_K', 'GND', 'I2C_SCL_K', 'GND',
               'LED_DIN_5V', 'GND', '+5V_LED_K', 'JOG_CLICK', 'PEDAL_BTN'], (3, 0))
     s.symbols[-1].fields['LCSC'] = 'C158038'
     for index in (1, 2):
-        connector(s, f'J{index+4}_SHARP{index}', ['+5V_LED_SHARP', f'SHARP{index}_ADC', 'GND'], (index - 1, 1))
+        connector(s, f'J{index+4}_SHARP{index}', ['+5V_LED_SHARP', f'SHARP{index}_RAW', 'GND'], (index - 1, 1))
         connector(s, f'J{index+6}_EXP{index}', ['+3.3V', f'EXP{index}_ADC'], (index + 1, 1))
         resistor(s, f'R_EXP{index}', '10k', f'EXP{index}_ADC', 'GND', (index + 1, 2))
         capacitor(s, f'C_SHARP{index}', '10uF', '+5V_LED_SHARP', 'GND', (index - 1, 2))
+        resistor(s, f'R_SHARP_LIMIT{index}', '10k', f'SHARP{index}_RAW', f'SHARP{index}_ADC', (index - 1, 3))
     s.notes = ['D8: J1 segun PCB-A fabricada; NC 18(spare)/20(INT_K)/22(INT_A)/26(LED_DIN).',
                'Encoders a Teensy segun firmware; faders al ADS0x48 AIN0-3. LED solo via J_PCB_K.',
                'I2C hacia PCB-A por J2; J1 no lleva SDA/SCL. Retirar pull-ups PCB-A.']
@@ -541,7 +543,12 @@ def pcb_m():
         connector(s, f'J_LINE_OUT_{channel}', [f'LINE_OUT_{channel}_T', None, 'AGND'], (1, row))
         number = 1 if channel == 'L' else 2
         connector(s, f'J_CV{number}', [f'CV{number}_PROTECTED', 'AGND'], (2, row))
-    connector(s, 'J_PEDAL', ['PEDAL_BTN', None, 'GND'], (1, 2))
+    connector(s, 'J_PEDAL', ['PEDAL_RAW', None, 'GND'], (1, 2))
+    resistor(s, 'R_PEDAL_SER', '1k', 'PEDAL_RAW', 'PEDAL_BTN', (0, 3))
+    resistor(s, 'R_PEDAL_PU', '10k', '+3.3V', 'PEDAL_BTN', (1, 3))
+    capacitor(s, 'C_PEDAL', '10nF', 'PEDAL_BTN', 'GND', (2, 3))
+    part(s, 'D_PEDAL_ESD', {1: 'PEDAL_BTN', 2: 'GND'}, (3, 3),
+         lib_id='Device:D_TVS', value='PESD3V3U1UL,315', footprint='Diode_SMD:D_SOD-882')
     connector(s, 'J_EDRUM', [None] * 5, (2, 2), dnp=True)
     s.notes = ['D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack.',
                'TRS: 1=tip/2=ring/3=sleeve; TS CV: 1=tip/2=sleeve. HP solo por J_HP (06).',
@@ -550,15 +557,20 @@ def pcb_m():
 
     s = sheets[9]
     s.paper = 'A2'
-    part(s, 'U_LDO1', {1: '+5V_LED', 2: 'AGND', 3: '+5V_LED', 4: None, 5: '+3.3VA'}, (1, 0))
-    part(s, 'F1', {1: '+5V_LED_RAW', 2: '+5V_LED'}, (0, 0), footprint='Fuse:Fuse_1206_3216Metric')
+    part(s, 'U_LDO1', {1: '+5V_TEENSY', 2: 'AGND', 3: '+5V_TEENSY', 4: None, 5: '+3.3VA'}, (1, 0))
+    part(s, 'F1', {1: '+5V_LED_RAW', 2: '+5V_LED_FUSED'}, (0, 0))
+    part(s, 'Q_LED_REVERSE', {1: 'GND', 2: '+5V_LED', 3: '+5V_LED_FUSED'}, (4, 0),
+         lib_id='Transistor_FET:AO3401A', value='AO3401A', footprint='Package_TO_SOT_SMD:SOT-23')
+    part(s, 'D_LED_TVS', {1: '+5V_LED', 2: 'GND'}, (4, 1),
+         lib_id='Device:D_TVS', value='SMAJ5.0A', footprint='Diode_SMD:D_SMA')
+    resistor(s, 'R_LED_BIAS', '100k', 'LED_DATA', 'GND', (4, 2))
     connector(s, 'J_5V_LED_IN', ['+5V_LED_RAW', 'GND'], (0, 2), value='USB-A_PI_5V_LED_IN',
               footprint='Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal')
     part(s, 'NT1', {1: 'AGND', 2: 'GND'}, (1, 2), lib_id='Device:NetTie_2', value='NetTie_2',
          footprint='NetTie:NetTie-2_SMD_Pad0.5mm')
     connector(s, 'J_5V_BKUP', ['+5V_LED_RAW', 'GND'], (0, 1), dnp=True,
               footprint=PARTS['J_5V_BKUP']['footprint'])
-    capacitor(s, 'C_LDO_IN', '10uF', '+5V_LED', 'AGND', (2, 0))
+    capacitor(s, 'C_LDO_IN', '10uF', '+5V_TEENSY', 'AGND', (2, 0))
     part(s, 'C_LDO_OUT', {1: '+3.3VA', 2: 'AGND'}, (3, 0), footprint=CAPACITOR)
     part(s, 'U_LED_BUF', {1: 'GND', 2: 'LED_DATA', 3: 'GND', 4: 'LED_BUF_OUT', 5: '+5V_LED'}, (1, 1),
          footprint='Package_TO_SOT_SMD:SOT-353_SC-70-5')
@@ -568,8 +580,8 @@ def pcb_m():
     for index, rail in enumerate(('+5V_LED_RAW', '+5V_LED', '+5V_TEENSY', '+3.3V', 'GND', 'AGND')):
         part(s, f'#FLG{index+1:03}', {1: rail}, (index % 4, 3 + index // 4),
              lib_id='power:PWR_FLAG', value='PWR_FLAG', footprint='')
-    s.notes = ['LDO -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada.',
-               'D9: USB-A Pi -> J_5V_LED_IN -> F1 0.75A -> +5V_LED. Backup DNP; sin TVS de entrada adecuada en BOM.',
+    s.notes = ['LDO from +5V_TEENSY -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada.',
+               'D33: USB Pi -> F1 1812 -> PMOS D/S -> +5V_LED; SMAJ5.0A after fuse. Backup DNP.',
                'D14: pull-ups 2.2k en PCB-M; desoldar R1/R2 de PCB-A. Unica union AGND/GND por NT1.']
     s = sheets[10]
     s.paper = 'A1'
@@ -636,9 +648,9 @@ def pcb_m():
     s.paper = 'A1'
     for branch in ('K', 'A'):
         part(s, f'U_I2C_{branch}', {1: '+3.3V', 2: 'I2C_SCL', 3: 'I2C_SDA', 4: 'GND',
-             5: 'I2C_BUF_EN', 6: f'I2C_SDA_B_{branch}', 7: f'I2C_SCL_B_{branch}', 8: '+3.3V'},
+             5: f'EN_{branch}', 6: f'I2C_SDA_B_{branch}', 7: f'I2C_SCL_B_{branch}', 8: '+3.3V'},
              lib_id='Logic_LevelTranslator:TCA9517ADGK', value='PCA9517ADP,118',
-             footprint='Package_SO:VSSOP-8_3x3mm_P0.65mm',
+             footprint='Package_SO:MSOP-8_3x3mm_P0.65mm',
              fields={'LCSC': 'C80799', 'Datasheet': 'https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf'})
         for port in ('A', 'B'):
             capacitor(s, f'C_I2C_{branch}_{port}', '100nF', '+3.3V', 'GND')
@@ -662,9 +674,9 @@ def pcb_m():
              footprint='Package_TO_SOT_SMD:SOT-23-6', fields={'LCSC': 'C7519',
              'Datasheet': 'https://www.st.com/resource/en/datasheet/usblc6-2.pdf'})
         capacitor(s, f'C_ESD_I2C_{branch}', '100nF', '+3.3V', 'GND')
-    resistor(s, 'R_I2C_EN', '10k', '+3.3V', 'I2C_BUF_EN')
-    jumper('SJ_EN_GPIO', 'I2C_BUF_EN_GPIO', 'I2C_BUF_EN')
-    jumper('SJ_EN_HIGH', '+3.3V', 'I2C_BUF_EN', closed=False)
+    for branch in ('K', 'A'):
+        resistor(s, f'R_EN_{branch}', '10k', '+3.3V', f'EN_{branch}')
+        jumper(f'SJ_EN_{branch}_GPIO', f'EN_{branch}_GPIO', f'EN_{branch}')
     for name in ('RX', 'TX'):
         service(f'TP_MIDI_{name}', {1: f'MIDI_{name}'}, 'Connector:TestPoint', f'MIDI_{name}',
                 'TestPoint:TestPoint_Pad_D1.5mm', dnp=True)
@@ -674,8 +686,15 @@ def pcb_m():
     s.notes = [
         'D21: TCA9517ADGK library graphic/pins = NXP PCA9517ADP C80799 (MSOP8). VCCA=VCCB=3.3V.',
         'A=local bus shared; B_K and B_A separate cables. NEVER connect two B sides. EN changes only while idle.',
-        'EN default pull-up: Teensy pin0 input. Force HIGH: open SJ_EN_GPIO BEFORE closing SJ_EN_HIGH.',
+        'D30: EN_K=Teensy0, EN_A=Teensy1; separate 10k pull-ups / GPIO jumpers. Change EN only with bus idle.',
         '47 ohm 0805 series per cable line; replace with 0 ohm only after measuring VOL/rise time.',
         'USBLC6-2SC6 C7519: 3.5pF max per line; short GND return near cable connector. PCB-A I2C only via J2.',
         'Pull-ups per segment: 2.2k closed / 4.7k open. Remote pull-ups DNP. No MIDI harness or panel holes.']
+    from .bom import populate_fields
+    populate_fields(sheets)
+    for sheet in sheets:
+        for symbol in sheet.symbols:
+            if not symbol.reference.startswith('#'):
+                symbol.fields['Function'] = symbol.reference
+                symbol.reference = annotated_reference(symbol.reference)
     return Board('pcb-m', sheets)

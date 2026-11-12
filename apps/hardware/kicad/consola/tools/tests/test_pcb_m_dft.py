@@ -7,7 +7,7 @@ from schgen.pcb_m import pcb_m
 
 @pytest.fixture
 def parts():
-    return {s.reference: s for sheet in pcb_m().sheets for s in sheet.symbols}
+    return {s.fields.get('Function', s.reference): s for sheet in pcb_m().sheets for s in sheet.symbols}
 
 
 def test_instrument_access_to_service_nets(parts):
@@ -59,7 +59,7 @@ def test_bridge_opens_only_named_service_path(parts, bridge, source, load, pin):
 
 
 def test_front_power_and_cv_rc_preserve_other_domains(parts):
-    units = [s for sheet in pcb_m().sheets for s in sheet.symbols if s.reference == 'U_OA_IN']
+    units = [s for sheet in pcb_m().sheets for s in sheet.symbols if s.fields.get('Function') == 'U_OA_IN']
     assert next(s for s in units if s.unit == 5).pins['4'] == '+3.3VA_FRONT'
     assert parts['D_CLAMP_L'].pins['2'] == parts['R_VREF_T'].pins['1'] == '+3.3VA_FRONT'
     assert parts['U_ADS1'].pins['8'] == parts['U_ADS2'].pins['8'] == '+3.3VA'
@@ -105,7 +105,7 @@ def test_led_current_and_conservative_dnp_adjustments(parts):
 @pytest.mark.parametrize('channel,shield_pin', [('L', '1'), ('R', '2')])
 def test_codec_input_can_be_disconnected_without_removing_shield(parts, channel, shield_pin):
     source = parts[f'C_LIN_{channel}'].pins['2']
-    target = parts['J_SHIELD_AUDIO'].pins[shield_pin]
+    target = parts['J_SHIELD_IN'].pins[shield_pin]
     link = f'R_ISO_IN_{channel}'
     assert parts[link].value == '0' and '0805' in parts[link].footprint
     assert target in conductive_reach(parts, source)
@@ -119,8 +119,8 @@ def test_midi_reserve_has_no_active_teensy_or_assembly_connection(parts, tmp_pat
     board = pcb_m()
     midi = next(sheet for sheet in board.sheets if sheet.name == '07-midi')
     assert all(symbol.dnp for symbol in midi.symbols)
-    assert parts['J_T41L'].pins['2'] == 'I2C_BUF_EN_GPIO'
-    assert parts['J_T41L'].pins['3'] is None
+    assert parts['J_T41L'].pins['2'] == 'EN_K_GPIO'
+    assert parts['J_T41L'].pins['3'] == 'EN_A_GPIO'
     generate(board, tmp_path, Library())
     tree = parse((tmp_path / 'sheets/07-midi.kicad_sch').read_text())
     for symbol in children(tree, 'symbol'):
@@ -137,10 +137,11 @@ def test_midi_reserve_has_no_active_teensy_or_assembly_connection(parts, tmp_pat
                    '--labels', 'Reference,Value,DNP', '--output', str(output),
                    str(tmp_path / 'pcb-m.kicad_sch')], tmp_path)
         with output.open() as stream:
-            refs = {row['Reference'].rstrip('?') for row in csv.DictReader(stream)}
+            refs = {row['Reference'] for row in csv.DictReader(stream)}
+        assert all('?' not in ref for ref in refs)
         assert not refs & {symbol.reference for symbol in midi.symbols}
         assert not {ref for ref in refs if 'MIDI' in ref}
-        assert {'U_I2C_A', 'U_I2C_K', 'J_PCB_K'} <= refs
+        assert {'U_I2C_A1', 'U_I2C_K1', 'J_PCB_K1'} <= refs
 
 
 def test_buffer_pinout_domains_protection_and_service_enable(parts):
@@ -149,7 +150,7 @@ def test_buffer_pinout_domains_protection_and_service_enable(parts):
         assert chip.value == 'PCA9517ADP,118' and chip.fields['LCSC'] == 'C80799'
         assert '3x3mm_P0.65mm' in chip.footprint
         assert chip.pins == {'1': '+3.3V', '2': 'I2C_SCL', '3': 'I2C_SDA', '4': 'GND',
-                             '5': 'I2C_BUF_EN', '6': f'I2C_SDA_B_{branch}',
+                             '5': f'EN_{branch}', '6': f'I2C_SDA_B_{branch}',
                              '7': f'I2C_SCL_B_{branch}', '8': '+3.3V'}
         for signal, pin in [('SDA', sda_pin), ('SCL', scl_pin)]:
             local, remote = f'I2C_{signal}', parts[connector].pins[pin]
@@ -167,11 +168,13 @@ def test_buffer_pinout_domains_protection_and_service_enable(parts):
         assert esd.value == 'USBLC6-2SC6' and esd.fields['LCSC'] == 'C7519'
         assert esd.pins == {'1': f'I2C_SDA_{branch}', '6': f'I2C_SDA_{branch}', '2': 'GND',
                             '3': f'I2C_SCL_{branch}', '4': f'I2C_SCL_{branch}', '5': '+3.3V'}
-    assert parts['R_I2C_EN'].value == '10k'
-    assert parts['R_I2C_EN'].pins == {'1': '+3.3V', '2': 'I2C_BUF_EN'}
-    assert 'I2C_BUF_EN' in conductive_reach(parts, 'I2C_BUF_EN_GPIO')
-    assert 'I2C_BUF_EN' not in conductive_reach(parts, 'I2C_BUF_EN_GPIO', ['SJ_EN_GPIO'])
-    assert parts['SJ_EN_HIGH'].lib_id == 'Jumper:SolderJumper_2_Open'
+    for branch, pin in [('K', '2'), ('A', '3')]:
+        assert parts[f'R_EN_{branch}'].value == '10k'
+        assert parts[f'R_EN_{branch}'].pins == {'1': '+3.3V', '2': f'EN_{branch}'}
+        assert parts['J_T41L'].pins[pin] == f'EN_{branch}_GPIO'
+        assert f'EN_{branch}' in conductive_reach(parts, f'EN_{branch}_GPIO')
+        assert f'EN_{branch}' not in conductive_reach(parts, f'EN_{branch}_GPIO', [f'SJ_EN_{branch}_GPIO'])
+        assert f'EN_{"A" if branch == "K" else "K"}' not in conductive_reach(parts, f'EN_{branch}_GPIO')
 
 
 def test_m_k_ten_way_contract_independent_on_both_boards(parts):

@@ -633,6 +633,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C131342"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B6B-PH-K-S(LF)(SN)"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid cd171059-de84-5094-920c-b09b9df61ab9))
     (pin "2"
@@ -712,6 +736,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C17634"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F330JT5E"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 190.5 63.5 0)
       (effects
         (font
@@ -800,6 +842,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "CL31A226KAHNNNE"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "1206"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid fa3030b4-67ee-54f5-a0f4-2ee05e0c55b6))
     (pin "2"
@@ -883,6 +943,24 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 98fc28c0-4eee-526a-ac91-611946766f06))
     (pin "2"
@@ -961,6 +1039,24 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" "C17520"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F2201T5E"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
       (at 190.5 114.3 0)
       (effects
         (font
