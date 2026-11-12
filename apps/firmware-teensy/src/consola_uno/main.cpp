@@ -37,8 +37,12 @@ bool probe(uint8_t address) {
 void poll_codec(uint32_t now) {
     if (!codec.due(now)) return;
     if (!codec.online()) {
+        // enable() calls Wire.begin(), which drops the bus to 100 kHz: a 5-byte SGTL5000 write then takes ~450 us
+        // and the 250 us transaction deadline aborted every init (codec silent since b6c579d). Widen it only here.
+        Wire.setWireTimeout(2000);
         bool ok = probe(0x0a) && g_codec.enable();
-        Wire.setClock(400000); // enable() calls Wire.begin() internally.
+        Wire.setClock(400000);
+        Wire.setWireTimeout(GF_WIRE_TIMEOUT_US);
         if (ok) ok = g_codec.inputSelect(AUDIO_INPUT_LINEIN);
         if (ok) ok = g_codec.lineInLevel(input_gain) && g_codec.volume(hp_volume/127.0f);
         if (!ok) { codec.failed(micros()); return; }
