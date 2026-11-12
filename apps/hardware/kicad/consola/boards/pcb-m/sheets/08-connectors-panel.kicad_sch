@@ -2127,6 +2127,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Supply" "local"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "caja IDC 2×15 2,54 mm recta (box header) con muesca"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 6ddccd72-2f03-5008-8dea-02a2aad1b28f))
     (pin "2"

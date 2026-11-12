@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_sch</source>
-    <date>2026-11-12T14:09:04</date>
+    <date>2026-11-12T14:32:56</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -603,11 +603,15 @@
       <footprint>Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical</footprint>
       <description>Generic connector, double row, 02x15, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <fields>
+        <field name="Supply">local</field>
+        <field name="SupplyDescription">caja IDC 2×15 2,54 mm recta (box header) con muesca</field>
         <field name="Footprint">Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description">Generic connector, double row, 02x15, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)</field>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_02x15_Odd_Even" description="Generic connector, double row, 02x15, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Supply" value="local"/>
+      <property name="SupplyDescription" value="caja IDC 2×15 2,54 mm recta (box header) con muesca"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -808,11 +812,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -837,11 +845,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -866,11 +878,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -895,11 +911,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -924,11 +944,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -953,11 +977,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -982,11 +1010,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>
@@ -1011,11 +1043,15 @@
       <footprint>Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</footprint>
       <description>Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</description>
       <fields>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: encoder EC11 con pulsador, ya disponible</field>
         <field name="Footprint">Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm</field>
         <field name="Datasheet"/>
         <field name="Description">Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin</field>
       </fields>
       <libsource lib="Device" part="RotaryEncoder_Switch_MP" description="Rotary encoder, dual channel, incremental quadrate outputs, with switch and MP Pin"/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: encoder EC11 con pulsador, ya disponible"/>
       <property name="Sheetname" value="pcb-a"/>
       <property name="Sheetfile" value="pcb-a.kicad_sch"/>
       <property name="ki_keywords" value="rotary switch encoder switch push button"/>

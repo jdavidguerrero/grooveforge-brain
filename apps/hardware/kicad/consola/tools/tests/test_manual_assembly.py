@@ -108,7 +108,7 @@ def test_real_bom_export_matches_checked_in_csv(name, tmp_path):
     if not cli:
         pytest.skip('KiCad CLI not installed')
     output = tmp_path / 'bom.csv'
-    fields = 'Reference,Value,Footprint,LCSC,DNP'
+    fields = 'Reference,Value,Footprint,LCSC,Supply,SupplyDescription,DNP'
     run_kicad([cli, 'sch', 'export', 'bom', '--fields', fields, '--labels', fields,
                '--output', str(output), str(CONSOLE / f'boards/{name}/{name}.kicad_sch')], tmp_path)
     assert output.read_bytes() == (CONSOLE / f'fab/bom-{name}.csv').read_bytes()

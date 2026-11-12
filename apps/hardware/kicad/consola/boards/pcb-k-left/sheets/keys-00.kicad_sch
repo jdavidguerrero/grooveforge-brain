@@ -499,6 +499,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid defb75fe-bfca-5425-8464-c7df1d5d4948))
     (pin "2"
@@ -825,6 +837,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid bf4cccda-878c-57ef-aa32-dcfd894e480d))
     (pin "2"
@@ -1144,6 +1168,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 7ac69e50-e5cf-54f4-b918-5625fa64df7c))
     (pin "2"
@@ -1458,6 +1494,18 @@
           (size 1.0 1.0))
         (hide yes)))
     (property "LCSC" ""
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
       (at 76.2 215.9 0)
       (effects
         (font

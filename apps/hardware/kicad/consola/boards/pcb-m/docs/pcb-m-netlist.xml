@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_sch</source>
-    <date>2026-11-12T14:08:45</date>
+    <date>2026-11-12T14:32:40</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -350,14 +350,20 @@
       <footprint>Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical</footprint>
       <fields>
         <field name="Function">J_T41L</field>
-        <field name="LCSC"/>
+        <field name="LCSC">C41376163</field>
+        <field name="MPN">HC-PM254-8.5H-1x24PZ</field>
+        <field name="Manufacturer">Hong Cheng</field>
+        <field name="Package">THT 1x24 P2.54mm H8.5mm</field>
         <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x24" description="Generic connector, single row, 01x24, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Function" value="J_T41L"/>
-      <property name="LCSC" value=""/>
+      <property name="LCSC" value="C41376163"/>
+      <property name="MPN" value="HC-PM254-8.5H-1x24PZ"/>
+      <property name="Manufacturer" value="Hong Cheng"/>
+      <property name="Package" value="THT 1x24 P2.54mm H8.5mm"/>
       <property name="Sheetname" value="01-teensy"/>
       <property name="Sheetfile" value="sheets/01-teensy.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -400,14 +406,20 @@
       <footprint>Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical</footprint>
       <fields>
         <field name="Function">J_T41R</field>
-        <field name="LCSC"/>
+        <field name="LCSC">C41376163</field>
+        <field name="MPN">HC-PM254-8.5H-1x24PZ</field>
+        <field name="Manufacturer">Hong Cheng</field>
+        <field name="Package">THT 1x24 P2.54mm H8.5mm</field>
         <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x24" description="Generic connector, single row, 01x24, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Function" value="J_T41R"/>
-      <property name="LCSC" value=""/>
+      <property name="LCSC" value="C41376163"/>
+      <property name="MPN" value="HC-PM254-8.5H-1x24PZ"/>
+      <property name="Manufacturer" value="Hong Cheng"/>
+      <property name="Package" value="THT 1x24 P2.54mm H8.5mm"/>
       <property name="Sheetname" value="01-teensy"/>
       <property name="Sheetfile" value="sheets/01-teensy.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -1494,14 +1506,20 @@
       <footprint>Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical</footprint>
       <fields>
         <field name="Function">SW_PAD</field>
-        <field name="LCSC"/>
+        <field name="LCSC">C225519</field>
+        <field name="MPN">A2541WV-2x4P</field>
+        <field name="Manufacturer">CJT</field>
+        <field name="Package">THT 2x4 P2.54mm vertical</field>
         <field name="Footprint">Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_DP3T" description="Switch, three position, dual pole triple throw, 3 position switch, SP3T"/>
       <property name="Function" value="SW_PAD"/>
-      <property name="LCSC" value=""/>
+      <property name="LCSC" value="C225519"/>
+      <property name="MPN" value="A2541WV-2x4P"/>
+      <property name="Manufacturer" value="CJT"/>
+      <property name="Package" value="THT 2x4 P2.54mm vertical"/>
       <property name="Sheetname" value="02-analog-front"/>
       <property name="Sheetfile" value="sheets/02-analog-front.kicad_sch"/>
       <property name="ki_keywords" value="switch dp3t ON-ON-ON"/>
@@ -1897,18 +1915,24 @@
       </units>
     </comp>
     <comp ref="C_CV_FILTER1">
-      <value>47uF 10V</value>
-      <footprint>Capacitor_SMD:CP_Elec_5x5.8</footprint>
+      <value>47uF 16V</value>
+      <footprint>Capacitor_SMD:CP_Elec_5x5.4</footprint>
       <fields>
         <field name="Function">C_CV_FILTER</field>
-        <field name="LCSC"/>
-        <field name="Footprint">Capacitor_SMD:CP_Elec_5x5.8</field>
+        <field name="LCSC">C7469972</field>
+        <field name="MPN">FVH016ADA470M0554</field>
+        <field name="Manufacturer">FOSAN</field>
+        <field name="Package">SMD 5x5.4mm 47uF 16V +/-20%</field>
+        <field name="Footprint">Capacitor_SMD:CP_Elec_5x5.4</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C_Polarized" description="Polarized capacitor"/>
       <property name="Function" value="C_CV_FILTER"/>
-      <property name="LCSC" value=""/>
+      <property name="LCSC" value="C7469972"/>
+      <property name="MPN" value="FVH016ADA470M0554"/>
+      <property name="Manufacturer" value="FOSAN"/>
+      <property name="Package" value="SMD 5x5.4mm 47uF 16V +/-20%"/>
       <property name="Sheetname" value="05-cv-dac"/>
       <property name="Sheetfile" value="sheets/05-cv-dac.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -3837,6 +3861,8 @@
       <fields>
         <field name="Function">J1_PCBA</field>
         <field name="LCSC"/>
+        <field name="Supply">local</field>
+        <field name="SupplyDescription">caja IDC 2×15 2,54 mm recta (box header) con muesca</field>
         <field name="Footprint">Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
@@ -3844,6 +3870,8 @@
       <libsource lib="Connector_Generic" part="Conn_02x15_Odd_Even" description="Generic connector, double row, 02x15, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Function" value="J1_PCBA"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="local"/>
+      <property name="SupplyDescription" value="caja IDC 2×15 2,54 mm recta (box header) con muesca"/>
       <property name="Sheetname" value="08-connectors-panel"/>
       <property name="Sheetfile" value="sheets/08-connectors-panel.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>

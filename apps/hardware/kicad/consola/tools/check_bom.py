@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate real exported component identities; missing procurement codes fail closed."""
+"""Validate exported LCSC identities or declared external supplies; fail closed."""
 import argparse
 import json
 from pathlib import Path
@@ -22,6 +22,12 @@ def check_components(components, catalog):
     for p in by_code.values():
         if any(not p.get(k) for k in required) or not re.fullmatch(r'C\d+', p['lcsc']):
             raise ValueError(f'Incomplete verified catalog entry: {p}')
+    external = catalog.get('external_supplies', [])
+    for p in external:
+        if (p.get('supply') not in ('owner', 'local') or
+                any(not p.get(k) for k in ('description', 'footprints', 'values',
+                                          'fecha_verificacion', 'source'))):
+            raise ValueError(f'Incomplete external supply entry: {p}')
     errors, pending = [], []
     for c in components:
         ref, value, footprint, code = (c.get(k, '') for k in ('Reference', 'Value', 'Footprint', 'LCSC'))
@@ -31,8 +37,18 @@ def check_components(components, catalog):
             continue
         # Only physical copper/features are exempt, never bought connectors or ICs.
         if footprint.startswith(('TestPoint:', 'NetTie:', 'Jumper:', 'MountingHole:')):
+            if code or c.get('Supply') or c.get('SupplyDescription'):
+                errors.append(f'{ref}: copper-only feature unexpectedly assigned purchase supply')
+            continue
+        supply, description = c.get('Supply', ''), c.get('SupplyDescription', '')
+        if supply or description:
             if code:
-                errors.append(f'{ref}: copper-only feature unexpectedly assigned purchase code')
+                errors.append(f'{ref}: LCSC conflicts with external Supply')
+            matched = [p for p in external if supply == p['supply'] and
+                       description == p['description'] and footprint in p['footprints'] and
+                       value in p['values']]
+            if supply not in ('owner', 'local') or not description.strip() or len(matched) != 1:
+                errors.append(f'{ref}: invalid or undeclared external Supply/description/value/footprint')
             continue
         if not code:
             pending.append(f'{ref}: {value} | {footprint}')
@@ -73,7 +89,9 @@ def main():
     for name in ([args.board] if args.board else BOARDS):
         rows = read_components(args.directory / name / 'docs' / f'{name}-netlist.xml')
         errors, pending = check_components(rows, catalog)
-        print(f'{name}: {len(rows)} components; {len(errors)} identity errors; {len(pending)} unverified purchases')
+        supplied = sum(bool(c.get('Supply')) and not c.get('DNP') for c in rows)
+        print(f'{name}: {len(rows)} components; {len(errors)} identity errors; '
+              f'{len(pending)} unverified purchases; {supplied} external supplies')
         for message in errors:
             print('ERROR ' + message)
         for message in pending:

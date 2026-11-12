@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-k-right/pcb-k-right.kicad_sch</source>
-    <date>2026-11-12T14:08:55</date>
+    <date>2026-11-12T14:32:48</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -910,12 +910,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -935,12 +939,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -960,12 +968,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -985,12 +997,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1274,12 +1290,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1299,12 +1319,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1324,12 +1348,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1349,12 +1377,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
@@ -1440,12 +1472,16 @@
       <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
       <fields>
         <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
         <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
       <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>

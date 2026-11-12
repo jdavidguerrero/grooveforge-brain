@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "parts": [
     {
       "lcsc": "C25744",
@@ -816,6 +816,113 @@
         "Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal"
       ],
       "values": []
+    },
+    {
+      "lcsc": "C41376163",
+      "mpn": "HC-PM254-8.5H-1x24PZ",
+      "fabricante": "Hong Cheng",
+      "encapsulado": "THT 1x24 P2.54mm H8.5mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "buscador LCSC",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical"
+      ],
+      "values": [
+        "Teensy41-LeftRow",
+        "Teensy41-RightRow"
+      ]
+    },
+    {
+      "lcsc": "C225519",
+      "mpn": "A2541WV-2x4P",
+      "fabricante": "CJT",
+      "encapsulado": "THT 2x4 P2.54mm vertical",
+      "fecha_verificacion": "2026-11-12",
+      "source": "buscador LCSC",
+      "footprints": [
+        "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
+      ],
+      "values": [
+        "PAD 3P3T A/B"
+      ]
+    },
+    {
+      "lcsc": "C7469972",
+      "mpn": "FVH016ADA470M0554",
+      "fabricante": "FOSAN",
+      "encapsulado": "SMD 5x5.4mm 47uF 16V +/-20%",
+      "fecha_verificacion": "2026-11-12",
+      "source": "buscador LCSC",
+      "footprints": [
+        "Capacitor_SMD:CP_Elec_5x5.4"
+      ],
+      "values": [
+        "47uF 16V"
+      ]
+    }
+  ],
+  "external_supplies": [
+    {
+      "supply": "local",
+      "description": "caja IDC 2×15 2,54 mm recta (box header) con muesca",
+      "footprints": [
+        "Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical"
+      ],
+      "values": [
+        "IDC_2x15_PCB-A",
+        "to carrier J5 (IDC 2x15)"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress",
+      "footprints": [
+        "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      ],
+      "values": [
+        "BACK",
+        "MENU",
+        "NAV_L",
+        "NAV_R",
+        "BROWSE",
+        "TAP",
+        "FILL",
+        "CUE_ENG",
+        "BUILD",
+        "DROP",
+        "BREAK",
+        "SHIFT",
+        "UNDO",
+        "DELETE",
+        "DUPLICATE",
+        "QUANTIZE",
+        "NEW",
+        "PLAY",
+        "STOP",
+        "REC",
+        "LOOP",
+        "METRO",
+        "SCENE4_PAGE_R",
+        "SCENE3_PAGE_L",
+        "SCENE2_OCT-",
+        "SCENE1_OCT+"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: encoder EC11 con pulsador, ya disponible",
+      "footprints": [
+        "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+      ],
+      "values": [
+        "EC11"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
     }
   ]
 }

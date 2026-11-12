@@ -145,10 +145,18 @@ python3 apps/hardware/kicad/consola/tools/check_bom.py
 python3 apps/hardware/kicad/consola/tools/check_bom.py --board pcb-m
 ```
 
-El checker lee XML real: ausencia de LCSC, código sin catálogo o encapsulado/huella/valor
-incompatible impiden PASS. TP/NT/SJ/agujeros de cobre no son compras; componentes DNP
+El checker lee XML real: ausencia de LCSC o suministro externo declarado, código sin catálogo
+o encapsulado/huella/valor incompatible impiden PASS. TP/NT/SJ/agujeros de cobre no son compras; componentes DNP
 se excluyen del cierre de población. `check_netlist` compara también valor, huella, DNP y
 campos del XML contra descripción: mismo cableado con pieza cambiada ahora falla.
+
+Cierre de compras aprobado el 2026-11-12: [THEORY-lcsc.md](THEORY-lcsc.md),
+[REPORT-lcsc.md](REPORT-lcsc.md). `Supply=owner` identifica piezas de Juan y `Supply=local`
+compras locales. Requieren `SupplyDescription` y coincidencia de tipo/descripción/valor/huella
+con `external_supplies` del catálogo. No pueden coexistir con LCSC. Vacío sigue siendo
+pendiente; una declaración inválida falla como error. Las cuatro BOM de `fab/` exportan
+`Reference,Value,Footprint,LCSC,Supply,SupplyDescription,DNP` desde KiCad, sin posproceso.
+Los THT manuales de M van al pedido suelto; los SMD de M van al ensamble JLC.
 
 En un clon con layoutF o layoutP bajo otra tarea: regenerar/verificar todas con
 `--all --regenerate --directory .fixrev-validation`, copiando antes PCB-A a ese directorio

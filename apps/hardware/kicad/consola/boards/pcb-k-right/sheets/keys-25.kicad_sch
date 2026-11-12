@@ -499,6 +499,18 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid dec14c1e-8b07-5a97-86a1-7df815fd0c0a))
     (pin "2"

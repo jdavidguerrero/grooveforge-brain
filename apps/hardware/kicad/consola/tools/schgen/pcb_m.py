@@ -464,8 +464,8 @@ def pcb_m():
     part(s, 'R_CV_FILTER', {1: '+5V_CV_IN', 2: '+5V_CV'}, (3, 3),
          lib_id='Device:R', value='10', footprint='Resistor_SMD:R_0603_1608Metric')
     part(s, 'C_CV_FILTER', {1: '+5V_CV', 2: 'GND'}, (3, 4),
-         lib_id='Device:C_Polarized', value='47uF 10V',
-         footprint='Capacitor_SMD:CP_Elec_5x5.8')
+         lib_id='Device:C_Polarized', value='47uF 16V',
+         footprint='Capacitor_SMD:CP_Elec_5x5.4')
     s.notes = ['CV: 1 + 10k/20k = 1.5; A0 DAC1=GND (0x60), DAC2=3V3 (0x61).',
                'D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_LED.',
                'DFT: SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga.']

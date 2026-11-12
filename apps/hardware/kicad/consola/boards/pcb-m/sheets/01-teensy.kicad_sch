@@ -1170,7 +1170,25 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (property "LCSC" ""
+    (property "LCSC" "C41376163"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "HC-PM254-8.5H-1x24PZ"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Hong Cheng"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 1x24 P2.54mm H8.5mm"
       (at 63.5 127 0)
       (effects
         (font
@@ -1728,7 +1746,25 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (property "LCSC" ""
+    (property "LCSC" "C41376163"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "HC-PM254-8.5H-1x24PZ"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Hong Cheng"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 1x24 P2.54mm H8.5mm"
       (at 241.3 127 0)
       (effects
         (font

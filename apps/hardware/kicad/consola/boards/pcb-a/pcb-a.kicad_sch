@@ -3959,6 +3959,14 @@
 				)
 			)
 		)
+		(property "Supply" "local"
+			(at 39.37 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "caja IDC 2×15 2,54 mm recta (box header) con muesca"
+			(at 39.37 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x04")
@@ -8432,6 +8440,14 @@
 				)
 			)
 		)
+		(property "Supply" "owner"
+			(at 240.03 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 240.03 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 	)
 	(symbol
 		(lib_id "Device:RotaryEncoder_Switch_MP")
@@ -8522,6 +8538,14 @@
 					(unit 1)
 				)
 			)
+		)
+		(property "Supply" "owner"
+			(at 284.48 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 284.48 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(symbol
@@ -8614,6 +8638,14 @@
 				)
 			)
 		)
+		(property "Supply" "owner"
+			(at 330.2 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 330.2 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 	)
 	(symbol
 		(lib_id "Device:RotaryEncoder_Switch_MP")
@@ -8704,6 +8736,14 @@
 					(unit 1)
 				)
 			)
+		)
+		(property "Supply" "owner"
+			(at 374.65 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 374.65 59.69 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(symbol
@@ -8796,6 +8836,14 @@
 				)
 			)
 		)
+		(property "Supply" "owner"
+			(at 240.03 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 240.03 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 	)
 	(symbol
 		(lib_id "Device:RotaryEncoder_Switch_MP")
@@ -8886,6 +8934,14 @@
 					(unit 1)
 				)
 			)
+		)
+		(property "Supply" "owner"
+			(at 284.48 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 284.48 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(symbol
@@ -8978,6 +9034,14 @@
 				)
 			)
 		)
+		(property "Supply" "owner"
+			(at 330.2 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 330.2 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
 	)
 	(symbol
 		(lib_id "Device:RotaryEncoder_Switch_MP")
@@ -9068,6 +9132,14 @@
 					(unit 1)
 				)
 			)
+		)
+		(property "Supply" "owner"
+			(at 374.65 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
+		)
+		(property "SupplyDescription" "Juan: encoder EC11 con pulsador, ya disponible"
+			(at 374.65 129.54 0)
+			(effects (font (size 1.27 1.27)) (hide yes))
 		)
 	)
 	(wire

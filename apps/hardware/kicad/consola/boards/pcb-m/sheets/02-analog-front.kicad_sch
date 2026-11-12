@@ -1541,7 +1541,25 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (property "LCSC" ""
+    (property "LCSC" "C225519"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "A2541WV-2x4P"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "CJT"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 2x4 P2.54mm vertical"
       (at 330.2 63.5 0)
       (effects
         (font
@@ -2743,7 +2761,25 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (property "LCSC" ""
+    (property "LCSC" "C225519"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "A2541WV-2x4P"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "CJT"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 2x4 P2.54mm vertical"
       (at 330.2 190.5 0)
       (effects
         (font

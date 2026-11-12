@@ -3831,12 +3831,12 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "47uF 10V"
+    (property "Value" "47uF 16V"
       (at 330.2 298.45 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Capacitor_SMD:CP_Elec_5x5.8"
+    (property "Footprint" "Capacitor_SMD:CP_Elec_5x5.4"
       (at 330.2 317.5 0)
       (effects
         (font
@@ -3848,7 +3848,25 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (property "LCSC" ""
+    (property "LCSC" "C7469972"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "FVH016ADA470M0554"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "FOSAN"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD 5x5.4mm 47uF 16V +/-20%"
       (at 330.2 317.5 0)
       (effects
         (font

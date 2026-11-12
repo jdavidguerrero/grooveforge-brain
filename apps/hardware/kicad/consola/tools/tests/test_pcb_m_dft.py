@@ -66,7 +66,7 @@ def test_front_power_and_cv_rc_preserve_other_domains(parts):
     assert parts['R_CV_FILTER'].pins == {'1': '+5V_CV_IN', '2': '+5V_CV'}
     assert parts['R_CV_FILTER'].value == '10'
     assert parts['C_CV_FILTER'].pins == {'1': '+5V_CV', '2': 'GND'}
-    assert parts['C_CV_FILTER'].value == '47uF 10V'
+    assert parts['C_CV_FILTER'].value == '47uF 16V'
     assert parts['U_OA_CV'].pins['4'] == '+5V_CV'
     assert parts['C_OA_CV_VCC'].pins['1'] == parts['C_OA_CV_BULK'].pins['1'] == '+5V_CV'
     assert '+5V_TEENSY' not in conductive_reach(parts, '+5V_LED')
