@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from threading import RLock
 import time
+from key_leds import key_frame, key_messages
 
 SELECTED, DIM, HELD, ROOT, PLAYHEAD, HIT = 1, 2, 4, 8, 16, 32
 ROLE_COLORS = ('#3D8CFF', '#FF6FC8', '#B6F23D', '#F2C9A0')
@@ -109,6 +110,10 @@ class LedOutput:
         self.host_seen = {1: -float('inf'), 2: -float('inf')}
         self.counter = 0
         self.clock = {}
+        self.clocks = {}
+        self.clock_seen = {}
+        self.key_frame = self.key_controls = None
+        self.last_key_heartbeat = -float("inf")
         self.hits = None
         self.pending_hits = {}
         self.serials = [0]*16
@@ -131,6 +136,7 @@ class LedOutput:
         event = message.get('event')
         if event == 'connection' and message.get('state') != 'ready':
             self.host_seen[source] = -float('inf')
+            self.clock_seen[source] = -float('inf')
             if source == 2:
                 self.hits = None
                 self.pending_hits.clear()
@@ -143,6 +149,8 @@ class LedOutput:
         if event != 'clock':
             return
         clock = message['clock']
+        self.clocks[source] = clock
+        self.clock_seen[source] = self.now()
         epoch = clock.get('audio_epoch')
         counters = clock.get('led_hits')
         if counters is not None and len(counters) == 16:
@@ -174,9 +182,10 @@ class LedOutput:
             self.pending_hits.clear()
             self.serials = [0]*16
         prefs = self.surface.console.preferences
-        running = bool(self.clock.get('running', False))
-        transport = int(running) | (2 if mode == 2 and self.clock.get('armed') else 0) | (4 if mode == 2 and self.clock.get('queued', -1) >= 0 else 0)
-        beat = (int(self.clock.get('bar', 1))*4+int(self.clock.get('step', 0))//4) % 128
+        clock = self.clocks.get(mode, {})
+        running = bool(clock.get('running', False))
+        transport = int(running) | (2 if mode == 2 and clock.get('armed') else 0) | (4 if mode == 2 and clock.get('queued', -1) >= 0 else 0)
+        beat = (int(clock.get('bar', 1))*4+int(clock.get('step', 0))//4) % 128
         controls = (prefs.ledBrightness, int(prefs.ledAnimations), transport, beat)
         if mode == 2:
             frame = drum_frame(self.drum, self.pending_hits, self.choked, self.serials)
@@ -197,6 +206,22 @@ class LedOutput:
         for i, state in enumerate(frame):
             if snapshot or self.frame is None or state != self.frame[i]:
                 messages.extend(pad_messages(i, state))
+        console = self.surface.console
+        key_fresh = now-self.clock_seen.get(mode, -float('inf')) < 1
+        keys = key_frame(console, clock, key_fresh)
+        bpm = max(30, min(240, round(float(console.drum.clock['bpm']))))
+        key_controls = (bpm % 128, bpm // 128, console.buttons.tap_serial,
+                        int(key_fresh and running))
+        if reset:
+            messages.append(cc(102, 27))
+        if snapshot or key_controls != self.key_controls:
+            messages += [cc(n, v) for n, v in zip((107, 108, 109, 111), key_controls)]
+        key_heartbeat = reset or now-self.last_key_heartbeat >= .5
+        if key_heartbeat:
+            messages.append(cc(110, self.counter))
+        for i, state in enumerate(keys):
+            if snapshot or self.key_frame is None or state != self.key_frame[i]:
+                messages.extend(key_messages(i, state))
         try:
             for message in messages:
                 port.send(mido.Message(**message))
@@ -204,6 +229,9 @@ class LedOutput:
             self.port = None
             raise
         self.port, self.mode, self.frame, self.controls = port, mode, frame, controls
+        self.key_frame, self.key_controls = keys, key_controls
+        if key_heartbeat:
+            self.last_key_heartbeat = now
         self.last_send = now
         self.pending_hits.clear()
         self.recovered = False

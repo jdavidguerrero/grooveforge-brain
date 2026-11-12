@@ -15,6 +15,7 @@ class ConsoleButtons(QObject):
         self._armed = ''
         self._boundary = 'phrase'
         self._taps = deque(maxlen=5)
+        self.tap_serial = 0
         self._menu_index = 0
 
     armed = Property(str, lambda s: s._armed, notify=changed)
@@ -39,6 +40,8 @@ class ConsoleButtons(QObject):
         if self._taps and now-self._taps[-1] < .3:
             return
         self._taps.append(now)
+        self.tap_serial = (self.tap_serial+1) % 128
+        self.changed.emit()
         if len(self._taps) < 2:
             self.notice('TAP · tap again to set tempo')
             return
@@ -97,6 +100,7 @@ class ConsoleButtons(QObject):
         name, down = fields['nombre'], fields['presionado']
         if name == 'SHIFT':
             self.shift = down
+            self.changed.emit()
             return False  # Fine mode/hold state must reach the existing bridges too.
         if not down:
             return False

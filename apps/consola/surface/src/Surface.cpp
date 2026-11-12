@@ -6,6 +6,10 @@
 #include <cstring>
 #include "consola_s/Surface.h"
 #include "consola_s/PadLedReturn.h"
+#ifdef GF_CONSOLA_UNO
+#include "consola_s/KeyLedReturn.h"
+#include "consola_s/KeyLedDma.h"
+#endif
 #include "consola_s/AdcScan.h"
 #include "consola_s/CcCadence.h"
 #include "consola_s/ConsolaMap.h"
@@ -39,6 +43,11 @@ surface::PotHandler pot_handler = nullptr;
 surface::StatsHandler stats_handler = nullptr;
 PadSelector selector;
 PadLedReturn pad_led_return;
+#ifdef GF_CONSOLA_UNO
+KeyLedReturn key_led_return;
+uint8_t key_led_sent[KeyLedReturn::BYTES]{};
+bool key_led_pending=true;
+#endif
 uint32_t last_led_return=0;
 #ifdef GF_CONSOLA_UNO
 constexpr uint8_t ADC1_MASK = PROFILE.fsrs | ((PROFILE.pots & 2) ? 0x10 : 0) | (PROFILE.selector ? 0x20 : 0);
@@ -354,6 +363,11 @@ void prepare_stats() {
         (unsigned long)(uint64_t(samples[2])*1000/elapsed),(unsigned long)(uint64_t(samples[3])*1000/elapsed),
         (unsigned long)ADC1_CFG,(unsigned long)ADC1_GC,unsigned(NVIC_GET_PRIORITY(IRQ_PIT)));
     response_size += min(size_t(max(0,n)),sizeof(response)-response_size-1);
+#ifdef GF_CONSOLA_UNO
+    const int led_stats=snprintf(response+response_size,sizeof(response)-response_size,
+        " key_led_ua=%lu",(unsigned long)key_led_return.current_ua());
+    response_size+=min(size_t(max(0,led_stats)),sizeof(response)-response_size-1);
+#endif
     if (stats_handler) {
         stats_handler(response+response_size,sizeof(response)-response_size);
         response_size = strlen(response);
@@ -375,6 +389,15 @@ void poll_serial() {
                 response_size = strlen(response);
                 response_sent = 0;
             }
+#ifdef GF_CONSOLA_UNO
+            else if (!command_overflow && !strncmp(command,"@GF KEYLEDS",11)) {
+                uint8_t count=0;
+                const bool valid=KeyLedReturn::parse_bench(command,count);
+                if(valid)key_led_return.bench(uint8_t(count),millis());
+                snprintf(response,sizeof(response),valid?"@GF OK KEYLEDS %u\n":"@GF ERR KEYLEDS 0..26\n",count);
+                response_size=strlen(response);response_sent=0;
+            }
+#endif
             else if (!command_overflow && command_handler) {
                 response[0] = 0;
                 if (command_handler(command,response,sizeof(response))) {
@@ -410,8 +433,7 @@ void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHand
     for (const auto pin : POT_PINS) pinMode(pin,INPUT_DISABLE);
     for (uint8_t i = 0; i < ENCODER_COUNT; ++i) encoder_positions[i] = encoders[i].read();
 #ifdef GF_CONSOLA_UNO
-    pinMode(13,OUTPUT);
-    digitalWrite(13,LOW);
+    key_led_dma::begin();
     if (PROFILE.selector) pinMode(41,INPUT_DISABLE);
 #endif
     // PJRC startup analog_init has already calibrated both ADCs synchronously.
@@ -497,6 +519,9 @@ void surface::poll() {
     poll_serial();
     for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {
         pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2(),millis());
+#ifdef GF_CONSOLA_UNO
+        key_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2(),millis());
+#endif
     }
     const uint32_t led_now=millis();
     pad_led_return.render(led_now);
@@ -506,6 +531,14 @@ void surface::poll() {
             last_led_return=led_now;
         }
     }
+#ifdef GF_CONSOLA_UNO
+    key_led_return.render(led_now);
+    if(key_led_pending || memcmp(key_led_sent,key_led_return.colors(),sizeof(key_led_sent))) {
+        if(key_led_dma::submit(key_led_return.colors(),micros())) {
+            memcpy(key_led_sent,key_led_return.colors(),sizeof(key_led_sent));key_led_pending=false;
+        }
+    }
+#endif
     flush_cc();
     usbMIDI.send_now();
     const uint32_t duration = micros()-start;

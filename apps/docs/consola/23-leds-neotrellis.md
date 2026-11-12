@@ -150,3 +150,10 @@ mapeo entero nativamente. Hay que desplegar el build M4 de consola para ver la
 cadencia/niveles nuevos; receptor antiguo seguirá aceptando el mismo UART pero
 retendrá supresión/gamma. Preview muestra RGB7 del motor, sin afirmar luminancia
 física; ganancia de pantalla×3 sólo ayuda a inspección en monitor.
+
+## 7. Teclas PCB-K (extensión LED27)
+
+El retorno de las 26 teclas por pin13 se especifica en
+[27 · LEDs de teclas](27-leds-teclas.md). Usa opt-in propio CC102=27 y CC103–111
+en canal16; comparte únicamente brillo/animations/beat de LED23. No altera
+notas48–79, CC20–31 del receptor de pads ni CMD_LED_GRID_UPDATE hacia M4.

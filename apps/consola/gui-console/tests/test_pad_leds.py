@@ -46,9 +46,9 @@ def setup_output(gui, drum=False):
 
 def test_diffs_budget_snapshot_reconnect_and_heartbeat_freshness(gui):
     engine, output, clock, sent, port = setup_output(gui)
-    assert len(sent) == 230
+    assert len(sent) == 340
     output.update(port, 1)
-    assert len(sent) == 230
+    assert len(sent) == 340
     clock[0] = .034
     output.observe(dict(event='meters'), 1)
     output.update(port, 1)
@@ -60,7 +60,7 @@ def test_diffs_budget_snapshot_reconnect_and_heartbeat_freshness(gui):
     clock[0] = .534
     output.observe(dict(event='meters'), 1)
     output.update(port, 1)
-    assert [m.control for m in sent] == [119]
+    assert [m.control for m in sent if m.control < 102 or m.control == 119] == [119]
     sent.clear()
     clock[0] = 1.6
     output.update(port, 1)
