@@ -7,7 +7,8 @@
 
 extern NeoTrellisController controller;
 
-// Use built-in Serial1 (SERCOM4) on pins 22 (RX) and 21 (TX)
+// Use built-in Serial1 (SERCOM4) on pins 22 (RX) and 21 (TX).
+static_assert(UART_RX_PIN == 22 && UART_TX_PIN == 21, "trellis_m4 Serial1 pin contract");
 
 void UartInterface::begin() {
     Serial.println("=== NeoTrellis M4 UART Configuration ===");
@@ -31,11 +32,11 @@ void UartInterface::begin() {
     
     Serial.println("NeoTrellis M4: Serial1 initialized successfully!");
     Serial.println("Pin configuration:");
-    Serial.println("  Pin 21 (SDA/JST) -> UART TX (to Teensy RX1)");
-    Serial.println("  Pin 22 (SCL/JST) -> UART RX (from Teensy TX1)");
+    Serial.println("  Pin 21 (SDA/JST) -> UART TX (to Teensy RX7/28)");
+    Serial.println("  Pin 22 (SCL/JST) -> UART RX (from Teensy TX7/29)");
     Serial.println("Expected connections:");
-    Serial.println("  Teensy Pin 1 (TX1) -> M4 Pin 22 (RX)");
-    Serial.println("  Teensy Pin 0 (RX1) -> M4 Pin 21 (TX)");
+    Serial.println("  Teensy Pin 29 (TX7) -> M4 Pin 22 (RX)");
+    Serial.println("  Teensy Pin 28 (RX7) -> M4 Pin 21 (TX)");
     Serial.println("  GND -> GND");
     Serial.println("Waiting for data from Teensy (Serial1)...");
 

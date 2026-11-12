@@ -113,15 +113,17 @@ El puente provisional `~/midi_to_host.py` (ALSA → socket `note`, probado con M
 ya no es necesario para esta ruta. **No se ha tocado el Pi**: falta compilar/enlazar
 allí y validar teclado real, hotplug y latencia antes de dar la puerta física por pasada.
 
-## Contradicción: TX/RX de la NeoTrellis M4 en el conector STEMMA (2026-11-10)
+## ✅ UART NeoTrellis M4: contrato corregido (2026-11-12), cable físico pendiente
 
-`processor/UART_CONNECTIONS.md` dice SDA (pin 21) = RX y SCL (pin 22) = TX; el código
-(`lib/neotrellis_m4/UartInterface/UartInterface.cpp`, Serial1 SERCOM4) dice pin 21 (SDA) = TX y 22 (SCL) = RX. Se
-cablea según el código (SDA → Teensy RX7 pin 28, SCL ← Teensy TX7 pin 29) y se confirma en la protoboard; luego se
-corrige el documento que esté mal. El pin 3V del conector no se conecta (salida del regulador de la M4).
+D24 y el core instalado `trellis_m4/variant.h` confirman Serial1: **TX21=SDA → Teensy RX7/28**,
+**RX22=SCL ← Teensy TX7/29**. Se corrigieron Config.h, UART_CONNECTIONS y diagnósticos M4;
+se conserva Serial1, sin bit-banging. Build consola_s_m4 y test nativo de constantes pasan.
+3V3 del conector NC, GND común. Pendiente confirmar ambos sentidos, handshake y press/release
+con el mazo real; no se flasheó. Contrato en [18 §9](18-teensy-unica-firmware.md#9-d24d27d30-contrato-de-implementación-spec-previo-al-código-2026-11-12).
 
 ## Banco de pruebas (2026-11-12)
 
 - Implementado y probado nativo: `@GF WATCH` con histéresis y máximo 20 eventos/s por canal analógico (FSR, ADS, pots/selector); KEY/ENC conservan sus eventos. Pendiente repetir los 60 s del banco físico. Ver [29](29-banco-pruebas.md).
 - Confirmado en código/test: el detector anterior emitía una nota con ADC≈1500 al arrancar. `consola_uno` exige ahora reposo ≤400 durante 3 ms antes de armar, manteniendo `fsr_mask=3`. Pendiente comprobar en mesa y luego con FSR + R a GND; no es detector eléctrico de desconexión. Ver [18 §8](18-teensy-unica-firmware.md#8-banco-del-12-de-noviembre-en-de-ramas-y-entradas-al-aire-spec-previo-al-código).
-- Implementado y probado nativo: PCA9517A EN común pin 0 alto antes del códec/Wire, pulso no bloqueante ≥1 ms tras 3 fallos seguidos por MCP y `i2c_branch_resets` en STATS. Pendiente medir EN, reconexión y audio con PCB-M; una línea permanentemente baja exige aislamiento físico (24 §10). Sin flash en esta tarea.
+- D30 implementado y probado nativo: **EN_K pin0** (MCP0x21/22/23) y **EN_A pin1** (MCP0x20) altos antes del códec/Wire, recuperación independiente, ambos flancos sólo tras SDA/SCL local altas≥10µs, pulso no bloqueante≥1ms. STATS `i2c_reset_k` / `i2c_reset_a`. Pendiente medir ambos EN, liberación sólo de teclas de su rama, reconexión y audio con PCB-M; línea permanentemente baja exige servicio sin alimentación (24 §10).
+- D27 implementado y probado nativo: cero volátil temprano a **ambos DAC0x60/61**, incluso mínimo, retry independiente sin espera. CV2 permanece0. `@GF CV EEPROM0` provisiona una vez por solicitud y verifica lectura antes de confirmar; nunca EEPROM al boot. Pendiente ejecutarlo **una vez en fábrica**, medir CV1/CV2 tras reset MCU, comprobar EEPROM/POR y secuencias de USB. Sin flash ni provisión física en esta tarea; [procedimiento y resultados](29-banco-pruebas.md#d24d27d30-firmware-2026-11-12-sin-flash).

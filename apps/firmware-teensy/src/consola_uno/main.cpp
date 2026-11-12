@@ -4,17 +4,31 @@
 #include "../ui/preset_link.h"
 #include "consola_s/Surface.h"
 #include "consola_s/RetryGate.h"
+#include "consola_s/CvDac.h"
 #include "consola_s/ConsolaMap.h"
 #ifdef GF_CONSOLA_BRAIN
 #include "../engines/moog_model_d.h"
 #endif
 
 namespace {
-RetryGate codec, dac;
+RetryGate codec;
+consola::CvDac dac;
+class WireCvBus : public consola::CvDacBus {
+public:
+    bool write(uint8_t address, const uint8_t* data, uint8_t size) override {
+        Wire.beginTransmission(address);
+        Wire.write(data,size);
+        return Wire.endTransmission() == 0;
+    }
+    uint8_t read(uint8_t address, uint8_t* data, uint8_t size) override {
+        const uint8_t count = Wire.requestFrom(address,size);
+        for (uint8_t i=0;i<count;++i) data[i] = Wire.read();
+        return count;
+    }
+} cv_bus;
 uint8_t input_gain = 5, hp_volume = 64;
 uint8_t applied_input = 255, applied_hp = 255;
-uint16_t cv = 0, applied_cv = 65535;
-uint32_t codec_probe = 0, dac_probe = 0;
+uint32_t codec_probe = 0;
 // A single NACK/timeout on the shared bus (cable noise, hot-plug) must not re-run enable(): that mutes the
 // headphones/line out and blocks the loop ~400 ms. Only CODEC_MISS_LIMIT consecutive misses take it offline.
 constexpr uint8_t CODEC_MISS_LIMIT = 3;
@@ -73,34 +87,27 @@ void poll_codec(uint32_t now) {
         else if (codec_miss_take_offline()) { codec_miss = 0; codec.failed(micros()); }
     }
 }
-void poll_cv(uint32_t now) {
-    if (GF_CONSOLA_MINIMAL || !dac.due(now)) return;
-    if (!dac.online() || applied_cv != cv) {
-        // Fast mode writes the DAC register only; never program its EEPROM.
-        Wire.beginTransmission(0x60);
-        Wire.write(uint8_t(cv >> 8));
-        Wire.write(uint8_t(cv));
-        if (Wire.endTransmission()) { dac.failed(micros()); return; }
-        dac.succeeded();
-        applied_cv = cv;
-        dac_probe = now;
-    } else if (now - dac_probe >= 1000000) {
-        dac_probe = now;
-        if (!probe(0x60)) dac.failed(micros());
-    }
-}
+bool cv_reply(char* out, size_t size) { return dac.reply(out,size); }
 void pot_changed(uint8_t pot, uint8_t value) {
     if (pot == 1) hp_volume = value;
     if (pot == 2) input_gain = uint16_t(value)*15/127;
 }
 void stats(char* out, size_t size) {
-    snprintf(out,size," codec=%u cv=%u codec_misses=%lu codec_errors=%lu cv_errors=%lu cv_enabled=%u codec_retry_us=%lu cv_retry_us=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
-        unsigned(codec.online()),unsigned(dac.online()),(unsigned long)codec_misses,(unsigned long)codec.errors(),(unsigned long)dac.errors(),
-        unsigned(!GF_CONSOLA_MINIMAL),(unsigned long)codec.retry_us(),(unsigned long)dac.retry_us(),
+    snprintf(out,size," codec=%u cv=%u cv2=%u codec_misses=%lu codec_errors=%lu cv_errors=%lu cv2_errors=%lu cv_enabled=%u codec_retry_us=%lu cv_retry_us=%lu cv2_retry_us=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
+        unsigned(codec.online()),unsigned(dac.status(0).online()),unsigned(dac.status(1).online()),(unsigned long)codec_misses,(unsigned long)codec.errors(),(unsigned long)dac.status(0).errors(),(unsigned long)dac.status(1).errors(),
+        unsigned(!GF_CONSOLA_MINIMAL),(unsigned long)codec.retry_us(),(unsigned long)dac.status(0).retry_us(),(unsigned long)dac.status(1).retry_us(),
         (unsigned long)(AudioProcessorUsageMax()*100),unsigned(AudioMemoryUsageMax()));
 }
 bool command(char* line, char* out, size_t size) {
     if (strncmp(line,"@GF ",4)) return false;
+    if (consola::CvDac::is_provision_command(line)) {
+        const auto result = dac.provision();
+        using Request = consola::CvDac::Request;
+        snprintf(out,size,result == Request::Busy ? "@GF ERR CV EEPROM0 BUSY\n" :
+            result == Request::Already ? "@GF OK CV EEPROM0 ALREADY VERIFIED=60,61\n" :
+            "@GF OK CV EEPROM0 PENDING\n");
+        return true;
+    }
     const auto c = studio::parse_link_cmd(line);
     using Cmd = studio::LinkCmd;
     switch (c.kind) {
@@ -125,8 +132,8 @@ bool command(char* line, char* out, size_t size) {
             snprintf(out,size,"@GF ERR CV DISABLED\n");
             break;
         }
-        cv = c.cv;
-        snprintf(out,size,"@GF OK CV %u\n",cv);
+        if (!dac.set(c.cv)) snprintf(out,size,"@GF ERR CV BUSY\n");
+        else snprintf(out,size,"@GF OK CV %u\n",c.cv);
         break;
     case Cmd::Usb: {
         const auto rx = g_usb_in.getStatus();
@@ -152,8 +159,15 @@ bool command(char* line, char* out, size_t size) {
 #endif
 void setup() {
     // PJRC digitalWrite on INPUT only changes pull-ups; Fast writes the latch before OUTPUT, avoiding a low EN glitch.
-    digitalWriteFast(consola::I2C_BRANCH_EN_PIN,HIGH);
-    pinMode(consola::I2C_BRANCH_EN_PIN,OUTPUT);
+    digitalWriteFast(consola::I2C_BRANCH_EN_PINS[0],HIGH);
+    digitalWriteFast(consola::I2C_BRANCH_EN_PINS[1],HIGH);
+    pinMode(consola::I2C_BRANCH_EN_PINS[0],OUTPUT);
+    pinMode(consola::I2C_BRANCH_EN_PINS[1],OUTPUT);
+    Wire.begin();
+    Wire.setClock(400000);
+    Wire.setWireTimeout(GF_WIRE_TIMEOUT_US);
+    dac.poll(cv_bus,micros());
+    dac.poll(cv_bus,micros());
 #ifdef GF_DIAG_NO_FSR
     Serial.begin(115200);
     while (!Serial && millis() < 4000) {}
@@ -170,7 +184,7 @@ void setup() {
         applied_hp = hp_volume;
     } else codec.failed(micros());
     DIAG("diag: audio_graph::init listo");
-    surface::begin(command,pot_changed,stats);
+    surface::begin(command,pot_changed,stats,cv_reply);
     DIAG("diag: surface::begin listo");
     Wire.setClock(400000);
     audio_graph::set_usb_out_source(1);
@@ -200,6 +214,6 @@ void loop() {
 #ifdef GF_DIAG_NO_FSR
     stage = 3;
 #endif
-    if (!surface::i2c_paused()) poll_cv(micros());
+    if (!surface::i2c_paused()) dac.poll(cv_bus,micros());
     surface::record_loop_duration(micros()-start);
 }

@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 namespace consola {
-/** Loop-only policy for the common PCA9517A EN; no GPIO, I2C or allocation. */
+/** Loop-only policy for one independent PCA9517A EN; no GPIO, I2C or allocation. */
 class I2cBranchRecovery {
 public:
     enum class Action { None, Disable, Enable };

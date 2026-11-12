@@ -13,8 +13,12 @@ namespace consola {
 #define GF_CONSOLA_PRODUCT_CHARS {'G','F',' ','C','o','n','s','o','l','a'}
 inline constexpr char USB_PRODUCT_TEXT[] = {'G','F',' ','C','o','n','s','o','l','a','\0'};
 inline constexpr uint8_t MIDI_CHANNEL = 1;
-/// Common PCA9517A EN on PCB-M; Serial1/DIN is DNP.
-inline constexpr uint8_t I2C_BRANCH_EN_PIN = 0;
+/// Independent PCB-M PCA9517A enables, K then A; Serial1/DIN is DNP.
+inline constexpr uint8_t I2C_BRANCH_EN_PINS[] = {0, 1};
+/// MCP membership by branch: K=0x21/22/23, A=0x20.
+inline constexpr uint8_t I2C_BRANCH_MCP_MASKS[] = {0x0e, 0x01};
+/// Branch index for MCP index 0..3 (0x20..23).
+constexpr uint8_t mcp_branch(uint8_t chip) { return chip == 0 ? 1 : 0; }
 inline constexpr uint8_t ENCODER_CC[] = {16,17,18,19,20,21,22,23,35};
 inline constexpr uint8_t ENCODER_PINS[][2] = {{2,3},{4,5},{6,9},{10,11},{12,30},{31,32},{33,34},{35,36},{37,40}};
 inline constexpr uint8_t MCP_PINS[] = {0,1,2,3,4,5,6,8,9,10,11,12,13,14};

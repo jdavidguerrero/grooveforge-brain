@@ -121,6 +121,83 @@ Unity debe verificar parser estricto, valores límite e inversión de histéresi
 con wrap, coalescencia, revalidación, WATCH0/renovación/expiración y KEY/ENC sin rate limit; simular60s
 de ruido en las entradas analógicas y comprobar≤1200 eventos/canal. Para FSR: ruido1500±sin reposo,
 reposos breves rechazados y golpe/velocity/liberación/retrigger iguales al detector anterior tras
-cualificación. Para EN: tres fallos consecutivos por MCP, éxito completo borra racha, espera de bus
-ocioso, pulso≥1ms, wrap, ausencia de repulsos y contador. Son pruebas de lógica custom, sin prometer
+cualificación. Para EN (D30, sustituye EN común): tres fallos consecutivos por MCP, éxito completo borra su racha,
+ramas K/A independientes con máscaras por perfil, espera de bus local ocioso≥10µs en ambos flancos,
+pulso≥1ms, wrap, ausencia de repulsos y contadores separados. Son pruebas de lógica custom, sin prometer
 comportamiento eléctrico ni recuperación de una rama en corto. Ensayo físico pendiente en18.
+
+
+## D24/D27/D30 firmware (2026-11-12, sin flash)
+
+Spec escrito en18 §8–9 antes del código. M4 conserva Serial1 oficial Adafruit (SERCOM4),
+TX21/SDA→RX7/28 y RX22/SCL←TX7/29, sin remapeo. Config.h y UART_CONNECTIONS corregidos;
+Serial5 del carrier antiguo sólo corresponde al target Brain histórico. El core local confirma
+PIN_SERIAL1_RX=22/PIN_SERIAL1_TX=21. Contrato de constantes probado nativo y compilado en M4.
+
+EN_K0 y EN_A1 se precargan HIGH antes de OUTPUT, Wire y códec. Cada máquina conserva sus rachas
+por MCP, contador y pulso: K0x21/22/23, A0x20, filtrados por perfil. Ambos flancos requieren
+SDA18/SCL19 altas≥10µs; un bajo interrumpe la cualificación. Durante espera/pulso se pausa I2C
+del firmware; ADC/MIDI/CDC/audio continúan. Sólo la rama pulsada pierde snapshots/notas MCP.
+`@S STATS` sustituye i2c_branch_resets por **i2c_reset_k/i2c_reset_a**; `@S RESET` limpia ambos
+contadores sin cancelar trabajo. El cliente superficie.py ya admite campos adicionales: tests
+actualizados con ambos contadores y cv2, incluida recepción de línea>1024B bajo el límite1280B.
+
+Los dos MCP4725 reciben cero volátil antes de cualquier espera diagnóstica/init del códec/DMALED,
+aunque falte uno, también en mínimo. Refresh1s y backoff independiente1–32s sin espera por presencia.
+CV2 permanece0 sin función asignada. STATS: cv/cv2 presencia por último ACK, cv_errors/cv2_errors,
+cv_retry_us/cv2_retry_us; cv_enabled indica sólo permiso de control numérico CV1. NACK no es muestra
+válida de tensión. Ninguna escritura de arranque ni reconexión usa EEPROM.
+
+Provisión de fábrica, con firmware ya cargado y sin usar este ensayo para autorizar un flash:
+
+1. Conectar ambos DAC alimentados; carga CV sensible desconectada. Abrir CDC de «GF Consola».
+2. Enviar exactamente `@GF CV EEPROM0` una vez. Recibir `@GF OK CV EEPROM0 PENDING`.
+3. Esperar respuesta final: `@GF OK CV EEPROM0 VERIFIED=60,61 WRITTEN=3`. Se escribe el comando
+   explícito `[60,00,00]` una vez por DAC, y se lee estado/registro/EEPROM (5bytes), sin delay.
+   WRITTEN es máscara de ACK; VERIFIED confirma RDY, dato0 y modo normal de registro y EEPROM.
+   Ante fallo: `@GF ERR CV EEPROM0 WRITTEN=<0..3> VERIFIED=<0..3>`; bit0=60, bit1=61.
+   No se repiten escrituras automáticamente. Inspeccionar alimentación/bus antes de nueva solicitud.
+   Mientras trabaja, otra solicitud devuelve BUSY; tras éxito en este arranque, ALREADY sin reescribir.
+4. Medir ambos voltajes y comprobar POR de cada DAC sin depender de la escritura de setup Teensy.
+   La lectura por firmware no certifica POR, cable ni offset analógico. No repetir el comando en cada
+   encendido: EEPROM tiene vida finita. Un reset de MCU con DAC alimentado conserva salida hasta setup.
+5. Registrar mediciones. Ensayar EN_K/EN_A por separado con tres fallos MCP, idle y pulso≥1ms, notas
+   de la otra rama intactas, reconexión, audio dúplex y loop_max_us<2000 en régimen estable. Línea
+   retenida baja no permite toggle seguro: servicio sin alimentación según24. Todo pendiente físico.
+
+Resultados reales en clon `/private/tmp/grooveforge-fw2`, rama claude/monorepo-groovepush,
+base095370c, sin upload:
+
+| Directorio | Comando | Resultado |
+|---|---|---|
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio test -e native` | **217 test cases: 217 succeeded**, 19 suites, 17,647s |
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio run -e consola_uno` | **SUCCESS**, 27,604s; FLASH código91892/data14076, RAM1 variables26560, RAM2 variables55040 |
+| apps/consola/processor | `~/.platformio/penv/bin/pio run -e consola_s_m4` | **SUCCESS**, 11,230s; RAM3588/196608, Flash22700/524288 |
+| tools/consola | `python3 -m pytest -q` (python3 del sistema) | **487 passed in 2.40s** |
+
+Los primeros tres intentos sin override terminaron con exit1 **antes de compilar**:
+`Operation not permitted: '/Users/juandavidguerrerocastro/.platformio/platforms.lock'` y
+HomeDirPermissionsError de .cache al cerrar. Para completar la verificación sin escribir fuera del
+clon, se copiaron plataformas native/teensy/atmelsam, frameworks/toolchains y caché instalados a
+`apps/firmware-teensy/.pio/local-core` (ignorado por Git). Todos los comandos PIO exitosos anteriores
+llevan los prefijos:
+
+```sh
+PLATFORMIO_CORE_DIR=/private/tmp/grooveforge-fw2/apps/firmware-teensy/.pio/local-core \
+PLATFORMIO_SETTING_ENABLE_TELEMETRY=no
+```
+
+La resolución automática de librerías se interrumpió al intentar consultar red; se copiaron Unity2.6.1
+y los archivos de caché Adafruit NeoPixel1.7.0/Keypad1.3.2 ya instalados, cumpliendo las versiones del
+proyecto. No se cambió platformio.ini ni ~/.platformio. Logs crudos ignorados dentro del clon:
+apps/firmware-teensy/.native-verification.log, .uno-verification.log (fallos iniciales),
+.native-local-verification.log, .uno-local-verification.log (exitosos);
+apps/consola/processor/.m4-verification.log y .m4-local-verification.log;
+tools/consola/.pytest-verification.log. No se incluyen toolchains ni binarios en el parche.
+
+Advertencias de builds en archivos existentes/dependencias: Teensy `-fno-rtti` aplicado a C;
+M4 `NEOPIXEL_PIN` redefinido, variable `bit` sin uso de NeoPixel, conversiones narrowing track/scene
+en NeoTrellisController. No hubo error de compilación ni tests fallidos tras preparar el entorno local.
+Los tests nuevos comprueban ambos ceros iniciales, continuidad de CV2=0, retry/NACK/wrap independiente,
+EEPROM explícita única/BUSY/ALREADY, lectura corta/RDY/PD/dato incorrecto/timeout y respuesta retenida,
+y aislamiento lógico K/A. No se afirma resultado eléctrico, audible ni latencia medida.

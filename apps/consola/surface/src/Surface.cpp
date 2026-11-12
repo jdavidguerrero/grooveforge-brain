@@ -45,6 +45,7 @@ constexpr bool REQUIRE_FSR_REST = false;
 surface::CommandHandler command_handler = nullptr;
 surface::PotHandler pot_handler = nullptr;
 surface::StatsHandler stats_handler = nullptr;
+surface::ReplyHandler reply_handler = nullptr;
 PadSelector selector;
 PadLedReturn pad_led_return;
 #ifdef GF_CONSOLA_UNO
@@ -112,12 +113,16 @@ uint32_t last_selector = 0;
 #endif
 RetryGate mcp[MCP_COUNT];
 #ifdef GF_CONSOLA_UNO
-consola::I2cBranchRecovery branch_recovery(
+constexpr uint8_t ENABLED_MCPS =
     (PROFILE.mcp_inputs[0] ? 1 : 0) | (PROFILE.mcp_inputs[1] ? 2 : 0) |
-    (PROFILE.mcp_inputs[2] ? 4 : 0) | (PROFILE.mcp_inputs[3] ? 8 : 0));
+    (PROFILE.mcp_inputs[2] ? 4 : 0) | (PROFILE.mcp_inputs[3] ? 8 : 0);
 #else
-consola::I2cBranchRecovery branch_recovery(0);
+constexpr uint8_t ENABLED_MCPS = 0;
 #endif
+consola::I2cBranchRecovery branch_recovery[] = {
+    consola::I2cBranchRecovery(ENABLED_MCPS & consola::I2C_BRANCH_MCP_MASKS[0]),
+    consola::I2cBranchRecovery(ENABLED_MCPS & consola::I2C_BRANCH_MCP_MASKS[1])
+};
 bool mcp_configured[MCP_COUNT] = {};
 McpButtons buttons[] = {McpButtons(0,PROFILE.mcp_inputs[0]), McpButtons(1,PROFILE.mcp_inputs[1])
 #ifdef GF_CONSOLA_UNO
@@ -247,7 +252,7 @@ void poll_buttons(uint32_t now) {
         if (!mcp_write(chip,0x00,0x7f7f) || !mcp_write(chip,0x0c,0x7f7f)) {
             ++mcp_errors;
             mcp[chip].failed(now);
-            branch_recovery.failed(chip);
+            branch_recovery[consola::mcp_branch(chip)].failed(chip);
             return;
         }
         mcp_configured[chip] = true; // Reset backoff only after GPIO read succeeds.
@@ -258,7 +263,7 @@ void poll_buttons(uint32_t now) {
     if (Wire.endTransmission(false) || Wire.requestFrom(uint8_t(0x20 + chip),uint8_t(2)) != 2) {
         ++mcp_errors;
         mcp[chip].failed(now);
-        branch_recovery.failed(chip);
+        branch_recovery[consola::mcp_branch(chip)].failed(chip);
         mcp_configured[chip] = false;
         bench_inputs.mcp_valid &= ~(1u<<chip);
         McpButtons::Event events[14];
@@ -267,7 +272,7 @@ void poll_buttons(uint32_t now) {
         return;
     }
     mcp[chip].succeeded();
-    branch_recovery.succeeded(chip);
+    branch_recovery[consola::mcp_branch(chip)].succeeded(chip);
     uint16_t value = Wire.read();
     value |= uint16_t(Wire.read()) << 8;
     bench_inputs.mcp[chip]=value;
@@ -345,21 +350,26 @@ void poll_m4() {
 }
 void poll_branch_recovery() {
 #ifdef GF_CONSOLA_UNO
-    const auto action = branch_recovery.tick(micros(),digitalRead(18) && digitalRead(19));
-    using Action = consola::I2cBranchRecovery::Action;
-    if (action == Action::Enable) digitalWrite(consola::I2C_BRANCH_EN_PIN,HIGH);
-    else if (action == Action::Disable) {
-        digitalWrite(consola::I2C_BRANCH_EN_PIN,LOW);
-        bench_inputs.mcp_valid = 0;
-        for (uint8_t chip = 0; chip < MCP_COUNT; ++chip) {
-            McpButtons::Event events[14];
-            send_buttons(events,buttons[chip].disconnect(events));
+    for (uint8_t branch = 0; branch < 2; ++branch) {
+        const auto action = branch_recovery[branch].tick(micros(),digitalRead(18) && digitalRead(19));
+        using Action = consola::I2cBranchRecovery::Action;
+        const uint8_t pin = consola::I2C_BRANCH_EN_PINS[branch];
+        if (action == Action::Enable) digitalWrite(pin,HIGH);
+        else if (action == Action::Disable) {
+            digitalWrite(pin,LOW);
+            for (uint8_t chip = 0; chip < MCP_COUNT; ++chip) {
+                if (!(consola::I2C_BRANCH_MCP_MASKS[branch] & (1u << chip))) continue;
+                bench_inputs.mcp_valid &= ~(1u << chip);
+                mcp_configured[chip] = false;
+                McpButtons::Event events[14];
+                send_buttons(events,buttons[chip].disconnect(events));
+            }
         }
     }
 #endif
 }
 void reset_stats() {
-    branch_recovery.clear_count();
+    for (auto& branch : branch_recovery) branch.clear_count();
     noInterrupts();
     scans = scan_gap_max = queue_drops = adc1_timeouts = 0;
     adc2_timeouts = 0;
@@ -405,8 +415,8 @@ void prepare_stats() {
     response_size += min(size_t(max(0,n)),sizeof(response)-response_size-1);
 #ifdef GF_CONSOLA_UNO
     const int led_stats=snprintf(response+response_size,sizeof(response)-response_size,
-        " key_led_ua=%lu i2c_branch_resets=%lu",(unsigned long)key_led_return.current_ua(),
-        (unsigned long)branch_recovery.resets());
+        " key_led_ua=%lu i2c_reset_k=%lu i2c_reset_a=%lu",(unsigned long)key_led_return.current_ua(),
+        (unsigned long)branch_recovery[0].resets(),(unsigned long)branch_recovery[1].resets());
     response_size+=min(size_t(max(0,led_stats)),sizeof(response)-response_size-1);
 #endif
     if (stats_handler) {
@@ -485,7 +495,9 @@ void poll_serial() {
         else command_overflow = true;
     }
     if(response_sent==response_size && !bench.scanning() && !command_size && !Serial.available()) {
-        if(watch_expired) {
+        if(reply_handler && reply_handler(response,sizeof(response))) {
+            response_size=strlen(response); response_sent=0;
+        } else if(watch_expired) {
             strcpy(response,"@GF OK WATCH 0 EXPIRED\n"); watch_expired=false;
             response_size=strlen(response); response_sent=0;
         } else if(bench.next(response,sizeof(response))) { response_size=strlen(response); response_sent=0; }
@@ -498,10 +510,11 @@ void poll_serial() {
 }
 } // namespace
 
-void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHandler stats_callback) {
+void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHandler stats_callback, ReplyHandler replies) {
     command_handler = commands;
     pot_handler = pots_callback;
     stats_handler = stats_callback;
+    reply_handler = replies;
     Serial.begin(115200);
     M4_SERIAL.addMemoryForWrite(m4_tx_memory,sizeof(m4_tx_memory));
     M4_SERIAL.begin(1000000);
@@ -645,7 +658,7 @@ void surface::poll() {
     record_loop_duration(duration);
 }
 
-bool surface::i2c_paused() { return branch_recovery.paused(); }
+bool surface::i2c_paused() { return branch_recovery[0].paused() || branch_recovery[1].paused(); }
 
 void surface::record_loop_duration(uint32_t duration) {
     if (duration > loop_max) loop_max = duration;

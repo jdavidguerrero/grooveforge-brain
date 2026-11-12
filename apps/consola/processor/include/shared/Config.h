@@ -37,7 +37,8 @@
 #define COLOR_TRIGGERED 0xFFFF00 // Yellow
 
 // === UART COMMUNICATION ===
-// Teensy port assignment on the GrooveForge Brain carrier (gap G-H10):
+// Historical Brain carrier target only (gap G-H10), not consola_uno:
+// Consola uses USB to Pi, Serial7 RX28/TX29 to M4; 0/1 are EN_K/EN_A.
 //   - Raspberry Pi 5 (GUI): Serial1, pins 0/1, carrier header J6.
 //   - NeoTrellis M4 (pads): Serial5, TX5 = pin 20, RX5 = pin 21, via Audio Shield socket J15.
 #define TEENSY_GUI_SERIAL Serial1
@@ -51,9 +52,9 @@
 #define UART_LINK_TIMEOUT_MS 90000      // Consider link down after 90 seconds without RX
 
 // === NEOTRELLIS M4 UART PINS (M4 side: its 4-pin JST port) ===
-// The pad grid is an Adafruit NeoTrellis M4 linked by UART (gap G-P2, reversed 2026-10-19).
-#define UART_RX_PIN 21  // M4 SDA pad, used as RX
-#define UART_TX_PIN 22  // M4 SCL pad, used as TX
+// Default trellis_m4 Serial1 (SERCOM4); no custom pin mux or bit-banging.
+#define UART_RX_PIN 22  // M4 SCL pad, RX from Teensy TX7/29
+#define UART_TX_PIN 21  // M4 SDA pad, TX to Teensy RX7/28
 
 // === ABLETON INTEGRATION ===
 #define ABLETON_MIDI_CHANNEL 1

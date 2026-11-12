@@ -244,7 +244,7 @@ def test_cliente_stats_serial_perezoso(monkeypatch):
     cliente.reset()
     assert conexiones[-1].escritos == [b"@S RESET\n"] and conexiones[-1].flushed
     # Expanded diagnostics must remain a complete CDC line beyond the old 1024-byte cap.
-    extra = {f"diagnostic_{i}": 4294967295 for i in range(38)} | {"i2c_branch_resets": 3}
+    extra = {f"diagnostic_{i}": 4294967295 for i in range(38)} | {"i2c_reset_k": 3, "i2c_reset_a": 1}
     extended = RESPUESTA.rstrip() + " " + " ".join(f"{k}={v}" for k, v in extra.items()) + "\n"
     assert 1024 < len(extended) < 1280
     SerialFalso.respuesta = extended.encode("ascii")
@@ -269,7 +269,7 @@ def test_selector_pad(valor, db):
 
 def test_stats_con_presencia_y_mascaras():
     extra = dict(mcp_mask=3, ads_mask=1, m4=1, encoder_mask=271, fsr_mask=3,
-                 pot_mask=1, ads0_channels=5, ads1_channels=0, codec=1, cv=0, i2c_branch_resets=3)
+                 pot_mask=1, ads0_channels=5, ads1_channels=0, codec=1, cv=0, i2c_reset_k=3, i2c_reset_a=1, cv2=1)
     respuesta = RESPUESTA.rstrip() + " " + " ".join(f"{k}={v}" for k,v in extra.items())
     assert s.Stats.parsear(respuesta) == ESPERADOS | extra
 

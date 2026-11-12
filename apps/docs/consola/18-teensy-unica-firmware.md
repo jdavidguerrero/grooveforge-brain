@@ -14,11 +14,11 @@ Prioridad NVIC (menor número gana): USB **112**, DMA I2S **128** (core), FSR In
 
 ADC1 tiene **un único dueño**, `AdcScan` en la ISR de 50 µs. Cada trama de 400 µs programa FSR habilitados; CUE24 (canal1) y selector41 (canal10) se intercalan cada 10 ms. Una interrupción inicia la conversión y otra recoge R0: **no hay busy-wait**. Si no llega COCO en 100 µs, aborta HC0=31, incrementa `adc1_timeouts`, omite esa muestra y continúa. No fabrica un cero ni un golpe. El loop sólo lee buzones de CUE/selector. MASTER22 usa **ADC2 canal13**, IN26 ADC2 canal3; ADC2 pertenece al loop, con plazo DWT de **20 µs** y `adc2_timeouts`. Tampoco `consola_s` comparte ADC1 con pots. Se conserva la calibración/reloj asíncrono PJRC realizada por `analog_init` antes de setup, resolución12, sin averaging/trigger externo/continuous/compare/DMA ADC. No hay `analogRead` después de tomar posesión. No cambia ningún pin.
 
-Wire18/19 a **400 kHz**: I2C sólo en setup/loop. El perfil decide qué dispositivos existen: mínimo **no sondea** ADS0x49, MCP0x22 ni DAC0x60. ADS0x48 convierte sólo AIN0/AIN2. NACK/fallo usa backoff exponencial **1, 2, 4, 8, 16, 32 s**, reiniciado después de una operación completa correcta. MCP libera notas al caer. Codec/CV aplican el mismo backoff. Todos los CC tienen cadencia máxima **100 Hz por control**; valores absolutos se coalescen, encoders/jog retienen pasos pendientes. Las actualizaciones locales de CUE/IN comparten esa cadencia.
+Wire18/19 a **400 kHz**: I2C sólo en setup/loop. El perfil decide qué dispositivos existen: mínimo **no sondea** ADS0x49 ni MCP0x22/23. Ambos DAC0x60/61 siempre se atienden por seguridad, incluso en mínimo. ADS0x48 convierte sólo AIN0/AIN2. NACK/fallo usa backoff exponencial **1, 2, 4, 8, 16, 32 s**, reiniciado después de una operación completa correcta. MCP libera notas al caer. Codec/CV aplican el mismo backoff. Todos los CC tienen cadencia máxima **100 Hz por control**; valores absolutos se coalescen, encoders/jog retienen pasos pendientes. Las actualizaciones locales de CUE/IN comparten esa cadencia.
 
 **Timeout real de Wire:** Teensyduino1.160.0 `WireIMXRT` no tiene `setWireTimeout`; `Stream::setTimeout` no limita `endTransmission/requestFrom`. `surface/tools/wire_timeout.py` crea un **framework privado en .pio/build**, conserva el driver PJRC y añade `setWireTimeout(250)` / `getWireTimeoutCount()`. El plazo de **250 µs** cubre adquisición de bus y transferencia juntos; pin-low también250µs. Recuperar bus ocupado añade como máximo nueve pulsos de10µs más10µs iniciales; siguiente intento respeta backoff. El script valida los sitios que parchea y nunca modifica `~/.platformio`. Se aplica a uno/full/brain/diag y `consola_s`; consola/USB/sketch49 conservan su framework. `wire_timeout_us`, `wire_timeouts`, `retry_max_us` y retries codec/CV en STATS permiten contrastarlo. **Objetivo medible: loop_max_us<2000 en régimen estable**, pendiente de Pi/Teensy; el arranque y la recuperación SGTL con `enable()` oficial (5+400ms) quedan fuera de régimen estable y sí aparecen en el máximo si ocurren durante loop. Hacer `@S RESET` después de setup/recuperación antes de medir. No se afirma que un build mida latencia.
 
-Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Sin accesos concurrentes al bus desde callbacks MIDI. CV por MCP4725, escritura volátil, nunca EEPROM; `@GF CV <0–4095>` controla 0x60, inicialmente cero. El segundo DAC 0x61 queda reservado.
+Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Sin accesos concurrentes al bus desde callbacks MIDI. CV por MCP4725: escrituras ordinarias volátiles. `@GF CV <0–4095>` controla 0x60 (sigue deshabilitado en mínimo); 0x61 está poblado y se mantiene siempre a cero aunque no tenga función asignada. La única escritura EEPROM es el comando explícito de banco descrito en §9.
 
 ## 3. Pines y MIDI
 
@@ -48,7 +48,7 @@ Selector: común a 41; tres posiciones a GND, mitad de 3,3 V (divisor 10k/10k), 
 
 Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A, CJMCU-2317 0x20/21 (solo GPA0–GPA6 cableados) y ADS de dirección fija 0x48 (fader A0, Sharp A2). No se trasladó ni se modificó el sketch50 que vive en otra rama.
 
-`GF_CONSOLA_MINIMAL=1` predeterminado; el entorno `consola_uno_full` lo pone a 0 y activa el mapa completo. Cinco encoders **incluido jog** = encoder1–4 + jog; dos FSR; **ningún pot** (MASTER22 está al aire en esta mesa). Los periféricos I2C excluidos no se sondean. No se puede autodetectar si un pot/FSR analógico está cableado: las máscaras desactivan entradas flotantes.
+`GF_CONSOLA_MINIMAL=1` predeterminado; el entorno `consola_uno_full` lo pone a 0 y activa el mapa completo. Cinco encoders **incluido jog** = encoder1–4 + jog; dos FSR; **ningún pot** (MASTER22 está al aire en esta mesa). Los periféricos de entrada excluidos no se sondean; los dos DAC son excepción de seguridad (§9). No se puede autodetectar si un pot/FSR analógico está cableado: las máscaras desactivan entradas flotantes.
 
 | Conectar | Cableado mínimo |
 |---|---|
@@ -61,7 +61,7 @@ Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A
 | Sharp1 | alimentación5 V, ≥10µF local y GND común; verificar salida dentro de 0–3,3 V antes del ADS |
 | M4 | TX M4 → RX28; RX M4 ← TX29; GND común, alimentación adecuada; firmware M4 existente de press/release |
 
-En mínimo el Sharp se traslada de ADS0x49 AIN2 a **0x48 AIN2**, manteniendo CC33/nota108. Los otros canales ADS se omiten. El clic jog está en 0x23 GPA6 según el contrato v1 y no está cableado en esta mesa: queda desactivado en mínimo; no se reasigna a otro GPIO. Sin MCP0x22/23, segundo ADS, DAC, CUE/IN o selector conectados no se generan eventos falsos ni logs repetidos. STATS informa máscaras habilitadas y presencia; ausencia M4 significa sin respuesta válida, no diagnóstico eléctrico.
+En mínimo el Sharp se traslada de ADS0x49 AIN2 a **0x48 AIN2**, manteniendo CC33/nota108. Los otros canales ADS se omiten. El clic jog está en 0x23 GPA6 según el contrato v1 y no está cableado en esta mesa: queda desactivado en mínimo; no se reasigna a otro GPIO. Sin MCP0x22/23, segundo ADS, CUE/IN o selector conectados no se generan eventos falsos ni logs repetidos. STATS informa máscaras habilitadas y presencia; ausencia M4 significa sin respuesta válida, no diagnóstico eléctrico.
 
 Mismo CDC: `@S STATS` y `@S RESET` mantienen los campos de 06/08 y agregan presencia/máscaras, CPU/memoria audio y errores codec/DAC. `@GF RUTA LINEA|SINTE` (LINEA inicial; SINTE silencio sin Brain), `@GF CUE 0|1` (1 inicial), `@GF USB` mantiene contadores async; **`@GF IN 0–15`** llama `lineInLevel` (5 inicial; número mayor = menor sensibilidad), **`@GF HP 0–127`** volumen de audífonos (64 inicial). En completo CUE/IN envían sus CC y actualizan HP/IN; MASTER sigue siendo CC para la sala del Pi. OK confirma el estado solicitado; la escritura física se atiende en loop y su disponibilidad se consulta en STATS. Respuestas acotadas/fraccionadas sin esperar al host. RESET reinicia los contadores históricos de superficie; los errores codec/CV y máximos de audio añadidos se acumulan desde arranque. Sin protocolos bridge nuevos.
 
@@ -118,22 +118,23 @@ Prueba pendiente con firmware de producción: FSR1/2 en14/15 con divisor10k, Sha
 Esta tarea autoriza manejar EN; sustituye para consola_uno la indicación histórica de24 §10.8 de
 dejar0 en alta impedancia. No cambia PCB-M ni el mapa físico de sus dos buffers. Al inicio de setup,
 antes de cualquier espera diagnóstica, Wire.begin y audio_graph::init/códec, precargar HIGH y configurar
-Teensy0 como OUTPUT. Se usa digitalWriteFast para precargar el latch: en el core PJRC
-instalado digitalWrite sobre INPUT sólo configura pull-up/down (digital.c:115–140). EN común controla ambas ramas: MCP0x20 en A, MCP0x21/22/23 en K. ADS, DAC y
-códec son locales. No hay Serial1 ni otro usuario de0 en consola_uno/surface/audio_graph; M4 usa Serial7.
-En la mesa actual0 no tiene cable: este GPIO no altera sus rutas existentes. Verificación estática y
+Teensy0 y Teensy1 como OUTPUT. Se usa digitalWriteFast para precargar el latch: en el core PJRC
+instalado digitalWrite sobre INPUT sólo configura pull-up/down (digital.c:115–140). D30 sustituye el EN común: EN_K=0 controla MCP0x21/22/23 y EN_A=1 controla MCP0x20. ADS, DAC y
+códec son locales. No hay Serial1 ni otro usuario de0/1 en consola_uno/surface/audio_graph; M4 usa Serial7.
+En la mesa actual0/1 no tienen cable: este GPIO no altera sus rutas existentes. Verificación estática y
 build no sustituyen una medición de arranque con PCB-M. consola_s conserva sus pines y no controla EN.
 
 Política custom: **N=3 fallos consecutivos por MCP habilitado**, contando fallos de configuración o
 lectura; sólo una lectura GPIO completa correcta borra su racha. Se conservan los backoffs1–32s.
 Al alcanzar N se solicita un pulso, atendido sólo en loop por máquina de estados con micros unsigned.
 Antes de cambiar EN se exige SDA18/SCL19 altas durante≥10µs observados entre iteraciones, sin
-transacciones del firmware durante esa espera. Bajar EN, liberar una vez notas MCP retenidas e
-invalidar su snapshot; mantenerlo bajo≥1000µs (1ms más granularidad del loop), y subir con bus local
+transacciones del firmware durante esa espera. Bajar sólo el EN solicitado, liberar una vez notas MCP de esa rama e
+invalidar sólo su snapshot; mantenerlo bajo≥1000µs (1ms más granularidad del loop), y subir con bus local
 ocioso. Pausar ADS/MCP/SCAN/códec/CV durante espera/pulso; ADC, MIDI, CDC, audio y LEDs siguen.
 No reiniciar Wire, códec ni alimentar de nuevo los chips: EN aísla señales, no resetea MCP. No se
-reinicia su backoff para evitar una tormenta con una rama ausente. Un pulso borra las rachas de los
-cuatro MCP porque EN es común. STATS añade `i2c_branch_resets` (pulsos iniciados desde @S RESET).
+reinicia su backoff para evitar una tormenta con una rama ausente. Cada rama conserva su máquina de estados y rachas por MCP independientes; un pulso borra sólo
+las rachas de su rama. STATS publica `i2c_reset_k` e `i2c_reset_a` (pulsos iniciados desde @S RESET),
+sustituyendo `i2c_branch_resets`. Si ambas solicitan, sus pulsos se atienden por separado.
 No cuentan fallos ADS/códec/CV ni direcciones ausentes de un SCAN de diagnóstico.
 La línea STATS ampliada usa buffer estático de1280B y el cliente superficie.py admite ese mismo
 límite: con contadores largos puede superar el límite anterior de1024B. No cambia la gramática.
@@ -150,4 +151,44 @@ con R a GND y confirmar golpes/release/velocity. En PCB-M inyectar tres fallos M
 contador+1, liberación de teclas y recuperación sin cortes de audio; medir loop_max_us<2000 en régimen.
 Sin placa ni flash, los tests nativos y el build sólo certifican lógica/compilación.
 
-Contrato pendiente de implementación firmware (D24/D27/D30): Serial1 de M4 usa TX21=SDA, RX22=SCL; corregir macros contrarios. Ambos DAC 0x60/0x61 poblados: cero al inicio de setup y provisionado EEPROM cero una vez. EN_K pin0 y EN_A pin1 se gestionan independientemente y solo con bus ocioso; ver lista completa en REPORT-fixrev.
+## 9. D24/D27/D30: contrato de implementación (spec previo al código, 2026-11-12)
+
+M4 usa el Serial1 predeterminado del core trellis_m4: **TX21=SDA → Teensy RX7/28** y
+**RX22=SCL ← Teensy TX7/29**, GND común, 3V3 del conector NC. No se cambia SERCOM ni se
+implementa bit-bang. Las asignaciones Serial5 del carrier Brain antiguo sólo describen ese target.
+
+Después de precargar ambos EN altos y antes de esperas diagnósticas, códec o superficie: iniciar
+Wire18/19 a400kHz con timeout250µs y escribir `[0x00,0x00]` (fast write, PD=00) a **cada**
+MCP4725 0x60/61, incluso en mínimo y aunque el otro falle. Cada DAC tiene backoff independiente
+1–32s; reintentos en loop, nunca espera por presencia. Se refresca el registro volátil cada1s:
+0x60 conserva el valor solicitado, 0x61 siempre cero. Sin escritura EEPROM al boot ni al reconectar.
+Reset MCU con DAC alimentado conserva el valor previo hasta esa escritura; no se promete mute durante
+reset ni cero voltios analógicos exactos (offset físico). Mantener init SGTL antes del DMALED.
+
+Banco: gramática exacta `@GF CV EEPROM0`, sin argumentos adicionales, disponible también en mínimo.
+Responde `@GF OK CV EEPROM0 PENDING`; trabajo diferido en loop con máximo una transacción I2C
+por servicio. Fuerza CV1/CV2 solicitados a0 y escribe explícitamente `[0x60,0x00,0x00]` una vez por
+DAC por solicitud; no reintenta escrituras EEPROM fallidas. Espera cooperativa, consulta cinco bytes
+cada≥1ms hasta100ms por DAC (tWR máximo50ms, Microchip DS22039D). Verifica RDY/BSY=1,
+registro DAC=0/PD=00 y EEPROM=0/PD=00. Respuesta final asíncrona:
+`@GF OK CV EEPROM0 VERIFIED=60,61 WRITTEN=3`; fallo:
+`@GF ERR CV EEPROM0 WRITTEN=<máscara> VERIFIED=<máscara>` (bit0=60, bit1=61).
+WRITTEN significa ACK al comando, VERIFIED lectura completa correcta; no certifica tensión ni POR.
+Solicitud durante trabajo devuelve BUSY; tras éxito en este arranque devuelve ALREADY sin gastar
+EEPROM otra vez. Un fallo permite nueva solicitud explícita del operador. Durante provisión se
+rechazan CV numéricos habilitados con BUSY (en mínimo conservan DISABLED). Nada bloquea MIDI/audio/CDC; recuperación EN pausa también este
+servicio. El estado final se conserva hasta que CDC pueda emitirlo. STATS conserva `cv` (presencia60)
+y añade `cv2` (presencia61), errores/retry por DAC; `cv_enabled` sigue indicando control numérico.
+
+Teoría/pruebas: políticas custom sin GPIO/Wire en Unity mediante interfaz de transacciones. Comprobar
+orden/bytes de ambos ceros iniciales, NACK y retry independiente/wrap, CV2 siempre0, ausencia de
+EEPROM al boot, escritura única explícita, busy/timeout/lectura corta/PD/datos no cero y confirmación.
+EN: máscaras K=0x0e/A=0x01 filtradas por perfil, tres fallos por MCP, éxito borra sólo esa racha,
+no cruce de ramas, ambos flancos tras idle≥10µs, interrupción del idle, pulso≥1ms, wrap y contadores.
+No prueban hardware eléctrico ni recuperación de cortos. Puerta física pendiente: medir ambos EN,
+CV tras reset, desconexión/reconexión, EEPROM leída y POR independiente de ambos DAC, audio dúplex.
+
+Referencias: [MCP4725 DS22039D §§6–7](https://ww1.microchip.com/downloads/en/devicedoc/22039d.pdf)
+(fast write, EEPROM y lectura); [PCA9517A §6](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf)
+(EN sólo en idle). Wire/SGTL/Serial1 del core son oficiales PJRC/Adafruit; política de recuperación,
+provisión y parser son custom. No flash ni cambios hardware en esta tarea.

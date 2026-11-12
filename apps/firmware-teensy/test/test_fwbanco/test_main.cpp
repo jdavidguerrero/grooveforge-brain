@@ -56,7 +56,8 @@ void previous_fsr_at_air_did_emit_a_note() {
 }
 void branch_streaks_are_per_chip_and_success_means_complete_read() {
     I2cBranchRecovery r(3);
-    TEST_ASSERT_EQUAL_UINT8(0,consola::I2C_BRANCH_EN_PIN);
+    TEST_ASSERT_EQUAL_UINT8(0,consola::I2C_BRANCH_EN_PINS[0]);
+    TEST_ASSERT_EQUAL_UINT8(1,consola::I2C_BRANCH_EN_PINS[1]);
     r.failed(0); r.failed(1); r.failed(0); r.failed(1);
     TEST_ASSERT_FALSE(r.paused());
     r.succeeded(0); r.failed(0); r.failed(0);
@@ -70,7 +71,7 @@ void branch_streaks_are_per_chip_and_success_means_complete_read() {
     TEST_ASSERT_TRUE(r.tick(111,true)==Action::None);
     TEST_ASSERT_TRUE(r.tick(1110,true)==Action::Enable);
     TEST_ASSERT_FALSE(r.paused());
-    r.failed(0); TEST_ASSERT_FALSE(r.paused()); // Common EN cleared every streak.
+    r.failed(0); TEST_ASSERT_FALSE(r.paused()); // This branch pulse cleared its own streaks.
     r.failed(0); TEST_ASSERT_FALSE(r.paused());
     r.failed(0); TEST_ASSERT_TRUE(r.paused());
 }
@@ -113,6 +114,52 @@ void branch_low_bus_and_reset_counter_do_not_cancel_pulse() {
     for (unsigned i=0;i<10;++i) disabled.failed(0);
     TEST_ASSERT_FALSE(disabled.paused());
 }
+void branch_k_and_a_are_independent_with_profile_masks() {
+    for (const auto& profile : {consola::MINIMAL,consola::FULL}) {
+        uint8_t mask = 0;
+        for (uint8_t chip=0;chip<4;++chip) if (profile.mcp_inputs[chip]) mask |= 1u << chip;
+        I2cBranchRecovery branches[] = {
+            I2cBranchRecovery(mask & consola::I2C_BRANCH_MCP_MASKS[0]),
+            I2cBranchRecovery(mask & consola::I2C_BRANCH_MCP_MASKS[1])};
+        TEST_ASSERT_EQUAL_UINT8(1,consola::mcp_branch(0));
+        for (uint8_t chip=1;chip<4;++chip) TEST_ASSERT_EQUAL_UINT8(0,consola::mcp_branch(chip));
+        branches[1].failed(0); branches[1].failed(0);
+        branches[0].failed(1); branches[0].failed(1);
+        branches[1].succeeded(0);
+        branches[1].failed(0); branches[1].failed(0);
+        branches[0].failed(1);
+        TEST_ASSERT_TRUE(branches[0].paused()); TEST_ASSERT_FALSE(branches[1].paused());
+        branches[0].tick(0,true);
+        TEST_ASSERT_TRUE(branches[0].tick(10,true)==Action::Disable);
+        branches[0].tick(11,true);
+        TEST_ASSERT_TRUE(branches[0].tick(1010,true)==Action::Enable);
+        TEST_ASSERT_EQUAL_UINT32(1,branches[0].resets());
+        TEST_ASSERT_EQUAL_UINT32(0,branches[1].resets());
+        branches[1].failed(0); TEST_ASSERT_TRUE(branches[1].paused());
+        branches[1].tick(1020,true);
+        TEST_ASSERT_TRUE(branches[1].tick(1030,true)==Action::Disable);
+        TEST_ASSERT_EQUAL_UINT32(1,branches[1].resets());
+        for (unsigned n=0;n<3;++n) branches[0].failed(0);
+        TEST_ASSERT_FALSE(branches[0].paused());
+    }
+}
+void enabled_k_chips_respect_masks_and_simultaneous_requests() {
+    for (uint8_t chip=1;chip<4;++chip) {
+        I2cBranchRecovery k(consola::I2C_BRANCH_MCP_MASKS[0]), a(consola::I2C_BRANCH_MCP_MASKS[1]);
+        for (unsigned n=0;n<3;++n) { k.failed(chip); a.failed(0); }
+        k.tick(0,true); a.tick(0,true);
+        TEST_ASSERT_TRUE(k.tick(10,true)==Action::Disable);
+        TEST_ASSERT_TRUE(a.tick(10,true)==Action::Disable);
+        TEST_ASSERT_EQUAL_UINT32(1,k.resets()); TEST_ASSERT_EQUAL_UINT32(1,a.resets());
+        k.clear_count(); TEST_ASSERT_EQUAL_UINT32(1,a.resets());
+        k.tick(1000,true); a.tick(1000,true);
+        TEST_ASSERT_TRUE(k.tick(1010,true)==Action::Enable);
+        TEST_ASSERT_TRUE(a.tick(1010,true)==Action::Enable);
+    }
+    I2cBranchRecovery minimal_k(2);
+    for (unsigned n=0;n<3;++n) { minimal_k.failed(2); minimal_k.failed(3); }
+    TEST_ASSERT_FALSE(minimal_k.paused());
+}
 int main() {
     UNITY_BEGIN();
     RUN_TEST(floating_fsr_requires_continuous_low_rest);
@@ -121,5 +168,7 @@ int main() {
     RUN_TEST(branch_streaks_are_per_chip_and_success_means_complete_read);
     RUN_TEST(branch_pulse_waits_for_idle_is_nonblocking_and_wrap_safe);
     RUN_TEST(branch_low_bus_and_reset_counter_do_not_cancel_pulse);
+    RUN_TEST(branch_k_and_a_are_independent_with_profile_masks);
+    RUN_TEST(enabled_k_chips_respect_masks_and_simultaneous_requests);
     return UNITY_END();
 }
