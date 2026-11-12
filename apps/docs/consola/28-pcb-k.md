@@ -11,7 +11,7 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 
 | Bloque | Cantidad | Nota |
 |---|---|---|
-| Teclas Kailh Choc V2 | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
+| Teclas Kailh Choc V2 Brown (táctil 50 gf, 4 patas, ventana para LED SMD) | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
 | LED SK6812MINI-E (montaje inverso) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
 | MCP23017 | 3 | 0x21, 0x22, 0x23 (A2 A1 A0 = 001, 010, 011) |
 | Conector a PCB-M | 1 | 8 vías, pinout de la hoja 08 de PCB-M (§5) |
@@ -47,6 +47,9 @@ Valen las v1, que son además las que corta la chapa.
   **D-K1 pendiente.**
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
   Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.
+- Modelo de Juan: Choc V2 Low Profile Brown, 4 patas (2 eléctricas + 2 de plástico), ventana para LED SMD de
+  montaje inverso: encaja con el SK6812MINI-E de §6. La huella se dibuja con las patas medidas con calibre en una
+  tecla real (centro, patas eléctricas y postes), no con la de la Choc V1.
 - LED en la ventana de la tecla, desplazado hacia atrás (+y) del centro; distancia exacta según la hoja de la Choc V2
   (verificar con una tecla real antes de enviar el layout).
 
