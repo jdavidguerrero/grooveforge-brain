@@ -1,5 +1,11 @@
 # 30 · Validación en protoboard antes de pedir PCB-M
 
+> **2026-11-12, decisión de Juan: el protoboard no se hace y no bloquea el pedido.** El riesgo del frente analógico
+> y del CV se acota en PCB-M con aislamiento: puentes de soldadura en la alimentación de cada bloque, bypass del
+> buffer de entrada (JP_BYP), resistencia de 0 Ω entre el frente analógico y LINE IN del Audio Shield, y puntos de
+> prueba. Si un bloque falla en la placa, se aísla con el cautín y la consola funciona sin esa función hasta
+> corregirla (doc 24 §10). Este documento queda como procedimiento para depurar esos bloques en la placa.
+
 2026-11-12. La parte digital de PCB-M (Teensy, Audio Shield, ADS1115, MCP23017) ya corre en el prototipo de mesa con
 el firmware `consola_uno`. Lo que se fabrica por primera vez sin haber funcionado nunca es el **frente analógico**,
 las **salidas CV** y el **MIDI**. Este doc los prueba en protoboard con los mismos valores del esquema
@@ -71,4 +77,4 @@ MIDI IN (TRS tipo A): anillo → 220 Ω → LED del 6N138; punta → cátodo; 1N
 ## 3. Resultado
 
 Anotar cada medida en `mediciones/protoboard-<fecha>.md`. Cualquier cambio de valor o de circuito se pasa a
-`pcb_m.py` antes del layout. **PCB-M no se pide hasta que A y B pasen** (C solo si se puebla el MIDI).
+`pcb_m.py` antes del layout. Ya no bloquea el pedido (nota al inicio). Sirve para medir A y B sobre la placa ensamblada.
