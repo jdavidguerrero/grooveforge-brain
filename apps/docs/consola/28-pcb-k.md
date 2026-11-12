@@ -12,7 +12,7 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 | Bloque | Cantidad | Nota |
 |---|---|---|
 | Teclas Kailh Choc V2 Brown (táctil 50 gf, 4 patas, ventana para LED SMD) | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
-| LED SK6812MINI-E (montaje inverso) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
+| LED SK6812MINI-EA (montaje inverso; LCSC C5378731, ensamble económico de JLC) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
 | MCP23017 | 3 | 0x21, 0x22, 0x23 (A2 A1 A0 = 001, 010, 011) |
 | Conector a PCB-M | 1 | 8 vías, pinout de la hoja 08 de PCB-M (§5) |
 
