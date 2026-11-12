@@ -119,3 +119,9 @@ allí y validar teclado real, hotplug y latencia antes de dar la puerta física 
 (`lib/neotrellis_m4/UartInterface/UartInterface.cpp`, Serial1 SERCOM4) dice pin 21 (SDA) = TX y 22 (SCL) = RX. Se
 cablea según el código (SDA → Teensy RX7 pin 28, SCL ← Teensy TX7 pin 29) y se confirma en la protoboard; luego se
 corrige el documento que esté mal. El pin 3V del conector no se conecta (salida del regulador de la M4).
+
+## Banco de pruebas (2026-11-12)
+
+- `@GF WATCH`: umbral/histéresis para entradas analógicas (FSR, ADS); hoy una entrada al aire inunda el registro.
+- Confirmar que una entrada FSR al aire no dispara golpes en el perfil mínimo del prototipo (en PCB-M hay R a GND).
+- PCA9517A: el firmware aún no maneja EN (pin 0); el pull-up lo deja habilitado. Decidir si se usa para recuperar el bus.
