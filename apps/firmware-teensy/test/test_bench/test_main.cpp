@@ -12,7 +12,7 @@ void grammar() {
     TEST_ASSERT_TRUE(Bench::parse("@GF INPUTS")==C::Inputs);
     TEST_ASSERT_TRUE(Bench::parse("@GF WATCH 0")==C::WatchOff);
     TEST_ASSERT_TRUE(Bench::parse("@GF WATCH 1")==C::WatchOn);
-    for(const char* line:{"@GF WATCH","@GF WATCH 2","@GF WATCH 01","@GF WATCH 1 x","@GF WATCH 1 "})
+    for(const char* line:{"@GF WATCH","@GF WATCH 2","@GF WATCH 01","@GF WATCH 1 x","@GF WATCH 1 ","@GF WATCH -1","@GF WATCH 20","@GF WATCH 1 0"})
         TEST_ASSERT_TRUE(Bench::parse(line)==C::InvalidWatch);
     TEST_ASSERT_TRUE(Bench::parse("@GF SCAN x")==C::InvalidScan);
     TEST_ASSERT_TRUE(Bench::parse("@GF INPUTS ")==C::InvalidInputs);
@@ -50,17 +50,82 @@ void incremental_scan() {
 }
 void watch_deadbands() {
     Bench b; Bench::Snapshot s; char out[128]; b.watch(true,0,s);
-    s.ads_valid=1; s.ads[0]=1000; b.observe(s); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
-    s.ads[0]=1127; b.observe(s); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
-    s.ads[0]=1128; b.observe(s); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+    s.ads_valid=1; s.ads[0]=1000; b.observe(s,0); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=1127; b.observe(s,50); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=1128; b.observe(s,50); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
     TEST_ASSERT_EQUAL_STRING("@GF OK EVENT ADS 0 1128\n",out);
-    s.ads[0]=1000; b.observe(s); b.next(out,sizeof(out));
-    TEST_ASSERT_EQUAL_STRING("@GF OK EVENT ADS 0 1000\n",out);
-    s.ads_valid=0; b.observe(s); s.ads_valid=1; s.ads[0]=2000; b.observe(s);
+    s.ads[0]=873; b.observe(s,100); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=872; b.observe(s,100); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+    TEST_ASSERT_EQUAL_STRING("@GF OK EVENT ADS 0 872\n",out);
+    s.ads_valid=0; b.observe(s,110); s.ads_valid=1; s.ads[0]=2000; b.observe(s,120);
     TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
-    s.fsr_valid=1; s.pot_valid=1; s.sel_valid=true; b.observe(s);
-    s.fsr[0]=32; s.pot[0]=32; s.sel=32; b.observe(s);
-    for(const char* kind:{"FSR","POT","SEL"}) { b.next(out,sizeof(out)); TEST_ASSERT_NOT_NULL(strstr(out,kind)); }
+    s.fsr_valid=1; s.pot_valid=1; s.sel_valid=true; b.observe(s,120);
+    s.fsr[0]=31; s.pot[0]=31; s.sel=31; b.observe(s,170);
+    TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.fsr[0]=32; s.pot[0]=32; s.sel=32; b.observe(s,170);
+    for(const char* kind:{"FSR","POT","SEL"}) {
+        TEST_ASSERT_TRUE(b.next(out,sizeof(out))); TEST_ASSERT_NOT_NULL(strstr(out,kind));
+    }
+    s.fsr[0]=-31; s.pot[0]=-31; s.sel=-31; b.observe(s,220);
+    TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.fsr[0]=-32; s.pot[0]=-32; s.sel=-32; b.observe(s,220);
+    for(const char* kind:{"FSR","POT","SEL"}) {
+        TEST_ASSERT_TRUE(b.next(out,sizeof(out))); TEST_ASSERT_NOT_NULL(strstr(out,kind));
+    }
+}
+void watch_rate_latest_independent_and_wrap() {
+    Bench b; Bench::Snapshot s; char out[128];
+    s.ads_valid=3; s.fsr_valid=1; s.pot_valid=1;
+    const uint32_t start=UINT32_MAX-20;
+    b.watch(true,start,s);
+    s.ads[0]=1000; b.observe(s,start+49); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=2000; b.observe(s,start+50); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+    TEST_ASSERT_EQUAL_STRING("@GF OK EVENT ADS 0 2000\n",out);
+    s.ads[1]=1000; s.fsr[0]=64; s.pot[0]=64; b.observe(s,start+51);
+    for (const char* expected : {"ADS 1 1000", "FSR 0 64", "POT 0 64"}) {
+        TEST_ASSERT_TRUE(b.next(out,sizeof(out))); TEST_ASSERT_NOT_NULL(strstr(out,expected));
+    }
+    // Intermediate excursions do not become delayed historical events.
+    s.ads[0]=10000; b.observe(s,start+99); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=2000; b.observe(s,start+100); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    s.ads[0]=2128; b.observe(s,start+101); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+    TEST_ASSERT_EQUAL_STRING("@GF OK EVENT ADS 0 2128\n",out);
+    b.watch(true,start+102,s); s.ads[0]=3000;
+    b.observe(s,start+151); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    b.observe(s,start+152); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+    s.ads_valid=2; b.observe(s,start+153);
+    s.ads_valid=3; s.ads[0]=0; b.observe(s,start+154);
+    s.ads[0]=1000; b.observe(s,start+203); TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    b.observe(s,start+204); TEST_ASSERT_TRUE(b.next(out,sizeof(out)));
+}
+void watch_sixty_seconds_noise_bounded_all_channels_and_digital_unfiltered() {
+    Bench b; Bench::Snapshot s; char out[128];
+    s.ads_valid=255; s.fsr_valid=15; s.pot_valid=7; s.sel_valid=true;
+    b.watch(true,0,s);
+    unsigned counts[16]{};
+    for (uint32_t now=1;now<=60000;++now) {
+        const int value=now%2 ? 1500 : 3000;
+        for(auto& v:s.ads)v=value*8;
+        for(auto& v:s.fsr)v=value;
+        for(auto& v:s.pot)v=value;
+        s.sel=value;
+        b.observe(s,now);
+        while(b.next(out,sizeof(out))) {
+            char kind[8]; unsigned i; long v;
+            TEST_ASSERT_EQUAL(3,sscanf(out,"@GF OK EVENT %7s %u %ld",kind,&i,&v));
+            const unsigned offset=!strcmp(kind,"ADS")?0:!strcmp(kind,"FSR")?8:!strcmp(kind,"POT")?12:15;
+            ++counts[offset+i];
+        }
+    }
+    for(unsigned count:counts) { TEST_ASSERT_GREATER_THAN(0,count); TEST_ASSERT_LESS_OR_EQUAL(1200,count); }
+    TEST_ASSERT_EQUAL_UINT32(0,b.drops());
+    for(unsigned i=0;i<2000;++i) {
+        b.event("KEY",84,i%2); b.event("ENC",0,i);
+        TEST_ASSERT_TRUE(b.next(out,sizeof(out))); TEST_ASSERT_NOT_NULL(strstr(out,"KEY"));
+        TEST_ASSERT_TRUE(b.next(out,sizeof(out))); TEST_ASSERT_NOT_NULL(strstr(out,"ENC"));
+        TEST_ASSERT_FALSE(b.next(out,sizeof(out)));
+    }
+    TEST_ASSERT_EQUAL_UINT32(0,b.drops());
 }
 void watch_queue_expiration_and_wrap() {
     Bench b; Bench::Snapshot s; char out[128];
@@ -82,5 +147,6 @@ void watch_queue_expiration_and_wrap() {
 }
 int main() {
     UNITY_BEGIN(); RUN_TEST(grammar); RUN_TEST(snapshot_format); RUN_TEST(incremental_scan);
-    RUN_TEST(watch_deadbands); RUN_TEST(watch_queue_expiration_and_wrap); return UNITY_END();
+    RUN_TEST(watch_deadbands); RUN_TEST(watch_rate_latest_independent_and_wrap);
+    RUN_TEST(watch_sixty_seconds_noise_bounded_all_channels_and_digital_unfiltered); RUN_TEST(watch_queue_expiration_and_wrap); return UNITY_END();
 }

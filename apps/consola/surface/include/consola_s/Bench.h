@@ -71,6 +71,7 @@ public:
     /** Enable/disable watch and discard pending events, preserving cumulative drops. */
     void watch(bool enabled,uint32_t now,const Snapshot& s) {
         watching_=enabled; watch_since_=now; head_=tail_=count_=0; previous_=s;
+        for (auto& channel : analog_) channel = {now,0};
     }
     /** Expire even if USB TX is stalled. Wrap-safe for the 120-second interval. */
     bool expire(uint32_t now) {
@@ -83,13 +84,13 @@ public:
         if (count_==64) { ++drops_; return; }
         events_[head_]={kind,index,value}; head_=(head_+1)%64; ++count_;
     }
-    /** Publish raw analog changes above deadband; first valid sample is only a baseline. */
-    void observe(const Snapshot& s) {
+    /** Observe latest raw values with direction hysteresis and a per-input 50ms cadence. */
+    void observe(const Snapshot& s, uint32_t now_ms) {
         if (!watching_) return;
-        analog("ADS",s.ads,previous_.ads,8,s.ads_valid,previous_.ads_valid,128);
-        analog("FSR",s.fsr,previous_.fsr,4,s.fsr_valid,previous_.fsr_valid,32);
-        analog("POT",s.pot,previous_.pot,3,s.pot_valid,previous_.pot_valid,32);
-        analog("SEL",&s.sel,&previous_.sel,1,s.sel_valid,previous_.sel_valid,32);
+        analog("ADS",s.ads,previous_.ads,8,s.ads_valid,previous_.ads_valid,128,0,now_ms);
+        analog("FSR",s.fsr,previous_.fsr,4,s.fsr_valid,previous_.fsr_valid,32,8,now_ms);
+        analog("POT",s.pot,previous_.pot,3,s.pot_valid,previous_.pot_valid,32,12,now_ms);
+        analog("SEL",&s.sel,&previous_.sel,1,s.sel_valid,previous_.sel_valid,32,15,now_ms);
         previous_.ads_valid=s.ads_valid; previous_.fsr_valid=s.fsr_valid;
         previous_.pot_valid=s.pot_valid; previous_.sel_valid=s.sel_valid;
     }
@@ -120,15 +121,22 @@ private:
     private:
         char* out_; size_t size_,used_=0; bool ok_=true;
     };
+    struct AnalogState { uint32_t sent; int8_t direction; };
     void analog(const char* kind,const int32_t* values,int32_t* old,unsigned n,
-                uint8_t valid,uint8_t old_valid,int32_t threshold) {
+                uint8_t valid,uint8_t old_valid,int32_t threshold,unsigned offset,uint32_t now) {
         for(unsigned i=0;i<n;++i) {
-            if (!(valid & (1u<<i))) continue;
+            auto& state=analog_[offset+i];
+            if (!(valid & (1u<<i))) { state={now,0}; continue; }
+            if (!(old_valid & (1u<<i))) { old[i]=values[i]; state={now,0}; continue; }
             const int64_t delta=int64_t(values[i])-old[i];
-            if (!(old_valid & (1u<<i))) old[i]=values[i];
-            else if (delta>=threshold || delta<=-threshold) { event(kind,i,values[i]); old[i]=values[i]; }
+            const int8_t direction=delta>0 ? 1 : delta<0 ? -1 : 0;
+            const int32_t distance=state.direction && direction!=state.direction ? 2*threshold : threshold;
+            if (uint32_t(now-state.sent)<50 || (delta<distance && delta>-distance)) continue;
+            event(kind,i,values[i]);
+            old[i]=values[i]; state={now,direction};
         }
     }
+    AnalogState analog_[16]{};
     Snapshot previous_{};
     Event events_[64]{};
     uint8_t head_=0,tail_=0,count_=0,address_=8,found_[112]{},found_count_=0;

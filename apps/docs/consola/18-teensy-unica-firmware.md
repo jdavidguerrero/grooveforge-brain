@@ -22,7 +22,8 @@ Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Si
 
 ## 3. Pines y MIDI
 
-Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. DIN 0/1 y triggers 25/27/38/39 permanecen reservados.
+Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. Desde24 §10/D16+ el MIDI DIN queda DNP sin unión a Teensy: pin0 pasa a EN común de los
+PCA9517A, pin1 sigue reservado. No iniciar Serial1. Triggers25/27/38/39 permanecen reservados.
 
 No hay contradicción de asignación en 17. Restricciones del shield reutilizado: **sin microSD SPI ni flash opcional**, porque 6/10/11/12/13 son superficie; no montar el pot de volumen opcional del shield en 15 (FSR2). CUE usa el buzón del planificador ADC1 descrito arriba. La escalera del selector no tenía resistencias/umbrales definidos: se fija aquí como contrato de prototipo, calibrable antes de PCB.
 
@@ -112,3 +113,40 @@ El nuevo planificador elimina las esperas y todos los accesos concurrentes al mi
 Pots: filtro EMA y deadband2 MIDI, más techo100Hz, no pueden identificar eléctricamente una entrada flotante. Por eso mínimo las deja deshabilitadas; completo supone cableado completo. Al habilitar un cursor, conectar ambos extremos; si puede quedar desconectado, poner pull-down externo (p.ej.100k a GND, verificando carga/calibración). No usar un pin al aire como detector de pot. No hay cambios de pin que Juan deba recablear.
 
 Prueba pendiente con firmware de producción: FSR1/2 en14/15 con divisor10k, Sharp0x48 AIN2, `@S RESET`, `@S STATS` después de60s y audio dúplex. Esperar `pot_mask=0`, `ads_mask=1`, `mcp_mask=3`, `cv_enabled=0`, `cv_errors=0`, `ads1_sps=0`, `fsr_timer=1`, muestras de cada pad≥2000/s, `adc1_timeouts=adc2_timeouts=0`, cero drops y loop_max<2000µs. Enviar notas36/37 con velocity y liberación; CC33/nota108 de Sharp; SYNTH transforma el segundo FSR en nota38 (doc21). Si aparece timeout, guardar STATS completo: aún falta determinar el disparador físico original. Resultados de escritorio de esta corrección: ver medición enlazada (no reemplazan el ensayo físico).
+
+## 8. Banco del 12 de noviembre: EN de ramas y entradas al aire (spec previo al código)
+
+Esta tarea autoriza manejar EN; sustituye para consola_uno la indicación histórica de24 §10.8 de
+dejar0 en alta impedancia. No cambia PCB-M ni el mapa físico de sus dos buffers. Al inicio de setup,
+antes de cualquier espera diagnóstica, Wire.begin y audio_graph::init/códec, precargar HIGH y configurar
+Teensy0 como OUTPUT. Se usa digitalWriteFast para precargar el latch: en el core PJRC
+instalado digitalWrite sobre INPUT sólo configura pull-up/down (digital.c:115–140). EN común controla ambas ramas: MCP0x20 en A, MCP0x21/22/23 en K. ADS, DAC y
+códec son locales. No hay Serial1 ni otro usuario de0 en consola_uno/surface/audio_graph; M4 usa Serial7.
+En la mesa actual0 no tiene cable: este GPIO no altera sus rutas existentes. Verificación estática y
+build no sustituyen una medición de arranque con PCB-M. consola_s conserva sus pines y no controla EN.
+
+Política custom: **N=3 fallos consecutivos por MCP habilitado**, contando fallos de configuración o
+lectura; sólo una lectura GPIO completa correcta borra su racha. Se conservan los backoffs1–32s.
+Al alcanzar N se solicita un pulso, atendido sólo en loop por máquina de estados con micros unsigned.
+Antes de cambiar EN se exige SDA18/SCL19 altas durante≥10µs observados entre iteraciones, sin
+transacciones del firmware durante esa espera. Bajar EN, liberar una vez notas MCP retenidas e
+invalidar su snapshot; mantenerlo bajo≥1000µs (1ms más granularidad del loop), y subir con bus local
+ocioso. Pausar ADS/MCP/SCAN/códec/CV durante espera/pulso; ADC, MIDI, CDC, audio y LEDs siguen.
+No reiniciar Wire, códec ni alimentar de nuevo los chips: EN aísla señales, no resetea MCP. No se
+reinicia su backoff para evitar una tormenta con una rama ausente. Un pulso borra las rachas de los
+cuatro MCP porque EN es común. STATS añade `i2c_branch_resets` (pulsos iniciados desde @S RESET).
+No cuentan fallos ADS/códec/CV ni direcciones ausentes de un SCAN de diagnóstico.
+La línea STATS ampliada usa buffer estático de1280B y el cliente superficie.py admite ese mismo
+límite: con contadores largos puede superar el límite anterior de1024B. No cambia la gramática.
+
+**Límite:** NXP exige cambiar EN con bus ocioso; si SDA/SCL no regresan altas, la petición espera y
+no fuerza el flanco. Un corto físico exige aislamiento/reparación de24 §10. Un pulso con línea remota
+retenida tampoco certifica recuperación: repetir el ensayo con TP y mazo. Referencia primaria:
+[NXP PCA9517A rev4.1, §§6–7](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf), contrato local24 §10.8,
+y driver Wire/SGTL5000 PJRC instalado1.160.0. No se añaden esperas, heap ni I2C en ISR.
+
+WATCH y cualificación inicial FSR se definen en29 (teoría y tests previos). Puerta física: arranque
+con LEDs/códec,60s con14/15 al aire sin notas36–39 y≤20 eventos/s por analógico; luego conectar FSR
+con R a GND y confirmar golpes/release/velocity. En PCB-M inyectar tres fallos MCP, medir EN bajo≥1ms,
+contador+1, liberación de teclas y recuperación sin cortes de audio; medir loop_max_us<2000 en régimen.
+Sin placa ni flash, los tests nativos y el build sólo certifican lógica/compilación.

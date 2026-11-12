@@ -6,6 +6,7 @@
 #include <cstring>
 #include "consola_s/Surface.h"
 #include "consola_s/Bench.h"
+#include "consola_s/I2cBranchRecovery.h"
 #include "consola_s/PadLedReturn.h"
 #ifdef GF_CONSOLA_UNO
 #include "consola_s/KeyLedReturn.h"
@@ -32,11 +33,13 @@ constexpr uint8_t ADC1_CHANNELS[] = {7, 8, 12, 11, 1, 10};
 constexpr uint8_t POT_PINS[] = {22,24,26};
 constexpr auto PROFILE = GF_CONSOLA_MINIMAL ? consola::MINIMAL : consola::FULL;
 constexpr uint8_t MCP_COUNT = 4;
+constexpr bool REQUIRE_FSR_REST = true;
 #define M4_SERIAL Serial7
 #else
 constexpr uint8_t POT_PINS[] = {23,38,39};
 constexpr consola::Profile PROFILE{0x1ff,0x0f,0x07,{0x0f,0x0f},{0x7f7f,0x7f7f,0},false};
 constexpr uint8_t MCP_COUNT = 2;
+constexpr bool REQUIRE_FSR_REST = false;
 #define M4_SERIAL Serial5
 #endif
 surface::CommandHandler command_handler = nullptr;
@@ -68,8 +71,8 @@ constexpr uint8_t QUEUE_SIZE = 64;
 FsrVelocity pads[] = {
     // 12-bit ADC: 600 ≈ 0.48 V on, 400 ≈ 0.32 V off. 160/100 (0.13/0.08 V) false-triggered on the breadboard with the
     // Sharp pulsing on the shared ground (2026-11-10, ~2800 notes/min untouched); per-pad calibration still pending.
-    FsrVelocity({600,3000,400}), FsrVelocity({600,3000,400}),
-    FsrVelocity({600,3000,400}), FsrVelocity({600,3000,400})
+    FsrVelocity({600,3000,400},3000,12000,REQUIRE_FSR_REST), FsrVelocity({600,3000,400},3000,12000,REQUIRE_FSR_REST),
+    FsrVelocity({600,3000,400},3000,12000,REQUIRE_FSR_REST), FsrVelocity({600,3000,400},3000,12000,REQUIRE_FSR_REST)
 };
 
 Encoder encoders[] = {
@@ -108,6 +111,13 @@ uint8_t next_ads = 0, next_mcp = 0;
 uint32_t last_selector = 0;
 #endif
 RetryGate mcp[MCP_COUNT];
+#ifdef GF_CONSOLA_UNO
+consola::I2cBranchRecovery branch_recovery(
+    (PROFILE.mcp_inputs[0] ? 1 : 0) | (PROFILE.mcp_inputs[1] ? 2 : 0) |
+    (PROFILE.mcp_inputs[2] ? 4 : 0) | (PROFILE.mcp_inputs[3] ? 8 : 0));
+#else
+consola::I2cBranchRecovery branch_recovery(0);
+#endif
 bool mcp_configured[MCP_COUNT] = {};
 McpButtons buttons[] = {McpButtons(0,PROFILE.mcp_inputs[0]), McpButtons(1,PROFILE.mcp_inputs[1])
 #ifdef GF_CONSOLA_UNO
@@ -129,7 +139,7 @@ bool watch_expired=false;
 char command[32];
 size_t command_size = 0;
 bool command_overflow = false;
-char response[1024];
+char response[1280];
 size_t response_size = 0, response_sent = 0;
 
 // ADC2 belongs to loop only. 20 us is well above a 12-bit single conversion.
@@ -237,6 +247,7 @@ void poll_buttons(uint32_t now) {
         if (!mcp_write(chip,0x00,0x7f7f) || !mcp_write(chip,0x0c,0x7f7f)) {
             ++mcp_errors;
             mcp[chip].failed(now);
+            branch_recovery.failed(chip);
             return;
         }
         mcp_configured[chip] = true; // Reset backoff only after GPIO read succeeds.
@@ -247,6 +258,7 @@ void poll_buttons(uint32_t now) {
     if (Wire.endTransmission(false) || Wire.requestFrom(uint8_t(0x20 + chip),uint8_t(2)) != 2) {
         ++mcp_errors;
         mcp[chip].failed(now);
+        branch_recovery.failed(chip);
         mcp_configured[chip] = false;
         bench_inputs.mcp_valid &= ~(1u<<chip);
         McpButtons::Event events[14];
@@ -255,6 +267,7 @@ void poll_buttons(uint32_t now) {
         return;
     }
     mcp[chip].succeeded();
+    branch_recovery.succeeded(chip);
     uint16_t value = Wire.read();
     value |= uint16_t(Wire.read()) << 8;
     bench_inputs.mcp[chip]=value;
@@ -330,7 +343,23 @@ void poll_m4() {
         }
     }
 }
+void poll_branch_recovery() {
+#ifdef GF_CONSOLA_UNO
+    const auto action = branch_recovery.tick(micros(),digitalRead(18) && digitalRead(19));
+    using Action = consola::I2cBranchRecovery::Action;
+    if (action == Action::Enable) digitalWrite(consola::I2C_BRANCH_EN_PIN,HIGH);
+    else if (action == Action::Disable) {
+        digitalWrite(consola::I2C_BRANCH_EN_PIN,LOW);
+        bench_inputs.mcp_valid = 0;
+        for (uint8_t chip = 0; chip < MCP_COUNT; ++chip) {
+            McpButtons::Event events[14];
+            send_buttons(events,buttons[chip].disconnect(events));
+        }
+    }
+#endif
+}
 void reset_stats() {
+    branch_recovery.clear_count();
     noInterrupts();
     scans = scan_gap_max = queue_drops = adc1_timeouts = 0;
     adc2_timeouts = 0;
@@ -376,7 +405,8 @@ void prepare_stats() {
     response_size += min(size_t(max(0,n)),sizeof(response)-response_size-1);
 #ifdef GF_CONSOLA_UNO
     const int led_stats=snprintf(response+response_size,sizeof(response)-response_size,
-        " key_led_ua=%lu",(unsigned long)key_led_return.current_ua());
+        " key_led_ua=%lu i2c_branch_resets=%lu",(unsigned long)key_led_return.current_ua(),
+        (unsigned long)branch_recovery.resets());
     response_size+=min(size_t(max(0,led_stats)),sizeof(response)-response_size-1);
 #endif
     if (stats_handler) {
@@ -510,6 +540,7 @@ void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHand
 }
 void surface::poll() {
     const uint32_t start = micros();
+    poll_branch_recovery();
     drain_pads();
     poll_m4();
     for (uint8_t i = 0; i < ENCODER_COUNT; ++i) {
@@ -557,9 +588,9 @@ void surface::poll() {
     int16_t raw;
     const uint8_t chip = next_ads;
     next_ads ^= 1;
-    const int scan_address=bench.scan_address(micros());
+    const int scan_address=i2c_paused() ? -1 : bench.scan_address(micros());
     const bool scanning=scan_address>=0;
-    if (!scanning && ads[chip].poll(micros(),channel,raw)) {
+    if (!i2c_paused() && !scanning && ads[chip].poll(micros(),channel,raw)) {
         bench_inputs.ads[chip*4+channel]=raw; bench_inputs.ads_valid |= 1u<<(chip*4+channel);
         ++ads_reads[chip];
 #ifdef GF_CONSOLA_UNO
@@ -575,10 +606,12 @@ void surface::poll() {
         }
     }
     for (uint8_t i = 0; i < 2; ++i) send_hand(i,hands[i].expire(millis()));
-    if(scanning) poll_bench_scan(uint8_t(scan_address)); else poll_buttons(micros());
+    if (!i2c_paused()) {
+        if(scanning) poll_bench_scan(uint8_t(scan_address)); else poll_buttons(micros());
+    }
     capture_bench_inputs();
     if(bench.expire(millis())) watch_expired=true;
-    bench.observe(bench_inputs);
+    bench.observe(bench_inputs,millis());
     poll_serial();
     for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {
         pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2(),millis());
@@ -611,6 +644,8 @@ void surface::poll() {
     const uint32_t duration = micros()-start;
     record_loop_duration(duration);
 }
+
+bool surface::i2c_paused() { return branch_recovery.paused(); }
 
 void surface::record_loop_duration(uint32_t duration) {
     if (duration > loop_max) loop_max = duration;

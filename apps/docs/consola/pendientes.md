@@ -122,6 +122,6 @@ corrige el documento que esté mal. El pin 3V del conector no se conecta (salida
 
 ## Banco de pruebas (2026-11-12)
 
-- `@GF WATCH`: umbral/histéresis para entradas analógicas (FSR, ADS); hoy una entrada al aire inunda el registro.
-- Confirmar que una entrada FSR al aire no dispara golpes en el perfil mínimo del prototipo (en PCB-M hay R a GND).
-- PCA9517A: el firmware aún no maneja EN (pin 0); el pull-up lo deja habilitado. Decidir si se usa para recuperar el bus.
+- Implementado y probado nativo: `@GF WATCH` con histéresis y máximo 20 eventos/s por canal analógico (FSR, ADS, pots/selector); KEY/ENC conservan sus eventos. Pendiente repetir los 60 s del banco físico. Ver [29](29-banco-pruebas.md).
+- Confirmado en código/test: el detector anterior emitía una nota con ADC≈1500 al arrancar. `consola_uno` exige ahora reposo ≤400 durante 3 ms antes de armar, manteniendo `fsr_mask=3`. Pendiente comprobar en mesa y luego con FSR + R a GND; no es detector eléctrico de desconexión. Ver [18 §8](18-teensy-unica-firmware.md#8-banco-del-12-de-noviembre-en-de-ramas-y-entradas-al-aire-spec-previo-al-código).
+- Implementado y probado nativo: PCA9517A EN común pin 0 alto antes del códec/Wire, pulso no bloqueante ≥1 ms tras 3 fallos seguidos por MCP y `i2c_branch_resets` en STATS. Pendiente medir EN, reconexión y audio con PCB-M; una línea permanentemente baja exige aislamiento físico (24 §10). Sin flash en esta tarea.

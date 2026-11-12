@@ -151,6 +151,9 @@ bool command(char* line, char* out, size_t size) {
 #define DIAG(msg) do {} while (0)
 #endif
 void setup() {
+    // PJRC digitalWrite on INPUT only changes pull-ups; Fast writes the latch before OUTPUT, avoiding a low EN glitch.
+    digitalWriteFast(consola::I2C_BRANCH_EN_PIN,HIGH);
+    pinMode(consola::I2C_BRANCH_EN_PIN,OUTPUT);
 #ifdef GF_DIAG_NO_FSR
     Serial.begin(115200);
     while (!Serial && millis() < 4000) {}
@@ -193,10 +196,10 @@ void loop() {
 #ifdef GF_CONSOLA_BRAIN
     brain.update();
 #endif
-    poll_codec(micros());
+    if (!surface::i2c_paused()) poll_codec(micros());
 #ifdef GF_DIAG_NO_FSR
     stage = 3;
 #endif
-    poll_cv(micros());
+    if (!surface::i2c_paused()) poll_cv(micros());
     surface::record_loop_duration(micros()-start);
 }

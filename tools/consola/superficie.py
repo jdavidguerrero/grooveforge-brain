@@ -222,7 +222,7 @@ class Stats:
         with self._abrir() as puerto:
             puerto.reset_input_buffer()
             puerto.write(b"@S STATS\n")
-            respuesta = puerto.read_until(b"\n", size=1024)
+            respuesta = puerto.read_until(b"\n", size=1280)
         if not respuesta.endswith(b"\n"):
             raise TimeoutError("Respuesta STATS incompleta o timeout")
         return self.parsear(respuesta.decode("ascii"))

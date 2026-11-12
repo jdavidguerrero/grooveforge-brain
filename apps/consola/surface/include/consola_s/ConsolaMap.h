@@ -13,6 +13,8 @@ namespace consola {
 #define GF_CONSOLA_PRODUCT_CHARS {'G','F',' ','C','o','n','s','o','l','a'}
 inline constexpr char USB_PRODUCT_TEXT[] = {'G','F',' ','C','o','n','s','o','l','a','\0'};
 inline constexpr uint8_t MIDI_CHANNEL = 1;
+/// Common PCA9517A EN on PCB-M; Serial1/DIN is DNP.
+inline constexpr uint8_t I2C_BRANCH_EN_PIN = 0;
 inline constexpr uint8_t ENCODER_CC[] = {16,17,18,19,20,21,22,23,35};
 inline constexpr uint8_t ENCODER_PINS[][2] = {{2,3},{4,5},{6,9},{10,11},{12,30},{31,32},{33,34},{35,36},{37,40}};
 inline constexpr uint8_t MCP_PINS[] = {0,1,2,3,4,5,6,8,9,10,11,12,13,14};
@@ -26,7 +28,7 @@ constexpr uint8_t mcp_note(uint8_t chip, uint8_t input) {
     };
     return chip < 4 && input < 14 ? notes[chip][input] : 0xff;
 }
-/// No floating analog inputs or unconnected encoders are sampled in minimal mode.
+/// Minimal mode enables two FSRs; their detector must qualify low rest before arming.
 struct Profile {
     uint16_t encoders;
     uint8_t fsrs, pots, ads_channels[2];

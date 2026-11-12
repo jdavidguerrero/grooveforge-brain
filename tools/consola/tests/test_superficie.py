@@ -230,8 +230,8 @@ def test_cliente_stats_serial_perezoso(monkeypatch):
             self.escritos.append(datos)
 
         def read_until(self, terminador, size):
-            assert terminador == b"\n" and size == 1024 and self.limpio
-            return self.respuesta
+            assert terminador == b"\n" and size == 1280 and self.limpio
+            return self.respuesta[:size]
 
         def flush(self):
             self.flushed = True
@@ -243,6 +243,12 @@ def test_cliente_stats_serial_perezoso(monkeypatch):
     assert conexiones[-1].escritos == [b"@S STATS\n"] and conexiones[-1].cerrado
     cliente.reset()
     assert conexiones[-1].escritos == [b"@S RESET\n"] and conexiones[-1].flushed
+    # Expanded diagnostics must remain a complete CDC line beyond the old 1024-byte cap.
+    extra = {f"diagnostic_{i}": 4294967295 for i in range(38)} | {"i2c_branch_resets": 3}
+    extended = RESPUESTA.rstrip() + " " + " ".join(f"{k}={v}" for k, v in extra.items()) + "\n"
+    assert 1024 < len(extended) < 1280
+    SerialFalso.respuesta = extended.encode("ascii")
+    assert cliente.consultar() == ESPERADOS | extra
     SerialFalso.respuesta = b"@S PROTOTYPE drops=0"
     with pytest.raises(TimeoutError):
         cliente.consultar()
@@ -263,7 +269,7 @@ def test_selector_pad(valor, db):
 
 def test_stats_con_presencia_y_mascaras():
     extra = dict(mcp_mask=3, ads_mask=1, m4=1, encoder_mask=271, fsr_mask=3,
-                 pot_mask=1, ads0_channels=5, ads1_channels=0, codec=1, cv=0)
+                 pot_mask=1, ads0_channels=5, ads1_channels=0, codec=1, cv=0, i2c_branch_resets=3)
     respuesta = RESPUESTA.rstrip() + " " + " ".join(f"{k}={v}" for k,v in extra.items())
     assert s.Stats.parsear(respuesta) == ESPERADOS | extra
 

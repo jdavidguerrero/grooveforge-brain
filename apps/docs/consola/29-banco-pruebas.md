@@ -61,11 +61,19 @@ Errores de estos verbos: `@GF ERR <verbo> ARG`. Se mantiene el parser de líneas
   simultáneas; válido significa muestreado desde arranque/última caída conocida. Cero con válido=0 no es muestra.
 - WATCH: `@GF OK WATCH 1` / `@GF OK WATCH 0`. Activo sólo 120000 ms desde cada WATCH1, incluso sin host;
   expira con `@GF OK WATCH 0 EXPIRED`. Evento `@GF OK EVENT <KEY|ENC|ADS|FSR|POT|SEL> <índice> <valor>`.
-  KEY usa nota musical y estado estable 0/1 (incluye M4/FSR); ENC cuenta absoluta con signo, ADS umbral128,
-  FSR/POT/SEL umbral32 desde último valor publicado. Primera muestra establece referencia, no evento.
+  KEY usa nota musical y estado estable 0/1 (incluye M4/FSR); ENC cuenta absoluta con signo.
+  Analógicos: ADS umbral128 cuentas, FSR/POT/SEL umbral32 desde último valor publicado.
+  Histéresis de dirección: continuar requiere un umbral; invertir requiere dos umbrales.
+  Cada canal tiene su reloj independiente: mínimo50ms entre eventos (máximo20/s), también desde WATCH1
+  o una nueva referencia válida. Durante ese plazo se conserva sólo el valor actual; un transitorio
+  que desaparece antes del próximo cupo no se publica. Primera muestra válida establece referencia,
+  no evento; perder validez borra dirección y referencia. WATCH1 reinicia referencias y relojes.
+  KEY/clics/ENC no pasan por este filtro ni por su límite de tasa.
   Una cola fija de 64 eventos conserva orden; si se llena descarta nuevos y aumenta DROPS en INPUTS.
   WATCH0 descarta eventos pendientes. El host falla el chequeo de integridad si DROPS aumenta.
-  No se promete transmitir ruido ilimitado: umbrales + límite de cola son explícitos.
+  Las supresiones por histéresis/cadencia son intencionales y no aumentan DROPS; éste sigue contando
+  únicamente desbordamientos reales de cola. El límite por canal no garantiza cero drops si todos
+  los controles cambian a la vez o el host deja de leer.
 
 CDC RX hasta16 bytes/loop y TX hasta32 con availableForWrite, sin esperar al host. Memoria estática;
 sin heap, delay, scans síncronos ni cambios de prioridades. Se conservan todas las rutas MIDI y audio.
@@ -90,3 +98,29 @@ wrap y presión de cola. pytest usa el puerto falso para checklist completo, fal
 timeout, rechazo LED, desconexión y limpieza. Demo de escritorio: simulación todo produce informe sin
 hardware. No cubre ERC/DRC, alimentación/consumo, polaridad, tensiones CV, MIDI DIN, audio/THD/latencia,
 60min dúplex, calibración FSR/Sharp, NeoTrellis ni ensayos on-device. No sustituye 24 §7 ni 28 §8.
+
+## Corrección de banco del 12 de noviembre: teoría y prueba previa
+
+Evidencia: [banco físico](mediciones/banco-2026-11-12.md), 220880 eventos FSR en60s con14/15 al aire.
+El deadband original compara contra el último evento: ruido que cruza repetidamente ambos lados puede
+publicarse a velocidad de loop. La histéresis de dirección exige mayor recorrido para invertir; el reloj
+por entrada pone una cota incluso ante oscilación de escala completa. Filtrar sólo CDC conserva MIDI
+y permite mantener todas las transiciones de teclas y posiciones de encoders observadas por loop.
+Subir sólo el umbral perdería sensibilidad sin acotar un pin flotante.
+
+FSR mínimo conserva máscara3 y su muestreo. El detector anterior empezaba Armed: ADC1500≥600 iniciaba
+Peak y emitía NoteOn36/37 tras3ms incluso sin FSR. En consola_uno (también full/brain) se exige primero
+reposo continuo≤400 durante3ms, luego cruce≥600. Ruido por encima de400 reinicia la cualificación.
+Se conserva velocity600–3000, ventana3ms, release400 y guard12ms después de armar. Un FSR conectado
+con R a GND reposa bajo y conserva el golpe normal; si se arranca presionado, soltar antes del primero.
+No se infiere la presencia de una resistencia mediante ADC: una desconexión después de armar o ruido
+que imite un reposo real puede seguir pareciendo un golpe. El pull-down físico de PCB-M sigue siendo
+necesario. No se deshabilitan pads conectados ni se cambian los umbrales para ocultar el ruido.
+
+Unity debe verificar parser estricto, valores límite e inversión de histéresis, cadencia independiente
+con wrap, coalescencia, revalidación, WATCH0/renovación/expiración y KEY/ENC sin rate limit; simular60s
+de ruido en las entradas analógicas y comprobar≤1200 eventos/canal. Para FSR: ruido1500±sin reposo,
+reposos breves rechazados y golpe/velocity/liberación/retrigger iguales al detector anterior tras
+cualificación. Para EN: tres fallos consecutivos por MCP, éxito completo borra racha, espera de bus
+ocioso, pulso≥1ms, wrap, ausencia de repulsos y contador. Son pruebas de lógica custom, sin prometer
+comportamiento eléctrico ni recuperación de una rama en corto. Ensayo físico pendiente en18.
