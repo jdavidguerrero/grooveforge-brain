@@ -4167,7 +4167,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "6b8a9e15-b81b-4193-9771-8b6bdea41301")
 		(property "Reference" "J4"
 			(at 39.37 212.09 0)
@@ -4293,7 +4293,7 @@
 				)
 			)
 		)
-		(property "Value" "MCP23017T-E/SS"
+		(property "Value" "MCP23017-E/SS"
 			(at 139.7 82.55 0)
 			(show_name no)
 			(do_not_autoplace no)
@@ -4327,7 +4327,7 @@
 				(justify left)
 			)
 		)
-		(property "LCSC" "C558584"
+		(property "LCSC" "C506653"
 			(at 139.7 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -4635,7 +4635,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "daffd0a7-ca73-407a-9251-a3f00918ff5b")
 		(property "Reference" "R1"
 			(at 175.26 107.95 0)
@@ -4725,7 +4725,7 @@
 		(in_bom yes)
 		(on_board yes)
 		(in_pos_files yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "852f3cbb-9f3a-48d9-8bf3-f8a998284965")
 		(property "Reference" "R2"
 			(at 190.5 107.95 0)

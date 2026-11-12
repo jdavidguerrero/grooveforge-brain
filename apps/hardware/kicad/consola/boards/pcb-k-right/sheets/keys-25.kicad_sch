@@ -584,12 +584,18 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "SK6812MINI-E idx 25"
+    (property "Value" "SK6812MINI-EA"
       (at 190.5 39.37 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:SK6812MINI-E_ReverseMount"
+    (property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5378731"
       (at 190.5 63.5 0)
       (effects
         (font
@@ -670,7 +676,13 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
       (at 304.8 63.5 0)
       (effects
         (font

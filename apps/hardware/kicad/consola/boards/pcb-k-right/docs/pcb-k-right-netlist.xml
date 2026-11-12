@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-k-right/pcb-k-right.kicad_sch</source>
-    <date>2026-11-12T09:06:18</date>
+    <date>2026-11-12T09:41:22</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -134,13 +134,15 @@
   <components>
     <comp ref="C1">
       <value>22uF</value>
-      <footprint>Capacitor_SMD:C_1210_3225Metric</footprint>
+      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_1210_3225Metric</field>
+        <field name="LCSC">C12891</field>
+        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C12891"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -186,13 +188,15 @@
     </comp>
     <comp ref="R1">
       <value>33R</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="LCSC">C17634</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17634"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -210,13 +214,15 @@
     </comp>
     <comp ref="R2">
       <value>2.2k DNP</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="LCSC">C17520</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17520"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="dnp"/>
@@ -235,13 +241,15 @@
     </comp>
     <comp ref="R3">
       <value>2.2k DNP</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="LCSC">C17520</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17520"/>
       <property name="Sheetname" value="cables-power-1"/>
       <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
       <property name="dnp"/>
@@ -259,18 +267,20 @@
       </units>
     </comp>
     <comp ref="U21">
-      <value>MCP23017 0x21</value>
-      <footprint>Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm</footprint>
+      <value>MCP23017-E/SS 0x21</value>
+      <footprint>Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</footprint>
       <fields>
-        <field name="Footprint">Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm</field>
+        <field name="LCSC">C506653</field>
+        <field name="Footprint">Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="Interface_Expansion" part="MCP23017x-x-SO" description="16-bit I/O expander, I2C, interrupts, w pull-ups, GPA7/GPB7 output only (https://microchip.my.site.com/s/article/GPA7---GPB7-Cannot-Be-Used-as-Inputs-In-MCP23017),  SOIC-28"/>
+      <libsource lib="Interface_Expansion" part="MCP23017x-x-SS" description="16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28"/>
+      <property name="LCSC" value="C506653"/>
       <property name="Sheetname" value="mcp-21"/>
       <property name="Sheetfile" value="sheets/mcp-21.kicad_sch"/>
       <property name="ki_keywords" value="Microchip port-expander GPIO"/>
-      <property name="ki_fp_filters" value="SOIC*7.5x17.9mm*P1.27mm*"/>
+      <property name="ki_fp_filters" value="SSOP*5.3x10.2mm*P0.65mm*"/>
       <sheetpath names="/mcp-21/" tstamps="/8f295a35-de91-5b8a-9309-4de8291bb23c/"/>
       <tstamps>498bc389-04ef-579e-b0e8-9f9a64eaaf98</tstamps>
       <units>
@@ -310,13 +320,15 @@
     </comp>
     <comp ref="C211">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -334,13 +346,15 @@
     </comp>
     <comp ref="C212">
       <value>1uF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C5137478</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C5137478"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -358,13 +372,15 @@
     </comp>
     <comp ref="R21">
       <value>10k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="LCSC">C17414</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17414"/>
       <property name="Sheetname" value="support-21-1"/>
       <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor"/>
@@ -543,13 +559,15 @@
     </comp>
     <comp ref="C117">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -567,13 +585,15 @@
     </comp>
     <comp ref="C118">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -591,13 +611,15 @@
     </comp>
     <comp ref="C119">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -615,13 +637,15 @@
     </comp>
     <comp ref="C120">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -638,14 +662,16 @@
       </units>
     </comp>
     <comp ref="D18">
-      <value>SK6812MINI-E idx 17</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -664,14 +690,16 @@
       </units>
     </comp>
     <comp ref="D19">
-      <value>SK6812MINI-E idx 18</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -690,14 +718,16 @@
       </units>
     </comp>
     <comp ref="D20">
-      <value>SK6812MINI-E idx 19</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -716,14 +746,16 @@
       </units>
     </comp>
     <comp ref="D21">
-      <value>SK6812MINI-E idx 20</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-17"/>
       <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -835,13 +867,15 @@
     </comp>
     <comp ref="C121">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -859,13 +893,15 @@
     </comp>
     <comp ref="C122">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -883,13 +919,15 @@
     </comp>
     <comp ref="C123">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -907,13 +945,15 @@
     </comp>
     <comp ref="C124">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -930,14 +970,16 @@
       </units>
     </comp>
     <comp ref="D22">
-      <value>SK6812MINI-E idx 21</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -956,14 +998,16 @@
       </units>
     </comp>
     <comp ref="D23">
-      <value>SK6812MINI-E idx 22</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -982,14 +1026,16 @@
       </units>
     </comp>
     <comp ref="D24">
-      <value>SK6812MINI-E idx 23</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1008,14 +1054,16 @@
       </units>
     </comp>
     <comp ref="D25">
-      <value>SK6812MINI-E idx 24</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-21"/>
       <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1127,13 +1175,15 @@
     </comp>
     <comp ref="C125">
       <value>100nF</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="LCSC">C49678</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -1150,14 +1200,16 @@
       </units>
     </comp>
     <comp ref="D26">
-      <value>SK6812MINI-E idx 25</value>
-      <footprint>gf_consola:SK6812MINI-E_ReverseMount</footprint>
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
       <fields>
-        <field name="Footprint">gf_consola:SK6812MINI-E_ReverseMount</field>
+        <field name="LCSC">C5378731</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
       <property name="Sheetname" value="keys-25"/>
       <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
       <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
@@ -1272,18 +1324,18 @@
         <pin num="2" name="" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Interface_Expansion" part="MCP23017x-x-SO">
-      <description>16-bit I/O expander, I2C, interrupts, w pull-ups, GPA7/GPB7 output only (https://microchip.my.site.com/s/article/GPA7---GPB7-Cannot-Be-Used-as-Inputs-In-MCP23017),  SOIC-28</description>
+    <libpart lib="Interface_Expansion" part="MCP23017x-x-SS">
+      <description>16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28</description>
       <docs>https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf</docs>
       <footprints>
-        <fp>SOIC*7.5x17.9mm*P1.27mm*</fp>
+        <fp>SSOP*5.3x10.2mm*P0.65mm*</fp>
       </footprints>
       <fields>
         <field name="Reference">U</field>
-        <field name="Value">MCP23017x-x-SO</field>
-        <field name="Footprint">Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm</field>
+        <field name="Value">MCP23017x-x-SS</field>
+        <field name="Footprint">Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</field>
         <field name="Datasheet">https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf</field>
-        <field name="Description">16-bit I/O expander, I2C, interrupts, w pull-ups, GPA7/GPB7 output only (https://microchip.my.site.com/s/article/GPA7---GPB7-Cannot-Be-Used-as-Inputs-In-MCP23017),  SOIC-28</field>
+        <field name="Description">16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28</field>
       </fields>
       <pins>
         <pin num="1" name="GPB0" type="bidirectional"/>

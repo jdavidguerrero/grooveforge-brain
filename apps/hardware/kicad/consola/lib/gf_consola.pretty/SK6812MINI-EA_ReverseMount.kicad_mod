@@ -1,9 +1,9 @@
-(footprint "SK6812MINI-E_ReverseMount"
+(footprint "SK6812MINI-EA_ReverseMount"
   (version 20260206)
   (generator "pcbnew")
   (generator_version "10.0")
   (layer "F.Cu")
-  (descr "RGB LED with integrated controller (https://www.lcsc.com/datasheet/C5149201.pdf)")
+  (descr "SK6812MINI-EA C5378731; OPSCO B/2 pp4-5; KiCad reverse-mount geometry, compatible pinout 1 GND 2 DIN 3 VDD 4 DOUT")
   (tags "RGB LED NeoPixel Mini addressable")
   (property "Reference" "REF**"
     (at 0 -2.6 0)
@@ -14,7 +14,7 @@
       (font
         (size 1 1)
         (thickness 0.15))))
-  (property "Value" "SK6812MINI-E_ReverseMount"
+  (property "Value" "SK6812MINI-EA_ReverseMount"
     (at 0 2.54 0)
     (unlocked yes)
     (layer "F.Fab")

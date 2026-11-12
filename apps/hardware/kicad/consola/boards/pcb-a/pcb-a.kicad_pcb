@@ -5010,7 +5010,7 @@
 				)
 			)
 		)
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -6719,7 +6719,7 @@
 				)
 			)
 		)
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -4.94 -2.685)
@@ -7203,7 +7203,7 @@
 				)
 			)
 		)
-		(attr smd)
+		(attr smd dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -8297,7 +8297,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Value" "MCP23017T-E/SS"
+		(property "Value" "MCP23017-E/SS"
 			(at 0 -6.05 180)
 			(layer "B.Fab")
 			(uuid "a3c7bfe2-938e-4317-a8d9-46c806138718")
@@ -8346,7 +8346,7 @@
 				(justify mirror)
 			)
 		)
-		(property "LCSC" "C558584"
+		(property "LCSC" "C506653"
 			(at 0 0 0)
 			(layer "B.SilkS")
 			(hide yes)

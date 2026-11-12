@@ -3,9 +3,9 @@
 from .generator import Board, Sheet, Symbol
 
 CHOC = 'gf_consola:Kailh_Choc_V2_PG1353_Hotswap'
-LED = 'gf_consola:SK6812MINI-E_ReverseMount'
-R0603 = 'Resistor_SMD:R_0603_1608Metric'
-C0603 = 'Capacitor_SMD:C_0603_1608Metric'
+LED = 'gf_consola:SK6812MINI-EA_ReverseMount'
+R0805 = 'Resistor_SMD:R_0805_2012Metric'
+C0805 = 'Capacitor_SMD:C_0805_2012Metric'
 TP = 'TestPoint:TestPoint_Pad_D1.5mm'
 LED_ORDER = ('BACK', 'MENU', 'NAV_L', 'NAV_R', 'BROWSE', 'TAP', 'FILL', 'CUE_ENG',
              'BUILD', 'DROP', 'BREAK', 'SHIFT', 'UNDO', 'DELETE', 'DUPLICATE',
@@ -27,9 +27,10 @@ LINK = ('+3V3', 'GND', 'SDA', 'SCL', '+5V_LED', 'LED_DATA')
 MAIN = ('GND', '+3V3', 'SDA', 'SCL', 'LED_DIN_5V', '+5V_LED', 'JOG_CLICK', 'PEDAL_BTN')
 
 
-def part(lib_id, reference, value, footprint, pins, dnp=False):
+def part(lib_id, reference, value, footprint, pins, dnp=False, lcsc=None):
     """Create an unplaced declarative part for the sheet packer."""
-    return Symbol(lib_id, reference, value, footprint, (0, 0), pins, dnp=dnp)
+    return Symbol(lib_id, reference, value, footprint, (0, 0), pins, dnp=dnp,
+                  fields={"LCSC": lcsc} if lcsc else {})
 
 
 def packed(name, symbols, notes=()):
@@ -52,8 +53,9 @@ def connector(ref, nets, value):
 
 
 def capacitor(ref, value, rail, ground='GND'):
-    return part('Device:C', ref, value, C0603 if value != '22uF' else
-                'Capacitor_SMD:C_1210_3225Metric', {'1': rail, '2': ground})
+    return part('Device:C', ref, value, C0805 if value != '22uF' else
+                'Capacitor_SMD:C_1206_3216Metric', {'1': rail, '2': ground},
+                lcsc={'100nF': 'C49678', '1uF': 'C5137478', '22uF': 'C12891'}[value])
 
 
 def testpoint(ref, net):
@@ -67,8 +69,8 @@ def mcp(address):
             '13': 'SDA', '14': None, '15': '+3V3' if address & 1 else 'GND',
             '16': '+3V3' if address & 2 else 'GND', '17': 'GND',
             '18': f'RESET_{tag}', '19': f'INTB_{tag}', '20': f'INTA_{tag}', '28': None}
-    support = [part('Device:R', f'R{tag}', '10k', R0603,
-                    {'1': '+3V3', '2': f'RESET_{tag}'}),
+    support = [part('Device:R', f'R{tag}', '10k', R0805,
+                    {'1': '+3V3', '2': f'RESET_{tag}'}, lcsc='C17414'),
                capacitor(f'C{tag}1', '100nF', '+3V3'),
                capacitor(f'C{tag}2', '1uF', '+3V3'),
                testpoint(f'TP{tag}20', f'INTA_{tag}'),
@@ -80,8 +82,9 @@ def mcp(address):
             pins[GPIO_PINS[gpio]] = net
             if gpio not in GPIO[address]:
                 support.append(testpoint(f'TP{tag}{GPIO_PINS[gpio]}', net))
-    chip = part('Interface_Expansion:MCP23017x-x-SO', f'U{tag}',
-                f'MCP23017 0x{tag}', 'Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm', pins)
+    chip = part('Interface_Expansion:MCP23017x-x-SS', f'U{tag}',
+                f'MCP23017-E/SS 0x{tag}', 'Package_SO:SSOP-28_5.3x10.2mm_P0.65mm', pins,
+                lcsc='C506653')
     chip.position = (190.5, 127)
     return [Sheet(f'mcp-{tag}', [chip], notes=[
         f'0x{tag}: GPA7 / GPB7 NC (errata). Pull-ups internos por firmware.',
@@ -97,12 +100,12 @@ def pcb_k(side):
     symbols = [connector('J1', MAIN if left else LINK, 'PCB-M' if left else 'DESDE IZQUIERDA')]
     if left:
         symbols.append(connector('J2', LINK, 'HACIA DERECHA'))
-    symbols += [part('Device:R', 'R1', '33R', R0603,
-                     {'1': 'LED_DIN_5V' if left else 'LED_DATA', '2': f'LED_{indices.start}_DIN'}),
+    symbols += [part('Device:R', 'R1', '33R', R0805,
+                     {'1': 'LED_DIN_5V' if left else 'LED_DATA', '2': f'LED_{indices.start}_DIN'}, lcsc='C17634'),
                 capacitor('C1', '22uF', '+5V_LED')]
     for index, signal in enumerate(('SDA', 'SCL'), 2):
-        symbols.append(part('Device:R', f'R{index}', '2.2k DNP', R0603,
-                            {'1': '+3V3', '2': signal}, dnp=True))
+        symbols.append(part('Device:R', f'R{index}', '2.2k DNP', R0805,
+                            {'1': '+3V3', '2': signal}, dnp=True, lcsc='C17520'))
     for i, rail in enumerate(('+3V3', '+5V_LED', 'GND')):
         symbols.append(part('power:PWR_FLAG', f'#FLG{i+1:02}', 'PWR_FLAG', '', {'1': rail}))
     # Off-board SCL/DIN sources are electrically asserted; SDA is bidirectional on MCP.
@@ -120,8 +123,8 @@ def pcb_k(side):
             key = LED_ORDER[i]
             output = ('LED_DATA' if i == 16 else None if i == 25 else f'LED_{i+1}_DIN')
             triple = [part('Switch:SW_Push', f'SW{i+1}', key, CHOC, {'1': key, '2': 'GND'}),
-                      part('LED:SK6812MINI-E', f'D{i+1}', f'SK6812MINI-E idx {i}', LED,
-                           {'1': 'GND', '2': f'LED_{i}_DIN', '3': '+5V_LED', '4': output}),
+                      part('LED:SK6812MINI-E', f'D{i+1}', 'SK6812MINI-EA', LED,
+                           {'1': 'GND', '2': f'LED_{i}_DIN', '3': '+5V_LED', '4': output}, lcsc='C5378731'),
                       capacitor(f'C{100+i}', '100nF', '+5V_LED')]
             for col, symbol in enumerate(triple):
                 symbol.position = (76.2 + col*114.3, 63.5 + row*50.8)

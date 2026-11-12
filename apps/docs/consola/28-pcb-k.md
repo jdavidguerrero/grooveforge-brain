@@ -12,7 +12,7 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 | Bloque | Cantidad | Nota |
 |---|---|---|
 | Teclas Kailh Choc V2 Brown (táctil 50 gf, 4 patas, ventana para LED SMD) | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
-| LED SK6812MINI-EA (montaje inverso; LCSC C5378731, ensamble económico de JLC) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
+| LED SK6812MINI-EA (montaje inverso; LCSC C5378731, ensamble manual opción B) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
 | MCP23017 | 3 | 0x21, 0x22, 0x23 (A2 A1 A0 = 001, 010, 011) |
 | Conector a PCB-M | 1 | 8 vías, pinout de la hoja 08 de PCB-M (§5) |
 
@@ -42,8 +42,7 @@ Valen las v1, que son además las que corta la chapa.
 ## 3. Teclas
 
 - Huella Choc con **zócalo hot-swap Kailh CPG135001S30** (LCSC C5333465, ~0,16 USD c/u, sin stock el 2026-11-12;
-  también se vende por bolsas). Se compran aparte de las teclas: 26 + repuestos. Se sueldan a mano (SMD de 2 pads) o
-  los pone JLC. Confirmar con la hoja de la Choc V2 que usa el mismo zócalo. Alternativa: teclas soldadas.
+  también se vende por bolsas). Se compran aparte de las teclas: 26 + repuestos. Se sueldan a mano (SMD de 2 pads, pedido-v1 opción B; JLC ensambla solo PCB-M). Confirmar con la hoja de la Choc V2 que usa el mismo zócalo. Alternativa: teclas soldadas.
   **D-K1: zócalos (Juan, 2026-11-12).** Huella base: `Kailh_Choc_V2` de la librería siderakb/key-switches.pretty
   (poste central más grande que la V1, sin los postes laterales de la V1), a confirmar con la medición de §3.
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
@@ -54,13 +53,24 @@ Valen las v1, que son además las que corta la chapa.
   | Elemento | Posición | Agujero |
   |---|---|---|
   | Poste central | 0, 0 | Ø5,0 |
-  | Pata eléctrica 1 | 0, −5,90 | Ø1,2 (o pad del zócalo) |
-  | Pata eléctrica 2 | 5,00, −3,80 | Ø1,2 (o pad del zócalo) |
+  | Pata eléctrica 1 | 0, −5,90 | **Ø1,3 PTH**, pad Ø1,9 + pad SMD del zócalo |
+  | Pata eléctrica 2 | 5,00, −3,80 | **Ø1,3 PTH**, pad Ø1,9 + pad SMD del zócalo |
   | Poste de plástico | −5,00, 5,15 | Ø1,5 |
-  | Ventana del LED | 0, 4,93 | corte para SK6812MINI-E |
+  | Ventana del LED | 0, 4,93 | corte para SK6812MINI-EA |
 
   Las patas eléctricas están donde las de la Choc V1, por eso sirve el zócalo **CPG135001S30**; el poste central es
   más grande (Ø5,0 contra Ø3,4 de la V1).
+- **Huella doble (Juan, 2026-11-12):** cada pata eléctrica tiene taladro metalizado Ø1,3 con anillo
+  de 0,30 mm (pad Ø1,9) y comparte número/red 1 o 2 con su pad SMD inferior del zócalo.
+  Se puede soldar la tecla directamente si no llegan los zócalos. Los pads SMD provisionales
+  de 2,6 × 2,6 quedan en x = −3,275 y 8,275; distancia al taladro correspondiente 3,275 mm:
+  separación cobre-cobre = 3,275 − 1,30 − 0,95 = **1,025 mm**, sin choque (mínimo 0,2).
+  Anillo 0,30 ≥ 0,15 mm. Los pares cruzados tienen más separación. En layout hay que rutear
+  las dos terminaciones de cada red; compartir número no las conecta físicamente.
+  No se cambian los postes **NPTH** Ø5,0 y Ø1,5 ni el centro de recorte LED (x = 0; y = +4,93).
+  Los pads del zócalo siguen provisionales: verificar pieza/cupón, incluido que su plástico
+  admita estos taladros de 1,3 (antes eran aperturas NPTH de 3); no se certifica aquí ese ajuste.
+
 - **Alturas:** la carcasa inferior (13,95 × 13,95) mide 3,30 sobre la PCB; la superior (15 × 15) se apoya encima. Con
   PCB-K a −3,4 la cara del aluminio queda donde iría la placa de montaje estándar: **la tecla apoya su carcasa
   superior en la chapa**, como en un teclado. Las aletas de clip quedan dentro del espesor de 2 mm.
@@ -128,15 +138,23 @@ alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
 
 ## 6. LEDs
 
-- 26 × SK6812MINI-E, cadena única en el orden de `27` §1, para las dos placas de §7: J1.5 → BACK (LED0) →
+- 26 × SK6812MINI-EA (LCSC C5378731), cadena única en el orden de `27` §1, para las dos placas de §7: J1.5 → BACK (LED0) →
   MENU → NAV_L → NAV_R → BROWSE → TAP → FILL → CUE_ENG → BUILD → DROP → BREAK → SHIFT → UNDO →
   DELETE → DUPLICATE → QUANTIZE → NEW (LED16), todo en la izquierda. DOUT de NEW → único hilo LED_DATA del
   cable → DIN de PLAY (LED17) en la frente-derecha → STOP → REC → LOOP → METRO → SCENE4_PAGE_R →
   SCENE3_PAGE_L → SCENE2_OCT− → SCENE1_OCT+ (LED25). No cruza la franja sobre la ventana de la M4.
-- Datos: entrada desde J1.5 con resistencia serie de 33 Ω (huella 0603, puente si no hace falta).
+- Datos: entrada desde J1.5 con resistencia serie de 33 Ω (huella 0805, puente si no hace falta).
 - Cada LED con 100 nF a GND; 22 µF a la entrada de +5V_LED. +5 V y GND en pista ancha (≥ 0,8 mm) alrededor del anillo
   que forma la placa; GND con relleno en la cara inferior.
 - Corriente: el firmware limita a 500 mA (`27` §4). El polyfuse de 0,75 A de la rama está en PCB-M (`24` §5).
+
+**Ensamble manual:** 100 nF C49678, 1 µF C5137478, 10 kΩ C17414 y 33 Ω C17634
+usan 0805; 22 µF C12891 usa **1206**. MCP23017-E/SS C506653 usa SSOP-28
+5,3 × 10,2 mm, paso 0,65 (no SOIC). R2/R3 2,2 kΩ 0805 C17520 siguen DNP.
+LED: [hoja LCSC C5378731](https://www.lcsc.com/datasheet/C5378731.pdf), OPSCO B/2
+(2026-07-23), pp.4–5: 3,2 × 2,8 × 1,78 mm; **1 GND, 2 DIN, 3 VDD, 4 DOUT**.
+Compatible con el símbolo eléctrico MINI-E y la geometría inversa KiCad de paso 1,5 mm;
+la huella local se llama `SK6812MINI-EA_ReverseMount`. Se conserva el recorte de Dn.
 
 ## 7. Costo: una placa o dos
 

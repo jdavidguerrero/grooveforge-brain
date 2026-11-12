@@ -705,7 +705,13 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17634"
       (at 190.5 63.5 0)
       (effects
         (font
@@ -782,7 +788,13 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Capacitor_SMD:C_1210_3225Metric"
+    (property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C12891"
       (at 304.8 63.5 0)
       (effects
         (font
@@ -859,7 +871,13 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
       (at 76.2 114.3 0)
       (effects
         (font
@@ -936,7 +954,13 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17520"
       (at 190.5 114.3 0)
       (effects
         (font

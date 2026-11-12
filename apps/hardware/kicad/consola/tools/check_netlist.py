@@ -3,6 +3,7 @@
 
 import argparse
 import importlib.util
+import json
 import os
 from pathlib import Path
 import re
@@ -20,6 +21,8 @@ from schgen.console_artifacts import write_artifacts
 
 DEFAULT_CLI = Path('/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli')
 DEFAULT_BOARD = Path(__file__).resolve().parents[1] / 'boards/pcb-m'
+# Existing authored schematics have frozen connectivity, never a generation factory.
+LEGACY_BOARDS = {'pcb-a': Path(__file__).with_name('pcb-a-connectivity.json')}
 
 
 def find_kicad_cli():
@@ -140,6 +143,14 @@ def check(board, directory, cli, regenerate=False, library=None):
               f'({stats["nc"]} NC), {stats["nets"]} named nets')
     except ValueError as error:
         failures.append(str(error))
+    failures += check_erc_and_pdf(board.name, schematic, docs, cli, library)
+    if failures:
+        raise ValueError('\n'.join(failures))
+
+
+def check_erc_and_pdf(name, schematic, docs, cli, library):
+    """Export real ERC/PDF artifacts for generated and existing schematics alike."""
+    failures = []
     report = docs / 'erc-report.txt'
     run_kicad([str(cli), 'sch', 'erc', '--severity-all', '--output', str(report), str(schematic)], docs, library.directory)
     text = report.read_text()
@@ -151,7 +162,44 @@ def check(board, directory, cli, regenerate=False, library=None):
         if int(counts[1]):
             failures.append(f'ERC errors remain: {counts[1]}')
     run_kicad([str(cli), 'sch', 'export', 'pdf', '--output',
-               str(docs / f'{board.name}-schematic.pdf'), str(schematic)], docs, library.directory)
+               str(docs / f'{name}-schematic.pdf'), str(schematic)], docs, library.directory)
+    return failures
+
+
+def compare_legacy_netlist(name, path):
+    """Check an existing board against the independently frozen pre-edit pin/net map."""
+    expected = json.loads(LEGACY_BOARDS[name].read_text())
+    tree = ET.parse(path)
+    refs = sorted(c.attrib['ref'] for c in tree.findall('./components/comp'))
+    pins = {}
+    for net in tree.findall('./nets/net'):
+        for node in net.findall('node'):
+            key = f"{node.attrib['ref']}.{node.attrib['pin']}"
+            if key in pins:
+                raise ValueError(f'Pin appears in multiple nets: {key}')
+            pins[key] = net.attrib['name']
+    if refs != expected['components']:
+        raise ValueError(f'{name}: components changed from frozen legacy contract')
+    if pins != expected['pins']:
+        changes = {key: (expected['pins'].get(key), pins.get(key))
+                   for key in expected['pins'].keys() | pins.keys()
+                   if expected['pins'].get(key) != pins.get(key)}
+        raise ValueError(f'{name}: legacy connectivity changed: {changes}')
+    return {'components': len(refs), 'pins': len(pins), 'nets': len(set(pins.values()))}
+
+
+def check_legacy(name, directory, cli, library):
+    """Verify a hand-authored schematic without regenerating or changing its nets."""
+    directory = Path(directory)
+    schematic = directory / f'{name}.kicad_sch'
+    docs = directory / 'docs'
+    docs.mkdir(parents=True, exist_ok=True)
+    netlist = docs / f'{name}-netlist.xml'
+    export_netlist(cli, schematic, netlist, library.directory)
+    stats = compare_legacy_netlist(name, netlist)
+    print(f'Connectivity PASS (frozen legacy): {stats["components"]} components, '
+          f'{stats["pins"]} pins, {stats["nets"]} exported nets')
+    failures = check_erc_and_pdf(name, schematic, docs, cli, library)
     if failures:
         raise ValueError('\n'.join(failures))
 
@@ -162,15 +210,16 @@ def main():
     parser.add_argument('--regenerate', action='store_true', help='Generate before exporting and checking')
     parser.add_argument('--directory', type=Path, help='Board directory; parent of board directories with --all')
     source = parser.add_mutually_exclusive_group()
-    source.add_argument('--board', choices=BOARDS, default='pcb-m')
-    source.add_argument('--all', action='store_true', help='Check PCB-M and all four Console boards')
+    source.add_argument('--board', choices=[*BOARDS, *LEGACY_BOARDS], default='pcb-m')
+    source.add_argument('--all', action='store_true', help='Check all generated boards and existing PCB-A against its frozen contract')
     source.add_argument('--description', type=Path, help='Python file exporting board() -> Board')
     parser.add_argument('--libraries', type=Path, default=None)
     parser.add_argument('--kicad-cli', default=find_kicad_cli())
     args = parser.parse_args()
     if not args.kicad_cli:
         parser.error('kicad-cli not found; install KiCad 10 or pass --kicad-cli')
-    boards = [factory() for factory in BOARDS.values()] if args.all else [BOARDS[args.board]()]
+    names = [*BOARDS, *LEGACY_BOARDS] if args.all else [args.board]
+    boards = [BOARDS[name]() if name in BOARDS else name for name in names]
     if args.description:
         spec = importlib.util.spec_from_file_location('board_description', args.description)
         module = importlib.util.module_from_spec(spec)
@@ -179,18 +228,22 @@ def main():
     failed = False
     library = Library(args.libraries) if args.libraries else Library()
     for board in boards:
+        name = board if isinstance(board, str) else board.name
         if args.directory:
-            directory = args.directory / board.name if args.all else args.directory
+            directory = args.directory / name if args.all else args.directory
         else:
-            directory = DEFAULT_BOARD.parent / board.name
-        print(f'=== {board.name} ===', flush=True)
+            directory = DEFAULT_BOARD.parent / name
+        print(f'=== {name} ===', flush=True)
         try:
+            if name in LEGACY_BOARDS:
+                check_legacy(name, directory, args.kicad_cli, library)
+                continue
             if args.regenerate and not args.description:
                 validate(board, library)
                 write_artifacts(board.name, directory)
             check(board, directory, args.kicad_cli, args.regenerate, library)
         except (ValueError, OSError, subprocess.CalledProcessError) as error:
-            print(f'FAIL {board.name}: {error}', file=sys.stderr)
+            print(f'FAIL {name}: {error}', file=sys.stderr)
             failed = True
     return int(failed)
 

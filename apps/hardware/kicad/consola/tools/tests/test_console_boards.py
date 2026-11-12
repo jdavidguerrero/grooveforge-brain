@@ -69,7 +69,7 @@ def test_connectors_and_split_led_chain():
     assert left['D17'].pins['4'] == left['J2'].pins['6'] == right['R1'].pins['1']
     assert right['D26'].pins['4'] is None
     for parts, incoming, first in [(left, 'LED_DIN_5V', 0), (right, 'LED_DATA', 17)]:
-        assert parts['R1'].value == '33R' and '0603' in parts['R1'].footprint
+        assert parts['R1'].value == '33R' and '0805' in parts['R1'].footprint
         assert parts['R1'].pins == {'1': incoming, '2': f'LED_{first}_DIN'}
         assert parts['C1'].value == '22uF' and parts['C1'].pins['1'] == '+5V_LED'
         assert [(parts[r].value, parts[r].dnp) for r in ('R2', 'R3')] == [('2.2k DNP', True)] * 2
@@ -129,8 +129,8 @@ def test_footprint_geometry_and_provisional_marking(tmp_path):
     pads = children(switch, 'pad')
     holes = {tuple(map(float, child(p, 'at')[1:3])): float(child(p, 'drill')[1])
              for p in pads if p[2] == 'np_thru_hole'}
-    assert holes == {(0, 0): 5, (-5, -5.15): 1.5, (0, 5.9): 3, (5, 3.8): 3}
-    contacts = [p for p in pads if p[1]]
+    assert holes == {(0, 0): 5, (-5, -5.15): 1.5}
+    contacts = [p for p in pads if p[2] == 'smd']
     assert {p[1] for p in contacts} == {'1', '2'}
     assert all(child(p, 'layers')[1:] == ['B.Cu', 'B.Paste', 'B.Mask'] for p in contacts)
     assert 'VERIFICAR CON ZÓCALO REAL' in (tmp_path / 'Kailh_Choc_V2_PG1353_Hotswap.kicad_mod').read_text()
@@ -139,7 +139,7 @@ def test_footprint_geometry_and_provisional_marking(tmp_path):
     fsr = parse((tmp_path / 'FSR402_SolderTail_Provisional.kicad_mod').read_text())
     assert {p[1] for p in children(fsr, 'pad')} == {'1', '2'}
     assert all('F.Paste' not in child(p, 'layers') for p in children(fsr, 'pad'))
-    led = parse((tmp_path / 'SK6812MINI-E_ReverseMount.kicad_mod').read_text())
+    led = parse((tmp_path / 'SK6812MINI-EA_ReverseMount.kicad_mod').read_text())
     assert {p[1] for p in children(led, 'pad')} == {'1', '2', '3', '4'}
     assert any(child(n, 'layer')[1] == 'Edge.Cuts' for n in children(led, 'fp_line'))
     for path in tmp_path.glob('*.kicad_mod'):

@@ -30,6 +30,7 @@ class Symbol:
     rotation: int = 0
     unit: int = 1
     dnp: bool = False
+    fields: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -220,7 +221,7 @@ def validate(board, library):
             if key in seen:
                 raise ValueError(f'Duplicate reference/unit: {key}')
             seen.add(key)
-            identity = (symbol.lib_id, symbol.value, symbol.footprint, symbol.dnp)
+            identity = (symbol.lib_id, symbol.value, symbol.footprint, symbol.dnp, symbol.fields)
             if symbol.reference in reference_data and reference_data[symbol.reference] != identity:
                 raise ValueError(f'Inconsistent multi-unit symbol: {symbol.reference}')
             reference_data[symbol.reference] = identity
@@ -278,6 +279,8 @@ def _sheet_tree(board, sheet, library, global_nets):
                 _property('Reference', symbol.reference, x, bounds[1] + 1.27),
                 _property('Value', symbol.value, x, bounds[1] + 3.81),
                 _property('Footprint', symbol.footprint, x, y, True)]
+        node.extend(_property(name, value, x, y, True)
+                    for name, value in sorted(symbol.fields.items()))
         for pin in library.pins(symbol):
             number = str(child(pin, 'number')[1])
             start, end, angle = _pin_geometry(symbol, pin)
