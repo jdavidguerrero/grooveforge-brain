@@ -12,8 +12,9 @@ Decidido con Juan el 2026-11-12, tras cotizar CNC + nylon en ~90 USD cada uno: *
 | `panel-aluminio-v1.step` | Para cotizar o revisar en 3D |
 
 - **Sin rebajes de Choc:** el rebaje 16 × 16 × 0,8 por debajo obligaba a fresar por la otra cara y era lo que encarecía el
-  CNC. La variante láser abre la tecla a **15,4** (pasa la carcasa superior); la tecla queda sostenida solo por PCB-K.
-  Elegir la medida definitiva con el cupón y una Choc V2 real, y cambiar `CHOC_CUT_LASER`.
+  CNC. Con la hoja de la PG1353 (`28` §3) la chapa hace de placa de montaje: probar primero **14,0** en el cupón con
+  una tecla montada (las aletas se comprimen y la tecla queda firme sobre el zócalo); 14,6 si queda forzada; 15,4 solo
+  si nada sirve. El modelo usa hoy 15,4: cambiar `CHOC_CUT_LASER` cuando se elija.
 - **Agujeros de PEM** (37): FH-M2.5 → 2,5 (PCB-K); BSO-M2.5 / BSO-M3 → 4,2 (PCB-P, PCB-F y las 9 torres). Se prensan a
   mano en tornillo de banco con yunque plano. Verificar diámetros con la hoja del proveedor y en el cupón.
 - Anodizado y rótulos aparte (grabado láser o vinilo); el corte no los incluye.

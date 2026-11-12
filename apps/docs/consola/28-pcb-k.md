@@ -48,15 +48,26 @@ Valen las v1, que son además las que corta la chapa.
   (poste central más grande que la V1, sin los postes laterales de la V1), a confirmar con la medición de §3.
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
   Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.
-- Modelo de Juan (a confirmar): Choc V2 Low Profile Brown, 4 patas (2 eléctricas + 2 de plástico), ventana para LED SMD de
-  montaje inverso: encaja con el SK6812MINI-E de §6. La huella se dibuja con las patas medidas con calibre en una
-  tecla real (centro, patas eléctricas y postes), no con la de la Choc V1.
-- **Ojo:** la hoja que encontró Juan es de la **PG1511** (CPG151101S22, perfil bajo con patas en posición MX), no de la
-  Choc V2 (PG1353). Son teclas distintas: la PG1511 mide 15,25 mm de alto y su carcasa superior queda ~11 mm sobre la
-  PCB, lo que no cabe en la luz de 1,4 mm de §2. Prueba rápida: distancia entre las dos patas metálicas,
-  **≈ 5,4 mm → Choc** (V1/V2 comparten esas patas), **≈ 6,8 mm → PG1511/MX**.
-- LED en la ventana de la tecla, desplazado hacia atrás (+y) del centro; distancia exacta según la hoja de la Choc V2
-  (verificar con una tecla real antes de enviar el layout).
+- **Tecla: Kailh Choc V2 PG1353** (hoja CPG135301D02; la de Juan es la Brown, mismo cuerpo). Huella en vista superior,
+  mm desde el centro, +y hacia atrás (la hoja la dibuja girada 90°):
+
+  | Elemento | Posición | Agujero |
+  |---|---|---|
+  | Poste central | 0, 0 | Ø5,0 |
+  | Pata eléctrica 1 | 0, −5,90 | Ø1,2 (o pad del zócalo) |
+  | Pata eléctrica 2 | 5,00, −3,80 | Ø1,2 (o pad del zócalo) |
+  | Poste de plástico | −5,00, 5,15 | Ø1,5 |
+  | Ventana del LED | 0, 4,93 | corte para SK6812MINI-E |
+
+  Las patas eléctricas están donde las de la Choc V1, por eso sirve el zócalo **CPG135001S30**; el poste central es
+  más grande (Ø5,0 contra Ø3,4 de la V1).
+- **Alturas:** la carcasa inferior (13,95 × 13,95) mide 3,30 sobre la PCB; la superior (15 × 15) se apoya encima. Con
+  PCB-K a −3,4 la cara del aluminio queda donde iría la placa de montaje estándar: **la tecla apoya su carcasa
+  superior en la chapa**, como en un teclado. Las aletas de clip quedan dentro del espesor de 2 mm.
+- **Corte de la chapa:** con zócalos conviene que la chapa sostenga la tecla (si no, se sale al tirar del keycap).
+  Primero probar en el cupón el corte de **14,0** con una tecla montada: las aletas se comprimen en los 2 mm y la
+  tecla queda firme. Si no entra o queda forzada, 14,6. El 15,4 solo si nada de lo anterior sirve (la tecla quedaría
+  sostenida solo por el zócalo).
 
 ## 4. Entradas de los MCP
 
@@ -156,5 +167,5 @@ dos cargos de preparación en vez de uno: cotizarlo antes de elegir ensamble.
 |---|---|---|
 | D-K1 | ~~Zócalo o soldadas~~ | Resuelto: zócalos |
 | D-K2 | ~~Una o dos placas~~ | Resuelto: dos (§7) |
-| D-K4 | ¿Las teclas son Choc V2 (PG1353) o PG1511? | Medir las patas (§3) |
+| D-K4 | ~~Modelo de tecla~~ | Resuelto: PG1353 (hoja enviada por Juan) |
 | D-K3 | ~~Posiciones~~ | Resuelto: v1 (§2) |
