@@ -5,6 +5,7 @@
 #include <IntervalTimer.h>
 #include <cstring>
 #include "consola_s/Surface.h"
+#include "consola_s/Bench.h"
 #include "consola_s/PadLedReturn.h"
 #ifdef GF_CONSOLA_UNO
 #include "consola_s/KeyLedReturn.h"
@@ -120,6 +121,11 @@ uint32_t m4_last_rx = 0;
 uint8_t m4_buffer[259];
 uint16_t m4_size = 0;
 uint32_t m4_byte_time = 0;
+consola::Bench bench;
+consola::Bench::Snapshot bench_inputs;
+volatile uint16_t fsr_raw[4]{};
+volatile uint8_t fsr_valid=0;
+bool watch_expired=false;
 char command[32];
 size_t command_size = 0;
 bool command_overflow = false;
@@ -158,6 +164,7 @@ void scan_fsr() {
             slow_valid |= 1u << (i-4);
         } else {
             ++fsr_samples[i];
+            fsr_raw[i]=raw; fsr_valid |= 1u<<i;
             const auto event = pads[i].sample(raw,now);
             if (event.changed) {
                 const uint8_t next = (queue_head + 1) % QUEUE_SIZE;
@@ -175,6 +182,7 @@ void scan_fsr() {
     if (step.start >= 0) ADC1_HC0 = ADC1_CHANNELS[step.start];
 }
 void send_note(uint8_t note, bool on, uint8_t velocity) {
+    bench.event("KEY",note,on);
     if (on) usbMIDI.sendNoteOn(note, velocity, MIDI_CHANNEL);
     else usbMIDI.sendNoteOff(note, 0, MIDI_CHANNEL);
     ++midi_events;
@@ -240,6 +248,7 @@ void poll_buttons(uint32_t now) {
         ++mcp_errors;
         mcp[chip].failed(now);
         mcp_configured[chip] = false;
+        bench_inputs.mcp_valid &= ~(1u<<chip);
         McpButtons::Event events[14];
         const uint8_t count = buttons[chip].disconnect(events);
         send_buttons(events,count);
@@ -248,6 +257,8 @@ void poll_buttons(uint32_t now) {
     mcp[chip].succeeded();
     uint16_t value = Wire.read();
     value |= uint16_t(Wire.read()) << 8;
+    bench_inputs.mcp[chip]=value;
+    bench_inputs.mcp_valid |= 1u<<chip;
     McpButtons::Event events[14];
     const uint8_t count = buttons[chip].sample(value,now,events);
     send_buttons(events,count);
@@ -376,13 +387,46 @@ void prepare_stats() {
     response[response_size] = 0;
     response_sent = 0;
 }
+void capture_bench_inputs() {
+    bench_inputs.enc_mask=PROFILE.encoders;
+    for(uint8_t i=0;i<9;++i) bench_inputs.enc[i]=encoder_positions[i];
+    for(uint8_t i=0;i<4;++i) bench_inputs.fsr[i]=fsr_raw[i];
+    bench_inputs.fsr_valid=fsr_valid;
+    for(uint8_t i=0;i<2;++i) if(!ads[i].online()) bench_inputs.ads_valid &= ~(0x0fu<<(i*4));
+    bench_inputs.m4=m4_connected; bench_inputs.m4_bits=0;
+    for(uint8_t i=0;i<32;++i) if(m4_held[i]) bench_inputs.m4_bits |= 1ul<<i;
+}
+bool bench_command() {
+    using C=consola::Bench::Command;
+    const auto c=consola::Bench::parse(command);
+    if(c==C::Other) return false;
+    capture_bench_inputs();
+    if(c==C::Scan) { bench.start_scan(micros()); return true; }
+    if(c==C::Inputs) consola::Bench::inputs(response,sizeof(response),bench_inputs,bench.drops());
+    else if(c==C::WatchOn || c==C::WatchOff) {
+        bench.watch(c==C::WatchOn,millis(),bench_inputs); watch_expired=false;
+        snprintf(response,sizeof(response),"@GF OK WATCH %u\n",unsigned(c==C::WatchOn));
+    } else snprintf(response,sizeof(response),"@GF ERR %s ARG\n",
+                    c==C::InvalidScan?"SCAN":c==C::InvalidInputs?"INPUTS":"WATCH");
+    response_size=strlen(response); response_sent=0;
+    return true;
+}
+void poll_bench_scan(uint8_t address) {
+    Wire.beginTransmission(uint8_t(address));
+    const bool ack=Wire.endTransmission()==0;
+    if(bench.scan_result(ack)) {
+        bench.scan_output(response,sizeof(response));
+        response_size=strlen(response); response_sent=0;
+    }
+}
 void poll_serial() {
-    for (uint8_t n = 0; n < 16 && Serial.available() && response_sent == response_size; ++n) {
+    for (uint8_t n = 0; n < 16 && !bench.scanning() && Serial.available() && response_sent == response_size; ++n) {
         const char ch = Serial.read();
         if (ch == '\r') continue;
         if (ch == '\n') {
             command[command_size] = 0;
-            if (!command_overflow && !strcmp(command,"@S STATS")) prepare_stats();
+            if (!command_overflow && bench_command()) {}
+            else if (!command_overflow && !strcmp(command,"@S STATS")) prepare_stats();
             else if (!command_overflow && !strcmp(command,"@S RESET")) {
                 reset_stats();
                 strcpy(response,"@S PROTOTYPE RESET OK\n");
@@ -409,6 +453,12 @@ void poll_serial() {
             command_overflow = false;
         } else if (command_size < sizeof(command)-1) command[command_size++] = ch;
         else command_overflow = true;
+    }
+    if(response_sent==response_size && !bench.scanning() && !command_size && !Serial.available()) {
+        if(watch_expired) {
+            strcpy(response,"@GF OK WATCH 0 EXPIRED\n"); watch_expired=false;
+            response_size=strlen(response); response_sent=0;
+        } else if(bench.next(response,sizeof(response))) { response_size=strlen(response); response_sent=0; }
     }
     if (response_sent < response_size && Serial) {
         const size_t space = Serial.availableForWrite();
@@ -463,6 +513,7 @@ void surface::poll() {
         const int32_t position = encoders[i].read();
         const int32_t delta = int32_t(uint32_t(position)-uint32_t(encoder_positions[i]));
         encoder_positions[i] = position;
+        if(delta) bench.event("ENC",i,position);
         const uint8_t cc = ENCODER_CC[i];
         // Keep detents in RelativeEncoder until this control's next send slot.
         if (cc_cadence[cc].due(start)) {
@@ -483,6 +534,7 @@ void surface::poll() {
 #else
             if (!read_adc2(i == 0 ? 14 : i,raw)) continue;
 #endif
+            bench_inputs.pot[i]=raw; bench_inputs.pot_valid |= 1u<<i;
             uint8_t value;
             if (pots[i].sample(raw,value)) {
                 send_cc(30+i,value);
@@ -492,6 +544,7 @@ void surface::poll() {
 #ifdef GF_CONSOLA_UNO
     if (PROFILE.selector && start - last_selector >= 10000) {
         last_selector = start;
+        if(slow_valid & 2) { bench_inputs.sel=slow_adc[1]; bench_inputs.sel_valid=true; }
         uint8_t value;
         if ((slow_valid & 2) && selector.sample(slow_adc[1],value)) send_cc(36,value);
     }
@@ -500,7 +553,10 @@ void surface::poll() {
     int16_t raw;
     const uint8_t chip = next_ads;
     next_ads ^= 1;
-    if (ads[chip].poll(micros(),channel,raw)) {
+    const int scan_address=bench.scan_address(micros());
+    const bool scanning=scan_address>=0;
+    if (!scanning && ads[chip].poll(micros(),channel,raw)) {
+        bench_inputs.ads[chip*4+channel]=raw; bench_inputs.ads_valid |= 1u<<(chip*4+channel);
         ++ads_reads[chip];
 #ifdef GF_CONSOLA_UNO
         const int8_t hand = consola::hand_index(GF_CONSOLA_MINIMAL,chip,channel);
@@ -515,7 +571,10 @@ void surface::poll() {
         }
     }
     for (uint8_t i = 0; i < 2; ++i) send_hand(i,hands[i].expire(millis()));
-    poll_buttons(micros());
+    if(scanning) poll_bench_scan(uint8_t(scan_address)); else poll_buttons(micros());
+    capture_bench_inputs();
+    if(bench.expire(millis())) watch_expired=true;
+    bench.observe(bench_inputs);
     poll_serial();
     for (uint8_t n = 0; n < 8 && usbMIDI.read(); ++n) {
         pad_led_return.receive(usbMIDI.getChannel(),usbMIDI.getType(),usbMIDI.getData1(),usbMIDI.getData2(),millis());
