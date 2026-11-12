@@ -149,9 +149,26 @@ def main(binary):
             client.request('load_rack',path='racks/Saved.json')
             client.request('set_pattern',pattern=4)
             client.request('save_rack',name='Saved',overwrite=True)
-            process.terminate()
+            # D4 must hold after a crash during PLAY/REC with a queued pattern,
+            # not just after a clean shutdown of an already stopped transport.
+            client.request('record_arm', armed=True, quantize=32)
+            client.request('transport', action='play', bpm=122)
+            client.request('set_pattern', pattern=5)
+            before_crash = client.request('get_drum_state')['clock']
+            assert before_crash['running'] and before_crash['armed'] and before_crash['queued'] == 5
+            client.request('set_group', group=0, level=.25, name='LOW')
+            # ACK and durable checkpoint are distinct: wait for the actual file,
+            # so the crash tests recovery rather than the 100 ms debounce window.
+            deadline = time.monotonic() + 1
+            while True:
+                checkpoint = json.loads((data/'last-drum.json').read_text())
+                if checkpoint.get('selected_pattern') == 4:
+                    break
+                assert time.monotonic() < deadline, 'checkpoint not published before crash'
+                time.sleep(.01)
+            process.kill()
             process.wait(timeout=5)
-            assert process.returncode == 0
+            assert process.returncode < 0
             client.close()
             process, client = start()
             state = client.request('get_drum_state')

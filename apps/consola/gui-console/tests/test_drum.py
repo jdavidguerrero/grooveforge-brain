@@ -210,6 +210,7 @@ def test_drum_client_handshake_commands_and_reconnect_does_not_replay(app):
         client.start()
         for _ in range(10):QTest.qWait(5);client.drain_frame()
         assert any(m.get('_cmd')=='get_drum_state' and m.get('ok') for m in messages)
+        assert not transport.fake.clock['running'] and not transport.fake.clock['armed']
         client.request('transport',action='play')
         for _ in range(4):QTest.qWait(5);client.drain_frame()
         assert any(m.get('event')=='clock' and m['clock']['running'] for m in messages)

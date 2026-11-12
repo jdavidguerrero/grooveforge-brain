@@ -1,0 +1,6 @@
+[Unit]
+Description=GrooveForge Console autostart
+Wants=gf-synth-host.service gf-console-gui.service gf-audio-links.service gf-midi-link.service
+
+[Install]
+WantedBy=default.target
