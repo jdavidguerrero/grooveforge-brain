@@ -1,7 +1,7 @@
 # PCB-M — Placa Principal GrooveForge Consola
 
 > Esquemático jerárquico en KiCad 10. Sin layout PCB.
-> Generado: 2026-11-11. Actualizado: 2026-11-11 (layout update — sin PCB-N, conectores panel por cable, PCB-K).
+> Regenerado con `tools/schgen/` el 2026-11-12 (KiCad 10.0.6). Layout sin cambios.
 > Docs de referencia: `apps/docs/consola/24-placa-principal.md`, `17-mapa-pines-teensy.md`, `25-panel-consola.md`, `kicad/consola/boards/CONNECTORS.md`.
 >
 > **Cambio 2026-11-11 (rev. 1):** No habrá PCB-N. Jog (EC11), pots IN/CUE/MASTER, selector de pad
@@ -137,14 +137,15 @@ reutilizar dos pines libres de J1 para rutar INT. Si no, mantener NC.
 
 **Problema:** Rf = 10kΩ y Rin = 20kΩ del buffer de ganancia 1.5× están anotados como texto en el
 esquemático (sheet 05-cv-dac) pero no como componentes discrete con footprint.
-**Acción requerida:** agregar R_CV_RF1/RF2 y R_CV_RI1/RI2 como Device:R en el esquemático con
-los valores y footprints antes de exportar BOM final.
+**Capturado:** R_CV_RF1/RF2 = 10k y R_CV_RI1/RI2 = 20k como Device:R con footprint 0402.
+Se capturan las cinco unidades del MCP6004, incluida alimentación y seguidores de unidades libres.
 
 ### D3 — Resistores de protección MIDI OUT
 
 **Problema:** spec MIDI Association recomienda 2×47Ω (tip y ring) + 100Ω serie en MIDI OUT para
 protección de cortocircuito. Están anotados como texto en sheet 07-midi pero no como componentes.
-**Acción requerida:** agregar R_MIDI_T, R_MIDI_R, R_MIDI_S con valores y footprint.
+**Capturado:** R_MIDI_T/R = 47Ω y R_MIDI_S = 100Ω serie en TX, con footprint 0402.
+La entrada optoaislada y su polarización están explícitas; validar en banco (ver informe del generador).
 
 ### D4 — Sheet 02 (analog front end) — capturado 2026-11-12
 
@@ -152,7 +153,7 @@ protección de cortocircuito. Están anotados como texto en sheet 07-midi pero n
 hoja, no se rediseña"). Mapeo portadora → PCB-M: R4–R9 → R_PAD_x1–3, SW1 → SW_PAD, C5/C6 → C_AC_x,
 R10/R11 → R_SER_x, R12/R13 → R_BIAS_x, D2/D3 → D_CLAMP_x, U2 → U_OA_IN, R14/R15/C10 → R_VREF_T/B + C_VREF,
 C7 → C_OA_IN, C8/C9 → C_LIN_x, C11/C12 + R16/R17 → C_LOUT_x + R_LOUT_x, JP2–JP4 → JP_BYP_L/R/VREF, TP1–TP3.
-ERC del sheet: 0 errores; 8 warnings `same_local_global_label` (ver D9).
+Regeneración: todas las redes entre hojas usan etiquetas globales consistentes; ver ERC al final.
 
 Decisiones (2026-11-12):
 - **LINE OUT sin buffer**, igual que la portadora. El texto "buffered" del sheet 09 queda desactualizado.
@@ -175,7 +176,8 @@ proyecto menciona que T27 = 74HC4053 (ruteo Synth/FX) a revisar con D5.
 
 **Problema:** 100nF + 10µF por pin VCC de ADS1115 ×2, MCP23017, MCP4725 ×2, MCP6004, TLV75533
 no están en el esquemático — deben agregarse en layout o antes.
-**Acción requerida:** agregar en sheets 03/04/05/10 con C_ADS1_VCC, etc.
+**Capturado:** 100nF + 10µF para ADS1115 y MCP4725 y MCP6004 CV; 100nF para buffer LED
+y opto MIDI; se conservan los capacitores del LDO y frente analógico. Sheet 04 sigue vacío (sin MCP).
 
 ### D7 — Pull-ups I2C: conflict con PCB-A
 
@@ -195,7 +197,7 @@ diseñar un sistema de jumpers/DNP.
    virtual activa (~VDDA/2) del SGTL5000; si se pone a masa queda en corto. El manguito va a **HP_VGND**,
    como en la portadora (J13.S).
 4. **Netlist del 09:** las puntas de J_LINE_IN_x, J_LINE_OUT_x, J_HP_CUE y J_PEDAL quedan todas en el
-   net HP_L (etiquetas o cables encimados). Es el mismo tipo de artefacto que D8.
+   net HP_L (etiquetas o cables encimados). Era un artefacto de geometría y conectividad, corregido por el generador.
 
 ### D10 — Selector de pad: J_PAD_SEL (sheet 06) duplica la escalera del sheet 02
 
@@ -220,25 +222,36 @@ SW_PAD_SEL/R_SEL_x. En los dos casos los polos de audio (SW_PAD) también van po
 
 ---
 
+## Regeneración y verificación
+
+Desde la raíz del repositorio, un comando genera todas las hojas y actualiza XML, ERC y PDF:
+
+```bash
+python3 apps/hardware/kicad/consola/tools/check_netlist.py --regenerate
+```
+
+La descripción declarativa es `tools/schgen/pcb_m.py`. No editar los `.kicad_sch` generados;
+modificar la descripción y regenerar. Para verificar cambios manuales sin sobrescribirlos,
+ejecutar el mismo comando sin `--regenerate`.
+
+El netlist XML se comprueba pin a pin, incluidos los NC: redes fusionadas/divididas, pines sin
+red o nombres incorrectos hacen fallar el comando. La hoja 04 permanece vacía y referenciada
+en la raíz, con una nota del traslado del MCP a PCB-K. Son 11 páginas (raíz + 10 subhojas).
+
 ## ERC Status
 
 ```
-Errors:   2    (artefacto ERC jerárquico — ver docs/erc-report.txt)
-Warnings: 123  (esperados: net labels locales en diseño multi-sheet sin hierarchical pins)
+Errors:   0
+Warnings: 7
+Connectivity: PASS — 113 componentes, 398 pines, 21 NC, 100 redes con nombre
 ```
 
-Ver `docs/erc-report.txt` para análisis completo.
-Los warnings no impiden generar netlist ni PDF. Para ERC limpio en producción: migrar a
-`global_label` o implementar hierarchical sheet pins.
-
-### Limitación conocida del netlist (D8)
-
-Todos los componentes en sheet 08 están en coordenadas (0,0) por limitación del tool de captura.
-Los 30 pines de J1_PCBA cubren todas las posiciones pin de los demás conectores del sheet, causando
-que KiCad fusione los nets GND, +5V_LED, y varias señales locales con +3.3V en la exportación
-de netlist. Las labels en el .kicad_sch son correctas y autoritativas; el netlist XML es solo
-referencial. Para producción: reubicar todos los conectores del sheet 08 a posiciones separadas
-y regenerar netlist limpio.
+Cinco avisos son I2S interno al módulo Audio Shield; dos son los anillos LINE IN cuya
+terminación no está definida. No hay errores ocultados mediante exclusiones añadidas.
+Los `PWR_FLAG` representan fuentes externas y retornos, no una validación de la alimentación.
+Se mantienen abiertas las decisiones de hardware; D9.1–4 quedan reparadas conforme a D4/D9.
+El conflicto J1 de la tabla de cross-reference se documenta sin cambiar esa tabla.
+Ver [REPORT.md](../../tools/REPORT.md) para contradicciones, footprints pendientes y alcance de esta validación.
 
 ---
 
@@ -246,6 +259,6 @@ y regenerar netlist limpio.
 
 | Archivo | Contenido |
 |---|---|
-| `docs/pcb-m-schematic.pdf` | PDF del esquemático completo (10 sheets) |
+| `docs/pcb-m-schematic.pdf` | PDF completo (11 páginas: raíz + 10 hojas) |
 | `docs/pcb-m-netlist.xml` | Netlist KiCad XML para verificación |
 | `docs/erc-report.txt` | Reporte ERC con análisis de errores |

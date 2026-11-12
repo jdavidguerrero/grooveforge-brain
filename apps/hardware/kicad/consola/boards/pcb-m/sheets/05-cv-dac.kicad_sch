@@ -1,1117 +1,2138 @@
 (kicad_sch
-	(version 20260101)
-	(generator "eeschema")
-	(generator_version "10.0")
-	(uuid f48c19eb-f616-4c53-8118-0ba92a4f7988)
-	(paper "A4")
-	(lib_symbols
-		(symbol "Analog_DAC:MCP4725xxx-xCH"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at -6.35 6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "MCP4725xxx-xCH"
-				(at 8.89 6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-				(at 0 -6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/22039d.pdf"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "12-bit Digital-to-Analog Converter, integrated EEPROM, I2C interface, SOT-23-6"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "dac twi"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "SOT?23*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "MCP4725xxx-xCH_0_1"
-				(rectangle
-					(start -7.62 5.08)
-					(end 7.62 -5.08)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "MCP4725xxx-xCH_1_1"
-				(pin output line
-					(at 10.16 0 180)
-					(length 2.54)
-					(name "VOUT"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 -7.62 90)
-					(length 2.54)
-					(name "VSS"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 7.62 270)
-					(length 2.54)
-					(name "VDD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin bidirectional line
-					(at -10.16 0 0)
-					(length 2.54)
-					(name "SDA"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 2.54 0)
-					(length 2.54)
-					(name "SCL"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 -2.54 0)
-					(length 2.54)
-					(name "A0"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Amplifier_Operational:MCP6004"
-			(pin_names
-				(offset 0.127)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at 0 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "MCP6004"
-				(at 0 -5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at -1.27 2.54 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-				(at 1.27 5.08 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "quad opamp"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "SOIC*3.9x8.7mm*P1.27mm* DIP*W7.62mm* TSSOP*4.4x5mm*P0.65mm* SSOP*5.3x6.2mm*P0.65mm* MSOP*3x3mm*P0.5mm*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "MCP6004_1_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6004_2_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6004_3_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "9"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "10"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6004_4_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "12"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "13"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "14"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6004_5_1"
-				(pin power_in line
-					(at -2.54 7.62 270)
-					(length 3.81)
-					(name "V+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at -2.54 -7.62 90)
-					(length 3.81)
-					(name "V-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "11"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-	)
-	(symbol
-		(lib_id "Analog_DAC:MCP4725xxx-xCH")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "f7e5c6b7-9761-4dd4-a46c-352bfc306217")
-		(property "Reference" "U_DAC1"
-			(at -6.35 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "MCP4725A0T-E/CH"
-			(at 8.89 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 0 -6.35 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/22039d.pdf"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "12-bit Digital-to-Analog Converter, integrated EEPROM, I2C interface, SOT-23-6"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "60c29809-f7de-4f5b-a4ca-7d28d2615f60")
-		)
-		(pin "2"
-			(uuid "e2acb047-c1ba-4fe1-ace0-c2137c5931df")
-		)
-		(pin "3"
-			(uuid "bc98e82b-6906-48c9-9dd4-a25ebd33c140")
-		)
-		(pin "4"
-			(uuid "dc228c93-73ef-4206-a6d3-6ecca0be2901")
-		)
-		(pin "5"
-			(uuid "bbfd4368-e66b-4d54-a1f0-7a24c4805c4b")
-		)
-		(pin "6"
-			(uuid "448ffd15-2a1e-406a-a6f9-60de99f9ac62")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/f48c19eb-f616-4c53-8118-0ba92a4f7988"
-					(reference "U_DAC1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Analog_DAC:MCP4725xxx-xCH")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "cf68afab-266a-4350-9b98-a356c257e4ae")
-		(property "Reference" "U_DAC2"
-			(at -6.35 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "MCP4725A0T-E/CH"
-			(at 8.89 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 0 -6.35 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/22039d.pdf"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "12-bit Digital-to-Analog Converter, integrated EEPROM, I2C interface, SOT-23-6"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "85939c0a-5de7-4717-878d-6c49083afd24")
-		)
-		(pin "2"
-			(uuid "53fd28e1-5896-44bd-a00d-e9d2c47e0c49")
-		)
-		(pin "3"
-			(uuid "48c55dc3-ea03-4852-85c1-8456230e4fac")
-		)
-		(pin "4"
-			(uuid "f17e9da5-9b43-4778-b8fa-e7183588c024")
-		)
-		(pin "5"
-			(uuid "320cc8f9-1b61-4730-8204-105a319d027b")
-		)
-		(pin "6"
-			(uuid "ac2d8467-02d9-4f72-9695-b427a092550c")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/f48c19eb-f616-4c53-8118-0ba92a4f7988"
-					(reference "U_DAC2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Amplifier_Operational:MCP6004")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "db158ef4-d0fe-4ead-8817-273625b91e91")
-		(property "Reference" "U_OA_CV"
-			(at 0 5.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MCP6004"
-			(at 0 -5.08 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" ""
-			(at -1.27 2.54 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-			(at 1.27 5.08 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "9b2965fe-f2cc-465e-8736-b70a31e93356")
-		)
-		(pin "2"
-			(uuid "e48bde2d-29b3-4c5f-adc6-214670e11bc8")
-		)
-		(pin "3"
-			(uuid "34158d80-666a-4c46-a453-74cb8ac40555")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/f48c19eb-f616-4c53-8118-0ba92a4f7988"
-					(reference "U_OA_CV")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(label "DAC1_RAW"
-		(at 10.16 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "26992d5b-1b15-4df8-8a86-01204f72b366")
-	)
-	(global_label "+3.3V"
-		(at 0.0 -7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "96b6f2c4-9406-428e-9a4d-6cef61fce201")
-	)
-	(global_label "GND"
-		(at 0.0 7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "91f8727f-1714-4ab5-967b-b2e714e9abfc")
-	)
-	(label "I2C_SDA"
-		(at -10.16 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1835c4c1-abb1-4d80-ae3a-cf734c3ea154")
-	)
-	(label "I2C_SCL"
-		(at -10.16 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "82d8330c-245f-4e5c-8797-ec39a1fc8848")
-	)
-	(global_label "GND"
-		(at -10.16 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b02abbda-232a-4c32-9e90-b9dac1ec3a0a")
-	)
-	(label "DAC2_RAW"
-		(at 10.16 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "6d7a5f35-8c04-4488-95d8-9740680c8c37")
-	)
-	(global_label "+3.3V"
-		(at 0.0 -7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "810f3acd-dd20-4ff6-9443-b8a10336d4b2")
-	)
-	(global_label "GND"
-		(at 0.0 7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "94099035-9f7b-49bb-bada-9b9d7a9ff3de")
-	)
-	(label "I2C_SDA"
-		(at -10.16 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "77ad26f1-f6a0-40cb-ac0e-741b3659a924")
-	)
-	(label "I2C_SCL"
-		(at -10.16 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a03d1b44-8349-4ac5-81e0-38d3947d09dc")
-	)
-	(global_label "+3.3V"
-		(at -10.16 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "6589b4de-e1e4-4d81-9645-96474f9209bf")
-	)
-	(global_label "+5V_LED"
-		(at -2.54 -7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a3ad330a-859e-427a-938c-3b24acf7ca60")
-	)
-	(global_label "GND"
-		(at -2.54 7.62 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "7b0d8454-cc16-4223-98e0-8610af02f75d")
-	)
-	(label "DAC1_RAW"
-		(at -7.62 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "89470def-cc1d-4615-a483-19d7fda2477a")
-	)
-	(label "CV1_OUT"
-		(at 7.62 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7663aa9d-d7c9-4e72-9017-f0dd64a22d84")
-	)
-	(label "DAC2_RAW"
-		(at -7.62 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1b13424c-bacc-430d-8c1f-e83fcf53bf6c")
-	)
-	(label "CV2_OUT"
-		(at 7.62 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "2c5795f6-fb0e-4012-bfa2-b5a50b0f132e")
-	)
-	(no_connect
-		(at 7.62 0.0)
-		(uuid "53d7657b-cc97-4957-b6a4-56b43eadf340")
-	)
-	(no_connect
-		(at -7.62 2.54)
-		(uuid "64125e5a-968f-4ebe-9029-fa6fdbfb2451")
-	)
-	(no_connect
-		(at -7.62 -2.54)
-		(uuid "fd2bcd94-3e55-4d20-ba67-be914096db5d")
-	)
-	(no_connect
-		(at -7.62 -2.54)
-		(uuid "66a31666-0fb7-4960-b0e6-0808208fcf35")
-	)
-	(no_connect
-		(at -7.62 2.54)
-		(uuid "333fbdd3-d5c0-4eda-a949-587489d52a4f")
-	)
-	(no_connect
-		(at 7.62 0.0)
-		(uuid "ae7c842f-9ee7-47c6-b510-cc10f935c1b2")
-	)
-	(no_connect
-		(at -7.62 2.54)
-		(uuid "5b89d614-5c62-4981-9883-0719d801d070")
-	)
-	(no_connect
-		(at -7.62 2.54)
-		(uuid "b6826d26-9410-44c9-98e9-b1d4b6e4b8a1")
-	)
-	(text "CV DAC — MCP4725 x2 + MCP6004 buffer gain 1.5\\nU_DAC1 (0x60): A0=GND; U_DAC2 (0x61): A0=+3.3V\\nBuffer gain: Rf=10k Rin=20k (1+10k/20k=1.5)\\nSalida: 0-3.3V*1.5=0-4.95V aprox. 5V\\nSerie 1kohm + BAT54S a GND/+5V_LED por salida\\nTODO: agregar R_CV1_S, R_CV2_S, D_CV1, D_CV2"
-		(exclude_from_sim no)
-		(at 50 90 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1b8ee92b-497b-48da-a31b-3f8707af0913")
-	)
-	(sheet_instances
-		(path "/"
-			(page "1")
-		)
-	)
-)
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 89cae768-7a3a-51a1-b8d4-02bcfdd1ca6d)
+  (paper "A2")
+  (lib_symbols
+    (symbol "Amplifier_Operational:MCP6004"
+      (pin_names
+        (offset 0.127))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "MCP6004"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at -1.27 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
+        (at 1.27 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_locked" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "quad opamp"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOIC*3.9x8.7mm*P1.27mm* DIP*W7.62mm* TSSOP*4.4x5mm*P0.65mm* SSOP*5.3x6.2mm*P0.65mm* MSOP*3x3mm*P0.5mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "MCP6004_1_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_2_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_3_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "9"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "10"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_4_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "12"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "13"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "14"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_5_1"
+        (pin power_in line
+          (at -2.54 7.62 270)
+          (length 3.81)
+          (name "V+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at -2.54 -7.62 90)
+          (length 3.81)
+          (name "V-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "11"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Analog_DAC:MCP4725xxx-xCH"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at -6.35 6.35 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "MCP4725xxx-xCH"
+        (at 8.89 6.35 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+        (at 0 -6.35 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/22039d.pdf"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "12-bit Digital-to-Analog Converter, integrated EEPROM, I2C interface, SOT-23-6"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "dac twi"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOT?23*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "MCP4725xxx-xCH_0_1"
+        (rectangle
+          (start -7.62 5.08)
+          (end 7.62 -5.08)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background))))
+      (symbol "MCP4725xxx-xCH_1_1"
+        (pin output line
+          (at 10.16 0 180)
+          (length 2.54)
+          (name "VOUT"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 -7.62 90)
+          (length 2.54)
+          (name "VSS"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 7.62 270)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at -10.16 0 0)
+          (length 2.54)
+          (name "SDA"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 2.54 0)
+          (length 2.54)
+          (name "SCL"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 -2.54 0)
+          (length 2.54)
+          (name "A0"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 73.66 63.5)
+      (xy 76.2 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1daaa505-6079-5632-bc40-9215a0cd8a4a))
+  (label "DAC1_RAW"
+    (at 76.2 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d99e9cbf-a4a5-58b4-b037-e5c6344bdf83))
+  (wire
+    (pts
+      (xy 63.5 71.12)
+      (xy 63.5 73.66))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7be1cf88-eb9e-5827-82c3-3e748239fdf5))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 73.66 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c6b87601-591c-5d8a-a7c2-4a4e1b73f876)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 73.66 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 55.88)
+      (xy 63.5 53.34))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9da8eac7-1f44-5f65-b3c5-848320a567aa))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 63.5 53.34 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b0d7722e-f822-5aad-838e-f199a58c035e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 53.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 63.5)
+      (xy 50.8 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6d6a1496-35d7-5a12-94f5-1c58fad5104f))
+  (global_label "I2C_SDA"
+    (shape bidirectional)
+    (at 50.8 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5f01e17b-cb4f-55ce-ad7b-9a2eb78f8060)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 60.96)
+      (xy 50.8 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1a447a0e-d980-547f-96b8-32ab9025a718))
+  (global_label "I2C_SCL"
+    (shape bidirectional)
+    (at 50.8 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 26d4ca0f-2f5d-5225-9dae-ea3da48975fe)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 66.04)
+      (xy 50.8 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d8cd420c-1a9e-5b17-b7d1-2dd50ef017e0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 50.8 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 92dcec40-236e-526d-86af-77b7acc60e74)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Analog_DAC:MCP4725xxx-xCH")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 83517546-5198-55b7-8c78-231e1836dbe9)
+    (property "Reference" "U_DAC1"
+      (at 63.5 39.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP4725A0T-E/CH"
+      (at 63.5 41.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 361d7e5f-01d8-5697-b7d0-c4d48e248a7d))
+    (pin "2"
+      (uuid aeb37759-baf4-5736-a431-c94b63494428))
+    (pin "3"
+      (uuid 1b23a318-9095-5795-9b20-97c2ebf1bae9))
+    (pin "4"
+      (uuid b5c1a618-12c8-515e-ae0c-df0764046701))
+    (pin "5"
+      (uuid 156c875c-7456-569a-a53b-f4781b276449))
+    (pin "6"
+      (uuid 3c66b88a-b133-5f37-bf44-43be3e696084))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_DAC1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 160.02 63.5)
+      (xy 162.56 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c97979af-c72d-50dd-99f5-f71356e5ab4a))
+  (global_label "CV1_OUT"
+    (shape bidirectional)
+    (at 162.56 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a91c1031-daf7-50bb-8ede-aa3f527cb43e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 144.78 66.04)
+      (xy 142.24 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d2b5e059-b42c-5cd8-b6a4-62835e160192))
+  (label "CV1_FB"
+    (at 142.24 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ab4f47cc-4ea6-587c-85fc-06d257352715))
+  (wire
+    (pts
+      (xy 144.78 60.96)
+      (xy 142.24 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 907803ff-f3eb-5944-8707-2a37ca3267a7))
+  (label "DAC1_RAW"
+    (at 142.24 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6919318e-9f5d-51d2-8c01-a2f544317ac4))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 152.4 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 61e93eab-6fae-5136-a44c-5245bf74e96f)
+    (property "Reference" "U_OA_CV"
+      (at 152.4 53.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 152.4 55.88 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 9cb5963c-fc89-5646-b188-d3bcea3177be))
+    (pin "2"
+      (uuid 7ab0059b-82e1-5a34-83d4-9fc98c6d64b8))
+    (pin "3"
+      (uuid c98ad16a-111f-51d0-889e-b26f9c894a40))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_OA_CV")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 59.69)
+      (xy 241.3 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bfb064b0-d827-5f27-9d02-fdd5f61d5475))
+  (global_label "CV1_OUT"
+    (shape bidirectional)
+    (at 241.3 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d80c494b-1860-512f-b902-e6669257a8c2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 67.31)
+      (xy 241.3 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 34696949-1090-5ec8-907e-08e8c502f817))
+  (label "CV1_FB"
+    (at 241.3 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6230f7dd-8213-5357-81fc-669469e1e433))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 73eeff19-b1ce-5ee2-8409-ef84a25cd7a2)
+    (property "Reference" "R_CV_RF1"
+      (at 241.3 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f9972bee-cf69-542b-9e33-97c7cd3df2a2))
+    (pin "2"
+      (uuid de23a6cf-1a29-548f-bfa3-92b30434239a))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "R_CV_RF1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 59.69)
+      (xy 330.2 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4789d747-d9e0-5b63-8b40-e8d1b16bf9ce))
+  (label "CV1_FB"
+    (at 330.2 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid f9ab2456-c3d9-529e-86d7-f67873ba8742))
+  (wire
+    (pts
+      (xy 330.2 67.31)
+      (xy 330.2 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f2242607-e5b1-560a-8455-4c15a7adb225))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c7fd48a4-5f46-58d1-ba60-c182b7ea6eb2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid abdf7837-68ea-5fc8-b669-e76ce7ab46d3)
+    (property "Reference" "R_CV_RI1"
+      (at 330.2 41.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "20k"
+      (at 330.2 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid afa2713a-1882-51f7-82c4-e915ec074ab9))
+    (pin "2"
+      (uuid 6e939e8b-b0cb-50fe-82e3-19afdc7a5c85))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "R_CV_RI1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 73.66 127)
+      (xy 76.2 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid abce0d1c-ebf7-579d-8b82-29c52461bdac))
+  (label "DAC2_RAW"
+    (at 76.2 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 298625b0-69f0-5049-9fa7-febde5adb011))
+  (wire
+    (pts
+      (xy 63.5 134.62)
+      (xy 63.5 137.16))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 670b0179-d94c-5a16-bf06-647a55bcef73))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 137.16 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 25fcc8df-0c06-5aef-ad99-97b411df818f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 137.16 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 119.38)
+      (xy 63.5 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ccdd765f-89a0-542d-83c8-4900bba42068))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 63.5 116.84 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 275312aa-15b3-5d3b-81a5-54a4d305e7fe)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 127)
+      (xy 50.8 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 605bfa05-2463-584b-8a0c-4d9aefc77199))
+  (global_label "I2C_SDA"
+    (shape bidirectional)
+    (at 50.8 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b621358c-9324-511e-8417-80582d535078)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 124.46)
+      (xy 50.8 124.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5d4bf51b-cac1-5b9f-aac7-40e289ca40f4))
+  (global_label "I2C_SCL"
+    (shape bidirectional)
+    (at 50.8 124.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ddee06ef-8150-5bb4-adcf-5ba3c4c2b1dc)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 124.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 129.54)
+      (xy 50.8 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f85cba2c-e0f5-534b-8099-b8b10127a560))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 50.8 129.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f3697e37-eac5-5424-babc-01b99781f465)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 129.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Analog_DAC:MCP4725xxx-xCH")
+    (at 63.5 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 7f2f2f37-0770-5b51-809d-d08e462c5458)
+    (property "Reference" "U_DAC2"
+      (at 63.5 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP4725A0T-E/CH"
+      (at 63.5 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d41ef50e-9649-5f4a-9086-e66f940f5073))
+    (pin "2"
+      (uuid b7d0e675-3829-5961-9a12-95044f4583d5))
+    (pin "3"
+      (uuid 3ffe2ac5-3b26-5e86-bf60-8b04eb4a1c50))
+    (pin "4"
+      (uuid 4bd55352-fe58-54b4-a272-559397f7feac))
+    (pin "5"
+      (uuid 228a5f81-613f-56f9-98a3-a42236e645e7))
+    (pin "6"
+      (uuid 16ff3f98-3d7f-55c2-8ad1-968ce1b26478))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_DAC2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 144.78 124.46)
+      (xy 142.24 124.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b2954610-4736-5862-ac2f-807417d88bce))
+  (label "DAC2_RAW"
+    (at 142.24 124.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 03137cb9-6026-5255-b2fb-cc5684c00530))
+  (wire
+    (pts
+      (xy 144.78 129.54)
+      (xy 142.24 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cb55011c-3d00-5e1a-a8d0-7bc921068d64))
+  (label "CV2_FB"
+    (at 142.24 129.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 013348e2-1b92-5f06-b927-7300655eccc7))
+  (wire
+    (pts
+      (xy 160.02 127)
+      (xy 162.56 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7cb45080-3280-559a-91f5-3d5f15fcd8db))
+  (global_label "CV2_OUT"
+    (shape bidirectional)
+    (at 162.56 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 56eb73d5-7da7-5b00-af5e-8e52fd0c5b8d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 152.4 127 0)
+    (unit 2)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5c1ae9f1-5945-5c1f-bb61-822fb833576f)
+    (property "Reference" "U_OA_CV"
+      (at 152.4 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 152.4 119.38 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "5"
+      (uuid e78f27b6-2f46-5b00-97eb-58ee8ada2850))
+    (pin "6"
+      (uuid 2c3266f3-30d7-55ee-a02a-c385fbee031a))
+    (pin "7"
+      (uuid 024dfdc9-3a1d-5b6a-8cc8-f238a7cc37b3))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_OA_CV")
+          (unit 2)))))
+  (wire
+    (pts
+      (xy 241.3 123.19)
+      (xy 241.3 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3902d0f9-49f1-578e-a2a4-ba8801a86310))
+  (global_label "CV2_OUT"
+    (shape bidirectional)
+    (at 241.3 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 09f9f29c-7450-5aed-8047-4904939c634c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 130.81)
+      (xy 241.3 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 63d0bf52-b737-5106-84f4-80c1c847de3a))
+  (label "CV2_FB"
+    (at 241.3 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5759bdd0-52d8-5ee3-a877-4280441e785a))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid faa63396-10d6-5637-9b96-6949ef74591f)
+    (property "Reference" "R_CV_RF2"
+      (at 241.3 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 9ce42f90-aea0-5043-af8a-50715a510fb3))
+    (pin "2"
+      (uuid 906dea3b-4240-54db-98b5-267eb4eef0df))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "R_CV_RF2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 123.19)
+      (xy 330.2 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2c78584e-3498-59c1-b005-03e253b5e77d))
+  (label "CV2_FB"
+    (at 330.2 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 11ce4434-e9e0-54a8-9101-374e1b52ac3e))
+  (wire
+    (pts
+      (xy 330.2 130.81)
+      (xy 330.2 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 306a8f56-a5be-58d2-8051-21d631b24d8e))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a278985a-5108-5a85-aaf2-cd767d43c64a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 073b4c82-9a54-5f71-9e65-dc5b977b09bf)
+    (property "Reference" "R_CV_RI2"
+      (at 330.2 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "20k"
+      (at 330.2 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 42bde4d6-a1cf-5e1f-9bef-4e3807e23778))
+    (pin "2"
+      (uuid 2f60acda-3279-5152-b3ae-817e45a1da4c))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "R_CV_RI2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 190.5)
+      (xy 73.66 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 65d98039-b6d5-5411-9bfa-3f862cf258cf))
+  (label "CV_UNUSED_3"
+    (at 73.66 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 0fcc0008-8867-5825-b26c-20ce0de55c4e))
+  (wire
+    (pts
+      (xy 55.88 193.04)
+      (xy 53.34 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 704ed4ce-16f0-58db-aba1-b8e72c0e5aae))
+  (label "CV_UNUSED_3"
+    (at 53.34 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3e2988ee-7af9-5c77-8696-556ab6aec01d))
+  (wire
+    (pts
+      (xy 55.88 187.96)
+      (xy 53.34 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ef6354d7-f226-5971-90f6-a9f2803bbd60))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 53.34 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a4e64c65-e29f-5a0e-ab72-f5609351842e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 53.34 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 63.5 190.5 0)
+    (unit 3)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 8ed9751d-759f-5b73-af15-ec9122571a9e)
+    (property "Reference" "U_OA_CV"
+      (at 63.5 180.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 63.5 182.88 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "8"
+      (uuid 70106dcb-c7c7-5df2-88b1-949004d62ad5))
+    (pin "9"
+      (uuid d524a0c0-887c-57ba-96ee-448c6a5ab2d5))
+    (pin "10"
+      (uuid 23234c9d-43b5-5769-844c-7db38997d5b4))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_OA_CV")
+          (unit 3)))))
+  (wire
+    (pts
+      (xy 144.78 187.96)
+      (xy 142.24 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6bee700e-59ec-53f9-8209-03afcb9108b7))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 142.24 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 010f9ee9-e0f5-5299-90ae-d45881428ad2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 142.24 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 144.78 193.04)
+      (xy 142.24 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 56abe77e-debc-52ed-8c5f-b87a3db44385))
+  (label "CV_UNUSED_4"
+    (at 142.24 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8c729117-1155-5e4b-b59b-5de95a9d3311))
+  (wire
+    (pts
+      (xy 160.02 190.5)
+      (xy 162.56 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ce7ce728-7434-59bf-94e7-d5db82c6dd22))
+  (label "CV_UNUSED_4"
+    (at 162.56 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3dabf181-7bab-576c-9982-f9e4bb965a0a))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 152.4 190.5 0)
+    (unit 4)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 315b8d7c-7981-55ad-ac74-b580e9efab9b)
+    (property "Reference" "U_OA_CV"
+      (at 152.4 180.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 152.4 182.88 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "12"
+      (uuid adab88d8-e56c-51ad-bec1-8b0a1716b429))
+    (pin "13"
+      (uuid d881510c-1698-5c30-a0c1-8d6e60395570))
+    (pin "14"
+      (uuid 3b9f0f52-b080-5467-a693-a73e6f8eec1f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_OA_CV")
+          (unit 4)))))
+  (wire
+    (pts
+      (xy 238.76 182.88)
+      (xy 238.76 180.34))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c5e87d9b-f314-5f4a-9094-15cb313854b6))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 238.76 180.34 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid fbd92d9c-fd4d-56c3-8b50-2e9fe2a2d6f3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 238.76 180.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 238.76 198.12)
+      (xy 238.76 200.66))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 777f1348-8647-50ad-bdff-99e754d59d61))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 238.76 200.66 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 55b05ddc-533f-5c1b-aef4-3eb403c29fe0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 238.76 200.66 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 241.3 190.5 0)
+    (unit 5)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 35469282-4cdb-59ef-86ce-2d937a373850)
+    (property "Reference" "U_OA_CV"
+      (at 241.3 163.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 241.3 166.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "4"
+      (uuid c746eb9a-02c9-5b27-8b49-25c5be71eb6d))
+    (pin "11"
+      (uuid 797c004b-15d5-5903-9670-cbed687477e7))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "U_OA_CV")
+          (unit 5)))))
+  (wire
+    (pts
+      (xy 63.5 250.19)
+      (xy 63.5 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 05701595-d010-5f71-9996-ae13062b7239))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 63.5 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a431ae71-730c-5488-9729-4132eef9f5a3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 257.81)
+      (xy 63.5 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cded0281-adaf-528c-b8b1-d288ee85ef7d))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 419035c3-3bf7-5757-b826-c1e9025989bd)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 63.5 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid dc984301-e964-5d2e-bf7a-db6cfb5765a6)
+    (property "Reference" "C_DAC1_VCC"
+      (at 63.5 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 63.5 236.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 5da0d565-1e3f-5b56-8d20-3b1368db412f))
+    (pin "2"
+      (uuid 76ecde4d-f6ff-54e1-89c5-d929ed336dcd))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_DAC1_VCC")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 313.69)
+      (xy 63.5 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bff199c2-07e0-5ccf-80c7-98c5cea69da8))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 63.5 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e9b73dcf-64be-515e-acc7-0e9139935a40)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 311.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 321.31)
+      (xy 63.5 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 35fda8f6-de86-587c-89f2-02c59b36f080))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 873a033c-e5d8-5e1e-a8c9-16ed34d31212)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 63.5 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 8f8069a8-eaa2-5407-b20b-2e16111a969e)
+    (property "Reference" "C_DAC1_BULK"
+      (at 63.5 297.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 63.5 299.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 5dfcad9e-8633-5203-83d6-f760da273ccc))
+    (pin "2"
+      (uuid aa2e08da-dd5a-5193-992b-4c806859ec15))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_DAC1_BULK")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 250.19)
+      (xy 152.4 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b6e1af26-80b9-5d10-b117-8fe010888d90))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 152.4 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 73da4a42-3292-58fb-8027-06be11f1bac8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 257.81)
+      (xy 152.4 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 034a9b2d-239b-5244-b3dd-71f49c080746))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ec523ca8-9d4f-5982-a6c2-760edc04de46)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 28ff0642-374c-5949-92c5-6984a6bb24c7)
+    (property "Reference" "C_DAC2_VCC"
+      (at 152.4 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 152.4 236.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid cd1c93c7-e950-58c3-af5e-81c27094d36c))
+    (pin "2"
+      (uuid 807ab3e3-cd27-5f15-8fbf-0be68c75b335))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_DAC2_VCC")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 313.69)
+      (xy 152.4 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 684ac8d5-14c9-5f10-98d4-f8524a51dc60))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 152.4 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 63cf2365-fbe5-561a-aea6-7f552d570055)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 311.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 321.31)
+      (xy 152.4 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7c2c473e-1d97-5a47-8e54-b647c2bbb8c0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 718eb0d2-5ed9-5c76-9cec-fec18c88ac71)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid cb286465-8512-5211-838e-858c1bcfaca0)
+    (property "Reference" "C_DAC2_BULK"
+      (at 152.4 297.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 152.4 299.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid a0d8d38b-9f06-59f3-ad9a-bc4bea0f9026))
+    (pin "2"
+      (uuid ade48b25-a81d-599a-a481-7f4a51e16fe2))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_DAC2_BULK")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 250.19)
+      (xy 241.3 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f678b50a-3c0a-54d9-a93c-1c7d795f87ad))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 241.3 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b31e710a-e9d3-533d-9015-fe5e9fd7dee4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 257.81)
+      (xy 241.3 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 52e82aa7-1c08-5d70-85ca-68ffe5821adc))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f8986e9d-506d-5996-9e45-746c91c0d074)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3731d8c3-d8db-59c2-b615-afd6bc9ce8ca)
+    (property "Reference" "C_OA_CV_VCC"
+      (at 241.3 231.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 241.3 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 301c4f55-6d84-5a09-b03b-6ccc4ce8ffcd))
+    (pin "2"
+      (uuid 908db505-cd6f-5509-aa91-bb9eb17507b6))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_OA_CV_VCC")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 313.69)
+      (xy 241.3 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 59f15e38-aafd-5fc9-82e0-6f3a364ec5c6))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 241.3 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 23bd04d2-4134-5d69-b86e-8f70bd10e5ec)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 311.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 321.31)
+      (xy 241.3 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1d55d3e6-8902-5921-af1e-6af338fd8a5f))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid aaa4d4f6-5cba-5055-ada5-c8c0ea1279f1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 67c3c52e-d3f9-5cc8-87f1-76cd0bd2d259)
+    (property "Reference" "C_OA_CV_BULK"
+      (at 241.3 294.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 241.3 297.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7fd52dc6-da75-53b6-958a-7b94f2fbe489))
+    (pin "2"
+      (uuid 3df45875-6c51-5351-94b7-5c409d7560a6))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0"
+          (reference "C_OA_CV_BULK")
+          (unit 1)))))
+  (text "CV: 1 + 10k/20k = 1.5; A0 DAC1=GND (0x60), DAC2=3V3 (0x61)."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b019c78f-bd0a-59fa-8c13-bee175397eff))
+  (text "Doc24 pide 1k + proteccion de salida; no definidos en README, pendiente de decision."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e9d9467d-b0bf-5ee6-95db-f2ff41e1fcad)))

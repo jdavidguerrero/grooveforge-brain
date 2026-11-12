@@ -1,33 +1,53 @@
-ERC Report — PCB-M Placa Principal GrooveForge Consola
-Generado: 2026-11-11
-Esquemático: pcb-m.kicad_sch (top-level jerárquico)
+ERC report (2026-11-12T08:07:38, Encoding UTF8)
+Report includes: Errors, Warnings, Exclusions
 
-=== RESUMEN ===
-  Errores:   19   (2 reales + 17 warnings promovidos a error por configuración de herramienta)
-  Warnings:  123  (esperados, inherentes al diseño jerárquico con net labels)
-  Info:       0
+***** Sheet /
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(55.88 mm, 119.38 mm): Label 'I2S_TX'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(55.88 mm, 121.92 mm): Label 'I2S_RX'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(233.68 mm, 106.68 mm): Label 'I2S_MCLK'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(233.68 mm, 111.76 mm): Label 'I2S_BCLK'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(233.68 mm, 114.30 mm): Label 'I2S_LRCLK'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(71.12 mm, 63.50 mm): Label 'LINE_IN_L_R'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(71.12 mm, 127.00 mm): Label 'LINE_IN_R_R'
 
-=== ERRORES REALES ===
-1. [error] Label not connected @ (-0.0254, -0.0762)
-2. [error] Label not connected @ (-0.0254, 0.0762)
+***** Sheet /01-teensy/
 
-   Análisis: Coordenadas en rango milimétrico cercano a cero. No se encontraron labels
-   en esas posiciones exactas en ningún archivo .kicad_sch. Probablemente artefacto del
-   ERC jerárquico de KiCad cuando los sub-sheets usan net labels locales (no global labels
-   ni hierarchical pins). En producción: convertir nets críticos a global_label o agregar
-   PWR_FLAG en los rails de alimentación.
+***** Sheet /02-analog-front/
 
-=== WARNINGS (123) — "Label connected to only one pin" ===
-   ESPERADOS en este diseño. Causa: net labels locales son scoped al sub-sheet donde
-   están definidos. El ERC ve cada label como conectado solo al pin de ese sub-sheet
-   y no puede verificar la conexión cross-sheet sin hierarchical pins.
+***** Sheet /03-adc/
 
-   En producción: implementar uno de estos enfoques:
-   a) Agregar hierarchical pins a cada sheet symbol + hierarchical labels en sub-sheets
-   b) Usar global_label en lugar de label para todos los nets cross-sheet
-   c) Aceptar warnings y verificar netlist XML manualmente
+***** Sheet /04-mcp-io/
 
-=== RESULTADO PARA FABRICACIÓN ===
-   STATUS: PASS con reservas (ver sección errores reales)
-   El netlist XML en pcb-m-netlist.xml está disponible para revisión manual.
-   Los errores reales no impiden la generación del netlist ni del PDF.
+***** Sheet /05-cv-dac/
+
+***** Sheet /06-surface/
+
+***** Sheet /07-midi/
+
+***** Sheet /08-connectors-panel/
+
+***** Sheet /09-connectors-rear/
+
+***** Sheet /10-power/
+
+ ** ERC messages: 7  Errors 0  Warnings 7
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters

@@ -1,698 +1,1112 @@
 (kicad_sch
-	(version 20260101)
-	(generator "eeschema")
-	(generator_version "10.0")
-	(uuid 28fb366c-fd75-48c9-86a8-a82da3a00305)
-	(paper "A4")
-	(lib_symbols
-		(symbol "Analog_ADC:ADS1115IDGS"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at 2.54 13.97 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "ADS1115IDGS"
-				(at 7.62 11.43 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Package_SO:TSSOP-10_3x3mm_P0.5mm"
-				(at 0 -12.7 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "http://www.ti.com/lit/ds/symlink/ads1113.pdf"
-				(at -1.27 -22.86 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal Reference, Oscillator, and Programmable Comparator, VSSOP-10"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "16 bit 4 channel I2C ADC"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "TSSOP*3x3mm*P0.5mm*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "ADS1115IDGS_0_1"
-				(rectangle
-					(start -7.62 10.16)
-					(end 7.62 -7.62)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-			)
-			(symbol "ADS1115IDGS_1_1"
-				(pin input line
-					(at 10.16 -5.08 180)
-					(length 2.54)
-					(name "ADDR"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 10.16 5.08 180)
-					(length 2.54)
-					(name "ALERT/RDY"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 -10.16 90)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 2.54 0)
-					(length 2.54)
-					(name "AIN0"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 0 0)
-					(length 2.54)
-					(name "AIN1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 -2.54 0)
-					(length 2.54)
-					(name "AIN2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -10.16 -5.08 0)
-					(length 2.54)
-					(name "AIN3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at 0 12.7 270)
-					(length 2.54)
-					(name "VDD"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin bidirectional line
-					(at 10.16 -2.54 180)
-					(length 2.54)
-					(name "SDA"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "9"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at 10.16 0 180)
-					(length 2.54)
-					(name "SCL"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "10"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-	)
-	(symbol
-		(lib_id "Analog_ADC:ADS1115IDGS")
-		(at 69.85 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "e4f11464-6a19-4ba1-9333-d02de42c5021")
-		(property "Reference" "U_ADS1"
-			(at 72.39 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "ADS1115IDGSR"
-			(at 77.47 71.12 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:VSSOP-10_3x3mm_P0.5mm"
-			(at 69.85 46.99 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/ads1113.pdf"
-			(at 68.58 36.83 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal Reference, Oscillator, and Programmable Comparator, VSSOP-10"
-			(at 69.85 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "764de11d-a188-486a-b787-5d347c4489c1")
-		)
-		(pin "10"
-			(uuid "cf68de0b-c46d-4d53-96d0-79cdb3c64ff5")
-		)
-		(pin "2"
-			(uuid "5f76a45c-3993-420f-a8f4-111fddd6f21f")
-		)
-		(pin "3"
-			(uuid "dfeae814-c8d6-43f4-8194-09fa270e1a88")
-		)
-		(pin "4"
-			(uuid "6ee2b193-ae19-4b27-af8c-4891a7040346")
-		)
-		(pin "5"
-			(uuid "99e38b7f-1ba4-433f-8932-9a4266680223")
-		)
-		(pin "6"
-			(uuid "0776fbfb-094c-4810-8ecf-670343dd1e9d")
-		)
-		(pin "7"
-			(uuid "562bdbfd-0b2a-4d19-82fb-8f553fe49a8f")
-		)
-		(pin "8"
-			(uuid "dde09db0-dc26-43c6-a677-9bfbda7a6bb0")
-		)
-		(pin "9"
-			(uuid "664dcf05-ca6d-4145-ad81-e635469196e2")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/28fb366c-fd75-48c9-86a8-a82da3a00305"
-					(reference "U_ADS1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Analog_ADC:ADS1115IDGS")
-		(at 160.02 59.69 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "8777bb45-441a-4e94-90ab-53c796513136")
-		(property "Reference" "U_ADS2"
-			(at 162.56 73.66 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "ADS1115IDGSR"
-			(at 167.64 71.12 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:VSSOP-10_3x3mm_P0.5mm"
-			(at 160.02 46.99 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/ads1113.pdf"
-			(at 158.75 36.83 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal Reference, Oscillator, and Programmable Comparator, VSSOP-10"
-			(at 160.02 59.69 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "7f60567a-6882-4662-9fda-ce9a5caf7501")
-		)
-		(pin "10"
-			(uuid "7fcb33e6-c5b2-479d-91ff-624d8d48314a")
-		)
-		(pin "2"
-			(uuid "02cc16fc-278f-4b08-ab07-f47bf7d3f1a6")
-		)
-		(pin "3"
-			(uuid "eb5e8b9b-6354-4cd4-8a15-de8e4f29c56e")
-		)
-		(pin "4"
-			(uuid "b54ad784-49a8-4cc9-81ab-4ceca1b3c7dd")
-		)
-		(pin "5"
-			(uuid "fc5db19e-f60e-4d16-a599-85c49d75e563")
-		)
-		(pin "6"
-			(uuid "51df4d39-7e66-49fc-8a22-bffeecc6fa57")
-		)
-		(pin "7"
-			(uuid "0da49b8e-3078-4041-9bb4-71b1259c6cdd")
-		)
-		(pin "8"
-			(uuid "fac74bb9-ddf3-45ca-af73-5f49d9005cc2")
-		)
-		(pin "9"
-			(uuid "3f2b8a26-fc24-444f-8adc-4fdae13577a8")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/28fb366c-fd75-48c9-86a8-a82da3a00305"
-					(reference "U_ADS2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(no_connect
-		(at 80.00999999999999 54.61)
-		(uuid "ae44df25-54a3-4195-b539-9a2665556854")
-	)
-	(global_label "GND"
-		(at 69.85 69.85 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ed200641-4373-4a84-9231-2b3f9afab518")
-	)
-	(label "FADER1_SIG"
-		(at 59.69 57.15 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1bd701f2-4b3c-4652-a653-c76558abbf8a")
-	)
-	(label "FADER2_SIG"
-		(at 59.69 59.69 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "deed9f87-65e5-426e-bb65-3c13f395f00a")
-	)
-	(label "FADER3_SIG"
-		(at 59.69 62.23 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d482d580-9870-480d-a597-a700c593154f")
-	)
-	(label "FADER4_SIG"
-		(at 59.69 64.77 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "ec638f8a-33b1-4949-a49b-bb083d078a4e")
-	)
-	(label "I2C_SDA"
-		(at 80.00999999999999 62.23 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5ca693f5-7bb1-45ef-9783-0be26bc85970")
-	)
-	(label "I2C_SCL"
-		(at 80.00999999999999 59.69 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "41d454d3-2559-4388-a3d0-5e8dca38f705")
-	)
-	(global_label "+3.3VA"
-		(at 69.85 46.989999999999995 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "0cfdd46a-f05c-47ad-a584-23db78c77dcb")
-	)
-	(label "EXP1_ADC"
-		(at 149.86 57.15 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "f6f486b8-cddf-4105-aa2d-f4dd94580e7c")
-	)
-	(label "EXP2_ADC"
-		(at 149.86 59.69 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "254d0815-ebd1-4d1d-a663-68302d68135d")
-	)
-	(label "SHARP1_ADC"
-		(at 149.86 62.23 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "9b85884f-55d2-4827-8fcc-77e0721e5399")
-	)
-	(label "SHARP2_ADC"
-		(at 149.86 64.77 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "b5ca185b-133d-44ea-9087-b1f85f14c2b9")
-	)
-	(global_label "+3.3VA"
-		(at 170.18 64.77 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "4f8fc506-8206-4419-a153-bf8d99f95c3d")
-	)
-	(no_connect
-		(at 170.18 54.61)
-		(uuid "93b23097-7e5d-4b75-aec0-da29b1c41446")
-	)
-	(global_label "GND"
-		(at 160.02 69.85 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "9bfc753d-2bbd-47a5-a00d-5e7b01d64049")
-	)
-	(global_label "+3.3VA"
-		(at 160.02 46.989999999999995 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "a944d0f3-45aa-41f3-b5f0-6cd7aef375a2")
-	)
-	(label "I2C_SDA"
-		(at 170.18 62.23 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "6d1e381c-b2e7-4868-886f-06624278e333")
-	)
-	(label "I2C_SCL"
-		(at 170.18 59.69 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "20e2e47c-bba6-4ca6-a1a7-d03432362a39")
-	)
-	(text "ADS1115 #1 (0x48) — Faders 1-4"
-		(exclude_from_sim no)
-		(at 69.85 78 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "0bc933fe-94a8-42a8-8e06-a6546bcbbb1b")
-	)
-	(text "ADS1115 #2 (0x49) — EXP1/2 + Sharp1/2"
-		(exclude_from_sim no)
-		(at 160.02 78 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "144faa34-fb0a-44ee-bf45-929e16c5c51d")
-	)
-	(sheet_instances
-		(path "/"
-			(page "1")
-		)
-	)
-)
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 3302b27c-08c3-54b9-8882-5238c9011ddc)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Analog_ADC:ADS1115IDGS"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at 2.54 13.97 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "ADS1115IDGS"
+        (at 7.62 11.43 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" "Package_SO:TSSOP-10_3x3mm_P0.5mm"
+        (at 0 -12.7 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://www.ti.com/lit/ds/symlink/ads1113.pdf"
+        (at -1.27 -22.86 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Ultra-Small, Low-Power, I2C-Compatible, 860-SPS, 16-Bit ADCs With Internal Reference, Oscillator, and Programmable Comparator, VSSOP-10"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "16 bit 4 channel I2C ADC"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "TSSOP*3x3mm*P0.5mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "ADS1115IDGS_0_1"
+        (rectangle
+          (start -7.62 10.16)
+          (end 7.62 -7.62)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background))))
+      (symbol "ADS1115IDGS_1_1"
+        (pin input line
+          (at 10.16 -5.08 180)
+          (length 2.54)
+          (name "ADDR"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 10.16 5.08 180)
+          (length 2.54)
+          (name "ALERT/RDY"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 -10.16 90)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 2.54 0)
+          (length 2.54)
+          (name "AIN0"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 0 0)
+          (length 2.54)
+          (name "AIN1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 -2.54 0)
+          (length 2.54)
+          (name "AIN2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -10.16 -5.08 0)
+          (length 2.54)
+          (name "AIN3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 12.7 270)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 10.16 -2.54 180)
+          (length 2.54)
+          (name "SDA"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "9"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at 10.16 0 180)
+          (length 2.54)
+          (name "SCL"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "10"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 73.66 68.58)
+      (xy 76.2 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 02abdcf9-ee49-57fa-8afa-3a8bd09bf121))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 76.2 68.58 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ac01814d-6e29-58bc-8d38-6ca6dbf8c269)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 73.66 58.42)
+    (uuid 23f6126f-0cab-55a5-9a7f-326d6ec3ea2b))
+  (wire
+    (pts
+      (xy 63.5 73.66)
+      (xy 63.5 76.2))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1e8358ce-62d1-59d1-ac25-20cc1f0ea9c7))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 76.2 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8ada7848-0eee-5e9e-868c-8d7f079f8ed3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 76.2 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 60.96)
+      (xy 50.8 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1245105a-ede3-5c18-8911-cc378c54784a))
+  (global_label "FADER1_SIG"
+    (shape bidirectional)
+    (at 50.8 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f2b39391-33c5-51f7-b03c-8ebe6adc1edd)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 63.5)
+      (xy 50.8 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c378dad5-0920-5219-b549-72a1fc50698d))
+  (global_label "FADER2_SIG"
+    (shape bidirectional)
+    (at 50.8 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b7647eb7-b628-51e6-9a54-3fd79b7b818f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 66.04)
+      (xy 50.8 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5226d4aa-4b88-5104-b00a-0f719a155149))
+  (global_label "FADER3_SIG"
+    (shape bidirectional)
+    (at 50.8 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 427e438f-3c38-596e-86f2-1ed0e5917da6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 53.34 68.58)
+      (xy 50.8 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 40356a7e-fc6e-56d7-a882-d15ea0725fcf))
+  (global_label "FADER4_SIG"
+    (shape bidirectional)
+    (at 50.8 68.58 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3568a904-6722-5264-b8d6-dd26dfe7ef02)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 50.8 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 50.8)
+      (xy 63.5 48.26))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid fd5c39b4-26d1-52ff-87e3-37526ab9c70c))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 63.5 48.26 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3e91d7ac-3a39-5818-b3ab-12f7fc38fa8c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 48.26 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 73.66 66.04)
+      (xy 76.2 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b40cb303-6db4-5941-9b45-e27c1de8f9bd))
+  (global_label "I2C_SDA"
+    (shape bidirectional)
+    (at 76.2 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1b1c6977-8f42-5c37-855c-263403d8c379)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 73.66 63.5)
+      (xy 76.2 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4c00e1f7-964e-57fd-a7bb-d278cc0f850c))
+  (global_label "I2C_SCL"
+    (shape bidirectional)
+    (at 76.2 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1fb41282-d360-5c3d-ba3f-d094f4193940)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Analog_ADC:ADS1115IDGS")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3eea875a-8ffc-5766-ac32-91dd468c796b)
+    (property "Reference" "U_ADS1"
+      (at 63.5 33.02 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "ADS1115IDGSR"
+      (at 63.5 35.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:TSSOP-10_3x3mm_P0.5mm"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 9bc051aa-19e6-5e12-928c-0d9ad8ea2dd4))
+    (pin "2"
+      (uuid 17fc6efc-9cde-5c2a-a751-43e077d4fe9f))
+    (pin "3"
+      (uuid 95a43455-be13-5c55-b26f-13d7bced5cea))
+    (pin "4"
+      (uuid 10bc6fe6-4f88-5b7f-9a5f-eacab2e40c20))
+    (pin "5"
+      (uuid d7b97d4d-c2fb-5434-b533-6b7fd1f7c027))
+    (pin "6"
+      (uuid 0f5b5e39-9ec3-5573-a3c7-c2bced04fcc6))
+    (pin "7"
+      (uuid 8e21d9a7-3a4e-5f85-ad89-3d53d12a9881))
+    (pin "8"
+      (uuid 5512c948-d1d7-58fd-baa0-d8594475ca16))
+    (pin "9"
+      (uuid 8358e752-f4cb-5bbb-90de-dc32e8374b93))
+    (pin "10"
+      (uuid 9f19d731-0efd-5c51-a1c6-0506ce695c00))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "U_ADS1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 123.19)
+      (xy 63.5 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e334ab25-5b90-595a-b648-b04e82074640))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 63.5 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid af1a4335-1532-5007-b520-a3a56b067bad)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 130.81)
+      (xy 63.5 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 823c6f00-14b3-5db0-95b8-71359481f7b5))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 29d399c4-62b1-5140-a1f3-c323c9fcb8a5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 63.5 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0fbf24b1-b85d-5c00-890e-62d60c23accf)
+    (property "Reference" "C_ADS1_VCC"
+      (at 63.5 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 63.5 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 1b87e205-497d-55e8-8cb8-38fbb9d32c01))
+    (pin "2"
+      (uuid 852cb0a5-0b75-5250-9aa0-290efa9f0a36))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "C_ADS1_VCC")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 186.69)
+      (xy 241.3 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4689a710-bc45-5351-bab6-d09b12ef4cff))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 241.3 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 0e8f6a9e-e56b-5031-a4ac-f4731523b836)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 194.31)
+      (xy 241.3 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6c683b8c-a116-5c17-9d71-90b075a82973))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid af7d637c-cb8d-5f83-8b4c-7a1f8b219f1f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d6729071-bf6d-52b6-9e94-fdc0211104a6)
+    (property "Reference" "C_ADS1_BULK"
+      (at 241.3 168.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 241.3 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid be4c6dbf-2733-527d-ad77-49cce9bef5af))
+    (pin "2"
+      (uuid bf647913-777f-5bd4-a270-7bf6d34b3258))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "C_ADS1_BULK")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 251.46 68.58)
+      (xy 254 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 305a48dc-ff14-5b48-bb96-004b56e38fde))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 254 68.58 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid aa60e97e-ca84-59d2-b7a4-f8d21b8efe9a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 254 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 251.46 58.42)
+    (uuid c07de6b1-b088-5fd1-8660-76994877d920))
+  (wire
+    (pts
+      (xy 241.3 73.66)
+      (xy 241.3 76.2))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid be5b0b13-e1d9-5b44-94ff-c341d49da15c))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 76.2 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid be0a9da4-8291-5fba-995a-a08dafd904a6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 76.2 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 231.14 60.96)
+      (xy 228.6 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 09d28e72-b299-59a0-b66b-e4a8b611fd8c))
+  (global_label "EXP1_ADC"
+    (shape bidirectional)
+    (at 228.6 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a76f2ca2-2043-5daa-af47-72511421171b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 228.6 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 231.14 63.5)
+      (xy 228.6 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 066edaa9-6e5b-51ab-8057-f0f04ce4dc84))
+  (global_label "EXP2_ADC"
+    (shape bidirectional)
+    (at 228.6 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f4e2cc52-419f-5fe3-946f-c83132e88d24)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 228.6 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 231.14 66.04)
+      (xy 228.6 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ef993ad6-36ee-5f1a-b72d-4ea8399e41f5))
+  (global_label "SHARP1_ADC"
+    (shape bidirectional)
+    (at 228.6 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6f13e54d-e463-58dc-b1d2-c104b5bfc059)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 228.6 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 231.14 68.58)
+      (xy 228.6 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 63ea7bc8-6e74-5a75-ae0e-a5d4e9283fbc))
+  (global_label "SHARP2_ADC"
+    (shape bidirectional)
+    (at 228.6 68.58 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bb64ff65-14cc-5fa0-9bc0-daa63508a667)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 228.6 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 50.8)
+      (xy 241.3 48.26))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 69a90123-be74-51f1-9c2a-4c36a8ec948c))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 241.3 48.26 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2eb0531c-6289-5ac5-8e3c-6202438899bd)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 48.26 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 251.46 66.04)
+      (xy 254 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7ce076a9-7f16-597e-b7de-3f658cf6c919))
+  (global_label "I2C_SDA"
+    (shape bidirectional)
+    (at 254 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c16c7a52-12a3-5511-87f2-0b1d820cbbf3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 254 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 251.46 63.5)
+      (xy 254 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e2046180-ea60-5c75-9d34-bc35224251d0))
+  (global_label "I2C_SCL"
+    (shape bidirectional)
+    (at 254 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d0d3a02e-c864-5623-90c5-5d79ecb8166d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 254 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Analog_ADC:ADS1115IDGS")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3ea6944f-d463-5ab0-a7b9-fd0848856adc)
+    (property "Reference" "U_ADS2"
+      (at 241.3 33.02 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "ADS1115IDGSR"
+      (at 241.3 35.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:TSSOP-10_3x3mm_P0.5mm"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 0aa33046-609d-5be5-91b2-e934ff050256))
+    (pin "2"
+      (uuid c86b205e-a256-54b6-ad6b-2bc942345925))
+    (pin "3"
+      (uuid 1c7de44f-daeb-5c49-91cb-b2c378a59470))
+    (pin "4"
+      (uuid 25f1dac8-e0c4-594c-b1b3-4cc22aafc439))
+    (pin "5"
+      (uuid 2b04fa04-8433-5479-bc07-3b24b0cbd179))
+    (pin "6"
+      (uuid 7d4de327-8e7a-528c-80e7-5ca6a2c6966c))
+    (pin "7"
+      (uuid 84ea9155-3b31-53f4-8c23-e4bf2e36ec25))
+    (pin "8"
+      (uuid 4b59a5ab-f5f4-576f-bd1c-24c573b96fbf))
+    (pin "9"
+      (uuid a5ff8a7b-0b3d-5cb1-8247-34bc266ea7bf))
+    (pin "10"
+      (uuid 12d71dfc-48c6-56af-a6d8-ae30c77a2cd4))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "U_ADS2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 123.19)
+      (xy 152.4 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d134b56e-6270-5430-98e8-a21cf0eaedd6))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 152.4 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 30169bc0-8ed1-5aed-b92d-2f84324e689f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 130.81)
+      (xy 152.4 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3f184790-dbb0-594f-9232-4068252a2cc0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 806fe7be-73b3-55fe-8033-81b6da1b41bb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 53866539-9f93-5e39-9c40-a031cf2c6a75)
+    (property "Reference" "C_ADS2_VCC"
+      (at 152.4 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 152.4 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d85c445f-e7d0-54fc-98a7-34afa48ecb7e))
+    (pin "2"
+      (uuid 410cb7fe-d3cd-56da-b23f-002a7fb21070))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "C_ADS2_VCC")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 186.69)
+      (xy 330.2 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 964de5f7-7b31-540b-bc5a-82968aa3897c))
+  (global_label "+3.3VA"
+    (shape bidirectional)
+    (at 330.2 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c1f286d8-cd29-5ef4-8cf9-db9bcd5b2937)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 194.31)
+      (xy 330.2 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1062d64f-f9f8-58ac-99ca-66f3baf9c41f))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c68c34a7-b626-5191-ac88-9bbc851b75a2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 330.2 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid ad92fbc5-a2f0-5533-8f42-db12f56a2397)
+    (property "Reference" "C_ADS2_BULK"
+      (at 330.2 168.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 330.2 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ce0fd1a7-bfe7-5eba-8ee6-33fe366627d0))
+    (pin "2"
+      (uuid 01faa751-9f81-5269-a6aa-2d9d9617ee51))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/08f376cf-7ddc-53dd-9416-fe1edb332f66"
+          (reference "C_ADS2_BULK")
+          (unit 1)))))
+  (text "ADS1=0x48 (ADDR=GND); ADS2=0x49 (ADDR=VDD); ALERT/RDY no usado."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2db4a2bb-fa27-5af6-8e7b-5877817917e5)))

@@ -1,1109 +1,1752 @@
 (kicad_sch
-	(version 20260101)
-	(generator "eeschema")
-	(generator_version "10.0")
-	(uuid 49a23d3e-f9cf-4357-b507-04f6ecf40eec)
-	(paper "A4")
-	(lib_symbols
-		(symbol "Isolator:6N138"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "U"
-				(at -4.064 8.89 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "6N138"
-				(at 2.286 8.89 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 7.366 -7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "http://www.onsemi.com/pub/Collateral/HCPL2731-D.pdf"
-				(at 7.366 -7.62 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Low Input Current high Gain Split Darlington Optocouplers, -0.5V to 7V VDD, DIP-8"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "darlington optocoupler"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "DIP*W7.62mm* SMDIP*W9.53mm*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "6N138_0_1"
-				(rectangle
-					(start -5.08 7.62)
-					(end 5.08 -7.62)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(polyline
-					(pts
-						(xy -5.08 -2.54) (xy -3.937 -2.54) (xy -3.937 2.54) (xy -5.08 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -4.572 -0.635) (xy -3.302 -0.635)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -3.937 -0.635) (xy -4.572 0.635) (xy -3.302 0.635) (xy -3.937 -0.635)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.794 0.508) (xy -1.524 0.508) (xy -1.905 0.381) (xy -1.905 0.635) (xy -1.524 0.508)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy -2.794 -0.508) (xy -1.524 -0.508) (xy -1.905 -0.635) (xy -1.905 -0.381) (xy -1.524 -0.508)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.254 -0.635) (xy 0.889 -1.905) (xy -0.381 -1.905) (xy 0.254 -0.635)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.889 -0.635) (xy -0.381 -0.635)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0.254 -2.54) (xy 0.254 5.08) (xy 2.54 5.08)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.397 -1.524) (xy 1.397 -3.556)
-					)
-					(stroke
-						(width 0.3556)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.397 -2.413) (xy 2.54 -1.27)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.397 -2.667) (xy 2.54 -3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.413 -3.683) (xy 2.159 -3.175) (xy 1.905 -3.429) (xy 2.413 -3.683)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 -1.27) (xy 2.54 5.08) (xy 5.08 5.08)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 -3.81) (xy 3.175 -3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.429 -2.794) (xy 3.429 -4.826)
-					)
-					(stroke
-						(width 0.3556)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.429 -3.683) (xy 4.572 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.429 -3.937) (xy 4.572 -5.08)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 4.445 -4.953) (xy 4.191 -4.445) (xy 3.937 -4.699) (xy 4.445 -4.953)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 4.572 -2.54) (xy 5.08 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 4.572 -5.08) (xy 5.08 -5.08)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 5.08 2.54) (xy 3.048 2.54) (xy 3.048 -3.81)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "6N138_1_1"
-				(pin no_connect line
-					(at -5.08 5.08 0)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "C1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "C2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin no_connect line
-					(at -5.08 -5.08 0)
-					(length 2.54)
-					(hide yes)
-					(name "NC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 7.62 -5.08 180)
-					(length 2.54)
-					(name "GND"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 7.62 -2.54 180)
-					(length 2.54)
-					(name "VO2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 7.62 2.54 180)
-					(length 2.54)
-					(name "VO1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 7.62 5.08 180)
-					(length 2.54)
-					(name "VCC"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Connector_Audio:AudioJack3"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(in_pos_files yes)
-			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at 0 8.89 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "AudioJack3"
-				(at 0 6.35 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" ""
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "audio jack receptacle stereo headphones phones TRS connector"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_fp_filters" "Jack*"
-				(at 0 0 0)
-				(show_name no)
-				(do_not_autoplace no)
-				(hide yes)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(symbol "AudioJack3_0_1"
-				(rectangle
-					(start -5.08 -5.08)
-					(end -6.35 -2.54)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy -1.905 -2.54) (xy -1.27 -3.175) (xy -0.635 -2.54) (xy -0.635 0) (xy 2.54 0)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0 -2.54) (xy 0.635 -3.175) (xy 1.27 -2.54) (xy 2.54 -2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(rectangle
-					(start 2.54 3.81)
-					(end -5.08 -5.08)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.54 2.54) (xy -2.54 2.54) (xy -2.54 -2.54) (xy -3.175 -3.175) (xy -3.81 -2.54)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "AudioJack3_1_1"
-				(pin passive line
-					(at 5.08 0 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "R"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 2.54 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "S"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 -2.54 180)
-					(length 2.54)
-					(name ""
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "T"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-	)
-	(symbol
-		(lib_id "Isolator:6N138")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "a916a596-2454-44a7-9acc-0b5ccc0a3ee6")
-		(property "Reference" "U_OPT_MIDI"
-			(at -4.064 8.89 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "6N138"
-			(at 2.286 8.89 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 7.366 -7.62 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "http://www.onsemi.com/pub/Collateral/HCPL2731-D.pdf"
-			(at 7.366 -7.62 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Low Input Current high Gain Split Darlington Optocouplers, -0.5V to 7V VDD, DIP-8"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "37e14193-b7bf-4a24-b6cd-ea8e81809095")
-		)
-		(pin "2"
-			(uuid "645a9b96-67fc-4a4c-89af-30656d54de11")
-		)
-		(pin "3"
-			(uuid "917a0677-071f-429b-b0fe-be50e027ff30")
-		)
-		(pin "4"
-			(uuid "1642d6bb-6a95-4a8f-9d6d-fae544dde813")
-		)
-		(pin "5"
-			(uuid "afb77bda-efea-491d-810c-168059cbd3eb")
-		)
-		(pin "6"
-			(uuid "ada33ae3-67fe-43c4-bf33-dff7845fd1aa")
-		)
-		(pin "7"
-			(uuid "8838a07b-2098-4db0-83aa-c1380740f8f2")
-		)
-		(pin "8"
-			(uuid "dd29bc56-379f-4f84-9e96-1bb0c5ed3804")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/49a23d3e-f9cf-4357-b507-04f6ecf40eec"
-					(reference "U_OPT_MIDI")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Audio:AudioJack3")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "bbfc3a71-c8fa-43be-a73d-ced121d87806")
-		(property "Reference" "J_MIDI_IN"
-			(at 0 8.89 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "3.5mm_TRS_MIDI_IN"
-			(at 0 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "R"
-			(uuid "33d6083b-6d5a-40f6-bd42-f016d7e787cb")
-		)
-		(pin "S"
-			(uuid "ac6ad3ef-3829-482d-bda8-2d75b4a09cd4")
-		)
-		(pin "T"
-			(uuid "cdd06528-0be6-4a8e-acd0-24eceee70a7d")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/49a23d3e-f9cf-4357-b507-04f6ecf40eec"
-					(reference "J_MIDI_IN")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Audio:AudioJack3")
-		(at 0 0 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "919640d1-5eb2-4a16-92f7-0f5599412f6f")
-		(property "Reference" "J_MIDI_OUT"
-			(at 0 8.89 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "3.5mm_TRS_MIDI_OUT"
-			(at 0 6.35 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
-			(at 0 0 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "R"
-			(uuid "86d395db-e588-47da-aa29-0b08bca6872d")
-		)
-		(pin "S"
-			(uuid "7f2429c5-0f7f-4380-aae1-a256509f8a5a")
-		)
-		(pin "T"
-			(uuid "e85fcd8f-230b-4c01-8b32-76a88398c3a4")
-		)
-		(instances
-			(project "pcb-m"
-				(path "/49a23d3e-f9cf-4357-b507-04f6ecf40eec"
-					(reference "J_MIDI_OUT")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(label "MIDI_IN_RING"
-		(at 5.08 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "9348c883-7c39-4749-9011-0a20f3196e61")
-	)
-	(global_label "GND"
-		(at 5.08 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "aec0991f-8369-49ba-b7e9-cf18f19fbe67")
-	)
-	(global_label "GND"
-		(at 5.08 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "ee15091f-d337-46d5-b740-343434491026")
-	)
-	(label "MIDI_IN_RING"
-		(at -7.62 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "30c53266-ab48-407b-ac09-388f622a7870")
-	)
-	(global_label "GND"
-		(at -7.62 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "74aeaae0-e510-48a4-90a2-0094027ced19")
-	)
-	(label "MIDI_RX"
-		(at 7.62 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "5579ad58-2c2a-4f27-a99f-e21a45c60637")
-	)
-	(label "MIDI_RX"
-		(at 7.62 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d0f27ccb-fc32-407e-961b-8c20c88f94e8")
-	)
-	(global_label "+3.3V"
-		(at 7.62 -5.08 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "b4d6c7b4-4015-408b-8548-fa748c8bb9a2")
-	)
-	(global_label "GND"
-		(at 7.62 5.08 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "5c801709-03ec-4206-8472-5f1d9bdf56ed")
-	)
-	(no_connect
-		(at -5.08 -5.08)
-		(uuid "c2747cbe-f601-4610-aa25-b4c3e0457c71")
-	)
-	(label "MIDI_TX"
-		(at 5.08 2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "80b3ec2d-706d-480c-a59d-7ee05731cb63")
-	)
-	(label "MIDI_TX"
-		(at 5.08 0.0 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "d395bcd8-5d7c-4e46-8fae-741703233888")
-	)
-	(global_label "GND"
-		(at 5.08 -2.54 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "8dcee3a4-b852-4204-9b78-71db7bcaa847")
-	)
-	(text "MIDI TRS Tipo A (MIDI Assoc. spec)\\nIN: T=GND (100ohm), R=anode 6N138 (220ohm serie), S=GND\\n6N138: VO1+VO2=MIDI_RX (T0/Serial1), 220ohm pull-up a 3.3V\\nOUT: T+R=MIDI_TX (T1/Serial1) a traves de 47ohm c/u, S=GND\\nLCSC: 6N138 C3001991\\nTODO: agregar 220ohm/100ohm/47ohm pasivos"
-		(exclude_from_sim no)
-		(at 80 110 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "a046a243-c7cd-46c7-8795-721894f2d577")
-	)
-	(sheet_instances
-		(path "/"
-			(page "1")
-		)
-	)
-)
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid cf68f0b7-9555-55bd-a960-8bac441e2d70)
+  (paper "A2")
+  (lib_symbols
+    (symbol "Connector_Audio:AudioJack3"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 8.89 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "AudioJack3"
+        (at 0 6.35 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "audio jack receptacle stereo headphones phones TRS connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Jack*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "AudioJack3_0_1"
+        (rectangle
+          (start -5.08 -5.08)
+          (end -6.35 -2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy -1.905 -2.54)
+            (xy -1.27 -3.175)
+            (xy -0.635 -2.54)
+            (xy -0.635 0)
+            (xy 2.54 0))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0 -2.54)
+            (xy 0.635 -3.175)
+            (xy 1.27 -2.54)
+            (xy 2.54 -2.54))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start 2.54 3.81)
+          (end -5.08 -5.08)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (polyline
+          (pts
+            (xy 2.54 2.54)
+            (xy -2.54 2.54)
+            (xy -2.54 -2.54)
+            (xy -3.175 -3.175)
+            (xy -3.81 -2.54))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "AudioJack3_1_1"
+        (pin passive line
+          (at 5.08 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "R"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 2.54 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "S"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 -2.54 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "T"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:D"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "D"
+        (at 0 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Device" "D"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Pins" "1=K 2=A"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "D_0_1"
+        (polyline
+          (pts
+            (xy -1.27 1.27)
+            (xy -1.27 -1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 1.27)
+            (xy 1.27 -1.27)
+            (xy -1.27 0)
+            (xy 1.27 1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "D_1_1"
+        (pin passive line
+          (at -3.81 0 0)
+          (length 2.54)
+          (name "K"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 3.81 0 180)
+          (length 2.54)
+          (name "A"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Isolator:6N138"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at -4.064 8.89 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "6N138"
+        (at 2.286 8.89 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 7.366 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://www.onsemi.com/pub/Collateral/HCPL2731-D.pdf"
+        (at 7.366 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Low Input Current high Gain Split Darlington Optocouplers, -0.5V to 7V VDD, DIP-8"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "darlington optocoupler"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "DIP*W7.62mm* SMDIP*W9.53mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "6N138_0_1"
+        (rectangle
+          (start -5.08 7.62)
+          (end 5.08 -7.62)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (polyline
+          (pts
+            (xy -5.08 -2.54)
+            (xy -3.937 -2.54)
+            (xy -3.937 2.54)
+            (xy -5.08 2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -4.572 -0.635)
+            (xy -3.302 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.937 -0.635)
+            (xy -4.572 0.635)
+            (xy -3.302 0.635)
+            (xy -3.937 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.794 0.508)
+            (xy -1.524 0.508)
+            (xy -1.905 0.381)
+            (xy -1.905 0.635)
+            (xy -1.524 0.508))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.794 -0.508)
+            (xy -1.524 -0.508)
+            (xy -1.905 -0.635)
+            (xy -1.905 -0.381)
+            (xy -1.524 -0.508))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.254 -0.635)
+            (xy 0.889 -1.905)
+            (xy -0.381 -1.905)
+            (xy 0.254 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.889 -0.635)
+            (xy -0.381 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 -2.54)
+            (xy 0.254 -2.54)
+            (xy 0.254 5.08)
+            (xy 2.54 5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -1.524)
+            (xy 1.397 -3.556))
+          (stroke
+            (width 0.3556)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -2.413)
+            (xy 2.54 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -2.667)
+            (xy 2.54 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.413 -3.683)
+            (xy 2.159 -3.175)
+            (xy 1.905 -3.429)
+            (xy 2.413 -3.683))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 -1.27)
+            (xy 2.54 5.08)
+            (xy 5.08 5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 -3.81)
+            (xy 3.175 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -2.794)
+            (xy 3.429 -4.826))
+          (stroke
+            (width 0.3556)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -3.683)
+            (xy 4.572 -2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -3.937)
+            (xy 4.572 -5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.445 -4.953)
+            (xy 4.191 -4.445)
+            (xy 3.937 -4.699)
+            (xy 4.445 -4.953))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.572 -2.54)
+            (xy 5.08 -2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.572 -5.08)
+            (xy 5.08 -5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 5.08 2.54)
+            (xy 3.048 2.54)
+            (xy 3.048 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "6N138_1_1"
+        (pin no_connect line
+          (at -5.08 5.08 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "C1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "C2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin no_connect line
+          (at -5.08 -5.08 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 -5.08 180)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 -2.54 180)
+          (length 2.54)
+          (name "VO2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 2.54 180)
+          (length 2.54)
+          (name "VO1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 5.08 180)
+          (length 2.54)
+          (name "VCC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (no_connect
+    (at 147.32 58.42)
+    (uuid 9d604ec7-49db-54b5-8e03-4bcca694fe2c))
+  (wire
+    (pts
+      (xy 144.78 60.96)
+      (xy 142.24 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6765e720-f47e-576a-a1cf-f2ceb3a3e9a2))
+  (label "MIDI_OPTO_A"
+    (at 142.24 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1bab5bda-408b-52b6-a5ac-a7cb4b5f6eca))
+  (wire
+    (pts
+      (xy 144.78 66.04)
+      (xy 142.24 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ea7dd2e6-a1ca-5b31-b883-dc44ea3abb1f))
+  (label "MIDI_IN_TIP"
+    (at 142.24 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 37603873-10c9-5a68-8035-9878b37d22a3))
+  (no_connect
+    (at 147.32 68.58)
+    (uuid f4908045-fea7-5a2f-842b-1ac9441cc6fd))
+  (wire
+    (pts
+      (xy 160.02 68.58)
+      (xy 162.56 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 81683b8f-ee03-56f0-bdf9-f1301762d3fd))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 162.56 68.58 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid f41e969b-be49-573f-91af-100d3fcfdc0b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 66.04)
+      (xy 162.56 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 373c4f9c-d814-5ab9-967f-4b41e5d3fde0))
+  (global_label "MIDI_RX"
+    (shape bidirectional)
+    (at 162.56 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid da053743-c302-5b08-9c04-63d42c8c3810)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 60.96)
+      (xy 162.56 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 777caff4-d5ac-56e1-86e4-a6d582a11cb3))
+  (label "MIDI_OPTO_BASE"
+    (at 162.56 60.96 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c5f2ee65-21ba-53e4-9f57-1f01756eac2a))
+  (wire
+    (pts
+      (xy 160.02 58.42)
+      (xy 162.56 58.42))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 86a09fb5-6b3b-5664-8552-8538d2f383d5))
+  (global_label "+5V_TEENSY"
+    (shape bidirectional)
+    (at 162.56 58.42 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ae84d4d0-d498-5f75-8ebc-96c6a380c042)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Isolator:6N138")
+    (at 152.4 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid fb95cca3-4aa4-52e3-9fde-99cd5b812601)
+    (property "Reference" "U_OPT_MIDI"
+      (at 152.4 50.8 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "6N138"
+      (at 152.4 53.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_DIP:DIP-8_W7.62mm"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 92791f15-0d5e-5431-b4ce-e8753c0d3919))
+    (pin "2"
+      (uuid 2ca4463d-4fb4-532f-a1bb-4c3c81eca613))
+    (pin "3"
+      (uuid eca24f77-e532-5a80-a5a5-54b53c47bd99))
+    (pin "4"
+      (uuid c9590580-276c-5575-8d0b-efc95313a0f2))
+    (pin "5"
+      (uuid 12dfd107-1a0e-5bd3-9f35-562c6bebd725))
+    (pin "6"
+      (uuid 4c1de8d4-6327-5e43-8892-e0cf22f6d87a))
+    (pin "7"
+      (uuid 87ed4588-5ba2-51fb-b830-bbc7900011f7))
+    (pin "8"
+      (uuid 21ce2748-028f-5cdb-bc43-b33a2005af14))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "U_OPT_MIDI")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 68.58 63.5)
+      (xy 71.12 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0dd4cf00-74d7-5515-ac63-c9353741f62a))
+  (label "MIDI_IN_RING"
+    (at 71.12 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d6995ec5-0710-55b0-a2fe-f3bd2cde064f))
+  (no_connect
+    (at 68.58 60.96)
+    (uuid db883c3e-a2f2-5f24-83b5-526a8b2c2b44))
+  (wire
+    (pts
+      (xy 68.58 66.04)
+      (xy 71.12 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 75f46955-61c4-5612-8fff-00e920472d89))
+  (label "MIDI_IN_TIP"
+    (at 71.12 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b90b1632-b959-526b-8bbb-1f6a464d5ec0))
+  (symbol
+    (lib_id "Connector_Audio:AudioJack3")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 213d5375-1d3f-5070-8f88-4884ede5224e)
+    (property "Reference" "J_MIDI_IN"
+      (at 63.5 54.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "3.5mm_TRS_MIDI_IN"
+      (at 63.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_Audio:Jack_3.5mm_CUI_SJ-3523-SMT_Horizontal"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "R"
+      (uuid ad8b84d7-377b-539a-8a11-6c4d50a1e185))
+    (pin "S"
+      (uuid c99a6d32-9a2c-528f-82ba-cccc5cb025b0))
+    (pin "T"
+      (uuid 4cc4c1eb-6fd0-5c22-8d6b-c0b5ed94173b))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "J_MIDI_IN")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 68.58 190.5)
+      (xy 71.12 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 84220b28-0439-5317-bab5-f4279c870bc2))
+  (label "MIDI_OUT_RING"
+    (at 71.12 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e266a7a5-da5e-5a24-afe5-55a706b67a25))
+  (wire
+    (pts
+      (xy 68.58 187.96)
+      (xy 71.12 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1fe53802-3f66-5144-ba0d-d3b347368f5b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 71.12 187.96 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid dfe1192d-e8d2-59d2-a6bf-bb94eb9bea8d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 71.12 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 68.58 193.04)
+      (xy 71.12 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 00321459-b931-581f-9ad4-731cb8a3efc2))
+  (label "MIDI_OUT_TIP"
+    (at 71.12 193.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 61dc9eb7-5e3b-57af-b010-a0c92b119dd2))
+  (symbol
+    (lib_id "Connector_Audio:AudioJack3")
+    (at 63.5 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5cf67726-947b-563a-8dfa-800f0a463f1a)
+    (property "Reference" "J_MIDI_OUT"
+      (at 63.5 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "3.5mm_TRS_MIDI_OUT"
+      (at 63.5 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_Audio:Jack_3.5mm_CUI_SJ-3523-SMT_Horizontal"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "R"
+      (uuid 69797844-8187-5c4f-8082-86c84f2e3b73))
+    (pin "S"
+      (uuid 34e840d5-b13f-58de-be3f-71c7c913c3b5))
+    (pin "T"
+      (uuid e1d62276-0059-5b13-bdb8-bcc1abaa84e8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "J_MIDI_OUT")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 59.69)
+      (xy 241.3 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b7e6d340-aae4-5db7-91e9-cf8300841318))
+  (label "MIDI_IN_RING"
+    (at 241.3 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4905f1d6-671f-5b43-8608-8bae033a43b8))
+  (wire
+    (pts
+      (xy 241.3 67.31)
+      (xy 241.3 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 013bd676-4701-503c-8b10-8cd243a4b3a3))
+  (label "MIDI_OPTO_A"
+    (at 241.3 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f713cbc5-86c5-50fe-b029-26e32d537686))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b521d000-b677-52c7-a3ab-65d2214499d9)
+    (property "Reference" "R_MIDI_IN"
+      (at 241.3 34.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "220"
+      (at 241.3 36.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d4bc7ae2-c9e1-5b6e-b786-94c8bc80545e))
+    (pin "2"
+      (uuid dc4d13e9-a76c-5db0-b2c1-ab75af7ccf8c))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_IN")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 59.69)
+      (xy 330.2 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f69c8a0e-b7b6-59de-aaa8-6a8e2d6a5075))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 330.2 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9bdaa443-4665-5bb0-b717-f4892a514dd5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 67.31)
+      (xy 330.2 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8ccebcb2-89f5-55dc-8cd2-80c2b82cde39))
+  (global_label "MIDI_RX"
+    (shape bidirectional)
+    (at 330.2 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0fb1fafd-2daf-538a-a017-47866991cc12)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid dbc98df4-b0dc-5138-b507-10f62ef0b442)
+    (property "Reference" "R_MIDI_RX"
+      (at 330.2 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "4.7k"
+      (at 330.2 45.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3f8de11d-b96b-5d8b-b6ae-0a113c81d368))
+    (pin "2"
+      (uuid a6cb8dea-4728-59dd-ba8f-32355aeff41f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_RX")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 123.19)
+      (xy 241.3 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 48d1b0e5-f55a-59be-85d7-aeabbd0f3a36))
+  (label "MIDI_OPTO_BASE"
+    (at 241.3 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9826dd00-0038-5e9c-9a73-525711961f07))
+  (wire
+    (pts
+      (xy 241.3 130.81)
+      (xy 241.3 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 82ba10f0-f9e8-56e4-b9c0-661c48749299))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a5c4cb30-0ce3-5a87-be69-e0a5135d2e43)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 56f8f519-662a-5302-aa30-b8316931939e)
+    (property "Reference" "R_MIDI_BASE"
+      (at 241.3 95.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 97.79 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 04ee0683-8f1c-5d4d-ba85-b6c9a2661e6c))
+    (pin "2"
+      (uuid 8c4c537b-9d8a-5064-86e5-044f513c5323))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_BASE")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 326.39 127)
+      (xy 323.85 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 188b8af6-1f55-5dbf-8d60-d220ef487359))
+  (label "MIDI_OPTO_A"
+    (at 323.85 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 17d12e02-4036-5f6e-8ab7-333fa0c47e8f))
+  (wire
+    (pts
+      (xy 334.01 127)
+      (xy 336.55 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 50e39aa3-6467-5f82-bda6-00fa5ff94322))
+  (label "MIDI_IN_TIP"
+    (at 336.55 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 41ee7a4d-e528-502e-bf2e-f4fbf87bee27))
+  (symbol
+    (lib_id "Device:D")
+    (at 330.2 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d73e1a85-d961-5ac6-b633-d4a5edf06265)
+    (property "Reference" "D_MIDI_IN"
+      (at 330.2 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1N4148W"
+      (at 330.2 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Diode_SMD:D_SOD-123"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 21662954-341f-51ed-9565-7b9c44c47710))
+    (pin "2"
+      (uuid cd61e92c-57ff-5b9f-b1b0-7b3324a238da))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "D_MIDI_IN")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 186.69)
+      (xy 152.4 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3435e902-07d9-5b7a-95a9-1998dda82ff8))
+  (global_label "MIDI_TX"
+    (shape bidirectional)
+    (at 152.4 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e5238b06-9b43-53aa-8ac4-827861a76871)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 194.31)
+      (xy 152.4 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 364ad801-4e14-51b0-ae45-087078fe5783))
+  (label "MIDI_TX_PROTECTED"
+    (at 152.4 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3f403e5e-76ec-52a9-afda-daafc6e85e76))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid aa21d5dd-af1e-5e0b-9da8-572b526fa35c)
+    (property "Reference" "R_MIDI_S"
+      (at 152.4 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100"
+      (at 152.4 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b502f494-339d-54e1-9def-7d68b214fe23))
+    (pin "2"
+      (uuid f13cdead-2083-54d2-88c2-0961025481d4))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_S")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 186.69)
+      (xy 241.3 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 387bf4ed-9317-57e3-819d-76c37ad733bb))
+  (label "MIDI_TX_PROTECTED"
+    (at 241.3 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 731cac95-6fc2-5a53-9c28-426374633ae9))
+  (wire
+    (pts
+      (xy 241.3 194.31)
+      (xy 241.3 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 950ab8d1-5f1d-5595-bf26-6802446593f3))
+  (label "MIDI_OUT_TIP"
+    (at 241.3 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7a372464-2d84-552e-827c-23a6dcf9dbdc))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 174ad25e-da17-5564-92a0-191f5d3d9033)
+    (property "Reference" "R_MIDI_T"
+      (at 241.3 154.94 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "47"
+      (at 241.3 157.48 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 93ee5a05-efe0-518e-8e96-228f060c1008))
+    (pin "2"
+      (uuid eff8dc07-7494-54ac-8751-543357740307))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_T")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 186.69)
+      (xy 330.2 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7f1c9af5-305a-5fa4-9e6b-56b904e94382))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 330.2 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 294dc4d8-5abc-5f75-8f7d-f15e214ce944)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 194.31)
+      (xy 330.2 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7c142afa-2c80-5495-bf45-14ea9172b360))
+  (label "MIDI_OUT_RING"
+    (at 330.2 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5fe71290-bd8e-5324-9fe3-7c0dbfe9ed6a))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c04d002d-8712-5058-864c-3b40131cb8e6)
+    (property "Reference" "R_MIDI_R"
+      (at 330.2 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "47"
+      (at 330.2 172.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 42175ab4-cc79-513a-bc5b-22e1e1f8b71d))
+    (pin "2"
+      (uuid 867995bf-45df-5829-8b0e-8daf32300b7a))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_R")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 123.19)
+      (xy 152.4 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1bf573a5-adf6-5aee-bdb9-9ce1f2e42dfe))
+  (global_label "+5V_TEENSY"
+    (shape bidirectional)
+    (at 152.4 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c9c21c2d-5ad2-58f9-8c60-d8b71ab82cee)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 130.81)
+      (xy 152.4 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e639912c-2350-5097-9a3d-e6a026062c12))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 14111288-c610-5dbf-80f5-6b41096f965d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 6af4acef-3626-5892-86ab-688a54a82c09)
+    (property "Reference" "C_MIDI_VCC"
+      (at 152.4 100.33 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 152.4 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 30a40dbd-7510-52e6-91b3-a3e650a87154))
+    (pin "2"
+      (uuid a908e715-c310-5210-a8bc-08fb350a4bc8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "C_MIDI_VCC")
+          (unit 1)))))
+  (text "MIDI TRS Type A: ring=fuente, tip=sumidero; entrada aislada, sleeve IN NC."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1f901777-f42f-5c3e-983d-45965f8d9dac))
+  (text "R_MIDI_S/T/R materializan D3; polarizacion opto explicita, validar en banco."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ebd0fb14-4a96-5f72-b379-4261cf19d2e0)))
