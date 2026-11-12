@@ -1,0 +1,140 @@
+# 28 · PCB-K — placa de teclas (spec)
+
+2026-11-12. Spec antes del esquema: de aquí sale la descripción que el generador de esquemas (`kicad/consola/tools/
+schgen`, en curso) convierte en KiCad. Reemplaza a PCB-K1/K2 de la GroovePush (`24` §9).
+
+Fuentes: posiciones de `panel-coordinates-console-v1.csv`; contorno y agujeros de `pcb-outlines-console-v5.csv`;
+pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pines-teensy.md); cadena de LEDs de
+[27 §1](27-leds-teclas.md); conector de la hoja 08 de PCB-M; alturas de [25 §7](25-panel-consola.md) y del diseño v5.
+
+## 1. Qué lleva
+
+| Bloque | Cantidad | Nota |
+|---|---|---|
+| Teclas Kailh Choc V2 | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
+| LED SK6812MINI-E (montaje inverso) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
+| MCP23017 | 3 | 0x21, 0x22, 0x23 (A2 A1 A0 = 001, 010, 011) |
+| Conector a PCB-M | 1 | 8 vías, pinout de la hoja 08 de PCB-M (§5) |
+
+2 capas, 1,6 mm, máscara negra. Sin componentes que lean el bus distinto a los MCP.
+
+## 2. Mecánica
+
+- **Contorno:** los 18 vértices de `pcb-outlines-console-v5.csv`, con un cambio: el escalón de los vértices 13–14 baja
+  de **y 226 a y 222**. Con la posición v1 de BROWSE (64, 231) su huella (y 223,5–238,5, x hasta 71,5) se salía del
+  contorno en el tramo x 68–71,5.
+- **Altura:** cara superior de PCB-K a **−3,4 mm** de la cara superior del aluminio, o sea **1,4 mm de luz** bajo la
+  chapa. **Ningún componente en la cara superior** salvo las teclas (los LED van de montaje inverso, desde abajo).
+- **Cara inferior con zonas prohibidas:** PCB-P (x 9–232, y 69–100) queda 1,5 mm por debajo; la M4 ocupa la ventana
+  (x 109–231, y 107–169) y su placa cuelga debajo (margen de 5 mm alrededor de la ventana). Sobre la bahía de la Pi
+  (x 9–94, y 219–275) el apilado llega a z ≈ 66 (estimado, el HAT no ha llegado): cualquier pieza inferior ahí ≤ 6 mm.
+- **Montaje:** 14 agujeros M2.5 del CSV v5 a espárragos PEM FH-M2.5 de la chapa, con separador de 1,4 mm. Los agujeros
+  de PCB-P (y 72 y 97) que caen dentro de PCB-K pasan a través.
+- **Ventanas:** M4 122 × 62 y 4 redondas Ø20 bajo los FSR de velocity (del CSV v5).
+
+### Diferencia de posiciones v1 ↔ v5 (señalada, no resuelta en otro lado)
+
+El CSV de contornos v5 de Claude Design pone motor (CUE/FILL/TAP) en y 182, sección en y 163 y navegación en
+y 236–310. El CSV del panel v1, con los ajustes de Juan (motor/sección −8, navegación −5), los pone en y 174, 155 y
+231–305. **Se usa el v1**: es el que corta la chapa en `build_console.py`. Si Juan prefiere el v5, solo cambian esas
+11 posiciones y el escalón de §2.
+
+## 3. Teclas
+
+- Huella Choc V2 con **zócalo hot-swap Kailh** (sirve para Choc V1 y V2; a confirmar el número de JLC en el layout).
+  Permite reutilizar las 20 teclas que ya hay y cambiar una dañada sin desoldar. Alternativa: soldadas (más baratas,
+  sin reparación). **Decisión D-K1, recomendación: hot-swap.**
+- Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
+  Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.
+- LED en la ventana de la tecla, desplazado hacia atrás (+y) del centro; distancia exacta según la hoja de la Choc V2
+  (verificar con una tecla real antes de enviar el layout).
+
+## 4. Entradas de los MCP
+
+Igual que el firmware actual (`ConsolaMap.h`, `18`): **no hay que tocar código**. GPIO 0–6 = GPA0–6, 8–14 = GPB0–6;
+GPA7/GPB7 no se usan (errata de solo salida). Índice LED = orden de la cadena de `27` §1.
+
+| MCP | Pin | Tecla | x, y | Nota | LED |
+|---|---|---|---|---:|---:|
+| 0x21 | GPA0 | SCENE1_OCT+ | 242, 160.5 | 89 | 8 |
+| 0x21 | GPA1 | SCENE2_OCT− | 242, 145.5 | 90 | 7 |
+| 0x21 | GPA2 | SCENE4_PAGE_R | 242, 115.5 | 91 | 5 |
+| 0x21 | GPA3 | SCENE3_PAGE_L | 242, 130.5 | 92 | 6 |
+| 0x21 | GPB0 | METRO | 208, 39.5 | 101 | 4 |
+| 0x21 | GPB1 | LOOP | 189, 39.5 | 97 | 3 |
+| 0x21 | GPB2 | REC | 170, 39.5 | 96 | 2 |
+| 0x21 | GPB3 | STOP | 151, 39.5 | 95 | 1 |
+| 0x21 | GPB4 | PLAY | 132, 39.5 | 94 | 0 |
+| 0x22 | GPA0 | UNDO | 39, 132.5 | 98 | 13 |
+| 0x22 | GPA1 | BACK | 64, 305 | 102 | 25 |
+| 0x22 | GPA2 | MENU | 64, 286.5 | 103 | 24 |
+| 0x22 | GPA3 | NAV_L | 64, 268 | 104 | 23 |
+| 0x22 | GPA4 | NAV_R | 64, 249.5 | 105 | 22 |
+| 0x22 | GPA5 | BROWSE | 64, 231 | 106 | 21 |
+| 0x22 | GPA6 | SHIFT | 20, 132.5 | 100 | 14 |
+| 0x22 | GPB0 | DELETE | 98, 160.5 | 107 | 9 |
+| 0x22 | GPB1 | DUPLICATE | 98, 145.5 | 110 | 10 |
+| 0x22 | GPB2 | QUANTIZE | 98, 130.5 | 111 | 11 |
+| 0x22 | GPB3 | NEW | 98, 115.5 | 99 | 12 |
+| 0x23 | GPA0 | CUE_ENG | 20, 174 | 112 | 20 |
+| 0x23 | GPA1 | FILL | 39, 174 | 113 | 19 |
+| 0x23 | GPA2 | TAP | 58, 174 | 114 | 18 |
+| 0x23 | GPA3 | BUILD | 20, 155 | 115 | 15 |
+| 0x23 | GPA4 | DROP | 39, 155 | 116 | 16 |
+| 0x23 | GPA5 | BREAK | 58, 155 | 117 | 17 |
+| 0x23 | GPA6 | JOG_CLICK (J1.7, desde PCB-M) | — | 88 | — |
+| 0x23 | GPB0 | PEDAL_BTN (J1.8, desde PCB-M) | — | 122 | — |
+
+36 de 42 entradas en uso. Las libres (0x21 GPA4–6 y GPB5–6; 0x22 GPB4–6; 0x23 GPB1–6) van a pads de prueba para
+ampliar sin otra placa.
+
+**Ubicación de los MCP (cara inferior, cerca de sus teclas):** 0x21 hacia (215, 58), entre el transporte y PCB-P;
+0x22 hacia (78, 150), entre la columna de edición y SHIFT/UNDO; 0x23 hacia (30, 200), bajo motor/sección. A ajustar
+en el layout. Cada uno: 100 nF + 1 µF a +3V3, RESET a +3V3 con 10 kΩ, INTA/INTB a pads de prueba (el firmware sondea
+por I2C, no usa interrupciones).
+
+## 5. Conector J1 ↔ PCB-M
+
+JST-PH 2,0 mm de 8 vías, vertical, cara inferior, zona x 15–45 / y 230–290 (a la izquierda de la columna de
+navegación, sobre la bahía de la Pi: el conector mide 6 mm, cabe en la luz de §2 con poco margen; si el HAT sale más
+alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
+
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---|---|---|---|---|---|---|
+| GND | +3V3 | SDA | SCL | LED_DIN_5V | +5V_LED | JOG_CLICK | PEDAL_BTN |
+
+- **I2C sin pull-ups en PCB-K** (huellas 2,2 kΩ sin poblar): el par activo está en PCB-M (`17` §2: un solo par).
+- La protección del pedal (jack externo) va en PCB-M antes del cable; PCB-K no la repite.
+
+## 6. LEDs
+
+- 26 × SK6812MINI-E, cadena única en el orden de `27` §1: transporte → columna de escenas (sube) → cruza por la
+  franja de 4 mm entre la ventana de la M4 y el borde (y 169–173) → columna de edición (baja) → UNDO, SHIFT →
+  sección → motor → navegación (sube).
+- Datos: entrada desde J1.5 con resistencia serie de 33 Ω (huella 0603, puente si no hace falta).
+- Cada LED con 100 nF a GND; 22 µF a la entrada de +5V_LED. +5 V y GND en pista ancha (≥ 0,8 mm) alrededor del anillo
+  que forma la placa; GND con relleno en la cara inferior.
+- Corriente: el firmware limita a 500 mA (`27` §4). El polyfuse de 0,75 A de la rama está en PCB-M (`24` §5).
+
+## 7. Costo y alternativa
+
+PCB-K se cobra por su rectángulo envolvente (246 × 292 mm), casi todo hueco por la ventana. **Alternativa D-K2:**
+partirla en dos (izquierda: edición, SHIFT/UNDO, motor, sección y navegación, ~102 × 216; frente-derecha: transporte
+y escenas, ~144 × 152) unidas por un cable de 6 vías (I2C, +3V3, GND, LED_DIN, +5V). Baja el área envolvente ~40 % a
+cambio de un conector y un cable más. Cotizar ambas en JLC antes de decidir; la spec del esquema es la misma (0x21
+iría a la placa derecha, 0x22 y 0x23 a la izquierda).
+
+## 8. Verificación
+
+- Esquema: netlist del generador contra la tabla de §4 y §5 (cada tecla en su pin, nada fusionado); ERC limpio.
+- Layout: DRC limpio; huellas contra el CSV v1 (centro de tecla ± 0,1 mm); chequeo 3D en FreeCAD con la placa
+  exportada (luz de 1,4 mm a la chapa, nada contra PCB-P ni la M4).
+- Banco: `i2cdetect` ve 0x21–0x23; las 26 teclas generan su nota de §4; `@GF KEYLEDS 26` recorre la cadena completa.
+
+## Decisiones pendientes de Juan
+
+| | Pregunta | Recomendación |
+|---|---|---|
+| D-K1 | ¿Teclas en zócalo hot-swap o soldadas? | Hot-swap |
+| D-K2 | ¿Una placa o dos (§7)? | Cotizar ambas; si la diferencia es pequeña, una |
+| D-K3 | ¿Posiciones v1 (con tus ajustes) o v5 (§2)? | v1, la de la chapa |
