@@ -14,12 +14,12 @@
   0x48 AIN0–3, no a los antiguos pines analógicos de la columna Teensy. Cross-reference vigente
   en [PCB-M README](pcb-m/README.md).
 - En PCB-M **J1.18 NC** (spare), **.20 NC** (INT_K), **.22 NC** (INT_A), **.26 NC** (LED_DIN).
-  Los MCP se sondean por I2C. LED_DIN_5V sale solo por J_PCB_K.5 hacia la nueva PCB-K única;
+  Los MCP se sondean por I2C. LED_DIN_5V sale solo por J_PCB_K.6 hacia la nueva PCB-K única;
   no conectar simultáneamente la antigua ruta de teclas por PCB-A J4.
 - J2_I2C ↔ PCB-A J2 mantiene GND / +3,3 V / SDA / SCL. **Desoldar R1/R2 de PCB-A**;
-  quedan R_SDA/R_SCL 2,2 kΩ en PCB-M. No alterar las otras pistas ni conectores de PCB-A.
-- J_PCB_K (8 hilos) desde PCB-M: **1 GND, 2 +3,3 V, 3 SDA, 4 SCL, 5 LED_DIN_5V,
-  6 +5V_LED, 7 JOG_CLICK, 8 PEDAL_BTN**. MCP 0x21/0x22/0x23 viven en PCB-K.
+  quedan pull-ups seleccionables 2,2/4,7 kΩ en el lado B_A del PCA9517A de PCB-M (D18/D21). No alterar las otras pistas ni conectores de PCB-A.
+- J_PCB_K (**10 hilos, D23**) desde PCB-M: **1 +3,3 V, 2 SDA, 3 GND, 4 SCL, 5 GND,
+  6 LED_DIN_5V, 7 GND, 8 +5V_LED, 9 JOG_CLICK, 10 PEDAL_BTN**. Headers C158038 y mazo PHR-10 1:1. MCP 0x21/0x22/0x23 viven en PCB-K.
 - J_5V_LED_IN (S2B-PH-K 2 vías): **1 +5V_LED_RAW, 2 GND**, desde cable USB-A del Pi.
   F1 **0,75 A** alimenta +5V_LED (incluye PCB-A J1.1/.2); +5V_TEENSY separado.
   Esta rama sustituye para PCB-M el antiguo contrato USB-C/3 A/TVS descrito al final.
@@ -86,7 +86,7 @@ pin; no parts besides the connectors. Only these socket pins are used, the rest 
 | GND | +3V3 | SDA | SCL |
 
 PCB-A fabricada lleva pull-ups de 2,2 kΩ (R1/R2, 0603, C4190). **Al integrar PCB-M, desoldar R1/R2
-de PCB-A**: el único par activo es R_SDA/R_SCL de 2,2 kΩ en PCB-M (D14, Juan, 2026-11-12).
+de PCB-A**: el par activo de este segmento está en B_A del buffer de PCB-M: 2,2 kΩ por defecto, 4,7 kΩ seleccionables (D18/D21, Juan, 2026-11-12).
 La configuración con la portadora anterior se conserva solo como referencia histórica.
 
 ## PCB-A J3 ↔ PCB-F J1 — JST-SH 6, faders

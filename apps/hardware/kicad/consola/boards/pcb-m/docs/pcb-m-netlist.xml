@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_sch</source>
-    <date>2026-11-12T09:41:12</date>
+    <date>2026-11-12T11:23:02</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -191,6 +191,42 @@
         <rev/>
         <date/>
         <source>10-power.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="12" name="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>11-diagnostics.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="13" name="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>12-i2c-branches.kicad_sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
         <comment number="3" value=""/>
@@ -700,6 +736,54 @@
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/02-analog-front/" tstamps="/37204336-d7a2-54a6-89a8-c422e9ab70d1/"/>
       <tstamps>2ef74352-bec9-5d9a-bf8b-f382d80f8305</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_ISO_IN_L">
+      <value>0</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="02-analog-front"/>
+      <property name="Sheetfile" value="sheets/02-analog-front.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/02-analog-front/" tstamps="/37204336-d7a2-54a6-89a8-c422e9ab70d1/"/>
+      <tstamps>7feef5ad-c7c0-5ae0-ad57-d9177c0022de</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_ISO_IN_R">
+      <value>0</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="02-analog-front"/>
+      <property name="Sheetfile" value="sheets/02-analog-front.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/02-analog-front/" tstamps="/37204336-d7a2-54a6-89a8-c422e9ab70d1/"/>
+      <tstamps>96f02a47-0023-53bc-a9e7-01616f4a5c34</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -1360,6 +1444,30 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C_CV_FILTER">
+      <value>47uF 10V</value>
+      <footprint>Capacitor_SMD:CP_Elec_5x5.8</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:CP_Elec_5x5.8</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C_Polarized" description="Polarized capacitor"/>
+      <property name="Sheetname" value="05-cv-dac"/>
+      <property name="Sheetfile" value="sheets/05-cv-dac.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="CP_*"/>
+      <sheetpath names="/05-cv-dac/" tstamps="/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0/"/>
+      <tstamps>e5bbe453-38f9-57f0-ad1c-ca28989f42e5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="C_DAC1_BULK">
       <value>10uF</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
@@ -1549,6 +1657,30 @@
           <pins>
             <pin num="1"/>
             <pin num="3"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_CV_FILTER">
+      <value>10</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="05-cv-dac"/>
+      <property name="Sheetfile" value="sheets/05-cv-dac.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/05-cv-dac/" tstamps="/6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0/"/>
+      <tstamps>6e523f04-2b82-51d4-a48b-98cf04ef5e17</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
             <pin num="2"/>
           </pins>
         </unit>
@@ -2304,6 +2436,8 @@
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="cap capacitor"/>
       <property name="ki_fp_filters" value="C_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2328,6 +2462,8 @@
       <libsource lib="Device" part="D" description="Diode"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="diode"/>
       <property name="ki_fp_filters" value="TO-???* *_Diode_* *SingleDiode* D_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2352,6 +2488,8 @@
       <libsource lib="Connector_Generic" part="Conn_01x03" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="connector"/>
       <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2377,6 +2515,8 @@
       <libsource lib="Connector_Generic" part="Conn_01x03" description="Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="connector"/>
       <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2402,6 +2542,8 @@
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2426,6 +2568,8 @@
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2450,6 +2594,8 @@
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2474,6 +2620,8 @@
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2498,6 +2646,8 @@
       <libsource lib="Device" part="R" description="Resistor"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="R res resistor"/>
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2522,6 +2672,8 @@
       <libsource lib="Isolator" part="6N138" description="Low Input Current high Gain Split Darlington Optocouplers, -0.5V to 7V VDD, DIP-8"/>
       <property name="Sheetname" value="07-midi"/>
       <property name="Sheetfile" value="sheets/07-midi.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
       <property name="ki_keywords" value="darlington optocoupler"/>
       <property name="ki_fp_filters" value="DIP*W7.62mm* SMDIP*W9.53mm*"/>
       <sheetpath names="/07-midi/" tstamps="/1bdd4807-168d-59c2-a209-2f19337b239c/"/>
@@ -2793,13 +2945,15 @@
     </comp>
     <comp ref="J_PCB_K">
       <value>PCB_K_KEY_CABLE</value>
-      <footprint>Connector_JST:JST_PH_B8B-PH-K_1x08_P2.00mm_Vertical</footprint>
+      <footprint>Connector_JST:JST_PH_B10B-PH-K_1x10_P2.00mm_Vertical</footprint>
       <fields>
-        <field name="Footprint">Connector_JST:JST_PH_B8B-PH-K_1x08_P2.00mm_Vertical</field>
+        <field name="LCSC">C158038</field>
+        <field name="Footprint">Connector_JST:JST_PH_B10B-PH-K_1x10_P2.00mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="Connector_Generic" part="Conn_01x08" description="Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <libsource lib="Connector_Generic" part="Conn_01x10" description="Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C158038"/>
       <property name="Sheetname" value="08-connectors-panel"/>
       <property name="Sheetfile" value="sheets/08-connectors-panel.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -2817,6 +2971,8 @@
             <pin num="6"/>
             <pin num="7"/>
             <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
           </pins>
         </unit>
       </units>
@@ -3341,6 +3497,2046 @@
         </unit>
       </units>
     </comp>
+    <comp ref="D_IND_3V3">
+      <value>RED ~1mA</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="LED diode"/>
+      <property name="ki_fp_filters" value="LED* LED_SMD:* LED_THT:*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>2461314c-e8f2-5e7f-b088-92e57f4b3d26</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_IND_3V3A">
+      <value>RED ~1mA</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="LED diode"/>
+      <property name="ki_fp_filters" value="LED* LED_SMD:* LED_THT:*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>cf2a9cd2-2fe4-5f5f-ba94-7c3d06481106</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_IND_5V_LED">
+      <value>RED ~1mA</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="LED" description="Light emitting diode"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="LED diode"/>
+      <property name="ki_fp_filters" value="LED* LED_SMD:* LED_THT:*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>09ef162f-9737-5ec7-bb90-d3ce25030dbc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_IND_3V3">
+      <value>1.5k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>0f5f8e84-f5bd-5c72-a6ba-150664c4f976</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_IND_3V3A">
+      <value>1.5k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>71665009-dc11-5a22-a1db-f7dab114873f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_IND_5V_LED">
+      <value>3.3k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>591d5e14-c32e-5f55-bdd1-4a387d361736</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_OPT_BIAS_L">
+      <value>DNP tune parallel</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>3caf0823-6701-590d-a515-0c2fef60bc60</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_OPT_BIAS_R">
+      <value>DNP tune parallel</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>3b873cd1-da2d-5876-8b2d-fa1d8e5805d3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_OPT_MIDI_BASE">
+      <value>DNP tune parallel</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>9cc00c64-627c-54de-b8b5-82ab0da3a5fb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_OPT_MIDI_RX">
+      <value>DNP tune parallel</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>f08c0f25-d285-54be-a19a-2524b9706357</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_SCL_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>649fdec9-2377-574f-9ea0-d4e5148bf477</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_SDA_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>7775eace-5f51-5490-99ba-fdb798bb6100</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_CV">
+      <value>SJ_CV</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>c7e97b8c-27f3-5ed0-99c1-e4e32ed6b7ff</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_FRONT">
+      <value>SJ_FRONT</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>852b2a97-ce72-501a-998d-1bcedbb77c9f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_LED_DATA">
+      <value>SJ_LED_DATA</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>a8c16f30-cf02-5cad-8e28-0e7b11cd92ce</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_LED_K">
+      <value>SJ_LED_K</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>a897017c-68e1-5f78-8f8e-8432939d1ab7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_22">
+      <value>SJ_PU_SCL_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>ef1e6c1c-6f78-5dd3-b5a0-eaa70940bbaa</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_47">
+      <value>SJ_PU_SCL_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>738e92a6-88d5-5bde-8272-f0aaf7e8452c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_22">
+      <value>SJ_PU_SDA_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>4593ee65-1be9-58c9-ab9f-e8975cc34aea</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_47">
+      <value>SJ_PU_SDA_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>87d7d70e-55c4-5ec5-8976-6f1e70fc7dfb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_SCL_A">
+      <value>SJ_SCL_A</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>0bdb2597-f254-5499-8a72-a9a92c6cfe48</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_SCL_K">
+      <value>SJ_SCL_K</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>0678139a-eec5-5259-ad0e-36a1be2ca825</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_SDA_A">
+      <value>SJ_SDA_A</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>13cb750c-a9e2-5256-b2c1-b0b1f01cd2c2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_SDA_K">
+      <value>SJ_SDA_K</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>cb067ab0-3956-5bff-8b03-90031568c5c9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_SHARP">
+      <value>SJ_SHARP</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>bd78f08d-c856-59c9-b673-92588ad84cad</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_3V3">
+      <value>+3.3V</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>22e22102-fb13-5a8d-a374-c4fd92723caa</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_3V3A">
+      <value>+3.3VA</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>59fe7caf-3ca3-5e57-ba0d-aa51a493e5f4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_5V_CV">
+      <value>+5V_CV</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>01c2f949-fb00-5741-bd11-44ebc7e4acb2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_5V_LED">
+      <value>+5V_LED</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>e9c99af8-cf71-514d-b496-f6dd9ba09cbf</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_5V_RAW">
+      <value>+5V_LED_RAW</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>5158b294-5476-557f-925a-5fb04638a53c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_5V_TEENSY">
+      <value>+5V_TEENSY</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>a45bdcba-41b8-56b1-8f7c-92403e92b588</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_AGND">
+      <value>AGND</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>5b5a3032-c360-53a7-a0f0-4222316592d7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_CV1">
+      <value>CV1_OUT</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>583052c0-ff2e-5427-899d-1716918cee69</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_CV1_JACK">
+      <value>CV1_PROTECTED</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>54a85fb7-9dc2-5c25-91e3-029c0a69d3ef</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_CV2">
+      <value>CV2_OUT</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>5171a9cb-d20d-5a86-a880-bd72968a5349</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_CV2_JACK">
+      <value>CV2_PROTECTED</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>1a6e209f-a6c7-5208-8366-5ccd79e98d28</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_FRONT">
+      <value>+3.3VA_FRONT</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>8a3e095f-8575-59a3-ae4a-f00e43379f12</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_GND">
+      <value>GND</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>6ef21823-108b-51a1-ac56-aefcc33ccb9d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_LED_DIN">
+      <value>LED_DIN_5V</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>3bd4f391-d6ed-53b7-a690-ad7978707486</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SCL">
+      <value>I2C_SCL</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>268d155a-ee70-565b-bf97-9cf40e374f83</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SDA">
+      <value>I2C_SDA</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="11-diagnostics"/>
+      <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
+      <tstamps>fdb65042-f1dd-52db-a987-2313dc85f345</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_ESD_I2C_A">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>02a18c9a-6caf-5217-ba41-29ecbe6cd751</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_ESD_I2C_K">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>9ebcfbac-481d-57de-837a-2cd592ed8d58</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_I2C_A_A">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>91a3e829-2a98-546a-8655-7f341a5256c1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_I2C_A_B">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>77062db3-1b46-58f5-a16b-5d3599baa527</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_I2C_K_A">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>45089d81-d839-5776-a4b2-28ebc0fecc10</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_I2C_K_B">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>451c2ecf-5a22-5865-ad7a-fbf89e2ca630</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_ESD_I2C_A">
+      <value>USBLC6-2SC6</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C7519</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.st.com/resource/en/datasheet/usblc6-2.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Power_Protection" part="USBLC6-2SC6" description="Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"/>
+      <property name="LCSC" value="C7519"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="usb ethernet video"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>35f424ef-25cf-51d3-bdb3-c7c347471b08</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="5"/>
+            <pin num="2"/>
+            <pin num="6"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_ESD_I2C_K">
+      <value>USBLC6-2SC6</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C7519</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.st.com/resource/en/datasheet/usblc6-2.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Power_Protection" part="USBLC6-2SC6" description="Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"/>
+      <property name="LCSC" value="C7519"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="usb ethernet video"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>9dace4a3-ab6e-529e-9acf-e57c01d2b313</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="5"/>
+            <pin num="2"/>
+            <pin num="6"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_I2C_EN">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>a4ad2aab-7fd0-589b-b245-45c7a9b8f24d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_I2C_SCL_A">
+      <value>47</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Service">0 ohm if series damping not required</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Service" value="0 ohm if series damping not required"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>3bbc201c-eb60-5f08-88d0-e5560c6442e9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_I2C_SCL_K">
+      <value>47</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Service">0 ohm if series damping not required</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Service" value="0 ohm if series damping not required"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>39a023d8-9ec9-5619-b904-e60d80bac7f5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_I2C_SDA_A">
+      <value>47</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Service">0 ohm if series damping not required</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Service" value="0 ohm if series damping not required"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>0fe4e875-051f-5f90-b8d7-61a96a7e19fd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_I2C_SDA_K">
+      <value>47</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Service">0 ohm if series damping not required</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Service" value="0 ohm if series damping not required"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>c3534b85-97ff-510e-99fb-ab251a62044b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SCL_A_22">
+      <value>2.2k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>3932570c-c29f-5127-b45e-b4e8e5879333</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SCL_A_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>8f741dae-fe6b-5a8a-9871-a46ebaf36020</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SCL_K_22">
+      <value>2.2k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>1b2e8517-7894-5465-9f9f-53da83732b88</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SCL_K_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>449601e4-f4d7-53ca-a418-fbc196eacd52</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SDA_A_22">
+      <value>2.2k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>1620bcda-0385-5f0e-b692-2db595550317</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SDA_A_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>deff8bda-f35a-564b-8303-166ffc1c2a98</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SDA_K_22">
+      <value>2.2k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>0b8ee399-6412-523a-b7c6-759cabecb86f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_PU_SDA_K_47">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>edc4f051-75ca-5b95-8a22-53e966b54dc5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_EN_GPIO">
+      <value>SJ_EN_GPIO</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>38faad5f-1668-5cb6-9534-070908862808</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_EN_HIGH">
+      <value>SJ_EN_HIGH</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>790e47ed-14fd-5aa9-b724-de733bb9fa5f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_A_22">
+      <value>SJ_PU_SCL_A_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>39d419eb-8816-529e-b5ff-86806d8a302b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_A_47">
+      <value>SJ_PU_SCL_A_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>e7b7217c-95d1-5680-a1e9-70214534316f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_K_22">
+      <value>SJ_PU_SCL_K_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>edbc78ac-d30e-5d29-8f5a-bc2c38482268</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SCL_K_47">
+      <value>SJ_PU_SCL_K_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>0d1fc00f-5703-51d3-8975-f5904f53a2e1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_A_22">
+      <value>SJ_PU_SDA_A_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>14a7cff7-6a4a-5c07-a1f2-47dcc99b5c54</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_A_47">
+      <value>SJ_PU_SDA_A_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>f79e79fc-682f-5bf1-989a-fcfcee3dbabf</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_K_22">
+      <value>SJ_PU_SDA_K_22</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>9c19f576-4526-537d-a985-a87688fe878a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SJ_PU_SDA_K_47">
+      <value>SJ_PU_SDA_K_47</value>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="solder jumper SPST"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>5d924b7b-4a09-5a84-af65-5ee5062d3060</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_MIDI_RX">
+      <value>MIDI_RX</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>ef3917f8-22be-5db0-9dec-64185d9a1d52</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_MIDI_TX">
+      <value>MIDI_TX</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>9216be6a-c618-5d35-954f-04ee3765208e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SCL_A">
+      <value>I2C_SCL_A</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>a67ca724-a0cd-50c0-bb55-6cd9d90e00c9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SCL_B_A">
+      <value>I2C_SCL_B_A</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>1885c520-ec64-529d-b2a8-48f5e7f52a13</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SCL_B_K">
+      <value>I2C_SCL_B_K</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>22394d89-04a0-5546-928b-ed0167ef4f35</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SCL_K">
+      <value>I2C_SCL_K</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>d1c82b14-e22f-5862-8934-f3b75f2f6916</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SDA_A">
+      <value>I2C_SDA_A</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>1810482e-e7f3-53ac-8195-f1cc52404e4d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SDA_B_A">
+      <value>I2C_SDA_B_A</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>92ea5bcf-7f2e-56d1-8baf-9975abb105ee</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SDA_B_K">
+      <value>I2C_SDA_B_K</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>7a88e10a-c640-5b64-9aed-5a24a3d56fa2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP_SDA_K">
+      <value>I2C_SDA_K</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>4d269d28-111b-5fa1-9d2b-6ddc2e0703a5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U_I2C_A">
+      <value>PCA9517ADP,118</value>
+      <footprint>Package_SO:VSSOP-8_3x3mm_P0.65mm</footprint>
+      <datasheet>https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C80799</field>
+        <field name="Footprint">Package_SO:VSSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet">https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Logic_LevelTranslator" part="TCA9517ADGK" description="Level-Translating I2C Bus Buffer/Repeater, VSSOP-8"/>
+      <property name="LCSC" value="C80799"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="I2C buffer repeater"/>
+      <property name="ki_fp_filters" value="VSSOP*3x3mm*P0.65mm*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>d8834fbb-919c-5e55-8034-e8d327d65e38</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+            <pin num="8"/>
+            <pin num="7"/>
+            <pin num="6"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U_I2C_K">
+      <value>PCA9517ADP,118</value>
+      <footprint>Package_SO:VSSOP-8_3x3mm_P0.65mm</footprint>
+      <datasheet>https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf</datasheet>
+      <fields>
+        <field name="LCSC">C80799</field>
+        <field name="Footprint">Package_SO:VSSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet">https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Logic_LevelTranslator" part="TCA9517ADGK" description="Level-Translating I2C Bus Buffer/Repeater, VSSOP-8"/>
+      <property name="LCSC" value="C80799"/>
+      <property name="Sheetname" value="12-i2c-branches"/>
+      <property name="Sheetfile" value="sheets/12-i2c-branches.kicad_sch"/>
+      <property name="ki_keywords" value="I2C buffer repeater"/>
+      <property name="ki_fp_filters" value="VSSOP*3x3mm*P0.65mm*"/>
+      <sheetpath names="/12-i2c-branches/" tstamps="/e10a9322-7533-510c-8de6-6cedadb311ab/"/>
+      <tstamps>93ea63a0-0d96-52ab-b858-df4f373afffc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+            <pin num="8"/>
+            <pin num="7"/>
+            <pin num="6"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
   </components>
   <libparts>
     <libpart lib="74xGxx" part="74AHCT1G125">
@@ -3538,17 +5734,17 @@
         <pin num="5" name="Pin_5" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="Connector_Generic" part="Conn_01x08">
-      <description>Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+    <libpart lib="Connector_Generic" part="Conn_01x10">
+      <description>Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <footprints>
         <fp>Connector*:*_1x??_*</fp>
       </footprints>
       <fields>
         <field name="Reference">J</field>
-        <field name="Value">Conn_01x08</field>
+        <field name="Value">Conn_01x10</field>
         <field name="Footprint"/>
         <field name="Datasheet"/>
-        <field name="Description">Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+        <field name="Description">Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
       </fields>
       <pins>
         <pin num="1" name="Pin_1" type="passive"/>
@@ -3559,6 +5755,8 @@
         <pin num="6" name="Pin_6" type="passive"/>
         <pin num="7" name="Pin_7" type="passive"/>
         <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Connector_Generic" part="Conn_01x24">
@@ -3662,6 +5860,23 @@
         <pin num="2" name="" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Device" part="C_Polarized">
+      <description>Polarized capacitor</description>
+      <footprints>
+        <fp>CP_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C_Polarized</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Polarized capacitor</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Device" part="D">
       <description>Diode</description>
       <footprints>
@@ -3677,6 +5892,26 @@
         <field name="Datasheet"/>
         <field name="Description">Diode</field>
         <field name="Sim.Device">D</field>
+        <field name="Sim.Pins">1=K 2=A</field>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="LED">
+      <description>Light emitting diode</description>
+      <footprints>
+        <fp>LED*</fp>
+        <fp>LED_SMD:*</fp>
+        <fp>LED_THT:*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Light emitting diode</field>
         <field name="Sim.Pins">1=K 2=A</field>
       </fields>
       <pins>
@@ -3780,6 +6015,23 @@
         <pin num="8" name="VCC" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Jumper" part="SolderJumper_2_Bridged">
+      <description>Solder Jumper, 2-pole, closed/bridged</description>
+      <footprints>
+        <fp>SolderJumper*Bridged*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">JP</field>
+        <field name="Value">SolderJumper_2_Bridged</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Solder Jumper, 2-pole, closed/bridged</field>
+      </fields>
+      <pins>
+        <pin num="1" name="A" type="passive"/>
+        <pin num="2" name="B" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Jumper" part="SolderJumper_2_Open">
       <description>Solder Jumper, 2-pole, open</description>
       <footprints>
@@ -3795,6 +6047,52 @@
       <pins>
         <pin num="1" name="A" type="passive"/>
         <pin num="2" name="B" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Logic_LevelTranslator" part="TCA9517ADGK">
+      <description>Level-Translating I2C Bus Buffer/Repeater, VSSOP-8</description>
+      <docs>https://www.ti.com/lit/ds/symlink/tca9517a.pdf</docs>
+      <footprints>
+        <fp>VSSOP*3x3mm*P0.65mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TCA9517ADGK</field>
+        <field name="Footprint">Package_SO:VSSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tca9517a.pdf</field>
+        <field name="Description">Level-Translating I2C Bus Buffer/Repeater, VSSOP-8</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VCCA" type="power_in"/>
+        <pin num="2" name="SCLA" type="bidirectional"/>
+        <pin num="3" name="SDAA" type="bidirectional"/>
+        <pin num="4" name="GND" type="power_in"/>
+        <pin num="5" name="EN" type="passive"/>
+        <pin num="6" name="SDAB" type="bidirectional"/>
+        <pin num="7" name="SCLB" type="bidirectional"/>
+        <pin num="8" name="VCCB" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="Power_Protection" part="USBLC6-2SC6">
+      <description>Very low capacitance ESD protection diode, 2 data-line, SOT-23-6</description>
+      <docs>https://www.st.com/resource/en/datasheet/usblc6-2.pdf</docs>
+      <footprints>
+        <fp>SOT?23*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">USBLC6-2SC6</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.st.com/resource/en/datasheet/usblc6-2.pdf</field>
+        <field name="Description">Very low capacitance ESD protection diode, 2 data-line, SOT-23-6</field>
+      </fields>
+      <pins>
+        <pin num="1" name="I/O1" type="passive"/>
+        <pin num="2" name="GND" type="passive"/>
+        <pin num="3" name="I/O2" type="passive"/>
+        <pin num="4" name="I/O2" type="passive"/>
+        <pin num="5" name="VBUS" type="passive"/>
+        <pin num="6" name="I/O1" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="Regulator_Linear" part="TLV75533PDBV">
@@ -3874,6 +6172,12 @@
     <library logical="Jumper">
       <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Jumper.kicad_sym</uri>
     </library>
+    <library logical="Logic_LevelTranslator">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Logic_LevelTranslator.kicad_sym</uri>
+    </library>
+    <library logical="Power_Protection">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Power_Protection.kicad_sym</uri>
+    </library>
     <library logical="Regulator_Linear">
       <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Regulator_Linear.kicad_sym</uri>
     </library>
@@ -3887,6 +6191,14 @@
       <node ref="C_DAC1_VCC" pin="1" pintype="passive"/>
       <node ref="C_DAC2_BULK" pin="1" pintype="passive"/>
       <node ref="C_DAC2_VCC" pin="1" pintype="passive"/>
+      <node ref="C_ESD_I2C_A" pin="1" pintype="passive"/>
+      <node ref="C_ESD_I2C_K" pin="1" pintype="passive"/>
+      <node ref="C_I2C_A_A" pin="1" pintype="passive"/>
+      <node ref="C_I2C_A_B" pin="1" pintype="passive"/>
+      <node ref="C_I2C_K_A" pin="1" pintype="passive"/>
+      <node ref="C_I2C_K_B" pin="1" pintype="passive"/>
+      <node ref="D_ESD_I2C_A" pin="5" pinfunction="VBUS_5" pintype="passive"/>
+      <node ref="D_ESD_I2C_K" pin="5" pinfunction="VBUS_5" pintype="passive"/>
       <node ref="J1_PCBA" pin="30" pinfunction="Pin_30_30" pintype="passive"/>
       <node ref="J2_I2C" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J7_EXP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
@@ -3896,20 +6208,39 @@
       <node ref="J_FSR3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_FSR4" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_PAD_SEL" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J_PCB_K" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J_PCB_K" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_POT_CUE" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_POT_IN" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_POT_MASTER" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_T41L" pin="15" pinfunction="Pin_15_15" pintype="passive"/>
       <node ref="J_T41R" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="R_I2C_EN" pin="1" pintype="passive"/>
+      <node ref="R_IND_3V3" pin="1" pintype="passive"/>
       <node ref="R_MIDI_R" pin="1" pintype="passive"/>
       <node ref="R_MIDI_RX" pin="1" pintype="passive"/>
-      <node ref="R_SCL" pin="1" pintype="passive"/>
-      <node ref="R_SDA" pin="1" pintype="passive"/>
+      <node ref="R_OPT_MIDI_RX" pin="1" pintype="passive"/>
       <node ref="R_SEL_T" pin="1" pintype="passive"/>
+      <node ref="SJ_EN_HIGH" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_A_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_A_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_K_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_K_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_A_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_A_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_K_22" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_K_47" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_3V3" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_DAC1" pin="3" pinfunction="VDD_3" pintype="power_in"/>
       <node ref="U_DAC2" pin="3" pinfunction="VDD_3" pintype="power_in"/>
       <node ref="U_DAC2" pin="6" pinfunction="A0_6" pintype="input"/>
+      <node ref="U_I2C_A" pin="1" pinfunction="VCCA_1" pintype="power_in"/>
+      <node ref="U_I2C_A" pin="8" pinfunction="VCCB_8" pintype="power_in"/>
+      <node ref="U_I2C_K" pin="1" pinfunction="VCCA_1" pintype="power_in"/>
+      <node ref="U_I2C_K" pin="8" pinfunction="VCCB_8" pintype="power_in"/>
     </net>
     <net code="2" name="+3.3VA" class="Default">
       <node ref="C_ADS1_BULK" pin="1" pintype="passive"/>
@@ -3917,232 +6248,292 @@
       <node ref="C_ADS2_BULK" pin="1" pintype="passive"/>
       <node ref="C_ADS2_VCC" pin="1" pintype="passive"/>
       <node ref="C_LDO_OUT" pin="1" pintype="passive"/>
-      <node ref="C_OA_IN" pin="1" pintype="passive"/>
-      <node ref="D_CLAMP_L" pin="2" pinfunction="K_2" pintype="passive"/>
-      <node ref="D_CLAMP_R" pin="2" pinfunction="K_2" pintype="passive"/>
-      <node ref="R_VREF_T" pin="1" pintype="passive"/>
+      <node ref="R_IND_3V3A" pin="1" pintype="passive"/>
+      <node ref="SJ_FRONT" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_3V3A" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_ADS1" pin="8" pinfunction="VDD_8" pintype="power_in"/>
       <node ref="U_ADS2" pin="1" pinfunction="ADDR_1" pintype="input"/>
       <node ref="U_ADS2" pin="8" pinfunction="VDD_8" pintype="power_in"/>
       <node ref="U_LDO1" pin="5" pinfunction="OUT_5" pintype="power_out"/>
+    </net>
+    <net code="3" name="+3.3VA_FRONT" class="Default">
+      <node ref="C_OA_IN" pin="1" pintype="passive"/>
+      <node ref="D_CLAMP_L" pin="2" pinfunction="K_2" pintype="passive"/>
+      <node ref="D_CLAMP_R" pin="2" pinfunction="K_2" pintype="passive"/>
+      <node ref="R_VREF_T" pin="1" pintype="passive"/>
+      <node ref="SJ_FRONT" pin="2" pinfunction="B_2" pintype="passive"/>
+      <node ref="TP_FRONT" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OA_IN" pin="4" pinfunction="V+_4" pintype="power_in"/>
     </net>
-    <net code="3" name="+5V_LED" class="Default">
-      <node ref="C_LDO_IN" pin="1" pintype="passive"/>
-      <node ref="C_LED_BUF" pin="1" pintype="passive"/>
+    <net code="4" name="+5V_CV" class="Default">
+      <node ref="C_CV_FILTER" pin="1" pintype="passive"/>
       <node ref="C_OA_CV_BULK" pin="1" pintype="passive"/>
       <node ref="C_OA_CV_VCC" pin="1" pintype="passive"/>
-      <node ref="C_SHARP1" pin="1" pintype="passive"/>
-      <node ref="C_SHARP2" pin="1" pintype="passive"/>
+      <node ref="R_CV_FILTER" pin="2" pintype="passive"/>
+      <node ref="TP_5V_CV" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_OA_CV" pin="4" pinfunction="V+_4" pintype="power_in"/>
+    </net>
+    <net code="5" name="+5V_CV_IN" class="Default">
+      <node ref="R_CV_FILTER" pin="1" pintype="passive"/>
+      <node ref="SJ_CV" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="6" name="+5V_LED" class="Default">
+      <node ref="C_LDO_IN" pin="1" pintype="passive"/>
+      <node ref="C_LED_BUF" pin="1" pintype="passive"/>
       <node ref="D_CV_CLAMP1" pin="2" pinfunction="K_2" pintype="passive"/>
       <node ref="D_CV_CLAMP2" pin="2" pinfunction="K_2" pintype="passive"/>
       <node ref="F1" pin="2" pintype="passive"/>
       <node ref="J1_PCBA" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J1_PCBA" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
-      <node ref="J5_SHARP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J6_SHARP2" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
-      <node ref="J_PCB_K" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="R_IND_5V_LED" pin="1" pintype="passive"/>
+      <node ref="SJ_CV" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_LED_K" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="SJ_SHARP" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_5V_LED" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_LDO1" pin="1" pinfunction="IN_1" pintype="power_in"/>
       <node ref="U_LDO1" pin="3" pinfunction="EN_3" pintype="input"/>
       <node ref="U_LED_BUF" pin="5" pinfunction="VCC_5" pintype="power_in"/>
-      <node ref="U_OA_CV" pin="4" pinfunction="V+_4" pintype="power_in"/>
     </net>
-    <net code="4" name="+5V_LED_RAW" class="Default">
+    <net code="7" name="+5V_LED_K" class="Default">
+      <node ref="J_PCB_K" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+      <node ref="SJ_LED_K" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="8" name="+5V_LED_RAW" class="Default">
       <node ref="F1" pin="1" pintype="passive"/>
       <node ref="J_5V_BKUP" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_5V_LED_IN" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="TP_5V_RAW" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="5" name="+5V_TEENSY" class="Default">
+    <net code="9" name="+5V_LED_SHARP" class="Default">
+      <node ref="C_SHARP1" pin="1" pintype="passive"/>
+      <node ref="C_SHARP2" pin="1" pintype="passive"/>
+      <node ref="J5_SHARP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J6_SHARP2" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="SJ_SHARP" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="10" name="+5V_TEENSY" class="Default">
       <node ref="C_MIDI_VCC" pin="1" pintype="passive"/>
       <node ref="J_T41R" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="TP_5V_TEENSY" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OPT_MIDI" pin="8" pinfunction="VCC_8" pintype="passive"/>
     </net>
-    <net code="6" name="/01-teensy/I2S_BCLK" class="Default">
+    <net code="11" name="/01-teensy/I2S_BCLK" class="Default">
       <node ref="J_T41R" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
     </net>
-    <net code="7" name="/01-teensy/I2S_LRCLK" class="Default">
+    <net code="12" name="/01-teensy/I2S_LRCLK" class="Default">
       <node ref="J_T41R" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
     </net>
-    <net code="8" name="/01-teensy/I2S_MCLK" class="Default">
+    <net code="13" name="/01-teensy/I2S_MCLK" class="Default">
       <node ref="J_T41R" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
     </net>
-    <net code="9" name="/01-teensy/I2S_RX" class="Default">
+    <net code="14" name="/01-teensy/I2S_RX" class="Default">
       <node ref="J_T41L" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
     </net>
-    <net code="10" name="/01-teensy/I2S_TX" class="Default">
+    <net code="15" name="/01-teensy/I2S_TX" class="Default">
       <node ref="J_T41L" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
     </net>
-    <net code="11" name="/02-analog-front/AC_L" class="Default">
+    <net code="16" name="/02-analog-front/AC_L" class="Default">
       <node ref="C_AC_L" pin="2" pintype="passive"/>
       <node ref="R_SER_L" pin="1" pintype="passive"/>
     </net>
-    <net code="12" name="/02-analog-front/AC_R" class="Default">
+    <net code="17" name="/02-analog-front/AC_R" class="Default">
       <node ref="C_AC_R" pin="2" pintype="passive"/>
       <node ref="R_SER_R" pin="1" pintype="passive"/>
     </net>
-    <net code="13" name="/02-analog-front/BUF_L" class="Default">
+    <net code="18" name="/02-analog-front/BUF_L" class="Default">
       <node ref="C_LIN_L" pin="1" pintype="passive"/>
       <node ref="JP_BYP_L" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="TP_BUF_L" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OA_IN" pin="1" pintype="output"/>
       <node ref="U_OA_IN" pin="2" pinfunction="-_2" pintype="input"/>
     </net>
-    <net code="14" name="/02-analog-front/BUF_R" class="Default">
+    <net code="19" name="/02-analog-front/BUF_R" class="Default">
       <node ref="C_LIN_R" pin="1" pintype="passive"/>
       <node ref="JP_BYP_R" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="TP_BUF_R" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OA_IN" pin="6" pinfunction="-_6" pintype="input"/>
       <node ref="U_OA_IN" pin="7" pintype="output"/>
     </net>
-    <net code="15" name="/02-analog-front/OA_IN_D" class="Default">
+    <net code="20" name="/02-analog-front/FRONT_LINE_IN_L" class="Default">
+      <node ref="C_LIN_L" pin="2" pintype="passive"/>
+      <node ref="R_ISO_IN_L" pin="1" pintype="passive"/>
+    </net>
+    <net code="21" name="/02-analog-front/FRONT_LINE_IN_R" class="Default">
+      <node ref="C_LIN_R" pin="2" pintype="passive"/>
+      <node ref="R_ISO_IN_R" pin="1" pintype="passive"/>
+    </net>
+    <net code="22" name="/02-analog-front/OA_IN_D" class="Default">
       <node ref="U_OA_IN" pin="13" pinfunction="-_13" pintype="input"/>
       <node ref="U_OA_IN" pin="14" pintype="output"/>
     </net>
-    <net code="16" name="/02-analog-front/PAD_L" class="Default">
+    <net code="23" name="/02-analog-front/PAD_L" class="Default">
       <node ref="C_AC_L" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="3" pinfunction="3_3" pintype="passive"/>
     </net>
-    <net code="17" name="/02-analog-front/PAD_R" class="Default">
+    <net code="24" name="/02-analog-front/PAD_R" class="Default">
       <node ref="C_AC_R" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="7" pinfunction="7_7" pintype="passive"/>
     </net>
-    <net code="18" name="/02-analog-front/PROT_L" class="Default">
-      <node ref="D_CLAMP_L" pin="3" pinfunction="COM_3" pintype="passive"/>
-      <node ref="JP_BYP_L" pin="1" pinfunction="A_1" pintype="passive"/>
-      <node ref="R_BIAS_L" pin="1" pintype="passive"/>
-      <node ref="R_SER_L" pin="2" pintype="passive"/>
-      <node ref="U_OA_IN" pin="3" pinfunction="+_3" pintype="input"/>
-    </net>
-    <net code="19" name="/02-analog-front/PROT_R" class="Default">
-      <node ref="D_CLAMP_R" pin="3" pinfunction="COM_3" pintype="passive"/>
-      <node ref="JP_BYP_R" pin="1" pinfunction="A_1" pintype="passive"/>
-      <node ref="R_BIAS_R" pin="1" pintype="passive"/>
-      <node ref="R_SER_R" pin="2" pintype="passive"/>
-      <node ref="U_OA_IN" pin="5" pinfunction="+_5" pintype="input"/>
-    </net>
-    <net code="20" name="/02-analog-front/TAP10_L" class="Default">
+    <net code="25" name="/02-analog-front/TAP10_L" class="Default">
       <node ref="R_PAD_L1" pin="2" pintype="passive"/>
       <node ref="R_PAD_L2" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
-    <net code="21" name="/02-analog-front/TAP10_R" class="Default">
+    <net code="26" name="/02-analog-front/TAP10_R" class="Default">
       <node ref="R_PAD_R1" pin="2" pintype="passive"/>
       <node ref="R_PAD_R2" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="6" pinfunction="6_6" pintype="passive"/>
     </net>
-    <net code="22" name="/02-analog-front/TAP20_L" class="Default">
+    <net code="27" name="/02-analog-front/TAP20_L" class="Default">
       <node ref="R_PAD_L2" pin="2" pintype="passive"/>
       <node ref="R_PAD_L3" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="4" pinfunction="4_4" pintype="passive"/>
     </net>
-    <net code="23" name="/02-analog-front/TAP20_R" class="Default">
+    <net code="28" name="/02-analog-front/TAP20_R" class="Default">
       <node ref="R_PAD_R2" pin="2" pintype="passive"/>
       <node ref="R_PAD_R3" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="8" pinfunction="8_8" pintype="passive"/>
     </net>
-    <net code="24" name="/02-analog-front/VREF" class="Default">
-      <node ref="JP_BYP_VREF" pin="2" pinfunction="B_2" pintype="passive"/>
-      <node ref="R_BIAS_L" pin="2" pintype="passive"/>
-      <node ref="R_BIAS_R" pin="2" pintype="passive"/>
-      <node ref="TP_VREF" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="U_OA_IN" pin="12" pinfunction="+_12" pintype="input"/>
-      <node ref="U_OA_IN" pin="8" pintype="output"/>
-      <node ref="U_OA_IN" pin="9" pinfunction="-_9" pintype="input"/>
-    </net>
-    <net code="25" name="/02-analog-front/VREF_DIV" class="Default">
+    <net code="29" name="/02-analog-front/VREF_DIV" class="Default">
       <node ref="C_VREF" pin="1" pintype="passive"/>
       <node ref="JP_BYP_VREF" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="R_VREF_B" pin="1" pintype="passive"/>
       <node ref="R_VREF_T" pin="2" pintype="passive"/>
       <node ref="U_OA_IN" pin="10" pinfunction="+_10" pintype="input"/>
     </net>
-    <net code="26" name="/05-cv-dac/CV1_FB" class="Default">
+    <net code="30" name="/05-cv-dac/CV1_FB" class="Default">
       <node ref="R_CV_RF1" pin="2" pintype="passive"/>
       <node ref="R_CV_RI1" pin="1" pintype="passive"/>
       <node ref="U_OA_CV" pin="2" pinfunction="-_2" pintype="input"/>
     </net>
-    <net code="27" name="/05-cv-dac/CV1_OUT" class="Default">
-      <node ref="R_CV_RF1" pin="1" pintype="passive"/>
-      <node ref="R_CV_SER1" pin="1" pintype="passive"/>
-      <node ref="U_OA_CV" pin="1" pintype="output"/>
-    </net>
-    <net code="28" name="/05-cv-dac/CV2_FB" class="Default">
+    <net code="31" name="/05-cv-dac/CV2_FB" class="Default">
       <node ref="R_CV_RF2" pin="2" pintype="passive"/>
       <node ref="R_CV_RI2" pin="1" pintype="passive"/>
       <node ref="U_OA_CV" pin="6" pinfunction="-_6" pintype="input"/>
     </net>
-    <net code="29" name="/05-cv-dac/CV2_OUT" class="Default">
-      <node ref="R_CV_RF2" pin="1" pintype="passive"/>
-      <node ref="R_CV_SER2" pin="1" pintype="passive"/>
-      <node ref="U_OA_CV" pin="7" pintype="output"/>
-    </net>
-    <net code="30" name="/05-cv-dac/CV_UNUSED_3" class="Default">
+    <net code="32" name="/05-cv-dac/CV_UNUSED_3" class="Default">
       <node ref="U_OA_CV" pin="8" pintype="output"/>
       <node ref="U_OA_CV" pin="9" pinfunction="-_9" pintype="input"/>
     </net>
-    <net code="31" name="/05-cv-dac/CV_UNUSED_4" class="Default">
+    <net code="33" name="/05-cv-dac/CV_UNUSED_4" class="Default">
       <node ref="U_OA_CV" pin="13" pinfunction="-_13" pintype="input"/>
       <node ref="U_OA_CV" pin="14" pintype="output"/>
     </net>
-    <net code="32" name="/05-cv-dac/DAC1_RAW" class="Default">
+    <net code="34" name="/05-cv-dac/DAC1_RAW" class="Default">
       <node ref="U_DAC1" pin="1" pinfunction="VOUT_1" pintype="output"/>
       <node ref="U_OA_CV" pin="3" pinfunction="+_3" pintype="input"/>
     </net>
-    <net code="33" name="/05-cv-dac/DAC2_RAW" class="Default">
+    <net code="35" name="/05-cv-dac/DAC2_RAW" class="Default">
       <node ref="U_DAC2" pin="1" pinfunction="VOUT_1" pintype="output"/>
       <node ref="U_OA_CV" pin="5" pinfunction="+_5" pintype="input"/>
     </net>
-    <net code="34" name="/06-surface/POT_CUE_WIPER" class="Default">
+    <net code="36" name="/06-surface/POT_CUE_WIPER" class="Default">
       <node ref="J_POT_CUE" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_POT_CUE" pin="1" pintype="passive"/>
     </net>
-    <net code="35" name="/06-surface/POT_IN_WIPER" class="Default">
+    <net code="37" name="/06-surface/POT_IN_WIPER" class="Default">
       <node ref="J_POT_IN" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_POT_IN" pin="1" pintype="passive"/>
     </net>
-    <net code="36" name="/06-surface/POT_MASTER_WIPER" class="Default">
+    <net code="38" name="/06-surface/POT_MASTER_WIPER" class="Default">
       <node ref="J_POT_MASTER" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_POT_MASTER" pin="1" pintype="passive"/>
     </net>
-    <net code="37" name="/07-midi/MIDI_IN_RING" class="Default">
+    <net code="39" name="/07-midi/MIDI_IN_RING" class="Default">
       <node ref="J_MIDI_IN" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_MIDI_IN" pin="1" pintype="passive"/>
     </net>
-    <net code="38" name="/07-midi/MIDI_IN_TIP" class="Default">
+    <net code="40" name="/07-midi/MIDI_IN_TIP" class="Default">
       <node ref="D_MIDI_IN" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="J_MIDI_IN" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="U_OPT_MIDI" pin="3" pinfunction="C2_3" pintype="passive"/>
     </net>
-    <net code="39" name="/07-midi/MIDI_OPTO_A" class="Default">
+    <net code="41" name="/07-midi/MIDI_OPTO_A" class="Default">
       <node ref="D_MIDI_IN" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="R_MIDI_IN" pin="2" pintype="passive"/>
       <node ref="U_OPT_MIDI" pin="2" pinfunction="C1_2" pintype="passive"/>
     </net>
-    <net code="40" name="/07-midi/MIDI_OPTO_BASE" class="Default">
-      <node ref="R_MIDI_BASE" pin="1" pintype="passive"/>
-      <node ref="U_OPT_MIDI" pin="7" pinfunction="VO1_7" pintype="passive"/>
-    </net>
-    <net code="41" name="/07-midi/MIDI_OUT_RING" class="Default">
+    <net code="42" name="/07-midi/MIDI_OUT_RING" class="Default">
       <node ref="J_MIDI_OUT" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_MIDI_R" pin="2" pintype="passive"/>
     </net>
-    <net code="42" name="/07-midi/MIDI_OUT_TIP" class="Default">
+    <net code="43" name="/07-midi/MIDI_OUT_TIP" class="Default">
       <node ref="J_MIDI_OUT" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_MIDI_T" pin="2" pintype="passive"/>
     </net>
-    <net code="43" name="/09-connectors-rear/LINE_IN_L_R" class="Default">
+    <net code="44" name="/09-connectors-rear/LINE_IN_L_R" class="Default">
       <node ref="J_LINE_IN_L" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
     </net>
-    <net code="44" name="/09-connectors-rear/LINE_IN_R_R" class="Default">
+    <net code="45" name="/09-connectors-rear/LINE_IN_R_R" class="Default">
       <node ref="J_LINE_IN_R" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
     </net>
-    <net code="45" name="AGND" class="Default">
+    <net code="46" name="/11-diagnostics/IND_3V3A_A" class="Default">
+      <node ref="D_IND_3V3A" pin="2" pinfunction="A_2" pintype="passive"/>
+      <node ref="R_IND_3V3A" pin="2" pintype="passive"/>
+    </net>
+    <net code="47" name="/11-diagnostics/IND_3V3_A" class="Default">
+      <node ref="D_IND_3V3" pin="2" pinfunction="A_2" pintype="passive"/>
+      <node ref="R_IND_3V3" pin="2" pintype="passive"/>
+    </net>
+    <net code="48" name="/11-diagnostics/IND_5V_LED_A" class="Default">
+      <node ref="D_IND_5V_LED" pin="2" pinfunction="A_2" pintype="passive"/>
+      <node ref="R_IND_5V_LED" pin="2" pintype="passive"/>
+    </net>
+    <net code="49" name="/11-diagnostics/PU_SCL_47" class="Default">
+      <node ref="R_SCL_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="50" name="/11-diagnostics/PU_SDA_47" class="Default">
+      <node ref="R_SDA_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="51" name="/12-i2c-branches/I2C_BUF_EN" class="Default">
+      <node ref="R_I2C_EN" pin="2" pintype="passive"/>
+      <node ref="SJ_EN_GPIO" pin="2" pinfunction="B_2" pintype="passive"/>
+      <node ref="SJ_EN_HIGH" pin="2" pinfunction="B_2" pintype="passive"/>
+      <node ref="U_I2C_A" pin="5" pinfunction="EN_5" pintype="passive"/>
+      <node ref="U_I2C_K" pin="5" pinfunction="EN_5" pintype="passive"/>
+    </net>
+    <net code="52" name="/12-i2c-branches/PU_SCL_A_22" class="Default">
+      <node ref="R_PU_SCL_A_22" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_A_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="53" name="/12-i2c-branches/PU_SCL_A_47" class="Default">
+      <node ref="R_PU_SCL_A_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_A_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="54" name="/12-i2c-branches/PU_SCL_K_22" class="Default">
+      <node ref="R_PU_SCL_K_22" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_K_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="55" name="/12-i2c-branches/PU_SCL_K_47" class="Default">
+      <node ref="R_PU_SCL_K_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_K_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="56" name="/12-i2c-branches/PU_SDA_A_22" class="Default">
+      <node ref="R_PU_SDA_A_22" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_A_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="57" name="/12-i2c-branches/PU_SDA_A_47" class="Default">
+      <node ref="R_PU_SDA_A_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_A_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="58" name="/12-i2c-branches/PU_SDA_K_22" class="Default">
+      <node ref="R_PU_SDA_K_22" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_K_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="59" name="/12-i2c-branches/PU_SDA_K_47" class="Default">
+      <node ref="R_PU_SDA_K_47" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_K_47" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="60" name="AGND" class="Default">
       <node ref="C_LDO_IN" pin="2" pintype="passive"/>
       <node ref="C_LDO_OUT" pin="2" pintype="passive"/>
       <node ref="C_OA_IN" pin="2" pintype="passive"/>
       <node ref="C_VREF" pin="2" pintype="passive"/>
       <node ref="D_CLAMP_L" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="D_CLAMP_R" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="D_IND_3V3A" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="J_CV1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_CV2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_LINE_IN_L" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
@@ -4155,138 +6546,160 @@
       <node ref="R_PAD_L3" pin="2" pintype="passive"/>
       <node ref="R_PAD_R3" pin="2" pintype="passive"/>
       <node ref="R_VREF_B" pin="2" pintype="passive"/>
+      <node ref="TP_AGND" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_LDO1" pin="2" pinfunction="GND_2" pintype="power_in"/>
       <node ref="U_OA_IN" pin="11" pinfunction="V-_11" pintype="power_in"/>
     </net>
-    <net code="46" name="CV1_PROTECTED" class="Default">
+    <net code="61" name="CV1_OUT" class="Default">
+      <node ref="R_CV_RF1" pin="1" pintype="passive"/>
+      <node ref="R_CV_SER1" pin="1" pintype="passive"/>
+      <node ref="TP_CV1" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_OA_CV" pin="1" pintype="output"/>
+    </net>
+    <net code="62" name="CV1_PROTECTED" class="Default">
       <node ref="D_CV_CLAMP1" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="J_CV1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_CV_SER1" pin="2" pintype="passive"/>
+      <node ref="TP_CV1_JACK" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="47" name="CV2_PROTECTED" class="Default">
+    <net code="63" name="CV2_OUT" class="Default">
+      <node ref="R_CV_RF2" pin="1" pintype="passive"/>
+      <node ref="R_CV_SER2" pin="1" pintype="passive"/>
+      <node ref="TP_CV2" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_OA_CV" pin="7" pintype="output"/>
+    </net>
+    <net code="64" name="CV2_PROTECTED" class="Default">
       <node ref="D_CV_CLAMP2" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="J_CV2" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_CV_SER2" pin="2" pintype="passive"/>
+      <node ref="TP_CV2_JACK" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="48" name="ENC1_A" class="Default">
+    <net code="65" name="ENC1_A" class="Default">
       <node ref="J1_PCBA" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="J_T41L" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
     </net>
-    <net code="49" name="ENC1_B" class="Default">
+    <net code="66" name="ENC1_B" class="Default">
       <node ref="J1_PCBA" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J_T41L" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
     </net>
-    <net code="50" name="ENC2_A" class="Default">
+    <net code="67" name="ENC2_A" class="Default">
       <node ref="J1_PCBA" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="J_T41L" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
     </net>
-    <net code="51" name="ENC2_B" class="Default">
+    <net code="68" name="ENC2_B" class="Default">
       <node ref="J1_PCBA" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="J_T41L" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
     </net>
-    <net code="52" name="ENC3_A" class="Default">
+    <net code="69" name="ENC3_A" class="Default">
       <node ref="J1_PCBA" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
       <node ref="J_T41L" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
     </net>
-    <net code="53" name="ENC3_B" class="Default">
+    <net code="70" name="ENC3_B" class="Default">
       <node ref="J1_PCBA" pin="15" pinfunction="Pin_15_15" pintype="passive"/>
       <node ref="J_T41L" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
     </net>
-    <net code="54" name="ENC4_A" class="Default">
+    <net code="71" name="ENC4_A" class="Default">
       <node ref="J1_PCBA" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
       <node ref="J_T41L" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
     </net>
-    <net code="55" name="ENC4_B" class="Default">
+    <net code="72" name="ENC4_B" class="Default">
       <node ref="J1_PCBA" pin="19" pinfunction="Pin_19_19" pintype="passive"/>
       <node ref="J_T41L" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
     </net>
-    <net code="56" name="ENC5_A" class="Default">
+    <net code="73" name="ENC5_A" class="Default">
       <node ref="J1_PCBA" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="J_T41L" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
     </net>
-    <net code="57" name="ENC5_B" class="Default">
+    <net code="74" name="ENC5_B" class="Default">
       <node ref="J1_PCBA" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
       <node ref="J_T41L" pin="22" pinfunction="Pin_22_22" pintype="passive"/>
     </net>
-    <net code="58" name="ENC6_A" class="Default">
+    <net code="75" name="ENC6_A" class="Default">
       <node ref="J1_PCBA" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
       <node ref="J_T41L" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
     </net>
-    <net code="59" name="ENC6_B" class="Default">
+    <net code="76" name="ENC6_B" class="Default">
       <node ref="J1_PCBA" pin="25" pinfunction="Pin_25_25" pintype="passive"/>
       <node ref="J_T41L" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
     </net>
-    <net code="60" name="ENC7_A" class="Default">
+    <net code="77" name="ENC7_A" class="Default">
       <node ref="J1_PCBA" pin="28" pinfunction="Pin_28_28" pintype="passive"/>
       <node ref="J_T41R" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
     </net>
-    <net code="61" name="ENC7_B" class="Default">
+    <net code="78" name="ENC7_B" class="Default">
       <node ref="J1_PCBA" pin="29" pinfunction="Pin_29_29" pintype="passive"/>
       <node ref="J_T41R" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
     </net>
-    <net code="62" name="ENC8_A" class="Default">
+    <net code="79" name="ENC8_A" class="Default">
       <node ref="J1_PCBA" pin="27" pinfunction="Pin_27_27" pintype="passive"/>
       <node ref="J_T41R" pin="22" pinfunction="Pin_22_22" pintype="passive"/>
     </net>
-    <net code="63" name="ENC8_B" class="Default">
+    <net code="80" name="ENC8_B" class="Default">
       <node ref="J1_PCBA" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
       <node ref="J_T41R" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
     </net>
-    <net code="64" name="EXP1_ADC" class="Default">
+    <net code="81" name="EXP1_ADC" class="Default">
       <node ref="J7_EXP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_EXP1" pin="1" pintype="passive"/>
       <node ref="U_ADS2" pin="4" pinfunction="AIN0_4" pintype="input"/>
     </net>
-    <net code="65" name="EXP2_ADC" class="Default">
+    <net code="82" name="EXP2_ADC" class="Default">
       <node ref="J8_EXP2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_EXP2" pin="1" pintype="passive"/>
       <node ref="U_ADS2" pin="5" pinfunction="AIN1_5" pintype="input"/>
     </net>
-    <net code="66" name="FADER1_SIG" class="Default">
+    <net code="83" name="FADER1_SIG" class="Default">
       <node ref="J1_PCBA" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="U_ADS1" pin="4" pinfunction="AIN0_4" pintype="input"/>
     </net>
-    <net code="67" name="FADER2_SIG" class="Default">
+    <net code="84" name="FADER2_SIG" class="Default">
       <node ref="J1_PCBA" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
       <node ref="U_ADS1" pin="5" pinfunction="AIN1_5" pintype="input"/>
     </net>
-    <net code="68" name="FADER3_SIG" class="Default">
+    <net code="85" name="FADER3_SIG" class="Default">
       <node ref="J1_PCBA" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="U_ADS1" pin="6" pinfunction="AIN2_6" pintype="input"/>
     </net>
-    <net code="69" name="FADER4_SIG" class="Default">
+    <net code="86" name="FADER4_SIG" class="Default">
       <node ref="J1_PCBA" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="U_ADS1" pin="7" pinfunction="AIN3_7" pintype="input"/>
     </net>
-    <net code="70" name="FSR1_ADC" class="Default">
+    <net code="87" name="FSR1_ADC" class="Default">
       <node ref="J_FSR1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
       <node ref="R_FSR1" pin="1" pintype="passive"/>
     </net>
-    <net code="71" name="FSR2_ADC" class="Default">
+    <net code="88" name="FSR2_ADC" class="Default">
       <node ref="J_FSR2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="R_FSR2" pin="1" pintype="passive"/>
     </net>
-    <net code="72" name="FSR3_ADC" class="Default">
+    <net code="89" name="FSR3_ADC" class="Default">
       <node ref="J_FSR3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="R_FSR3" pin="1" pintype="passive"/>
     </net>
-    <net code="73" name="FSR4_ADC" class="Default">
+    <net code="90" name="FSR4_ADC" class="Default">
       <node ref="J_FSR4" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="R_FSR4" pin="1" pintype="passive"/>
     </net>
-    <net code="74" name="GND" class="Default">
+    <net code="91" name="GND" class="Default">
       <node ref="C_ADS1_BULK" pin="2" pintype="passive"/>
       <node ref="C_ADS1_VCC" pin="2" pintype="passive"/>
       <node ref="C_ADS2_BULK" pin="2" pintype="passive"/>
       <node ref="C_ADS2_VCC" pin="2" pintype="passive"/>
+      <node ref="C_CV_FILTER" pin="2" pintype="passive"/>
       <node ref="C_DAC1_BULK" pin="2" pintype="passive"/>
       <node ref="C_DAC1_VCC" pin="2" pintype="passive"/>
       <node ref="C_DAC2_BULK" pin="2" pintype="passive"/>
       <node ref="C_DAC2_VCC" pin="2" pintype="passive"/>
+      <node ref="C_ESD_I2C_A" pin="2" pintype="passive"/>
+      <node ref="C_ESD_I2C_K" pin="2" pintype="passive"/>
+      <node ref="C_I2C_A_A" pin="2" pintype="passive"/>
+      <node ref="C_I2C_A_B" pin="2" pintype="passive"/>
+      <node ref="C_I2C_K_A" pin="2" pintype="passive"/>
+      <node ref="C_I2C_K_B" pin="2" pintype="passive"/>
       <node ref="C_LED_BUF" pin="2" pintype="passive"/>
       <node ref="C_MIDI_VCC" pin="2" pintype="passive"/>
       <node ref="C_OA_CV_BULK" pin="2" pintype="passive"/>
@@ -4298,6 +6711,10 @@
       <node ref="C_SHARP2" pin="2" pintype="passive"/>
       <node ref="D_CV_CLAMP1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="D_CV_CLAMP2" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="D_ESD_I2C_A" pin="2" pinfunction="GND_2" pintype="passive"/>
+      <node ref="D_ESD_I2C_K" pin="2" pinfunction="GND_2" pintype="passive"/>
+      <node ref="D_IND_3V3" pin="1" pinfunction="K_1" pintype="passive"/>
+      <node ref="D_IND_5V_LED" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="J1_PCBA" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J1_PCBA" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J1_PCBA" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
@@ -4310,7 +6727,9 @@
       <node ref="J_JOG" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_MIDI_OUT" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_PAD_SEL" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="J_PCB_K" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J_PCB_K" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="J_PCB_K" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+      <node ref="J_PCB_K" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J_PEDAL" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_POT_CUE" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_POT_IN" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
@@ -4328,13 +6747,17 @@
       <node ref="R_FSR3" pin="2" pintype="passive"/>
       <node ref="R_FSR4" pin="2" pintype="passive"/>
       <node ref="R_MIDI_BASE" pin="2" pintype="passive"/>
+      <node ref="R_OPT_MIDI_BASE" pin="2" pintype="passive"/>
       <node ref="R_SEL_B" pin="2" pintype="passive"/>
+      <node ref="TP_GND" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_ADS1" pin="1" pinfunction="ADDR_1" pintype="input"/>
       <node ref="U_ADS1" pin="3" pinfunction="GND_3" pintype="power_in"/>
       <node ref="U_ADS2" pin="3" pinfunction="GND_3" pintype="power_in"/>
       <node ref="U_DAC1" pin="2" pinfunction="VSS_2" pintype="power_in"/>
       <node ref="U_DAC1" pin="6" pinfunction="A0_6" pintype="input"/>
       <node ref="U_DAC2" pin="2" pinfunction="VSS_2" pintype="power_in"/>
+      <node ref="U_I2C_A" pin="4" pinfunction="GND_4" pintype="power_in"/>
+      <node ref="U_I2C_K" pin="4" pinfunction="GND_4" pintype="power_in"/>
       <node ref="U_LED_BUF" pin="1" pintype="input"/>
       <node ref="U_LED_BUF" pin="3" pinfunction="GND_3" pintype="power_in"/>
       <node ref="U_OA_CV" pin="10" pinfunction="+_10" pintype="input"/>
@@ -4342,211 +6765,340 @@
       <node ref="U_OA_CV" pin="12" pinfunction="+_12" pintype="input"/>
       <node ref="U_OPT_MIDI" pin="5" pinfunction="GND_5" pintype="passive"/>
     </net>
-    <net code="75" name="HP_L" class="Default">
+    <net code="92" name="HP_L" class="Default">
       <node ref="J_HP" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_SHIELD_HP" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
     </net>
-    <net code="76" name="HP_R" class="Default">
+    <net code="93" name="HP_R" class="Default">
       <node ref="J_HP" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_SHIELD_HP" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
     </net>
-    <net code="77" name="HP_VGND" class="Default">
+    <net code="94" name="HP_VGND" class="Default">
       <node ref="J_HP" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_SHIELD_HP" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
     </net>
-    <net code="78" name="I2C_SCL" class="Default">
-      <node ref="J2_I2C" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="J_PCB_K" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+    <net code="95" name="I2C_BUF_EN_GPIO" class="Default">
+      <node ref="J_T41L" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="SJ_EN_GPIO" pin="1" pinfunction="A_1" pintype="passive"/>
+    </net>
+    <net code="96" name="I2C_SCL" class="Default">
       <node ref="J_T41R" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="R_SCL" pin="2" pintype="passive"/>
+      <node ref="R_SCL_47" pin="2" pintype="passive"/>
+      <node ref="TP_SCL" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_ADS1" pin="10" pinfunction="SCL_10" pintype="input"/>
       <node ref="U_ADS2" pin="10" pinfunction="SCL_10" pintype="input"/>
       <node ref="U_DAC1" pin="5" pinfunction="SCL_5" pintype="input"/>
       <node ref="U_DAC2" pin="5" pinfunction="SCL_5" pintype="input"/>
+      <node ref="U_I2C_A" pin="2" pinfunction="SCLA_2" pintype="bidirectional"/>
+      <node ref="U_I2C_K" pin="2" pinfunction="SCLA_2" pintype="bidirectional"/>
     </net>
-    <net code="79" name="I2C_SDA" class="Default">
-      <node ref="J2_I2C" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
-      <node ref="J_PCB_K" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+    <net code="97" name="I2C_SCL_A" class="Default">
+      <node ref="D_ESD_I2C_A" pin="3" pinfunction="I/O2_3" pintype="passive"/>
+      <node ref="D_ESD_I2C_A" pin="4" pinfunction="I/O2_4" pintype="passive"/>
+      <node ref="J2_I2C" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="R_I2C_SCL_A" pin="2" pintype="passive"/>
+      <node ref="TP_SCL_A" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="98" name="I2C_SCL_A_SER" class="Default">
+      <node ref="R_I2C_SCL_A" pin="1" pintype="passive"/>
+      <node ref="SJ_SCL_A" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="99" name="I2C_SCL_B_A" class="Default">
+      <node ref="R_PU_SCL_A_22" pin="2" pintype="passive"/>
+      <node ref="R_PU_SCL_A_47" pin="2" pintype="passive"/>
+      <node ref="SJ_SCL_A" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_SCL_B_A" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_I2C_A" pin="7" pinfunction="SCLB_7" pintype="bidirectional"/>
+    </net>
+    <net code="100" name="I2C_SCL_B_K" class="Default">
+      <node ref="R_PU_SCL_K_22" pin="2" pintype="passive"/>
+      <node ref="R_PU_SCL_K_47" pin="2" pintype="passive"/>
+      <node ref="SJ_SCL_K" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_SCL_B_K" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_I2C_K" pin="7" pinfunction="SCLB_7" pintype="bidirectional"/>
+    </net>
+    <net code="101" name="I2C_SCL_K" class="Default">
+      <node ref="D_ESD_I2C_K" pin="3" pinfunction="I/O2_3" pintype="passive"/>
+      <node ref="D_ESD_I2C_K" pin="4" pinfunction="I/O2_4" pintype="passive"/>
+      <node ref="J_PCB_K" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="R_I2C_SCL_K" pin="2" pintype="passive"/>
+      <node ref="TP_SCL_K" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="102" name="I2C_SCL_K_SER" class="Default">
+      <node ref="R_I2C_SCL_K" pin="1" pintype="passive"/>
+      <node ref="SJ_SCL_K" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="103" name="I2C_SDA" class="Default">
       <node ref="J_T41R" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="R_SDA" pin="2" pintype="passive"/>
+      <node ref="R_SDA_47" pin="2" pintype="passive"/>
+      <node ref="TP_SDA" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_ADS1" pin="9" pinfunction="SDA_9" pintype="bidirectional"/>
       <node ref="U_ADS2" pin="9" pinfunction="SDA_9" pintype="bidirectional"/>
       <node ref="U_DAC1" pin="4" pinfunction="SDA_4" pintype="bidirectional"/>
       <node ref="U_DAC2" pin="4" pinfunction="SDA_4" pintype="bidirectional"/>
+      <node ref="U_I2C_A" pin="3" pinfunction="SDAA_3" pintype="bidirectional"/>
+      <node ref="U_I2C_K" pin="3" pinfunction="SDAA_3" pintype="bidirectional"/>
     </net>
-    <net code="80" name="JOG_A" class="Default">
+    <net code="104" name="I2C_SDA_A" class="Default">
+      <node ref="D_ESD_I2C_A" pin="1" pinfunction="I/O1_1" pintype="passive"/>
+      <node ref="D_ESD_I2C_A" pin="6" pinfunction="I/O1_6" pintype="passive"/>
+      <node ref="J2_I2C" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="R_I2C_SDA_A" pin="2" pintype="passive"/>
+      <node ref="TP_SDA_A" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="105" name="I2C_SDA_A_SER" class="Default">
+      <node ref="R_I2C_SDA_A" pin="1" pintype="passive"/>
+      <node ref="SJ_SDA_A" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="106" name="I2C_SDA_B_A" class="Default">
+      <node ref="R_PU_SDA_A_22" pin="2" pintype="passive"/>
+      <node ref="R_PU_SDA_A_47" pin="2" pintype="passive"/>
+      <node ref="SJ_SDA_A" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_SDA_B_A" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_I2C_A" pin="6" pinfunction="SDAB_6" pintype="bidirectional"/>
+    </net>
+    <net code="107" name="I2C_SDA_B_K" class="Default">
+      <node ref="R_PU_SDA_K_22" pin="2" pintype="passive"/>
+      <node ref="R_PU_SDA_K_47" pin="2" pintype="passive"/>
+      <node ref="SJ_SDA_K" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="TP_SDA_B_K" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_I2C_K" pin="6" pinfunction="SDAB_6" pintype="bidirectional"/>
+    </net>
+    <net code="108" name="I2C_SDA_K" class="Default">
+      <node ref="D_ESD_I2C_K" pin="1" pinfunction="I/O1_1" pintype="passive"/>
+      <node ref="D_ESD_I2C_K" pin="6" pinfunction="I/O1_6" pintype="passive"/>
+      <node ref="J_PCB_K" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="R_I2C_SDA_K" pin="2" pintype="passive"/>
+      <node ref="TP_SDA_K" pin="1" pinfunction="1_1" pintype="passive"/>
+    </net>
+    <net code="109" name="I2C_SDA_K_SER" class="Default">
+      <node ref="R_I2C_SDA_K" pin="1" pintype="passive"/>
+      <node ref="SJ_SDA_K" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="110" name="JOG_A" class="Default">
       <node ref="J_JOG" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="20" pinfunction="Pin_20_20" pintype="passive"/>
     </net>
-    <net code="81" name="JOG_B" class="Default">
+    <net code="111" name="JOG_B" class="Default">
       <node ref="J_JOG" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_T41R" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
     </net>
-    <net code="82" name="JOG_CLICK" class="Default">
+    <net code="112" name="JOG_CLICK" class="Default">
       <node ref="J_JOG" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
-      <node ref="J_PCB_K" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
+      <node ref="J_PCB_K" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
     </net>
-    <net code="83" name="LED_DATA" class="Default">
+    <net code="113" name="LED_BUF_OUT" class="Default">
+      <node ref="SJ_LED_DATA" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="U_LED_BUF" pin="4" pintype="tri_state"/>
+    </net>
+    <net code="114" name="LED_DATA" class="Default">
       <node ref="J_T41R" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
       <node ref="U_LED_BUF" pin="2" pintype="input"/>
     </net>
-    <net code="84" name="LED_DIN_5V" class="Default">
-      <node ref="J_PCB_K" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
-      <node ref="U_LED_BUF" pin="4" pintype="tri_state"/>
+    <net code="115" name="LED_DIN_5V" class="Default">
+      <node ref="J_PCB_K" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="SJ_LED_DATA" pin="2" pinfunction="B_2" pintype="passive"/>
+      <node ref="TP_LED_DIN" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="85" name="LINE_IN_L_T" class="Default">
+    <net code="116" name="LINE_IN_L_T" class="Default">
       <node ref="J_LINE_IN_L" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_PAD_L1" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="86" name="LINE_IN_R_T" class="Default">
+    <net code="117" name="LINE_IN_R_T" class="Default">
       <node ref="J_LINE_IN_R" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_PAD_R1" pin="1" pintype="passive"/>
       <node ref="SW_PAD" pin="5" pinfunction="5_5" pintype="passive"/>
     </net>
-    <net code="87" name="LINE_OUT_L_T" class="Default">
+    <net code="118" name="LINE_OUT_L_T" class="Default">
       <node ref="C_LOUT_L" pin="2" pintype="passive"/>
       <node ref="J_LINE_OUT_L" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_LOUT_L" pin="1" pintype="passive"/>
     </net>
-    <net code="88" name="LINE_OUT_R_T" class="Default">
+    <net code="119" name="LINE_OUT_R_T" class="Default">
       <node ref="C_LOUT_R" pin="2" pintype="passive"/>
       <node ref="J_LINE_OUT_R" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_LOUT_R" pin="1" pintype="passive"/>
     </net>
-    <net code="89" name="M4_RX7" class="Default">
+    <net code="120" name="M4_RX7" class="Default">
       <node ref="J3_M4" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J_T41L" pin="20" pinfunction="Pin_20_20" pintype="passive"/>
     </net>
-    <net code="90" name="M4_TX7" class="Default">
+    <net code="121" name="M4_TX7" class="Default">
       <node ref="J3_M4" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_T41L" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
     </net>
-    <net code="91" name="MIDI_RX" class="Default">
-      <node ref="J_T41L" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    <net code="122" name="MIDI_OPTO_BASE" class="Default">
+      <node ref="R_MIDI_BASE" pin="1" pintype="passive"/>
+      <node ref="R_OPT_MIDI_BASE" pin="1" pintype="passive"/>
+      <node ref="U_OPT_MIDI" pin="7" pinfunction="VO1_7" pintype="passive"/>
+    </net>
+    <net code="123" name="MIDI_RX" class="Default">
       <node ref="R_MIDI_RX" pin="2" pintype="passive"/>
+      <node ref="R_OPT_MIDI_RX" pin="2" pintype="passive"/>
+      <node ref="TP_MIDI_RX" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OPT_MIDI" pin="6" pinfunction="VO2_6" pintype="passive"/>
     </net>
-    <net code="92" name="MIDI_TX" class="Default">
-      <node ref="J_T41L" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+    <net code="124" name="MIDI_TX" class="Default">
       <node ref="R_MIDI_T" pin="1" pintype="passive"/>
+      <node ref="TP_MIDI_TX" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="93" name="PAD_SEL_ADC" class="Default">
+    <net code="125" name="PAD_SEL_ADC" class="Default">
       <node ref="J_PAD_SEL" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="R_SEL_B" pin="1" pintype="passive"/>
       <node ref="R_SEL_T" pin="2" pintype="passive"/>
     </net>
-    <net code="94" name="PEDAL_BTN" class="Default">
-      <node ref="J_PCB_K" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
+    <net code="126" name="PEDAL_BTN" class="Default">
+      <node ref="J_PCB_K" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="J_PEDAL" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
     </net>
-    <net code="95" name="POT_CUE" class="Default">
+    <net code="127" name="POT_CUE" class="Default">
       <node ref="C_POT_CUE" pin="1" pintype="passive"/>
       <node ref="J_T41L" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="R_POT_CUE" pin="2" pintype="passive"/>
     </net>
-    <net code="96" name="POT_IN" class="Default">
+    <net code="128" name="POT_IN" class="Default">
       <node ref="C_POT_IN" pin="1" pintype="passive"/>
       <node ref="J_T41L" pin="18" pinfunction="Pin_18_18" pintype="passive"/>
       <node ref="R_POT_IN" pin="2" pintype="passive"/>
     </net>
-    <net code="97" name="POT_MASTER" class="Default">
+    <net code="129" name="POT_MASTER" class="Default">
       <node ref="C_POT_MASTER" pin="1" pintype="passive"/>
       <node ref="J_T41R" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="R_POT_MASTER" pin="2" pintype="passive"/>
     </net>
-    <net code="98" name="SHARP1_ADC" class="Default">
+    <net code="130" name="PROT_L" class="Default">
+      <node ref="D_CLAMP_L" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="JP_BYP_L" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="R_BIAS_L" pin="1" pintype="passive"/>
+      <node ref="R_OPT_BIAS_L" pin="1" pintype="passive"/>
+      <node ref="R_SER_L" pin="2" pintype="passive"/>
+      <node ref="U_OA_IN" pin="3" pinfunction="+_3" pintype="input"/>
+    </net>
+    <net code="131" name="PROT_R" class="Default">
+      <node ref="D_CLAMP_R" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="JP_BYP_R" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="R_BIAS_R" pin="1" pintype="passive"/>
+      <node ref="R_OPT_BIAS_R" pin="1" pintype="passive"/>
+      <node ref="R_SER_R" pin="2" pintype="passive"/>
+      <node ref="U_OA_IN" pin="5" pinfunction="+_5" pintype="input"/>
+    </net>
+    <net code="132" name="PU_SCL_22" class="Default">
+      <node ref="R_SCL" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SCL_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="133" name="PU_SDA_22" class="Default">
+      <node ref="R_SDA" pin="1" pintype="passive"/>
+      <node ref="SJ_PU_SDA_22" pin="2" pinfunction="B_2" pintype="passive"/>
+    </net>
+    <net code="134" name="SHARP1_ADC" class="Default">
       <node ref="J5_SHARP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U_ADS2" pin="6" pinfunction="AIN2_6" pintype="input"/>
     </net>
-    <net code="99" name="SHARP2_ADC" class="Default">
+    <net code="135" name="SHARP2_ADC" class="Default">
       <node ref="J6_SHARP2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="U_ADS2" pin="7" pinfunction="AIN3_7" pintype="input"/>
     </net>
-    <net code="100" name="SHIELD_LINE_IN_L" class="Default">
-      <node ref="C_LIN_L" pin="2" pintype="passive"/>
+    <net code="136" name="SHIELD_LINE_IN_L" class="Default">
       <node ref="J_SHIELD_AUDIO" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="R_ISO_IN_L" pin="2" pintype="passive"/>
     </net>
-    <net code="101" name="SHIELD_LINE_IN_R" class="Default">
-      <node ref="C_LIN_R" pin="2" pintype="passive"/>
+    <net code="137" name="SHIELD_LINE_IN_R" class="Default">
       <node ref="J_SHIELD_AUDIO" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="R_ISO_IN_R" pin="2" pintype="passive"/>
     </net>
-    <net code="102" name="SHIELD_LINE_OUT_L" class="Default">
+    <net code="138" name="SHIELD_LINE_OUT_L" class="Default">
       <node ref="C_LOUT_L" pin="1" pintype="passive"/>
       <node ref="J_SHIELD_AUDIO" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
     </net>
-    <net code="103" name="SHIELD_LINE_OUT_R" class="Default">
+    <net code="139" name="SHIELD_LINE_OUT_R" class="Default">
       <node ref="C_LOUT_R" pin="1" pintype="passive"/>
       <node ref="J_SHIELD_AUDIO" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
     </net>
-    <net code="104" name="unconnected-(J1_PCBA-Pin_18-Pad18)" class="Default">
+    <net code="140" name="VREF" class="Default">
+      <node ref="JP_BYP_VREF" pin="2" pinfunction="B_2" pintype="passive"/>
+      <node ref="R_BIAS_L" pin="2" pintype="passive"/>
+      <node ref="R_BIAS_R" pin="2" pintype="passive"/>
+      <node ref="R_OPT_BIAS_L" pin="2" pintype="passive"/>
+      <node ref="R_OPT_BIAS_R" pin="2" pintype="passive"/>
+      <node ref="TP_VREF" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U_OA_IN" pin="12" pinfunction="+_12" pintype="input"/>
+      <node ref="U_OA_IN" pin="8" pintype="output"/>
+      <node ref="U_OA_IN" pin="9" pinfunction="-_9" pintype="input"/>
+    </net>
+    <net code="141" name="unconnected-(J1_PCBA-Pin_18-Pad18)" class="Default">
       <node ref="J1_PCBA" pin="18" pinfunction="Pin_18_18" pintype="passive+no_connect"/>
     </net>
-    <net code="105" name="unconnected-(J1_PCBA-Pin_20-Pad20)" class="Default">
+    <net code="142" name="unconnected-(J1_PCBA-Pin_20-Pad20)" class="Default">
       <node ref="J1_PCBA" pin="20" pinfunction="Pin_20_20" pintype="passive+no_connect"/>
     </net>
-    <net code="106" name="unconnected-(J1_PCBA-Pin_22-Pad22)" class="Default">
+    <net code="143" name="unconnected-(J1_PCBA-Pin_22-Pad22)" class="Default">
       <node ref="J1_PCBA" pin="22" pinfunction="Pin_22_22" pintype="passive+no_connect"/>
     </net>
-    <net code="107" name="unconnected-(J1_PCBA-Pin_26-Pad26)" class="Default">
+    <net code="144" name="unconnected-(J1_PCBA-Pin_26-Pad26)" class="Default">
       <node ref="J1_PCBA" pin="26" pinfunction="Pin_26_26" pintype="passive+no_connect"/>
     </net>
-    <net code="108" name="unconnected-(J3_M4-Pin_2-Pad2)" class="Default">
+    <net code="145" name="unconnected-(J3_M4-Pin_2-Pad2)" class="Default">
       <node ref="J3_M4" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="109" name="unconnected-(J_EDRUM-Pin_1-Pad1)" class="Default">
+    <net code="146" name="unconnected-(J_EDRUM-Pin_1-Pad1)" class="Default">
       <node ref="J_EDRUM" pin="1" pinfunction="Pin_1_1" pintype="passive+no_connect"/>
     </net>
-    <net code="110" name="unconnected-(J_EDRUM-Pin_2-Pad2)" class="Default">
+    <net code="147" name="unconnected-(J_EDRUM-Pin_2-Pad2)" class="Default">
       <node ref="J_EDRUM" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="111" name="unconnected-(J_EDRUM-Pin_3-Pad3)" class="Default">
+    <net code="148" name="unconnected-(J_EDRUM-Pin_3-Pad3)" class="Default">
       <node ref="J_EDRUM" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
     </net>
-    <net code="112" name="unconnected-(J_EDRUM-Pin_4-Pad4)" class="Default">
+    <net code="149" name="unconnected-(J_EDRUM-Pin_4-Pad4)" class="Default">
       <node ref="J_EDRUM" pin="4" pinfunction="Pin_4_4" pintype="passive+no_connect"/>
     </net>
-    <net code="113" name="unconnected-(J_EDRUM-Pin_5-Pad5)" class="Default">
+    <net code="150" name="unconnected-(J_EDRUM-Pin_5-Pad5)" class="Default">
       <node ref="J_EDRUM" pin="5" pinfunction="Pin_5_5" pintype="passive+no_connect"/>
     </net>
-    <net code="114" name="unconnected-(J_LINE_OUT_L-Pin_2-Pad2)" class="Default">
+    <net code="151" name="unconnected-(J_LINE_OUT_L-Pin_2-Pad2)" class="Default">
       <node ref="J_LINE_OUT_L" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="115" name="unconnected-(J_LINE_OUT_R-Pin_2-Pad2)" class="Default">
+    <net code="152" name="unconnected-(J_LINE_OUT_R-Pin_2-Pad2)" class="Default">
       <node ref="J_LINE_OUT_R" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="116" name="unconnected-(J_MIDI_IN-Pin_3-Pad3)" class="Default">
+    <net code="153" name="unconnected-(J_MIDI_IN-Pin_3-Pad3)" class="Default">
       <node ref="J_MIDI_IN" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
     </net>
-    <net code="117" name="unconnected-(J_PEDAL-Pin_2-Pad2)" class="Default">
+    <net code="154" name="unconnected-(J_PEDAL-Pin_2-Pad2)" class="Default">
       <node ref="J_PEDAL" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="118" name="unconnected-(J_T41L-Pin_17-Pad17)" class="Default">
+    <net code="155" name="unconnected-(J_T41L-Pin_3-Pad3)" class="Default">
+      <node ref="J_T41L" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
+    </net>
+    <net code="156" name="unconnected-(J_T41L-Pin_17-Pad17)" class="Default">
       <node ref="J_T41L" pin="17" pinfunction="Pin_17_17" pintype="passive+no_connect"/>
     </net>
-    <net code="119" name="unconnected-(J_T41L-Pin_19-Pad19)" class="Default">
+    <net code="157" name="unconnected-(J_T41L-Pin_19-Pad19)" class="Default">
       <node ref="J_T41L" pin="19" pinfunction="Pin_19_19" pintype="passive+no_connect"/>
     </net>
-    <net code="120" name="unconnected-(J_T41R-Pin_18-Pad18)" class="Default">
+    <net code="158" name="unconnected-(J_T41R-Pin_18-Pad18)" class="Default">
       <node ref="J_T41R" pin="18" pinfunction="Pin_18_18" pintype="passive+no_connect"/>
     </net>
-    <net code="121" name="unconnected-(J_T41R-Pin_19-Pad19)" class="Default">
+    <net code="159" name="unconnected-(J_T41R-Pin_19-Pad19)" class="Default">
       <node ref="J_T41R" pin="19" pinfunction="Pin_19_19" pintype="passive+no_connect"/>
     </net>
-    <net code="122" name="unconnected-(U_ADS1-ALERT/RDY-Pad2)" class="Default">
+    <net code="160" name="unconnected-(U_ADS1-ALERT/RDY-Pad2)" class="Default">
       <node ref="U_ADS1" pin="2" pinfunction="ALERT/RDY_2" pintype="output+no_connect"/>
     </net>
-    <net code="123" name="unconnected-(U_ADS2-ALERT/RDY-Pad2)" class="Default">
+    <net code="161" name="unconnected-(U_ADS2-ALERT/RDY-Pad2)" class="Default">
       <node ref="U_ADS2" pin="2" pinfunction="ALERT/RDY_2" pintype="output+no_connect"/>
     </net>
-    <net code="124" name="unconnected-(U_LDO1-NC-Pad4)" class="Default">
+    <net code="162" name="unconnected-(U_LDO1-NC-Pad4)" class="Default">
       <node ref="U_LDO1" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="125" name="unconnected-(U_OPT_MIDI-NC-Pad1)" class="Default">
+    <net code="163" name="unconnected-(U_OPT_MIDI-NC-Pad1)" class="Default">
       <node ref="U_OPT_MIDI" pin="1" pinfunction="NC_1" pintype="no_connect"/>
     </net>
-    <net code="126" name="unconnected-(U_OPT_MIDI-NC-Pad4)" class="Default">
+    <net code="164" name="unconnected-(U_OPT_MIDI-NC-Pad4)" class="Default">
       <node ref="U_OPT_MIDI" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
   </nets>

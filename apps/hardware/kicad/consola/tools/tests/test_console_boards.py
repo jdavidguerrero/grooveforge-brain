@@ -49,8 +49,8 @@ def test_gpio_contract_doc_28_independent_of_description():
 
 def test_connectors_and_split_led_chain():
     left, right = by_ref('pcb-k-left'), by_ref('pcb-k-right')
-    assert list(left['J1'].pins.values()) == ['GND', '+3V3', 'SDA', 'SCL', 'LED_DIN_5V',
-                                            '+5V_LED', 'JOG_CLICK', 'PEDAL_BTN']
+    assert list(left['J1'].pins.values()) == ['+3V3', 'SDA', 'GND', 'SCL', 'GND', 'LED_DIN_5V',
+                                            'GND', '+5V_LED', 'JOG_CLICK', 'PEDAL_BTN']
     link = ['+3V3', 'GND', 'SDA', 'SCL', '+5V_LED', 'LED_DATA']
     assert list(left['J2'].pins.values()) == list(right['J1'].pins.values()) == link
     expected = ('BACK MENU NAV_L NAV_R BROWSE TAP FILL CUE_ENG BUILD DROP BREAK SHIFT UNDO '

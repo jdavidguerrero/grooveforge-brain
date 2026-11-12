@@ -24,7 +24,7 @@ GPIO = {
 GPIO_PINS = {**{f'GPA{i}': str(21+i) for i in range(8)},
              **{f'GPB{i}': str(1+i) for i in range(8)}}
 LINK = ('+3V3', 'GND', 'SDA', 'SCL', '+5V_LED', 'LED_DATA')
-MAIN = ('GND', '+3V3', 'SDA', 'SCL', 'LED_DIN_5V', '+5V_LED', 'JOG_CLICK', 'PEDAL_BTN')
+MAIN = ('+3V3', 'SDA', 'GND', 'SCL', 'GND', 'LED_DIN_5V', 'GND', '+5V_LED', 'JOG_CLICK', 'PEDAL_BTN')
 
 
 def part(lib_id, reference, value, footprint, pins, dnp=False, lcsc=None):
@@ -99,6 +99,7 @@ def pcb_k(side):
     indices = range(17) if left else range(17, 26)
     symbols = [connector('J1', MAIN if left else LINK, 'PCB-M' if left else 'DESDE IZQUIERDA')]
     if left:
+        symbols[0].fields['LCSC'] = 'C158038'
         symbols.append(connector('J2', LINK, 'HACIA DERECHA'))
     symbols += [part('Device:R', 'R1', '33R', R0805,
                      {'1': 'LED_DIN_5V' if left else 'LED_DATA', '2': f'LED_{indices.start}_DIN'}, lcsc='C17634'),

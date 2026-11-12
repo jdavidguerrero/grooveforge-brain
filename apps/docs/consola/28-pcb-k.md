@@ -112,8 +112,8 @@ GPA7/GPB7 no se usan (errata de solo salida). Índice LED = orden de la cadena d
 | 0x23 | GPA3 | BUILD | 20, 155 | 115 | 8 |
 | 0x23 | GPA4 | DROP | 39, 155 | 116 | 9 |
 | 0x23 | GPA5 | BREAK | 58, 155 | 117 | 10 |
-| 0x23 | GPA6 | JOG_CLICK (J1.7, desde PCB-M) | — | 88 | — |
-| 0x23 | GPB0 | PEDAL_BTN (J1.8, desde PCB-M) | — | 122 | — |
+| 0x23 | GPA6 | JOG_CLICK (J1.9, desde PCB-M) | — | 88 | — |
+| 0x23 | GPB0 | PEDAL_BTN (J1.10, desde PCB-M) | — | 122 | — |
 
 36 de 42 entradas en uso. Las libres (0x21 GPA4–6 y GPB5–6; 0x22 GPB4–6; 0x23 GPB1–6) van a pads de prueba para
 ampliar sin otra placa.
@@ -125,25 +125,27 @@ por I2C, no usa interrupciones).
 
 ## 5. Conector J1 ↔ PCB-M
 
-JST-PH 2,0 mm de 8 vías, vertical, cara inferior, zona x 15–45 / y 230–290 (a la izquierda de la columna de
+JST-PH 2,0 mm de 10 vías, vertical, cara inferior, zona x 15–45 / y 230–290 (a la izquierda de la columna de
 navegación, sobre la bahía de la Pi: el conector mide 6 mm, cabe en la luz de §2 con poco margen; si el HAT sale más
 alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
 
-| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|---|---|---|---|---|---|---|---|
-| GND | +3V3 | SDA | SCL | LED_DIN_5V | +5V_LED | JOG_CLICK | PEDAL_BTN |
+| 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|
+| +3V3 | SDA | GND | SCL | GND | LED_DIN_5V | GND | +5V_LED | JOG_CLICK | PEDAL_BTN |
 
-- **I2C sin pull-ups en PCB-K** (huellas 2,2 kΩ sin poblar): el par activo está en PCB-M (`17` §2: un solo par).
+**D23 (Juan, 2026-11-12):** ambos headers B10B-PH-K-S(LF)(SN), [LCSC C158038](https://www.lcsc.com/product-detail/C158038.html), huella 1×10 PH vertical, ancho 21,9 mm. Cable PHR-10 ↔ PHR-10 1:1.
+
+- **I2C sin pull-ups en PCB-K** (huellas 2,2 kΩ sin poblar): el par activo está en el segmento B_K de PCB-M tras PCA9517A, con 2,2 kΩ por defecto o 4,7 kΩ seleccionables (doc24 D18/D21). El cable K izquierda–derecha sigue 6 vías, en el mismo dominio B_K.
 - La protección del pedal (jack externo) va en PCB-M antes del cable; PCB-K no la repite.
 
 ## 6. LEDs
 
-- 26 × SK6812MINI-EA (LCSC C5378731), cadena única en el orden de `27` §1, para las dos placas de §7: J1.5 → BACK (LED0) →
+- 26 × SK6812MINI-EA (LCSC C5378731), cadena única en el orden de `27` §1, para las dos placas de §7: J1.6 → BACK (LED0) →
   MENU → NAV_L → NAV_R → BROWSE → TAP → FILL → CUE_ENG → BUILD → DROP → BREAK → SHIFT → UNDO →
   DELETE → DUPLICATE → QUANTIZE → NEW (LED16), todo en la izquierda. DOUT de NEW → único hilo LED_DATA del
   cable → DIN de PLAY (LED17) en la frente-derecha → STOP → REC → LOOP → METRO → SCENE4_PAGE_R →
   SCENE3_PAGE_L → SCENE2_OCT− → SCENE1_OCT+ (LED25). No cruza la franja sobre la ventana de la M4.
-- Datos: entrada desde J1.5 con resistencia serie de 33 Ω (huella 0805, puente si no hace falta).
+- Datos: entrada desde J1.6 con resistencia serie de 33 Ω (huella 0805, puente si no hace falta).
 - Cada LED con 100 nF a GND; 22 µF a la entrada de +5V_LED. +5 V y GND en pista ancha (≥ 0,8 mm) alrededor del anillo
   que forma la placa; GND con relleno en la cara inferior.
 - Corriente: el firmware limita a 500 mA (`27` §4). El polyfuse de 0,75 A de la rama está en PCB-M (`24` §5).

@@ -1,6 +1,6 @@
 # PCB-M — Placa Principal GrooveForge Consola
 
-> Esquemático jerárquico KiCad 10, decisiones **D8–D15 aprobadas por Juan el 2026-11-12**
+> Esquemático jerárquico KiCad 10, decisiones **D8–D23 aprobadas por Juan el 2026-11-12**
 > (`apps/docs/consola/24-placa-principal.md` §8). Sin layout PCB; no es aprobación de fabricación.
 > Descripción eléctrica: `tools/schgen/pcb_m.py`. Firmware: `apps/consola/surface/include/consola_s/ConsolaMap.h`
 > y `apps/docs/consola/17-mapa-pines-teensy.md`. Conector fabricado: `../CONNECTORS.md`.
@@ -19,9 +19,11 @@ K1/K2. JOG_A/B van a Teensy 37/40; JOG_CLICK y PEDAL_BTN viajan por J_PCB_K al M
 | 04 | `04-mcp-io` | **Vacía**, reservada; MCP 0x23 vive en PCB-K |
 | 05 | `05-cv-dac` | MCP4725 0x60/0x61, MCP6004 ganancia 1,5; 1k serie + BAT54S por CV |
 | 06 | `06-surface` | JST-PH para jog, pots, selector, HP y FSR; RC 1k/100nF por pot |
-| 07 | `07-midi` | Opto 6N138 y polarización; JST-PH para MIDI TRS **tipo A**, OUT 33Ω/10Ω |
+| 07 | `07-midi` | **Todo DNP**, reserva sin agujeros/mazos: opto 6N138 y polarización; JST-PH para MIDI TRS **tipo A**, OUT 33Ω/10Ω |
 | 08 | `08-connectors-panel` | IDC PCB-A, Qwiic, Serial7 M4, PCB-K, Sharp/expresión |
 | 09 | `09-connectors-rear` | JST-PH hacia LINE IN/OUT, CV, pedal; E-drum DNP |
+| 11 | `11-diagnostics` | TP, puentes de servicio, indicadores y selección de pull-ups locales |
+| 12 | `12-i2c-branches` | PCA9517A ×2, EN desde pin0, pull-ups B, 47 Ω y USBLC6-2SC6 |
 | 10 | `10-power` | J_5V_LED_IN → F1; LDO +3.3VA; NT1 AGND/GND; buffer LED y pull-ups I2C |
 
 ## Cross-reference: Teensy ↔ señales de PCB-A y panel (D8)
@@ -31,7 +33,7 @@ Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actua
 
 | Teensy | Función | Net PCB-M | Ruta |
 |---|---|---|---|
-| T0 / T1 | MIDI RX/TX Serial1 | `MIDI_RX` / `MIDI_TX` | Opto IN / R_MIDI_T → J_MIDI_OUT; **no pasan por J1** |
+| T0 / T1 | EN I2C / libre | `I2C_BUF_EN_GPIO` / NC | T0 → SJ_EN_GPIO → EN de ambos PCA9517A; MIDI DNP, sin conexión a T0/T1 (D20/D21) |
 | T2 / T3 | ENC1 A/B | `ENC1_A` / `ENC1_B` | J1_PCBA **5 / 7** |
 | T4 / T5 | ENC2 A/B | `ENC2_A` / `ENC2_B` | J1_PCBA **9 / 10** |
 | T6 / T9 | ENC3 A/B | `ENC3_A` / `ENC3_B` | J1_PCBA **13 / 15** |
@@ -40,9 +42,9 @@ Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actua
 | T31 / T32 | ENC6 A/B | `ENC6_A` / `ENC6_B` | J1_PCBA **23 / 25** |
 | T33 / T34 | ENC7 A/B | `ENC7_A` / `ENC7_B` | J1_PCBA **28 / 29** |
 | T35 / T36 | ENC8 A/B | `ENC8_A` / `ENC8_B` | J1_PCBA **27 / 24** |
-| T13 | LEDs teclas | `LED_DATA` | 74AHCT1G125 → `LED_DIN_5V` → **J_PCB_K.5**; J1.26 NC |
+| T13 | LEDs teclas | `LED_DATA` | 74AHCT1G125 → `LED_DIN_5V` → **J_PCB_K.6**; J1.26 NC |
 | T14–T17 | FSR velocity 1–4 | `FSR1_ADC`–`FSR4_ADC` | J_FSR1–4, divisor 10k a GND |
-| T18 / T19 | I2C SDA/SCL | `I2C_SDA` / `I2C_SCL` | J2_I2C.3/.4, J_PCB_K.3/.4 y convertidores |
+| T18 / T19 | I2C SDA/SCL | `I2C_SDA` / `I2C_SCL` | lado A de PCA9517A y convertidores; B_A → J2_I2C.3/.4; B_K → J_PCB_K.2/.4 |
 | T22 | MASTER | `POT_MASTER` | J_POT_MASTER.2 → **1k → ADC; 100nF a GND** |
 | T24 | CUE | `POT_CUE` | J_POT_CUE.2 → **1k → ADC; 100nF a GND** |
 | T26 | IN | `POT_IN` | J_POT_IN.2 → **1k → ADC; 100nF a GND** |
@@ -75,7 +77,7 @@ PH = JST-PH 2,0 mm; normalmente BnB-PH-K vertical. J_5V_LED_IN usa S2B-PH-K hori
 | J1_PCBA | IDC 2×15 | Pinout fabricado de CONNECTORS.md; destinos en tablas anteriores |
 | J2_I2C | JST-SH 4 Qwiic | GND / +3.3V / SDA / SCL |
 | J3_M4 | PH 4 | GND / **NC** / M4_TX7 / M4_RX7; M4 alimentada por su USB al Pi |
-| J_PCB_K | PH 8 | GND / +3.3V / SDA / SCL / LED_DIN_5V / +5V_LED / JOG_CLICK / PEDAL_BTN |
+| J_PCB_K | PH 10 C158038 | +3.3V / SDA_B_K / GND / SCL_B_K / GND / LED_DIN_5V / GND / +5V_LED_K / JOG_CLICK / PEDAL_BTN |
 | J5_SHARP1, J6_SHARP2 | PH 3 cada uno | +5V_LED / SHARPx_ADC / GND |
 | J7_EXP1, J8_EXP2 | PH 2 cada uno | +3.3V / EXPx_ADC, pulldown 10k |
 | J_JOG | PH 4 | GND / JOG_A / JOG_B / JOG_CLICK |
@@ -90,7 +92,7 @@ PH = JST-PH 2,0 mm; normalmente BnB-PH-K vertical. J_5V_LED_IN usa S2B-PH-K hori
 
 Los jacks se compran en **Bogotá**, se fijan **con tuerca a la pared trasera del cuerpo** y van
 por cable a los JST-PH del borde trasero de PCB-M. No hay jacks montados en esta PCB. Las hojas
-06/07/09 son agrupaciones eléctricas: colocar también J_HP y los JST MIDI en el borde trasero
+06/07/09 son agrupaciones eléctricas: colocar J_HP en el borde trasero; JST MIDI DNP, sin mazos ni agujeros
 cuando se haga layout. Confirmar por continuidad los terminales del jack comprado antes de soldar;
 la tabla usa **T = tip/punta, R = ring/anillo, S = sleeve/manguito**, no la numeración de sus patillas.
 
@@ -145,17 +147,29 @@ Cada CV tiene **1k serie** desde CVx_OUT (realimentación antes del resistor) ha
 **CVx_PROTECTED** en el cable, con **BAT54S**: pin1 GND, pin2 +5V_LED, pin3 nodo protegido.
 Cada pot lleva **1k desde el cursor y 100nF a GND en el lado ADC** (τ=100µs, corte ≈1,59kHz).
 
-MIDI OUT **3,3 V tipo A**: R_MIDI_R **33Ω ≥0,5W** de +3.3V a ring, R_MIDI_T **10Ω ≥0,25W**
+Reserva **DNP** MIDI OUT **3,3 V tipo A**: R_MIDI_R **33Ω ≥0,5W** de +3.3V a ring, R_MIDI_T **10Ω ≥0,25W**
 de MIDI_TX a tip. Se elimina R_MIDI_S=100Ω y la anterior pareja de 47Ω. Referencia:
 [MIDI Association, CA-033 (2014)](https://midi.org/5-pin-din-electrical-specs),
 [figura 1, p.2, publicada por AMEI](https://amei.or.jp/midistandardcommittee/Recommended_Practice/ca33-j.pdf).
 Footprints 1210/1206 respectivamente; seleccionar resistores con esa potencia nominal.
 
-**Pull-ups I2C en PCB-M:** R_SDA/R_SCL 2,2k a +3.3V. **Desoldar R1/R2 de PCB-A** al integrarla;
+**Pull-ups I2C en PCB-M:** R_SDA/R_SCL 2,2k locales y un par de 2,2k por lado B de los PCA9517A; cada segmento permite cambiar a 4,7k mediante puentes (doc24 §10). **Desoldar R1/R2 de PCB-A** al integrarla;
 con ambos pares quedarían 1,1k. No modificar pistas ni el pinout de PCB-A. Revisar el total de
 pull-ups de los módulos ya instalados antes de elevar el bus a 400kHz.
 
 ## BOM de referencia PCB-M
+
+D20: **todos** los componentes de hoja 07 y TP/ajustes MIDI son DNP, `in_bom no`; el generador excluye esta reserva MIDI del BOM, conservándola en el netlist/PCB. Otras opciones DNP conservan su estado previo en el BOM de referencia. Tablas MIDI describen solo reserva histórica. Conversor USB en Pi; no perforar MIDI.
+
+| DFT añadido | Pieza | LCSC | Nota |
+|---|---|---|---|
+| U_I2C_A/K | PCA9517ADP,118 ×2 | C80799 | MSOP-8 3×3 paso 0,65, símbolo TCA9517ADGK con mismo pinout |
+| D_ESD_I2C_A/K | USBLC6-2SC6 ×2 | C7519 | SOT-23-6, 3,5 pF máx./línea |
+| J_PCB_K | B10B-PH-K-S(LF)(SN) | C158038 | 10 vías, igual que PCB-K izq. J1 |
+| R_ISO_IN_L/R | 0 Ω | — | 0805, retirar para aislar códec |
+
+Procedimientos, selección de puentes y referencias verificadas en doc24 §10.
+
 
 Números LCSC heredados; comprobar stock y potencia al comprar. No se especifica referencia de
 jack de PCB: todos son de panel comprados localmente. Componentes nuevos sin SKU cerrado se
@@ -166,7 +180,7 @@ identifican por valor, encapsulado y potencia, sin inventar equivalentes.
 | U_ADS1/2 | ADS1115IDGSR | C37593 | TSSOP-10_3x3mm_P0.5mm de librería KiCad |
 | U_DAC1/2 | MCP4725A0T-E/CH | C144198 | SOT-23-6 |
 | U_OA_CV / U_OA_IN | MCP6004 | C510498 | SOIC-14; unidades libres como seguidores |
-| U_OPT_MIDI | 6N138 | C3001991 | DIP-8 |
+| U_OPT_MIDI **DNP** | 6N138 | C3001991 | DIP-8 |
 | U_LED_BUF | 74AHCT1G125GW | C7466 | SC-70-5 |
 | U_LDO1 | TLV75533PDBV | C15578 | SOT-23-5, +3.3VA |
 | F1 | MF-MSMF075 0,75A | C17357 | 1206, según BOM vigente |
@@ -176,7 +190,7 @@ identifican por valor, encapsulado y potencia, sin inventar equivalentes.
 | R_POT_MASTER/CUE/IN | 1k | — | 0402 |
 | C_POT_MASTER/CUE/IN | 100nF | — | 0402 |
 | R_CV_RF1/2 / R_CV_RI1/2 | 10k / 20k | — | 0402, ganancia 1,5 |
-| R_MIDI_R / R_MIDI_T | 33Ω ≥0,5W / 10Ω ≥0,25W, ±5% o mejor | — | **1210 / 1206**, CA-033 |
+| R_MIDI_R / R_MIDI_T **DNP** | 33Ω ≥0,5W / 10Ω ≥0,25W, ±5% o mejor | — | **1210 / 1206**, CA-033 |
 | R_SDA / R_SCL | 2,2k 1% | C25879 | 0402; retirar R1/R2 de PCB-A |
 | R_FSR1–4 | 10k 1% | C25744 | 0402 |
 | R_SEL_T/B | 10k | — | 0603, divisor en PCB-M |
@@ -191,7 +205,7 @@ LDO y frente conservan sus capacitores. No puebla MCP23017 en PCB-M.
 
 ## Decisiones resueltas y pendientes
 
-D8–D15 están registradas en `24` §8 (2026-11-12, **aprobado por Juan**). Quedan resueltos los
+D8–D23 están registradas en `24` §8 (2026-11-12, **aprobado por Juan**). Quedan resueltos los
 antiguos conflictos de J1/cross-reference, duplicación del selector, falta de entrada primaria,
 masas sin unión, protecciones CV/pots, valores MIDI, pull-ups duplicados y montaje de jacks.
 La corrección previa HP/LINE OUT se conserva: HP_VGND aislada, LINE OUT después del capacitor.
@@ -199,7 +213,7 @@ La ubicación MCP 0x23 y el conteo 36/56 quedan consistentes con `17` y `24` §9
 
 Pendientes fuera de estas decisiones: terminación ring de LINE IN; función T27 frente al Brain
 (J_EDRUM DNP); selección mecánica del selector/jacks y componentes sin SKU; protección de entrada
-USB sin pieza en BOM; presupuesto de consumo medido, banco MIDI/CV/audio, layout/DRC.
+USB sin pieza en BOM; presupuesto de consumo medido, banco CV/audio (MIDI DNP), layout/DRC.
 Ver [REPORT.md](../../tools/REPORT.md) para el alcance exacto de la verificación.
 
 ## Dimensiones y layout pendiente

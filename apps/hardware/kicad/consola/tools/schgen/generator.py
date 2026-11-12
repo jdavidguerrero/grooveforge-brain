@@ -31,6 +31,7 @@ class Symbol:
     unit: int = 1
     dnp: bool = False
     fields: dict = field(default_factory=dict)
+    in_bom: bool = True
 
 
 @dataclass
@@ -221,7 +222,7 @@ def validate(board, library):
             if key in seen:
                 raise ValueError(f'Duplicate reference/unit: {key}')
             seen.add(key)
-            identity = (symbol.lib_id, symbol.value, symbol.footprint, symbol.dnp, symbol.fields)
+            identity = (symbol.lib_id, symbol.value, symbol.footprint, symbol.dnp, symbol.fields, symbol.in_bom)
             if symbol.reference in reference_data and reference_data[symbol.reference] != identity:
                 raise ValueError(f'Inconsistent multi-unit symbol: {symbol.reference}')
             reference_data[symbol.reference] = identity
@@ -274,7 +275,7 @@ def _sheet_tree(board, sheet, library, global_nets):
         bounds = _envelope(library, symbol)
         x, y = symbol.position
         node = ['symbol', ['lib_id', Q(symbol.lib_id)], _at(x, y, symbol.rotation),
-                ['unit', str(symbol.unit)], ['in_bom', 'yes'], ['on_board', 'yes'],
+                ['unit', str(symbol.unit)], ['in_bom', 'yes' if symbol.in_bom else 'no'], ['on_board', 'yes'],
                 ['dnp', 'yes' if symbol.dnp else 'no'], ['uuid', identifier],
                 _property('Reference', symbol.reference, x, bounds[1] + 1.27),
                 _property('Value', symbol.value, x, bounds[1] + 3.81),
@@ -319,7 +320,7 @@ def generate(board, output, library=None):
     output = Path(output)
     rows = math.ceil(len(board.sheets) / 3)
     papers = [name for name, (_, height) in PAPER_SIZES.items()
-              if 20.32 + (rows - 1) * 43.18 + 38.1 < height - 10]
+              if 20.32 + (rows - 1) * 43.18 + 38.1 < height - 50]
     if not papers:
         raise ValueError('Too many sheets for a single root drawing')
     root = _header(board, 'root', papers[0])

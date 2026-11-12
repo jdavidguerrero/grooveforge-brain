@@ -48,7 +48,8 @@ def test_fabricated_pcba_pinout_and_current_firmware(parts):
     for channel, idc in enumerate((16, 14, 12, 11), 1):
         assert parts['U_ADS1'].pins[str(channel + 3)] == parts['J1_PCBA'].pins[str(idc)] == f'FADER{channel}_SIG'
     assert parts['U_LED_BUF'].pins['2'] == by_teensy[13] == 'LED_DATA'
-    assert parts['J_PCB_K'].pins['5'] == parts['U_LED_BUF'].pins['4'] == 'LED_DIN_5V'
+    assert parts['U_LED_BUF'].pins['4'] == parts['SJ_LED_DATA'].pins['1'] == 'LED_BUF_OUT'
+    assert parts['J_PCB_K'].pins['6'] == parts['SJ_LED_DATA'].pins['2'] == 'LED_DIN_5V'
     assert all(parts['J1_PCBA'].pins[str(n)] is None for n in (18, 20, 22, 26))
 
 
@@ -69,7 +70,8 @@ def test_fused_usb_power_and_unique_ground_tie(parts):
                    {'HP_VGND', 'GND'} <= set(s.pins.values()) for s in parts.values())
     for ref, signal in [('R_SDA', 'I2C_SDA'), ('R_SCL', 'I2C_SCL')]:
         assert parts[ref].value == '2.2k'
-        assert parts[ref].pins == {'1': '+3.3V', '2': signal}
+        assert parts[ref].pins == {'1': f'PU_{signal[4:]}_22', '2': signal}
+        assert parts[f'SJ_PU_{signal[4:]}_22'].pins == {'1': '+3.3V', '2': parts[ref].pins['1']}
 
 
 @pytest.mark.parametrize('channel', (1, 2))

@@ -3,7 +3,7 @@
   (generator "schgen")
   (generator_version "1.0")
   (uuid 4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa)
-  (paper "A4")
+  (paper "A3")
   (lib_symbols)
   (sheet
     (at 20.32 20.32)

@@ -3,7 +3,7 @@
   (generator "schgen")
   (generator_version "1.0")
   (uuid 0766e3a4-c438-57aa-9265-664763d6dd17)
-  (paper "A4")
+  (paper "A3")
   (lib_symbols)
   (sheet
     (at 20.32 20.32)
@@ -235,6 +235,52 @@
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
           (page "11")))))
+  (sheet
+    (at 109.22 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 2254eb97-ccb1-557b-b047-c25ba62a2b25)
+    (property "Sheetname" "11-diagnostics"
+      (at 147.32 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/11-diagnostics.kicad_sch"
+      (at 147.32 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "12")))))
+  (sheet
+    (at 198.12 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid e10a9322-7533-510c-8de6-6cedadb311ab)
+    (property "Sheetname" "12-i2c-branches"
+      (at 236.22 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/12-i2c-branches.kicad_sch"
+      (at 236.22 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "13")))))
   (sheet_instances
     (path "/"
       (page "1"))))

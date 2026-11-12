@@ -38,7 +38,7 @@
 "D15","SK6812MINI-EA","gf_consola:SK6812MINI-EA_ReverseMount","C5378731",""
 "D16","SK6812MINI-EA","gf_consola:SK6812MINI-EA_ReverseMount","C5378731",""
 "D17","SK6812MINI-EA","gf_consola:SK6812MINI-EA_ReverseMount","C5378731",""
-"J1","PCB-M","Connector_JST:JST_PH_B8B-PH-K_1x08_P2.00mm_Vertical","",""
+"J1","PCB-M","Connector_JST:JST_PH_B10B-PH-K_1x10_P2.00mm_Vertical","C158038",""
 "J2","HACIA DERECHA","Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical","",""
 "R1","33R","Resistor_SMD:R_0805_2012Metric","C17634",""
 "R2","2.2k DNP","Resistor_SMD:R_0805_2012Metric","C17520","DNP"

@@ -101,7 +101,7 @@ def test_invalid_description(change, match, library):
 def test_pcb_m_complete_description(library):
     board = pcb_m()
     validate(board, library)
-    assert len(board.sheets) == 10
+    assert len(board.sheets) == 12
     assert not board.sheets[3].symbols
     assert all(s.symbols for s in board.sheets if s.name != '04-mcp-io')
     by_ref = {s.reference: s for sheet in board.sheets for s in sheet.symbols}
@@ -181,16 +181,16 @@ def test_page_frame_and_safe_sheet_names(library):
         validate(board, library)
 
 
-def test_root_all_ten_sheets_inside_page(tmp_path, library):
+def test_root_all_twelve_sheets_inside_page(tmp_path, library):
     from schgen.sexp import child, children, parse
     root = generate(pcb_m(), tmp_path, library)
     tree = parse(root.read_text())
-    assert child(tree, 'paper')[1] == 'A4'
+    assert child(tree, 'paper')[1] == 'A3'
     sheets = children(tree, 'sheet')
-    assert len(sheets) == 10
+    assert len(sheets) == 12
     for sheet in sheets:
         x, y = map(float, child(sheet, 'at')[1:3])
         width, height = map(float, child(sheet, 'size')[1:3])
         assert x >= 10 and y >= 10
-        assert x + width <= 287 and y + height <= 200
-        assert float(child(children(sheet, 'property')[1], 'at')[2]) <= 200
+        assert x + width <= 410 and y + height <= 247
+        assert float(child(children(sheet, 'property')[1], 'at')[2]) <= 247

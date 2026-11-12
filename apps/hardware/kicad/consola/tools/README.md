@@ -109,3 +109,23 @@ El checker usa configuracion/cache/temporales de KiCad debajo del directorio de 
 y tablas de libreria generadas desde las librerias instaladas; no depende de las tablas
 personales del usuario. No cambia el nucleo `generator.py` ni la descripcion PCB-M.
 `--all` continua con las otras placas si una falla y devuelve exit 1 al final.
+
+
+## Diagnóstico y mazos (D16–D23)
+
+Spec previo: doc24 §8/§10, doc28 §5. Teoría: [THEORY-dft.md](THEORY-dft.md).
+Informe de ejecución: [REPORT-dft.md](REPORT-dft.md). Tabla de cables: [HARNESS.md](HARNESS.md).
+
+```sh
+python3 apps/hardware/kicad/consola/tools/check_netlist.py --all --regenerate
+python3 apps/hardware/kicad/consola/tools/check_harness.py --export-pcb-a
+python3 -m pytest -q apps/hardware/kicad/consola/tools/tests
+```
+
+`harness.py` es un contrato independiente de los generadores. Se comparan números de pin y
+redes del XML, con alias por placa y dominios de riel/I2C antes de alias; un NC solo vale en
+su pin declarado. Paneles tienen contrato de contactos, no netlist físico; el informe distingue
+esa limitación. PCB-A se exporta/verifica sin regenerar su fuente congelada. La opción
+`--export-pcb-a` deja una copia de XML junto al informe para reproducir la revisión del mazo.
+MIDI de hoja 07 y TP/ajustes MIDI tienen `dnp yes` y `in_bom no`; otras opciones DNP mantienen su
+BOM de referencia. El atributo independiente `Symbol.in_bom` evita alterar compras históricas.

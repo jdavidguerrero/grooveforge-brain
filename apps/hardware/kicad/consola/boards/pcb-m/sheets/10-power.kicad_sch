@@ -1551,7 +1551,7 @@
       (width 0)
       (type default))
     (uuid 0de6b2ba-eda1-5f76-af2a-4b068f8f64f7))
-  (global_label "LED_DIN_5V"
+  (global_label "LED_BUF_OUT"
     (shape bidirectional)
     (at 167.64 127 180)
     (effects
@@ -1634,7 +1634,7 @@
       (width 0)
       (type default))
     (uuid 58d14a93-dda0-568f-a589-a95dabfde43e))
-  (global_label "+3.3V"
+  (global_label "PU_SDA_22"
     (shape bidirectional)
     (at 241.3 120.65 270)
     (effects
@@ -1679,12 +1679,12 @@
     (dnp no)
     (uuid 7d7f3bd8-d8b8-565b-b35c-4c1e8c8970b4)
     (property "Reference" "R_SDA"
-      (at 241.3 106.68 0)
+      (at 241.3 101.6 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "2.2k"
-      (at 241.3 109.22 0)
+      (at 241.3 104.14 0)
       (effects
         (font
           (size 1.0 1.0))))
@@ -1711,7 +1711,7 @@
       (width 0)
       (type default))
     (uuid aa4534aa-a370-50f5-98c8-027b65762c45))
-  (global_label "+3.3V"
+  (global_label "PU_SCL_22"
     (shape bidirectional)
     (at 330.2 120.65 270)
     (effects
@@ -1756,12 +1756,12 @@
     (dnp no)
     (uuid df1fa90a-a35d-59a1-afcb-120ee1e2169d)
     (property "Reference" "R_SCL"
-      (at 330.2 106.68 0)
+      (at 330.2 101.6 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "2.2k"
-      (at 330.2 109.22 0)
+      (at 330.2 104.14 0)
       (effects
         (font
           (size 1.0 1.0))))

@@ -1544,13 +1544,20 @@
       (width 0)
       (type default))
     (uuid bf5249a2-0cd1-5ced-81f4-7b779556ae8c))
-  (label "PROT_L"
+  (global_label "PROT_L"
+    (shape bidirectional)
     (at 508 69.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid a4af86d5-c83e-5af1-9170-24284a3b5888))
+    (uuid a4af86d5-c83e-5af1-9170-24284a3b5888)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Device:R")
     (at 508 63.5 0)
@@ -1592,13 +1599,20 @@
       (width 0)
       (type default))
     (uuid ec4a81d2-60c7-54b5-af1a-5f8b0beaa76d))
-  (label "PROT_L"
+  (global_label "PROT_L"
+    (shape bidirectional)
     (at 63.5 120.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 24d530ac-7c9a-59b8-9253-915fc567b984))
+    (uuid 24d530ac-7c9a-59b8-9253-915fc567b984)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 63.5 130.81)
@@ -1607,13 +1621,20 @@
       (width 0)
       (type default))
     (uuid d81f3149-cd39-58be-9910-723b47e4191b))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 63.5 133.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 78a70500-861e-5dc1-a6cf-9fd414ff0acf))
+    (uuid 78a70500-861e-5dc1-a6cf-9fd414ff0acf)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Device:R")
     (at 63.5 127 0)
@@ -1677,7 +1698,7 @@
       (width 0)
       (type default))
     (uuid 2fc2f2be-ad30-5e53-bbfb-c51841697a2b))
-  (global_label "+3.3VA"
+  (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 162.56 127 180)
     (effects
@@ -1699,13 +1720,20 @@
       (width 0)
       (type default))
     (uuid c08c9eb0-4938-5cba-ab3e-9aad0085a865))
-  (label "PROT_L"
+  (global_label "PROT_L"
+    (shape bidirectional)
     (at 152.4 134.62 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid ace8d8c8-5688-5eb6-a547-c945b806b78c))
+    (uuid ace8d8c8-5688-5eb6-a547-c945b806b78c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 134.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Diode:BAT54S")
     (at 152.4 127 0)
@@ -1749,13 +1777,20 @@
       (width 0)
       (type default))
     (uuid dc501628-cb4f-5080-b20a-777010945264))
-  (label "PROT_L"
+  (global_label "PROT_L"
+    (shape bidirectional)
     (at 233.68 127 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid f8cbf6cd-c4cc-57aa-a96b-a917d5e6c7e9))
+    (uuid f8cbf6cd-c4cc-57aa-a96b-a917d5e6c7e9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 246.38 127)
@@ -1842,13 +1877,20 @@
       (width 0)
       (type default))
     (uuid 813deda4-76c5-58bb-ba12-b104d2e51cb3))
-  (label "PROT_L"
+  (global_label "PROT_L"
+    (shape bidirectional)
     (at 320.04 124.46 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid c897b6da-ffc8-527a-9a96-2de4752680d5))
+    (uuid c897b6da-ffc8-527a-9a96-2de4752680d5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 124.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Amplifier_Operational:MCP6004")
     (at 330.2 127 0)
@@ -1953,20 +1995,13 @@
       (width 0)
       (type default))
     (uuid 47659c78-6430-5dc7-bcb7-92ff0ab8e104))
-  (global_label "SHIELD_LINE_IN_L"
-    (shape bidirectional)
+  (label "FRONT_LINE_IN_L"
     (at 508 133.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 62070681-1fc1-5644-897d-08e55161258d)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 508 133.35 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+    (uuid 62070681-1fc1-5644-897d-08e55161258d))
   (symbol
     (lib_id "Device:C")
     (at 508 127 0)
@@ -2393,13 +2428,20 @@
       (width 0)
       (type default))
     (uuid 75e17b9d-322c-5045-8271-9f3ac222fae6))
-  (label "PROT_R"
+  (global_label "PROT_R"
+    (shape bidirectional)
     (at 508 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 1780d312-163d-56b2-b10e-777262ed507f))
+    (uuid 1780d312-163d-56b2-b10e-777262ed507f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Device:R")
     (at 508 190.5 0)
@@ -2441,13 +2483,20 @@
       (width 0)
       (type default))
     (uuid 2ea51c94-d6d2-5533-b3c0-f22e7eb5c397))
-  (label "PROT_R"
+  (global_label "PROT_R"
+    (shape bidirectional)
     (at 63.5 247.65 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a6e8908d-9416-59ac-a358-25ccabebb8f6))
+    (uuid a6e8908d-9416-59ac-a358-25ccabebb8f6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 63.5 257.81)
@@ -2456,13 +2505,20 @@
       (width 0)
       (type default))
     (uuid b5026058-68b6-5d41-a01b-09a4fca4e871))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 63.5 260.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 53c94f51-9e55-5f97-8cb6-913bb93ea8e0))
+    (uuid 53c94f51-9e55-5f97-8cb6-913bb93ea8e0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Device:R")
     (at 63.5 254 0)
@@ -2526,7 +2582,7 @@
       (width 0)
       (type default))
     (uuid cdfdf872-3892-5843-be9b-77669449fa04))
-  (global_label "+3.3VA"
+  (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 162.56 254 180)
     (effects
@@ -2548,13 +2604,20 @@
       (width 0)
       (type default))
     (uuid 35f0c36c-89ea-5ca5-ae6f-950fedf96d35))
-  (label "PROT_R"
+  (global_label "PROT_R"
+    (shape bidirectional)
     (at 152.4 261.62 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b3cbac6e-204f-5276-81fa-b2c473649146))
+    (uuid b3cbac6e-204f-5276-81fa-b2c473649146)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 261.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Diode:BAT54S")
     (at 152.4 254 0)
@@ -2598,13 +2661,20 @@
       (width 0)
       (type default))
     (uuid da0cddb8-2c49-5d60-882d-361366ba92f8))
-  (label "PROT_R"
+  (global_label "PROT_R"
+    (shape bidirectional)
     (at 233.68 254 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid b616d22f-7695-545b-b67f-6b63c82899bf))
+    (uuid b616d22f-7695-545b-b67f-6b63c82899bf)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 246.38 254)
@@ -2661,13 +2731,20 @@
       (width 0)
       (type default))
     (uuid 20dbe618-9e0a-5cfb-8fa2-30a533a5176b))
-  (label "PROT_R"
+  (global_label "PROT_R"
+    (shape bidirectional)
     (at 320.04 251.46 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 3ae7da1f-03f8-5ecb-b0bf-0533700e170a))
+    (uuid 3ae7da1f-03f8-5ecb-b0bf-0533700e170a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 251.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 322.58 256.54)
@@ -2802,20 +2879,13 @@
       (width 0)
       (type default))
     (uuid 5911f503-6a79-5ba2-b3bc-fd80e803641d))
-  (global_label "SHIELD_LINE_IN_R"
-    (shape bidirectional)
+  (label "FRONT_LINE_IN_R"
     (at 508 260.35 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid d0402f52-11b7-50dc-9dca-2c864bdece83)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 508 260.35 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+    (uuid d0402f52-11b7-50dc-9dca-2c864bdece83))
   (symbol
     (lib_id "Device:C")
     (at 508 254 0)
@@ -2857,7 +2927,7 @@
       (width 0)
       (type default))
     (uuid 6b66aa7d-471b-5766-9384-0abcee603832))
-  (global_label "+3.3VA"
+  (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 63.5 311.15 270)
     (effects
@@ -2895,12 +2965,12 @@
     (dnp no)
     (uuid cd6a8f32-12de-57ce-87c5-96874c5481f4)
     (property "Reference" "R_VREF_T"
-      (at 63.5 295.91 0)
+      (at 63.5 288.29 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "10k"
-      (at 63.5 298.45 0)
+      (at 63.5 290.83 0)
       (effects
         (font
           (size 1.0 1.0))))
@@ -3067,13 +3137,20 @@
       (width 0)
       (type default))
     (uuid f41a488e-fc3a-5825-8e96-7d3eb8846652))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 340.36 317.5 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 25071367-bca5-5a27-b047-3235e882781f))
+    (uuid 25071367-bca5-5a27-b047-3235e882781f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 340.36 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 322.58 320.04)
@@ -3082,13 +3159,20 @@
       (width 0)
       (type default))
     (uuid 3d936e2e-568a-5807-b7df-2659bb928e8e))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 320.04 320.04 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 07731663-9ade-54e7-9f4c-822789f49704))
+    (uuid 07731663-9ade-54e7-9f4c-822789f49704)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 320.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 322.58 314.96)
@@ -3162,13 +3246,20 @@
       (width 0)
       (type default))
     (uuid 5bb0c81b-0775-5f61-804a-b6f83146fbe4))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 426.72 317.5 180)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid dac54edd-7b63-576b-a6e2-8576e6b911c5))
+    (uuid dac54edd-7b63-576b-a6e2-8576e6b911c5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 426.72 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Jumper:SolderJumper_2_Open")
     (at 419.1 317.5 0)
@@ -3210,13 +3301,20 @@
       (width 0)
       (type default))
     (uuid 47c0e4f1-974f-55aa-993e-036ea84cb062))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 508 320.04 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid dd572701-f989-56a4-b830-ffe76e71df79))
+    (uuid dd572701-f989-56a4-b830-ffe76e71df79)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 320.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Connector:TestPoint")
     (at 508 317.5 0)
@@ -3256,13 +3354,20 @@
       (width 0)
       (type default))
     (uuid 625d4647-fc03-5cad-9014-3a910e9a2a3c))
-  (label "VREF"
+  (global_label "VREF"
+    (shape bidirectional)
     (at 53.34 378.46 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 06dc06f7-7575-5ce4-bb1a-e8efeef87478))
+    (uuid 06dc06f7-7575-5ce4-bb1a-e8efeef87478)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 53.34 378.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
       (xy 55.88 383.54)
@@ -3336,7 +3441,7 @@
       (width 0)
       (type default))
     (uuid 4e725084-0321-5377-a1e3-e5083c8f8904))
-  (global_label "+3.3VA"
+  (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 149.86 370.84 270)
     (effects
@@ -3381,12 +3486,12 @@
     (dnp no)
     (uuid 9fb02245-2ccc-5b44-ab1f-f766c28e33c0)
     (property "Reference" "U_OA_IN"
-      (at 152.4 355.6 0)
+      (at 152.4 347.98 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "MCP6004"
-      (at 152.4 358.14 0)
+      (at 152.4 350.52 0)
       (effects
         (font
           (size 1.0 1.0))))
@@ -3413,7 +3518,7 @@
       (width 0)
       (type default))
     (uuid 2ffb8b39-6884-588e-96c0-4a7e958affe5))
-  (global_label "+3.3VA"
+  (global_label "+3.3VA_FRONT"
     (shape bidirectional)
     (at 241.3 374.65 270)
     (effects
@@ -3458,12 +3563,12 @@
     (dnp no)
     (uuid 3b8431f4-5357-5a9d-838a-7414007c390a)
     (property "Reference" "C_OA_IN"
-      (at 241.3 359.41 0)
+      (at 241.3 351.79 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "100nF"
-      (at 241.3 361.95 0)
+      (at 241.3 354.33 0)
       (effects
         (font
           (size 1.0 1.0))))
@@ -3944,6 +4049,146 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
           (reference "R_SEL_B")
           (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 504.19)
+      (xy 63.5 501.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b2d330a1-4a5c-59ae-b23e-3902a645045d))
+  (label "FRONT_LINE_IN_L"
+    (at 63.5 501.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5a238a33-a798-5ec9-8c73-e32a89308788))
+  (wire
+    (pts
+      (xy 63.5 511.81)
+      (xy 63.5 514.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b105c189-e222-52e1-af6c-126480255d0e))
+  (global_label "SHIELD_LINE_IN_L"
+    (shape bidirectional)
+    (at 63.5 514.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ba93c22e-7764-58fd-a138-7fd1d112c7bc)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 514.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 508 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 7feef5ad-c7c0-5ae0-ad57-d9177c0022de)
+    (property "Reference" "R_ISO_IN_L"
+      (at 63.5 474.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "0"
+      (at 63.5 477.52 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 23ca1715-18e3-52d8-aebb-05f29f3e43e7))
+    (pin "2"
+      (uuid 5d9a5319-3dd1-5331-87bb-06be9459cf27))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_ISO_IN_L")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 504.19)
+      (xy 152.4 501.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 541ad8bc-ea56-533f-b678-35fbb8e61cdc))
+  (label "FRONT_LINE_IN_R"
+    (at 152.4 501.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5a136b2e-69f6-5c6f-9f23-c8b6921dba7e))
+  (wire
+    (pts
+      (xy 152.4 511.81)
+      (xy 152.4 514.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cf5c0628-3eb8-5bcd-9922-df080dbff72d))
+  (global_label "SHIELD_LINE_IN_R"
+    (shape bidirectional)
+    (at 152.4 514.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 542990c8-a4cc-551d-acb1-ccfcea66d154)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 514.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 508 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 96f02a47-0023-53bc-a9e7-01616f4a5c34)
+    (property "Reference" "R_ISO_IN_R"
+      (at 152.4 474.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "0"
+      (at 152.4 477.52 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 432d7d79-99e0-5eab-91b6-81be537b58e7))
+    (pin "2"
+      (uuid 4f907098-d316-569d-a4a0-a03e929bd109))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_ISO_IN_R")
+          (unit 1)))))
   (text "Frente analogico de la portadora Studio conservado (doc25 seccion 6)."
     (at 15.24 20.32 0)
     (effects
@@ -3964,4 +4209,11 @@
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid bc81cb1b-d85e-5f6a-9edf-e653f66b0a22)))
+    (uuid bc81cb1b-d85e-5f6a-9edf-e653f66b0a22))
+  (text "D17: R_ISO_IN_L/R 0 ohm 0805 separate front from codec; remove both if input fails."
+    (at 15.24 31.75 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e7c2faac-ef7d-56bb-a646-6654845f0532)))

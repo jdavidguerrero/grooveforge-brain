@@ -44,7 +44,7 @@ Pasivos de PCB-A: según su esquema (100 nF, 10 nF, 10 µF en 0603). Se agregan 
 | JST PH 3 vías vertical (B3B-PH-K-S) | C131339 | 12 | PCB-M: Sharp ×2, pots ×3, selector, audífonos, jacks TRS ×5 (MIDI sin poblar) |
 | JST PH 4 vías vertical | C566011 | 2 | PCB-M: jog, M4 |
 | JST PH 6 vías vertical | C495261 | 2 | Cable PCB-K izq. ↔ der. |
-| JST PH 8 vías vertical | C594302 | 2 | PCB-M ↔ PCB-K izq. |
+| JST PH 10 vías vertical B10B-PH-K-S(LF)(SN) | [C158038](https://www.lcsc.com/product-detail/C158038.html) | 2 | PCB-M ↔ PCB-K izq. |
 | JST SH 4 vías SMD vertical | C51940129 | 2 | I2C PCB-M ↔ PCB-A |
 | JST SH 6 vías SMD vertical | C160392 | 2 | PCB-A ↔ PCB-F |
 | Header hembra 1 × 24, 2,54 mm | C41376163 | 2 | Zócalo de la Teensy en PCB-M |
@@ -60,7 +60,7 @@ Sin crimpadora, comprar **cables ya armados** (AliExpress) en vez de carcasas y 
 |---|---:|
 | JST PH 2.0, 2 vías, doble punta, ~20 cm | 15 |
 | JST PH 2.0, 3 vías, doble punta (o una punta para jacks/pots) | 12 |
-| JST PH 2.0, 4 / 6 / 8 vías, doble punta | 2 / 1 / 1 |
+| JST PH 2.0, 4 / 6 / 10 vías, doble punta | 2 / 1 / 1 |
 | JST SH 1.0 (Qwiic), 4 y 6 vías, doble punta | 1 y 1 |
 | Cable plano IDC 30 hilos con 2 conectores hembra 2 × 15, ~20 cm | 1 |
 
@@ -77,3 +77,5 @@ Con crimpadora: terminales PH C5292557 (≈ 0,005 USD) y carcasas PHR-n, a busca
 
 Placas ~61 + ensamble de PCB-M ~47 (preparación + extendidas + piezas) + chips sueltos ~14 + conectores ~20 ≈
 **140 USD**, más envío (~30–40) e IVA/arancel según DIAN (sin verificar).
+
+D23 (Juan, 2026-11-12): sustituye ambos headers de 8 vías por **C158038**, 10 vías PH vertical; mazo con dos carcasas PHR-10, no PHR-8. Ver doc28 §5 para orden 1:1. Identidad LCSC y pinout verificados el 2026-11-12.

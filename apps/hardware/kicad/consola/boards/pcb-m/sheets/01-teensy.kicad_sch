@@ -843,7 +843,7 @@
       (width 0)
       (type default))
     (uuid d401fdc3-78c0-5451-b515-2e3538f27adf))
-  (global_label "MIDI_RX"
+  (global_label "I2C_BUF_EN_GPIO"
     (shape bidirectional)
     (at 55.88 101.6 0)
     (effects
@@ -857,28 +857,9 @@
         (font
           (size 1.0 1.0))
         (hide yes))))
-  (wire
-    (pts
-      (xy 58.42 104.14)
-      (xy 55.88 104.14))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 81f9c955-af5f-5caa-8bec-20e664824d71))
-  (global_label "MIDI_TX"
-    (shape bidirectional)
-    (at 55.88 104.14 0)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify right))
-    (uuid a676978b-b768-5809-87ea-80a2c9c38c66)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 55.88 104.14 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+  (no_connect
+    (at 58.42 104.14)
+    (uuid 69234c7e-7844-5369-b09f-a2e932137ca8))
   (wire
     (pts
       (xy 58.42 106.68)
