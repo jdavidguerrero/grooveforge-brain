@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-p/pcb-p.kicad_sch</source>
+    <date>2026-11-12T09:06:29</date>
+    <tool>Eeschema 10.0.6</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>pcb-p.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="2" name="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>fsr-passive-1.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="FSR1">
+      <value>Interlink 402 V1</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>b42dd827-33a0-5fdb-9b2a-7558a1ac2522</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="FSR2">
+      <value>Interlink 402 V2</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>be2ee464-f8f8-54bc-9252-85ff9b48c14c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="FSR3">
+      <value>Interlink 402 V3</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>27fd888f-b76a-5478-a961-bee6693b4038</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="FSR4">
+      <value>Interlink 402 V4</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>d3e4c666-25b4-512d-92d7-71cf8daa5e8f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="FSR5">
+      <value>Interlink 402 X1</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>0d92a8ac-e344-5404-ab2d-34700605aaa4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="FSR6">
+      <value>Interlink 402 X2</value>
+      <footprint>gf_consola:FSR402_SolderTail_Provisional</footprint>
+      <fields>
+        <field name="Footprint">gf_consola:FSR402_SolderTail_Provisional</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>314123c0-11e3-55c5-be29-4a6a8c8a450b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J1">
+      <value>PCB-M J_FSR1</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>28566a15-38b8-547b-b320-2440c05c2876</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J2">
+      <value>PCB-M J_FSR2</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>5ff8358b-6f52-592c-9376-6150431655e9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J3">
+      <value>PCB-M J_FSR3</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>c1bd5a16-01a7-50e6-8759-60db307bc81b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J4">
+      <value>PCB-M J_FSR4</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>36b96dc3-4828-57a7-8bdd-4d6e9c57d24e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J5">
+      <value>PCB-M J7_EXP1</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>ffc9c86b-d499-55d8-8635-00c91289e11d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J6">
+      <value>PCB-M J8_EXP2</value>
+      <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Sheetname" value="fsr-passive-1"/>
+      <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/fsr-passive-1/" tstamps="/c1d5ea21-05f4-5c51-8305-6b8172688a47/"/>
+      <tstamps>5bba2fa6-fa70-5255-9639-5bb1e94692d7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector_Generic" part="Conn_01x02">
+      <description>Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x02</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="R_Variable">
+      <description>Variable resistor</description>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R_Variable</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Variable resistor</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector_Generic">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Connector_Generic.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Device.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="+3V3_V1" class="Default">
+      <node ref="FSR1" pin="1" pintype="passive"/>
+      <node ref="J1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="2" name="+3V3_V2" class="Default">
+      <node ref="FSR2" pin="1" pintype="passive"/>
+      <node ref="J2" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="3" name="+3V3_V3" class="Default">
+      <node ref="FSR3" pin="1" pintype="passive"/>
+      <node ref="J3" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="4" name="+3V3_V4" class="Default">
+      <node ref="FSR4" pin="1" pintype="passive"/>
+      <node ref="J4" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="5" name="+3V3_X1" class="Default">
+      <node ref="FSR5" pin="1" pintype="passive"/>
+      <node ref="J5" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="6" name="+3V3_X2" class="Default">
+      <node ref="FSR6" pin="1" pintype="passive"/>
+      <node ref="J6" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+    </net>
+    <net code="7" name="/fsr-passive-1/FSR_V1" class="Default">
+      <node ref="FSR1" pin="2" pintype="passive"/>
+      <node ref="J1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+    <net code="8" name="/fsr-passive-1/FSR_V2" class="Default">
+      <node ref="FSR2" pin="2" pintype="passive"/>
+      <node ref="J2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+    <net code="9" name="/fsr-passive-1/FSR_V3" class="Default">
+      <node ref="FSR3" pin="2" pintype="passive"/>
+      <node ref="J3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+    <net code="10" name="/fsr-passive-1/FSR_V4" class="Default">
+      <node ref="FSR4" pin="2" pintype="passive"/>
+      <node ref="J4" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+    <net code="11" name="/fsr-passive-1/FSR_X1" class="Default">
+      <node ref="FSR5" pin="2" pintype="passive"/>
+      <node ref="J5" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+    <net code="12" name="/fsr-passive-1/FSR_X2" class="Default">
+      <node ref="FSR6" pin="2" pintype="passive"/>
+      <node ref="J6" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+    </net>
+  </nets>
+</export>

@@ -1,0 +1,1029 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid d73d5bb4-812e-526b-9598-59ddd245ded7)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Interface_Expansion:MCP23017x-x-SO"
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at -9.398 24.638 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "MCP23017x-x-SO"
+        (at 11.176 24.638 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+        (at 5.08 -25.4 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Datasheet" "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf"
+        (at 5.08 -27.94 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Description" "16-bit I/O expander, I2C, interrupts, w pull-ups, GPA7/GPB7 output only (https://microchip.my.site.com/s/article/GPA7---GPB7-Cannot-Be-Used-as-Inputs-In-MCP23017),  SOIC-28"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "Microchip port-expander GPIO"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOIC*7.5x17.9mm*P1.27mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "MCP23017x-x-SO_0_1"
+        (rectangle
+          (start -10.16 22.86)
+          (end 10.16 -22.86)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background))))
+      (symbol "MCP23017x-x-SO_1_1"
+        (pin bidirectional line
+          (at 12.7 -2.54 180)
+          (length 2.54)
+          (name "GPB0"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -5.08 180)
+          (length 2.54)
+          (name "GPB1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -7.62 180)
+          (length 2.54)
+          (name "GPB2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -10.16 180)
+          (length 2.54)
+          (name "GPB3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -12.7 180)
+          (length 2.54)
+          (name "GPB4"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -15.24 180)
+          (length 2.54)
+          (name "GPB5"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 -17.78 180)
+          (length 2.54)
+          (name "GPB6"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 12.7 -20.32 180)
+          (length 2.54)
+          (name "GPB7"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 25.4 270)
+          (length 2.54)
+          (name "V_{DD}"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "9"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 -25.4 90)
+          (length 2.54)
+          (name "V_{SS}"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "10"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin no_connect line
+          (at -10.16 15.24 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "11"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -12.7 20.32 0)
+          (length 2.54)
+          (name "SCK"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "12"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at -12.7 17.78 0)
+          (length 2.54)
+          (name "SDA"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "13"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin no_connect line
+          (at -10.16 12.7 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "14"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -12.7 -15.24 0)
+          (length 2.54)
+          (name "A0"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "15"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -12.7 -17.78 0)
+          (length 2.54)
+          (name "A1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "16"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -12.7 -20.32 0)
+          (length 2.54)
+          (name "A2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "17"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -12.7 -2.54 0)
+          (length 2.54)
+          (name "~{RESET}"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "18"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin tri_state line
+          (at -12.7 2.54 0)
+          (length 2.54)
+          (name "INTB"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "19"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin tri_state line
+          (at -12.7 5.08 0)
+          (length 2.54)
+          (name "INTA"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "20"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 20.32 180)
+          (length 2.54)
+          (name "GPA0"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "21"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 17.78 180)
+          (length 2.54)
+          (name "GPA1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "22"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 15.24 180)
+          (length 2.54)
+          (name "GPA2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "23"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 12.7 180)
+          (length 2.54)
+          (name "GPA3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "24"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 10.16 180)
+          (length 2.54)
+          (name "GPA4"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "25"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 7.62 180)
+          (length 2.54)
+          (name "GPA5"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "26"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin bidirectional line
+          (at 12.7 5.08 180)
+          (length 2.54)
+          (name "GPA6"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "27"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 12.7 2.54 180)
+          (length 2.54)
+          (name "GPA7"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "28"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 203.2 129.54)
+      (xy 205.74 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0bdf7ba7-0837-56ae-96f9-569e78bd0a36))
+  (global_label "PEDAL_BTN"
+    (shape bidirectional)
+    (at 205.74 129.54 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 97361f96-7794-5bb4-b737-f3127e92a84a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 129.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 132.08)
+      (xy 205.74 132.08))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 03664a18-3fec-50a2-9ba0-24cd8ffa7780))
+  (global_label "SPARE_23_GPB1"
+    (shape bidirectional)
+    (at 205.74 132.08 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c1827808-4009-5e10-88d8-5f133e5aa292)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 132.08 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 134.62)
+      (xy 205.74 134.62))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9b92fe1d-3b26-5d23-a483-35e753585615))
+  (global_label "SPARE_23_GPB2"
+    (shape bidirectional)
+    (at 205.74 134.62 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9d49ca0f-02a6-5d78-bcac-3aba0087cf4d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 134.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 137.16)
+      (xy 205.74 137.16))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9e8cefa9-f137-5d69-9f92-959bf160df5c))
+  (global_label "SPARE_23_GPB3"
+    (shape bidirectional)
+    (at 205.74 137.16 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 8c6e44c9-4e0d-5948-b7a2-bf74d60c74e2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 137.16 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 139.7)
+      (xy 205.74 139.7))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bcaee724-73a9-59f8-8f0f-c3fe246bf849))
+  (global_label "SPARE_23_GPB4"
+    (shape bidirectional)
+    (at 205.74 139.7 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ac97ab27-6cb0-59f6-bf41-43de5db2fbf3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 139.7 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 142.24)
+      (xy 205.74 142.24))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3794a647-7927-5b85-b542-52be2954b379))
+  (global_label "SPARE_23_GPB5"
+    (shape bidirectional)
+    (at 205.74 142.24 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid bb9d54b1-878c-555d-a95f-e85455ef070c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 142.24 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 144.78)
+      (xy 205.74 144.78))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b84d68cd-8792-580f-a659-1c425245f1b9))
+  (global_label "SPARE_23_GPB6"
+    (shape bidirectional)
+    (at 205.74 144.78 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 82259551-971d-529a-ae7c-e178e87a2363)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 203.2 147.32)
+    (uuid 00d5a35b-917a-53a5-9549-79cce9c0a719))
+  (wire
+    (pts
+      (xy 190.5 101.6)
+      (xy 190.5 99.06))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 572e52e9-e21c-57e3-ad45-3009894d0f7f))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 190.5 99.06 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2d40abce-1569-5dc2-8018-6686ed4b13b5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 99.06 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 152.4)
+      (xy 190.5 154.94))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 87071f5b-15df-572d-b3ec-331c5ae8afbd))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 154.94 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9c9ebfd8-4fba-5fde-9fff-3fe0938d6705)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 154.94 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 180.34 111.76)
+    (uuid 3d4d38fa-f198-52c1-afbd-4a41bdce670b))
+  (wire
+    (pts
+      (xy 177.8 106.68)
+      (xy 175.26 106.68))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2a5e29ee-09e8-55f9-b175-0e689bac4956))
+  (global_label "SCL"
+    (shape bidirectional)
+    (at 175.26 106.68 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a64ac2d0-4f8d-5589-ab12-a1b80a3f50ed)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 109.22)
+      (xy 175.26 109.22))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 12c02d3e-0166-5332-95ac-89b27ee1dd4d))
+  (global_label "SDA"
+    (shape bidirectional)
+    (at 175.26 109.22 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 810bae27-1157-570a-897e-17e811b98b80)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 109.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 180.34 114.3)
+    (uuid 468e757a-d547-5486-85c6-c1ea40f60e0b))
+  (wire
+    (pts
+      (xy 177.8 142.24)
+      (xy 175.26 142.24))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d334c2ca-8769-5bb6-b002-eeea10c87907))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 175.26 142.24 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ec4844fb-d161-536d-a034-bb326f2683cc)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 142.24 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 144.78)
+      (xy 175.26 144.78))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 450dacd3-12f3-5402-acca-e2ba72e01c13))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 175.26 144.78 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 29cf2204-eb21-5b30-b164-5c4606592886)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 147.32)
+      (xy 175.26 147.32))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 44bfaea0-3e0d-58b9-8dc8-9cc605bf6d4a))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 175.26 147.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a10ca042-2b5e-59ca-a75b-219f3a998c30)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 129.54)
+      (xy 175.26 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ca8277a3-c012-54a6-b6c1-437e840fedff))
+  (global_label "RESET_23"
+    (shape bidirectional)
+    (at 175.26 129.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3bf27986-773f-5d6c-ba08-e86e22df1166)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 129.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 124.46)
+      (xy 175.26 124.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5f0a5378-80ed-5e52-97ee-e6755581313c))
+  (global_label "INTB_23"
+    (shape bidirectional)
+    (at 175.26 124.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid dc435794-e6d5-59df-8838-dd95d582af44)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 124.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 177.8 121.92)
+      (xy 175.26 121.92))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d6498e49-2754-51ff-941f-558120d655b4))
+  (global_label "INTA_23"
+    (shape bidirectional)
+    (at 175.26 121.92 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d44ed70e-eec4-5741-aebe-c57ebb906285)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 175.26 121.92 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 106.68)
+      (xy 205.74 106.68))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dfc3436f-74d1-565b-a89b-af36ca317962))
+  (global_label "CUE_ENG"
+    (shape bidirectional)
+    (at 205.74 106.68 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c0c11ef5-356b-58df-a76b-56fe1c2a4124)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 109.22)
+      (xy 205.74 109.22))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9d7c6548-dd55-54ff-9a10-d3daf936bd3e))
+  (global_label "FILL"
+    (shape bidirectional)
+    (at 205.74 109.22 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 7cee837c-1822-51eb-b42d-92c1efd2295f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 109.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 111.76)
+      (xy 205.74 111.76))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4861a280-406d-53d2-8b59-2582d79bcbaf))
+  (global_label "TAP"
+    (shape bidirectional)
+    (at 205.74 111.76 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4180a732-a8ce-5b90-a5c1-7340bfb73be6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 111.76 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 114.3)
+      (xy 205.74 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid baf83d54-8b43-519d-989e-a89bf50208b6))
+  (global_label "BUILD"
+    (shape bidirectional)
+    (at 205.74 114.3 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 16f64b3d-cca9-51d2-a722-e1ed44d2655a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 116.84)
+      (xy 205.74 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid aa398b89-1a5c-595a-b1cb-c2f91a62f839))
+  (global_label "DROP"
+    (shape bidirectional)
+    (at 205.74 116.84 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid f8822370-7b8a-5f67-85c9-7b3893ce5981)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 119.38)
+      (xy 205.74 119.38))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 709046a4-9c67-5420-9b3f-ca3223c65330))
+  (global_label "BREAK"
+    (shape bidirectional)
+    (at 205.74 119.38 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 946dd2b3-2aaf-5368-82d4-daf07765b7f0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 119.38 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 203.2 121.92)
+      (xy 205.74 121.92))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5d0be9c4-583e-578f-bce5-bd06eec54fa9))
+  (global_label "JOG_CLICK"
+    (shape bidirectional)
+    (at 205.74 121.92 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4a8c6de0-734f-551d-b421-716503e0e679)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 205.74 121.92 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 203.2 124.46)
+    (uuid 4dd288b5-803b-5001-b691-7cd0282608fd))
+  (symbol
+    (lib_id "Interface_Expansion:MCP23017x-x-SO")
+    (at 190.5 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 6390e346-298f-56f3-a091-72f3e5573976)
+    (property "Reference" "U23"
+      (at 190.5 86.36 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP23017 0x23"
+      (at 190.5 88.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+      (at 190.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 86327b58-7099-5193-b903-dd7b26b04d3c))
+    (pin "2"
+      (uuid 32966643-4b47-5a06-bd9f-4692bb7d9301))
+    (pin "3"
+      (uuid ecd87a06-24a1-51f2-a7aa-6030ef44332f))
+    (pin "4"
+      (uuid 2d5c36bd-cc89-59dd-991c-7524bee143e5))
+    (pin "5"
+      (uuid 3c1fdc2f-2999-5c9b-a11b-d51dd4e55dfa))
+    (pin "6"
+      (uuid 188d6996-2adc-5bd0-9682-535176e4abcb))
+    (pin "7"
+      (uuid db6368b9-9ce1-5340-84b4-318b7233d430))
+    (pin "8"
+      (uuid fd20f242-307a-591c-909b-978978462261))
+    (pin "9"
+      (uuid 4185226f-7193-52c3-8180-c25ca084db41))
+    (pin "10"
+      (uuid 67542dfa-b19c-54ac-aed6-064a918ce9c0))
+    (pin "11"
+      (uuid 894569e5-6f55-5d9f-8e4d-98c014b442d8))
+    (pin "12"
+      (uuid bd8eee93-5e03-5e3b-8ba7-323c8886fca5))
+    (pin "13"
+      (uuid 0d228715-7877-5b27-a8a4-670c1c5b7482))
+    (pin "14"
+      (uuid 63d3f64e-0366-553c-9abb-ecfcb10f2b88))
+    (pin "15"
+      (uuid 2497ccc6-7d81-5faf-84fb-6e8f510960fc))
+    (pin "16"
+      (uuid bb40845a-ffe9-5c78-bd8a-f927bbcc0dc0))
+    (pin "17"
+      (uuid 49323b03-159b-5610-91cd-909084fd715f))
+    (pin "18"
+      (uuid 85405e38-ed70-545b-950d-12004e2c7ad2))
+    (pin "19"
+      (uuid 76202670-9660-5294-a6b3-df79363d06b6))
+    (pin "20"
+      (uuid 7a71bbd6-147b-5bc8-b4f0-b10cd16efd76))
+    (pin "21"
+      (uuid af81579b-196f-5567-808e-f1eef1906b06))
+    (pin "22"
+      (uuid 110c8e07-7698-525b-becf-3ff542f0cf7c))
+    (pin "23"
+      (uuid 3b5f8651-baf1-56d5-ab5d-9e6a196718c4))
+    (pin "24"
+      (uuid cc3ee3f0-a939-59c8-ac17-4d53fdba61da))
+    (pin "25"
+      (uuid ce4ebae8-486a-5a96-b4bc-cba7b35d2e33))
+    (pin "26"
+      (uuid 7a1c5e89-825c-53ef-af0b-111c739f1582))
+    (pin "27"
+      (uuid e1c75f4d-8549-5dcc-820a-dab6b159b8ff))
+    (pin "28"
+      (uuid 612e6519-9f18-5e11-9c95-d1efe742a58c))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa/91d57479-6127-59d5-951b-15475d57b0cf"
+          (reference "U23")
+          (unit 1)))))
+  (text "0x23: GPA7 / GPB7 NC (errata). Pull-ups internos por firmware."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2cce1902-adae-5da2-adcb-68cbe33eb115))
+  (text "INTA/INTB y entradas libres a pads. Consultar hoja support."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 84178bbf-d087-50a1-b951-4bf992b54f21)))

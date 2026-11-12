@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="E">
   <design>
-    <source>/private/tmp/grooveforge-pcbm2/apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_sch</source>
-    <date>2026-11-12T08:35:38</date>
+    <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_sch</source>
+    <date>2026-11-12T09:05:45</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -3845,40 +3845,40 @@
   </libparts>
   <libraries>
     <library logical="74xGxx">
-      <uri>${KICAD9_SYMBOL_DIR}/74xGxx.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/74xGxx.kicad_sym</uri>
     </library>
     <library logical="Amplifier_Operational">
-      <uri>${KICAD9_SYMBOL_DIR}/Amplifier_Operational.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Amplifier_Operational.kicad_sym</uri>
     </library>
     <library logical="Analog_ADC">
-      <uri>${KICAD9_SYMBOL_DIR}/Analog_ADC.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Analog_ADC.kicad_sym</uri>
     </library>
     <library logical="Analog_DAC">
-      <uri>${KICAD9_SYMBOL_DIR}/Analog_DAC.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Analog_DAC.kicad_sym</uri>
     </library>
     <library logical="Connector">
-      <uri>${KICAD9_SYMBOL_DIR}/Connector.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Connector.kicad_sym</uri>
     </library>
     <library logical="Connector_Generic">
-      <uri>${KICAD9_SYMBOL_DIR}/Connector_Generic.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Connector_Generic.kicad_sym</uri>
     </library>
     <library logical="Device">
-      <uri>${KICAD9_SYMBOL_DIR}/Device.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Device.kicad_sym</uri>
     </library>
     <library logical="Diode">
-      <uri>${KICAD9_SYMBOL_DIR}/Diode.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Diode.kicad_sym</uri>
     </library>
     <library logical="Isolator">
-      <uri>${KICAD9_SYMBOL_DIR}/Isolator.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Isolator.kicad_sym</uri>
     </library>
     <library logical="Jumper">
-      <uri>${KICAD9_SYMBOL_DIR}/Jumper.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Jumper.kicad_sym</uri>
     </library>
     <library logical="Regulator_Linear">
-      <uri>${KICAD9_SYMBOL_DIR}/Regulator_Linear.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Regulator_Linear.kicad_sym</uri>
     </library>
     <library logical="Switch">
-      <uri>${KICAD9_SYMBOL_DIR}/Switch.kicad_sym</uri>
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Switch.kicad_sym</uri>
     </library>
   </libraries>
   <nets>
