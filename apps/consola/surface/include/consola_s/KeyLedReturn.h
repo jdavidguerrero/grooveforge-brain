@@ -1,10 +1,11 @@
 #pragma once
 #include <stdint.h>
+#include "consola_s/KeyLedMap.h"
 
 /** @brief LED27 loop renderer and current model; custom, hardware independent. */
 class KeyLedReturn {
 public:
-    static constexpr unsigned COUNT=26, BYTES=COUNT*3, FRAME_MS=34;
+    static constexpr unsigned COUNT=key_leds::COUNT, BYTES=COUNT*3, FRAME_MS=34;
     static constexpr uint32_t LIMIT_UA=500000, IDLE_UA=COUNT*1000;
     enum State : uint8_t {OFF, DIM, ON, BLINK, PULSE};
     enum Palette : uint8_t {TEAL, VIOLET, BLUE, AMBER, WHITE};

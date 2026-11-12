@@ -1,18 +1,48 @@
 """Observable LED27 output; no hardware or musical timing assertions."""
 import csv
+import io
+import re
+import subprocess
 from pathlib import Path
 import pytest
-from key_leds import (KEY_REFS, KeyState, key_frame, key_messages,
+from key_leds import (KEY_CHAIN, KEY_REFS, KeyState, key_frame, key_messages,
                       DIM, ON, BLINK, PULSE, TEAL, VIOLET, BLUE, AMBER)
 from test_pad_leds import setup_output
 
 
-def test_chain_matches_all_csv_keys_once_and_protocol_ranges():
+def test_chain_matches_cpp_specs_and_all_csv_keys_once(tmp_path):
     root = Path(__file__).resolve().parents[4]
-    with (root/'apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv').open() as f:
-        refs = {r['ref'] for r in csv.DictReader(f) if r['kind'] == 'key'}
+    include = root/'apps/consola/surface/include'
+    binary = tmp_path/'key-led-preview'
+    subprocess.run(['c++', '-std=c++17', '-I'+str(include),
+                    str(root/'apps/consola/gui-console/tools/key_led_preview.cpp'),
+                    str(root/'apps/consola/surface/src/KeyLedReturn.cpp'),
+                    '-o', str(binary)], check=True)
+    output = subprocess.check_output([str(binary), '--chain'], text=True)
+    cpp = tuple((ref, float(x), float(y)) for ref, x, y in csv.reader(io.StringIO(output)))
+    assert cpp == KEY_CHAIN
     assert len(KEY_REFS) == len(set(KEY_REFS)) == 26
-    assert set(KEY_REFS) == refs
+    with (root/'apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv').open() as f:
+        keys = [r for r in csv.DictReader(f) if r['kind'] == 'key']
+    assert len(keys) == len({r['ref'] for r in keys}) == 26
+    assert {ref: (x, y) for ref, x, y in cpp} == {
+        r['ref']: (float(r['x_mm']), float(r['y_mm'])) for r in keys}
+    spec = (root/'apps/docs/consola/27-leds-teclas.md').read_text()
+    entries = re.findall(r'^\|(\d+)\|([^|]+)\|([\d.]+)\|([\d.]+)\|$', spec, re.M)
+    assert [int(i) for i, *_ in entries] == list(range(26))
+    assert tuple((ref, float(x), float(y)) for _, ref, x, y in entries) == cpp
+    pcb = (root/'apps/docs/consola/28-pcb-k.md').read_text()
+    entries = [line.split('|') for line in pcb.splitlines() if line.startswith('| 0x2')]
+    led_rows = [fields for fields in entries if fields[-2].strip().isdigit()]
+    assert len(led_rows) == 26
+    for fields in led_rows:
+        ref = fields[3].strip().replace('−', '-')
+        index = int(fields[-2])
+        x, y = map(float, fields[4].split(','))
+        assert cpp[index] == (ref, x, y)
+
+
+def test_protocol_ranges():
     messages = key_messages(25, KeyState(PULSE, VIOLET))
     assert [(m['control'], m['value']) for m in messages] == [(103, 25), (104, 4), (105, 1), (106, 1)]
     assert all(m['channel'] == 15 and m['type'] == 'control_change' for m in messages)
@@ -27,19 +57,19 @@ def test_modes_shift_sections_and_host_freshness(gui):
     for mode, color in [(0, TEAL), (1, TEAL), (2, BLUE), (3, AMBER)]:
         console.triggerAction('mode:'+str(mode))
         frame = key_frame(console, dict(running=True, armed=True), True)
-        assert all(frame[i] == KeyState(ON, color) for i in range(5, 9))
-        assert frame[0].state == ON and frame[1].state == DIM and frame[2].state == ON
-        assert all(frame[i].palette == VIOLET for i in (9, 10, 11, 12, 13, 14, 21, 22, 23, 24, 25))
+        assert all(frame[i] == KeyState(ON, color) for i in range(22, 26))
+        assert frame[17].state == ON and frame[18].state == DIM and frame[19].state == ON
+        assert all(frame[i].palette == VIOLET for i in (0, 1, 2, 3, 4, 11, 12, 13, 14, 15, 16))
     b.handle('Boton', dict(nombre='SHIFT', presionado=True))
     b.section('DROP')
     frame = key_frame(console, {}, False)
-    assert frame[14] == KeyState(ON, VIOLET)
-    assert frame[16] == KeyState(BLINK) and frame[15].state == frame[17].state == DIM
-    assert frame[0].state == frame[1].state == frame[2].state == DIM
+    assert frame[11] == KeyState(ON, VIOLET)
+    assert frame[9] == KeyState(BLINK) and frame[8].state == frame[10].state == DIM
+    assert frame[17].state == frame[18].state == frame[19].state == DIM
     b.handle('Boton', dict(nombre='SHIFT', presionado=False))
     b.section('DROP')
     frame = key_frame(console, {}, False)
-    assert frame[14].state == frame[16].state == DIM
+    assert frame[11].state == frame[9].state == DIM
 
 
 def test_output_shared_brightness_heartbeat_diff_and_mode_reset(gui):
@@ -54,7 +84,7 @@ def test_output_shared_brightness_heartbeat_diff_and_mode_reset(gui):
     assert not sent
     clock[0] = .034
     output.update(port, 1)
-    assert [(m.control, m.value) for m in sent] == [(103, 14), (104, ON), (105, VIOLET), (106, 1)]
+    assert [(m.control, m.value) for m in sent] == [(103, 11), (104, ON), (105, VIOLET), (106, 1)]
     sent.clear()
     console.preferences.setLedBrightness(0)
     clock[0] = .068
@@ -69,7 +99,7 @@ def test_output_shared_brightness_heartbeat_diff_and_mode_reset(gui):
     clock[0] = .54
     output.update(port, 2)
     assert any(m.type == 'control_change' and m.control == 102 for m in sent)
-    assert all(output.key_frame[i].palette == AMBER for i in range(5, 9))
+    assert all(output.key_frame[i].palette == AMBER for i in range(22, 26))
     assert any(m.type == 'control_change' and m.control == 25 and m.value == 0 for m in sent)
 
 
@@ -86,10 +116,10 @@ def test_tap_serial_tempo_and_confirmed_running_beats(gui):
     sent.clear(); output.update(port, 2)
     assert output.key_controls[-1] == 1
     assert any(m.type == 'control_change' and m.control == 28 and m.value == 5 for m in sent)
-    assert output.key_frame[0].state == output.key_frame[2].state == ON
+    assert output.key_frame[17].state == output.key_frame[19].state == ON
     clock[0] = 1.1
     output.update(port, 2)
-    assert output.key_controls[-1] == 0 and output.key_frame[0].state == DIM
+    assert output.key_controls[-1] == 0 and output.key_frame[17].state == DIM
     output.observe(dict(event='clock', clock=dict(running=True, bar=9, step=0)), 1)
     clock[0] = 1.14
     output.update(port, 2)

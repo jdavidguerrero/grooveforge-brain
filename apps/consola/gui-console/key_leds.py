@@ -1,13 +1,38 @@
-"""LED27 intentions in provisional PCB-K chain order (doc27); no animation timer."""
+"""LED27 intentions in split PCB-K chain order (doc27); no animation timer."""
 from dataclasses import dataclass
 
 OFF, DIM, ON, BLINK, PULSE = range(5)
 TEAL, VIOLET, BLUE, AMBER, WHITE = range(5)
-KEY_REFS = ('PLAY', 'STOP', 'REC', 'LOOP', 'METRO',
-            'SCENE4_PAGE_R', 'SCENE3_PAGE_L', 'SCENE2_OCT-', 'SCENE1_OCT+',
-            'DELETE', 'DUPLICATE', 'QUANTIZE', 'NEW', 'UNDO', 'SHIFT',
-            'BUILD', 'DROP', 'BREAK', 'TAP', 'FILL', 'CUE_ENG',
-            'BROWSE', 'NAV_R', 'NAV_L', 'MENU', 'BACK')
+# Single Python source for wire order and CSV centres (doc27 §1).
+KEY_CHAIN = (
+    ('BACK', 64, 305),
+    ('MENU', 64, 286.5),
+    ('NAV_L', 64, 268),
+    ('NAV_R', 64, 249.5),
+    ('BROWSE', 64, 231),
+    ('TAP', 58, 174),
+    ('FILL', 39, 174),
+    ('CUE_ENG', 20, 174),
+    ('BUILD', 20, 155),
+    ('DROP', 39, 155),
+    ('BREAK', 58, 155),
+    ('SHIFT', 20, 132.5),
+    ('UNDO', 39, 132.5),
+    ('DELETE', 98, 160.5),
+    ('DUPLICATE', 98, 145.5),
+    ('QUANTIZE', 98, 130.5),
+    ('NEW', 98, 115.5),
+    ('PLAY', 132, 39.5),
+    ('STOP', 151, 39.5),
+    ('REC', 170, 39.5),
+    ('LOOP', 189, 39.5),
+    ('METRO', 208, 39.5),
+    ('SCENE4_PAGE_R', 242, 115.5),
+    ('SCENE3_PAGE_L', 242, 130.5),
+    ('SCENE2_OCT-', 242, 145.5),
+    ('SCENE1_OCT+', 242, 160.5),
+)
+KEY_REFS = tuple(ref for ref, _, _ in KEY_CHAIN)
 
 
 @dataclass(frozen=True)
@@ -18,7 +43,7 @@ class KeyState:
 
 def key_messages(index, state):
     from pad_leds import cc
-    if (type(index) is not int or not 0 <= index < 26 or
+    if (type(index) is not int or not 0 <= index < len(KEY_REFS) or
             type(state.state) is not int or not OFF <= state.state <= PULSE or
             type(state.palette) is not int or not TEAL <= state.palette <= WHITE):
         raise ValueError('LED27 key/state/palette outside protocol')

@@ -47,18 +47,21 @@ void blink_pulse_and_animation_off(){
     cc(k,26,0);k.render(800);TEST_ASSERT_EQUAL(62,k.colors()[2]);TEST_ASSERT_EQUAL(62,k.colors()[5]);
 }
 void tap_tempo_beat_dedup_and_stop(){
-    K k;start(k);key(k,18,K::DIM,K::WHITE);
-    cc(k,107,120);cc(k,108,0);cc(k,109,1,0);k.render(0);TEST_ASSERT_EQUAL(62,k.colors()[54]);
-    k.render(100);TEST_ASSERT_EQUAL(7,k.colors()[54]);
-    k.render(500);TEST_ASSERT_EQUAL(62,k.colors()[54]);
-    cc(k,111,1,600);k.render(600);TEST_ASSERT_EQUAL(7,k.colors()[54]);
-    cc(k,28,10,634);k.render(634);TEST_ASSERT_EQUAL(62,k.colors()[54]);
-    cc(k,28,10,734);k.render(734);TEST_ASSERT_EQUAL(7,k.colors()[54]);
-    cc(k,28,11,768);k.render(768);TEST_ASSERT_EQUAL(62,k.colors()[54]);
-    cc(k,111,0);cc(k,109,2,900);k.render(900);TEST_ASSERT_EQUAL(62,k.colors()[54]);
-    cc(k,109,2,1000);k.render(1000);TEST_ASSERT_EQUAL(7,k.colors()[54]);
+    K k;start(k);key(k,key_leds::index_of("TAP"),K::DIM,K::WHITE);
+    key(k,key_leds::index_of("STOP"),K::DIM,K::WHITE);
+    constexpr unsigned tap=key_leds::index_of("TAP")*3;
+    cc(k,107,120);cc(k,108,0);cc(k,109,1,0);k.render(0);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
+    TEST_ASSERT_EQUAL(7,k.colors()[key_leds::index_of("STOP")*3]);
+    k.render(100);TEST_ASSERT_EQUAL(7,k.colors()[tap]);
+    k.render(500);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
+    cc(k,111,1,600);k.render(600);TEST_ASSERT_EQUAL(7,k.colors()[tap]);
+    cc(k,28,10,634);k.render(634);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
+    cc(k,28,10,734);k.render(734);TEST_ASSERT_EQUAL(7,k.colors()[tap]);
+    cc(k,28,11,768);k.render(768);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
+    cc(k,111,0);cc(k,109,2,900);k.render(900);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
+    cc(k,109,2,1000);k.render(1000);TEST_ASSERT_EQUAL(7,k.colors()[tap]);
     TEST_ASSERT_FALSE(cc(k,108,127));
-    cc(k,26,0);k.render(1034);TEST_ASSERT_EQUAL(62,k.colors()[54]);
+    cc(k,26,0);k.render(1034);TEST_ASSERT_EQUAL(62,k.colors()[tap]);
 }
 void frame_budget_timeout_recovery_and_wrap(){
     K k;const uint32_t at=UINT32_MAX-50;start(k,at);key(k,0,K::ON);

@@ -76,32 +76,32 @@ GPA7/GPB7 no se usan (errata de solo salida). Índice LED = orden de la cadena d
 
 | MCP | Pin | Tecla | x, y | Nota | LED |
 |---|---|---|---|---:|---:|
-| 0x21 | GPA0 | SCENE1_OCT+ | 242, 160.5 | 89 | 8 |
-| 0x21 | GPA1 | SCENE2_OCT− | 242, 145.5 | 90 | 7 |
-| 0x21 | GPA2 | SCENE4_PAGE_R | 242, 115.5 | 91 | 5 |
-| 0x21 | GPA3 | SCENE3_PAGE_L | 242, 130.5 | 92 | 6 |
-| 0x21 | GPB0 | METRO | 208, 39.5 | 101 | 4 |
-| 0x21 | GPB1 | LOOP | 189, 39.5 | 97 | 3 |
-| 0x21 | GPB2 | REC | 170, 39.5 | 96 | 2 |
-| 0x21 | GPB3 | STOP | 151, 39.5 | 95 | 1 |
-| 0x21 | GPB4 | PLAY | 132, 39.5 | 94 | 0 |
-| 0x22 | GPA0 | UNDO | 39, 132.5 | 98 | 13 |
-| 0x22 | GPA1 | BACK | 64, 305 | 102 | 25 |
-| 0x22 | GPA2 | MENU | 64, 286.5 | 103 | 24 |
-| 0x22 | GPA3 | NAV_L | 64, 268 | 104 | 23 |
-| 0x22 | GPA4 | NAV_R | 64, 249.5 | 105 | 22 |
-| 0x22 | GPA5 | BROWSE | 64, 231 | 106 | 21 |
-| 0x22 | GPA6 | SHIFT | 20, 132.5 | 100 | 14 |
-| 0x22 | GPB0 | DELETE | 98, 160.5 | 107 | 9 |
-| 0x22 | GPB1 | DUPLICATE | 98, 145.5 | 110 | 10 |
-| 0x22 | GPB2 | QUANTIZE | 98, 130.5 | 111 | 11 |
-| 0x22 | GPB3 | NEW | 98, 115.5 | 99 | 12 |
-| 0x23 | GPA0 | CUE_ENG | 20, 174 | 112 | 20 |
-| 0x23 | GPA1 | FILL | 39, 174 | 113 | 19 |
-| 0x23 | GPA2 | TAP | 58, 174 | 114 | 18 |
-| 0x23 | GPA3 | BUILD | 20, 155 | 115 | 15 |
-| 0x23 | GPA4 | DROP | 39, 155 | 116 | 16 |
-| 0x23 | GPA5 | BREAK | 58, 155 | 117 | 17 |
+| 0x21 | GPA0 | SCENE1_OCT+ | 242, 160.5 | 89 | 25 |
+| 0x21 | GPA1 | SCENE2_OCT− | 242, 145.5 | 90 | 24 |
+| 0x21 | GPA2 | SCENE4_PAGE_R | 242, 115.5 | 91 | 22 |
+| 0x21 | GPA3 | SCENE3_PAGE_L | 242, 130.5 | 92 | 23 |
+| 0x21 | GPB0 | METRO | 208, 39.5 | 101 | 21 |
+| 0x21 | GPB1 | LOOP | 189, 39.5 | 97 | 20 |
+| 0x21 | GPB2 | REC | 170, 39.5 | 96 | 19 |
+| 0x21 | GPB3 | STOP | 151, 39.5 | 95 | 18 |
+| 0x21 | GPB4 | PLAY | 132, 39.5 | 94 | 17 |
+| 0x22 | GPA0 | UNDO | 39, 132.5 | 98 | 12 |
+| 0x22 | GPA1 | BACK | 64, 305 | 102 | 0 |
+| 0x22 | GPA2 | MENU | 64, 286.5 | 103 | 1 |
+| 0x22 | GPA3 | NAV_L | 64, 268 | 104 | 2 |
+| 0x22 | GPA4 | NAV_R | 64, 249.5 | 105 | 3 |
+| 0x22 | GPA5 | BROWSE | 64, 231 | 106 | 4 |
+| 0x22 | GPA6 | SHIFT | 20, 132.5 | 100 | 11 |
+| 0x22 | GPB0 | DELETE | 98, 160.5 | 107 | 13 |
+| 0x22 | GPB1 | DUPLICATE | 98, 145.5 | 110 | 14 |
+| 0x22 | GPB2 | QUANTIZE | 98, 130.5 | 111 | 15 |
+| 0x22 | GPB3 | NEW | 98, 115.5 | 99 | 16 |
+| 0x23 | GPA0 | CUE_ENG | 20, 174 | 112 | 7 |
+| 0x23 | GPA1 | FILL | 39, 174 | 113 | 6 |
+| 0x23 | GPA2 | TAP | 58, 174 | 114 | 5 |
+| 0x23 | GPA3 | BUILD | 20, 155 | 115 | 8 |
+| 0x23 | GPA4 | DROP | 39, 155 | 116 | 9 |
+| 0x23 | GPA5 | BREAK | 58, 155 | 117 | 10 |
 | 0x23 | GPA6 | JOG_CLICK (J1.7, desde PCB-M) | — | 88 | — |
 | 0x23 | GPB0 | PEDAL_BTN (J1.8, desde PCB-M) | — | 122 | — |
 
@@ -128,9 +128,11 @@ alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
 
 ## 6. LEDs
 
-- 26 × SK6812MINI-E, cadena única en el orden de `27` §1: transporte → columna de escenas (sube) → cruza por la
-  franja de 4 mm entre la ventana de la M4 y el borde (y 169–173) → columna de edición (baja) → UNDO, SHIFT →
-  sección → motor → navegación (sube).
+- 26 × SK6812MINI-E, cadena única en el orden de `27` §1, para las dos placas de §7: J1.5 → BACK (LED0) →
+  MENU → NAV_L → NAV_R → BROWSE → TAP → FILL → CUE_ENG → BUILD → DROP → BREAK → SHIFT → UNDO →
+  DELETE → DUPLICATE → QUANTIZE → NEW (LED16), todo en la izquierda. DOUT de NEW → único hilo LED_DATA del
+  cable → DIN de PLAY (LED17) en la frente-derecha → STOP → REC → LOOP → METRO → SCENE4_PAGE_R →
+  SCENE3_PAGE_L → SCENE2_OCT− → SCENE1_OCT+ (LED25). No cruza la franja sobre la ventana de la M4.
 - Datos: entrada desde J1.5 con resistencia serie de 33 Ω (huella 0603, puente si no hace falta).
 - Cada LED con 100 nF a GND; 22 µF a la entrada de +5V_LED. +5 V y GND en pista ancha (≥ 0,8 mm) alrededor del anillo
   que forma la placa; GND con relleno en la cara inferior.

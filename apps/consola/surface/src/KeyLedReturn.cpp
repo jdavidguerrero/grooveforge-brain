@@ -87,7 +87,7 @@ bool KeyLedReturn::render(uint32_t now){
             default:break;
             }
             // TAP follows confirmed running beats; only the stopped preview extrapolates tempo.
-            if(i==18&&keys_[i].state!=OFF){
+            if(i==key_leds::index_of("TAP")&&keys_[i].state!=OFF){
                 const bool beat=running_?(beat_seen_&&uint32_t(now-beat_at_)<80):
                     (uint32_t(now-tap_at_)%(60000/bpm_)<80);
                 level=!animations_||beat?255:32;

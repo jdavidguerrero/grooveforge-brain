@@ -3,45 +3,52 @@
 2026-11-11. Spec escrito antes de implementación, bajo autorización de la tarea
 keyleds1. Extiende 23 sin cambiar el retorno M4 ni los SSoT 00–06.
 
-## 1. Cadena provisional PCB-K
+## 1. Cadena PCB-K partida
 
-DIN pin13 → 74AHCT1G125 a 5 V → LED0. GND común; OE activo bajo.
-No alimentar LEDs desde 3,3 V ni unir las ramas USB de 24 §5. No usar SD/SPI del
-shield (17/18). SK6812MINI-E **RGB, GRB de 24 bits**, 800 kHz.
-Orden lógico = físico, índice base cero; **provisional hasta rutear PCB-K**.
-Coordenadas exactas del CSV v1, mm desde izquierda/frente. Sigue transporte,
-sube por el borde derecho, cruza detrás de la ventana M4, baja por su izquierda
-y serpentea motor/sección antes de subir navegación. La vuelta evita atravesar
-las ventanas de pads/FSR; no constituye un netlist aprobado.
+DIN pin13 → 74AHCT1G125 a 5 V → J1.5 en la placa izquierda → LED0.
+GND común; OE activo bajo. No alimentar LEDs desde 3,3 V ni unir las ramas USB
+de 24 §5. No usar SD/SPI del shield (17/18). SK6812MINI-E **RGB, GRB de 24 bits**,
+800 kHz. Orden lógico = físico, índice base cero; coordenadas exactas del CSV v1,
+mm desde izquierda/frente.
+
+Orden autorizado por Juan (2026-11-12) para PCB-K en **dos placas**, según
+[28 §7](28-pcb-k.md#7-costo-una-placa-o-dos). J1 recibe LED_DIN desde PCB-M en la
+izquierda: la cadena empieza en BACK, baja por navegación, serpentea motor y
+sección, pasa por SHIFT/UNDO y baja por edición hasta NEW. Un único hilo de datos
+en el cable une DOUT de NEW (16) con DIN de PLAY (17) en la placa frente-derecha;
+sigue transporte y termina subiendo escenas hasta SCENE1_OCT+ (25).
+Los índices 0–16 están en la izquierda y 17–25 en la derecha. El recorrido gráfico
+es ilustrativo; el cobre se valida al rutear. LED27 conserva CC102–111, colores,
+brillos y limitador de corriente de §2–4.
 
 | LED | Ref CSV | x | y |
 |---|---|---:|---:|
-|0|PLAY|132|39.5|
-|1|STOP|151|39.5|
-|2|REC|170|39.5|
-|3|LOOP|189|39.5|
-|4|METRO|208|39.5|
-|5|SCENE4_PAGE_R|242|115.5|
-|6|SCENE3_PAGE_L|242|130.5|
-|7|SCENE2_OCT-|242|145.5|
-|8|SCENE1_OCT+|242|160.5|
-|9|DELETE|98|160.5|
-|10|DUPLICATE|98|145.5|
-|11|QUANTIZE|98|130.5|
-|12|NEW|98|115.5|
-|13|UNDO|39|132.5|
-|14|SHIFT|20|132.5|
-|15|BUILD|20|155|
-|16|DROP|39|155|
-|17|BREAK|58|155|
-|18|TAP|58|174|
-|19|FILL|39|174|
-|20|CUE_ENG|20|174|
-|21|BROWSE|64|231|
-|22|NAV_R|64|249.5|
-|23|NAV_L|64|268|
-|24|MENU|64|286.5|
-|25|BACK|64|305|
+|0|BACK|64|305|
+|1|MENU|64|286.5|
+|2|NAV_L|64|268|
+|3|NAV_R|64|249.5|
+|4|BROWSE|64|231|
+|5|TAP|58|174|
+|6|FILL|39|174|
+|7|CUE_ENG|20|174|
+|8|BUILD|20|155|
+|9|DROP|39|155|
+|10|BREAK|58|155|
+|11|SHIFT|20|132.5|
+|12|UNDO|39|132.5|
+|13|DELETE|98|160.5|
+|14|DUPLICATE|98|145.5|
+|15|QUANTIZE|98|130.5|
+|16|NEW|98|115.5|
+|17|PLAY|132|39.5|
+|18|STOP|151|39.5|
+|19|REC|170|39.5|
+|20|LOOP|189|39.5|
+|21|METRO|208|39.5|
+|22|SCENE4_PAGE_R|242|115.5|
+|23|SCENE3_PAGE_L|242|130.5|
+|24|SCENE2_OCT-|242|145.5|
+|25|SCENE1_OCT+|242|160.5|
 
 ## 2. LED27, extensión independiente del canal 16
 
@@ -123,6 +130,15 @@ segunda barrera ante futuras paletas. Modelo estimado, no sensor de corriente:
 medir lote/fuente; polyfuse0,75A sigue necesario según24.
 
 ## 5. Pruebas, preview y puerta física
+
+Para la partición, una tabla C++ y otra Python definen referencias y centros CSV.
+El índice se deriva de su posición: así TAP no depende de un literal que pueda
+quedar obsoleto. Un test compila y consulta la tabla C++ y compara las 26 entradas
+con Python, la tabla de §1 y las 26 teclas del CSV (sin duplicados, mismo orden y
+mismas posiciones); también verifica la columna LED de 28 §4. Unity comprueba que
+sólo TAP recibe el tratamiento de beat y que STOP conserva su estado normal.
+La preview usa las referencias para etiquetas y distingue el cable NEW → PLAY.
+Esto valida direccionamiento y render, no continuidad eléctrica ni timing físico.
 
 Antes de código/tests: Unity valida protocolo aislado de pads/canal1, apply
 atómico y rechazo, estados/beat/rollover/timeout, fps, colores/cap, limitador

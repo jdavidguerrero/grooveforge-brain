@@ -1,5 +1,8 @@
 # Console · 26 key LEDs (LED27)
 
+Historical implementation report. The split-board order and current verification
+are documented in [REPORT-split.md](REPORT-split.md); previews here now use that order.
+
 Base: `claude/monorepo-groovepush` at `02ffe1a`.
 All work stays in `/private/tmp/grooveforge-keyleds1`; no commit or upload.
 Spec/theory preceded code: [27-leds-teclas.md](../../../../docs/consola/27-leds-teclas.md).
