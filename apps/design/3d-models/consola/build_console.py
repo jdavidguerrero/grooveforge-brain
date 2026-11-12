@@ -142,6 +142,8 @@ PCB_TOP = {'PCB-K': TOP - 3.4, 'PCB-P': TOP - 6.5, 'PCB-F': TOP - 9.5, 'PCB-M': 
 TOWER_TOP = BODY_H - 10.0   # separador PEM de 10 que cuelga de la chapa
 JACK_AXIS_Z = 8.0 + PCB_T + 7.0
 JACK_HOLE = {'1/4': 9.5, '3.5': 6.2}
+# MIDI por hardware sin poblar (Juan, 2026-11-12): MIDI va por un conversor USB en la Pi; la pared queda ciega.
+MIDI_HOLES = False
 
 
 def load_outlines(repo):
@@ -196,7 +198,7 @@ def body_details(rows, body):
         elif r['board'] == 'PCB-M' and r['item'] == 'agujero':
             adds.append(cylinder(x, y, 7.0, 0, 8.0))                     # torre de 5 sobre el piso de 3
             cuts.append(cylinder(x, y, 4.0, FLOOR, 6.0))                 # inserto M3 Ø4 × 6
-        elif r['board'] == 'PCB-M' and r['item'] == 'jack':
+        elif r['board'] == 'PCB-M' and r['item'] == 'jack' and (MIDI_HOLES or 'MIDI' not in r['notes']):
             kind = '1/4' if any(k in r['notes'] for k in ('LINE', 'PEDAL')) else '3.5'
             hole = Part.makeCylinder(JACK_HOLE[kind] / 2, WALL + 2, App.Vector(x, D - WALL - 1, JACK_AXIS_Z),
                                      App.Vector(0, 1, 0))

@@ -10,7 +10,7 @@ las **salidas CV** y el **MIDI**. Este doc los prueba en protoboard con los mism
 | Pieza | Cant. | En PCB-M | Para protoboard | Nota |
 |---|---:|---|---|---|
 | Amplificador operacional cuádruple rail-to-rail | 1–2 | MCP6004 (SOIC) | **MCP6004-I/P** (DIP-14) | Alternativa: 2 × MCP6002 (DIP-8). No usar LM324/TL072: no llegan a los rieles con 3,3 V |
-| Optoacoplador | 1 | 6N138 | **6N138** (DIP-8) | Común en tiendas locales |
+| Optoacoplador (solo para C, opcional) | 1 | 6N138 | **6N138** (DIP-8) | Común en tiendas locales |
 | DAC I2C | 1 | MCP4725 | **Módulo MCP4725** (CJMCU-4725 o Adafruit) | Dirección del módulo: 0x60 o 0x62 según el puente A0; anotarla |
 | Diodo Schottky | 2 | BAT54S | **BAT43, BAT85 o 1N5819** | Recorte de protección a los rieles |
 | Diodo de señal | 1 | 1N4148W | **1N4148** | Inverso en la entrada MIDI |
@@ -51,7 +51,11 @@ amplificador se alimenta de **5 V**.
 | Linealidad | 5 puntos intermedios | Error < 1 % |
 | Ruido del riel | Alimentar el amplificador desde el mismo 5 V que los LEDs encendidos (NeoTrellis o tira) y medir la salida en CA | Si el rizado es visible (> 5 mV), agregar filtro RC 10 Ω + 47 µF o regulador al riel del amplificador en PCB-M |
 
-### C. MIDI (hoja 07)
+### C. MIDI (hoja 07) — opcional
+
+**2026-11-12: el MIDI por hardware queda sin poblar en PCB-M** (Juan): MIDI va por un conversor USB conectado a la
+Pi. Esta prueba solo hace falta si algún día se puebla el bloque; no bloquea el pedido.
+
 
 MIDI IN (TRS tipo A): anillo → 220 Ω → LED del 6N138; punta → cátodo; 1N4148 inverso en paralelo; base a GND con
 10 k; salida con pull-up de 4,7 k a 3,3 V → RX de la Teensy. MIDI OUT: TX → resistencia → punta; 3,3 V → resistencia
@@ -67,4 +71,4 @@ MIDI IN (TRS tipo A): anillo → 220 Ω → LED del 6N138; punta → cátodo; 1N
 ## 3. Resultado
 
 Anotar cada medida en `mediciones/protoboard-<fecha>.md`. Cualquier cambio de valor o de circuito se pasa a
-`pcb_m.py` antes del layout. **PCB-M no se pide hasta que A, B y C pasen.**
+`pcb_m.py` antes del layout. **PCB-M no se pide hasta que A y B pasen** (C solo si se puebla el MIDI).

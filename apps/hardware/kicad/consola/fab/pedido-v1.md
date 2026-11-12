@@ -41,7 +41,7 @@ Pasivos de PCB-A: según su esquema (100 nF, 10 nF, 10 µF en 0603). Se agregan 
 | Pieza | LCSC | Cant. | Dónde |
 |---|---|---:|---|
 | JST PH 2 vías vertical (B2B-PH-K-S) | **buscar** (el original C20504437 está sin stock; vale un clon PH 2.0) | 15 | PCB-M: FSR ×4, EXP ×2, CV ×2, 5V_LED_IN; PCB-P ×6 |
-| JST PH 3 vías vertical (B3B-PH-K-S) | C131339 | 14 | PCB-M: Sharp ×2, pots ×3, selector, audífonos, jacks TRS ×7 |
+| JST PH 3 vías vertical (B3B-PH-K-S) | C131339 | 12 | PCB-M: Sharp ×2, pots ×3, selector, audífonos, jacks TRS ×5 (MIDI sin poblar) |
 | JST PH 4 vías vertical | C566011 | 2 | PCB-M: jog, M4 |
 | JST PH 6 vías vertical | C495261 | 2 | Cable PCB-K izq. ↔ der. |
 | JST PH 8 vías vertical | C594302 | 2 | PCB-M ↔ PCB-K izq. |
@@ -59,7 +59,7 @@ Sin crimpadora, comprar **cables ya armados** (AliExpress) en vez de carcasas y 
 | Cable | Cant. |
 |---|---:|
 | JST PH 2.0, 2 vías, doble punta, ~20 cm | 15 |
-| JST PH 2.0, 3 vías, doble punta (o una punta para jacks/pots) | 14 |
+| JST PH 2.0, 3 vías, doble punta (o una punta para jacks/pots) | 12 |
 | JST PH 2.0, 4 / 6 / 8 vías, doble punta | 2 / 1 / 1 |
 | JST SH 1.0 (Qwiic), 4 y 6 vías, doble punta | 1 y 1 |
 | Cable plano IDC 30 hilos con 2 conectores hembra 2 × 15, ~20 cm | 1 |
@@ -70,7 +70,7 @@ Con crimpadora: terminales PH C5292557 (≈ 0,005 USD) y carcasas PHR-n, a busca
 
 - Zócalos Kailh Choc CPG135001S30: 2 paquetes de 20 (AliExpress; en LCSC sin stock).
 - ~8 teclas Kailh Choc V2 Brown.
-- Jacks de pared (Bogotá): 6,35 mm TRS ×5 (LINE IN L/R, LINE OUT L/R, PEDAL), 3,5 mm ×4 (CV1, CV2, MIDI IN, MIDI OUT) y audífonos 6,35 mm.
+- Jacks de pared (Bogotá): 6,35 mm TRS ×5 (LINE IN L/R, LINE OUT L/R, PEDAL), 3,5 mm ×2 (CV1, CV2; MIDI sin poblar, va por USB) y audífonos 6,35 mm.
 - Ya los tiene Juan: encoders EC11 ×9, faders RS6011 ×4, FSR 402 ×6, Teensy 4.1 y Audio Shield.
 
 ## Estimado (opción B)
