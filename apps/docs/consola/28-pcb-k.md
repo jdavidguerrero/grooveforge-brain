@@ -20,9 +20,10 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 
 ## 2. Mecánica
 
-- **Contorno:** los 18 vértices de `pcb-outlines-console-v5.csv`, con un cambio: el escalón de los vértices 13–14 baja
-  de **y 226 a y 222**. Con la posición v1 de BROWSE (64, 231) su huella (y 223,5–238,5, x hasta 71,5) se salía del
-  contorno en el tramo x 68–71,5.
+- **Contorno:** los 18 vértices de `pcb-outlines-console-v5.csv`. El CSV se corrigió el 2026-11-12 con los ajustes
+  que el diseño v5 aceptado ya traía y que no habían salido en el export: escalón de los vértices 13–14 en **y 221**,
+  agujero de (10, 147.5) movido a **(30, 144)** (quedaba a 2 mm de BUILD) y las 11 teclas de motor, sección y
+  navegación en sus posiciones v1.
 - **Altura:** cara superior de PCB-K a **−3,4 mm** de la cara superior del aluminio, o sea **1,4 mm de luz** bajo la
   chapa. **Ningún componente en la cara superior** salvo las teclas (los LED van de montaje inverso, desde abajo).
 - **Cara inferior con zonas prohibidas:** PCB-P (x 9–232, y 69–100) queda 1,5 mm por debajo; la M4 ocupa la ventana
@@ -32,18 +33,18 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
   de PCB-P (y 72 y 97) que caen dentro de PCB-K pasan a través.
 - **Ventanas:** M4 122 × 62 y 4 redondas Ø20 bajo los FSR de velocity (del CSV v5).
 
-### Diferencia de posiciones v1 ↔ v5 (señalada, no resuelta en otro lado)
+### Posiciones v1 (resuelto)
 
-El CSV de contornos v5 de Claude Design pone motor (CUE/FILL/TAP) en y 182, sección en y 163 y navegación en
-y 236–310. El CSV del panel v1, con los ajustes de Juan (motor/sección −8, navegación −5), los pone en y 174, 155 y
-231–305. **Se usa el v1**: es el que corta la chapa en `build_console.py`. Si Juan prefiere el v5, solo cambian esas
-11 posiciones y el escalón de §2.
+El CSV de contornos descargado traía motor en y 182, sección en y 163 y navegación en y 236–310, pero el diseño v5
+aceptado ya las había movido a y 174, 155 y 231–305 a pedido de Juan («TAP pasa de 5,3 a 8,0 mm de la perilla E1»).
+Valen las v1, que son además las que corta la chapa.
 
 ## 3. Teclas
 
-- Huella Choc V2 con **zócalo hot-swap Kailh** (sirve para Choc V1 y V2; a confirmar el número de JLC en el layout).
-  Permite reutilizar las 20 teclas que ya hay y cambiar una dañada sin desoldar. Alternativa: soldadas (más baratas,
-  sin reparación). **Decisión D-K1, recomendación: hot-swap.**
+- Huella Choc con **zócalo hot-swap Kailh CPG135001S30** (LCSC C5333465, ~0,16 USD c/u, sin stock el 2026-11-12;
+  también se vende por bolsas). Se compran aparte de las teclas: 26 + repuestos. Se sueldan a mano (SMD de 2 pads) o
+  los pone JLC. Confirmar con la hoja de la Choc V2 que usa el mismo zócalo. Alternativa: teclas soldadas.
+  **D-K1 pendiente.**
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
   Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.
 - LED en la ventana de la tecla, desplazado hacia atrás (+y) del centro; distancia exacta según la hoja de la Choc V2
@@ -116,13 +117,23 @@ alto, versión en ángulo recto). PH en vez de SH: 2 A por vía para los LEDs.
   que forma la placa; GND con relleno en la cara inferior.
 - Corriente: el firmware limita a 500 mA (`27` §4). El polyfuse de 0,75 A de la rama está en PCB-M (`24` §5).
 
-## 7. Costo y alternativa
+## 7. Costo: una placa o dos
 
-PCB-K se cobra por su rectángulo envolvente (246 × 292 mm), casi todo hueco por la ventana. **Alternativa D-K2:**
-partirla en dos (izquierda: edición, SHIFT/UNDO, motor, sección y navegación, ~102 × 216; frente-derecha: transporte
-y escenas, ~144 × 152) unidas por un cable de 6 vías (I2C, +3V3, GND, LED_DIN, +5V). Baja el área envolvente ~40 % a
-cambio de un conector y un cable más. Cotizar ambas en JLC antes de decidir; la spec del esquema es la misma (0x21
-iría a la placa derecha, 0x22 y 0x23 a la izquierda).
+Cotización JLC del 2026-11-12 (calculadora pública; 2 capas, 1,6 mm, verde, 5 unidades, 1 diseño, sin envío ni
+ensamble; el negro puede cambiar ambos precios por igual):
+
+| Opción | Envolvente | Precio |
+|---|---|---:|
+| Una placa | 246 × 292 | 56,18 USD |
+| Dos placas: izquierda (edición, SHIFT/UNDO, motor, sección, navegación, J1) | 102 × 216 | 14,70 USD |
+| ″ frente-derecha (transporte y escenas) | 144 × 152 | 14,60 USD |
+| **Dos placas, total** | | **29,30 USD** |
+
+Partida: ahorra ~27 USD, se elimina la franja de 4 mm sobre la ventana de la M4 y se suma un cable corto de 6 vías
+(+3V3, GND, SDA, SCL, +5V_LED, LED_DATA) entre la esquina (108, 104) de ambas. 0x21 va a la derecha; 0x22, 0x23 y J1 a
+la izquierda. La cadena de LEDs se reordena para empezar en la izquierda y terminar en la derecha (un solo hilo de
+datos en el cable); eso cambia la tabla de índices de `27` §1 y del firmware (cambio pequeño). Si JLC ensambla, son
+dos cargos de preparación en vez de uno: cotizarlo antes de elegir ensamble.
 
 ## 8. Verificación
 
@@ -136,5 +147,5 @@ iría a la placa derecha, 0x22 y 0x23 a la izquierda).
 | | Pregunta | Recomendación |
 |---|---|---|
 | D-K1 | ¿Teclas en zócalo hot-swap o soldadas? | Hot-swap |
-| D-K2 | ¿Una placa o dos (§7)? | Cotizar ambas; si la diferencia es pequeña, una |
-| D-K3 | ¿Posiciones v1 (con tus ajustes) o v5 (§2)? | v1, la de la chapa |
+| D-K2 | ¿Una placa o dos (§7)? | Dos: 29 contra 56 USD |
+| D-K3 | ~~Posiciones~~ | Resuelto: v1 (§2) |

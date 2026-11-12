@@ -11,8 +11,8 @@ PCB-K,vértice 9,252,180,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 10,236,180,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 11,236,173,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 12,68,173,,,"contorno, sentido horario desde el frente izquierdo"
-PCB-K,vértice 13,68,226,,,"contorno, sentido horario desde el frente izquierdo"
-PCB-K,vértice 14,73,226,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 13,68,221,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 14,73,221,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 15,73,320,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 16,50,320,,,"contorno, sentido horario desde el frente izquierdo"
 PCB-K,vértice 17,50,311,,,"contorno, sentido horario desde el frente izquierdo"
@@ -35,20 +35,20 @@ PCB-K,Choc V2,151,39.5,15,15,STOP · LED verde
 PCB-K,Choc V2,170,39.5,15,15,REC · LED verde
 PCB-K,Choc V2,189,39.5,15,15,LOOP · LED verde
 PCB-K,Choc V2,208,39.5,15,15,METRO · LED verde
-PCB-K,Choc V2,64,310,15,15,BACK · LED violeta
-PCB-K,Choc V2,64,291.5,15,15,MENU · LED violeta
-PCB-K,Choc V2,64,273,15,15,NAV_L · LED violeta
-PCB-K,Choc V2,64,254.5,15,15,NAV_R · LED violeta
-PCB-K,Choc V2,64,236,15,15,BROWSE · LED violeta
-PCB-K,Choc V2,20,182,15,15,CUE_ENG · LED verde
-PCB-K,Choc V2,39,182,15,15,FILL · LED verde
-PCB-K,Choc V2,58,182,15,15,TAP · LED verde
-PCB-K,Choc V2,20,163,15,15,BUILD · LED verde
-PCB-K,Choc V2,39,163,15,15,DROP · LED verde
-PCB-K,Choc V2,58,163,15,15,BREAK · LED verde
+PCB-K,Choc V2,64,305,15,15,BACK · LED violeta
+PCB-K,Choc V2,64,286.5,15,15,MENU · LED violeta
+PCB-K,Choc V2,64,268,15,15,NAV_L · LED violeta
+PCB-K,Choc V2,64,249.5,15,15,NAV_R · LED violeta
+PCB-K,Choc V2,64,231,15,15,BROWSE · LED violeta
+PCB-K,Choc V2,20,174,15,15,CUE_ENG · LED verde
+PCB-K,Choc V2,39,174,15,15,FILL · LED verde
+PCB-K,Choc V2,58,174,15,15,TAP · LED verde
+PCB-K,Choc V2,20,155,15,15,BUILD · LED verde
+PCB-K,Choc V2,39,155,15,15,DROP · LED verde
+PCB-K,Choc V2,58,155,15,15,BREAK · LED verde
 PCB-K,Choc V2,20,132.5,15,15,SHIFT · LED violeta
 PCB-K,Choc V2,39,132.5,15,15,UNDO · LED violeta
-PCB-K,agujero,10,147.5,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,30,144,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
 PCB-K,agujero,82,124,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
 PCB-K,agujero,10,200,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
 PCB-K,agujero,64,204,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
