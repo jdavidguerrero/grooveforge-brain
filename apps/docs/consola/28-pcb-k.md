@@ -44,12 +44,17 @@ Valen las v1, que son además las que corta la chapa.
 - Huella Choc con **zócalo hot-swap Kailh CPG135001S30** (LCSC C5333465, ~0,16 USD c/u, sin stock el 2026-11-12;
   también se vende por bolsas). Se compran aparte de las teclas: 26 + repuestos. Se sueldan a mano (SMD de 2 pads) o
   los pone JLC. Confirmar con la hoja de la Choc V2 que usa el mismo zócalo. Alternativa: teclas soldadas.
-  **D-K1 pendiente.**
+  **D-K1: zócalos (Juan, 2026-11-12).** Huella base: `Kailh_Choc_V2` de la librería siderakb/key-switches.pretty
+  (poste central más grande que la V1, sin los postes laterales de la V1), a confirmar con la medición de §3.
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
   Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.
-- Modelo de Juan: Choc V2 Low Profile Brown, 4 patas (2 eléctricas + 2 de plástico), ventana para LED SMD de
+- Modelo de Juan (a confirmar): Choc V2 Low Profile Brown, 4 patas (2 eléctricas + 2 de plástico), ventana para LED SMD de
   montaje inverso: encaja con el SK6812MINI-E de §6. La huella se dibuja con las patas medidas con calibre en una
   tecla real (centro, patas eléctricas y postes), no con la de la Choc V1.
+- **Ojo:** la hoja que encontró Juan es de la **PG1511** (CPG151101S22, perfil bajo con patas en posición MX), no de la
+  Choc V2 (PG1353). Son teclas distintas: la PG1511 mide 15,25 mm de alto y su carcasa superior queda ~11 mm sobre la
+  PCB, lo que no cabe en la luz de 1,4 mm de §2. Prueba rápida: distancia entre las dos patas metálicas,
+  **≈ 5,4 mm → Choc** (V1/V2 comparten esas patas), **≈ 6,8 mm → PG1511/MX**.
 - LED en la ventana de la tecla, desplazado hacia atrás (+y) del centro; distancia exacta según la hoja de la Choc V2
   (verificar con una tecla real antes de enviar el layout).
 
@@ -149,6 +154,7 @@ dos cargos de preparación en vez de uno: cotizarlo antes de elegir ensamble.
 
 | | Pregunta | Recomendación |
 |---|---|---|
-| D-K1 | ¿Teclas en zócalo hot-swap o soldadas? | Hot-swap |
-| D-K2 | ¿Una placa o dos (§7)? | Dos: 29 contra 56 USD |
+| D-K1 | ~~Zócalo o soldadas~~ | Resuelto: zócalos |
+| D-K2 | ~~Una o dos placas~~ | Resuelto: dos (§7) |
+| D-K4 | ¿Las teclas son Choc V2 (PG1353) o PG1511? | Medir las patas (§3) |
 | D-K3 | ~~Posiciones~~ | Resuelto: v1 (§2) |
