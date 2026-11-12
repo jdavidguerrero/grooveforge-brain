@@ -15,6 +15,12 @@ uint8_t input_gain = 5, hp_volume = 64;
 uint8_t applied_input = 255, applied_hp = 255;
 uint16_t cv = 0, applied_cv = 65535;
 uint32_t codec_probe = 0, dac_probe = 0;
+// A single NACK/timeout on the shared bus (cable noise, hot-plug) must not re-run enable(): that mutes the
+// headphones/line out and blocks the loop ~400 ms. Only CODEC_MISS_LIMIT consecutive misses take it offline.
+constexpr uint8_t CODEC_MISS_LIMIT = 3;
+uint8_t codec_miss = 0;
+uint32_t codec_misses = 0;
+bool codec_miss_take_offline() { ++codec_misses; return ++codec_miss >= CODEC_MISS_LIMIT; }
 #ifdef GF_CONSOLA_BRAIN
 MoogModelD brain;
 AudioConnection brain_left(brain.getOutput(),0,g_engine_mix_a,0);
@@ -47,18 +53,24 @@ void poll_codec(uint32_t now) {
         if (ok) ok = g_codec.lineInLevel(input_gain) && g_codec.volume(hp_volume/127.0f);
         if (!ok) { codec.failed(micros()); return; }
         codec.succeeded();
+        codec_miss = 0;
         applied_input = input_gain;
         applied_hp = hp_volume;
         codec_probe = micros();
     } else if (applied_input != input_gain || applied_hp != hp_volume) {
         const bool ok = (applied_input == input_gain || g_codec.lineInLevel(input_gain)) &&
                         (applied_hp == hp_volume || g_codec.volume(hp_volume/127.0f));
-        if (!ok) { codec.failed(micros()); return; }
+        if (!ok) {
+            if (codec_miss_take_offline()) { codec_miss = 0; codec.failed(micros()); }
+            return; // retried on the next loop: applied_* still differ
+        }
+        codec_miss = 0;
         applied_input = input_gain;
         applied_hp = hp_volume;
     } else if (now - codec_probe >= 1000000) {
         codec_probe = now;
-        if (!probe(0x0a)) codec.failed(micros());
+        if (probe(0x0a)) codec_miss = 0;
+        else if (codec_miss_take_offline()) { codec_miss = 0; codec.failed(micros()); }
     }
 }
 void poll_cv(uint32_t now) {
@@ -82,8 +94,8 @@ void pot_changed(uint8_t pot, uint8_t value) {
     if (pot == 2) input_gain = uint16_t(value)*15/127;
 }
 void stats(char* out, size_t size) {
-    snprintf(out,size," codec=%u cv=%u codec_errors=%lu cv_errors=%lu cv_enabled=%u codec_retry_us=%lu cv_retry_us=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
-        unsigned(codec.online()),unsigned(dac.online()),(unsigned long)codec.errors(),(unsigned long)dac.errors(),
+    snprintf(out,size," codec=%u cv=%u codec_misses=%lu codec_errors=%lu cv_errors=%lu cv_enabled=%u codec_retry_us=%lu cv_retry_us=%lu audio_cpu_max_x100=%lu audio_blocks_max=%u",
+        unsigned(codec.online()),unsigned(dac.online()),(unsigned long)codec_misses,(unsigned long)codec.errors(),(unsigned long)dac.errors(),
         unsigned(!GF_CONSOLA_MINIMAL),(unsigned long)codec.retry_us(),(unsigned long)dac.retry_us(),
         (unsigned long)(AudioProcessorUsageMax()*100),unsigned(AudioMemoryUsageMax()));
 }
@@ -144,15 +156,19 @@ void setup() {
     while (!Serial && millis() < 4000) {}
     DIAG("diag: setup inicio");
 #endif
-    surface::begin(command,pot_changed,stats);
-    DIAG("diag: surface::begin listo");
+    // Codec first, before surface::begin() starts the key-LED DMA and the 250 us I2C deadline: on the bench
+    // (2026-11-12) init after them failed every retry with the LED data line connected, never once before.
+    Wire.setWireTimeout(2000);
     // Reuse the existing graph, with no engine/FX objects unless explicitly enabled.
     if (audio_graph::init(hp_volume/127.0f)) {
         codec.succeeded();
+        codec_miss = 0;
         applied_input = input_gain;
         applied_hp = hp_volume;
     } else codec.failed(micros());
     DIAG("diag: audio_graph::init listo");
+    surface::begin(command,pot_changed,stats);
+    DIAG("diag: surface::begin listo");
     Wire.setClock(400000);
     audio_graph::set_usb_out_source(1);
     DIAG("diag: setup fin");

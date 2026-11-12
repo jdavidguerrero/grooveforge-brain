@@ -483,7 +483,11 @@ void surface::begin(CommandHandler commands, PotHandler pots_callback, StatsHand
     for (const auto pin : POT_PINS) pinMode(pin,INPUT_DISABLE);
     for (uint8_t i = 0; i < ENCODER_COUNT; ++i) encoder_positions[i] = encoders[i].read();
 #ifdef GF_CONSOLA_UNO
+#ifdef GF_NO_KEYLED_DMA  // bench bisect only: pin 13 static LOW, no DMA
+    pinMode(13,OUTPUT);digitalWrite(13,LOW);
+#else
     key_led_dma::begin();
+#endif
     if (PROFILE.selector) pinMode(41,INPUT_DISABLE);
 #endif
     // PJRC startup analog_init has already calibrated both ADCs synchronously.
@@ -593,7 +597,11 @@ void surface::poll() {
 #ifdef GF_CONSOLA_UNO
     key_led_return.render(led_now);
     if(key_led_pending || memcmp(key_led_sent,key_led_return.colors(),sizeof(key_led_sent))) {
+#ifdef GF_NO_KEYLED_DMA
+        if(true) {
+#else
         if(key_led_dma::submit(key_led_return.colors(),micros())) {
+#endif
             memcpy(key_led_sent,key_led_return.colors(),sizeof(key_led_sent));key_led_pending=false;
         }
     }
