@@ -5,21 +5,24 @@
   (uuid 8dbe80b0-e0c1-53a9-903c-5798354279d8)
   (paper "A3")
   (lib_symbols
-    (symbol "Connector_Audio:AudioJack2"
+    (symbol "Connector_Generic:Conn_01x02"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
       (exclude_from_sim no)
       (in_bom yes)
       (on_board yes)
       (in_pos_files yes)
       (duplicate_pin_numbers_are_jumpers no)
       (property "Reference" "J"
-        (at 0 8.89 0)
+        (at 0 2.54 0)
         (show_name no)
         (do_not_autoplace no)
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Value" "AudioJack2"
-        (at 0 6.35 0)
+      (property "Value" "Conn_01x02"
+        (at 0 -5.08 0)
         (show_name no)
         (do_not_autoplace no)
         (effects
@@ -41,7 +44,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Description" "Audio Jack, 2 Poles (Mono / TS)"
+      (property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -49,7 +52,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "ki_keywords" "audio jack receptacle mono phone headphone TS connector"
+      (property "ki_keywords" "connector"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -57,7 +60,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "ki_fp_filters" "Jack*"
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -65,85 +68,72 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (symbol "AudioJack2_0_1"
+      (symbol "Conn_01x02_1_1"
         (rectangle
-          (start -3.81 0)
-          (end -2.54 -2.54)
-          (stroke
-            (width 0.254)
-            (type default))
-          (fill
-            (type outline)))
-        (rectangle
-          (start -2.54 3.81)
-          (end 2.54 -2.54)
+          (start -1.27 1.27)
+          (end 1.27 -3.81)
           (stroke
             (width 0.254)
             (type default))
           (fill
             (type background)))
-        (polyline
-          (pts
-            (xy 0 0)
-            (xy 0.635 -0.635)
-            (xy 1.27 0)
-            (xy 2.54 0))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
           (stroke
-            (width 0.254)
+            (width 0.1524)
             (type default))
           (fill
             (type none)))
-        (polyline
-          (pts
-            (xy 2.54 2.54)
-            (xy -0.635 2.54)
-            (xy -0.635 0)
-            (xy -1.27 -0.635)
-            (xy -1.905 0))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
           (stroke
-            (width 0.254)
+            (width 0.1524)
             (type default))
           (fill
-            (type none))))
-      (symbol "AudioJack2_1_1"
+            (type none)))
         (pin passive line
-          (at 5.08 2.54 180)
-          (length 2.54)
-          (name ""
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_1"
             (effects
               (font
                 (size 1.27 1.27))))
-          (number "S"
+          (number "1"
             (effects
               (font
                 (size 1.27 1.27)))))
         (pin passive line
-          (at 5.08 0 180)
-          (length 2.54)
-          (name ""
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_2"
             (effects
               (font
                 (size 1.27 1.27))))
-          (number "T"
+          (number "2"
             (effects
               (font
                 (size 1.27 1.27))))))
       (embedded_fonts no))
-    (symbol "Connector_Audio:AudioJack3"
+    (symbol "Connector_Generic:Conn_01x03"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
       (exclude_from_sim no)
       (in_bom yes)
       (on_board yes)
       (in_pos_files yes)
       (duplicate_pin_numbers_are_jumpers no)
       (property "Reference" "J"
-        (at 0 8.89 0)
+        (at 0 5.08 0)
         (show_name no)
         (do_not_autoplace no)
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Value" "AudioJack3"
-        (at 0 6.35 0)
+      (property "Value" "Conn_01x03"
+        (at 0 -5.08 0)
         (show_name no)
         (do_not_autoplace no)
         (effects
@@ -165,7 +155,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Description" "Audio Jack, 3 Poles (Stereo / TRS)"
+      (property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -173,7 +163,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "ki_keywords" "audio jack receptacle stereo headphones phones TRS connector"
+      (property "ki_keywords" "connector"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -181,7 +171,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "ki_fp_filters" "Jack*"
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -189,89 +179,69 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (symbol "AudioJack3_0_1"
+      (symbol "Conn_01x03_1_1"
         (rectangle
-          (start -5.08 -5.08)
-          (end -6.35 -2.54)
-          (stroke
-            (width 0.254)
-            (type default))
-          (fill
-            (type outline)))
-        (polyline
-          (pts
-            (xy -1.905 -2.54)
-            (xy -1.27 -3.175)
-            (xy -0.635 -2.54)
-            (xy -0.635 0)
-            (xy 2.54 0))
-          (stroke
-            (width 0.254)
-            (type default))
-          (fill
-            (type none)))
-        (polyline
-          (pts
-            (xy 0 -2.54)
-            (xy 0.635 -3.175)
-            (xy 1.27 -2.54)
-            (xy 2.54 -2.54))
-          (stroke
-            (width 0.254)
-            (type default))
-          (fill
-            (type none)))
-        (rectangle
-          (start 2.54 3.81)
-          (end -5.08 -5.08)
+          (start -1.27 3.81)
+          (end 1.27 -3.81)
           (stroke
             (width 0.254)
             (type default))
           (fill
             (type background)))
-        (polyline
-          (pts
-            (xy 2.54 2.54)
-            (xy -2.54 2.54)
-            (xy -2.54 -2.54)
-            (xy -3.175 -3.175)
-            (xy -3.81 -2.54))
+        (rectangle
+          (start -1.27 2.667)
+          (end 0 2.413)
           (stroke
-            (width 0.254)
+            (width 0.1524)
             (type default))
           (fill
-            (type none))))
-      (symbol "AudioJack3_1_1"
+            (type none)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
         (pin passive line
-          (at 5.08 0 180)
-          (length 2.54)
-          (name ""
+          (at -5.08 2.54 0)
+          (length 3.81)
+          (name "Pin_1"
             (effects
               (font
                 (size 1.27 1.27))))
-          (number "R"
+          (number "1"
             (effects
               (font
                 (size 1.27 1.27)))))
         (pin passive line
-          (at 5.08 2.54 180)
-          (length 2.54)
-          (name ""
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_2"
             (effects
               (font
                 (size 1.27 1.27))))
-          (number "S"
+          (number "2"
             (effects
               (font
                 (size 1.27 1.27)))))
         (pin passive line
-          (at 5.08 -2.54 180)
-          (length 2.54)
-          (name ""
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_3"
             (effects
               (font
                 (size 1.27 1.27))))
-          (number "T"
+          (number "3"
             (effects
               (font
                 (size 1.27 1.27))))))
@@ -446,65 +416,65 @@
       (embedded_fonts no)))
   (wire
     (pts
-      (xy 68.58 63.5)
-      (xy 71.12 63.5))
+      (xy 58.42 60.96)
+      (xy 55.88 60.96))
     (stroke
       (width 0)
       (type default))
-    (uuid 2f39528b-309e-51c6-b6bf-daa16880c1b3))
-  (label "LINE_IN_L_R"
-    (at 71.12 63.5 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid fb4ccb92-38d1-50d1-8431-c5944dc6e1b1))
-  (wire
-    (pts
-      (xy 68.58 60.96)
-      (xy 71.12 60.96))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 72faa4fe-f55c-55bc-84a9-15f36cc5f021))
-  (global_label "AGND"
+    (uuid b22585a9-6bfe-510f-8368-577a03984df4))
+  (global_label "LINE_IN_L_T"
     (shape bidirectional)
-    (at 71.12 60.96 180)
+    (at 55.88 60.96 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid c1abecf8-ad9a-59a6-a657-045fef0b9bab)
+      (justify right))
+    (uuid 434247e3-a851-5ab6-b333-5e464af5dfae)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 60.96 0)
+      (at 55.88 60.96 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 68.58 66.04)
-      (xy 71.12 66.04))
+      (xy 58.42 63.5)
+      (xy 55.88 63.5))
     (stroke
       (width 0)
       (type default))
-    (uuid 5406975d-afc1-5576-ac43-1778fc08713b))
-  (global_label "LINE_IN_L_T"
-    (shape bidirectional)
-    (at 71.12 66.04 180)
+    (uuid 1077d385-92f4-5f64-9690-3b663ec20224))
+  (label "LINE_IN_L_R"
+    (at 55.88 63.5 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 315ddcce-832a-59fd-9452-f747662c0570)
+      (justify right))
+    (uuid ff14808c-4386-529f-be6a-6ed57de2cc91))
+  (wire
+    (pts
+      (xy 58.42 66.04)
+      (xy 55.88 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b0d6fd98-d267-5424-b678-dd027fbd1b2c))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 55.88 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1aadcbeb-26e0-5ad6-abfa-9ccd8f9d4a40)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 66.04 0)
+      (at 55.88 66.04 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack3")
+    (lib_id "Connector_Generic:Conn_01x03")
     (at 63.5 63.5 0)
     (unit 1)
     (in_bom yes)
@@ -516,77 +486,77 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "NRJ3HF-1_LINE_IN_L"
+    (property "Value" "LINE_IN_L_PANEL_CABLE"
       (at 63.5 57.15 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
       (at 63.5 63.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "R"
-      (uuid ca10e14b-d73f-56b3-bbba-4a90b8fcb5c1))
-    (pin "S"
-      (uuid dba913e5-3ada-55c8-aba7-4babc2325146))
-    (pin "T"
-      (uuid d59b69d4-6055-5b50-9172-06ad7bd57732))
+    (pin "1"
+      (uuid 8e17f7db-784a-5395-b9d4-56758c4ddb91))
+    (pin "2"
+      (uuid f7504cc8-e06d-5bb9-bdfc-797f4bd828c7))
+    (pin "3"
+      (uuid 0b696381-f2a6-582f-82cc-8680a1b0ab43))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
           (reference "J_LINE_IN_L")
           (unit 1)))))
-  (no_connect
-    (at 157.48 63.5)
-    (uuid e92d7e21-a062-56ea-b524-7b01e28a4ecc))
   (wire
     (pts
-      (xy 157.48 60.96)
-      (xy 160.02 60.96))
+      (xy 147.32 60.96)
+      (xy 144.78 60.96))
     (stroke
       (width 0)
       (type default))
-    (uuid db0594a4-f1a4-5f3e-ba8a-86f7282defec))
-  (global_label "AGND"
+    (uuid 950b3992-a5cc-59af-8195-b8d947ed30e1))
+  (global_label "LINE_OUT_L_T"
     (shape bidirectional)
-    (at 160.02 60.96 180)
+    (at 144.78 60.96 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid f7122d4c-848b-52de-b191-8fe5ca3a992a)
+      (justify right))
+    (uuid 85ddec31-14b6-5616-b8b1-ceef29b21632)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 60.96 0)
+      (at 144.78 60.96 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
+  (no_connect
+    (at 147.32 63.5)
+    (uuid 3de0e061-3f2d-571c-9671-dbca6ebcc178))
   (wire
     (pts
-      (xy 157.48 66.04)
-      (xy 160.02 66.04))
+      (xy 147.32 66.04)
+      (xy 144.78 66.04))
     (stroke
       (width 0)
       (type default))
-    (uuid 6101d0b6-340c-5be7-9491-1ef24e8f29e3))
-  (global_label "LINE_OUT_L_T"
+    (uuid c3cfc6f2-e9dd-561a-9380-3e8091ce6027))
+  (global_label "AGND"
     (shape bidirectional)
-    (at 160.02 66.04 180)
+    (at 144.78 66.04 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 7b046f1d-aef5-5ef1-931a-e5d392333843)
+      (justify right))
+    (uuid 8a0de1ec-4844-5ed2-8500-ce409ef08f06)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 66.04 0)
+      (at 144.78 66.04 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack3")
+    (lib_id "Connector_Generic:Conn_01x03")
     (at 152.4 63.5 0)
     (unit 1)
     (in_bom yes)
@@ -598,23 +568,23 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "6.35mm_LINE_OUT_L"
+    (property "Value" "LINE_OUT_L_PANEL_CABLE"
       (at 152.4 57.15 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" ""
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
       (at 152.4 63.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "R"
-      (uuid 015f5a70-0ef8-5f11-b8b9-01b0402ccadc))
-    (pin "S"
-      (uuid f6f0be77-3a78-5f17-944f-cf056733954e))
-    (pin "T"
-      (uuid f20bd0a3-c8f0-5a38-8550-d1b821e89ce7))
+    (pin "1"
+      (uuid c05ec22f-5c92-5f5e-b034-48ba749b3a15))
+    (pin "2"
+      (uuid 2d4e8ee2-a13a-542a-8c0d-f88097d75876))
+    (pin "3"
+      (uuid fd4abd29-a3ce-5802-a991-a671f518b61a))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
@@ -622,50 +592,50 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 246.38 60.96)
-      (xy 248.92 60.96))
+      (xy 236.22 63.5)
+      (xy 233.68 63.5))
     (stroke
       (width 0)
       (type default))
-    (uuid 69b1e63a-5d59-5f77-81d2-dffabb2333c9))
-  (global_label "AGND"
+    (uuid 11974ce4-2988-5331-8021-7a98241b9ebe))
+  (global_label "CV1_PROTECTED"
     (shape bidirectional)
-    (at 248.92 60.96 180)
+    (at 233.68 63.5 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid eec3baf4-11da-58b4-ac55-e21930627c42)
+      (justify right))
+    (uuid 49ec6f4e-6dfd-56ba-b816-87981f9db18c)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 248.92 60.96 0)
+      (at 233.68 63.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 246.38 63.5)
-      (xy 248.92 63.5))
+      (xy 236.22 66.04)
+      (xy 233.68 66.04))
     (stroke
       (width 0)
       (type default))
-    (uuid cbe4b437-53ae-5ca4-b243-575d33cc707a))
-  (global_label "CV1_OUT"
+    (uuid 58c65ec5-e2fc-5e00-968d-4150f21830c9))
+  (global_label "AGND"
     (shape bidirectional)
-    (at 248.92 63.5 180)
+    (at 233.68 66.04 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid a82485d0-cf7e-5b15-b591-ad7078197f62)
+      (justify right))
+    (uuid 8137112e-43a8-5705-95e7-2ab1e941b18e)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 248.92 63.5 0)
+      (at 233.68 66.04 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack2")
+    (lib_id "Connector_Generic:Conn_01x02")
     (at 241.3 63.5 0)
     (unit 1)
     (in_bom yes)
@@ -673,25 +643,25 @@
     (dnp no)
     (uuid af32c8ee-bd60-5c90-9914-bd2c383d75b6)
     (property "Reference" "J_CV1"
-      (at 241.3 54.61 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Value" "3.5mm_CV1_OUT"
       (at 241.3 57.15 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" ""
+    (property "Value" "CV1_PANEL_CABLE"
+      (at 241.3 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
       (at 241.3 63.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "S"
-      (uuid 174e3b55-1c07-5648-9fb9-b1755dd6e8f8))
-    (pin "T"
-      (uuid ffd20a4d-356e-52b5-b9f7-4811f9930d0c))
+    (pin "1"
+      (uuid 4807d5ce-ed50-58f2-9cfb-dfe84340d09e))
+    (pin "2"
+      (uuid 28c75bb4-d102-5862-813f-41f12a0bf0a6))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
@@ -699,65 +669,65 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 68.58 127)
-      (xy 71.12 127))
+      (xy 58.42 124.46)
+      (xy 55.88 124.46))
     (stroke
       (width 0)
       (type default))
-    (uuid d931bd89-83e9-59b2-a602-8af853adad5f))
-  (label "LINE_IN_R_R"
-    (at 71.12 127 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 2d71d8da-6bd2-520c-822f-5a0f50fe67ba))
-  (wire
-    (pts
-      (xy 68.58 124.46)
-      (xy 71.12 124.46))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid a4e39f20-34f8-5b72-a4b1-5113e653fbca))
-  (global_label "AGND"
+    (uuid 63f5533a-0c15-5688-9bc5-ab44dc2ca49f))
+  (global_label "LINE_IN_R_T"
     (shape bidirectional)
-    (at 71.12 124.46 180)
+    (at 55.88 124.46 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 69916479-2d8c-51f7-a90b-0460861d110c)
+      (justify right))
+    (uuid 8b851d50-d7ee-5907-b12a-96b8cf1e408f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 124.46 0)
+      (at 55.88 124.46 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 68.58 129.54)
-      (xy 71.12 129.54))
+      (xy 58.42 127)
+      (xy 55.88 127))
     (stroke
       (width 0)
       (type default))
-    (uuid 65ae5ad0-1772-5c02-91af-1d5a4dfc1de4))
-  (global_label "LINE_IN_R_T"
-    (shape bidirectional)
-    (at 71.12 129.54 180)
+    (uuid 1e7dc3e5-4a57-5cf0-a7ba-50e51ce19187))
+  (label "LINE_IN_R_R"
+    (at 55.88 127 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 054db4b6-09fd-5f83-a833-d100be1e9121)
+      (justify right))
+    (uuid eaf218a1-365e-5c73-bdf2-22c5985401f6))
+  (wire
+    (pts
+      (xy 58.42 129.54)
+      (xy 55.88 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a6ee9317-1a32-5217-89c6-cd9664ebecbd))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 55.88 129.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a05a6b2a-b9ac-5d4b-8042-7757ae5316ff)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 129.54 0)
+      (at 55.88 129.54 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack3")
+    (lib_id "Connector_Generic:Conn_01x03")
     (at 63.5 127 0)
     (unit 1)
     (in_bom yes)
@@ -769,77 +739,77 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "NRJ3HF-1_LINE_IN_R"
+    (property "Value" "LINE_IN_R_PANEL_CABLE"
       (at 63.5 120.65 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal"
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
       (at 63.5 127 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "R"
-      (uuid 65a6c0c1-58c0-5154-a229-598c5a93ef8e))
-    (pin "S"
-      (uuid b92fd09c-9766-5236-8947-81788116df43))
-    (pin "T"
-      (uuid 20f34b08-01c2-548c-b9d1-84d54725ee10))
+    (pin "1"
+      (uuid 4cb3638e-290f-5b39-9b8f-291540771ab7))
+    (pin "2"
+      (uuid 75808b98-d526-5d52-95d4-3c81d38b7d57))
+    (pin "3"
+      (uuid 225410ff-91fe-59b6-855c-ff7ab0d3dc5c))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
           (reference "J_LINE_IN_R")
           (unit 1)))))
-  (no_connect
-    (at 157.48 127)
-    (uuid 34ea0cf2-921e-5921-808b-9456f0c8bc9c))
   (wire
     (pts
-      (xy 157.48 124.46)
-      (xy 160.02 124.46))
+      (xy 147.32 124.46)
+      (xy 144.78 124.46))
     (stroke
       (width 0)
       (type default))
-    (uuid ad9cc6fc-dae4-5689-9568-847d9dcbcce5))
-  (global_label "AGND"
+    (uuid f6949fdb-16ca-533f-a49e-06444a4c85f4))
+  (global_label "LINE_OUT_R_T"
     (shape bidirectional)
-    (at 160.02 124.46 180)
+    (at 144.78 124.46 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 154aa09b-3729-577d-b8d7-fea0f34e99f2)
+      (justify right))
+    (uuid 26fd6efc-413b-5d6d-8ce7-714e86359d01)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 124.46 0)
+      (at 144.78 124.46 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
+  (no_connect
+    (at 147.32 127)
+    (uuid f8f2a02a-f760-5a82-a4d4-b2991b560011))
   (wire
     (pts
-      (xy 157.48 129.54)
-      (xy 160.02 129.54))
+      (xy 147.32 129.54)
+      (xy 144.78 129.54))
     (stroke
       (width 0)
       (type default))
-    (uuid 495a19ce-9ce3-51ab-ad25-143407cc1225))
-  (global_label "LINE_OUT_R_T"
+    (uuid dbfd5c6f-1d89-50ab-b8c2-44e7b343e9a0))
+  (global_label "AGND"
     (shape bidirectional)
-    (at 160.02 129.54 180)
+    (at 144.78 129.54 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 4e0a6e24-dc3b-5254-92d3-58a93881cdf2)
+      (justify right))
+    (uuid 9dc7de10-4618-57ff-9c57-f9c747ae944d)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 129.54 0)
+      (at 144.78 129.54 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack3")
+    (lib_id "Connector_Generic:Conn_01x03")
     (at 152.4 127 0)
     (unit 1)
     (in_bom yes)
@@ -851,23 +821,23 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "6.35mm_LINE_OUT_R"
+    (property "Value" "LINE_OUT_R_PANEL_CABLE"
       (at 152.4 120.65 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" ""
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
       (at 152.4 127 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "R"
-      (uuid 48fb8f79-b861-5911-a513-8d8c929c1f28))
-    (pin "S"
-      (uuid 9f22544f-4a55-5980-86ec-e4afd5ca703f))
-    (pin "T"
-      (uuid 6740026a-ec14-5727-9647-c3aa5ebb06ba))
+    (pin "1"
+      (uuid 5610e32c-4484-51b7-897a-3af9d462b4f8))
+    (pin "2"
+      (uuid be6cb415-5201-5e98-8ae6-a3f970d945f0))
+    (pin "3"
+      (uuid a1996ab5-778e-58e8-bf91-ce3bfa9d6ce1))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
@@ -875,50 +845,50 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 246.38 124.46)
-      (xy 248.92 124.46))
+      (xy 236.22 127)
+      (xy 233.68 127))
     (stroke
       (width 0)
       (type default))
-    (uuid fae5c278-fe96-5b51-8b25-169a6f2f39c3))
-  (global_label "AGND"
+    (uuid 66dc0ca4-a4ea-5188-827f-4349cc822e04))
+  (global_label "CV2_PROTECTED"
     (shape bidirectional)
-    (at 248.92 124.46 180)
+    (at 233.68 127 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 6dc7a3f9-2d04-56b2-9bd8-bd13f4b8da70)
+      (justify right))
+    (uuid edc65ca8-a42f-526b-a9a2-a9d6ff8c9663)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 248.92 124.46 0)
+      (at 233.68 127 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 246.38 127)
-      (xy 248.92 127))
+      (xy 236.22 129.54)
+      (xy 233.68 129.54))
     (stroke
       (width 0)
       (type default))
-    (uuid 6fae93a3-fb62-5a5c-8a06-13ee09b310c2))
-  (global_label "CV2_OUT"
+    (uuid ff836c19-a90d-5e4b-ad84-af6acebb9103))
+  (global_label "AGND"
     (shape bidirectional)
-    (at 248.92 127 180)
+    (at 233.68 129.54 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid a4ba4d77-e2d4-543c-acee-70c896b4fa58)
+      (justify right))
+    (uuid d67db0f8-87f6-524f-882d-a4915a4ac98f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 248.92 127 0)
+      (at 233.68 129.54 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack2")
+    (lib_id "Connector_Generic:Conn_01x02")
     (at 241.3 127 0)
     (unit 1)
     (in_bom yes)
@@ -926,25 +896,25 @@
     (dnp no)
     (uuid 63962c82-2616-528d-a752-e4238af0375d)
     (property "Reference" "J_CV2"
-      (at 241.3 118.11 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Value" "3.5mm_CV2_OUT"
       (at 241.3 120.65 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" ""
+    (property "Value" "CV2_PANEL_CABLE"
+      (at 241.3 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
       (at 241.3 127 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "S"
-      (uuid 5462052d-3d92-5251-a051-4acb56b92393))
-    (pin "T"
-      (uuid 067e87ce-1f81-535c-8ccb-15860f96dbf5))
+    (pin "1"
+      (uuid 7fedbadb-a073-5ac8-a609-6e72e9f73ac7))
+    (pin "2"
+      (uuid 28056a57-0309-56cd-aa30-cc43675f8e55))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
@@ -952,154 +922,53 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 68.58 190.5)
-      (xy 71.12 190.5))
+      (xy 147.32 187.96)
+      (xy 144.78 187.96))
     (stroke
       (width 0)
       (type default))
-    (uuid 80e53b7f-e3ec-587d-8173-f0870b2528e1))
-  (global_label "HP_R"
-    (shape bidirectional)
-    (at 71.12 190.5 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid d96a3c7e-eed7-5140-9e0b-116c57594fdd)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 190.5 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (wire
-    (pts
-      (xy 68.58 187.96)
-      (xy 71.12 187.96))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid b29755c7-7c45-5e6d-9d7b-3f25247ced67))
-  (global_label "HP_VGND"
-    (shape bidirectional)
-    (at 71.12 187.96 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 3d208ada-fb87-57bf-9de7-7909514b6e01)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 187.96 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (wire
-    (pts
-      (xy 68.58 193.04)
-      (xy 71.12 193.04))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid dd4c7d9b-ab38-562a-8029-d6aed027898b))
-  (global_label "HP_L"
-    (shape bidirectional)
-    (at 71.12 193.04 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 124e3dc0-0974-561a-9c05-0d27b0bb319c)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 71.12 193.04 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (symbol
-    (lib_id "Connector_Audio:AudioJack3")
-    (at 63.5 190.5 0)
-    (unit 1)
-    (in_bom yes)
-    (on_board yes)
-    (dnp no)
-    (uuid b6b515fb-8eb3-55eb-89d3-e42a6f4d8ff8)
-    (property "Reference" "J_HP_CUE"
-      (at 63.5 181.61 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Value" "6.35mm_HP_CUE_front"
-      (at 63.5 184.15 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Footprint" ""
-      (at 63.5 190.5 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes)))
-    (pin "R"
-      (uuid 7d5015c6-0749-5b8a-871d-40f9832851a7))
-    (pin "S"
-      (uuid c8a46498-ef83-5c52-bbe4-b0059c46d9be))
-    (pin "T"
-      (uuid b5202036-189e-5679-ba0e-36dcd16b082b))
-    (instances
-      (project "pcb-m"
-        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
-          (reference "J_HP_CUE")
-          (unit 1)))))
-  (no_connect
-    (at 157.48 190.5)
-    (uuid 5d7cce90-90fd-594d-b388-eade0a77cdd2))
-  (wire
-    (pts
-      (xy 157.48 187.96)
-      (xy 160.02 187.96))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid d348da4e-d30c-5a2f-83d6-1d5a807b551a))
-  (global_label "GND"
-    (shape bidirectional)
-    (at 160.02 187.96 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 1a5b5a1e-924d-5fd9-a92a-1b9f13632b31)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 187.96 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (wire
-    (pts
-      (xy 157.48 193.04)
-      (xy 160.02 193.04))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid f0b27477-31b2-5004-9b5d-cefd3a9f2601))
+    (uuid df2d05c9-227d-588d-9098-d164ce0da768))
   (global_label "PEDAL_BTN"
     (shape bidirectional)
-    (at 160.02 193.04 180)
+    (at 144.78 187.96 0)
     (effects
       (font
         (size 1.0 1.0))
-      (justify left))
-    (uuid 57b11e6d-7175-501d-a144-3316c2b44206)
+      (justify right))
+    (uuid ae402ddc-fa0c-5fd8-9c3c-4d705f40e8e3)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 193.04 0)
+      (at 144.78 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (no_connect
+    (at 147.32 190.5)
+    (uuid 590124ea-86bb-5b1e-91b6-9b4951f8edfe))
+  (wire
+    (pts
+      (xy 147.32 193.04)
+      (xy 144.78 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c298440a-ef02-5fb5-acb3-5da3ddc0bcb0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 144.78 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 29275296-a966-5563-b720-5e04d244f07c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 144.78 193.04 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Connector_Audio:AudioJack3")
+    (lib_id "Connector_Generic:Conn_01x03")
     (at 152.4 190.5 0)
     (unit 1)
     (in_bom yes)
@@ -1111,23 +980,23 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Value" "6.35mm_PEDAL_TRS"
+    (property "Value" "PEDAL_PANEL_CABLE"
       (at 152.4 184.15 0)
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" ""
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
       (at 152.4 190.5 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes)))
-    (pin "R"
-      (uuid c2771301-1fa7-59bd-b2bf-511e95884d2a))
-    (pin "S"
-      (uuid 477e0a90-4994-52aa-a964-523867261e95))
-    (pin "T"
-      (uuid 8dac584c-937f-5399-bdcb-5ac1671a7c61))
+    (pin "1"
+      (uuid 913148ca-455d-56a4-9d64-988dd8510c9b))
+    (pin "2"
+      (uuid 9f826663-6f78-5414-8df7-7a56900c7491))
+    (pin "3"
+      (uuid 1c2bf0ff-1448-52d7-9b61-59ab1b29bc7c))
     (instances
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
@@ -1187,24 +1056,31 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
           (reference "J_EDRUM")
           (unit 1)))))
-  (text "D9: LINE OUT despues del capacitor; sleeve HP = HP_VGND, nunca AGND."
+  (text "D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack."
     (at 15.24 20.32 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 3ff68ddb-78ff-5954-bd9a-caa0226b3270))
-  (text "Footprints jacks salida/HP/CV/pedal no definidos por README: se conservan vacios."
+  (text "TRS: 1=tip/2=ring/3=sleeve; TS CV: 1=tip/2=sleeve. HP solo por J_HP (06)."
     (at 15.24 24.13 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid c8a99c02-726a-515d-a720-1c4bc4dd163f))
-  (text "Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir."
+  (text "Captura anterior sin contactos de deteccion; no se agrega deteccion de insercion."
     (at 15.24 27.94 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid e794c32a-0f9e-5865-8525-c92cf2c9a051)))
+    (uuid e794c32a-0f9e-5865-8525-c92cf2c9a051))
+  (text "Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir."
+    (at 15.24 31.75 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2c724999-1131-5be1-960f-7b386ff04ed6)))

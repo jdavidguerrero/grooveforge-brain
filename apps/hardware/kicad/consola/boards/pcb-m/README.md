@@ -1,264 +1,236 @@
 # PCB-M — Placa Principal GrooveForge Consola
 
-> Esquemático jerárquico en KiCad 10. Sin layout PCB.
-> Regenerado con `tools/schgen/` el 2026-11-12 (KiCad 10.0.6). Layout sin cambios.
-> Docs de referencia: `apps/docs/consola/24-placa-principal.md`, `17-mapa-pines-teensy.md`, `25-panel-consola.md`, `kicad/consola/boards/CONNECTORS.md`.
->
-> **Cambio 2026-11-11 (rev. 1):** No habrá PCB-N. Jog (EC11), pots IN/CUE/MASTER, selector de pad
-> y jack HP son componentes de panel, cableados directamente a PCB-M vía conectores wire-to-board
-> en sheet 06.
->
-> **Cambio 2026-11-11 (rev. 2):** MCP23017 0x23 se mueve FUERA de PCB-M → vive en PCB-K junto con
-> 0x21 y 0x22. PCB-M ya no tiene ningún MCP23017. El conector J_PCB_K (sheet 08) es el puente
-> PCB-M ↔ PCB-K: lleva I2C (SDA/SCL), +3.3V, LED_DIN_5V (buffer 5V), +5V_LED, GND, JOG_CLICK
-> (clic del encoder jog desde J_JOG) y PEDAL_BTN (desde jack trasero). JOG_A/B permanecen en
-> Teensy T37/T40 sin pasar por PCB-K.
+> Esquemático jerárquico KiCad 10, decisiones **D8–D15 aprobadas por Juan el 2026-11-12**
+> (`apps/docs/consola/24-placa-principal.md` §8). Sin layout PCB; no es aprobación de fabricación.
+> Descripción eléctrica: `tools/schgen/pcb_m.py`. Firmware: `apps/consola/surface/include/consola_s/ConsolaMap.h`
+> y `apps/docs/consola/17-mapa-pines-teensy.md`. Conector fabricado: `../CONNECTORS.md`.
 
----
+No habrá PCB-N: jog, pots IN/CUE/MASTER, selector y audífonos son componentes de panel por cable.
+PCB-M no lleva MCP23017: **0x20 está en PCB-A; 0x21/0x22/0x23 en la PCB-K única**, que reemplaza
+K1/K2. JOG_A/B van a Teensy 37/40; JOG_CLICK y PEDAL_BTN viajan por J_PCB_K al MCP 0x23.
 
-## Tabla de bloques (10 sub-sheets)
+## Bloques (10 subhojas)
 
-| # | Archivo | Bloque | Componentes clave |
+| # | Hoja | Contenido |
+|---|---|---|
+| 01 | `01-teensy` | Sockets Teensy 4.1 y Audio Shield Rev D (módulos); I2S interno |
+| 02 | `02-analog-front` | Frente Studio: pad 33k/12k/5.1k, polos A/B del selector por cable, acople 1µF, 1k, BAT54S, bias 100k a VREF; MCP6004 seguidores L/R/VREF; LINE OUT 10µF + 47k sin buffer; divisor PAD_SEL 10k/10k |
+| 03 | `03-adc` | ADS1115 0x48 faders AIN0–3; 0x49 expresión/Sharp |
+| 04 | `04-mcp-io` | **Vacía**, reservada; MCP 0x23 vive en PCB-K |
+| 05 | `05-cv-dac` | MCP4725 0x60/0x61, MCP6004 ganancia 1,5; 1k serie + BAT54S por CV |
+| 06 | `06-surface` | JST-PH para jog, pots, selector, HP y FSR; RC 1k/100nF por pot |
+| 07 | `07-midi` | Opto 6N138 y polarización; JST-PH para MIDI TRS **tipo A**, OUT 33Ω/10Ω |
+| 08 | `08-connectors-panel` | IDC PCB-A, Qwiic, Serial7 M4, PCB-K, Sharp/expresión |
+| 09 | `09-connectors-rear` | JST-PH hacia LINE IN/OUT, CV, pedal; E-drum DNP |
+| 10 | `10-power` | J_5V_LED_IN → F1; LDO +3.3VA; NT1 AGND/GND; buffer LED y pull-ups I2C |
+
+## Cross-reference: Teensy ↔ señales de PCB-A y panel (D8)
+
+**Manda el pinout de PCB-A ya fabricada**, no la antigua columna Teensy de CONNECTORS.md.
+Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actual:
+
+| Teensy | Función | Net PCB-M | Ruta |
 |---|---|---|---|
-| 01 | `sheets/01-teensy.kicad_sch` | Teensy 4.1 + Audio Shield | Teensy 4.1 (módulo), SGTL5000 Audio Shield (módulo) |
-| 02 | `sheets/02-analog-front.kicad_sch` | Analog front end | Copia de la portadora Studio: pad 33k/12k/5.1k + SW_PAD (3P3T polos A/B), 1µF, 1k, BAT54S a +3.3VA/AGND, bias 100k a VREF, U_OA_IN MCP6004 (seguidores L/R + VREF 10k/10k), 4.7µF → SHIELD_LINE_IN; LINE OUT 10µF + 47k (sin buffer); escalera PAD_SEL (SW_PAD_SEL polo C + 10k/10k) |
-| 03 | `sheets/03-adc.kicad_sch` | ADC 16-bit ×2 | ADS1115IDGSR ×2 (0x48 FADERs, 0x49 EXP/Sharp) |
-| 04 | `sheets/04-mcp-io.kicad_sch` | GPIO expander I/O | **VACÍO** — MCP23017 0x23 movido a PCB-K (rev. 2026-11-11); sheet reservado para uso futuro |
-| 05 | `sheets/05-cv-dac.kicad_sch` | CV DAC ×2 + buffer | MCP4725A0T-E/CH ×2 (0x60/0x61), MCP6004 ×1 buffer 1.5× |
-| 06 | `sheets/06-surface.kicad_sch` | Superficie: conectores panel + FSR | Wire-to-board: J_JOG 4-pin, J_POT_MASTER/CUE/IN 3-pin×3, J_PAD_SEL 3-pin, J_HP 3-pin; JST-PH FSR ×4, R pulldown 10kΩ ×4 |
-| 07 | `sheets/07-midi.kicad_sch` | MIDI TRS In/Out | 6N138 optoacoplador, jacks 3.5mm TRS (Type A) |
-| 08 | `sheets/08-connectors-panel.kicad_sch` | Conectores panel → PCB-A / PCB-K | IDC 2×15 J1 (cinta 30-pin), Qwiic I2C, M4 Serial7, PCB-K 8-pin (teclas live), Sharp ×2, Expr FSR ×2 |
-| 09 | `sheets/09-connectors-rear.kicad_sch` | Conectores traseros y frente | LINE IN/OUT 6.35mm, CV 3.5mm ×2, HP/CUE, Pedal, E-drum (DNP) |
-| 10 | `sheets/10-power.kicad_sch` | Power D6 + LED buffer + I2C | TLV75533PDBV LDO 3.3V, polyfuse 0.75A, 74AHCT1G125 LED shifter, 2.2kΩ pull-ups I2C |
+| T0 / T1 | MIDI RX/TX Serial1 | `MIDI_RX` / `MIDI_TX` | Opto IN / R_MIDI_T → J_MIDI_OUT; **no pasan por J1** |
+| T2 / T3 | ENC1 A/B | `ENC1_A` / `ENC1_B` | J1_PCBA **5 / 7** |
+| T4 / T5 | ENC2 A/B | `ENC2_A` / `ENC2_B` | J1_PCBA **9 / 10** |
+| T6 / T9 | ENC3 A/B | `ENC3_A` / `ENC3_B` | J1_PCBA **13 / 15** |
+| T10 / T11 | ENC4 A/B | `ENC4_A` / `ENC4_B` | J1_PCBA **17 / 19** |
+| T12 / T30 | ENC5 A/B | `ENC5_A` / `ENC5_B` | J1_PCBA **8 / 21** |
+| T31 / T32 | ENC6 A/B | `ENC6_A` / `ENC6_B` | J1_PCBA **23 / 25** |
+| T33 / T34 | ENC7 A/B | `ENC7_A` / `ENC7_B` | J1_PCBA **28 / 29** |
+| T35 / T36 | ENC8 A/B | `ENC8_A` / `ENC8_B` | J1_PCBA **27 / 24** |
+| T13 | LEDs teclas | `LED_DATA` | 74AHCT1G125 → `LED_DIN_5V` → **J_PCB_K.5**; J1.26 NC |
+| T14–T17 | FSR velocity 1–4 | `FSR1_ADC`–`FSR4_ADC` | J_FSR1–4, divisor 10k a GND |
+| T18 / T19 | I2C SDA/SCL | `I2C_SDA` / `I2C_SCL` | J2_I2C.3/.4, J_PCB_K.3/.4 y convertidores |
+| T22 | MASTER | `POT_MASTER` | J_POT_MASTER.2 → **1k → ADC; 100nF a GND** |
+| T24 | CUE | `POT_CUE` | J_POT_CUE.2 → **1k → ADC; 100nF a GND** |
+| T26 | IN | `POT_IN` | J_POT_IN.2 → **1k → ADC; 100nF a GND** |
+| T28 / T29 | M4 RX/TX Serial7 | `M4_RX7` / `M4_TX7` | J3_M4.4 / .3 (cruce hacia TX/RX M4) |
+| T37 / T40 | Jog A/B | `JOG_A` / `JOG_B` | J_JOG.2/.3; clic por .4 hacia PCB-K |
+| T41 | Selector pad | `PAD_SEL_ADC` | J_PAD_SEL.2 y divisor permanente 10k/10k |
+| T7 / T8 / T20 / T21 / T23 | I2S TX/RX/LRCLK/BCLK/MCLK | `I2S_*` | Internos al módulo Audio Shield; sin ruta al panel |
+| T25 / T27 / T38 / T39 | E-drum reservado | NC | No se asigna función nueva; J_EDRUM DNP |
 
----
+| Señal de PCB-A | J1_PCBA | Destino PCB-M |
+|---|---|---|
+| FADER1 / FADER2 / FADER3 / FADER4 | **16 / 14 / 12 / 11** | U_ADS1 **AIN0 / AIN1 / AIN2 / AIN3** (pines 4/5/6/7), dirección **0x48** |
+| +5V | 1 / 2 | +5V_LED después de F1 |
+| GND | 3 / 4 / 6 | GND |
+| +3V3 | 30 | +3.3V digital |
+| Spare | **18** | **NC**, sin uso |
+| INT_K / INT_A | **20 / 22** | **NC**, MCP por sondeo I2C |
+| LED_DIN | **26** | **NC**, LED solo por J_PCB_K |
 
-## Cross-reference: Teensy pin ↔ Net PCB-M ↔ Fuente
+**I2C no va por el IDC J1:** llega a PCB-A por J2. La PCB-A fabricada no se modifica salvo
+**desoldar R1/R2** al instalar PCB-M (D14). No conectar además la antigua cadena PCB-A J4 → K1/K2
+al usar la nueva PCB-K por J_PCB_K.
 
-Referencia: `apps/docs/consola/17-mapa-pines-teensy.md` (actualizado 2026-11-11).
+## Conectores hacia panel y otras placas
 
-| Teensy Pin | Función | Net en PCB-M | Sheet | Ruta |
-|---|---|---|---|---|
-| T0 / T1 | MIDI RX/TX (Serial1) | `MIDI_RX` / `MIDI_TX` | 07-midi | Teensy → J1 pin 7/8 (CONNECTORS.md) → 07 |
-| T2 / T3 | ENC1 A/B | `ENC1_A` / `ENC1_B` | 08-connectors | J1 pin 15/17 → PCB-A |
-| T4 / T5 | ENC2 A/B | `ENC2_A` / `ENC2_B` | 08-connectors | J1 pin 19/21 |
-| T6 / T9 | ENC3 A/B | `ENC3_A` / `ENC3_B` | 08-connectors | J1 pin 23/25 |
-| T7 / T8 | I2S TX/RX | (audio shield interno) | 01-teensy | Fijo hardware |
-| T10 / T11 | ENC4 A/B | `ENC4_A` / `ENC4_B` | 08-connectors | J1 pin 27/29 |
-| T12 / T30 | ENC5 A/B | `ENC5_A` / `ENC5_B` | 08-connectors | J1 pin 2/4 |
-| T13 | LED_DATA (SK6812) | `LED_DATA` | 10-power | 74AHCT1G125 → `LED_DIN_5V` → J1 pin 26 |
-| T14–T17 | FSR velocity 1–4 | `FSR1_ADC`–`FSR4_ADC` | 06-surface | JST-PH ÷ R10k → pin |
-| T18 / T19 | I2C SDA/SCL | `I2C_SDA` / `I2C_SCL` | múltiples | Bus compartido: ADS1115, MCP23017, MCP4725 |
-| T20 / T21 | I2S LRCLK/BCLK | (audio shield interno) | 01-teensy | Fijo |
-| T22 | Pot MASTER | `POT_MASTER` | 06-surface | J_POT_MASTER pin 2 (wiper) — pot panel-mount vía cable |
-| T23 | I2S MCLK | (audio shield interno) | 01-teensy | Fijo |
-| T24 | Pot CUE | `POT_CUE` | 06-surface | J_POT_CUE pin 2 (wiper) — pot panel-mount vía cable |
-| T26 | Pot IN | `POT_IN` | 06-surface | J_POT_IN pin 2 (wiper) — pot panel-mount vía cable |
-| T28 / T29 | M4 RX/TX (Serial7) | `M4_RX7` / `M4_TX7` | 08-connectors | J3_M4 JST-PH |
-| T31 / T32 | ENC6 A/B | `ENC6_A` / `ENC6_B` | 08-connectors | J1 pin 6/8 |
-| T33 / T34 | ENC7 A/B | `ENC7_A` / `ENC7_B` | 08-connectors | J1 pin 10/12 |
-| T35 / T36 | ENC8 A/B | `ENC8_A` / `ENC8_B` | 08-connectors | J1 pin 13/14 |
-| T37 / T40 | Jog A/B | `JOG_A` / `JOG_B` | 06-surface | J_JOG pin 2/3 — EC11 panel-mount vía cable (4-pin: GND/A/B/CLICK) |
-| T41 | PAD_SEL | `PAD_SEL_ADC` | 06-surface | J_PAD_SEL pin 2 (wiper ladder) — selector panel-mount vía cable |
+PH = JST-PH 2,0 mm; normalmente BnB-PH-K vertical. J_5V_LED_IN usa S2B-PH-K horizontal de la BOM.
 
-**Pines de audio (I2S) no ruteados en PCB-M:** T7, T8, T20, T21, T23 son internos al Audio Shield.
-**Pines e-drum reservados (DNP):** T25, T27, T38, T39 → J_EDRUM en 09-connectors-rear (NC).
+| Ref | Tipo | Pines en orden 1→n |
+|---|---|---|
+| J1_PCBA | IDC 2×15 | Pinout fabricado de CONNECTORS.md; destinos en tablas anteriores |
+| J2_I2C | JST-SH 4 Qwiic | GND / +3.3V / SDA / SCL |
+| J3_M4 | PH 4 | GND / **NC** / M4_TX7 / M4_RX7; M4 alimentada por su USB al Pi |
+| J_PCB_K | PH 8 | GND / +3.3V / SDA / SCL / LED_DIN_5V / +5V_LED / JOG_CLICK / PEDAL_BTN |
+| J5_SHARP1, J6_SHARP2 | PH 3 cada uno | +5V_LED / SHARPx_ADC / GND |
+| J7_EXP1, J8_EXP2 | PH 2 cada uno | +3.3V / EXPx_ADC, pulldown 10k |
+| J_JOG | PH 4 | GND / JOG_A / JOG_B / JOG_CLICK |
+| J_POT_MASTER/CUE/IN | PH 3 cada uno | +3.3V / POT_x_WIPER / GND; cursor **antes** del RC |
+| J_PAD_SEL | PH 3 | +3.3V / PAD_SEL_ADC / GND |
+| J_FSR1–4 | PH 2 cada uno | +3.3V / FSRx_ADC; pulldown 10k |
+| J_5V_LED_IN | PH 2 S2B-PH-K | **+5V_LED_RAW / GND** desde cable USB-A del Pi |
+| J_5V_BKUP | PH 2, **DNP** | +5V_LED_RAW / GND; solo alternativa, no conectar ambas entradas |
+| J_EDRUM | PH 5, **DNP** | Todos NC |
 
----
+### Cableado jack ↔ JST-PH (D15)
 
-## Conectores
+Los jacks se compran en **Bogotá**, se fijan **con tuerca a la pared trasera del cuerpo** y van
+por cable a los JST-PH del borde trasero de PCB-M. No hay jacks montados en esta PCB. Las hojas
+06/07/09 son agrupaciones eléctricas: colocar también J_HP y los JST MIDI en el borde trasero
+cuando se haga layout. Confirmar por continuidad los terminales del jack comprado antes de soldar;
+la tabla usa **T = tip/punta, R = ring/anillo, S = sleeve/manguito**, no la numeración de sus patillas.
 
-| Ref | Sheet | Tipo | Pines | Función |
-|---|---|---|---|---|
-| J1_PCBA | 08-connectors-panel | IDC 2×15 | 30 | Cinta a PCB-A: encoders, LEDs, I2C, 5V_LED, GND |
-| J2_I2C | 08-connectors-panel | JST-SH 4-pin (Qwiic) | 4 | I2C externo: GND / +3.3V / SDA / SCL |
-| J3_M4 | 08-connectors-panel | JST-PH 4-pin | 4 | NeoTrellis M4 Serial7: GND / NC / TX7 / RX7 |
-| J_PCB_K | 08-connectors-panel | Conn_01x08 (wire-to-board) | 8 | Puente PCB-M ↔ PCB-K: GND / +3.3V / I2C_SDA / I2C_SCL / LED_DIN_5V / +5V_LED / JOG_CLICK / PEDAL_BTN |
-| J5_SHARP1 / J6_SHARP2 | 08-connectors-panel | JST-PH 3-pin | 3×2 | GP2Y0A41: +5V_LED / ADC / GND |
-| J7_EXP1 / J8_EXP2 | 08-connectors-panel | JST-PH 2-pin | 2×2 | FSR expresión: +3.3V / ADC |
-| J_JOG | 06-surface | Conn_01x04 (wire-to-board) | 4 | EC11 panel-mount: GND / JOG_A / JOG_B / JOG_CLICK |
-| J_POT_MASTER | 06-surface | Conn_01x03 (wire-to-board) | 3 | Pot MASTER panel-mount: +3.3V / POT_MASTER / GND |
-| J_POT_CUE | 06-surface | Conn_01x03 (wire-to-board) | 3 | Pot CUE panel-mount: +3.3V / POT_CUE / GND |
-| J_POT_IN | 06-surface | Conn_01x03 (wire-to-board) | 3 | Pot IN panel-mount: +3.3V / POT_IN / GND |
-| J_PAD_SEL | 06-surface | Conn_01x03 (wire-to-board) | 3 | Selector pad panel-mount: +3.3V / PAD_SEL_ADC / GND |
-| J_HP | 06-surface | Conn_01x03 (wire-to-board) | 3 | Jack HP panel-mount: HP_L / HP_R / HP_VGND |
-| J_FSR1–J_FSR4 | 06-surface | JST-PH 2-pin | 2×4 | FSR velocity: +3.3V / FSRx_ADC |
-| J_LINE_IN_L/R | 09-connectors-rear | NRJ3HF-1 (6.35mm TRS) | 3×2 | LINE IN L/R: T=señal, R=balance, S=AGND |
-| J_LINE_OUT_L/R | 09-connectors-rear | 6.35mm TS | 3×2 | LINE OUT L/R de SGTL5000 |
-| J_HP_CUE | 09-connectors-rear | 6.35mm TRS | 3 | HP: T=HP_L, R=HP_R, S=AGND |
-| J_CV1 / J_CV2 | 09-connectors-rear | 3.5mm TS | 2×2 | CV OUT 0–5V: T=CVx_OUT, S=AGND |
-| J_PEDAL | 09-connectors-rear | 6.35mm TRS | 3 | Pedal: T=PEDAL_BTN, S=GND (R=NC) |
-| J_EDRUM | 09-connectors-rear | 5-pin (DNP) | 5 | E-drum reservado — no poblar |
-| J_MIDI_IN / J_MIDI_OUT | 07-midi | 3.5mm TRS (Type A) | 3×2 | MIDI IN via 6N138, MIDI OUT resistivo |
-| J_5V_BKUP | 10-power | Conn_01x02 (DNP) | 2 | Entrada 5V backup, no poblar |
-
----
-
-## BOM (componentes de PCB-M)
-
-| Referencia | Valor/Tipo | LCSC Part | Notas |
+| Jack externo | Ref en PCB-M | JST-PH | Cableado hacia contactos del jack |
 |---|---|---|---|
-| U_ADS1, U_ADS2 | ADS1115IDGSR | **C37593** | I2C ADC 16-bit 4ch, VSSOP-10 |
-| ~~U_MCP_IO~~ | ~~MCP23017T-E/SS~~ | ~~C558584~~ | **Movido a PCB-K** (2026-11-11) — no ensamblar en PCB-M |
-| U_DAC1, U_DAC2 | MCP4725A0T-E/CH | **C144198** | I2C DAC 12-bit, SOT-23-6 |
-| U_OA_CV | MCP6004T-E/SL | C510498 | Quad opamp rail-to-rail, SOIC-14 — verificar stock |
-| U_OPT_MIDI | 6N138 | **C3001991** | Optoacoplador MIDI IN |
-| U_LED_BUF | 74AHCT1G125GW | C7466 | Buffer tri-state 1-gate, SC-70-5 |
-| U_LDO1 | TLV75533PDBV | C15578 | LDO 3.3V 500mA, SOT-23-5 |
-| F1 | MF-MSMF075 (0.75A) | C17357 | Polyfuse reseteable, 1206 |
-| R_SDA, R_SCL | 2.2kΩ 1% 0402 | C25879 | Pull-ups I2C — retirar de PCB-A cuando PCB-M instalado |
-| R_FSR1–R_FSR4 | 10kΩ 1% 0402 | C25744 | Divisor FSR velocity |
-| C_LDO_IN | 10µF X5R 0805 | C15850 | Desacople entrada LDO |
-| C_LDO_OUT | 1µF X5R 0402 | C52923 | Desacople salida LDO |
-| J_FSR1–J_FSR4 | JST PH S2B-PH-K | C157929 | Conector FSR 2-pin, paso 2.0mm |
-| J5_SHARP1, J6_SHARP2 | JST PH S3B-PH-K | C157930 | Conector Sharp IR 3-pin, paso 2.0mm |
-| J_LINE_IN_L/R | Neutrik NRJ3HF-1 | — | Panel mount 6.35mm TRS, sourcing externo |
-| J_MIDI_IN/OUT | 3.5mm TRS SJ-3523-SMT-TR | C500073 | MIDI TRS, SMD |
-| J1_PCBA | IDC 2×15 DS1020-01×15SF21-B2 | — | Verificar footprint Foxconn compatible |
+| LINE IN L 6,35 mm TRS | J_LINE_IN_L | B3B-PH-K, 3 vías | **1→T** LINE_IN_L_T, **2→R** LINE_IN_L_R, **3→S** AGND |
+| LINE IN R 6,35 mm TRS | J_LINE_IN_R | B3B-PH-K, 3 vías | **1→T** LINE_IN_R_T, **2→R** LINE_IN_R_R, **3→S** AGND |
+| LINE OUT L 6,35 mm TS/TRS | J_LINE_OUT_L | B3B-PH-K, 3 vías | **1→T** LINE_OUT_L_T después de 10µF, **2 NC**, **3→S** AGND; ring sin cable si es TRS |
+| LINE OUT R 6,35 mm TS/TRS | J_LINE_OUT_R | B3B-PH-K, 3 vías | **1→T** LINE_OUT_R_T después de 10µF, **2 NC**, **3→S** AGND; ring sin cable si es TRS |
+| PEDAL 6,35 mm TRS | J_PEDAL | B3B-PH-K, 3 vías | **1→T** PEDAL_BTN, **2 NC** (R sin cable), **3→S** GND |
+| CV1 3,5 mm TS | J_CV1 | B2B-PH-K, 2 vías | **1→T** CV1_PROTECTED, **2→S** AGND |
+| CV2 3,5 mm TS | J_CV2 | B2B-PH-K, 2 vías | **1→T** CV2_PROTECTED, **2→S** AGND |
+| MIDI IN 3,5 mm TRS **tipo A** | J_MIDI_IN | B3B-PH-K, 3 vías | **1→T** MIDI_IN_TIP (DIN5), **2→R** MIDI_IN_RING (DIN4), **3 NC** (sleeve/DIN2 sin cable) |
+| MIDI OUT 3,5 mm TRS **tipo A** | J_MIDI_OUT | B3B-PH-K, 3 vías | **1→T** MIDI_OUT_TIP (DIN5), **2→R** MIDI_OUT_RING (DIN4), **3→S** GND (DIN2) |
+| Audífonos cue 6,35 mm TRS | **J_HP** (06) | B3B-PH-K, 3 vías | **1→T** HP_L, **2→R** HP_R, **3→S** HP_VGND |
 
-**Notas de BOM:**
-- Número de LCSC a verificar con stock actual en JLCPCB antes de fabricar.
-- Componentes sin LCSC: NRJ3HF-1 (Neutrik), IDC 2×15 → pedir aparte.
-- Desacoplamiento (100nF + 10µF) por IC no incluido en esta tabla — agregar en layout.
+**HP_VGND es una salida activa del SGTL5000, nunca GND/AGND.** Se elimina el duplicado J_HP_CUE:
+J_HP es el único conector hacia el jack de audífonos que ya iba por cable.
+**Detección de inserción:** los símbolos anteriores eran AudioJack2/3 sin switches; ninguno tenía
+pin ni red de detección. Por tanto se conservan todos sus contactos actuales y no se inventa un
+pin de detección. Si el jack adquirido trae contactos conmutados, dejarlos sin cable y verificar
+que T/R/S se identificaron correctamente. **LINE IN ring sigue sin terminación balanceada definida**;
+se conserva la red por cable, pendiente de decisión eléctrica antes de fabricar.
 
----
+### Selector en panel (D13)
 
-## Dudas y conflictos abiertos
+R_SEL_T/R_SEL_B de 10k quedan en PCB-M: +3.3V → 10k → **PAD_SEL_ADC** → 10k → GND.
+Se elimina **SW_PAD_SEL**. Cablear el **común del polo C** a J_PAD_SEL.2, sus contactos extremos
+a .3 (GND) y .1 (+3,3 V), y **dejar el contacto central sin cable**. Lectura 0 / 1,65 / 3,3 V;
+no se necesita un cuarto hilo ni una escalera en el panel. La correspondencia con 0/−10/−20 dB
+se verifica con los polos A/B y el firmware en banco.
+SW_PAD representa los polos A/B del selector de panel, con header 2×4 en PCB-M: contactos
+1 LINE_IN_L_T, 2 TAP10_L, 3 común PAD_L, 4 TAP20_L; 5 LINE_IN_R_T, 6 TAP10_R,
+7 común PAD_R, 8 TAP20_R. No montar un selector en la placa.
 
-### D1 — Pines J1 20 y 22: INT_K / INT_A vs. JOG_B / PAD_SEL
+## Alimentación, masas y protecciones (D9–D12/D14)
 
-**Problema:** En CONNECTORS.md, J1 pin 20 = INT_K (antes Teensy T41) y pin 22 = INT_A (antes T40).
-Con la Teensy única, T40 = JOG_B y T41 = PAD_SEL. Los nets INT_K/INT_A ya no corresponden.
-**Estado en esquemático:** pines 20 y 22 de J1_PCBA tienen flag NC en el lado PCB-M.
-**Acción requerida:** confirmar si INT_K/INT_A del MCP23017 de PCB-A siguen necesarios. Si sí,
-reutilizar dos pines libres de J1 para rutar INT. Si no, mantener NC.
+Cable USB-A del Pi (solo alimentación): VBUS → J_5V_LED_IN.1, retorno → .2. F1 MF-MSMF075
+**0,75 A** entre +5V_LED_RAW y +5V_LED. El riel protegido alimenta LEDs de teclas (también
+J1.1/.2), Sharp, buffer LED y las cargas ya capturadas (MCP6004 CV y entrada LDO).
++5V_TEENSY desde el USB propio permanece separado. Respetar el límite de brillo/consumo de `24` §5;
+no conectar en caliente. **No se añade TVS/diodo de entrada** porque no hay pieza adecuada en la
+BOM; BAT54S y 1N4148W son protecciones de señal, no una TVS USB ni bloqueo inverso. Pendiente
+seleccionar esa protección si se revisa la BOM.
 
-### D2 — Resistores de feedback CV (MCP6004 buffer 1.5×)
+**NT1 Device:NetTie_2 / NetTie:NetTie-2_SMD_Pad0.5mm**, pin1 AGND, pin2 GND, es la única unión
+entre estas redes. En layout colocarlo **junto a U_LDO1**, regulador de +3.3VA; no crear puentes
+adicionales ni unir HP_VGND. El netlist conserva los nombres GND/AGND y la huella define la unión
+de cobre admitida por DRC; el esquema no prueba la colocación física.
 
-**Problema:** Rf = 10kΩ y Rin = 20kΩ del buffer de ganancia 1.5× están anotados como texto en el
-esquemático (sheet 05-cv-dac) pero no como componentes discrete con footprint.
-**Capturado:** R_CV_RF1/RF2 = 10k y R_CV_RI1/RI2 = 20k como Device:R con footprint 0402.
-Se capturan las cinco unidades del MCP6004, incluida alimentación y seguidores de unidades libres.
+Cada CV tiene **1k serie** desde CVx_OUT (realimentación antes del resistor) hasta
+**CVx_PROTECTED** en el cable, con **BAT54S**: pin1 GND, pin2 +5V_LED, pin3 nodo protegido.
+Cada pot lleva **1k desde el cursor y 100nF a GND en el lado ADC** (τ=100µs, corte ≈1,59kHz).
 
-### D3 — Resistores de protección MIDI OUT
+MIDI OUT **3,3 V tipo A**: R_MIDI_R **33Ω ≥0,5W** de +3.3V a ring, R_MIDI_T **10Ω ≥0,25W**
+de MIDI_TX a tip. Se elimina R_MIDI_S=100Ω y la anterior pareja de 47Ω. Referencia:
+[MIDI Association, CA-033 (2014)](https://midi.org/5-pin-din-electrical-specs),
+[figura 1, p.2, publicada por AMEI](https://amei.or.jp/midistandardcommittee/Recommended_Practice/ca33-j.pdf).
+Footprints 1210/1206 respectivamente; seleccionar resistores con esa potencia nominal.
 
-**Problema:** spec MIDI Association recomienda 2×47Ω (tip y ring) + 100Ω serie en MIDI OUT para
-protección de cortocircuito. Están anotados como texto en sheet 07-midi pero no como componentes.
-**Capturado:** R_MIDI_T/R = 47Ω y R_MIDI_S = 100Ω serie en TX, con footprint 0402.
-La entrada optoaislada y su polarización están explícitas; validar en banco (ver informe del generador).
+**Pull-ups I2C en PCB-M:** R_SDA/R_SCL 2,2k a +3.3V. **Desoldar R1/R2 de PCB-A** al integrarla;
+con ambos pares quedarían 1,1k. No modificar pistas ni el pinout de PCB-A. Revisar el total de
+pull-ups de los módulos ya instalados antes de elevar el bus a 400kHz.
 
-### D4 — Sheet 02 (analog front end) — capturado 2026-11-12
+## BOM de referencia PCB-M
 
-**Estado:** capturado como copia fiel del frente de la portadora del Brain Studio (`25` §6: "se copia la
-hoja, no se rediseña"). Mapeo portadora → PCB-M: R4–R9 → R_PAD_x1–3, SW1 → SW_PAD, C5/C6 → C_AC_x,
-R10/R11 → R_SER_x, R12/R13 → R_BIAS_x, D2/D3 → D_CLAMP_x, U2 → U_OA_IN, R14/R15/C10 → R_VREF_T/B + C_VREF,
-C7 → C_OA_IN, C8/C9 → C_LIN_x, C11/C12 + R16/R17 → C_LOUT_x + R_LOUT_x, JP2–JP4 → JP_BYP_L/R/VREF, TP1–TP3.
-Regeneración: todas las redes entre hojas usan etiquetas globales consistentes; ver ERC al final.
+Números LCSC heredados; comprobar stock y potencia al comprar. No se especifica referencia de
+jack de PCB: todos son de panel comprados localmente. Componentes nuevos sin SKU cerrado se
+identifican por valor, encapsulado y potencia, sin inventar equivalentes.
 
-Decisiones (2026-11-12):
-- **LINE OUT sin buffer**, igual que la portadora. El texto "buffered" del sheet 09 queda desactualizado.
-- **VREF** = 10k/10k + 10µF bufferizado; los 100k son el bias de cada entrada a VREF, no el divisor.
-- **Rail analógico:** U_OA_IN, VREF y clamps en +3.3VA (en la portadora era el 3V3 de la Teensy).
-- **Unidad D del MCP6004** (en la portadora era el CV, que ahora está en el sheet 05): queda como seguidor de VREF.
-- **Selector 3P3T:** SW_PAD (DP3T, audio) + SW_PAD_SEL (SP3T, escalera doc 18 §3: GND / 1,65 V / +3,3 V).
-- **HP:** sin componentes; HP_L/R/HP_VGND van de 01 a 09 directo (SGTL5000 capless).
+| Referencia | Valor / pieza | LCSC heredado | Encapsulado / notas |
+|---|---|---|---|
+| U_ADS1/2 | ADS1115IDGSR | C37593 | TSSOP-10_3x3mm_P0.5mm de librería KiCad |
+| U_DAC1/2 | MCP4725A0T-E/CH | C144198 | SOT-23-6 |
+| U_OA_CV / U_OA_IN | MCP6004 | C510498 | SOIC-14; unidades libres como seguidores |
+| U_OPT_MIDI | 6N138 | C3001991 | DIP-8 |
+| U_LED_BUF | 74AHCT1G125GW | C7466 | SC-70-5 |
+| U_LDO1 | TLV75533PDBV | C15578 | SOT-23-5, +3.3VA |
+| F1 | MF-MSMF075 0,75A | C17357 | 1206, según BOM vigente |
+| NT1 | NetTie_2 | — | NetTie-2_SMD_Pad0.5mm, cobre; no componente comprado |
+| R_CV_SER1/2 | 1k | — | 0402 |
+| D_CV_CLAMP1/2 | BAT54S | — | SOT-23, misma pieza de señal del frente |
+| R_POT_MASTER/CUE/IN | 1k | — | 0402 |
+| C_POT_MASTER/CUE/IN | 100nF | — | 0402 |
+| R_CV_RF1/2 / R_CV_RI1/2 | 10k / 20k | — | 0402, ganancia 1,5 |
+| R_MIDI_R / R_MIDI_T | 33Ω ≥0,5W / 10Ω ≥0,25W, ±5% o mejor | — | **1210 / 1206**, CA-033 |
+| R_SDA / R_SCL | 2,2k 1% | C25879 | 0402; retirar R1/R2 de PCB-A |
+| R_FSR1–4 | 10k 1% | C25744 | 0402 |
+| R_SEL_T/B | 10k | — | 0603, divisor en PCB-M |
+| C_LDO_IN / C_LDO_OUT | 10µF / 1µF | C15850 / C52923 | 0805 / 0402 |
+| J_5V_LED_IN | **JST PH S2B-PH-K** | **C157929** | 2 vías, horizontal; familia ya usada por FSR |
+| J_FSR1–4, J_CV1/2 | JST PH B2B-PH-K | — | 2 vías vertical (revisar variantes frente a S2B de BOM anterior) |
+| J5_SHARP1/J6_SHARP2, J_HP, J_POT_x, J_PAD_SEL, J_LINE_IN/OUT_L/R, J_PEDAL, J_MIDI_IN/OUT | JST PH B3B-PH-K | — | 3 vías vertical; reemplazan las entradas de jacks SMD de la BOM anterior |
+| J1_PCBA | IDC 2×15 | — | IDC-Header_2x15_P2.54mm_Vertical; verificar mecánica |
 
-**Pendiente:** elegir la pieza 3P3T y si su cableado (header 2×4 + 1×4 de la portadora) se une
-en un solo conector — ver D10.
+Desacoplos por IC capturados: ADS1115/MCP4725/MCP6004 CV 100nF + 10µF; buffer LED y opto 100nF;
+LDO y frente conservan sus capacitores. No puebla MCP23017 en PCB-M.
 
-### D5 — Pin 27 (74HC4053 routing Synth/FX) sin asignar en PCB-M
+## Decisiones resueltas y pendientes
 
-**Problema:** `17-mapa-pines-teensy.md` reserva T27 para "trigger e-drum 2" pero el CLAUDE.md del
-proyecto menciona que T27 = 74HC4053 (ruteo Synth/FX) a revisar con D5.
-**Acción requerida:** confirmar función definitiva de T27 antes de poblar J_EDRUM.
+D8–D15 están registradas en `24` §8 (2026-11-12, **aprobado por Juan**). Quedan resueltos los
+antiguos conflictos de J1/cross-reference, duplicación del selector, falta de entrada primaria,
+masas sin unión, protecciones CV/pots, valores MIDI, pull-ups duplicados y montaje de jacks.
+La corrección previa HP/LINE OUT se conserva: HP_VGND aislada, LINE OUT después del capacitor.
+La ubicación MCP 0x23 y el conteo 36/56 quedan consistentes con `17` y `24` §9.
 
-### D6 — Desacoplamiento por IC no capturado en esquemático
+Pendientes fuera de estas decisiones: terminación ring de LINE IN; función T27 frente al Brain
+(J_EDRUM DNP); selección mecánica del selector/jacks y componentes sin SKU; protección de entrada
+USB sin pieza en BOM; presupuesto de consumo medido, banco MIDI/CV/audio, layout/DRC.
+Ver [REPORT.md](../../tools/REPORT.md) para el alcance exacto de la verificación.
 
-**Problema:** 100nF + 10µF por pin VCC de ADS1115 ×2, MCP23017, MCP4725 ×2, MCP6004, TLV75533
-no están en el esquemático — deben agregarse en layout o antes.
-**Capturado:** 100nF + 10µF para ADS1115 y MCP4725 y MCP6004 CV; 100nF para buffer LED
-y opto MIDI; se conservan los capacitores del LDO y frente analógico. Sheet 04 sigue vacío (sin MCP).
+## Dimensiones y layout pendiente
 
-### D7 — Pull-ups I2C: conflict con PCB-A
-
-**Estado actual:** R_SDA y R_SCL (2.2kΩ) están en PCB-M (sheet 10).
-**Riesgo:** si PCB-A tiene sus propios pull-ups R1/R2, hay dos pares en paralelo (≈1.1kΩ).
-**Acción requerida:** confirmar y remover R1/R2 de PCB-A cuando PCB-M esté instalado, o
-diseñar un sistema de jumpers/DNP.
-
-### D9 — Sheets 01/06/09 incompatibles con el sheet 02 (detectado 2026-11-12)
-
-1. **Etiquetas locales entre sheets:** el sheet 02 usa `global_label` para LINE_IN_x_T, SHIELD_LINE_IN_x,
-   SHIELD_LINE_OUT_x, LINE_OUT_x_T, PAD_SEL_ADC, +3.3V, +3.3VA, AGND y GND. En 01/06/09 esos nombres
-   son `label` locales, así que no conectan con el 02. Hay que pasarlos a globales.
-2. **LINE OUT:** en el 09, la punta de J_LINE_OUT_x está en SHIELD_LINE_OUT_x. Debe ir a **LINE_OUT_x_T**
-   para que pase por el acople de 10µF del sheet 02.
-3. **HP: riesgo de hardware.** En el 09 el manguito de J_HP_CUE va a AGND. HP_VGND es una masa
-   virtual activa (~VDDA/2) del SGTL5000; si se pone a masa queda en corto. El manguito va a **HP_VGND**,
-   como en la portadora (J13.S).
-4. **Netlist del 09:** las puntas de J_LINE_IN_x, J_LINE_OUT_x, J_HP_CUE y J_PEDAL quedan todas en el
-   net HP_L (etiquetas o cables encimados). Era un artefacto de geometría y conectividad, corregido por el generador.
-
-### D10 — Selector de pad: J_PAD_SEL (sheet 06) duplica la escalera del sheet 02
-
-La rev. 1 cablea el selector por J_PAD_SEL (3 pines: +3.3V / PAD_SEL_ADC / GND), lo que deja la escalera
-del lado del panel sin capturar. El sheet 02 captura la escalera en PCB-M (R_SEL_T/B 10k + polo C del
-3P3T, 4 hilos). Hay que elegir una de dos: quitar J_PAD_SEL, o mover la escalera al panel y quitar
-SW_PAD_SEL/R_SEL_x. En los dos casos los polos de audio (SW_PAD) también van por cable al panel.
-
----
-
-## Dimensiones de PCB-M (para fase de layout)
-
-> Referencia: `apps/docs/consola/25-panel-consola.md` panel v5 outline, 2026-11-11.
-
-- **Tamaño:** 186 × 60 mm
-- **Posición en coordenadas de panel:** x 140–326 mm, y 276–336 mm (pared trasera)
-- **Jacks traseros en el borde de PCB-M:**
-  - 5× jacks 1/4" (6.35 mm) a 24 mm de pitch
-  - 4× jacks 3.5 mm a 18 mm de pitch
-- El conector J_PCB_K se orienta hacia el centro del enclosure (hacia PCB-K, bajo el panel)
-- El IDC J1_PCBA conecta a PCB-A (tira de encoders/LEDs) en el borde opuesto
-
----
+Referencia `25-panel-consola.md`: PCB-M **186 × 60 mm**, x140–326 / y276–336 mm en panel.
+Los jacks pertenecen a la pared del cuerpo: sus pitches no fijan las huellas de PCB-M. Colocar los
+JST de cada jack en el borde trasero, J_PCB_K hacia el centro e IDC J1 hacia PCB-A; NT1 junto a U_LDO1.
+El archivo `.kicad_pcb` y el proyecto no se modifican en esta captura; la colocación queda pendiente.
 
 ## Regeneración y verificación
 
-Desde la raíz del repositorio, un comando genera todas las hojas y actualiza XML, ERC y PDF:
+Desde la raíz:
 
-```bash
+```sh
+python3 -m pytest -q apps/hardware/kicad/consola/tools/tests --basetemp=.schgen-test-tmp
 python3 apps/hardware/kicad/consola/tools/check_netlist.py --regenerate
 ```
 
-La descripción declarativa es `tools/schgen/pcb_m.py`. No editar los `.kicad_sch` generados;
-modificar la descripción y regenerar. Para verificar cambios manuales sin sobrescribirlos,
-ejecutar el mismo comando sin `--regenerate`.
+No editar las hojas generadas; cambiar `tools/schgen/pcb_m.py`. Sin `--regenerate` se verifican
+las hojas existentes sin sobrescribirlas. XML compara pines, NC y particiones/nombres de redes;
+ERC no acredita montaje ni rendimiento analógico. Son **11 páginas** (raíz + 10 subhojas).
 
-El netlist XML se comprueba pin a pin, incluidos los NC: redes fusionadas/divididas, pines sin
-red o nombres incorrectos hacen fallar el comando. La hoja 04 permanece vacía y referenciada
-en la raíz, con una nota del traslado del MCP a PCB-K. Son 11 páginas (raíz + 10 subhojas).
-
-## ERC Status
-
-```
-Errors:   0
-Warnings: 7
-Connectivity: PASS — 113 componentes, 398 pines, 21 NC, 100 redes con nombre
-```
-
-Cinco avisos son I2S interno al módulo Audio Shield; dos son los anillos LINE IN cuya
-terminación no está definida. No hay errores ocultados mediante exclusiones añadidas.
-Los `PWR_FLAG` representan fuentes externas y retornos, no una validación de la alimentación.
-Se mantienen abiertas las decisiones de hardware; D9.1–4 quedan reparadas conforme a D4/D9.
-El conflicto J1 de la tabla de cross-reference se documenta sin cambiar esa tabla.
-Ver [REPORT.md](../../tools/REPORT.md) para contradicciones, footprints pendientes y alcance de esta validación.
-
----
-
-## Outputs
+**Resultados reales (KiCad 10.0.6): 34 tests pasan; Connectivity PASS: 122 componentes,
+415 pines, 23 NC, 103 redes con nombre; ERC 0 errores y 7 avisos.** Cinco avisos son I2S
+interno al módulo y dos los anillos LINE IN aún sin terminación; no hay exclusiones nuevas.
+PDF de 11 páginas rasterizado y revisado; 11 esquemas idénticos byte a byte al regenerar.
+La CLI conserva el aviso de anotación de referencias descriptivas heredadas; no omite pines.
+Detalle íntegro en REPORT.md.
 
 | Archivo | Contenido |
 |---|---|
-| `docs/pcb-m-schematic.pdf` | PDF completo (11 páginas: raíz + 10 hojas) |
-| `docs/pcb-m-netlist.xml` | Netlist KiCad XML para verificación |
-| `docs/erc-report.txt` | Reporte ERC con análisis de errores |
+| `docs/pcb-m-schematic.pdf` | Esquema completo |
+| `docs/pcb-m-netlist.xml` | Netlist XML verificado |
+| `docs/erc-report.txt` | ERC íntegro, sin exclusiones añadidas |

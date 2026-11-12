@@ -1843,28 +1843,9 @@
         (font
           (size 1.0 1.0))
         (hide yes))))
-  (wire
-    (pts
-      (xy 71.12 66.04)
-      (xy 73.66 66.04))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 89cae1a5-bd86-56d2-9ebe-81c24c437852))
-  (global_label "LED_DATA"
-    (shape bidirectional)
-    (at 73.66 66.04 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 857c2b3c-84b1-5d8f-8af9-b8a873198caa)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 73.66 66.04 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+  (no_connect
+    (at 71.12 66.04)
+    (uuid 2f037108-24d2-5a97-8e9e-7ae50f42986f))
   (wire
     (pts
       (xy 58.42 68.58)
@@ -1981,28 +1962,9 @@
         (font
           (size 1.0 1.0))
         (hide yes))))
-  (wire
-    (pts
-      (xy 71.12 76.2)
-      (xy 73.66 76.2))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid a2d719d9-1223-5ec0-8c8c-b1b68b9cfe85))
-  (global_label "LED_DIN_5V"
-    (shape bidirectional)
-    (at 73.66 76.2 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid acd7712f-de9e-58b8-838f-48250267d73a)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 73.66 76.2 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+  (no_connect
+    (at 71.12 76.2)
+    (uuid a1e120d6-c502-5768-a6d4-f8bb29e47efb))
   (wire
     (pts
       (xy 58.42 78.74)
@@ -3296,17 +3258,24 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e31eba56-b0b1-5bc2-be55-5a673e4df2b0"
           (reference "C_SHARP2")
           (unit 1)))))
-  (text "J1: pinout de captura conservado; NC 20/22 (D1). Tabla README contradictoria: ver REPORT.md."
+  (text "D8: J1 segun PCB-A fabricada; NC 18(spare)/20(INT_K)/22(INT_A)/26(LED_DIN)."
     (at 15.24 20.32 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid d42c223f-aaea-5fd4-a740-5df8a99f1fa0))
-  (text "I2C hacia PCB-A por J2; J1 no lleva SDA/SCL. Retirar pull-ups PCB-A."
+  (text "Encoders a Teensy segun firmware; faders al ADS0x48 AIN0-3. LED solo via J_PCB_K."
     (at 15.24 24.13 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 523b189b-dfce-5b46-bd2e-b28c82ce2087)))
+    (uuid 523b189b-dfce-5b46-bd2e-b28c82ce2087))
+  (text "I2C hacia PCB-A por J2; J1 no lleva SDA/SCL. Retirar pull-ups PCB-A."
+    (at 15.24 27.94 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3ffef990-78e5-54f6-9ff1-66094c63bca3)))

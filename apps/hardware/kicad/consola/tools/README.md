@@ -24,7 +24,7 @@ y `--kicad-cli PATH` permiten otras instalaciones. La prueba de integración se 
 la CLI; las pruebas que necesitan librerías se omiten si no están instaladas.
 
 `schgen/pcb_m.py` es la descripción eléctrica revisable. `PARTS` conserva referencias, valores y
-footprints de la captura cuando son válidos; `FRONT` conserva pin a pin la hoja analógica. Las
+footprints de la captura cuando son válidos; `FRONT` conserva el frente analógico, con el divisor de selector adaptado a D13 (3 hilos). Las
 posiciones se asignan en la factoría con una grilla explícita; los bucles muestran cómo repetir
 FSR, canales ADC/DAC y conectores. `None` significa NC, nunca pin olvidado. Cada unidad tiene su
 propia posición/pines pero conserva la misma referencia, valor y footprint del encapsulado.
@@ -70,3 +70,10 @@ XML de PCB; sí los valida ERC. No se modifica el layout ni el proyecto KiCad.
 La fecha y ruta del XML y la fecha de ERC/PDF las escribe KiCad y pueden cambiar entre
 exportaciones. Esto no afecta la estabilidad de los esquemas generados. Ver [THEORY.md](THEORY.md)
 y [REPORT.md](REPORT.md) para límites, conflictos documentales y resultados reales.
+
+
+PCB-M incorpora las decisiones D8–D15 aprobadas por Juan (2026-11-12), registradas en doc24 §8.
+J1 sigue PCB-A fabricada; los destinos Teensy se verifican contra el firmware. La entrada 5V por
+JST-PH/F1, net-tie de masa, protecciones CV/pots, MIDI 33Ω/10Ω y mazos de jacks se describen en
+`schgen/pcb_m.py`. Las pruebas `tests/test_pcb_m_contract.py` verifican ese contrato sin cambiar
+la API de generación compartida. No se generan ni modifican PCB-K/F/P con esta revisión.

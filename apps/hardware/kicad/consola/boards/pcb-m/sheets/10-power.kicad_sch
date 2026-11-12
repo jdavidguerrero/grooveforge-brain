@@ -354,6 +354,105 @@
               (font
                 (size 1.27 1.27))))))
       (embedded_fonts no))
+    (symbol "Device:NetTie_2"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom no)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "NT"
+        (at 0 1.27 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "NetTie_2"
+        (at 0 -1.27 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Net tie, 2 pins"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "net tie short"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Net*Tie*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "NetTie_2_0_1"
+        (polyline
+          (pts
+            (xy -1.27 0)
+            (xy 1.27 0))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "NetTie_2_1_1"
+        (pin passive line
+          (at -2.54 0 0)
+          (length 2.54)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 2.54 0 180)
+          (length 2.54)
+          (name "2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
     (symbol "Device:Polyfuse"
       (pin_numbers
         (hide yes))
@@ -995,6 +1094,160 @@
           (unit 1)))))
   (wire
     (pts
+      (xy 58.42 190.5)
+      (xy 55.88 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 31740dcf-5d0d-51b7-9b35-e4cdfc3db30c))
+  (global_label "+5V_LED_RAW"
+    (shape bidirectional)
+    (at 55.88 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a718a62b-6917-5cdc-8897-0ed334c9be50)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 193.04)
+      (xy 55.88 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4fbcedd3-11dd-5d63-9dbc-742fa8741d63))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 55.88 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 2c371407-f63c-5206-b1fe-992d5e053868)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 63.5 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4eee2dd8-9cf2-50a7-bb72-6052819f411f)
+    (property "Reference" "J_5V_LED_IN"
+      (at 63.5 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "USB-A_PI_5V_LED_IN"
+      (at 63.5 186.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f3a91b35-cfb7-5b0f-87b8-751347fcdf52))
+    (pin "2"
+      (uuid 26a71b75-36d4-59c3-9d7e-25aeaf47b384))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
+          (reference "J_5V_LED_IN")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 149.86 190.5)
+      (xy 147.32 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4559e18a-c737-5f98-98f7-d802c9c17845))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 147.32 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 41e5091a-fb37-5194-a9e6-a5a35b122cf2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 147.32 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 154.94 190.5)
+      (xy 157.48 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b7313ed6-6109-5ac8-b64a-d004a2b026c4))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 157.48 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 12ad659f-7287-5ac8-a5c9-b009b35821d5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 157.48 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:NetTie_2")
+    (at 152.4 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f373c6d4-60d0-5619-88fa-3763e3530766)
+    (property "Reference" "NT1"
+      (at 152.4 185.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "NetTie_2"
+      (at 152.4 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "NetTie:NetTie-2_SMD_Pad0.5mm"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid dc7ed92b-c4b8-594f-8e62-7588af4f6637))
+    (pin "2"
+      (uuid f2591eb5-fde8-5542-a647-10dca3979550))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
+          (reference "NT1")
+          (unit 1)))))
+  (wire
+    (pts
       (xy 58.42 127)
       (xy 55.88 127))
     (stroke
@@ -1529,68 +1782,68 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 63.5 186.69)
-      (xy 63.5 184.15))
+      (xy 241.3 186.69)
+      (xy 241.3 184.15))
     (stroke
       (width 0)
       (type default))
     (uuid 0d98787c-403e-52be-be22-9323764b4c1c))
   (global_label "+5V_LED"
     (shape bidirectional)
-    (at 63.5 184.15 270)
+    (at 241.3 184.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 37a48dd4-a506-5175-93b3-b253b6726f00)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 63.5 184.15 0)
+      (at 241.3 184.15 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 63.5 194.31)
-      (xy 63.5 196.85))
+      (xy 241.3 194.31)
+      (xy 241.3 196.85))
     (stroke
       (width 0)
       (type default))
     (uuid e5ea6530-ec05-5dfb-badc-fa86e615503a))
   (global_label "GND"
     (shape bidirectional)
-    (at 63.5 196.85 90)
+    (at 241.3 196.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
     (uuid e1176c91-ec39-584e-b3d4-cf76e940684f)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 63.5 196.85 0)
+      (at 241.3 196.85 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
     (lib_id "Device:C")
-    (at 63.5 190.5 0)
+    (at 241.3 190.5 0)
     (unit 1)
     (in_bom yes)
     (on_board yes)
     (dnp no)
     (uuid ef0f06a1-57b7-56b0-b421-ba5a8a62f46c)
     (property "Reference" "C_LED_BUF"
-      (at 63.5 167.64 0)
+      (at 241.3 167.64 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "100nF"
-      (at 63.5 170.18 0)
+      (at 241.3 170.18 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-      (at 63.5 190.5 0)
+      (at 241.3 190.5 0)
       (effects
         (font
           (size 1.0 1.0))
@@ -1922,21 +2175,21 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/6adb066a-20f9-5752-906a-e7add3ad287a"
           (reference "#FLG006")
           (unit 1)))))
-  (text "LDO -> +3.3VA (D4). +3.3V desde Teensy; rieles LED y Teensy separados."
+  (text "LDO -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada."
     (at 15.24 20.32 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 343d1f32-df49-5494-931e-6889923f4266))
-  (text "PWR_FLAG: fuentes externas/pasivas. AGND/GND sin punto estrella definido (REPORT.md)."
+  (text "D9: USB-A Pi -> J_5V_LED_IN -> F1 0.75A -> +5V_LED. Backup DNP; sin TVS de entrada adecuada en BOM."
     (at 15.24 24.13 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid cffcc48d-53a0-5caa-be13-e3ea28bce5ee))
-  (text "USB-A3 alimenta +5V_LED_RAW; conector primario sin definir, J_5V_BKUP DNP conservado."
+  (text "D14: pull-ups 2.2k en PCB-M; desoldar R1/R2 de PCB-A. Unica union AGND/GND por NT1."
     (at 15.24 27.94 0)
     (effects
       (font

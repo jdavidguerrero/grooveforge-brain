@@ -1,4 +1,4 @@
-ERC report (2026-11-12T08:07:38, Encoding UTF8)
+ERC report (2026-11-12T08:35:43, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
@@ -19,10 +19,10 @@ Report includes: Errors, Warnings, Exclusions
     @(233.68 mm, 114.30 mm): Label 'I2S_LRCLK'
 [isolated_pin_label]: Label connected to only one pin
     ; warning
-    @(71.12 mm, 63.50 mm): Label 'LINE_IN_L_R'
+    @(55.88 mm, 63.50 mm): Label 'LINE_IN_L_R'
 [isolated_pin_label]: Label connected to only one pin
     ; warning
-    @(71.12 mm, 127.00 mm): Label 'LINE_IN_R_R'
+    @(55.88 mm, 127.00 mm): Label 'LINE_IN_R_R'
 
 ***** Sheet /01-teensy/
 

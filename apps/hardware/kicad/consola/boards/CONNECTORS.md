@@ -2,7 +2,34 @@
 
 > Single source of truth for every board-to-board connector. Both ends of each cable are drawn
 > from this table. **All cables are 1:1** (pin n ↔ pin n). Positions on the panel:
-> `../panel/panel-coordinates.csv`. Carrier side: `../../apps/processor/PIN_MAP.md`.
+> `../panel/panel-coordinates.csv`. Carrier side legacy: `../../apps/processor/PIN_MAP.md`.
+> **Integración PCB-M aprobada 2026-11-12:** ver sección siguiente; el pinout físico de PCB-A no cambia.
+> Las columnas Teensy de las tablas históricas corresponden a la portadora antigua; para PCB-M manda
+> `pcb-m/README.md` y `apps/docs/consola/17-mapa-pines-teensy.md`.
+
+## PCB-M ↔ PCB-A fabricada (D8/D9/D14/D15, aprobado por Juan 2026-11-12)
+
+- J1_PCBA IDC 2×15 ↔ PCB-A J1 por cinta **1:1**, sin modificar el pinout de abajo. Los nombres
+  ENC1–8 A/B se reparten en PCB-M según ENCODER_PINS del firmware; FADER1–4 van a ADS1115
+  0x48 AIN0–3, no a los antiguos pines analógicos de la columna Teensy. Cross-reference vigente
+  en [PCB-M README](pcb-m/README.md).
+- En PCB-M **J1.18 NC** (spare), **.20 NC** (INT_K), **.22 NC** (INT_A), **.26 NC** (LED_DIN).
+  Los MCP se sondean por I2C. LED_DIN_5V sale solo por J_PCB_K.5 hacia la nueva PCB-K única;
+  no conectar simultáneamente la antigua ruta de teclas por PCB-A J4.
+- J2_I2C ↔ PCB-A J2 mantiene GND / +3,3 V / SDA / SCL. **Desoldar R1/R2 de PCB-A**;
+  quedan R_SDA/R_SCL 2,2 kΩ en PCB-M. No alterar las otras pistas ni conectores de PCB-A.
+- J_PCB_K (8 hilos) desde PCB-M: **1 GND, 2 +3,3 V, 3 SDA, 4 SCL, 5 LED_DIN_5V,
+  6 +5V_LED, 7 JOG_CLICK, 8 PEDAL_BTN**. MCP 0x21/0x22/0x23 viven en PCB-K.
+- J_5V_LED_IN (S2B-PH-K 2 vías): **1 +5V_LED_RAW, 2 GND**, desde cable USB-A del Pi.
+  F1 **0,75 A** alimenta +5V_LED (incluye PCB-A J1.1/.2); +5V_TEENSY separado.
+  Esta rama sustituye para PCB-M el antiguo contrato USB-C/3 A/TVS descrito al final.
+  La BOM de PCB-M no incluye TVS de entrada adecuada: no se añade una pieza de señal como sustituto.
+- Todos los jacks de PCB-M se montan con tuerca en el cuerpo y van por cable a un JST-PH por jack,
+  pin a pin en el README de PCB-M; ninguno tiene detección en la captura actual. HP_VGND aislada.
+  AGND/GND se unen solo por el net-tie NT1 junto al LDO de audio (posición a respetar en layout).
+
+El resto de este archivo conserva los conectores **fabricados** y la topología histórica de
+GroovePush (K1/K2, portadora y PCB-S); no define esa topología como vigente para PCB-M.
 
 ```
  Brain carrier J5 (IDC 2×15) ══ribbon══ PCB-A J1
@@ -58,8 +85,9 @@ pin; no parts besides the connectors. Only these socket pins are used, the rest 
 |---|---|---|---|
 | GND | +3V3 | SDA | SCL |
 
-The 2.2 kΩ I2C pull-ups (R1/R2, 0603, C4190) are on PCB-A (the carrier relies on the Audio Shield's, which GroovePush
-doesn't fit).
+PCB-A fabricada lleva pull-ups de 2,2 kΩ (R1/R2, 0603, C4190). **Al integrar PCB-M, desoldar R1/R2
+de PCB-A**: el único par activo es R_SDA/R_SCL de 2,2 kΩ en PCB-M (D14, Juan, 2026-11-12).
+La configuración con la portadora anterior se conserva solo como referencia histórica.
 
 ## PCB-A J3 ↔ PCB-F J1 — JST-SH 6, faders
 
@@ -73,7 +101,8 @@ J4 sits on PCB-A's tab, next to J1 (rev. 2026-10-20). At the strip's left end it
 200 mm along the encoder strip and the board didn't route. The cable is therefore ~20–25 cm
 (pre-crimped JST-SH, 28 AWG): it leaves the tab towards the M4 and runs under PCB-A / the M4 to
 PCB-K1 J1 at the back of the edit block. At that length I2C (2.2 kΩ pull-ups on PCB-A) and the
-buffered 800 kHz LED data are fine; +5V uses two pins and GND three.
+buffered 800 kHz LED data are fine; +5V uses two pins and GND three. Esta ruta es histórica;
+en la integración PCB-M, los datos LED van por J_PCB_K y R1/R2 de PCB-A se desueldan.
 
 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 |---|---|---|---|---|---|---|---|---|---|

@@ -1150,165 +1150,6 @@
             (effects
               (font
                 (size 1.27 1.27))))))
-      (embedded_fonts no))
-    (symbol "Switch:SW_SP3T"
-      (pin_names
-        (offset 0)
-        (hide yes))
-      (exclude_from_sim no)
-      (in_bom yes)
-      (on_board yes)
-      (in_pos_files yes)
-      (duplicate_pin_numbers_are_jumpers no)
-      (property "Reference" "SW"
-        (at 0 5.08 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "Value" "SW_SP3T"
-        (at 0 -5.08 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "Footprint" ""
-        (at -15.875 4.445 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (hide yes)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "Datasheet" ""
-        (at 0 -7.62 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (hide yes)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "Description" "Switch, three position, single pole triple throw, 3 position switch, SP3T"
-        (at 0 0 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (hide yes)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "ki_keywords" "switch sp3t ON-ON-ON"
-        (at 0 0 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (hide yes)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (property "ki_fp_filters" "SW* SP3T*"
-        (at 0 0 0)
-        (show_name no)
-        (do_not_autoplace no)
-        (hide yes)
-        (effects
-          (font
-            (size 1.27 1.27))))
-      (symbol "SW_SP3T_0_1"
-        (circle
-          (center -2.032 0)
-          (radius 0.4572)
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type none)))
-        (polyline
-          (pts
-            (xy -1.651 0.254)
-            (xy 1.651 2.286))
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type none)))
-        (circle
-          (center 2.032 2.54)
-          (radius 0.4572)
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type none)))
-        (circle
-          (center 2.032 0)
-          (radius 0.4572)
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type none)))
-        (circle
-          (center 2.032 -2.54)
-          (radius 0.4572)
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type none))))
-      (symbol "SW_SP3T_1_1"
-        (rectangle
-          (start -3.175 3.81)
-          (end 3.175 -3.81)
-          (stroke
-            (width 0)
-            (type default))
-          (fill
-            (type background)))
-        (pin passive line
-          (at 5.08 2.54 180)
-          (length 2.54)
-          (name "1"
-            (effects
-              (font
-                (size 1.27 1.27))))
-          (number "1"
-            (effects
-              (font
-                (size 1.27 1.27)))))
-        (pin passive line
-          (at 5.08 0 180)
-          (length 2.54)
-          (name "2"
-            (effects
-              (font
-                (size 1.27 1.27))))
-          (number "2"
-            (effects
-              (font
-                (size 1.27 1.27)))))
-        (pin passive line
-          (at -5.08 0 0)
-          (length 2.54)
-          (name "3"
-            (effects
-              (font
-                (size 1.27 1.27))))
-          (number "3"
-            (effects
-              (font
-                (size 1.27 1.27)))))
-        (pin passive line
-          (at 5.08 -2.54 180)
-          (length 2.54)
-          (name "4"
-            (effects
-              (font
-                (size 1.27 1.27))))
-          (number "4"
-            (effects
-              (font
-                (size 1.27 1.27))))))
       (embedded_fonts no)))
   (wire
     (pts
@@ -3951,179 +3792,68 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 157.48 441.96)
-      (xy 160.02 441.96))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 2990d887-3dc1-5309-ab9a-db5af0b19556))
-  (global_label "GND"
-    (shape bidirectional)
-    (at 160.02 441.96 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid cc79dcb0-59d2-5f82-b2f0-8b0ada90d1f0)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 441.96 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (wire
-    (pts
-      (xy 157.48 444.5)
-      (xy 160.02 444.5))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 5cdba092-96ae-5dec-a957-b22cc136e939))
-  (label "PAD_SEL_MID"
-    (at 160.02 444.5 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid c70aefa3-0912-55c6-a26a-578bca01b6cf))
-  (wire
-    (pts
-      (xy 147.32 444.5)
-      (xy 144.78 444.5))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 83078657-ad8f-5c40-a152-6051c8a5cda1))
-  (global_label "PAD_SEL_ADC"
-    (shape bidirectional)
-    (at 144.78 444.5 0)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify right))
-    (uuid aedaba89-cbcf-57cd-9516-8d4fc1dc39d7)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 144.78 444.5 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (wire
-    (pts
-      (xy 157.48 447.04)
-      (xy 160.02 447.04))
-    (stroke
-      (width 0)
-      (type default))
-    (uuid 550ddf4b-c32d-5942-abc5-c9ff29d3a78c))
-  (global_label "+3.3V"
-    (shape bidirectional)
-    (at 160.02 447.04 180)
-    (effects
-      (font
-        (size 1.0 1.0))
-      (justify left))
-    (uuid 81eebf45-ab53-546a-965d-d5c88602f990)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 160.02 447.04 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
-  (symbol
-    (lib_id "Switch:SW_SP3T")
-    (at 152.4 444.5 0)
-    (unit 1)
-    (in_bom yes)
-    (on_board yes)
-    (dnp no)
-    (uuid d9fef0bc-27d0-5358-a99f-4c59b2387117)
-    (property "Reference" "SW_PAD_SEL"
-      (at 152.4 435.61 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Value" "PAD 3P3T C"
-      (at 152.4 438.15 0)
-      (effects
-        (font
-          (size 1.0 1.0))))
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
-      (at 152.4 444.5 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes)))
-    (pin "1"
-      (uuid e4724110-ca9b-5dae-ba3f-39907b0302a4))
-    (pin "2"
-      (uuid 21baea9b-824c-57ef-b581-d4ae8bd6d1c1))
-    (pin "3"
-      (uuid 697d4237-b94e-574c-9d86-c1da9004701c))
-    (pin "4"
-      (uuid bc950f01-1ca1-5726-9bdd-d694ab3581e6))
-    (instances
-      (project "pcb-m"
-        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
-          (reference "SW_PAD_SEL")
-          (unit 1)))))
-  (wire
-    (pts
-      (xy 241.3 440.69)
-      (xy 241.3 438.15))
+      (xy 152.4 440.69)
+      (xy 152.4 438.15))
     (stroke
       (width 0)
       (type default))
     (uuid eebe6ffc-9f45-5eb2-97bf-e3da02812bef))
   (global_label "+3.3V"
     (shape bidirectional)
-    (at 241.3 438.15 270)
+    (at 152.4 438.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 68971603-ea47-5abb-95d2-be46c923abe7)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 241.3 438.15 0)
+      (at 152.4 438.15 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (wire
     (pts
-      (xy 241.3 448.31)
-      (xy 241.3 450.85))
+      (xy 152.4 448.31)
+      (xy 152.4 450.85))
     (stroke
       (width 0)
       (type default))
     (uuid 8eea9a50-00aa-58e1-9a0e-00f227d632b2))
-  (label "PAD_SEL_MID"
-    (at 241.3 450.85 90)
+  (global_label "PAD_SEL_ADC"
+    (shape bidirectional)
+    (at 152.4 450.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 0d5e72ae-eca3-514e-b6a3-c25e609ff012))
+    (uuid 0d5e72ae-eca3-514e-b6a3-c25e609ff012)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Device:R")
-    (at 241.3 444.5 0)
+    (at 152.4 444.5 0)
     (unit 1)
     (in_bom yes)
     (on_board yes)
     (dnp no)
     (uuid 7dc02968-80e5-50e7-9095-efbf884693a8)
     (property "Reference" "R_SEL_T"
-      (at 241.3 424.18 0)
+      (at 152.4 424.18 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "10k"
-      (at 241.3 426.72 0)
+      (at 152.4 426.72 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-      (at 241.3 444.5 0)
+      (at 152.4 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
@@ -4139,61 +3869,68 @@
           (unit 1)))))
   (wire
     (pts
-      (xy 330.2 440.69)
-      (xy 330.2 438.15))
+      (xy 241.3 440.69)
+      (xy 241.3 438.15))
     (stroke
       (width 0)
       (type default))
     (uuid 1377436a-adbb-5c7a-8dcf-7896e767cfa6))
-  (label "PAD_SEL_MID"
-    (at 330.2 438.15 270)
+  (global_label "PAD_SEL_ADC"
+    (shape bidirectional)
+    (at 241.3 438.15 270)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid a71d26ac-a412-509b-a82c-c34bb455ec22))
+    (uuid a71d26ac-a412-509b-a82c-c34bb455ec22)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (wire
     (pts
-      (xy 330.2 448.31)
-      (xy 330.2 450.85))
+      (xy 241.3 448.31)
+      (xy 241.3 450.85))
     (stroke
       (width 0)
       (type default))
     (uuid dddd2436-526e-541c-a585-95c3147b407b))
   (global_label "GND"
     (shape bidirectional)
-    (at 330.2 450.85 90)
+    (at 241.3 450.85 90)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
     (uuid b12c6726-a0f0-5764-b706-6ccb4ea340d3)
     (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 330.2 450.85 0)
+      (at 241.3 450.85 0)
       (effects
         (font
           (size 1.0 1.0))
         (hide yes))))
   (symbol
     (lib_id "Device:R")
-    (at 330.2 444.5 0)
+    (at 241.3 444.5 0)
     (unit 1)
     (in_bom yes)
     (on_board yes)
     (dnp no)
     (uuid 60cddd19-e86f-5af8-ab22-513fe59188a2)
     (property "Reference" "R_SEL_B"
-      (at 330.2 416.56 0)
+      (at 241.3 416.56 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Value" "10k"
-      (at 330.2 419.1 0)
+      (at 241.3 419.1 0)
       (effects
         (font
           (size 1.0 1.0))))
     (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-      (at 330.2 444.5 0)
+      (at 241.3 444.5 0)
       (effects
         (font
           (size 1.0 1.0))
@@ -4207,17 +3944,24 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
           (reference "R_SEL_B")
           (unit 1)))))
-  (text "Frente analogico de la portadora Studio, contrato README D4."
+  (text "Frente analogico de la portadora Studio conservado (doc25 seccion 6)."
     (at 15.24 20.32 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid 86ce7bba-a909-5420-8823-e1529aa60c7e))
-  (text "D10 abierto: se conservan SW_PAD_SEL + escalera y J_PAD_SEL; no poblar ambos sin decision."
+  (text "D13: selector en panel; escalera 10k/10k a PAD_SEL_ADC. Polo C via J_PAD_SEL (3 hilos)."
     (at 15.24 24.13 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 069e8799-05dc-5f93-8291-8135a0d8f046)))
+    (uuid 069e8799-05dc-5f93-8291-8135a0d8f046))
+  (text "SW_PAD representa polos A/B en panel, cableados al header 2x4; no montar switch en PCB-M."
+    (at 15.24 27.94 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid bc81cb1b-d85e-5f6a-9edf-e653f66b0a22)))

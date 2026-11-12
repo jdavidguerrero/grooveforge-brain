@@ -1,6 +1,6 @@
-"""PCB-M electrical contract transcribed from README tables and the captured analog front.
+"""PCB-M electrical contract: Juan-approved D8-D15 (2026-11-12) and captured analog front.
 
-None means intentional NC. Cell positions are on a 1.27 mm grid. Unresolved source
+None means intentional NC. Cell positions are on a 1.27 mm grid. Remaining source
 contradictions are listed in ../REPORT.md; this is schematic capture, not fabrication approval.
 """
 
@@ -150,10 +150,6 @@ PARTS = {'J_T41L': {'lib_id': 'Connector_Generic:Conn_01x24',
               'reference': 'R_LOUT_R',
               'value': '47k',
               'footprint': 'Resistor_SMD:R_0603_1608Metric'},
- 'SW_PAD_SEL': {'lib_id': 'Switch:SW_SP3T',
-                'reference': 'SW_PAD_SEL',
-                'value': 'PAD 3P3T C',
-                'footprint': 'Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical'},
  'R_SEL_T': {'lib_id': 'Device:R',
              'reference': 'R_SEL_T',
              'value': '10k',
@@ -230,14 +226,12 @@ PARTS = {'J_T41L': {'lib_id': 'Connector_Generic:Conn_01x24',
                 'reference': 'U_OPT_MIDI',
                 'value': '6N138',
                 'footprint': ''},
- 'J_MIDI_IN': {'lib_id': 'Connector_Audio:AudioJack3',
-               'reference': 'J_MIDI_IN',
-               'value': '3.5mm_TRS_MIDI_IN',
-               'footprint': ''},
- 'J_MIDI_OUT': {'lib_id': 'Connector_Audio:AudioJack3',
-                'reference': 'J_MIDI_OUT',
-                'value': '3.5mm_TRS_MIDI_OUT',
-                'footprint': ''},
+ 'J_MIDI_IN': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_MIDI_IN', 'value': 'MIDI_IN_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
+ 'J_MIDI_OUT': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_MIDI_OUT', 'value': 'MIDI_OUT_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
  'J1_PCBA': {'lib_id': 'Connector_Generic:Conn_02x15_Odd_Even',
              'reference': 'J1_PCBA',
              'value': 'IDC_2x15_PCB-A',
@@ -270,38 +264,27 @@ PARTS = {'J_T41L': {'lib_id': 'Connector_Generic:Conn_01x24',
              'reference': 'J_PCB_K',
              'value': 'PCB_K_KEY_CABLE',
              'footprint': ''},
- 'J_LINE_IN_L': {'lib_id': 'Connector_Audio:AudioJack3',
-                 'reference': 'J_LINE_IN_L',
-                 'value': 'NRJ3HF-1_LINE_IN_L',
-                 'footprint': ''},
- 'J_LINE_IN_R': {'lib_id': 'Connector_Audio:AudioJack3',
-                 'reference': 'J_LINE_IN_R',
-                 'value': 'NRJ3HF-1_LINE_IN_R',
-                 'footprint': ''},
- 'J_LINE_OUT_L': {'lib_id': 'Connector_Audio:AudioJack3',
-                  'reference': 'J_LINE_OUT_L',
-                  'value': '6.35mm_LINE_OUT_L',
-                  'footprint': ''},
- 'J_LINE_OUT_R': {'lib_id': 'Connector_Audio:AudioJack3',
-                  'reference': 'J_LINE_OUT_R',
-                  'value': '6.35mm_LINE_OUT_R',
-                  'footprint': ''},
- 'J_HP_CUE': {'lib_id': 'Connector_Audio:AudioJack3',
-              'reference': 'J_HP_CUE',
-              'value': '6.35mm_HP_CUE_front',
-              'footprint': ''},
- 'J_CV1': {'lib_id': 'Connector_Audio:AudioJack2',
-           'reference': 'J_CV1',
-           'value': '3.5mm_CV1_OUT',
-           'footprint': ''},
- 'J_CV2': {'lib_id': 'Connector_Audio:AudioJack2',
-           'reference': 'J_CV2',
-           'value': '3.5mm_CV2_OUT',
-           'footprint': ''},
- 'J_PEDAL': {'lib_id': 'Connector_Audio:AudioJack3',
-             'reference': 'J_PEDAL',
-             'value': '6.35mm_PEDAL_TRS',
-             'footprint': ''},
+ 'J_LINE_IN_L': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_LINE_IN_L', 'value': 'LINE_IN_L_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
+ 'J_LINE_IN_R': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_LINE_IN_R', 'value': 'LINE_IN_R_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
+ 'J_LINE_OUT_L': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_LINE_OUT_L', 'value': 'LINE_OUT_L_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
+ 'J_LINE_OUT_R': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_LINE_OUT_R', 'value': 'LINE_OUT_R_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
+ 'J_CV1': {'lib_id': 'Connector_Generic:Conn_01x02',
+                'reference': 'J_CV1', 'value': 'CV1_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical'},
+ 'J_CV2': {'lib_id': 'Connector_Generic:Conn_01x02',
+                'reference': 'J_CV2', 'value': 'CV2_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical'},
+ 'J_PEDAL': {'lib_id': 'Connector_Generic:Conn_01x03',
+                'reference': 'J_PEDAL', 'value': 'PEDAL_PANEL_CABLE',
+                'footprint': 'Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical'},
  'J_EDRUM': {'lib_id': 'Connector_Generic:Conn_01x05',
              'reference': 'J_EDRUM',
              'value': 'EDRUM_RESERVED_DNP',
@@ -370,9 +353,8 @@ FRONT = [('R_PAD_L1', 1, {'1': 'LINE_IN_L_T', '2': 'TAP10_L'}),
  ('R_LOUT_L', 1, {'1': 'LINE_OUT_L_T', '2': 'AGND'}),
  ('C_LOUT_R', 1, {'1': 'SHIELD_LINE_OUT_R', '2': 'LINE_OUT_R_T'}),
  ('R_LOUT_R', 1, {'1': 'LINE_OUT_R_T', '2': 'AGND'}),
- ('SW_PAD_SEL', 1, {'1': 'GND', '2': 'PAD_SEL_MID', '3': 'PAD_SEL_ADC', '4': '+3.3V'}),
- ('R_SEL_T', 1, {'1': '+3.3V', '2': 'PAD_SEL_MID'}),
- ('R_SEL_B', 1, {'1': 'PAD_SEL_MID', '2': 'GND'})]
+ ('R_SEL_T', 1, {'1': '+3.3V', '2': 'PAD_SEL_ADC'}),
+ ('R_SEL_B', 1, {'1': 'PAD_SEL_ADC', '2': 'GND'})]
 
 RESISTOR = 'Resistor_SMD:R_0402_1005Metric'
 CAPACITOR = 'Capacitor_SMD:C_0402_1005Metric'
@@ -430,8 +412,9 @@ def pcb_m():
     s.paper = 'A1'
     for index, (ref, unit, pins) in enumerate(FRONT):
         part(s, ref, pins, (index % 6, index // 6), unit)
-    s.notes = ['Frente analogico de la portadora Studio, contrato README D4.',
-               'D10 abierto: se conservan SW_PAD_SEL + escalera y J_PAD_SEL; no poblar ambos sin decision.']
+    s.notes = ['Frente analogico de la portadora Studio conservado (doc25 seccion 6).',
+               'D13: selector en panel; escalera 10k/10k a PAD_SEL_ADC. Polo C via J_PAD_SEL (3 hilos).',
+               'SW_PAD representa polos A/B en panel, cableados al header 2x4; no montar switch en PCB-M.']
     sheets[3].notes = ['RESERVADO: MCP23017 0x23 vive en PCB-K. Hoja vacia conservada en la raiz.']
 
     s = sheets[2]
@@ -457,6 +440,11 @@ def pcb_m():
              footprint='Package_SO:SOIC-14_3.9x8.7mm_P1.27mm')
         resistor(s, f'R_CV_RF{channel}', '10k', f'CV{channel}_OUT', f'CV{channel}_FB', (2, channel - 1))
         resistor(s, f'R_CV_RI{channel}', '20k', f'CV{channel}_FB', 'GND', (3, channel - 1))
+        resistor(s, f'R_CV_SER{channel}', '1k', f'CV{channel}_OUT', f'CV{channel}_PROTECTED',
+                 (4, channel - 1))
+        part(s, f'D_CV_CLAMP{channel}', {1: 'GND', 2: '+5V_LED', 3: f'CV{channel}_PROTECTED'},
+             (5, channel - 1), lib_id='Diode:BAT54S', value='BAT54S',
+             footprint='Package_TO_SOT_SMD:SOT-23')
     for unit in (3, 4):
         out, negative, positive = opamp_pins[unit - 1]
         part(s, 'U_OA_CV', {out: f'CV_UNUSED_{unit}', negative: f'CV_UNUSED_{unit}', positive: 'GND'},
@@ -468,46 +456,51 @@ def pcb_m():
         capacitor(s, f'C_{ref}_VCC', '100nF', rail, 'GND', (index, 3))
         capacitor(s, f'C_{ref}_BULK', '10uF', rail, 'GND', (index, 4))
     s.notes = ['CV: 1 + 10k/20k = 1.5; A0 DAC1=GND (0x60), DAC2=3V3 (0x61).',
-               'Doc24 pide 1k + proteccion de salida; no definidos en README, pendiente de decision.']
+               'D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_LED.']
 
     s = sheets[5]
+    s.paper = 'A2'
     for channel in range(1, 5):
         connector(s, f'J_FSR{channel}', ['+3.3V', f'FSR{channel}_ADC'], (channel - 1, 0))
         resistor(s, f'R_FSR{channel}', '10k', f'FSR{channel}_ADC', 'GND', (channel - 1, 1))
     connector(s, 'J_JOG', ['GND', 'JOG_A', 'JOG_B', 'JOG_CLICK'], (0, 2))
     for index, name in enumerate(('MASTER', 'CUE', 'IN')):
-        connector(s, f'J_POT_{name}', ['+3.3V', f'POT_{name}', 'GND'], (index + 1, 2))
+        connector(s, f'J_POT_{name}', ['+3.3V', f'POT_{name}_WIPER', 'GND'], (index + 1, 2))
+        resistor(s, f'R_POT_{name}', '1k', f'POT_{name}_WIPER', f'POT_{name}', (index + 1, 4))
+        capacitor(s, f'C_POT_{name}', '100nF', f'POT_{name}', 'GND', (index + 1, 5))
     connector(s, 'J_PAD_SEL', ['+3.3V', 'PAD_SEL_ADC', 'GND'], (0, 3))
     connector(s, 'J_HP', ['HP_L', 'HP_R', 'HP_VGND'], (2, 3))
     s.notes = ['Componentes de panel por cable. JOG_CLICK via J_PCB_K hacia MCP 0x23.',
-               'J_PAD_SEL: duplicacion D10 pendiente; HP_VGND aislado de masa.']
+               'D13: polo C comun a J_PAD_SEL.2; extremos a .1/.3; contacto central sin cable (1.65V).',
+               'D11: pots con RC 1k/100nF del lado ADC. J_HP unico jack HP; HP_VGND aislado de masa.']
 
     s = sheets[6]
     s.paper = 'A2'
     part(s, 'U_OPT_MIDI', {1: None, 2: 'MIDI_OPTO_A', 3: 'MIDI_IN_TIP', 4: None,
          5: 'GND', 6: 'MIDI_RX', 7: 'MIDI_OPTO_BASE', 8: '+5V_TEENSY'}, (1, 0),
          footprint='Package_DIP:DIP-8_W7.62mm')
-    jack_fp = 'Connector_Audio:Jack_3.5mm_CUI_SJ-3523-SMT_Horizontal'
-    part(s, 'J_MIDI_IN', {'T': 'MIDI_IN_TIP', 'R': 'MIDI_IN_RING', 'S': None}, (0, 0), footprint=jack_fp)
-    part(s, 'J_MIDI_OUT', {'T': 'MIDI_OUT_TIP', 'R': 'MIDI_OUT_RING', 'S': 'GND'}, (0, 2), footprint=jack_fp)
+    connector(s, 'J_MIDI_IN', ['MIDI_IN_TIP', 'MIDI_IN_RING', None], (0, 0))
+    connector(s, 'J_MIDI_OUT', ['MIDI_OUT_TIP', 'MIDI_OUT_RING', 'GND'], (0, 2))
     resistor(s, 'R_MIDI_IN', '220', 'MIDI_IN_RING', 'MIDI_OPTO_A', (2, 0))
     resistor(s, 'R_MIDI_RX', '4.7k', '+3.3V', 'MIDI_RX', (3, 0))
     resistor(s, 'R_MIDI_BASE', '10k', 'MIDI_OPTO_BASE', 'GND', (2, 1))
     part(s, 'D_MIDI_IN', {1: 'MIDI_OPTO_A', 2: 'MIDI_IN_TIP'}, (3, 1),
          lib_id='Device:D', value='1N4148W', footprint='Diode_SMD:D_SOD-123')
-    resistor(s, 'R_MIDI_S', '100', 'MIDI_TX', 'MIDI_TX_PROTECTED', (1, 2))
-    resistor(s, 'R_MIDI_T', '47', 'MIDI_TX_PROTECTED', 'MIDI_OUT_TIP', (2, 2))
-    resistor(s, 'R_MIDI_R', '47', '+3.3V', 'MIDI_OUT_RING', (3, 2))
+    part(s, 'R_MIDI_T', {1: 'MIDI_TX', 2: 'MIDI_OUT_TIP'}, (2, 2),
+         lib_id='Device:R', value='10', footprint='Resistor_SMD:R_1206_3216Metric')
+    part(s, 'R_MIDI_R', {1: '+3.3V', 2: 'MIDI_OUT_RING'}, (3, 2),
+         lib_id='Device:R', value='33', footprint='Resistor_SMD:R_1210_3225Metric')
     capacitor(s, 'C_MIDI_VCC', '100nF', '+5V_TEENSY', 'GND', (1, 1))
     s.notes = ['MIDI TRS Type A: ring=fuente, tip=sumidero; entrada aislada, sleeve IN NC.',
-               'R_MIDI_S/T/R materializan D3; polarizacion opto explicita, validar en banco.']
+               'D12 CA-033 (2014): R_MIDI_R=33 ohm >=0.5W; R_MIDI_T=10 ohm >=0.25W; sin 100 ohm extra.',
+               'JST-PH hacia jacks de panel: 1=tip, 2=ring, 3=sleeve. Sin deteccion de insercion.']
 
     s = sheets[7]
     part(s, 'J1_PCBA', dict(enumerate([
         '+5V_LED', '+5V_LED', 'GND', 'GND', 'ENC1_A', 'GND', 'ENC1_B', 'ENC5_A',
         'ENC2_A', 'ENC2_B', 'FADER4_SIG', 'FADER3_SIG', 'ENC3_A', 'FADER2_SIG',
-        'ENC3_B', 'FADER1_SIG', 'ENC4_A', 'LED_DATA', 'ENC4_B', None, 'ENC5_B', None,
-        'ENC6_A', 'ENC8_B', 'ENC6_B', 'LED_DIN_5V', 'ENC8_A', 'ENC7_A', 'ENC7_B', '+3.3V'], 1)),
+        'ENC3_B', 'FADER1_SIG', 'ENC4_A', None, 'ENC4_B', None, 'ENC5_B', None,
+        'ENC6_A', 'ENC8_B', 'ENC6_B', None, 'ENC8_A', 'ENC7_A', 'ENC7_B', '+3.3V'], 1)),
         (0, 0), footprint='Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical')
     connector(s, 'J2_I2C', ['GND', '+3.3V', 'I2C_SDA', 'I2C_SCL'], (1, 0),
               footprint='Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal')
@@ -519,27 +512,32 @@ def pcb_m():
         connector(s, f'J{index+6}_EXP{index}', ['+3.3V', f'EXP{index}_ADC'], (index + 1, 1))
         resistor(s, f'R_EXP{index}', '10k', f'EXP{index}_ADC', 'GND', (index + 1, 2))
         capacitor(s, f'C_SHARP{index}', '10uF', '+5V_LED', 'GND', (index - 1, 2))
-    s.notes = ['J1: pinout de captura conservado; NC 20/22 (D1). Tabla README contradictoria: ver REPORT.md.',
+    s.notes = ['D8: J1 segun PCB-A fabricada; NC 18(spare)/20(INT_K)/22(INT_A)/26(LED_DIN).',
+               'Encoders a Teensy segun firmware; faders al ADS0x48 AIN0-3. LED solo via J_PCB_K.',
                'I2C hacia PCB-A por J2; J1 no lleva SDA/SCL. Retirar pull-ups PCB-A.']
 
     s = sheets[8]
     for channel, row in (('L', 0), ('R', 1)):
-        part(s, f'J_LINE_IN_{channel}', {'T': f'LINE_IN_{channel}_T', 'R': f'LINE_IN_{channel}_R', 'S': 'AGND'},
-             (0, row), footprint='Connector_Audio:Jack_6.35mm_Neutrik_NRJ3HF-1_Horizontal')
-        part(s, f'J_LINE_OUT_{channel}', {'T': f'LINE_OUT_{channel}_T', 'R': None, 'S': 'AGND'}, (1, row))
-        part(s, f'J_CV{1 if channel == "L" else 2}', {'T': f'CV{1 if channel == "L" else 2}_OUT', 'S': 'AGND'},
-             (2, row))
-    part(s, 'J_HP_CUE', {'T': 'HP_L', 'R': 'HP_R', 'S': 'HP_VGND'}, (0, 2))
-    part(s, 'J_PEDAL', {'T': 'PEDAL_BTN', 'R': None, 'S': 'GND'}, (1, 2))
+        connector(s, f'J_LINE_IN_{channel}', [f'LINE_IN_{channel}_T', f'LINE_IN_{channel}_R', 'AGND'],
+                  (0, row))
+        connector(s, f'J_LINE_OUT_{channel}', [f'LINE_OUT_{channel}_T', None, 'AGND'], (1, row))
+        number = 1 if channel == 'L' else 2
+        connector(s, f'J_CV{number}', [f'CV{number}_PROTECTED', 'AGND'], (2, row))
+    connector(s, 'J_PEDAL', ['PEDAL_BTN', None, 'GND'], (1, 2))
     connector(s, 'J_EDRUM', [None] * 5, (2, 2), dnp=True)
-    s.notes = ['D9: LINE OUT despues del capacitor; sleeve HP = HP_VGND, nunca AGND.',
-               'Footprints jacks salida/HP/CV/pedal no definidos por README: se conservan vacios.',
+    s.notes = ['D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack.',
+               'TRS: 1=tip/2=ring/3=sleeve; TS CV: 1=tip/2=sleeve. HP solo por J_HP (06).',
+               'Captura anterior sin contactos de deteccion; no se agrega deteccion de insercion.',
                'Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir.']
 
     s = sheets[9]
     s.paper = 'A2'
     part(s, 'U_LDO1', {1: '+5V_LED', 2: 'AGND', 3: '+5V_LED', 4: None, 5: '+3.3VA'}, (1, 0))
     part(s, 'F1', {1: '+5V_LED_RAW', 2: '+5V_LED'}, (0, 0), footprint='Fuse:Fuse_1206_3216Metric')
+    connector(s, 'J_5V_LED_IN', ['+5V_LED_RAW', 'GND'], (0, 2), value='USB-A_PI_5V_LED_IN',
+              footprint='Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal')
+    part(s, 'NT1', {1: 'AGND', 2: 'GND'}, (1, 2), lib_id='Device:NetTie_2', value='NetTie_2',
+         footprint='NetTie:NetTie-2_SMD_Pad0.5mm')
     connector(s, 'J_5V_BKUP', ['+5V_LED_RAW', 'GND'], (0, 1), dnp=True,
               footprint=PARTS['J_5V_BKUP']['footprint'])
     capacitor(s, 'C_LDO_IN', '10uF', '+5V_LED', 'AGND', (2, 0))
@@ -548,11 +546,11 @@ def pcb_m():
          footprint='Package_TO_SOT_SMD:SOT-353_SC-70-5')
     resistor(s, 'R_SDA', '2.2k', '+3.3V', 'I2C_SDA', (2, 1))
     resistor(s, 'R_SCL', '2.2k', '+3.3V', 'I2C_SCL', (3, 1))
-    capacitor(s, 'C_LED_BUF', '100nF', '+5V_LED', 'GND', (0, 2))
+    capacitor(s, 'C_LED_BUF', '100nF', '+5V_LED', 'GND', (2, 2))
     for index, rail in enumerate(('+5V_LED_RAW', '+5V_LED', '+5V_TEENSY', '+3.3V', 'GND', 'AGND')):
         part(s, f'#FLG{index+1:03}', {1: rail}, (index % 4, 3 + index // 4),
              lib_id='power:PWR_FLAG', value='PWR_FLAG', footprint='')
-    s.notes = ['LDO -> +3.3VA (D4). +3.3V desde Teensy; rieles LED y Teensy separados.',
-               'PWR_FLAG: fuentes externas/pasivas. AGND/GND sin punto estrella definido (REPORT.md).',
-               'USB-A3 alimenta +5V_LED_RAW; conector primario sin definir, J_5V_BKUP DNP conservado.']
+    s.notes = ['LDO -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada.',
+               'D9: USB-A Pi -> J_5V_LED_IN -> F1 0.75A -> +5V_LED. Backup DNP; sin TVS de entrada adecuada en BOM.',
+               'D14: pull-ups 2.2k en PCB-M; desoldar R1/R2 de PCB-A. Unica union AGND/GND por NT1.']
     return Board('pcb-m', sheets)

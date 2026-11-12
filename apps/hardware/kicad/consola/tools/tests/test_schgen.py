@@ -105,8 +105,8 @@ def test_pcb_m_complete_description(library):
     assert not board.sheets[3].symbols
     assert all(s.symbols for s in board.sheets if s.name != '04-mcp-io')
     by_ref = {s.reference: s for sheet in board.sheets for s in sheet.symbols}
-    assert by_ref['J_HP_CUE'].pins['S'] == 'HP_VGND'
-    assert by_ref['J_LINE_OUT_L'].pins['T'] == 'LINE_OUT_L_T'
+    assert by_ref['J_HP'].pins['3'] == 'HP_VGND'
+    assert by_ref['J_LINE_OUT_L'].pins['1'] == 'LINE_OUT_L_T'
     assert by_ref['J1_PCBA'].pins['20'] is None
     assert by_ref['J1_PCBA'].pins['22'] is None
 

@@ -1,52 +1,63 @@
-# PCB-M — reparación de captura (2026-11-12)
+# PCB-M — decisiones D8–D15 y verificación (2026-11-12)
 
-Clon `/private/tmp/grooveforge-pcbgen`, rama `claude/monorepo-groovepush`, base `0a5f53d`.
-Sin push; layout y proyecto `.kicad_pro` intactos. PCB-K/F/P no generadas.
+Trabajo exclusivamente en `/private/tmp/grooveforge-pcbm2`, rama `claude/monorepo-groovepush`,
+base **670457f**. Sin push. Layout `.kicad_pcb` y proyecto `.kicad_pro` intactos; ninguna placa
+PCB-A/K/F/P se modifica o regenera. La API pública de `schgen` y `check_netlist.py` no cambia.
+Entrega: `/private/tmp/grooveforge-pcbm2.patch`, diff binario staged contra 670457f.
 
-Generador Python 3 sin dependencias externas: librerías estándar instaladas, herencia de símbolos,
-unidades múltiples, grilla 1,27 mm, pines rotados, cables de 2,54 mm, etiquetas locales/globales,
-NC explícitos, colisiones antes de escribir y UUID v5 persistentes. Descripción en `schgen/pcb_m.py`.
-Se conserva la hoja 04 vacía en la raíz con una nota: MCP 0x23 trasladado a PCB-K.
-Se capturaron resistores CV/MIDI, todas las unidades del MCP6004 CV y desacoplos faltantes.
-El frente analógico conserva su relación pin/red. HP y LINE OUT siguen README D4/D9.
-Footprints inválidos de ADS1115 sustituidos por el footprint de la propia librería instalada
-`Package_SO:TSSOP-10_3x3mm_P0.5mm`; F1 y C_LDO_OUT siguen los tamaños de la BOM del README.
+La descripción `schgen/pcb_m.py` aplica las decisiones **aprobadas por Juan el 2026-11-12**,
+registradas en `apps/docs/consola/24-placa-principal.md` §8. Theory previa en [THEORY.md](THEORY.md).
+El contrato de cableado y BOM están en [PCB-M README](../boards/pcb-m/README.md); el contrato
+fabricado de PCB-A y la integración vigente en [CONNECTORS.md](../boards/CONNECTORS.md).
 
-## Verificación real
+## Resultado real
 
 - `python3 -m pytest -q apps/hardware/kicad/consola/tools/tests --basetemp=.schgen-test-tmp`:
-  **25 passed**; incluye exportación KiCad real con cuatro rotaciones y NC, y rechazo de XML corrupto.
+  **34 passed** (25 existentes actualizados para conectores numéricos + 9 nuevos casos de contrato PCB-M).
+  Incluye exportación KiCad real, rechazo de XML corrupto, geometría y UUID persistentes.
+  Los nuevos casos cruzan J1 contra CONNECTORS.md y ENCODER_PINS contra firmware, además de
+  verificar faders, NC, protecciones, RC, power/net-tie, selector, MIDI y mazos de jacks.
 - `python3 apps/hardware/kicad/consola/tools/check_netlist.py --regenerate`:
-  **PASS**, KiCad **10.0.6**, **113 componentes / 398 pines / 21 NC / 100 redes con nombre**.
-  Detecta redes fusionadas/divididas, componentes/pines extra o ausentes, nombres distintos y NC sin marca.
-- ERC: **0 errores, 7 avisos**; informe íntegro en `boards/pcb-m/docs/erc-report.txt`.
-  Cinco `isolated_pin_label` son I2S TX/RX/MCLK/BCLK/LRCLK internos al módulo, representados
-  solo en los sockets. Dos son `LINE_IN_L_R` / `LINE_IN_R_R`, sin terminación documentada.
-  No se añadieron exclusiones ERC. PWR_FLAG representa fuentes/retornos externos; no crea una fuente física.
-- XML y PDF actualizados; PDF **11 páginas** (raíz + 10 hojas), revisado mediante rasterización.
-  Regeneración consecutiva de los **11 .kicad_sch idéntica byte a byte**.
-- La exportación avisa de errores de anotación con las referencias heredadas; se conservaron las
-  referencias solicitadas. El XML conserva todos los componentes/pines esperados; ERC no reporta errores.
+  **PASS**, KiCad **10.0.6**, **122 componentes / 415 pines / 23 NC / 103 redes con nombre**.
+  Cuenta componentes físicos del XML, no los PWR_FLAG virtuales. Compara todos los pines y
+  sus particiones/nombres de red; rechaza NC sin marca, fusiones/divisiones y componentes extra/ausentes.
+- **ERC: 0 errores, 7 avisos**, íntegro en `boards/pcb-m/docs/erc-report.txt`.
+  Cinco avisos `isolated_pin_label`: I2S TX/RX/MCLK/BCLK/LRCLK internos al módulo Audio Shield,
+  representados solo en sockets. Dos: `LINE_IN_L_R` / `LINE_IN_R_R`, sin terminación definida.
+  Mismos avisos que en la base; no se agregan exclusiones ni se modifica la configuración ERC.
+  Los checks ignorados que enumera KiCad proceden de la configuración heredada.
+- XML y PDF regenerados. PDF **11 páginas** (raíz + 10 hojas), rasterizado completo con
+  `pdftoppm` y revisado visualmente, incluidas hojas CV y alimentación a mayor escala.
+  Se compactaron las notas de alimentación para evitar invadir el texto de F1.
+- Regeneración consecutiva de los **11 `.kicad_sch` idéntica byte a byte**.
+- La CLI sigue emitiendo el aviso heredado de errores de anotación por las referencias descriptivas.
+  Se conservan las referencias del proyecto; exporta todos los pines esperados y el ERC cuenta cero errores.
 
-## Contradicciones y decisiones de hardware abiertas
+## Contradicciones revisadas
 
-No se reescriben los documentos fuente ni se declaran resueltas estas decisiones. El README es
-prioritario frente a docs 24/17; donde su propia tabla es inconsistente, se conserva la captura
-existente explícitamente como provisional:
-
-| Conflicto | Captura / pendiente |
+| Contradicción registrada en la revisión anterior | Estado / decisión vigente |
 |---|---|
-| README cross-reference asigna J1.15/17 a ENC1 y J1.2/4 a ENC5; la captura/CONNECTORS asigna 15/17 a ENC3_B/ENC4_A y 2/4 a +5V/GND. Además J1.8 aparece como MIDI_TX y ENC6_B. | Se conserva el pinout **preexistente de J1** (no se infiere un recableado imposible desde esa tabla); 20/22 NC según README D1. La tabla requiere decisión del autor antes de fabricar. |
-| README tabla HP_CUE.S=AGND frente a D4/D9.S=HP_VGND. | Se aplica la corrección explícita D9: HP_VGND. Ninguna unión a AGND/GND. |
-| README D10: J_PAD_SEL de 3 hilos duplica SW_PAD_SEL + escalera en 02. | Se conservan ambos, sin decidir ubicación ni cable de panel. |
-| Doc24 §3/§8 ubica MCP0x23 en PCB-M; §9, README y doc17 lo trasladan a PCB-K. | Sin MCP en PCB-M; J_PCB_K transporta JOG_CLICK y PEDAL_BTN. |
-| Doc24 menciona K1/K2 y 41 entradas; README/doc17 usan PCB-K única y doc17 cuenta 36. | No se generan ni se rediseñan otras placas ni se cambia el mapa de firmware. |
-| Alimentación: captura antigua unía el mismo LDO a +3.3V/+3.3VA y su retorno a GND/AGND; README D4 pide +3.3VA. | LDO→+3.3VA/AGND; +3.3V queda en sockets Teensy. GND/AGND siguen distintos: falta especificar su unión estrella y alimentación primaria USB-A3 (solo existe J_5V_BKUP DNP). |
-| Doc24 pide 1k + diodos por CV y RC 1k/100nF por pot; README no fija esos componentes. | No se incorporan protecciones/RC no tabulados. Confirmar contrato antes del layout. |
-| Doc24 MIDI OUT dice 2×47Ω; README D3 añade 100Ω serie. | Se capturan D3: 47Ω en T/R y 100Ω en TX. Polarización de entrada añadida explícitamente: 220Ω LED, 4.7k pull-up RX, 10k base, 1N4148W inversa y 100nF; validar valores en banco. |
-| README D5: T27 reservado e-drum frente a routing 74HC4053 del Brain. | T25/27/38/39 y J_EDRUM NC; J_EDRUM DNP. |
-| Jacks traseros y selector 3P3T sin pieza/huella definitiva; pull-ups PCB-A duplicables (D7). | Se conservan footprints vacíos donde no hay selección; no inventar una pieza equivalente. Confirmar mecánica, BOM F1 y retirar pull-ups duplicados. |
+| Cross-reference README J1.15/17→ENC1, .2/4→ENC5 y .8 duplicado como MIDI/ENC6_B | **Resuelta D8.** Manda PCB-A fabricada, cable 1:1: ENC1 5/7, ENC2 9/10, ENC3 13/15, ENC4 17/19, ENC5 8/21, ENC6 23/25, ENC7 28/29, ENC8 27/24. Teensy según ENCODER_PINS; faders J1.16/14/12/11→ADS0x48 AIN0–3. Tabla README corregida. J1.18 spare/.20 INT_K/.22 INT_A/.26 LED_DIN NC; LEDs por J_PCB_K.5. |
+| HP_CUE.S=AGND frente a HP_VGND; duplicación J_HP/J_HP_CUE | **Resuelta, corrección previa conservada + D15.** J_HP es el único JST de audífonos, pin3=HP_VGND. Se elimina J_HP_CUE. HP_VGND no se une a GND/AGND. LINE OUT sigue después de 10µF. |
+| J_PAD_SEL de 3 hilos duplicaba SW_PAD_SEL y la escalera | **Resuelta D13.** Selector en panel, SW_PAD_SEL eliminado; divisor permanente R_SEL_T/B 10k en PCB-M con punto medio PAD_SEL_ADC. Polo C común→J.2, extremos→GND/3V3, contacto central sin cable; 0/1,65/3,3 V con tres hilos. Polos A/B de audio siguen cableados al header 2×4 representado por SW_PAD. |
+| Doc24 §2/§3/§8 ubicaba MCP0x23 en PCB-M frente a §9/README/doc17 | **Resuelta documentalmente.** 24 corregido: ningún MCP en PCB-M; 0x23 en PCB-K, JOG_CLICK/PEDAL_BTN por J_PCB_K. Hoja 04 vacía conservada. |
+| Doc24 hablaba de K1/K2 y 41 entradas frente a PCB-K única y 36 en doc17 | **Resuelta documentalmente en 24.** PCB-K única con 0x21/0x22/0x23, reparto 36/56 según doc17. No se edita firmware ni otras placas/documentos históricos. |
+| Captura antigua LDO +3.3V/+3.3VA y retornos GND/AGND; faltaba unión estrella y conector primario | **Resuelta D9/D10.** LDO→+3.3VA; +3.3V desde Teensy. J_5V_LED_IN S2B-PH-K (BOM)→F1 0,75 A→+5V_LED. NT1 Device:NetTie_2 / NetTie-2_SMD_Pad0.5mm entre AGND y GND; colocación junto a LDO obligatoria en layout. J_5V_BKUP sigue DNP. Rieles 5V_LED y 5V_TEENSY separados. |
+| CV sin 1k + diodos y pots sin RC 1k/100nF de doc24 | **Resuelta D11.** 1k serie y BAT54S por CV, nodo del jack protegido a GND/+5V_LED; feedback antes de 1k. RC independiente por MASTER/CUE/IN, capacitor en lado ADC. |
+| MIDI OUT doc24 2×47Ω y README 100Ω extra | **Resuelta D12.** CA-033: 33Ω ≥0,5W al riel 3,3V, 10Ω ≥0,25W desde TX; sin resistor extra. TRS tipo A: tip DIN5, ring DIN4, sleeve DIN2 (IN NC/OUT GND). Footprints 1210/1206. Opto IN y polarización previa conservados. |
+| Jacks de PCB sin pieza/huella definitiva y selector sin decisión mecánica | **Resuelta arquitectura de montaje D13/D15.** Jacks con tuerca en pared trasera, compra Bogotá, un JST-PH por jack; mazos documentados. Ningún jack anterior tenía contacto de detección de inserción: no se pierde uno ni se inventa señal nueva. Selector en panel; queda por escoger su pieza mecánica. |
+| Pull-ups PCB-A duplicables | **Resuelta D14.** 2,2k en PCB-M; **desoldar R1/R2 de PCB-A**, documentado en README y CONNECTORS. No se cambia la PCB-A fabricada. |
+| T27 reservado e-drum frente a routing 74HC4053 del Brain | **Abierta, fuera de D8–D15.** T25/27/38/39 y J_EDRUM siguen NC; J_EDRUM DNP. |
+| Anillos LINE IN sin terminación | **Abierta.** Se conservan señales R hacia el mazo; no se inventa una entrada balanceada. Son dos avisos ERC conocidos; resolver antes de fabricar. |
+| Protección TVS/diodo de entrada 5V | **Nota D9 aplicada; pieza pendiente.** No hay TVS/bloqueo de entrada adecuado en la BOM de PCB-M. BAT54S/1N4148W de señal no sirven como reemplazo. No se añade una pieza nueva sin decisión de BOM. |
 
-Esto valida la captura contra su descripción, no resuelve esos contratos ni acredita consumo,
-estabilidad analógica, aislamiento/retornos, MIDI/CV en banco o fabricación. Instrucciones y API:
-[README.md](README.md); fundamento previo a implementación/tests: [THEORY.md](THEORY.md).
+## Límites
+
+Esto valida la captura y los contratos aprobados, no el layout. La posición trasera de JST y el
+punto estrella junto a U_LDO1 están documentados para la fase de colocación, no implementados en
+`.kicad_pcb`. El net-tie mantiene nombres de red distintos y su footprint estándar permite la
+unión física controlada. No acredita DRC, consumo real/USB, estabilidad analógica, tolerancias,
+transitorios, MIDI/CV en banco ni terminación balanceada. Falta seleccionar jacks/selector del
+panel y SKU/potencias de componentes nuevos antes de fabricar. No se genera ninguna otra placa.
+
+Instrucciones de uso y alcance del generador: [README.md](README.md).
