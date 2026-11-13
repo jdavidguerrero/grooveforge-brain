@@ -9,7 +9,7 @@ class MountingTests(unittest.TestCase):
         result = mounting.audit()
         self.assertTrue(result['passes'], result)
         self.assertEqual([h['panel_mm'] for h in result['holes']],
-                         [(72, 181), (118, 192), (144, 192), (248, 192)])
+                         [(84, 179), (118, 192), (144, 192), (248, 192)])
         self.assertEqual(result['standoff_z_mm'], [65, 83])
         self.assertEqual(result['pcb_k_z_mm'], [80, 81.6])
 
@@ -21,7 +21,7 @@ class MountingTests(unittest.TestCase):
     def test_standoff_collision_even_when_center_is_outside_k(self):
         k = [mounting.fit.rect(0, 0, 68, 221)]
         self.assertLess(mounting.standoff_gap((70, 183), k), 0)
-        self.assertAlmostEqual(mounting.standoff_gap((72, 181), k), 1.2)
+        self.assertAlmostEqual(mounting.standoff_gap((84, 179), k), 13.2)
 
     def test_laser_dxf_contains_four_real_mounting_circles(self):
         path = mounting.fit.ROOT / 'apps/design/3d-models/consola/panel-aluminio-v1-laser.dxf'
@@ -36,5 +36,5 @@ class MountingTests(unittest.TestCase):
                 j += 1
             fields = dict(pairs[i+1:j])
             circles.append(tuple(float(fields[k]) for k in ('10', '20', '30', '40')))
-        for x, y in [(72, 181), (118, 192), (144, 192), (248, 192)]:
+        for x, y in [(84, 179), (118, 192), (144, 192), (248, 192)]:
             self.assertEqual(circles.count((x, y, 84, 2.1)), 1)

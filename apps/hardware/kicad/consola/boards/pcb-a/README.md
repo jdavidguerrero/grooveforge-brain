@@ -13,13 +13,13 @@ Los orígenes de las huellas EC11 están a (−7,5; −2,5) mm de sus ejes.
 
 | Agujero | KiCad (mm) | Panel (mm) | Taladro |
 |---|---|---|---|
-| H1 | 28; 190 | 72; 181 | NPTH Ø3,2 mm |
+| H1 | 40; 192 | 84; 179 | NPTH Ø3,2 mm |
 | H2 | 74; 179 | 118; 192 | NPTH Ø3,2 mm |
 | H3 | 100; 179 | 144; 192 | NPTH Ø3,2 mm |
 | H4 | 204; 179 | 248; 192 | NPTH Ø3,2 mm |
 
 H4 está entre E7 y E8 para liberar el cuerpo del último encoder. Las posiciones también
-están anotadas en `Cmts.User` de la PCB. H1 se llevó a (72;181) panel para liberar TAP y el paso por K.
+están anotadas en `Cmts.User` de la PCB. H1 se llevó a (84;179) panel: libera TAP, la franja de navegación de PCB-K izquierda (x 68–74,5) y los recortes de la chapa.
 Separadores BSO-M3 de **18 mm útiles**: cara inferior de chapa z83 → PCB-A superior z65 (TOP−20, doc25 §7).
 La chapa lleva cuatro cortes Ø4,2, alimentados por el CSV v5 y `PEM_HOLE`.
 Puentes láser mínimos: **4,2 / 7,35 / 7,35 / 7,35 mm**. El cuerpo Ø5,6 de los separadores

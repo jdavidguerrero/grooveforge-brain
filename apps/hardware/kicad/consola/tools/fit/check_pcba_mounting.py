@@ -114,7 +114,7 @@ def main():
              'sobre sus contornos especificados, no certifica un layout inexistente. '
              'Revalidar si cambian contornos, tolerancias o diámetro del proveedor.', '',
              'H1 anterior (62;183) invade el paso del separador por K y solapa 0,8 mm '
-             'con TAP en el generador láser. Se movió a (72;181) sin rerutear.', '',
+             'con TAP en el generador láser. Se movió a (72;181) y luego a (84;179): (72;181) caía dentro de la franja x 68–74,5 de PCB-K izquierda real.', '',
              'La prueba valida geometría nominal; el ancho de puente no certifica la '
              'resistencia de clinchado. Ver [BOM de herrajes](../../../../../design/3d-models/consola/BOM-herrajes.md) '
              'para taladro, dureza y distancia a borde exigidos por el proveedor.']

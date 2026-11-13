@@ -17,17 +17,17 @@
   },
   "base": "edc67a3",
   "sources_sha256": {
-    "apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb": "20f494ae63f43ea48bd4f3817b3db3a16eaddf4cb196b9bc0d8529c2a5801bd1",
+    "apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb": "1a2971c525090f600e2ca07af35db3cbc0c198da43d7e9e1d6e5096801f2aebd",
     "apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_pcb": "40b24cd458f844b515aa1a1f635be92718f9402e412fd7991c83d78e03941881",
     "apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_pcb": "4ff5bed4e7c0a47de8729e05b4af5282fcdac6d088537d9678fcb038863d1c2b",
     "apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv": "eb730926c4030ac611e7a12a20579b518f91da12a3b74c435e4b6e816d091d12",
-    "apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv": "0b98fa72f98a212d52b175b605dd94c55c9fe48573a4ff5282a3bbec670ad70d",
+    "apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv": "6a06165eeb4f3b73688e3008a19c572efd123d5b14037d5d2c6052e6dfbab80e",
     "apps/hardware/kicad/consola/boards/pcb-k-left/README.md": "483281331f15398e23c75cc19818bb7674815ec895ee049ebfa42c2ab82a010b",
     "apps/hardware/kicad/consola/boards/pcb-k-right/README.md": "0bdfffca6f038b3895a384145956e451c555c2630047ca7a4d2eb13ccf1acd23",
     "apps/hardware/kicad/consola/panel/contornos/pcb-k-contorno-v5.dxf": "d1b93a17188cc775cf311894de2dc84becfd6fbaf01a71bb933b6c67c5fdd76d",
     "apps/design/3d-models/consola/build_console.py": "e26e8a5278b5a45a54fd6808fef2e97d552794df9a71c17e74dc906e1d1c9b45",
     "apps/docs/consola/25-panel-consola.md": "7e122d2952323fddd647c59ab5cd11e02781e8e7c83eb3b0c54c12dddf94841c",
-    "apps/docs/consola/28-pcb-k.md": "4108d1bc4d763e26e460b18f7edd5dc9c5e7f17327e1415e3ebe570c6bc6dd6b",
+    "apps/docs/consola/28-pcb-k.md": "9885f3e4a2c7c895e3ce712fe4eba4d637ae2116bbe13265520bc1b8e5ed9cd8",
     "apps/docs/consola/design/claude-design-prompt-consola-cuerpo-v5.md": "171ef385def6027dbf3d661cb0699475f85909f6df6ec7c8c362f306fb4bee53"
   },
   "transformation": {
@@ -1018,12 +1018,12 @@
     {
       "reference": "H1",
       "center_kicad": [
-        28.0,
-        190.0
+        40.0,
+        192.0
       ],
       "center_panel": [
-        72.0,
-        181.0
+        84.0,
+        179.0
       ],
       "drill_mm": 3.2
     },

@@ -91,7 +91,7 @@ No se impone aquí una altura de montaje de la placa NeoTrellis aún sin medir.
 
 ## Montaje de A y comprobación de paso por K
 
-Centros de panel H1=(72,181), H2=(118,192), H3=(144,192), H4=(248,192). Taladros de PCB-A Ø3,2 NPTH;
+Centros de panel H1=(84,179), H2=(118,192), H3=(144,192), H4=(248,192). Taladros de PCB-A Ø3,2 NPTH;
 la chapa lleva Ø4,2 nominal. [Chequeo reproducible](../../../hardware/kicad/consola/tools/fit/REPORT-pcba-mounting.md):
 puentes láser mínimos conservadores **4,2 / 7,35 / 7,35 / 7,35 mm** (requisito ≥1,5).
 Separadores z65…83 frente a K z80…81,6: atraviesan su intervalo Z, pero **ninguno atraviesa material de K**

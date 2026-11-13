@@ -14,7 +14,7 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 | Teclas Kailh Choc V2 Brown (táctil 50 gf, 4 patas, ventana para LED SMD) | 26 | Una entrada de MCP por tecla, a GND al pulsar; sin matriz ni diodos |
 | LED SK6812MINI-EA (montaje inverso; LCSC C5378731, ensamble manual opción B) | 26 | Uno bajo cada tecla, cadena única, datos a 5 V ya bufferados en PCB-M |
 | MCP23017 | 3 | 0x21, 0x22, 0x23 (A2 A1 A0 = 001, 010, 011) |
-| Conector a PCB-M | 1 | 8 vías, pinout de la hoja 08 de PCB-M (§5) |
+| Conector a PCB-M | 1 | 10 vías, pinout de la hoja 08 de PCB-M (§5) |
 
 2 capas, 1,6 mm, máscara negra. Sin componentes que lean el bus distinto a los MCP.
 
@@ -29,8 +29,19 @@ pines de MCP y notas de [18](18-teensy-unica-firmware.md) y [17 §3](17-mapa-pin
 - **Cara inferior con zonas prohibidas:** PCB-P (x 9–232, y 69–100) queda 1,5 mm por debajo; la M4 ocupa la ventana
   (x 109–231, y 107–169) y su placa cuelga debajo (margen de 5 mm alrededor de la ventana). Sobre la bahía de la Pi
   (x 9–94, y 219–275) el apilado llega a z ≈ 66 (estimado, el HAT no ha llegado): cualquier pieza inferior ahí ≤ 6 mm.
-- **Montaje:** 14 agujeros M2.5 del CSV v5 a espárragos PEM FH-M2.5 de la chapa, con separador de 1,4 mm. Los agujeros
-  de PCB-P (y 72 y 97) que caen dentro de PCB-K pasan a través.
+- **Montaje:** se conservan los 14 agujeros M2.5 originales del CSV v5 a espárragos PEM FH-M2.5 de la chapa,
+  con separador de 1,4 mm. **M4 colgada de un marco impreso con 4 espárragos PEM M2.5 fuera de la ventana;
+  conectores de la M4 hacia atrás (Juan, 2026-11-13)**. Los brazos alcanzan, en coordenadas de panel:
+  izquierda **(77, 130)** y **(77, 158)**; derecha **(244, 94)** y **(244, 172)** mm. Cada taladro es Ø3,2;
+  reserva inferior R4,6 (3 mm adicionales al radio del agujero), sin piezas ni cobre. Dos apoyos por lado corto;
+  el delantero derecho queda por delante de las filas para conservar espacio eléctrico. Sin brazo transversal
+  en la salida trasera y≈168: micro-USB x≈185, audio x≈154 y JST x≈170. Cabeza PEM Ø4,2 con ≥1,5 mm a cortes.
+- **Pasos PCB-P:** de los diez BSO-M2.5 en x=40/89,5/139/170/201, y=72/97, solo seis cruzan K derecha:
+  x=139/170/201, y=72/97. Se añaden NPTH **Ø4,6** y reserva de cobre/componentes **Ø7**. Los cuatro de
+  x=40/89,5 no atraviesan material de K. No se modifican los diez taladros Ø2,7 propios de PCB-P.
+- **Ajustes del contorno para conservar teclas/zócalos:** banda de navegación x=74,5 en lugar de 73;
+  escalón delantero derecho y=90 en lugar de 98 para alojar el apoyo (244,94). Las posiciones de las teclas,
+  PTH Ø1,3, zócalos y los 14 agujeros originales no cambian. Ver `tools/layout/REPORT-k.md` para cotas finales.
 - **Ventanas:** M4 122 × 62 y 4 redondas Ø20 bajo los FSR de velocity (del CSV v5).
 
 ### Posiciones v1 (resuelto)

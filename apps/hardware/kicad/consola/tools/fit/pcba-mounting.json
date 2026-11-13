@@ -14,20 +14,20 @@
     {
       "reference": "H1",
       "panel_mm": [
-        72.0,
-        181.0
+        84.0,
+        179.0
       ],
       "csv_matches": 1,
       "panel_cut_found": true,
       "panel_hole_diameter_mm": 4.2,
       "web_lower_bound_mm": {
-        "laser": 4.199999999999999,
-        "cnc_con_rebajes": 3.9
+        "laser": 7.420329614269008,
+        "cnc_con_rebajes": 7.420329614269008
       },
       "standoff_to_k_mm": {
-        "PCB-K izquierda (partición inferida)": 1.2000000000000002,
-        "PCB-K derecha (partición inferida)": 35.147331922020555,
-        "PCB-K v5 conjunto (conservador)": 1.2000000000000002
+        "PCB-K izquierda (partición inferida)": 3.2,
+        "PCB-K derecha (partición inferida)": 23.2,
+        "PCB-K v5 conjunto (conservador)": 3.2
       },
       "passes": true
     },

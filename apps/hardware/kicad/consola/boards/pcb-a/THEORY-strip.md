@@ -69,7 +69,7 @@ Spec de esta revisión: petición de montaje y BOM de herrajes de Juan sobre `0e
 El NPTH Ø3,2 de la PCB y el corte Ø4,2 para BSO-M3 en aluminio son piezas distintas.
 El CSV debe contener los cuatro centros y `PEM_HOLE` debe traducirlos al corte de chapa.
 H1 original (62;183) deja un solape de 0,8 mm con el corte láser de TAP de 15,4 mm; no conserva el puente de 1,5 mm.
-Se lleva a (72;181) panel = (28;190) KiCad. Se conserva todo el ruteo; se rellenan
+Se lleva a (84;179) panel = (40;192) KiCad (2026-11-13: (72;181) caía dentro de la franja x 68–74,5 de PCB-K izquierda). Se conserva todo el ruteo; se rellenan
 las dos zonas para despejar el nuevo NPTH. El sitio se comprueba contra pads,
 pistas y vías mediante DRC completo, incluido `--schematic-parity`.
 

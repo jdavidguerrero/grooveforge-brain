@@ -1,0 +1,384 @@
+{
+    "$schema": "https://schemas.kicad.org/drc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-11-13T13:30:57",
+    "ignored_checks": [
+        {
+            "description": "Footprint has no courtyard defined",
+            "key": "missing_courtyard"
+        },
+        {
+            "description": "Track endpoint not centered on via",
+            "key": "track_not_centered_on_via"
+        },
+        {
+            "description": "Tuning profile track geometries",
+            "key": "tuning_profile_track_geometries"
+        },
+        {
+            "description": "Footprint doesn't match symbol's footprint filters",
+            "key": "footprint_filters_mismatch"
+        },
+        {
+            "description": "Footprint component type doesn't match footprint pads",
+            "key": "footprint_type_mismatch"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning"
+    ],
+    "kicad_version": "10.0.6",
+    "schematic_parity": [],
+    "source": "pcb-k-left.kicad_pcb",
+    "unconnected_items": [],
+    "violations": [
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": -38.0,
+                        "y": 251.0
+                    },
+                    "uuid": "4dcdadaa-b5c3-45f8-afa1-2717193b1701"
+                },
+                {
+                    "description": "Segment of J2 on B.Silkscreen",
+                    "pos": {
+                        "x": 25.2,
+                        "y": 251.06
+                    },
+                    "uuid": "65ce79ea-9bf0-459d-aac5-c58da9af3535"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": -38.0,
+                        "y": 251.0
+                    },
+                    "uuid": "4dcdadaa-b5c3-45f8-afa1-2717193b1701"
+                },
+                {
+                    "description": "Segment of J2 on B.Silkscreen",
+                    "pos": {
+                        "x": 26.5,
+                        "y": 251.06
+                    },
+                    "uuid": "633b86c4-62ff-47d3-baac-e12772105e5e"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": -38.0,
+                        "y": 251.0
+                    },
+                    "uuid": "4dcdadaa-b5c3-45f8-afa1-2717193b1701"
+                },
+                {
+                    "description": "Segment of J2 on B.Silkscreen",
+                    "pos": {
+                        "x": 28.11,
+                        "y": 250.11
+                    },
+                    "uuid": "3d95d955-25ba-40db-a3df-23ba5215d401"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Silkscreen clipped by board edge",
+            "items": [
+                {
+                    "description": "Segment on Edge.Cuts",
+                    "pos": {
+                        "x": -38.0,
+                        "y": 251.0
+                    },
+                    "uuid": "4dcdadaa-b5c3-45f8-afa1-2717193b1701"
+                },
+                {
+                    "description": "Rectangle of J2 on B.Silkscreen",
+                    "pos": {
+                        "x": 27.81,
+                        "y": 251.06
+                    },
+                    "uuid": "309113c6-8f77-4472-9717-679365e18ee6"
+                }
+            ],
+            "severity": "warning",
+            "type": "silk_edge_clearance"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW14",
+                    "pos": {
+                        "x": 54.0,
+                        "y": 210.5
+                    },
+                    "uuid": "05757d21-f593-4cea-a616-b0569948841e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW9",
+                    "pos": {
+                        "x": -24.0,
+                        "y": 216.0
+                    },
+                    "uuid": "0a7c3622-1d9e-4071-8715-cce8a33e3c10"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW17",
+                    "pos": {
+                        "x": 54.0,
+                        "y": 255.5
+                    },
+                    "uuid": "129f3220-66ac-4c24-9682-f7ca60a99f7c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW12",
+                    "pos": {
+                        "x": -24.0,
+                        "y": 238.5
+                    },
+                    "uuid": "15b8cfbd-c147-49f4-a467-24335d1d58a9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW3",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 103.0
+                    },
+                    "uuid": "2ece8b61-dcaa-4bb7-9e27-52ac30ba77d4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW1",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 66.0
+                    },
+                    "uuid": "357e7216-3482-44fe-ad56-4d4e7a12d3f9"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW4",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 121.5
+                    },
+                    "uuid": "4f485b74-b572-4785-9f71-fba7b8a70c4c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW8",
+                    "pos": {
+                        "x": -24.0,
+                        "y": 197.0
+                    },
+                    "uuid": "6275edf3-38ae-4e00-91b9-026f70c4945c"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW10",
+                    "pos": {
+                        "x": -5.0,
+                        "y": 216.0
+                    },
+                    "uuid": "73150c25-8b1a-44ae-a8c9-5291effa1d3b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW5",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 140.0
+                    },
+                    "uuid": "766553be-a1ed-49ad-8ff7-f70a49145ac4"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW7",
+                    "pos": {
+                        "x": -5.0,
+                        "y": 197.0
+                    },
+                    "uuid": "8d11ef1f-9dbe-4c8b-b3c3-791dca210c2b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW2",
+                    "pos": {
+                        "x": 20.0,
+                        "y": 84.5
+                    },
+                    "uuid": "9b7096a7-040c-468b-bb10-f58bcc0c7a5d"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW16",
+                    "pos": {
+                        "x": 54.0,
+                        "y": 240.5
+                    },
+                    "uuid": "a9e7f034-34f1-44ac-a53f-eca70ced8a9b"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW13",
+                    "pos": {
+                        "x": -5.0,
+                        "y": 238.5
+                    },
+                    "uuid": "c671dbc8-c1b7-4210-8dd2-e62b31dd62bf"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW11",
+                    "pos": {
+                        "x": 14.0,
+                        "y": 216.0
+                    },
+                    "uuid": "c99b9e49-c067-4f68-9115-2c6bcfa86d4e"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW15",
+                    "pos": {
+                        "x": 54.0,
+                        "y": 225.5
+                    },
+                    "uuid": "dabd42ec-f9f5-4b62-8339-330d42e16ba7"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        },
+        {
+            "description": "Footprint 'Kailh_Choc_V2_PG1353_Hotswap' does not match copy in library 'gf_consola'",
+            "items": [
+                {
+                    "description": "Footprint SW6",
+                    "pos": {
+                        "x": 14.0,
+                        "y": 197.0
+                    },
+                    "uuid": "f89f6df8-0eef-4dba-8711-bc571535f4e5"
+                }
+            ],
+            "severity": "warning",
+            "type": "lib_footprint_mismatch"
+        }
+    ]
+}

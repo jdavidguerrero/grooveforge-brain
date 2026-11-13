@@ -84,7 +84,7 @@ def init():
     move(b,'R1',143,169,90)
     move(b,'R2',144.8,169,90)
     # Existing NPTH M3 holes; keep a head/standoff envelope clear on both faces.
-    for ref,x,y in [('H1',28,190),('H2',74,179),('H3',100,179),('H4',204,179)]: move(b,ref,x,y)
+    for ref,x,y in [('H1',40,192),('H2',74,179),('H3',100,179),('H4',204,179)]: move(b,ref,x,y)
     for f in b.GetFootprints():
         f.Reference().SetVisible(True); f.Value().SetVisible(False)
         for p in f.Pads():

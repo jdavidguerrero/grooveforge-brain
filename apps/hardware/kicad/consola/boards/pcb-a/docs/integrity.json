@@ -2,7 +2,7 @@
   "base": "edc67a3",
   "schematic_sha256": "887ac90cb5f758ef9eaf306f3dbd0887a63d128141b0a392b08fde96fc055ed6",
   "pad_net_contract": "identical",
-  "board_sha256": "20f494ae63f43ea48bd4f3817b3db3a16eaddf4cb196b9bc0d8529c2a5801bd1",
+  "board_sha256": "1a2971c525090f600e2ca07af35db3cbc0c198da43d7e9e1d6e5096801f2aebd",
   "layers": 2,
   "thickness_mm": 1.6,
   "footprints": 37,

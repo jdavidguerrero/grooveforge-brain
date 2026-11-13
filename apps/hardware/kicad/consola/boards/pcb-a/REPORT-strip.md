@@ -32,7 +32,7 @@ El cotejo de biblioteca se mantiene activo y no detecta diferencias con la insta
 
 ## Revisión de anclajes al panel (base 0ef531f)
 
-H1 pasa a KiCad (28;190), panel (72;181), sin rerutear: se conservan las 764 pistas/vías.
+H1 pasa a KiCad (40;192), panel (84;179), sin rerutear (antes (72;181), dentro de la franja de PCB-K izquierda): se conservan las 764 pistas/vías.
 Se rellenaron ambos planos y se reexportaron Gerber, PTH/NPTH, ZIP y 14 SVG.
 No existe un STEP de PCB-A en esta base, por lo que no hay STEP de A que actualizar.
 El SVG de montaje y las cuatro filas `PCB-A,agujero` del CSV concuerdan; el generador
