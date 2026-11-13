@@ -88,7 +88,7 @@ Con crimpadora: terminales PH C5292557 (≈ 0,005 USD) y carcasas PHR-n, a busca
   zócalos Kailh CPG135001S30 comprados aparte por AliExpress (26 conjuntos). No volver a pedir
   teclas ni zócalos en este CSV. El cupón mecánico de la huella sigue pendiente.
 - **Suministrados por Juan (`Supply=owner`):** PCB-A RE1–RE8, 8 encoders EC11 con pulsador ya disponibles.
-- Jacks de pared (Bogotá): 6,35 mm TRS ×5 (LINE IN L/R, LINE OUT L/R, PEDAL), 3,5 mm ×2
+- Jacks de pared: **en el pedido LCSC** (2026-11-13): 7 × HOOYA PJ-612 6,35 mm C309284 y 3 × CAX PJ-392-AU 3,5 mm C49274302. Verificar en la hoja la rosca del 6,35 contra el agujero Ø9,5 del cuerpo.
   (CV1, CV2; MIDI sin poblar, va por USB) y audífonos 6,35 mm.
 - Juan también tiene el encoder de jog, faders RS6011 ×4, FSR 402 ×6, Teensy 4.1 y Audio Shield.
   D43: FSR por soldadura directa de pines metálicos, sin sockets. Los sockets hembra 1×2 P2,54 alternativos son compra externa sin LCSC verificado, no poblados ni incluidos en este pedido.
