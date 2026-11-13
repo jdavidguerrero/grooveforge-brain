@@ -190,6 +190,14 @@ def main():
             args.directory / name / f'{name}.kicad_sch',
             args.directory / name / 'docs' / f'{name}-netlist.xml',
             args.bom_directory / f'bom-{name}.csv', catalog)
+        supplement = args.directory / name / 'assembly-sockets.csv'
+        if supplement.exists():
+            with supplement.open() as stream:
+                assembly = list(csv.DictReader(stream))
+            identity, unresolved = check_components(assembly, catalog)
+            errors.extend(f'assembly-sockets: {e}' for e in identity)
+            pending.extend(f'assembly-sockets: {e}' for e in unresolved)
+            print(f'{name}: {len(assembly)} sockets de ensamble adicionales verificados')
         supplied = sum(bool(c.get('Supply')) and not c.get('DNP') for c in rows)
         print(f'{name}: {len(rows)} components; {len(errors)} identity errors; '
               f'{len(pending)} unverified purchases; {supplied} external supplies')

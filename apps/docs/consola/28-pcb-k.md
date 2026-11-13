@@ -195,6 +195,13 @@ dos cargos de preparación en vez de uno: cotizarlo antes de elegir ensamble.
 
 ## 9. Solape PCB-P / PCB-K — D43, revisión 2 (2026-11-12)
 
+> Actualización autorizada por Juan en el encargo de layout PCB-P (2026-11-13): la cola de 37,4 mm
+> impide la terminación directa descrita abajo. La implementación actual lleva ranura NPTH y
+> socket inferior; cálculo, límites de ensamble y resultados en
+> [THEORY-layout](../../hardware/kicad/consola/boards/pcb-p/docs/THEORY-layout.md) y
+> [REPORT-p](../../hardware/kicad/consola/tools/layout/REPORT-p.md). Se mantienen discos y diez PEM.
+> El texto D43 que sigue documenta la decisión anterior, sustituida en cuanto a terminación.
+
 Spec previo al cambio de huella/placement, aprobado por Juan. Contornos de
 `panel/pcb-outlines-console-v5.csv` y partición §7: a y=84,5 (y también en los
 landings y_panel=73,5), la izquierda no tiene placa; derecha ocupa x=108–232.

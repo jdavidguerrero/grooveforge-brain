@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="70mm" viewBox="0 0 160 70">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="sans-serif" font-size="2.1" fill="#111">
+<text x="7" y="6" font-size="3">PCB-P · sección radial de una cola · escala 1:1</text>
+<text x="7" y="11" font-size="2.1">Misma sección para los seis sensores; girada 25° en planta, 205° para V4.</text>
+<rect x="15.7" y="26" width="19.950000000000003" height="1.6" fill="#ddd" stroke="black" stroke-width="0.1"/>
+<rect x="38.65" y="26" width="16.639027549038275" height="1.6" fill="#ddd" stroke="black" stroke-width="0.1"/>
+<rect x="15.7" y="25.54" width="18.3" height="0.46" fill="#888"/>
+<rect x="50.01902754903827" y="27.6" width="2.54" height="8.5" fill="#bbb" stroke="black" stroke-width="0.1"/>
+<path d="M34 25.77h1 a2.5 2.5 0 0 1 2.5 2.5 v10.33 a2.5 2.5 0 0 0 2.5 2.5 h8.789027549038275 a2.5 2.5 0 0 0 2.5 -2.5 v-5.5" fill="none" stroke="#222" stroke-width="0.46"/>
+<text x="7" y="22" font-size="2">Disco Ø18,3</text>
+<text x="57" y="29" font-size="2">Socket inferior H=8,5</text>
+<text x="57" y="34" font-size="2">Boca a TOP −16,6</text>
+<text x="57" y="39" font-size="2">Inserción nominal: 3</text>
+<text x="7" y="46" font-size="2.1">P superior = TOP −6,5; espesor = 1,6; K inferior = TOP −5,0. Luz superior: 1,5.</text>
+<text x="7" y="51" font-size="2.1">L = 37.4 = 1 + 3πR/2 + V + B + R + 3; R = 2.5; V = 10.33; B = 8.789.</text>
+<text x="7" y="56" font-size="2.1">D centro disco → eje socket = 9,15 + 1 + B + 3R = 26.439. Cola hasta TOP −21,83.</text>
+<text x="7" y="61" font-size="2.1">No marcar la película ni tapar su respiradero. Recortar metal/soldadura superior a ≤0,8.</text>
+<text x="7" y="66" font-size="2.1">37,4 se interpreta desde borde de disco a punta metálica. Comprobar inserción y recorrido con pieza real.</text>
+</g></svg>

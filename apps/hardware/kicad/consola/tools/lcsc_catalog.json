@@ -875,6 +875,23 @@
       "values": [
         "1k"
       ]
+    },
+    {
+      "lcsc": "C2897365",
+      "mpn": "PM254-1-02-Z-8.5",
+      "fabricante": "HCTL",
+      "encapsulado": "Through Hole,P=2.54mm; H=8.5mm",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C2897365.html",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical"
+      ],
+      "values": [
+        "PM254-1-02-Z-8.5"
+      ],
+      "stock_verificado": 10481,
+      "stock_source": "JLCPCB component_search C2897365 in_stock=true; 2026-11-13",
+      "nota": "P2.54, 1x2, vertical; taladro 1mm para terminal cuadrado nominal 0.64mm; cuerpo 8.5mm."
     }
   ],
   "external_supplies": [
