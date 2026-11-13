@@ -35,7 +35,7 @@ Ancho de cola usado: 7,62 mm; holgura transversal nominal total **1,18 mm**. Cen
 del disco sobre el eje de cola. Sin canto metalizado. Taladro NPTH exportado como G85 con fresa Ø3.
 Desbarbar/proteger cantos; la película se curva en el hueco, no contra la arista de FR4.
 
-**Interpretación de la cota recibida:** 37,4 mm desde borde del disco a punta metálica.
+**Interpretación de la cota recibida:** 37,4 mm desde borde del disco a punta metálica. **Confirmado por Juan (2026-11-13): midió desde donde termina el círculo.** La posición de los sockets queda cerrada.
 El socket vertical abre hacia abajo: la punta debe acabar entrando hacia arriba.
 El recorrido usa tres arcos de 90° de radio nominal de línea media R=2,5 mm, con un tramo inferior.
 Espesor de película nominal 0,46; inserción metálica nominal I=3,0; recto inicial A=1,0 mm.

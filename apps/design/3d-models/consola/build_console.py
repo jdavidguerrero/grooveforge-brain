@@ -215,8 +215,9 @@ INSERT_D, INSERT_DEPTH, BOLT_D = 4.0, 6.0, 3.4
 
 # (eje, posición a lo largo, z0, alto, lado del inserto). Lado del inserto = -1 (x o y menores) o +1; la cabeza del M3
 # queda del otro lado, por donde entra la llave. Alturas fuera de PCB-M (≤ 30), faders (≥ 58) y pantalla (≥ 68).
+# Topes de x = 160 en y 215 y 240: PCB-M (80 de alto desde 2026-11-13) empieza en y 256 a z 8 y los topes llegan a z 13.
 SEAM_BOSSES = [
-    ('x', 40, FLOOR, 10, -1), ('x', 110, FLOOR, 10, -1), ('x', 230, FLOOR, 10, -1), ('x', 262, FLOOR, 10, -1),
+    ('x', 40, FLOOR, 10, -1), ('x', 110, FLOOR, 10, -1), ('x', 215, FLOOR, 10, -1), ('x', 240, FLOOR, 10, -1),
     ('x', WALL + BOSS_L / 2, 12, 14, -1), ('x', WALL + BOSS_L / 2, 50, 14, -1),
     ('x', D - WALL - BOSS_L / 2, 45, 13, -1),
     ('y', 40, FLOOR, 10, +1), ('y', 110, FLOOR, 10, +1), ('y', 210, FLOOR, 10, +1), ('y', 280, FLOOR, 10, +1),

@@ -225,7 +225,7 @@ No se declara aprobación de fabricación desde ERC.
 
 ## Dimensiones y layout pendiente
 
-Referencia `25-panel-consola.md`: PCB-M **186 × 60 mm**, x140–326 / y276–336 mm en panel.
+Referencia `25-panel-consola.md`: PCB-M **186 × 80 mm** (Juan, 2026-11-13: crece 20 mm hacia el frente para redistribuir en 2 capas), x140–326 / y256–336 mm en panel, 8 agujeros M3 (dos nuevos en (144, 260) y (322, 260)).
 Los jacks pertenecen a la pared del cuerpo: sus pitches no fijan las huellas de PCB-M. Colocar los
 JST de cada jack en el borde trasero, J_PCB_K hacia el centro e IDC J1 hacia PCB-A; NT1 junto a U_LDO1.
 El archivo `.kicad_pcb` y el proyecto no se modifican en esta captura; la colocación queda pendiente.

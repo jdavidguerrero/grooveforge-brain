@@ -87,9 +87,9 @@ Incluye los 4 soportes BSO-M3 de 18 mm de PCB-A y los 4 FH largos del futuro mar
 
 - **Compra local declarada (`Supply=local`):** caja IDC 2×15 2,54 mm recta (box header) con muesca,
   **2 unidades**: PCB-M J1_PCBA1 y PCB-A J1. Sin código LCSC verificable; no incluir en CSV LCSC.
-- **Suministradas por Juan (`Supply=owner`):** SW1–SW26, teclas Kailh Choc V2 PG1353 con
-  zócalos Kailh CPG135001S30 comprados aparte por AliExpress (26 conjuntos). No volver a pedir
-  teclas ni zócalos en este CSV. El cupón mecánico de la huella sigue pendiente.
+- **Suministradas por Juan (`Supply=owner`):** SW1–SW26, teclas Kailh Choc V2 PG1353
+  **soldadas directo, sin zócalos** (Juan, 2026-11-13, doc 28 D-K1b): no pedir zócalos CPG135001S30. No volver a
+  pedir teclas en este CSV.
 - **Suministrados por Juan (`Supply=owner`):** PCB-A RE1–RE8, 8 encoders EC11 con pulsador ya disponibles.
 - Jacks de pared: **en el pedido LCSC** (2026-11-13): 7 × HOOYA PJ-612 6,35 mm C309284 y 3 × CAX PJ-392-AU 3,5 mm C49274302. Verificar en la hoja la rosca del 6,35 contra el agujero Ø9,5 del cuerpo.
   (CV1, CV2; MIDI sin poblar, va por USB) y audífonos 6,35 mm.

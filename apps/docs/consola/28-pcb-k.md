@@ -54,7 +54,10 @@ Valen las v1, que son además las que corta la chapa.
 
 - Huella Choc con **zócalo hot-swap Kailh CPG135001S30** (LCSC C5333465, ~0,16 USD c/u, sin stock el 2026-11-12;
   también se vende por bolsas). Se compran aparte de las teclas: 26 + repuestos. Se sueldan a mano (SMD de 2 pads, pedido-v1 opción B; JLC ensambla solo PCB-M). Confirmar con la hoja de la Choc V2 que usa el mismo zócalo. Alternativa: teclas soldadas.
-  **D-K1: zócalos (Juan, 2026-11-12).** Huella base: `Kailh_Choc_V2` de la librería siderakb/key-switches.pretty
+  **D-K1b: teclas soldadas, sin zócalos (Juan, 2026-11-13).** Juan no tiene los zócalos y no se piden. Las 26 Choc V2 se
+  sueldan directo en los PTH Ø1,3 de la huella; los pads SMD del zócalo quedan sin uso (cobre de la misma red). Reemplaza
+  D-K1. La revisión de Codex (B01) mostró que el zócalo CPG135001S30 pide agujeros Ø3,0, incompatibles con esta huella.
+  ~~**D-K1: zócalos (Juan, 2026-11-12).**~~ Huella base: `Kailh_Choc_V2` de la librería siderakb/key-switches.pretty
   (poste central más grande que la V1, sin los postes laterales de la V1), a confirmar con la medición de §3.
 - Un polo a la entrada del MCP, el otro a GND. Pull-ups internos del MCP (los activa el firmware); rebote en firmware.
   Las teclas de transporte llevan keycap 1 mm más bajo: no cambia la PCB.

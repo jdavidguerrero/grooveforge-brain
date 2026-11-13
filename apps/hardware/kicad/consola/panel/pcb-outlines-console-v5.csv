@@ -82,13 +82,15 @@ PCB-P,agujero,170,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde s
 PCB-P,agujero,170,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
 PCB-P,agujero,201,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
 PCB-P,agujero,201,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
-PCB-M,contorno,233,306,186,60,"rectángulo; x, y = centro"
+PCB-M,contorno,233,296,186,80,"rectángulo; x, y = centro; 80 de alto desde 2026-11-13 (crece 20 hacia el frente)"
 PCB-M,agujero,144,280,3.2,3.2,M3 a inserto en torre de 5 del piso
 PCB-M,agujero,233,280,3.2,3.2,M3 a inserto en torre de 5 del piso
 PCB-M,agujero,322,280,3.2,3.2,M3 a inserto en torre de 5 del piso
 PCB-M,agujero,144,312,3.2,3.2,M3 a inserto en torre de 5 del piso
 PCB-M,agujero,233,312,3.2,3.2,M3 a inserto en torre de 5 del piso
 PCB-M,agujero,322,308,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,144,260,3.2,3.2,M3 a inserto en torre de 5 del piso (borde delantero nuevo)
+PCB-M,agujero,322,260,3.2,3.2,M3 a inserto en torre de 5 del piso (borde delantero nuevo)
 CUERPO,pozo de tornillo,8,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
 CUERPO,pozo de tornillo,100,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
 CUERPO,pozo de tornillo,240,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
