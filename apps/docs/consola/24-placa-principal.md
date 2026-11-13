@@ -1,6 +1,6 @@
 # Consola: placa principal (PCB-M)
 
-> **Fecha:** 2026-11-12. **Estado:** decisiones D1–D37 aprobadas por Juan (§8); esquema PCB-M en captura,
+> **Fecha:** 2026-11-12. **Estado:** decisiones D1–D43 aprobadas por Juan (§8); esquema PCB-M en captura,
 > layout pendiente del panel (`25-panel-consola.md`). **Base:** ADR-008 §2 y §6 (una Teensy; presupuesto de consumo obligatorio antes de la placa, auditoría G30),
 > `03-arquitectura-capas.md` §4 (una placa principal reemplaza portadora + PCB-S + PCB-A; se mantienen las placas de
 > botones y faders), `17-mapa-pines-teensy.md` (pines e I2C), `18-teensy-unica-firmware.md`,
@@ -83,9 +83,9 @@ para sus USB-A**. Reparto propuesto, todo desde el Pi:
 | Rama | Alimenta | Típico | Tope |
 |---|---|---|---|
 | Fuente → Pi (núcleo, NVMe, Audio+, pantalla) | — | 2,5 A | 3,4 A |
-| USB-A 1 (datos + 5 V) | Teensy, LDO analógico/ADS/frente y lógica de 3,3 V | 0,15 A | 0,25 A |
+| USB-A 1 (datos + 5 V) | Teensy, LDO analógico/ADS/frente y lógica de 3,3 V y amplificador CV filtrado | 0,15 A | 0,25 A |
 | USB-A 2 (datos + 5 V) | NeoTrellis M4 | 0,5 A | 0,6 A (brillo ≤ 25 %) |
-| USB-A 3 (solo 5 V, cable de alimentación) | 26 LEDs de las teclas, Sharp ×2, buffer LED y amplificador CV | 0,5 A | 0,6 A (brillo ≤ 25 %) |
+| USB-A 3 (solo 5 V, cable de alimentación) | 26 LEDs de las teclas, Sharp ×2, buffer LED | 0,5 A | 0,6 A (brillo ≤ 25 %) |
 | **Suma de USB** | | **1,15 A** | **1,45 A ≤ 1,6 A** |
 
 Condiciones: brillo de LEDs **limitado por firmware sin excepción** (teclas y M4), polyfuse de 0,75 A en la entrada
@@ -149,12 +149,58 @@ I2C ve 0x0A, 0x20–0x23, 0x48, 0x49, 0x60, 0x61; audio dúplex ≥ 60 min sin c
 | **D36** | **2026-11-12, aprobado por Juan:** doc27 LED_DIN es J1.6 de PCB-K, no J1.5 (GND). Corrige referencia, sin cambiar cadena. |
 | **D37** | **2026-11-12, aprobado por Juan:** completar anotación de referencias PCB-M con sufijo numérico válido conservando nombres descriptivos; BOM real sin «?», test no normaliza ni elimina ese carácter. No cambia conectividad. |
 
+### Segunda revisión: decisiones aprobadas por Juan, 2026-11-12 (A1 actualizada 2026-11-13)
+
+Estas decisiones sustituyen expresamente los puntos indicados de D11/D24/D26/D31/D32.
+
+| # | Decisión |
+|---|---|
+| **D38 / A2** | SJ_CV recibe **+5V_TEENSY**, conserva RC 10 Ω + 47 µF y desacoplos 100 nF/10 µF a +5V_CV. DAC y amplificador comparten origen USB Teensy. +5V_LED conserva LEDs (incluido indicador), buffer 74AHCT1G125 y Sharp; los clamps superiores BAT54S pasan a **+5V_CV**, evitando realimentar LED desde CV activo al quitar USB LED. Sustituye también el riel superior de D11. |
+| **D39 / A3** | Dos resistencias serie **1 kΩ 0805**, R_M4_RX1 y R_M4_TX1, junto a **J3_M4**, separan M4_RX7/T28 y M4_TX7/T29 de M4_RX7_CABLE/M4_TX7_CABLE. LCSC **C17513**, UNI-ROYAL 0805W8F1001T5E, 1 %, 125 mW. Limitación de corriente, no aislamiento Ioff ni autorización de hot-plug. |
+| **D40 / A1** | **2026-11-13, decisión de Juan:** soldar el cable a los **pads rotulados de la M4 por función**, sin depender de la numeración de CONN1. **SDA = TX M4 → R_M4_RX1 1 kΩ → RX Teensy 28**, **SCL = RX M4 ← R_M4_TX1 1 kΩ ← TX Teensy 29**, **GND → GND**, **3V sin conectar** (J3_M4.2 también NC). J3_M4 conserva pines PCB-M 1=GND, 2=NC, 3=SDA/TX M4, 4=SCL/RX M4. Juan confirmará los rótulos impresos antes de soldar. Sustituye la numeración externa de D24: check_harness usa rótulos de pad y no avisa pendiente por CONN1. |
+| **D41 / M1, M2, B1** | TVS unidireccionales con símbolo K1/A2 y marca K junto a pad1; mismas redes. check_bom cubre M/K izq./K der./A/F/P y exige conjuntos de referencias/atributos esquema↔XML↔BOM real. Exenciones por lib_id real TP/NT/SJ/agujero; nunca por texto de huella. Catálogo LCSC exige URL HTTPS exacta de producto; suministros externos conservan fuente de inventario separada. Faders RS6011 y seis FSR402 son de Juan. Zócalos FSR alternativos son compra externa sin código verificado y **no se pueblan** con D43. |
+| **D42 / M3** | Pots MASTER/CUE/IN: **100 kΩ** (C25741) tras 1 kΩ/100 nF, sustituye 1 MΩ de D31. Error máximo ideal ≈2,108 % FS para pot de 10 kΩ; calibrar curva/extremos. Umbral de reposo ≤0,15 V sostenido 100 ms, esperar ≥100 ms desde conexión/boot; no es detección inequívoca de cable abierto. Firmware debe suprimir CC en esa zona y tratar pot mínimo/cable abierto como mismo estado seguro. |
+| **D43 / M4** | Elegir **soldadura directa de los terminales metálicos prensados**, sin zócalo en los seis FSR. Huella THT P2.54 con inserción desde cara superior y soldadura inferior, contactos metálicos acondicionados para que TODO sobresaliente superior (terminal, crimpado, cola) sea ≤1,0 mm. Nada de calor sobre película; disipador entre metal y película, alivio de tensión fuera de la zona activa. Mantener centros de disco/landing; comprobar con pieza real antes de fabricar. Doc28 detalla solape/alturas. **Layout PCB-P debe rehacerse** por cambio de terminación/huella y envolvente; no se edita su .kicad_pcb en esta tarea. |
+
+**Consumo añadido a +5V_TEENSY (D38):** MCP6004 completo 4×100 µA = 0,40 mA típico,
+4×170 µA = 0,68 mA máximo de reposo bajo las condiciones de la tabla eléctrica Microchip.
+Dos redes de feedback a 4,95 V: 2×4,95/30k = 0,33 mA; incremento sin carga ≈0,73 mA típico,
+≈1,01 mA usando máximo IQ. Con dos cargas externas de 10 kΩ se suman ≤0,99 mA: reservar
+**2 mA** continuos con esa carga (no cota para cortocircuito); caída RC ≈20 mV. El tope de rama
+USB de 250 mA se mantiene como objetivo a medir, ahora incluyendo esos 2 mA. Inrush del
+47+10 µF requiere ensayo; 5 V/10 Ω = 0,5 A inicial ideal breve, no consumo continuo.
+
+**UART a 1 Mbps (D39):** `apps/consola/processor/include/shared/Config.h` define
+`UART_BAUD_RATE=1000000`; `processor/lib/neotrellis_m4/UartInterface/UartInterface.cpp` lo
+aplica a Serial1. `apps/consola/surface/src/Surface.cpp` usa Serial7.begin(1000000)
+en Teensy: ambos extremos a **1 Mbps**, bit=1 µs. Con presupuesto
+**C total receptor+cable ≤100 pF**, R máxima 1,01 kΩ: τ≤101 ns, 10–90 %≤222 ns,
+cruce 0,7×VDD≤122 ns; a mitad del bit se alcanza ≥99,2 % del nivel final. Sin divisor DC
+salvo fugas del receptor. Un cable corto cumple por cálculo bajo ese presupuesto, no se ha
+medido su capacitancia: verificar bordes/niveles/errores a 1 Mbps con mazo real; si C>100 pF,
+revisar antes de aceptar. Con un lado apagado, corriente ideal ≤3,3/990=3,34 mA; **no** prueba
+cumplimiento de NXP NVCC apagada ni elimina rail fantasma. Ensayar secuencias en ambos sentidos.
+
+**Cable abierto de pot (D42):** para fracción de cursor x, Rth=10k·x·(1−x),
+Vadc/3,3=x·100k/(100k+1k+Rth). Error absoluto máximo ≈0,02108 FS cerca de x=0,7174;
+a media escala ≈1,691 % FS. Error relativo máximo 3,5k/103,5k≈3,382 %.
+Cable abierto: τ=100k×100nF=10 ms; fuga de +1 µA da 0,10 V nominal, no cero.
+Con R+1 % y C+20 %, τ≤12,12 ms y asíntota≤0,101 V: tras 100 ms desde 3,3 V
+V≤0,102 V. Umbral 0,15 V deja ≈48 mV de margen en este modelo; configurar ADC sin
+pull-up y validar fuga/contaminación/temperatura/muestreo. No confundir extremo mínimo
+legítimo con avería: para distinguirlos hace falta información adicional. Llevar este contrato
+a la tarea de firmware; aquí no se modifica código de firmware.
+
+Fuentes: [Microchip MCP6004 tabla DC](https://ww1.microchip.com/downloads/aemDocuments/documents/MSLD/ProductDocuments/DataSheets/MCP6001-1R-1U-2-4-1-MHz-Low-Power-Op-Amp-DS20001733L.pdf),
+[NXP RT1060 §4.2.1.3/tabla 22](https://www.nxp.com/docs/en/nxp/data-sheets/IMXRT1060CEC.pdf),
+[1 kΩ 0805 C17513](https://www.lcsc.com/product-detail/C17513.html).
+
 ### Secuencia de alimentación y límites (D26–D27)
 
 Sin USB LED: Teensy, +3.3V, +3.3VA, ADS, frente y sensores excitados por Teensy siguen activos;
-LEDs, Sharp y amplificador CV quedan sin alimentación. Las resistencias DAC→CV de 2,2 kΩ
-limitan incluso 3,3/2,2k = 1,50 mA, menor que ±2 mA absoluto MCP6004. Sin USB Teensy:
-ADS/frente/faders/expresión/DAC apagados; Sharp/LED/CV pueden seguir alimentados.
+LEDs y Sharp quedan sin alimentación; amplificador CV sigue desde Teensy (D38). Las resistencias
+DAC→CV de 2,2 kΩ se conservan, sin atribuirles protección de tensión con operacional apagado.
+Sin USB Teensy: ADS/frente/faders/expresión/DAC/amplificador CV apagados; Sharp/LED pueden seguir activos.
 10 kΩ limita una salida Sharp hasta 5 V a ≤0,50 mA en ADS apagado, menor que ±10 mA.
 No confundir limitar corriente con operación analógica válida: ADS AIN ≤VDD+0,3 V y
 MCP6004 VIN ≤VDD+1 V son límites absolutos; apagar/inyección requiere ensayo de rail fantasma,
@@ -207,7 +253,7 @@ retira el puente de cobre y para cerrar se resuelda. No basta aspirar estaño de
 | Puente | Recorrido | Por qué |
 |---|---|---|
 | SJ_FRONT | +3.3VA → +3.3VA_FRONT | Aislar MCP6004 de entrada, clamps y divisor VREF; ADS siguen en +3.3VA |
-| SJ_CV | +5V_LED → +5V_CV_IN | Aislar alimentación del amplificador CV y su filtro |
+| SJ_CV | +5V_TEENSY → +5V_CV_IN | Aislar alimentación del amplificador CV y su filtro |
 | SJ_LED_K | +5V_LED → +5V_LED_K → J_PCB_K.8 | Localizar cortos del mazo/LEDs de teclas |
 | SJ_SHARP | +5V_LED → +5V_LED_SHARP → ambos Sharp y sus 10 µF | Distinguir la rama de sensores de la de LEDs |
 | SJ_SDA_A / SJ_SCL_A | B de U_I2C_A → puente → 47 Ω → J2_I2C | Desconectar la rama PCB-A/F si mantiene el bus bajo |
@@ -236,9 +282,9 @@ los pull-ups opcionales de PCB-K quedan DNP. Arrancar a 100 kHz; validar a 400 k
 
 SJ_CV → **10 Ω + 47 µF** a GND crea **+5V_CV** para U_OA_CV y su desacoplo existente
 100 nF/10 µF. El RC solo tiene fc nominal≈339 Hz (τ=470 µs); el condensador de 10 µF existente
-reduce la fc real. Atenúa perturbaciones rápidas de +5V_LED, no regula ni elimina ruido lento.
+reduce la fc real. D38: recibe +5V_TEENSY. Atenúa perturbaciones rápidas de ese riel, no regula ni elimina ruido lento.
 Usar R 0603 y C polarizado SMD 47 µF ≥10 V; medir caída 10 Ω × corriente y transitorios en banco.
-Los clamps de salida permanecen a +5V_LED (D11); pueden realimentar la placa desde un CV externo.
+D38: clamps superiores de salida a +5V_CV; pueden realimentar ese dominio desde un CV externo.
 
 Ganancia **1 + 10k/20k = 1,5** conservada; 4,95 V es el valor ideal, no un máximo garantizado:
 la salida necesita margen respecto a +5V_CV y el resistor de 1 kΩ cae con carga. **No se añade

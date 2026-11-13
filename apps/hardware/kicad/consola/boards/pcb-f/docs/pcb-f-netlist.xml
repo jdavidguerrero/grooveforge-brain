@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_sch</source>
-    <date>2026-11-12T14:32:51</date>
+    <date>2026-11-13T06:57:18</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -47,12 +47,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -73,12 +79,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -99,12 +111,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -125,12 +143,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -151,12 +175,18 @@
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
         <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
       <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="cap capacitor"/>
@@ -176,11 +206,19 @@
       <value>PCB-A J3 / 1:1</value>
       <footprint>Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C160405</field>
+        <field name="MPN">SM06B-SRSS-TB(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">SMD,P=1mm,Surface Mount,Right Angle</field>
         <field name="Footprint">Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x06" description="Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C160405"/>
+      <property name="MPN" value="SM06B-SRSS-TB(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="SMD,P=1mm,Surface Mount,Right Angle"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -204,11 +242,17 @@
       <value>RS6011 B50K</value>
       <footprint>groovepush:ALPS_RS6011P_60mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: cuatro faders RS6011 B50K</field>
         <field name="Footprint">groovepush:ALPS_RS6011P_60mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Potentiometer_MountingPin" description="Potentiometer with a mounting pin"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: cuatro faders RS6011 B50K"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="resistor variable"/>
@@ -230,11 +274,17 @@
       <value>RS6011 B50K</value>
       <footprint>groovepush:ALPS_RS6011P_60mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: cuatro faders RS6011 B50K</field>
         <field name="Footprint">groovepush:ALPS_RS6011P_60mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Potentiometer_MountingPin" description="Potentiometer with a mounting pin"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: cuatro faders RS6011 B50K"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="resistor variable"/>
@@ -256,11 +306,17 @@
       <value>RS6011 B50K</value>
       <footprint>groovepush:ALPS_RS6011P_60mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: cuatro faders RS6011 B50K</field>
         <field name="Footprint">groovepush:ALPS_RS6011P_60mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Potentiometer_MountingPin" description="Potentiometer with a mounting pin"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: cuatro faders RS6011 B50K"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="resistor variable"/>
@@ -282,11 +338,17 @@
       <value>RS6011 B50K</value>
       <footprint>groovepush:ALPS_RS6011P_60mm</footprint>
       <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: cuatro faders RS6011 B50K</field>
         <field name="Footprint">groovepush:ALPS_RS6011P_60mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Potentiometer_MountingPin" description="Potentiometer with a mounting pin"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: cuatro faders RS6011 B50K"/>
       <property name="Sheetname" value="faders-1"/>
       <property name="Sheetfile" value="sheets/faders-1.kicad_sch"/>
       <property name="ki_keywords" value="resistor variable"/>

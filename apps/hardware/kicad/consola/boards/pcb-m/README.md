@@ -1,6 +1,6 @@
 # PCB-M — Placa Principal GrooveForge Consola
 
-> Esquemático jerárquico KiCad 10, decisiones **D8–D37 aprobadas por Juan el 2026-11-12**
+> Esquemático jerárquico KiCad 10, decisiones **D8–D43 aprobadas por Juan (2026-11-12; D40 actualizado 2026-11-13)**
 > (`apps/docs/consola/24-placa-principal.md` §8). Sin layout PCB; no es aprobación de fabricación.
 > Descripción eléctrica: `tools/schgen/pcb_m.py`. Firmware: `apps/consola/surface/include/consola_s/ConsolaMap.h`
 > y `apps/docs/consola/17-mapa-pines-teensy.md`. Conector fabricado: `../CONNECTORS.md`.
@@ -48,7 +48,7 @@ Cinta IDC **1:1**. PCB-M distribuye cada señal al pin que usa el firmware actua
 | T22 | MASTER | `POT_MASTER` | J_POT_MASTER.2 → **1k → ADC; 100nF a GND** |
 | T24 | CUE | `POT_CUE` | J_POT_CUE.2 → **1k → ADC; 100nF a GND** |
 | T26 | IN | `POT_IN` | J_POT_IN.2 → **1k → ADC; 100nF a GND** |
-| T28 / T29 | M4 RX/TX Serial7 | `M4_RX7` / `M4_TX7` | J3_M4.3 / .4 → CONN1.3 SDA/TX21 / .4 SCL/RX22 |
+| T28 / T29 | M4 RX/TX Serial7 | `M4_RX7` / `M4_TX7` | J3_M4.3 / .4 ↔ pads SDA/TX M4 / SCL/RX M4, vía 1 kΩ cada línea |
 | T37 / T40 | Jog A/B | `JOG_A` / `JOG_B` | J_JOG.2/.3; clic por .4 hacia PCB-K |
 | T41 | Selector pad | `PAD_SEL_ADC` | J_PAD_SEL.2 y divisor permanente 10k/10k |
 | T7 / T8 / T20 / T21 / T23 | I2S TX/RX/LRCLK/BCLK/MCLK | `I2S_*` | Internos al módulo Audio Shield; sin ruta al panel |
@@ -76,7 +76,7 @@ PH = JST-PH 2,0 mm; normalmente BnB-PH-K vertical. J_5V_LED_IN usa S2B-PH-K hori
 |---|---|---|
 | J1_PCBA | IDC 2×15 | Pinout fabricado de CONNECTORS.md; destinos en tablas anteriores |
 | J2_I2C | JST-SH 4 Qwiic | GND / +3.3V / SDA / SCL |
-| J3_M4 | PH 4 | GND / **NC** / M4_RX7 / M4_TX7; M4 alimentada por su USB al Pi |
+| J3_M4 | PH 4 | GND / **NC** / M4_RX7_CABLE / M4_TX7_CABLE; pads M4 por rótulo (D40), vía 1 kΩ por señal; M4 por USB propio |
 | J_PCB_K | PH 10 C158038 | +3.3V / SDA_B_K / GND / SCL_B_K / GND / LED_DIN_5V / GND / +5V_LED_K / JOG_CLICK / PEDAL_BTN |
 | J5_SHARP1, J6_SHARP2 | PH 3 cada uno | +5V_LED / SHARPx_RAW / GND; 10k serie hacia ADS |
 | J7_EXP1, J8_EXP2 | PH 2 cada uno | +3.3V / EXPx_ADC, pulldown 10k |
@@ -133,7 +133,7 @@ SW_PAD representa los polos A/B del selector de panel, con header 2×4 en PCB-M:
 Cable USB-A del Pi (solo alimentación): VBUS → J_5V_LED_IN.1, GND → .2.
 F1 **MF-MSMF075/24-2, 0,75 A, 1812** → +5V_LED_FUSED → AO3401A (D entrada, S carga, G GND)
 → +5V_LED. SMAJ5.0A unidireccional a GND después del fusible: un corto sostenido de TVS
-queda limitado por F1. El riel alimenta LEDs, buffer, Sharp y amplificador CV.
+queda limitado por F1. El riel +5V_LED alimenta solo LEDs (incluido indicador), buffer 74AHCT1G125 y Sharp.
 PMOS: caída ≤43 mV a 0,5 A usando 85 mΩ, disipación ≈21 mW; evita ≈0,2–0,25 V de Schottky.
 TVS: 5 V es standoff, clamp nominal máximo 9,2 V al pulso especificado; no es regulación a 5 V.
 Medir transitorios con mazo final y no usar para aceptar sobretensión continua.
@@ -141,8 +141,10 @@ Medir transitorios con mazo final y no usar para aceptar sobretensión continua.
 **+5V_TEENSY procede solo del USB propio de la Teensy desde Pi. NO cortar VUSB–VIN.**
 PCB-M no inyecta alimentación en ese rail. IN/EN y C_IN del TLV75533 están en +5V_TEENSY;
 +3.3VA alimenta ADS y frente. Faders/FSR/pots/DAC van a +3.3V de Teensy.
-Sin USB LED esos bloques siguen vivos; Sharp/LED/CV apagados. Sin USB Teensy el dominio
-analógico queda apagado aunque Sharp/CV tengan 5 V. Sharp→ADS 10k (≤0,5 mA con 5 V forzados);
+El amplificador CV y sus clamps superiores usan +5V_CV desde +5V_TEENSY por
+SJ_CV + 10 Ω + 47 µF; conserva desacoplos 100 nF/10 µF. Sin USB LED, CV/ADS/frente
+siguen activos y Sharp/LED/buffer quedan apagados. Sin USB Teensy el dominio analógico
+y CV quedan apagados aunque Sharp/LED tengan 5 V. Sharp→ADS 10k (≤0,5 mA con 5 V forzados);
 DAC→CV 2,2k (≤1,5 mA con 3,3 V). Son límites de corriente, no garantía de tensión válida ni
 lecturas correctas sin VDD. Referencias y ensayos de secuencia: doc24 D26.
 
@@ -152,8 +154,8 @@ adicionales ni unir HP_VGND. El netlist conserva los nombres GND/AGND y la huell
 de cobre admitida por DRC; el esquema no prueba la colocación física.
 
 Cada CV tiene **1k serie** desde CVx_OUT (realimentación antes del resistor) hasta
-**CVx_PROTECTED** en el cable, con **BAT54S**: pin1 GND, pin2 +5V_LED, pin3 nodo protegido.
-Cada pot lleva **1k desde cursor, 100nF y 1M a GND en lado ADC**. Cable abierto decae con τ≈100ms. Pot10k: error máximo ≈0,217% FS (media escala ≈0,174% FS); cota relativa 0,349%. Entrada LED desde T13 con 100k a GND define reposo durante reset.
+**CVx_PROTECTED** en el cable, con **BAT54S**: pin1 GND, pin2 +5V_CV (D38), pin3 nodo protegido.
+Cada pot lleva **1k desde cursor, 100nF y 100k a GND en lado ADC** (D42). Cable abierto τ≈10ms, umbral 0,15V/100ms; no distingue pot mínimo. Pot10k: error máximo ≈2,108% FS (media escala ≈1,691% FS); cota relativa 3,382%. Entrada LED desde T13 con 100k a GND define reposo durante reset.
 
 Pedal: J_PEDAL tip → 1k → PEDAL_BTN → J_PCB_K.10, ESD PESD3V3U1UL unidireccional 3,3V (K señal/A GND), pull-up10k a 3,3V y 10nF a GND junto al conector.
 
@@ -175,7 +177,8 @@ La **BOM se exporta del esquema KiCad** con Reference, Value, Footprint, LCSC y 
 `../../fab/bom-pcb-m.csv`. Este README no contiene una tabla paralela de códigos de compra.
 `../../tools/lcsc_catalog.json` registra identidades y encapsulados verificados, fuentes y fecha;
 `check_bom.py` detecta códigos ausentes/no verificados o huellas incompatibles. Componentes sin
-identidad confirmada conservan LCSC vacío y se enumeran en `../../tools/REPORT-fixrev.md`.
+identidad confirmada y sin suministro externo declarado impedirían el cierre. Ver estado actual
+de las seis BOM y límites físicos en [REPORT-fixrev2.md](../../tools/REPORT-fixrev2.md).
 No comprar desde una tabla histórica. DNP excluye ensamble; pads TP, puentes y NT son cobre,
 no piezas compradas. MIDI de hoja07/TP/ajustes permanece DNP e `in_bom no`.
 
@@ -243,3 +246,21 @@ ERC no acredita montaje ni rendimiento analógico. Son **11 páginas** (raíz + 
 Los resultados de esta corrección se registran en [REPORT-fixrev.md](../../tools/REPORT-fixrev.md).
 El netlist, ERC y PDF de `docs/` se regeneran juntos. Los siete avisos de PCB-M son cinco
 señales I2S internas al módulo y dos anillos LINE IN sin terminación. No hay exclusiones nuevas.
+
+
+Segunda revisión, D40 (decisión de Juan 2026-11-13): soldar el cable a los **pads rotulados
+por función** de la NeoTrellis M4, sin depender de la numeración del conector.
+Juan confirmará los rótulos impresos antes de soldar. M4 conserva su USB propio.
+
+| Rótulo de pad M4 | Función M4 | J3_M4 (PCB-M) | Destino Teensy |
+|---|---|---|---|
+| SDA | TX M4 | 3 | → R_M4_RX1 1 kΩ → RX pin 28 |
+| SCL | RX M4 | 4 | ← R_M4_TX1 1 kΩ ← TX pin 29 |
+| GND | masa | 1 | GND |
+| 3V | alimentación M4 | sin hilo (2 NC) | sin conectar |
+
+R_M4_RX1/R_M4_TX1: 1 kΩ 0805, junto a J3_M4. UART real a 1 Mbps; cálculo RC y
+ensayo de mazo requerido en doc24 D39. El checker valida pads por función y no conserva
+un aviso pendiente por numeración del conector.
+SJ_CV nace de +5V_TEENSY, conserva 10Ω/47µF. TVS unidireccionales: pad1=K a señal/riel,
+pad2=A a GND; comprobar marca K de las huellas locales. Pots: pull-down 100k, doc24 D42.

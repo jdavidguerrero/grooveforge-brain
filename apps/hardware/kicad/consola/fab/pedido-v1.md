@@ -91,7 +91,7 @@ Con crimpadora: terminales PH C5292557 (≈ 0,005 USD) y carcasas PHR-n, a busca
 - Jacks de pared (Bogotá): 6,35 mm TRS ×5 (LINE IN L/R, LINE OUT L/R, PEDAL), 3,5 mm ×2
   (CV1, CV2; MIDI sin poblar, va por USB) y audífonos 6,35 mm.
 - Juan también tiene el encoder de jog, faders RS6011 ×4, FSR 402 ×6, Teensy 4.1 y Audio Shield.
-  Los sockets hembra 1×2 de los FSR quedan en la tarea mecánica/PCB-P; no se les asigna un SKU aquí.
+  D43: FSR por soldadura directa de pines metálicos, sin sockets. Los sockets hembra 1×2 P2,54 alternativos son compra externa sin LCSC verificado, no poblados ni incluidos en este pedido.
 
 ## Estimado histórico (opción B, pendiente de recotizar)
 

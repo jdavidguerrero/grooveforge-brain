@@ -2392,20 +2392,13 @@
       (width 0)
       (type default))
     (uuid 13970e3e-c619-50a7-9b94-00b38f4c9294))
-  (global_label "M4_RX7"
-    (shape bidirectional)
+  (label "M4_RX7_CABLE"
     (at 233.68 66.04 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid 29e2dd43-cf8b-506e-89c3-7a7b2060a3b3)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 233.68 66.04 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+    (uuid 29e2dd43-cf8b-506e-89c3-7a7b2060a3b3))
   (wire
     (pts
       (xy 236.22 68.58)
@@ -2414,20 +2407,13 @@
       (width 0)
       (type default))
     (uuid 15d04960-4415-5c88-b191-918c01027453))
-  (global_label "M4_TX7"
-    (shape bidirectional)
+  (label "M4_TX7_CABLE"
     (at 233.68 68.58 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify right))
-    (uuid e2092520-3953-5153-bab2-8d42edb90ab0)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}"
-      (at 233.68 68.58 0)
-      (effects
-        (font
-          (size 1.0 1.0))
-        (hide yes))))
+    (uuid e2092520-3953-5153-bab2-8d42edb90ab0))
   (symbol
     (lib_id "Connector_Generic:Conn_01x04")
     (at 241.3 63.5 0)
@@ -2494,6 +2480,218 @@
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e31eba56-b0b1-5bc2-be55-5a673e4df2b0"
           (reference "J3_M4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 250.19)
+      (xy 241.3 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7e014736-3f01-5ecf-9e04-a9b0a12a11e9))
+  (global_label "M4_RX7"
+    (shape bidirectional)
+    (at 241.3 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 68fda1e5-6e47-55db-be35-1214b9e767a0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 257.81)
+      (xy 241.3 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 128dfd92-3544-5040-bd77-c4d9c9ae6f2a))
+  (label "M4_RX7_CABLE"
+    (at 241.3 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0d65e22c-568f-55d8-aea5-5a761fde7cf3))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c5edba91-5efd-5963-9877-0cc477f51e4c)
+    (property "Reference" "R_M4_RX1"
+      (at 241.3 232.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 241.3 234.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_M4_RX"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17513"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F1001T5E"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Placement" "D39: place next to J3_M4; limits current, not Ioff isolation"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c7aeb38f-42d3-531a-a3e5-66531aac7420))
+    (pin "2"
+      (uuid 1e65dd31-2414-5615-9edb-4d28338e7010))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e31eba56-b0b1-5bc2-be55-5a673e4df2b0"
+          (reference "R_M4_RX1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 250.19)
+      (xy 330.2 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 11dce595-bcb0-511a-82f2-1db260725c15))
+  (global_label "M4_TX7"
+    (shape bidirectional)
+    (at 330.2 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 181435e0-46bb-5591-a7c8-646b595b66ba)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 257.81)
+      (xy 330.2 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 78585566-e15c-5021-86ad-b1347b7147e6))
+  (label "M4_TX7_CABLE"
+    (at 330.2 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5a4cc9fc-3558-5746-9db5-b79368edf74d))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0f1bab98-98d0-5b7d-a101-a11bd01e167b)
+    (property "Reference" "R_M4_TX1"
+      (at 330.2 232.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 330.2 234.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_M4_TX"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17513"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F1001T5E"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Placement" "D39: place next to J3_M4; limits current, not Ioff isolation"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b44b45aa-9a47-584c-ac88-48f28f0f602a))
+    (pin "2"
+      (uuid 2459c740-75ea-5c2a-bad9-b249eab72e42))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/e31eba56-b0b1-5bc2-be55-5a673e4df2b0"
+          (reference "R_M4_TX1")
           (unit 1)))))
   (wire
     (pts

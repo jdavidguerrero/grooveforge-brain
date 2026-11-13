@@ -1,7 +1,7 @@
 reference,component,name,x_mm,y_mm,rotation_deg,side,notes
-FSR1,fsr,V1,123.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
-FSR2,fsr,V2,154.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
-FSR3,fsr,V3,185.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
-FSR4,fsr,V4,216.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
-FSR5,fsr,X1,24.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
-FSR6,fsr,X2,55.5,84.5,0,F,"datum disco CSV; THT socket P2.54 pads x +/-1.27 y_KiCad +11; cola hacia disco (-y_KiCad), validar acomodo/altura"
+FSR1,fsr,V1,123.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P
+FSR2,fsr,V2,154.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P
+FSR3,fsr,V3,185.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P
+FSR4,fsr,V4,216.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P
+FSR5,fsr,X1,24.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P
+FSR6,fsr,X2,55.5,84.5,0,F,D43 datum disco; soldadura directa SIN SOCKET; PTH x +/-1.27 y_KiCad +11 (panel disco-11); superior <=1mm; soldar metal desde abajo sin calor en pelicula; rehacer layout PCB-P

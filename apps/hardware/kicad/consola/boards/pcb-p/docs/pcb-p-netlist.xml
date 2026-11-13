@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-p/pcb-p.kicad_sch</source>
-    <date>2026-11-12T14:32:53</date>
+    <date>2026-11-13T06:57:22</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -44,13 +44,19 @@
   <components>
     <comp ref="FSR1">
       <value>Interlink 402 V1</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -68,13 +74,19 @@
     </comp>
     <comp ref="FSR2">
       <value>Interlink 402 V2</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -92,13 +104,19 @@
     </comp>
     <comp ref="FSR3">
       <value>Interlink 402 V3</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -116,13 +134,19 @@
     </comp>
     <comp ref="FSR4">
       <value>Interlink 402 V4</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -140,13 +164,19 @@
     </comp>
     <comp ref="FSR5">
       <value>Interlink 402 X1</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -164,13 +194,19 @@
     </comp>
     <comp ref="FSR6">
       <value>Interlink 402 X2</value>
-      <footprint>gf_consola:FSR402_Socket_1x02_P2.54mm</footprint>
+      <footprint>gf_consola:FSR402_DirectSolder_1x02_P2.54mm</footprint>
       <fields>
-        <field name="Footprint">gf_consola:FSR402_Socket_1x02_P2.54mm</field>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43</field>
+        <field name="Footprint">gf_consola:FSR402_DirectSolder_1x02_P2.54mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Device" part="R_Variable" description="Variable resistor"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="R res resistor variable potentiometer rheostat"/>
@@ -190,11 +226,19 @@
       <value>PCB-M J_FSR1</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -214,11 +258,19 @@
       <value>PCB-M J_FSR2</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -238,11 +290,19 @@
       <value>PCB-M J_FSR3</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -262,11 +322,19 @@
       <value>PCB-M J_FSR4</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -286,11 +354,19 @@
       <value>PCB-M J7_EXP1</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>
@@ -310,11 +386,19 @@
       <value>PCB-M J8_EXP2</value>
       <footprint>Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</footprint>
       <fields>
+        <field name="LCSC">C173752</field>
+        <field name="MPN">S2B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,Right Angle,P=2mm</field>
         <field name="Footprint">Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="Connector_Generic" part="Conn_01x02" description="Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C173752"/>
+      <property name="MPN" value="S2B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,Right Angle,P=2mm"/>
       <property name="Sheetname" value="fsr-passive-1"/>
       <property name="Sheetfile" value="sheets/fsr-passive-1.kicad_sch"/>
       <property name="ki_keywords" value="connector"/>

@@ -191,3 +191,39 @@ dos cargos de preparación en vez de uno: cotizarlo antes de elegir ensamble.
 | D-K2 | ~~Una o dos placas~~ | Resuelto: dos (§7) |
 | D-K4 | ~~Modelo de tecla~~ | Resuelto: PG1353 (hoja enviada por Juan) |
 | D-K3 | ~~Posiciones~~ | Resuelto: v1 (§2) |
+
+
+## 9. Solape PCB-P / PCB-K — D43, revisión 2 (2026-11-12)
+
+Spec previo al cambio de huella/placement, aprobado por Juan. Contornos de
+`panel/pcb-outlines-console-v5.csv` y partición §7: a y=84,5 (y también en los
+landings y_panel=73,5), la izquierda no tiene placa; derecha ocupa x=108–232.
+PCB-P ocupa x=9–232 / y=69–100. Por tanto:
+
+| FSR | Centro de disco x,y (mm) | Landing x,y (mm) | PCB-K encima |
+|---|---|---|---|
+| V1 | 123,5 / 84,5 | 123,5 / 73,5 | derecha; disco sobre ventana Ø20, landing sobre material |
+| V2 | 154,5 / 84,5 | 154,5 / 73,5 | derecha; igual |
+| V3 | 185,5 / 84,5 | 185,5 / 73,5 | derecha; igual |
+| V4 | 216,5 / 84,5 | 216,5 / 73,5 | derecha; igual |
+| X1 | 24,5 / 84,5 | 24,5 / 73,5 | ninguna |
+| X2 | 55,5 / 84,5 | 55,5 / 73,5 | ninguna |
+
+Las ventanas Ø20 no liberan el landing: distancia disco→terminal=11 mm > radio10.
+Cara inferior de K = TOP−3,4−1,6=TOP−5,0; superior P=TOP−6,5: **luz 1,5 mm**.
+No se monta hembra vertical arriba. La solución de menos piezas es **soldar directamente los
+pines prensados** de los seis sensores, sin zócalos: D43. La huella se llama
+`FSR402_DirectSolder_1x02_P2.54mm`; conserva datum disco, pads x±1,27 / y_KiCad+11,
+PTH Ø1,0 mm. Montar pines desde arriba; soldar por abajo y recortar/acondicionar solo metal.
+Presupuesto superior completo ≤1,0 mm, deja ≥0,5 mm nominal frente a K. No doblar película
+para ganar altura ni aplicar cautín sobre ella: sujetar/disipar por terminal metálico y usar
+alivio de tensión. Comprobar con el lote real el espesor del crimpado, longitud de cola,
+inserción Ø1 y envolvente ≤1 mm antes de liberar fabricación; el CAD no mide esas piezas.
+
+Alternativas descartadas por más trabajo: hembra inferior con ranura para cola (exige recorte
+nuevo/plegado) o mover todos los sockets fuera de K (aleja terminación de V1–V4). Los sockets
+P2,54 alternativos quedan declarados **compra externa**, sin LCSC verificado, no poblados/no
+incluidos en BOM de D43. Los FSR402 son suministro de Juan.
+
+**Layout de PCB-P debe rehacerse** con la nueva huella, alturas y keepout superior indicado.
+Esta tarea solo actualiza generador/huella/placement/esquema/docs; no su `.kicad_pcb`.

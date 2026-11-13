@@ -523,7 +523,7 @@
               (font
                 (size 1.27 1.27))))))
       (embedded_fonts no))
-    (symbol "Device:D_TVS"
+    (symbol "Device:D_Zener"
       (pin_numbers
         (hide yes))
       (pin_names
@@ -541,7 +541,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Value" "D_TVS"
+      (property "Value" "D_Zener"
         (at 0 -2.54 0)
         (show_name no)
         (do_not_autoplace no)
@@ -564,7 +564,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "Description" "Bidirectional transient-voltage-suppression diode"
+      (property "Description" "Zener diode"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -572,7 +572,7 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (property "ki_keywords" "diode TVS thyrector"
+      (property "ki_keywords" "diode"
         (at 0 0 0)
         (show_name no)
         (do_not_autoplace no)
@@ -588,25 +588,12 @@
         (effects
           (font
             (size 1.27 1.27))))
-      (symbol "D_TVS_0_1"
+      (symbol "D_Zener_0_1"
         (polyline
           (pts
-            (xy -2.54 1.27)
-            (xy -2.54 -1.27)
-            (xy 2.54 1.27)
-            (xy 2.54 -1.27)
-            (xy -2.54 1.27))
-          (stroke
-            (width 0.254)
-            (type default))
-          (fill
-            (type none)))
-        (polyline
-          (pts
-            (xy 0.508 1.27)
-            (xy 0 1.27)
-            (xy 0 -1.27)
-            (xy -0.508 -1.27))
+            (xy -1.27 -1.27)
+            (xy -1.27 1.27)
+            (xy -0.762 1.27))
           (stroke
             (width 0.254)
             (type default))
@@ -620,12 +607,23 @@
             (width 0)
             (type default))
           (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 -1.27)
+            (xy 1.27 1.27)
+            (xy -1.27 0)
+            (xy 1.27 -1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
             (type none))))
-      (symbol "D_TVS_1_1"
+      (symbol "D_Zener_1_1"
         (pin passive line
           (at -3.81 0 0)
           (length 2.54)
-          (name "A1"
+          (name "K"
             (effects
               (font
                 (size 1.27 1.27))))
@@ -636,7 +634,7 @@
         (pin passive line
           (at 3.81 0 180)
           (length 2.54)
-          (name "A2"
+          (name "A"
             (effects
               (font
                 (size 1.27 1.27))))
@@ -1892,7 +1890,7 @@
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Device:D_TVS")
+    (lib_id "Device:D_Zener")
     (at 330.2 254 0)
     (unit 1)
     (in_bom yes)
@@ -1909,7 +1907,7 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Diode_SMD:D_SOD-882"
+    (property "Footprint" "gf_consola:D_SOD-882_K1"
       (at 330.2 254 0)
       (effects
         (font
@@ -2034,17 +2032,24 @@
         (size 1.0 1.0))
       (justify left))
     (uuid c8a99c02-726a-515d-a720-1c4bc4dd163f))
-  (text "Captura anterior sin contactos de deteccion; no se agrega deteccion de insercion."
+  (text "M1: TVS unidirectional K=1 at PEDAL_BTN / A=2 at GND; cathode K marked on footprint."
     (at 15.24 27.94 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid e794c32a-0f9e-5865-8525-c92cf2c9a051))
-  (text "Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir."
+  (text "Captura anterior sin contactos de deteccion; no se agrega deteccion de insercion."
     (at 15.24 31.75 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
-    (uuid 2c724999-1131-5be1-960f-7b386ff04ed6)))
+    (uuid 2c724999-1131-5be1-960f-7b386ff04ed6))
+  (text "Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir."
+    (at 15.24 35.56 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b8f655eb-f7c5-55d1-9a51-281114dfadad)))

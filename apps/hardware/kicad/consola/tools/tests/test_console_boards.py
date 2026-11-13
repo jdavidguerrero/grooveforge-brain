@@ -136,7 +136,7 @@ def test_footprint_geometry_and_provisional_marking(tmp_path):
     assert 'VERIFICAR CON ZÓCALO REAL' in (tmp_path / 'Kailh_Choc_V2_PG1353_Hotswap.kicad_mod').read_text()
     window = next(n for n in children(switch, 'fp_rect') if child(n, 'layer')[1] == 'Dwgs.User')
     assert (float(child(window, 'start')[2]) + float(child(window, 'end')[2])) / 2 == -4.93
-    fsr = parse((tmp_path / 'FSR402_Socket_1x02_P2.54mm.kicad_mod').read_text())
+    fsr = parse((tmp_path / 'FSR402_DirectSolder_1x02_P2.54mm.kicad_mod').read_text())
     assert {p[1] for p in children(fsr, 'pad')} == {'1', '2'}
     assert all(p[2] == 'thru_hole' and float(child(p, 'drill')[1]) == 1 for p in children(fsr, 'pad'))
     assert [tuple(map(float, child(p, 'at')[1:])) for p in children(fsr, 'pad')] == [(-1.27, 11), (1.27, 11)]

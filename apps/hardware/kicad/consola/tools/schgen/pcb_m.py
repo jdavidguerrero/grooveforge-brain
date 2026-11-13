@@ -448,7 +448,7 @@ def pcb_m():
         resistor(s, f'R_CV_RI{channel}', '20k', f'CV{channel}_FB', 'GND', (3, channel - 1))
         resistor(s, f'R_CV_SER{channel}', '1k', f'CV{channel}_OUT', f'CV{channel}_PROTECTED',
                  (4, channel - 1))
-        part(s, f'D_CV_CLAMP{channel}', {1: 'GND', 2: '+5V_LED', 3: f'CV{channel}_PROTECTED'},
+        part(s, f'D_CV_CLAMP{channel}', {1: 'GND', 2: '+5V_CV', 3: f'CV{channel}_PROTECTED'},
              (5, channel - 1), lib_id='Diode:BAT54S', value='BAT54S',
              footprint='Package_TO_SOT_SMD:SOT-23')
     for unit in (3, 4):
@@ -467,8 +467,8 @@ def pcb_m():
          lib_id='Device:C_Polarized', value='47uF 16V',
          footprint='Capacitor_SMD:CP_Elec_5x5.4')
     s.notes = ['CV: 1 + 10k/20k = 1.5; A0 DAC1=GND (0x60), DAC2=3V3 (0x61).',
-               'D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_LED.',
-               'DFT: SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga.']
+               'D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_CV (D38).',
+               'D38: +5V_TEENSY -> SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga.']
 
     s = sheets[5]
     s.paper = 'A1'
@@ -480,7 +480,7 @@ def pcb_m():
         connector(s, f'J_POT_{name}', ['+3.3V', f'POT_{name}_WIPER', 'GND'], (index + 1, 2))
         resistor(s, f'R_POT_{name}', '1k', f'POT_{name}_WIPER', f'POT_{name}', (index + 1, 4))
         capacitor(s, f'C_POT_{name}', '100nF', f'POT_{name}', 'GND', (index + 1, 5))
-        resistor(s, f'R_POT_BIAS_{name}', '1M', f'POT_{name}', 'GND', (index + 1, 6))
+        resistor(s, f'R_POT_BIAS_{name}', '100k', f'POT_{name}', 'GND', (index + 1, 6))
     connector(s, 'J_PAD_SEL', ['+3.3V', 'PAD_SEL_ADC', 'GND'], (0, 3))
     connector(s, 'J_HP', ['HP_L', 'HP_R', 'HP_VGND'], (2, 3))
     s.notes = ['Componentes de panel por cable. JOG_CLICK via J_PCB_K hacia MCP 0x23.',
@@ -522,7 +522,12 @@ def pcb_m():
         (0, 0), footprint='Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical')
     connector(s, 'J2_I2C', ['GND', '+3.3V', 'I2C_SDA_A', 'I2C_SCL_A'], (1, 0),
               footprint='Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal')
-    connector(s, 'J3_M4', ['GND', None, 'M4_RX7', 'M4_TX7'], (2, 0))
+    connector(s, 'J3_M4', ['GND', None, 'M4_RX7_CABLE', 'M4_TX7_CABLE'], (2, 0))
+    for index, direction in enumerate(('RX', 'TX')):
+        part(s, f'R_M4_{direction}', {1: f'M4_{direction}7', 2: f'M4_{direction}7_CABLE'},
+             (index + 2, 3), lib_id='Device:R', value='1k',
+             footprint='Resistor_SMD:R_0805_2012Metric',
+             fields={'Placement': 'D39: place next to J3_M4; limits current, not Ioff isolation'})
     connector(s, 'J_PCB_K', ['+3.3V', 'I2C_SDA_K', 'GND', 'I2C_SCL_K', 'GND',
               'LED_DIN_5V', 'GND', '+5V_LED_K', 'JOG_CLICK', 'PEDAL_BTN'], (3, 0))
     s.symbols[-1].fields['LCSC'] = 'C158038'
@@ -548,10 +553,11 @@ def pcb_m():
     resistor(s, 'R_PEDAL_PU', '10k', '+3.3V', 'PEDAL_BTN', (1, 3))
     capacitor(s, 'C_PEDAL', '10nF', 'PEDAL_BTN', 'GND', (2, 3))
     part(s, 'D_PEDAL_ESD', {1: 'PEDAL_BTN', 2: 'GND'}, (3, 3),
-         lib_id='Device:D_TVS', value='PESD3V3U1UL,315', footprint='Diode_SMD:D_SOD-882')
+         lib_id='Device:D_Zener', value='PESD3V3U1UL,315', footprint='gf_consola:D_SOD-882_K1')
     connector(s, 'J_EDRUM', [None] * 5, (2, 2), dnp=True)
     s.notes = ['D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack.',
                'TRS: 1=tip/2=ring/3=sleeve; TS CV: 1=tip/2=sleeve. HP solo por J_HP (06).',
+               'M1: TVS unidirectional K=1 at PEDAL_BTN / A=2 at GND; cathode K marked on footprint.',
                'Captura anterior sin contactos de deteccion; no se agrega deteccion de insercion.',
                'Anillos LINE IN expuestos como redes locales; terminacion balanceada sin definir.']
 
@@ -562,7 +568,7 @@ def pcb_m():
     part(s, 'Q_LED_REVERSE', {1: 'GND', 2: '+5V_LED', 3: '+5V_LED_FUSED'}, (4, 0),
          lib_id='Transistor_FET:AO3401A', value='AO3401A', footprint='Package_TO_SOT_SMD:SOT-23')
     part(s, 'D_LED_TVS', {1: '+5V_LED', 2: 'GND'}, (4, 1),
-         lib_id='Device:D_TVS', value='SMAJ5.0A', footprint='Diode_SMD:D_SMA')
+         lib_id='Device:D_Zener', value='SMAJ5.0A', footprint='gf_consola:D_SMA_K1')
     resistor(s, 'R_LED_BIAS', '100k', 'LED_DATA', 'GND', (4, 2))
     connector(s, 'J_5V_LED_IN', ['+5V_LED_RAW', 'GND'], (0, 2), value='USB-A_PI_5V_LED_IN',
               footprint='Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal')
@@ -581,7 +587,7 @@ def pcb_m():
         part(s, f'#FLG{index+1:03}', {1: rail}, (index % 4, 3 + index // 4),
              lib_id='power:PWR_FLAG', value='PWR_FLAG', footprint='')
     s.notes = ['LDO from +5V_TEENSY -> +3.3VA; +3.3V desde Teensy; +5V_LED separado de +5V_TEENSY. D10: NT1 junto a LDO, HP_VGND aislada.',
-               'D33: USB Pi -> F1 1812 -> PMOS D/S -> +5V_LED; SMAJ5.0A after fuse. Backup DNP.',
+               'D33: USB Pi -> F1 1812 -> PMOS D/S -> +5V_LED; SMAJ5.0A K1=rail/A2=GND; cathode K marked. Backup DNP.',
                'D14: pull-ups 2.2k en PCB-M; desoldar R1/R2 de PCB-A. Unica union AGND/GND por NT1.']
     s = sheets[10]
     s.paper = 'A1'
@@ -598,7 +604,7 @@ def pcb_m():
 
     for ref, a, b in (
             ('SJ_FRONT', '+3.3VA', '+3.3VA_FRONT'),
-            ('SJ_CV', '+5V_LED', '+5V_CV_IN'),
+            ('SJ_CV', '+5V_TEENSY', '+5V_CV_IN'),
             ('SJ_LED_K', '+5V_LED', '+5V_LED_K'),
             ('SJ_SHARP', '+5V_LED', '+5V_LED_SHARP'),
             ('SJ_SDA_A', 'I2C_SDA_B_A', 'I2C_SDA_A_SER'),

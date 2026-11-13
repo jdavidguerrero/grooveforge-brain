@@ -83,7 +83,7 @@ def test_cv_clamps_after_series_resistor(parts, channel):
     assert parts[f'R_CV_RF{channel}'].pins['1'] == raw
     clamp = parts[f'D_CV_CLAMP{channel}']
     assert clamp.lib_id == 'Diode:BAT54S'
-    assert clamp.pins == {'1': 'GND', '2': '+5V_LED', '3': protected}
+    assert clamp.pins == {'1': 'GND', '2': '+5V_CV', '3': protected}
     assert parts[f'J_CV{channel}'].pins == {'1': protected, '2': 'AGND'}
 
 

@@ -614,7 +614,8 @@
       "fecha_verificacion": "2026-11-12",
       "source": "https://www.lcsc.com/product-detail/C83329.html",
       "footprints": [
-        "Diode_SMD:D_SMA"
+        "Diode_SMD:D_SMA",
+        "gf_consola:D_SMA_K1"
       ],
       "values": [
         "SMAJ5.0A"
@@ -628,7 +629,8 @@
       "fecha_verificacion": "2026-11-12",
       "source": "https://www.lcsc.com/product-detail/C552530.html",
       "footprints": [
-        "Diode_SMD:D_SOD-882"
+        "Diode_SMD:D_SOD-882",
+        "gf_consola:D_SOD-882_K1"
       ],
       "values": [
         "PESD3V3U1UL,315"
@@ -823,7 +825,7 @@
       "fabricante": "Hong Cheng",
       "encapsulado": "THT 1x24 P2.54mm H8.5mm",
       "fecha_verificacion": "2026-11-12",
-      "source": "buscador LCSC",
+      "source": "https://www.lcsc.com/product-detail/C41376163.html",
       "footprints": [
         "Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical"
       ],
@@ -838,7 +840,7 @@
       "fabricante": "CJT",
       "encapsulado": "THT 2x4 P2.54mm vertical",
       "fecha_verificacion": "2026-11-12",
-      "source": "buscador LCSC",
+      "source": "https://www.lcsc.com/product-detail/C225519.html",
       "footprints": [
         "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
       ],
@@ -852,12 +854,26 @@
       "fabricante": "FOSAN",
       "encapsulado": "SMD 5x5.4mm 47uF 16V +/-20%",
       "fecha_verificacion": "2026-11-12",
-      "source": "buscador LCSC",
+      "source": "https://www.lcsc.com/pl/product-detail/C7469972.html",
       "footprints": [
         "Capacitor_SMD:CP_Elec_5x5.4"
       ],
       "values": [
         "47uF 16V"
+      ]
+    },
+    {
+      "lcsc": "C17513",
+      "mpn": "0805W8F1001T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17513.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "1k"
       ]
     }
   ],
@@ -923,6 +939,47 @@
       ],
       "fecha_verificacion": "2026-11-12",
       "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: cuatro faders RS6011 B50K",
+      "footprints": [
+        "groovepush:ALPS_RS6011P_60mm"
+      ],
+      "values": [
+        "RS6011 B50K"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Juan, aprobacion fixrev2 2026-11-12; comprobar lote real"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43",
+      "footprints": [
+        "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      ],
+      "values": [
+        "Interlink 402 V1",
+        "Interlink 402 V2",
+        "Interlink 402 V3",
+        "Interlink 402 V4",
+        "Interlink 402 X1",
+        "Interlink 402 X2"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Juan, aprobacion fixrev2 2026-11-12 y docs/fotos/fsr402-juan.png"
+    },
+    {
+      "supply": "local",
+      "description": "Alternativa NO poblada D43: socket hembra 1x02 P2.54; compra externa, altura por verificar",
+      "footprints": [
+        "gf_consola:FSR402_Socket_1x02_P2.54mm"
+      ],
+      "values": [
+        "FSR402 socket alternate"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Decision D43; no codigo LCSC verificado ni compra en BOM actual"
     }
   ]
 }

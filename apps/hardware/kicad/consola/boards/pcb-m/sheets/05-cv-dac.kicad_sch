@@ -1739,7 +1739,7 @@
       (width 0)
       (type default))
     (uuid c8bba28a-943c-5199-bdd9-b0ddd3e501ab))
-  (global_label "+5V_LED"
+  (global_label "+5V_CV"
     (shape bidirectional)
     (at 518.16 63.5 180)
     (effects
@@ -2583,7 +2583,7 @@
       (width 0)
       (type default))
     (uuid d3a7f9c7-4002-56cc-81e0-45b7195937b2))
-  (global_label "+5V_LED"
+  (global_label "+5V_CV"
     (shape bidirectional)
     (at 518.16 127 180)
     (effects
@@ -3888,14 +3888,14 @@
         (size 1.0 1.0))
       (justify left))
     (uuid b019c78f-bd0a-59fa-8c13-bee175397eff))
-  (text "D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_LED."
+  (text "D11: realimentacion antes de 1k serie; BAT54S en nodo protegido hacia jack, a GND/+5V_CV (D38)."
     (at 15.24 24.13 0)
     (effects
       (font
         (size 1.0 1.0))
       (justify left))
     (uuid e9d9467d-b0bf-5ee6-95db-f2ff41e1fcad))
-  (text "DFT: SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga."
+  (text "D38: +5V_TEENSY -> SJ_CV + RC 10 ohm / 47uF -> +5V_CV; swing 4.95V ideal, medir margen/carga."
     (at 15.24 27.94 0)
     (effects
       (font

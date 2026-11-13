@@ -40,14 +40,18 @@ for i, ref in enumerate(('J_FSR1', 'J_FSR2', 'J_FSR3', 'J_FSR4', 'J7_EXP1', 'J8_
 PANEL = {}
 
 
-def panel(ref, nets, contacts, description, kind='JST-PH'):
+def panel(ref, nets, contacts, description, kind='JST-PH', pads=None):
     """Document an expected panel counterpart and append its cable."""
     if len(nets) != len(contacts):
         raise ValueError(f'{ref}: panel contacts/net count differs')
-    PANEL[ref] = dict(pins={str(i): n for i, n in enumerate(nets, 1)},
-                      contacts=dict(zip(map(str, range(1, len(nets)+1)), contacts)),
-                      description=description)
-    CABLES.append(cable(f'panel-{ref}', ('pcb-m', ref), ('panel', ref), len(nets), kind))
+    indices = list(map(str, range(1, len(nets)+1)))
+    labels = list(pads) if pads is not None else indices
+    if len(labels) != len(nets) or len(set(labels)) != len(labels):
+        raise ValueError(f'{ref}: pad labels must be unique and match net count')
+    PANEL[ref] = dict(pins=dict(zip(labels, nets)),
+                      contacts=dict(zip(labels, contacts)), description=description)
+    CABLES.append(cable(f'panel-{ref}', ('pcb-m', ref), ('panel', ref), len(nets), kind,
+                        mapping=dict(zip(indices, labels))))
 
 
 for side in ('L', 'R'):
@@ -79,9 +83,14 @@ for i in (1, 2):
     panel(f'J{i+4}_SHARP{i}', ['+5V_LED', f'SHARP{i}_RAW', 'GND'],
           ['VCC', 'VO', 'GND'],
           'Sharp GP2Y0A41: mapear por FUNCIÓN, no asumir orden físico del sensor; VO ≤3.3V.')
-panel('J3_M4', ['GND', None, 'M4_RX7', 'M4_TX7'],
-      ['CONN1.1 GND', 'CONN1.2 3V3 NC', 'CONN1.3 SDA = TX21 M4 -> RX28 Teensy', 'CONN1.4 SCL = RX22 M4 <- TX29 Teensy'],
-      'NeoTrellis M4 por USB propio; señales UART cruzadas por función.')
+panel('J3_M4', ['GND', None, 'M4_RX7_CABLE', 'M4_TX7_CABLE'],
+      ['pad GND -> GND', 'pad 3V sin conectar',
+       'pad SDA = TX21 M4 -> 1 kΩ -> RX Teensy 28',
+       'pad SCL = RX22 M4 <- 1 kΩ <- TX Teensy 29'],
+      'D40 (Juan 2026-11-13): soldar a pads rotulados por función, sin depender de números del conector. '
+      'M4 por USB propio; Juan confirmará los rótulos impresos antes de soldar. '
+      'R_M4_RX1/R_M4_TX1 de 1 kΩ junto a J3_M4; pad 3V y J3_M4.2 sin hilo.',
+      pads=('GND', '3V', 'SDA', 'SCL'))
 panel('J_5V_LED_IN', ['+5V_LED_RAW', 'GND'], ['USB-A VBUS', 'USB-A GND'],
       'USB-A Pi solo alimentación. D+/D- sin cable; no unir VBUS con +5V_TEENSY.')
 

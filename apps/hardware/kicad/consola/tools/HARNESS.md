@@ -5,7 +5,7 @@ Regenerar XML de A y comprobar: `python3 apps/hardware/kicad/consola/tools/check
 **Resultado: 0 errores; 32 cables declarados.**
 
 A/B de placas: XML independiente. B de panel: contrato esperado; NO continuidad medida.
-Vista por número de contacto, no por cara del housing. Comprobar orientación de pin1 antes de crimpar.
+Placas: números de pin; M4: rótulos de pad SDA/SCL/GND/3V (sin numeración de conector). Comprobar pin1 antes de crimpar.
 Colores sugeridos; marcar ambos extremos. IDC: raya identifica pin1; mantener 1:1.
 Abrir puentes invalida continuidad de los alias de ramas; tablas asumen montaje por defecto.
 
@@ -29,7 +29,7 @@ Abrir puentes invalida continuidad de los alias de ramas; tablas asumen montaje 
 
 `pcb-m.J_PCB_K1` ↔ `pcb-k-left.J1` · 10 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | I2C_SDA_K | SDA | I2C_SDA_B_K / I2C_SDA_B_K | azul |  | PASS |
@@ -46,7 +46,7 @@ Abrir puentes invalida continuidad de los alias de ramas; tablas asumen montaje 
 
 `pcb-k-left.J2` ↔ `pcb-k-right.J1` · 6 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3V3 | +3V3 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | GND | GND | GND / GND | negro |  | PASS |
@@ -61,7 +61,7 @@ Abrir puentes invalida continuidad de los alias de ramas; tablas asumen montaje 
 
 D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +5V_LED | /+5V | +5V_LED / +5V_LED | rojo |  | PASS |
 | 2 → 2 | +5V_LED | /+5V | +5V_LED / +5V_LED | rojo |  | PASS |
@@ -98,7 +98,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J2_I2C1` ↔ `pcb-a.J2` · 4 vías · JST-SH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | GND | /GND | GND / GND | negro |  | PASS |
 | 2 → 2 | +3.3V | /+3V3 | +3.3V / +3.3V | naranja |  | PASS |
@@ -109,7 +109,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-a.J3` ↔ `pcb-f.J1` · 6 vías · JST-SH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | /+3V3 | +3V3 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | /FADER1 | /faders-1/FADER1 | FADER1_SIG / FADER1_SIG | blanco (marcar señal) |  | PASS |
@@ -122,7 +122,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J_FSR1` ↔ `pcb-p.J1` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_V1 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | FSR1_ADC | /fsr-passive-1/FSR_V1 | FSR1_ADC / FSR1_ADC | blanco (marcar señal) |  | PASS |
@@ -131,7 +131,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J_FSR2` ↔ `pcb-p.J2` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_V2 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | FSR2_ADC | /fsr-passive-1/FSR_V2 | FSR2_ADC / FSR2_ADC | blanco (marcar señal) |  | PASS |
@@ -140,7 +140,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J_FSR3` ↔ `pcb-p.J3` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_V3 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | FSR3_ADC | /fsr-passive-1/FSR_V3 | FSR3_ADC / FSR3_ADC | blanco (marcar señal) |  | PASS |
@@ -149,7 +149,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J_FSR4` ↔ `pcb-p.J4` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_V4 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | FSR4_ADC | /fsr-passive-1/FSR_V4 | FSR4_ADC / FSR4_ADC | blanco (marcar señal) |  | PASS |
@@ -158,7 +158,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J7_EXP1` ↔ `pcb-p.J5` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_X1 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | EXP1_ADC | /fsr-passive-1/FSR_X1 | EXP1_ADC / EXP1_ADC | blanco (marcar señal) |  | PASS |
@@ -167,7 +167,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 `pcb-m.J8_EXP2` ↔ `pcb-p.J6` · 2 vías · JST-PH.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3V3_X2 | +3.3V / +3.3V | naranja |  | PASS |
 | 2 → 2 | EXP2_ADC | /fsr-passive-1/FSR_X2 | EXP2_ADC / EXP2_ADC | blanco (marcar señal) |  | PASS |
@@ -178,7 +178,7 @@ D8: M.18/20/22/26 NC; MCP polling, LED data only via M-K. A J4 legacy unused.
 
 Jack LINE IN TRS; ring sin terminación definida en PCB-M.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | LINE_IN_L_T | LINE_IN_L_T | LINE_IN_L_T / LINE_IN_L_T | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | /09-connectors-rear/LINE_IN_L_R | LINE_IN_L_R | LINE_IN_L_R / LINE_IN_L_R | blanco (marcar señal) | ring | PASS |
@@ -190,7 +190,7 @@ Jack LINE IN TRS; ring sin terminación definida en PCB-M.
 
 Jack LINE OUT TRS; dejar ring sin conexión.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | LINE_OUT_L_T | LINE_OUT_L_T | LINE_OUT_L_T / LINE_OUT_L_T | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | NC | NC | NC / NC | sin hilo / aislar | ring NC | NC |
@@ -202,7 +202,7 @@ Jack LINE OUT TRS; dejar ring sin conexión.
 
 Jack LINE IN TRS; ring sin terminación definida en PCB-M.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | LINE_IN_R_T | LINE_IN_R_T | LINE_IN_R_T / LINE_IN_R_T | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | /09-connectors-rear/LINE_IN_R_R | LINE_IN_R_R | LINE_IN_R_R / LINE_IN_R_R | blanco (marcar señal) | ring | PASS |
@@ -214,7 +214,7 @@ Jack LINE IN TRS; ring sin terminación definida en PCB-M.
 
 Jack LINE OUT TRS; dejar ring sin conexión.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | LINE_OUT_R_T | LINE_OUT_R_T | LINE_OUT_R_T / LINE_OUT_R_T | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | NC | NC | NC / NC | sin hilo / aislar | ring NC | NC |
@@ -226,7 +226,7 @@ Jack LINE OUT TRS; dejar ring sin conexión.
 
 Jack CV TS.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | CV1_PROTECTED | CV1_PROTECTED | CV1_PROTECTED / CV1_PROTECTED | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | AGND | AGND | AGND / AGND | gris (masa analógica) | sleeve | PASS |
@@ -237,7 +237,7 @@ Jack CV TS.
 
 Jack CV TS.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | CV2_PROTECTED | CV2_PROTECTED | CV2_PROTECTED / CV2_PROTECTED | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | AGND | AGND | AGND / AGND | gris (masa analógica) | sleeve | PASS |
@@ -248,7 +248,7 @@ Jack CV TS.
 
 Pedal: cierre de contacto entre tip y sleeve; no asignar expresión al ring.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | /09-connectors-rear/PEDAL_RAW | PEDAL_RAW | PEDAL_RAW / PEDAL_RAW | blanco (marcar señal) | tip | PASS |
 | 2 → 2 | NC | NC | NC / NC | sin hilo / aislar | ring NC | NC |
@@ -260,7 +260,7 @@ Pedal: cierre de contacto entre tip y sleeve; no asignar expresión al ring.
 
 Audífonos TRS: sleeve exclusivamente HP_VGND, aislado del chasis/masas.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | HP_L | HP_L | HP_L / HP_L | blanco (marcar señal) | tip L | PASS |
 | 2 → 2 | HP_R | HP_R | HP_R / HP_R | blanco (marcar señal) | ring R | PASS |
@@ -272,7 +272,7 @@ Audífonos TRS: sleeve exclusivamente HP_VGND, aislado del chasis/masas.
 
 Jog: unir comunes localmente; verificar fases con pieza comprada.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | GND | GND | GND / GND | negro | común encoder + común pulsador | PASS |
 | 2 → 2 | JOG_A | JOG_A | JOG_A / JOG_A | blanco (marcar señal) | fase A | PASS |
@@ -285,7 +285,7 @@ Jog: unir comunes localmente; verificar fases con pieza comprada.
 
 Potenciómetro lineal 10k.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3.3V | +3.3V / +3.3V | naranja | extremo horario | PASS |
 | 2 → 2 | /06-surface/POT_MASTER_WIPER | POT_MASTER_WIPER | POT_MASTER_WIPER / POT_MASTER_WIPER | blanco (marcar señal) | cursor | PASS |
@@ -297,7 +297,7 @@ Potenciómetro lineal 10k.
 
 Potenciómetro lineal 10k.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3.3V | +3.3V / +3.3V | naranja | extremo horario | PASS |
 | 2 → 2 | /06-surface/POT_CUE_WIPER | POT_CUE_WIPER | POT_CUE_WIPER / POT_CUE_WIPER | blanco (marcar señal) | cursor | PASS |
@@ -309,7 +309,7 @@ Potenciómetro lineal 10k.
 
 Potenciómetro lineal 10k.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3.3V | +3.3V / +3.3V | naranja | extremo horario | PASS |
 | 2 → 2 | /06-surface/POT_IN_WIPER | POT_IN_WIPER | POT_IN_WIPER / POT_IN_WIPER | blanco (marcar señal) | cursor | PASS |
@@ -321,7 +321,7 @@ Potenciómetro lineal 10k.
 
 Selector 3 posiciones: contacto central polo C SIN cable (D13).
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +3.3V | +3.3V | +3.3V / +3.3V | naranja | extremo alto polo C | PASS |
 | 2 → 2 | PAD_SEL_ADC | PAD_SEL_ADC | PAD_SEL_ADC / PAD_SEL_ADC | blanco (marcar señal) | común polo C | PASS |
@@ -333,7 +333,7 @@ Selector 3 posiciones: contacto central polo C SIN cable (D13).
 
 Mismo selector: polos A/B audio, header 2x4 2.54mm (no IDC con llave).
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | LINE_IN_L_T | LINE_IN_L_T | LINE_IN_L_T / LINE_IN_L_T | blanco (marcar señal) | A 0dB | PASS |
 | 2 → 2 | /02-analog-front/TAP10_L | TAP10_L | TAP10_L / TAP10_L | blanco (marcar señal) | A -10dB | PASS |
@@ -350,7 +350,7 @@ Mismo selector: polos A/B audio, header 2x4 2.54mm (no IDC con llave).
 
 Sharp GP2Y0A41: mapear por FUNCIÓN, no asumir orden físico del sensor; VO ≤3.3V.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +5V_LED_SHARP | +5V_LED | +5V_LED / +5V_LED | rojo | VCC | PASS |
 | 2 → 2 | /08-connectors-panel/SHARP1_RAW | SHARP1_RAW | SHARP1_RAW / SHARP1_RAW | blanco (marcar señal) | VO | PASS |
@@ -362,7 +362,7 @@ Sharp GP2Y0A41: mapear por FUNCIÓN, no asumir orden físico del sensor; VO ≤3
 
 Sharp GP2Y0A41: mapear por FUNCIÓN, no asumir orden físico del sensor; VO ≤3.3V.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +5V_LED_SHARP | +5V_LED | +5V_LED / +5V_LED | rojo | VCC | PASS |
 | 2 → 2 | /08-connectors-panel/SHARP2_RAW | SHARP2_RAW | SHARP2_RAW / SHARP2_RAW | blanco (marcar señal) | VO | PASS |
@@ -372,14 +372,14 @@ Sharp GP2Y0A41: mapear por FUNCIÓN, no asumir orden físico del sensor; VO ≤3
 
 `pcb-m.J3_M4` ↔ `panel.J3_M4` · 4 vías · JST-PH.
 
-NeoTrellis M4 por USB propio; señales UART cruzadas por función.
+D40 (Juan 2026-11-13): soldar a pads rotulados por función, sin depender de números del conector. M4 por USB propio; Juan confirmará los rótulos impresos antes de soldar. R_M4_RX1/R_M4_TX1 de 1 kΩ junto a J3_M4; pad 3V y J3_M4.2 sin hilo.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
-| 1 → 1 | GND | GND | GND / GND | negro | CONN1.1 GND | PASS |
-| 2 → 2 | NC | NC | NC / NC | sin hilo / aislar | CONN1.2 3V3 NC | NC |
-| 3 → 3 | M4_RX7 | M4_RX7 | M4_RX7 / M4_RX7 | blanco (marcar señal) | CONN1.3 SDA = TX21 M4 -> RX28 Teensy | PASS |
-| 4 → 4 | M4_TX7 | M4_TX7 | M4_TX7 / M4_TX7 | blanco (marcar señal) | CONN1.4 SCL = RX22 M4 <- TX29 Teensy | PASS |
+| 1 → GND | GND | GND | GND / GND | negro | pad GND -> GND | PASS |
+| 2 → 3V | NC | NC | NC / NC | sin hilo / aislar | pad 3V sin conectar | NC |
+| 3 → SDA | /08-connectors-panel/M4_RX7_CABLE | M4_RX7_CABLE | M4_RX7_CABLE / M4_RX7_CABLE | blanco (marcar señal) | pad SDA = TX21 M4 -> 1 kΩ -> RX Teensy 28 | PASS |
+| 4 → SCL | /08-connectors-panel/M4_TX7_CABLE | M4_TX7_CABLE | M4_TX7_CABLE / M4_TX7_CABLE | blanco (marcar señal) | pad SCL = RX22 M4 <- 1 kΩ <- TX Teensy 29 | PASS |
 
 ## panel-J_5V_LED_IN — PASS
 
@@ -387,7 +387,7 @@ NeoTrellis M4 por USB propio; señales UART cruzadas por función.
 
 USB-A Pi solo alimentación. D+/D- sin cable; no unir VBUS con +5V_TEENSY.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | +5V_LED_RAW | +5V_LED_RAW | +5V_LED_RAW / +5V_LED_RAW | rojo | USB-A VBUS | PASS |
 | 2 → 2 | GND | GND | GND / GND | negro | USB-A GND | PASS |
@@ -398,7 +398,7 @@ USB-A Pi solo alimentación. D+/D- sin cable; no unir VBUS con +5V_TEENSY.
 
 Rev D reverse: lower Lout/G/Rout/Rin/Lin; upper G over Rin/Lin. 2.54 mm pitch.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | SHIELD_LINE_IN_L | SHIELD_LINE_IN_L | SHIELD_LINE_IN_L / SHIELD_LINE_IN_L | blanco (marcar señal) | lower LINE IN L (rightmost) | PASS |
 | 2 → 2 | SHIELD_LINE_IN_R | SHIELD_LINE_IN_R | SHIELD_LINE_IN_R / SHIELD_LINE_IN_R | blanco (marcar señal) | lower LINE IN R | PASS |
@@ -410,7 +410,7 @@ Rev D reverse: lower Lout/G/Rout/Rin/Lin; upper G over Rin/Lin. 2.54 mm pitch.
 
 Rev D reverse. Two unlabeled upper pads over Lout/Rout MUST stay NC.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | SHIELD_LINE_OUT_L | SHIELD_LINE_OUT_L | SHIELD_LINE_OUT_L / SHIELD_LINE_OUT_L | blanco (marcar señal) | lower LINE OUT L (leftmost) | PASS |
 | 2 → 2 | SHIELD_LINE_OUT_R | SHIELD_LINE_OUT_R | SHIELD_LINE_OUT_R / SHIELD_LINE_OUT_R | blanco (marcar señal) | lower LINE OUT R | PASS |
@@ -422,7 +422,7 @@ Rev D reverse. Two unlabeled upper pads over Lout/Rout MUST stay NC.
 
 Rev D: CAUTION do not short VGND to GND; isolated headphone return.
 
-| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
+| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |
 |---|---|---|---|---|---|---|
 | 1 → 1 | HP_L | HP_L | HP_L / HP_L | blanco (marcar señal) | bottom right L | PASS |
 | 2 → 2 | HP_R | HP_R | HP_R / HP_R | blanco (marcar señal) | bottom right R | PASS |

@@ -789,7 +789,7 @@
       (width 0)
       (type default))
     (uuid 861cdcf4-d45f-52e4-a7e5-614c31f89f73))
-  (global_label "+5V_LED"
+  (global_label "+5V_TEENSY"
     (shape bidirectional)
     (at 144.78 63.5 0)
     (effects

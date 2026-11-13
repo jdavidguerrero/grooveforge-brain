@@ -11,6 +11,7 @@
 #ifdef GF_CONSOLA_UNO
 #include "consola_s/KeyLedReturn.h"
 #include "consola_s/KeyLedDma.h"
+#include "consola_s/PotInput.h"
 #endif
 #include "consola_s/AdcScan.h"
 #include "consola_s/CcCadence.h"
@@ -61,6 +62,11 @@ constexpr uint8_t ADC1_MASK = PROFILE.fsrs;
 #endif
 AdcScan adc_scan(ADC1_MASK);
 volatile uint16_t slow_adc[2] = {};
+#ifdef GF_CONSOLA_UNO
+volatile uint32_t slow_sample_us[2] = {};
+uint32_t cue_consumed_us = 0;
+bool cue_consumed = false;
+#endif
 volatile uint8_t slow_valid = 0;
 volatile uint32_t adc1_timeouts = 0;
 uint32_t adc2_timeouts = 0;
@@ -90,7 +96,11 @@ constexpr uint8_t ENCODER_COUNT = sizeof(encoders) / sizeof(encoders[0]);
 constexpr auto& ENCODER_CC = consola::ENCODER_CC;
 RelativeEncoder relative[ENCODER_COUNT];
 int32_t encoder_positions[ENCODER_COUNT] = {};
+#ifdef GF_CONSOLA_UNO
+PotInput pots[3];
+#else
 AnalogChange pots[3];
+#endif
 AnalogChange ads_controls[] = {
     AnalogChange(26400), AnalogChange(26400), AnalogChange(26400),
     AnalogChange(26400), AnalogChange(26400), AnalogChange(26400)
@@ -176,6 +186,9 @@ void scan_fsr() {
         const uint8_t i = step.sample;
         if (i >= 4) {
             slow_adc[i-4] = raw;
+#ifdef GF_CONSOLA_UNO
+            slow_sample_us[i-4] = now;
+#endif
             slow_valid |= 1u << (i-4);
         } else {
             ++fsr_samples[i];
@@ -414,8 +427,12 @@ void prepare_stats() {
         (unsigned long)ADC1_CFG,(unsigned long)ADC1_GC,unsigned(NVIC_GET_PRIORITY(IRQ_PIT)));
     response_size += min(size_t(max(0,n)),sizeof(response)-response_size-1);
 #ifdef GF_CONSOLA_UNO
+    uint8_t pot_open_mask = 0;
+    for (uint8_t i = 0; i < 3; ++i) {
+        if ((PROFILE.pots & (1u << i)) && pots[i].disconnected()) pot_open_mask |= 1u << i;
+    }
     const int led_stats=snprintf(response+response_size,sizeof(response)-response_size,
-        " key_led_ua=%lu i2c_reset_k=%lu i2c_reset_a=%lu",(unsigned long)key_led_return.current_ua(),
+        " pot_open_mask=%u key_led_ua=%lu i2c_reset_k=%lu i2c_reset_a=%lu",unsigned(pot_open_mask),(unsigned long)key_led_return.current_ua(),
         (unsigned long)branch_recovery[0].resets(),(unsigned long)branch_recovery[1].resets());
     response_size+=min(size_t(max(0,led_stats)),sizeof(response)-response_size-1);
 #endif
@@ -575,16 +592,27 @@ void surface::poll() {
             if (!(PROFILE.pots & (1u << i))) continue;
             uint16_t raw;
 #ifdef GF_CONSOLA_UNO
+            uint32_t sample_us = start;
             if (i == 1) {
                 if (!(slow_valid & 1)) continue;
+                sample_us = slow_sample_us[0];
                 raw = slow_adc[0]; // ISR mailbox; ADC1 never touched by loop.
+                // An ISR between the timestamp and data reads invalidates this snapshot.
+                if (sample_us != slow_sample_us[0] || (cue_consumed && sample_us == cue_consumed_us)) continue;
+                cue_consumed_us = sample_us;
+                cue_consumed = true;
             } else if (!read_adc2(i == 0 ? 13 : 3,raw)) continue;
 #else
             if (!read_adc2(i == 0 ? 14 : i,raw)) continue;
 #endif
             bench_inputs.pot[i]=raw; bench_inputs.pot_valid |= 1u<<i;
             uint8_t value;
-            if (pots[i].sample(raw,value)) {
+#ifdef GF_CONSOLA_UNO
+            const bool changed = pots[i].sample(raw,sample_us,value);
+#else
+            const bool changed = pots[i].sample(raw,value);
+#endif
+            if (changed) {
                 send_cc(30+i,value);
             }
         }

@@ -14,14 +14,16 @@ def parts():
     return {s.fields.get('Function', s.reference): s for sh in pcb_m().sheets for s in sh.symbols}
 
 
-def test_uart_matches_physical_adafruit_conn1():
+def test_uart_matches_adafruit_function_with_soldered_pads():
     p = parts()
     # Module socket physical contact20 = T28/RX7, contact21 = T29/TX7.
-    assert p['J_T41L'].pins['20'] == p['J3_M4'].pins['3'] == 'M4_RX7'
-    assert p['J_T41L'].pins['21'] == p['J3_M4'].pins['4'] == 'M4_TX7'
+    for direction, contact, socket in [('RX', '3', '20'), ('TX', '4', '21')]:
+        resistor = p[f'R_M4_{direction}']
+        assert p['J_T41L'].pins[socket] == resistor.pins['1'] == f'M4_{direction}7'
+        assert resistor.pins['2'] == p['J3_M4'].pins[contact] == f'M4_{direction}7_CABLE'
     assert p['J3_M4'].pins['2'] is None
-    assert 'SDA = TX21' in PANEL['J3_M4']['contacts']['3']
-    assert 'SCL = RX22' in PANEL['J3_M4']['contacts']['4']
+    assert 'SDA = TX21' in PANEL['J3_M4']['contacts']['SDA']
+    assert 'SCL = RX22' in PANEL['J3_M4']['contacts']['SCL']
 
 
 def test_power_loss_has_series_limiting_and_common_sensor_origin():
@@ -49,10 +51,10 @@ def test_external_pedal_and_unplugged_pots_have_defined_state():
     assert p['D_PEDAL_ESD'].pins == {'1': 'PEDAL_BTN', '2': 'GND'}
     assert p['R_LED_BIAS'].value == '100k' and p['R_LED_BIAS'].pins == {'1': 'LED_DATA', '2': 'GND'}
     for n in ('MASTER', 'CUE', 'IN'):
-        assert p[f'R_POT_BIAS_{n}'].value == '1M'
+        assert p[f'R_POT_BIAS_{n}'].value == '100k'
         assert p[f'R_POT_BIAS_{n}'].pins == p[f'C_POT_{n}'].pins == {'1': f'POT_{n}', '2': 'GND'}
-    err = max(x/10000 - x/10000*1e6/(1e6+1000+10000*(x/10000)*(1-x/10000)) for x in range(10001))
-    assert .00216 < err < .00217
+    err = max(x/10000 - x/10000*1e5/(1e5+1000+10000*(x/10000)*(1-x/10000)) for x in range(10001))
+    assert .02108 < err < .02109
 
 
 def test_audio_module_is_three_soldered_pad_cables_and_hp_return_isolated():

@@ -1,10 +1,11 @@
 """Console faders and passive six-sensor FSR carrier."""
 
 from .generator import Board
+from .bom import populate_fields
 from .pcb_k import capacitor, packed, part
 
 FADER_FP = 'groovepush:ALPS_RS6011P_60mm'
-FSR_FP = 'gf_consola:FSR402_Socket_1x02_P2.54mm'
+FSR_FP = 'gf_consola:FSR402_DirectSolder_1x02_P2.54mm'
 FSR_NAMES = ('V1', 'V2', 'V3', 'V4', 'X1', 'X2')
 FSR_TARGETS = ('J_FSR1', 'J_FSR2', 'J_FSR3', 'J_FSR4', 'J7_EXP1', 'J8_EXP2')
 
@@ -19,9 +20,11 @@ def pcb_f():
         symbols += [part('Device:R_Potentiometer_MountingPin', f'RV{i}', 'RS6011 B50K', FADER_FP,
                          {'1': '+3V3', '2': f'FADER{i}', '3': 'GND', 'MP': 'GND'}),
                     capacitor(f'C{i}', '100nF', f'FADER{i}')]
-    return Board('pcb-f', packed('faders', symbols, [
+    sheets = packed('faders', symbols, [
         'J1 vers PCB-A J3. MP a GND. Contorno/agujeros: mechanical.csv (v5).',
-        'RV1-4: paso 20 mm, recorrido 60 mm. Comprobar pieza RS6011 exacta antes de layout.']))
+        'RV1-4: paso 20 mm, recorrido 60 mm. Comprobar pieza RS6011 exacta antes de layout.'])
+    populate_fields(sheets)
+    return Board('pcb-f', sheets)
 
 
 def pcb_p():
@@ -35,6 +38,8 @@ def pcb_p():
                     part('Connector_Generic:Conn_01x02', f'J{i}', f'PCB-M {target}',
                          'Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal',
                          {'1': supply, '2': signal})]
-    return Board('pcb-p', packed('fsr-passive', symbols, [
+    sheets = packed('fsr-passive', symbols, [
         '6 circuitos independientes. Pin 1: +3V3; pin 2: senal. Sin divisor ni filtro aqui.',
-        'FSR Juan: machos prensados 2.54 mm -> hembra 1x2 THT o soldar. Datum disco CSV; validar acomodo cola/altura.']))
+        'D43: soldar solo pines metalicos prensados, sin socket; envolvente superior <=1mm; no calor en pelicula.'])
+    populate_fields(sheets)
+    return Board('pcb-p', sheets)

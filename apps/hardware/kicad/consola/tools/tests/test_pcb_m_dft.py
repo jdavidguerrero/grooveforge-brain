@@ -40,7 +40,7 @@ def conductive_reach(parts, start, opened=()):
 
 @pytest.mark.parametrize('bridge,source,load,pin', [
     ('SJ_FRONT', '+3.3VA', 'C_OA_IN', '1'),
-    ('SJ_CV', '+5V_LED', 'C_OA_CV_VCC', '1'),
+    ('SJ_CV', '+5V_TEENSY', 'C_OA_CV_VCC', '1'),
     ('SJ_LED_K', '+5V_LED', 'J_PCB_K', '8'),
     ('SJ_SHARP', '+5V_LED', 'J5_SHARP1', '1'),
     ('SJ_SHARP', '+5V_LED', 'J6_SHARP2', '1'),

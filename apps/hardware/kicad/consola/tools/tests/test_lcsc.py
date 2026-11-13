@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from check_bom import BOARDS, CATALOG, CONSOLE, check_components, read_components
+from check_bom import BOARDS, CATALOG, CONSOLE, check_components, read_components, read_schematic, check_board
 from schgen import DEFAULT_LIBRARIES
 from schgen.boards import BOARDS as FACTORIES
 from schgen.sexp import child, children, parse
@@ -34,14 +34,18 @@ def test_external_supplies_require_exact_declaration(catalog):
         assert check_components([dict(unresolved, DNP='DNP')], catalog) == ([], [])
 
 
-@pytest.mark.parametrize('board,external_count', tuple(zip(BOARDS, (1, 17, 9, 9))))
+@pytest.mark.parametrize('board,external_count', tuple(zip(BOARDS, (1, 17, 9, 9, 4, 6))))
 def test_exported_procurement_is_closed(board, external_count, catalog):
     rows = read_components(CONSOLE / f'boards/{board}/docs/{board}-netlist.xml')
     assert check_components(rows, catalog) == ([], [])
     assert sum(bool(r.get('Supply')) for r in rows) == external_count
     with (CONSOLE / f'fab/bom-{board}.csv').open() as f:
         bom = list(csv.DictReader(f))
-    assert check_components(bom, catalog) == ([], [])
+    symbols = {r['Reference']: r['Symbol'] for r in rows}
+    assert check_components([dict(r, Symbol=symbols[r['Reference']]) for r in bom], catalog) == ([], [])
+    assert check_board(CONSOLE / f'boards/{board}/{board}.kicad_sch',
+                       CONSOLE / f'boards/{board}/docs/{board}-netlist.xml',
+                       CONSOLE / f'fab/bom-{board}.csv', catalog)[:2] == ([], [])
     assert sum(bool(r['Supply']) for r in bom) == external_count
 
 

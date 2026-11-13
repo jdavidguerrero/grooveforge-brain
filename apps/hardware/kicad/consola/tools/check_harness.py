@@ -172,11 +172,15 @@ def check_cables(netlists, cables, aliases=None, panel=None, excluded=None):
             fail(f'unknown connector type {cable["kind"]}')
         physical = {str(i) for i in range(1, ways+1)}
         mapping = {str(a): str(b) for a, b in cable.get('mapping', {p: p for p in physical}).items()}
-        if set(mapping) != physical or set(mapping.values()) != physical or len(mapping) != ways:
-            fail(f'pin map must be a bijection of 1..{ways}')
+        # A PCB connector uses numbered pins; a soldered panel endpoint may use pad labels.
+        expected_b = (set(panel[cable['b'][1]]['pins'])
+                      if cable['b'][0] == 'panel' and cable['b'][1] in panel else physical)
+        if (set(mapping) != physical or set(mapping.values()) != expected_b or
+                len(expected_b) != ways or len(mapping) != ways):
+            fail(f'pin map must be a bijection of 1..{ways} to {sorted(expected_b)}')
             continue
         endpoints = []
-        for board, ref in (cable['a'], cable['b']):
+        for side, (board, ref) in enumerate((cable['a'], cable['b'])):
             if (board, ref) in used:
                 fail(f'connector reused by multiple cables: {board}.{ref}')
             used.add((board, ref))
@@ -200,8 +204,9 @@ def check_cables(netlists, cables, aliases=None, panel=None, excluded=None):
                     endpoints.append(({}, source))
                     continue
                 pinset, endpoint = source.pins[ref], source.nets[ref]
-            if pinset != physical:
-                fail(f'{board}.{ref}: expected {ways} pins 1..{ways}, got {sorted(pinset)}')
+            expected_pins = expected_b if side == 1 else physical
+            if pinset != expected_pins:
+                fail(f'{board}.{ref}: expected {ways} pins {sorted(expected_pins)}, got {sorted(pinset)}')
             endpoints.append((endpoint, source))
         for a in sorted(mapping, key=int):
             b = mapping[a]
@@ -256,7 +261,7 @@ def markdown(results, errors, netlists, excluded):
              'Regenerar XML de A y comprobar: `python3 apps/hardware/kicad/consola/tools/check_harness.py --export-pcb-a`.', '',
              f'**Resultado: {len(errors)} errores; {len(results)} cables declarados.**', '',
              'A/B de placas: XML independiente. B de panel: contrato esperado; NO continuidad medida.',
-             'Vista por número de contacto, no por cara del housing. Comprobar orientación de pin1 antes de crimpar.',
+             'Placas: números de pin; M4: rótulos de pad SDA/SCL/GND/3V (sin numeración de conector). Comprobar pin1 antes de crimpar.',
              'Colores sugeridos; marcar ambos extremos. IDC: raya identifica pin1; mantener 1:1.',
              'Abrir puentes invalida continuidad de los alias de ramas; tablas asumen montaje por defecto.', '',
              '## Fuentes', '']
@@ -282,7 +287,7 @@ def markdown(results, errors, netlists, excluded):
             lines += [c['note'], '']
         if c['b'][0] == 'panel':
             lines += [harness.PANEL.get(c['b'][1], {}).get('description', ''), '']
-        lines += ['| Pin A → B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |',
+        lines += ['| Pin A → pin / pad B | Red en A (XML) | Red en B (XML / esperado panel) | Equivalencia A / B | Color | Contacto pieza B | Estado |',
                   '|---|---|---|---|---|---|---|']
         for a, b, ra, rb, ca, cb, color, contact, status in result['rows']:
             lines.append('| ' + ' | '.join(map(cell, (f'{a} → {b}', ra, rb, f'{cell(ca)} / {cell(cb)}', color, contact, status))) + ' |')

@@ -9,6 +9,7 @@
 #include "consola_s/RelativeEncoder.h"
 #include "consola_s/McpButtons.h"
 #include "consola_s/PadSelector.h"
+#include "consola_s/PotInput.h"
 #include "consola_s/RetryGate.h"
 #include "ui/preset_link.h"
 // Compile the production I2C adapter against a fault-injection Wire in this TU.
@@ -334,6 +335,103 @@ void codec_and_cv_command_ranges() {
         "@GF CV -1","@GF CV 4096","@GF CV 1 extra","@GF CV x","@GF CV 99999999999999999999"};
     for (const auto line : bad) TEST_ASSERT_EQUAL(studio::LinkCmd::None,parse(line).kind);
 }
+void pot_low_holds_from_first_sample_and_resumes_filter() {
+    const uint32_t periods[] = {1000,10000};
+    for (const uint32_t period : periods) {
+        PotInput pot;
+        AnalogChange reference;
+        uint8_t midi=255, expected=255;
+        TEST_ASSERT_TRUE(pot.sample(3000,0,midi));
+        TEST_ASSERT_TRUE(reference.sample(3000,expected));
+        TEST_ASSERT_EQUAL_UINT8(expected,midi);
+        const uint8_t held=midi;
+        for (uint32_t t=period;t<=400000;t+=period) {
+            TEST_ASSERT_FALSE(pot.sample((t/period)%41,t,midi));
+            TEST_ASSERT_EQUAL_UINT8(held,midi);
+        }
+        TEST_ASSERT_TRUE(pot.disconnected());
+        // The reference never saw the unplugged samples: its whole recovery must match.
+        for (uint32_t t=410000;t<600000;t+=period) {
+            const uint16_t raw=t<500000 ? 1500 : 4095;
+            TEST_ASSERT_EQUAL(reference.sample(raw,expected),pot.sample(raw,t,midi));
+            TEST_ASSERT_EQUAL_UINT8(expected,midi);
+            TEST_ASSERT_FALSE(pot.disconnected());
+        }
+    }
+}
+void pot_confirmation_boundary_noise_and_valid_cancel() {
+    PotInput pot;
+    uint8_t midi=255;
+    pot.sample(2048,0,midi);
+    for (uint32_t t=1000;t<=201000;t+=1000) {
+        TEST_ASSERT_FALSE(pot.sample(t%41,t,midi));
+        TEST_ASSERT_FALSE(pot.disconnected());
+    }
+    TEST_ASSERT_FALSE(pot.sample(40,201001,midi));
+    TEST_ASSERT_TRUE(pot.disconnected());
+    pot.sample(41,202000,midi);
+    TEST_ASSERT_FALSE(pot.disconnected());
+    for (uint32_t t=203000;t<=303000;t+=1000) pot.sample(0,t,midi);
+    pot.sample(42,304000,midi);
+    for (uint32_t t=305000;t<=505000;t+=1000) {
+        pot.sample(0,t,midi);
+        TEST_ASSERT_FALSE(pot.disconnected());
+    }
+    pot.sample(0,505001,midi);
+    TEST_ASSERT_TRUE(pot.disconnected());
+}
+void pot_low_at_boot_never_publishes_zero() {
+    PotInput pot;
+    uint8_t midi=77;
+    for (uint32_t t=0;t<=210000;t+=10000) {
+        TEST_ASSERT_FALSE(pot.sample(0,t,midi));
+        TEST_ASSERT_EQUAL_UINT8(77,midi);
+    }
+    TEST_ASSERT_TRUE(pot.disconnected());
+    TEST_ASSERT_TRUE(pot.sample(4095,220000,midi));
+    TEST_ASSERT_EQUAL_UINT8(127,midi);
+    TEST_ASSERT_FALSE(pot.disconnected());
+    pot.sample(0,230000,midi);
+    TEST_ASSERT_FALSE(pot.sample(4095,240000,midi));
+    TEST_ASSERT_FALSE(pot.disconnected());
+}
+void pot_missing_samples_cannot_confirm_and_wrap_is_safe() {
+    PotInput pot;
+    uint8_t midi=64;
+    const uint32_t began=UINT32_MAX-100000;
+    for (uint32_t t=0;t<=100000;t+=10000) pot.sample(0,began+t,midi);
+    // No sample for 30 ms restarts the pending 200 ms, across micros() wrap.
+    for (uint32_t t=130000;t<=330000;t+=10000) {
+        pot.sample(0,began+t,midi);
+        TEST_ASSERT_FALSE(pot.disconnected());
+    }
+    pot.sample(0,began+330001,midi);
+    TEST_ASSERT_TRUE(pot.disconnected());
+    pot.sample(0,began+900000,midi);
+    TEST_ASSERT_TRUE(pot.disconnected());
+    pot.sample(1000,began+910000,midi);
+    TEST_ASSERT_FALSE(pot.disconnected());
+}
+void pot_channels_hold_independently() {
+    PotInput pots[3];
+    uint8_t midi[3]{};
+    for (unsigned i=0;i<3;++i) pots[i].sample(1000+i*1000,0,midi[i]);
+    const uint8_t master=midi[0], input=midi[2];
+    for (uint32_t t=1000;t<=210000;t+=1000) {
+        TEST_ASSERT_FALSE(pots[0].sample(0,t,midi[0]));
+        pots[1].sample(4095,t,midi[1]);
+        TEST_ASSERT_FALSE(pots[2].sample(40,t,midi[2]));
+    }
+    TEST_ASSERT_TRUE(pots[0].disconnected());
+    TEST_ASSERT_FALSE(pots[1].disconnected());
+    TEST_ASSERT_TRUE(pots[2].disconnected());
+    TEST_ASSERT_EQUAL_UINT8(master,midi[0]);
+    TEST_ASSERT_EQUAL_UINT8(127,midi[1]);
+    TEST_ASSERT_EQUAL_UINT8(input,midi[2]);
+    pots[0].sample(2000,220000,midi[0]);
+    TEST_ASSERT_FALSE(pots[0].disconnected());
+    TEST_ASSERT_TRUE(pots[2].disconnected());
+}
 int main() {
     UNITY_BEGIN();
     RUN_TEST(mcp_full_map_and_reserved_pins);
@@ -349,5 +447,10 @@ int main() {
     RUN_TEST(cc_flood_is_bounded_and_relative_steps_survive);
     RUN_TEST(retry_exponential_caps_and_success_resets);
     RUN_TEST(ads_disabled_has_no_bus_traffic_and_recovers_after_backoff);
+    RUN_TEST(pot_low_holds_from_first_sample_and_resumes_filter);
+    RUN_TEST(pot_confirmation_boundary_noise_and_valid_cancel);
+    RUN_TEST(pot_low_at_boot_never_publishes_zero);
+    RUN_TEST(pot_missing_samples_cannot_confirm_and_wrap_is_safe);
+    RUN_TEST(pot_channels_hold_independently);
     return UNITY_END();
 }

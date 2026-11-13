@@ -282,7 +282,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 76.2 63.5 0)
       (effects
         (font
@@ -358,6 +376,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid c11c5753-b147-5e71-a632-8f59286c30dd))
     (pin "2"
@@ -422,7 +464,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 304.8 63.5 0)
       (effects
         (font
@@ -498,6 +558,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 5c608f10-b204-508e-9028-b85ccb62b80a))
     (pin "2"
@@ -562,7 +646,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 190.5 114.3 0)
       (effects
         (font
@@ -638,6 +740,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 85723667-c281-57fd-bc47-1f142ec363d3))
     (pin "2"
@@ -702,7 +828,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 76.2 165.1 0)
       (effects
         (font
@@ -778,6 +922,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 5f51a068-6db7-509a-a384-8af7e4761fed))
     (pin "2"
@@ -842,7 +1010,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 304.8 165.1 0)
       (effects
         (font
@@ -918,6 +1104,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 7e216fd5-048b-5232-b92b-a654df62c002))
     (pin "2"
@@ -982,7 +1192,25 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "gf_consola:FSR402_Socket_1x02_P2.54mm"
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
       (at 190.5 215.9 0)
       (effects
         (font
@@ -1058,6 +1286,30 @@
         (font
           (size 1.0 1.0))
         (hide yes)))
+    (property "LCSC" "C173752"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
     (pin "1"
       (uuid 96fa29ac-7681-5ab4-abef-07862380d58f))
     (pin "2"
@@ -1074,7 +1326,7 @@
         (size 1.0 1.0))
       (justify left))
     (uuid d7ce05b0-9965-54cf-a8ee-d542e98fd8bd))
-  (text "FSR Juan: machos prensados 2.54 mm -> hembra 1x2 THT o soldar. Datum disco CSV; validar acomodo cola/altura."
+  (text "D43: soldar solo pines metalicos prensados, sin socket; envolvente superior <=1mm; no calor en pelicula."
     (at 15.24 24.13 0)
     (effects
       (font

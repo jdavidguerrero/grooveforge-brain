@@ -154,12 +154,39 @@ Cierre de compras aprobado el 2026-11-12: [THEORY-lcsc.md](THEORY-lcsc.md),
 [REPORT-lcsc.md](REPORT-lcsc.md). `Supply=owner` identifica piezas de Juan y `Supply=local`
 compras locales. Requieren `SupplyDescription` y coincidencia de tipo/descripción/valor/huella
 con `external_supplies` del catálogo. No pueden coexistir con LCSC. Vacío sigue siendo
-pendiente; una declaración inválida falla como error. Las cuatro BOM de `fab/` exportan
+pendiente; una declaración inválida falla como error. Las seis BOM de `fab/` exportan
 `Reference,Value,Footprint,LCSC,Supply,SupplyDescription,DNP` desde KiCad, sin posproceso.
 Los THT manuales de M van al pedido suelto; los SMD de M van al ensamble JLC.
 
 En un clon con layoutF o layoutP bajo otra tarea: regenerar/verificar todas con
 `--all --regenerate --directory .fixrev-validation`, copiando antes PCB-A a ese directorio
-(es existente, sin factory). No sobrescribir boards/pcb-f ni *.kicad_pcb de P.
+(es existente, sin factory). En esta segunda revisión se actualizan esquemas/exportaciones/BOM de F y P; no sobrescribir
+`boards/pcb-f/*.kicad_pcb`, `boards/pcb-p/*.kicad_pcb` ni ningún archivo de PCB-A.
 Para entregar esquemas/XML/ERC/PDF M/K/P usar las rutas definitivas y regenerar ahí sus
 fp-lib-table/placement mediante write_artifacts; no copiar tablas relativas de un temporal.
+
+
+## Segunda revisión — D38–D43
+
+Spec previo: doc24 §8 / doc28 §9. [Teoría](THEORY-fixrev2.md) e [informe](REPORT-fixrev2.md).
+D40 actualizado por Juan el 2026-11-13: cable soldado a los **pads rotulados de la M4 por función**,
+sin depender de la numeración del conector. Juan confirmará los rótulos impresos antes de soldar.
+M4 tiene USB propio; check_harness compara estos rótulos, sin aviso pendiente por CONN1.
+
+| Rótulo de pad M4 | Función | Ruta PCB-M / Teensy |
+|---|---|---|
+| SDA | TX M4 | → J3_M4.3 → R_M4_RX1 1 kΩ → RX Teensy 28 |
+| SCL | RX M4 | ← J3_M4.4 ← R_M4_TX1 1 kΩ ← TX Teensy 29 |
+| GND | masa | → J3_M4.1 → GND |
+| 3V | alimentación | sin conectar; J3_M4.2 NC |
+
+check_bom compara conjuntos y atributos del esquema real, XML y CSV exportado de las seis placas.
+XML incluye también excluidos de BOM; CSV incluye exactamente in_bom=yes, conservando DNP como
+filas identificadas (no compras pobladas). TP/NT/SJ/agujeros exentos solo por tipo de símbolo real;
+para CSV el tipo se toma del esquema después de cotejar referencias. Catálogo: URL HTTPS exacta
+LCSC por código, fuentes de inventario externo separadas. Faders/FSR: owner; D43 sin sockets.
+Futura CPL/layout aún no está validada por este checker.
+
+Para cumplir exclusión estricta de boards/pcb-a, copiar su carpeta a un directorio de validación
+DENTRO del clon, junto a las otras cinco placas generadas; correr `check_netlist.py --all
+--directory <directorio>`. Así KiCad escribe XML/ERC/PDF solo en copia, no en PCB-A original.

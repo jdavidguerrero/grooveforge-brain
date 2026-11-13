@@ -192,3 +192,90 @@ Referencias: [MCP4725 DS22039D §§6–7](https://ww1.microchip.com/downloads/en
 (fast write, EEPROM y lectura); [PCA9517A §6](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf)
 (EN sólo en idle). Wire/SGTL/Serial1 del core son oficiales PJRC/Adafruit; política de recuperación,
 provisión y parser son custom. No flash ni cambios hardware en esta tarea.
+
+## 10. Cable abierto en MASTER/CUE/IN (spec y teoría antes del código)
+
+2026-11-13 · Tarea de puesta en marcha autorizada. MASTER22/CUE24/IN26 conservan ADC,
+CC30/31/32, perfiles y cadencia de §2–4. Esta tarea fija **100 kΩ a GND del lado ADC**, tras
+la serie de **1 kΩ**, en paralelo con **100 nF**. Sustituye para estos pots la hipótesis de
+1 MΩ de D31/doc 24 y del README/esquema de esta base; **no modifica esos archivos ni acredita
+el montaje**. Medir y registrar el valor real antes de aprobar el detector en PCB-M.
+
+Teoría: sin cursor, τ nominal=100k × 100nF = 10 ms; desde escala completa el RC ideal tarda
+≈46 ms en bajar del 1%. El plazo de confirmación empieza **al cruzar el umbral**, no al retirar
+el cable. Con pot de 10k, Rth≤2,5k más 1k: carga relativa≤3,5/103,5≈3,38%; a media escala
+≈1,69% FS. Calibrar extremos y recorrido con esa carga. Fuga/contaminación y el ADC pueden
+impedir llegar al umbral: no se infiere resistencia ni continuidad eléctrica de un ADC.
+Fuentes: revisión adversarial 2 M3 y doc 24 D11/D31; modelo RC de primer orden y el presupuesto
+de fugas de NXP i.MX RT1060 tabla 22/figura 35 citado en esa revisión.
+
+Contrato custom de `PotInput`, aplicado **solo a consola_uno** (incluye full/brain/diag):
+
+- ADC12 **0–40** (`raw < 41`, ≈1% FS) es sospechoso. Desde la **primera** muestra baja se
+  congela EMA/deadband y no se genera CC ni actualización local HP/IN por ella; se conserva
+  el último valor válido. No se espera a confirmar para retenerlo. Antes de la primera
+  muestra válida no se emite ningún valor, conservando HP64/IN5 iniciales de §4.
+- Muestras bajas consecutivas durante **más de 200000 µs** confirman desconexión; a 200000 µs
+  exactos aún no. Se tolera variación dentro de 0–40, no se exige igualdad de cuentas. Un hueco
+  entre muestras mayor de 20000 µs reinicia la cualificación pendiente; una lectura antigua,
+  un timeout o el mero paso del tiempo no confirman. El estado confirmado se retiene hasta
+  una muestra válida. Relojes unsigned por resta, incluidos wrap de micros.
+- La primera muestra **≥41** cancela sospecha/desconexión y reanuda la EMA previa (α=1/4,
+  deadband 2 MIDI), sin reinicializarla a cero. No se añade otro umbral de retorno. Un valor
+  válido que no supera deadband puede limpiar diagnóstico sin generar CC. Se conservan
+  coalescencia, techo 100 Hz y callbacks locales existentes. Un envío pendiente previo contiene
+  un valor válido y puede salir durante la retención.
+- `@S STATS` añade **`pot_open_mask` decimal**, bit0=MASTER22 (1), bit1=CUE24 (2), bit2=IN26 (4).
+  Solo marca desconexiones confirmadas en pots habilitados; mínimo normal `pot_mask=0` implica
+  `pot_open_mask=0`. `@S RESET` limpia contadores, no borra el estado del detector. INPUTS/WATCH
+  conservan ADC crudo (POT_VALID significa muestra adquirida, no cable conectado).
+
+**Límite observable:** un pot conectado a cero real y un cable abierto polarizado a GND son
+indistinguibles con este circuito. Ambos retienen el último valor y pueden marcar el bit; el
+tramo 0–40 no envía cero. Tampoco se evita la caída durante la descarga RC **antes** del umbral,
+ni se detecta un cable que quede alto por fuga o un fallo de alimentación/GND que imite señal
+válida. Esta política prioriza la retención pedida; no se promete detección física inequívoca.
+
+Implementación en loop con estado fijo por pot, sin heap, delay, nuevas esperas, Wire ni cambios
+NVIC. ADC1 sigue siendo exclusivo de ISR: CUE publica además timestamp de adquisición, leído
+con comprobación de coherencia sin enmascarar IRQ, y cada muestra se consume una sola vez.
+La EMA de CUE avanza así a 100 Hz de adquisición, en lugar de repetir el mismo buzón a 1 kHz;
+MASTER/IN conservan su servicio a 1 kHz. El techo de envío sigue siendo 100 Hz.
+MASTER/IN conservan lectura ADC2 acotada 20 µs. No cambia consola_s ni ADS/FSR/selector. ADC/core
+y Teensy Audio Library son oficiales PJRC; detector, EMA y publicación CDC son custom.
+
+Unity nativo debe probar retención inmediata, >200 ms frente al límite exacto, ruido bajo y
+rebotes, arranque sin muestra válida, recuperación igual a la EMA sin las muestras rechazadas,
+canales independientes, huecos sin muestras y wrap, a 1 kHz y 100 Hz. El cliente Python debe conservar
+el campo adicional en STATS. No prueba fugas, descarga RC real, cableado, tiempos ISR ni audio.
+Demo física pendiente: con full y 100k medidos, fijar cada pot>5%, abrir solo cursor con jig seguro,
+observar raw<41, bit correspondiente tras>200 ms, ningún CC cero ni salto local HP/IN; reconectar
+≥41 y comprobar retorno suave. Repetir con cero real y anotar ambigüedad. Audio+LED+entradas 60 min
+y loop_max_us<2000 en régimen siguen siendo la puerta física de §5 y [31](31-puesta-en-marcha.md).
+
+### Verificación de escritorio de §10 (2026-11-13, sin flash)
+
+Clon `/private/tmp/grooveforge-bringup`, rama `claude/monorepo-groovepush`, base `edc67a3`.
+Spec de §10 escrito antes de `PotInput`, integración y tests. Resultados reales:
+
+| Directorio | Comando | Resultado |
+|---|---|---|
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio test -e native` | **222/222**, 19 suites, 20,376s |
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio run -e consola_uno` | **SUCCESS**, 34,700s |
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio run -e consola_uno_full` | **SUCCESS**, 29,538s |
+| tools/consola | `python3 -m pytest -q` (sistema) | **487 passed**, 3,16s |
+
+PIO usa `PLATFORMIO_CORE_DIR=/private/tmp/grooveforge-bringup/apps/firmware-teensy/.pio/local-core`,
+`PLATFORMIO_SETTING_ENABLE_TELEMETRY=no` y
+`TMPDIR=/private/tmp/grooveforge-bringup/apps/firmware-teensy/.pio/tmp`. Plataformas native/teensy,
+framework/toolchain, caché y Unity 2.6.1 se copiaron de instalaciones existentes al clon, sin cambiar
+versiones ni platformio.ini. El primer build se detuvo al intentar descargar Unity; se completó
+con la copia local también en libdeps del entorno de build. Logs ignorados: `.pio/native-verification.log`,
+`.pio/uno-verification.log`, `.pio/full-verification.log` y `tools/consola/.pytest-verification.log`.
+
+FLASH código: mínimo 91892 B / full 92660 B; ambos RAM1 variables 26624 B, RAM2 variables 55040 B.
+Único warning de compilación observado: `-fno-rtti` aplicado a C, heredado. STATS tiene margen
+bajo 1280 B aun sustituyendo todos sus decimales por el máximo uint32 (cota 1129 B con newline).
+No se modificó `apps/hardware`; no hubo flash ni push. La guía [31](31-puesta-en-marcha.md)
+entrega la secuencia y plantilla, **no resultados físicos**. Siguen pendientes 100k medidos,
+prueba de cursor abierto/retorno, arranque con 26 LED y 60 min de audio/entradas/LED en PCB-M.

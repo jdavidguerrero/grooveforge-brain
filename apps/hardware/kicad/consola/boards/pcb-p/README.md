@@ -13,9 +13,12 @@ huellas provisionales y verificacion manual. Los archivos `.kicad_pcb`/`.kicad_d
 existieran en PCB-F pertenecen a GroovePush: no son un layout de Console ni son fabricables
 con este esquema. No se ha generado ni actualizado layout en esta entrega.
 
-PCB-P D32: FSR402 de Juan con dos machos prensados P2.54, ver ../../docs/fotos/fsr402-juan.png.
-Huella gf_consola:FSR402_Socket_1x02_P2.54mm con landing THT hembra/soldadura, taladro1mm.
-Datum del footprint = centro disco del CSV, no centro del socket. Pads x +/-1.27, y_KiCad +11mm
-(socket y_panel = disco-11mm); cola orientada hacia disco (-y_KiCad / +y_panel). Mantener centros
-de los seis discos. Antes de layout definitivo verificar acomodo/longitud/altura con FSR real;
-no forzar pliegues ni soldar sobre la película. El layout .kicad_pcb lo actualiza otra tarea.
+PCB-P D43: FSR402 de Juan con dos machos prensados P2.54, ver ../../docs/fotos/fsr402-juan.png.
+Huella gf_consola:FSR402_DirectSolder_1x02_P2.54mm, PTH dia1mm, SIN SOCKET.
+Datum = centro disco CSV; pads x +/-1.27 y_KiCad +11 (panel disco-11), cola hacia disco.
+V1-V4 bajo K derecha; X1/X2 sin K arriba. Luz K-P=1.5mm; envolvente superior COMPLETA <=1mm.
+Insertar metal desde arriba, soldar por abajo usando disipador hacia pelicula; no aplicar calor
+sobre pelicula ni forzar pliegues. Verificar crimpado/cola/insercion/altura con pieza de Juan.
+No comprar/poblar sockets en D43; alternativa P2.54 es compra externa sin LCSC verificado.
+Mantener centros de disco y landings. El layout PCB-P DEBE REHACERSE por esta terminacion;
+.kicad_pcb pertenece a otra tarea y no se ha editado. Ver doc28 seccion9.
