@@ -4,30 +4,30 @@
     "pcbm_footprint_count": 0,
     "pcbm_has_outline": false,
     "pcbf_legacy_outline_mm": [
-      228.0,
-      171.5,
-      274.0,
-      263.5
+      210.0,
+      200.0,
+      291.0,
+      283.0
     ],
     "pcbf_j1_origin_kicad": [
-      231.5,
-      176.5
+      213.5,
+      210.8
     ],
     "pcbf_j1_rotation_deg": 90.0
   },
   "base": "edc67a3",
   "sources_sha256": {
-    "apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb": "8d3e42a0adced1bc70af5a753a308871d3e5e37d963316a493b6b23a44bf23cd",
-    "apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_pcb": "64df7f9a75aba538b81824337530efbf579301aba029fd92ee685a34befe7712",
+    "apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb": "20f494ae63f43ea48bd4f3817b3db3a16eaddf4cb196b9bc0d8529c2a5801bd1",
+    "apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_pcb": "40b24cd458f844b515aa1a1f635be92718f9402e412fd7991c83d78e03941881",
     "apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_pcb": "4ff5bed4e7c0a47de8729e05b4af5282fcdac6d088537d9678fcb038863d1c2b",
     "apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv": "eb730926c4030ac611e7a12a20579b518f91da12a3b74c435e4b6e816d091d12",
-    "apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv": "7597c831d31699c37ce87935cae12d2bd64160cf53acae96bf7daee6cda0b634",
+    "apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv": "0b98fa72f98a212d52b175b605dd94c55c9fe48573a4ff5282a3bbec670ad70d",
     "apps/hardware/kicad/consola/boards/pcb-k-left/README.md": "483281331f15398e23c75cc19818bb7674815ec895ee049ebfa42c2ab82a010b",
     "apps/hardware/kicad/consola/boards/pcb-k-right/README.md": "0bdfffca6f038b3895a384145956e451c555c2630047ca7a4d2eb13ccf1acd23",
     "apps/hardware/kicad/consola/panel/contornos/pcb-k-contorno-v5.dxf": "d1b93a17188cc775cf311894de2dc84becfd6fbaf01a71bb933b6c67c5fdd76d",
-    "apps/design/3d-models/consola/build_console.py": "da3a04608e787a25a64bf7801eae7f36e152055e4d4db6b969eb8466709bc316",
-    "apps/docs/consola/25-panel-consola.md": "075cd1171c2e1a89b2f258c8ced92fb42fb83ac16ff018094b938add1f84d16d",
-    "apps/docs/consola/28-pcb-k.md": "0a873d29751e51195bfe86e531917787e76796b020077461ef4fac07ea4a35a9",
+    "apps/design/3d-models/consola/build_console.py": "e26e8a5278b5a45a54fd6808fef2e97d552794df9a71c17e74dc906e1d1c9b45",
+    "apps/docs/consola/25-panel-consola.md": "7e122d2952323fddd647c59ab5cd11e02781e8e7c83eb3b0c54c12dddf94841c",
+    "apps/docs/consola/28-pcb-k.md": "4108d1bc4d763e26e460b18f7edd5dc9c5e7f17327e1415e3ebe570c6bc6dd6b",
     "apps/docs/consola/design/claude-design-prompt-consola-cuerpo-v5.md": "171ef385def6027dbf3d661cb0699475f85909f6df6ec7c8c362f306fb4bee53"
   },
   "transformation": {
@@ -1018,12 +1018,12 @@
     {
       "reference": "H1",
       "center_kicad": [
-        18.0,
-        188.0
+        28.0,
+        190.0
       ],
       "center_panel": [
-        62.0,
-        183.0
+        72.0,
+        181.0
       ],
       "drill_mm": 3.2
     },
@@ -1230,14 +1230,14 @@
   },
   "heights": {
     "panel_top_mm": 85.0,
-    "pcba_bottom_mm": 71.4,
-    "pcba_top_mm": 73.0,
-    "pcba_base_relative_mm": -12.0,
+    "pcba_bottom_mm": 63.4,
+    "pcba_top_mm": 65.0,
+    "pcba_base_relative_mm": -20.0,
     "pcbf_top_mm": 75.5,
     "pcbf_bottom_mm": 73.9,
-    "pcba_to_pcbf_substrate_gap_mm": 0.9,
+    "pcba_to_pcbf_substrate_gap_mm": 8.9,
     "pcbk_bottom_mm": 80.0,
-    "pcba_to_pcbk_substrate_gap_mm": 7.0,
+    "pcba_to_pcbk_substrate_gap_mm": 15.0,
     "display_bottom_mm": 68.2,
     "display_top_mm": 83.0,
     "tower_top_mm": 73.0
@@ -1250,7 +1250,7 @@
       "start_mm": [
         234.0,
         180.2,
-        71.4
+        63.4
       ],
       "end_estimated_mm": [
         261.0,
@@ -1265,10 +1265,10 @@
         "M4 reserva": false,
         "PCB-F": false
       },
-      "straight_3d_mm": 120.45032171,
+      "straight_3d_mm": 116.548187459,
       "target_region_range_mm": [
-        114.003859584,
-        192.168884058
+        109.873017616,
+        189.74741105
       ],
       "crossings": {
         "Ventana M4": {
@@ -1283,17 +1283,17 @@
         "Pantalla módulo": {
           "crosses_xy": true,
           "z_mm": [
-            54.259478958,
+            48.478316633,
             9.6
           ],
-          "below_model_mm": 13.940521042
+          "below_model_mm": 19.721683367
         }
       },
       "waypoints_mm": [
         [
           234.0,
           180.2,
-          71.4
+          63.4
         ],
         [
           234.0,
@@ -1311,7 +1311,7 @@
           9.6
         ]
       ],
-      "routed_mm": 165.187813595
+      "routed_mm": 157.187813595
     },
     {
       "source": "J2",
@@ -1319,7 +1319,7 @@
       "start_mm": [
         194.0,
         199.0,
-        71.4
+        63.4
       ],
       "end_estimated_mm": [
         238.0,
@@ -1334,10 +1334,10 @@
         "M4 reserva": false,
         "PCB-F": false
       },
-      "straight_3d_mm": 110.978556487,
+      "straight_3d_mm": 106.73068912,
       "target_region_range_mm": [
-        98.733175782,
-        200.030597659
+        93.933167731,
+        197.705437457
       ],
       "crossings": {
         "Ventana M4": {
@@ -1352,17 +1352,17 @@
         "Pantalla módulo": {
           "crosses_xy": true,
           "z_mm": [
-            64.624888889,
+            57.501925926,
             9.6
           ],
-          "below_model_mm": 3.575111111
+          "below_model_mm": 10.698074074
         }
       },
       "waypoints_mm": [
         [
           194.0,
           199.0,
-          71.4
+          63.4
         ],
         [
           194.0,
@@ -1380,7 +1380,7 @@
           9.6
         ]
       ],
-      "routed_mm": 153.979173353
+      "routed_mm": 145.979173353
     },
     {
       "source": "J3",
@@ -1388,7 +1388,7 @@
       "start_mm": [
         265.0,
         181.0,
-        71.4
+        63.4
       ],
       "end_estimated_mm": [
         257.0,
@@ -1403,10 +1403,10 @@
         "M4 reserva": false,
         "PCB-F": false
       },
-      "straight_3d_mm": 18.062391868,
+      "straight_3d_mm": 20.742468513,
       "target_region_range_mm": [
-        10.307764064,
-        116.427015765
+        14.5,
+        116.872794097
       ],
       "crossings": {
         "Ventana M4": {
@@ -1426,7 +1426,7 @@
         [
           265.0,
           181.0,
-          71.4
+          63.4
         ],
         [
           276.0,
@@ -1449,7 +1449,7 @@
           73.9
         ]
       ],
-      "routed_mm": 57.212627632
+      "routed_mm": 52.884380925
     }
   ],
   "shapes": {
@@ -3294,13 +3294,13 @@
   },
   "placeholder": {
     "origin": [
-      70,
-      177,
-      71.4
+      54,
+      178,
+      63.4
     ],
     "size": [
-      200,
-      30,
+      217,
+      23,
       1.6
     ]
   },

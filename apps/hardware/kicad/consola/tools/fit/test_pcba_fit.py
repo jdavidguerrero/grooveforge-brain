@@ -82,26 +82,30 @@ class ActualConsoleTests(unittest.TestCase):
         self.assertEqual(r['transformation']['translation_mm'],(44,371))
         self.assertEqual(r['encoders'][-1]['axis_panel'],(261,192))
 
-    def test_panel_overlap_demo_independent_rectangle_products(self):
+    def test_strip_clears_approved_panel_reservations(self):
         checks = self.result['plan_checks']
-        self.assertEqual(checks['PCB-F']['overlap_mm2'],17*40)
-        self.assertEqual(checks['M4 reserva doc28 (ventana +5 mm)']['overlap_mm2'],5*43)
-        self.assertEqual(checks['Ventana M4']['status'],'CONTACTO')
-        self.assertEqual(checks['M4 nominal CSV']['clearance_mm'],1)
-        self.assertAlmostEqual(checks['Pantalla módulo']['clearance_mm'],207.88-200.6)
-        self.assertFalse(self.result['plan_pass'])
+        self.assertEqual(checks['PCB-F']['overlap_mm2'],0)
+        self.assertEqual(checks['PCB-F']['clearance_mm'],4)
+        self.assertEqual(checks['M4 reserva doc28 (ventana +5 mm)']['overlap_mm2'],0)
+        self.assertEqual(checks['M4 reserva doc28 (ventana +5 mm)']['clearance_mm'],1)
+        self.assertEqual(checks['Ventana M4']['clearance_mm'],6)
+        self.assertEqual(checks['M4 nominal CSV']['clearance_mm'],7)
+        self.assertAlmostEqual(checks['Pantalla módulo']['clearance_mm'],207.88-204.6)
+        self.assertTrue(self.result['plan_pass'])
 
     def test_stacked_height_and_cable_crossings(self):
         r = self.result
-        self.assertEqual(r['heights']['pcba_base_relative_mm'],-12)
-        self.assertAlmostEqual(r['heights']['pcba_to_pcbf_substrate_gap_mm'],.9)
-        self.assertEqual(len(r['through_hole_pins_under_f']),26)
+        self.assertEqual(r['heights']['pcba_base_relative_mm'],-20)
+        self.assertAlmostEqual(r['heights']['pcba_to_pcbf_substrate_gap_mm'],8.9)
+        self.assertEqual(r['through_hole_pins_under_f'],[])
+        self.assertTrue(r['cable_pass'])
         for route in r['routes']:
             self.assertFalse(route['crossings']['Ventana M4']['crosses_xy'])
             self.assertEqual(route['straight_hits_pcba_substrate'], route['source']=='J3')
             self.assertEqual(route['crossings']['Pantalla módulo']['crosses_xy'],route['source']!='J3')
             if route['source']!='J3':
-                self.assertGreater(route['crossings']['Pantalla módulo']['below_model_mm'],20)
+                self.assertAlmostEqual(route['crossings']['Pantalla módulo']['below_model_mm'],
+                                       {'J1': 19.7216833667, 'J2': 10.6980740741}[route['source']])
 
     def test_generated_svg_is_complete_xml(self):
         root = ET.parse(fit.HERE/'pcba-fit.svg').getroot()

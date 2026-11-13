@@ -113,3 +113,7 @@ PCB-M,jack,265,336,,,CV 1 · eje a 7 sobre la placa
 PCB-M,jack,283,336,,,CV 2 · eje a 7 sobre la placa
 PCB-M,jack,301,336,,,MIDI IN · eje a 7 sobre la placa
 PCB-M,jack,319,336,,,MIDI OUT · eje a 7 sobre la placa
+PCB-A,agujero,72,181,3.2,3.2,"H1; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,118,192,3.2,3.2,"H2; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,144,192,3.2,3.2,"H3; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,248,192,3.2,3.2,"H4; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"

@@ -3,19 +3,24 @@
 Decidido con Juan el 2026-11-12, tras cotizar CNC + nylon en ~90 USD cada uno: **chapa por corte láser local** y
 **cuerpo en PETG en 4 piezas en la Ender 3 V3** (filamento propio). Todo sale de `build_console.py`.
 
+Lista consolidada y alternativas de compra: [BOM de herrajes](BOM-herrajes.md).
+Los 41 anclajes definidos incluyen 4 BSO-M3 de 18 mm útiles para PCB-A; los 4 FH largos del marco M4
+se cotizan aparte y aún no tienen centros de corte. El DXF láser incorpora los cuatro círculos nuevos Ø4,2. Regenerar STEP/FCStd desde el script
+para revisar el conjunto 3D: esas copias guardadas anteceden a esta corrección de A.
+
 ## Chapa de aluminio 2 mm — corte láser
 
 | Archivo | Para qué |
 |---|---|
 | `cupon-prueba-laser.dxf` | **Cortar primero** (120 × 60). Tecla en 14,0 / 14,6 / 15,0 / 15,4 / 16,0; EC11 en 7,1 y 7,4; PEM en 2,5 / 2,6 / 4,2 / 4,3; tramo de ranura de fader |
-| `panel-aluminio-v1-laser.dxf` | Perfil completo, solo cortes pasantes (116 contornos) |
+| `panel-aluminio-v1-laser.dxf` | Perfil completo, solo cortes pasantes (120 contornos, incluidos los 4 anclajes de A) |
 | `panel-aluminio-v1.step` | Para cotizar o revisar en 3D |
 
 - **Sin rebajes de Choc:** el rebaje 16 × 16 × 0,8 por debajo obligaba a fresar por la otra cara y era lo que encarecía el
   CNC. Con la hoja de la PG1353 (`28` §3) la chapa hace de placa de montaje: probar primero **14,0** en el cupón con
   una tecla montada (las aletas se comprimen y la tecla queda firme sobre el zócalo); 14,6 si queda forzada; 15,4 solo
   si nada sirve. El modelo usa hoy 15,4: cambiar `CHOC_CUT_LASER` cuando se elija.
-- **Agujeros de PEM** (37): FH-M2.5 → 2,5 (PCB-K); BSO-M2.5 / BSO-M3 → 4,2 (PCB-P, PCB-F y las 9 torres). Se prensan a
+- **Agujeros de PEM** (41): FH-M2.5 → 2,5 (PCB-K); BSO-M2.5 / BSO-M3 → 4,2 (PCB-P, PCB-F, PCB-A y las 9 torres). Se prensan a
   mano en tornillo de banco con yunque plano. Verificar diámetros con la hoja del proveedor y en el cupón.
 - Anodizado y rótulos aparte (grabado láser o vinilo); el corte no los incluye.
 
@@ -34,7 +39,7 @@ Decidido con Juan el 2026-11-12, tras cotizar CNC + nylon en ~90 USD cada uno: *
   atornillada a las 9 torres, termina de amarrar las cuatro piezas.
 - Imprimir con el piso sobre la cama, sin soportes: los agujeros horizontales (jacks Ø9,5/Ø6,2, pernos Ø3,4) puentean.
   Pared 3,2 = 8 perímetros con boquilla 0,4. Volumen 771 cm³: 0,98 kg de PETG si fuera macizo; con relleno del 20 % queda por debajo (un rollo de 1 kg alcanza justo, mejor tener otro).
-- Herrajes: 15 M3 × 16 + 15 insertos M3 Ø4 × 6 (juntas), 9 M3 × 10 (chapa), 6 insertos M3 (torres de PCB-M).
+- Herrajes: 15 M3 × 16 + 15 insertos M3 Ø4 × 6 (juntas), 9 M3 × 10 (chapa), 6 M3 × 8 + 6 insertos M3 Ø4 × 6 (torres de PCB-M).
 
 ## Cambios frente al diseño v5
 

@@ -80,6 +80,9 @@ Sin crimpadora, comprar **cables ya armados** (AliExpress) en vez de carcasas y 
 
 Con crimpadora: terminales PH C5292557 (≈ 0,005 USD) y carcasas PHR-n, a buscar en LCSC.
 
+Herrajes mecánicos, cantidades y alturas: [BOM de herrajes Console](../../../../design/3d-models/consola/BOM-herrajes.md).
+Incluye los 4 soportes BSO-M3 de 18 mm de PCB-A y los 4 FH largos del futuro marco M4.
+
 ## 5. Fuera de LCSC/JLC
 
 - **Compra local declarada (`Supply=local`):** caja IDC 2×15 2,54 mm recta (box header) con muesca,

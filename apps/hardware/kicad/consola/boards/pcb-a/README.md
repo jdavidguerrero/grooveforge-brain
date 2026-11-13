@@ -13,14 +13,19 @@ Los orígenes de las huellas EC11 están a (−7,5; −2,5) mm de sus ejes.
 
 | Agujero | KiCad (mm) | Panel (mm) | Taladro |
 |---|---|---|---|
-| H1 | 18; 188 | 62; 183 | NPTH Ø3,2 mm |
+| H1 | 28; 190 | 72; 181 | NPTH Ø3,2 mm |
 | H2 | 74; 179 | 118; 192 | NPTH Ø3,2 mm |
 | H3 | 100; 179 | 144; 192 | NPTH Ø3,2 mm |
 | H4 | 204; 179 | 248; 192 | NPTH Ø3,2 mm |
 
 H4 está entre E7 y E8 para liberar el cuerpo del último encoder. Las posiciones también
-están anotadas en `Cmts.User` de la PCB. Separadores M3 nominales de 10 mm, pendientes de
-verificar con el conjunto físico. Los NPTH no constituyen una unión eléctrica a la chapa.
+están anotadas en `Cmts.User` de la PCB. H1 se llevó a (72;181) panel para liberar TAP y el paso por K.
+Separadores BSO-M3 de **18 mm útiles**: cara inferior de chapa z83 → PCB-A superior z65 (TOP−20, doc25 §7).
+La chapa lleva cuatro cortes Ø4,2, alimentados por el CSV v5 y `PEM_HOLE`.
+Puentes láser mínimos: **4,2 / 7,35 / 7,35 / 7,35 mm**. El cuerpo Ø5,6 de los separadores
+no invade K combinado ni las particiones izq./der.; H1 deja 1,2 mm al borde.
+Ver [chequeo de montaje](../../tools/fit/REPORT-pcba-mounting.md) y
+[BOM de herrajes](../../../../../design/3d-models/consola/BOM-herrajes.md). Los NPTH no constituyen una unión eléctrica a la chapa.
 
 J1 es IDC 2×15 por la cara inferior, con su eje largo paralelo a X; origen KiCad
 (207,78;192,07), ángulo +90°. J2 SH4 y J3 SH6 van en la cara inferior; J3 abre hacia
@@ -58,8 +63,9 @@ KPY=/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/
 KCLI=/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli
 BOARD=apps/hardware/kicad/consola/boards/pcb-a
 "$KPY" -B tools/layout/pcba_strip.py verify
-"$KCLI" pcb drc --format json --exit-code-violations -o "$BOARD/docs/drc-final.json" "$BOARD/pcb-a.kicad_pcb"
+"$KCLI" pcb drc --schematic-parity --format json --exit-code-violations -o "$BOARD/docs/drc-final.json" "$BOARD/pcb-a.kicad_pcb"
 python3 -B apps/hardware/kicad/consola/tools/fit/check_pcba_fit.py
+python3 -B apps/hardware/kicad/consola/tools/fit/check_pcba_mounting.py
 "$KPY" -B tools/layout/pcba_strip.py export
 ```
 

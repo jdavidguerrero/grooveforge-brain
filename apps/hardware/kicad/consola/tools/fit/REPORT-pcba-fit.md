@@ -34,18 +34,18 @@ Paso: 26.000, 26.000, 26.000, 26.000, 26.000, 26.000, 26.000 mm. Límites panel 
 | PCB-P | 0.0 | 75.0 | LIBRE |
 | PCB-M | 0.0 | 71.4 | LIBRE |
 
-PCB-K se conserva como diagnóstico del CSV v5 combinado y partición inferida: no es el layout nuevo de K. Su proyección XY no integra el criterio de aprobación de esta tarea. Hay 7 mm nominales entre sustratos A/K; la interferencia de componentes y el paso de separadores requieren el modelo final. Pantalla debe tener ≥3 mm; F, M4 nominal, ventana y reserva M4 deben quedar LIBRES. No hay pines THT de A bajo F: [].
+PCB-K se conserva como diagnóstico del CSV v5 combinado y partición inferida: no es el layout nuevo de K. Su proyección XY no integra el criterio de aprobación de esta tarea. Hay 15 mm nominales entre sustratos A/K; la interferencia de componentes y el paso de separadores requieren el modelo final. Pantalla debe tener ≥3 mm; F, M4 nominal, ventana y reserva M4 deben quedar LIBRES. No hay pines THT de A bajo F: [].
 
 ## Montaje para FreeCAD
 
 | Agujero | KiCad mm | Panel mm | Taladro mm |
 |---|---|---|---|
-| H1 | (18.000, 188.000) | (62.000, 183.000) | 3.2 |
+| H1 | (28.000, 190.000) | (72.000, 181.000) | 3.2 |
 | H2 | (74.000, 179.000) | (118.000, 192.000) | 3.2 |
 | H3 | (100.000, 179.000) | (144.000, 192.000) | 3.2 |
 | H4 | (204.000, 179.000) | (248.000, 192.000) | 3.2 |
 
-Cara inferior/superior A: z=71,4/73,0; chapa z=83…85. Separador nominal desde cara inferior de chapa a cara superior PCB: 10 mm. Agujeros NPTH Ø3,2 para M3; no son un bond de GND. Añadir estos apoyos al modelo y verificar sus pasos por K y cabezas/tuercas. Placeholder antiguo: {'origin': [70, 177, 71.4], 'size': [200, 30, 1.6]}. No representa el nuevo contorno.
+Cara inferior/superior A: z=63,4/65,0; chapa z=83…85. Separador nominal desde cara inferior de chapa a cara superior PCB: 18 mm. Agujeros NPTH Ø3,2 para M3; no son un bond de GND. Paso de separadores por K y puente de aluminio: [chequeo de montaje](REPORT-pcba-mounting.md). Placeholder antiguo: {'origin': [54, 178, 63.4], 'size': [217, 23, 1.6]}. No representa el nuevo contorno.
 
 ## Conectores y ruta del mazo
 
@@ -60,9 +60,9 @@ J1 largo paralelo a X, enchufe hacia abajo; cinta hacia PCB-M después de bajar 
 
 | Ruta | Polilínea XYZ mm | Largo mm | Interferencias | Viable geométricamente |
 |---|---|---|---|---|
-| J1 → PCB-M J1_PCBA | (234.000, 180.200, 71.400) → (234.000, 180.200, 60.000) → (261.000, 280.000, 60.000) → (261.000, 280.000, 9.600) | 165.19 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
-| J2 → PCB-M J2_I2C | (194.000, 199.000, 71.400) → (194.000, 199.000, 60.000) → (238.000, 280.000, 60.000) → (238.000, 280.000, 9.600) | 153.98 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
-| J3 → PCB-F J1 | (265.000, 181.000, 71.400) → (276.000, 181.000, 60.000) → (276.000, 175.000, 60.000) → (257.000, 165.000, 60.000) → (257.000, 165.000, 73.900) | 57.21 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
+| J1 → PCB-M J1_PCBA | (234.000, 180.200, 63.400) → (234.000, 180.200, 60.000) → (261.000, 280.000, 60.000) → (261.000, 280.000, 9.600) | 157.19 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
+| J2 → PCB-M J2_I2C | (194.000, 199.000, 63.400) → (194.000, 199.000, 60.000) → (238.000, 280.000, 60.000) → (238.000, 280.000, 9.600) | 145.98 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
+| J3 → PCB-F J1 | (265.000, 181.000, 63.400) → (276.000, 181.000, 60.000) → (276.000, 175.000, 60.000) → (257.000, 165.000, 60.000) → (257.000, 165.000, 73.900) | 52.88 | {'PCB-A': False, 'Pantalla módulo': False, 'M4 reserva': False, 'PCB-F': False} | True |
 
 Los extremos remotos se conservan como hipótesis explícitas del informe original: M=(261/238,280,9,6), F=(257,165,73,9). Se comprueban todas las secciones contra prismas A, F, pantalla y reserva M4. El comienzo en el plano inferior de A representa una salida hacia abajo, no el volumen del enchufe. Las polilíneas son corredores para dar forma al cable; las esquinas deben redondearse con el radio del mazo elegido. No son largos de compra: añadir bucles y validar conectores remotos, volumen enchufado y alturas en el montaje. Encoders/perillas y bond ESD a chapa quedan por verificar físicamente.
 
@@ -72,15 +72,15 @@ Los extremos remotos se conservan como hipótesis explícitas del informe origin
 
 | Entrada | SHA-256 |
 |---|---|
-| apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb | `8d3e42a0adced1bc70af5a753a308871d3e5e37d963316a493b6b23a44bf23cd` |
-| apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_pcb | `64df7f9a75aba538b81824337530efbf579301aba029fd92ee685a34befe7712` |
+| apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_pcb | `20f494ae63f43ea48bd4f3817b3db3a16eaddf4cb196b9bc0d8529c2a5801bd1` |
+| apps/hardware/kicad/consola/boards/pcb-f/pcb-f.kicad_pcb | `40b24cd458f844b515aa1a1f635be92718f9402e412fd7991c83d78e03941881` |
 | apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_pcb | `4ff5bed4e7c0a47de8729e05b4af5282fcdac6d088537d9678fcb038863d1c2b` |
 | apps/hardware/kicad/consola/panel/panel-coordinates-console-v1.csv | `eb730926c4030ac611e7a12a20579b518f91da12a3b74c435e4b6e816d091d12` |
-| apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv | `7597c831d31699c37ce87935cae12d2bd64160cf53acae96bf7daee6cda0b634` |
+| apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv | `0b98fa72f98a212d52b175b605dd94c55c9fe48573a4ff5282a3bbec670ad70d` |
 | apps/hardware/kicad/consola/boards/pcb-k-left/README.md | `483281331f15398e23c75cc19818bb7674815ec895ee049ebfa42c2ab82a010b` |
 | apps/hardware/kicad/consola/boards/pcb-k-right/README.md | `0bdfffca6f038b3895a384145956e451c555c2630047ca7a4d2eb13ccf1acd23` |
 | apps/hardware/kicad/consola/panel/contornos/pcb-k-contorno-v5.dxf | `d1b93a17188cc775cf311894de2dc84becfd6fbaf01a71bb933b6c67c5fdd76d` |
-| apps/design/3d-models/consola/build_console.py | `da3a04608e787a25a64bf7801eae7f36e152055e4d4db6b969eb8466709bc316` |
-| apps/docs/consola/25-panel-consola.md | `075cd1171c2e1a89b2f258c8ced92fb42fb83ac16ff018094b938add1f84d16d` |
-| apps/docs/consola/28-pcb-k.md | `0a873d29751e51195bfe86e531917787e76796b020077461ef4fac07ea4a35a9` |
+| apps/design/3d-models/consola/build_console.py | `e26e8a5278b5a45a54fd6808fef2e97d552794df9a71c17e74dc906e1d1c9b45` |
+| apps/docs/consola/25-panel-consola.md | `7e122d2952323fddd647c59ab5cd11e02781e8e7c83eb3b0c54c12dddf94841c` |
+| apps/docs/consola/28-pcb-k.md | `4108d1bc4d763e26e460b18f7edd5dc9c5e7f17327e1415e3ebe570c6bc6dd6b` |
 | apps/docs/consola/design/claude-design-prompt-consola-cuerpo-v5.md | `171ef385def6027dbf3d661cb0699475f85909f6df6ec7c8c362f306fb4bee53` |

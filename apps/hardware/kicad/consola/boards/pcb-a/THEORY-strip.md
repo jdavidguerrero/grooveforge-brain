@@ -62,3 +62,29 @@ abortos, reports antiguos ni configuraciones recortadas en PASS.
 
 Referencia de implementación: [KiCad 10.0.6, JobExportDrc](https://github.com/KiCad/kicad/blob/10.0.6/pcbnew/pcbnew_jobs_handler.cpp)
 y [WriteDRCReport](https://github.com/KiCad/kicad/blob/10.0.6/pcbnew/python/scripting/pcbnew_scripting_helpers.cpp).
+
+## Corrección de anclajes al panel (2026-11-13)
+
+Spec de esta revisión: petición de montaje y BOM de herrajes de Juan sobre `0ef531f`.
+El NPTH Ø3,2 de la PCB y el corte Ø4,2 para BSO-M3 en aluminio son piezas distintas.
+El CSV debe contener los cuatro centros y `PEM_HOLE` debe traducirlos al corte de chapa.
+H1 original (62;183) deja un solape de 0,8 mm con el corte láser de TAP de 15,4 mm; no conserva el puente de 1,5 mm.
+Se lleva a (72;181) panel = (28;190) KiCad. Se conserva todo el ruteo; se rellenan
+las dos zonas para despejar el nuevo NPTH. El sitio se comprueba contra pads,
+pistas y vías mediante DRC completo, incluido `--schematic-parity`.
+
+TOP=85, cara inferior del aluminio=83. PCB-A superior=85−20=65;
+BSO de 18 mm desde la cara inferior de la chapa: 83−18=65. PCB-K ocupa
+z=80…81,6: un separador sí atraviesa esa altura, por lo que no basta comprobar
+la separación vertical entre sustratos. Se prueba una envolvente circular Ø5,6
+que contiene el hexágono nominal de 4,8 entre caras del BSO-M3 (4,8/cos30°=5,543).
+Se comprueba contra K combinado v5 y particiones izquierda/derecha de doc28 §7;
+no hay layouts `.kicad_pcb` de K izquierdo/derecho en esta base. Esta limitación se
+mantiene explícita. Otro proveedor o cuerpo mayor exige repetir el chequeo.
+
+Antes de los tests: verificar coincidencia PCB/CSV/cortes generados, mínimo puente
+láser de 1,5 mm a cada apertura (círculos exactos; rectángulos envolventes conservadores
+en recortes redondeados), y ausencia de colisión del separador con los contornos K.
+El caso de regresión H1 original debe fallar. No se certifican tolerancias físicas,
+fuerza de prensado ni desempeño de extracción. Referencia dimensional:
+[PEM, BSO-M3](https://www.pemnet.com/products/product-finder/bso-m3-16zi/).

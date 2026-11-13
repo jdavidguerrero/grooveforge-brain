@@ -525,16 +525,16 @@ def write_report(r):
         table(['Reserva','Solape mm²','Separación mm','Estado'],
               [[n,v['overlap_mm2'],v['clearance_mm'],v['status']] for n,v in r['plan_checks'].items()]),
         'PCB-K se conserva como diagnóstico del CSV v5 combinado y partición inferida: no es el layout nuevo de K. '
-        'Su proyección XY no integra el criterio de aprobación de esta tarea. Hay 7 mm nominales entre sustratos A/K; '
+        'Su proyección XY no integra el criterio de aprobación de esta tarea. Hay 15 mm nominales entre sustratos A/K; '
         'la interferencia de componentes y el paso de separadores requieren el modelo final. '
         'Pantalla debe tener ≥3 mm; F, M4 nominal, ventana y reserva M4 deben quedar LIBRES. '
         'No hay pines THT de A bajo F: '+str(r['through_hole_pins_under_f'])+'.',
         '## Montaje para FreeCAD',
         table(['Agujero','KiCad mm','Panel mm','Taladro mm'],
               [[h['reference'],fmt(h['center_kicad']),fmt(h['center_panel']),h['drill_mm']] for h in r['mounting_holes']]),
-        'Cara inferior/superior A: z=71,4/73,0; chapa z=83…85. Separador nominal desde cara inferior de chapa '
-        'a cara superior PCB: 10 mm. Agujeros NPTH Ø3,2 para M3; no son un bond de GND. '
-        'Añadir estos apoyos al modelo y verificar sus pasos por K y cabezas/tuercas. '
+        'Cara inferior/superior A: z=63,4/65,0; chapa z=83…85. Separador nominal desde cara inferior de chapa '
+        'a cara superior PCB: 18 mm. Agujeros NPTH Ø3,2 para M3; no son un bond de GND. '
+        'Paso de separadores por K y puente de aluminio: [chequeo de montaje](REPORT-pcba-mounting.md). '
         'Placeholder antiguo: '+str(r['placeholder'])+'. No representa el nuevo contorno.',
         '## Conectores y ruta del mazo',
         table(['Ref','Origen KiCad','Origen panel','Ángulo KiCad','Cara','Centro pads panel'],

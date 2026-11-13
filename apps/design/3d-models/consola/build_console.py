@@ -59,7 +59,7 @@ def load_csv(repo):
 CHOC_CUT_LASER = 15.4
 # Agujeros de montaje de los PEM (hoja PEM: FH-M2.5 → 2,5; BSO-M2.5 / BSO-M3 → 4,2). Se prensan a mano en tornillo de
 # banco con un yunque plano; verificar diámetros con la hoja del proveedor antes de cortar.
-PEM_HOLE = {'PCB-K': 2.5, 'PCB-P': 4.2, 'PCB-F': 4.2, 'CUERPO': 4.2}
+PEM_HOLE = {'PCB-K': 2.5, 'PCB-P': 4.2, 'PCB-F': 4.2, 'PCB-A': 4.2, 'CUERPO': 4.2}
 
 
 def pem_holes(outlines):
