@@ -114,6 +114,11 @@ Ajustes aplicados: faders 5 mm más abajo (13 mm de aire con el encoder 8), tran
 transporte 1 mm más bajos (los FSR de velocity quedan a 25 mm), un solo keycap de **13,5 mm** para las 26 teclas (un
 molde), LED por zona (verde = tocar, violeta = navegar/editar; escenas cambian de color con el modo).
 
+**Pantalla bajo la chapa (Juan, 2026-11-12).** El prompt de diseño v5 pedía el vidrio a ras del aluminio, pero la
+ventana de la chapa es de 158 × 91 (área activa más margen) y el vidrio del módulo mide 189,32 × 120,24: el vidrio
+queda **debajo** de la chapa, apoyado contra ella, con el aluminio tapando el borde negro. Se conserva así (protege y
+sujeta el vidrio); el modelo de FreeCAD ya lo tiene con la cara del vidrio en z = 83 (2 mm bajo la cara superior).
+
 **Placas (propuesta a cerrar en el esquema):** una **PCB-K única** bajo el panel a −3,4 mm con las 26 Choc, sus LEDs y
 los MCP, con ventanas para la M4, los encoders, los faders y los FSR (como la placa principal de un Push), en lugar
 de K1/K2 y varias placas sueltas; PCB-A (encoders) sin cambios; **PCB-F nueva** (paso 20); **PCB-P** en una sola tira
