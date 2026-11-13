@@ -151,6 +151,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -162,6 +163,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -173,17 +175,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "6021b1f6-e48a-4d53-a301-8b086c41f716")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -379,6 +371,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -390,6 +383,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -401,17 +395,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "c9fabfd9-b8a3-4cdf-8f90-2bd2cb4801cb")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -607,6 +591,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -618,6 +603,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -629,17 +615,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "ce0aec93-ce6e-4a73-a80c-cc30addc6c9d")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -835,6 +811,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -846,6 +823,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -857,17 +835,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "c6de40ed-bd64-41fd-8747-74077d49f380")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1181,6 +1149,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1192,6 +1161,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1203,17 +1173,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "7d8aa15b-f897-4fbf-a133-fa87d6a84b30")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1409,6 +1369,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1420,6 +1381,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1431,17 +1393,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "758c1e83-9692-4422-bc27-190168139241")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1814,6 +1766,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1825,6 +1778,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -1836,17 +1790,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "088bc2e0-3ec2-490b-a03e-572eb25380b6")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2042,6 +1986,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2053,6 +1998,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2064,17 +2010,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "ff91f664-02b3-493d-a516-9c33660dda56")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2270,6 +2206,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2281,6 +2218,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2292,17 +2230,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "e57139e7-51f4-40ec-b2c1-1f0b749aa17b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2557,6 +2485,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2568,6 +2497,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2579,17 +2509,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "a950e162-4bca-4a44-99e6-2e31f200d929")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2844,6 +2764,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2855,6 +2776,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -2866,17 +2788,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "ad82f3aa-0951-45d0-a8b9-7a25a9cc17d2")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3072,6 +2984,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3083,6 +2996,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3094,17 +3008,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "1fcb85ad-7e06-4790-bc83-78f9890f0c6a")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3300,6 +3204,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3311,6 +3216,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3322,17 +3228,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "f560f832-8c91-416e-b4c5-9e136de46517")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3528,6 +3424,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3539,6 +3436,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3550,17 +3448,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "a4c7c5f5-8940-4c89-a901-6452d2bc132a")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3756,6 +3644,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3767,6 +3656,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -3778,17 +3668,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "102179f4-adc6-4813-adfe-068262ee7b00")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4102,6 +3982,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4113,6 +3994,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4124,17 +4006,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "19a92954-4795-4708-b61c-5fc65a724ec9")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4330,6 +4202,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4341,6 +4214,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4352,17 +4226,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
-			(at 0 0 0)
-			(layer "F.SilkS")
-			(hide yes)
-			(uuid "072d50c9-38e9-4a14-965b-618163815671")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4627,6 +4491,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4638,6 +4503,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4649,6 +4515,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -4660,17 +4527,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "b36afd0d-f487-49ee-9855-1f44ed05c189")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5109,6 +4966,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5120,17 +4978,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "ef1d2edd-a2bf-4eb1-ac74-7eb8231175ff")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5250,6 +5098,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5261,6 +5110,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5272,6 +5122,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5283,17 +5134,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "da2b6b07-6add-40ec-aa29-a9de2c16d1b0")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5734,6 +5575,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5745,6 +5587,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5756,6 +5599,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -5767,17 +5611,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "55296395-5911-4d13-bafc-d62b1dab19f8")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6225,6 +6059,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6236,6 +6071,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6247,6 +6083,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6258,17 +6095,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "af288ea5-c0c4-4368-8236-bf5dd8ffc9c4")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6856,6 +6683,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6867,6 +6695,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6878,6 +6707,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6889,17 +6719,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "fb20bc18-47fb-4d30-afaa-1b9ae74a8d8c")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7057,6 +6877,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7068,17 +6889,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "0e6013f3-f5dd-4618-9b45-b6122ae9c464")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7205,6 +7016,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7216,6 +7028,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7227,6 +7040,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7238,17 +7052,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "f1028500-359b-4837-8aa4-61444ba4354e")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7415,6 +7219,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7426,6 +7231,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7437,6 +7243,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7448,17 +7255,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "84c8e6eb-0e12-4ac3-83a5-eee56e3be243")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7625,6 +7422,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7636,6 +7434,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7647,6 +7446,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7658,17 +7458,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "616de37e-7949-4731-bb1b-07bc8e74de2d")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7828,6 +7618,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7839,6 +7630,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7850,6 +7642,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -7861,17 +7654,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "55cb476d-51c9-4939-9e68-6db04e769385")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8319,6 +8102,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8330,6 +8114,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8341,6 +8126,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8352,17 +8138,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "2f7a0737-0f49-4b99-acf3-012b919f4424")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8529,6 +8305,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8540,6 +8317,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8551,6 +8329,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8562,17 +8341,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "bed8fef8-3a5c-4318-b118-3a10027dd284")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8730,6 +8499,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8741,17 +8511,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "7e171b5d-f23c-40f7-8f79-22bc6abf5ecb")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8871,6 +8631,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8882,6 +8643,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8893,6 +8655,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -8904,17 +8667,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "71c2be35-c858-41bc-902d-e33f23fc3ac7")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9362,6 +9115,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9373,6 +9127,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9384,6 +9139,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9395,17 +9151,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "4209039b-5717-4ba3-add3-ce5ef72f6aa9")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9572,6 +9318,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9583,6 +9330,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9594,6 +9342,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9605,17 +9354,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "640f34a5-d733-4e51-9845-c19739d208a4")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9775,6 +9514,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9786,6 +9526,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9797,6 +9538,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -9808,17 +9550,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "cc2da370-741e-4a71-af74-e39ed9ed824b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10257,6 +9989,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10268,17 +10001,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "ae61098d-c932-49a2-b11b-37f6c3bfe272")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10405,6 +10128,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10416,6 +10140,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10427,6 +10152,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10438,17 +10164,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "3dc7f6aa-3816-4079-a4f1-149becce426a")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10615,6 +10331,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10626,6 +10343,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10637,6 +10355,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10648,17 +10367,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "2ae37634-a7dd-47ab-9169-483ee648ba1e")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10816,6 +10525,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10827,17 +10537,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "07df07de-38b7-4c3c-ad84-b4fe9588e523")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10957,6 +10657,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10968,6 +10669,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10979,6 +10681,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -10990,17 +10693,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "e6301696-d6d0-427b-aa3e-b204191ef2fa")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11448,6 +11141,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11459,6 +11153,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11470,6 +11165,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11481,17 +11177,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "44841fac-816a-490d-ab99-78c192338026")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11658,6 +11344,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11669,6 +11356,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11680,6 +11368,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11691,17 +11380,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "6a20bd02-a109-430d-a40e-d7daa0fbda14")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11861,6 +11540,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11872,6 +11552,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11883,6 +11564,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -11894,17 +11576,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "c9507cea-ee00-4da1-8163-3ac622a00fe0")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12343,6 +12015,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12354,17 +12027,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "1abbb40d-9eae-4d1e-b91e-eaec7733b93b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12491,6 +12154,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12502,6 +12166,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12513,6 +12178,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12524,17 +12190,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "7bcabedc-bd12-4d57-9287-6e00a8ea62d9")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12701,6 +12357,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12712,6 +12369,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12723,6 +12381,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12734,17 +12393,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "c1634d10-7825-406e-a4e9-4a5d2b8c3bf4")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12911,6 +12560,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12922,6 +12572,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12933,6 +12584,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -12944,17 +12596,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "00719c5c-3bb0-4f2f-a7d7-9c433ccf589b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13121,6 +12763,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13132,6 +12775,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13143,6 +12787,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13154,17 +12799,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "53ea146c-c24d-42b9-8407-2c0f39b2fc63")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13331,6 +12966,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13342,6 +12978,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13353,6 +12990,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13364,17 +13002,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:SSOP-28_5.3x10.2mm_P0.65mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "cc90e709-f0e9-4d21-9e5b-200a550e4346")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13902,6 +13530,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -13913,17 +13542,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "5ea90e1c-f4c8-4232-981b-07bf3801d3f8")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14050,6 +13669,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14061,6 +13681,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14072,6 +13693,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14083,17 +13705,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:SSOP-28_5.3x10.2mm_P0.65mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "1e60b6a2-3d17-428d-8a1a-2332608a1488")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14623,6 +14235,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14634,6 +14247,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14645,6 +14259,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -14656,17 +14271,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "d2ab077f-3bdc-4388-ab10-0c6e42fb14bd")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15114,6 +14719,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15125,6 +14731,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15136,6 +14743,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15147,17 +14755,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "b28b248e-a72d-4b92-b7f1-d21ea549bdb9")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15317,6 +14915,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15328,6 +14927,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15339,6 +14939,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15350,17 +14951,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "e7795e96-074f-4349-9256-9c661bcad6bd")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15808,6 +15399,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15819,6 +15411,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15830,6 +15423,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -15841,17 +15435,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "28ea7b76-4701-428b-9d11-8600a769b183")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16018,6 +15602,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16029,6 +15614,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16040,6 +15626,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16051,17 +15638,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "31fae40d-c015-41ce-bd02-a628e1d38eb0")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16228,6 +15805,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16239,6 +15817,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16250,6 +15829,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16261,17 +15841,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "7539ee0a-81fc-4ef2-b94c-56e8d50f8c6e")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16438,6 +16008,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16449,6 +16020,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16460,6 +16032,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16471,17 +16044,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "07c75316-92d6-4a07-baf0-21356a7661c0")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16639,6 +16202,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16650,17 +16214,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "2ff262c4-9606-4412-a76d-c6938ea9cc70")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16780,6 +16334,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16791,6 +16346,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16802,6 +16358,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -16813,17 +16370,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "26499b9a-fb70-45c5-a57a-5d89a65b96df")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17271,6 +16818,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17282,6 +16830,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17293,6 +16842,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17304,17 +16854,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "c1fd4a96-2aab-4147-a240-22ac3e91aeb6")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17474,6 +17014,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17485,6 +17026,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17496,6 +17038,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17507,17 +17050,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "b1e4939f-29e2-4567-8fbd-3aa8549f08fc")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17956,6 +17489,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -17967,17 +17501,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "5f3dfd77-210f-45c5-a288-a708b49c158b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18097,6 +17621,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18108,6 +17633,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18119,6 +17645,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18130,17 +17657,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "b1a636c9-e819-408a-b1ec-7e1033607c57")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18581,6 +18098,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18592,6 +18110,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18603,6 +18122,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -18614,17 +18134,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "be5563d3-29c6-456e-9808-710eddee2568")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19065,6 +18575,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19076,6 +18587,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19087,6 +18599,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19098,17 +18611,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "38701dda-d6cc-4887-9033-df30257234dd")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19556,6 +19059,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19567,6 +19071,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19578,6 +19083,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19589,17 +19095,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "1e8c45f5-ad91-4686-874c-35094da80b24")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19757,6 +19253,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19768,17 +19265,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "a4d07736-2b13-4ca2-b764-c3813998b149")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19896,6 +19383,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -19907,17 +19395,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "d5ba3a88-0f27-4c39-93b8-9a582109cf05")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20044,6 +19522,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20055,6 +19534,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20066,6 +19546,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20077,17 +19558,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "dea47a05-60dc-4893-8930-0926848ef5ce")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20247,6 +19718,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20258,6 +19730,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20269,6 +19742,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20280,17 +19754,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "cccaf026-ccc9-4b5d-9ff4-6a40441e0350")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20729,6 +20193,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20740,17 +20205,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "e06c1ccb-4de9-40b1-909e-5f7ab8cc252a")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20870,6 +20325,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20881,6 +20337,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20892,6 +20349,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -20903,17 +20361,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "57c79fb9-d7b9-42a6-8a7a-da6a9273230f")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21352,6 +20800,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21363,17 +20812,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "f3b26e1e-b890-491c-8fd1-3555a974869b")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21500,6 +20939,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21511,6 +20951,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21522,6 +20963,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -21533,17 +20975,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_JST:JST_PH_B10B-PH-K_1x10_P2.00mm_Vertical"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "3fa21f36-7fad-4540-bdb4-fe2e169594a6")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22329,6 +21761,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22340,6 +21773,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22351,6 +21785,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22362,17 +21797,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "9e38424f-7918-4662-af0b-bd955c7b8565")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22539,6 +21964,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22550,6 +21976,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22561,6 +21988,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22572,17 +22000,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "2241020b-b5fd-4afe-bfa8-5faf6a9e0b4c")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22749,6 +22167,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22760,6 +22179,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22771,6 +22191,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22782,17 +22203,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
-			(at 0 0 0)
-			(layer "B.SilkS")
-			(hide yes)
-			(uuid "c6ad8e67-f068-4446-81c7-40f1a748eb94")
-			(effects
-				(font
-					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -22974,13 +22385,23 @@
 	)
 	(gr_line
 		(start 42 267)
-		(end 64.2 267)
+		(end 63.5 267)
 		(stroke
 			(width 0.05)
 			(type default)
 		)
 		(layer "Edge.Cuts")
 		(uuid "98589103-f8ea-4815-affa-ef2c9027fa91")
+	)
+	(gr_line
+		(start 63.5 267)
+		(end 64.2 265.5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "Edge.Cuts")
+		(uuid "7196660b-f966-4aa2-94da-da3d9e602341")
 	)
 	(gr_line
 		(start 64.2 198)
@@ -22993,7 +22414,7 @@
 		(uuid "44e638cf-c5b0-4a67-9f1e-31f62560b73c")
 	)
 	(gr_line
-		(start 64.2 267)
+		(start 64.2 265.5)
 		(end 64.2 198)
 		(stroke
 			(width 0.05)
@@ -83893,31 +83314,32 @@
 				(xy 34.181162 201.638208) (xy 34.18116 201.638217) (xy 34.158115 201.813274) (xy 34.1495 201.878712)
 				(xy 23.6255 201.878712) (xy 23.6255 198.511259) (xy 23.647174 198.458933) (xy 23.6995 198.437259)
 				(xy 23.751826 198.458933) (xy 23.792893 198.5) (xy 63.626 198.5) (xy 63.678326 198.521674) (xy 63.7 198.574)
-				(xy 63.7 266.426) (xy 63.678326 266.478326) (xy 63.626 266.5) (xy 42.574 266.5) (xy 42.521674 266.478326)
-				(xy 42.5 266.426) (xy 42.5 261.309453) (xy 52.8495 261.309453) (xy 52.8495 261.490546) (xy 52.877828 261.669406)
-				(xy 52.877831 261.669419) (xy 52.933787 261.841635) (xy 52.933788 261.841638) (xy 52.933789 261.841639)
-				(xy 53.016004 262.002994) (xy 53.122447 262.149501) (xy 53.250499 262.277553) (xy 53.397006 262.383996)
-				(xy 53.558361 262.466211) (xy 53.558364 262.466212) (xy 53.558363 262.466212) (xy 53.73058 262.522168)
-				(xy 53.730586 262.522169) (xy 53.730591 262.522171) (xy 53.849833 262.541057) (xy 53.909453 262.5505)
-				(xy 53.909454 262.5505) (xy 54.090547 262.5505) (xy 54.135261 262.543417) (xy 54.269409 262.522171)
-				(xy 54.269416 262.522168) (xy 54.269419 262.522168) (xy 54.347601 262.496765) (xy 54.441639 262.466211)
-				(xy 54.602994 262.383996) (xy 54.749501 262.277553) (xy 54.877553 262.149501) (xy 54.983996 262.002994)
-				(xy 55.066211 261.841639) (xy 55.122171 261.669409) (xy 55.1505 261.490546) (xy 55.1505 261.309454)
-				(xy 55.122171 261.130591) (xy 55.122169 261.130586) (xy 55.122168 261.13058) (xy 55.066212 260.958364)
-				(xy 55.066211 260.958363) (xy 55.066211 260.958361) (xy 54.983996 260.797006) (xy 54.877553 260.650499)
-				(xy 54.749501 260.522447) (xy 54.664128 260.46042) (xy 54.602996 260.416005) (xy 54.441635 260.333787)
-				(xy 54.441636 260.333787) (xy 54.269419 260.277831) (xy 54.269406 260.277828) (xy 54.090547 260.2495)
-				(xy 54.090546 260.2495) (xy 53.909454 260.2495) (xy 53.909453 260.2495) (xy 53.730593 260.277828)
-				(xy 53.73058 260.277831) (xy 53.558364 260.333787) (xy 53.397004 260.416005) (xy 53.397003 260.416005)
-				(xy 53.250503 260.522444) (xy 53.250499 260.522447) (xy 53.122447 260.650499) (xy 53.122444 260.650502)
-				(xy 53.122444 260.650503) (xy 53.016005 260.797003) (xy 53.016005 260.797004) (xy 52.933787 260.958364)
-				(xy 52.877831 261.13058) (xy 52.877828 261.130593) (xy 52.8495 261.309453) (xy 42.5 261.309453)
-				(xy 42.5 259.205557) (xy 57.8 259.205557) (xy 57.8 259.394442) (xy 57.829547 259.580998) (xy 57.82955 259.581011)
-				(xy 57.887914 259.760637) (xy 57.887916 259.760641) (xy 57.973666 259.928933) (xy 57.973669 259.928939)
-				(xy 58.066505 260.056716) (xy 58.460568 259.662652) (xy 58.495112 259.714351) (xy 58.585649 259.804888)
-				(xy 58.637345 259.83943) (xy 58.243282 260.233494) (xy 58.37106 260.32633) (xy 58.371066 260.326333)
-				(xy 58.539358 260.412083) (xy 58.539362 260.412085) (xy 58.718988 260.470449) (xy 58.719001 260.470452)
-				(xy 58.905557 260.5) (xy 59.094443 260.5) (xy 59.280998 260.470452) (xy 59.281011 260.470449) (xy 59.460637 260.412085)
+				(xy 63.7 266.080886) (xy 63.693058 266.112179) (xy 63.532006 266.457293) (xy 63.490237 266.495545)
+				(xy 63.464948 266.5) (xy 42.574 266.5) (xy 42.521674 266.478326) (xy 42.5 266.426) (xy 42.5 261.309453)
+				(xy 52.8495 261.309453) (xy 52.8495 261.490546) (xy 52.877828 261.669406) (xy 52.877831 261.669419)
+				(xy 52.933787 261.841635) (xy 52.933788 261.841638) (xy 52.933789 261.841639) (xy 53.016004 262.002994)
+				(xy 53.122447 262.149501) (xy 53.250499 262.277553) (xy 53.397006 262.383996) (xy 53.558361 262.466211)
+				(xy 53.558364 262.466212) (xy 53.558363 262.466212) (xy 53.73058 262.522168) (xy 53.730586 262.522169)
+				(xy 53.730591 262.522171) (xy 53.849833 262.541057) (xy 53.909453 262.5505) (xy 53.909454 262.5505)
+				(xy 54.090547 262.5505) (xy 54.135261 262.543417) (xy 54.269409 262.522171) (xy 54.269416 262.522168)
+				(xy 54.269419 262.522168) (xy 54.347601 262.496765) (xy 54.441639 262.466211) (xy 54.602994 262.383996)
+				(xy 54.749501 262.277553) (xy 54.877553 262.149501) (xy 54.983996 262.002994) (xy 55.066211 261.841639)
+				(xy 55.122171 261.669409) (xy 55.1505 261.490546) (xy 55.1505 261.309454) (xy 55.122171 261.130591)
+				(xy 55.122169 261.130586) (xy 55.122168 261.13058) (xy 55.066212 260.958364) (xy 55.066211 260.958363)
+				(xy 55.066211 260.958361) (xy 54.983996 260.797006) (xy 54.877553 260.650499) (xy 54.749501 260.522447)
+				(xy 54.664128 260.46042) (xy 54.602996 260.416005) (xy 54.441635 260.333787) (xy 54.441636 260.333787)
+				(xy 54.269419 260.277831) (xy 54.269406 260.277828) (xy 54.090547 260.2495) (xy 54.090546 260.2495)
+				(xy 53.909454 260.2495) (xy 53.909453 260.2495) (xy 53.730593 260.277828) (xy 53.73058 260.277831)
+				(xy 53.558364 260.333787) (xy 53.397004 260.416005) (xy 53.397003 260.416005) (xy 53.250503 260.522444)
+				(xy 53.250499 260.522447) (xy 53.122447 260.650499) (xy 53.122444 260.650502) (xy 53.122444 260.650503)
+				(xy 53.016005 260.797003) (xy 53.016005 260.797004) (xy 52.933787 260.958364) (xy 52.877831 261.13058)
+				(xy 52.877828 261.130593) (xy 52.8495 261.309453) (xy 42.5 261.309453) (xy 42.5 259.205557) (xy 57.8 259.205557)
+				(xy 57.8 259.394442) (xy 57.829547 259.580998) (xy 57.82955 259.581011) (xy 57.887914 259.760637)
+				(xy 57.887916 259.760641) (xy 57.973666 259.928933) (xy 57.973669 259.928939) (xy 58.066505 260.056716)
+				(xy 58.460568 259.662652) (xy 58.495112 259.714351) (xy 58.585649 259.804888) (xy 58.637345 259.83943)
+				(xy 58.243282 260.233494) (xy 58.37106 260.32633) (xy 58.371066 260.326333) (xy 58.539358 260.412083)
+				(xy 58.539362 260.412085) (xy 58.718988 260.470449) (xy 58.719001 260.470452) (xy 58.905557 260.5)
+				(xy 59.094443 260.5) (xy 59.280998 260.470452) (xy 59.281011 260.470449) (xy 59.460637 260.412085)
 				(xy 59.460641 260.412083) (xy 59.628933 260.326333) (xy 59.628939 260.32633) (xy 59.756716 260.233494)
 				(xy 59.362653 259.83943) (xy 59.414351 259.804888) (xy 59.504888 259.714351) (xy 59.53943 259.662653)
 				(xy 59.933494 260.056716) (xy 60.02633 259.928939) (xy 60.026333 259.928933) (xy 60.112083 259.760641)
@@ -85917,163 +85339,163 @@
 				(xy 62.4 257.75) (xy 62.4 260.849999) (xy 63.249636 260.849999) (xy 63.285916 260.847144) (xy 63.441196 260.802031)
 				(xy 63.580371 260.719723) (xy 63.580636 260.719518) (xy 63.580789 260.719475) (xy 63.584386 260.717349)
 				(xy 63.584967 260.718332) (xy 63.635264 260.704565) (xy 63.684465 260.732619) (xy 63.7 260.777983)
-				(xy 63.7 266.426) (xy 63.678326 266.478326) (xy 63.626 266.5) (xy 42.574 266.5) (xy 42.521674 266.478326)
-				(xy 42.5 266.426) (xy 42.5 250.792893) (xy 42.498628 250.789581) (xy 42.498628 250.732944) (xy 42.538676 250.692895)
-				(xy 42.595313 250.692895) (xy 42.619321 250.708936) (xy 43.702826 251.792441) (xy 43.7245 251.844767)
-				(xy 43.7245 253.754799) (xy 43.76592 253.854795) (xy 43.76592 253.854798) (xy 43.76644 253.856052)
-				(xy 43.766441 253.856054) (xy 43.766443 253.856058) (xy 43.766445 253.85606) (xy 43.820678 253.910293)
-				(xy 43.836719 253.9343) (xy 43.861424 253.993941) (xy 43.866442 254.006056) (xy 43.866444 254.006059)
-				(xy 44.102826 254.242441) (xy 44.1245 254.294767) (xy 44.1245 254.304799) (xy 44.157123 254.383557)
-				(xy 44.157123 254.383558) (xy 44.166441 254.406055) (xy 44.166444 254.406059) (xy 44.202826 254.442441)
-				(xy 44.2245 254.494767) (xy 44.2245 254.5548) (xy 44.266443 254.656058) (xy 44.402826 254.792441)
-				(xy 44.4245 254.844766) (xy 44.4245 254.8548) (xy 44.425013 254.856038) (xy 44.425017 254.85606)
-				(xy 44.425022 254.856059) (xy 44.466442 254.956057) (xy 45.702826 256.192441) (xy 45.7245 256.244767)
-				(xy 45.7245 256.4048) (xy 45.76592 256.504795) (xy 45.76592 256.504798) (xy 45.76644 256.506052)
-				(xy 45.766441 256.506054) (xy 45.766443 256.506058) (xy 45.766445 256.50606) (xy 45.802826 256.542441)
-				(xy 45.8245 256.594767) (xy 45.8245 256.604799) (xy 45.857123 256.683557) (xy 45.857123 256.683558)
-				(xy 45.866441 256.706055) (xy 45.866444 256.706059) (xy 45.920679 256.760294) (xy 45.93672 256.784301)
-				(xy 45.956712 256.832565) (xy 45.966442 256.856057) (xy 46.020678 256.910293) (xy 46.036719 256.9343)
-				(xy 46.066442 257.006056) (xy 46.066444 257.006059) (xy 46.620678 257.560294) (xy 46.636719 257.584301)
-				(xy 46.661422 257.643939) (xy 46.666441 257.656054) (xy 46.666443 257.656058) (xy 46.666445 257.65606)
-				(xy 46.870678 257.860293) (xy 46.886719 257.8843) (xy 46.916442 257.956056) (xy 46.916444 257.956059)
-				(xy 48.320678 259.360294) (xy 48.336719 259.384301) (xy 48.34092 259.394442) (xy 48.366443 259.456058)
-				(xy 49.102585 260.192201) (xy 49.214655 260.304271) (xy 49.236329 260.356597) (xy 49.235696 260.366254)
-				(xy 49.229147 260.416005) (xy 49.2245 260.4513) (xy 49.2245 262.348698) (xy 49.239698 262.464148)
-				(xy 49.239698 262.464149) (xy 49.239699 262.464151) (xy 49.2992 262.607798) (xy 49.393851 262.731149)
-				(xy 49.517202 262.8258) (xy 49.660849 262.885301) (xy 49.776299 262.9005) (xy 51.6737 262.900499)
-				(xy 51.789151 262.885301) (xy 51.932798 262.8258) (xy 52.056149 262.731149) (xy 52.1508 262.607798)
-				(xy 52.210301 262.464151) (xy 52.2255 262.348701) (xy 52.2255 261.7495) (xy 52.247174 261.697174)
-				(xy 52.2995 261.6755) (xy 52.826044 261.6755) (xy 52.87837 261.697174) (xy 52.896422 261.726633)
-				(xy 52.933787 261.841635) (xy 52.933788 261.841638) (xy 52.933789 261.841639) (xy 53.016004 262.002994)
-				(xy 53.122447 262.149501) (xy 53.250499 262.277553) (xy 53.397006 262.383996) (xy 53.558361 262.466211)
-				(xy 53.558364 262.466212) (xy 53.558363 262.466212) (xy 53.73058 262.522168) (xy 53.730586 262.522169)
-				(xy 53.730591 262.522171) (xy 53.849833 262.541057) (xy 53.909453 262.5505) (xy 53.909454 262.5505)
-				(xy 54.090547 262.5505) (xy 54.135261 262.543417) (xy 54.269409 262.522171) (xy 54.269416 262.522168)
-				(xy 54.269419 262.522168) (xy 54.347601 262.496765) (xy 54.441639 262.466211) (xy 54.602994 262.383996)
-				(xy 54.749501 262.277553) (xy 54.877553 262.149501) (xy 54.983996 262.002994) (xy 55.066211 261.841639)
-				(xy 55.122171 261.669409) (xy 55.1505 261.490546) (xy 55.1505 261.309454) (xy 55.122171 261.130591)
-				(xy 55.122169 261.130586) (xy 55.122168 261.13058) (xy 55.066212 260.958364) (xy 55.066211 260.958363)
-				(xy 55.066211 260.958361) (xy 54.983996 260.797006) (xy 54.877553 260.650499) (xy 54.749501 260.522447)
-				(xy 54.664128 260.46042) (xy 54.602996 260.416005) (xy 54.441635 260.333787) (xy 54.441636 260.333787)
-				(xy 54.269419 260.277831) (xy 54.269406 260.277828) (xy 54.090547 260.2495) (xy 54.090546 260.2495)
-				(xy 53.909454 260.2495) (xy 53.909453 260.2495) (xy 53.730593 260.277828) (xy 53.73058 260.277831)
-				(xy 53.558364 260.333787) (xy 53.397004 260.416005) (xy 53.397003 260.416005) (xy 53.250503 260.522444)
-				(xy 53.250499 260.522447) (xy 53.122447 260.650499) (xy 53.122444 260.650502) (xy 53.122444 260.650503)
-				(xy 53.016005 260.797003) (xy 53.016005 260.797004) (xy 52.933787 260.958364) (xy 52.896422 261.073367)
-				(xy 52.85964 261.116434) (xy 52.826044 261.1245) (xy 52.299499 261.1245) (xy 52.247173 261.102826)
-				(xy 52.225499 261.0505) (xy 52.225499 260.451301) (xy 52.220853 260.416005) (xy 52.210301 260.335849)
-				(xy 52.1508 260.192202) (xy 52.056149 260.068851) (xy 51.932798 259.9742) (xy 51.78915 259.914698)
-				(xy 51.70056 259.903036) (xy 51.673701 259.8995) (xy 51.673699 259.8995) (xy 49.776301 259.8995)
-				(xy 49.660848 259.914698) (xy 49.657522 259.91559) (xy 49.60137 259.908191) (xy 49.586051 259.896435)
-				(xy 48.944592 259.254977) (xy 48.895172 259.205557) (xy 57.8 259.205557) (xy 57.8 259.394442) (xy 57.829547 259.580998)
-				(xy 57.82955 259.581011) (xy 57.887914 259.760637) (xy 57.887916 259.760641) (xy 57.973666 259.928933)
-				(xy 57.973669 259.928939) (xy 58.066505 260.056716) (xy 58.460568 259.662652) (xy 58.495112 259.714351)
-				(xy 58.585649 259.804888) (xy 58.637345 259.83943) (xy 58.243282 260.233494) (xy 58.37106 260.32633)
-				(xy 58.371066 260.326333) (xy 58.539358 260.412083) (xy 58.539362 260.412085) (xy 58.718988 260.470449)
-				(xy 58.719001 260.470452) (xy 58.905557 260.5) (xy 59.094443 260.5) (xy 59.280998 260.470452) (xy 59.281011 260.470449)
-				(xy 59.460637 260.412085) (xy 59.460641 260.412083) (xy 59.628933 260.326333) (xy 59.628939 260.32633)
-				(xy 59.700091 260.274635) (xy 60.725001 260.274635) (xy 60.727855 260.310916) (xy 60.772968 260.466196)
-				(xy 60.85528 260.605377) (xy 60.969622 260.719719) (xy 61.108803 260.802031) (xy 61.264085 260.847144)
-				(xy 61.264082 260.847144) (xy 61.300363 260.849999) (xy 62.15 260.849999) (xy 62.15 259.425) (xy 60.725001 259.425)
-				(xy 60.725001 260.274635) (xy 59.700091 260.274635) (xy 59.756716 260.233494) (xy 59.362653 259.83943)
-				(xy 59.414351 259.804888) (xy 59.504888 259.714351) (xy 59.53943 259.662653) (xy 59.933494 260.056716)
-				(xy 60.02633 259.928939) (xy 60.026333 259.928933) (xy 60.112083 259.760641) (xy 60.112085 259.760637)
-				(xy 60.170449 259.581011) (xy 60.170452 259.580998) (xy 60.2 259.394442) (xy 60.2 259.205557) (xy 60.170452 259.019001)
-				(xy 60.170449 259.018988) (xy 60.112085 258.839362) (xy 60.112083 258.839358) (xy 60.026333 258.671066)
-				(xy 60.02633 258.67106) (xy 59.933494 258.543282) (xy 59.53943 258.937345) (xy 59.504888 258.885649)
-				(xy 59.414351 258.795112) (xy 59.362652 258.760568) (xy 59.756716 258.366505) (xy 59.756716 258.366504)
-				(xy 59.70009 258.325363) (xy 60.725 258.325363) (xy 60.725 259.175) (xy 62.15 259.175) (xy 62.15 257.75)
-				(xy 61.300364 257.75) (xy 61.264083 257.752855) (xy 61.108803 257.797968) (xy 60.969622 257.88028)
-				(xy 60.85528 257.994622) (xy 60.772968 258.133803) (xy 60.727855 258.289083) (xy 60.725 258.325363)
-				(xy 59.70009 258.325363) (xy 59.62894 258.27367) (xy 59.628933 258.273666) (xy 59.460641 258.187916)
-				(xy 59.460637 258.187914) (xy 59.281011 258.12955) (xy 59.280998 258.129547) (xy 59.094443 258.1)
-				(xy 58.905557 258.1) (xy 58.719001 258.129547) (xy 58.718988 258.12955) (xy 58.539365 258.187913)
-				(xy 58.371067 258.273665) (xy 58.243282 258.366505) (xy 58.637346 258.760569) (xy 58.585649 258.795112)
-				(xy 58.495112 258.885649) (xy 58.460569 258.937346) (xy 58.066505 258.543282) (xy 57.973665 258.671067)
-				(xy 57.887913 258.839365) (xy 57.82955 259.018988) (xy 57.829547 259.019001) (xy 57.8 259.205557)
-				(xy 48.895172 259.205557) (xy 48.879321 259.189706) (xy 48.86328 259.165698) (xy 48.854268 259.143941)
-				(xy 48.833559 259.093944) (xy 48.833557 259.093941) (xy 48.18665 258.447034) (xy 47.429321 257.689706)
-				(xy 47.41328 257.665699) (xy 47.409287 257.65606) (xy 47.383557 257.593942) (xy 47.383557 257.593941)
-				(xy 47.179318 257.389703) (xy 47.163278 257.365696) (xy 47.13919 257.307541) (xy 47.13919 257.30754)
-				(xy 47.133557 257.293941) (xy 46.57932 256.739704) (xy 46.56328 256.715699) (xy 46.533557 256.643942)
-				(xy 46.533557 256.643941) (xy 46.533556 256.64394) (xy 46.533555 256.643938) (xy 46.479321 256.589705)
-				(xy 46.463279 256.565698) (xy 46.462623 256.564115) (xy 46.43919 256.507541) (xy 46.43919 256.50754)
-				(xy 46.433557 256.493941) (xy 46.397174 256.457558) (xy 46.3755 256.405232) (xy 46.3755 256.3952)
-				(xy 46.333557 256.293942) (xy 46.333556 256.29394) (xy 46.297174 256.257558) (xy 46.2755 256.205232)
-				(xy 46.2755 256.0452) (xy 46.275499 256.045198) (xy 46.233559 255.943944) (xy 46.233557 255.943941)
-				(xy 45.635154 255.345538) (xy 51.2495 255.345538) (xy 51.2495 255.654461) (xy 51.284089 255.961455)
-				(xy 51.284089 255.961456) (xy 51.352829 256.262627) (xy 51.352834 256.262643) (xy 51.454863 256.554225)
-				(xy 51.588904 256.832563) (xy 51.753265 257.094143) (xy 51.923444 257.307541) (xy 51.94588 257.335674)
-				(xy 52.164326 257.55412) (xy 52.405857 257.746735) (xy 52.667435 257.911095) (xy 52.945771 258.045135)
-				(xy 53.237364 258.147168) (xy 53.237369 258.147169) (xy 53.237372 258.14717) (xy 53.538543 258.21591)
-				(xy 53.538544 258.21591) (xy 53.538548 258.215911) (xy 53.845535 258.2505) (xy 53.845539 258.2505)
-				(xy 54.154461 258.2505) (xy 54.154465 258.2505) (xy 54.461452 258.215911) (xy 54.762636 258.147168)
-				(xy 55.054229 258.045135) (xy 55.332565 257.911095) (xy 55.594143 257.746735) (xy 55.835674 257.55412)
-				(xy 56.05412 257.335674) (xy 56.246735 257.094143) (xy 56.411095 256.832565) (xy 56.545135 256.554229)
-				(xy 56.647168 256.262636) (xy 56.715911 255.961452) (xy 56.7505 255.654465) (xy 56.7505 255.345535)
-				(xy 56.715911 255.038548) (xy 56.697083 254.956057) (xy 56.64717 254.737372) (xy 56.647165 254.737356)
-				(xy 56.579486 254.543942) (xy 56.545135 254.445771) (xy 56.411095 254.167435) (xy 56.246735 253.905857)
-				(xy 56.05412 253.664326) (xy 55.835674 253.44588) (xy 55.594143 253.253265) (xy 55.332565 253.088905)
-				(xy 55.054229 252.954865) (xy 55.054225 252.954863) (xy 54.762643 252.852834) (xy 54.762627 252.852829)
-				(xy 54.461456 252.784089) (xy 54.307958 252.766794) (xy 54.154465 252.7495) (xy 53.845535 252.7495)
-				(xy 53.692041 252.766794) (xy 53.538544 252.784089) (xy 53.538543 252.784089) (xy 53.237372 252.852829)
-				(xy 53.237356 252.852834) (xy 52.945774 252.954863) (xy 52.667436 253.088904) (xy 52.405856 253.253265)
-				(xy 52.164326 253.445879) (xy 51.945879 253.664326) (xy 51.753265 253.905856) (xy 51.588904 254.167436)
-				(xy 51.454863 254.445774) (xy 51.352834 254.737356) (xy 51.352829 254.737372) (xy 51.284089 255.038543)
-				(xy 51.284089 255.038544) (xy 51.2495 255.345538) (xy 45.635154 255.345538) (xy 44.997174 254.707558)
-				(xy 44.9755 254.655232) (xy 44.9755 254.645202) (xy 44.9755 254.6452) (xy 44.974979 254.643942)
-				(xy 44.933558 254.543942) (xy 44.797174 254.407558) (xy 44.7755 254.355232) (xy 44.7755 254.2952)
-				(xy 44.733557 254.193942) (xy 44.733556 254.19394) (xy 44.697174 254.157558) (xy 44.6755 254.105232)
-				(xy 44.6755 254.0952) (xy 44.638576 254.006059) (xy 44.633557 253.993942) (xy 44.633557 253.993941)
-				(xy 44.379319 253.739704) (xy 44.363279 253.715698) (xy 44.345841 253.673599) (xy 44.34584 253.673597)
-				(xy 44.333557 253.643941) (xy 44.297174 253.607558) (xy 44.2755 253.555232) (xy 44.2755 251.6452)
-				(xy 44.275499 251.645198) (xy 44.253531 251.592161) (xy 44.233559 251.543944) (xy 44.233557 251.543941)
-				(xy 43.637462 250.947846) (xy 42.941074 250.251459) (xy 47.9995 250.251459) (xy 47.9995 250.448541)
-				(xy 48.006465 250.483557) (xy 48.037947 250.641829) (xy 48.03795 250.641839) (xy 48.113367 250.823913)
-				(xy 48.22286 250.987781) (xy 48.362218 251.127139) (xy 48.526086 251.236632) (xy 48.607491 251.270351)
-				(xy 48.708165 251.312051) (xy 48.901459 251.3505) (xy 48.901461 251.3505) (xy 49.098539 251.3505)
-				(xy 49.098541 251.3505) (xy 49.291835 251.312051) (xy 49.473914 251.236632) (xy 49.637782 251.127139)
-				(xy 49.777139 250.987782) (xy 49.886632 250.823914) (xy 49.962051 250.641835) (xy 50.0005 250.448541)
-				(xy 50.0005 250.251459) (xy 49.962051 250.058165) (xy 49.918418 249.952826) (xy 49.886632 249.876086)
-				(xy 49.777139 249.712218) (xy 49.637781 249.57286) (xy 49.61884 249.560204) (xy 50.35 249.560204)
-				(xy 50.35 249.695) (xy 51.15 249.695) (xy 51.15 249.16) (xy 50.750208 249.16) (xy 50.750195 249.160001)
-				(xy 50.719457 249.162882) (xy 50.719448 249.162884) (xy 50.589993 249.208182) (xy 50.479633 249.289632)
-				(xy 50.479632 249.289633) (xy 50.398182 249.399993) (xy 50.352885 249.529445) (xy 50.352883 249.529453)
-				(xy 50.35 249.560204) (xy 49.61884 249.560204) (xy 49.473913 249.463367) (xy 49.291839 249.38795)
-				(xy 49.291829 249.387947) (xy 49.162388 249.3622) (xy 49.098541 249.3495) (xy 48.901459 249.3495)
-				(xy 48.846662 249.360399) (xy 48.70817 249.387947) (xy 48.70816 249.38795) (xy 48.526086 249.463367)
-				(xy 48.362218 249.57286) (xy 48.362217 249.572862) (xy 48.222862 249.712217) (xy 48.22286 249.712218)
-				(xy 48.113367 249.876086) (xy 48.03795 250.05816) (xy 48.037947 250.05817) (xy 48.007247 250.212513)
-				(xy 47.9995 250.251459) (xy 42.941074 250.251459) (xy 42.706058 250.016443) (xy 42.706057 250.016442)
-				(xy 42.646742 249.991873) (xy 42.6048 249.9745) (xy 42.604799 249.9745) (xy 31.594768 249.9745)
-				(xy 31.542442 249.952826) (xy 30.989609 249.399993) (xy 29.306058 247.716443) (xy 29.2048 247.6745)
-				(xy 29.204799 247.6745) (xy 25.690229 247.6745) (xy 25.66191 247.668867) (xy 25.606321 247.645841)
-				(xy 25.5548 247.6245) (xy 25.554799 247.6245) (xy 25.490229 247.6245) (xy 25.461911 247.618867)
-				(xy 25.435187 247.607798) (xy 25.435186 247.607797) (xy 25.384299 247.586719) (xy 25.360294 247.570678)
-				(xy 25.306059 247.516444) (xy 25.306058 247.516443) (xy 25.306055 247.516442) (xy 25.306054 247.516441)
-				(xy 25.234301 247.486719) (xy 25.210294 247.470678) (xy 24.206059 246.466444) (xy 24.199999 246.462395)
-				(xy 24.20161 246.459982) (xy 24.169447 246.427816) (xy 24.169449 246.371178) (xy 24.209499 246.331132)
-				(xy 24.237815 246.3255) (xy 28.855233 246.3255) (xy 28.907558 246.347173) (xy 29.100499 246.540115)
-				(xy 29.243941 246.683557) (xy 29.24394 246.683557) (xy 29.273599 246.695841) (xy 29.2736 246.695842)
-				(xy 29.315695 246.713278) (xy 29.339703 246.729319) (xy 29.343941 246.733557) (xy 29.343944 246.733559)
-				(xy 29.367196 246.74319) (xy 29.4452 246.7755) (xy 29.459769 246.7755) (xy 29.488087 246.781133)
-				(xy 29.493942 246.783558) (xy 29.5952 246.8255) (xy 30.038595 246.8255) (xy 30.090921 246.847174)
-				(xy 30.097298 246.854445) (xy 30.099496 246.857309) (xy 30.099498 246.857311) (xy 30.0995 246.857314)
-				(xy 30.192686 246.9505) (xy 30.306814 247.016392) (xy 30.434105 247.050499) (xy 30.434106 247.0505)
-				(xy 30.434108 247.0505) (xy 30.565894 247.0505) (xy 30.565894 247.050499) (xy 30.693186 247.016392)
-				(xy 30.807314 246.9505) (xy 30.9005 246.857314) (xy 30.966392 246.743186) (xy 30.983341 246.67993)
-				(xy 31.017817 246.635) (xy 31.07397 246.627606) (xy 31.107144 246.646759) (xy 31.566443 247.106058)
-				(xy 31.643942 247.183557) (xy 31.7452 247.2255) (xy 32.205233 247.2255) (xy 32.257559 247.247174)
-				(xy 32.643941 247.633557) (xy 32.64394 247.633557) (xy 32.673599 247.645841) (xy 32.7452 247.6755)
-				(xy 33.455233 247.6755) (xy 33.507558 247.697173) (xy 33.658558 247.848174) (xy 33.793941 247.983557)
-				(xy 33.793944 247.983559) (xy 33.843675 248.004158) (xy 33.8952 248.0255) (xy 34.0048 248.0255)
-				(xy 34.105233 248.0255) (xy 34.157558 248.047173) (xy 35.543942 249.433558) (xy 35.6157 249.46328)
-				(xy 35.639703 249.479318) (xy 35.683322 249.522938) (xy 35.69394 249.533556) (xy 35.693941 249.533557)
-				(xy 35.7236 249.545842) (xy 35.723601 249.545842) (xy 35.784607 249.571112) (xy 35.7952 249.5755)
-				(xy 37.009769 249.5755) (xy 37.038087 249.581133) (xy 37.043942 249.583558) (xy 37.1452 249.6255)
-				(xy 37.159769 249.6255) (xy 37.188087 249.631133) (xy 37.193942 249.633558) (xy 37.2952 249.6755)
-				(xy 37.409769 249.6755) (xy 37.438087 249.681133) (xy 37.443942 249.683558) (xy 37.5452 249.7255)
-				(xy 37.545201 249.7255) (xy 47.604798 249.7255) (xy 47.6048 249.7255) (xy 47.706058 249.683557)
+				(xy 63.7 266.080886) (xy 63.693058 266.112179) (xy 63.532006 266.457293) (xy 63.490237 266.495545)
+				(xy 63.464948 266.5) (xy 42.574 266.5) (xy 42.521674 266.478326) (xy 42.5 266.426) (xy 42.5 250.792893)
+				(xy 42.498628 250.789581) (xy 42.498628 250.732944) (xy 42.538676 250.692895) (xy 42.595313 250.692895)
+				(xy 42.619321 250.708936) (xy 43.702826 251.792441) (xy 43.7245 251.844767) (xy 43.7245 253.754799)
+				(xy 43.76592 253.854795) (xy 43.76592 253.854798) (xy 43.76644 253.856052) (xy 43.766441 253.856054)
+				(xy 43.766443 253.856058) (xy 43.766445 253.85606) (xy 43.820678 253.910293) (xy 43.836719 253.9343)
+				(xy 43.861424 253.993941) (xy 43.866442 254.006056) (xy 43.866444 254.006059) (xy 44.102826 254.242441)
+				(xy 44.1245 254.294767) (xy 44.1245 254.304799) (xy 44.157123 254.383557) (xy 44.157123 254.383558)
+				(xy 44.166441 254.406055) (xy 44.166444 254.406059) (xy 44.202826 254.442441) (xy 44.2245 254.494767)
+				(xy 44.2245 254.5548) (xy 44.266443 254.656058) (xy 44.402826 254.792441) (xy 44.4245 254.844766)
+				(xy 44.4245 254.8548) (xy 44.425013 254.856038) (xy 44.425017 254.85606) (xy 44.425022 254.856059)
+				(xy 44.466442 254.956057) (xy 45.702826 256.192441) (xy 45.7245 256.244767) (xy 45.7245 256.4048)
+				(xy 45.76592 256.504795) (xy 45.76592 256.504798) (xy 45.76644 256.506052) (xy 45.766441 256.506054)
+				(xy 45.766443 256.506058) (xy 45.766445 256.50606) (xy 45.802826 256.542441) (xy 45.8245 256.594767)
+				(xy 45.8245 256.604799) (xy 45.857123 256.683557) (xy 45.857123 256.683558) (xy 45.866441 256.706055)
+				(xy 45.866444 256.706059) (xy 45.920679 256.760294) (xy 45.93672 256.784301) (xy 45.956712 256.832565)
+				(xy 45.966442 256.856057) (xy 46.020678 256.910293) (xy 46.036719 256.9343) (xy 46.066442 257.006056)
+				(xy 46.066444 257.006059) (xy 46.620678 257.560294) (xy 46.636719 257.584301) (xy 46.661422 257.643939)
+				(xy 46.666441 257.656054) (xy 46.666443 257.656058) (xy 46.666445 257.65606) (xy 46.870678 257.860293)
+				(xy 46.886719 257.8843) (xy 46.916442 257.956056) (xy 46.916444 257.956059) (xy 48.320678 259.360294)
+				(xy 48.336719 259.384301) (xy 48.34092 259.394442) (xy 48.366443 259.456058) (xy 49.102585 260.192201)
+				(xy 49.214655 260.304271) (xy 49.236329 260.356597) (xy 49.235696 260.366254) (xy 49.229147 260.416005)
+				(xy 49.2245 260.4513) (xy 49.2245 262.348698) (xy 49.239698 262.464148) (xy 49.239698 262.464149)
+				(xy 49.239699 262.464151) (xy 49.2992 262.607798) (xy 49.393851 262.731149) (xy 49.517202 262.8258)
+				(xy 49.660849 262.885301) (xy 49.776299 262.9005) (xy 51.6737 262.900499) (xy 51.789151 262.885301)
+				(xy 51.932798 262.8258) (xy 52.056149 262.731149) (xy 52.1508 262.607798) (xy 52.210301 262.464151)
+				(xy 52.2255 262.348701) (xy 52.2255 261.7495) (xy 52.247174 261.697174) (xy 52.2995 261.6755) (xy 52.826044 261.6755)
+				(xy 52.87837 261.697174) (xy 52.896422 261.726633) (xy 52.933787 261.841635) (xy 52.933788 261.841638)
+				(xy 52.933789 261.841639) (xy 53.016004 262.002994) (xy 53.122447 262.149501) (xy 53.250499 262.277553)
+				(xy 53.397006 262.383996) (xy 53.558361 262.466211) (xy 53.558364 262.466212) (xy 53.558363 262.466212)
+				(xy 53.73058 262.522168) (xy 53.730586 262.522169) (xy 53.730591 262.522171) (xy 53.849833 262.541057)
+				(xy 53.909453 262.5505) (xy 53.909454 262.5505) (xy 54.090547 262.5505) (xy 54.135261 262.543417)
+				(xy 54.269409 262.522171) (xy 54.269416 262.522168) (xy 54.269419 262.522168) (xy 54.347601 262.496765)
+				(xy 54.441639 262.466211) (xy 54.602994 262.383996) (xy 54.749501 262.277553) (xy 54.877553 262.149501)
+				(xy 54.983996 262.002994) (xy 55.066211 261.841639) (xy 55.122171 261.669409) (xy 55.1505 261.490546)
+				(xy 55.1505 261.309454) (xy 55.122171 261.130591) (xy 55.122169 261.130586) (xy 55.122168 261.13058)
+				(xy 55.066212 260.958364) (xy 55.066211 260.958363) (xy 55.066211 260.958361) (xy 54.983996 260.797006)
+				(xy 54.877553 260.650499) (xy 54.749501 260.522447) (xy 54.664128 260.46042) (xy 54.602996 260.416005)
+				(xy 54.441635 260.333787) (xy 54.441636 260.333787) (xy 54.269419 260.277831) (xy 54.269406 260.277828)
+				(xy 54.090547 260.2495) (xy 54.090546 260.2495) (xy 53.909454 260.2495) (xy 53.909453 260.2495)
+				(xy 53.730593 260.277828) (xy 53.73058 260.277831) (xy 53.558364 260.333787) (xy 53.397004 260.416005)
+				(xy 53.397003 260.416005) (xy 53.250503 260.522444) (xy 53.250499 260.522447) (xy 53.122447 260.650499)
+				(xy 53.122444 260.650502) (xy 53.122444 260.650503) (xy 53.016005 260.797003) (xy 53.016005 260.797004)
+				(xy 52.933787 260.958364) (xy 52.896422 261.073367) (xy 52.85964 261.116434) (xy 52.826044 261.1245)
+				(xy 52.299499 261.1245) (xy 52.247173 261.102826) (xy 52.225499 261.0505) (xy 52.225499 260.451301)
+				(xy 52.220853 260.416005) (xy 52.210301 260.335849) (xy 52.1508 260.192202) (xy 52.056149 260.068851)
+				(xy 51.932798 259.9742) (xy 51.78915 259.914698) (xy 51.70056 259.903036) (xy 51.673701 259.8995)
+				(xy 51.673699 259.8995) (xy 49.776301 259.8995) (xy 49.660848 259.914698) (xy 49.657522 259.91559)
+				(xy 49.60137 259.908191) (xy 49.586051 259.896435) (xy 48.944592 259.254977) (xy 48.895172 259.205557)
+				(xy 57.8 259.205557) (xy 57.8 259.394442) (xy 57.829547 259.580998) (xy 57.82955 259.581011) (xy 57.887914 259.760637)
+				(xy 57.887916 259.760641) (xy 57.973666 259.928933) (xy 57.973669 259.928939) (xy 58.066505 260.056716)
+				(xy 58.460568 259.662652) (xy 58.495112 259.714351) (xy 58.585649 259.804888) (xy 58.637345 259.83943)
+				(xy 58.243282 260.233494) (xy 58.37106 260.32633) (xy 58.371066 260.326333) (xy 58.539358 260.412083)
+				(xy 58.539362 260.412085) (xy 58.718988 260.470449) (xy 58.719001 260.470452) (xy 58.905557 260.5)
+				(xy 59.094443 260.5) (xy 59.280998 260.470452) (xy 59.281011 260.470449) (xy 59.460637 260.412085)
+				(xy 59.460641 260.412083) (xy 59.628933 260.326333) (xy 59.628939 260.32633) (xy 59.700091 260.274635)
+				(xy 60.725001 260.274635) (xy 60.727855 260.310916) (xy 60.772968 260.466196) (xy 60.85528 260.605377)
+				(xy 60.969622 260.719719) (xy 61.108803 260.802031) (xy 61.264085 260.847144) (xy 61.264082 260.847144)
+				(xy 61.300363 260.849999) (xy 62.15 260.849999) (xy 62.15 259.425) (xy 60.725001 259.425) (xy 60.725001 260.274635)
+				(xy 59.700091 260.274635) (xy 59.756716 260.233494) (xy 59.362653 259.83943) (xy 59.414351 259.804888)
+				(xy 59.504888 259.714351) (xy 59.53943 259.662653) (xy 59.933494 260.056716) (xy 60.02633 259.928939)
+				(xy 60.026333 259.928933) (xy 60.112083 259.760641) (xy 60.112085 259.760637) (xy 60.170449 259.581011)
+				(xy 60.170452 259.580998) (xy 60.2 259.394442) (xy 60.2 259.205557) (xy 60.170452 259.019001) (xy 60.170449 259.018988)
+				(xy 60.112085 258.839362) (xy 60.112083 258.839358) (xy 60.026333 258.671066) (xy 60.02633 258.67106)
+				(xy 59.933494 258.543282) (xy 59.53943 258.937345) (xy 59.504888 258.885649) (xy 59.414351 258.795112)
+				(xy 59.362652 258.760568) (xy 59.756716 258.366505) (xy 59.756716 258.366504) (xy 59.70009 258.325363)
+				(xy 60.725 258.325363) (xy 60.725 259.175) (xy 62.15 259.175) (xy 62.15 257.75) (xy 61.300364 257.75)
+				(xy 61.264083 257.752855) (xy 61.108803 257.797968) (xy 60.969622 257.88028) (xy 60.85528 257.994622)
+				(xy 60.772968 258.133803) (xy 60.727855 258.289083) (xy 60.725 258.325363) (xy 59.70009 258.325363)
+				(xy 59.62894 258.27367) (xy 59.628933 258.273666) (xy 59.460641 258.187916) (xy 59.460637 258.187914)
+				(xy 59.281011 258.12955) (xy 59.280998 258.129547) (xy 59.094443 258.1) (xy 58.905557 258.1) (xy 58.719001 258.129547)
+				(xy 58.718988 258.12955) (xy 58.539365 258.187913) (xy 58.371067 258.273665) (xy 58.243282 258.366505)
+				(xy 58.637346 258.760569) (xy 58.585649 258.795112) (xy 58.495112 258.885649) (xy 58.460569 258.937346)
+				(xy 58.066505 258.543282) (xy 57.973665 258.671067) (xy 57.887913 258.839365) (xy 57.82955 259.018988)
+				(xy 57.829547 259.019001) (xy 57.8 259.205557) (xy 48.895172 259.205557) (xy 48.879321 259.189706)
+				(xy 48.86328 259.165698) (xy 48.854268 259.143941) (xy 48.833559 259.093944) (xy 48.833557 259.093941)
+				(xy 48.18665 258.447034) (xy 47.429321 257.689706) (xy 47.41328 257.665699) (xy 47.409287 257.65606)
+				(xy 47.383557 257.593942) (xy 47.383557 257.593941) (xy 47.179318 257.389703) (xy 47.163278 257.365696)
+				(xy 47.13919 257.307541) (xy 47.13919 257.30754) (xy 47.133557 257.293941) (xy 46.57932 256.739704)
+				(xy 46.56328 256.715699) (xy 46.533557 256.643942) (xy 46.533557 256.643941) (xy 46.533556 256.64394)
+				(xy 46.533555 256.643938) (xy 46.479321 256.589705) (xy 46.463279 256.565698) (xy 46.462623 256.564115)
+				(xy 46.43919 256.507541) (xy 46.43919 256.50754) (xy 46.433557 256.493941) (xy 46.397174 256.457558)
+				(xy 46.3755 256.405232) (xy 46.3755 256.3952) (xy 46.333557 256.293942) (xy 46.333556 256.29394)
+				(xy 46.297174 256.257558) (xy 46.2755 256.205232) (xy 46.2755 256.0452) (xy 46.275499 256.045198)
+				(xy 46.233559 255.943944) (xy 46.233557 255.943941) (xy 45.635154 255.345538) (xy 51.2495 255.345538)
+				(xy 51.2495 255.654461) (xy 51.284089 255.961455) (xy 51.284089 255.961456) (xy 51.352829 256.262627)
+				(xy 51.352834 256.262643) (xy 51.454863 256.554225) (xy 51.588904 256.832563) (xy 51.753265 257.094143)
+				(xy 51.923444 257.307541) (xy 51.94588 257.335674) (xy 52.164326 257.55412) (xy 52.405857 257.746735)
+				(xy 52.667435 257.911095) (xy 52.945771 258.045135) (xy 53.237364 258.147168) (xy 53.237369 258.147169)
+				(xy 53.237372 258.14717) (xy 53.538543 258.21591) (xy 53.538544 258.21591) (xy 53.538548 258.215911)
+				(xy 53.845535 258.2505) (xy 53.845539 258.2505) (xy 54.154461 258.2505) (xy 54.154465 258.2505)
+				(xy 54.461452 258.215911) (xy 54.762636 258.147168) (xy 55.054229 258.045135) (xy 55.332565 257.911095)
+				(xy 55.594143 257.746735) (xy 55.835674 257.55412) (xy 56.05412 257.335674) (xy 56.246735 257.094143)
+				(xy 56.411095 256.832565) (xy 56.545135 256.554229) (xy 56.647168 256.262636) (xy 56.715911 255.961452)
+				(xy 56.7505 255.654465) (xy 56.7505 255.345535) (xy 56.715911 255.038548) (xy 56.697083 254.956057)
+				(xy 56.64717 254.737372) (xy 56.647165 254.737356) (xy 56.579486 254.543942) (xy 56.545135 254.445771)
+				(xy 56.411095 254.167435) (xy 56.246735 253.905857) (xy 56.05412 253.664326) (xy 55.835674 253.44588)
+				(xy 55.594143 253.253265) (xy 55.332565 253.088905) (xy 55.054229 252.954865) (xy 55.054225 252.954863)
+				(xy 54.762643 252.852834) (xy 54.762627 252.852829) (xy 54.461456 252.784089) (xy 54.307958 252.766794)
+				(xy 54.154465 252.7495) (xy 53.845535 252.7495) (xy 53.692041 252.766794) (xy 53.538544 252.784089)
+				(xy 53.538543 252.784089) (xy 53.237372 252.852829) (xy 53.237356 252.852834) (xy 52.945774 252.954863)
+				(xy 52.667436 253.088904) (xy 52.405856 253.253265) (xy 52.164326 253.445879) (xy 51.945879 253.664326)
+				(xy 51.753265 253.905856) (xy 51.588904 254.167436) (xy 51.454863 254.445774) (xy 51.352834 254.737356)
+				(xy 51.352829 254.737372) (xy 51.284089 255.038543) (xy 51.284089 255.038544) (xy 51.2495 255.345538)
+				(xy 45.635154 255.345538) (xy 44.997174 254.707558) (xy 44.9755 254.655232) (xy 44.9755 254.645202)
+				(xy 44.9755 254.6452) (xy 44.974979 254.643942) (xy 44.933558 254.543942) (xy 44.797174 254.407558)
+				(xy 44.7755 254.355232) (xy 44.7755 254.2952) (xy 44.733557 254.193942) (xy 44.733556 254.19394)
+				(xy 44.697174 254.157558) (xy 44.6755 254.105232) (xy 44.6755 254.0952) (xy 44.638576 254.006059)
+				(xy 44.633557 253.993942) (xy 44.633557 253.993941) (xy 44.379319 253.739704) (xy 44.363279 253.715698)
+				(xy 44.345841 253.673599) (xy 44.34584 253.673597) (xy 44.333557 253.643941) (xy 44.297174 253.607558)
+				(xy 44.2755 253.555232) (xy 44.2755 251.6452) (xy 44.275499 251.645198) (xy 44.253531 251.592161)
+				(xy 44.233559 251.543944) (xy 44.233557 251.543941) (xy 43.637462 250.947846) (xy 42.941074 250.251459)
+				(xy 47.9995 250.251459) (xy 47.9995 250.448541) (xy 48.006465 250.483557) (xy 48.037947 250.641829)
+				(xy 48.03795 250.641839) (xy 48.113367 250.823913) (xy 48.22286 250.987781) (xy 48.362218 251.127139)
+				(xy 48.526086 251.236632) (xy 48.607491 251.270351) (xy 48.708165 251.312051) (xy 48.901459 251.3505)
+				(xy 48.901461 251.3505) (xy 49.098539 251.3505) (xy 49.098541 251.3505) (xy 49.291835 251.312051)
+				(xy 49.473914 251.236632) (xy 49.637782 251.127139) (xy 49.777139 250.987782) (xy 49.886632 250.823914)
+				(xy 49.962051 250.641835) (xy 50.0005 250.448541) (xy 50.0005 250.251459) (xy 49.962051 250.058165)
+				(xy 49.918418 249.952826) (xy 49.886632 249.876086) (xy 49.777139 249.712218) (xy 49.637781 249.57286)
+				(xy 49.61884 249.560204) (xy 50.35 249.560204) (xy 50.35 249.695) (xy 51.15 249.695) (xy 51.15 249.16)
+				(xy 50.750208 249.16) (xy 50.750195 249.160001) (xy 50.719457 249.162882) (xy 50.719448 249.162884)
+				(xy 50.589993 249.208182) (xy 50.479633 249.289632) (xy 50.479632 249.289633) (xy 50.398182 249.399993)
+				(xy 50.352885 249.529445) (xy 50.352883 249.529453) (xy 50.35 249.560204) (xy 49.61884 249.560204)
+				(xy 49.473913 249.463367) (xy 49.291839 249.38795) (xy 49.291829 249.387947) (xy 49.162388 249.3622)
+				(xy 49.098541 249.3495) (xy 48.901459 249.3495) (xy 48.846662 249.360399) (xy 48.70817 249.387947)
+				(xy 48.70816 249.38795) (xy 48.526086 249.463367) (xy 48.362218 249.57286) (xy 48.362217 249.572862)
+				(xy 48.222862 249.712217) (xy 48.22286 249.712218) (xy 48.113367 249.876086) (xy 48.03795 250.05816)
+				(xy 48.037947 250.05817) (xy 48.007247 250.212513) (xy 47.9995 250.251459) (xy 42.941074 250.251459)
+				(xy 42.706058 250.016443) (xy 42.706057 250.016442) (xy 42.646742 249.991873) (xy 42.6048 249.9745)
+				(xy 42.604799 249.9745) (xy 31.594768 249.9745) (xy 31.542442 249.952826) (xy 30.989609 249.399993)
+				(xy 29.306058 247.716443) (xy 29.2048 247.6745) (xy 29.204799 247.6745) (xy 25.690229 247.6745)
+				(xy 25.66191 247.668867) (xy 25.606321 247.645841) (xy 25.5548 247.6245) (xy 25.554799 247.6245)
+				(xy 25.490229 247.6245) (xy 25.461911 247.618867) (xy 25.435187 247.607798) (xy 25.435186 247.607797)
+				(xy 25.384299 247.586719) (xy 25.360294 247.570678) (xy 25.306059 247.516444) (xy 25.306058 247.516443)
+				(xy 25.306055 247.516442) (xy 25.306054 247.516441) (xy 25.234301 247.486719) (xy 25.210294 247.470678)
+				(xy 24.206059 246.466444) (xy 24.199999 246.462395) (xy 24.20161 246.459982) (xy 24.169447 246.427816)
+				(xy 24.169449 246.371178) (xy 24.209499 246.331132) (xy 24.237815 246.3255) (xy 28.855233 246.3255)
+				(xy 28.907558 246.347173) (xy 29.100499 246.540115) (xy 29.243941 246.683557) (xy 29.24394 246.683557)
+				(xy 29.273599 246.695841) (xy 29.2736 246.695842) (xy 29.315695 246.713278) (xy 29.339703 246.729319)
+				(xy 29.343941 246.733557) (xy 29.343944 246.733559) (xy 29.367196 246.74319) (xy 29.4452 246.7755)
+				(xy 29.459769 246.7755) (xy 29.488087 246.781133) (xy 29.493942 246.783558) (xy 29.5952 246.8255)
+				(xy 30.038595 246.8255) (xy 30.090921 246.847174) (xy 30.097298 246.854445) (xy 30.099496 246.857309)
+				(xy 30.099498 246.857311) (xy 30.0995 246.857314) (xy 30.192686 246.9505) (xy 30.306814 247.016392)
+				(xy 30.434105 247.050499) (xy 30.434106 247.0505) (xy 30.434108 247.0505) (xy 30.565894 247.0505)
+				(xy 30.565894 247.050499) (xy 30.693186 247.016392) (xy 30.807314 246.9505) (xy 30.9005 246.857314)
+				(xy 30.966392 246.743186) (xy 30.983341 246.67993) (xy 31.017817 246.635) (xy 31.07397 246.627606)
+				(xy 31.107144 246.646759) (xy 31.566443 247.106058) (xy 31.643942 247.183557) (xy 31.7452 247.2255)
+				(xy 32.205233 247.2255) (xy 32.257559 247.247174) (xy 32.643941 247.633557) (xy 32.64394 247.633557)
+				(xy 32.673599 247.645841) (xy 32.7452 247.6755) (xy 33.455233 247.6755) (xy 33.507558 247.697173)
+				(xy 33.658558 247.848174) (xy 33.793941 247.983557) (xy 33.793944 247.983559) (xy 33.843675 248.004158)
+				(xy 33.8952 248.0255) (xy 34.0048 248.0255) (xy 34.105233 248.0255) (xy 34.157558 248.047173) (xy 35.543942 249.433558)
+				(xy 35.6157 249.46328) (xy 35.639703 249.479318) (xy 35.683322 249.522938) (xy 35.69394 249.533556)
+				(xy 35.693941 249.533557) (xy 35.7236 249.545842) (xy 35.723601 249.545842) (xy 35.784607 249.571112)
+				(xy 35.7952 249.5755) (xy 37.009769 249.5755) (xy 37.038087 249.581133) (xy 37.043942 249.583558)
+				(xy 37.1452 249.6255) (xy 37.159769 249.6255) (xy 37.188087 249.631133) (xy 37.193942 249.633558)
+				(xy 37.2952 249.6755) (xy 37.409769 249.6755) (xy 37.438087 249.681133) (xy 37.443942 249.683558)
+				(xy 37.5452 249.7255) (xy 37.545201 249.7255) (xy 47.604798 249.7255) (xy 47.6048 249.7255) (xy 47.706058 249.683557)
 				(xy 47.783557 249.606058) (xy 47.783556 249.606058) (xy 47.818517 249.571097) (xy 47.818516 249.571097)
 				(xy 48.110297 249.279317) (xy 48.1343 249.263279) (xy 48.206058 249.233557) (xy 48.260296 249.179317)
 				(xy 48.284296 249.163281) (xy 48.356058 249.133557) (xy 48.36029 249.129324) (xy 48.384298 249.11328)

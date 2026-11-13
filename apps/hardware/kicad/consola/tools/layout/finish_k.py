@@ -29,6 +29,16 @@ def finish(side):
    for get,setter in [(item.GetStart,item.SetStart),(item.GetEnd,item.SetEnd)]:
     pt=get()
     if abs(p.ToMM(pt.x)-64)<.0001:setter(v(64.2,p.ToMM(pt.y)))
+  # K derecha empieza en x_KiCad 64 sobre y 267: chaflán en la esquina para dejar 0,5 mm (revisión 2026-11-13, I02).
+  for item in list(b.GetDrawings()):
+   if item.GetLayer()!=p.Edge_Cuts or not isinstance(item,p.PCB_SHAPE):continue
+   s0,e0=(p.ToMM(item.GetStart().x),p.ToMM(item.GetStart().y)),(p.ToMM(item.GetEnd().x),p.ToMM(item.GetEnd().y))
+   for get,setter,pt in [(item.GetStart,item.SetStart,s0),(item.GetEnd,item.SetEnd,e0)]:
+    if abs(pt[0]-64.2)<.0001 and abs(pt[1]-267)<.0001:
+     other=e0 if pt==s0 else s0
+     setter(v(63.5,267) if abs(other[1]-267)<.0001 else v(64.2,265.5))
+  ch=p.PCB_SHAPE(b);ch.SetShape(p.SHAPE_T_SEGMENT);ch.SetLayer(p.Edge_Cuts);ch.SetWidth(p.FromMM(.05))
+  ch.SetStart(v(63.5,267));ch.SetEnd(v(64.2,265.5));b.Add(ch)
  # Vías idénticas producidas al unir ramas de una red no constituyen taladros adicionales.
  seen=set()
  for t in list(b.GetTracks()):
