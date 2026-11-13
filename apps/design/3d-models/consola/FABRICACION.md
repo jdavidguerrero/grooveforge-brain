@@ -13,7 +13,7 @@ para revisar el conjunto 3D: esas copias guardadas anteceden a esta corrección 
 | Archivo | Para qué |
 |---|---|
 | `cupon-prueba-laser.dxf` | **Cortar primero** (120 × 60). Tecla en 14,0 / 14,6 / 15,0 / 15,4 / 16,0; EC11 en 7,1 y 7,4; PEM en 2,5 / 2,6 / 4,2 / 4,3; tramo de ranura de fader |
-| `panel-aluminio-v1-laser.dxf` | Perfil completo, solo cortes pasantes (120 contornos, incluidos los 4 anclajes de A) |
+| `panel-aluminio-v1-laser.dxf` | Perfil completo, solo cortes pasantes (incluye los 4 anclajes de A y los 4 espárragos del marco de la M4; 45 agujeros PEM en total) |
 | `panel-aluminio-v1.step` | Para cotizar o revisar en 3D |
 
 - **Sin rebajes de Choc:** el rebaje 16 × 16 × 0,8 por debajo obligaba a fresar por la otra cara y era lo que encarecía el
