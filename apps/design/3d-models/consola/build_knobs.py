@@ -51,6 +51,35 @@ def knob(d, height, skirt_h=0.0, pointer=True, grip=0):
     return body.cut(hub).cut(slot).removeSplitter()
 
 
+# Pots Alps RK09L (MASTER, CUE, IN): montados a la chapa con tuerca, eje en D Ø6 (cara plana a 4,5 mm), casquillo
+# roscado M7 de ~8 mm. Con el cuerpo pegado bajo la chapa de 2 mm, casquillo y tuerca asoman ~6 mm y la punta del
+# eje queda a ~18 mm sobre el aluminio (foto de Juan, 2026-11-13; verificar con calibre).
+POT_BUSHING_ABOVE = 6.0
+POT_SHAFT_TIP = 18.0
+POT_D_FLAT = 4.5
+NUT_RECESS_D = 12.0     # tuerca M7 hexagonal ~10–11 mm entre vértices + holgura
+
+
+def d_bore(depth):
+    """Agujero en D: Ø6 + holgura con la cara plana a 4,5 mm del lado opuesto."""
+    r = SHAFT_D / 2 + BORE_CLEAR
+    hole = Part.makeCylinder(r, depth)
+    flat_cut = Part.makeBox(2 * r, 2 * r, depth, App.Vector(-r, POT_D_FLAT - SHAFT_D / 2 + BORE_CLEAR, 0))
+    return hole.cut(flat_cut)
+
+
+def knob_pot(d=18.0, gap=1.0, grip=24):
+    """Perilla del RK09L: tapa casquillo y tuerca con un hueco abajo y agarra el eje en D hasta 1 mm del techo."""
+    recess_h = POT_BUSHING_ABOVE - gap + 0.5
+    height = POT_SHAFT_TIP - gap + 1.0           # 1 mm de techo sobre la punta del eje
+    body = knob(d, height, grip=grip)            # reutiliza forma, chaflán, estrías e indicador
+    body = body.fuse(Part.makeCylinder(SHAFT_D / 2 + 1.5, BORE_DEPTH + 0.5))  # rellena el agujero estriado
+    body = body.cut(Part.makeCylinder(NUT_RECESS_D / 2, recess_h))
+    shaft = d_bore(height - 1.0 - recess_h)
+    shaft.translate(App.Vector(0, 0, recess_h))
+    return body.cut(shaft).removeSplitter()
+
+
 def coupon():
     """Pieza de prueba: tres agujeros con holgura 0,05 / 0,10 / 0,15 para elegir BORE_CLEAR antes de imprimir 13."""
     global BORE_CLEAR
@@ -69,7 +98,8 @@ def build(out_dir):
     import MeshPart
     doc = App.newDocument('Perillas')
     parts = {
-        'perilla_18': knob(18.0, 15.0, grip=24),           # 8 EC11 + MASTER/CUE/IN
+        'perilla_18': knob(18.0, 15.0, grip=24),           # 8 EC11
+        'perilla_pot_18': knob_pot(),                      # MASTER, CUE, IN (Alps RK09L)
         'jog_40': knob(40.0, 14.0, pointer=False, grip=40),  # rueda jog; añadir hoyuelo para el dedo
         'cupon_agujero': coupon(),
     }
