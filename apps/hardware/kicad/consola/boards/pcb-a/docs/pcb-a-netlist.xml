@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-a/pcb-a.kicad_sch</source>
-    <date>2026-11-13T06:57:25</date>
+    <date>2026-11-13T07:10:25</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -1365,7 +1365,7 @@
     </library>
   </libraries>
   <nets>
-    <net code="1" name="/+3V3" class="Default">
+    <net code="1" name="/+3V3" class="Power">
       <node ref="C1" pin="1" pintype="passive"/>
       <node ref="C2" pin="1" pintype="passive"/>
       <node ref="J1" pin="30" pinfunction="Pin_30_30" pintype="passive"/>
@@ -1377,7 +1377,7 @@
       <node ref="U1" pin="18" pinfunction="~{RESET}_18" pintype="input"/>
       <node ref="U1" pin="9" pinfunction="V_{DD}_9" pintype="power_in"/>
     </net>
-    <net code="2" name="/+5V" class="Default">
+    <net code="2" name="/+5V" class="Power">
       <node ref="J1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J4" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
@@ -1511,7 +1511,7 @@
       <node ref="J1" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="J3" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
     </net>
-    <net code="31" name="/GND" class="Default">
+    <net code="31" name="/GND" class="Power">
       <node ref="C1" pin="2" pintype="passive"/>
       <node ref="C10" pin="2" pintype="passive"/>
       <node ref="C11" pin="2" pintype="passive"/>

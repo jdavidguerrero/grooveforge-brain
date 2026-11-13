@@ -212,6 +212,22 @@ def board(path):
                 segments.append((xy(node, 'start'), xy(node, 'end')))
             elif node[0] == 'gr_rect':
                 segments += edges(rect(*xy(node, 'start'), *xy(node, 'end')))
+            elif node[0] == 'gr_arc':
+                a, m, b = (xy(node, tag) for tag in ('start', 'mid', 'end'))
+                ax,ay=a; mx,my=m; bx,by=b
+                den=2*(ax*(my-by)+mx*(by-ay)+bx*(ay-my))
+                if abs(den)<EPS: raise ValueError('Degenerate arc')
+                aa=ax*ax+ay*ay; mm=mx*mx+my*my; bb=bx*bx+by*by
+                cx=(aa*(my-by)+mm*(by-ay)+bb*(ay-my))/den
+                cy=(aa*(bx-mx)+mm*(ax-bx)+bb*(mx-ax))/den
+                angles=[math.atan2(y-cy,x-cx) for x,y in (a,m,b)]
+                sweep=(angles[2]-angles[0])%(2*math.pi)
+                if (angles[1]-angles[0])%(2*math.pi)>sweep: sweep-=2*math.pi
+                radius=math.dist(a,(cx,cy))
+                count=max(2,math.ceil(abs(sweep)/math.radians(5)))
+                points=[a]+[(cx+radius*math.cos(angles[0]+sweep*i/count),
+                              cy+radius*math.sin(angles[0]+sweep*i/count)) for i in range(1,count)]+[b]
+                segments += list(zip(points,points[1:]))
             else:
                 raise ValueError(f'Unsupported Edge.Cuts primitive {node[0]}')
     outline = []
@@ -357,7 +373,8 @@ def audit():
         e['error_mm'] = math.dist(e['axis_panel'], e['target_panel'])
     pitches = [math.dist(a['axis_kicad'], b['axis_kicad']) for a,b in zip(encoders, encoders[1:])]
     transformed = transform_poly(outline, fitting)
-    a_cells = [transform_poly(c, fitting) for c in cells(outline)]
+    # Conservative outer envelope for rounded strip: no false clearance at sampled corners.
+    a_cells = [transform_poly(rect(*bounds(outline)), fitting)]
     # clip() expects its clipping polygon counterclockwise, but subject may be either winding.
     krows = [r for r in rows if r['board']=='PCB-K']
     k = [(float(r['x_mm']),float(r['y_mm'])) for r in krows if r['item'].startswith('vértice')]
@@ -429,10 +446,16 @@ def audit():
         near=(max(region[0],min(start[0],region[2])),max(region[1],min(start[1],region[3])),end[2])
         far=max(math.dist(start,(*p,end[2])) for p in rect(*region))
         # Service route drops below the display, turns at the front of PCB-M, then reaches endpoint.
-        waypoints=[start,(start[0],start[1],60.),(end[0],end[1],60.),end] if ref!='J3' else [start,end]
+        waypoints=([start,(start[0],start[1],60.),(end[0],end[1],60.),end] if ref!='J3' else
+                   [start,(276.,start[1],60.),(276.,175.,60.),(257.,165.,60.),end])
+        service_hits={
+            'PCB-A':any(segment_hits_slab(a,b,a_cells,a_bottom,a_top) for a,b in zip(waypoints,waypoints[1:])),
+            'Pantalla módulo':any(segment_hits_slab(a,b,shapes['Pantalla módulo'],display_z0,display_z0+params['display_parameters'][6]) for a,b in zip(waypoints,waypoints[1:])),
+            'M4 reserva':any(segment_hits_slab(a,b,shapes['M4 reserva doc28 (ventana +5 mm)'],0.,params['TOP']) for a,b in zip(waypoints,waypoints[1:])),
+            'PCB-F':any(segment_hits_slab(a,b,shapes['PCB-F'],f_top-params['PCB_T'],f_top) for a,b in zip(waypoints,waypoints[1:]))}
         self_hit = segment_hits_slab(start, end, a_cells, a_bottom, a_top)
         routes.append(dict(source=ref,destination=target,start_mm=start,end_estimated_mm=end,
-                           straight_hits_pcba_substrate=self_hit,service_route_valid=not self_hit,
+                           straight_hits_pcba_substrate=self_hit,service_route_valid=not any(service_hits.values()),service_hits=service_hits,
                            straight_3d_mm=math.dist(start,end),target_region_range_mm=[math.dist(start,near),far],
                            crossings=crossings,waypoints_mm=waypoints,
                            routed_mm=sum(math.dist(a,b) for a,b in zip(waypoints,waypoints[1:]))))
@@ -447,7 +470,8 @@ def audit():
             if any(v>EPS for v in hits.values()):
                 components.append(dict(reference=ref,value=fp['value'],courtyard_panel=ct,overlap_mm2=hits))
     encoder_pass = max(e['error_mm'] for e in encoders)<=.1 and all(abs(p-26)<=1e-6 for p in pitches)
-    plan_pass = all(v['status']=='LIBRE' for v in checks.values()) and min(wall_gaps)>0 and min(t['clearance_mm'] for t in towers)>0
+    plan_pass = all(v['status']=='LIBRE' for n,v in checks.items() if not n.startswith('PCB-K')) and checks['Pantalla módulo']['clearance_mm']>=3 and min(wall_gaps)>0 and min(t['clearance_mm'] for t in towers)>0
+    cable_pass=all(route['service_route_valid'] for route in routes)
     pins_under_f = []
     for ref, fp in fps.items():
         for pad in children(fp['node'], 'pad'):
@@ -455,9 +479,9 @@ def audit():
                 pins_under_f.append(ref+'.'+pad[1])
     return dict(schema_version=1,remote_layouts=dict(pcbm_footprint_count=len(remote_m),pcbm_has_outline=bool(remote_m_outline),
                 pcbf_legacy_outline_mm=bounds(legacy_f_outline),pcbf_j1_origin_kicad=legacy_f['J1']['origin'],
-                pcbf_j1_rotation_deg=legacy_f['J1']['angle_deg']),base='095370c19b340b084151e3a9079798f92aa0c23d',sources_sha256=hashes,
+                pcbf_j1_rotation_deg=legacy_f['J1']['angle_deg']),base='edc67a3',sources_sha256=hashes,
                 transformation=fitting,diagnostic_no_y_conversion=direct,encoders=encoders,pitches_mm=pitches,
-                encoder_pass=encoder_pass,plan_pass=plan_pass,through_hole_pins_under_f=sorted(pins_under_f),
+                encoder_pass=encoder_pass,plan_pass=plan_pass,cable_pass=cable_pass,through_hole_pins_under_f=sorted(pins_under_f),
                 outline_kicad=outline,outline_panel=transformed,outline_area_mm2=abs(signed_area(outline)),
                 outline_bounds_mm=b,plan_checks=checks,towers=towers,mounting_holes=holes,connectors=connectors,
                 wall_clearances_mm=dict(zip(('izquierda','frente','derecha','atrás'),wall_gaps)),
@@ -470,7 +494,7 @@ def audit():
                              tower_top_mm=params['TOWER_TOP']),
                 front_components_in_reserved_areas=components,routes=routes,shapes=shapes,
                 placeholder=dict(origin=params['A_placeholder_origin'],size=params['A_placeholder_size']),
-                conclusion=('ENCAJE XY y ejes PASS; altura y mazos pendientes' if plan_pass and encoder_pass else 'NO ENCAJA en las reservas de planta v1; altura y mazos sin cierre mecánico'))
+                conclusion=('PASS: tira, ejes y rutas geométricas; montaje físico pendiente' if plan_pass and encoder_pass and cable_pass else 'FAIL: revisar reservas, ejes o rutas'))
 
 
 def fmt(p):
@@ -483,179 +507,54 @@ def table(headers, rows):
 
 
 def write_report(r):
-    h=r['heights']
-    conrows=[]
-    for c in r['connectors']:
-        conrows.append([c['reference'],fmt(c['origin_kicad']),fmt(c['origin_panel']),
-                        f"{c['rotation_kicad_deg']:.0f}° / {c['rotation_panel_deg']:.0f}°",c['layer'],fmt(c['cable_datum_panel']),fmt(bounds(c['courtyard_panel']))])
     texts=[
-        '# PCB-A · verificación de encaje para Console v1',
-        '**Conclusión: PCB-A NO ENCAJA en las reservas de planta v1.** El paso y los ocho ejes pasan; '
-        'el contorno existente invade PCB-F, PCB-K y la reserva de placa de la M4. Esto bloquea '
-        'cerrar el montaje para el primer pedido. Los solapes XY no se presentan como choques 3D '
-        'demostrados: los sustratos están a distintas alturas. La compatibilidad en altura queda '
-        'condicionada a componentes, soldaduras, M4 y perilla reales. No se ha modificado ninguna placa.',
-        '## Reproducción y fuentes',
-        'Desde la raíz del clon, sin dependencias externas ni FreeCAD/pcbnew:\n\n'
-        '```sh\npython3 apps/hardware/kicad/consola/tools/fit/check_pcba_fit.py\n'
-        'python3 -B -m unittest discover -s apps/hardware/kicad/consola/tools/fit -p "test_*.py"\n```\n\n'
-        'El script escribe únicamente este informe, `pcba-fit.json` y `pcba-fit.svg` junto al script. '
-        'Una ejecución correcta termina en 0 aunque el encaje falle; `encoder_pass` y `conclusion` '
-        'en JSON contienen el resultado de ingeniería. El hash de cada entrada permite detectar cambios. '
-        'No es un DRC ni una certificación de fabricación. Método y límites: [THEORY.md](THEORY.md). '
-        'Base revisada: `'+r['base']+'`.',
-        '## Ejes: origen de huella, conversión de coordenadas y transformación',
-        'Vista superior: X derecha, Y hacia atrás desde el frente, Z desde el piso del cuerpo. '
-        'El README de PCB-K fija **Y_KiCad = constante − y_panel**. '
-        'El círculo Ø6 de cada EC11 da el eje local **(+7,5; +2,5) mm**; '
-        'el origen de huella está en el pad 1 y no en el eje. Los EC11 siguen en F.Cu, mirando arriba.',
-        f"Ajuste sin escala: **(x_panel, y_panel) = R({r['transformation']['angle_deg']:.6f}°) · (x_KiCad, −y_KiCad) + {fmt(r['transformation']['translation_mm'])} mm**. "
-        'No hace falta rotación física adicional. La inversión de Y cambia la convención del dibujo, no la cara de montaje.',
-        table(['Encoder','Origen KiCad','Eje KiCad','Objetivo panel','Eje ajustado','Error mm'],
-              [[e['reference']+' → '+e['target'],fmt(e['origin_kicad']),fmt(e['axis_kicad']),fmt(e['target_panel']),fmt(e['axis_panel']),f"{e['error_mm']:.6f}"] for e in r['encoders']]),
-        '**Pasos reales consecutivos:** '+', '.join(f'{p:.3f}' for p in r['pitches_mm'])+' mm. '
-        f"Criterio ejes ≤0,1 mm y paso nominal 26 mm (tolerancia numérica 0,000001 mm): **{'PASS' if r['encoder_pass'] else 'FAIL BLOQUEANTE'}**.",
-        f"Diagnóstico de convención incorrecta: sin invertir Y, la misma fila colineal daría traslación {fmt(r['diagnostic_no_y_conversion']['translation_mm'])}, "
-        'y llevaría la prolongación hacia la pantalla (y 183,4–253). Los ejes por sí solos no detectan ese error. '
-        'Ese caso contradice la conversión explícita del repositorio y no se usa para certificar el montaje.',
-        '## Contorno, montaje y conectores reales',
-        '**Vértices Edge.Cuts, KiCad → panel, mm:**\n\n'+table(['KiCad','Panel'],[[fmt(a),fmt(b)] for a,b in zip(r['outline_kicad'],r['outline_panel'])]),
-        f"Envolvente **217 × 69,6 mm**, área **{r['outline_area_mm2']:.2f} mm²**, límites panel (xmin,ymin,xmax,ymax) **{fmt(r['outline_bounds_mm'])}**. "
-        'La tira es x 54–271 / y 178,5–200,6; la prolongación es x 231–271 / y 131–178,5. '
-        f"Placeholder FreeCAD: origen {fmt(r['placeholder']['origin'])}, tamaño {fmt(r['placeholder']['size'])}; "
-        'su caja 200×30 no representa esta PCB. No hay contorno de PCB-A en el CSV v5: manda Edge.Cuts.',
-        table(['Agujero','KiCad','Panel','Taladro mm'],[[v['reference'],fmt(v['center_kicad']),fmt(v['center_panel']),f"{v['drill_mm']:.2f}"] for v in r['mounting_holes']]),
-        'El modelo no crea soportes para esos cuatro agujeros de PCB-A; tampoco aparecen en los PEM del CSV v5. '
-        'H1 queda en (62,195) sobre PCB-K izquierda; H4 en (238,145) sobre la derecha. '
-        'Falta diseñar soportes bajo PCB-A o estudiar pasos/espaciadores a través de K, respetando la diferencia Z.',
-        table(['Conector','Origen KiCad','Origen panel','Ángulo KiCad / panel','Cara','Centro pads eléctricos panel','Caja courtyard panel'],conrows),
-        'J1 es IDC 2×15 vertical, con eje largo paralelo a Y y salida hacia abajo (B.Cu); '
-        'el origen es pad 1, no centro de cinta. J2/J3 son SH horizontales de 4/6 vías a 180°; '
-        'J4 es SH10 a 90° y **DNP por contrato**, sin cable. Ángulo panel: dirección del eje local +X, CCW '
-        'en X derecha/Y atrás. La abertura del SH sigue su geometría local; no confundirla con el eje +X. '
-        'Las cajas son courtyards (holgura de colocación), no volúmenes de enchufe o radio de curvatura.',
-        '## Planta: áreas reales, sin usar la envolvente de la L',
-        table(['Obstáculo','Área solapada mm²','Separación mínima XY mm','Resultado'],
-              [[n,f"{v['overlap_mm2']:.3f}",f"{v['clearance_mm']:.3f}",v['status']] for n,v in r['plan_checks'].items()]),
-        'PCB-F ocupa x 254–335 / y 88–171; su intersección con A es **17×40 = 680 mm²**. '
-        'La ventana M4 ocupa x 109–231 / y 107–169: hay **contacto sin margen** en x=231. '
-        'La M4 nominal del CSV ocupa x 110–230 / y 108–168 y conserva solo **1 mm** lateral. '
-        'Doc28 §2 reserva 5 mm alrededor de la ventana para la placa colgante: x 104–236 / y 102–174; '
-        'A invade esa reserva **5×43 = 215 mm²**. Es una reserva documental, no una medición del PCB Adafruit completo.',
-        '**PCB-K partida:** no hay layouts ni contornos individuales de izquierda/derecha. CSV v5 y DXF '
-        'describen la placa conjunta. Se muestra una partición inferida según doc28 §7: corte x=108 y '
-        'eliminación de la franja inferior x108–231/y169–173. Da envolventes 102×216 y 144×152 como el doc28. '
-        'También se comprueba la placa conjunta como límite conservador. No se convierte esta inferencia '
-        'en una propuesta de layout aprobada. Se restan la ventana M4 y la franja, no los pequeños taladros/FSR '
-        '(alejados del choque de interés); las áreas son de reserva de contorno.',
-        '**Pared de 3,2 mm:** límites interiores x/y 3,2–336,8. Holguras del contorno: '+
-        ', '.join(f'{n} {v:.3f} mm' for n,v in r['wall_clearances_mm'].items())+'. **PASS**. '
-        'La placa queda lejos de las esquinas redondeadas (R interior 3,4), por lo que no afectan el resultado. '
-        'El tabique de bahía en y211–213 queda 10,4 mm detrás del borde de A; '
-        'el de x136–138 empieza en y211. Los topes de las juntas están fuera de su altura/planta.',
-        table(['Torre cuerpo (centro)','Radio mm','Holgura real al círculo mm'],
-              [[fmt(t['center']),f"{t['radius_mm']:.1f}",f"{t['clearance_mm']:.3f}"] for t in r['towers']]),
-        f"Torres Ø10: mínima holgura **{min(t['clearance_mm'] for t in r['towers']):.3f} mm**, PASS en planta. "
-        f"Su techo es z={h['tower_top_mm']:.1f}, a la altura de la cara superior de A; los PEM continúan hasta la chapa y también quedan fuera en XY.",
-        '## Altura de EC11, PCB y perilla Ø18',
-        table(['Magnitud','Valor mm'],[
-            ['Cara superior aluminio',f"z={h['panel_top_mm']:.3f}"],
-            ['PCB-A sustrato inferior / superior',f"{h['pcba_bottom_mm']:.3f} / {h['pcba_top_mm']:.3f}"],
-            ['Base EC11 respecto al aluminio',f"{h['pcba_base_relative_mm']:.3f}"],
-            ['PCB-F inferior / superior',f"{h['pcbf_bottom_mm']:.3f} / {h['pcbf_top_mm']:.3f}"],
-            ['Luz A superior → F inferior',f"{h['pcba_to_pcbf_substrate_gap_mm']:.3f}"],
-            ['Luz A superior → K inferior',f"{h['pcba_to_pcbk_substrate_gap_mm']:.3f}"],
-            ['Módulo pantalla inferior / superior (modelo)',f"{h['display_bottom_mm']:.3f} / {h['display_top_mm']:.3f}"]]),
-        '**Base −12 mm: PASS del apilado nominal.** Se extrae el placeholder TOP−13,6 más el espesor real '
-        '1,6 mm de A; base EC11 = TOP−12 = z73. No hay separador de A modelado que imponga esa altura en el ensamble. '
-        'Las superficies de sustrato A/F no se atraviesan, pero **0,9 mm no certifica espacio para componentes '
-        'superiores/soldaduras en la zona solapada**. La luz a K es 7 mm y también requiere revisar sus componentes inferiores.',
-        'Componentes superiores de A cuyo courtyard entra en reservas vecinas: '+('ninguno de los componentes F.Cu medidos (excluyendo encoders y agujeros).' if not r['front_components_in_reserved_areas'] else '')+'\n\n'+
-        table(['Ref','Valor','Solape courtyard F mm²','Solape reserva M4 mm²'],
-              [[c['reference'],c['value'],f"{c['overlap_mm2']['PCB-F']:.3f}",f"{c['overlap_mm2']['M4 reserva doc28 (ventana +5 mm)']:.3f}"] for c in r['front_components_in_reserved_areas']]),
-        'No se demuestra un choque de encapsulados con F: los SH están abajo. Sí quedan **'+str(len(r['through_hole_pins_under_f']))+' pines THT de J1** con centro bajo F ('+', '.join(r['through_hole_pins_under_f'])+'); sus puntas/soldaduras emergen sobre A y tienen solo 0,9 mm hasta el sustrato F. Medir protrusión y fijar margen aislante. No suponer ese volumen nulo.',
-        '**Eje H20: comprobación condicional.** Si el EC11 instalado tiene punta a 20 mm de la superficie '
-        'de montaje, sobresale **20−12 = 8 mm** sobre el aluminio; con carrera de clic de 0,5 mm '
-        '(0,8 mm máxima en la variante EC11E15244G1), quedan 7,5 mm nominales (7,2 mm al máximo de carrera). '
-        'El catálogo oficial [Alps EC11E, dibujos 2/3](https://tech.alpsalpine.com/cms.media/product_catalog_ec_01_ec11e_en_611f078659.pdf) '
-        'y la [ficha EC11E15244G1](https://tech.alpsalpine.com/e/products/detail/EC11E15244G1/) '
-        'distinguen versiones con clic de 0,5 y 1,5 mm. En la placa solo figura EC11, no un MPN de compra. '
-        'El nombre H20 y el enlace del footprint no demuestran qué variante se montará.',
-        'Para una perilla de agujero ciego que asienta en la punta, con hueco inferior g y profundidad de '
-        'inserción d, **g+d=8 mm**. Si g≥0,8 mm para permitir la carrera máxima de la variante de 0,5, '
-        'd≤7,2 mm (antes de tolerancias). Para la variante de 1,5 mm hace falta mayor hueco. '
-        'Ø18 solo fija el diámetro exterior: no especifica d, altura, ajuste del eje D/estriado ni posición del '
-        'hombro. Por tanto **perilla pendiente de validación**, no PASS automático. Separación exterior entre '
-        'perillas: 26−18 = **8 mm**. Corte de chapa Ø7,1 para eje nominal Ø6: **0,55 mm radial**; '
-        'verificar que el casquillo/hombro real no invada ese corte a z83–85.',
-        'El modelo pone el módulo de pantalla con techo z83, es decir 2 mm por debajo de TOP85, '
-        'aunque el prompt v5 pide vidrio a ras. Se señala esa diferencia sin modificarla; no afecta la '
-        'separación XY de 7,28 mm de A a la pantalla.',
-        '## Mazo: distancias aproximadas y cruces',
-        '**Extremos conocidos:** centro de pads eléctricos de J1/J2/J3 de A; Z usado = cara inferior del sustrato '
-        '(z71,4). No se conocen alturas del enchufe. **Extremos estimados:** J1_PCBA=(261,280,9,6), '
-        'J2_I2C=(238,280,9,6) en el frente de PCB-M; F.J1=(257,165,73,9), cerca de su borde izquierdo '
-        'y sobre la cara inferior. PCB-M no tiene footprints colocados. El `.kicad_pcb` de F es legacy '
-        '46×92 mm y no corresponde al contorno Console de 81×83: su J1 no se traslada como si fuera Console. '
-        'Son hipótesis explícitas de encaminado, no coordenadas reales inventadas de esos conectores.',
-        table(['Ruta','Inicio XYZ','Destino estimado XYZ','Recta 3D mm','Rango destino en toda placa mm','Polilínea de servicio mm'],
-              [[v['source']+' → '+v['destination'],fmt(v['start_mm']),fmt(v['end_estimated_mm']),f"{v['straight_3d_mm']:.2f}",fmt(v['target_region_range_mm']),f"{v['routed_mm']:.2f}" if v['service_route_valid'] else 'PENDIENTE (atraviesa A)'] for v in r['routes']]),
-        table(['Ruta','Cruza ventana M4 XY','Cruza pantalla XY','Z del cruce de pantalla','Luz mínima por debajo del módulo mm'],
-              [[v['source'],str(v['crossings']['Ventana M4']['crosses_xy']),str(v['crossings']['Pantalla módulo']['crosses_xy']),
-                fmt(v['crossings']['Pantalla módulo']['z_mm']) if v['crossings']['Pantalla módulo']['crosses_xy'] else '—',
-                f"{v['crossings']['Pantalla módulo']['below_model_mm']:.2f}" if v['crossings']['Pantalla módulo']['crosses_xy'] else '—'] for v in r['routes']]),
-        'Las rectas J1/J2 pasan bajo la pantalla **en proyección**, pero ya han descendido por debajo '
-        'de z68,2 al entrar en su huella: no chocan con el prisma del módulo bajo estas hipótesis. '
-        'La alternativa de servicio baja a z60 antes de pasar bajo el módulo y sigue hacia PCB-M. '
-        'J3 no cruza ventana/pantalla, pero su recta estimada **atraviesa el propio sustrato de A**: '
-        'sube de z71,4 a z73,9 sin salir de la prolongación x231–271/y131–178,5. '
-        '**Su longitud recta es solo una cota inferior, no una ruta utilizable.** '
-        'El conector supuesto F.J1 inferior tiene además solo 0,9 mm libres hasta A: su enchufe no queda validado. '
-        'Para cerrar J3 se necesita colocar F.J1 fuera de la proyección de A o estudiar montarlo arriba, '
-        'rodear el borde de A y llegar desde arriba de F; la altura del conector se debe cotar antes de '
-        'calcular un largo de compra. No se aplica ninguna recolocación. Las tres rectas evitan '
-        'la ventana y M4 nominal en XY; la placa A sigue invadiendo su reserva lateral.',
-        'Longitud de compra = recorrido + bucles de montaje/terminación; no basta con la recta 3D. '
-        'Usar aproximadamente 20–30 % de margen una vez fijados los conectores, medir el camino '
-        'con cinta y comprobar radio mínimo del cable/IDC seleccionado. No se fija un radio sin ficha '
-        'del mazo. Antes del pedido faltan ubicación/orientación/altura de los dos conectores M, '
-        'el de F y el volumen enchufado de J1 (cinta de 30 vías).',
-        '## Qué cambiar, sin aplicarlo',
-        '1. Mantener los ejes aprobados E1–E8: ya pasan con paso 26 mm. Sustituir en una futura revisión '
-        'del modelo el placeholder por el contorno real y añadir sus cuatro soportes a z71,4–73.\n'
-        '2. Para conservar PCB-A, rediseñar el alojamiento/contorno de F en la zona x254–271/y131–171 '
-        '(680 mm²) o justificar un apilado con volumen de componentes y soldaduras. Mover F completa '
-        '≥17 mm a la derecha deja su borde en x352 y excede las paredes; moverla ≥40 mm hacia el frente '
-        'cambia los faders aprobados. Esos cambios requieren decisión de diseño.\n'
-        '3. Resolver el contacto x231 con la ventana y la invasión de 5 mm de la reserva de placa M4: '
-        'medir M4 real, cotar Z y conectores. No reducir la reserva ni mover los pads sin aprobación.\n'
-        '4. Cerrar los contornos separados de K y sus zonas inferiores; A se proyecta sobre ambas. '
-        'Suprimir material por esos solapes sin comprobar Z puede ser innecesario. Verificar también los pasos '
-        'de montaje de A y el volumen del IDC bajo F/K.\n'
-        '5. Alternativa si no se puede acomodar el contorno existente: futura revisión de la prolongación '
-        'de A/conectores manteniendo ejes y contrato eléctrico. No recortar la PCB existente a mano: '
-        'hay cobre y componentes en esa región. No se aplica aquí esa alternativa.\n'
-        '6. Elegir MPN exacto del EC11, cotar la perilla y su carrera, y fijar los tres extremos remotos del mazo '
-        'antes de liberar fabricación. La orden presente es el primer pedido; las notas históricas que dicen '
-        '«fabricada» no se toman como evidencia de un ensamble validado.',
-        '## Superposición a escala y datos',
-        '![Vista superior, X derecha e Y hacia atrás](pcba-fit.svg)\n\n'
-        'Ver [SVG](pcba-fit.svg) y [datos JSON](pcba-fit.json). El SVG distingue contorno real, '
-        'placeholder y reservas inferidas, e incluye PCB-A/K izquierda/K derecha/F/P/M, M4, pantalla, '
-        'torres, agujeros, encoders y cables.',
-        '## Validación de entrega',
-        'En esta base se ejecutaron **16 tests con el Python de KiCad: 16 PASS**. Con Python estándar: '
-        '**15 PASS y 1 omitido**, correspondiente al contraste opcional con pcbnew. Incluyen el demo de '
-        'solapes 680/215 mm², contacto M4, ocho ejes, altura y cruces de mazo. El contraste pcbnew '
-        'comprueba 37 footprints, caras, rotaciones, posiciones globales de pads numéricos, centros '
-        'de eje y Edge.Cuts sin guardar la placa. El SVG se comprobó como XML y se inspeccionó '
-        'visualmente mediante una rasterización de sus primitivas. Los hashes de informe/JSON/SVG '
-        'son idénticos al regenerar con ambos intérpretes. Las únicas adiciones del parche están '
-        'en esta carpeta; todos los archivos de entrada conservan sus bytes respecto a 095370c.',
-        '## Integridad de entradas (SHA-256)',
-        table(['Entrada','SHA-256'],[[p,'`'+v+'`'] for p,v in r['sources_sha256'].items()]),
-    ]
-    (HERE/'REPORT-pcba-fit.md').write_text('\n\n'.join(text.rstrip() for text in texts)+'\n',encoding='utf-8')
+        '# PCB-A · fit de la tira Console v1',
+        '**'+r['conclusion']+'**',
+        'Reproducir: `python3 -B apps/hardware/kicad/consola/tools/fit/check_pcba_fit.py`. '
+        'La ejecución devuelve 1 si falla un criterio. Base: edc67a3. '
+        'Método previo: [THEORY.md](THEORY.md); decisión: [THEORY-strip.md](../../boards/pcb-a/THEORY-strip.md).',
+        '## Ejes y contorno',
+        'Conversión fija esperada: (x+44, 371−y), mm. El ajuste sin escala entrega '+fmt(r['transformation']['translation_mm'])+'. '
+        'EC11 en F.Cu: eje local (+7,5; +2,5), distinto del origen. Esquinas R1 muestreadas cada ≤5°. '
+        'Las colisiones usan la envolvente rectangular exterior conservadora, incluidos los pequeños recortes R1.',
+        table(['Encoder','Eje KiCad','Objetivo panel','Eje panel','Error mm'],
+              [[e['reference'],fmt(e['axis_kicad']),fmt(e['target_panel']),fmt(e['axis_panel']),f"{e['error_mm']:.6f}"] for e in r['encoders']]),
+        'Paso: '+', '.join(f'{v:.3f}' for v in r['pitches_mm'])+' mm. '
+        'Límites panel (xmin,ymin,xmax,ymax): **'+fmt(r['outline_bounds_mm'])+'**. '
+        f"Área muestreada: {r['outline_area_mm2']:.3f} mm². Espesor 1,6 mm.",
+        table(['Reserva','Solape mm²','Separación mm','Estado'],
+              [[n,v['overlap_mm2'],v['clearance_mm'],v['status']] for n,v in r['plan_checks'].items()]),
+        'PCB-K se conserva como diagnóstico del CSV v5 combinado y partición inferida: no es el layout nuevo de K. '
+        'Su proyección XY no integra el criterio de aprobación de esta tarea. Hay 7 mm nominales entre sustratos A/K; '
+        'la interferencia de componentes y el paso de separadores requieren el modelo final. '
+        'Pantalla debe tener ≥3 mm; F, M4 nominal, ventana y reserva M4 deben quedar LIBRES. '
+        'No hay pines THT de A bajo F: '+str(r['through_hole_pins_under_f'])+'.',
+        '## Montaje para FreeCAD',
+        table(['Agujero','KiCad mm','Panel mm','Taladro mm'],
+              [[h['reference'],fmt(h['center_kicad']),fmt(h['center_panel']),h['drill_mm']] for h in r['mounting_holes']]),
+        'Cara inferior/superior A: z=71,4/73,0; chapa z=83…85. Separador nominal desde cara inferior de chapa '
+        'a cara superior PCB: 10 mm. Agujeros NPTH Ø3,2 para M3; no son un bond de GND. '
+        'Añadir estos apoyos al modelo y verificar sus pasos por K y cabezas/tuercas. '
+        'Placeholder antiguo: '+str(r['placeholder'])+'. No representa el nuevo contorno.',
+        '## Conectores y ruta del mazo',
+        table(['Ref','Origen KiCad','Origen panel','Ángulo KiCad','Cara','Centro pads panel'],
+              [[c['reference'],fmt(c['origin_kicad']),fmt(c['origin_panel']),c['rotation_kicad_deg'],c['layer'],fmt(c['cable_datum_panel'])] for c in r['connectors']]),
+        'J1 largo paralelo a X, enchufe hacia abajo; cinta hacia PCB-M después de bajar a z60. '
+        'J2 abre hacia atrás (+Y panel), baja a z60 antes de pasar por debajo de pantalla. '
+        'J3 abre a la derecha (+X panel), rodea el borde derecho de A por x276 y va al J1 supuesto de F. '
+        'J4/R1/R2 DNP. Todos los cables 1:1; conservar pin 1 y polarización.',
+        table(['Ruta','Polilínea XYZ mm','Largo mm','Interferencias','Viable geométricamente'],
+              [[v['source']+' → '+v['destination'],' → '.join(fmt(p) for p in v['waypoints_mm']),f"{v['routed_mm']:.2f}",str(v['service_hits']),v['service_route_valid']] for v in r['routes']]),
+        'Los extremos remotos se conservan como hipótesis explícitas del informe original: M=(261/238,280,9,6), '
+        'F=(257,165,73,9). Se comprueban todas las secciones contra prismas A, F, pantalla y reserva M4. '
+        'El comienzo en el plano inferior de A representa una salida hacia abajo, no el volumen del enchufe. '
+        'Las polilíneas son corredores para dar forma al cable; las esquinas deben redondearse con el radio '
+        'del mazo elegido. No son largos de compra: añadir bucles y validar conectores remotos, volumen enchufado '
+        'y alturas en el montaje. Encoders/perillas y bond ESD a chapa quedan por verificar físicamente.',
+        '## Vista y trazabilidad',
+        '![Fit](pcba-fit.svg)',
+        table(['Entrada','SHA-256'],[[p,'`'+v+'`'] for p,v in r['sources_sha256'].items()])]
+    (HERE/'REPORT-pcba-fit.md').write_text('\n\n'.join(texts)+'\n',encoding='utf-8')
 
 
 def write_svg(r):
@@ -673,7 +572,7 @@ def write_svg(r):
         return f'<circle cx="{x:.2f}" cy="{y:.2f}" r="{radius*scale:.2f}" fill="{fill}" stroke="{color}" stroke-width="1.3"/>'
     svg=['<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="930" viewBox="0 0 1280 930">',
          '<rect width="1280" height="930" fill="#fafbfc"/>',
-         '<text x="55" y="28" font-family="sans-serif" font-size="22" font-weight="bold">PCB-A / Console v1 — NO ENCAJA en reservas XY</text>',
+         '<text x="55" y="28" font-family="sans-serif" font-size="22" font-weight="bold">PCB-A / Console v1 — tira recta · ver resultados JSON</text>',
          '<text x="55" y="49" font-family="sans-serif" font-size="13">Vista superior · X desde izquierda · Y desde frente hacia atrás · mm · Z no representada</text>',
          '<g font-family="sans-serif">',poly(rect(0,0,340,340),'#283749',.02),poly(rect(3.2,3.2,336.8,336.8),'#7b8999',0,'4 3')]
     for v in range(0,341,20):
@@ -717,18 +616,17 @@ def write_svg(r):
         svg += [poly(c['courtyard_panel'],'#a01520',.1,'3 2' if c['reference']=='J4' else ''),
                 label(c['origin_panel'],c['reference']+(' DNP' if c['reference']=='J4' else ''),size=10)]
     for route,color in zip(r['routes'],('#aa3479','#44603f','#008b92')):
-        a,b=pnt(route['start_mm']),pnt(route['end_estimated_mm'])
-        svg.append(f'<path d="M{a[0]},{a[1]} L{b[0]},{b[1]}" fill="none" stroke="{color}" stroke-width="2" stroke-dasharray="6 4"/>')
+        pts=' '.join(f'{x:.2f},{y:.2f}' for x,y in map(pnt,route['waypoints_mm']))
+        svg.append(f'<polyline points="{pts}" fill="none" stroke="{color}" stroke-width="2" stroke-dasharray="6 4"/>')
         svg += [circle(route['end_estimated_mm'],1.5,color,color),label((route['end_estimated_mm'][0]+2,route['end_estimated_mm'][1]+2),route['source']+' destino*',color,9)]
     legend=[('PCB-A real · ejes PASS','#d83945'),('Placeholder 200 × 30 · gris','#838383'),
             ('PCB-K izquierda/derecha inferidas','#8873c9'),('PCB-F 81 × 83','#27936b'),('PCB-P','#afa12e'),
             ('PCB-M piso','#3c8eb2'),('Módulo pantalla','#477eb8'),('M4 / reserva doc28','#e28e29'),
-            ('Torres Ø10','#44515e'),('J1 → M (estimado)','#aa3479'),('J2 → M (estimado)','#44603f'),('J3 → F (recta NO válida)','#008b92')]
+            ('Torres Ø10','#44515e'),('J1 → M (estimado)','#aa3479'),('J2 → M (estimado)','#44603f'),('J3 → F (corredor)','#008b92')]
     for i,(text,color) in enumerate(legend):
         yy=94+i*29
         svg.append(f'<rect x="883" y="{yy-11}" width="14" height="14" fill="{color}"/><text x="907" y="{yy}" font-size="13">{html.escape(text)}</text>')
-    for i,line in enumerate(['A: x54–271 / y131–200,6','F: solape XY 680 mm²','K izq./der.: ver informe','M4 ventana: margen 0 mm','M4 nominal: margen 1 mm','Reserva M4: solape 215 mm²',
-                             'A/F: sustratos separados 0,9 mm','Solape XY ≠ choque 3D probado','* Extremos remotos sin layout','Cables cruzan pantalla en XY,','pasan debajo en Z (hipótesis).','J3 recta atraviesa A: revisar F.J1.']):
+    for i,line in enumerate([r['conclusion'][:48], 'Contorno panel: '+fmt(r['outline_bounds_mm']), 'F / M4: ver separaciones en informe', 'Pantalla: margen mínimo 3 mm', 'K: diagnóstico de reserva histórica', '* Extremos remotos estimados', 'Cables pasan bajo pantalla a z60', 'J3 rodea borde derecho por x276']):
         svg.append(f'<text x="883" y="{490+i*24}" font-size="13">{html.escape(line)}</text>')
     svg += ['</g></svg>']
     (HERE/'pcba-fit.svg').write_text('\n'.join(svg)+'\n',encoding='utf-8')
@@ -753,7 +651,8 @@ def main():
     write_report(r)
     print(f"Ejes: {'PASS' if r['encoder_pass'] else 'FAIL'}; {r['conclusion']}")
     print(f'Informe: {HERE / "REPORT-pcba-fit.md"}')
+    return 0 if r['encoder_pass'] and r['plan_pass'] and r['cable_pass'] else 1
 
 
 if __name__=='__main__':
-    main()
+    raise SystemExit(main())

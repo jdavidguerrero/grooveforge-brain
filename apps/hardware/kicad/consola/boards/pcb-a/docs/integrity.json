@@ -1,0 +1,22 @@
+{
+  "base": "edc67a3",
+  "schematic_sha256": "887ac90cb5f758ef9eaf306f3dbd0887a63d128141b0a392b08fde96fc055ed6",
+  "pad_net_contract": "identical",
+  "board_sha256": "8d3e42a0adced1bc70af5a753a308871d3e5e37d963316a493b6b23a44bf23cd",
+  "layers": 2,
+  "thickness_mm": 1.6,
+  "footprints": 37,
+  "tracks_and_vias": 764,
+  "vias": 172,
+  "trace_widths_mm": [
+    0.25,
+    0.4
+  ],
+  "gnd_zones": 2,
+  "dnp": [
+    "R1",
+    "R2",
+    "J4"
+  ],
+  "encoder_mp": "GND solid"
+}
