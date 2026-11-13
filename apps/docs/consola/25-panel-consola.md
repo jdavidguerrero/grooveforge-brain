@@ -114,6 +114,12 @@ Ajustes aplicados: faders 5 mm más abajo (13 mm de aire con el encoder 8), tran
 transporte 1 mm más bajos (los FSR de velocity quedan a 25 mm), un solo keycap de **13,5 mm** para las 26 teclas (un
 molde), LED por zona (verde = tocar, violeta = navegar/editar; escenas cambian de color con el modo).
 
+**Altura de PCB-A (2026-11-13).** El EC11 de Juan (Alps, eje estriado Ø6) mide **28 mm** de la base del cuerpo a la
+punta del eje, no los 20 supuestos. PCB-A baja de −12 a **−20 mm** (cara superior de la placa = base del encoder) con
+separadores más largos; el eje asoma **8 mm** sobre el aluminio y el casquillo queda bajo la chapa. El layout de
+PCB-A no cambia. Verificado en FreeCAD sin choques (PCB-A en z 63,4–65; pantalla desde z 68,2; Pi hasta z 66 en otra
+zona). Perillas Ø18 con agujero estriado de ≤ 7 mm de profundidad.
+
 **Pantalla bajo la chapa (Juan, 2026-11-12).** El prompt de diseño v5 pedía el vidrio a ras del aluminio, pero la
 ventana de la chapa es de 158 × 91 (área activa más margen) y el vidrio del módulo mide 189,32 × 120,24: el vidrio
 queda **debajo** de la chapa, apoyado contra ella, con el aluminio tapando el borde negro. Se conserva así (protege y

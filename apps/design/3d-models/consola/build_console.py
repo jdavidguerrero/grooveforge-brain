@@ -267,7 +267,13 @@ def make_placeholders():
     return {
         'Pi_stack': Part.makeBox(85, 56, 60, App.Vector(9, 219, 6)),
         'Display_module': rounded_rect(170, 268, 189.32, 120.24, 8, BODY_H - 14.8, 14.8),
-        'PCB_A': Part.makeBox(200, 30, PCB_T, App.Vector(70, 177, TOP - 13.6)),
+        # Tira recta (x 54–271, y 178–201 aprox.) con su cara superior a TOP−20: el EC11 de Juan mide 28 mm de la
+        # base a la punta del eje (2026-11-13), así el eje asoma 8 mm sobre el aluminio. Encoders EC11 como cilindros.
+        'PCB_A': Part.makeBox(217, 23, PCB_T, App.Vector(54, 178, TOP - 20 - PCB_T)),
+        'EC11_bodies': Part.makeCompound([Part.makeBox(12.4, 13.4, 6.5, App.Vector(x - 6.2, 192 - 6.7, TOP - 20))
+                                          for x in [79 + 26 * i for i in range(8)]]),
+        'EC11_shafts': Part.makeCompound([Part.makeCylinder(3.0, 28 - 6.5, App.Vector(x, 192, TOP - 20 + 6.5))
+                                          for x in [79 + 26 * i for i in range(8)]]),
     }
 
 
