@@ -1,0 +1,3211 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 2debcdcf-ebf9-572f-bc5d-eebf76b05308)
+  (paper "A1")
+  (lib_symbols
+    (symbol "Connector_Generic:Conn_01x02"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x02"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x02_1_1"
+        (rectangle
+          (start -1.27 1.27)
+          (end 1.27 -3.81)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Connector_Generic:Conn_01x03"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x03"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x03_1_1"
+        (rectangle
+          (start -1.27 3.81)
+          (end 1.27 -3.81)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 2.667)
+          (end 0 2.413)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 2.54 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Connector_Generic:Conn_01x04"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x04"
+        (at 0 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x04_1_1"
+        (rectangle
+          (start -1.27 3.81)
+          (end 1.27 -6.35)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 2.667)
+          (end 0 2.413)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -4.953)
+          (end 0 -5.207)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 2.54 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -5.08 0)
+          (length 3.81)
+          (name "Pin_4"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 58.42 63.5)
+      (xy 55.88 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d66b3f59-2dbb-5e8f-b25f-8d80e31c5f26))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 55.88 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid e7c4429e-6c30-5dcc-b9fd-04254a7dfed7)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 66.04)
+      (xy 55.88 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 57c8be4f-d996-51c8-b8f7-6e5767861684))
+  (global_label "FSR1_ADC"
+    (shape bidirectional)
+    (at 55.88 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 10288eea-9c31-583f-8cce-e4d2ced7ed3a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid dd8cfffa-5773-5ae3-b0e4-da4af0562e50)
+    (property "Reference" "J_FSR1"
+      (at 63.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "JST-PH_2pin_FSR1"
+      (at 63.5 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_FSR1"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f1deccd4-1025-50a0-a364-e478ad56f01c))
+    (pin "2"
+      (uuid dafa8192-f035-5d37-8e28-b2183947893c))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_FSR1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 123.19)
+      (xy 63.5 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3849eee4-5aed-5931-bc69-f92e1f5e0f2d))
+  (global_label "FSR1_ADC"
+    (shape bidirectional)
+    (at 63.5 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 274fe4e9-2752-506f-a424-a3d332f46c77)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 130.81)
+      (xy 63.5 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bebea1be-3276-5cbf-9cbb-baf8228f3e05))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 63.5 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1f7a182f-10b3-5ec4-8d48-a32ee9e33181)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0aa4be52-50d0-52ed-a5b5-12edf84fba83)
+    (property "Reference" "R_FSR1"
+      (at 63.5 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 63.5 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_FSR1"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 32dbcf16-70be-5014-97f2-763074ac359b))
+    (pin "2"
+      (uuid 5e3cabd5-82f6-5f61-8611-e664b5867665))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_FSR1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 147.32 63.5)
+      (xy 144.78 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8d3cfbd1-4660-5eff-938f-ff2dda29cc62))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 144.78 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1037d739-92b7-5c7e-b978-0e7901946ff2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 144.78 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 147.32 66.04)
+      (xy 144.78 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 046eccc2-c366-562e-a70e-8cd483779094))
+  (global_label "FSR2_ADC"
+    (shape bidirectional)
+    (at 144.78 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid db6da201-9fab-5e66-a726-a750be9b7045)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 144.78 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 152.4 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 08c23289-7a82-554d-a0c4-5fe982860763)
+    (property "Reference" "J_FSR2"
+      (at 152.4 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "JST-PH_2pin_FSR2"
+      (at 152.4 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_FSR2"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 82549933-bfb6-50e2-9a36-1e3b6f14056f))
+    (pin "2"
+      (uuid f2383547-5927-57ca-8339-fd0db17d1375))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_FSR2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 123.19)
+      (xy 152.4 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6b179a18-fe1a-5852-8a0e-cbf85116a672))
+  (global_label "FSR2_ADC"
+    (shape bidirectional)
+    (at 152.4 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid aa32dbed-1720-574c-9bb6-43347345da8c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 130.81)
+      (xy 152.4 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5dcfc3b8-f859-559d-a998-5706b37bc1bd))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 72fbb161-a45c-54b7-bfdf-a0ddd80b82d1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 9467db55-ec63-530d-809a-8a08807de2b6)
+    (property "Reference" "R_FSR2"
+      (at 152.4 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 152.4 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_FSR2"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 09dea14c-8efe-5c21-bbf3-7a69667adeda))
+    (pin "2"
+      (uuid 28aa2118-7d41-5d28-a225-be20c10f970b))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_FSR2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 236.22 63.5)
+      (xy 233.68 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b952ce83-f805-5727-bc6f-3745a4391985))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 233.68 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6ce0cbe0-7861-5b28-aa83-08be63bd3d98)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 236.22 66.04)
+      (xy 233.68 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e1c43fac-45c5-5a40-a5d6-b4154d7b27a7))
+  (global_label "FSR3_ADC"
+    (shape bidirectional)
+    (at 233.68 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 2ac131c7-a2cd-5d72-af62-67eda8ae7e9c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 15b7deb3-28d4-5409-9f17-67523e29d002)
+    (property "Reference" "J_FSR3"
+      (at 241.3 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "JST-PH_2pin_FSR3"
+      (at 241.3 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_FSR3"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7fd33e0f-848a-5f82-b2c2-0637a6a5b5d5))
+    (pin "2"
+      (uuid 6bd51447-b846-5a3e-a0d0-7bc52b71a70f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_FSR3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 123.19)
+      (xy 241.3 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2a403928-41ec-5daf-bcbc-71c3ac2ff27a))
+  (global_label "FSR3_ADC"
+    (shape bidirectional)
+    (at 241.3 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c4982e40-edbd-5de6-81ea-b6208785711a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 130.81)
+      (xy 241.3 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d63a01f6-3c25-526a-9a32-eaa57f6b97e9))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8e2876ff-5449-5d3f-9a50-669e0a312d67)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid fff7aea6-033e-5d4c-a975-5d47e1f28427)
+    (property "Reference" "R_FSR3"
+      (at 241.3 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_FSR3"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 9aaec070-668d-5f11-a9e6-6e4918052c87))
+    (pin "2"
+      (uuid a1a9c9cb-c5df-5457-9154-5554d2be7ceb))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_FSR3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 325.12 63.5)
+      (xy 322.58 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ceb13759-3a03-58ab-a06a-c5d7875dd27c))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 322.58 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 107e384f-995a-5f2b-a0cd-04480506b1e2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 322.58 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 325.12 66.04)
+      (xy 322.58 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6d1abd36-1df7-5c0d-a6fe-302ec7f683a6))
+  (global_label "FSR4_ADC"
+    (shape bidirectional)
+    (at 322.58 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3f67af04-7ac5-5a3e-abbc-4cd9bd81ab6e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 322.58 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 330.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 724d0318-905f-5459-9ea1-a34e27faebff)
+    (property "Reference" "J_FSR4"
+      (at 330.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "JST-PH_2pin_FSR4"
+      (at 330.2 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_FSR4"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131337"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B2B-PH-K-S(LF)(SN)"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 10f18b41-d78a-5675-a0c9-49371932869a))
+    (pin "2"
+      (uuid c3d3e544-57dd-5862-bd92-5542dba2e9f1))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_FSR4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 123.19)
+      (xy 330.2 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6d230eda-7482-5808-87cf-5963a0eb0863))
+  (global_label "FSR4_ADC"
+    (shape bidirectional)
+    (at 330.2 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 70ea9130-2a81-559f-b43f-9d9575bae8cb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 130.81)
+      (xy 330.2 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2543b269-48c9-5bd8-9380-c6a219410b97))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid e1b4f16e-20b4-5485-8047-907742573fe7)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 921d0c06-8fa0-57da-9f96-4cbe9295ff46)
+    (property "Reference" "R_FSR4"
+      (at 330.2 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 330.2 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_FSR4"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 2c5b8fe1-f2f8-58fb-aed4-3e671263ee74))
+    (pin "2"
+      (uuid d9f790f6-161e-56ad-a3ec-224ed5b3656d))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_FSR4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 58.42 187.96)
+      (xy 55.88 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 02ac625d-eb70-5030-af16-d308d5ad9f57))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 55.88 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0bdce0cd-af0c-5baa-a265-a16156a68244)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 190.5)
+      (xy 55.88 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0d0d9e28-4bca-55a3-99ea-53ebaf5611c9))
+  (global_label "JOG_A"
+    (shape bidirectional)
+    (at 55.88 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid eaa2bd2d-a80d-563c-bc8d-ee3d4bb2adfb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 193.04)
+      (xy 55.88 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5aea9db6-e18e-5009-914b-9ba1e1f51507))
+  (global_label "JOG_B"
+    (shape bidirectional)
+    (at 55.88 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 85d50c65-a04b-5925-bafa-670791d7c322)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 195.58)
+      (xy 55.88 195.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 773e3292-550d-5992-b59f-7af64e699f02))
+  (global_label "JOG_CLICK"
+    (shape bidirectional)
+    (at 55.88 195.58 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 86795c77-7ce4-5d4d-b278-d5c23a601b71)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 195.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x04")
+    (at 63.5 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 37745daf-4fc3-5c0a-947d-8a4e8ae13762)
+    (property "Reference" "J_JOG1"
+      (at 63.5 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "JOG_CABLE"
+      (at 63.5 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_JOG"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131334"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B4B-PH-K-S(LF)(SN)"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid aa3bee90-fb7b-50fa-b78f-254d6c76fec2))
+    (pin "2"
+      (uuid 38a88fc8-6ae6-5158-a6cd-add7a7d68b9d))
+    (pin "3"
+      (uuid 423b548b-9ed8-597a-bc79-1c750d000b51))
+    (pin "4"
+      (uuid 77f651cb-aebb-557a-aa2d-52579bd65dda))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_JOG1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 147.32 187.96)
+      (xy 144.78 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 608fb264-f0eb-5bbe-b40a-0accba4af0e7))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 144.78 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 56faa4a4-1c1a-5ed3-bd68-026cd4cac99c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 144.78 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 147.32 190.5)
+      (xy 144.78 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5486bd34-90ef-52ca-94ec-dcb7484975ca))
+  (label "POT_MASTER_WIPER"
+    (at 144.78 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c39ac3c7-f90d-53f6-8319-cfd668bfd6fe))
+  (wire
+    (pts
+      (xy 147.32 193.04)
+      (xy 144.78 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid df1fef33-f2d9-520c-a96e-559e81a12d83))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 144.78 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1675f596-c6ab-5569-98a4-6a878c5bfe9b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 144.78 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 152.4 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid cfda4ca6-66ba-572d-8ccb-02d642c9e542)
+    (property "Reference" "J_POT_MASTER1"
+      (at 152.4 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "POT_MASTER_CABLE"
+      (at 152.4 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_POT_MASTER"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid df036954-b867-5f80-a369-540282fc3e6a))
+    (pin "2"
+      (uuid c293dcef-44fb-52f8-bc7e-5235ae339a8d))
+    (pin "3"
+      (uuid 8f3cb036-5cd9-5a4c-bb26-949c9bd6c825))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_POT_MASTER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 313.69)
+      (xy 152.4 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c63986ab-2317-5e72-9cbf-29445aeaac98))
+  (label "POT_MASTER_WIPER"
+    (at 152.4 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1b7bbdb7-9e76-56ea-9944-6e08a497da11))
+  (wire
+    (pts
+      (xy 152.4 321.31)
+      (xy 152.4 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4ee2492d-dca5-5085-95c1-c3c3f98a8a6d))
+  (global_label "POT_MASTER"
+    (shape bidirectional)
+    (at 152.4 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid cfcd34cf-6976-5810-8cd4-16b7552c449d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid fe4783b3-fb2c-5b0c-bd87-1e6a93d3f4ce)
+    (property "Reference" "R_POT_MASTER1"
+      (at 152.4 283.21 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 152.4 285.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_MASTER"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 5858eb3e-ad53-572d-9d8e-1f3d32e1d4a6))
+    (pin "2"
+      (uuid 0260369e-16dc-5a92-b0ff-eefcdd13bf66))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_MASTER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 377.19)
+      (xy 152.4 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ebfc2da3-cafc-5687-897f-96b9115a504a))
+  (global_label "POT_MASTER"
+    (shape bidirectional)
+    (at 152.4 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5b5afe94-440e-502c-bfaf-16924d4b80a1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 384.81)
+      (xy 152.4 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 14120c90-c448-5c16-a026-c0e4e42842af))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 873ecdf5-00c1-5192-b8c1-fc87d2603136)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 6f7e40e5-051c-5e12-b945-60a46189cf59)
+    (property "Reference" "C_POT_MASTER1"
+      (at 152.4 354.33 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 152.4 356.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_POT_MASTER"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 8812d02d-26e4-5e2e-a678-b6a6df75b880))
+    (pin "2"
+      (uuid da0b3f78-f0ac-5561-a086-3b5b07f75dac))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "C_POT_MASTER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 440.69)
+      (xy 152.4 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 04418e13-7163-5dd3-9b75-35a83055d1b7))
+  (global_label "POT_MASTER"
+    (shape bidirectional)
+    (at 152.4 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d64a72b1-f8df-5400-99d5-5da5fc052b80)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 448.31)
+      (xy 152.4 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dbea9bf7-777b-54b6-b8f0-ee69c14fceb9))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5634a231-ad30-5916-abba-c525e8a11d97)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f589022b-a960-5bc3-a715-a4fd4bc4283b)
+    (property "Reference" "R_POT_BIAS_MASTER1"
+      (at 152.4 417.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 152.4 420.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_BIAS_MASTER"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25741"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1003TCE"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 87b5eecb-6c87-584c-9979-56413a46413c))
+    (pin "2"
+      (uuid a5037a40-9b8a-5c3f-8e6e-902345a690cf))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_BIAS_MASTER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 236.22 187.96)
+      (xy 233.68 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c69d9208-5b06-5316-9d8a-9e92a8b339aa))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 233.68 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b7e44088-b292-59bc-b1eb-4a031fcb6c07)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 236.22 190.5)
+      (xy 233.68 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4fc32283-0e62-5d38-a57c-8a577eaf3d52))
+  (label "POT_CUE_WIPER"
+    (at 233.68 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 837292bb-13c9-540c-8b82-3b8cb53c8dc9))
+  (wire
+    (pts
+      (xy 236.22 193.04)
+      (xy 233.68 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0957d5e1-0702-5cd2-8a3d-39ee6b9d7665))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 233.68 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 97668cc2-5432-50d1-a35c-d323883d074b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 241.3 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f0947318-dfab-5cc6-aca9-8dd291e9017e)
+    (property "Reference" "J_POT_CUE1"
+      (at 241.3 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "POT_CUE_CABLE"
+      (at 241.3 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_POT_CUE"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d509eb65-fc87-558b-96bf-c4ad212a2a47))
+    (pin "2"
+      (uuid 2b24f16f-f9f9-504f-9ebb-6763518ef51e))
+    (pin "3"
+      (uuid 2018838f-1963-512e-b8e7-18033a02962a))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_POT_CUE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 313.69)
+      (xy 241.3 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 20c13b43-c375-5cfc-9c29-270b43ce6ef7))
+  (label "POT_CUE_WIPER"
+    (at 241.3 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid bdd5cd37-f16b-5098-a477-904827fc3754))
+  (wire
+    (pts
+      (xy 241.3 321.31)
+      (xy 241.3 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid aa0dbd5e-a3fa-56d2-b2d1-c56f78f0f98c))
+  (global_label "POT_CUE"
+    (shape bidirectional)
+    (at 241.3 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7c5c2e31-ae5e-5038-aaa5-6a61be300b7c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid e91987f2-85bb-5e79-8ce4-a69ede282302)
+    (property "Reference" "R_POT_CUE1"
+      (at 241.3 287.02 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 241.3 289.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_CUE"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 96359e8e-e683-58b3-a3c5-229218a15730))
+    (pin "2"
+      (uuid a47bfd0a-66bc-5d17-ae25-83648e38e8d4))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_CUE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 377.19)
+      (xy 241.3 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1f23d014-9e9c-59b7-927c-7b84fe01c308))
+  (global_label "POT_CUE"
+    (shape bidirectional)
+    (at 241.3 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c397796f-3e4b-520c-8936-b810518120d7)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 384.81)
+      (xy 241.3 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6d991b2a-628d-5906-8a96-c312833ae49d))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7a612100-b20b-59d4-a8b4-d1f9ec6f35af)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b551190c-9bb2-58ed-9b98-ef8d9e9738d5)
+    (property "Reference" "C_POT_CUE1"
+      (at 241.3 358.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 241.3 360.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_POT_CUE"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c4fb570b-4f63-5bc9-bef0-6ba85311caa7))
+    (pin "2"
+      (uuid 2c5e4650-072f-5d45-be3a-f7bb148e1110))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "C_POT_CUE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 440.69)
+      (xy 241.3 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0d008183-f499-5fc9-acab-59aa77aaf925))
+  (global_label "POT_CUE"
+    (shape bidirectional)
+    (at 241.3 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid df3150c4-9662-5f86-9aae-69ad58b4298e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 448.31)
+      (xy 241.3 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7087a276-1a1a-591a-8ffb-2552f0b436a5))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c901be39-2681-54d8-8e9a-c49e85d6ad6a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 59c16d5d-4405-5864-bdbd-7e88bb12d0ec)
+    (property "Reference" "R_POT_BIAS_CUE1"
+      (at 241.3 421.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 241.3 424.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_BIAS_CUE"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25741"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1003TCE"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 62bb245b-ed92-57a4-a1d6-c5262f6b4a25))
+    (pin "2"
+      (uuid 3de00817-1dd4-51b7-8eab-36e5e265b17f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_BIAS_CUE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 325.12 187.96)
+      (xy 322.58 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2338f165-a586-569a-9574-5509642eb48f))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 322.58 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 89f9c33e-6653-5a40-a522-4df21a447667)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 322.58 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 325.12 190.5)
+      (xy 322.58 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c0e204a3-e5ea-5106-b612-cf697e9f4b32))
+  (label "POT_IN_WIPER"
+    (at 322.58 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9883df00-556d-51b2-bbdb-874c5808a747))
+  (wire
+    (pts
+      (xy 325.12 193.04)
+      (xy 322.58 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cc37e37a-41d4-5447-80a6-bf373a8942b8))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 322.58 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid dc63fcdf-5abb-50c3-98a5-a0c054a05a34)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 322.58 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 330.2 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 8e2c0e3b-2d30-5512-b8dc-8d3e5a51182b)
+    (property "Reference" "J_POT_IN1"
+      (at 330.2 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "POT_IN_CABLE"
+      (at 330.2 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_POT_IN"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 8fa7b710-dff1-52f2-b3a1-1ab2ec6c451a))
+    (pin "2"
+      (uuid 7ee45725-e0b3-5200-9759-34a5db97000c))
+    (pin "3"
+      (uuid da5ea4a7-d4c4-57c2-9eb2-6799895e2086))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_POT_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 313.69)
+      (xy 330.2 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8e71e2b7-16a9-587f-8ea4-bd74fa2d1b21))
+  (label "POT_IN_WIPER"
+    (at 330.2 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d4baced6-57f6-5437-947f-90b73f41efe2))
+  (wire
+    (pts
+      (xy 330.2 321.31)
+      (xy 330.2 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bc529f3d-bebd-54da-8bf8-fe79d5cc804e))
+  (global_label "POT_IN"
+    (shape bidirectional)
+    (at 330.2 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 97e80730-ff53-5f2d-8144-be200474b7ff)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 865958fd-bfba-5650-99da-cec5d42f12fe)
+    (property "Reference" "R_POT_IN1"
+      (at 330.2 288.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 330.2 290.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_IN"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c3cfee60-6991-5a10-9d98-7cba609dd20b))
+    (pin "2"
+      (uuid 87474efb-909c-53f7-b3d5-43a4b732fc85))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 377.19)
+      (xy 330.2 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c172cdde-729a-515a-ba55-6e8238c3e7a8))
+  (global_label "POT_IN"
+    (shape bidirectional)
+    (at 330.2 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3d44d22a-50de-5a92-8a30-231c319bb9aa)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 384.81)
+      (xy 330.2 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bbe816d4-3abd-55e3-b159-a1b9ff1a78a8))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f0a90623-4329-5642-8733-b66253503c5f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 330.2 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 46f1482c-49ed-505f-9ec8-343d87dce6c3)
+    (property "Reference" "C_POT_IN1"
+      (at 330.2 359.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 330.2 361.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_POT_IN"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 44cb498d-0de4-5071-9ad5-8ebf2fb37f1c))
+    (pin "2"
+      (uuid c366dee1-2c41-560d-9887-a1fb25b2689b))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "C_POT_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 440.69)
+      (xy 330.2 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e90f1c55-ffe6-584b-9c41-d96089b0c2f7))
+  (global_label "POT_IN"
+    (shape bidirectional)
+    (at 330.2 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2e26586b-a582-5569-9b86-6b8ac2860c76)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 448.31)
+      (xy 330.2 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ed382bb4-9a7f-5719-baeb-60d4ca13b0e4))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 330.2 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 66739e16-a853-5fe2-a9c9-97c2e6bb4e89)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f371534c-d051-54a4-9dbc-18e62fd8ba2c)
+    (property "Reference" "R_POT_BIAS_IN1"
+      (at 330.2 422.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 330.2 425.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_POT_BIAS_IN"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25741"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1003TCE"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 330.2 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7c212a28-40f0-5348-ac50-fa393026092a))
+    (pin "2"
+      (uuid a2c228fd-30c8-5a3f-9124-32aab0969c30))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "R_POT_BIAS_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 58.42 251.46)
+      (xy 55.88 251.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid adf610ca-36de-5da3-9c4f-6e4b32fbe55a))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 55.88 251.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7062e90b-60e8-5e4b-8e99-504131617781)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 251.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 254)
+      (xy 55.88 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 41c0a0b0-099e-5690-ab5a-b0fe8a2e64a2))
+  (global_label "PAD_SEL_ADC"
+    (shape bidirectional)
+    (at 55.88 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 39420cdf-49e1-5e84-937a-dce746af7753)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 58.42 256.54)
+      (xy 55.88 256.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4d072a30-d321-5e65-bc94-7eda2beef293))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 55.88 256.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6e7872de-a631-5fbb-b67c-ee207be9e0e7)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 256.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 63.5 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 339df7d3-e896-50e1-93cb-8f4be520e95f)
+    (property "Reference" "J_PAD_SEL1"
+      (at 63.5 245.11 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PAD_SEL_CABLE"
+      (at 63.5 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_PAD_SEL"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c8b8f8b3-1fde-55ee-877c-76b238077613))
+    (pin "2"
+      (uuid a29baf2a-2ebe-5e32-b5a8-cd795525ca5e))
+    (pin "3"
+      (uuid d3482a4c-cfb0-5743-a6e6-20e68a285686))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_PAD_SEL1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 236.22 251.46)
+      (xy 233.68 251.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1e0e3a10-7356-56b2-9e53-b028b6135f6e))
+  (global_label "HP_L"
+    (shape bidirectional)
+    (at 233.68 251.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6a78e879-a087-561c-9a84-c396a4eb2c40)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 251.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 236.22 254)
+      (xy 233.68 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3f2a6804-0e38-5882-b9d1-d2c6c82ee44b))
+  (global_label "HP_R"
+    (shape bidirectional)
+    (at 233.68 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7ff7272f-5184-593a-94be-eab19a24c529)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 236.22 256.54)
+      (xy 233.68 256.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6a734c54-a179-550c-b045-de27b1d4221b))
+  (global_label "HP_VGND"
+    (shape bidirectional)
+    (at 233.68 256.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d23b742b-e3b0-5b7e-a1ab-48e4fe36f536)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 256.54 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 241.3 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 43751f46-c1d8-516d-9bd7-ee8551292afe)
+    (property "Reference" "J_HP1"
+      (at 241.3 245.11 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "HP_CABLE"
+      (at 241.3 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_HP"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 70f48be2-88ea-5b62-b599-3717a2e0fbdf))
+    (pin "2"
+      (uuid 2e8ecac3-0e1d-531f-ab4a-535023db00bd))
+    (pin "3"
+      (uuid c5a02342-5159-56e8-a961-1e7f22f26098))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/596f804a-2bc9-570d-b766-ddfd3ed8404d"
+          (reference "J_HP1")
+          (unit 1)))))
+  (text "Componentes de panel por cable. JOG_CLICK via J_PCB_K hacia MCP 0x23."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 827dca8a-19c2-5f1d-a381-4196a7a1064c))
+  (text "D13: polo C comun a J_PAD_SEL.2; extremos a .1/.3; contacto central sin cable (1.65V)."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 848bd80a-8a7d-5967-a2e9-1cf582c4b696))
+  (text "D11: pots con RC 1k/100nF del lado ADC. J_HP unico jack HP; HP_VGND aislado de masa."
+    (at 15.24 27.94 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 7a6ca56c-d149-5d6f-aa6d-019edbe60572)))

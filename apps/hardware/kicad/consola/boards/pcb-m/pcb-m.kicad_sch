@@ -1,0 +1,286 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 0766e3a4-c438-57aa-9265-664763d6dd17)
+  (paper "A3")
+  (lib_symbols)
+  (sheet
+    (at 20.32 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid ccfd5574-841e-55ce-8ba6-76217c08467f)
+    (property "Sheetname" "01-teensy"
+      (at 58.42 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/01-teensy.kicad_sch"
+      (at 58.42 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "2")))))
+  (sheet
+    (at 109.22 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 37204336-d7a2-54a6-89a8-c422e9ab70d1)
+    (property "Sheetname" "02-analog-front"
+      (at 147.32 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/02-analog-front.kicad_sch"
+      (at 147.32 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "3")))))
+  (sheet
+    (at 198.12 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 08f376cf-7ddc-53dd-9416-fe1edb332f66)
+    (property "Sheetname" "03-adc"
+      (at 236.22 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/03-adc.kicad_sch"
+      (at 236.22 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "4")))))
+  (sheet
+    (at 20.32 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid ad9ac7de-dd0b-515f-b618-1da00d7251db)
+    (property "Sheetname" "04-mcp-io"
+      (at 58.42 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/04-mcp-io.kicad_sch"
+      (at 58.42 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "5")))))
+  (sheet
+    (at 109.22 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 6d1e5fc4-1ae9-5727-95ee-4dd72b5aa7d0)
+    (property "Sheetname" "05-cv-dac"
+      (at 147.32 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/05-cv-dac.kicad_sch"
+      (at 147.32 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "6")))))
+  (sheet
+    (at 198.12 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 596f804a-2bc9-570d-b766-ddfd3ed8404d)
+    (property "Sheetname" "06-surface"
+      (at 236.22 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/06-surface.kicad_sch"
+      (at 236.22 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "7")))))
+  (sheet
+    (at 20.32 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 1bdd4807-168d-59c2-a209-2f19337b239c)
+    (property "Sheetname" "07-midi"
+      (at 58.42 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/07-midi.kicad_sch"
+      (at 58.42 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "8")))))
+  (sheet
+    (at 109.22 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid e31eba56-b0b1-5bc2-be55-5a673e4df2b0)
+    (property "Sheetname" "08-connectors-panel"
+      (at 147.32 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/08-connectors-panel.kicad_sch"
+      (at 147.32 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "9")))))
+  (sheet
+    (at 198.12 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 690fcfae-1b99-5c2c-bfab-6430a8445761)
+    (property "Sheetname" "09-connectors-rear"
+      (at 236.22 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/09-connectors-rear.kicad_sch"
+      (at 236.22 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "10")))))
+  (sheet
+    (at 20.32 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 6adb066a-20f9-5752-906a-e7add3ad287a)
+    (property "Sheetname" "10-power"
+      (at 58.42 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/10-power.kicad_sch"
+      (at 58.42 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "11")))))
+  (sheet
+    (at 109.22 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 2254eb97-ccb1-557b-b047-c25ba62a2b25)
+    (property "Sheetname" "11-diagnostics"
+      (at 147.32 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/11-diagnostics.kicad_sch"
+      (at 147.32 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "12")))))
+  (sheet
+    (at 198.12 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid e10a9322-7533-510c-8de6-6cedadb311ab)
+    (property "Sheetname" "12-i2c-branches"
+      (at 236.22 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/12-i2c-branches.kicad_sch"
+      (at 236.22 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17"
+          (page "13")))))
+  (sheet_instances
+    (path "/"
+      (page "1"))))

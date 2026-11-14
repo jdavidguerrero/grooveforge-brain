@@ -1,0 +1,18 @@
+{
+  "board_sha256": "ebf584ac154504effff6725f7f17ab66b1dc944c18495e68761c5aba7f91324e",
+  "files": {
+    "pcb-a-B_Cu.gbl": "91554f4ba3265ba0132cbf4fa8cb0e9594de623f232198c05fa4d478a727bd5f",
+    "pcb-a-B_Mask.gbs": "f39319a153cc9a4fd5a9f74699c8ae13b8fb4ba5f522d098d69638496bece5d1",
+    "pcb-a-B_Paste.gbp": "d022cd268d712b83be4ee81d2aedf27090917d22b4a86feac5f4c989a634dd75",
+    "pcb-a-B_Silkscreen.gbo": "58b88e1aeebc8f3a3c39c68ea3ab466e7dcf3a141a733fa23ded15103f2bcdfe",
+    "pcb-a-Edge_Cuts.gm1": "296507ab43c5a4538ba6994b5db56b992d919d57e617a9e65b95131bd8db88d6",
+    "pcb-a-F_Cu.gtl": "8483afe150d9f74fa9ae2f9cc4b0c5b8333a1e92349acdae50f17cf1f3d47171",
+    "pcb-a-F_Mask.gts": "c2454ca1a9f37c482925f9ff2866598680df6899e4cd5d97fa1b78e699c341b7",
+    "pcb-a-F_Paste.gtp": "17cdda778c49bb9659376ceeb32621d7ac7945db423fc82e0bcc1cded403d21d",
+    "pcb-a-F_Silkscreen.gto": "3bfb2f66127de0582a0a10d9fee28ef04092cb4d17f9b1062ac6edef46df7c27",
+    "pcb-a-NPTH.drl": "c22bc20f44059c5de62132b1e2b4e4e8bdd72e3ffc490da3e1c7e282ebbc5f7f",
+    "pcb-a-PTH.drl": "4db0bab1d7059479ae07ceedb4e63e7e238afb53615397b5969d5baaa60496f3",
+    "pcb-a-gerbers.zip": "84706d0e7891a2d290f223ccbdeee0783b51bcfa43837e136786fd46527277f3",
+    "pcb-a-job.gbrjob": "803b621b135c61736c8e3aee9081722f39bb9e7ee4a1517717ecc68664f4f39f"
+  }
+}

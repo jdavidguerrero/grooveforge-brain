@@ -53,3 +53,32 @@ DX7 y Prophet admiten CC 74 (cutoff) y 71 (resonancia) con los rangos del firmwa
 con MOVE y GRIT del preset cargado. Las macros CC 14/15/16/19 del Prophet siguen pendientes. La salida pasa por un
 bloqueador de DC de 5 Hz, porque la PLATE de PJRC deja un offset al terminar la cola y la salida física del Brain es
 acoplada en alterna (`apps/docs/sprints/gemelo-correcciones-2026-11-03.md`).
+
+Benchmark headless para Pi 5 (también macOS, sin JUCE ni descargas):
+
+```sh
+cmake -S apps/brain-plugin -B /tmp/gf-gemelo-bench \
+  -DGF_BUILD_VST3=OFF -DCMAKE_BUILD_TYPE=Release -DGF_BENCH_OPT=O2
+cmake --build /tmp/gf-gemelo-bench --parallel 4
+/tmp/gf-gemelo-bench/gf_engine_bench --seconds 20 --threads 1 --json /tmp/gf-gemelo-results/results.json
+```
+
+Genera tabla, JSON, WAV PCM16 y SHA-256 del PCM a 48 kHz. Matriz dry/wet con ambos bloques (128/256),
+polifonías hasta el máximo del preview y escenario de cuatro partes medido en un hilo. `--help` permite filtrar;
+`GF_BENCH_OPT=O3` mide la alternativa. El runner y las bibliotecas DSP usan los mismos flags Release
+(`-O2` por defecto, sin fast-math, sin contracción FMA, tuning ARM comprobado por CMake).
+El benchmark se activa por defecto con VST3 apagado; queda apagado por defecto en un build VST3 nuevo.
+`GF_BUILD_ENGINE_BENCH=OFF` conserva la política de flags anterior del plugin.
+El build sin VST solo habilita C++; no requiere un compilador C separado.
+
+En el Pi: `bash tools/gemelo-pi/run_on_pi.sh` construye en `/tmp`, ejecuta O2/O3 tres veces, guarda resultados,
+compara hashes y registra temperatura/throttling si existe `vcgencmd`; no instala nada.
+Método, presets, límites y puerta de decisión: [consola/12-gemelo-pi.md](../docs/consola/12-gemelo-pi.md).
+El arnés mide los previews y sus buses, no valida fidelidad del firmware ni latencia de un host real.
+
+DX7 6-OP (ADR-008 §4) es un modo adicional: `gf_dx7_6op` / `gf::Dx7SixPreview`, engine id 7,
+`dx7_6op` en el bench. FM 4-OP conserva id 4 y sus GFP antiguos. El VST ofrece un selector **DX7 6-OP**
+y bancos de ocho controles creados desde `engines/dx7_6op_params.h` (la misma tabla para `list_params`).
+Importa `.syx` VCED o VMEM; **SYX voice 1–32** elige la voz del banco antes de importar. Exporta GFP 6,
+que también puede leer `decode_engine_preset`; no usa la estructura de cuatro operadores para seis.
+[Modelo/APIs](../docs/theory/dx7-6op.md) · [validación y comparación MSFA](../docs/theory/dx7-6op-validation.md).

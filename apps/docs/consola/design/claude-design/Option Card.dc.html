@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></helmet>
+<div style="box-sizing:border-box;width:100%;height:100%;background:#141414;border:{{ bd }};border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;font-family:'IBM Plex Mono',monospace;color:#F2F2F2;overflow:hidden">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;line-height:36px;font-weight:700">{{ letter }}</span>
+      <span style="font-size:10px;font-weight:600;letter-spacing:.08em;padding:3px 6px;border-radius:3px;background:{{ tagBg }};color:{{ tagFg }};border:1px solid {{ tagBd }}">{{ tagText }}</span>
+    </div>
+    <span style="font-size:11px;letter-spacing:.06em;color:#5A5A6E">{{ encTxt }}</span>
+  </div>
+  <div style="position:relative;height:{{ rollH }}px;flex:none;background:#0C0C0C;border:1px solid #242424;border-radius:4px;overflow:hidden">
+    <sc-for list="{{ lanes }}" as="r" hint-placeholder-count="4"><div style="position:absolute;left:0;right:0;top:{{ r.t }}%;height:{{ r.h }}%;background:{{ r.bg }}"></div></sc-for>
+    <sc-for list="{{ beats }}" as="b" hint-placeholder-count="4"><div style="position:absolute;top:0;bottom:0;left:{{ b.x }}%;width:1px;background:{{ b.c }}"></div></sc-for>
+    <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;letter-spacing:.12em;color:#7A6FE0">GENERATING · {{ progress }}</div></sc-if>
+    <sc-for list="{{ ns }}" as="n" hint-placeholder-count="6"><div style="position:absolute;left:calc({{ n.l }}% + 1px);width:calc({{ n.w }}% - 2px);top:calc({{ n.t }}% + 1px);height:calc({{ n.h }}% - 2px);background:{{ color }};border-radius:2px"></div></sc-for>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+    <span style="font-size:16px;line-height:20px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:{{ nameC }}">{{ sound }}</span>
+    <span style="font-size:12px;line-height:16px;color:#9FE1CB;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sub }}</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span style="font-size:10px;letter-spacing:.12em;color:#5A5A6E;width:54px">ENERGY</span>
+    <div style="display:flex;gap:3px;flex:1"><sc-for list="{{ segs }}" as="s" hint-placeholder-count="5"><div style="flex:1;height:8px;border-radius:1px;background:{{ s.c }}"></div></sc-for></div>
+    <span style="font-size:14px;font-weight:600;width:16px;text-align:right">{{ energy }}</span>
+  </div>
+  <div style="flex:1"></div>
+  <div style="font-size:11px;letter-spacing:.06em;color:#5A5A6E;border-top:1px solid #242424;padding-top:10px">{{ hint }}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:300,&quot;height&quot;:420},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;option&quot;,&quot;cue&quot;,&quot;room&quot;,&quot;loading&quot;],&quot;default&quot;:&quot;option&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;letter&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;A&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;color&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3D8CFF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sound&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Sub Prophet&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;A1 · pluck · 16 steps&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;energy&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;default&quot;:3,&quot;tsType&quot;:&quot;number&quot;},&quot;encTxt&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;ENC 1&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;hint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PRESS ENC TO CUE&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;rollH&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;rows&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;},&quot;progress&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;2/3&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;notes&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{s:number,n:number,l:number}[]&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props, st = p.state ?? 'option', rows = p.rows ?? 6;
+    const T = {
+      option: ['ENGINE', '#534AB7', '#F2F2F2', '#534AB7', '2px solid #534AB7'],
+      cue: ['CUE', '#F2F2F2', '#0A0A0A', '#F2F2F2', '2px dashed #F2F2F2'],
+      room: ['IN ROOM', '#1D9E75', '#0A0A0A', '#1D9E75', '2px solid #1D9E75'],
+      loading: ['GENERATING', 'transparent', '#7A6FE0', '#534AB7', '2px solid #2B2758']
+    }[st];
+    const loading = st === 'loading';
+    const notes = loading ? [] : (p.notes ?? [{ s: 0, n: 0, l: 2 }, { s: 3, n: 2, l: 1 }, { s: 6, n: 0, l: 2 }, { s: 8, n: 3, l: 1 }, { s: 11, n: 2, l: 2 }, { s: 14, n: 4, l: 1 }]);
+    const e = p.energy ?? 3;
+    return {
+      bd: T[4], tagText: T[0], tagBg: T[1], tagFg: T[2], tagBd: T[3],
+      letter: p.letter ?? 'A', encTxt: p.encTxt ?? 'ENC 1', rollH: p.rollH ?? 120,
+      color: p.color ?? '#3D8CFF', loading, progress: p.progress ?? '2/3',
+      lanes: Array.from({ length: rows }, (_, i) => ({ t: i / rows * 100, h: 100 / rows, bg: i % 2 ? '#0F0F0F' : '#0C0C0C' })),
+      beats: [25, 50, 75].map(x => ({ x, c: x === 50 ? '#2E2E2E' : '#1E1E1E' })),
+      ns: notes.map(n => ({ l: n.s / 16 * 100, w: n.l / 16 * 100, t: (rows - 1 - n.n) / rows * 100, h: 100 / rows })),
+      sound: loading ? 'Waiting for engine' : (p.sound ?? 'Sub Prophet'), nameC: loading ? '#5A5A6E' : '#F2F2F2',
+      sub: loading ? 'pattern · sound · energy' : (p.sub ?? 'A1 · pluck · 16 steps'),
+      energy: loading ? '–' : e,
+      segs: Array.from({ length: 5 }, (_, i) => ({ c: !loading && i < e ? '#F2F2F2' : '#2A2A2A' })),
+      hint: p.hint ?? 'PRESS ENC TO CUE'
+    };
+  }
+}
+</script>
+</body>
+</html>

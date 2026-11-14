@@ -1,0 +1,110 @@
+{
+  "machine": {
+    "model": "MacBook Pro (MacBookPro18,3)",
+    "cpu": "Apple M1 Pro",
+    "cores": "6 performance + 2 efficiency",
+    "ram_gb": 16,
+    "os": "macOS 27.0.1 (26A434)"
+  },
+  "workload_version": "factory0-retrobrass7-v2",
+  "matrices": [
+    {
+      "optimization": "O2",
+      "run": 1,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    },
+    {
+      "optimization": "O2",
+      "run": 2,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    },
+    {
+      "optimization": "O2",
+      "run": 3,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    },
+    {
+      "optimization": "O3",
+      "run": 1,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    },
+    {
+      "optimization": "O3",
+      "run": 2,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    },
+    {
+      "optimization": "O3",
+      "run": 3,
+      "cases": 76,
+      "fixtures": 32,
+      "audio_seconds": 1520,
+      "valid_json_and_metrics": true,
+      "all_wav_hashes_independently_verified": true,
+      "no_nonfinite_or_clipped_audio": true,
+      "hashes_stable_across_repeats": true,
+      "hashes_identical_between_block_sizes": true,
+      "provisional_timing_gate_pass": false
+    }
+  ],
+  "O2": {
+    "ctest": "13/13 passed",
+    "compile_commands_checked": 23
+  },
+  "O3": {
+    "ctest": "13/13 passed",
+    "compile_commands_checked": 23
+  },
+  "same_pcm_hashes_O2_vs_O3": true,
+  "source_manifest_equal_O2_vs_O3": true,
+  "raw_wav_and_build_logs": "/tmp/gf-gemelo-pi-mac-v2",
+  "thermal_gate": "not applicable to this Mac; Pi evidence pending",
+  "hardware_decision": "pending Pi and real-time I/O/latency tests",
+  "additional_checks": {
+    "bench_Wall_Wextra_Wpedantic": "passed without diagnostics",
+    "CLI_invalid_options": "rejected",
+    "firmware_and_immutable_specs": "unchanged",
+    "network_installs_push": "none",
+    "commits": "blocked by sandbox: .git/index.lock Operation not permitted"
+  }
+}

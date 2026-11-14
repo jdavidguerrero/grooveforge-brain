@@ -1,0 +1,28 @@
+reference,component,name,x_mm,y_mm,rotation_deg,side,notes
+SW18,key,PLAY,132.0,39.5,0,F,huella combinada SW + zocalo
+SW18,socket,PLAY,132.0,39.5,0,B,mismo footprint SW; NO colocar dos veces
+D18,led,PLAY,132.0,44.43,0,B,LED index 17; centro de ventana
+SW19,key,STOP,151.0,39.5,0,F,huella combinada SW + zocalo
+SW19,socket,STOP,151.0,39.5,0,B,mismo footprint SW; NO colocar dos veces
+D19,led,STOP,151.0,44.43,0,B,LED index 18; centro de ventana
+SW20,key,REC,170.0,39.5,0,F,huella combinada SW + zocalo
+SW20,socket,REC,170.0,39.5,0,B,mismo footprint SW; NO colocar dos veces
+D20,led,REC,170.0,44.43,0,B,LED index 19; centro de ventana
+SW21,key,LOOP,189.0,39.5,0,F,huella combinada SW + zocalo
+SW21,socket,LOOP,189.0,39.5,0,B,mismo footprint SW; NO colocar dos veces
+D21,led,LOOP,189.0,44.43,0,B,LED index 20; centro de ventana
+SW22,key,METRO,208.0,39.5,0,F,huella combinada SW + zocalo
+SW22,socket,METRO,208.0,39.5,0,B,mismo footprint SW; NO colocar dos veces
+D22,led,METRO,208.0,44.43,0,B,LED index 21; centro de ventana
+SW23,key,SCENE4_PAGE_R,242.0,115.5,0,F,huella combinada SW + zocalo
+SW23,socket,SCENE4_PAGE_R,242.0,115.5,0,B,mismo footprint SW; NO colocar dos veces
+D23,led,SCENE4_PAGE_R,242.0,120.43,0,B,LED index 22; centro de ventana
+SW24,key,SCENE3_PAGE_L,242.0,130.5,0,F,huella combinada SW + zocalo
+SW24,socket,SCENE3_PAGE_L,242.0,130.5,0,B,mismo footprint SW; NO colocar dos veces
+D24,led,SCENE3_PAGE_L,242.0,135.43,0,B,LED index 23; centro de ventana
+SW25,key,SCENE2_OCT-,242.0,145.5,0,F,huella combinada SW + zocalo
+SW25,socket,SCENE2_OCT-,242.0,145.5,0,B,mismo footprint SW; NO colocar dos veces
+D25,led,SCENE2_OCT-,242.0,150.43,0,B,LED index 24; centro de ventana
+SW26,key,SCENE1_OCT+,242.0,160.5,0,F,huella combinada SW + zocalo
+SW26,socket,SCENE1_OCT+,242.0,160.5,0,B,mismo footprint SW; NO colocar dos veces
+D26,led,SCENE1_OCT+,242.0,165.43,0,B,LED index 25; centro de ventana

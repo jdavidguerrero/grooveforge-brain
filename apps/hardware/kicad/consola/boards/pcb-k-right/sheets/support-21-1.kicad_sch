@@ -1,0 +1,1058 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 0543da77-4380-58cf-87f8-674bd3b12fe7)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Connector:TestPoint"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.762)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "TP"
+        (at 0 6.858 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "TestPoint"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 5.08 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 5.08 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "test point"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "test point tp"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Pin* Test*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "TestPoint_0_1"
+        (circle
+          (center 0 3.302)
+          (radius 0.762)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "TestPoint_1_1"
+        (pin passive line
+          (at 0 0 90)
+          (length 2.54)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 76.2 59.69)
+      (xy 76.2 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b770f65f-9aa4-5449-ab54-ea7690071941))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 76.2 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 35c043ed-8be8-54bc-ad22-8ec4ed625ae3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 76.2 67.31)
+      (xy 76.2 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0b8f474b-07bc-5f07-98f3-96b7ff4fc389))
+  (global_label "RESET_21"
+    (shape bidirectional)
+    (at 76.2 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5097cfb3-53df-54ef-a3d0-b5d94676ba83)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 76.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid e0ec4de3-c40a-5687-b02b-e21f3dd684c9)
+    (property "Reference" "R21"
+      (at 76.2 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 76.2 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17414"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F1002T5E"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 8b3b0fe7-77a2-5e5f-812a-ab212a7a9e0d))
+    (pin "2"
+      (uuid 142cc5f9-04bc-5118-831c-c194f42a5f38))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "R21")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 59.69)
+      (xy 190.5 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b43a5122-560a-5cbf-8f27-d618cd1ec5a6))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 190.5 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c3a0ea2c-fd62-5e0d-85e0-ab757d9d81f3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 67.31)
+      (xy 190.5 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 38606638-ef03-58bd-b4d1-b3ff1ecf9082))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3a6d41fb-fd40-5472-8cce-8205e41a6ded)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 190.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d2b8c3bd-b8f8-562a-80e7-1924d370d533)
+    (property "Reference" "C211"
+      (at 190.5 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 190.5 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 1ffa83c3-14e6-547e-8bb4-be544fec88c2))
+    (pin "2"
+      (uuid 3cf3a767-eb1c-5360-b2bd-11926f936c32))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "C211")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 59.69)
+      (xy 304.8 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ff65a1d2-8d76-5cc2-9660-42ab3d1fff2e))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 304.8 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid fb56d260-ba0e-5a95-9445-62821a27f589)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 67.31)
+      (xy 304.8 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c40738e1-6b5b-5ee4-9121-76c96416529c))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a7eb08a8-8511-5a1b-b47d-b2e129b4a85f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid fb550114-17a5-532e-a932-3d930993961d)
+    (property "Reference" "C212"
+      (at 304.8 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1uF"
+      (at 304.8 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5137478"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "FCC0805B105K500FT"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "FOJAN"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 56728256-4fbe-5aaa-b63b-9ee68262db3a))
+    (pin "2"
+      (uuid 83ec771a-b849-5168-8984-003672e1ae84))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "C212")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 114.3)
+      (xy 76.2 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6265427d-7d22-5238-8e55-fd37f73a1fa2))
+  (global_label "INTA_21"
+    (shape bidirectional)
+    (at 76.2 116.84 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 30b9d94d-88e4-5123-a581-07b71e70bd5e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 76.2 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 2d3606d3-35da-5d61-8f5e-5bc36f61ad04)
+    (property "Reference" "TP2120"
+      (at 76.2 105.156 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "INTA_21"
+      (at 76.2 107.696 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3b385875-bf88-54b0-9aaa-e5c97f004cda))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP2120")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 114.3)
+      (xy 190.5 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dd4a9d52-b4c7-53bc-b066-b042740c0a2c))
+  (global_label "INTB_21"
+    (shape bidirectional)
+    (at 190.5 116.84 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6e6c9a91-3f32-5d77-8445-c1a56db08534)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 190.5 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b11a53ac-2994-5eff-942d-d57753db5602)
+    (property "Reference" "TP2119"
+      (at 190.5 105.156 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "INTB_21"
+      (at 190.5 107.696 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 83b491ec-af55-5a9a-9e3d-380c1d6881e2))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP2119")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 114.3)
+      (xy 304.8 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid fb44cafe-1252-55df-a89c-aee07efad27b))
+  (global_label "SPARE_21_GPA4"
+    (shape bidirectional)
+    (at 304.8 116.84 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ff11a3c5-61f5-521f-8efa-82cff37c3795)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 304.8 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c64a19fd-1450-5f09-bfb5-ba8abe0ffc0e)
+    (property "Reference" "TP2125"
+      (at 304.8 105.156 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SPARE_21_GPA4"
+      (at 304.8 107.696 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 67c1ff2f-de34-5921-b885-a1f8c2f615c9))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP2125")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 165.1)
+      (xy 76.2 167.64))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c2e5a279-1bc8-59d5-933e-961ddaeb6156))
+  (global_label "SPARE_21_GPA5"
+    (shape bidirectional)
+    (at 76.2 167.64 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8fe4eb74-ffd5-5231-9359-3e88a21575d2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 76.2 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 2a63119b-078a-5586-ab7d-d2d236a98247)
+    (property "Reference" "TP2126"
+      (at 76.2 155.956 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SPARE_21_GPA5"
+      (at 76.2 158.496 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 89f87781-e4a9-5644-85fa-bc121e1bec18))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP2126")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 165.1)
+      (xy 190.5 167.64))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 56ee49be-0ffe-59be-90ce-75281efc1908))
+  (global_label "SPARE_21_GPA6"
+    (shape bidirectional)
+    (at 190.5 167.64 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 31fc00ca-5e65-5c39-b7d6-0d4286a5d17d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 190.5 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 839e2a9f-5981-575a-9928-412d356c6d7e)
+    (property "Reference" "TP2127"
+      (at 190.5 155.956 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SPARE_21_GPA6"
+      (at 190.5 158.496 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3cc716c5-d56c-5b33-98b3-e39c30b82260))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP2127")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 165.1)
+      (xy 304.8 167.64))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 18df01d2-2f0b-50cc-9ebc-de11d24b2f0c))
+  (global_label "SPARE_21_GPB5"
+    (shape bidirectional)
+    (at 304.8 167.64 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a20f253b-a929-5aaf-9f17-5bf08da5c19e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 304.8 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid aea9a1ec-2991-5e2a-8c09-d62c76c55e2c)
+    (property "Reference" "TP216"
+      (at 304.8 155.956 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SPARE_21_GPB5"
+      (at 304.8 158.496 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 12c6e898-e48b-5a4f-87b9-14d323441945))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP216")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 215.9)
+      (xy 76.2 218.44))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4a2de1e3-d099-5c4b-bcbc-d9d1eea83848))
+  (global_label "SPARE_21_GPB6"
+    (shape bidirectional)
+    (at 76.2 218.44 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ca94db4c-7e87-5770-9edb-9323c6ab189f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 218.44 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 76.2 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid be8ed7db-d2a5-5d08-abb4-a439c1f7d441)
+    (property "Reference" "TP217"
+      (at 76.2 206.756 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SPARE_21_GPB6"
+      (at 76.2 209.296 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b22907fb-46b8-57e3-85ef-c731c78f7ea2))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/9ca5174f-7151-5ffa-8442-192e31ab5fee"
+          (reference "TP217")
+          (unit 1))))))

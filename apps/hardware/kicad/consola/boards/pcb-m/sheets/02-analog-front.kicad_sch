@@ -1,0 +1,5377 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 3ee846b1-285f-5432-87ba-515d779fc873)
+  (paper "A1")
+  (lib_symbols
+    (symbol "Amplifier_Operational:MCP6004"
+      (pin_names
+        (offset 0.127))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "MCP6004"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at -1.27 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
+        (at 1.27 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "1MHz, Low-Power Op Amp, DIP-14/SOIC-14/TSSOP-14"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_locked" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "quad opamp"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOIC*3.9x8.7mm*P1.27mm* DIP*W7.62mm* TSSOP*4.4x5mm*P0.65mm* SSOP*5.3x6.2mm*P0.65mm* MSOP*3x3mm*P0.5mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "MCP6004_1_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_2_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_3_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "9"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "10"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_4_1"
+        (polyline
+          (pts
+            (xy -5.08 5.08)
+            (xy 5.08 0)
+            (xy -5.08 -5.08)
+            (xy -5.08 5.08))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (pin input line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "12"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "13"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "14"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "MCP6004_5_1"
+        (pin power_in line
+          (at -2.54 7.62 270)
+          (length 3.81)
+          (name "V+"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at -2.54 -7.62 90)
+          (length 3.81)
+          (name "V-"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "11"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Connector:TestPoint"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.762)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "TP"
+        (at 0 6.858 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "TestPoint"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 5.08 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 5.08 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "test point"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "test point tp"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Pin* Test*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "TestPoint_0_1"
+        (circle
+          (center 0 3.302)
+          (radius 0.762)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "TestPoint_1_1"
+        (pin passive line
+          (at 0 0 90)
+          (length 2.54)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Diode:BAT54S"
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 2.54 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "BAT54S"
+        (at -6.35 3.175 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+        (at 1.905 3.175 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
+        (at -3.048 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "schottky diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOT?23*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "BAT54S_0_1"
+        (polyline
+          (pts
+            (xy -4.445 1.27)
+            (xy -4.445 -1.27)
+            (xy -2.54 0)
+            (xy -4.445 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.81 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.175 -1.27)
+            (xy -3.175 -1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 1.27)
+            (xy -1.905 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 -1.27)
+            (xy -3.175 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 -1.27)
+            (xy -2.54 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -1.905 1.27)
+            (xy -1.905 1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -1.905 0)
+            (xy 1.905 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 0 0)
+          (radius 0.254)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy 3.81 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.905 1.27)
+            (xy 1.905 -1.27)
+            (xy 3.81 0)
+            (xy 1.905 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.175 -1.27)
+            (xy 3.175 -1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 1.27)
+            (xy 4.445 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 -1.27)
+            (xy 3.175 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 -1.27)
+            (xy 3.81 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.445 1.27)
+            (xy 4.445 1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "BAT54S_1_1"
+        (pin passive line
+          (at -7.62 0 0)
+          (length 3.81)
+          (name "A"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 0 180)
+          (length 3.81)
+          (name "K"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -5.08 90)
+          (length 5.08)
+          (name "COM"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Jumper:SolderJumper_2_Open"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom no)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "JP"
+        (at 0 2.032 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "SolderJumper_2_Open"
+        (at 0 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Solder Jumper, 2-pole, open"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "solder jumper SPST"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SolderJumper*Open*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "SolderJumper_2_Open_0_1"
+        (polyline
+          (pts
+            (xy -0.254 1.016)
+            (xy -0.254 -1.016))
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (arc
+          (start -0.254 -1.016)
+          (mid -1.2656 0)
+          (end -0.254 1.016)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type outline)))
+        (arc
+          (start 0.254 1.016)
+          (mid 1.2656 0)
+          (end 0.254 -1.016)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 0.254 1.016)
+            (xy 0.254 -1.016))
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "SolderJumper_2_Open_1_1"
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "A"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 0 180)
+          (length 3.81)
+          (name "B"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Switch:SW_DP3T"
+      (pin_names
+        (offset 0)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "SW"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "SW_DP3T"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -15.875 4.445 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at -15.875 4.445 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Switch, three position, dual pole triple throw, 3 position switch, SP3T"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "switch dp3t ON-ON-ON"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SW* DP3T*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "SW_DP3T_0_1"
+        (rectangle
+          (start -3.175 3.81)
+          (end 3.175 -3.81)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (circle
+          (center -2.032 0)
+          (radius 0.4572)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -1.651 0.254)
+            (xy 1.651 2.286))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 2.032 2.54)
+          (radius 0.4572)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 2.032 0)
+          (radius 0.4572)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 2.032 -2.54)
+          (radius 0.4572)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "SW_DP3T_1_1"
+        (pin passive line
+          (at 5.08 2.54 180)
+          (length 2.54)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 0 180)
+          (length 2.54)
+          (name "2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 2.54)
+          (name "3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 -2.54 180)
+          (length 2.54)
+          (name "4"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (symbol "SW_DP3T_2_1"
+        (pin passive line
+          (at 5.08 2.54 180)
+          (length 2.54)
+          (name "5"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 0 180)
+          (length 2.54)
+          (name "6"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 2.54)
+          (name "7"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 -2.54 180)
+          (length 2.54)
+          (name "8"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 63.5 59.69)
+      (xy 63.5 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 085f0098-eb42-5b86-a998-ce1e7291fddb))
+  (global_label "LINE_IN_L_T"
+    (shape bidirectional)
+    (at 63.5 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a50ffd20-a536-5324-85c1-3ba83876a898)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 67.31)
+      (xy 63.5 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 04888f69-b31f-5a43-b3ab-a65164ce7846))
+  (label "TAP10_L"
+    (at 63.5 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid cf3e75d1-24d7-5851-9bde-43d24de6ca14))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 78a880ea-827d-59f2-ae23-99a097e69b01)
+    (property "Reference" "R_PAD_L1"
+      (at 63.5 35.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "33k"
+      (at 63.5 38.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_L1"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C4216"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF3302T5E"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 2a4278a4-8082-5bb1-b4f0-18783e7ffef4))
+    (pin "2"
+      (uuid 963ff77a-51d0-5e27-b3e9-0ab207c816d3))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 59.69)
+      (xy 152.4 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6f691e60-1d8d-576a-8fe3-844a8c891ed7))
+  (label "TAP10_L"
+    (at 152.4 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4c9b74ad-a311-5fec-a417-ff530cfe5781))
+  (wire
+    (pts
+      (xy 152.4 67.31)
+      (xy 152.4 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 57668b03-44b5-54dc-8e88-e954ec65670c))
+  (label "TAP20_L"
+    (at 152.4 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c32dc9b1-6b4d-5020-aa06-f186f25a05f2))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0b606f18-487f-5bb7-a2f4-cd383d030a16)
+    (property "Reference" "R_PAD_L2"
+      (at 152.4 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "12k"
+      (at 152.4 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_L2"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22790"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1202T5E"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4c3e0ed6-c196-5b44-8096-dcf2cf232e56))
+    (pin "2"
+      (uuid a0172950-ad62-59d5-af06-5b20d6502dcf))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_L2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 59.69)
+      (xy 241.3 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 72ac2a7c-b721-53e7-8f3d-c9aac48fdf14))
+  (label "TAP20_L"
+    (at 241.3 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 11e5b7f5-f14e-5bde-85cd-022b4610624a))
+  (wire
+    (pts
+      (xy 241.3 67.31)
+      (xy 241.3 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 13c49be1-7962-5172-b5fa-9499f8c20d7e))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 241.3 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bc155c75-352a-5669-bcb0-2b79cdc0f7da)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 9eba7b6a-dd78-50c6-b0ad-770936c6596a)
+    (property "Reference" "R_PAD_L3"
+      (at 241.3 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "5.1k"
+      (at 241.3 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_L3"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23186"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF5101T5E"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7929f967-009c-505a-b52d-76750c54b899))
+    (pin "2"
+      (uuid 1d98d5bf-d6c1-5898-8826-04e7f981308f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_L3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 335.28 60.96)
+      (xy 337.82 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cf1d8ef3-cdca-51f7-b391-d72117bc65c8))
+  (global_label "LINE_IN_L_T"
+    (shape bidirectional)
+    (at 337.82 60.96 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1154f710-95b2-5e46-9f4d-a876787881d1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 337.82 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 335.28 63.5)
+      (xy 337.82 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9b7e8239-56a9-52b9-a0be-eeef2ef5abce))
+  (label "TAP10_L"
+    (at 337.82 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 31982c1f-6def-53a8-a74a-83d90342de0a))
+  (wire
+    (pts
+      (xy 325.12 63.5)
+      (xy 322.58 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 13a67976-8267-5fe7-a33e-26676a54a909))
+  (label "PAD_L"
+    (at 322.58 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7885c2bc-b05d-5fbc-b99f-0411f827c473))
+  (wire
+    (pts
+      (xy 335.28 66.04)
+      (xy 337.82 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9a776874-6be7-5cf3-b722-4340b71dba74))
+  (label "TAP20_L"
+    (at 337.82 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid cc90f22e-b244-54c0-a6f9-fd4018acd6d4))
+  (symbol
+    (lib_id "Switch:SW_DP3T")
+    (at 330.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 80e572d3-2918-5757-be94-9676a7f317a5)
+    (property "Reference" "SW_PAD1"
+      (at 330.2 54.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PAD 3P3T A/B"
+      (at 330.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SW_PAD"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C225519"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "A2541WV-2x4P"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "CJT"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 2x4 P2.54mm vertical"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 598dbadd-1ea6-5a26-874a-0e948f419948))
+    (pin "2"
+      (uuid 29f72edf-25bd-5553-b977-5f395f3b5a0f))
+    (pin "3"
+      (uuid 20640cdd-2960-51db-b92b-816b7d3aae5b))
+    (pin "4"
+      (uuid 15abd875-8177-5315-8d7a-964e08c5d1c7))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "SW_PAD1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 59.69)
+      (xy 419.1 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f8f32dc1-51a0-5f77-8c25-53d4b17593e5))
+  (label "PAD_L"
+    (at 419.1 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 02931133-a0c5-58ba-a374-aa136616f60c))
+  (wire
+    (pts
+      (xy 419.1 67.31)
+      (xy 419.1 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e6e7c4bf-dc67-58c3-8e0d-9abf6082909d))
+  (label "AC_L"
+    (at 419.1 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c2893258-1656-5717-a86b-9e72b9ad0a02))
+  (symbol
+    (lib_id "Device:C")
+    (at 419.1 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b325fb15-e3b8-5b33-8a24-ec3a0d2eaab5)
+    (property "Reference" "C_AC_L1"
+      (at 419.1 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1uF"
+      (at 419.1 45.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_AC_L"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C28323"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21B105KBFNNNE"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7fd459e0-d0e1-5d1e-aa67-d362a657c1df))
+    (pin "2"
+      (uuid 475f103b-ba39-50e7-8b6a-8225aa4d8828))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_AC_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 59.69)
+      (xy 508 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dc2f77aa-9742-5336-95ef-1be1b78f7d77))
+  (label "AC_L"
+    (at 508 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 855579ff-f9c7-5428-80f3-048f260411b6))
+  (wire
+    (pts
+      (xy 508 67.31)
+      (xy 508 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7bc03cec-2702-54a9-b06e-517d66d932c7))
+  (global_label "PROT_L"
+    (shape bidirectional)
+    (at 508 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 2c0c55f5-04fb-57b6-b32f-93539b167e58)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 01c3bde4-442b-5bc9-8184-086de3ee2659)
+    (property "Reference" "R_SER_L1"
+      (at 508 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_SER_L"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C21190"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1001T5E"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 24c44e48-c259-5066-a798-301ac5e68f7c))
+    (pin "2"
+      (uuid acd752c2-c66c-5643-a44d-41bc6bdf81be))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_SER_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 123.19)
+      (xy 63.5 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 32b017cc-d76b-5524-9ec8-14a8f6339ac1))
+  (global_label "PROT_L"
+    (shape bidirectional)
+    (at 63.5 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b93f9a95-b037-5ea4-8600-b93fac33e466)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 130.81)
+      (xy 63.5 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6a013f0b-9349-5f29-be99-3387b43ac87b))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 63.5 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d8b7ee0b-d348-524e-8478-7cf6e85049f8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 49f308e9-0ed5-505f-9814-83e7e3f04453)
+    (property "Reference" "R_BIAS_L1"
+      (at 63.5 105.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 63.5 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_BIAS_L"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14675"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "RC0603FR-07100KL"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ade49ca0-1810-53f5-b479-9ee4ef2494a3))
+    (pin "2"
+      (uuid 4b4da6ad-7dfd-570b-aefa-32c65d397204))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_BIAS_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 144.78 127)
+      (xy 142.24 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 070c9c12-1efc-5520-ba0a-718b9d98b8ac))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 142.24 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9840aae8-59ad-5f7d-9cfd-9f1744503c47)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 142.24 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 127)
+      (xy 162.56 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 35b795a3-5bb5-53f3-855b-5e15464bf6e8))
+  (global_label "+3.3VA_FRONT"
+    (shape bidirectional)
+    (at 162.56 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 92ff7a1f-420d-5b0f-8317-529137061350)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 132.08)
+      (xy 152.4 134.62))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e40b3089-755b-50c9-b045-501e47a8136d))
+  (global_label "PROT_L"
+    (shape bidirectional)
+    (at 152.4 134.62 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9b0c5405-95a6-5d6c-96e4-aa4b8a22e704)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 134.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 152.4 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 62f01644-42ea-5ecc-8608-2bb3bb3c81ec)
+    (property "Reference" "D_CLAMP_L1"
+      (at 152.4 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 152.4 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_CLAMP_L"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid a7a7a6ed-9979-59d8-966b-fd989a553959))
+    (pin "2"
+      (uuid b05982a3-b5fb-5457-ad7c-107d4115bc75))
+    (pin "3"
+      (uuid b946622a-aaad-5b97-bb57-a7945d1aa5c8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "D_CLAMP_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 236.22 127)
+      (xy 233.68 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e94e0e58-7b20-56a6-b2d6-46fca70b2bd5))
+  (global_label "PROT_L"
+    (shape bidirectional)
+    (at 233.68 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f8a67c1c-ff7e-56bf-832b-7a3cf124892d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 246.38 127)
+      (xy 248.92 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 66c3c817-16c3-5bae-8e07-3608f13b566e))
+  (label "BUF_L"
+    (at 248.92 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 09077d72-a024-573f-af0f-2b8b6ce5c920))
+  (symbol
+    (lib_id "Jumper:SolderJumper_2_Open")
+    (at 241.3 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3ad6a1d6-9f54-5a29-a4f5-a110ff381466)
+    (property "Reference" "JP_BYP_L1"
+      (at 241.3 120.904 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BYP L (sin U_OA_IN)"
+      (at 241.3 123.444 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "JP_BYP_L"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 86ad30e7-7235-5543-8783-6fb0779b1be3))
+    (pin "2"
+      (uuid 444401ea-3024-5a0c-a937-b988b88bc821))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "JP_BYP_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 337.82 127)
+      (xy 340.36 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a1b5ed02-ae5e-568a-93d9-e92cd896871d))
+  (label "BUF_L"
+    (at 340.36 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 41943daf-7617-58f0-896b-5ee0f044ecb9))
+  (wire
+    (pts
+      (xy 322.58 129.54)
+      (xy 320.04 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a98c7d39-fe38-5ff5-82bf-7193c3eb8c78))
+  (label "BUF_L"
+    (at 320.04 129.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0a0e4fa2-d25d-569a-b947-de424e1a44ab))
+  (wire
+    (pts
+      (xy 322.58 124.46)
+      (xy 320.04 124.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b114cc2a-2805-50c4-a9ef-e4a6311ae439))
+  (global_label "PROT_L"
+    (shape bidirectional)
+    (at 320.04 124.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bd2ddd2f-7c7a-5720-bdc4-06f094325365)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 124.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 330.2 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 22d45b5e-7979-5b26-97d2-e5a2b4dac1dc)
+    (property "Reference" "U_OA_IN1"
+      (at 330.2 116.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 330.2 119.38 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid be090634-37b7-5b70-9e9f-6a5dc24869a8))
+    (pin "2"
+      (uuid 33cc1034-6d36-58aa-8762-884c2f8adfc0))
+    (pin "3"
+      (uuid 47875700-88ef-5102-ae83-f4df6116aae2))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "U_OA_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 127)
+      (xy 419.1 129.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0eb233d8-f32c-5658-8e65-49d189082e45))
+  (label "BUF_L"
+    (at 419.1 129.54 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid dd5cd27a-8d98-5b34-9999-8b1e312123bb))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 419.1 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 013e4b82-cef2-58f7-9fae-6881530ebb59)
+    (property "Reference" "TP_BUF_L1"
+      (at 419.1 117.856 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BUF_L"
+      (at 419.1 120.396 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "TP_BUF_L"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 1abe411a-0e29-5fbd-9598-b0c3b6124b73))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "TP_BUF_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 123.19)
+      (xy 508 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 39b7a815-6213-5ea6-9e72-b9ba76b6dac4))
+  (label "BUF_L"
+    (at 508 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2abf80f2-ce75-5521-b222-f2939fcced6c))
+  (wire
+    (pts
+      (xy 508 130.81)
+      (xy 508 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5bd80a0e-42f0-51c2-920f-5333209d630d))
+  (label "FRONT_LINE_IN_L"
+    (at 508 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6ac781a2-e0c5-538d-84f0-e707d68f6b37))
+  (symbol
+    (lib_id "Device:C")
+    (at 508 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d970f4f9-637c-58cb-b6a6-f740cfe851fd)
+    (property "Reference" "C_LIN_L1"
+      (at 508 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "4.7uF"
+      (at 508 109.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_LIN_L"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1779"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A475KAQNNNE"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 591379e1-f7dc-505d-8fe4-6e73415d0fcd))
+    (pin "2"
+      (uuid 23bf93d9-bed2-5edc-aa6d-8c1fa174b55f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_LIN_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 186.69)
+      (xy 63.5 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cc9a7797-265e-5e02-87d4-d2bfc65b456d))
+  (global_label "LINE_IN_R_T"
+    (shape bidirectional)
+    (at 63.5 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 0d240304-4b3f-5b35-8886-03f1534352ba)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 194.31)
+      (xy 63.5 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a5ad8a8f-6ca3-5fd7-b172-666f6eeb858c))
+  (label "TAP10_R"
+    (at 63.5 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ca35b14b-c53f-5fe4-bb42-8bd83fd7f03c))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 6be2e83c-0b3a-5500-a29b-c217697a7c81)
+    (property "Reference" "R_PAD_R1"
+      (at 63.5 162.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "33k"
+      (at 63.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_R1"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C4216"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF3302T5E"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 08862e83-ecd9-5793-8c49-2e62f97a1715))
+    (pin "2"
+      (uuid 95f4f281-8368-5bbf-93ab-88e3813422b8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 186.69)
+      (xy 152.4 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 842e09ff-6ce6-50d9-8eb2-119c531ea2fb))
+  (label "TAP10_R"
+    (at 152.4 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9272ee57-8f80-5f7a-a5f6-bd6255a21590))
+  (wire
+    (pts
+      (xy 152.4 194.31)
+      (xy 152.4 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cf73b6db-7330-551e-b0bc-60ac359e9152))
+  (label "TAP20_R"
+    (at 152.4 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid e9812c36-27ea-5cef-b5e9-c53396ffd3a2))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4e8f2f90-ec4d-57f6-a679-cdfbf9e2afab)
+    (property "Reference" "R_PAD_R2"
+      (at 152.4 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "12k"
+      (at 152.4 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_R2"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C22790"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1202T5E"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 61364868-1082-57a7-8760-325d64abeb4c))
+    (pin "2"
+      (uuid 1926a4d1-2a96-5067-976b-761551b86502))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_R2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 186.69)
+      (xy 241.3 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 012abb02-4f2d-5ab0-a7dc-bee3da306ee1))
+  (label "TAP20_R"
+    (at 241.3 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d048faf5-d621-53e3-934a-59aeda22596a))
+  (wire
+    (pts
+      (xy 241.3 194.31)
+      (xy 241.3 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 61e5f8bc-479e-557a-bab8-76bef03b3afa))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 241.3 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a4349b67-0740-5078-9b9c-6f753e29506a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 19f82195-e5d5-5276-8bfa-3298fdde2dc5)
+    (property "Reference" "R_PAD_R3"
+      (at 241.3 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "5.1k"
+      (at 241.3 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_PAD_R3"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C23186"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF5101T5E"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid e0938184-a99e-5915-89b6-338ef4f6e028))
+    (pin "2"
+      (uuid 2b372422-194f-59ca-a693-da71e5906db9))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_PAD_R3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 335.28 187.96)
+      (xy 337.82 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 865650d7-8e1d-5b69-9353-214688736403))
+  (global_label "LINE_IN_R_T"
+    (shape bidirectional)
+    (at 337.82 187.96 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 13f78839-bfe8-5957-a391-dc5d5f332ccb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 337.82 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 335.28 190.5)
+      (xy 337.82 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 266d4e9b-5b26-582f-9c87-27a2124f7c27))
+  (label "TAP10_R"
+    (at 337.82 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 476769e1-6281-5fcb-ad28-9101294afca5))
+  (wire
+    (pts
+      (xy 325.12 190.5)
+      (xy 322.58 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e5c820f4-21bd-58fd-af63-5ee16958c6e9))
+  (label "PAD_R"
+    (at 322.58 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3b8ee2d9-c4a8-5d6f-a8f5-a7e526864511))
+  (wire
+    (pts
+      (xy 335.28 193.04)
+      (xy 337.82 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 83e59753-18a7-5381-b0e1-5e1ff1f7e3e1))
+  (label "TAP20_R"
+    (at 337.82 193.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b041b819-e854-55a0-a14b-119f499f2ae4))
+  (symbol
+    (lib_id "Switch:SW_DP3T")
+    (at 330.2 190.5 0)
+    (unit 2)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 19a0539a-4915-5249-84b1-0d8e6813dbac)
+    (property "Reference" "SW_PAD1"
+      (at 330.2 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PAD 3P3T A/B"
+      (at 330.2 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "SW_PAD"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C225519"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "A2541WV-2x4P"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "CJT"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "THT 2x4 P2.54mm vertical"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "5"
+      (uuid 84784001-a579-55af-95ae-37d4bda2ffa0))
+    (pin "6"
+      (uuid 73da9f0f-1c4f-53d4-8b7f-2fd47d9af372))
+    (pin "7"
+      (uuid 7f48604c-f965-55bb-a975-7c9ae5330291))
+    (pin "8"
+      (uuid 4de915ed-5bc0-5de4-bad9-2e98ef9e040e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "SW_PAD1")
+          (unit 2)))))
+  (wire
+    (pts
+      (xy 419.1 186.69)
+      (xy 419.1 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 827a2a99-cdf9-535c-afb9-85e30abaa7a9))
+  (label "PAD_R"
+    (at 419.1 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9ea86da5-5b97-5eaf-9472-16f8fb54c3ce))
+  (wire
+    (pts
+      (xy 419.1 194.31)
+      (xy 419.1 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 86be0487-4116-555f-aabb-75b1f73d19f9))
+  (label "AC_R"
+    (at 419.1 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c12ee069-97ae-52e8-bd1f-ea61b70c5080))
+  (symbol
+    (lib_id "Device:C")
+    (at 419.1 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f50515d0-d5aa-5cc1-bb65-0792c16a2a48)
+    (property "Reference" "C_AC_R1"
+      (at 419.1 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1uF"
+      (at 419.1 172.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_AC_R"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C28323"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21B105KBFNNNE"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 775c7936-cc4f-5062-9f3f-0f8341ff8e93))
+    (pin "2"
+      (uuid 7eba405e-3f41-5879-98ea-419fc9ae188d))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_AC_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 186.69)
+      (xy 508 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 026b8193-7f61-588f-ae20-2617e1b7ed55))
+  (label "AC_R"
+    (at 508 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 145df3c6-2de7-5cd5-b65a-eff6bc02f6c9))
+  (wire
+    (pts
+      (xy 508 194.31)
+      (xy 508 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 52991f2b-5ac2-52e5-9186-69ef25487534))
+  (global_label "PROT_R"
+    (shape bidirectional)
+    (at 508 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 471a2b78-b990-5de1-8faf-3db904081f99)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 528cd26b-4220-59d4-978b-28f02ab087aa)
+    (property "Reference" "R_SER_R1"
+      (at 508 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 173.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_SER_R"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C21190"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1001T5E"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid cd082536-5cb3-55c9-90f0-13e3dcb83358))
+    (pin "2"
+      (uuid 1de3bc37-c647-5e61-81c9-21986c53469e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_SER_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 250.19)
+      (xy 63.5 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2d96333d-2d0e-5ed1-a9f0-11cd427ac270))
+  (global_label "PROT_R"
+    (shape bidirectional)
+    (at 63.5 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 76bb040e-7904-5d1e-8dab-4a99fa01e3d9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 257.81)
+      (xy 63.5 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cc78de6e-d86d-586b-8499-db542a0768dc))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 63.5 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5a8483bb-0b4f-571c-8c14-b20b1eb5c510)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 46a445ee-a0cc-5c3d-9514-105eebaf98af)
+    (property "Reference" "R_BIAS_R1"
+      (at 63.5 232.41 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100k"
+      (at 63.5 234.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_BIAS_R"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14675"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "RC0603FR-07100KL"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3c5349fd-16e2-5000-99d3-773febe9926c))
+    (pin "2"
+      (uuid c7bbb534-754d-5de3-af19-470caaee6483))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_BIAS_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 144.78 254)
+      (xy 142.24 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7a1ec9d6-1d22-57cb-912f-db07cef5c170))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 142.24 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 22c9532a-3ecf-57d9-9026-663f76b6d50e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 142.24 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 254)
+      (xy 162.56 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 452df09d-ca82-5518-a67e-e97bf79dcc6f))
+  (global_label "+3.3VA_FRONT"
+    (shape bidirectional)
+    (at 162.56 254 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4f83542f-6c03-536f-becd-bb564118627a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 259.08)
+      (xy 152.4 261.62))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4a619aef-bee2-5552-b102-2952d29f1f43))
+  (global_label "PROT_R"
+    (shape bidirectional)
+    (at 152.4 261.62 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 53148d69-b7be-5ab6-a8c0-2ca232c30ab3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 261.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 152.4 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4c382ef4-7e8e-5fb3-8648-fa4034fcde78)
+    (property "Reference" "D_CLAMP_R1"
+      (at 152.4 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 152.4 250.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_CLAMP_R"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 152.4 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 515e36f2-f4f0-55c0-aae9-1b8e266e64c9))
+    (pin "2"
+      (uuid abcaeceb-ea06-528e-af7d-e4f1a126dd53))
+    (pin "3"
+      (uuid a943b6cf-4c2f-5f00-bd40-0ceebf788b23))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "D_CLAMP_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 236.22 254)
+      (xy 233.68 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d03be8bf-1668-5d7c-a66e-03310af0b7d7))
+  (global_label "PROT_R"
+    (shape bidirectional)
+    (at 233.68 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b8dd9c31-9ec7-52fc-878c-083b986f0238)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 246.38 254)
+      (xy 248.92 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6cd4174d-937b-5041-acc5-45166c38489c))
+  (label "BUF_R"
+    (at 248.92 254 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e08d2822-aa41-5012-bfc7-137fdb00f02f))
+  (symbol
+    (lib_id "Jumper:SolderJumper_2_Open")
+    (at 241.3 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 36be1196-0a8b-51a6-96ce-2465abfce3ca)
+    (property "Reference" "JP_BYP_R1"
+      (at 241.3 247.904 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BYP R (sin U_OA_IN)"
+      (at 241.3 250.444 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "JP_BYP_R"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 241.3 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid bc48eb01-312e-55fb-9e6e-6c7b6a775258))
+    (pin "2"
+      (uuid 3de2ae65-a2c3-5a2c-a372-c1842c410272))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "JP_BYP_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 322.58 251.46)
+      (xy 320.04 251.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d8653e9a-35b5-5551-bb16-f48b6291f1c5))
+  (global_label "PROT_R"
+    (shape bidirectional)
+    (at 320.04 251.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c68bec9c-f333-576c-bdd0-5a1d2424f51a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 251.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 322.58 256.54)
+      (xy 320.04 256.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 73d2d735-618b-5430-8cf0-01b549cbf0dd))
+  (label "BUF_R"
+    (at 320.04 256.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7fa28d43-96c5-549b-b90b-6fde6e0fc4e2))
+  (wire
+    (pts
+      (xy 337.82 254)
+      (xy 340.36 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 01f906b9-b775-5e89-9439-40004bc9c9f6))
+  (label "BUF_R"
+    (at 340.36 254 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d3c26b41-19e4-5b89-b84d-8e9e20489c99))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 330.2 254 0)
+    (unit 2)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c4ee23a8-4f9e-546f-b234-01dd1df88ff1)
+    (property "Reference" "U_OA_IN1"
+      (at 330.2 243.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 330.2 246.38 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "5"
+      (uuid ac3e956a-84de-5172-b454-410f13dedf94))
+    (pin "6"
+      (uuid 8547e3f6-787f-5160-b1cb-b4cb225389d3))
+    (pin "7"
+      (uuid a720f723-3aaf-5a49-b73f-6f492867d774))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "U_OA_IN1")
+          (unit 2)))))
+  (wire
+    (pts
+      (xy 419.1 254)
+      (xy 419.1 256.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dab646af-2f32-51aa-b56a-ec872cb37ec6))
+  (label "BUF_R"
+    (at 419.1 256.54 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6f723621-b3d9-57a8-8615-8bfe264e1fa8))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 419.1 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 276bb41e-2696-5c4b-a9f6-48ab33aecde7)
+    (property "Reference" "TP_BUF_R1"
+      (at 419.1 244.856 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BUF_R"
+      (at 419.1 247.396 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "TP_BUF_R"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4b66b983-a360-5429-98c1-7f5e99b1bd59))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "TP_BUF_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 250.19)
+      (xy 508 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid feb725c7-3b2c-5fda-a452-244375e0bee9))
+  (label "BUF_R"
+    (at 508 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c45ed107-0163-5bea-b973-28336ad71162))
+  (wire
+    (pts
+      (xy 508 257.81)
+      (xy 508 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 29d191fc-7472-5581-9a1d-58d9d1fab73c))
+  (label "FRONT_LINE_IN_R"
+    (at 508 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 24c91f75-14e9-51c6-ac11-2d747e63b4ce))
+  (symbol
+    (lib_id "Device:C")
+    (at 508 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c507ba49-f64a-5008-9b0a-7221ab7e6fcd)
+    (property "Reference" "C_LIN_R1"
+      (at 508 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "4.7uF"
+      (at 508 236.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_LIN_R"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1779"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A475KAQNNNE"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 24d631a9-bf97-5983-934e-c9556b830cc6))
+    (pin "2"
+      (uuid b7f1f9e5-65ef-5a53-a750-c89e91f3e881))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_LIN_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 313.69)
+      (xy 63.5 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ee15669f-2a9f-5742-8b53-9698822a352a))
+  (global_label "+3.3VA_FRONT"
+    (shape bidirectional)
+    (at 63.5 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2a276bb7-ef11-528c-b421-083b42407fbb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 311.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 321.31)
+      (xy 63.5 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 455c3c5b-66cb-5114-8c94-35252824e9e7))
+  (label "VREF_DIV"
+    (at 63.5 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 2f352af8-9419-5d8b-af31-16abca6640a2))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3de585d2-2982-54aa-abb7-d8d060c2595c)
+    (property "Reference" "R_VREF_T1"
+      (at 63.5 288.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 63.5 290.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_VREF_T"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d6e6158b-fdcc-5683-bf00-7f9b038d2ab8))
+    (pin "2"
+      (uuid 2fb5cd11-9a8e-541b-9598-386fbf007412))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_VREF_T1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 313.69)
+      (xy 152.4 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1263c7ea-1473-5b4b-b80e-a5c7be0c09ec))
+  (label "VREF_DIV"
+    (at 152.4 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4697ee73-e147-51f1-94b3-62c416277b5b))
+  (wire
+    (pts
+      (xy 152.4 321.31)
+      (xy 152.4 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 63280c16-2c86-5b95-b6c8-7997d1dfeae9))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 152.4 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 12d16c15-036d-5602-9184-449e6d89cb76)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 7c10c274-7ea0-51e9-a368-c36ba2db0816)
+    (property "Reference" "R_VREF_B1"
+      (at 152.4 293.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 152.4 295.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_VREF_B"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 49fe081a-2dbd-5138-b349-967dc29658c1))
+    (pin "2"
+      (uuid cd548b06-f216-502a-87a4-8d40cd82e250))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_VREF_B1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 313.69)
+      (xy 241.3 311.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d692e12b-d4bf-5b39-bf9a-c5b9fb33e6a6))
+  (label "VREF_DIV"
+    (at 241.3 311.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 407c0cd3-3e53-55a7-95d5-ddf01ea7ebc8))
+  (wire
+    (pts
+      (xy 241.3 321.31)
+      (xy 241.3 323.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e3166314-7a28-5f34-a624-8b302d611bec))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 241.3 323.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3263f67f-748d-5427-8b0e-698e5ab06dbe)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 323.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 343bc4fa-1cb6-55a3-93bf-5031cd7df553)
+    (property "Reference" "C_VREF1"
+      (at 241.3 293.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 241.3 295.91 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_VREF"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 241.3 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 19fe02c8-456a-5332-91f5-e2d82eb6044b))
+    (pin "2"
+      (uuid 35ff5976-a083-532c-ae6a-a6fb9bff4ceb))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_VREF1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 337.82 317.5)
+      (xy 340.36 317.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid efe16896-4326-548a-af69-a098bb203c92))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 340.36 317.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ff22417d-b59b-5595-90f7-b92ed48f434e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 340.36 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 322.58 320.04)
+      (xy 320.04 320.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid fc76a770-d5fd-5aec-a994-bb579e439d7b))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 320.04 320.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7f0dccb4-27f6-572f-b8e7-38c010bb1c18)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 320.04 320.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 322.58 314.96)
+      (xy 320.04 314.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1f5186c8-2362-549a-8dff-bfe71a3be7a8))
+  (label "VREF_DIV"
+    (at 320.04 314.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 06901e85-4023-59a7-83b0-19cf3b45e6ab))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 330.2 317.5 0)
+    (unit 3)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3c8938a0-deba-5773-a8a0-780f0e6499ca)
+    (property "Reference" "U_OA_IN1"
+      (at 330.2 307.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 330.2 309.88 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 330.2 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "8"
+      (uuid 6ae02a84-2777-5ed1-a3be-c4f327a9519c))
+    (pin "9"
+      (uuid bdbe3365-dd43-5022-8f80-75ad8359be01))
+    (pin "10"
+      (uuid 2476f8bd-82c9-54d7-9e88-fd2b974ea173))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "U_OA_IN1")
+          (unit 3)))))
+  (wire
+    (pts
+      (xy 414.02 317.5)
+      (xy 411.48 317.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9305f744-d4b2-5f29-94f0-f1bf5314385b))
+  (label "VREF_DIV"
+    (at 411.48 317.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 818f0714-4789-5c7c-9e40-418aa3163279))
+  (wire
+    (pts
+      (xy 424.18 317.5)
+      (xy 426.72 317.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7eb460ac-38ee-52c3-90af-e696b07487c1))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 426.72 317.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 14e15558-2942-5616-92f3-a761459b7ad8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 426.72 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Jumper:SolderJumper_2_Open")
+    (at 419.1 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 98a88e6a-0f89-5d0e-bf40-73655f132e14)
+    (property "Reference" "JP_BYP_VREF1"
+      (at 419.1 311.404 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BYP VREF (sin U_OA_IN)"
+      (at 419.1 313.944 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "JP_BYP_VREF"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 419.1 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d16f7299-1044-5ce5-bd3c-663ce4aceaa5))
+    (pin "2"
+      (uuid 012f7720-8b6d-532b-af05-e74f81d0b89f))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "JP_BYP_VREF1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 317.5)
+      (xy 508 320.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f8c54b03-d35e-5b15-b759-26b268eb5cba))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 508 320.04 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c1f00562-7292-54d8-a068-c6a07d5e599e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 320.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector:TestPoint")
+    (at 508 317.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid baa25ffd-804b-587f-a479-6bc33813b42b)
+    (property "Reference" "TP_VREF1"
+      (at 508 308.356 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "VREF"
+      (at 508 310.896 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "TP_VREF"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Procurement" "PCB copper; no purchased component"
+      (at 508 317.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ed0d1b36-10f0-5132-8b93-dbc9b08d20d7))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "TP_VREF1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 55.88 378.46)
+      (xy 53.34 378.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6f6726d4-4d2e-5316-bdc6-94b34910a738))
+  (global_label "VREF"
+    (shape bidirectional)
+    (at 53.34 378.46 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d9d064f7-6cd9-5007-8761-e4c7d77ba56d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 53.34 378.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 55.88 383.54)
+      (xy 53.34 383.54))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 631a0d37-00c5-5ddb-b1db-72cae8b8bbc2))
+  (label "OA_IN_D"
+    (at 53.34 383.54 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 015ca882-09f4-55bf-aaa1-e2a31adb460c))
+  (wire
+    (pts
+      (xy 71.12 381)
+      (xy 73.66 381))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5aac8115-2b56-5097-90b4-64a40a35d5df))
+  (label "OA_IN_D"
+    (at 73.66 381 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 169005f7-d62b-5612-8440-2c9a2ef74999))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 63.5 381 0)
+    (unit 4)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0ab3bd56-29aa-540d-a1b2-4b2be00ed493)
+    (property "Reference" "U_OA_IN1"
+      (at 63.5 370.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 63.5 373.38 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 63.5 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "12"
+      (uuid 1149c2d7-bc83-5e82-bb31-67c291eba403))
+    (pin "13"
+      (uuid aad8ad7f-8046-58a4-ae19-6bc85fae7158))
+    (pin "14"
+      (uuid 9f74cfda-3626-5245-ae85-62ed51e2f309))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "U_OA_IN1")
+          (unit 4)))))
+  (wire
+    (pts
+      (xy 149.86 373.38)
+      (xy 149.86 370.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3da2cdd8-e1ff-52fc-9679-d55c8ef36cea))
+  (global_label "+3.3VA_FRONT"
+    (shape bidirectional)
+    (at 149.86 370.84 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d402dfa5-1cc2-5f41-899f-ad234993789b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 149.86 370.84 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 149.86 388.62)
+      (xy 149.86 391.16))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a7b58d72-165c-5f51-927b-463902b2e900))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 149.86 391.16 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 53cc8dd6-8904-5a7f-9b52-b4958fdb40eb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 149.86 391.16 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Amplifier_Operational:MCP6004")
+    (at 152.4 381 0)
+    (unit 5)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d36e96de-cb5f-5adb-948e-b83f457bc06c)
+    (property "Reference" "U_OA_IN1"
+      (at 152.4 347.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MCP6004"
+      (at 152.4 350.52 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OA_IN"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1346056"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "MCP6004-I/SL"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "MICROCHIP"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOIC-14"
+      (at 152.4 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "4"
+      (uuid 1d765a02-4818-5498-a73b-731ccdfe9798))
+    (pin "11"
+      (uuid eac135c9-dcd5-5563-b4c9-57b0c4b94ff0))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "U_OA_IN1")
+          (unit 5)))))
+  (wire
+    (pts
+      (xy 241.3 377.19)
+      (xy 241.3 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f6256097-0ae3-5893-a379-c276cdf635e6))
+  (global_label "+3.3VA_FRONT"
+    (shape bidirectional)
+    (at 241.3 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1024b2c2-8c60-517d-8b43-60e11df41073)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 384.81)
+      (xy 241.3 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8d8d570f-72ac-52cf-9c29-b6a7b55884e0))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 241.3 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 658b1998-055c-56bc-8459-f136974289e1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 241.3 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 1bfb5751-c167-5a1f-99ec-9391ffb814ce)
+    (property "Reference" "C_OA_IN1"
+      (at 241.3 351.79 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 241.3 354.33 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_OA_IN"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C14663"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0603KRX7R9BB104"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 9488a860-8206-5cb4-8cb7-cf381f827155))
+    (pin "2"
+      (uuid 9782961a-5678-5403-bc72-544abaa0e5eb))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_OA_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 377.19)
+      (xy 330.2 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e7739608-690f-5de5-a8d2-c110c6222d8f))
+  (global_label "SHIELD_LINE_OUT_L"
+    (shape bidirectional)
+    (at 330.2 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c8edd8f3-5f17-5d3e-8200-ef548e485fdb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 384.81)
+      (xy 330.2 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 73e5c6b9-e693-5cc4-99c4-04bf7002c94c))
+  (global_label "LINE_OUT_L_T"
+    (shape bidirectional)
+    (at 330.2 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 50d62559-8e3b-57eb-8529-2bf28d59fb2d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 330.2 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid eab19ef3-e58a-52c4-9fcf-ffac0d781a2a)
+    (property "Reference" "C_LOUT_L1"
+      (at 330.2 345.44 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 330.2 347.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_LOUT_L"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 330.2 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4e100ab9-c406-5099-84bb-b23b902e55c8))
+    (pin "2"
+      (uuid 3699d4c8-4a99-554f-8662-495706235dc3))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_LOUT_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 377.19)
+      (xy 419.1 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 987f5da3-e7d7-5fe9-924c-2c510b8622ff))
+  (global_label "LINE_OUT_L_T"
+    (shape bidirectional)
+    (at 419.1 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 8e18e1d6-3f7f-5425-b5e6-972c270deaa6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 419.1 384.81)
+      (xy 419.1 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9d22b106-6bf3-5b69-8ebf-569024002973))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 419.1 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f3eec8b6-b181-541b-bb78-4d4b4f24c621)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid cc6ce114-a6f2-5227-8ef9-fc3250471f32)
+    (property "Reference" "R_LOUT_L1"
+      (at 419.1 351.79 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "47k"
+      (at 419.1 354.33 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_LOUT_L"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25819"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4702T5E"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 419.1 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 8d171f15-4ef7-577b-9669-1fcd2d16210b))
+    (pin "2"
+      (uuid 2a4fe536-0118-5eaa-9f22-93b1b7942f9c))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_LOUT_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 377.19)
+      (xy 508 374.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8d10313b-5887-5b22-8f24-b4b461d483d8))
+  (global_label "SHIELD_LINE_OUT_R"
+    (shape bidirectional)
+    (at 508 374.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e7250c35-d70c-5ab0-880f-f6a4c24794a2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 374.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 508 384.81)
+      (xy 508 387.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0a16316d-b536-5da9-b9d0-0cae9e0120ca))
+  (global_label "LINE_OUT_R_T"
+    (shape bidirectional)
+    (at 508 387.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8392ca83-b14f-5224-95a7-524115bf5323)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 387.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 508 381 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid de30a6c7-3b04-577c-a15f-e28abb0bacfc)
+    (property "Reference" "C_LOUT_R1"
+      (at 508 345.44 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10uF"
+      (at 508 347.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_LOUT_R"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C15850"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL21A106KAYNNNE"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 508 381 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3a9abd33-06ad-5257-b9bb-e0ecebfb6063))
+    (pin "2"
+      (uuid 1c15220e-6792-5391-ac46-143e57148246))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "C_LOUT_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 440.69)
+      (xy 63.5 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b482a115-0f71-538c-b862-c64f6788ac7d))
+  (global_label "LINE_OUT_R_T"
+    (shape bidirectional)
+    (at 63.5 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b4ffcb36-82a9-5f97-82b3-e552d0839617)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 63.5 448.31)
+      (xy 63.5 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 57c9f7a6-9b4d-54b9-aca1-fb5733c9be0e))
+  (global_label "AGND"
+    (shape bidirectional)
+    (at 63.5 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 652cc207-b596-5661-9673-54bc84248f98)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 30b7ca89-122e-5843-b2c4-788232c45199)
+    (property "Reference" "R_LOUT_R1"
+      (at 63.5 415.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "47k"
+      (at 63.5 417.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_LOUT_R"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25819"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF4702T5E"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 63.5 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ff7e56c8-c381-5a59-8d95-73a6f7c7d882))
+    (pin "2"
+      (uuid 3fee1ab2-1617-5bfe-a33f-a837efc0010b))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_LOUT_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 440.69)
+      (xy 152.4 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9db45d49-23f1-52a0-99f5-2712a53f9469))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 152.4 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ceca3a91-972b-50d3-a9c3-446323cf9c7e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 448.31)
+      (xy 152.4 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0ea63483-eae8-57a1-b5e4-12de891907fd))
+  (global_label "PAD_SEL_ADC"
+    (shape bidirectional)
+    (at 152.4 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b5511c9e-3002-54e4-ba14-8ed3285e42ca)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4ada31c2-6ebd-5083-8c06-301fb2282434)
+    (property "Reference" "R_SEL_T1"
+      (at 152.4 424.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 152.4 426.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_SEL_T"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 152.4 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b1399519-ee28-578f-9dcf-edf7e59ac32b))
+    (pin "2"
+      (uuid 43bf3026-4838-5480-a636-4d2bd06ef871))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_SEL_T1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 440.69)
+      (xy 241.3 438.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2a59de86-9d36-5b30-b0d1-d721ad1b176c))
+  (global_label "PAD_SEL_ADC"
+    (shape bidirectional)
+    (at 241.3 438.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b3ca268d-b3ec-5346-a51d-20dd3807f578)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 438.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 448.31)
+      (xy 241.3 450.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8e5bd2d7-6c03-55f9-b892-11bbf7875393))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 450.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d67fd959-245d-5ce6-8afb-14e8c77922e0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 450.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 444.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 607285a4-b015-55fb-a293-7c391ed2cad3)
+    (property "Reference" "R_SEL_B1"
+      (at 241.3 416.56 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 419.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0603_1608Metric"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_SEL_B"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25804"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0603WAF1002T5E"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0603"
+      (at 241.3 444.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7861997d-6087-5206-8795-999e2dd88363))
+    (pin "2"
+      (uuid 46ee6bdb-fcb1-5a92-b694-4a8d64650a4d))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_SEL_B1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 63.5 504.19)
+      (xy 63.5 501.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 85b97aaf-404d-50b3-a4f6-c629cfde3ef7))
+  (label "FRONT_LINE_IN_L"
+    (at 63.5 501.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c1bc9ae9-669e-51f8-942e-49c34ee8ef00))
+  (wire
+    (pts
+      (xy 63.5 511.81)
+      (xy 63.5 514.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 50d2fdc5-3f1f-53b6-964a-5021a5ab6f26))
+  (global_label "SHIELD_LINE_IN_L"
+    (shape bidirectional)
+    (at 63.5 514.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b2891de9-c1b3-5bac-b8c1-da5cc5e4e8d9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 63.5 514.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 63.5 508 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 22e8e6aa-899e-5206-bb67-708cc098b3c3)
+    (property "Reference" "R_ISO_IN_L1"
+      (at 63.5 474.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "0"
+      (at 63.5 477.52 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_ISO_IN_L"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17477"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F0000T5E"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 63.5 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid ba6ef1d3-914d-5af6-a806-87a0eff8a2d7))
+    (pin "2"
+      (uuid 8261ac75-3799-5d9e-8bb2-76edb2e1a47e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_ISO_IN_L1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 504.19)
+      (xy 152.4 501.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f19208d2-0985-508b-b3e1-a5ea3b39925c))
+  (label "FRONT_LINE_IN_R"
+    (at 152.4 501.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 773a1ddb-7c75-5604-a8f1-30582b0c253a))
+  (wire
+    (pts
+      (xy 152.4 511.81)
+      (xy 152.4 514.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5eecb1c6-e89a-5b17-bcc6-c5cbb34496b4))
+  (global_label "SHIELD_LINE_IN_R"
+    (shape bidirectional)
+    (at 152.4 514.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid fc32b148-44c6-5d13-8729-b84a33ca9824)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 514.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 152.4 508 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4d18b430-5a45-5872-81ee-db0ca2e1a27d)
+    (property "Reference" "R_ISO_IN_R1"
+      (at 152.4 474.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "0"
+      (at 152.4 477.52 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_ISO_IN_R"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C17477"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0805W8F0000T5E"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 152.4 508 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f21e0f6d-b699-54af-8f9e-5f760eb9b6f9))
+    (pin "2"
+      (uuid 4c6c00ef-068c-5543-ba6c-32882702e3a8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/37204336-d7a2-54a6-89a8-c422e9ab70d1"
+          (reference "R_ISO_IN_R1")
+          (unit 1)))))
+  (text "Frente analogico de la portadora Studio conservado (doc25 seccion 6)."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 86ce7bba-a909-5420-8823-e1529aa60c7e))
+  (text "D13: selector en panel; escalera 10k/10k a PAD_SEL_ADC. Polo C via J_PAD_SEL (3 hilos)."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 069e8799-05dc-5f93-8291-8135a0d8f046))
+  (text "SW_PAD representa polos A/B en panel, cableados al header 2x4; no montar switch en PCB-M."
+    (at 15.24 27.94 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid bc81cb1b-d85e-5f6a-9edf-e653f66b0a22))
+  (text "D17: R_ISO_IN_L/R 0 ohm 0805 separate front from codec; remove both if input fails."
+    (at 15.24 31.75 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e7c2faac-ef7d-56bb-a646-6654845f0532)))

@@ -1,0 +1,32 @@
+{
+  "platform": "offscreen/software",
+  "audio": false,
+  "physical_pi_verified": false,
+  "qml_rotation": 0,
+  "captures": [
+    {
+      "file": "mode-selector.png",
+      "screen": "ModeSelect",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "soft-keys-synth.png",
+      "screen": "SynthFilter",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "soft-keys-drum.png",
+      "screen": "DrumRack",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "section-armed.png",
+      "screen": "DrumRack",
+      "width": 1280,
+      "height": 720
+    }
+  ]
+}

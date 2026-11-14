@@ -61,6 +61,13 @@ Mismo protocolo binario sobre dos transports (UART y USB-CDC) para mantener la c
 - No fixed baudrate (USB Full Speed)
 - Buffer size: 1024 bytes per direction
 
+**USB-CDC (Teensy ↔ Raspberry Pi 5 de la consola)** — *enmienda 2026-11-09, autorizada por Juan; ver `apps/docs/consola/03-arquitectura-capas.md` §2:*
+- Mismas tramas, mismo CRC-8 y mismas reglas de SEQ/ACK/NACK que en UART; solo cambia el transporte. Ningún comando existente cambia de significado.
+- En la consola hay **dos Teensy** conectadas al Pi: la de **sonido** (Brain) y la de **superficie**. Cada una aparece como su propio puerto serie (`/dev/ttyACM*`). El Pi las distingue por el número de serie USB de cada placa, y lo confirma con `GET_VERSION` / `GET_STATUS` (§2.1). Un campo de **rol** (sonido o superficie) en `STATUS` queda pendiente para la misma enmienda de comandos de la consola.
+- El Pi actúa como **cliente**, igual que el VST (§5.3): la Teensy sigue siendo master del protocolo.
+- Comandos propios de la consola (por ejemplo, notas con marca de tiempo para la planificación por adelantado): **pendientes**. Se asignarán en una enmienda posterior, en un rango libre, sin reutilizar códigos existentes.
+- Observación, no corregida aquí: el Teensy 4.1 usa la pila USB de PJRC a **High Speed (480 Mbit/s)**, no TinyUSB a Full Speed como dice el bloque anterior. Queda para revisar con Juan.
+
 ---
 
 ## 2. Command Reference
@@ -346,6 +353,10 @@ class BrainBridge : public juce::AudioProcessor {
 };
 ```
 
+### 5.4 Raspberry Pi 5 de la consola (USB-CDC client) — enmienda 2026-11-09
+
+Cliente en el Pi (Python con `pyserial` para el prototipo; C++ si el rendimiento lo pide). Abre un puerto por Teensy, identifica cada una por su número de serie USB y `GET_VERSION` / `GET_STATUS`, y usa el mismo cálculo de CRC-8 que §6. Las pruebas de protocolo de `apps/bridge-protocol/test/` sirven de referencia para los vectores.
+
 ---
 
 ## 6. CRC-8 Implementation
@@ -390,6 +401,7 @@ uint8_t calculateCRC8(const uint8_t* data, size_t length) {
 - Frame send/receive: <500µs typical
 - Round-trip latency Teensy ↔ ESP32: <2ms p95
 - Round-trip latency Teensy ↔ VST3: <10ms p95
+- Round-trip latency Teensy ↔ Raspberry Pi 5 (USB-CDC): <2ms p95 — *objetivo a medir en el prototipo de mesa (enmienda 2026-11-09)*
 - Throughput: 1000+ frames/sec sustainable
 
 ---

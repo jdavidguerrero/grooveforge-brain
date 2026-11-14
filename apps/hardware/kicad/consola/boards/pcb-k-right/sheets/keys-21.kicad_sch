@@ -1,0 +1,1772 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 877c5991-949e-5325-babd-d12b3c788035)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "LED:SK6812MINI-E"
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 5.08 5.715 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify right bottom)))
+      (property "Value" "SK6812MINI-E"
+        (at 1.27 -5.715 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left top)))
+      (property "Footprint" "LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount"
+        (at 1.27 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left top)))
+      (property "Datasheet" "https://www.lcsc.com/datasheet/C5149201.pdf"
+        (at 2.54 -9.525 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left top)))
+      (property "Description" "RGB LED with integrated controller"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "RGB LED NeoPixel addressable"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "SK6812MINI-E_0_0"
+        (text "RGB"
+          (at 2.286 -4.191 0)
+          (effects
+            (font
+              (size 0.762 0.762)))))
+      (symbol "SK6812MINI-E_0_1"
+        (polyline
+          (pts
+            (xy 1.27 -2.54)
+            (xy 1.778 -2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 -3.556)
+            (xy 1.778 -3.556))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.286 -1.524)
+            (xy 1.27 -2.54)
+            (xy 1.27 -2.032))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.286 -2.54)
+            (xy 1.27 -3.556)
+            (xy 1.27 -3.048))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.683 -1.016)
+            (xy 3.683 -3.556)
+            (xy 3.683 -4.064))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.699 -1.524)
+            (xy 2.667 -1.524)
+            (xy 3.683 -3.556)
+            (xy 4.699 -1.524))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.699 -3.556)
+            (xy 2.667 -3.556))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start 5.08 5.08)
+          (end -5.08 -5.08)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background))))
+      (symbol "SK6812MINI-E_1_1"
+        (pin power_in line
+          (at 0 -7.62 90)
+          (length 2.54)
+          (name "VSS"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin input line
+          (at -7.62 0 0)
+          (length 2.54)
+          (name "DIN"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin power_in line
+          (at 0 7.62 270)
+          (length 2.54)
+          (name "VDD"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin output line
+          (at 7.62 0 180)
+          (length 2.54)
+          (name "DOUT"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Switch:SW_Push"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "SW"
+        (at 1.27 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "SW_Push"
+        (at 0 -1.524 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Push button switch, generic, two pins"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "switch normally-open pushbutton push-button"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "SW_Push_0_1"
+        (circle
+          (center -2.032 0)
+          (radius 0.508)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0 1.27)
+            (xy 0 3.048))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 2.032 0)
+          (radius 0.508)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 1.27)
+            (xy -2.54 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 2.54)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 5.08 0 180)
+          (length 2.54)
+          (name "2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 71.12 63.5)
+      (xy 68.58 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 846ca174-56a1-5b0d-884e-8ec38af8e56f))
+  (global_label "METRO"
+    (shape bidirectional)
+    (at 68.58 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid efb7f7b0-a188-59a9-a790-2b3b90d8e27e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 81.28 63.5)
+      (xy 83.82 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7c2dfbbb-3c79-5a94-8d10-f494738920d5))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 83.82 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 03007852-1142-5ebe-8d6c-ac2a28efbd99)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 83.82 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Switch:SW_Push")
+    (at 76.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 19184b6c-1272-5fbc-a7a2-2e8eb110485f)
+    (property "Reference" "SW22"
+      (at 76.2 55.372 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "METRO"
+      (at 76.2 57.912 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 280c473d-8914-5c15-b979-99b4202bbe14))
+    (pin "2"
+      (uuid aae93bd0-0146-5151-a0ab-e07a0f5ad850))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "SW22")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 71.12)
+      (xy 190.5 73.66))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0c29600f-54dd-5d21-8586-222cded98e90))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 73.66 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6ddf6483-c435-5cd2-9758-af9d241d1587)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 73.66 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 182.88 63.5)
+      (xy 180.34 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7a950f3d-bf7b-5949-8e00-d0801558cde2))
+  (global_label "LED_21_DIN"
+    (shape bidirectional)
+    (at 180.34 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 011b8c6b-908c-523d-a648-b9ac92cadf75)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 180.34 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 55.88)
+      (xy 190.5 53.34))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2c79d992-67af-531d-800f-f33afa200dc9))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 190.5 53.34 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 522ca8c6-60da-5418-a560-0fdb15e46ce1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 53.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 198.12 63.5)
+      (xy 200.66 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 92a3796b-e7a9-57bc-aecf-103c44b2c938))
+  (label "LED_22_DIN"
+    (at 200.66 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5963963f-739f-5679-a8eb-8a51073f0dd0))
+  (symbol
+    (lib_id "LED:SK6812MINI-E")
+    (at 190.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5d321ad2-ef8f-5714-98cb-9e4f4566f39c)
+    (property "Reference" "D22"
+      (at 190.5 36.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SK6812MINI-EA"
+      (at 190.5 39.37 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5378731"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b69272c5-0845-5d8e-a9d2-9dddba4db8db))
+    (pin "2"
+      (uuid 581abd37-dcfb-5980-82ae-40947b8879f6))
+    (pin "3"
+      (uuid 3aa67d27-f52a-5563-897a-355f82060860))
+    (pin "4"
+      (uuid b2dfc908-735f-50da-b9c9-f4f1830f73bd))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "D22")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 59.69)
+      (xy 304.8 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1c8dc1ae-36a1-54bf-95b1-f377213c3dba))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 304.8 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 89c88899-1af1-505f-acc3-c6378728ea9e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 67.31)
+      (xy 304.8 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a3302d02-959f-54d6-a075-98d2a19fb168))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 70d1dda0-2ef4-551f-b78a-a9b93e8a8297)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 3a9def6c-c117-5a96-bf42-5d4fe0fca6c2)
+    (property "Reference" "C121"
+      (at 304.8 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 304.8 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid acc9a8c3-8f5f-573a-838c-830f39f23383))
+    (pin "2"
+      (uuid af125974-5c5b-5dd8-b246-c29f408eecc2))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "C121")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 114.3)
+      (xy 68.58 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2ed8f7b8-4ff8-5749-a554-7c2ac6a57c29))
+  (global_label "SCENE4_PAGE_R"
+    (shape bidirectional)
+    (at 68.58 114.3 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 47e1ace2-2ccd-525b-b7c0-2961defa36a4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 81.28 114.3)
+      (xy 83.82 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7f855ebe-7ea2-57ae-a986-504099300cb1))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 83.82 114.3 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e93231f2-6cdd-5a3c-8a7e-c93c1da13cd2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 83.82 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Switch:SW_Push")
+    (at 76.2 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 53ef3409-9311-526d-b66c-f65a2fa668ea)
+    (property "Reference" "SW23"
+      (at 76.2 106.172 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SCENE4_PAGE_R"
+      (at 76.2 108.712 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 664ea302-e834-5aa3-9068-6ac1817ad6a9))
+    (pin "2"
+      (uuid 9d387af9-38ce-503f-b095-3c237b9bb573))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "SW23")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 121.92)
+      (xy 190.5 124.46))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ef8aa428-10ff-5e0d-ad91-96b5ca21329b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 124.46 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ad0dfbb2-675b-5270-aaba-68431e2d2d8d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 124.46 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 182.88 114.3)
+      (xy 180.34 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 686693d0-2bf5-5551-88d6-4e1ec379c856))
+  (label "LED_22_DIN"
+    (at 180.34 114.3 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 4e43af07-b730-5b15-9977-2998fee18efc))
+  (wire
+    (pts
+      (xy 190.5 106.68)
+      (xy 190.5 104.14))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d2feb867-3977-541d-b78d-757e890a3921))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 190.5 104.14 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1814a7f6-325c-58da-bf23-14b1b2dc5c0e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 198.12 114.3)
+      (xy 200.66 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 08584095-ff40-58f3-a3ea-d398110e2cb6))
+  (label "LED_23_DIN"
+    (at 200.66 114.3 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a60ea507-1a4e-5386-a7c7-5eb022e9c158))
+  (symbol
+    (lib_id "LED:SK6812MINI-E")
+    (at 190.5 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c267f954-be60-5416-bef3-f2d2ec6d1ed3)
+    (property "Reference" "D23"
+      (at 190.5 87.63 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SK6812MINI-EA"
+      (at 190.5 90.17 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5378731"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid e854fb36-69dd-5b18-be25-d012ca092d6e))
+    (pin "2"
+      (uuid c53a024f-d8ba-5e52-98f7-c52abf78a53a))
+    (pin "3"
+      (uuid 2ff99c84-e459-5692-98d5-e688d4046849))
+    (pin "4"
+      (uuid 4c00193a-8d16-59f1-94e8-9ffdd5f2f9ff))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "D23")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 110.49)
+      (xy 304.8 107.95))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e1c983c1-b9f0-539a-a12c-fc4878825e89))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 304.8 107.95 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 91341f77-309c-535f-afa1-700bc5fc6715)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 118.11)
+      (xy 304.8 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 30645adb-c9ca-5021-acd7-cfc699a5c766))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 120.65 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3d5daa54-c703-5213-a872-cad43c5c8c7c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5d061859-c3a9-5639-8f3c-340fb6707d5f)
+    (property "Reference" "C122"
+      (at 304.8 91.44 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 304.8 93.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 778fa715-1a6b-53b7-82a1-3188953c760b))
+    (pin "2"
+      (uuid 21160ce3-a1ba-57dc-a1c7-c59b65293533))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "C122")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 165.1)
+      (xy 68.58 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f1589205-3c63-5eaf-a13f-481a4308f909))
+  (global_label "SCENE3_PAGE_L"
+    (shape bidirectional)
+    (at 68.58 165.1 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1573d533-2f8c-5f0d-8c5c-2432c996c82c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 81.28 165.1)
+      (xy 83.82 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b2831581-5ab1-5728-864a-16741222fb96))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 83.82 165.1 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 684c0c8c-a9bd-599e-977f-de43ac326b8f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 83.82 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Switch:SW_Push")
+    (at 76.2 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 9422eb0c-78ff-5131-902c-84be0f24dbe4)
+    (property "Reference" "SW24"
+      (at 76.2 156.972 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SCENE3_PAGE_L"
+      (at 76.2 159.512 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 2828613b-ca95-5773-90e4-8b61e1157a67))
+    (pin "2"
+      (uuid 7c427191-ea53-58b1-8aa8-fc2575082d42))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "SW24")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 172.72)
+      (xy 190.5 175.26))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1f693853-72ce-5409-8103-6d84330e9beb))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 175.26 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bd23f135-69bd-5563-917b-f1d5e55c2503)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 175.26 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 182.88 165.1)
+      (xy 180.34 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8b9b271d-6acd-55ea-8968-d41c4619ef6a))
+  (label "LED_23_DIN"
+    (at 180.34 165.1 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid e66416b5-1bba-54ee-bb76-859b11b67398))
+  (wire
+    (pts
+      (xy 190.5 157.48)
+      (xy 190.5 154.94))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5140d8f0-a647-5645-a987-6574aa3b4b1b))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 190.5 154.94 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid f1f55db8-5a9c-5ce8-9c91-4e6682dbf113)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 154.94 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 198.12 165.1)
+      (xy 200.66 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f593bc18-4771-5109-a3d7-aeb604411f4a))
+  (label "LED_24_DIN"
+    (at 200.66 165.1 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a5bb7e2d-5760-5c2c-bef0-101ada88f6a6))
+  (symbol
+    (lib_id "LED:SK6812MINI-E")
+    (at 190.5 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 486dc4d8-05f2-595d-a4cd-9d7e3d180e6e)
+    (property "Reference" "D24"
+      (at 190.5 138.43 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SK6812MINI-EA"
+      (at 190.5 140.97 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5378731"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 6eab803e-edba-55bd-b4f2-861773676b85))
+    (pin "2"
+      (uuid 18a3c4c9-776b-5f7c-aa24-fd54af6fc642))
+    (pin "3"
+      (uuid 2a00375f-ea7b-5afc-9032-3498e327bd44))
+    (pin "4"
+      (uuid 43c5fd8a-de2d-5496-b70a-c28fc0da61dc))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "D24")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 161.29)
+      (xy 304.8 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 060c78fb-9751-557b-9d75-1fc360335fcd))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 304.8 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ba941e84-b185-5158-be62-36b557d6dc51)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 168.91)
+      (xy 304.8 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d9b121d9-9655-589e-aa30-5b83db1c8eca))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid e970fa4a-de17-596f-8f53-5e48b91d942a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 39e23bd1-9017-5983-b97c-8a1b4bf3636a)
+    (property "Reference" "C123"
+      (at 304.8 142.24 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 304.8 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid fa195b32-ac35-55cf-b755-632a729e2e27))
+    (pin "2"
+      (uuid 215dbe35-5d70-5392-ab05-40b46096d69d))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "C123")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 215.9)
+      (xy 68.58 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 26428e5e-9ffa-5c36-8626-49225b5f4262))
+  (global_label "SCENE2_OCT-"
+    (shape bidirectional)
+    (at 68.58 215.9 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 13ff2272-7ae8-587c-9f72-16f208bc41f6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 81.28 215.9)
+      (xy 83.82 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 36c8c0c9-652b-5d8e-9fc9-71ca592f0ea0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 83.82 215.9 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4cad1805-fb7a-5318-9e04-15fba43d5437)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 83.82 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Switch:SW_Push")
+    (at 76.2 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 456193dc-4680-5589-9933-5a9f58e9c741)
+    (property "Reference" "SW25"
+      (at 76.2 207.772 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SCENE2_OCT-"
+      (at 76.2 210.312 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 8813cb35-964a-5f18-8e83-a948b94263eb))
+    (pin "2"
+      (uuid d2558c2d-abe5-5ae9-92fb-dcc9a1282ad4))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "SW25")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 223.52)
+      (xy 190.5 226.06))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ecfe6615-f385-5aab-b07e-89c0901d004e))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 226.06 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1c364364-5978-5360-a9d3-31004909ed39)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 226.06 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 182.88 215.9)
+      (xy 180.34 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid d1122579-4e02-580c-b037-52abae1649ab))
+  (label "LED_24_DIN"
+    (at 180.34 215.9 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7dee4514-b25d-5f46-9b20-02ddf38db41e))
+  (wire
+    (pts
+      (xy 190.5 208.28)
+      (xy 190.5 205.74))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 25718b8a-d8ac-5efd-940d-1df6d30e7c90))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 190.5 205.74 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9d386c4e-04fb-5824-a031-8386df9fd897)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 205.74 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 198.12 215.9)
+      (xy 200.66 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e88b5828-d575-555e-a291-fbd41e46b4ed))
+  (global_label "LED_25_DIN"
+    (shape bidirectional)
+    (at 200.66 215.9 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4cad178a-cae0-57ef-b244-55483c4b8bc4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 200.66 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "LED:SK6812MINI-E")
+    (at 190.5 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 4e069e89-0355-54d2-8d71-2f0b8bed1650)
+    (property "Reference" "D25"
+      (at 190.5 189.23 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "SK6812MINI-EA"
+      (at 190.5 191.77 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:SK6812MINI-EA_ReverseMount"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C5378731"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SK6812MINI-EA"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "OPSCO Optoelectronics"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD-4P,3.2x2.8mm"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7496725e-a7bc-5e8a-a2c2-515c7e5263dd))
+    (pin "2"
+      (uuid 56350553-d2a9-5ad9-8a2a-9b2a285bc755))
+    (pin "3"
+      (uuid 59176d93-eed7-567e-a41c-b2ac3be599db))
+    (pin "4"
+      (uuid 8a492ce1-f065-5e53-81e9-a5cb24ec05c4))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "D25")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 212.09)
+      (xy 304.8 209.55))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c6fbcab9-54f2-5d19-9c58-d8bbf55e9779))
+  (global_label "+5V_LED"
+    (shape bidirectional)
+    (at 304.8 209.55 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2eb214a2-9043-5e61-b434-8e2f989c6feb)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 209.55 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 219.71)
+      (xy 304.8 222.25))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ca7ef8d8-a4e3-57b4-8723-b1d426f7840d))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 222.25 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3ef44cea-ca5a-5813-b057-5632d4ccabfa)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 222.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d48e5754-80ee-5701-95a4-d237caf135a4)
+    (property "Reference" "C124"
+      (at 304.8 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 304.8 195.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 60a6d3da-10b6-54fe-87b3-a1e58c7682e3))
+    (pin "2"
+      (uuid 5e4628e0-6094-53da-9826-119684335d70))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420/2304dba4-236e-5391-a027-6b94875258e8"
+          (reference "C124")
+          (unit 1)))))
+  (text "SW arriba, zocalo integrado abajo. LED inverso abajo. Orden nuevo PCB-K partida."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5b1f820e-2419-5275-87dd-338959bd9f3d)))

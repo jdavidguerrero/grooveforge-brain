@@ -1,0 +1,50 @@
+[
+  {
+    "screen": "ModeSelect",
+    "file": "ModeSelect.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "COMMON",
+    "source": "offline fake host; no audio or physical surface"
+  },
+  {
+    "screen": "SynthParts",
+    "file": "SynthParts.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "SYNTH",
+    "source": "offline fake host; no audio or physical surface"
+  },
+  {
+    "screen": "SynthFilter",
+    "file": "SynthFilter.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "SYNTH",
+    "source": "offline fake host; no audio or physical surface"
+  },
+  {
+    "screen": "SynthScale",
+    "file": "SynthScale.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "SYNTH",
+    "source": "offline fake host; no audio or physical surface"
+  },
+  {
+    "screen": "SynthPresets",
+    "file": "SynthPresets.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "SYNTH",
+    "source": "offline fake host; no audio or physical surface"
+  },
+  {
+    "screen": "SynthSettingsAudio",
+    "file": "SynthSettingsAudio.png",
+    "width": 1280,
+    "height": 720,
+    "mode": "SYNTH",
+    "source": "offline fake host; no audio or physical surface"
+  }
+]

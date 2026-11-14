@@ -1,0 +1,186 @@
+{
+  "platform": "offscreen/software",
+  "physical_pi_verified": false,
+  "screens": [
+    {
+      "screen": "DrumRack",
+      "file": "DrumRack-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumRackStates",
+      "file": "DrumRackStates-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumRackEmpty",
+      "file": "DrumRackEmpty-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumPad",
+      "file": "DrumPad-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumBrowser",
+      "file": "DrumBrowser-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumBrowserEmpty",
+      "file": "DrumBrowserEmpty-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumImport",
+      "file": "DrumImport-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumSteps",
+      "file": "DrumSteps-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumProbability",
+      "file": "DrumProbability-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumPerform",
+      "file": "DrumPerform-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumMixer",
+      "file": "DrumMixer-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumSave",
+      "file": "DrumSave-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumVariations",
+      "file": "DrumVariations-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "Settings",
+      "file": "Settings-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "SynthHybrid",
+      "file": "SynthHybrid-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "ModeSelect",
+      "file": "ModeSelect-0.png",
+      "qml_rotation": 0,
+      "width": 1280,
+      "height": 720,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "DrumRack",
+      "file": "DrumRack-90.png",
+      "qml_rotation": 90,
+      "width": 720,
+      "height": 1280,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    },
+    {
+      "screen": "Settings",
+      "file": "Settings-90.png",
+      "qml_rotation": 90,
+      "width": 720,
+      "height": 1280,
+      "data": "deterministic preview; no audio",
+      "hands": "master/left/right OFF",
+      "pad_velocity": 100
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+[  8%] Building CXX object CMakeFiles/gf_prophet_preview.dir/src/prophet_preview.cpp.o
+[  8%] Building CXX object CMakeFiles/gf_preset_codec.dir/src/hybrid_codec.cpp.o
+[  8%] Building CXX object CMakeFiles/gf_preset_codec.dir/src/preset_codec.cpp.o
+[  8%] Building CXX object CMakeFiles/gf_prophet_preview.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/engines/prophet_osc_core.cpp.o
+[ 10%] Building CXX object CMakeFiles/gf_prophet_preview.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/dsp/lfo.cpp.o
+[ 12%] Building CXX object CMakeFiles/gf_preset_codec.dir/src/hybrid_router.cpp.o
+[ 14%] Building CXX object CMakeFiles/gf_preset_codec.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/ui/layer_bank.cpp.o
+[ 16%] Building CXX object CMakeFiles/gf_preset_codec.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/ui/preset_bank.cpp.o
+[ 18%] Building CXX object CMakeFiles/gf_preset_codec.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/ui/page_params.cpp.o
+[ 20%] Linking CXX static library libgf_preset_codec.a
+[ 20%] Built target gf_preset_codec
+[ 26%] Building CXX object CMakeFiles/gf_hybrid_router_test.dir/tests/hybrid_router_test.cpp.o
+[ 26%] Building CXX object CMakeFiles/gf_preset_codec_test.dir/tests/preset_codec_test.cpp.o
+[ 26%] Building CXX object CMakeFiles/gf_hybrid_codec_test.dir/tests/hybrid_codec_test.cpp.o
+[ 28%] Linking CXX executable gf_hybrid_router_test
+[ 28%] Built target gf_hybrid_router_test
+[ 30%] Linking CXX executable gf_hybrid_codec_test
+[ 30%] Built target gf_hybrid_codec_test
+[ 32%] Linking CXX executable gf_preset_codec_test
+[ 32%] Built target gf_preset_codec_test
+[ 34%] Linking CXX static library libgf_prophet_preview.a
+[ 34%] Built target gf_prophet_preview
+[ 42%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/dx7_preset.cpp.o
+[ 42%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/dx7_preview.cpp.o
+[ 42%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/prophet_preset.cpp.o
+[ 42%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/juno_preview.cpp.o
+[ 44%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/juno_preset.cpp.o
+[ 46%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/ob6_preview.cpp.o
+[ 48%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/ob6_preset.cpp.o
+[ 51%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/model_d_preview.cpp.o
+[ 53%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/model_d_preset.cpp.o
+[ 55%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/arp2600_preview.cpp.o
+[ 57%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/arp2600_preset.cpp.o
+[ 59%] Building CXX object CMakeFiles/gf_prophet_preset.dir/src/hybrid_preview.cpp.o
+[ 61%] Building CXX object CMakeFiles/gf_prophet_preset.dir/home/juan/gemelo-pi/apps/firmware-teensy/src/engines/dx7_core.cpp.o
+[ 63%] Linking CXX static library libgf_prophet_preset.a
+[ 63%] Built target gf_prophet_preset
+[ 71%] Building CXX object CMakeFiles/gf_juno_preview_test.dir/tests/juno_preview_test.cpp.o
+[ 71%] Building CXX object CMakeFiles/gf_ob6_preview_reference.dir/home/juan/gemelo-pi/tools/gemelo-baseline/ob6_preview_reference.cpp.o
+[ 71%] Building CXX object CMakeFiles/gf_prophet_preview_test.dir/tests/prophet_preview_test.cpp.o
+[ 71%] Building CXX object CMakeFiles/gf_juno_preview_reference.dir/home/juan/gemelo-pi/tools/gemelo-baseline/juno_preview_reference.cpp.o
+[ 73%] Linking CXX executable gf_ob6_preview_reference
+[ 73%] Built target gf_ob6_preview_reference
+[ 75%] Linking CXX executable gf_juno_preview_reference
+[ 77%] Building CXX object CMakeFiles/gf_ob6_preview_test.dir/tests/ob6_preview_test.cpp.o
+[ 77%] Built target gf_juno_preview_reference
+[ 79%] Building CXX object CMakeFiles/gf_model_d_preview_test.dir/tests/model_d_preview_test.cpp.o
+[ 81%] Linking CXX executable gf_juno_preview_test
+[ 81%] Built target gf_juno_preview_test
+[ 83%] Building CXX object CMakeFiles/gf_arp2600_preview_test.dir/tests/arp2600_preview_test.cpp.o
+[ 85%] Linking CXX executable gf_ob6_preview_test
+[ 85%] Built target gf_ob6_preview_test
+[ 87%] Building CXX object CMakeFiles/gf_hybrid_preview_test.dir/tests/hybrid_preview_test.cpp.o
+[ 89%] Linking CXX executable gf_model_d_preview_test
+[ 89%] Built target gf_model_d_preview_test
+[ 91%] Building CXX object bench/CMakeFiles/gf_engine_bench.dir/engine_bench.cpp.o
+[ 93%] Linking CXX executable gf_arp2600_preview_test
+[ 93%] Built target gf_arp2600_preview_test
+[ 95%] Linking CXX executable gf_prophet_preview_test
+[ 95%] Built target gf_prophet_preview_test
+[ 97%] Linking CXX executable gf_hybrid_preview_test
+[ 97%] Built target gf_hybrid_preview_test
+[100%] Linking CXX executable ../gf_engine_bench
+[100%] Built target gf_engine_bench

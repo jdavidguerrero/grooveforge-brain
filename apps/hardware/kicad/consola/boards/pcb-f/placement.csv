@@ -1,0 +1,5 @@
+reference,component,name,x_mm,y_mm,rotation_deg,side,notes
+RV1,fader,F1,264.5,129.5,90,F,rotacion KiCad CCW; eje largo paralelo a y del panel
+RV2,fader,F2,284.5,129.5,90,F,rotacion KiCad CCW; eje largo paralelo a y del panel
+RV3,fader,F3,304.5,129.5,90,F,rotacion KiCad CCW; eje largo paralelo a y del panel
+RV4,fader,F4,324.5,129.5,90,F,rotacion KiCad CCW; eje largo paralelo a y del panel

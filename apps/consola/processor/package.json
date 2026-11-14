@@ -1,0 +1,14 @@
+{
+  "name": "@groovepush/processor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GroovePush processor firmware — PlatformIO (Teensy 4.1 brain + NeoTrellis M4 pad grid).",
+  "scripts": {
+    "build": "pio run",
+    "build:teensy": "pio run -e teensy41",
+    "build:m4": "pio run -e neotrellis_m4",
+    "upload": "pio run -e teensy41 -t upload",
+    "test": "pio run -e test_faders_teensy -e test_encoders_teensy",
+    "clean": "pio run -t clean"
+  }
+}

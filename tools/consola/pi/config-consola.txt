@@ -1,0 +1,21 @@
+# GrooveForge consola · líneas propias para /boot/firmware/config.txt (Raspberry Pi 5)
+# Tomadas de la SD que funcionaba (config.txt del 2026-10-15). Van al final, dentro de [all].
+# Las aplica tools/consola/e0-preparar-pi.sh, con respaldo previo.
+
+[all]
+dtparam=i2s=on
+dtparam=i2c_arm=on
+
+# Audio: Raspiaudio Audio+ V2 (DAC por I2S). Overlay confirmado en la SD anterior.
+dtoverlay=hifiberry-dac
+
+# Reloj de 12,288 MHz en GPIO4. Estaba activo en la SD anterior; su uso no está documentado
+# (¿MCLK para un códec?). El Audio+ no lo necesita. Se deja comentado hasta confirmarlo con Juan.
+#dtoverlay=gpclk,pin=4,clock=12288000
+
+# Pantalla: Waveshare/UeeKKoo 7" DSI, 720x1280 nativa (vertical), touch Goodix.
+# Si no enciende, probar en este orden: 1) 7_0_inch_a  2) 7_0_inch_b  3) vc4-kms-dsi-ili9881-7inch
+# Añadir ,dsi0 si el cable está en el conector DSI0 (el más cercano al USB-C).
+dtoverlay=vc4-kms-dsi-waveshare-panel-v2,7_0_inch_a
+#dtoverlay=vc4-kms-dsi-waveshare-panel-v2,7_0_inch_b
+#dtoverlay=vc4-kms-dsi-ili9881-7inch

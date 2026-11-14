@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
+<style>:root{--disp:'Big Shoulders Display',sans-serif;--dispw:100%}body{margin:0;background:#060606}a{color:#5DCAA5}a:hover{color:#F2F2F2}</style>
+</helmet>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="cvd-p"><feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0"></feColorMatrix></filter>
+  <filter id="cvd-d"><feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0"></feColorMatrix></filter>
+  <filter id="cvd-t"><feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0"></feColorMatrix></filter>
+</svg>
+<div style="width:1600px;box-sizing:border-box;padding:72px;background:#0A0A0A;color:#F2F2F2;font-family:'IBM Plex Mono',monospace;display:flex;flex-direction:column;gap:104px">
+
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:12px;letter-spacing:.2em;color:#5DCAA5">GROOVEFORGE CONSOLE · DESIGN SYSTEM v0.1</div>
+    <div style="font-family:var(--disp);font-stretch:var(--dispw);font-size:88px;line-height:84px;font-weight:800;text-transform:uppercase;letter-spacing:.01em">Console UI</div>
+    <div style="font-size:14px;line-height:22px;color:#9A9AA6;max-width:900px">7" DSI · 1280×720 · Qt 6 / QML on Raspberry Pi 5 · IBM Plex Mono + display face · 4 px grid. Screen, pads and LEDs share one colour language: the role colour says which layer, teal says it sounds, violet says the engine proposed it.</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">01</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Base colour</span><span style="font-size:12px;color:#5A5A6E">BRAIN HEX UNCHANGED · + MARKS A CONSOLE EXTENSION</span></div>
+    <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:16px">
+      <sc-for list="{{ base }}" as="c" hint-placeholder-count="22">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="height:64px;border-radius:4px;background:{{ c.h }};border:1px solid #2E2E2E"></div>
+          <div style="font-size:12px;font-weight:600">{{ c.n }}</div>
+          <div style="font-size:11px;color:#9A9AA6">{{ c.h }}</div>
+          <div style="font-size:11px;line-height:15px;color:#5A5A6E">{{ c.u }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:200px repeat(7,minmax(0,1fr));gap:16px;align-items:start;padding:20px;border:1px solid #27272A;border-radius:8px;background:#09090B;font-family:'JetBrains Mono',monospace">
+      <div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'General Sans',sans-serif;font-size:18px;font-weight:600">GroovePilot OS</span><span style="font-size:11px;line-height:16px;color:#A1A1AA">Boot, mode select, menus and settings only. Never on a music screen.</span></div>
+      <sc-for list="{{ gp }}" as="c" hint-placeholder-count="7">
+        <div style="display:flex;flex-direction:column;gap:6px"><div style="height:44px;border-radius:8px;background:{{ c.h }};border:1px solid #27272A"></div><span style="font-size:11px;color:#FAFAFA">{{ c.n }}</span><span style="font-size:11px;color:#71717A">{{ c.h }}</span></div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">02</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Role palette</span><span style="font-size:12px;color:#5A5A6E">SAME HEX ON SCREEN, PADS AND KEY LEDS</span></div>
+    <div style="font-size:14px;line-height:22px;color:#9A9AA6;max-width:1000px;text-wrap:pretty">Roles sit outside the teal–blue–violet band (150°–260°) so they never read as "sounding", "hybrid" or "engine". BASS is the one cool role, held lighter than violet. Warm roles step in lightness from KICK (darkest) to TOP (near white) so adjacent columns separate even without hue. Column order is fixed and every cell prints its role name.</div>
+    <div style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:12px">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="9">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:96px;border-radius:6px;background:{{ r.c }};display:flex;align-items:flex-end;padding:10px;box-sizing:border-box;color:#0A0A0A;font-family:var(--disp);font-stretch:var(--dispw);font-size:30px;font-weight:800">{{ r.k }}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px"><div style="height:28px;border-radius:4px;background:{{ r.d }}"></div><div style="height:28px;border-radius:4px;background:#0A0A0A;border:1px solid #242424;display:flex;align-items:center;justify-content:center"><div style="width:14px;height:14px;border-radius:50%;background:{{ r.c }};box-shadow:0 0 10px {{ r.c }}"></div></div></div>
+          <div style="font-size:11px;line-height:16px;color:#9A9AA6">{{ r.c }}<br>dim {{ r.d }}</div>
+          <div style="font-size:11px;color:#5A5A6E">{{ r.g }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <sc-for list="{{ cvd }}" as="v" hint-placeholder-count="4">
+        <div style="display:grid;grid-template-columns:160px minmax(0,1fr);gap:16px;align-items:center">
+          <span style="font-size:11px;letter-spacing:.1em;color:#9A9AA6">{{ v.n }}</span>
+          <div style="display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:4px;filter:{{ v.f }}">
+            <sc-for list="{{ cvdRow }}" as="r" hint-placeholder-count="12"><div style="height:36px;border-radius:3px;background:{{ r.c }};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:{{ r.t }}">{{ r.k }}</div></sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">03</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Role × state · two encodings</span><span style="font-size:12px;color:#5A5A6E">PICK ONE · SCREENS FILE HAS A TWEAK TO SWITCH</span></div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px">
+      <sc-for list="{{ encs }}" as="e" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:20px;padding:24px;border:1px solid #242424;border-radius:10px;background:#0D0D0D">
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:32px;font-weight:700;text-transform:uppercase">{{ e.title }}</span><span style="font-size:13px;line-height:20px;color:#9A9AA6">{{ e.desc }}</span></div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+            <sc-for list="{{ e.states }}" as="s" hint-placeholder-count="8">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="height:108px"><dc-import name="Grid Cell" color="{{ s.c }}" dim="{{ s.d }}" label="{{ s.label }}" title="{{ s.name }}" sub="{{ s.sub }}" state="{{ s.state }}" enc="{{ s.enc }}" steps="{{ s.steps }}" level="{{ s.level }}" hint-size="100%,108px"></dc-import></div>
+                <span style="font-size:11px;letter-spacing:.08em;color:#9A9AA6">{{ s.cap }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;letter-spacing:.12em;color:#5A5A6E">AT ARM'S LENGTH · 8 COLUMNS</span>
+            <sc-for list="{{ e.mini }}" as="row" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;height:56px">
+                <sc-for list="{{ row }}" as="s" hint-placeholder-count="8"><dc-import name="Grid Cell" color="{{ s.c }}" dim="{{ s.d }}" label="{{ s.label }}" title="{{ s.name }}" state="{{ s.state }}" enc="{{ s.enc }}" compact="{{ true }}" tag="{{ false }}" hint-size="100%,56px"></dc-import></sc-for>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12px;line-height:18px">
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#5DCAA5;letter-spacing:.1em">FOR</span><span style="color:#9A9AA6">{{ e.pro }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:4px"><span style="color:#E8B84A;letter-spacing:.1em">AGAINST</span><span style="color:#9A9AA6">{{ e.con }}</span></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">04</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Type</span><span style="font-size:12px;color:#5A5A6E">IBM PLEX MONO FOR DATA · ONE DISPLAY FACE FOR BIG NUMBERS, MODES, PHRASE COUNT</span></div>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px">
+      <sc-for list="{{ disp }}" as="f" hint-placeholder-count="2">
+        <div style="display:flex;flex-direction:column;gap:16px;padding:28px;border:1px solid #242424;border-radius:10px;background:#0D0D0D;overflow:hidden">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:13px;font-weight:600;letter-spacing:.08em">{{ f.n }}</span><span style="font-size:11px;color:#5A5A6E">{{ f.meta }}</span></div>
+          <div style="display:flex;align-items:flex-end;gap:28px;font-family:{{ f.ff }};font-stretch:{{ f.fs }}">
+            <span style="font-size:200px;line-height:160px;font-weight:800">5</span>
+            <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:6px"><span style="font-size:72px;line-height:64px;font-weight:700">124.0</span><span style="font-size:44px;line-height:40px;font-weight:700;color:#5DCAA5">DROP</span></div>
+          </div>
+          <div style="font-family:{{ f.ff }};font-stretch:{{ f.fs }};font-size:32px;line-height:34px;font-weight:700;text-transform:uppercase;white-space:nowrap">Live · Session  /  Standalone</div>
+          <div style="font-family:{{ f.ff }};font-stretch:{{ f.fs }};font-size:22px;font-weight:600;color:#9A9AA6;white-space:nowrap">INTRO BUILD DROP BREAK INTER OUTRO</div>
+          <div style="font-size:12px;line-height:18px;color:#9A9AA6;border-top:1px solid #242424;padding-top:12px">{{ f.note }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column">
+      <sc-for list="{{ typeScale }}" as="t" hint-placeholder-count="10">
+        <div style="display:grid;grid-template-columns:200px minmax(0,1fr) 320px;gap:24px;align-items:center;border-top:1px solid #1C1C1C;padding:10px 0">
+          <div style="font-size:11px;line-height:16px;color:#9A9AA6">{{ t.n }}<br><span style="color:#5A5A6E">{{ t.spec }}</span></div>
+          <div style="font-family:{{ t.ff }};font-stretch:{{ t.fs }};font-size:{{ t.px }}px;line-height:{{ t.lh }}px;font-weight:{{ t.w }};letter-spacing:{{ t.ls }};text-transform:{{ t.tt }};white-space:nowrap;overflow:hidden">{{ t.sample }}</div>
+          <div style="font-size:12px;line-height:16px;color:#5A5A6E">{{ t.use }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:32px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">05</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Space, radius, layout</span></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:48px">
+      <div style="display:flex;flex-direction:column">
+        <sc-for list="{{ space }}" as="s" hint-placeholder-count="8">
+          <div style="display:grid;grid-template-columns:64px 72px minmax(0,1fr);gap:12px;align-items:center;border-top:1px solid #1C1C1C;padding:8px 0">
+            <span style="font-size:12px;font-weight:600">{{ s.n }}</span>
+            <div style="height:10px;width:{{ s.px }}px;background:#1D9E75"></div>
+            <span style="font-size:12px;color:#9A9AA6">{{ s.u }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="position:relative;width:640px;height:360px;background:#0A0A0A;border:1px solid #2E2E2E;border-radius:4px;overflow:hidden">
+          <div style="position:absolute;left:0;right:0;top:0;height:28px;background:#141414;border-bottom:1px solid #242424;display:flex;align-items:center;padding:0 10px;font-size:10px;color:#9A9AA6">TOP BAR · 56</div>
+          <div style="position:absolute;left:4px;right:4px;top:32px;bottom:52px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px"><sc-for list="{{ eight }}" as="i" hint-placeholder-count="8"><div style="background:#141414;border:1px dashed #2E2E2E"></div></sc-for></div>
+          <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:11px;color:#F2F2F2;background:#0A0A0A;padding:4px 8px">CONTENT · 568 · 8 COLUMNS OF 152 + 8 GAP</div>
+          <div style="position:absolute;left:4px;right:4px;bottom:4px;height:40px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px"><sc-for list="{{ eight }}" as="i" hint-placeholder-count="8"><div style="background:#1C1C1C;border-radius:3px;border-top:2px solid #5DCAA5;font-size:9px;color:#9A9AA6;display:flex;align-items:center;justify-content:center">ENC {{ i }}</div></sc-for></div>
+        </div>
+        <div style="font-size:12px;line-height:18px;color:#9A9AA6;max-width:640px">Scale 0.5. The 8 content columns sit exactly above the 8 encoder keys and match the 8 pad columns. Anything that belongs to a layer lives in its column, from cell to key LED to pad.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:40px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #242424;padding-bottom:12px"><span style="font-size:13px;color:#5DCAA5">06</span><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:40px;font-weight:700;text-transform:uppercase">Components</span></div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">TOP BAR · 1280 × 56</span>
+      <div style="width:1280px;border:1px solid #242424"><dc-import name="Top Bar" hint-size="1280px,56px"></dc-import></div>
+      <div style="width:1280px;border:1px solid #242424"><dc-import name="Top Bar" brand="gp" mode="SYSTEM" view="Settings" show-music="{{ false }}" conn="{{ gpConn }}" hint-size="1280px,56px"></dc-import></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">ENCODER KEYS · 8 × 152 × 80 · READ AS LIT HARDWARE KEYS</span>
+      <div style="width:1280px"><dc-import name="Soft Keys" keys="{{ keyDemo }}" hint-size="1280px,96px"></dc-import></div>
+      <div style="width:1280px;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:8px;padding:0 8px;box-sizing:border-box"><sc-for list="{{ keyCaps }}" as="k" hint-placeholder-count="8"><span style="font-size:11px;line-height:16px;color:#5A5A6E">{{ k }}</span></sc-for></div>
+      <div style="width:1280px"><dc-import name="Soft Keys" brand="gp" keys="{{ gpKeys }}" hint-size="1280px,96px"></dc-import></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,300px) minmax(0,1fr);gap:20px;align-items:start">
+      <sc-for list="{{ cards }}" as="o" hint-placeholder-count="4">
+        <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">{{ o.cap }}</span><div style="height:400px"><dc-import name="Option Card" state="{{ o.state }}" letter="{{ o.letter }}" color="#3D8CFF" sound="{{ o.sound }}" sub="{{ o.sub }}" energy="{{ o.energy }}" enc-txt="{{ o.enc }}" hint="{{ o.hint }}" notes="{{ o.notes }}" hint-size="300px,400px"></dc-import></div></div>
+      </sc-for>
+      <div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:56px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">MIXER STRIP · 152 × 472</span>
+        <div style="display:flex;gap:8px">
+          <div style="width:152px;height:472px"><dc-import name="Mixer Strip" label="KICK" color="#FF4560" dim="#4F1B22" eq="{{ eqA }}" filter="{{ 0 }}" vol="{{ 0.8 }}" meter="{{ 0.82 }}" echo="{{ 0.05 }}" verb="{{ 0.1 }}" hint-size="152px,472px"></dc-import></div>
+          <div style="width:152px;height:472px"><dc-import name="Mixer Strip" label="BASS" color="#3D8CFF" dim="#182E4F" eq="{{ eqB }}" filter="{{ -0.4 }}" vol="{{ 0.72 }}" meter="{{ 0.7 }}" echo="{{ 0.2 }}" verb="{{ 0.1 }}" cue="{{ true }}" sel="{{ true }}" focus="filter" hint-size="152px,472px"></dc-import></div>
+          <div style="width:152px;height:472px"><dc-import name="Mixer Strip" label="PAD" color="#F2C9A0" dim="#4B3F34" eq="{{ eqC }}" filter="{{ 0.3 }}" vol="{{ 0.6 }}" meter="{{ 0.5 }}" echo="{{ 0.4 }}" verb="{{ 0.7 }}" hint-size="152px,472px"></dc-import></div>
+        </div>
+        <span style="font-size:11px;line-height:16px;color:#5A5A6E;max-width:470px">Header in role colour. Isolator EQ is bipolar around 0 dB, full cut reads KILL. Filter is one knob: left lowpass, right highpass, the curve bends. Meters are always teal; only the 4 px clip tick turns red.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:40px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">PHRASE RING · 8 SEGMENTS = 8 BARS</span>
+          <div style="display:flex;gap:40px;align-items:center">
+            <sc-for list="{{ rings }}" as="r" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+                <div style="position:relative;width:{{ r.s }}px;height:{{ r.s }}px">
+                  <div style="position:absolute;inset:0;border-radius:50%;background:{{ r.bg }};-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - {{ r.th }}px),#000 calc(100% - {{ r.th }}px + 1px));mask:radial-gradient(farthest-side,transparent calc(100% - {{ r.th }}px),#000 calc(100% - {{ r.th }}px + 1px))"></div>
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-stretch:var(--dispw);font-size:{{ r.fs }}px;font-weight:800">{{ r.n }}</div>
+                </div>
+                <span style="font-size:11px;color:#5A5A6E">{{ r.cap }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">HAND HALO · SCREEN EDGE MIRRORS THE IR SENSOR ON THAT SIDE</span>
+          <div style="position:relative;width:560px;height:200px;background:#0A0A0A;border:1px solid #242424;border-radius:4px;overflow:hidden">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:120px;background:radial-gradient(60px 90px at 0% 38%,rgba(93,202,165,.45),transparent)"></div>
+            <div style="position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,transparent 18%,#5DCAA5 38%,transparent 58%)"></div>
+            <div style="position:absolute;right:0;top:0;bottom:0;width:4px;background:#1C1C1C"></div>
+            <div style="position:absolute;left:24px;top:62px;font-size:12px;line-height:18px"><span style="color:#5DCAA5;font-weight:600">L · 12 CM</span><br><span style="color:#9A9AA6">FILTER · LP 1.8k</span></div>
+            <div style="position:absolute;right:24px;top:86px;font-size:12px;line-height:18px;text-align:right;color:#5A5A6E">R · NO HAND<br>RISER</div>
+          </div>
+          <span style="font-size:11px;line-height:16px;color:#5A5A6E;max-width:560px">Halo height = hand distance (near = bottom). Teal because the hand is playing. 4 px core, 60 px soft bloom. Hidden when no hand is in range.</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">TOAST · 560 × 64 · BOTTOM CENTRE, 16 ABOVE KEYS · IN 150 / HOLD 4 S / OUT 300</span>
+        <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="4">
+          <div style="width:560px;height:64px;box-sizing:border-box;display:flex;align-items:center;gap:14px;padding:0 16px 0 12px;background:#1C1C1C;border:1px solid #2E2E2E;border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,.5)">
+            <div style="width:40px;height:40px;border-radius:4px;background:{{ t.c }};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:{{ t.tc }}">{{ t.i }}</div>
+            <span style="flex:1;font-size:16px;font-weight:600">{{ t.m }}</span>
+            <span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:22px;font-weight:700;color:{{ t.rc }}">{{ t.r }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:12px;letter-spacing:.14em;color:#9A9AA6">WINDOW · OVER CONTENT · SCRIM 70 % · ENCODERS REBIND WHILE OPEN</span>
+        <div style="position:relative;width:640px;height:320px;background:#0A0A0A;border:1px solid #242424;border-radius:4px;overflow:hidden">
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:4px;padding:8px;opacity:.25"><sc-for list="{{ ghost }}" as="g" hint-placeholder-count="24"><div style="background:{{ g }};border-radius:3px"></div></sc-for></div>
+          <div style="position:absolute;left:60px;right:60px;top:36px;bottom:36px;background:#141414;border:1px solid #2E2E2E;border-radius:10px;box-shadow:0 24px 64px rgba(0,0,0,.6);display:flex;flex-direction:column">
+            <div style="height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid #242424"><span style="font-family:var(--disp);font-stretch:var(--dispw);font-size:26px;font-weight:700;text-transform:uppercase">Window title</span><span style="font-size:11px;color:#5A5A6E">BACK CLOSES</span></div>
+            <div style="flex:1;margin:16px 18px;border:1px dashed #2E2E2E;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#5A5A6E">CONTENT</div>
+            <div style="height:36px;display:flex;align-items:center;padding:0 18px;border-top:1px solid #242424;font-size:11px;color:#9FE1CB">One line of guidance in secondary teal</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;displayFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Big Shoulders&quot;,&quot;Archivo Expanded&quot;],&quot;default&quot;:&quot;Big Shoulders&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.applyFont(); }
+  componentDidUpdate() { this.applyFont(); }
+  applyFont() {
+    const a = (this.props.displayFont ?? 'Big Shoulders') === 'Archivo Expanded';
+    const s = document.documentElement.style;
+    s.setProperty('--disp', a ? "'Archivo',sans-serif" : "'Big Shoulders Display',sans-serif");
+    s.setProperty('--dispw', a ? '125%' : '100%');
+  }
+  renderVals() {
+    const R = [
+      ['KICK', '#FF4560', '#4F1B22', 'RHYTHM'], ['DRUMS', '#FF9A2E', '#4F3214', 'RHYTHM'], ['PERC', '#F5E04A', '#4C461C', 'RHYTHM'], ['TOP', '#E8F0FF', '#484A4F', 'RHYTHM'],
+      ['BASS', '#3D8CFF', '#182E4F', 'BASS'], ['CHORDS', '#FF6FC8', '#4F263F', 'MUSIC'], ['LEAD', '#B6F23D', '#3A4B18', 'MUSIC'], ['PAD', '#F2C9A0', '#4B3F34', 'MUSIC'], ['FX', '#8E9AAF', '#2F3238', 'FX']
+    ];
+    const roles = R.map(([k, c, d, g]) => ({ k, c, d, g }));
+    const rc = Object.fromEntries(R.map(r => [r[0], r]));
+    const st = s => s.split('').map(ch => ch === 'x' ? 1 : 0);
+    const mk = (enc, k, state, name, sub, cap, pat) => ({ c: rc[k][1], d: rc[k][2], label: k, state, name, sub, cap, enc, steps: pat ? st(pat) : [], level: 0.72 });
+    const stateSet = enc => [
+      mk(enc, 'KICK', 'playing', 'Wood Kick 04', 'A1 · 808 body', 'PLAYING · ROOM', 'x...x...x...x...'),
+      mk(enc, 'BASS', 'queued', 'Bass Prophet', 'enters on phrase', 'QUEUED · NEXT PHRASE', 'x..x..x.x..x..x.'),
+      mk(enc, 'CHORDS', 'cue', 'DX Bells', 'in headphones', 'IN CUE', 'x.....x...x.....'),
+      mk(enc, 'LEAD', 'option', 'Kalimba Arp B', 'energy 4', 'ENGINE OPTION', '..x.x...x..x.x..'),
+      mk(enc, 'PERC', 'idle', 'Bongo Hi', 'available', 'AVAILABLE', '..x..x....x..x.x'),
+      mk(enc, 'TOP', 'muted', 'Hat Open 2', 'muted', 'MUTED', '..x...x...x...x.'),
+      mk(enc, 'PAD', 'empty', null, 'no layer', 'EMPTY', ''),
+      mk(enc, 'DRUMS', 'loading', null, 'engine 2/3', 'LOADING', '')
+    ];
+    const ORD = ['KICK', 'DRUMS', 'PERC', 'TOP', 'BASS', 'CHORDS', 'LEAD', 'PAD'];
+    const miniStates = [
+      ['playing', 'playing', 'playing', 'playing', 'playing', 'playing', 'muted', 'playing'],
+      ['queued', 'idle', 'idle', 'idle', 'cue', 'idle', 'idle', 'empty'],
+      ['option', 'option', 'option', 'option', 'option', 'option', 'option', 'loading']
+    ];
+    const mini = enc => miniStates.map(row => row.map((s, i) => ({ c: rc[ORD[i]][1], d: rc[ORD[i]][2], label: ORD[i], name: ORD[i] === 'BASS' ? 'Prophet' : '', state: s, enc })));
+    const ring = (n) => {
+      const parts = [];
+      for (let i = 0; i < 8; i++) { const s = i * 45 + 2, e = s + 41; const col = i < n - 1 ? '#1D9E75' : i === n - 1 ? '#F2F2F2' : '#242424'; parts.push(`transparent ${i * 45}deg ${s}deg`, `${col} ${s}deg ${e}deg`, `transparent ${e}deg ${(i + 1) * 45}deg`); }
+      return `conic-gradient(${parts.join(',')})`;
+    };
+    const k = n => rc[n];
+    return {
+      base: [
+        { n: 'BG', h: '#0A0A0A', u: 'Base, always' }, { n: 'SURFACE', h: '#141414', u: 'Panels, cards' }, { n: 'SURFACE_2', h: '#1C1C1C', u: 'Idle cells, toasts' }, { n: 'LINE', h: '#242424', u: 'Dividers, empty' },
+        { n: '+ LINE_2', h: '#2E2E2E', u: 'Window and keycap edge' }, { n: '+ KEY_TOP', h: '#1F1F1F', u: 'Keycap gradient top' }, { n: 'WHITE', h: '#F2F2F2', u: 'Text, cue, queued edge' }, { n: '+ GRAY_N', h: '#9A9AA6', u: 'Neutral secondary, idle key labels' },
+        { n: 'TEAL', h: '#1D9E75', u: 'Sounds: playing, meters' }, { n: 'TEAL_PLUS', h: '#5DCAA5', u: 'Level bars, live hand' }, { n: 'TEAL_DIM', h: '#0E5040', u: 'Playing fill (enc. B)' }, { n: 'GRAY', h: '#9FE1CB', u: 'Secondary text, teal-tinted' },
+        { n: 'PURPLE', h: '#534AB7', u: 'Engine proposed' }, { n: 'PURPLE_BRIGHT', h: '#7A6FE0', u: 'Engine edge, GENERATE LED' }, { n: 'PURPLE_DIM', h: '#2B2758', u: 'Engine fill (enc. B)' }, { n: 'MON', h: '#5A5A6E', u: 'Muted text, labels' },
+        { n: 'HYB', h: '#1E90C0', u: 'Brain HYBRID only' }, { n: 'HYB_HI', h: '#6CC4EA', u: 'HYBRID highlight' }, { n: 'HYB_DIM', h: '#0E3F55', u: 'HYBRID fill' }, { n: 'RED', h: '#E84A4A', u: 'Clip tick, down' },
+        { n: 'AMBER', h: '#E8B84A', u: 'Near limit, warnings' }, { n: 'ORANGE', h: '#FF6A35', u: 'Recording' }
+      ],
+      gp: [{ n: 'bgBase', h: '#09090B' }, { n: 'bgCard', h: '#141418' }, { n: 'border', h: '#27272A' }, { n: 'teal', h: '#00D4AA' }, { n: 'purple', h: '#8B5CF6' }, { n: 'text', h: '#FAFAFA' }, { n: 'textSec', h: '#A1A1AA' }],
+      roles,
+      cvd: [{ n: 'NORMAL', f: 'none' }, { n: 'PROTANOPIA', f: 'url(#cvd-p)' }, { n: 'DEUTERANOPIA', f: 'url(#cvd-d)' }, { n: 'TRITANOPIA', f: 'url(#cvd-t)' }],
+      cvdRow: [...roles.map(r => ({ c: r.c, k: r.k, t: '#0A0A0A' })), { c: '#1D9E75', k: 'SOUNDS', t: '#0A0A0A' }, { c: '#534AB7', k: 'ENGINE', t: '#F2F2F2' }, { c: '#1E90C0', k: 'HYBRID', t: '#0A0A0A' }],
+      encs: [
+        { title: 'A · Role fills, state on the edge', desc: 'The cell is the role colour: full when it sounds, dim when it waits. State lives in the edge: white = queued or cue, violet = engine option.', states: stateSet('fill'), mini: mini('fill'), pro: 'Matches the pads 1:1 (a lit pad = a full cell). Role reads first from across the room.', con: 'Teal "sounds" is reduced to the level bar. Playing vs queued relies on the white edge.' },
+        { title: 'B · Role stripe, state fills', desc: 'A 6 px stripe carries the role. The fill carries state: teal = sounding, violet = engine, grey = waiting.', states: stateSet('stripe'), mini: mini('stripe'), pro: 'Teal and violet stay dominant, so "what sounds / what the engine proposes" is unmistakable.', con: 'Role identity shrinks to a stripe; the screen no longer looks like the pads.' }
+      ],
+      disp: [
+        { n: 'BIG SHOULDERS DISPLAY', meta: 'Google Fonts · OFL · 100–900', ff: "'Big Shoulders Display',sans-serif", fs: '100%', note: 'Condensed and tall. Fits a 3-digit BPM and a phrase count in narrow cells, reads as stage signage. Weakness: needs 700+ under 24 px.' },
+        { n: 'ARCHIVO EXPANDED', meta: 'Google Fonts · OFL · wdth 125 · 400–800', ff: "'Archivo',sans-serif", fs: '125%', note: 'Wide grotesk with flat terminals; feels engraved on a panel. Strong at mode names. Weakness: wide, so big numbers need more width.' }
+      ],
+      typeScale: [
+        { n: 'D-HERO', spec: 'display 160 / 800', ff: 'var(--disp)', fs: 'var(--dispw)', px: 120, lh: 112, w: 800, ls: '0', tt: 'none', sample: '5', use: 'Phrase count on LIVE (shown at 75 %)' },
+        { n: 'D-XL', spec: 'display 64 / 800', ff: 'var(--disp)', fs: 'var(--dispw)', px: 64, lh: 64, w: 800, ls: '0', tt: 'uppercase', sample: 'Bass', use: 'Layer name, hero values' },
+        { n: 'D-L', spec: 'display 40 / 700', ff: 'var(--disp)', fs: 'var(--dispw)', px: 40, lh: 40, w: 700, ls: '.02em', tt: 'uppercase', sample: 'Drop · Swap', use: 'Section, transition type' },
+        { n: 'D-M', spec: 'display 26 / 700', ff: 'var(--disp)', fs: 'var(--dispw)', px: 26, lh: 28, w: 700, ls: '.02em', tt: 'uppercase', sample: 'Live · Session', use: 'Top bar view, window titles' },
+        { n: 'M-28', spec: 'Plex Mono 28 / 600', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 28, lh: 32, w: 600, ls: '0', tt: 'none', sample: '−3.2 dB  124.0', use: 'Secondary values' },
+        { n: 'M-20', spec: 'Plex Mono 20 / 600', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 20, lh: 24, w: 600, ls: '0', tt: 'none', sample: 'Kalimba Dusk', use: 'Track names' },
+        { n: 'M-18', spec: 'Plex Mono 18 / 600', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 18, lh: 22, w: 600, ls: '0', tt: 'none', sample: 'LP 1.8k', use: 'Encoder key value' },
+        { n: 'M-14', spec: 'Plex Mono 14 / 600', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 14, lh: 18, w: 600, ls: '0', tt: 'none', sample: 'Sub Model D', use: 'Cell name, list rows' },
+        { n: 'M-12', spec: 'Plex Mono 12 / 600 · +8 %', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 12, lh: 16, w: 600, ls: '.08em', tt: 'uppercase', sample: 'KICK  DRUMS  CUE', use: 'Labels, key labels (13)' },
+        { n: 'M-11', spec: 'Plex Mono 11 / 400', ff: "'IBM Plex Mono',monospace", fs: '100%', px: 11, lh: 14, w: 400, ls: '0', tt: 'none', sample: 'A1 · round · 16 steps', use: 'Sub-lines, units. Minimum size.' }
+      ],
+      space: [
+        { n: '4', px: 4, u: 'Gap inside dense groups' }, { n: '8', px: 8, u: 'Column gap, cell padding (matches key gap)' }, { n: '12', px: 12, u: 'Card inner gap' }, { n: '16', px: 16, u: 'Panel padding' },
+        { n: '24', px: 24, u: 'Between groups' }, { n: '48', px: 48, u: 'Minimum touch target' }, { n: 'R 6', px: 6, u: 'Cells, keycaps, strips' }, { n: 'R 10', px: 10, u: 'Windows. Nothing rounder on music screens' }
+      ],
+      eight: [1, 2, 3, 4, 5, 6, 7, 8],
+      gpConn: [{ n: 'BRAIN', s: 'ok' }, { n: 'LINK', s: 'ok' }, { n: 'LIVE', s: 'warn' }, { n: 'NET', s: 'ok' }],
+      keyDemo: [
+        { l: 'KICK', v: '82', c: k('KICK')[1], d: k('KICK')[2] },
+        { l: 'BASS', v: '77', c: k('BASS')[1], d: k('BASS')[2], on: true },
+        { l: 'CHORDS', v: '64', c: k('CHORDS')[1], d: k('CHORDS')[2], turn: true, p: 0.64 },
+        { l: 'Generate', v: '3 opts', ai: true },
+        { l: 'Cue', v: 'B', c: '#F2F2F2', on: true },
+        { l: 'Accept', v: '', c: '#5DCAA5', on: true },
+        { l: '—', off: true },
+        { l: 'Back', v: '' }
+      ],
+      keyCaps: ['Role · idle: dim role LED', 'Role · lit: sounding', 'Turning: edge + value in role colour, position track', 'Engine action: violet', 'Cue: white', 'Confirm: teal', 'Unassigned', 'Navigation'],
+      gpKeys: [{ l: 'Audio', v: '' }, { l: 'Connections', v: '' }, { l: 'Surface', v: '', on: true }, { l: 'System', v: '' }, { l: '—', off: true }, { l: '—', off: true }, { l: 'Calibrate', v: 'FSR 2' }, { l: 'Back', v: '' }],
+      cards: [
+        { cap: 'OPTION', state: 'option', letter: 'A', sound: 'Sub Prophet', sub: 'A1 · pluck · 16 steps', energy: 3, enc: 'ENC 1–2', hint: 'PRESS ENC 1 TO CUE', notes: [{ s: 0, n: 0, l: 2 }, { s: 3, n: 2, l: 1 }, { s: 6, n: 0, l: 2 }, { s: 10, n: 3, l: 1 }, { s: 12, n: 0, l: 2 }] },
+        { cap: 'IN CUE', state: 'cue', letter: 'B', sound: 'Moog Round', sub: 'A1 · legato · 16 steps', energy: 4, enc: 'ENC 3–4', hint: 'ACCEPT ▸ ENTERS NEXT PHRASE', notes: [{ s: 0, n: 0, l: 3 }, { s: 4, n: 2, l: 1 }, { s: 6, n: 4, l: 2 }, { s: 9, n: 2, l: 1 }, { s: 12, n: 0, l: 3 }] },
+        { cap: 'IN ROOM', state: 'room', letter: 'R', sound: 'Sub Model D', sub: 'A1 · round · playing', energy: 3, enc: 'NOW', hint: 'PLAYING SINCE BAR 17', notes: [{ s: 0, n: 0, l: 2 }, { s: 3, n: 0, l: 1 }, { s: 6, n: 2, l: 1 }, { s: 8, n: 0, l: 2 }, { s: 11, n: 3, l: 1 }, { s: 14, n: 2, l: 1 }] },
+        { cap: 'LOADING', state: 'loading', letter: 'D', enc: 'ENC 7–8', hint: 'GENERATE ▸ ANOTHER' }
+      ],
+      eqA: [0.1, 0, 0.3], eqB: [-1, -0.2, 0.2], eqC: [0.3, 0, -0.5],
+      rings: [{ n: 1, s: 96, th: 10, fs: 44, cap: 'BAR 1 · PHRASE START', bg: ring(1) }, { n: 5, s: 140, th: 14, fs: 72, cap: 'BAR 5', bg: ring(5) }, { n: 8, s: 96, th: 10, fs: 44, cap: 'BAR 8 · QUEUED ENTERS NEXT', bg: ring(8) }],
+      toasts: [
+        { i: 'BASS', c: '#3D8CFF', tc: '#0A0A0A', m: 'BASS enters on the phrase', r: 'IN 4 BARS', rc: '#F2F2F2' },
+        { i: 'LINK', c: '#0E5040', tc: '#5DCAA5', m: 'Link: 3 devices', r: '124.0', rc: '#5DCAA5' },
+        { i: 'AI', c: '#534AB7', tc: '#F2F2F2', m: '3 new options for LEAD', r: 'ENC 7', rc: '#7A6FE0' },
+        { i: '!', c: '#E8B84A', tc: '#0A0A0A', m: 'Brain offline · options paused', r: 'RETRY', rc: '#E8B84A' }
+      ],
+      ghost: Array.from({ length: 24 }, (_, i) => R[i % 8][i < 8 ? 1 : 2])
+    };
+  }
+}
+</script>
+</body>
+</html>

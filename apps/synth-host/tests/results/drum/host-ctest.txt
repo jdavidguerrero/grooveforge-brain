@@ -1,0 +1,26 @@
+Internal ctest changing into directory: /tmp/gf-drum-build
+Test project /tmp/gf-drum-build
+      Start  1: host_rt
+ 1/10 Test  #1: host_rt ..........................   Passed    3.28 sec
+      Start  2: host_audio
+ 2/10 Test  #2: host_audio .......................   Passed    0.10 sec
+      Start  3: host_contract
+ 3/10 Test  #3: host_contract ....................   Passed    8.30 sec
+      Start  4: host_render
+ 4/10 Test  #4: host_render ......................   Passed    3.38 sec
+      Start  5: metadata_snapshot
+ 5/10 Test  #5: metadata_snapshot ................   Passed    0.04 sec
+      Start  6: host_dx7
+ 6/10 Test  #6: host_dx7 .........................   Passed    0.04 sec
+      Start  7: host_drum
+ 7/10 Test  #7: host_drum ........................   Passed    0.15 sec
+      Start  8: host_drum_contract
+ 8/10 Test  #8: host_drum_contract ...............   Passed    1.45 sec
+      Start  9: drum_led_return
+ 9/10 Test  #9: drum_led_return ..................   Passed    0.00 sec
+      Start 10: drum_metadata_snapshot
+10/10 Test #10: drum_metadata_snapshot ...........   Passed    0.04 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =  16.77 sec

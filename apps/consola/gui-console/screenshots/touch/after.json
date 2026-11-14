@@ -1,0 +1,42 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.3",
+  "qt": "6.11.1",
+  "qpa": "offscreen",
+  "rotation": 90,
+  "results": [
+    {
+      "screen": "DrumBrowser",
+      "seconds": 6.002163917059079,
+      "events": 364,
+      "events_per_second": 60.64479494894427,
+      "ms_per_event": 0.2806240879120879,
+      "p95_ms_per_event": 0.97075,
+      "main_thread_cpu_percent": 2.972991665436444,
+      "process_cpu_percent": 2.9738441413219245,
+      "profile": "         105765 function calls (100669 primitive calls) in 6.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 42 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    5.825    5.825    6.002    6.002 {built-in method qWait}\n      364    0.047    0.000    0.141    0.000 surface_batch.py:124(drain_frame)\n      182    0.021    0.000    0.119    0.001 profile_touch.py:50(tick)\n    36764    0.033    0.000    0.049    0.000 models.py:38(flush)\n      364    0.009    0.000    0.042    0.000 drum_state.py:640(flush_frame)\n      596    0.029    0.000    0.030    0.000 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n    36764    0.016    0.000    0.016    0.000 {method 'stop' of 'PySide6.QtCore.QTimer' objects}\n      364    0.003    0.000    0.009    0.000 drum_state.py:187(_handle)\n 5278/182    0.002    0.000    0.007    0.000 copy.py:110(deepcopy)\n      182    0.001    0.000    0.006    0.000 copy.py:198(_deepcopy_dict)\n      364    0.002    0.000    0.003    0.000 copy.py:172(_deepcopy_list)\n      364    0.001    0.000    0.002    0.000 synth_state.py:596(flush_frame)\n     3822    0.001    0.000    0.001    0.000 {built-in method builtins.max}\n      172    0.001    0.000    0.001    0.000 drum_surface.py:157(update_leds)\n      364    0.001    0.000    0.001    0.000 synth_state.py:581(_send_edits)\n      546    0.001    0.000    0.001    0.000 copy.py:212(_keep_alive)\n     3268    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}\n      900    0.001    0.000    0.001    0.000 drum_state.py:94(<lambda>)\n     1084    0.001    0.000    0.001    0.000 {built-in method builtins.getattr}\n     2912    0.001    0.000    0.001    0.000 {built-in method math.sin}\n     4186    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}\n      172    0.001    0.000    0.001    0.000 synth_surface.py:539(update_leds)\n      364    0.001    0.000    0.001    0.000 {method '__enter__' of '_thread.lock' objects}\n      728    0.001    0.000    0.001    0.000 {method 'items' of 'dict' objects}\n     1820    0.000    0.000    0.000    0.000 {built-in method builtins.id}\n\n\n"
+    },
+    {
+      "screen": "DrumSteps",
+      "seconds": 6.00132250005845,
+      "events": 364,
+      "events_per_second": 60.6532976683814,
+      "ms_per_event": 0.9876567252747253,
+      "p95_ms_per_event": 3.5131455,
+      "main_thread_cpu_percent": 8.204860945153412,
+      "process_cpu_percent": 8.587323877278397,
+      "profile": "         169621 function calls (164525 primitive calls) in 6.001 seconds\n\n   Ordered by: cumulative time\n   List reduced from 43 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    5.571    5.571    6.001    6.001 {built-in method qWait}\n      364    0.052    0.000    0.398    0.001 surface_batch.py:124(drain_frame)\n      182    0.016    0.000    0.370    0.002 profile_touch.py:50(tick)\n      364    0.008    0.000    0.292    0.001 drum_state.py:640(flush_frame)\n      596    0.266    0.000    0.282    0.000 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n    36764    0.037    0.000    0.049    0.000 models.py:38(flush)\n    32800    0.013    0.000    0.016    0.000 drum_state.py:94(<lambda>)\n    36764    0.012    0.000    0.012    0.000 {method 'stop' of 'PySide6.QtCore.QTimer' objects}\n      364    0.004    0.000    0.012    0.000 drum_state.py:187(_handle)\n 5278/182    0.003    0.000    0.008    0.000 copy.py:110(deepcopy)\n      182    0.001    0.000    0.007    0.000 copy.py:198(_deepcopy_dict)\n    35168    0.004    0.000    0.004    0.000 {method 'get' of 'dict' objects}\n      364    0.002    0.000    0.003    0.000 copy.py:172(_deepcopy_list)\n      364    0.001    0.000    0.002    0.000 synth_state.py:596(flush_frame)\n      546    0.001    0.000    0.002    0.000 copy.py:212(_keep_alive)\n     3822    0.001    0.000    0.001    0.000 {built-in method builtins.max}\n     1086    0.001    0.000    0.001    0.000 {built-in method builtins.getattr}\n      364    0.001    0.000    0.001    0.000 synth_state.py:581(_send_edits)\n      173    0.001    0.000    0.001    0.000 drum_surface.py:157(update_leds)\n     1456    0.001    0.000    0.001    0.000 drum_state.py:654(<genexpr>)\n     4186    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}\n     2912    0.001    0.000    0.001    0.000 {built-in method math.sin}\n      173    0.001    0.000    0.001    0.000 synth_surface.py:539(update_leds)\n      364    0.001    0.000    0.001    0.000 {method '__enter__' of '_thread.lock' objects}\n     1820    0.000    0.000    0.000    0.000 {built-in method builtins.id}\n\n\n"
+    },
+    {
+      "screen": "DrumMixer",
+      "seconds": 6.001880916999653,
+      "events": 364,
+      "events_per_second": 60.64765446595432,
+      "ms_per_event": 0.630690478021978,
+      "p95_ms_per_event": 1.962271,
+      "main_thread_cpu_percent": 5.702862931360951,
+      "process_cpu_percent": 5.70296220024153,
+      "profile": "         112540 function calls (107444 primitive calls) in 6.001 seconds\n\n   Ordered by: cumulative time\n   List reduced from 43 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    5.683    5.683    6.001    6.001 {built-in method qWait}\n      365    0.058    0.000    0.270    0.001 surface_batch.py:124(drain_frame)\n      182    0.022    0.000    0.244    0.001 profile_touch.py:50(tick)\n      365    0.009    0.000    0.148    0.000 drum_state.py:640(flush_frame)\n      596    0.139    0.000    0.142    0.000 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n    36865    0.043    0.000    0.059    0.000 models.py:38(flush)\n      364    0.004    0.000    0.021    0.000 drum_state.py:187(_handle)\n    36865    0.016    0.000    0.016    0.000 {method 'stop' of 'PySide6.QtCore.QTimer' objects}\n 5278/182    0.008    0.000    0.013    0.000 copy.py:110(deepcopy)\n      182    0.001    0.000    0.010    0.000 copy.py:198(_deepcopy_dict)\n      364    0.002    0.000    0.004    0.000 copy.py:172(_deepcopy_list)\n      365    0.001    0.000    0.002    0.000 synth_state.py:596(flush_frame)\n     6552    0.002    0.000    0.002    0.000 drum_state.py:95(<lambda>)\n      546    0.001    0.000    0.002    0.000 copy.py:212(_keep_alive)\n      365    0.001    0.000    0.001    0.000 synth_state.py:581(_send_edits)\n      173    0.001    0.000    0.001    0.000 drum_surface.py:157(update_leds)\n     3822    0.001    0.000    0.001    0.000 {built-in method builtins.max}\n     3269    0.001    0.000    0.001    0.000 {method 'get' of 'dict' objects}\n     1087    0.001    0.000    0.001    0.000 {built-in method builtins.getattr}\n     2912    0.001    0.000    0.001    0.000 {built-in method math.sin}\n      900    0.001    0.000    0.001    0.000 drum_state.py:94(<lambda>)\n     4186    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}\n      173    0.000    0.000    0.001    0.000 synth_surface.py:539(update_leds)\n      365    0.001    0.000    0.001    0.000 {method '__enter__' of '_thread.lock' objects}\n      729    0.001    0.000    0.001    0.000 {method 'items' of 'dict' objects}\n\n\n"
+    }
+  ]
+}

@@ -443,6 +443,29 @@ void test_parseo_de_comandos() {
     TEST_ASSERT_EQUAL(int(LinkCmd::None), int(parse_link_cmd(l9).kind));
 }
 
+void test_comandos_de_la_consola() {
+    char usb[] = "@GF USB\r";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::Usb, studio::parse_link_cmd(usb).kind);
+    char usb_arg[] = "@GF USB RESET";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::None, studio::parse_link_cmd(usb_arg).kind);
+    char a[] = "@GF RUTA LINEA";
+    studio::LinkCmd c = studio::parse_link_cmd(a);
+    TEST_ASSERT_EQUAL(studio::LinkCmd::Ruta, c.kind);
+    TEST_ASSERT_EQUAL_UINT8(1, c.valor);
+    char b[] = "@GF RUTA SINTE\r";
+    c = studio::parse_link_cmd(b);
+    TEST_ASSERT_EQUAL(studio::LinkCmd::Ruta, c.kind);
+    TEST_ASSERT_EQUAL_UINT8(0, c.valor);
+    char d[] = "@GF CUE 1";
+    c = studio::parse_link_cmd(d);
+    TEST_ASSERT_EQUAL(studio::LinkCmd::Cue, c.kind);
+    TEST_ASSERT_EQUAL_UINT8(1, c.valor);
+    char e[] = "@GF RUTA OTRA";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::None, studio::parse_link_cmd(e).kind);
+    char g[] = "@GF CUE 2";
+    TEST_ASSERT_EQUAL(studio::LinkCmd::None, studio::parse_link_cmd(g).kind);
+}
+
 void test_put_y_trunc_del_banco() {
     FakeStorage s;
     PresetBank bank(s);
@@ -775,6 +798,7 @@ int main() {
     RUN_TEST(test_archivos_viejos_se_leen_enteros);
     RUN_TEST(test_hex_ida_y_vuelta);
     RUN_TEST(test_parseo_de_comandos);
+    RUN_TEST(test_comandos_de_la_consola);
     RUN_TEST(test_put_y_trunc_del_banco);
     RUN_TEST(test_presets_de_capa);
     return UNITY_END();

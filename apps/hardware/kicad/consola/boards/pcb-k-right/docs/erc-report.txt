@@ -1,0 +1,24 @@
+ERC report (2026-11-13T12:07:30, Encoding UTF8)
+Report includes: Errors, Warnings, Exclusions
+
+***** Sheet /
+
+***** Sheet /cables-power-1/
+
+***** Sheet /mcp-21/
+
+***** Sheet /support-21-1/
+
+***** Sheet /keys-17/
+
+***** Sheet /keys-21/
+
+***** Sheet /keys-25/
+
+ ** ERC messages: 0  Errors 0  Warnings 0
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters

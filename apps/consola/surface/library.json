@@ -1,0 +1,6 @@
+{
+  "name": "ConsolaSurface",
+  "version": "1.0.0",
+  "description": "Shared surface capture and polling for consola_s and consola_uno",
+  "build": {"includeDir": "include", "srcDir": "src"}
+}

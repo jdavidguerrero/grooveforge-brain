@@ -1,0 +1,42 @@
+{
+  "schema_version":1,
+  "workload_version":"factory0-retrobrass7-v2",
+  "compiler":"AppleClang 17.0.0.17000404",
+  "system":"Darwin 27.0.0 arm64",
+  "build_type":"Release",
+  "optimization":"O2",
+  "flags":" -O3 -DNDEBUG -O2 -fno-fast-math -ffp-contract=off -mcpu=apple-m1",
+  "git_revision":"006684dae26f0daba61fefc06651d5a731df3cc0",
+  "git_dirty_at_configure":"true",
+  "source_manifest_sha256":"5f586c2eb6783c8d87aed3424914cec9660a43ef21a9cd05dfea6ae3029204f7",
+  "sample_rate":48000,
+  "threads":1,
+  "warmup_audio_seconds":2,
+  "requested_audio_seconds":20,
+  "ftz_verified":true,
+  "fp_control_register":16777216,
+  "fixture_format":"stereo PCM16 little-endian; SHA-256 of data chunk only; gain 1 per engine, 0.25 per mixed part",
+  "full_four_part_matrix":false,
+  "provisional_timing_gate_pass":false,
+  "hardware_gate":"pending Pi repeats, thermal evidence, realtime I/O, latency and listening",
+  "results":[
+    {"engine":"dx7_6op","variant":"dry","held_notes":1,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":1,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.058366607,"real_time_factor":0.00291833035,"core_percent_mean":0.291833035,"core_percent_p99":0.5859375,"core_percent_max":4.565625,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.212637662888,"rms":0.0201012693628,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":4,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":4,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.10403367,"real_time_factor":0.0052016835,"core_percent_mean":0.52016835,"core_percent_p99":1.104675,"core_percent_max":4.689075,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.508361041546,"rms":0.0378175063234,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":6,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":6,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.133560942,"real_time_factor":0.0066780471,"core_percent_mean":0.66780471,"core_percent_p99":1.426575,"core_percent_max":4.7671875,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.641165137291,"rms":0.0446559920264,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":1,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":1,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.17736589,"real_time_factor":0.0088682945,"core_percent_mean":0.88682945,"core_percent_p99":1.5671625,"core_percent_max":5.007825,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.20986752212,"rms":0.0215929874104,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":4,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":4,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.224574023,"real_time_factor":0.01122870115,"core_percent_mean":1.122870115,"core_percent_p99":2.2421625,"core_percent_max":7.235925,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.41384986043,"rms":0.0398463542686,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":6,"block_frames":128,"parts":[{"engine":"dx7_6op","held_notes":6,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":7500,"render_wall_seconds":0.253037078,"real_time_factor":0.0126518539,"core_percent_mean":1.26518539,"core_percent_p99":2.2890375,"core_percent_max":4.9640625,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.494282782078,"rms":0.0480010199246,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":1,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":1,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.057237545,"real_time_factor":0.00286187725,"core_percent_mean":0.286187725,"core_percent_p99":0.61561875,"core_percent_max":1.5476625,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.212637662888,"rms":0.0201012693628,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":4,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":4,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.101890755,"real_time_factor":0.00509453775,"core_percent_mean":0.509453775,"core_percent_p99":0.9414,"core_percent_max":2.21405625,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.508361041546,"rms":0.0378175063234,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":6,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":6,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.131444182,"real_time_factor":0.0065722091,"core_percent_mean":0.65722091,"core_percent_p99":1.2250125,"core_percent_max":4.2343875,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.641165137291,"rms":0.0446559920264,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":1,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":1,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.174914845,"real_time_factor":0.00874574225,"core_percent_mean":0.874574225,"core_percent_p99":1.49454375,"core_percent_max":2.90859375,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.20986752212,"rms":0.0215929874104,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":4,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":4,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.221477203,"real_time_factor":0.01107386015,"core_percent_mean":1.107386015,"core_percent_p99":1.91484375,"core_percent_max":3.04843125,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.41384986043,"rms":0.0398463542686,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":6,"block_frames":256,"parts":[{"engine":"dx7_6op","held_notes":6,"root":48,"preset":"GF SIX PAIRS"}],"frames":960000,"audio_seconds":20,"blocks":3750,"render_wall_seconds":0.254032434,"real_time_factor":0.0127016217,"core_percent_mean":1.27016217,"core_percent_p99":2.34530625,"core_percent_max":7.8297,"deadline_misses":0,"timing_gate_pass":true,"audio":{"peak":0.494282782078,"rms":0.0480010199246,"nonfinite_samples":0,"clipped_samples":0}}
+  ],
+  "fixtures":[
+    {"engine":"dx7_6op","variant":"dry","held_notes":6,"block_frames":128,"wav":"dx7_6op-dry-b128-v6.wav","frames":144000,"pcm_sha256":"eedd3876680c52e6416b2855a6cf90bb9d32c6015ab814eb61a9c32e8d89ebde","audio":{"peak":0.618843913078,"rms":0.0475665218404,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":6,"block_frames":128,"wav":"dx7_6op-wet-b128-v6.wav","frames":144000,"pcm_sha256":"5dc06a900af2abc5ddc21abe2775f6607ab88f07d76cc19e97079d27654034bf","audio":{"peak":0.479774773121,"rms":0.0508480306384,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"dry","held_notes":6,"block_frames":256,"wav":"dx7_6op-dry-b256-v6.wav","frames":144000,"pcm_sha256":"eedd3876680c52e6416b2855a6cf90bb9d32c6015ab814eb61a9c32e8d89ebde","audio":{"peak":0.618843913078,"rms":0.0475665218404,"nonfinite_samples":0,"clipped_samples":0}},
+    {"engine":"dx7_6op","variant":"wet","held_notes":6,"block_frames":256,"wav":"dx7_6op-wet-b256-v6.wav","frames":144000,"pcm_sha256":"5dc06a900af2abc5ddc21abe2775f6607ab88f07d76cc19e97079d27654034bf","audio":{"peak":0.479774773121,"rms":0.0508480306384,"nonfinite_samples":0,"clipped_samples":0}}
+  ]
+}

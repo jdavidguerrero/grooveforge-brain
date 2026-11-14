@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+fonts/*.zip
+fonts/general-sans/
+fonts/GeneralSans.ttf
+perf-results/

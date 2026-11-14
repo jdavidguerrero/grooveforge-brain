@@ -1,7 +1,8 @@
 # Bridge Protocol
 
 Headers C compartidos entre firmware-teensy y firmware-esp32 que definen el protocolo
-binario de comunicación. También aplica al canal USB-CDC (Teensy ↔ VST3).
+binario de comunicación. También aplica al canal USB-CDC (Teensy ↔ VST3) y, desde la enmienda del
+2026-11-09, al USB-CDC entre las dos Teensy de la consola y su Raspberry Pi 5 (`02-bridge-protocol.md` §1.3 y §5.4).
 
 ## Specs relevantes
 

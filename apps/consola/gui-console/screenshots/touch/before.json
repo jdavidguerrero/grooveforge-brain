@@ -1,0 +1,42 @@
+{
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "python": "3.14.3",
+  "qt": "6.11.1",
+  "qpa": "offscreen",
+  "rotation": 90,
+  "results": [
+    {
+      "screen": "DrumBrowser",
+      "seconds": 6.002896500052884,
+      "events": 360,
+      "events_per_second": 59.971048975578455,
+      "ms_per_event": 2.4094974555555555,
+      "p95_ms_per_event": 4.1325,
+      "main_thread_cpu_percent": 18.932116770462187,
+      "process_cpu_percent": 21.108709770172396,
+      "profile": "         2086551 function calls (1157391 primitive calls) in 6.003 seconds\n\n   Ordered by: cumulative time\n   List reduced from 102 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    5.095    5.095    6.002    6.002 {built-in method qWait}\n      361    0.031    0.000    0.879    0.002 surface_batch.py:124(drain_frame)\n      180    0.015    0.000    0.877    0.005 profile_touch.py:50(tick)\n      361    0.026    0.000    0.815    0.002 drum_state.py:610(flush_frame)\n      720    0.031    0.000    0.484    0.001 drum_state.py:601(_model)\n904680/4320    0.149    0.000    0.435    0.000 copy.py:110(deepcopy)\n7200/1440    0.094    0.000    0.431    0.000 copy.py:172(_deepcopy_list)\n30600/7560    0.122    0.000    0.410    0.000 copy.py:198(_deepcopy_dict)\n      900    0.098    0.000    0.171    0.000 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n     1080    0.056    0.000    0.089    0.000 drum_state.py:525(filtered_samples)\n    37001    0.027    0.000    0.052    0.000 models.py:38(flush)\n     1440    0.038    0.000    0.043    0.000 drum_state.py:544(step_entries)\n      180    0.022    0.000    0.039    0.000 drum_state.py:530(pad_entries)\n      540    0.001    0.000    0.038    0.000 drum_state.py:115(<lambda>)\n   360900    0.034    0.000    0.034    0.000 {method 'append' of 'list' objects}\n   276480    0.033    0.000    0.033    0.000 {method 'lower' of 'str' objects}\n      180    0.001    0.000    0.029    0.000 fake_data.py:444(refresh_keys)\n      180    0.002    0.000    0.027    0.000 drum_state.py:580(keys)\n    37800    0.015    0.000    0.024    0.000 copy.py:212(_keep_alive)\n   141122    0.023    0.000    0.023    0.000 {method 'get' of 'dict' objects}\n     2531    0.008    0.000    0.014    0.000 models.py:28(queue_update)\n      720    0.000    0.000    0.013    0.000 drum_state.py:84(<lambda>)\n      720    0.002    0.000    0.012    0.000 drum_state.py:136(rack_summary)\n   114840    0.012    0.000    0.012    0.000 {built-in method builtins.id}\n      360    0.003    0.000    0.011    0.000 drum_state.py:169(_handle)\n\n\n"
+    },
+    {
+      "screen": "DrumSteps",
+      "seconds": 6.002031375071965,
+      "events": 364,
+      "events_per_second": 60.64613415914301,
+      "ms_per_event": 5.240307802197802,
+      "p95_ms_per_event": 11.788708,
+      "main_thread_cpu_percent": 46.517999365948384,
+      "process_cpu_percent": 48.69449720204032,
+      "profile": "         3040827 function calls (2111899 primitive calls) in 6.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 100 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    4.063    4.063    6.002    6.002 {built-in method qWait}\n      410    0.022    0.000    1.924    0.005 surface_batch.py:124(drain_frame)\n      182    0.007    0.000    1.913    0.011 profile_touch.py:50(tick)\n      410    0.020    0.000    1.879    0.005 drum_state.py:610(flush_frame)\n      910    1.147    0.001    1.407    0.002 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n      728    0.021    0.000    1.405    0.002 drum_state.py:601(_model)\n    41956    0.019    0.000    1.061    0.000 models.py:38(flush)\n903812/4004    0.120    0.000    0.341    0.000 copy.py:110(deepcopy)\n6916/1092    0.069    0.000    0.339    0.000 copy.py:172(_deepcopy_list)\n29120/5824    0.099    0.000    0.326    0.000 copy.py:198(_deepcopy_dict)\n     6400    0.135    0.000    0.219    0.000 touch_controller.py:24(unregisterTarget)\n   988800    0.084    0.000    0.084    0.000 {built-in method shiboken6.Shiboken.isValid}\n     1456    0.030    0.000    0.034    0.000 drum_state.py:544(step_entries)\n   367670    0.027    0.000    0.027    0.000 {method 'append' of 'list' objects}\n      182    0.013    0.000    0.023    0.000 drum_state.py:530(pad_entries)\n    36036    0.012    0.000    0.019    0.000 copy.py:212(_keep_alive)\n   135676    0.015    0.000    0.015    0.000 {method 'get' of 'dict' objects}\n      182    0.008    0.000    0.012    0.000 drum_state.py:525(filtered_samples)\n      728    0.000    0.000    0.011    0.000 drum_state.py:84(<lambda>)\n      728    0.002    0.000    0.011    0.000 drum_state.py:136(rack_summary)\n     2559    0.006    0.000    0.010    0.000 models.py:28(queue_update)\n   149026    0.009    0.000    0.009    0.000 drum_state.py:92(<lambda>)\n   109200    0.009    0.000    0.009    0.000 {built-in method builtins.id}\n      182    0.002    0.000    0.006    0.000 drum_surface.py:65(publish)\n    41956    0.006    0.000    0.006    0.000 {method 'stop' of 'PySide6.QtCore.QTimer' objects}\n\n\n"
+    },
+    {
+      "screen": "DrumMixer",
+      "seconds": 6.007931542000733,
+      "events": 364,
+      "events_per_second": 60.58657583817648,
+      "ms_per_event": 5.0317788214285715,
+      "p95_ms_per_event": 5.8749375,
+      "main_thread_cpu_percent": 50.55250539670065,
+      "process_cpu_percent": 58.13932758023383,
+      "profile": "         2555017 function calls (1626089 primitive calls) in 6.008 seconds\n\n   Ordered by: cumulative time\n   List reduced from 97 to 25 due to restriction <25>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    4.149    4.149    6.008    6.008 {built-in method qWait}\n      363    0.022    0.000    1.842    0.005 surface_batch.py:124(drain_frame)\n      182    0.008    0.000    1.838    0.010 profile_touch.py:50(tick)\n      363    0.020    0.000    1.799    0.005 drum_state.py:610(flush_frame)\n      910    1.139    0.001    1.325    0.001 {method 'emit' of 'PySide6.QtCore.SignalInstance' objects}\n      728    0.021    0.000    0.383    0.001 drum_state.py:601(_model)\n903812/4004    0.120    0.000    0.343    0.000 copy.py:110(deepcopy)\n6916/1092    0.069    0.000    0.341    0.000 copy.py:172(_deepcopy_list)\n29120/5824    0.100    0.000    0.328    0.000 copy.py:198(_deepcopy_dict)\n    10738    0.082    0.000    0.134    0.000 touch_controller.py:24(unregisterTarget)\n   610792    0.052    0.000    0.052    0.000 {built-in method shiboken6.Shiboken.isValid}\n      364    0.024    0.000    0.043    0.000 drum_state.py:530(pad_entries)\n    37209    0.017    0.000    0.036    0.000 models.py:38(flush)\n     1456    0.030    0.000    0.034    0.000 drum_state.py:544(step_entries)\n   375648    0.028    0.000    0.028    0.000 {method 'append' of 'list' objects}\n      182    0.000    0.000    0.020    0.000 drum_state.py:105(<lambda>)\n    36036    0.012    0.000    0.019    0.000 copy.py:212(_keep_alive)\n   168716    0.019    0.000    0.019    0.000 {method 'get' of 'dict' objects}\n      182    0.008    0.000    0.012    0.000 drum_state.py:525(filtered_samples)\n      728    0.000    0.000    0.011    0.000 drum_state.py:84(<lambda>)\n      728    0.002    0.000    0.011    0.000 drum_state.py:136(rack_summary)\n     2559    0.006    0.000    0.010    0.000 models.py:28(queue_update)\n   109200    0.008    0.000    0.008    0.000 {built-in method builtins.id}\n     5824    0.005    0.000    0.008    0.000 drum_state.py:144(source_for)\n      182    0.002    0.000    0.007    0.000 drum_surface.py:65(publish)\n\n\n"
+    }
+  ]
+}

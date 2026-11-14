@@ -1,0 +1,148 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid fc3d1bab-7dea-5eed-a1e2-7cd6995a7420)
+  (paper "A4")
+  (lib_symbols)
+  (sheet
+    (at 20.32 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 26f3b4a7-ee40-539b-8ff4-edf8806a90e5)
+    (property "Sheetname" "cables-power-1"
+      (at 58.42 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/cables-power-1.kicad_sch"
+      (at 58.42 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "2")))))
+  (sheet
+    (at 109.22 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 8f295a35-de91-5b8a-9309-4de8291bb23c)
+    (property "Sheetname" "mcp-21"
+      (at 147.32 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/mcp-21.kicad_sch"
+      (at 147.32 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "3")))))
+  (sheet
+    (at 198.12 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 9ca5174f-7151-5ffa-8442-192e31ab5fee)
+    (property "Sheetname" "support-21-1"
+      (at 236.22 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/support-21-1.kicad_sch"
+      (at 236.22 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "4")))))
+  (sheet
+    (at 20.32 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 95d604d5-cc87-556e-9874-b8e896991362)
+    (property "Sheetname" "keys-17"
+      (at 58.42 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-17.kicad_sch"
+      (at 58.42 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "5")))))
+  (sheet
+    (at 109.22 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 2304dba4-236e-5391-a027-6b94875258e8)
+    (property "Sheetname" "keys-21"
+      (at 147.32 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-21.kicad_sch"
+      (at 147.32 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "6")))))
+  (sheet
+    (at 198.12 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid e1ce1023-aec8-5629-937f-f36faaa484b2)
+    (property "Sheetname" "keys-25"
+      (at 236.22 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-25.kicad_sch"
+      (at 236.22 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-right"
+        (path "/fc3d1bab-7dea-5eed-a1e2-7cd6995a7420"
+          (page "7")))))
+  (sheet_instances
+    (path "/"
+      (page "1"))))

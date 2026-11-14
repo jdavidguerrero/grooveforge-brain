@@ -1,0 +1,14 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid c34bae08-bbdc-5b48-9c94-0d440288b1ff)
+  (paper "A3")
+  (lib_symbols)
+  (text "RESERVADO: MCP23017 0x23 vive en PCB-K. Hoja vacia conservada en la raiz."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 87a4a3d5-b46b-5141-9e07-ed3bee050ae8)))

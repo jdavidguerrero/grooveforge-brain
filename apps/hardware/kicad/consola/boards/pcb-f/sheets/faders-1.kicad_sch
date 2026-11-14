@@ -1,0 +1,1682 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 04c61864-318c-5719-8dcd-18ad5a304eda)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Connector_Generic:Conn_01x06"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x06"
+        (at 0 -10.16 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x06_1_1"
+        (rectangle
+          (start -1.27 6.35)
+          (end 1.27 -8.89)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 5.207)
+          (end 0 4.953)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 2.667)
+          (end 0 2.413)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -4.953)
+          (end 0 -5.207)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -7.493)
+          (end 0 -7.747)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 5.08 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 2.54 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_4"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -5.08 0)
+          (length 3.81)
+          (name "Pin_5"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -7.62 0)
+          (length 3.81)
+          (name "Pin_6"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R_Potentiometer_MountingPin"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "RV"
+        (at -8.255 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R_Potentiometer_MountingPin"
+        (at -6.35 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Potentiometer with a mounting pin"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Device" "R"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Type" "POT"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Pins" "1=r0 2=wiper 3=r1"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "resistor variable"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Potentiometer*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_Potentiometer_MountingPin_0_1"
+        (rectangle
+          (start 1.016 2.54)
+          (end -1.016 -2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.143 0)
+            (xy 2.286 0.508)
+            (xy 2.286 -0.508))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 2.54 0)
+            (xy 1.524 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_Potentiometer_MountingPin_1_1"
+        (polyline
+          (pts
+            (xy -2.032 1.016)
+            (xy -2.032 -1.016))
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (text "Mounting"
+          (at -1.651 0 900)
+          (effects
+            (font
+              (size 0.381 0.381))))
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name "1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 3.81 0 180)
+          (length 1.27)
+          (name "2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name "3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.048)
+          (name "MountPin"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "MP"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 71.12 58.42)
+      (xy 68.58 58.42))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e65ac861-57bf-54cc-ad29-03b285d1073a))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 68.58 58.42 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid dd647a33-c9c1-590b-b3b1-7901504f9cd2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 71.12 60.96)
+      (xy 68.58 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8490ec29-990d-514c-8051-419aec368381))
+  (label "FADER1"
+    (at 68.58 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b1a48b00-d838-513e-a4a7-8b0f471d1b2c))
+  (wire
+    (pts
+      (xy 71.12 63.5)
+      (xy 68.58 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0aef9958-2ce4-54a0-a132-99b4d2833757))
+  (label "FADER2"
+    (at 68.58 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 376aeea9-5a11-5fa6-8573-c6ad8757022a))
+  (wire
+    (pts
+      (xy 71.12 66.04)
+      (xy 68.58 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid df79c660-dd65-5219-87c5-b95e04d74017))
+  (label "FADER3"
+    (at 68.58 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bdd66371-f326-5348-8999-9118fff776b8))
+  (wire
+    (pts
+      (xy 71.12 68.58)
+      (xy 68.58 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 336698cd-6bcc-5c50-8cf1-6c23d1d99197))
+  (label "FADER4"
+    (at 68.58 68.58 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 85ca92f7-a1b6-5aeb-b637-0c157b54b738))
+  (wire
+    (pts
+      (xy 71.12 71.12)
+      (xy 68.58 71.12))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 744ef1f5-c2b7-5315-80a8-e130abe7c99d))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 68.58 71.12 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 92b04c5c-86cd-580d-9e8c-249f981c827e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 71.12 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x06")
+    (at 76.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 33e1d5aa-8d7c-5501-b382-2906696617e9)
+    (property "Reference" "J1"
+      (at 76.2 52.07 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-A J3 / 1:1"
+      (at 76.2 54.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C160405"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "SM06B-SRSS-TB(LF)(SN)"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SMD,P=1mm,Surface Mount,Right Angle"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 183b9a0a-ef81-5a3e-b1df-b2f44d856f4b))
+    (pin "2"
+      (uuid e3b36dab-9b60-536a-952b-474b98624996))
+    (pin "3"
+      (uuid 2f0a31d6-6d30-5027-af3a-8482352e40b5))
+    (pin "4"
+      (uuid 8b46ac7e-a0fd-55c4-8470-1657c255d049))
+    (pin "5"
+      (uuid 2ce551d9-deb2-56c2-9214-c29c2d283174))
+    (pin "6"
+      (uuid acf0cd85-9d4c-5f72-944d-fbc6b8f2f67e))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "J1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 59.69)
+      (xy 190.5 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 007a8b27-5dfe-5211-b5c8-00fed185d339))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 190.5 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 914e2154-364b-59ff-a88d-d458d42ec9a9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 67.31)
+      (xy 190.5 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b0e2f047-b2f6-58f6-823d-f022891d2aad))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7a76780b-24c0-574f-8712-185373109411)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 190.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d9c4fa57-8485-5456-b425-8c939b32b459)
+    (property "Reference" "C5"
+      (at 190.5 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 190.5 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 05281fea-7a42-5dca-9843-30eb9ff4f7cd))
+    (pin "2"
+      (uuid 42f907f5-3a20-582a-8268-1dea0144ecfd))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "C5")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 59.69)
+      (xy 304.8 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dfae4909-0fbf-5e83-97b6-63960d828c64))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 304.8 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 29b26ca3-0dc3-5fb0-925e-a1efdb7311d1)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 308.61 63.5)
+      (xy 311.15 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 96fd8126-2c15-5440-a17c-6ed31054c54a))
+  (label "FADER1"
+    (at 311.15 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 96ad2669-758a-5a4b-825e-f244258c98e3))
+  (wire
+    (pts
+      (xy 304.8 67.31)
+      (xy 304.8 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 95350cf8-1746-5ffb-b6dd-5b8f930ae601))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 29a5f0f3-dfdf-5578-bdca-4d38a75b9d23)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 299.72 63.5)
+      (xy 297.18 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6c932d6e-0f27-50a9-8026-779124c8b33b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 297.18 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid acf6a6e3-464f-532f-9a99-b70c06ebc612)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 297.18 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R_Potentiometer_MountingPin")
+    (at 304.8 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 2f183e40-f595-5246-8e9b-4351354b31b7)
+    (property "Reference" "RV1"
+      (at 304.8 44.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "RS6011 B50K"
+      (at 304.8 46.99 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "groovepush:ALPS_RS6011P_60mm"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 1f8ad162-c56a-5afa-b3a0-0880da97da3d))
+    (pin "2"
+      (uuid 225705c4-4167-56b5-b3e0-63d0165f9b9f))
+    (pin "3"
+      (uuid 6c1f2cf0-1647-59d5-8de3-f28849550695))
+    (pin "MP"
+      (uuid a4b3154f-6ea3-57b2-bb8a-63b07882ab77))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "RV1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 110.49)
+      (xy 76.2 107.95))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f826ea89-2275-5c00-8a04-712911fb4eee))
+  (label "FADER1"
+    (at 76.2 107.95 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 41dc62f1-ba17-589a-84fc-6018884596fd))
+  (wire
+    (pts
+      (xy 76.2 118.11)
+      (xy 76.2 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3b0f879f-6758-51fb-92fa-b8eafa95c90c))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 76.2 120.65 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 8997f564-1c5b-503e-8303-5d16824d96b4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 76.2 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 16f8b3bb-812f-5ce9-86e7-e654d96e72e3)
+    (property "Reference" "C1"
+      (at 76.2 92.71 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 76.2 95.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 322b99de-5511-5718-9415-502be11b34be))
+    (pin "2"
+      (uuid d7d6728f-8ba7-5cf6-a450-25c6ec249af9))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "C1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 110.49)
+      (xy 190.5 107.95))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1ef4dfa5-9750-50cb-8b52-fbbeeda568bb))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 190.5 107.95 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 18ae3d5c-48d8-57f0-8242-1e2daac02d4d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 194.31 114.3)
+      (xy 196.85 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6ad8e0cc-f44d-5753-92a7-2b1c2dbe7cd9))
+  (label "FADER2"
+    (at 196.85 114.3 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3d76c88a-fd09-54a5-b62d-89af60f5dac7))
+  (wire
+    (pts
+      (xy 190.5 118.11)
+      (xy 190.5 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5a97f1c2-9d8a-5aea-9d31-6f285bb53625))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 120.65 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3bda8fd7-fb7b-5ae3-8486-5e9ba44bea0b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 185.42 114.3)
+      (xy 182.88 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c2cdcfb7-abc5-5956-b9e7-6a7291912461))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 182.88 114.3 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0a7f1361-7db5-5b72-a87f-e51eb04ccfe5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 182.88 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R_Potentiometer_MountingPin")
+    (at 190.5 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid f2b38f3f-b64f-50ec-9741-02e5f6adca32)
+    (property "Reference" "RV2"
+      (at 190.5 95.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "RS6011 B50K"
+      (at 190.5 97.79 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "groovepush:ALPS_RS6011P_60mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid fe3a646b-927b-5e80-8778-3509ceff9741))
+    (pin "2"
+      (uuid a3965dba-0c1d-5f3d-98c4-141ea187aa2f))
+    (pin "3"
+      (uuid df903b48-ec28-5f70-956b-c89df564d3f2))
+    (pin "MP"
+      (uuid f7042eae-3d06-5636-b30a-80afed04c00e))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "RV2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 110.49)
+      (xy 304.8 107.95))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8196ad44-e443-5a0a-9382-401b820e839a))
+  (label "FADER2"
+    (at 304.8 107.95 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1c6a7dff-523b-52a3-97bd-202a24c0939d))
+  (wire
+    (pts
+      (xy 304.8 118.11)
+      (xy 304.8 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bfad34ed-0218-5455-8e60-67e6f33ccdf0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 120.65 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6ceb008b-b3ff-53c2-8ca1-2ac78ded7296)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 304.8 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d2ddaf01-f15c-5b67-82ee-fe58e9d014bd)
+    (property "Reference" "C2"
+      (at 304.8 92.71 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 304.8 95.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4c28feb2-d033-5a2c-8527-d55141d60175))
+    (pin "2"
+      (uuid adeb59ec-a12d-556a-865e-1b779500f019))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "C2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 161.29)
+      (xy 76.2 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e8d6dc76-cf30-5c8c-854d-d97525d0dd20))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 76.2 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 2974b69f-3f8d-5970-8ebc-d2b8e1e53db6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 80.01 165.1)
+      (xy 82.55 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a82098c4-4b9a-5e64-a31e-2bcfdc6fee64))
+  (label "FADER3"
+    (at 82.55 165.1 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 8ec53a5b-bdf2-5c20-821c-476b19cf2b3a))
+  (wire
+    (pts
+      (xy 76.2 168.91)
+      (xy 76.2 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3c31ed1a-7473-554e-8ec7-74aeb969740a))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 76.2 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3472d376-925d-547c-a314-6303550ddb53)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 71.12 165.1)
+      (xy 68.58 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5946236c-cd63-5e37-87a6-3a47d141800f))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 68.58 165.1 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 46d6834e-e55c-5536-93b4-a1ee56cf9465)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R_Potentiometer_MountingPin")
+    (at 76.2 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 315202d3-c1f2-5092-a0ce-c5bf34940172)
+    (property "Reference" "RV3"
+      (at 76.2 146.05 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "RS6011 B50K"
+      (at 76.2 148.59 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "groovepush:ALPS_RS6011P_60mm"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b1332190-9918-5310-ac5a-a6bba962f2c7))
+    (pin "2"
+      (uuid 5c7e44fe-4e85-51b2-b324-7ea61df6b6d0))
+    (pin "3"
+      (uuid ee0ca743-644f-51c4-94bf-d2df6aca67c3))
+    (pin "MP"
+      (uuid 4300b9f4-af28-52a2-ba18-e61512a42e83))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "RV3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 161.29)
+      (xy 190.5 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0a5335ff-3caf-5ad9-a46d-194dbd7d64cd))
+  (label "FADER3"
+    (at 190.5 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d5c5eb33-1eba-5b68-995a-f0487c1d23db))
+  (wire
+    (pts
+      (xy 190.5 168.91)
+      (xy 190.5 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid dcb45e72-5a23-5f7d-85c6-147ac78ae600))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 190.5 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 31bbe5eb-2aa5-5c52-8ad8-2b0d316add40)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 190.5 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 1c6a086c-a5a6-5668-a821-a68ca5574445)
+    (property "Reference" "C3"
+      (at 190.5 143.51 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 190.5 146.05 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 61d6c675-c008-5344-a4b4-becf401d3a8b))
+    (pin "2"
+      (uuid 46001200-0ed5-58b5-8090-fa283cddb1dd))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "C3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 161.29)
+      (xy 304.8 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8c16beb3-78c0-51e9-9023-8d816d2337e0))
+  (global_label "+3V3"
+    (shape bidirectional)
+    (at 304.8 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5af09116-740c-5973-92f8-cdd4d5a377ed)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 308.61 165.1)
+      (xy 311.15 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 425fbbff-b7c2-5419-91f1-a783d85be22f))
+  (label "FADER4"
+    (at 311.15 165.1 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid fea961ce-adaa-5c5d-af4c-89a0c0ac82cf))
+  (wire
+    (pts
+      (xy 304.8 168.91)
+      (xy 304.8 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8f2752a9-1c6b-5198-bdb6-9997456eff65))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 304.8 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9fe633ad-31c8-54a7-bcb4-40008b26664e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 171.45 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 299.72 165.1)
+      (xy 297.18 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0267568f-0e61-5390-9e70-bb0021facc80))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 297.18 165.1 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid bfdf65a7-9abe-544f-a7e7-6d223666fea4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 297.18 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R_Potentiometer_MountingPin")
+    (at 304.8 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5ac1383f-f240-503e-8dfa-09d092ff9a97)
+    (property "Reference" "RV4"
+      (at 304.8 146.05 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "RS6011 B50K"
+      (at 304.8 148.59 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "groovepush:ALPS_RS6011P_60mm"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid b4b3ed92-32ee-5ad5-8185-fbe84d6e44e7))
+    (pin "2"
+      (uuid f56cd7a1-dfb0-5690-915e-85fad6a1c33c))
+    (pin "3"
+      (uuid c7a3ccfd-70de-5f25-b629-fc1b90e47de7))
+    (pin "MP"
+      (uuid 269a330d-bfac-5654-a1fa-6f245bca0284))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "RV4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 212.09)
+      (xy 76.2 209.55))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b7c032a8-e8b5-553c-801a-8682492aa077))
+  (label "FADER4"
+    (at 76.2 209.55 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ef2c5929-ba74-5b69-bd26-7cd41ff02726))
+  (wire
+    (pts
+      (xy 76.2 219.71)
+      (xy 76.2 222.25))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 583a8b69-45e1-59f3-a54c-1643d3e3aa31))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 76.2 222.25 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 5079c767-2dac-523e-bddf-2ada8b22c5cf)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 222.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 76.2 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0d8053e4-bc7c-588c-b917-6852374b6c0a)
+    (property "Reference" "C4"
+      (at 76.2 194.31 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 76.2 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C49678"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CC0805KRX7R9BB104"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "YAGEO"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0805"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 2091717b-8c43-5f98-86e0-e207d5388941))
+    (pin "2"
+      (uuid f4c23d69-b514-53ab-9a39-b1f0a3c818e3))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1/3e281f95-44df-57c7-9b4a-d68eddc252b8"
+          (reference "C4")
+          (unit 1)))))
+  (text "J1 vers PCB-A J3. MP a GND. Contorno/agujeros: mechanical.csv (v5)."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid deff0482-900c-507b-b4e3-b11356d42e7a))
+  (text "RV1-4: paso 20 mm, recorrido 60 mm. Comprobar pieza RS6011 exacta antes de layout."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 32d3efbc-26ed-5738-aa11-b6155d7dfd25)))

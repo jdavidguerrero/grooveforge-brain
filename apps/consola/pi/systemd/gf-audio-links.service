@@ -1,0 +1,19 @@
+[Unit]
+Description=GrooveForge audio routing
+PartOf=gf-console.target
+Wants=pipewire.service wireplumber.service
+After=pipewire.service wireplumber.service gf-synth-host.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=exec
+ExecStart=/bin/bash "%h/.local/lib/gf-consola/run.sh" audio
+Restart=on-failure
+RestartSec=2s
+RestartSteps=5
+RestartMaxDelaySec=30s
+TimeoutStopSec=10s
+KillMode=control-group
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=journal
+StandardError=journal

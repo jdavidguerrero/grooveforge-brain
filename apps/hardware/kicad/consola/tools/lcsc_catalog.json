@@ -1,0 +1,1032 @@
+{
+  "schema": 2,
+  "parts": [
+    {
+      "lcsc": "C25744",
+      "mpn": "0402WGF1002TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25744.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "10k"
+      ]
+    },
+    {
+      "lcsc": "C25879",
+      "mpn": "0402WGF2201TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25879.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "2.2k"
+      ]
+    },
+    {
+      "lcsc": "C26083",
+      "mpn": "0402WGF1004TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C26083.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "1M"
+      ]
+    },
+    {
+      "lcsc": "C11702",
+      "mpn": "0402WGF1001TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C11702.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "1k"
+      ]
+    },
+    {
+      "lcsc": "C25765",
+      "mpn": "0402WGF2002TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25765.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "20k"
+      ]
+    },
+    {
+      "lcsc": "C25741",
+      "mpn": "0402WGF1003TCE",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25741.html",
+      "footprints": [
+        "Resistor_SMD:R_0402_1005Metric"
+      ],
+      "values": [
+        "100k"
+      ]
+    },
+    {
+      "lcsc": "C25804",
+      "mpn": "0603WAF1002T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25804.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "10k"
+      ]
+    },
+    {
+      "lcsc": "C21190",
+      "mpn": "0603WAF1001T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C21190.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "1k"
+      ]
+    },
+    {
+      "lcsc": "C14675",
+      "mpn": "RC0603FR-07100KL",
+      "fabricante": "YAGEO",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C14675.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "100k"
+      ]
+    },
+    {
+      "lcsc": "C22790",
+      "mpn": "0603WAF1202T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C22790.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "12k"
+      ]
+    },
+    {
+      "lcsc": "C4216",
+      "mpn": "0603WAF3302T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C4216.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "33k"
+      ]
+    },
+    {
+      "lcsc": "C25819",
+      "mpn": "0603WAF4702T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C25819.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "47k"
+      ]
+    },
+    {
+      "lcsc": "C23186",
+      "mpn": "0603WAF5101T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C23186.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "5.1k"
+      ]
+    },
+    {
+      "lcsc": "C22843",
+      "mpn": "0603WAF1501T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C22843.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "1.5k"
+      ]
+    },
+    {
+      "lcsc": "C22978",
+      "mpn": "0603WAF3301T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C22978.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "3.3k"
+      ]
+    },
+    {
+      "lcsc": "C22859",
+      "mpn": "0603WAF100JT5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C22859.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "10"
+      ]
+    },
+    {
+      "lcsc": "C23162",
+      "mpn": "0603WAF4701T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C23162.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "4.7k"
+      ]
+    },
+    {
+      "lcsc": "C4190",
+      "mpn": "0603WAF2201T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C4190.html",
+      "footprints": [
+        "Resistor_SMD:R_0603_1608Metric"
+      ],
+      "values": [
+        "2.2k"
+      ]
+    },
+    {
+      "lcsc": "C17414",
+      "mpn": "0805W8F1002T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17414.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "10k"
+      ]
+    },
+    {
+      "lcsc": "C17714",
+      "mpn": "0805W8F470JT5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17714.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "47"
+      ]
+    },
+    {
+      "lcsc": "C17477",
+      "mpn": "0805W8F0000T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17477.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "0"
+      ]
+    },
+    {
+      "lcsc": "C17520",
+      "mpn": "0805W8F2201T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17520.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "2.2k",
+        "2.2k DNP"
+      ]
+    },
+    {
+      "lcsc": "C17634",
+      "mpn": "0805W8F330JT5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17634.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "33R"
+      ]
+    },
+    {
+      "lcsc": "C17713",
+      "mpn": "0805W8F4702T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17713.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "47k"
+      ]
+    },
+    {
+      "lcsc": "C17673",
+      "mpn": "0805W8F4701T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17673.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "4.7k"
+      ]
+    },
+    {
+      "lcsc": "C1525",
+      "mpn": "CL05B104KO5NNNC",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C1525.html",
+      "footprints": [
+        "Capacitor_SMD:C_0402_1005Metric"
+      ],
+      "values": [
+        "100nF"
+      ]
+    },
+    {
+      "lcsc": "C52923",
+      "mpn": "CL05A105KA5NQNC",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0402",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C52923.html",
+      "footprints": [
+        "Capacitor_SMD:C_0402_1005Metric"
+      ],
+      "values": [
+        "1uF"
+      ]
+    },
+    {
+      "lcsc": "C15850",
+      "mpn": "CL21A106KAYNNNE",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C15850.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "10uF"
+      ]
+    },
+    {
+      "lcsc": "C28323",
+      "mpn": "CL21B105KBFNNNE",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C28323.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "1uF"
+      ]
+    },
+    {
+      "lcsc": "C1779",
+      "mpn": "CL21A475KAQNNNE",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C1779.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "4.7uF"
+      ]
+    },
+    {
+      "lcsc": "C1710",
+      "mpn": "CL21B103KBANNNC",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C1710.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "10nF"
+      ]
+    },
+    {
+      "lcsc": "C14663",
+      "mpn": "CC0603KRX7R9BB104",
+      "fabricante": "YAGEO",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C14663.html",
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "values": [
+        "100nF"
+      ]
+    },
+    {
+      "lcsc": "C49678",
+      "mpn": "CC0805KRX7R9BB104",
+      "fabricante": "YAGEO",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C49678.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "100nF"
+      ]
+    },
+    {
+      "lcsc": "C5137478",
+      "mpn": "FCC0805B105K500FT",
+      "fabricante": "FOJAN",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C5137478.html",
+      "footprints": [
+        "Capacitor_SMD:C_0805_2012Metric"
+      ],
+      "values": [
+        "1uF"
+      ]
+    },
+    {
+      "lcsc": "C12891",
+      "mpn": "CL31A226KAHNNNE",
+      "fabricante": "Samsung Electro-Mechanics",
+      "encapsulado": "1206",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C12891.html",
+      "footprints": [
+        "Capacitor_SMD:C_1206_3216Metric"
+      ],
+      "values": [
+        "22uF"
+      ]
+    },
+    {
+      "lcsc": "C57112",
+      "mpn": "0603B103K500NT",
+      "fabricante": "FH",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C57112.html",
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "values": [
+        "10nF"
+      ]
+    },
+    {
+      "lcsc": "C12495",
+      "mpn": "74AHCT1G125GW,125",
+      "fabricante": "Nexperia",
+      "encapsulado": "SOT-353",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C12495.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-353_SC-70-5"
+      ],
+      "values": [
+        "74AHCT1G125"
+      ]
+    },
+    {
+      "lcsc": "C404027",
+      "mpn": "TLV75533PDBVR",
+      "fabricante": "TI",
+      "encapsulado": "SOT-23-5",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C404027.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-23-5"
+      ],
+      "values": [
+        "TLV75533PDBV"
+      ]
+    },
+    {
+      "lcsc": "C80799",
+      "mpn": "PCA9517ADP,118",
+      "fabricante": "NXP",
+      "encapsulado": "MSOP-8",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C80799.html",
+      "footprints": [
+        "Package_SO:MSOP-8_3x3mm_P0.65mm"
+      ],
+      "values": [
+        "PCA9517ADP,118"
+      ],
+      "verification_note": "NXP SOT505-1 fig16: body D/E2.9..3.1, pitch0.65, total width4.7..5.1; KiCad MSOP pads x+/-2.1125 size1.625x0.4."
+    },
+    {
+      "lcsc": "C37593",
+      "mpn": "ADS1115IDGSR",
+      "fabricante": "TI",
+      "encapsulado": "VSSOP-10",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C37593.html",
+      "footprints": [
+        "Package_SO:TSSOP-10_3x3mm_P0.5mm"
+      ],
+      "values": [
+        "ADS1115IDGSR"
+      ],
+      "verification_note": "TI DGS VSSOP10: body 3x3, pitch0.5, total width4.9; KiCad TSSOP-10_3x3 land pattern dimensions checked against TI DGS drawing. Commercial package names differ."
+    },
+    {
+      "lcsc": "C144198",
+      "mpn": "MCP4725A0T-E/CH",
+      "fabricante": "MICROCHIP",
+      "encapsulado": "SOT-23-6",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C144198.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-23-6"
+      ],
+      "values": [
+        "MCP4725A0T-E/CH"
+      ]
+    },
+    {
+      "lcsc": "C1346056",
+      "mpn": "MCP6004-I/SL",
+      "fabricante": "MICROCHIP",
+      "encapsulado": "SOIC-14",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C1346056.html",
+      "footprints": [
+        "Package_SO:SOIC-14_3.9x8.7mm_P1.27mm"
+      ],
+      "values": [
+        "MCP6004"
+      ]
+    },
+    {
+      "lcsc": "C15127",
+      "mpn": "AO3401A",
+      "fabricante": "AOS",
+      "encapsulado": "SOT-23",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C15127.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-23"
+      ],
+      "values": [
+        "AO3401A"
+      ]
+    },
+    {
+      "lcsc": "C83329",
+      "mpn": "SMAJ5.0A",
+      "fabricante": "Littelfuse",
+      "encapsulado": "DO-214AC(SMA)",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C83329.html",
+      "footprints": [
+        "Diode_SMD:D_SMA",
+        "gf_consola:D_SMA_K1"
+      ],
+      "values": [
+        "SMAJ5.0A"
+      ]
+    },
+    {
+      "lcsc": "C552530",
+      "mpn": "PESD3V3U1UL,315",
+      "fabricante": "Nexperia",
+      "encapsulado": "DFN1006-2(SOD-882)",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C552530.html",
+      "footprints": [
+        "Diode_SMD:D_SOD-882",
+        "gf_consola:D_SOD-882_K1"
+      ],
+      "values": [
+        "PESD3V3U1UL,315"
+      ]
+    },
+    {
+      "lcsc": "C208467",
+      "mpn": "MF-MSMF075/24-2",
+      "fabricante": "BOURNS",
+      "encapsulado": "1812",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C208467.html",
+      "footprints": [
+        "Fuse:Fuse_1812_4532Metric"
+      ],
+      "values": [
+        "0.75A MF-MSMF075/24-2"
+      ]
+    },
+    {
+      "lcsc": "C7519",
+      "mpn": "USBLC6-2SC6",
+      "fabricante": "ST",
+      "encapsulado": "SOT-23-6L",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C7519.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-23-6"
+      ],
+      "values": [
+        "USBLC6-2SC6"
+      ]
+    },
+    {
+      "lcsc": "C47546",
+      "mpn": "BAT54S,215",
+      "fabricante": "Nexperia",
+      "encapsulado": "SOT-23",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C47546.html",
+      "footprints": [
+        "Package_TO_SOT_SMD:SOT-23"
+      ],
+      "values": [
+        "BAT54S"
+      ]
+    },
+    {
+      "lcsc": "C2286",
+      "mpn": "KT-0603R",
+      "fabricante": "Hubei KENTO Elec",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C2286.html",
+      "footprints": [
+        "LED_SMD:LED_0603_1608Metric"
+      ],
+      "values": [
+        "RED ~1mA"
+      ]
+    },
+    {
+      "lcsc": "C506653",
+      "mpn": "MCP23017-E/SS",
+      "fabricante": "MICROCHIP",
+      "encapsulado": "SSOP-28(5.3x10.2x0.65)",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C506653.html",
+      "footprints": [
+        "Package_SO:SSOP-28_5.3x10.2mm_P0.65mm"
+      ],
+      "values": [
+        "MCP23017-E/SS",
+        "MCP23017-E/SS 0x21",
+        "MCP23017-E/SS 0x22",
+        "MCP23017-E/SS 0x23"
+      ]
+    },
+    {
+      "lcsc": "C5378731",
+      "mpn": "SK6812MINI-EA",
+      "fabricante": "OPSCO Optoelectronics",
+      "encapsulado": "SMD-4P,3.2x2.8mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C5378731.html",
+      "footprints": [
+        "gf_consola:SK6812MINI-EA_ReverseMount"
+      ],
+      "values": [
+        "SK6812MINI-EA"
+      ]
+    },
+    {
+      "lcsc": "C131337",
+      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C131337.html",
+      "footprints": [
+        "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C131339",
+      "mpn": "B3B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C131339.html",
+      "footprints": [
+        "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C131334",
+      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C131334.html",
+      "footprints": [
+        "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C131342",
+      "mpn": "B6B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C131342.html",
+      "footprints": [
+        "Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C158038",
+      "mpn": "B10B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C158038.html",
+      "footprints": [
+        "Connector_JST:JST_PH_B10B-PH-K_1x10_P2.00mm_Vertical"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C160404",
+      "mpn": "SM04B-SRSS-TB(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "SMD,P=1mm,Surface Mount,Right Angle",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C160404.html",
+      "footprints": [
+        "Connector_JST:JST_SH_SM04B-SRSS-TB_1x04-1MP_P1.00mm_Horizontal"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C173752",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "Through Hole,Right Angle,P=2mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C173752.html",
+      "footprints": [
+        "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C160405",
+      "mpn": "SM06B-SRSS-TB(LF)(SN)",
+      "fabricante": "JST",
+      "encapsulado": "SMD,P=1mm,Surface Mount,Right Angle",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C160405.html",
+      "footprints": [
+        "Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal"
+      ],
+      "values": []
+    },
+    {
+      "lcsc": "C41376163",
+      "mpn": "HC-PM254-8.5H-1x24PZ",
+      "fabricante": "Hong Cheng",
+      "encapsulado": "THT 1x24 P2.54mm H8.5mm",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C41376163.html",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x24_P2.54mm_Vertical"
+      ],
+      "values": [
+        "Teensy41-LeftRow",
+        "Teensy41-RightRow"
+      ]
+    },
+    {
+      "lcsc": "C225519",
+      "mpn": "A2541WV-2x4P",
+      "fabricante": "CJT",
+      "encapsulado": "THT 2x4 P2.54mm vertical",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C225519.html",
+      "footprints": [
+        "Connector_PinHeader_2.54mm:PinHeader_2x04_P2.54mm_Vertical"
+      ],
+      "values": [
+        "PAD 3P3T A/B"
+      ]
+    },
+    {
+      "lcsc": "C7469972",
+      "mpn": "FVH016ADA470M0554",
+      "fabricante": "FOSAN",
+      "encapsulado": "SMD 5x5.4mm 47uF 16V +/-20%",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/pl/product-detail/C7469972.html",
+      "footprints": [
+        "Capacitor_SMD:CP_Elec_5x5.4"
+      ],
+      "values": [
+        "47uF 16V"
+      ]
+    },
+    {
+      "lcsc": "C17513",
+      "mpn": "0805W8F1001T5E",
+      "fabricante": "UNI-ROYAL",
+      "encapsulado": "0805",
+      "fecha_verificacion": "2026-11-12",
+      "source": "https://www.lcsc.com/product-detail/C17513.html",
+      "footprints": [
+        "Resistor_SMD:R_0805_2012Metric"
+      ],
+      "values": [
+        "1k"
+      ]
+    },
+    {
+      "lcsc": "C2897365",
+      "mpn": "PM254-1-02-Z-8.5",
+      "fabricante": "HCTL",
+      "encapsulado": "Through Hole,P=2.54mm; H=8.5mm",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C2897365.html",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Vertical"
+      ],
+      "values": [
+        "PM254-1-02-Z-8.5"
+      ],
+      "stock_verificado": 10481,
+      "stock_source": "JLCPCB component_search C2897365 in_stock=true; 2026-11-13",
+      "nota": "P2.54, 1x2, vertical; taladro 1mm para terminal cuadrado nominal 0.64mm; cuerpo 8.5mm."
+    },
+    {
+      "lcsc": "C22373900",
+      "mpn": "HC-PM254-8.5H-1x14PZ",
+      "fabricante": "Hong Cheng",
+      "encapsulado": "THT 1x14 P2.54mm H8.5mm",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C22373900.html",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical"
+      ],
+      "values": [
+        "AudioShieldRevD-L",
+        "AudioShieldRevD-R"
+      ]
+    },
+    {
+      "lcsc": "C1589",
+      "mpn": "CL10B103KB8NNNC",
+      "fabricante": "Samsung",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C1589.html",
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "values": [
+        "10nF"
+      ],
+      "sustitucion": "PCB-A C10–C25: reemplaza C57112 en pedido-lcsc-v1; 10 nF, 50 V, X7R, ±10 %, 0603. Lote de compra v1, 50 unidades; registrar lote físico al recibir."
+    }
+  ],
+  "external_supplies": [
+    {
+      "supply": "local",
+      "description": "caja IDC 2×15 2,54 mm recta (box header) con muesca",
+      "footprints": [
+        "Connector_IDC:IDC-Header_2x15_P2.54mm_Vertical"
+      ],
+      "values": [
+        "IDC_2x15_PCB-A",
+        "to carrier J5 (IDC 2x15)"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress",
+      "footprints": [
+        "gf_consola:Kailh_Choc_V2_PG1353_Hotswap"
+      ],
+      "values": [
+        "BACK",
+        "MENU",
+        "NAV_L",
+        "NAV_R",
+        "BROWSE",
+        "TAP",
+        "FILL",
+        "CUE_ENG",
+        "BUILD",
+        "DROP",
+        "BREAK",
+        "SHIFT",
+        "UNDO",
+        "DELETE",
+        "DUPLICATE",
+        "QUANTIZE",
+        "NEW",
+        "PLAY",
+        "STOP",
+        "REC",
+        "LOOP",
+        "METRO",
+        "SCENE4_PAGE_R",
+        "SCENE3_PAGE_L",
+        "SCENE2_OCT-",
+        "SCENE1_OCT+"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: encoder EC11 con pulsador, ya disponible",
+      "footprints": [
+        "Rotary_Encoder:RotaryEncoder_Alps_EC11E-Switch_Vertical_H20mm"
+      ],
+      "values": [
+        "EC11"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "declaración de Juan aprobada en el encargo"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: cuatro faders RS6011 B50K",
+      "footprints": [
+        "groovepush:ALPS_RS6011P_60mm"
+      ],
+      "values": [
+        "RS6011 B50K"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Juan, aprobacion fixrev2 2026-11-12; comprobar lote real"
+    },
+    {
+      "supply": "owner",
+      "description": "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43",
+      "footprints": [
+        "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      ],
+      "values": [
+        "Interlink 402 V1",
+        "Interlink 402 V2",
+        "Interlink 402 V3",
+        "Interlink 402 V4",
+        "Interlink 402 X1",
+        "Interlink 402 X2"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Juan, aprobacion fixrev2 2026-11-12 y docs/fotos/fsr402-juan.png"
+    },
+    {
+      "supply": "local",
+      "description": "Alternativa NO poblada D43: socket hembra 1x02 P2.54; compra externa, altura por verificar",
+      "footprints": [
+        "gf_consola:FSR402_Socket_1x02_P2.54mm"
+      ],
+      "values": [
+        "FSR402 socket alternate"
+      ],
+      "fecha_verificacion": "2026-11-12",
+      "source": "Decision D43; no codigo LCSC verificado ni compra en BOM actual"
+    }
+  ]
+}

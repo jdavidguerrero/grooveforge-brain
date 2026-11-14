@@ -1,3 +1,4 @@
+#include <set>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "preset_import.h"
 #include "output_meter.h"
@@ -137,7 +138,7 @@ static bool hybrid_midi_block_independence(double sample_rate) {
 int main() {
     juce::ScopedJuceInitialiser_GUI juce_gui;
     // §9.1: los datos del navegador van a un archivo de la máquina; la suite usa uno propio y no toca el del usuario
-    const auto browser_store_file = juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("gf-browser-store-test.settings");
+    const auto browser_store_file = juce::File("/tmp").getNonexistentChildFile("gf-browser-store-test", ".settings", false);
     browser_store_file.deleteFile();
     setenv("GF_BROWSER_STORE", browser_store_file.getFullPathName().toRawUTF8(), 1);
     for (double fs : {44100.0, 48000.0, 96000.0})
@@ -3478,6 +3479,66 @@ int main() {
         if (!check(editor && editor->getWidth() == 1200 && editor->getHeight() == 760, "editor creation")) return 1;
         editor->setSize(900, 570);
         if (!check(editor->getWidth() == 900 && editor->getHeight() == 570, "editor resize")) return 1;
+    }
+    {
+        auto six = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto restored = std::unique_ptr<juce::AudioProcessor>(createPluginFilter());
+        auto patch = gf::dx7six::init_patch(); patch.vced[134] = 4;
+        for (int op=0; op<6; ++op) patch.vced[21*op+16] = (op & 1) ? 90 : 65;
+        std::array<uint8_t,gf::dx7six::GFP_BYTES> bytes{};
+        gf::dx7six::encode_gfp(patch,bytes.data(),bytes.size());
+        auto* importer = dynamic_cast<gf::PresetImport*>(six.get());
+        if (!check(importer->import_preset(bytes.data(),bytes.size()), "DX7 6-OP GFP import")) return 1;
+        std::vector<uint8_t> exported;
+        if (!check(importer->export_dx7_preset(exported) && exported==std::vector<uint8_t>(bytes.begin(),bytes.end()), "DX7 6-OP GFP export")) return 1;
+        juce::MemoryBlock state; six->getStateInformation(state);
+        restored->setStateInformation(state.getData(),int(state.getSize()));
+        six->prepareToPlay(48000,128); restored->prepareToPlay(48000,128);
+        double energy=0;
+        for(int block=0;block<16;++block) {
+            juce::AudioBuffer<float> a(2,128), b(2,128); juce::MidiBuffer ma,mb;
+            if(block==0) {ma.addEvent(juce::MidiMessage::noteOn(1,60,uint8_t(100)),17);mb=ma;}
+            six->processBlock(a,ma); restored->processBlock(b,mb);
+            for(int i=0;i<128;++i) {
+                energy+=a.getSample(0,i)*a.getSample(0,i);
+                if (!check(std::isfinite(a.getSample(0,i)) && a.getSample(0,i)==b.getSample(0,i), "DX7 6-OP restored audio")) return 1;
+            }
+        }
+        if(!check(energy>.001,"DX7 6-OP is audible")) return 1;
+        {
+            std::unique_ptr<juce::AudioProcessorEditor> editor(six->createEditor());
+            auto* page = editor->findChildWithID("studio.dx7_6op");
+            if (!check(page && page->isVisible() && page->findChildWithID("dx7_6op.bank"), "DX7 6-OP bank editor")) return 1;
+            if (!check(page->findChildWithID("dx7_6op.op1.level") && page->findChildWithID("dx7_6op.op6.level"), "DX7 6-OP eight-parameter bank")) return 1;
+            auto* bank = dynamic_cast<juce::ComboBox*>(page->findChildWithID("dx7_6op.bank"));
+            bank->setSelectedId(2, juce::sendNotificationSync);
+            std::set<std::string> exposed;
+            for(int b=1;b<=bank->getNumItems();++b) {
+                bank->setSelectedId(b,juce::sendNotificationSync);
+                for(size_t i=0;i<gf::dx7six::param_count;++i) {
+                    const auto& p=gf::dx7six::params[i];
+                    auto* control=page->findChildWithID(juce::String("dx7_6op.")+p.id);
+                    if(control&&control->isVisible())exposed.insert(p.id);
+                }
+            }
+            if(!check(exposed.size()==gf::dx7six::param_count,"All 151 DX7 controls and six operators exposed"))return 1;
+            bank->setSelectedId(2,juce::sendNotificationSync);
+            auto* coarse = dynamic_cast<juce::Slider*>(page->findChildWithID("dx7_6op.op1.coarse"));
+            if (!check(coarse != nullptr,"DX7 6-OP frequency bank")) return 1;
+            coarse->setValue(3,juce::sendNotificationSync);
+            auto* parameter=find_parameter(*six,"dx7_6op.op1.coarse");
+            if (!check(parameter->convertFrom0to1(parameter->getValue())==3,"DX7 6-OP bank edits DAW parameters")) return 1;
+            auto* detune=dynamic_cast<juce::Slider*>(page->findChildWithID("dx7_6op.op1.detune"));
+            if (!check(detune && detune->getValueFromText("0")==7 && detune->getValueFromText("-7")==0,"DX7 detune text uses signed panel units")) return 1;
+
+
+        }
+
+        bytes[4]=4;
+        if(!check(!importer->import_preset(bytes.data(),bytes.size()),"DX7 6-OP rejects ambiguous GFP")) return 1;
+        std::array<uint8_t,gf::dx7six::SINGLE_SYSEX_BYTES> sysex{};
+        gf::dx7six::write_single_sysex(patch,sysex.data(),sysex.size());
+        if(!check(importer->import_preset(sysex.data(),sysex.size()),"DX7 6-OP VCED import")) return 1;
     }
     return 0;
 }

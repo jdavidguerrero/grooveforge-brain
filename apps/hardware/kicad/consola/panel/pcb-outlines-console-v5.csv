@@ -1,0 +1,125 @@
+board,item,x_mm,y_mm,w_mm,h_mm,notes
+PCB-K,vértice 1,6,120,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 2,86,120,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 3,86,104,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 4,108,104,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 5,108,28,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 6,232,28,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 7,232,90,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 8,252,90,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 9,252,180,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 10,236,180,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 11,236,173,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 12,68,173,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 13,68,221,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 14,74.5,221,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 15,74.5,320,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 16,50,320,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 17,50,311,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,vértice 18,6,311,,,"contorno, sentido horario desde el frente izquierdo"
+PCB-K,ventana,170,138,122,62,"rectangular, pads de la M4"
+PCB-K,ventana,123.5,84.5,20,20,"redonda, bajo FSR V1"
+PCB-K,ventana,154.5,84.5,20,20,"redonda, bajo FSR V2"
+PCB-K,ventana,185.5,84.5,20,20,"redonda, bajo FSR V3"
+PCB-K,ventana,216.5,84.5,20,20,"redonda, bajo FSR V4"
+PCB-K,Choc V2,98,160.5,15,15,DELETE · LED violeta
+PCB-K,Choc V2,98,145.5,15,15,DUPLICATE · LED violeta
+PCB-K,Choc V2,98,130.5,15,15,QUANTIZE · LED violeta
+PCB-K,Choc V2,98,115.5,15,15,NEW · LED violeta
+PCB-K,Choc V2,242,160.5,15,15,SCENE1_OCT+ · LED verde
+PCB-K,Choc V2,242,145.5,15,15,SCENE2_OCT- · LED verde
+PCB-K,Choc V2,242,130.5,15,15,SCENE3_PAGE_L · LED verde
+PCB-K,Choc V2,242,115.5,15,15,SCENE4_PAGE_R · LED verde
+PCB-K,Choc V2,132,39.5,15,15,PLAY · LED verde
+PCB-K,Choc V2,151,39.5,15,15,STOP · LED verde
+PCB-K,Choc V2,170,39.5,15,15,REC · LED verde
+PCB-K,Choc V2,189,39.5,15,15,LOOP · LED verde
+PCB-K,Choc V2,208,39.5,15,15,METRO · LED verde
+PCB-K,Choc V2,64,305,15,15,BACK · LED violeta
+PCB-K,Choc V2,64,286.5,15,15,MENU · LED violeta
+PCB-K,Choc V2,64,268,15,15,NAV_L · LED violeta
+PCB-K,Choc V2,64,249.5,15,15,NAV_R · LED violeta
+PCB-K,Choc V2,64,231,15,15,BROWSE · LED violeta
+PCB-K,Choc V2,20,174,15,15,CUE_ENG · LED verde
+PCB-K,Choc V2,39,174,15,15,FILL · LED verde
+PCB-K,Choc V2,58,174,15,15,TAP · LED verde
+PCB-K,Choc V2,20,155,15,15,BUILD · LED verde
+PCB-K,Choc V2,39,155,15,15,DROP · LED verde
+PCB-K,Choc V2,58,155,15,15,BREAK · LED verde
+PCB-K,Choc V2,20,132.5,15,15,SHIFT · LED violeta
+PCB-K,Choc V2,39,132.5,15,15,UNDO · LED violeta
+PCB-K,agujero,30,144,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,82,124,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,10,200,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,64,204,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,12,247,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,12,300,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,53,316,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,80,169,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,112,32,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,228,32,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,112,100,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,228,100,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,247,101.5,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,246,176.5,3.2,3.2,"M2.5 a espárrago PEM, separador 1.4"
+PCB-K,agujero,77,130,3.2,3.2,"Marco M4 PEM FH-M2.5; brazo impreso; reserva inferior R4.6; Juan 2026-11-13"
+PCB-K,agujero,77,158,3.2,3.2,"Marco M4 PEM FH-M2.5; brazo impreso; reserva inferior R4.6; Juan 2026-11-13"
+PCB-K,agujero,244,94,3.2,3.2,"Marco M4 PEM FH-M2.5; brazo impreso; reserva inferior R4.6; Juan 2026-11-13"
+PCB-K,agujero,244,172,3.2,3.2,"Marco M4 PEM FH-M2.5; brazo impreso; reserva inferior R4.6; Juan 2026-11-13"
+PCB-F,contorno,294.5,129.5,81,83,"rectángulo; x, y = centro"
+PCB-F,agujero,257,91,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,332,91,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,257,168,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,332,168,3.2,3.2,M3 a separador PEM de 7.5
+PCB-P,contorno,120.5,84.5,223,31,"rectángulo; x, y = centro"
+PCB-P,agujero,40,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,40,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,89.5,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,89.5,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,139,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,139,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,170,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,170,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,201,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,201,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-M,contorno,233,296,186,80,"rectángulo; x, y = centro; 80 de alto desde 2026-11-13 (crece 20 hacia el frente)"
+PCB-M,agujero,144,280,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,233,280,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,322,280,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,144,312,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,233,312,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,322,308,3.2,3.2,M3 a inserto en torre de 5 del piso
+PCB-M,agujero,144,260,3.2,3.2,M3 a inserto en torre de 5 del piso (borde delantero nuevo)
+PCB-M,agujero,322,260,3.2,3.2,M3 a inserto en torre de 5 del piso (borde delantero nuevo)
+CUERPO,pozo de tornillo,8,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,100,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,240,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,332,8,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,8,110,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,332,178,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,332,300,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,8,333,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+CUERPO,pozo de tornillo,134,334,10,10,torre Ø10 con pozo Ø6.5; M3 × 10 desde abajo a separador PEM BSO-M3 de 10 en la chapa
+PCB-F,RS6011,264.5,129.5,9,75,F1
+PCB-F,RS6011,284.5,129.5,9,75,F2
+PCB-F,RS6011,304.5,129.5,9,75,F3
+PCB-F,RS6011,324.5,129.5,9,75,F4
+PCB-P,FSR 402,123.5,84.5,18.3,18.3,FSR V1
+PCB-P,FSR 402,154.5,84.5,18.3,18.3,FSR V2
+PCB-P,FSR 402,185.5,84.5,18.3,18.3,FSR V3
+PCB-P,FSR 402,216.5,84.5,18.3,18.3,FSR V4
+PCB-P,FSR 402,24.5,84.5,18.3,18.3,FSR X1
+PCB-P,FSR 402,55.5,84.5,18.3,18.3,FSR X2
+PCB-M,jack,148,336,,,LINE IN L · eje a 7 sobre la placa
+PCB-M,jack,172,336,,,LINE IN R · eje a 7 sobre la placa
+PCB-M,jack,196,336,,,LINE OUT L · eje a 7 sobre la placa
+PCB-M,jack,220,336,,,LINE OUT R · eje a 7 sobre la placa
+PCB-M,jack,244,336,,,PEDAL · eje a 7 sobre la placa
+PCB-M,jack,265,336,,,CV 1 · eje a 7 sobre la placa
+PCB-M,jack,283,336,,,CV 2 · eje a 7 sobre la placa
+PCB-M,jack,301,336,,,MIDI IN · eje a 7 sobre la placa
+PCB-M,jack,319,336,,,MIDI OUT · eje a 7 sobre la placa
+PCB-A,agujero,84,179,3.2,3.2,"H1; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,118,192,3.2,3.2,"H2; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,144,192,3.2,3.2,"H3; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"
+PCB-A,agujero,248,192,3.2,3.2,"H4; M3 a separador PEM BSO-M3 de 18; PCB superior TOP-20"

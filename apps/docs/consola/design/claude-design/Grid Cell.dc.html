@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@500;600;700;800&family=Archivo:wdth,wght@62..125,400..800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"></helmet>
+<div style="position:relative;width:100%;height:100%;box-sizing:border-box;background:{{ bg }};border:{{ bd }};border-radius:6px;padding:8px 10px;display:flex;flex-direction:column;justify-content:space-between;gap:4px;overflow:hidden;font-family:'IBM Plex Mono',monospace;color:{{ fg }}">
+  <sc-if value="{{ stripe }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;left:0;right:0;top:0;height:6px;background:{{ stripeC }}"></div></sc-if>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding-top:{{ padTop }}px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.08em;color:{{ lc }};white-space:nowrap">{{ label }}</span>
+    <sc-if value="{{ hasTag }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;font-weight:600;letter-spacing:.06em;padding:2px 5px;border-radius:3px;background:{{ tagBg }};color:{{ tagFg }};border:{{ tagBd }};white-space:nowrap">{{ tagText }}</span></sc-if>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+    <span style="font-size:14px;line-height:18px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ nm }}</span>
+    <sc-if value="{{ showSub }}" hint-placeholder-val="{{ true }}"><span style="font-size:11px;line-height:14px;color:{{ sc }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sub }}</span></sc-if>
+  </div>
+  <sc-if value="{{ showSteps }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:2px"><sc-for list="{{ stepList }}" as="s" hint-placeholder-count="16"><div style="height:6px;border-radius:1px;background:{{ s.bg }}"></div></sc-for></div></sc-if>
+  <sc-if value="{{ showLevel }}" hint-placeholder-val="{{ false }}"><div style="height:4px;background:{{ lvTrack }};border-radius:2px;overflow:hidden"><div style="height:100%;width:{{ levelPct }}%;background:#5DCAA5"></div></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:160,&quot;height&quot;:112},&quot;color&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3D8CFF&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;dim&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#182E4F&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;BASS&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;title&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Sub Model D&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;A1 · round&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;state&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;playing&quot;,&quot;queued&quot;,&quot;cue&quot;,&quot;option&quot;,&quot;idle&quot;,&quot;muted&quot;,&quot;empty&quot;,&quot;loading&quot;],&quot;default&quot;:&quot;playing&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;enc&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;fill&quot;,&quot;stripe&quot;],&quot;default&quot;:&quot;fill&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;compact&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;level&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0,&quot;max&quot;:1,&quot;step&quot;:0.01,&quot;default&quot;:0.7,&quot;tsType&quot;:&quot;number&quot;},&quot;steps&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;number[]&quot;},&quot;tag&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const c = p.color ?? '#3D8CFF', d = p.dim ?? '#182E4F', st = p.state ?? 'idle', enc = p.enc ?? 'fill';
+    const steps = p.steps ?? [];
+    let bg, bd, fg = '#F2F2F2', lc = '#F2F2F2', sc = '#9FE1CB', stripeC = c, lvTrack = '#0A0A0A';
+    let onC = c, offC = 'rgba(255,255,255,.09)';
+    if (enc === 'fill') {
+      lc = c;
+      if (st === 'playing' || st === 'queued') { bg = c; bd = st === 'queued' ? '2px solid #F2F2F2' : `2px solid ${c}`; fg = '#0A0A0A'; lc = '#0A0A0A'; sc = 'rgba(10,10,10,.75)'; lvTrack = 'rgba(10,10,10,.35)'; onC = '#0A0A0A'; offC = 'rgba(10,10,10,.2)'; }
+      else if (st === 'cue') { bg = d; bd = '2px dashed #F2F2F2'; }
+      else if (st === 'option') { bg = d; bd = '2px solid #7A6FE0'; }
+      else if (st === 'muted') { bg = '#0A0A0A'; bd = `2px solid ${d}`; fg = '#5A5A6E'; lc = '#5A5A6E'; sc = '#5A5A6E'; onC = '#3A3A44'; }
+      else if (st === 'empty') { bg = 'transparent'; bd = '2px dashed #242424'; fg = '#5A5A6E'; lc = '#5A5A6E'; sc = '#3A3A44'; }
+      else if (st === 'loading') { bg = '#141414'; bd = '2px solid #2B2758'; fg = '#5A5A6E'; }
+      else { bg = d; bd = `2px solid ${d}`; }
+    } else {
+      if (st === 'playing') { bg = '#0E5040'; bd = '2px solid #1D9E75'; }
+      else if (st === 'queued') { bg = '#0E5040'; bd = '2px solid #F2F2F2'; }
+      else if (st === 'cue') { bg = '#1C1C1C'; bd = '2px dashed #F2F2F2'; }
+      else if (st === 'option') { bg = '#2B2758'; bd = '2px solid #534AB7'; }
+      else if (st === 'muted') { bg = '#0A0A0A'; bd = '2px solid #242424'; fg = '#5A5A6E'; lc = '#5A5A6E'; sc = '#5A5A6E'; stripeC = d; onC = '#3A3A44'; }
+      else if (st === 'empty') { bg = 'transparent'; bd = '2px dashed #242424'; fg = '#5A5A6E'; lc = '#5A5A6E'; sc = '#3A3A44'; stripeC = '#242424'; }
+      else if (st === 'loading') { bg = '#141414'; bd = '2px solid #2B2758'; fg = '#5A5A6E'; stripeC = d; }
+      else { bg = '#1C1C1C'; bd = '2px solid #242424'; }
+    }
+    const T = {
+      cue: ['CUE', '#F2F2F2', '#0A0A0A', '1px solid #F2F2F2'],
+      queued: ['NEXT PHRASE', '#0A0A0A', '#F2F2F2', '1px solid #0A0A0A'],
+      option: ['ENGINE', '#534AB7', '#F2F2F2', '1px solid #534AB7'],
+      muted: ['MUTED', 'transparent', '#5A5A6E', '1px solid #3A3A44'],
+      loading: ['GENERATING', 'transparent', '#7A6FE0', '1px solid #534AB7']
+    };
+    if (enc === 'stripe' && st === 'queued') T.queued = ['NEXT PHRASE', '#F2F2F2', '#0A0A0A', '1px solid #F2F2F2'];
+    const t = p.tag === false ? null : T[st];
+    const nm = st === 'loading' ? 'Generating…' : (p.title ?? (st === 'empty' ? '—' : ''));
+    return {
+      bg, bd, fg, lc, sc, stripeC, lvTrack,
+      stripe: enc === 'stripe', padTop: enc === 'stripe' ? 4 : 0,
+      label: p.label ?? 'BASS', nm, sub: p.sub ?? '',
+      hasTag: !!t, tagText: t?.[0], tagBg: t?.[1], tagFg: t?.[2], tagBd: t?.[3],
+      showSub: !p.compact,
+      showSteps: steps.length > 0 && !p.compact && st !== 'empty' && st !== 'loading',
+      stepList: steps.map(v => ({ bg: v ? onC : offC })),
+      showLevel: st === 'playing' && p.level != null && !p.compact,
+      levelPct: Math.round((p.level ?? 0) * 100)
+    };
+  }
+}
+</script>
+</body>
+</html>

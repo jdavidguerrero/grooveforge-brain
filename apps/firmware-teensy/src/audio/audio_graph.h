@@ -83,6 +83,9 @@ extern AudioInputI2S         g_audio_in;   ///< ADC del SGTL5000 — fuente para
 // NO conflictúa con AudioOutputI2S — comparten el mismo interrupt del SAI.
 // La diferencia de clock (44100 Hz USB vs 44117.647 Hz I2S) se absorbe en el FIFO interno.
 extern AudioInputUSB         g_usb_in;     ///< USB audio in (Mac passthrough, off by default)
+#ifdef GF_CONSOLA
+extern AudioOutputUSB g_usb_out;  ///< Teensy to Pi output; custom async status in consola_usb.
+#endif
 
 namespace audio_graph {
 
@@ -97,7 +100,8 @@ static constexpr uint8_t ENGINE_PROPHET = 2;
 static constexpr uint8_t ENGINE_OB6     = 3;
 static constexpr uint8_t ENGINE_DX7     = 4;
 static constexpr uint8_t ENGINE_ARP     = 5;
-static constexpr uint8_t NUM_ENGINES    = 6;
+static constexpr uint8_t ENGINE_DX7_6OP = 7;  ///< 6 reserved; Studio UI still exposes engines 0–5
+static constexpr uint8_t NUM_ENGINES    = 8;
 
 /** Gain nominal de un engine activo en g_engine_mix. 0.7 evita clipping al sumar. */
 static constexpr float ENGINE_ACTIVE_GAIN = 0.7f;
@@ -186,6 +190,14 @@ void set_usb_passthrough(bool enable);
  * @brief Retorna el estado actual del USB passthrough.
  */
 bool get_usb_passthrough();
+
+#ifdef GF_CONSOLA
+/**
+ * @brief Qué manda la Teensy al Pi por USB (consola, apps/docs/consola/05-e3-teensy-a.md).
+ * @param fuente 0 = la mezcla de los synths (por defecto), 1 = la entrada de línea del SGTL5000 (bucle de latencia).
+ */
+void set_usb_out_source(uint8_t fuente);
+#endif
 
 /**
  * @brief Volume master del codec (afecta jack 3.5mm headphones).

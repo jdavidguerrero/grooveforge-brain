@@ -1,0 +1,106 @@
+(footprint "Kailh_Choc_V2_PG1353_Hotswap"
+  (version 20241229)
+  (generator "schgen")
+  (layer "F.Cu")
+  (descr "PG1353 + CPG135001S30. Panel +Y rear = KiCad -Y. Dual solder PTH dia1.3 pad1.9; socket SMD pad centres/sizes provisional: VERIFICAR CON ZÓCALO REAL. Not fabrication approved.")
+  (tags "Kailh Choc V2 PG1353 CPG135001S30 hot-swap solder dual provisional")
+  (attr through_hole)
+  (property "Reference" "REF**"
+    (at 0 -8.5)
+    (layer "F.SilkS")
+    (effects
+      (font
+        (size 1 1)
+        (thickness 0.15))))
+  (property "Value" "PG1353 + CPG135001S30"
+    (at 0 8.5)
+    (layer "F.Fab")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12))))
+  (fp_text user "VERIFICAR CON ZÓCALO REAL"
+    (at 0 10)
+    (layer "B.Fab")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12))
+      (justify mirror)))
+  (fp_text user "PADS 1/2 PROVISIONALES"
+    (at 0 11.5)
+    (layer "B.SilkS")
+    (effects
+      (font
+        (size 0.8 0.8)
+        (thickness 0.12))
+      (justify mirror)))
+  (fp_rect
+    (start -7.5 -7.5)
+    (end 7.5 7.5)
+    (stroke
+      (width 0.1)
+      (type solid))
+    (fill none)
+    (layer "F.Fab"))
+  (fp_rect
+    (start -7.75 -7.75)
+    (end 7.75 7.75)
+    (stroke
+      (width 0.05)
+      (type solid))
+    (fill none)
+    (layer "F.CrtYd"))
+  (fp_rect
+    (start -4.825 2.25)
+    (end 9.825 7.45)
+    (stroke
+      (width 0.05)
+      (type solid))
+    (fill none)
+    (layer "B.CrtYd"))
+  (fp_rect
+    (start -1.7 -6.43)
+    (end 1.7 -3.43)
+    (stroke
+      (width 0.1)
+      (type solid))
+    (fill none)
+    (layer "Dwgs.User"))
+  (fp_text user "LED CUTOUT VIA Dn"
+    (at 0 -4.93)
+    (layer "Dwgs.User")
+    (effects
+      (font
+        (size 0.5 0.5)
+        (thickness 0.1))))
+  (pad "" np_thru_hole circle
+    (at 0 0)
+    (size 5 5)
+    (drill 5)
+    (layers "*.Cu" "*.Mask"))
+  (pad "" np_thru_hole circle
+    (at -5 -5.15)
+    (size 1.5 1.5)
+    (drill 1.5)
+    (layers "*.Cu" "*.Mask"))
+  (pad "1" thru_hole circle
+    (at 0 5.9)
+    (size 1.9 1.9)
+    (drill 1.3)
+    (layers "*.Cu" "*.Mask"))
+  (pad "2" thru_hole circle
+    (at 5 3.8)
+    (size 1.9 1.9)
+    (drill 1.3)
+    (layers "*.Cu" "*.Mask"))
+  (pad "1" smd roundrect
+    (at -3.275 5.9)
+    (size 2.6 2.6)
+    (layers "B.Cu" "B.Paste" "B.Mask")
+    (roundrect_rratio 0.15))
+  (pad "2" smd roundrect
+    (at 8.275 3.8)
+    (size 2.6 2.6)
+    (layers "B.Cu" "B.Paste" "B.Mask")
+    (roundrect_rratio 0.15)))

@@ -1,0 +1,17 @@
+E3 USB async Pi->Teensy Mon  9 Nov 19:40:21 -05 2026 minutos=60
+temp=42.8'C
+@GF OK RUTA SINTE
+@GF OK CUE 1
+antes: @GF USB RX_UND 1 RX_OVR 0 RX_MEM 0 TX_UND 0 TX_OVR 1 TX_SKIP 0 TX_PAD 0 TX_LESS 0 TX_MORE 9846 RX_ACTIVE 1 TX_ACTIVE 1
+minutos: 60.0
+segundos_con_saltos: 1
+saltos_totales: 4532
+segundos_sin_senal: 0
+underflow: 0
+overflow: 0
+primeros_eventos(min, saltos): [(0.02, 4532)]
+después: @GF USB RX_UND 1 RX_OVR 0 RX_MEM 0 TX_UND 0 TX_OVR 1 TX_SKIP 0 TX_PAD 0 TX_LESS 0 TX_MORE 18710 RX_ACTIVE 1 TX_ACTIVE 1
+temp=43.3'C
+throttled=0x0
+FIN
+

@@ -1,0 +1,202 @@
+[
+  {
+    "name": "SynthParts",
+    "file": "36-SynthParts.png",
+    "mode": "STANDALONE",
+    "design": "31",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthPartsStates",
+    "file": "37-SynthPartsStates.png",
+    "mode": "STANDALONE",
+    "design": "31b",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthFilter",
+    "file": "38-SynthFilter.png",
+    "mode": "STANDALONE",
+    "design": "32",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthNotResponding",
+    "file": "39-SynthNotResponding.png",
+    "mode": "STANDALONE",
+    "design": "32b",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthLoading",
+    "file": "40-SynthLoading.png",
+    "mode": "STANDALONE",
+    "design": "32c",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthOsc",
+    "file": "41-SynthOsc.png",
+    "mode": "STANDALONE",
+    "design": "33",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthEnv",
+    "file": "42-SynthEnv.png",
+    "mode": "STANDALONE",
+    "design": "34",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthEnvBank2",
+    "file": "43-SynthEnvBank2.png",
+    "mode": "STANDALONE",
+    "design": "34b",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthLfo",
+    "file": "44-SynthLfo.png",
+    "mode": "STANDALONE",
+    "design": "35",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthFm",
+    "file": "45-SynthFm.png",
+    "mode": "STANDALONE",
+    "design": "36",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthFmFocus",
+    "file": "46-SynthFmFocus.png",
+    "mode": "STANDALONE",
+    "design": "36b",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthDx7",
+    "file": "47-SynthDx7.png",
+    "mode": "STANDALONE",
+    "design": "36 \u00b7 DX7",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthDx7Bank2",
+    "file": "48-SynthDx7Bank2.png",
+    "mode": "STANDALONE",
+    "design": "36 \u00b7 DX7 bank 2",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthDx7Focus",
+    "file": "49-SynthDx7Focus.png",
+    "mode": "STANDALONE",
+    "design": "36b \u00b7 DX7",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthGroove",
+    "file": "50-SynthGroove.png",
+    "mode": "STANDALONE",
+    "design": "37",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthFx",
+    "file": "51-SynthFx.png",
+    "mode": "STANDALONE",
+    "design": "38",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthMacros",
+    "file": "52-SynthMacros.png",
+    "mode": "STANDALONE",
+    "design": "39",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthHybrid",
+    "file": "53-SynthHybrid.png",
+    "mode": "STANDALONE",
+    "design": "40",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthHybridA",
+    "file": "54-SynthHybridA.png",
+    "mode": "STANDALONE",
+    "design": "41",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthHybridB",
+    "file": "55-SynthHybridB.png",
+    "mode": "STANDALONE",
+    "design": "41 \u00b7 B",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthPresets",
+    "file": "56-SynthPresets.png",
+    "mode": "STANDALONE",
+    "design": "42",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthSaveAs",
+    "file": "57-SynthSaveAs.png",
+    "mode": "STANDALONE",
+    "design": "42b",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthSettingsAudio",
+    "file": "58-SynthSettingsAudio.png",
+    "mode": "COMMON",
+    "design": "43",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthSettingsConnections",
+    "file": "59-SynthSettingsConnections.png",
+    "mode": "COMMON",
+    "design": "44",
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "name": "SynthSettingsSystem",
+    "file": "60-SynthSettingsSystem.png",
+    "mode": "COMMON",
+    "design": "45",
+    "width": 1280,
+    "height": 720
+  }
+]

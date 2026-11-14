@@ -1,0 +1,281 @@
+# Consola: firmware de la Teensy única
+
+> 2026-11-10 · ADR-008 §2 · implementación de prototipo, sin flash. Autoridad de cableado: [17](17-mapa-pines-teensy.md). Sustituye el reparto A/S de 06, conserva su protocolo musical.
+
+## 1. Ubicación y alcance
+
+Nuevo entorno **`consola_uno` en `apps/firmware-teensy`**: hereda el overlay privado alex6679 f731821 de `consola_usb` (UAC2 asíncrono, PCM16, 44.100 Hz nominales, 4 canales por sentido). Reutiliza `audio_graph` GF_CONSOLA y el parser `preset_link`. Los módulos de superficie y su runtime pasan a **`apps/consola/surface`**, biblioteca local compartida por `consola_s` y `consola_uno`; no se copia la captura ni el transporte M4. Mantenerlo en processor obligaría a trasladar el overlay/grafo ya medidos. Los engines/FX/UI del Brain no se enlazan por defecto. `consola_uno_brain` permite una parte Moog con `GF_CONSOLA_BRAIN`, sin panel Brain ni UART heredada; MIDI entrante canal 1 controla esa parte. No activar antes de medir margen.
+
+USB compuesto **MIDI + Audio 4ch + Serial**, producto **«GF Consola»**. `superficie.py` cambia su filtro predeterminado; `--puerto 'GF Superficie'` sigue permitiendo usar la S antigua. Audio conserva el grafo medido: captura LINEA o SINTE en canales 1/2; canales 3/4 de captura quedan en silencio y reproducción 3/4 reservada. Cue usa reproducción 1/2. No se afirma que cuatro canales USB impliquen cuatro salidas analógicas del SGTL5000.
+
+## 2. Tiempo real y bus compartido
+
+Prioridad NVIC (menor número gana): USB **112**, DMA I2S **128** (core), FSR IntervalTimer **160**, AudioStream **208**. La prioridad del timer se fija **antes de begin()**. `IntervalTimer` comparte IRQ_PIT entre sus cuatro canales: se toma la prioridad más alta solicitada; STATS publica `pit_priority`. I2S asume `update_setup()` en su constructor global; `AudioMemory` sólo crea un IntervalTimer de respaldo si ningún I/O asumió la actualización. No hay evidencia de otro PIT activo en este grafo (véase §7), ni se enmascara el PIT desde loop.
+
+ADC1 tiene **un único dueño**, `AdcScan` en la ISR de 50 µs. Cada trama de 400 µs programa FSR habilitados; CUE24 (canal1) y selector41 (canal10) se intercalan cada 10 ms. Una interrupción inicia la conversión y otra recoge R0: **no hay busy-wait**. Si no llega COCO en 100 µs, aborta HC0=31, incrementa `adc1_timeouts`, omite esa muestra y continúa. No fabrica un cero ni un golpe. El loop sólo lee buzones de CUE/selector. MASTER22 usa **ADC2 canal13**, IN26 ADC2 canal3; ADC2 pertenece al loop, con plazo DWT de **20 µs** y `adc2_timeouts`. Tampoco `consola_s` comparte ADC1 con pots. Se conserva la calibración/reloj asíncrono PJRC realizada por `analog_init` antes de setup, resolución12, sin averaging/trigger externo/continuous/compare/DMA ADC. No hay `analogRead` después de tomar posesión. No cambia ningún pin.
+
+Wire18/19 a **400 kHz**: I2C sólo en setup/loop. El perfil decide qué dispositivos existen: mínimo **no sondea** ADS0x49 ni MCP0x22/23. Ambos DAC0x60/61 siempre se atienden por seguridad, incluso en mínimo. ADS0x48 convierte sólo AIN0/AIN2. NACK/fallo usa backoff exponencial **1, 2, 4, 8, 16, 32 s**, reiniciado después de una operación completa correcta. MCP libera notas al caer. Codec/CV aplican el mismo backoff. Todos los CC tienen cadencia máxima **100 Hz por control**; valores absolutos se coalescen, encoders/jog retienen pasos pendientes. Las actualizaciones locales de CUE/IN comparten esa cadencia.
+
+**Timeout real de Wire:** Teensyduino1.160.0 `WireIMXRT` no tiene `setWireTimeout`; `Stream::setTimeout` no limita `endTransmission/requestFrom`. `surface/tools/wire_timeout.py` crea un **framework privado en .pio/build**, conserva el driver PJRC y añade `setWireTimeout(250)` / `getWireTimeoutCount()`. El plazo de **250 µs** cubre adquisición de bus y transferencia juntos; pin-low también250µs. Recuperar bus ocupado añade como máximo nueve pulsos de10µs más10µs iniciales; siguiente intento respeta backoff. El script valida los sitios que parchea y nunca modifica `~/.platformio`. Se aplica a uno/full/brain/diag y `consola_s`; consola/USB/sketch49 conservan su framework. `wire_timeout_us`, `wire_timeouts`, `retry_max_us` y retries codec/CV en STATS permiten contrastarlo. **Objetivo medible: loop_max_us<2000 en régimen estable**, pendiente de Pi/Teensy; el arranque y la recuperación SGTL con `enable()` oficial (5+400ms) quedan fuera de régimen estable y sí aparecen en el máximo si ocurren durante loop. Hacer `@S RESET` después de setup/recuperación antes de medir. No se afirma que un build mida latencia.
+
+Un solo par de pull-ups, 3,3 V; revisar paralelo de módulos/shield (17 §2). Sin accesos concurrentes al bus desde callbacks MIDI. CV por MCP4725: escrituras ordinarias volátiles. `@GF CV <0–4095>` controla 0x60 (sigue deshabilitado en mínimo); 0x61 está poblado y se mantiene siempre a cero aunque no tenga función asignada. La única escritura EEPROM es el comando explícito de banco descrito en §9.
+
+## 3. Pines y MIDI
+
+Se aplica 17 completo: encoders **2/3, 4/5, 6/9, 10/11, 12/30, 31/32, 33/34, 35/36**; jog **37/40**; M4 **Serial7 RX28/TX29** (cruzar TX/RX); MASTER **22**, CUE **24**, IN **26**; FSR **14–17**; LEDs data **13** (reservado, sin animaciones que enmascaren audio); selector de pad analógico **41**. I2S **7/8/20/21/23**. Desaparece UART A↔S; 29 deja de ser PWM CV. 0/1 controlan EN_K/EN_A (doc24 D30); DIN DNP, triggers 25/27/38/39 reservados.
+
+No hay contradicción de asignación en 17. Restricciones del shield reutilizado: **sin microSD SPI ni flash opcional**, porque 6/10/11/12/13 son superficie; no montar el pot de volumen opcional del shield en 15 (FSR2). CUE usa el buzón del planificador ADC1 descrito arriba. La escalera del selector no tenía resistencias/umbrales definidos: se fija aquí como contrato de prototipo, calibrable antes de PCB.
+
+Canal MIDI 1; se conservan FSR notas 36–39, M4 48–79, encoders CC16–23, jog CC35, faders CC24–27, expresión CC28–29, MASTER/CUE/IN CC30/31/32, manos CC33/34 y presencia notas108/109. MCP usa orden GPIO **0–6, 8–14**; GPA7/GPB7 no son entradas:
+
+Contrato v1 (2026-11-11), notas decimales, entradas activas a GND. Cada celda enumera GPIO físico → nota / función; los demás GPIO están libres y no emiten eventos.
+
+| Chip / placa | GPA0–6 | GPB0–6 |
+|---|---|---|
+| 0x20 / PCB-A | 0→84 ENC5; 1→85 ENC6; 2→86 ENC7; 3→87 ENC8 | 0→80 ENC1; 1→81 ENC2; 2→82 ENC3; 3→83 ENC4 |
+| 0x21 / PCB-K1 | 0→89 OCT+ / escena1; 1→90 OCT− / escena2; 2→91 PAGE▶ / escena4; 3→92 PAGE◀ / escena3 | 0→101 METRO; 1→97 LOOP; 2→96 REC; 3→95 STOP; 4→94 PLAY |
+| 0x22 / PCB-K1+K2 | 0→98 UNDO; 1→102 BACK; 2→103 MENU; 3→104 LEFT; 4→105 RIGHT; 5→106 BROWSE; 6→100 SHIFT | 0→107 DELETE; 1→110 DUPLICATE; 2→111 QUANTIZE; 3→99 NEW |
+| 0x23 / PCB-M | 0→112 CUE; 1→113 FILL; 2→114 TAP; 3→115 BUILD; 4→116 DROP; 5→117 BREAK; 6→88 JOG | 0→122 PEDAL |
+
+36 notas únicas entre80 y122; 93,118–121 libres; 108/109 siguen siendo presencia de manos. JOG88, encoder80–87 y transporte histórico conservan identidad MIDI. Pedal envía on/off sin conversión a sustain.
+**Diferencia de spec:** CONNECTORS sólo define hasta0x22 y conserva nombres antiguos de K2; aquí se explicita BACK←BROWSE, MENU←MIX, LEFT←DEVICE, RIGHT←NOTE, BROWSE←SESSION. Para0x23 se fija provisionalmente GPA0–6 en el orden de17 y pedal GPB0: validar al diseñar PCB-M, no afirmar cableado existente.
+
+Mínimo conserva sólo GPA0–6 de0x20/21 y excluye0x22/23; por cableado real los clics disponibles ahí son ENC5–8, no ENC1–4. No se reasignan GPIO para simular la mesa anterior. Completo sondea los cuatro chips; NACK nunca se interpreta como pulsación y libera una sola vez cualquier nota mantenida.
+
+Selector: común a 41; tres posiciones a GND, mitad de 3,3 V (divisor 10k/10k), 3,3 V; masa común, nunca 5 V. ADC12: umbrales **1365/2730**, histéresis **±80 cuentas**. Posiciones 0/1/2 representan 0/−10/−20 dB y envían **CC36 = 0/64/127** inicial y al cambiar. Solo informa la posición física: no aplica otra atenuación digital. El lector añade `SelectorPad(db)`.
+
+## 4. Prototipo mínimo y CDC
+
+Banco comunicado por Juan (2026-11-10): Wire 18/19 ya responde con SGTL5000 0x0A, CJMCU-2317 0x20/21 (solo GPA0–GPA6 cableados) y ADS de dirección fija 0x48 (fader A0, Sharp A2). No se trasladó ni se modificó el sketch50 que vive en otra rama.
+
+`GF_CONSOLA_MINIMAL=1` predeterminado; el entorno `consola_uno_full` lo pone a 0 y activa el mapa completo. Cinco encoders **incluido jog** = encoder1–4 + jog; dos FSR; **ningún pot** (MASTER22 está al aire en esta mesa). Los periféricos de entrada excluidos no se sondean; los dos DAC son excepción de seguridad (§9). No se puede autodetectar si un pot/FSR analógico está cableado: las máscaras desactivan entradas flotantes.
+
+| Conectar | Cableado mínimo |
+|---|---|
+| Teensy 4.1 + SGTL5000 shield compatible T4 | I2S7/8/20/21/23, I2C18/19, alimentación y GND; USB al Pi/host |
+| Encoder1–4 + jog | A/B 2/3, 4/5, 6/9, 10/11, 37/40; común GND |
+| MCP0x20/21 | SDA18/SCL19, 3,3 V, GND, RESET alto; A2/A1/A0=000/001; módulos CJMCU-2317, solo GPA0–GPA6 cableados y habilitados; clics ENC5–8 en GPA0–GPA3 (contradicción de la mesa anterior: ENC1–4 son GPB0–3), pulsadores a GND |
+| FSR1/2 | 3,3 V → FSR → 14/15; cada ADC → 10k → GND |
+| MASTER (opcional, deshabilitado) | extremos 3,3 V/GND, cursor22; habilitar `-DGF_CONSOLA_WIRED_POTS=1` sólo al cablearlo |
+| ADS0x48 | 3,3 V/GND, SDA18/SCL19, dirección fija 0x48 sin pin ADDR en el módulo de Juan; fader1 cursor AIN0 (extremos 3,3 V/GND); Sharp1 salida AIN2 |
+| Sharp1 | alimentación5 V, ≥10µF local y GND común; verificar salida dentro de 0–3,3 V antes del ADS |
+| M4 | TX M4 → RX28; RX M4 ← TX29; GND común, alimentación adecuada; firmware M4 existente de press/release |
+
+En mínimo el Sharp se traslada de ADS0x49 AIN2 a **0x48 AIN2**, manteniendo CC33/nota108. Los otros canales ADS se omiten. El clic jog está en 0x23 GPA6 según el contrato v1 y no está cableado en esta mesa: queda desactivado en mínimo; no se reasigna a otro GPIO. Sin MCP0x22/23, segundo ADS, CUE/IN o selector conectados no se generan eventos falsos ni logs repetidos. STATS informa máscaras habilitadas y presencia; ausencia M4 significa sin respuesta válida, no diagnóstico eléctrico.
+
+Mismo CDC: `@S STATS` y `@S RESET` mantienen los campos de 06/08 y agregan presencia/máscaras, CPU/memoria audio y errores codec/DAC. `@GF RUTA LINEA|SINTE` (LINEA inicial; SINTE silencio sin Brain), `@GF CUE 0|1` (1 inicial), `@GF USB` mantiene contadores async; **`@GF IN 0–15`** llama `lineInLevel` (5 inicial; número mayor = menor sensibilidad), **`@GF HP 0–127`** volumen de audífonos (64 inicial). En completo CUE/IN envían sus CC y actualizan HP/IN; MASTER sigue siendo CC para la sala del Pi. OK confirma el estado solicitado; la escritura física se atiende en loop y su disponibilidad se consulta en STATS. Respuestas acotadas/fraccionadas sin esperar al host. RESET reinicia los contadores históricos de superficie; los errores codec/CV y máximos de audio añadidos se acumulan desde arranque. Sin protocolos bridge nuevos.
+
+## 5. Verificación y puerta física
+
+Tests nativos: mapa MCP completo/pedal/libre y ausencia de colisiones, ladder con histéresis, producto USB, configuración mínima, parser IN/HP/CV y recuperación/backoff. Mantener ambas suites native y tests Python; builds `consola_uno`, `consola_usb`, `consola`, `sketch49`, `consola_s`, sin upload. Código oficial PJRC: Wire/ADC/Audio/I2S/SGTL5000/Encoder; custom: superficie y política de polling/ruteo; terceros: overlay USB alex6679.
+
+La validación 0 dropouts de [E3](mediciones/e3-usb-async-20261109.md) corresponde a `consola_usb`, **no certifica este firmware combinado**. Después de cablear: audio dúplex ≥60 min + todos los controles, cero drops de cola/USB, scan ≥2kHz y gap≤500µs, carga total≤60%, reconexión de cada I2C y M4. Medir latencia y calibrar FSR/Sharp/ladder; falta hardware para aprobar la puerta. No usar animaciones LED síncronas. No cambia ningún SSoT00–06.
+
+
+## 6. Resultado de escritorio anterior (antes del fallo físico)
+
+Se escribió este documento antes del código. Commit del documento bloqueado por `Unable to create .git/index.lock: Operation not permitted`; por la misma restricción quedan **documento y código sin commits** sobre `codex/teensy-unica`, HEAD `2695044`. Sin push, upload ni cambios al checkout host.
+
+| Verificación final | Salida real |
+|---|---|
+| firmware-teensy: `pio test -e native` | **174 test cases: 174 succeeded**, 12,851 s |
+| processor: `pio test -e native` | **11 test cases: 11 succeeded**, 0,595 s |
+| tools/consola: `python3 -m pytest -q` | **450 passed**, 1,41 s |
+| `sketch49` | SUCCESS, 5,523 s |
+| `consola` | SUCCESS, 4,736 s |
+| `consola_usb` | SUCCESS, 2,292 s |
+| `consola_uno` | SUCCESS, 1,304 s |
+| `consola_uno_full` | SUCCESS, 1,286 s |
+| `consola_uno_brain` | SUCCESS, 1,326 s |
+| processor: `consola_s` | SUCCESS, 1,602 s |
+| `git diff --check` | Sin errores |
+
+La última pasada de builds es incremental, posterior a las compilaciones completas. `consola_uno`: FLASH código **81.300 B**, RAM1 variables **20.288 B**, RAM2 **52.512 B**. `nm` confirma ausencia de símbolos de engines en el binario predeterminado y `MoogModelD::begin` en el opt-in. `objdump` verifica el descriptor fuerte `usb_string_product_name`, 22 bytes, tipo 3, texto UTF-16 **GF Consola**. No se conectó ni se flasheó hardware para estas comprobaciones. Las compilaciones completas heredan warnings de flags `-fno-rtti` en C; los entornos Brain también tienen warnings existentes de `strncpy`.
+
+Para reproducir aquí, usar el ejecutable `~/.platformio/penv/bin/pio` y el prefijo `PLATFORMIO_CORE_DIR=/tmp/gf-unica-pio-core PLATFORMIO_SETTING_ENABLE_TELEMETRY=no` desde cada proyecto. Ese core temporal referencia paquetes/plataformas instalados en lectura, y Unity procede de la caché local; no se parcheó `~/.platformio`. Processor usa Encoder oficial incluido en Teensyduino y la biblioteca local por `symlink://../surface`.
+
+Logs: `/tmp/gf-unica-firmware-native.log`, `/tmp/gf-unica-processor-native.log`, `/tmp/gf-unica-python.log`, `/tmp/gf-unica-firmware-builds-final.log`, `/tmp/gf-unica-consola_s.log`. Compilaciones completas de los tres entornos nuevos: `/tmp/gf-unica-uno-builds.log`.
+
+**Pendiente físico:** probar este firmware combinado bajo audio dúplex, medir jitter/latencia/carga total y reconexión. Los pines de 17 se respetan; las salvedades del shield y ADC1 se explican en §2–3. CV requiere conectar un MCP4725; la mesa actual no lo tiene. La falta de esos ensayos no se oculta tras el resultado E3 del firmware anterior.
+
+
+## 7. Corrección tras la prueba física del 10 de noviembre
+
+Evidencia de entrada: [medición Pi](mediciones/synth-pi-20261110.md). Con FSR activo enumera pero CDC/MIDI no avanzan; la misma imagen con `GF_DIAG_NO_FSR` avanza. En HEAD5ded9db `read_adc1` y `read_adc2` esperan COCO **sin ningún plazo**; la ISR puede por tanto retener el procesador indefinidamente si ADC no termina. Éste es el defecto de vivacidad comprobable en código y la ruta aislada por el A/B. **El disparador exacto de la falta de COCO no está demostrado**: no hay dump de ADC ni reproducción con placa en esta sesión. No se presenta la sospecha MASTER como causa probada: ese HEAD ya deshabilitaba IRQ_PIT alrededor de MASTER/CUE/selector, y el `analogRead(14)` de setup precedía al timer. Fijar prioridades por sí solo tampoco demuestra una solución.
+
+Se contrastó el paquete instalado `framework-arduinoteensy1.160.0`: `cores/teensy4/analog.c` (`pin_to_channel`, `analog_init`, `analogRead`), `IntervalTimer.cpp`, `AudioStream.cpp:initialize_memory/update_setup`, `libraries/Audio/output_i2s.cpp`, `libraries/ADC/ADC.cpp`. MASTER22 ADC1/2 canal13; CUE24 sólo ADC1 canal1; IN26 sólo ADC2 canal3; selector41 ADC1/2 canal10. La tabla de ADC incluida sí expone ADC2 para41 aunque PJRC `analogRead(41)` elige ADC1. El SGTL usa su ADC de audio por I2S, no ADC1 del MCU. El overlay alex6679 no sustituye analog.c ni IntervalTimer.cpp. Fuentes primarias: [core PJRC](https://github.com/PaulStoffregen/cores/blob/master/teensy4/analog.c), [ADC incluido](https://github.com/pedvide/ADC/blob/master/ADC.cpp). La versión instalada prevalece sobre cambios posteriores de esas ramas.
+
+El nuevo planificador elimina las esperas y todos los accesos concurrentes al mismo ADC; tests nativos inyectan COCO ausente permanente, recuperación y wrap; verifican tramas2,5kHz, slots lentos100Hz y velocity. El fake Wire ejecuta el **AdsScanner de producción**: máscara vacía=0 transacciones, sólo AIN0/2, NACK/read-fault, backoff y recuperación. Cadencia se prueba con10000 actualizaciones/s y conservación de todos los detents. `fsr0_sps`…`fsr3_sps` cuentan muestras reales, además de `fsr_hz` (tramas), errores ADC, `fsr_timer`, `adc1_cfg/gc` y prioridad PIT. Una frecuencia de tramas correcta con SPS0 **no** aprueba FSR.
+
+`consola_uno_diag` se **conserva como A/B de aislamiento** (sin timer, con trazas y espera inicial de USB); no sirve para probar pads. `GF_DIAG_NO_FSR` está ausente de `consola_uno/full/brain`; esas imágenes no incluyen las trazas diag ni su espera USB. La salida existente de audio_graph al arrancar se conserva.
+
+Pots: filtro EMA y deadband2 MIDI, más techo100Hz, no pueden identificar eléctricamente una entrada flotante. Por eso mínimo las deja deshabilitadas; completo supone cableado completo. Al habilitar un cursor, conectar ambos extremos; si puede quedar desconectado, poner pull-down externo (p.ej.100k a GND, verificando carga/calibración). No usar un pin al aire como detector de pot. No hay cambios de pin que Juan deba recablear.
+
+Prueba pendiente con firmware de producción: FSR1/2 en14/15 con divisor10k, Sharp0x48 AIN2, `@S RESET`, `@S STATS` después de60s y audio dúplex. Esperar `pot_mask=0`, `ads_mask=1`, `mcp_mask=3`, `cv_enabled=0`, `cv_errors=0`, `ads1_sps=0`, `fsr_timer=1`, muestras de cada pad≥2000/s, `adc1_timeouts=adc2_timeouts=0`, cero drops y loop_max<2000µs. Enviar notas36/37 con velocity y liberación; CC33/nota108 de Sharp; SYNTH transforma el segundo FSR en nota38 (doc21). Si aparece timeout, guardar STATS completo: aún falta determinar el disparador físico original. Resultados de escritorio de esta corrección: ver medición enlazada (no reemplazan el ensayo físico).
+
+## 8. Banco del 12 de noviembre: EN de ramas y entradas al aire (spec previo al código)
+
+Esta tarea autoriza manejar EN; sustituye para consola_uno la indicación histórica de24 §10.8 de
+dejar0 en alta impedancia. No cambia PCB-M ni el mapa físico de sus dos buffers. Al inicio de setup,
+antes de cualquier espera diagnóstica, Wire.begin y audio_graph::init/códec, precargar HIGH y configurar
+Teensy0 y Teensy1 como OUTPUT. Se usa digitalWriteFast para precargar el latch: en el core PJRC
+instalado digitalWrite sobre INPUT sólo configura pull-up/down (digital.c:115–140). D30 sustituye el EN común: EN_K=0 controla MCP0x21/22/23 y EN_A=1 controla MCP0x20. ADS, DAC y
+códec son locales. No hay Serial1 ni otro usuario de0/1 en consola_uno/surface/audio_graph; M4 usa Serial7.
+En la mesa actual0/1 no tienen cable: este GPIO no altera sus rutas existentes. Verificación estática y
+build no sustituyen una medición de arranque con PCB-M. consola_s conserva sus pines y no controla EN.
+
+Política custom: **N=3 fallos consecutivos por MCP habilitado**, contando fallos de configuración o
+lectura; sólo una lectura GPIO completa correcta borra su racha. Se conservan los backoffs1–32s.
+Al alcanzar N se solicita un pulso, atendido sólo en loop por máquina de estados con micros unsigned.
+Antes de cambiar EN se exige SDA18/SCL19 altas durante≥10µs observados entre iteraciones, sin
+transacciones del firmware durante esa espera. Bajar sólo el EN solicitado, liberar una vez notas MCP de esa rama e
+invalidar sólo su snapshot; mantenerlo bajo≥1000µs (1ms más granularidad del loop), y subir con bus local
+ocioso. Pausar ADS/MCP/SCAN/códec/CV durante espera/pulso; ADC, MIDI, CDC, audio y LEDs siguen.
+No reiniciar Wire, códec ni alimentar de nuevo los chips: EN aísla señales, no resetea MCP. No se
+reinicia su backoff para evitar una tormenta con una rama ausente. Cada rama conserva su máquina de estados y rachas por MCP independientes; un pulso borra sólo
+las rachas de su rama. STATS publica `i2c_reset_k` e `i2c_reset_a` (pulsos iniciados desde @S RESET),
+sustituyendo `i2c_branch_resets`. Si ambas solicitan, sus pulsos se atienden por separado.
+No cuentan fallos ADS/códec/CV ni direcciones ausentes de un SCAN de diagnóstico.
+La línea STATS ampliada usa buffer estático de1280B y el cliente superficie.py admite ese mismo
+límite: con contadores largos puede superar el límite anterior de1024B. No cambia la gramática.
+
+**Límite:** NXP exige cambiar EN con bus ocioso; si SDA/SCL no regresan altas, la petición espera y
+no fuerza el flanco. Un corto físico exige aislamiento/reparación de24 §10. Un pulso con línea remota
+retenida tampoco certifica recuperación: repetir el ensayo con TP y mazo. Referencia primaria:
+[NXP PCA9517A rev4.1, §§6–7](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf), contrato local24 §10.8,
+y driver Wire/SGTL5000 PJRC instalado1.160.0. No se añaden esperas, heap ni I2C en ISR.
+
+WATCH y cualificación inicial FSR se definen en29 (teoría y tests previos). Puerta física: arranque
+con LEDs/códec,60s con14/15 al aire sin notas36–39 y≤20 eventos/s por analógico; luego conectar FSR
+con R a GND y confirmar golpes/release/velocity. En PCB-M inyectar tres fallos MCP, medir EN bajo≥1ms,
+contador+1, liberación de teclas y recuperación sin cortes de audio; medir loop_max_us<2000 en régimen.
+Sin placa ni flash, los tests nativos y el build sólo certifican lógica/compilación.
+
+## 9. D24/D27/D30: contrato de implementación (spec previo al código, 2026-11-12)
+
+M4 usa el Serial1 predeterminado del core trellis_m4: **TX21=SDA → Teensy RX7/28** y
+**RX22=SCL ← Teensy TX7/29**, GND común, 3V3 del conector NC. No se cambia SERCOM ni se
+implementa bit-bang. Las asignaciones Serial5 del carrier Brain antiguo sólo describen ese target.
+
+Después de precargar ambos EN altos y antes de esperas diagnósticas, códec o superficie: iniciar
+Wire18/19 a400kHz con timeout250µs y escribir `[0x00,0x00]` (fast write, PD=00) a **cada**
+MCP4725 0x60/61, incluso en mínimo y aunque el otro falle. Cada DAC tiene backoff independiente
+1–32s; reintentos en loop, nunca espera por presencia. Se refresca el registro volátil cada1s:
+0x60 conserva el valor solicitado, 0x61 siempre cero. Sin escritura EEPROM al boot ni al reconectar.
+Reset MCU con DAC alimentado conserva el valor previo hasta esa escritura; no se promete mute durante
+reset ni cero voltios analógicos exactos (offset físico). Mantener init SGTL antes del DMALED.
+
+Banco: gramática exacta `@GF CV EEPROM0`, sin argumentos adicionales, disponible también en mínimo.
+Responde `@GF OK CV EEPROM0 PENDING`; trabajo diferido en loop con máximo una transacción I2C
+por servicio. Fuerza CV1/CV2 solicitados a0 y escribe explícitamente `[0x60,0x00,0x00]` una vez por
+DAC por solicitud; no reintenta escrituras EEPROM fallidas. Espera cooperativa, consulta cinco bytes
+cada≥1ms hasta100ms por DAC (tWR máximo50ms, Microchip DS22039D). Verifica RDY/BSY=1,
+registro DAC=0/PD=00 y EEPROM=0/PD=00. Respuesta final asíncrona:
+`@GF OK CV EEPROM0 VERIFIED=60,61 WRITTEN=3`; fallo:
+`@GF ERR CV EEPROM0 WRITTEN=<máscara> VERIFIED=<máscara>` (bit0=60, bit1=61).
+WRITTEN significa ACK al comando, VERIFIED lectura completa correcta; no certifica tensión ni POR.
+Solicitud durante trabajo devuelve BUSY; tras éxito en este arranque devuelve ALREADY sin gastar
+EEPROM otra vez. Un fallo permite nueva solicitud explícita del operador. Durante provisión se
+rechazan CV numéricos habilitados con BUSY (en mínimo conservan DISABLED). Nada bloquea MIDI/audio/CDC; recuperación EN pausa también este
+servicio. El estado final se conserva hasta que CDC pueda emitirlo. STATS conserva `cv` (presencia60)
+y añade `cv2` (presencia61), errores/retry por DAC; `cv_enabled` sigue indicando control numérico.
+
+Teoría/pruebas: políticas custom sin GPIO/Wire en Unity mediante interfaz de transacciones. Comprobar
+orden/bytes de ambos ceros iniciales, NACK y retry independiente/wrap, CV2 siempre0, ausencia de
+EEPROM al boot, escritura única explícita, busy/timeout/lectura corta/PD/datos no cero y confirmación.
+EN: máscaras K=0x0e/A=0x01 filtradas por perfil, tres fallos por MCP, éxito borra sólo esa racha,
+no cruce de ramas, ambos flancos tras idle≥10µs, interrupción del idle, pulso≥1ms, wrap y contadores.
+No prueban hardware eléctrico ni recuperación de cortos. Puerta física pendiente: medir ambos EN,
+CV tras reset, desconexión/reconexión, EEPROM leída y POR independiente de ambos DAC, audio dúplex.
+
+Referencias: [MCP4725 DS22039D §§6–7](https://ww1.microchip.com/downloads/en/devicedoc/22039d.pdf)
+(fast write, EEPROM y lectura); [PCA9517A §6](https://www.nxp.com/docs/en/data-sheet/PCA9517A.pdf)
+(EN sólo en idle). Wire/SGTL/Serial1 del core son oficiales PJRC/Adafruit; política de recuperación,
+provisión y parser son custom. No flash ni cambios hardware en esta tarea.
+
+## 10. Cable abierto en MASTER/CUE/IN (spec y teoría antes del código)
+
+2026-11-13 · Tarea de puesta en marcha autorizada. MASTER22/CUE24/IN26 conservan ADC,
+CC30/31/32, perfiles y cadencia de §2–4. Esta tarea fija **100 kΩ a GND del lado ADC**, tras
+la serie de **1 kΩ**, en paralelo con **100 nF**. Sustituye para estos pots la hipótesis de
+1 MΩ de D31/doc 24 y del README/esquema de esta base; **no modifica esos archivos ni acredita
+el montaje**. Medir y registrar el valor real antes de aprobar el detector en PCB-M.
+
+Teoría: sin cursor, τ nominal=100k × 100nF = 10 ms; desde escala completa el RC ideal tarda
+≈46 ms en bajar del 1%. El plazo de confirmación empieza **al cruzar el umbral**, no al retirar
+el cable. Con pot de 10k, Rth≤2,5k más 1k: carga relativa≤3,5/103,5≈3,38%; a media escala
+≈1,69% FS. Calibrar extremos y recorrido con esa carga. Fuga/contaminación y el ADC pueden
+impedir llegar al umbral: no se infiere resistencia ni continuidad eléctrica de un ADC.
+Fuentes: revisión adversarial 2 M3 y doc 24 D11/D31; modelo RC de primer orden y el presupuesto
+de fugas de NXP i.MX RT1060 tabla 22/figura 35 citado en esa revisión.
+
+Contrato custom de `PotInput`, aplicado **solo a consola_uno** (incluye full/brain/diag):
+
+- ADC12 **0–40** (`raw < 41`, ≈1% FS) es sospechoso. Desde la **primera** muestra baja se
+  congela EMA/deadband y no se genera CC ni actualización local HP/IN por ella; se conserva
+  el último valor válido. No se espera a confirmar para retenerlo. Antes de la primera
+  muestra válida no se emite ningún valor, conservando HP64/IN5 iniciales de §4.
+- Muestras bajas consecutivas durante **más de 200000 µs** confirman desconexión; a 200000 µs
+  exactos aún no. Se tolera variación dentro de 0–40, no se exige igualdad de cuentas. Un hueco
+  entre muestras mayor de 20000 µs reinicia la cualificación pendiente; una lectura antigua,
+  un timeout o el mero paso del tiempo no confirman. El estado confirmado se retiene hasta
+  una muestra válida. Relojes unsigned por resta, incluidos wrap de micros.
+- La primera muestra **≥41** cancela sospecha/desconexión y reanuda la EMA previa (α=1/4,
+  deadband 2 MIDI), sin reinicializarla a cero. No se añade otro umbral de retorno. Un valor
+  válido que no supera deadband puede limpiar diagnóstico sin generar CC. Se conservan
+  coalescencia, techo 100 Hz y callbacks locales existentes. Un envío pendiente previo contiene
+  un valor válido y puede salir durante la retención.
+- `@S STATS` añade **`pot_open_mask` decimal**, bit0=MASTER22 (1), bit1=CUE24 (2), bit2=IN26 (4).
+  Solo marca desconexiones confirmadas en pots habilitados; mínimo normal `pot_mask=0` implica
+  `pot_open_mask=0`. `@S RESET` limpia contadores, no borra el estado del detector. INPUTS/WATCH
+  conservan ADC crudo (POT_VALID significa muestra adquirida, no cable conectado).
+
+**Límite observable:** un pot conectado a cero real y un cable abierto polarizado a GND son
+indistinguibles con este circuito. Ambos retienen el último valor y pueden marcar el bit; el
+tramo 0–40 no envía cero. Tampoco se evita la caída durante la descarga RC **antes** del umbral,
+ni se detecta un cable que quede alto por fuga o un fallo de alimentación/GND que imite señal
+válida. Esta política prioriza la retención pedida; no se promete detección física inequívoca.
+
+Implementación en loop con estado fijo por pot, sin heap, delay, nuevas esperas, Wire ni cambios
+NVIC. ADC1 sigue siendo exclusivo de ISR: CUE publica además timestamp de adquisición, leído
+con comprobación de coherencia sin enmascarar IRQ, y cada muestra se consume una sola vez.
+La EMA de CUE avanza así a 100 Hz de adquisición, en lugar de repetir el mismo buzón a 1 kHz;
+MASTER/IN conservan su servicio a 1 kHz. El techo de envío sigue siendo 100 Hz.
+MASTER/IN conservan lectura ADC2 acotada 20 µs. No cambia consola_s ni ADS/FSR/selector. ADC/core
+y Teensy Audio Library son oficiales PJRC; detector, EMA y publicación CDC son custom.
+
+Unity nativo debe probar retención inmediata, >200 ms frente al límite exacto, ruido bajo y
+rebotes, arranque sin muestra válida, recuperación igual a la EMA sin las muestras rechazadas,
+canales independientes, huecos sin muestras y wrap, a 1 kHz y 100 Hz. El cliente Python debe conservar
+el campo adicional en STATS. No prueba fugas, descarga RC real, cableado, tiempos ISR ni audio.
+Demo física pendiente: con full y 100k medidos, fijar cada pot>5%, abrir solo cursor con jig seguro,
+observar raw<41, bit correspondiente tras>200 ms, ningún CC cero ni salto local HP/IN; reconectar
+≥41 y comprobar retorno suave. Repetir con cero real y anotar ambigüedad. Audio+LED+entradas 60 min
+y loop_max_us<2000 en régimen siguen siendo la puerta física de §5 y [31](31-puesta-en-marcha.md).
+
+### Verificación de escritorio de §10 (2026-11-13, sin flash)
+
+Clon `/private/tmp/grooveforge-bringup`, rama `claude/monorepo-groovepush`, base `edc67a3`.
+Spec de §10 escrito antes de `PotInput`, integración y tests. Resultados reales:
+
+| Directorio | Comando | Resultado |
+|---|---|---|
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio test -e native` | **222/222**, 19 suites, 20,376s |
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio run -e consola_uno` | **SUCCESS**, 34,700s |
+| apps/firmware-teensy | `~/.platformio/penv/bin/pio run -e consola_uno_full` | **SUCCESS**, 29,538s |
+| tools/consola | `python3 -m pytest -q` (sistema) | **487 passed**, 3,16s |
+
+PIO usa `PLATFORMIO_CORE_DIR=/private/tmp/grooveforge-bringup/apps/firmware-teensy/.pio/local-core`,
+`PLATFORMIO_SETTING_ENABLE_TELEMETRY=no` y
+`TMPDIR=/private/tmp/grooveforge-bringup/apps/firmware-teensy/.pio/tmp`. Plataformas native/teensy,
+framework/toolchain, caché y Unity 2.6.1 se copiaron de instalaciones existentes al clon, sin cambiar
+versiones ni platformio.ini. El primer build se detuvo al intentar descargar Unity; se completó
+con la copia local también en libdeps del entorno de build. Logs ignorados: `.pio/native-verification.log`,
+`.pio/uno-verification.log`, `.pio/full-verification.log` y `tools/consola/.pytest-verification.log`.
+
+FLASH código: mínimo 91892 B / full 92660 B; ambos RAM1 variables 26624 B, RAM2 variables 55040 B.
+Único warning de compilación observado: `-fno-rtti` aplicado a C, heredado. STATS tiene margen
+bajo 1280 B aun sustituyendo todos sus decimales por el máximo uint32 (cota 1129 B con newline).
+No se modificó `apps/hardware`; no hubo flash ni push. La guía [31](31-puesta-en-marcha.md)
+entrega la secuencia y plantilla, **no resultados físicos**. Siguen pendientes 100k medidos,
+prueba de cursor abierto/retorno, arranque con 26 LED y 60 min de audio/entradas/LED en PCB-M.

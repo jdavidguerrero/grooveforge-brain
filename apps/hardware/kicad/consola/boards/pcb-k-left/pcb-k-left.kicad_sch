@@ -1,0 +1,240 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa)
+  (paper "A3")
+  (lib_symbols)
+  (sheet
+    (at 20.32 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 0cf62a52-3d37-59e9-b5cc-2449adb4b732)
+    (property "Sheetname" "cables-power-1"
+      (at 58.42 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/cables-power-1.kicad_sch"
+      (at 58.42 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "2")))))
+  (sheet
+    (at 109.22 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid a4e9bbfc-0c1a-5301-9cf0-388f77b02951)
+    (property "Sheetname" "mcp-22"
+      (at 147.32 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/mcp-22.kicad_sch"
+      (at 147.32 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "3")))))
+  (sheet
+    (at 198.12 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid d930f357-2f52-585e-9e4d-1ae65a0520a0)
+    (property "Sheetname" "support-22-1"
+      (at 236.22 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/support-22-1.kicad_sch"
+      (at 236.22 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "4")))))
+  (sheet
+    (at 20.32 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 91d57479-6127-59d5-951b-15475d57b0cf)
+    (property "Sheetname" "mcp-23"
+      (at 58.42 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/mcp-23.kicad_sch"
+      (at 58.42 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "5")))))
+  (sheet
+    (at 109.22 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid bfd99aea-a08e-56a5-9df0-0f546686ed5c)
+    (property "Sheetname" "support-23-1"
+      (at 147.32 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/support-23-1.kicad_sch"
+      (at 147.32 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "6")))))
+  (sheet
+    (at 198.12 63.5)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid bea3d346-db74-546e-8408-1303266960a6)
+    (property "Sheetname" "keys-00"
+      (at 236.22 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-00.kicad_sch"
+      (at 236.22 101.6 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "7")))))
+  (sheet
+    (at 20.32 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid a29ac63d-146e-5e6c-bf18-a71b46b3e4bd)
+    (property "Sheetname" "keys-04"
+      (at 58.42 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-04.kicad_sch"
+      (at 58.42 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "8")))))
+  (sheet
+    (at 109.22 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid eb701f3d-e4f0-5375-9467-26a75044cef5)
+    (property "Sheetname" "keys-08"
+      (at 147.32 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-08.kicad_sch"
+      (at 147.32 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "9")))))
+  (sheet
+    (at 198.12 106.68)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 887bc507-45d3-5e95-887d-930896f5b633)
+    (property "Sheetname" "keys-12"
+      (at 236.22 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-12.kicad_sch"
+      (at 236.22 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "10")))))
+  (sheet
+    (at 20.32 149.86)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 20a40f5e-cfe4-5231-85d4-fb2e4ac8d5db)
+    (property "Sheetname" "keys-16"
+      (at 58.42 147.32 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/keys-16.kicad_sch"
+      (at 58.42 187.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-k-left"
+        (path "/4ff1b5cc-63b9-5b9b-b9ef-21304d1b54aa"
+          (page "11")))))
+  (sheet_instances
+    (path "/"
+      (page "1"))))

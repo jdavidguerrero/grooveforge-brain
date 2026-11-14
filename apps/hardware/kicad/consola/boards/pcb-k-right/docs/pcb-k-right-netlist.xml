@@ -1,0 +1,1875 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/private/tmp/grooveforge-layoutk/apps/hardware/kicad/consola/boards/pcb-k-right/pcb-k-right.kicad_sch</source>
+    <date>2026-11-13T12:07:27</date>
+    <tool>Eeschema 10.0.6</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>pcb-k-right.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="2" name="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>cables-power-1.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="3" name="/mcp-21/" tstamps="/8f295a35-de91-5b8a-9309-4de8291bb23c/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>mcp-21.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="4" name="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>support-21-1.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="5" name="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>keys-17.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="6" name="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>keys-21.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="7" name="/keys-25/" tstamps="/e1ce1023-aec8-5629-937f-f36faaa484b2/">
+      <title_block>
+        <title/>
+        <company/>
+        <rev/>
+        <date/>
+        <source>keys-25.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="C1">
+      <value>22uF</value>
+      <footprint>Capacitor_SMD:C_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C12891</field>
+        <field name="MPN">CL31A226KAHNNNE</field>
+        <field name="Manufacturer">Samsung Electro-Mechanics</field>
+        <field name="Package">1206</field>
+        <field name="Footprint">Capacitor_SMD:C_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C12891"/>
+      <property name="MPN" value="CL31A226KAHNNNE"/>
+      <property name="Manufacturer" value="Samsung Electro-Mechanics"/>
+      <property name="Package" value="1206"/>
+      <property name="Sheetname" value="cables-power-1"/>
+      <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/"/>
+      <tstamps>0313ece6-0c4e-56ee-b1bc-63655f9e8eee</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J1">
+      <value>DESDE IZQUIERDA</value>
+      <footprint>Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical</footprint>
+      <fields>
+        <field name="LCSC">C131342</field>
+        <field name="MPN">B6B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="Package">Through Hole,P=2mm</field>
+        <field name="Footprint">Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x06" description="Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="LCSC" value="C131342"/>
+      <property name="MPN" value="B6B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="Package" value="Through Hole,P=2mm"/>
+      <property name="Sheetname" value="cables-power-1"/>
+      <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/"/>
+      <tstamps>3c50b150-3c67-550d-a30e-4165fd2db3f9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R1">
+      <value>33R</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C17634</field>
+        <field name="MPN">0805W8F330JT5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17634"/>
+      <property name="MPN" value="0805W8F330JT5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="cables-power-1"/>
+      <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/"/>
+      <tstamps>06c05539-c373-594c-bdbb-93328106cd1f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R2">
+      <value>2.2k DNP</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C17520</field>
+        <field name="MPN">0805W8F2201T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17520"/>
+      <property name="MPN" value="0805W8F2201T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="cables-power-1"/>
+      <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/"/>
+      <tstamps>91f880b4-f1b3-5a6c-9fbc-f974cc7129c0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R3">
+      <value>2.2k DNP</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C17520</field>
+        <field name="MPN">0805W8F2201T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17520"/>
+      <property name="MPN" value="0805W8F2201T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="cables-power-1"/>
+      <property name="Sheetfile" value="sheets/cables-power-1.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/cables-power-1/" tstamps="/26f3b4a7-ee40-539b-8ff4-edf8806a90e5/"/>
+      <tstamps>aff1eb5b-1f5a-5f2b-bc37-70e8d0685421</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U21">
+      <value>MCP23017-E/SS 0x21</value>
+      <footprint>Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C506653</field>
+        <field name="MPN">MCP23017-E/SS</field>
+        <field name="Manufacturer">MICROCHIP</field>
+        <field name="Package">SSOP-28(5.3x10.2x0.65)</field>
+        <field name="Footprint">Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Interface_Expansion" part="MCP23017x-x-SS" description="16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28"/>
+      <property name="LCSC" value="C506653"/>
+      <property name="MPN" value="MCP23017-E/SS"/>
+      <property name="Manufacturer" value="MICROCHIP"/>
+      <property name="Package" value="SSOP-28(5.3x10.2x0.65)"/>
+      <property name="Sheetname" value="mcp-21"/>
+      <property name="Sheetfile" value="sheets/mcp-21.kicad_sch"/>
+      <property name="ki_keywords" value="Microchip port-expander GPIO"/>
+      <property name="ki_fp_filters" value="SSOP*5.3x10.2mm*P0.65mm*"/>
+      <sheetpath names="/mcp-21/" tstamps="/8f295a35-de91-5b8a-9309-4de8291bb23c/"/>
+      <tstamps>498bc389-04ef-579e-b0e8-9f9a64eaaf98</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="20"/>
+            <pin num="19"/>
+            <pin num="18"/>
+            <pin num="15"/>
+            <pin num="16"/>
+            <pin num="17"/>
+            <pin num="11"/>
+            <pin num="14"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="21"/>
+            <pin num="22"/>
+            <pin num="23"/>
+            <pin num="24"/>
+            <pin num="25"/>
+            <pin num="26"/>
+            <pin num="27"/>
+            <pin num="28"/>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C211">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>d2b8c3bd-b8f8-562a-80e7-1924d370d533</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C212">
+      <value>1uF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C5137478</field>
+        <field name="MPN">FCC0805B105K500FT</field>
+        <field name="Manufacturer">FOJAN</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C5137478"/>
+      <property name="MPN" value="FCC0805B105K500FT"/>
+      <property name="Manufacturer" value="FOJAN"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>fb550114-17a5-532e-a932-3d930993961d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R21">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C17414</field>
+        <field name="MPN">0805W8F1002T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Resistor_SMD:R_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="LCSC" value="C17414"/>
+      <property name="MPN" value="0805W8F1002T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>e0ec4de3-c40a-5687-b02b-e21f3dd684c9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP216">
+      <value>SPARE_21_GPB5</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>aea9a1ec-2991-5e2a-8c09-d62c76c55e2c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP217">
+      <value>SPARE_21_GPB6</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>be8ed7db-d2a5-5d08-abb4-a439c1f7d441</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP2119">
+      <value>INTB_21</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>b11a53ac-2994-5eff-942d-d57753db5602</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP2120">
+      <value>INTA_21</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>2d3606d3-35da-5d61-8f5e-5bc36f61ad04</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP2125">
+      <value>SPARE_21_GPA4</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>c64a19fd-1450-5f09-bfb5-ba8abe0ffc0e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP2126">
+      <value>SPARE_21_GPA5</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>2a63119b-078a-5586-ab7d-d2d236a98247</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP2127">
+      <value>SPARE_21_GPA6</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Procurement">PCB copper; no purchased component</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector" part="TestPoint" description="test point"/>
+      <property name="LCSC" value=""/>
+      <property name="Procurement" value="PCB copper; no purchased component"/>
+      <property name="Sheetname" value="support-21-1"/>
+      <property name="Sheetfile" value="sheets/support-21-1.kicad_sch"/>
+      <property name="ki_keywords" value="test point tp"/>
+      <property name="ki_fp_filters" value="Pin* Test*"/>
+      <sheetpath names="/support-21-1/" tstamps="/9ca5174f-7151-5ffa-8442-192e31ab5fee/"/>
+      <tstamps>839e2a9f-5981-575a-9928-412d356c6d7e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C117">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>56ee0f5a-5392-5895-a42b-9600e0f85331</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C118">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>ebe49ab2-1d01-5eb4-96eb-2aa41c0cda63</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C119">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>4383006d-8941-5a05-bdc3-3a96620cdde2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C120">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>27912883-b2c0-544e-9a6f-879d2613c159</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D18">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>3b52a680-20e7-52cd-af2c-a28fd923a4f8</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D19">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>a123ca33-f705-521a-b60a-f82ac787cf9e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D20">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>75f0a6ef-d57f-5b0a-9a0f-0651c5bf4cd3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D21">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>b1cefea8-a640-5213-891b-6d6627e94237</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW18">
+      <value>PLAY</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>f9cbd7b4-313c-5735-8f48-a5d48d21457a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW19">
+      <value>STOP</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>fd377941-ba47-5bfe-9626-2ea5c37aae7d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW20">
+      <value>REC</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>dd030c97-b82f-58f4-b30f-f2ad201ce742</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW21">
+      <value>LOOP</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-17"/>
+      <property name="Sheetfile" value="sheets/keys-17.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-17/" tstamps="/95d604d5-cc87-556e-9874-b8e896991362/"/>
+      <tstamps>6016ae4a-f97c-5140-bd01-292de982e32c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C121">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>3a9def6c-c117-5a96-bf42-5d4fe0fca6c2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C122">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>5d061859-c3a9-5639-8f3c-340fb6707d5f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C123">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>39e23bd1-9017-5983-b97c-8a1b4bf3636a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C124">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>d48e5754-80ee-5701-95a4-d237caf135a4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D22">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>5d321ad2-ef8f-5714-98cb-9e4f4566f39c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D23">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>c267f954-be60-5416-bef3-f2d2ec6d1ed3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D24">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>486dc4d8-05f2-595d-a4cd-9d7e3d180e6e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D25">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>4e069e89-0355-54d2-8d71-2f0b8bed1650</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW22">
+      <value>METRO</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>19184b6c-1272-5fbc-a7a2-2e8eb110485f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW23">
+      <value>SCENE4_PAGE_R</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>53ef3409-9311-526d-b66c-f65a2fa668ea</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW24">
+      <value>SCENE3_PAGE_L</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>9422eb0c-78ff-5131-902c-84be0f24dbe4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW25">
+      <value>SCENE2_OCT-</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-21"/>
+      <property name="Sheetfile" value="sheets/keys-21.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-21/" tstamps="/2304dba4-236e-5391-a027-6b94875258e8/"/>
+      <tstamps>456193dc-4680-5589-9933-5a9f58e9c741</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C125">
+      <value>100nF</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C49678</field>
+        <field name="MPN">CC0805KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="Package">0805</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="LCSC" value="C49678"/>
+      <property name="MPN" value="CC0805KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="Package" value="0805"/>
+      <property name="Sheetname" value="keys-25"/>
+      <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/keys-25/" tstamps="/e1ce1023-aec8-5629-937f-f36faaa484b2/"/>
+      <tstamps>236700f2-4246-57d1-8470-ecc96f085fdc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D26">
+      <value>SK6812MINI-EA</value>
+      <footprint>gf_consola:SK6812MINI-EA_ReverseMount</footprint>
+      <fields>
+        <field name="LCSC">C5378731</field>
+        <field name="MPN">SK6812MINI-EA</field>
+        <field name="Manufacturer">OPSCO Optoelectronics</field>
+        <field name="Package">SMD-4P,3.2x2.8mm</field>
+        <field name="Footprint">gf_consola:SK6812MINI-EA_ReverseMount</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="LED" part="SK6812MINI-E" description="RGB LED with integrated controller"/>
+      <property name="LCSC" value="C5378731"/>
+      <property name="MPN" value="SK6812MINI-EA"/>
+      <property name="Manufacturer" value="OPSCO Optoelectronics"/>
+      <property name="Package" value="SMD-4P,3.2x2.8mm"/>
+      <property name="Sheetname" value="keys-25"/>
+      <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
+      <property name="ki_keywords" value="RGB LED NeoPixel addressable"/>
+      <property name="ki_fp_filters" value="LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*"/>
+      <sheetpath names="/keys-25/" tstamps="/e1ce1023-aec8-5629-937f-f36faaa484b2/"/>
+      <tstamps>a372c217-44e7-575a-8e7a-14a7b438e1e8</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW26">
+      <value>SCENE1_OCT+</value>
+      <footprint>gf_consola:Kailh_Choc_V2_PG1353_Hotswap</footprint>
+      <fields>
+        <field name="LCSC"/>
+        <field name="Supply">owner</field>
+        <field name="SupplyDescription">Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress</field>
+        <field name="Footprint">gf_consola:Kailh_Choc_V2_PG1353_Hotswap</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Switch" part="SW_Push" description="Push button switch, generic, two pins"/>
+      <property name="LCSC" value=""/>
+      <property name="Supply" value="owner"/>
+      <property name="SupplyDescription" value="Juan: tecla Kailh Choc V2 PG1353 + zócalo Kailh CPG135001S30 comprado aparte por AliExpress"/>
+      <property name="Sheetname" value="keys-25"/>
+      <property name="Sheetfile" value="sheets/keys-25.kicad_sch"/>
+      <property name="ki_keywords" value="switch normally-open pushbutton push-button"/>
+      <sheetpath names="/keys-25/" tstamps="/e1ce1023-aec8-5629-937f-f36faaa484b2/"/>
+      <tstamps>3ddbc3fa-b8f4-534c-8e8f-04ad6117b469</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="Connector" part="TestPoint">
+      <description>test point</description>
+      <footprints>
+        <fp>Pin*</fp>
+        <fp>Test*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">TP</field>
+        <field name="Value">TestPoint</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">test point</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x06">
+      <description>Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x06</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Generic connector, single row, 01x06, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="C">
+      <description>Unpolarized capacitor</description>
+      <footprints>
+        <fp>C_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Unpolarized capacitor</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Device" part="R">
+      <description>Resistor</description>
+      <footprints>
+        <fp>R_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Resistor</field>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="Interface_Expansion" part="MCP23017x-x-SS">
+      <description>16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28</description>
+      <docs>https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf</docs>
+      <footprints>
+        <fp>SSOP*5.3x10.2mm*P0.65mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">MCP23017x-x-SS</field>
+        <field name="Footprint">Package_SO:SSOP-28_5.3x10.2mm_P0.65mm</field>
+        <field name="Datasheet">https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf</field>
+        <field name="Description">16-bit I/O expander, I2C, interrupts, w pull-ups, SSOP-28</field>
+      </fields>
+      <pins>
+        <pin num="1" name="GPB0" type="bidirectional"/>
+        <pin num="2" name="GPB1" type="bidirectional"/>
+        <pin num="3" name="GPB2" type="bidirectional"/>
+        <pin num="4" name="GPB3" type="bidirectional"/>
+        <pin num="5" name="GPB4" type="bidirectional"/>
+        <pin num="6" name="GPB5" type="bidirectional"/>
+        <pin num="7" name="GPB6" type="bidirectional"/>
+        <pin num="8" name="GPB7" type="output"/>
+        <pin num="9" name="V_{DD}" type="power_in"/>
+        <pin num="10" name="V_{SS}" type="power_in"/>
+        <pin num="11" name="NC" type="no_connect"/>
+        <pin num="12" name="SCK" type="input"/>
+        <pin num="13" name="SDA" type="bidirectional"/>
+        <pin num="14" name="NC" type="no_connect"/>
+        <pin num="15" name="A0" type="input"/>
+        <pin num="16" name="A1" type="input"/>
+        <pin num="17" name="A2" type="input"/>
+        <pin num="18" name="~{RESET}" type="input"/>
+        <pin num="19" name="INTB" type="tri_state"/>
+        <pin num="20" name="INTA" type="tri_state"/>
+        <pin num="21" name="GPA0" type="bidirectional"/>
+        <pin num="22" name="GPA1" type="bidirectional"/>
+        <pin num="23" name="GPA2" type="bidirectional"/>
+        <pin num="24" name="GPA3" type="bidirectional"/>
+        <pin num="25" name="GPA4" type="bidirectional"/>
+        <pin num="26" name="GPA5" type="bidirectional"/>
+        <pin num="27" name="GPA6" type="bidirectional"/>
+        <pin num="28" name="GPA7" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="LED" part="SK6812MINI-E">
+      <description>RGB LED with integrated controller</description>
+      <docs>https://www.lcsc.com/datasheet/C5149201.pdf</docs>
+      <footprints>
+        <fp>LED?SK6812MINI?E?3.2x2.8mm?P1.5mm*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">SK6812MINI-E</field>
+        <field name="Footprint">LED_SMD:LED_SK6812MINI-E_3.2x2.8mm_P1.5mm_ReverseMount</field>
+        <field name="Datasheet">https://www.lcsc.com/datasheet/C5149201.pdf</field>
+        <field name="Description">RGB LED with integrated controller</field>
+      </fields>
+      <pins>
+        <pin num="1" name="VSS" type="power_in"/>
+        <pin num="2" name="DIN" type="input"/>
+        <pin num="3" name="VDD" type="power_in"/>
+        <pin num="4" name="DOUT" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="Switch" part="SW_Push">
+      <description>Push button switch, generic, two pins</description>
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_Push</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Push button switch, generic, two pins</field>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="Connector">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Connector.kicad_sym</uri>
+    </library>
+    <library logical="Connector_Generic">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Connector_Generic.kicad_sym</uri>
+    </library>
+    <library logical="Device">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Device.kicad_sym</uri>
+    </library>
+    <library logical="Interface_Expansion">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Interface_Expansion.kicad_sym</uri>
+    </library>
+    <library logical="LED">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/LED.kicad_sym</uri>
+    </library>
+    <library logical="Switch">
+      <uri>/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols/Switch.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="+3V3" class="Default">
+      <node ref="C211" pin="1" pintype="passive"/>
+      <node ref="C212" pin="1" pintype="passive"/>
+      <node ref="J1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
+      <node ref="R21" pin="1" pintype="passive"/>
+      <node ref="R3" pin="1" pintype="passive"/>
+      <node ref="U21" pin="15" pinfunction="A0_15" pintype="input"/>
+      <node ref="U21" pin="9" pinfunction="V_{DD}_9" pintype="power_in"/>
+    </net>
+    <net code="2" name="+5V_LED" class="Default">
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="C117" pin="1" pintype="passive"/>
+      <node ref="C118" pin="1" pintype="passive"/>
+      <node ref="C119" pin="1" pintype="passive"/>
+      <node ref="C120" pin="1" pintype="passive"/>
+      <node ref="C121" pin="1" pintype="passive"/>
+      <node ref="C122" pin="1" pintype="passive"/>
+      <node ref="C123" pin="1" pintype="passive"/>
+      <node ref="C124" pin="1" pintype="passive"/>
+      <node ref="C125" pin="1" pintype="passive"/>
+      <node ref="D18" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D19" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D20" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D21" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D22" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D23" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D24" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D25" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="D26" pin="3" pinfunction="VDD_3" pintype="power_in"/>
+      <node ref="J1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
+    </net>
+    <net code="3" name="/cables-power-1/LED_DATA" class="Default">
+      <node ref="J1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+    </net>
+    <net code="4" name="/keys-17/LED_18_DIN" class="Default">
+      <node ref="D18" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D19" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="5" name="/keys-17/LED_19_DIN" class="Default">
+      <node ref="D19" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D20" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="6" name="/keys-17/LED_20_DIN" class="Default">
+      <node ref="D20" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D21" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="7" name="/keys-21/LED_22_DIN" class="Default">
+      <node ref="D22" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D23" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="8" name="/keys-21/LED_23_DIN" class="Default">
+      <node ref="D23" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D24" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="9" name="/keys-21/LED_24_DIN" class="Default">
+      <node ref="D24" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D25" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="10" name="GND" class="Default">
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C117" pin="2" pintype="passive"/>
+      <node ref="C118" pin="2" pintype="passive"/>
+      <node ref="C119" pin="2" pintype="passive"/>
+      <node ref="C120" pin="2" pintype="passive"/>
+      <node ref="C121" pin="2" pintype="passive"/>
+      <node ref="C122" pin="2" pintype="passive"/>
+      <node ref="C123" pin="2" pintype="passive"/>
+      <node ref="C124" pin="2" pintype="passive"/>
+      <node ref="C125" pin="2" pintype="passive"/>
+      <node ref="C211" pin="2" pintype="passive"/>
+      <node ref="C212" pin="2" pintype="passive"/>
+      <node ref="D18" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D19" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D20" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D21" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D22" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D23" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D24" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D25" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="D26" pin="1" pinfunction="VSS_1" pintype="power_in"/>
+      <node ref="J1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="SW18" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW19" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW20" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW21" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW22" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW23" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW24" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW25" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="SW26" pin="2" pinfunction="2_2" pintype="passive"/>
+      <node ref="U21" pin="10" pinfunction="V_{SS}_10" pintype="power_in"/>
+      <node ref="U21" pin="16" pinfunction="A1_16" pintype="input"/>
+      <node ref="U21" pin="17" pinfunction="A2_17" pintype="input"/>
+    </net>
+    <net code="11" name="INTA_21" class="Default">
+      <node ref="TP2120" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="20" pinfunction="INTA_20" pintype="tri_state"/>
+    </net>
+    <net code="12" name="INTB_21" class="Default">
+      <node ref="TP2119" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="19" pinfunction="INTB_19" pintype="tri_state"/>
+    </net>
+    <net code="13" name="LED_17_DIN" class="Default">
+      <node ref="D18" pin="2" pinfunction="DIN_2" pintype="input"/>
+      <node ref="R1" pin="2" pintype="passive"/>
+    </net>
+    <net code="14" name="LED_21_DIN" class="Default">
+      <node ref="D21" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D22" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="15" name="LED_25_DIN" class="Default">
+      <node ref="D25" pin="4" pinfunction="DOUT_4" pintype="output"/>
+      <node ref="D26" pin="2" pinfunction="DIN_2" pintype="input"/>
+    </net>
+    <net code="16" name="LOOP" class="Default">
+      <node ref="SW21" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="2" pinfunction="GPB1_2" pintype="bidirectional"/>
+    </net>
+    <net code="17" name="METRO" class="Default">
+      <node ref="SW22" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="1" pinfunction="GPB0_1" pintype="bidirectional"/>
+    </net>
+    <net code="18" name="PLAY" class="Default">
+      <node ref="SW18" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="5" pinfunction="GPB4_5" pintype="bidirectional"/>
+    </net>
+    <net code="19" name="REC" class="Default">
+      <node ref="SW20" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="3" pinfunction="GPB2_3" pintype="bidirectional"/>
+    </net>
+    <net code="20" name="RESET_21" class="Default">
+      <node ref="R21" pin="2" pintype="passive"/>
+      <node ref="U21" pin="18" pinfunction="~{RESET}_18" pintype="input"/>
+    </net>
+    <net code="21" name="SCENE1_OCT+" class="Default">
+      <node ref="SW26" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="21" pinfunction="GPA0_21" pintype="bidirectional"/>
+    </net>
+    <net code="22" name="SCENE2_OCT-" class="Default">
+      <node ref="SW25" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="22" pinfunction="GPA1_22" pintype="bidirectional"/>
+    </net>
+    <net code="23" name="SCENE3_PAGE_L" class="Default">
+      <node ref="SW24" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="24" pinfunction="GPA3_24" pintype="bidirectional"/>
+    </net>
+    <net code="24" name="SCENE4_PAGE_R" class="Default">
+      <node ref="SW23" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="23" pinfunction="GPA2_23" pintype="bidirectional"/>
+    </net>
+    <net code="25" name="SCL" class="Default">
+      <node ref="J1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="U21" pin="12" pinfunction="SCK_12" pintype="input"/>
+    </net>
+    <net code="26" name="SDA" class="Default">
+      <node ref="J1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+      <node ref="U21" pin="13" pinfunction="SDA_13" pintype="bidirectional"/>
+    </net>
+    <net code="27" name="SPARE_21_GPA4" class="Default">
+      <node ref="TP2125" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="25" pinfunction="GPA4_25" pintype="bidirectional"/>
+    </net>
+    <net code="28" name="SPARE_21_GPA5" class="Default">
+      <node ref="TP2126" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="26" pinfunction="GPA5_26" pintype="bidirectional"/>
+    </net>
+    <net code="29" name="SPARE_21_GPA6" class="Default">
+      <node ref="TP2127" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="27" pinfunction="GPA6_27" pintype="bidirectional"/>
+    </net>
+    <net code="30" name="SPARE_21_GPB5" class="Default">
+      <node ref="TP216" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="6" pinfunction="GPB5_6" pintype="bidirectional"/>
+    </net>
+    <net code="31" name="SPARE_21_GPB6" class="Default">
+      <node ref="TP217" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="7" pinfunction="GPB6_7" pintype="bidirectional"/>
+    </net>
+    <net code="32" name="STOP" class="Default">
+      <node ref="SW19" pin="1" pinfunction="1_1" pintype="passive"/>
+      <node ref="U21" pin="4" pinfunction="GPB3_4" pintype="bidirectional"/>
+    </net>
+    <net code="33" name="unconnected-(D26-DOUT-Pad4)" class="Default">
+      <node ref="D26" pin="4" pinfunction="DOUT_4" pintype="output+no_connect"/>
+    </net>
+    <net code="34" name="unconnected-(U21-GPA7-Pad28)" class="Default">
+      <node ref="U21" pin="28" pinfunction="GPA7_28" pintype="output+no_connect"/>
+    </net>
+    <net code="35" name="unconnected-(U21-GPB7-Pad8)" class="Default">
+      <node ref="U21" pin="8" pinfunction="GPB7_8" pintype="output+no_connect"/>
+    </net>
+    <net code="36" name="unconnected-(U21-NC-Pad11)" class="Default">
+      <node ref="U21" pin="11" pinfunction="NC_11" pintype="no_connect"/>
+    </net>
+    <net code="37" name="unconnected-(U21-NC-Pad14)" class="Default">
+      <node ref="U21" pin="14" pinfunction="NC_14" pintype="no_connect"/>
+    </net>
+  </nets>
+</export>

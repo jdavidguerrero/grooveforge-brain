@@ -1,0 +1,18 @@
+-- The CXX compiler identification is GNU 14.2.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test GF_SUPPORTS__O2
+-- Performing Test GF_SUPPORTS__O2 - Success
+-- Performing Test GF_SUPPORTS__fno_fast_math
+-- Performing Test GF_SUPPORTS__fno_fast_math - Success
+-- Performing Test GF_SUPPORTS__ffp_contract_off
+-- Performing Test GF_SUPPORTS__ffp_contract_off - Success
+-- Performing Test GF_SUPPORTS_CORTEX_A76
+-- Performing Test GF_SUPPORTS_CORTEX_A76 - Success
+-- Gemelo benchmark Release flags: -O2 -fno-fast-math -ffp-contract=off -mcpu=cortex-a76
+-- Configuring done (1.3s)
+-- Generating done (0.0s)
+-- Build files have been written to: /tmp/gf-gemelo-pi-build.zmM0Xp/O2

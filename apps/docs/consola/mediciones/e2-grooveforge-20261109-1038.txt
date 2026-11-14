@@ -1,0 +1,46 @@
+E2 Mon  9 Nov 10:38:53 -05 2026
+6.18.50+rpt-rpi-2712
+temp=37.3'C
+== --minutos 30 --bloque 256
+minutos: 30.0
+bloque: 256
+carga: False
+bpm: 122.0
+callbacks: 337510
+cortes: 0
+latencia_salida_ms: 5.33
+callback_media_us: 40.3
+callback_p99_us: 77.5
+callback_max_us: 156.1
+carga_max_pct: 2.9
+temp=41.1'C
+throttled=0x0
+== --minutos 30 --bloque 256 --carga
+minutos: 30.0
+bloque: 256
+carga: True
+bpm: 122.0
+callbacks: 337521
+cortes: 0
+latencia_salida_ms: 5.33
+callback_media_us: 91.6
+callback_p99_us: 252.0
+callback_max_us: 660.2
+carga_max_pct: 12.4
+temp=57.6'C
+throttled=0x0
+== --minutos 5 --bloque 128 --carga
+minutos: 5.0
+bloque: 128
+carga: True
+bpm: 122.0
+callbacks: 112506
+cortes: 0
+latencia_salida_ms: 5.33
+callback_media_us: 85.7
+callback_p99_us: 236.9
+callback_max_us: 763.5
+carga_max_pct: 28.6
+temp=57.6'C
+throttled=0x0
+FIN

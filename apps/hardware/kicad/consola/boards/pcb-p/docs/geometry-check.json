@@ -1,0 +1,237 @@
+{
+  "result": "PASS",
+  "transform": "panel=(kicad.x+44,371-kicad.y)",
+  "footprints": [
+    {
+      "reference": "FSR1",
+      "panel_mm": [
+        147.998621,
+        94.522605
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J1",
+      "panel_mm": [
+        122.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "FSR2",
+      "panel_mm": [
+        178.998621,
+        94.522605
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J2",
+      "panel_mm": [
+        153.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "FSR3",
+      "panel_mm": [
+        209.998621,
+        94.522605
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J3",
+      "panel_mm": [
+        184.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "FSR4",
+      "panel_mm": [
+        192.001378,
+        74.477396
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J4",
+      "panel_mm": [
+        215.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "FSR5",
+      "panel_mm": [
+        48.998621,
+        94.522605
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J5",
+      "panel_mm": [
+        23.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "FSR6",
+      "panel_mm": [
+        79.998621,
+        94.522605
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "J6",
+      "panel_mm": [
+        54.5,
+        72.5
+      ],
+      "side": "B"
+    },
+    {
+      "reference": "H1",
+      "panel_mm": [
+        40.0,
+        72.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H2",
+      "panel_mm": [
+        40.0,
+        97.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H3",
+      "panel_mm": [
+        89.5,
+        72.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H4",
+      "panel_mm": [
+        89.5,
+        97.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H5",
+      "panel_mm": [
+        139.0,
+        72.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H6",
+      "panel_mm": [
+        139.0,
+        97.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H7",
+      "panel_mm": [
+        170.0,
+        72.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H8",
+      "panel_mm": [
+        170.0,
+        97.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H9",
+      "panel_mm": [
+        201.0,
+        72.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "H10",
+      "panel_mm": [
+        201.0,
+        97.0
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT1",
+      "panel_mm": [
+        134.647585,
+        89.69820499999997
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT2",
+      "panel_mm": [
+        165.647585,
+        89.69820499999997
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT3",
+      "panel_mm": [
+        196.647585,
+        89.69820499999997
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT4",
+      "panel_mm": [
+        205.352414,
+        79.30179600000002
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT5",
+      "panel_mm": [
+        35.647586000000004,
+        89.69820499999997
+      ],
+      "side": "F"
+    },
+    {
+      "reference": "SLOT6",
+      "panel_mm": [
+        66.64758499999999,
+        89.69820499999997
+      ],
+      "side": "F"
+    }
+  ],
+  "holes_unchanged": true,
+  "nets": 12,
+  "ground_zones": 0,
+  "tail_mm": 37.4,
+  "socket_offset_mm": 26.439027549038276,
+  "tail_bottom_run_mm": 8.789027549038275,
+  "tracks_and_vias": 164
+}

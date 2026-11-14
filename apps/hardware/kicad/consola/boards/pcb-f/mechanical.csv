@@ -1,0 +1,10 @@
+board,item,x_mm,y_mm,w_mm,h_mm,notes
+PCB-F,contorno,294.5,129.5,81,83,"rectángulo; x, y = centro"
+PCB-F,agujero,257,91,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,332,91,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,257,168,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,agujero,332,168,3.2,3.2,M3 a separador PEM de 7.5
+PCB-F,RS6011,264.5,129.5,9,75,F1
+PCB-F,RS6011,284.5,129.5,9,75,F2
+PCB-F,RS6011,304.5,129.5,9,75,F3
+PCB-F,RS6011,324.5,129.5,9,75,F4

@@ -1,0 +1,15 @@
+reference,x_panel_mm,y_panel_mm,drill_mm,source,panel_action
+H1,112.0,32.0,3.2,PCB-K v5,conservar PEM M2.5
+H2,228.0,32.0,3.2,PCB-K v5,conservar PEM M2.5
+H3,112.0,100.0,3.2,PCB-K v5,conservar PEM M2.5
+H4,228.0,100.0,3.2,PCB-K v5,conservar PEM M2.5
+H5,247.0,101.5,3.2,PCB-K v5,conservar PEM M2.5
+H6,246.0,176.5,3.2,PCB-K v5,conservar PEM M2.5
+H7,244.0,94.0,3.2,PCB-K v5,conservar PEM M2.5
+H8,244.0,172.0,3.2,PCB-K v5,conservar PEM M2.5
+H9,139.0,72.0,4.6,PCB-P v5,paso PEM PCB-P
+H10,139.0,97.0,4.6,PCB-P v5,paso PEM PCB-P
+H11,170.0,72.0,4.6,PCB-P v5,paso PEM PCB-P
+H12,170.0,97.0,4.6,PCB-P v5,paso PEM PCB-P
+H13,201.0,72.0,4.6,PCB-P v5,paso PEM PCB-P
+H14,201.0,97.0,4.6,PCB-P v5,paso PEM PCB-P

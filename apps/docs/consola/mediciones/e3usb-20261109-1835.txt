@@ -1,0 +1,22 @@
+E3 USB async Mon  9 Nov 18:35:25 -05 2026 minutos=60
+temp=43.9'C
+antes: @GF USB RX_UND 0 RX_OVR 0 RX_MEM 0 TX_UND 0 TX_OVR 1 TX_SKIP 0 TX_PAD 0 TX_LESS 0 TX_MORE 244 RX_ACTIVE 0 TX_ACTIVE 1
+minutos: 60.0
+segundos_con_saltos: 0
+saltos_totales: 0
+segundos_sin_senal: 0
+underflow: 0
+overflow: 0
+primeros_eventos(min, saltos): []
+después: @GF USB RX_UND 0 RX_OVR 0 RX_MEM 0 TX_UND 0 TX_OVR 1 TX_SKIP 0 TX_PAD 0 TX_LESS 0 TX_MORE 9190 RX_ACTIVE 0 TX_ACTIVE 1
+generador:
+minutos: 60.5
+segundos_con_saltos: 0
+saltos_totales: 0
+segundos_sin_senal: 0
+underflow: 0
+overflow: 0
+primeros_eventos(min, saltos): []
+temp=43.3'C
+throttled=0x0
+FIN

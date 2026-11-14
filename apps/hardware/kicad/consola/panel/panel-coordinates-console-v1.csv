@@ -1,0 +1,88 @@
+ref,kind,group,board,x_mm,y_mm,w_mm,h_mm,notes
+PANEL,outline,Panel,aluminium,170,170,340,340,"2 mm aluminium CNC; x from left edge, y from front edge; body printed in one piece for a 350x350 bed"
+MOD,outline,Display,Waveshare 7in,170,268,189.32,120.24,"module outline; active area 155x88 centred; Pi stack on the floor, DSI flex up"
+E1,encoder,Encoders,PCB-A,79,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E2,encoder,Encoders,PCB-A,105,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E3,encoder,Encoders,PCB-A,131,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E4,encoder,Encoders,PCB-A,157,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E5,encoder,Encoders,PCB-A,183,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E6,encoder,Encoders,PCB-A,209,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E7,encoder,Encoders,PCB-A,235,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+E8,encoder,Encoders,PCB-A,261,192,18,18,"EC11 push, hole 7.1, knob 18; pitch 26 as PCB-A"
+PAD11,pad,Pads,NeoTrellis M4,117.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD12,pad,Pads,NeoTrellis M4,132.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD13,pad,Pads,NeoTrellis M4,147.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD14,pad,Pads,NeoTrellis M4,162.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD15,pad,Pads,NeoTrellis M4,177.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD16,pad,Pads,NeoTrellis M4,192.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD17,pad,Pads,NeoTrellis M4,207.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD18,pad,Pads,NeoTrellis M4,222.5,160.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD21,pad,Pads,NeoTrellis M4,117.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD22,pad,Pads,NeoTrellis M4,132.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD23,pad,Pads,NeoTrellis M4,147.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD24,pad,Pads,NeoTrellis M4,162.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD25,pad,Pads,NeoTrellis M4,177.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD26,pad,Pads,NeoTrellis M4,192.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD27,pad,Pads,NeoTrellis M4,207.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD28,pad,Pads,NeoTrellis M4,222.5,145.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD31,pad,Pads,NeoTrellis M4,117.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD32,pad,Pads,NeoTrellis M4,132.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD33,pad,Pads,NeoTrellis M4,147.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD34,pad,Pads,NeoTrellis M4,162.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD35,pad,Pads,NeoTrellis M4,177.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD36,pad,Pads,NeoTrellis M4,192.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD37,pad,Pads,NeoTrellis M4,207.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD38,pad,Pads,NeoTrellis M4,222.5,130.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD41,pad,Pads,NeoTrellis M4,117.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD42,pad,Pads,NeoTrellis M4,132.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD43,pad,Pads,NeoTrellis M4,147.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD44,pad,Pads,NeoTrellis M4,162.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD45,pad,Pads,NeoTrellis M4,177.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD46,pad,Pads,NeoTrellis M4,192.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD47,pad,Pads,NeoTrellis M4,207.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+PAD48,pad,Pads,NeoTrellis M4,222.5,115.5,11,11,"elastomer 10x10, cutout 11x11"
+M4,outline,NeoTrellis M4,M4,170,138,120,60,M4 PCB outline (pads area)
+DELETE,key,Edición,PCB-K,98,160.5,13.5,13.5,"Choc V2, keycap 13.5; aligned with pad row; LED violet"
+DUPLICATE,key,Edición,PCB-K,98,145.5,13.5,13.5,"Choc V2, keycap 13.5; aligned with pad row; LED violet"
+QUANTIZE,key,Edición,PCB-K,98,130.5,13.5,13.5,"Choc V2, keycap 13.5; aligned with pad row; LED violet"
+NEW,key,Edición,PCB-K,98,115.5,13.5,13.5,"Choc V2, keycap 13.5; aligned with pad row; LED violet"
+SCENE1_OCT+,key,Escenas / octava,PCB-K,242,160.5,13.5,13.5,"Choc V2; scene launch in controller mode, OCT/PAGE in SYNTH/DRUM; LED colour per mode"
+SCENE2_OCT-,key,Escenas / octava,PCB-K,242,145.5,13.5,13.5,"Choc V2; scene launch in controller mode, OCT/PAGE in SYNTH/DRUM; LED colour per mode"
+SCENE3_PAGE_L,key,Escenas / octava,PCB-K,242,130.5,13.5,13.5,"Choc V2; scene launch in controller mode, OCT/PAGE in SYNTH/DRUM; LED colour per mode"
+SCENE4_PAGE_R,key,Escenas / octava,PCB-K,242,115.5,13.5,13.5,"Choc V2; scene launch in controller mode, OCT/PAGE in SYNTH/DRUM; LED colour per mode"
+FSR_V1,fsr,FSR velocity,PCB-P,123.5,84.5,25,25,"FSR 402 + silicone cap, flat face"
+FSR_V2,fsr,FSR velocity,PCB-P,154.5,84.5,25,25,"FSR 402 + silicone cap, flat face"
+FSR_V3,fsr,FSR velocity,PCB-P,185.5,84.5,25,25,"FSR 402 + silicone cap, flat face"
+FSR_V4,fsr,FSR velocity,PCB-P,216.5,84.5,25,25,"FSR 402 + silicone cap, flat face"
+FSR_X1,fsr,FSR expresión,PCB-P,24.5,84.5,25,25,"FSR 402 + silicone cap, cradle face (tactile difference)"
+FSR_X2,fsr,FSR expresión,PCB-P,55.5,84.5,25,25,"FSR 402 + silicone cap, cradle face (tactile difference)"
+PLAY,key,Transporte,PCB-K,132,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
+STOP,key,Transporte,PCB-K,151,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
+REC,key,Transporte,PCB-K,170,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
+LOOP,key,Transporte,PCB-K,189,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
+METRO,key,Transporte,PCB-K,208,39.5,13.5,13.5,Choc V2; keycap 1 mm lower than the rest (guard against FSR hits); LED teal
+BACK,key,Navegación,PCB-K,64,305,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+MENU,key,Navegación,PCB-K,64,286.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+NAV_L,key,Navegación,PCB-K,64,268,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+NAV_R,key,Navegación,PCB-K,64,249.5,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+BROWSE,key,Navegación,PCB-K,64,231,13.5,13.5,"Choc V2; column left of the screen, pitch 18.5 as the old K2; LED violet"
+SHARP_L,sensor,Manos,bracket,25.5,320.75,31,14.5,"GP2Y0A41 horizontal, IR window 31x14.5; free gesture zone around it"
+SHARP_R,sensor,Manos,bracket,314.5,320.75,31,14.5,GP2Y0A41 horizontal
+CUE_ENG,key,Motor en vivo,PCB-K,20,174,13.5,13.5,Choc V2; LED teal
+FILL,key,Motor en vivo,PCB-K,39,174,13.5,13.5,Choc V2; LED teal
+TAP,key,Motor en vivo,PCB-K,58,174,13.5,13.5,Choc V2; LED teal
+BUILD,key,Sección,PCB-K,20,155,13.5,13.5,Choc V2; LED teal
+DROP,key,Sección,PCB-K,39,155,13.5,13.5,Choc V2; LED teal
+BREAK,key,Sección,PCB-K,58,155,13.5,13.5,Choc V2; LED teal
+SHIFT,key,Modificador,PCB-K,20,132.5,13.5,13.5,Choc V2
+UNDO,key,Edición,PCB-K,39,132.5,13.5,13.5,Choc V2; SHIFT+UNDO = redo
+JOG,encoder,Navegación,"panel, cable to PCB-M",300,260,40,40,EC11 push + 3D printed jog knob 40
+F1,fader,Faders,PCB-F,264.5,129.5,9,75,"RS6011 60 mm travel, slot 3x63, pitch 20"
+F2,fader,Faders,PCB-F,284.5,129.5,9,75,"RS6011 60 mm travel, slot 3x63, pitch 20"
+F3,fader,Faders,PCB-F,304.5,129.5,9,75,"RS6011 60 mm travel, slot 3x63, pitch 20"
+F4,fader,Faders,PCB-F,324.5,129.5,9,75,"RS6011 60 mm travel, slot 3x63, pitch 20"
+POT_IN,pot,Entrada,"panel, cable to PCB-M",28,42,18,18,"10k lin, knob 18"
+SEL_PAD,switch,Entrada,"panel, cable to PCB-M",55,42,10,4,3-position slide 0/-10/-20 dB
+POT_CUE,pot,Mezcla,"panel, cable to PCB-M",282,42,18,18,"10k lin, knob 18; headphone jack on the front edge below it"
+POT_MASTER,pot,Mezcla,"panel, cable to PCB-M",312,42,18,18,"10k lin, knob 18; corner = protected from fader slams"
+JACK_PHONES,jack,Frente,"panel, cable to PCB-M",282,0,20,10,"1/4 inch on the front edge, below CUE"

@@ -1,0 +1,259 @@
+{
+  "transform": "panel=(kicad.x+44,371-kicad.y)",
+  "footprints": [
+    {
+      "reference": "C1",
+      "panel_mm": [
+        257.0,
+        100.0
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "F",
+      "bounds_panel_mm": [
+        255.995,
+        98.27499999999998,
+        258.005,
+        101.72500000000002
+      ]
+    },
+    {
+      "reference": "C2",
+      "panel_mm": [
+        277.0,
+        100.0
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "F",
+      "bounds_panel_mm": [
+        275.995,
+        98.27499999999998,
+        278.005,
+        101.72500000000002
+      ]
+    },
+    {
+      "reference": "C3",
+      "panel_mm": [
+        297.0,
+        100.0
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "F",
+      "bounds_panel_mm": [
+        295.995,
+        98.27499999999998,
+        298.005,
+        101.72500000000002
+      ]
+    },
+    {
+      "reference": "C4",
+      "panel_mm": [
+        317.0,
+        100.0
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "F",
+      "bounds_panel_mm": [
+        315.995,
+        98.27499999999998,
+        318.005,
+        101.72500000000002
+      ]
+    },
+    {
+      "reference": "C5",
+      "panel_mm": [
+        257.0,
+        153.0
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "F",
+      "bounds_panel_mm": [
+        255.995,
+        151.275,
+        258.005,
+        154.725
+      ]
+    },
+    {
+      "reference": "H1",
+      "panel_mm": [
+        257.0,
+        91.0
+      ],
+      "error_mm": 0.0,
+      "angle": 0,
+      "side": "F",
+      "bounds_panel_mm": [
+        255.4,
+        89.39999999999998,
+        258.6,
+        92.60000000000002
+      ]
+    },
+    {
+      "reference": "H2",
+      "panel_mm": [
+        332.0,
+        91.0
+      ],
+      "error_mm": 0.0,
+      "angle": 0,
+      "side": "F",
+      "bounds_panel_mm": [
+        330.4,
+        89.39999999999998,
+        333.6,
+        92.60000000000002
+      ]
+    },
+    {
+      "reference": "H3",
+      "panel_mm": [
+        257.0,
+        168.0
+      ],
+      "error_mm": 0.0,
+      "angle": 0,
+      "side": "F",
+      "bounds_panel_mm": [
+        255.4,
+        166.4,
+        258.6,
+        169.6
+      ]
+    },
+    {
+      "reference": "H4",
+      "panel_mm": [
+        332.0,
+        168.0
+      ],
+      "error_mm": 0.0,
+      "angle": 0,
+      "side": "F",
+      "bounds_panel_mm": [
+        330.4,
+        166.4,
+        333.6,
+        169.6
+      ]
+    },
+    {
+      "reference": "J1",
+      "panel_mm": [
+        257.5,
+        160.2
+      ],
+      "error_mm": 0.0,
+      "angle": 90,
+      "side": "B",
+      "bounds_panel_mm": [
+        254.195,
+        155.275,
+        260.805,
+        165.125
+      ]
+    },
+    {
+      "reference": "RV1",
+      "panel_mm": [
+        264.5,
+        129.5
+      ],
+      "error_mm": 0.0,
+      "angle": 90.0,
+      "side": "F",
+      "bounds_panel_mm": [
+        259.175,
+        91.07499999999999,
+        269.825,
+        167.925
+      ]
+    },
+    {
+      "reference": "RV2",
+      "panel_mm": [
+        284.5,
+        129.5
+      ],
+      "error_mm": 0.0,
+      "angle": 90.0,
+      "side": "F",
+      "bounds_panel_mm": [
+        279.175,
+        91.07499999999999,
+        289.825,
+        167.925
+      ]
+    },
+    {
+      "reference": "RV3",
+      "panel_mm": [
+        304.5,
+        129.5
+      ],
+      "error_mm": 0.0,
+      "angle": 90.0,
+      "side": "F",
+      "bounds_panel_mm": [
+        299.175,
+        91.07499999999999,
+        309.825,
+        167.925
+      ]
+    },
+    {
+      "reference": "RV4",
+      "panel_mm": [
+        324.5,
+        129.5
+      ],
+      "error_mm": 0.0,
+      "angle": 90.0,
+      "side": "F",
+      "bounds_panel_mm": [
+        319.175,
+        91.07499999999999,
+        329.825,
+        167.925
+      ]
+    }
+  ],
+  "electrical_partitions": "6/6 match fresh and verified schematic XML",
+  "ground_fills": "F.Cu and B.Cu; zero intersection with all four slot reserves",
+  "tracks_and_vias": 202,
+  "slot_keepouts": [
+    [
+      262.0,
+      97.0,
+      267.0,
+      162.0
+    ],
+    [
+      282.0,
+      97.0,
+      287.0,
+      162.0
+    ],
+    [
+      302.0,
+      97.0,
+      307.0,
+      162.0
+    ],
+    [
+      322.0,
+      97.0,
+      327.0,
+      162.0
+    ]
+  ],
+  "result": "PASS"
+}

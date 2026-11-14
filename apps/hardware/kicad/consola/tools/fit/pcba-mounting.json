@@ -1,0 +1,95 @@
+{
+  "passes": true,
+  "standoff_envelope_diameter_mm": 5.6,
+  "standoff_z_mm": [
+    65.0,
+    83.0
+  ],
+  "pcb_k_z_mm": [
+    80.0,
+    81.6
+  ],
+  "k_outline_limit": "CSV v5 combinado y particiones de doc28 §7; no existen layouts K left/right en esta base",
+  "holes": [
+    {
+      "reference": "H1",
+      "panel_mm": [
+        84.0,
+        179.0
+      ],
+      "csv_matches": 1,
+      "panel_cut_found": true,
+      "panel_hole_diameter_mm": 4.2,
+      "web_lower_bound_mm": {
+        "laser": 7.420329614269008,
+        "cnc_con_rebajes": 7.420329614269008
+      },
+      "standoff_to_k_mm": {
+        "PCB-K izquierda (partición inferida)": 3.2,
+        "PCB-K derecha (partición inferida)": 23.2,
+        "PCB-K v5 conjunto (conservador)": 3.2
+      },
+      "passes": true
+    },
+    {
+      "reference": "H2",
+      "panel_mm": [
+        118.0,
+        192.0
+      ],
+      "csv_matches": 1,
+      "panel_cut_found": true,
+      "panel_hole_diameter_mm": 4.2,
+      "web_lower_bound_mm": {
+        "laser": 7.3500000000000005,
+        "cnc_con_rebajes": 7.3500000000000005
+      },
+      "standoff_to_k_mm": {
+        "PCB-K izquierda (partición inferida)": 18.670910553583887,
+        "PCB-K derecha (partición inferida)": 21.898178070456936,
+        "PCB-K v5 conjunto (conservador)": 16.2
+      },
+      "passes": true
+    },
+    {
+      "reference": "H3",
+      "panel_mm": [
+        144.0,
+        192.0
+      ],
+      "csv_matches": 1,
+      "panel_cut_found": true,
+      "panel_hole_diameter_mm": 4.2,
+      "web_lower_bound_mm": {
+        "laser": 7.3500000000000005,
+        "cnc_con_rebajes": 7.3500000000000005
+      },
+      "standoff_to_k_mm": {
+        "PCB-K izquierda (partición inferida)": 37.90626487409524,
+        "PCB-K derecha (partición inferida)": 39.08078318274385,
+        "PCB-K v5 conjunto (conservador)": 16.2
+      },
+      "passes": true
+    },
+    {
+      "reference": "H4",
+      "panel_mm": [
+        248.0,
+        192.0
+      ],
+      "csv_matches": 1,
+      "panel_cut_found": true,
+      "panel_hole_diameter_mm": 4.2,
+      "web_lower_bound_mm": {
+        "laser": 7.3500000000000005,
+        "cnc_con_rebajes": 7.3500000000000005
+      },
+      "standoff_to_k_mm": {
+        "PCB-K izquierda (partición inferida)": 138.4834031300209,
+        "PCB-K derecha (partición inferida)": 9.2,
+        "PCB-K v5 conjunto (conservador)": 9.2
+      },
+      "passes": true
+    }
+  ]
+}

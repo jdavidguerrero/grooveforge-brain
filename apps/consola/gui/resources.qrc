@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <!-- Assets -->
+        <file alias="assets/logo.png">assets/logo.png</file>
+
+        <!-- Qt6 style paths (for compatibility) -->
+        <file alias="qt/qml/PushClone/qmldir">qmldir</file>
+        <file alias="qt/qml/PushClone/Main.qml">Main.qml</file>
+        <file alias="qt/qml/PushClone/SplashScreen.qml">SplashScreen.qml</file>
+        <file alias="qt/qml/PushClone/PushCloneTheme.qml">PushCloneTheme.qml</file>
+        <file alias="qt/qml/PushClone/components/ClipPad.qml">components/ClipPad.qml</file>
+        <file alias="qt/qml/PushClone/components/NavigationBar.qml">components/NavigationBar.qml</file>
+        <file alias="qt/qml/PushClone/components/TransportBar.qml">components/TransportBar.qml</file>
+        <file alias="qt/qml/PushClone/components/MixChannelStrip.qml">components/MixChannelStrip.qml</file>
+        <file alias="qt/qml/PushClone/views/SessionView.qml">views/SessionView.qml</file>
+        <file alias="qt/qml/PushClone/views/MixView.qml">views/MixView.qml</file>
+    </qresource>
+</RCC>

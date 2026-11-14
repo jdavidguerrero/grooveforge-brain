@@ -43,7 +43,10 @@ inline size_t hex_decode(const char* s, uint8_t* out, size_t cap) {
 
 struct LinkCmd {
     /// LEXPORT / LPUT / LTRUNC: presets de capa de HYBRID SYNTH (theory/12 §3d)
-    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc } kind = None;
+    enum Kind : uint8_t { None = 0, Hello, Export, Put, Trunc, Fs, Format, LayerExport, LayerPut, LayerTrunc, Ruta, Cue, Usb, In, Hp, Cv } kind = None;
+    /// RUTA (0 = synths, 1 = entrada de línea → USB) y CUE (0/1): prototipo de la consola (apps/docs/consola/05-e3-teensy-a.md)
+    uint8_t valor = 0;
+    uint16_t cv = 0; ///< Volatile MCP4725 value, 0..4095.
     uint8_t engine = 0, index = 0;   ///< PUT: engine e índice · TRUNC: engine y cantidad que queda · LPUT / LTRUNC: index
     const char* hex = nullptr;       ///< PUT / LPUT: el binario en hex (apunta dentro de la línea)
 };
@@ -73,6 +76,7 @@ inline LinkCmd parse_link_cmd(char* line) {
     };
     if (!strcmp(tok[0], "HELLO") && nt == 1) c.kind = LinkCmd::Hello;
     else if (!strcmp(tok[0], "EXPORT") && nt == 1) c.kind = LinkCmd::Export;
+    else if (!strcmp(tok[0], "USB") && nt == 1) c.kind = LinkCmd::Usb;
     else if (!strcmp(tok[0], "FS") && nt == 1) c.kind = LinkCmd::Fs;
     else if (!strcmp(tok[0], "FORMAT") && nt == 2 && !strcmp(tok[1], "YES")) c.kind = LinkCmd::Format;   // borra todo: pide YES
     else if (!strcmp(tok[0], "PUT") && nt == 4 && num(tok[1], &c.engine) && num(tok[2], &c.index)) {
@@ -85,6 +89,22 @@ inline LinkCmd parse_link_cmd(char* line) {
     } else if (!strcmp(tok[0], "LPUT") && nt == 3 && num(tok[1], &c.index)) {
         c.kind = LinkCmd::LayerPut;
         c.hex = tok[2];
+    } else if (!strcmp(tok[0], "RUTA") && nt == 2 && (!strcmp(tok[1], "SINTE") || !strcmp(tok[1], "LINEA"))) {
+        c.kind = LinkCmd::Ruta;
+        c.valor = !strcmp(tok[1], "LINEA") ? 1 : 0;
+    } else if (!strcmp(tok[0], "CUE") && nt == 2 && (!strcmp(tok[1], "0") || !strcmp(tok[1], "1"))) {
+        c.kind = LinkCmd::Cue;
+        c.valor = tok[1][0] == '1' ? 1 : 0;
+    } else if (nt == 2 && (!strcmp(tok[0], "IN") || !strcmp(tok[0], "HP")) && num(tok[1], &c.valor)) {
+        if (!strcmp(tok[0], "IN") && c.valor <= 15) c.kind = LinkCmd::In;
+        if (!strcmp(tok[0], "HP") && c.valor <= 127) c.kind = LinkCmd::Hp;
+    } else if (nt == 2 && !strcmp(tok[0], "CV")) {
+        char* end = nullptr;
+        const long value = strtol(tok[1], &end, 10);
+        if (tok[1][0] && !*end && value >= 0 && value <= 4095) {
+            c.kind = LinkCmd::Cv;
+            c.cv = uint16_t(value);
+        }
     } else if (!strcmp(tok[0], "LTRUNC") && nt == 2 && num(tok[1], &c.index)) {
         c.kind = LinkCmd::LayerTrunc;
     }

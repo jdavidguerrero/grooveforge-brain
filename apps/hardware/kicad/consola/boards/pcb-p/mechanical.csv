@@ -1,0 +1,18 @@
+board,item,x_mm,y_mm,w_mm,h_mm,notes
+PCB-P,contorno,120.5,84.5,223,31,"rectángulo; x, y = centro"
+PCB-P,agujero,40,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,40,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,89.5,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,89.5,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,139,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,139,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,170,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,170,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,201,72,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,agujero,201,97,2.7,2.7,M2.5 a separador PEM de 4.5; pasa por PCB-K donde se solapan
+PCB-P,FSR 402,123.5,84.5,18.3,18.3,FSR V1
+PCB-P,FSR 402,154.5,84.5,18.3,18.3,FSR V2
+PCB-P,FSR 402,185.5,84.5,18.3,18.3,FSR V3
+PCB-P,FSR 402,216.5,84.5,18.3,18.3,FSR V4
+PCB-P,FSR 402,24.5,84.5,18.3,18.3,FSR X1
+PCB-P,FSR 402,55.5,84.5,18.3,18.3,FSR X2

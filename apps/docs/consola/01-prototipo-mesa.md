@@ -44,7 +44,7 @@ Cada etapa termina con **pasa / no pasa**. Si una no pasa, se aplica su plan B a
 
 1. `uv sync` en `tools/motor` y `tools/perc-synth`; correr las dos suites de tests.
 2. Medir cuánto tarda en generar: una tanda de kicks, un rack de drums completo, los patrones de bajo y un subdrop.
-3. Levantar el servidor del motor (`gf_motor.servidor`) y abrir la web desde el Mac por la red.
+3. ~~Abrir la web del motor desde el Mac~~: descartado. En la consola la interfaz es la app de Qt, que habla con el motor en el mismo Pi.
 
 **Pasa si:** los tests pasan en ARM y generar una tanda de drums tarda menos de unos 10 s (en directo se genera con anticipación, no en el golpe). **Plan B:** precalcular bancos de sonidos en el Mac y que el Pi solo reproduzca y genere MIDI.
 

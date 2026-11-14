@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&amp;family=IBM+Plex+Sans:wght@400;600&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#101010}a{color:#5DCAA5}a:hover{color:#9FE1CB}</style>
+</helmet>
+<div style="width:1800px;box-sizing:border-box;padding:64px;background:#101010;color:#E6E6E6;font-family:'IBM Plex Sans',sans-serif;display:flex;flex-direction:column;gap:96px">
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:2px;color:#5DCAA5">GROOVEFORGE · GROOVEPUSH · ENCLOSURE · v2</div>
+    <div style="font-size:40px;font-weight:600;color:#F2F2F2">Controlador GroovePush · v2 con medidas reales</div>
+    <div style="font-size:15px;color:#8A8A8A">PETG FDM pared 3 mm · aluminio 2 mm CNC R3 · familia Brain Studio · v2 2026-10-19 · <a href="GroovePush Enclosure.dc.html">v1</a> · medidas en mm · dibujos SVG a escala real (imprimir al 100 %) · los valores se recalculan con los Tweaks (perilla, GUI, ángulo)</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">0</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Resultado</span></div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">HUELLA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">{{ footprint }}</div><div style="font-size:13px;color:#A8A8A8">ancho × fondo × alto con patas · {{ areaPct }} del área del Push 3</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">FORMA</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">Cuña {{ angle }}°</div><div style="font-size:13px;color:#A8A8A8">frente 28 mm, fondo {{ hb }} mm sobre la mesa</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">ENCODERS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#F2F2F2">Ø {{ knob }} · paso {{ pitch }}</div><div style="font-size:13px;color:#A8A8A8">desfase máx. etiqueta–encoder {{ offMax }} mm (GUI {{ gui }})</div></div>
+      <div style="background:#161616;border:1px solid #262626;padding:20px;display:flex;flex-direction:column;gap:6px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">REGLAS</div><div style="font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;color:#5DCAA5">{{ ruleSummary }}</div><div style="font-size:13px;color:#A8A8A8">{{ ruleSub }}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 48px;font-size:14px;line-height:22px;color:#C8C8C8;max-width:1260px">
+      <div><span style="color:#F2F2F2;font-weight:600">Perilla Ø 18 a 26 mm de paso.</span> Es la más grande que cumple 8 mm entre bordes y 25 mm de desfase a la vez. Ø 20 obliga a paso 28 y deja E1 y E8 a 26.6 mm de su etiqueta aun con la GUI redistribuida.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">GUI con celdas 100 · 180 × 6 · 100 px.</span> Las celdas extremas se angostan para que todas las etiquetas se corran hacia afuera. Desfase máximo 19.6 mm (con 8 × 160 px: 23.2 mm, pasa pero sin margen).</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Modos a la izquierda de la pantalla, corridos 12 mm hacia afuera.</span> El módulo real (189.3 mm) quedaba debajo de los Choc y de PCB-K2. La columna pasa a x {{ modeX }} y PCB-K2 queda a 2.3 mm del módulo. Edición sigue junto a los pads.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Fila frontal SHIFT | transporte | navegación.</span> Un solo eje en y 24, con huecos de 6 mm entre grupos para ubicarlos al tacto. OCT ▼ ▲ quedan bajo los faders, a la derecha de los pads.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Faders RS6011 de 60 mm en una franja propia a la derecha.</span> El cuerpo de 75 mm no entra entre la fila frontal y los encoders. Fuera de E8 y de BANK/OCT, el cap recorre y 35.5–109.5 y queda a ≥ 3.2 mm de todo. El panel crece a {{ W }} mm de ancho.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Pi 5 en una placa adaptadora atornillada a los 4 M2.5 del módulo,</span> corrida {{ piShift }} mm hacia atrás del patrón original. Sus puertos salen por extensiones de panel. La portadora va en el piso a la derecha (x {{ carX }}), fuera de la sombra de la Pi.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Cuña de 14° con frente de 28.</span> Con 50 mm de apilado, 12° deja 5.1 mm bajo el HAT aun con la Pi corrida hacia atrás. Subir el frente a 32 da 9.1 mm, pero sube la muñeca. 14° da 11.1 mm y mejora la regla 5.</div>
+      <div><span style="color:#F2F2F2;font-weight:600">Dos entradas de alimentación en v1.</span> Unificar en 5 V / 5 A es posible con una placa de distribución (ver sección 4), pero saca a la Pi de su fuente oficial y exige forzar el límite de corriente USB por configuración.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">0.1</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Cambios de la v2</span><span style="font-size:14px;color:#8A8A8A">Solo lo que forzaron las medidas reales; el resto queda como en la v1</span></div>
+    <div style="display:grid;grid-template-columns:40px 250px 220px 220px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">CHOQUE</div><div style="padding:8px 0">V1 CON MEDIDAS REALES</div><div style="padding:8px 0">V2</div><div style="padding:8px 0">SOLUCIÓN</div></div>
+      <sc-for list="{{ changes }}" as="c" hint-placeholder-count="6">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ c.i }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">{{ c.n }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#E8705A">{{ c.a }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#5DCAA5">{{ c.b }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ c.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">CHEQUEOS DE INTERFERENCIA (HOLGURA LIBRE, MM)</div>
+      <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+        <sc-for list="{{ checksV }}" as="k" hint-placeholder-count="8"><div style="background:#161616;border:1px solid #262626;padding:14px 16px;display:flex;flex-direction:column;gap:4px"><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A">{{ k.n }}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:{{ k.c }}">{{ k.v }}</div><div style="font-size:12px;line-height:17px;color:#A8A8A8">{{ k.m }}</div></div></sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">1</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Vista superior · panel de aluminio · 1:1</span><span style="font-size:14px;color:#8A8A8A">Coordenadas de la chapa plana: x desde el borde izquierdo, y desde el borde frontal</span></div>
+    <div style="display:flex;gap:40px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:20px;flex:none">
+        <svg width="{{ topW }}" height="{{ topH }}" viewBox="{{ topVB }}" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <rect x="0" y="0" width="{{ W }}" height="{{ D }}" rx="3" fill="#1A1B1E" stroke="#9FE1CB" style="stroke-width:0.35px"></rect>
+          <line x1="0" y1="{{ limY }}" x2="{{ W }}" y2="{{ limY }}" style="stroke:#E8B84A;stroke-width:0.25px;stroke-dasharray:1.5 1"></line>
+          <text x="1.5" y="{{ limTY }}" fill="#E8B84A" style="font-size:2.2px">LÍMITE 15 mm DEL BORDE FRONTAL</text>
+          <rect x="{{ modR.x }}" y="{{ modR.y }}" width="{{ modR.w }}" height="{{ modR.h }}" rx="8" fill="none" stroke="#5A5A6E" style="stroke-width:0.25px;stroke-dasharray:1.2 0.8"></rect>
+          <text x="{{ modR.tx }}" y="{{ modR.ty }}" fill="#5A5A6E" style="font-size:2.2px">MÓDULO 189.32 × 120.24 × 14.8 · R8</text>
+          <rect x="{{ piR.x }}" y="{{ piR.y }}" width="{{ piR.w }}" height="{{ piR.h }}" fill="none" stroke="#7A6FE0" style="stroke-width:0.25px;stroke-dasharray:2 0.8"></rect>
+          <text x="{{ piR.tx }}" y="{{ piR.ty }}" fill="#7A6FE0" style="font-size:2px">PI 5 + HAT EN ADAPTADOR (DEBAJO)</text>
+          <rect x="{{ carR.x }}" y="{{ carR.y }}" width="{{ carR.w }}" height="{{ carR.h }}" fill="none" stroke="#E8B84A" style="stroke-width:0.2px;stroke-dasharray:1 0.6"></rect>
+          <text x="{{ carR.tx }}" y="{{ carR.ty }}" fill="#E8B84A" style="font-size:2px">PORTADORA 97 × 100 (PISO)</text>
+          <rect x="{{ winR.x }}" y="{{ winR.y }}" width="{{ winR.w }}" height="{{ winR.h }}" rx="1" fill="#0A0A0A" stroke="#5DCAA5" style="stroke-width:0.3px"></rect>
+          <rect x="{{ actR.x }}" y="{{ actR.y }}" width="{{ actR.w }}" height="{{ actR.h }}" fill="none" stroke="#1D9E75" style="stroke-width:0.2px;stroke-dasharray:0.8 0.6"></rect>
+          <rect x="{{ stripR.x }}" y="{{ stripR.y }}" width="{{ stripR.w }}" height="{{ stripR.h }}" fill="#0E3A2E" stroke="none"></rect>
+          <sc-for list="{{ cellLines }}" as="c" hint-placeholder-count="7"><line x1="{{ c.x }}" y1="{{ c.y0 }}" x2="{{ c.x }}" y2="{{ c.y1 }}" style="stroke:#5DCAA5;stroke-width:0.2px"></line></sc-for>
+          <sc-for list="{{ labelLinks }}" as="l" hint-placeholder-count="8">
+            <line x1="{{ l.x0 }}" y1="{{ l.y0 }}" x2="{{ l.x1 }}" y2="{{ l.y1 }}" style="stroke:#E8B84A;stroke-width:0.2px;stroke-dasharray:0.6 0.5"></line>
+            <circle cx="{{ l.x1 }}" cy="{{ l.y1 }}" r="0.7" fill="#E8B84A"></circle>
+            <text x="{{ l.x1 }}" y="{{ l.ty }}" text-anchor="middle" fill="#9FE1CB" style="font-size:1.8px">{{ l.t }}</text>
+          </sc-for>
+          <text x="{{ scrT.x }}" y="{{ scrT.y }}" text-anchor="middle" fill="#F2F2F2" style="font-size:2.8px">PANTALLA 7" · CENTRO ({{ scrT.c }})</text>
+          <text x="{{ scrT.x }}" y="{{ scrT.y2 }}" text-anchor="middle" fill="#9FE1CB" style="font-size:2.2px">ventana 158 × 91 · activa 155 × 88 · 0.121 mm/px</text>
+          <text x="{{ scrT.x }}" y="{{ scrT.y3 }}" text-anchor="middle" fill="#9FE1CB" style="font-size:2.2px">franja de soft-keys 72 px (8.8 mm) · celdas {{ cellTxt }}</text>
+          <rect x="{{ m4R.x }}" y="{{ m4R.y }}" width="120" height="60" fill="none" stroke="#7A6FE0" style="stroke-width:0.2px;stroke-dasharray:1.5 0.6"></rect>
+          <rect x="{{ m4R.x }}" y="{{ m4Res.y }}" width="120" height="25" fill="#2A2810" stroke="#E8B84A" style="stroke-width:0.2px;stroke-dasharray:1 0.6"></rect>
+          <line x1="{{ m4R.x }}" y1="{{ m4Edge }}" x2="{{ m4R.x1 }}" y2="{{ m4Edge }}" style="stroke:#E8B84A;stroke-width:0.6px"></line>
+          <text x="{{ cx }}" y="{{ m4Res.ty }}" text-anchor="middle" fill="#E8B84A" style="font-size:1.9px">RESERVA 25 mm · FICHAS M4 (micro-USB · JST PH-4 · TRRS) BAJO LA FILA FRONTAL</text>
+          <sc-for list="{{ m4Holes }}" as="h" hint-placeholder-count="16"><circle cx="{{ h.x }}" cy="{{ h.y }}" r="1.4" fill="none" stroke="#7A6FE0" style="stroke-width:0.18px"></circle></sc-for>
+          <sc-for list="{{ padsV }}" as="p" hint-placeholder-count="32"><rect x="{{ p.x }}" y="{{ p.y }}" width="11" height="11" rx="1" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.22px"></rect></sc-for>
+          <text x="{{ cx }}" y="{{ m4R.ty }}" text-anchor="middle" fill="#7A6FE0" style="font-size:2px">NEOTRELLIS M4 · 120 × 60 · 16 × Ø2.8</text>
+          <sc-for list="{{ fadersV }}" as="f" hint-placeholder-count="4">
+            <rect x="{{ f.bx }}" y="{{ f.by }}" width="9" height="75" fill="none" stroke="#5A5A6E" style="stroke-width:0.15px;stroke-dasharray:1.2 0.8"></rect>
+            <rect x="{{ f.ex }}" y="{{ f.ey }}" width="8" height="74" fill="none" stroke="#9FE1CB" style="stroke-width:0.18px;stroke-dasharray:0.8 0.5"></rect>
+            <rect x="{{ f.sx }}" y="{{ f.sy }}" width="3" height="63" rx="1.5" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.22px"></rect>
+            <rect x="{{ f.ex }}" y="{{ f.cy }}" width="8" height="14" rx="1" fill="none" stroke="#5DCAA5" style="stroke-width:0.25px"></rect>
+            <rect x="{{ f.ex }}" y="{{ f.cy2 }}" width="8" height="14" rx="1" fill="none" stroke="#5DCAA5" style="stroke-width:0.18px;stroke-dasharray:0.6 0.4"></rect>
+            <text x="{{ f.x }}" y="{{ f.ty }}" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">{{ f.n }}</text>
+          </sc-for>
+          <sc-for list="{{ keysV }}" as="k" hint-placeholder-count="20">
+            <rect x="{{ k.cx }}" y="{{ k.cy }}" width="18" height="17" rx="1" fill="none" stroke="{{ k.c }}" style="stroke-width:0.22px;stroke-dasharray:0.8 0.5"></rect>
+            <rect x="{{ k.hx }}" y="{{ k.hy }}" width="14" height="14" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></rect>
+            <text x="{{ k.lx }}" y="{{ k.ly }}" text-anchor="middle" fill="{{ k.c }}" style="font-size:1.75px;font-weight:600">{{ k.n }}</text>
+          </sc-for>
+          <sc-for list="{{ encsV }}" as="e" hint-placeholder-count="8">
+            <circle cx="{{ e.x }}" cy="{{ e.y }}" r="{{ e.r }}" fill="none" stroke="#9FE1CB" style="stroke-width:0.22px;stroke-dasharray:0.8 0.5"></circle>
+            <circle cx="{{ e.x }}" cy="{{ e.y }}" r="3.55" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></circle>
+            <text x="{{ e.x }}" y="{{ e.ty }}" text-anchor="middle" fill="#F2F2F2" style="font-size:2.2px;font-weight:600">{{ e.n }}</text>
+          </sc-for>
+          <sc-for list="{{ groupTags }}" as="g" hint-placeholder-count="5"><text x="{{ g.x }}" y="{{ g.y }}" text-anchor="middle" fill="{{ g.c }}" style="font-size:2.1px;letter-spacing:0.3px">{{ g.t }}</text></sc-for>
+          <line x1="{{ cx }}" y1="-6" x2="{{ cx }}" y2="{{ axisY }}" style="stroke:#5A5A6E;stroke-width:0.15px;stroke-dasharray:3 1 0.5 1"></line>
+          <text x="{{ axisTX }}" y="{{ axisY }}" fill="#5A5A6E" style="font-size:2px">EJE x {{ cx }}</text>
+          <line x1="0" y1="{{ dimY }}" x2="{{ W }}" y2="{{ dimY }}" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="{{ cx }}" y="{{ dimTY }}" text-anchor="middle" fill="#B8B8B8" style="font-size:2.8px">{{ W }}</text>
+          <line x1="{{ dimX }}" y1="0" x2="{{ dimX }}" y2="{{ D }}" style="stroke:#7A7A7A;stroke-width:0.2px"></line>
+          <text x="{{ dimTX }}" y="{{ halfD }}" fill="#B8B8B8" style="font-size:2.8px" transform="{{ dimRot }}" text-anchor="middle">{{ D }} en la chapa · {{ pb }} en planta</text>
+          <text x="-2" y="{{ D }}" text-anchor="end" fill="#7A7A7A" style="font-size:2.2px">FRENTE</text>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:360px;display:flex;flex-direction:column;gap:14px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">LEYENDA</div>
+        <div>Blanco continuo: corte CNC. Punteado claro: perilla, keycap 18 × 17 y recorrido del cap (continuo y punteado: extremos). Gris: módulo de pantalla y cuerpos de fader bajo la chapa. Violeta: NeoTrellis M4 y Pi. Ámbar: reserva de fichas. Ámbar punteado: de cada encoder al centro de su etiqueta en pantalla.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:6px">CORTES CNC</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:120px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">Ventana</span><span>158 × 91 · R1</span>
+          <span style="color:#9FE1CB">Choc × 20</span><span>14 × 14 + rebaje 16 × 16 × 0.8 por debajo</span>
+          <span style="color:#9FE1CB">EC11 × 8</span><span>Ø 7.1 liso</span>
+          <span style="color:#9FE1CB">Pads × 32</span><span>11 × 11 R1, paso 15 (botón 10 × 10)</span>
+          <span style="color:#9FE1CB">Faders × 4</span><span>ranura 3 × 63 R1.5, paso 11</span>
+          <span style="color:#9FE1CB">Fijación</span><span>10 × PEM M3 + 8 × PEM M2.5 para la M4</span>
+          <span style="color:#9FE1CB">Acabado</span><span>6061-T6 anodizado negro, serigrafía IBM Plex Mono blanca, R3</span>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:6px">CENTROS (x, y)</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11.5px;line-height:18px;color:#F2F2F2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px">
+          <sc-for list="{{ coordList }}" as="c" hint-placeholder-count="34"><div style="display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #1E1E1E"><span style="color:#9FE1CB">{{ c.n }}</span><span>{{ c.xy }}</span></div></sc-for>
+        </div>
+        <div>Pads: columna i (0–7) en x = {{ padX0 }} + 15 i; fila j (0–3) en y = 44.5 + 15 j. La M4 se fija con 8 de sus 16 agujeros (x 2, 58, 62, 118 × y 15, 45) a espárragos PEM M2.5 de la chapa.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">2</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Tabla de alineación encoder ↔ soft-key</span><span style="font-size:14px;color:#8A8A8A">px = (x_mm − {{ actX0 }}) / 0.12109 · área activa desde x {{ actX0 }}</span></div>
+    <div style="display:grid;grid-template-columns:90px 110px 80px 150px 170px 120px 190px 120px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:18px;color:#F2F2F2">
+      <div style="display:contents;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">ENCODER</div><div style="padding:8px 0">X FÍSICO</div><div style="padding:8px 0">Y</div><div style="padding:8px 0">X PROYECTADO PX</div><div style="padding:8px 0">UNIFORME · CENTRO PX</div><div style="padding:8px 0">Δ MM</div><div style="padding:8px 0">REDISTRIB. · CENTRO PX</div><div style="padding:8px 0">Δ MM</div></div>
+      <sc-for list="{{ alignV }}" as="a" hint-placeholder-count="8">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#9FE1CB">{{ a.n }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.x }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#8A8A8A">{{ a.y }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.px }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.pu }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:{{ a.cu }}">{{ a.du }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ a.pr }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:{{ a.cr }}">{{ a.dr }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:10px;width:640px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">QUÉ PERILLA · PASO = Ø + 8 (REGLA 1 AL LÍMITE)</div>
+        <div style="display:grid;grid-template-columns:70px 70px 110px 140px 160px 90px;font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:18px;color:#F2F2F2">
+          <div style="display:contents;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">Ø</div><div style="padding:8px 0">PASO</div><div style="padding:8px 0">FILA</div><div style="padding:8px 0">Δ UNIFORME</div><div style="padding:8px 0">Δ REDISTRIB.</div><div style="padding:8px 0">≤ 25</div></div>
+          <sc-for list="{{ knobOpts }}" as="o" hint-placeholder-count="4">
+            <div style="display:contents">
+              <div style="border-top:1px solid #262626;padding:8px 0;color:{{ o.c }};font-weight:{{ o.fw }}">{{ o.d }}</div>
+              <div style="border-top:1px solid #262626;padding:8px 0">{{ o.p }}</div>
+              <div style="border-top:1px solid #262626;padding:8px 0">{{ o.row }}</div>
+              <div style="border-top:1px solid #262626;padding:8px 0">{{ o.u }}</div>
+              <div style="border-top:1px solid #262626;padding:8px 0">{{ o.rd }}</div>
+              <div style="border-top:1px solid #262626;padding:8px 0;color:{{ o.sc }};font-weight:600">{{ o.s }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-bottom:4px">TRADE-OFF</div>
+        <div>La fila de 8 encoders siempre es más ancha que la pantalla, porque 19.4 mm por celda no alcanza para una perilla cómoda más 8 mm de separación. El desfase de los extremos crece 3.5 mm por cada mm de paso.</div>
+        <div>Ø 15 da el mejor desfase (≤ 12.7 mm), pero es chica para la mano y se siente de equipo de bolsillo. Ø 18 es el punto en que la regla 6 todavía pasa con margen si la GUI acompaña.</div>
+        <div>Redistribuir las celdas no cambia la pantalla, solo la GUI: las celdas E1 y E8 quedan de 100 px (12.1 mm, ~8 caracteres a 18 px) y empujan las etiquetas hacia los bordes. E4 y E5 quedan a 2.1 mm de su perilla.</div>
+        <div>Sacar E1 y E8 fuera del ancho de la pantalla ya ocurre (x {{ e1x }} y {{ e8x }}; la pantalla va de {{ actX0 }} a {{ actX1 }}). La perilla en sí queda fuera; la etiqueta queda pegada al borde.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">3</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Corte lateral · proyección en x · 1:1</span><span style="font-size:14px;color:#8A8A8A">Pi y portadora están a x distintos: se dibujan proyectados</span></div>
+    <div style="background:#0C0C0C;border:1px solid #262626;padding:20px;align-self:flex-start">
+      <svg width="{{ secW }}" height="{{ secH }}" viewBox="{{ secVB }}" style="display:block;font-family:'IBM Plex Mono',monospace">
+        <line x1="-14" y1="{{ secFloor }}" x2="{{ secFloorX }}" y2="{{ secFloor }}" style="stroke:#5A5A6E;stroke-width:0.3px"></line>
+        <sc-for list="{{ secPolys }}" as="p" hint-placeholder-count="24"><polygon points="{{ p.p }}" fill="{{ p.f }}" stroke="{{ p.s }}" style="stroke-width:{{ p.w }}px;stroke-dasharray:{{ p.d }}"></polygon></sc-for>
+        <line x1="{{ sight.x0 }}" y1="{{ sight.y0 }}" x2="{{ sight.x1 }}" y2="{{ sight.y1 }}" style="stroke:#E8B84A;stroke-width:0.3px;stroke-dasharray:1.5 0.8"></line>
+        <circle cx="{{ sight.fx }}" cy="{{ sight.fy }}" r="0.9" fill="#E8B84A"></circle>
+        <sc-for list="{{ secLabels }}" as="l" hint-placeholder-count="16"><text x="{{ l.x }}" y="{{ l.y }}" fill="{{ l.c }}" text-anchor="{{ l.a }}" style="font-size:2.2px">{{ l.t }}</text></sc-for>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;font-size:13px;line-height:20px;color:#B8B8B8">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">APILADO BAJO LA CARA SUPERIOR (NORMAL AL PANEL)</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:88px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">0 – 2</span><span>Aluminio (1.2 en rebajes Choc)</span>
+          <span style="color:#9FE1CB">3.4 – 5.0</span><span>PCB-K1 (frente + edición) y PCB-K2 (modos)</span>
+          <span style="color:#9FE1CB">8.5 – 10.1</span><span>NeoTrellis M4; botón de 10 asoma 3; fichas hasta 17</span>
+          <span style="color:#9FE1CB">12 – 13.6</span><span>PCB-A, base de los EC11</span>
+          <span style="color:#9FE1CB">2.5 – 11.1</span><span>Faders RS6011 (cuerpo 7) + PCB-F</span>
+          <span style="color:#9FE1CB">2 – 16.8</span><span>Módulo de pantalla 14.8</span>
+          <span style="color:#9FE1CB">16.8 – 22.4</span><span>Placa adaptadora + Pi 5</span>
+          <span style="color:#9FE1CB">22.4 – 31.8</span><span>Active Cooler</span>
+          <span style="color:#9FE1CB">38.4 – 52</span><span>Audio+ V2 y sus piezas (apilado medido: 50 desde el vidrio)</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">ALTURAS SOBRE LA MESA</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:88px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">0 – 6</span><span>Patas Ø 14 × 6, goma</span>
+          <span style="color:#9FE1CB">6 – 9</span><span>Fondo PETG con 14 ranuras de entrada</span>
+          <span style="color:#9FE1CB">11 – 31</span><span>Portadora + Teensy en zócalo</span>
+          <span style="color:#9FE1CB">{{ piClear }}</span><span>Holgura HAT – fondo en el punto más bajo</span>
+          <span style="color:#9FE1CB">28 / {{ hb }}</span><span>Altura total frente / fondo</span>
+        </div>
+        <div>Pi colgada del módulo con los componentes hacia el piso. El aire entra por las ranuras del fondo, corre por los {{ piClear }} mm bajo el HAT y por el hueco de 6.6 mm entre cooler y HAT, y sale por las ranuras traseras centradas sobre la Pi.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">LÍNEA DE VISTA Y CABLE DSI</div>
+        <div>Línea ámbar: ojo a 42° bajo la horizontal (450 mm sobre la mesa, 500 mm de distancia), {{ sightAng }}° respecto del panel. Pasa sobre la yema apoyada en la perilla (punto ámbar) y llega al borde inferior del área activa.</div>
+        <div>Con la Pi atornillada al módulo, el FPC DSI recorre ~ 60 mm entre conectores con un pliegue en S de R ≥ 5. Pedir FPC de 100 mm y confirmar en qué borde del módulo sale su conector.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;color:#7A7A7A">ÁNGULO Y FRENTE · CON LA PI CORRIDA AL MÁXIMO HACIA ATRÁS</div>
+      <div style="display:grid;grid-template-columns:150px 140px 170px 160px 170px minmax(0,1fr);font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:18px;color:#F2F2F2;max-width:1300px">
+        <div style="display:contents;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">OPCIÓN</div><div style="padding:8px 0">FRENTE / FONDO</div><div style="padding:8px 0">VISTA AL PANEL</div><div style="padding:8px 0">REGLA 5</div><div style="padding:8px 0">HAT – PISO</div><div style="padding:8px 0">NOTA</div></div>
+        <sc-for list="{{ wedgeOpts }}" as="w" hint-placeholder-count="4">
+          <div style="display:contents">
+            <div style="border-top:1px solid #262626;padding:8px 0;color:{{ w.c }};font-weight:{{ w.fw }}">{{ w.n }}</div>
+            <div style="border-top:1px solid #262626;padding:8px 0">{{ w.h }}</div>
+            <div style="border-top:1px solid #262626;padding:8px 0">{{ w.a }}</div>
+            <div style="border-top:1px solid #262626;padding:8px 0;color:{{ w.rc }}">{{ w.r5 }}</div>
+            <div style="border-top:1px solid #262626;padding:8px 0;color:{{ w.clc }}">{{ w.cl }}</div>
+            <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Sans',sans-serif;color:#B8B8B8">{{ w.t }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">4</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Panel de conectores · pared trasera · 1:1</span><span style="font-size:14px;color:#8A8A8A">Visto desde atrás: la izquierda del dibujo es el lado derecho del equipo. Cotas x del panel frontal, z desde la mesa.</span></div>
+    <div style="display:flex;gap:40px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:20px;flex:none">
+        <svg width="{{ rearW }}" height="{{ rearH }}" viewBox="{{ rearVB }}" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <rect x="0" y="0" width="{{ W }}" height="{{ wallH }}" fill="#16171A" stroke="#9FE1CB" style="stroke-width:0.3px"></rect>
+          <rect x="0" y="-2" width="{{ W }}" height="2" fill="#3A3C42"></rect>
+          <rect x="12" y="{{ wallH }}" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+          <rect x="{{ footR }}" y="{{ wallH }}" width="14" height="6" fill="#0C0C0C" stroke="#7A7A7A" style="stroke-width:0.2px"></rect>
+          <line x1="-12" y1="{{ tableY }}" x2="{{ tableX }}" y2="{{ tableY }}" style="stroke:#5A5A6E;stroke-width:0.3px"></line>
+          <sc-for list="{{ exSlots }}" as="s" hint-placeholder-count="12"><rect x="{{ s.x }}" y="{{ s.y }}" width="3" height="24" rx="1.5" fill="#0A0A0A" stroke="#5A5A6E" style="stroke-width:0.15px"></rect></sc-for>
+          <text x="{{ exT.x }}" y="{{ exT.y }}" text-anchor="middle" fill="#7A6FE0" style="font-size:2px">SALIDA DE AIRE PI · 12 × 3 × 24</text>
+          <sc-for list="{{ connsV }}" as="c" hint-placeholder-count="9">
+            <rect x="{{ c.ex }}" y="{{ c.ey }}" width="{{ c.ew }}" height="{{ c.eh }}" rx="{{ c.er }}" fill="none" stroke="#5A5A6E" style="stroke-width:0.2px;stroke-dasharray:0.8 0.5"></rect>
+            <rect x="{{ c.hx }}" y="{{ c.hy }}" width="{{ c.hw }}" height="{{ c.hh }}" rx="{{ c.hr }}" fill="#0A0A0A" stroke="#F2F2F2" style="stroke-width:0.25px"></rect>
+            <text x="{{ c.x }}" y="{{ c.ty }}" text-anchor="middle" fill="#F2F2F2" style="font-size:2px;font-weight:600">{{ c.n }}</text>
+            <text x="{{ c.x }}" y="{{ c.ty2 }}" text-anchor="middle" fill="#9FE1CB" style="font-size:1.7px">{{ c.s }}</text>
+          </sc-for>
+          <text x="{{ halfW }}" y="{{ rearDimY }}" text-anchor="middle" fill="#B8B8B8" style="font-size:2.6px">{{ W }} · alto de la pared {{ wallHt }} ({{ hb }} con patas)</text>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:360px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A">POSICIONES · X PANEL / Z DESDE LA MESA</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:120px minmax(0,1fr);gap:0 8px">
+          <sc-for list="{{ connList }}" as="c" hint-placeholder-count="9"><span style="color:#9FE1CB">{{ c.n }}</span><span>{{ c.pos }}</span></sc-for>
+          <span style="color:#9FE1CB">PHONES</span><span>lateral izquierdo · 3.5 mm Ø 6.2 · y 50, z 18</span>
+        </div>
+        <div>Rectángulo punteado: envolvente del macho (1/4" Ø 20, 3.5 mm Ø 12, RJ45 18 × 16, USB-A 18 × 11, USB-C 14 × 9). Mínimo entre envolventes: {{ connMin }} mm.</div>
+        <div>Lado derecho (portadora): USB de la Teensy y alimentación de 5 V / 3 A salen directos de la placa. Lado izquierdo y centro (Pi): extensiones de panel cortas para Ethernet, USB-A, USB-C y microSD. La Pi va apaisada y sus puertos miran al costado.</div>
+        <div>Audio del Audio+ V2: salidas 1/4" TS de panel cableadas desde el HAT. Las RCA no se usan: el 1/4" va a monitores y mixers sin adaptador, aguanta tirones y es el mismo jack del Brain. Auriculares 3.5 al costado, donde se enchufan sin girar el equipo.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7A7A7A;padding-top:8px">UNA SOLA ENTRADA (PROPUESTA v2)</div>
+        <div>Fuente 5.1 V / 6 A con conector XT30 o barril 5.5/2.5 → placa de distribución con dos ramas: 3 A con polyfuse a la portadora y 5 A a la Pi por un cable USB-C interno. Hay que activar <span style="font-family:'IBM Plex Mono',monospace;color:#F2F2F2">usb_max_current_enable=1</span> en la Pi porque la fuente no negocia PD. A cambio, se pierde la protección y el aviso de bajo voltaje de la fuente oficial.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">5</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Vista explotada · piezas y materiales</span></div>
+    <div style="display:flex;gap:48px;align-items:flex-start">
+      <div style="width:720px;flex:none;display:flex;flex-direction:column;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#F2F2F2">
+        <sc-for list="{{ layers }}" as="l" hint-placeholder-count="12">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:24px;text-align:right;color:#7A7A7A">{{ l.i }}</div>
+            <div style="width:{{ l.span }}px;flex:none;position:relative;height:{{ l.h }}px"><div style="position:absolute;left:{{ l.ml }}px;top:0;width:{{ l.w }}px;height:{{ l.h }}px;background:{{ l.c }};border:1px solid {{ l.b }};box-sizing:border-box"></div></div>
+            <div style="color:#F2F2F2;white-space:nowrap">{{ l.n }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:28px 190px minmax(0,1fr);font-size:12.5px;line-height:18px;color:#C8C8C8">
+        <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:6px 0">#</div><div style="padding:6px 0">PIEZA</div><div style="padding:6px 0">MATERIAL · PROCESO · FIJACIÓN</div></div>
+        <sc-for list="{{ bom }}" as="b" hint-placeholder-count="12">
+          <div style="display:contents">
+            <div style="border-top:1px solid #262626;padding:6px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ b.i }}</div>
+            <div style="border-top:1px solid #262626;padding:6px 0;color:#F2F2F2">{{ b.n }}</div>
+            <div style="border-top:1px solid #262626;padding:6px 0">{{ b.d }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">5.1</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Impresión · Ender 3 V3</span><span style="font-size:14px;color:#8A8A8A">Cama 220 × 220, alto 250 (asumido: el mensaje llegó cortado)</span></div>
+    <div style="display:flex;gap:40px;align-items:flex-start">
+      <div style="background:#0C0C0C;border:1px solid #262626;padding:20px;flex:none">
+        <svg width="{{ prW }}" height="{{ prH }}" viewBox="{{ prVB }}" style="display:block;font-family:'IBM Plex Mono',monospace">
+          <sc-for list="{{ piecesV }}" as="p" hint-placeholder-count="4">
+            <rect x="{{ p.x }}" y="{{ p.y }}" width="{{ p.w }}" height="{{ p.h }}" fill="#16171A" stroke="#9FE1CB" style="stroke-width:0.3px"></rect>
+            <text x="{{ p.tx }}" y="{{ p.ty }}" text-anchor="middle" fill="#F2F2F2" style="font-size:5px;font-weight:600">{{ p.n }}</text>
+            <text x="{{ p.tx }}" y="{{ p.ty2 }}" text-anchor="middle" fill="#9FE1CB" style="font-size:3.4px">{{ p.dim }}</text>
+          </sc-for>
+          <rect x="{{ bed.x }}" y="{{ bed.y }}" width="220" height="220" fill="none" stroke="#E8B84A" style="stroke-width:0.4px;stroke-dasharray:3 1.5"></rect>
+          <text x="{{ bed.tx }}" y="{{ bed.ty }}" fill="#E8B84A" style="font-size:3.4px">CAMA 220 × 220 SOBRE TD</text>
+          <text x="{{ prMidX }}" y="{{ prBot }}" text-anchor="middle" fill="#B8B8B8" style="font-size:3.6px">FRENTE · planta del cuerpo {{ W }} × {{ pb }}</text>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:20px;color:#B8B8B8">
+        <div>El cuerpo entero ({{ W }} × {{ pb }}) no entra ni en diagonal: haría falta (ancho + fondo) / √2 ≤ 220, y da {{ diag }}. Se corta en cuatro bandejas con el piso integrado, una por cuadrante, que se imprimen boca arriba sin soportes.</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:20px;color:#F2F2F2;display:grid;grid-template-columns:120px minmax(0,1fr);gap:0 8px">
+          <span style="color:#9FE1CB">Corte en x</span><span>{{ halfW }} · bajo la columna de pads, sin piezas apoyadas en el piso</span>
+          <span style="color:#9FE1CB">Corte en planta</span><span>{{ halfPb }} · delante de la portadora (empieza en {{ carY }})</span>
+          <span style="color:#9FE1CB">Unión</span><span>lengüeta 2 × 3 en todo el corte + 3 insertos M3 por costura en torres internas</span>
+          <span style="color:#9FE1CB">Rigidez</span><span>la chapa de aluminio atornilla las cuatro piezas (10 PEM M3, al menos 2 por pieza)</span>
+          <span style="color:#9FE1CB">Ranuras</span><span>las 14 del piso caen en TI y TD, con el canto paralelo a X para imprimir sin puentes largos</span>
+        </div>
+        <div>Pieza más alta: TI/TD con {{ maxH }} mm (cama: 250). Holgura en la cama de {{ bedGap }} mm por lado para brim. La cara de corte va a 0.2 mm de capa y con 4 perímetros para que la lengüeta no se abra.</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">6</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Reporte de reglas</span><span style="font-size:14px;color:#8A8A8A">COND = pasa si se confirma la medida indicada</span></div>
+    <div style="display:grid;grid-template-columns:40px 320px 230px 110px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">REGLA</div><div style="padding:8px 0">VALOR MEDIDO</div><div style="padding:8px 0">ESTADO</div><div style="padding:8px 0">DETALLE</div></div>
+      <sc-for list="{{ rulesV }}" as="r" hint-placeholder-count="13">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ r.i }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">{{ r.t }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#F2F2F2">{{ r.v }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;font-weight:600;color:{{ r.c }}">{{ r.s }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ r.m }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">7</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Renders · producto terminado</span><span style="font-size:14px;color:#8A8A8A">Modelo 3D de la misma geometría: arrastrar para girar · descarga OBJ / GLB · <a href="GroovePush 3D v2.html">abrir a pantalla completa</a></span></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px">
+      <div style="display:flex;flex-direction:column;gap:8px"><iframe src="{{ src3dF }}" style="width:100%;height:520px;border:1px solid #262626;background:#d9d6cf;display:block"></iframe><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A8A8A">3/4 DE FRENTE</div></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><iframe src="{{ src3dR }}" style="width:100%;height:520px;border:1px solid #262626;background:#d9d6cf;display:block"></iframe><div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8A8A8A">TRASERA</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:24px">
+    <div style="display:flex;gap:16px;align-items:baseline;border-bottom:1px solid #262626;padding-bottom:12px"><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;color:#5DCAA5">8</span><span style="font-size:28px;font-weight:600;color:#F2F2F2">Medidas a verificar con calibre antes de fabricar</span></div>
+    <div style="display:grid;grid-template-columns:28px 280px 220px minmax(0,1fr);font-size:13px;line-height:20px;color:#C8C8C8">
+      <div style="display:contents;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;color:#7A7A7A"><div style="padding:8px 0">#</div><div style="padding:8px 0">MEDIDA</div><div style="padding:8px 0">ASUMIDO</div><div style="padding:8px 0">QUÉ CAMBIA SI DIFIERE</div></div>
+      <sc-for list="{{ verify }}" as="v" hint-placeholder-count="14">
+        <div style="display:contents">
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#7A7A7A">{{ v.i }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;color:#F2F2F2">{{ v.n }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0;font-family:'IBM Plex Mono',monospace;color:#E8B84A">{{ v.a }}</div>
+          <div style="border-top:1px solid #262626;padding:8px 0">{{ v.d }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;knob&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;15&quot;,&quot;18&quot;,&quot;20&quot;],&quot;default&quot;:&quot;18&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Geometría&quot;},&quot;gui&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;redistribuida&quot;,&quot;uniforme&quot;],&quot;default&quot;:&quot;redistribuida&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Geometría&quot;},&quot;angle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;12&quot;,&quot;14&quot;,&quot;15&quot;],&quot;default&quot;:&quot;14&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Geometría&quot;}}">
+class Component extends DCLogic {
+  state = { M: null };
+  componentDidMount() { import('./groovepush-geometry-v2.js').then(M => this.setState({ M })); }
+  renderVals() {
+    const knob = String(this.props.knob ?? '18'), gui = this.props.gui ?? 'redistribuida', angle = String(this.props.angle ?? '14');
+    const q = `knob=${knob}&gui=${gui}&angle=${angle}`;
+    const base = { knob, gui, angle, src3dF: `GroovePush 3D v2.html?view=front&${q}`, src3dR: `GroovePush 3D v2.html?view=rear&${q}` };
+    const M = this.state.M;
+    if (!M) return base;
+    const G = M.build({ knob, gui, angle }), f = G.f1, D = G.D, W = G.W, cx = G.cx;
+    const T = { teal: '#5DCAA5', mint: '#9FE1CB', purple: '#7A6FE0', amber: '#E8B84A', red: '#E8705A', white: '#F2F2F2' };
+    const gc = { 'Modos': T.teal, 'Edición': T.purple, 'Transporte': T.white, 'Navegación': T.mint, 'Modificador': T.amber };
+    const sr = (x0, x1, y0, y1, label) => ({ x: f(x0), y: f(D - y1), w: f(x1 - x0), h: f(y1 - y0), tx: f(x0 + 1), ty: f(D - y1 + 2.6) });
+
+    // vista superior
+    const cum = []; G.cell.reduce((a, w) => { cum.push(a + w); return a + w; }, 0);
+    const stripY0 = D - (G.act.y0 + 8.8), stripY1 = D - G.act.y0;
+    const ctr = []; G.cell.reduce((a, w) => { ctr.push(a + w / 2); return a + w; }, 0);
+    const top = {
+      topW: (W + 36) + 'mm', topH: (D + 30) + 'mm', topVB: `-16 -14 ${W + 36} ${D + 30}`,
+      W, D, cx, limY: f(D - 15), limTY: f(D - 15 + 3.2),
+      modR: sr(G.mod.x0, G.mod.x1, G.mod.y0, G.mod.y1), winR: sr(G.win.x0, G.win.x1, G.win.y0, G.win.y1), actR: sr(G.act.x0, G.act.x1, G.act.y0, G.act.y1),
+      piR: (() => { const s = sr(G.pi.x0, G.pi.x1, G.pi.y0, G.pi.y1); s.ty = f(D - G.pi.y0 - 1.2); return s; })(),
+      carR: (() => { const c = G.carrier, y0 = c.X0 / Math.cos(G.th), y1 = c.X1 / Math.cos(G.th); const s = sr(c.x0, c.x1, y0, y1); s.ty = f(D - y0 - 1.2); return s; })(),
+      stripR: { x: f(G.act.x0), y: f(stripY0), w: '155', h: '8.8' },
+      cellLines: cum.slice(0, 7).map(px => ({ x: f(G.act.x0 + px * M.MMPX), y0: f(stripY0), y1: f(stripY1) })),
+      labelLinks: G.encs.map((e, i) => { const lx = G.act.x0 + ctr[i] * M.MMPX; return { x0: f(e.x), y0: f(D - e.y), x1: f(lx), y1: f(stripY0 + 4.35), ty: f(stripY0 - 1.2), t: 'L' + (i + 1) }; }),
+      cellTxt: G.cell.join(' · ') + ' px',
+      scrT: { x: f(cx), y: f(D - G.act.cy - 6), y2: f(D - G.act.cy - 2.6), y3: f(D - G.act.cy + 0.8), c: f(cx) + ', ' + f(G.act.cy) },
+      m4R: { x: f(G.m4.x0), x1: f(G.m4.x1), y: f(D - 97), ty: f(D - 97 - 1) }, m4Edge: f(D - 37), m4Res: { y: f(D - 37), ty: f(D - 3.6) },
+      m4Holes: G.m4.holes.map(h => ({ x: f(h.x), y: f(D - h.y) })),
+      padsV: G.pads.map(p => ({ x: f(p.x0), y: f(D - p.y1) })),
+      fadersV: G.faders.map(fd => ({ n: fd.n, x: f(fd.x), ex: f(fd.x0), ey: f(D - fd.y1), bx: f(fd.body.x0), by: f(D - fd.body.y1), sx: f(fd.x - 1.5), sy: f(D - fd.slot.y1), cy: f(D - fd.y1), cy2: f(D - fd.y0 - 14), ty: f(D - fd.body.y1 - 1.4) })),
+      keysV: G.keys.map(k => ({ n: k.n, c: gc[k.g], cx: f(k.x0), cy: f(D - k.y1), hx: f(k.x - 7), hy: f(D - k.y - 7), lx: f(k.x), ly: f(D - k.y + 0.6) })),
+      encsV: G.encs.map(e => ({ n: e.n, x: f(e.x), y: f(D - e.y), r: f(e.r), ty: f(D - e.y - e.r - 1.2) })),
+      groupTags: [
+        { t: 'MODOS', x: f(cx - 105), y: f(D - (G.keys[4].y1) - 1.6), c: T.teal },
+        { t: 'EDICIÓN', x: f(cx - 83.25), y: f(D - 93.5 - 1.6), c: T.purple },
+        { t: 'TRANSPORTE', x: f(cx - 28.5), y: f(D - 8), c: T.white },
+        { t: 'NAVEGACIÓN', x: f(cx + 65.25), y: f(D - 8), c: T.mint },
+        { t: 'SHIFT', x: f(cx - 93), y: f(D - 8), c: T.amber }
+      ],
+      axisY: f(D + 6), axisTX: f(cx + 1), dimY: f(D + 10), dimTY: f(D + 14.5), dimX: f(W + 5), dimTX: f(W + 9), halfD: f(D / 2),
+      dimRot: `rotate(90 ${f(W + 9)} ${f(D / 2)})`, pb: f(G.Pb)
+    };
+    const coordList = [
+      ...G.encs.map(e => ({ n: e.n, xy: `(${f(e.x)}, ${f(e.y)})` })),
+      ...G.keys.map(k => ({ n: k.n, xy: `(${f(k.x)}, ${f(k.y)})` })),
+      ...G.faders.map(fd => ({ n: fd.n + ' (60 mm)', xy: `(${f(fd.x)}, ${f(fd.y)})` })),
+      { n: 'PANTALLA', xy: `(${f(cx)}, ${f(G.act.cy)})` }
+    ];
+
+    // alineación
+    const dc = v => Math.abs(v) <= 25 ? (Math.abs(v) <= 20 ? T.white : T.amber) : T.red;
+    const sgn = v => (v > 0 ? '+' : '') + f(v);
+    const alignV = G.align.map(a => ({ n: a.n, x: f(a.x), y: f(G.encY), px: f(a.px), pu: f(a.pu), du: sgn(a.du), cu: dc(a.du), pr: f(a.pr), dr: sgn(a.dr), cr: dc(a.dr) }));
+    const knobOpts = [15, 18, 20, 22].map(k => { const g = M.build({ knob: k }); const u = g.offMax('uniforme'), rd = g.offMax('redistribuida'), best = Math.min(u, rd);
+      return { d: 'Ø ' + k + (k === 18 ? ' ✓' : ''), c: k === 18 ? T.teal : T.white, fw: k === 18 ? '600' : '400', p: g.pitch, row: f(7 * g.pitch + k), u: f(u), rd: f(rd), s: best <= 25 ? 'PASA' : 'NO PASA', sc: best <= 25 ? T.teal : T.red }; });
+
+    // corte
+    const Ztop = G.Hb + 26, P = (y, n) => { const [X, Z] = G.toP(y, n); return f(X) + ',' + f(Ztop - Z); };
+    const PP = (y, n) => { const [X, Z] = G.toP(y, n); return [X, Ztop - Z]; };
+    const poly = (y0, y1, n0, n1) => [P(y0, n0), P(y1, n0), P(y1, n1), P(y0, n1)].join(' ');
+    const prect = (X0, X1, Z0, Z1) => [[X0, Z0], [X1, Z0], [X1, Z1], [X0, Z1]].map(([x, z]) => f(x) + ',' + f(Ztop - z)).join(' ');
+    const S = G.STACK, pi = G.pi, e = G.encY, r = G.r, mb = G.keys[0].y;
+    const poly_ = (p, fl, s, w, d) => ({ p, f: fl, s, w: w || 0.2, d: d || 'none' });
+    const body = [[0, G.FEET], [G.Pb, G.FEET]].map(([x, z]) => f(x) + ',' + f(Ztop - z)).join(' ') + ' ' + P(D, 2) + ' ' + P(0, 2);
+    const secPolys = [
+      poly_(prect(12, 26, 0, 6), '#0C0C0C', '#7A7A7A'), poly_(prect(G.Pb - 26, G.Pb - 12, 0, 6), '#0C0C0C', '#7A7A7A'),
+      poly_(body, '#16171A', T.mint, 0.3),
+      poly_(prect(G.carrier.X0, G.carrier.X1, G.carrier.Z0, G.carrier.Z0 + 1.6), '#2A2810', T.amber, 0.2, '1 0.6'),
+      poly_(prect(G.carrier.X0 + 20, G.carrier.X0 + 81, G.carrier.Z0 + 1.6, G.carrier.Z1), 'none', T.amber, 0.2, '1 0.6'),
+      poly_(poly(0, D, 0, 2), '#3A3C42', T.white),
+      poly_(poly(G.mod.y0, G.mod.y1, 2, 16.8), '#0A0A0A', T.teal, 0.25),
+      poly_(poly(pi.y0, pi.y1, S.pcb[0], S.pcb[1]), '#0E5040', T.purple),
+      poly_(poly(pi.y0 + 2, pi.y0 + 6, S.std[0], S.std[1]), '#5A5A6E', 'none'), poly_(poly(pi.y1 - 6, pi.y1 - 2, S.std[0], S.std[1]), '#5A5A6E', 'none'),
+      poly_(poly(pi.y0 + 8, pi.y0 + 48, S.cool[0], S.cool[1]), '#2A2C30', T.purple, 0.15),
+      poly_(poly(pi.y0, pi.y1, S.hat[0], S.hat[1]), '#2B2758', T.purple),
+      poly_(poly(pi.y0 + 4, pi.y1 - 4, S.hatParts[0], S.hatParts[1]), '#1C1C1C', T.purple, 0.15),
+      poly_(poly(G.mod.y0 + 4, G.mod.y1 - 4, S.std[0], S.std[0] + 1.5), 'none', T.purple, 0.15, '0.8 0.5'),
+      poly_(poly(e - 9, e + 11, 12, 13.6), '#0E5040', '#1D9E75'),
+      poly_(poly(e - 6, e + 6, 2, 12), '#242424', T.mint, 0.15),
+      poly_(poly(e - r, e + r, -18, -1), 'none', T.mint, 0.2, '0.8 0.5'),
+      poly_(poly(14, 97, 3.4, 5.0), '#2B2758', T.purple), poly_(poly(mb - 10, mb + 84, 3.4, 5.0), 'none', T.purple, 0.2, '0.8 0.5'),
+      poly_(poly(15.5, 32.5, -7, -1), '#2A2C30', T.white, 0.15),
+      poly_(poly(37, 97, 8.5, 10.1), '#2B2758', T.purple, 0.15), poly_(poly(39.5, 94.5, -3, 8.5), 'none', T.white, 0.15, '0.6 0.4'),
+      poly_(poly(31, 37, 10.1, 17), '#1C1C1C', T.amber, 0.15), poly_(poly(12, 37, 10.1, 17), 'none', T.amber, 0.2, '1 0.6'),
+      poly_(poly(35, 110, 2.5, 9.5), 'none', T.mint, 0.2, '1 0.6'), poly_(poly(95.5, 109.5, -14, -1), 'none', T.teal, 0.2, '0.8 0.5')
+    ];
+    const [ax, ay] = PP(G.act.y0, 0), [fx, fy] = PP(e + r, -20), sa = 42 * Math.PI / 180;
+    const sight = { x0: f(ax), y0: f(ay), x1: f(ax - 95 * Math.cos(sa)), y1: f(ay - 95 * Math.sin(sa)), fx: f(fx), fy: f(fy) };
+    const L = (y, n, t, c, a, dx = 0, dy = 0) => { const [X, Y] = PP(y, n); return { x: f(X + dx), y: f(Y + dy), t, c, a: a || 'start' }; };
+    const secLabels = [
+      { x: '-14', y: f(Ztop - 20), t: 'FRENTE', c: '#7A7A7A', a: 'start' },
+      L(G.act.cy, -1, 'PANTALLA · MÓDULO 2–8', T.teal, 'middle'),
+      L(pi.y0 + 40, S.hatParts[1], 'PI 5 + COOLER + AUDIO+ V2', T.purple, 'middle', 0, 4),
+      L(e, -19, 'PERILLA Ø' + G.knob, T.mint, 'middle'),
+      L(e, 14, 'PCB-A −12', '#1D9E75', 'middle', 0, 3),
+      L(67, 13, 'M4 · FADER 60 (PROY.)', T.purple, 'middle', 0, 4),
+      L(20, 17, 'FICHAS M4 →', T.amber, 'middle', 0, 4),
+      L(24, -8, 'FILA FRONTAL', T.white, 'middle'),
+      { x: f((G.carrier.X0 + G.carrier.X1) / 2), y: f(Ztop - G.carrier.Z1 - 1.2), t: 'PORTADORA + TEENSY (PROY.)', c: T.amber, a: 'middle' },
+      { x: f(G.Pb + 3), y: f(Ztop - 50), t: '→ SALIDA TRASERA', c: T.teal, a: 'start' },
+      { x: f(G.toP(pi.y0, 0)[0]), y: f(Ztop + 4.5), t: '↑ ENTRADA POR EL FONDO (PATAS 6)', c: T.teal, a: 'start' },
+      { x: f(sight.x1 - 1), y: f(+sight.y1 - 1.5), t: 'VISTA 42°', c: T.amber, a: 'start' },
+      { x: f(G.Pb + 3), y: f(Ztop - G.Hb / 2), t: f(G.Hb), c: '#B8B8B8', a: 'start' },
+      { x: f(G.Pb / 2), y: f(Ztop + 10), t: f(G.Pb) + ' en planta', c: '#B8B8B8', a: 'middle' }
+    ];
+
+    // panel trasero
+    const H = G.Hb, rv = z => f(H - z);
+    const connsV = G.conns.map(c => { const x = W - c.x;
+      const env = c.r ? { ex: f(x - c.r), ey: rv(c.z + c.r), ew: f(2 * c.r), eh: f(2 * c.r), er: f(c.r) } : { ex: f(x - c.w / 2), ey: rv(c.z + c.h / 2), ew: f(c.w), eh: f(c.h), er: '1' };
+      const hole = c.r ? { hx: f(x - c.hole), hy: rv(c.z + c.hole), hw: f(2 * c.hole), hh: f(2 * c.hole), hr: f(c.hole) } : { hx: f(x - c.hole[0] / 2), hy: rv(c.z + c.hole[1] / 2), hw: f(c.hole[0]), hh: f(c.hole[1]), hr: '0.6' };
+      const topZ = c.z + (c.r || c.h / 2);
+      return { n: c.n, s: c.s, x: f(x), ty: rv(topZ + 4.2), ty2: rv(topZ + 1.6), ...env, ...hole };
+    });
+    const ex = G.exhaust;
+    const rear = {
+      rearW: (W + 28) + 'mm', rearH: (H + 22) + 'mm', rearVB: `-14 -10 ${W + 28} ${f(H + 22)}`,
+      wallH: f(H - 6), footR: f(W - 26), tableY: f(H), tableX: f(W + 12), halfW: f(W / 2), rearDimY: f(H + 8), wallHt: f(H - 6),
+      exSlots: [...Array(ex.n)].map((_, i) => ({ x: f(W - (ex.x0 + i * ex.pitch) - 3), y: rv(ex.z0 + ex.h) })),
+      exT: { x: f(W - (ex.x0 + (ex.n - 1) * ex.pitch / 2) - 1.5), y: rv(ex.z0 + ex.h + 1.5) },
+      connsV, connMin: f(G.connMin),
+      connList: G.conns.map(c => ({ n: c.n, pos: `x ${c.x}, z ${c.z} · ${c.s}` }))
+    };
+
+    // explotada
+    const s = 1.4, span = Math.round(W * s);
+    const Ly = (i, n, x0, w, h, c, b) => ({ i, n, ml: Math.round(x0 * s), w: Math.round(w * s), h, c, b, span });
+    const layers = [
+      Ly(1, 'Perillas Ø' + G.knob + ' × 8 · caps de fader × 4', cx - 3.5 * G.pitch - r, 7 * G.pitch + 2 * r, 10, '#1B1B1D', '#5A5A6E'),
+      Ly(2, 'Keycaps 1u × 20', 16, W - 32, 7, '#24262A', '#5A5A6E'),
+      Ly(3, 'Panel aluminio 2 mm', 0, W, 6, '#3A3C42', '#F2F2F2'),
+      Ly(4, 'PCB-K1 + PCB-K2 · Choc V2 + LED + 2× MCP23017', 16, cx - 16 + 54, 5, '#2B2758', '#7A6FE0'),
+      Ly(5, 'Elastómero + NeoTrellis M4', cx - 60, 120, 9, '#2B2758', '#7A6FE0'),
+      Ly(6, 'Faders RS6011 × 4 + PCB-F', cx + 104, 42, 9, '#242424', '#9FE1CB'),
+      Ly(7, 'Módulo pantalla 7" + marco PETG', G.mod.x0, 189.3, 12, '#0A0A0A', '#5DCAA5'),
+      Ly(8, 'PCB-A · 8× EC11', cx - 105, 210, 5, '#0E5040', '#1D9E75'),
+      Ly(9, 'Adaptador + Pi 5 + Cooler + Audio+ V2', G.pi.x0 - 10, 105, 16, '#1C1C1C', '#7A6FE0'),
+      Ly(10, 'Portadora + Teensy 4.1', G.carrier.x0, 97, 12, '#2A2810', '#E8B84A'),
+      Ly(11, 'Cuerpo PETG, 4 bandejas (cuña ' + G.ang + '°)', 0, W, 30, '#16171A', '#9FE1CB'),
+      Ly(12, 'Patas', 0, W, 4, '#0C0C0C', '#5A5A6E')
+    ];
+    const bom = [
+      { i: 1, n: 'Perillas', d: 'Ø ' + G.knob + ' × 16, eje D 6 mm, aluminio o ABS negro con línea teal. Caps de fader 8 × 14 negro.' },
+      { i: 2, n: 'Keycaps Choc 1u', d: 'PBT negro 18 × 17, leyenda láser translúcida para el LED de cada tecla.' },
+      { i: 3, n: 'Panel superior', d: '6061-T6 2 mm, CNC, rebajes Choc de 0.8, R3, anodizado negro, serigrafía IBM Plex Mono. 8 PEM M3 por debajo.' },
+      { i: 4, n: 'PCB-K1 / PCB-K2', d: 'FR4 1.6. K1: 15 teclas (frente + edición). K2: 5 modos. Unidas por FFC. 2× MCP23017 en K1. A −3.4.' },
+      { i: 5, n: 'NeoTrellis M4', d: 'Adafruit 120 × 60 con elastómero (botón 10 × 10 × 10). 8 M2.5 a espárragos PEM de la chapa. Borde de fichas hacia el frente.' },
+      { i: 6, n: 'Faders + PCB-F', d: 'ALPS RS6011 60 mm, B50K, palanca 15, paso 11, en PCB-F a 9.5 bajo la cara superior.' },
+      { i: 7, n: 'Pantalla', d: 'Waveshare 7" DSI 189.32 × 120.24 × 14.8, R8. Marco PETG con junta de espuma 0.5; prensa el vidrio contra la chapa.' },
+      { i: 8, n: 'PCB-A', d: 'FR4 1.6, 8 EC11 a −12. Conector IDC a la portadora.' },
+      { i: 9, n: 'Adaptador + Pi 5 + HAT', d: 'Placa de aluminio 1.5 a los 4 M2.5 de 140 del módulo; lleva el patrón 58 × 49 de la Pi corrido ' + f(G.pi.shift) + ' mm hacia atrás. Active Cooler. Audio+ V2.' },
+      { i: 10, n: 'Portadora', d: 'Reutilizada del Brain, 97 × 100, en el piso a la derecha (x ' + (cx + 50) + '–' + (cx + 147) + ') sobre separadores M3 × 2.' },
+      { i: 11, n: 'Cuerpo', d: 'PETG antracita, FDM pared 3 mm, 0.2 mm de capa. 4 bandejas con piso integrado para la Ender 3 V3 (sección 5.1); 14 ranuras 3 × 30 en el piso.' },
+      { i: 12, n: 'Patas', d: '4 patas de goma Ø 14 × 6, una por bandeja.' }
+    ];
+
+    const cmap = { PASA: T.teal, COND: T.amber, 'NO PASA': T.red };
+    const rulesV = G.rules.map(x => ({ ...x, c: cmap[x.s] }));
+    const nP = rulesV.filter(x => x.s === 'PASA').length, nC = rulesV.filter(x => x.s === 'COND').length, nF = rulesV.filter(x => x.s === 'NO PASA').length;
+
+    const wedgeOpts = [[12, 28], [12, 32], [14, 28], [15, 28]].map(([a, h]) => { const g = M.build({ knob, gui, angle: a, front: h }); const r5 = g.rules[4]; const best = a === 14 && h === 28;
+      return { n: 'Cuña ' + a + '° · frente ' + h + (best ? ' ✓' : ''), c: best ? T.teal : T.white, fw: best ? '600' : '400', h: `${h} / ${Math.round(g.Hb)}`, a: (42 + a) + '°', r5: r5.s, rc: cmap[r5.s], cl: f(g.piClear) + ' mm', clc: g.piClear >= 8 ? T.white : T.red,
+        t: a === 12 && h === 28 ? 'Como el Brain, pero no llega a 8 mm bajo el HAT.' : a === 12 ? 'Pasa, pero la fila frontal queda 4 mm más alta para la muñeca.' : best ? 'Frente igual al Brain; 3 mm de margen sobre los 8 pedidos.' : 'Más margen, 4.5 mm más alto atrás y más horas de impresión.' }; });
+
+    const okc = v => v >= 1 ? T.white : T.red;
+    const checksV = G.checks.map(k => ({ n: k.n.toUpperCase(), v: f(k.v), c: k.v >= (k.n.startsWith('HAT') ? 8 : 1) ? T.teal : T.red, m: k.m }));
+    const changes = [
+      { i: 1, n: 'Módulo contra la pared trasera', a: 'borde en y 239.1 · chapa 241', b: 'chapa ' + D + ' · ' + f(G.checks[0].v) + ' libres', d: 'Panel 9 mm más largo. La pantalla no se mueve respecto de los encoders: la regla 5 queda igual (gap 17). Se mide la esquina inferior del módulo, que la cuña empuja hacia la pared.' },
+      { i: 2, n: 'Aire bajo el HAT', a: '~0.5 mm', b: f(G.piClear) + ' mm', d: 'Cuña 14° con frente 28 y Pi corrida ' + f(G.pi.shift) + ' mm hacia atrás en un adaptador sobre los 4 M2.5 del módulo. Más atrás no se puede: el apilado de 52 cuelga inclinado y quedaría a 1 mm de la pared.' },
+      { i: 3, n: 'Faders RS6011', a: 'cuerpo 75 en 71 libres', b: 'x ' + f(G.faders[0].x) + '–' + f(G.faders[3].x) + ' · y 35–110', d: 'Franja propia a la derecha de E8 y de la fila frontal. Recorrido de 60 completo; cap a ' + f(G.rules[6].v.split(' ')[0]) + ' mm de OCT ▲ abajo y a 4.6 de E8 arriba.' },
+      { i: 4, n: 'Fichas de la M4', a: 'hacia los encoders', b: 'hacia el frente · 25 libres', d: 'Borde largo de fichas en y 37. Los cables pasan bajo PCB-K1 (que llega a −6.8) y suben por el lateral derecho hasta la portadora y la Pi.' },
+      { i: 5, n: 'Modos bajo el módulo real', a: 'Choc sobre el módulo', b: 'x ' + (cx - 105) + ' · 2.3 libres', d: 'Consecuencia del ancho real del módulo (189.3). La columna se corre 12 mm a la izquierda; E1 sigue a 7.3 mm de BROWSE.' },
+      { i: 6, n: 'Ender 3 V3', a: 'cuerpo en 1–2 piezas', b: '4 bandejas ≤ 142 × 121', d: 'Ver sección 5.1.' }
+    ];
+    const prS = 1, bedX = W / 2 + (W / 2 - 220) / 2;
+    const piecesV = G.pieces.map(p => ({ n: p.n, x: f(p.X0 + 1), y: f(G.Pb - p.Y1 + 1), w: f(p.w - 2), h: f(p.d - 2), tx: f((p.X0 + p.X1) / 2), ty: f(G.Pb - (p.Y0 + p.Y1) / 2), ty2: f(G.Pb - (p.Y0 + p.Y1) / 2 + 6), dim: `${Math.round(p.w)} × ${Math.round(p.d)} × ${Math.round(p.h)}` }));
+    const v2extra = {
+      changes, checksV, piecesV, modeX: cx - 105, piShift: f(G.pi.shift), carX: (cx + 50) + '–' + (cx + 147),
+      prW: f((W * 0.75 + 135) * 2.2) + 'px', prH: f((G.Pb + 80) * 2.2) + 'px', prVB: `-20 -60 ${f(W * 0.75 + 135)} ${f(G.Pb + 80)}`,
+      bed: { x: f(W * 0.75 - 110), y: f(G.Pb * 0.25 - 110), tx: f(W * 0.75 - 108), ty: f(G.Pb * 0.25 - 112) },
+      prMidX: f(W / 2), prBot: f(G.Pb + 8), diag: f((W + G.Pb) / Math.SQRT2), halfW: f(W / 2), halfPb: f(G.Pb / 2), carY: f(G.carrier.X0),
+      maxH: Math.round(Math.max(...G.pieces.map(p => p.h))), bedGap: f((220 - Math.max(...G.pieces.map(p => p.d))) / 2)
+    };
+    const verify = [
+      ['Posición del patrón 58 × 49 de la Pi en el módulo', 'centrado', 'Define cuánto se corre la Pi en el adaptador.'],
+      ['Posición de los 4 M2.5 de 140 respecto del área activa', 'centrados', 'Agujeros del adaptador.'],
+      ['Ubicación y largo del FPC DSI', '~60 mm, FPC 100', 'Regla 8. Si sale por el borde lejano, rotar la Pi 180°.'],
+      ['Apilado vidrio → HAT, repetir con el adaptador puesto', '50 (+2 de chapa)', 'Holgura HAT–piso (' + f(G.piClear) + ').'],
+      ['Alto de las fichas M4 bajo la PCB', '7', 'Holgura fichas–piso y reserva frontal.'],
+      ['Perilla elegida: Ø y alto', 'Ø ' + G.knob + ' × 16', 'Reglas 1, 2, 5 y 6.'],
+      ['Largo de palanca RS6011 elegido', '15', 'Alto del cap sobre la chapa y posición de PCB-F.'],
+      ['Ancho de la ranura con el cap puesto', '3', 'Holgura lateral de la palanca.'],
+      ['Ubicación de USB y USB-C en la portadora', 'borde trasero', 'Posiciones de USB TEENSY y PWR CTRL.'],
+      ['Extensiones de panel (RJ45, USB-A, USB-C, microSD)', '0.2 m', 'Recorrido dentro de la cuña.'],
+      ['Diámetro de tuerca de jacks 1/4"', 'Ø 9.5 · tuerca 14', 'Separación OUT L ↔ OUT R (6.0).'],
+      ['Volumen de la Ender 3 V3', '220 × 220 × 250', 'Cortes del cuerpo (sección 5.1).']
+    ].map(([n, a, d], i) => ({ i: i + 1, n, a, d }));
+
+    return {
+      ...base, ...top, ...rear, coordList, padX0: f(cx - 52.5), alignV, knobOpts, actX0: f(G.act.x0), actX1: f(G.act.x1), e1x: f(G.encs[0].x), e8x: f(G.encs[7].x),
+      secW: f(G.Pb + 44) + 'mm', secH: f(Ztop + 14) + 'mm', secVB: `-16 0 ${f(G.Pb + 44)} ${f(Ztop + 14)}`, secFloor: f(Ztop), secFloorX: f(G.Pb + 14),
+      secPolys, sight, secLabels, sightAng: 42 + G.ang, piClear: f(G.piClear),
+      layers, bom, rulesV, wedgeOpts, verify, ...v2extra,
+      pitch: G.pitch, offMax: f(G.offMax(gui)), hb: Math.round(G.Hb),
+      footprint: `${W} × ${Math.round(G.Pb)} × ${Math.round(G.Hb)}`, areaPct: Math.round(100 * W * G.Pb / (378 * 293)) + ' %',
+      ruleSummary: `${nP} pasan · ${nC} cond.` + (nF ? ` · ${nF} no` : ''),
+      ruleSub: nF ? 'revisar las marcadas NO PASA en la sección 6' : 'condicionadas al cable DSI y al alcance táctil'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+O2: PCM hashes stable over three runs.
+O3: PCM hashes stable over three runs.
+Results saved to /home/juan/gemelo-pi-results
+Build retained at /tmp/gf-gemelo-pi-build.zmM0Xp
+Review JSON timing gates and system.txt thermal evidence; this does not approve hardware.

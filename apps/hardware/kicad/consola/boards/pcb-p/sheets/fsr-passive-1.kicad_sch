@@ -1,0 +1,1335 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid 6a9d1dff-c765-536a-ae01-324943c7bbe9)
+  (paper "A3")
+  (lib_symbols
+    (symbol "Connector_Generic:Conn_01x02"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x02"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x02_1_1"
+        (rectangle
+          (start -1.27 1.27)
+          (end 1.27 -3.81)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R_Variable"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.54 -2.54 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "R_Variable"
+        (at -2.54 -1.27 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Variable resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor variable potentiometer rheostat"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_Variable_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 1.524)
+            (xy 2.54 2.54)
+            (xy 1.524 2.54)
+            (xy 2.54 2.54)
+            (xy -2.032 -2.032))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_Variable_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (wire
+    (pts
+      (xy 76.2 59.69)
+      (xy 76.2 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid eba9ce57-d099-583a-bcbe-6bf74b29e326))
+  (global_label "+3V3_V1"
+    (shape bidirectional)
+    (at 76.2 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1540f6e9-88b0-5e52-9fb5-d5119607ddf3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 76.2 67.31)
+      (xy 76.2 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b62f1b7a-af0b-5cdf-bb3a-6103f340630e))
+  (label "FSR_V1"
+    (at 76.2 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b9105a8c-6ec7-5262-9981-7068db4bb8bc))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 76.2 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid b42dd827-33a0-5fdb-9b2a-7558a1ac2522)
+    (property "Reference" "FSR1"
+      (at 76.2 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 V1"
+      (at 76.2 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 76.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7c53d4b8-cb34-5ea0-b1a7-09c09121549a))
+    (pin "2"
+      (uuid e8789467-295f-5397-be54-ec1432b366ce))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 185.42 63.5)
+      (xy 182.88 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 42d0a737-41cd-528e-9492-d2184ff46c6a))
+  (global_label "+3V3_V1"
+    (shape bidirectional)
+    (at 182.88 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6b6f4e9b-f5d6-59ea-8cb9-62c0c2eee595)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 182.88 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 185.42 66.04)
+      (xy 182.88 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6a4c2c5d-7ea2-5557-8cd7-be329791e062))
+  (label "FSR_V1"
+    (at 182.88 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid fe0f1a6c-ab24-55cb-b40d-d9ab7deb3314))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 190.5 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 28566a15-38b8-547b-b320-2440c05c2876)
+    (property "Reference" "J1"
+      (at 190.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J_FSR1"
+      (at 190.5 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 190.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c11c5753-b147-5e71-a632-8f59286c30dd))
+    (pin "2"
+      (uuid 33019bcf-e913-58e0-8d1b-066fc2b9260e))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 59.69)
+      (xy 304.8 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid de244abf-bf23-569c-b783-6d852ca2bb4f))
+  (global_label "+3V3_V2"
+    (shape bidirectional)
+    (at 304.8 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 7aff14cf-b121-5770-b1c5-a844105e7e63)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 67.31)
+      (xy 304.8 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1f40517f-8445-5654-b364-79444846ac66))
+  (label "FSR_V2"
+    (at 304.8 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c42279eb-5e6f-5611-a72e-71408745f137))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 304.8 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid be2ee464-f8f8-54bc-9252-85ff9b48c14c)
+    (property "Reference" "FSR2"
+      (at 304.8 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 V2"
+      (at 304.8 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 304.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 0da451a1-4273-5808-9c34-6f6abe51d576))
+    (pin "2"
+      (uuid 7e1911d0-331f-514e-99a0-97b81175eecc))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 114.3)
+      (xy 68.58 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 18963b45-897b-51a1-b6ff-ae978be67e90))
+  (global_label "+3V3_V2"
+    (shape bidirectional)
+    (at 68.58 114.3 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a458c087-8b1e-5535-804b-078cf73a0ae4)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 71.12 116.84)
+      (xy 68.58 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b1811200-01bb-54c4-ac58-64123e6bf332))
+  (label "FSR_V2"
+    (at 68.58 116.84 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b626ee14-8227-52c1-adf8-3efe6f64c6a5))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 76.2 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5ff8358b-6f52-592c-9376-6150431655e9)
+    (property "Reference" "J2"
+      (at 76.2 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J_FSR2"
+      (at 76.2 110.49 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 76.2 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 5c608f10-b204-508e-9028-b85ccb62b80a))
+    (pin "2"
+      (uuid aeb5db5c-4213-5b92-b39b-37180112ad6a))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 110.49)
+      (xy 190.5 107.95))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 963a2bda-3913-571b-9cca-8da857131f5f))
+  (global_label "+3V3_V3"
+    (shape bidirectional)
+    (at 190.5 107.95 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ba899dbe-1cb4-5b78-87de-eb92b47a9cdf)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 118.11)
+      (xy 190.5 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1848c00c-8b39-5b45-9216-f28f258fb26a))
+  (label "FSR_V3"
+    (at 190.5 120.65 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a3a85cbb-6af8-5ac1-bf21-88a96d3f9aa1))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 190.5 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 27fd888f-b76a-5478-a961-bee6693b4038)
+    (property "Reference" "FSR3"
+      (at 190.5 91.44 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 V3"
+      (at 190.5 93.98 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 190.5 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 3486bf98-79ef-53d2-89f3-f7991cf19fab))
+    (pin "2"
+      (uuid e2e13425-ba04-525e-aae5-25bd468299ab))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 299.72 114.3)
+      (xy 297.18 114.3))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c8049589-6d18-536b-bca6-54d4776c17bd))
+  (global_label "+3V3_V3"
+    (shape bidirectional)
+    (at 297.18 114.3 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c28af85d-bf26-52c1-b206-8fec76dd774f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 297.18 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 299.72 116.84)
+      (xy 297.18 116.84))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2e8052aa-861e-5b81-924d-0aa0e17c1859))
+  (label "FSR_V3"
+    (at 297.18 116.84 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1bdbaf05-c935-57d3-8488-a05cd2312d65))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 304.8 114.3 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid c1bd5a16-01a7-50e6-8759-60db307bc81b)
+    (property "Reference" "J3"
+      (at 304.8 107.95 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J_FSR3"
+      (at 304.8 110.49 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 304.8 114.3 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 85723667-c281-57fd-bc47-1f142ec363d3))
+    (pin "2"
+      (uuid 46807b82-d97c-5faf-b006-e10b8b7e5ca7))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 76.2 161.29)
+      (xy 76.2 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b03d0a99-a688-59db-9fd2-c4a9f7690296))
+  (global_label "+3V3_V4"
+    (shape bidirectional)
+    (at 76.2 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 6b175004-c03d-5a15-8f77-bb2a3ae1957a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 76.2 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 76.2 168.91)
+      (xy 76.2 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1a3bc8ad-33b4-5be3-9647-997374dfb995))
+  (label "FSR_V4"
+    (at 76.2 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 89d96f74-e4d9-58de-9b2e-1decdfa1031f))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 76.2 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid d3e4c666-25b4-512d-92d7-71cf8daa5e8f)
+    (property "Reference" "FSR4"
+      (at 76.2 142.24 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 V4"
+      (at 76.2 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 76.2 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 870e40d2-9c07-598c-b293-fdb359c652e6))
+    (pin "2"
+      (uuid d27e0808-e54c-54e3-9885-22af004f8e0d))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 185.42 165.1)
+      (xy 182.88 165.1))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0b5c6772-3cf6-5a41-8630-788ebaefc586))
+  (global_label "+3V3_V4"
+    (shape bidirectional)
+    (at 182.88 165.1 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 4917e385-8f2d-570a-8538-9dfc7d5ae02a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 182.88 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 185.42 167.64)
+      (xy 182.88 167.64))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 69d3174b-1b7b-55eb-b097-214c8b673e01))
+  (label "FSR_V4"
+    (at 182.88 167.64 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 0d9ce234-6713-537f-98d3-b84b43adfb97))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 190.5 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 36b96dc3-4828-57a7-8bdd-4d6e9c57d24e)
+    (property "Reference" "J4"
+      (at 190.5 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J_FSR4"
+      (at 190.5 161.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 190.5 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 5f51a068-6db7-509a-a384-8af7e4761fed))
+    (pin "2"
+      (uuid 8313ae64-63ae-5be7-a5ff-2e2d3018fb0b))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 304.8 161.29)
+      (xy 304.8 158.75))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 03775bf3-1293-5ce9-85f0-81e505533086))
+  (global_label "+3V3_X1"
+    (shape bidirectional)
+    (at 304.8 158.75 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e6eef803-cbd2-5e80-860c-027d1f27170a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 304.8 158.75 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 304.8 168.91)
+      (xy 304.8 171.45))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 75bfb91a-d457-5ee3-94b3-f4d49b8f4728))
+  (label "FSR_X1"
+    (at 304.8 171.45 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1d5bf282-79f2-5e3e-8839-ebcf0ebbbbde))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 304.8 165.1 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 0d92a8ac-e344-5404-ab2d-34700605aaa4)
+    (property "Reference" "FSR5"
+      (at 304.8 142.24 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 X1"
+      (at 304.8 144.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 304.8 165.1 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 120e73da-b43c-51b2-88a8-a878be500ac9))
+    (pin "2"
+      (uuid 9c8abf87-9937-59bf-a314-e30343e8ac1f))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR5")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 71.12 215.9)
+      (xy 68.58 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f498caf5-b056-5724-b423-3013b4a6360c))
+  (global_label "+3V3_X1"
+    (shape bidirectional)
+    (at 68.58 215.9 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid a6865cb1-d16b-52ff-b087-8332abf65628)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 68.58 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 71.12 218.44)
+      (xy 68.58 218.44))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid fb960949-f8a1-5aa8-be7f-d311d9bae26f))
+  (label "FSR_X1"
+    (at 68.58 218.44 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b8055acc-e7ed-5cd2-a528-0d83c69c13c6))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 76.2 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid ffc9c86b-d499-55d8-8635-00c91289e11d)
+    (property "Reference" "J5"
+      (at 76.2 209.55 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J7_EXP1"
+      (at 76.2 212.09 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 76.2 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 7e216fd5-048b-5232-b92b-a654df62c002))
+    (pin "2"
+      (uuid 95a8a348-be35-5004-b61a-e358af9e93b5))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J5")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 190.5 212.09)
+      (xy 190.5 209.55))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4f3ad25f-d3f0-5298-b45e-a433eee10173))
+  (global_label "+3V3_X2"
+    (shape bidirectional)
+    (at 190.5 209.55 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid f949bd56-4565-5d14-9eed-921f206adf4f)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 190.5 209.55 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 190.5 219.71)
+      (xy 190.5 222.25))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6bf7afa0-c63c-59b5-86c1-6e0e2ce9789b))
+  (label "FSR_X2"
+    (at 190.5 222.25 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c517b589-d4e9-5096-930f-fc1f72fe42b8))
+  (symbol
+    (lib_id "Device:R_Variable")
+    (at 190.5 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 314123c0-11e3-55c5-be29-4a6a8c8a450b)
+    (property "Reference" "FSR6"
+      (at 190.5 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "Interlink 402 X2"
+      (at 190.5 195.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "gf_consola:FSR402_DirectSolder_1x02_P2.54mm"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Supply" "owner"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "SupplyDescription" "Juan: seis Interlink FSR402 con pines prensados; soldadura directa D43"
+      (at 190.5 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 71418857-5897-52d2-86d6-da1b0813cb17))
+    (pin "2"
+      (uuid 7f128e94-94fa-585c-b9f3-7dd21ea92796))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "FSR6")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 299.72 215.9)
+      (xy 297.18 215.9))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 4fbecf79-7111-54c5-bf75-087c5e64360c))
+  (global_label "+3V3_X2"
+    (shape bidirectional)
+    (at 297.18 215.9 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ebaa81d1-e1bb-5394-98a2-844276414f59)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 297.18 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 299.72 218.44)
+      (xy 297.18 218.44))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e4b3aad1-0a3b-5b17-a837-c301e8ca4e17))
+  (label "FSR_X2"
+    (at 297.18 218.44 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid df72ae93-6cb6-5fef-9cfb-71329d6cb934))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x02")
+    (at 304.8 215.9 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp no)
+    (uuid 5bba2fa6-fa70-5255-9639-5bb1e94692d7)
+    (property "Reference" "J6"
+      (at 304.8 209.55 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "PCB-M J8_EXP2"
+      (at 304.8 212.09 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C173752"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "S2B-PH-K-S(LF)(SN)"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,Right Angle,P=2mm"
+      (at 304.8 215.9 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 96fa29ac-7681-5ab4-abef-07862380d58f))
+    (pin "2"
+      (uuid 2e7ac192-8550-5662-9d9e-edde650debe7))
+    (instances
+      (project "pcb-p"
+        (path "/9e457744-1571-53f3-b6db-5a3528395c14/c1d5ea21-05f4-5c51-8305-6b8172688a47"
+          (reference "J6")
+          (unit 1)))))
+  (text "6 circuitos independientes. Pin 1: +3V3; pin 2: senal. Sin divisor ni filtro aqui."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d7ce05b0-9965-54cf-a8ee-d542e98fd8bd))
+  (text "D43: soldar solo pines metalicos prensados, sin socket; envolvente superior <=1mm; no calor en pelicula."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 7d8bcfa0-d98e-588e-ab5b-88ade20b5409)))

@@ -1,0 +1,121 @@
+{
+  "source": {
+    "path": "apps/docs/consola/design/claude-design-drum/Console Drum Screens.html",
+    "sha256": "b6b840d00f14493a527d925ee6a302907b00fb62a857100662e46e2248ad5d05",
+    "extraction": "Parsed JSON script[type=\"__bundler/template\"] and Layout notes for QML; no font assets extracted"
+  },
+  "screens": [
+    {
+      "name": "DrumRack",
+      "design": "46",
+      "file": "46-DrumRack.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumRackStates",
+      "design": "46b",
+      "file": "46b-DrumRackStates.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumRackEmpty",
+      "design": "46c",
+      "file": "46c-DrumRackEmpty.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumPad",
+      "design": "47",
+      "file": "47-DrumPad.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumBrowser",
+      "design": "48",
+      "file": "48-DrumBrowser.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumBrowserEmpty",
+      "design": "48b",
+      "file": "48b-DrumBrowserEmpty.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumImport",
+      "design": "49",
+      "file": "49-DrumImport.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumSteps",
+      "design": "50",
+      "file": "50-DrumSteps.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumProbability",
+      "design": "50b",
+      "file": "50b-DrumProbability.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumPerform",
+      "design": "51",
+      "file": "51-DrumPerform.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumMixer",
+      "design": "52",
+      "file": "52-DrumMixer.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumSave",
+      "design": "53",
+      "file": "53-DrumSave.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "DrumVariations",
+      "design": "54",
+      "file": "54-DrumVariations.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    },
+    {
+      "name": "ModeSelect",
+      "design": "55",
+      "file": "55-ModeSelect.png",
+      "width": 1280,
+      "height": 720,
+      "snapshot": "deterministic fake \u00b7 no audio"
+    }
+  ]
+}

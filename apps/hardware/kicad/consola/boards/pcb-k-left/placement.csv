@@ -1,0 +1,52 @@
+reference,component,name,x_mm,y_mm,rotation_deg,side,notes
+SW1,key,BACK,64.0,305.0,0,F,huella combinada SW + zocalo
+SW1,socket,BACK,64.0,305.0,0,B,mismo footprint SW; NO colocar dos veces
+D1,led,BACK,64.0,309.93,0,B,LED index 0; centro de ventana
+SW2,key,MENU,64.0,286.5,0,F,huella combinada SW + zocalo
+SW2,socket,MENU,64.0,286.5,0,B,mismo footprint SW; NO colocar dos veces
+D2,led,MENU,64.0,291.43,0,B,LED index 1; centro de ventana
+SW3,key,NAV_L,64.0,268.0,0,F,huella combinada SW + zocalo
+SW3,socket,NAV_L,64.0,268.0,0,B,mismo footprint SW; NO colocar dos veces
+D3,led,NAV_L,64.0,272.93,0,B,LED index 2; centro de ventana
+SW4,key,NAV_R,64.0,249.5,0,F,huella combinada SW + zocalo
+SW4,socket,NAV_R,64.0,249.5,0,B,mismo footprint SW; NO colocar dos veces
+D4,led,NAV_R,64.0,254.43,0,B,LED index 3; centro de ventana
+SW5,key,BROWSE,64.0,231.0,0,F,huella combinada SW + zocalo
+SW5,socket,BROWSE,64.0,231.0,0,B,mismo footprint SW; NO colocar dos veces
+D5,led,BROWSE,64.0,235.93,0,B,LED index 4; centro de ventana
+SW6,key,TAP,58.0,174.0,0,F,huella combinada SW + zocalo
+SW6,socket,TAP,58.0,174.0,0,B,mismo footprint SW; NO colocar dos veces
+D6,led,TAP,58.0,178.93,0,B,LED index 5; centro de ventana
+SW7,key,FILL,39.0,174.0,0,F,huella combinada SW + zocalo
+SW7,socket,FILL,39.0,174.0,0,B,mismo footprint SW; NO colocar dos veces
+D7,led,FILL,39.0,178.93,0,B,LED index 6; centro de ventana
+SW8,key,CUE_ENG,20.0,174.0,0,F,huella combinada SW + zocalo
+SW8,socket,CUE_ENG,20.0,174.0,0,B,mismo footprint SW; NO colocar dos veces
+D8,led,CUE_ENG,20.0,178.93,0,B,LED index 7; centro de ventana
+SW9,key,BUILD,20.0,155.0,0,F,huella combinada SW + zocalo
+SW9,socket,BUILD,20.0,155.0,0,B,mismo footprint SW; NO colocar dos veces
+D9,led,BUILD,20.0,159.93,0,B,LED index 8; centro de ventana
+SW10,key,DROP,39.0,155.0,0,F,huella combinada SW + zocalo
+SW10,socket,DROP,39.0,155.0,0,B,mismo footprint SW; NO colocar dos veces
+D10,led,DROP,39.0,159.93,0,B,LED index 9; centro de ventana
+SW11,key,BREAK,58.0,155.0,0,F,huella combinada SW + zocalo
+SW11,socket,BREAK,58.0,155.0,0,B,mismo footprint SW; NO colocar dos veces
+D11,led,BREAK,58.0,159.93,0,B,LED index 10; centro de ventana
+SW12,key,SHIFT,20.0,132.5,0,F,huella combinada SW + zocalo
+SW12,socket,SHIFT,20.0,132.5,0,B,mismo footprint SW; NO colocar dos veces
+D12,led,SHIFT,20.0,137.43,0,B,LED index 11; centro de ventana
+SW13,key,UNDO,39.0,132.5,0,F,huella combinada SW + zocalo
+SW13,socket,UNDO,39.0,132.5,0,B,mismo footprint SW; NO colocar dos veces
+D13,led,UNDO,39.0,137.43,0,B,LED index 12; centro de ventana
+SW14,key,DELETE,98.0,160.5,0,F,huella combinada SW + zocalo
+SW14,socket,DELETE,98.0,160.5,0,B,mismo footprint SW; NO colocar dos veces
+D14,led,DELETE,98.0,165.43,0,B,LED index 13; centro de ventana
+SW15,key,DUPLICATE,98.0,145.5,0,F,huella combinada SW + zocalo
+SW15,socket,DUPLICATE,98.0,145.5,0,B,mismo footprint SW; NO colocar dos veces
+D15,led,DUPLICATE,98.0,150.43,0,B,LED index 14; centro de ventana
+SW16,key,QUANTIZE,98.0,130.5,0,F,huella combinada SW + zocalo
+SW16,socket,QUANTIZE,98.0,130.5,0,B,mismo footprint SW; NO colocar dos veces
+D16,led,QUANTIZE,98.0,135.43,0,B,LED index 15; centro de ventana
+SW17,key,NEW,98.0,115.5,0,F,huella combinada SW + zocalo
+SW17,socket,NEW,98.0,115.5,0,B,mismo footprint SW; NO colocar dos veces
+D17,led,NEW,98.0,120.43,0,B,LED index 16; centro de ventana

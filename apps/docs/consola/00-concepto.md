@@ -83,6 +83,24 @@ Juan preguntó si ESTUDIO y LIVE pueden ir a la vez. Sí, como un tercer modo:
 4. Los faders mezclan grupos; un botón por sección pide **cambio**, y el motor pone la transición: roll, riser, fill de llamador, subdrop.
 5. Todo lo que aceptas o saltas va al registro: la consola **aprende de tus sets**, no solo del estudio.
 
+### 5.1 Transición entre tracks: por capas (Juan, 2026-11-09)
+
+Un track no es un audio: es un **conjunto de capas** (kick, drums, perc, bajo, acordes, lead, pad). La consola tiene siempre **dos tracks**: el que suena (**SALA**) y el **siguiente**, que puede venir **generado** (el motor lo deriva del que suena: mismo ADN, otra progresión, otro motivo, otra energía) o **ya hecho** (un track del estudio cargado por capas desde el registro del motor). El motor comprueba que tonalidad y tempo sean compatibles.
+
+**En el NeoTrellis:** fila de arriba = capas de SALA (brillo fuerte); segunda fila = capas del siguiente (tenues). Pad del siguiente con CUE = escuchar esa capa en audífonos encima de lo que suena.
+
+| Manera | Cómo va | Para |
+|---|---|---|
+| **Intercambio de capas** (~32 compases) | Entran hats y perc del siguiente; luego **el bajo se intercambia en un solo golpe** en la frase; luego acordes y lead mientras bajan los faders del viejo; el kick viejo sale con echo | La transición de DJ |
+| **Por el break** | El que suena va a su break (sin kick ni bajo, pad abierto); entra la atmósfera del siguiente; el **tempo se desliza** si hace falta; build, subdrop y el drop es del nuevo | La más emocional |
+| **Corte en la frase** | Echo sobre el último compás y cambio completo en el uno | Sets enérgicos |
+
+**Regla del grave:** nunca suenan dos bajos ni dos kicks a la vez; el motor intercambia el grave en un golpe.
+
+**Botón TRANSICIÓN:** ofrece las tres maneras y el motor la ejecuta sola (cambios en la frase, roll, riser, subdrop). **Si Juan toca un fader o un pad, manda Juan** y el motor se adapta.
+
+**Sin crossfader** (descartado): el intercambio capa por capa con pads y faders hace mejor ese trabajo.
+
 ## 6. Step sequencer
 
 Una cuadrícula de pads funciona como en Deluge o MPC: cada fila es un carril (instrumento o nota) y cada columna un paso. La diferencia: **el motor puede escribir en ella**. Le pides «un fill de llamador» o «otra clave», y aparece en los pasos, editable. Por paso: velocity, microtiming y probabilidad (como el parameter lock del OP-XY), para que los patrones respiren como tus ghosts.
@@ -177,7 +195,7 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 | Qué | Pines |
 |---|---|
 | NeoTrellis 8×4 + expansores de botones | I2C: 2 (bus compartido) |
-| 22 botones | **2 expansores MCP23017** en el mismo I2C (16 entradas cada uno: quedan 10 libres para crecer) |
+| 22 botones | **2 expansores MCP23017** en el mismo I2C. **Corrección (inventario de GroovePush):** cada MCP23017 tiene **14 entradas útiles**, no 16 (GPA7 y GPB7 solo son salidas); GroovePush ADR-0004 ya los llena con 8 clics de encoder + 20 botones. Más botones = un tercer MCP en 0x22 |
 | LEDs de los 22 botones | 1 pin: cadena WS2812 bajo tapas translúcidas |
 | 8 encoders con clic | 24 digitales |
 | 4 FSR de fuerza + 2 de expresión | 6 analógicos |
@@ -187,6 +205,8 @@ Juan tiene 10 resistencias sensibles a la fuerza **FSR 402** (Interlink, redonda
 Quedan unos 25 digitales y 6 analógicos libres, así que el número de botones puede subir sin cambiar de microcontrolador.
 
 ### 10.2.3 ¿Una Teensy o dos? (pregunta de Juan, 2026-11-09)
+
+> **Actualización (inventario de GroovePush, `02-inventario-groovepush.md` §4):** las placas del panel ya diseñadas usan los pines 20 y 21 (I2S del Audio Shield) como UART hacia la NeoTrellis M4. Con ese diseño, la consola es de **dos Teensy**, cada una en una copia de la misma portadora. La hipótesis de una sola queda abierta solo si se rediseña la PCB-S.
 
 **Hipótesis: una sola alcanza.** Pines: el audio usa I2S y el I2C del SGTL5000 (0x0A); el NeoTrellis (0x2E/0x2F) y los MCP23017 (0x20/0x21) comparten ese bus con otras direcciones, y los controles del panel del Brain los reemplaza la superficie. CPU: el presupuesto del Brain es ≤60 % (`01-architecture.md` §5.2) y la superficie cuesta poco; la Audio Library corre por interrupciones, con prioridad. USB: una Teensy puede ser MIDI + audio + serie en un solo cable.
 

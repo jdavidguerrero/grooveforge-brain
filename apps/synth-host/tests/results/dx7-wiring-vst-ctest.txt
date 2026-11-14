@@ -1,0 +1,34 @@
+Internal ctest changing into directory: /tmp/gf-host-six-vst
+Test project /tmp/gf-host-six-vst
+      Start  1: juno_comparison_smoke
+ 1/14 Test  #1: juno_comparison_smoke ............   Passed    2.52 sec
+      Start  2: ob6_comparison_smoke
+ 2/14 Test  #2: ob6_comparison_smoke .............   Passed    1.26 sec
+      Start  3: prophet_preview
+ 3/14 Test  #3: prophet_preview ..................   Passed    1.53 sec
+      Start  4: juno_preview
+ 4/14 Test  #4: juno_preview .....................   Passed    1.91 sec
+      Start  5: ob6_preview
+ 5/14 Test  #5: ob6_preview ......................   Passed    0.71 sec
+      Start  6: model_d_preview
+ 6/14 Test  #6: model_d_preview ..................   Passed    0.48 sec
+      Start  7: arp2600_preview
+ 7/14 Test  #7: arp2600_preview ..................   Passed    0.53 sec
+      Start  8: hybrid_preview
+ 8/14 Test  #8: hybrid_preview ...................   Passed    0.71 sec
+      Start  9: hybrid_router
+ 9/14 Test  #9: hybrid_router ....................   Passed    0.26 sec
+      Start 10: hybrid_codec
+10/14 Test #10: hybrid_codec .....................   Passed    0.23 sec
+      Start 11: preset_codec
+11/14 Test #11: preset_codec .....................   Passed    0.27 sec
+      Start 12: plugin_smoke
+12/14 Test #12: plugin_smoke .....................   Passed    3.25 sec
+      Start 13: dx7_6op_msfa
+13/14 Test #13: dx7_6op_msfa .....................   Passed    0.34 sec
+      Start 14: dx7_6op
+14/14 Test #14: dx7_6op ..........................   Passed    0.53 sec
+
+100% tests passed, 0 tests failed out of 14
+
+Total Test time (real) =  14.53 sec

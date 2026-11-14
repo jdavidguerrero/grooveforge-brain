@@ -1,0 +1,33 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid b10a0fdd-c421-5fdb-b427-81108a55d8c1)
+  (paper "A4")
+  (lib_symbols)
+  (sheet
+    (at 20.32 20.32)
+    (size 76.2 35.56)
+    (stroke
+      (width 0.1524)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid 3e281f95-44df-57c7-9b4a-d68eddc252b8)
+    (property "Sheetname" "faders-1"
+      (at 58.42 17.78 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Sheetfile" "sheets/faders-1.kicad_sch"
+      (at 58.42 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (instances
+      (project "pcb-f"
+        (path "/b10a0fdd-c421-5fdb-b427-81108a55d8c1"
+          (page "2")))))
+  (sheet_instances
+    (path "/"
+      (page "1"))))

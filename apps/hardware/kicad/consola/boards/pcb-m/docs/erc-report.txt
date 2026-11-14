@@ -1,0 +1,42 @@
+ERC report (2026-11-13T18:57:18, Encoding UTF8)
+Report includes: Errors, Warnings, Exclusions
+
+***** Sheet /
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(55.88 mm, 63.50 mm): Label 'LINE_IN_L_R'
+[isolated_pin_label]: Label connected to only one pin
+    ; warning
+    @(55.88 mm, 127.00 mm): Label 'LINE_IN_R_R'
+
+***** Sheet /01-teensy/
+
+***** Sheet /02-analog-front/
+
+***** Sheet /03-adc/
+
+***** Sheet /04-mcp-io/
+
+***** Sheet /05-cv-dac/
+
+***** Sheet /06-surface/
+
+***** Sheet /07-midi/
+
+***** Sheet /08-connectors-panel/
+
+***** Sheet /09-connectors-rear/
+
+***** Sheet /10-power/
+
+***** Sheet /11-diagnostics/
+
+***** Sheet /12-i2c-branches/
+
+ ** ERC messages: 2  Errors 0  Warnings 2
+
+ ** Ignored checks:
+    - Global label only appears once in the schematic
+    - Four connection points are joined together
+    - SPICE model issue
+    - Assigned footprint doesn't match footprint filters

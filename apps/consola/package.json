@@ -1,0 +1,27 @@
+{
+  "name": "groovepush",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GroovePush — DIY Ableton Push 3 clone: firmware processor (Teensy 4.1 + NeoTrellis M4), Qt/QML GUI (Raspberry Pi 5), and hardware (KiCad). AI mix-copilot surface for the GroovePilot platform.",
+  "license": "UNLICENSED",
+  "author": "Juan David Guerrero / GPROG",
+  "workspaces": [
+    "apps/*",
+    "tools/*"
+  ],
+  "scripts": {
+    "gui:build": "pnpm --filter @groovepush/gui build",
+    "gui:run": "pnpm --filter @groovepush/gui run",
+    "processor:build": "pnpm --filter @groovepush/processor build",
+    "processor:test": "pnpm --filter @groovepush/processor test",
+    "processor:upload": "pnpm --filter @groovepush/processor upload",
+    "build": "pnpm -r --if-present build",
+    "test": "pnpm -r --if-present test",
+    "hardware:drc": "echo 'Run KiCad DRC via the hardware workflow / MCP'",
+    "format": "echo 'Add clang-format / qmlformat hooks here'"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

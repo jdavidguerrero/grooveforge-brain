@@ -1,0 +1,1892 @@
+(kicad_sch
+  (version 20260101)
+  (generator "schgen")
+  (generator_version "1.0")
+  (uuid cf68f0b7-9555-55bd-a960-8bac441e2d70)
+  (paper "A2")
+  (lib_symbols
+    (symbol "Connector_Generic:Conn_01x03"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "J"
+        (at 0 5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "Conn_01x03"
+        (at 0 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "connector"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "Connector*:*_1x??_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "Conn_01x03_1_1"
+        (rectangle
+          (start -1.27 3.81)
+          (end 1.27 -3.81)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (rectangle
+          (start -1.27 2.667)
+          (end 0 2.413)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 0.127)
+          (end 0 -0.127)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (rectangle
+          (start -1.27 -2.413)
+          (end 0 -2.667)
+          (stroke
+            (width 0.1524)
+            (type default))
+          (fill
+            (type none)))
+        (pin passive line
+          (at -5.08 2.54 0)
+          (length 3.81)
+          (name "Pin_1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 0 0)
+          (length 3.81)
+          (name "Pin_2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -5.08 -2.54 0)
+          (length 3.81)
+          (name "Pin_3"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:C"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0.254))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "C"
+        (at 0.635 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "C"
+        (at 0.635 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" ""
+        (at 0.9652 -3.81 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Unpolarized capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "cap capacitor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "C_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "C_0_1"
+        (polyline
+          (pts
+            (xy -2.032 0.762)
+            (xy 2.032 0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.032 -0.762)
+            (xy 2.032 -0.762))
+          (stroke
+            (width 0.508)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "C_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 2.794)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:D"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 0 2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "D"
+        (at 0 -2.54 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Device" "D"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Sim.Pins" "1=K 2=A"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "TO-???* *_Diode_* *SingleDiode* D_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "D_0_1"
+        (polyline
+          (pts
+            (xy -1.27 1.27)
+            (xy -1.27 -1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 1.27)
+            (xy 1.27 -1.27)
+            (xy -1.27 0)
+            (xy 1.27 1.27))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "D_1_1"
+        (pin passive line
+          (at -3.81 0 0)
+          (length 2.54)
+          (name "K"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 3.81 0 180)
+          (length 2.54)
+          (name "A"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Device:R"
+      (pin_numbers
+        (hide yes))
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "R"
+        (at 2.032 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "R"
+        (at 0 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at -1.778 0 90)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" ""
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "R res resistor"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "R_*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "R_0_1"
+        (rectangle
+          (start -1.016 -2.54)
+          (end 1.016 2.54)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "R_1_1"
+        (pin passive line
+          (at 0 3.81 270)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -3.81 90)
+          (length 1.27)
+          (name ""
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Isolator:6N138"
+      (pin_names
+        (offset 1.016)
+        (hide yes))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "U"
+        (at -4.064 8.89 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Value" "6N138"
+        (at 2.286 8.89 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Footprint" ""
+        (at 7.366 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Datasheet" "http://www.onsemi.com/pub/Collateral/HCPL2731-D.pdf"
+        (at 7.366 -7.62 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Low Input Current high Gain Split Darlington Optocouplers, -0.5V to 7V VDD, DIP-8"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "darlington optocoupler"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "DIP*W7.62mm* SMDIP*W9.53mm*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "6N138_0_1"
+        (rectangle
+          (start -5.08 7.62)
+          (end 5.08 -7.62)
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type background)))
+        (polyline
+          (pts
+            (xy -5.08 -2.54)
+            (xy -3.937 -2.54)
+            (xy -3.937 2.54)
+            (xy -5.08 2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -4.572 -0.635)
+            (xy -3.302 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.937 -0.635)
+            (xy -4.572 0.635)
+            (xy -3.302 0.635)
+            (xy -3.937 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.794 0.508)
+            (xy -1.524 0.508)
+            (xy -1.905 0.381)
+            (xy -1.905 0.635)
+            (xy -1.524 0.508))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.794 -0.508)
+            (xy -1.524 -0.508)
+            (xy -1.905 -0.635)
+            (xy -1.905 -0.381)
+            (xy -1.524 -0.508))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.254 -0.635)
+            (xy 0.889 -1.905)
+            (xy -0.381 -1.905)
+            (xy 0.254 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 0.889 -0.635)
+            (xy -0.381 -0.635))
+          (stroke
+            (width 0.254)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.27 -2.54)
+            (xy 0.254 -2.54)
+            (xy 0.254 5.08)
+            (xy 2.54 5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -1.524)
+            (xy 1.397 -3.556))
+          (stroke
+            (width 0.3556)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -2.413)
+            (xy 2.54 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.397 -2.667)
+            (xy 2.54 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.413 -3.683)
+            (xy 2.159 -3.175)
+            (xy 1.905 -3.429)
+            (xy 2.413 -3.683))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 -1.27)
+            (xy 2.54 5.08)
+            (xy 5.08 5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 2.54 -3.81)
+            (xy 3.175 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -2.794)
+            (xy 3.429 -4.826))
+          (stroke
+            (width 0.3556)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -3.683)
+            (xy 4.572 -2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.429 -3.937)
+            (xy 4.572 -5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.445 -4.953)
+            (xy 4.191 -4.445)
+            (xy 3.937 -4.699)
+            (xy 4.445 -4.953))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.572 -2.54)
+            (xy 5.08 -2.54))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.572 -5.08)
+            (xy 5.08 -5.08))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 5.08 2.54)
+            (xy 3.048 2.54)
+            (xy 3.048 -3.81))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "6N138_1_1"
+        (pin no_connect line
+          (at -5.08 5.08 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -7.62 2.54 0)
+          (length 2.54)
+          (name "C1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at -7.62 -2.54 0)
+          (length 2.54)
+          (name "C2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin no_connect line
+          (at -5.08 -5.08 0)
+          (length 2.54)
+          (hide yes)
+          (name "NC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "4"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 -5.08 180)
+          (length 2.54)
+          (name "GND"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "5"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 -2.54 180)
+          (length 2.54)
+          (name "VO2"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "6"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 2.54 180)
+          (length 2.54)
+          (name "VO1"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "7"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 5.08 180)
+          (length 2.54)
+          (name "VCC"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "8"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no)))
+  (no_connect
+    (at 147.32 58.42)
+    (uuid 9343d301-b22b-55aa-aa15-b427cf718086))
+  (wire
+    (pts
+      (xy 144.78 60.96)
+      (xy 142.24 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 324b9dab-fae5-53b5-b9af-300057e9b9b1))
+  (label "MIDI_OPTO_A"
+    (at 142.24 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 2e5ac9b9-e0fe-55c0-8b62-05d3c170aef1))
+  (wire
+    (pts
+      (xy 144.78 66.04)
+      (xy 142.24 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5ffc1cb9-ba04-573c-aa59-f64a67c2287f))
+  (label "MIDI_IN_TIP"
+    (at 142.24 66.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6f9a908c-b2f9-545e-955a-d291f8653d98))
+  (no_connect
+    (at 147.32 68.58)
+    (uuid 8e6eac51-7d7e-5756-92a2-4fe962f88e7f))
+  (wire
+    (pts
+      (xy 160.02 68.58)
+      (xy 162.56 68.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cd6e1635-08a6-5353-b218-6a1f600157d9))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 162.56 68.58 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid b536e3e7-2575-5936-83ba-bb3c479f72c5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 68.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 66.04)
+      (xy 162.56 66.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1ce86ac7-82a7-5c95-9d70-c1479a7fdb7a))
+  (global_label "MIDI_RX"
+    (shape bidirectional)
+    (at 162.56 66.04 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3eb426fe-1214-5444-9a1c-d84e57a5b30e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 66.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 60.96)
+      (xy 162.56 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e0462899-22e0-5d90-95c4-bb65cdf48ac4))
+  (global_label "MIDI_OPTO_BASE"
+    (shape bidirectional)
+    (at 162.56 60.96 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid dafc9a05-e683-5ec7-a800-d3c950c67dd8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 60.96 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 160.02 58.42)
+      (xy 162.56 58.42))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c79effa2-4190-5681-ad2e-2b9fda9260e7))
+  (global_label "+5V_TEENSY"
+    (shape bidirectional)
+    (at 162.56 58.42 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a67616c4-f51c-5604-af4a-151fd2dfa4c8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 162.56 58.42 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Isolator:6N138")
+    (at 152.4 63.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 15852dd4-1dc5-5916-9573-b869d18c9048)
+    (property "Reference" "U_OPT_MIDI1"
+      (at 152.4 50.8 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "6N138"
+      (at 152.4 53.34 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_DIP:DIP-8_W7.62mm"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "U_OPT_MIDI"
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 152.4 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 01f48235-9f4f-5ad0-9e15-54dd86b548ad))
+    (pin "2"
+      (uuid c4c783f3-b2c2-5118-bf4a-3c18f233698c))
+    (pin "3"
+      (uuid 718a0b49-8639-5ba8-b90d-a23077f6110d))
+    (pin "4"
+      (uuid 290e9057-d43f-5f46-bd58-fdf9e84d6f83))
+    (pin "5"
+      (uuid 11e9440d-4a8e-5bc5-8072-8d1af4400b9f))
+    (pin "6"
+      (uuid 6a14f538-ad44-56b1-8280-2f1e5a8be076))
+    (pin "7"
+      (uuid 8eccc77a-7a2c-5198-8110-e8124efc3453))
+    (pin "8"
+      (uuid d7f3f8f4-8ea2-5cab-ad34-6b8a2d0f8753))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "U_OPT_MIDI1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 58.42 60.96)
+      (xy 55.88 60.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 65166d7c-0e75-5a85-a96a-4225ffc8994a))
+  (label "MIDI_IN_TIP"
+    (at 55.88 60.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f423e613-c4f1-58e7-8f83-6263edfc86af))
+  (wire
+    (pts
+      (xy 58.42 63.5)
+      (xy 55.88 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 59a355f8-454d-51c1-919c-5b7fe2d2c5e3))
+  (label "MIDI_IN_RING"
+    (at 55.88 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid eb53a9db-5859-5b36-b132-0370c923f579))
+  (no_connect
+    (at 58.42 66.04)
+    (uuid 59ea907a-73e5-5ba4-a25f-cb987a5cd1ed))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 63.5 63.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 49113a97-3839-579e-8387-d194543c95f2)
+    (property "Reference" "J_MIDI_IN1"
+      (at 63.5 54.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MIDI_IN_PANEL_CABLE"
+      (at 63.5 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_MIDI_IN"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f81386ef-c81d-57ca-b8b9-c2facf6837f9))
+    (pin "2"
+      (uuid f174228b-e207-547b-8e86-c7298cb9aa59))
+    (pin "3"
+      (uuid a18f749a-1658-527d-9ba2-1e2ffcd9b0f1))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "J_MIDI_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 58.42 187.96)
+      (xy 55.88 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 89720c71-9772-5140-8ffd-8fc8903f09e0))
+  (label "MIDI_OUT_TIP"
+    (at 55.88 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c0cd0295-be26-5d5e-8b18-b789a1bdd13a))
+  (wire
+    (pts
+      (xy 58.42 190.5)
+      (xy 55.88 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 26b12946-7db0-5ec4-acaa-8af5dff0c50e))
+  (label "MIDI_OUT_RING"
+    (at 55.88 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7ae7bab8-8e4d-5fc6-8fe8-cb819666259a))
+  (wire
+    (pts
+      (xy 58.42 193.04)
+      (xy 55.88 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid de82fca8-eff9-588b-bf14-de1a5c8be373))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 55.88 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 6bf67d6e-7c4e-5ac7-94bf-f67782e0a4f2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 55.88 193.04 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Connector_Generic:Conn_01x03")
+    (at 63.5 190.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid eff09e3c-fbbe-5809-9db6-90f7e9c8750c)
+    (property "Reference" "J_MIDI_OUT1"
+      (at 63.5 181.61 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "MIDI_OUT_PANEL_CABLE"
+      (at 63.5 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "J_MIDI_OUT"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C131339"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "B3B-PH-K-S(LF)(SN)"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "JST"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "Through Hole,P=2mm"
+      (at 63.5 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 84da541d-054e-5144-8958-76725610d715))
+    (pin "2"
+      (uuid d450035c-86db-5550-935c-49871a7ad496))
+    (pin "3"
+      (uuid 002e40a2-51fa-58f5-a980-bae9a05743c2))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "J_MIDI_OUT1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 59.69)
+      (xy 241.3 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b9838694-d62c-52b7-a404-ff504f55e5d4))
+  (label "MIDI_IN_RING"
+    (at 241.3 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 3af0853c-a6d5-5ef3-9aca-1142c807e028))
+  (wire
+    (pts
+      (xy 241.3 67.31)
+      (xy 241.3 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a9c28be9-4290-55d7-8c9b-7b510613bf66))
+  (label "MIDI_OPTO_A"
+    (at 241.3 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 4a0ad7e2-bc2c-5c76-8f66-7bbd3777bb4b))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 63.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 98b44b30-c0dd-5334-bc0f-ee94d3654199)
+    (property "Reference" "R_MIDI_IN1"
+      (at 241.3 34.29 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "220"
+      (at 241.3 36.83 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_MIDI_IN"
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 138220a7-959a-55be-82a5-b5a9acc585ed))
+    (pin "2"
+      (uuid 1017d722-f4fe-5dfb-b696-d21a9da21002))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 59.69)
+      (xy 330.2 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 6c530491-4fc8-5abc-923f-43116bbed102))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 330.2 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4d46e5c3-7d29-5787-89c9-6cecbac3406b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 67.31)
+      (xy 330.2 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 0b6be088-3ff0-5f06-9422-ef942175f939))
+  (global_label "MIDI_RX"
+    (shape bidirectional)
+    (at 330.2 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3749a670-5f52-5ff3-bcb5-4b4fb1426029)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 63.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 47601375-12e8-5527-81a7-ca2717d69c86)
+    (property "Reference" "R_MIDI_RX1"
+      (at 330.2 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "4.7k"
+      (at 330.2 45.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_MIDI_RX"
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid d59b2063-5f48-5260-9a54-216de384ea1d))
+    (pin "2"
+      (uuid 9dbbf685-343c-54cd-8627-c70f5893012c))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_RX1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 123.19)
+      (xy 241.3 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 65ee483b-be76-5d83-a863-21af704d8fde))
+  (global_label "MIDI_OPTO_BASE"
+    (shape bidirectional)
+    (at 241.3 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid cef8f1a9-8b6c-5092-8698-33c946550fa3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 130.81)
+      (xy 241.3 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8b1cfa63-2978-59d9-bffb-26bdab6ae2b2))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 241.3 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d4fb99a0-3994-5247-aa28-c44302464604)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 127 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 31c461a5-ca17-55a5-8ad8-43034da39d9d)
+    (property "Reference" "R_MIDI_BASE1"
+      (at 241.3 95.25 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10k"
+      (at 241.3 97.79 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_MIDI_BASE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C25744"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1002TCE"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 241.3 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid cc5ae3a3-e18e-5285-9daa-7e6ad84fbb07))
+    (pin "2"
+      (uuid 9beca146-666c-54ad-9530-aa82009c2b39))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_BASE1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 326.39 127)
+      (xy 323.85 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 66c25f54-a0fb-50c2-8496-1500130075aa))
+  (label "MIDI_OPTO_A"
+    (at 323.85 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 4b834a0b-20f5-50f1-96b4-ba7a4e42fd55))
+  (wire
+    (pts
+      (xy 334.01 127)
+      (xy 336.55 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b6c7f77b-995b-5abb-84cd-25110f588c5f))
+  (label "MIDI_IN_TIP"
+    (at 336.55 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5e878908-3db0-53f6-9e5d-e0be6ddb669a))
+  (symbol
+    (lib_id "Device:D")
+    (at 330.2 127 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 8b3c168e-9faf-5f2b-8bce-6835c7583a35)
+    (property "Reference" "D_MIDI_IN1"
+      (at 330.2 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1N4148W"
+      (at 330.2 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Diode_SMD:D_SOD-123"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_MIDI_IN"
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 6b888a68-10bc-5db8-86ac-3cdcd5eb9301))
+    (pin "2"
+      (uuid 793692ba-3c22-5ad2-9acb-f900b5669119))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "D_MIDI_IN1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 241.3 186.69)
+      (xy 241.3 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7e714f1a-b538-55bf-b0c0-15764a9497ef))
+  (global_label "MIDI_TX"
+    (shape bidirectional)
+    (at 241.3 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 61d3914c-70b5-5468-9940-93482e746b3c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 241.3 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 241.3 194.31)
+      (xy 241.3 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7a47a38e-44a1-59b0-a704-d42dab246388))
+  (label "MIDI_OUT_TIP"
+    (at 241.3 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 517d4d48-a8de-50aa-b1da-f7ffaf4244e4))
+  (symbol
+    (lib_id "Device:R")
+    (at 241.3 190.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 6ec3474c-ddae-5f89-b600-0a1335e54c0b)
+    (property "Reference" "R_MIDI_T1"
+      (at 241.3 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "10"
+      (at 241.3 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_1206_3216Metric"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_MIDI_T"
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 241.3 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid fd648a23-38ea-5520-97d8-3bce4eb4dffb))
+    (pin "2"
+      (uuid ac438d62-a5ec-529c-a754-4e70fe2eaad8))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_T1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 330.2 186.69)
+      (xy 330.2 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 52a0bcb8-de01-5ac6-9f6c-a86b52cb91c7))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 330.2 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 5bb89b9a-793c-567c-b1ee-000e5f19c974)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 330.2 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 330.2 194.31)
+      (xy 330.2 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bd6e56aa-e14c-5cf1-af76-f511111fb43b))
+  (label "MIDI_OUT_RING"
+    (at 330.2 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid d3bed8e0-2cb9-51f9-99bf-482d3e8c7fee))
+  (symbol
+    (lib_id "Device:R")
+    (at 330.2 190.5 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 9478b7d1-7951-5205-a193-1da309ad1161)
+    (property "Reference" "R_MIDI_R1"
+      (at 330.2 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "33"
+      (at 330.2 172.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_1210_3225Metric"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_MIDI_R"
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 330.2 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 390f6ae7-462b-56c9-813b-93451ecd4ebf))
+    (pin "2"
+      (uuid 883b579f-4902-55ee-b1d2-9cf571f81f53))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "R_MIDI_R1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 152.4 123.19)
+      (xy 152.4 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid a8cc3b89-2b0d-51f4-a343-a64219692502))
+  (global_label "+5V_TEENSY"
+    (shape bidirectional)
+    (at 152.4 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 62fc140c-f897-5b3a-9ecd-0cfd9d93d7d9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 152.4 130.81)
+      (xy 152.4 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9d3950a2-2df1-5f9f-8a7f-1019bc59ace8))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 152.4 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid ddadbc15-a748-516a-a37c-0dea303c383c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 152.4 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 152.4 127 0)
+    (unit 1)
+    (in_bom no)
+    (on_board yes)
+    (dnp yes)
+    (uuid 6c27a513-9d1e-58d2-8e9a-103e3d400cca)
+    (property "Reference" "C_MIDI_VCC1"
+      (at 152.4 100.33 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "100nF"
+      (at 152.4 102.87 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_MIDI_VCC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C1525"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "CL05B104KO5NNNC"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Samsung Electro-Mechanics"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 152.4 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 519c0c7e-e358-52d6-a7df-483e1f9668b1))
+    (pin "2"
+      (uuid 746bb29d-4257-5f71-ae08-b66930d5f1b0))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/1bdd4807-168d-59c2-a209-2f19337b239c"
+          (reference "C_MIDI_VCC1")
+          (unit 1)))))
+  (text "MIDI TRS Type A: ring=fuente, tip=sumidero; entrada aislada, sleeve IN NC."
+    (at 15.24 20.32 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1f901777-f42f-5c3e-983d-45965f8d9dac))
+  (text "D12 CA-033 (2014): R_MIDI_R=33 ohm >=0.5W; R_MIDI_T=10 ohm >=0.25W; sin 100 ohm extra."
+    (at 15.24 24.13 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid ebd0fb14-4a96-5f72-b379-4261cf19d2e0))
+  (text "JST-PH hacia jacks de panel: 1=tip, 2=ring, 3=sleeve. Sin deteccion de insercion."
+    (at 15.24 27.94 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 9cb10ab5-098e-595d-98e4-25e6612866e4))
+  (text "D20: ALL DNP / excluded assembly BOM; USB MIDI on Pi, no MIDI panel holes. Teensy 0=EN_K; 1=EN_A."
+    (at 15.24 31.75 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid cbd9acf4-a378-5d0c-ade0-0fb3366b4765)))
