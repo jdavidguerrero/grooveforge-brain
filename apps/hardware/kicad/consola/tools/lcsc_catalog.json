@@ -907,6 +907,21 @@
         "AudioShieldRevD-L",
         "AudioShieldRevD-R"
       ]
+    },
+    {
+      "lcsc": "C1589",
+      "mpn": "CL10B103KB8NNNC",
+      "fabricante": "Samsung",
+      "encapsulado": "0603",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C1589.html",
+      "footprints": [
+        "Capacitor_SMD:C_0603_1608Metric"
+      ],
+      "values": [
+        "10nF"
+      ],
+      "sustitucion": "PCB-A C10–C25: reemplaza C57112 en pedido-lcsc-v1; 10 nF, 50 V, X7R, ±10 %, 0603. Lote de compra v1, 50 unidades; registrar lote físico al recibir."
     }
   ],
   "external_supplies": [

@@ -1,8 +1,8 @@
 {
   "base": "edc67a3",
-  "schematic_sha256": "887ac90cb5f758ef9eaf306f3dbd0887a63d128141b0a392b08fde96fc055ed6",
+  "schematic_sha256": "bab8ef5b1f1f9a7595791e8cbfb760d3d91333b6955ceee8bd0b7260d2754198",
   "pad_net_contract": "identical",
-  "board_sha256": "1a2971c525090f600e2ca07af35db3cbc0c198da43d7e9e1d6e5096801f2aebd",
+  "board_sha256": "ebf584ac154504effff6725f7f17ab66b1dc944c18495e68761c5aba7f91324e",
   "layers": 2,
   "thickness_mm": 1.6,
   "footprints": 37,
@@ -18,5 +18,6 @@
     "R2",
     "J4"
   ],
-  "encoder_mp": "GND solid"
+  "encoder_mp": "GND solid",
+  "metadata_revision": "2026-11-13: C10–C25 C57112 → C1589; sin cambios de geometría ni redes."
 }

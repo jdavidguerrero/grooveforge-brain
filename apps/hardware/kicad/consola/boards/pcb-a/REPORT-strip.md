@@ -19,7 +19,7 @@ Gerber, taladros, SVG y ZIP generados de la placa final. El montaje físico sigu
 
 | Agujero | KiCad mm | Panel mm | Taladro |
 |---|---|---|---|
-| H1 | 28;190 | 72;181 | NPTH Ø3,2 mm |
+| H1 | 40;192 | 84;179 | NPTH Ø3,2 mm |
 | H2 | 74;179 | 118;192 | NPTH Ø3,2 mm |
 | H3 | 100;179 | 144;192 | NPTH Ø3,2 mm |
 | H4 | 204;179 | 248;192 | NPTH Ø3,2 mm |
@@ -44,8 +44,9 @@ El [chequeo de montaje](../../tools/fit/REPORT-pcba-mounting.md) da puentes lás
 ≥4,2 / 7,35 / 7,35 / 7,35 mm; en CNC con rebajes, H1 conserva ≥3,9 mm.
 Con cuerpo envuelto en Ø5,6, no hay choque con K combinado ni sus particiones
 izquierda/derecha de doc28 §7. Los separadores sí atraviesan la altura de K (z80…81,6),
-pero sus posiciones no atraviesan material de K; luz mínima H1=1,2 mm.
-No existen layouts de K izq./der. en esta base: son los contornos especificados.
+pero sus posiciones no atraviesan material de K. La revisión adversarial sobre los layouts terminados
+de ambas K confirma una luz de **3,2 mm** de la envolvente Ø5,6 de H1 a K izquierda;
+el cálculo conservador anterior sobre contornos especificados daba 1,2 mm.
 
 La paridad completa detectó 18 campos de suministro ausentes ya en la base:
 `Supply` y `SupplyDescription` de J1 y RE1–RE8. Se copiaron del esquema como campos
@@ -65,7 +66,7 @@ que colisiona con K aunque su centro esté fuera. No se modifica el criterio de 
 
 | Comprobación | Resultado real |
 |---|---|
-| Esquema frente a edc67a3 | Idéntico byte a byte |
+| Esquema frente a edc67a3 | Misma conectividad; C10–C25 actualizados a C1589 en metadatos de compra |
 | Referencia/pad/red de todas las huellas | Idéntico a edc67a3 |
 | Huellas | 37 |
 | Capas / espesor | 2 / 1.6 mm |
@@ -81,9 +82,14 @@ Las reglas por red en `pcb-a.kicad_dru` hacen exigibles los anchos de señal y p
 el mínimo global se mantiene en 0,2 mm. Se corrigió una separación al NPTH H4 y se
 eliminaron vías/tramos sin uso antes del DRC definitivo. [Integridad JSON](docs/integrity.json).
 
-SHA-256 del esquema: `887ac90cb5f758ef9eaf306f3dbd0887a63d128141b0a392b08fde96fc055ed6`.
+SHA-256 del esquema: `bab8ef5b1f1f9a7595791e8cbfb760d3d91333b6955ceee8bd0b7260d2754198`.
 
-SHA-256 de la placa final: `20f494ae63f43ea48bd4f3817b3db3a16eaddf4cb196b9bc0d8529c2a5801bd1`.
+SHA-256 de la placa final: `ebf584ac154504effff6725f7f17ab66b1dc944c18495e68761c5aba7f91324e`.
+
+Actualización de compra 2026-11-13 (M03): C10–C25 pasan de C57112 a **C1589** (10 nF 0603 X7R).
+Solo cambia el campo LCSC de esquema/PCB y sus representaciones XML/BOM; cobre, taladros y Gerbers se conservan.
+El [manifiesto local de fabricación](fab/manifest.json) identifica la placa y su ZIP vigentes;
+los paquetes centrales históricos no son la fuente de pedido de PCB desnuda.
 
 ## DRC definitivo
 

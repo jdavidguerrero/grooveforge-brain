@@ -67,7 +67,7 @@ kicad-cli sch export bom --fields Reference,Value,Footprint,LCSC,DNP \
 ```
 
 Los tests reexportan las tres BOM y las comparan byte a byte con los CSV entregados.
-PCB-A mantiene 100 nF 0603 C14663, 16 × 10 nF 0603 C57112, 10 µF **0805** C15850
+PCB-A mantiene 100 nF 0603 C14663, 16 × 10 nF 0603 C1589, 10 µF **0805** C15850
 y pull-ups 0603 C4190 DNP. La nota de compra que agrupa los pasivos de PCB-A
 como 0603 no describe C2: para ese componente manda su huella existente 0805.
 No se cambia ese layout a 0805/1206 de PCB-K.
@@ -157,11 +157,11 @@ Se enumera la revisión pendiente; no se trasladó ni rediseñó PCB-A.
 
 ## Límites y fuentes
 
-PCB-K sigue siendo **esquema sin layout**. Los pads SMD del zócalo siguen marcados
-provisionales; validar con CPG135001S30 real/cupón que el patrón y el plástico
-admiten los taladros Ø1,3 en lugar de las antiguas aperturas NPTH Ø3.
-La separación de cobre comprobada no demuestra ese ajuste mecánico. Probar
-también orientación del LED, recorte y soldadura directa de la tecla en el cupón.
+Actualización 2026-11-13: ambas K tienen layout terminado y fabricación en su `fab/` local;
+el DRC de entrega tiene 0 errores. **D-K1b: Choc V2 soldadas directamente, sin zócalos.**
+Los pads SMD históricos quedan sin poblar: los PTH Ø1,3 no validan el alojamiento del
+CPG135001S30, que requiere pasos Ø3. Probar orientación del LED, recorte de chapa y
+soldadura directa de la tecla en el cupón; los README vigentes incluyen el recorte de colas JST.
 No se fabricó ni se hizo una prueba eléctrica física de ninguna placa aquí.
 
 - [LED EA, hoja OPSCO B/2, pp.4–5](https://datasheet.lcsc.com/datasheet/pdf/7a14970dbcd694dcd129b083b19b0911.pdf?productCode=C5378731).

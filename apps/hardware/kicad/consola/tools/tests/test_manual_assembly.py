@@ -81,7 +81,7 @@ def test_pcb_a_dnp_and_passive_sourcing():
             if ref == 'U1':
                 assert props['LCSC'] == 'C506653'
             if ref[0] in 'RC' and ref[1:].isdigit():
-                assert props['LCSC'] == {'100nF': 'C14663', '10nF': 'C57112',
+                assert props['LCSC'] == {'100nF': 'C14663', '10nF': 'C1589',
                                          '10uF': 'C15850', '2.2k': 'C4190'}[props['Value']]
         assert dnp == {'R1', 'R2', 'J4'}
 

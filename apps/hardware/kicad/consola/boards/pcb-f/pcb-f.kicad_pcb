@@ -237,6 +237,13 @@
 				(xyz 0 0 0)
 			)
 		)
+		(property "LCSC" "C49678"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "a5dfd88d-8515-57b4-9f41-0ac433e86894")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
 	)
 	(footprint "MountingHole_3.2mm_M3"
 		(layer "F.Cu")
@@ -495,6 +502,13 @@
 			(rotate
 				(xyz 0 0 0)
 			)
+		)
+		(property "LCSC" "C49678"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e72eb2b2-7c9e-5a1a-ae67-ee33e07089c5")
+			(effects (font (size 1 1) (thickness 0.15)))
 		)
 	)
 	(footprint "MountingHole_3.2mm_M3"
@@ -788,6 +802,20 @@
 			(uuid "8d40deb4-ec80-59f9-bb43-61f850eb7a54")
 		)
 		(embedded_fonts no)
+		(property "Supply" "owner"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "d9c21169-c404-5866-ba2b-7d51c1c9c40d")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
+		(property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "88cd5744-8c86-5f78-bed5-e6509a331933")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
@@ -938,6 +966,13 @@
 			(rotate
 				(xyz 0 0 0)
 			)
+		)
+		(property "LCSC" "C49678"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "93eebfea-c118-5e89-a81f-d4687c621dc2")
+			(effects (font (size 1 1) (thickness 0.15)))
 		)
 	)
 	(footprint "MountingHole_3.2mm_M3"
@@ -1197,6 +1232,13 @@
 			(rotate
 				(xyz 0 0 0)
 			)
+		)
+		(property "LCSC" "C49678"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "682a7aaf-f171-5c9a-86f8-3fc76cee2345")
+			(effects (font (size 1 1) (thickness 0.15)))
 		)
 	)
 	(footprint "MountingHole_3.2mm_M3"
@@ -1490,6 +1532,20 @@
 			(uuid "05cb95a1-a1e1-5798-8939-79843b109700")
 		)
 		(embedded_fonts no)
+		(property "Supply" "owner"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "8fc08ca8-2be6-5727-8f78-bee696a0e865")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
+		(property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "7e115218-3f13-5c8b-b8af-01f650743853")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
 	)
 	(footprint "groovepush:ALPS_RS6011P_60mm"
 		(layer "F.Cu")
@@ -1674,6 +1730,20 @@
 			(uuid "68083098-dcd4-530e-8808-b35aafc7ae08")
 		)
 		(embedded_fonts no)
+		(property "Supply" "owner"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "80cadfa4-f1c0-52dc-94f0-1ded61180b50")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
+		(property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "042ad99e-331f-59f1-946c-df3c94d48cdd")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
 	)
 	(footprint "Capacitor_SMD:C_0805_2012Metric"
 		(layer "F.Cu")
@@ -1824,6 +1894,13 @@
 			(rotate
 				(xyz 0 0 0)
 			)
+		)
+		(property "LCSC" "C49678"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "11df9852-200b-5cb4-a382-d6c2b6cb6ffe")
+			(effects (font (size 1 1) (thickness 0.15)))
 		)
 	)
 	(footprint "groovepush:ALPS_RS6011P_60mm"
@@ -2009,6 +2086,20 @@
 			(uuid "4381b28e-d171-5e72-9ae6-832763735b59")
 		)
 		(embedded_fonts no)
+		(property "Supply" "owner"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "ad6e4a8c-9b73-5398-811f-35d78788edd5")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
+		(property "SupplyDescription" "Juan: cuatro faders RS6011 B50K"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "e904ca16-f947-53aa-adb2-ac0a9978a146")
+			(effects (font (size 1 1) (thickness 0.15)))
+		)
 	)
 	(footprint "Connector_JST:JST_SH_SM06B-SRSS-TB_1x06-1MP_P1.00mm_Horizontal"
 		(layer "B.Cu")
@@ -2449,6 +2540,13 @@
 			(rotate
 				(xyz 0 0 0)
 			)
+		)
+		(property "LCSC" "C160405"
+			(at 0 0)
+			(layer "F.Fab")
+			(hide yes)
+			(uuid "6be8c59e-e1ea-5cdc-b83e-96277b4a42b6")
+			(effects (font (size 1 1) (thickness 0.15)))
 		)
 	)
 	(gr_line

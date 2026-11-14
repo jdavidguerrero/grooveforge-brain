@@ -2,8 +2,9 @@
 
 2026-11-13 · **Un equipo**, sin repuestos ni múltiplos comerciales. Base `0ef531f` + corrección de anclajes PCB-A.
 Las cantidades de la tabla son totales por partida; las alternativas sustituyen partidas, no se suman.
-Los cuatro espárragos del marco M4 son la decisión nueva de Juan de esta revisión; sus posiciones y el marco
-siguen por definir. Esta BOM permite cotizar; no libera esos cuatro agujeros para corte.
+Los cuatro espárragos del marco M4 ya están ubicados en el CSV de contornos, en coordenadas de panel
+**(77,130), (77,158), (244,94), (244,172) mm**. El marco y su espesor final siguen por definir;
+esta BOM permite cotizar, sujeta al dibujo y las tolerancias del herraje elegido.
 
 Fuentes locales: [CSV de contornos y notas](../../../hardware/kicad/consola/panel/pcb-outlines-console-v5.csv),
 [FABRICACION](FABRICACION.md), [doc28 §2](../../../docs/consola/28-pcb-k.md#2-mecánica),
@@ -52,7 +53,7 @@ No hay tornillos extra para las ocho carcasas EC11 de A: quedan soldados a la PC
 | Separadores tubulares M2.5 de 1,4 | **14** |
 | BSO-M2.5 de 4,5 útiles | **10** |
 | BSO-M3 de 7,5 / 18 / 10 útiles | **4 / 4 / 9** = 17 |
-| Autoinsertables en la chapa | **45** = 18 FH + 27 BSO; **41 ubicados en CAD/CSV**, 4 M4 pendientes |
+| Autoinsertables en la chapa | **45** = 18 FH + 27 BSO; **45 ubicados en CSV**, incluidos los 4 M4; cotejar el CAD de conjunto con ese CSV |
 | Tornillos M2.5×6 | **10** |
 | Tornillos M3×6 / ×8 / ×10 / ×16 | **8 / 6 / 9 / 15** = **38 M3** |
 | Tornillos métricos sueltos, partidas de arriba | **48** = 10 M2.5 + 38 M3; no incluye alternativa avellanada |
@@ -95,9 +96,10 @@ Centros de panel H1=(84,179), H2=(118,192), H3=(144,192), H4=(248,192). Taladros
 la chapa lleva Ø4,2 nominal. [Chequeo reproducible](../../../hardware/kicad/consola/tools/fit/REPORT-pcba-mounting.md):
 puentes láser mínimos conservadores **4,2 / 7,35 / 7,35 / 7,35 mm** (requisito ≥1,5).
 Separadores z65…83 frente a K z80…81,6: atraviesan su intervalo Z, pero **ninguno atraviesa material de K**
-en los contornos especificados. Envolvente de cuerpo Ø5,6; H1 deja **1,2 mm** al borde K.
-Se usaron el contorno conjunto v5 y particiones izq./der. de doc28 §7; en esta base no hay layouts de K
-izq./der. para certificar. Revalidar al completarlos y contra el cuerpo del proveedor final.
+en los contornos especificados. Envolvente de cuerpo Ø5,6; H1 deja **3,2 mm** al contorno real de K izquierda
+(la estimación conservadora anterior daba 1,2 mm). Ambas K tienen layout terminado, DRC de entrega con
+0 errores y fabricación local en `boards/pcb-k-left/fab/` y `boards/pcb-k-right/fab/`. La revisión adversarial
+contrastó sus contornos reales; revalidar el montaje contra el cuerpo y las tolerancias del proveedor final.
 
 ## Compra y proceso de chapa
 
@@ -127,6 +129,23 @@ Para FH y equivalentes M2.5, verificar también diámetro y espesor mínimo en s
 plano alrededor del agujero y no desbarbar por rutina la zona de retención. Es una fijación mecánica, no una
 unión eléctrica garantizada de GND a la chapa anodizada.
 
+## Propuesta para Juan — unión ESD del panel a GND (I07)
+
+**Propuesta pendiente de aprobación de Juan; no es una decisión de montaje.** Establecer un único
+punto de unión eléctrica (bond) del aluminio a **GND**: terminal de ojo retenido bajo un separador PEM
+de la chapa, en una zona sin anodizar. Si ya está anodizada, preparar metal desnudo por raspado local
+y/o usar arandela dentada que atraviese el acabado; comprobar contacto real y retención mecánica.
+Añadir un cable corto desde ese terminal a un pad **GND de PCB-M**. PCB-M dispone de agujeros M3
+con pad en esa red; identificar el pad elegido en la revisión final y comprobar su red antes de soldar.
+No usar AGND ni HP_VGND, ni confiar en los agujeros NPTH de K/A/F o en el anodizado como conexión.
+
+Con el equipo apagado y sin alimentación, compensar la resistencia de las puntas del multímetro y
+medir entre aluminio desnudo, terminal y pad GND de PCB-M: exigir **continuidad <1 Ω** en el recorrido
+completo. Repetir tras el apriete final y mover suavemente el cable para detectar un contacto intermitente;
+registrar valor y punto elegido. Esta medida valida la unión DC, no certifica el comportamiento ESD.
+Prever **1 terminal de ojo, 1 cable corto y 1 arandela dentada si hace falta** como partida propuesta,
+fuera de los totales aprobados hasta que Juan decida; evitar una segunda unión panel–GND accidental.
+
 ## Por definir
 
 Estas cantidades son **adicionales** a los totales anteriores y quedan sin asignar hasta medir/diseñar su soporte.
@@ -137,9 +156,9 @@ Estas cantidades son **adicionales** a los totales anteriores y quedan sin asign
 | Bahía Pi 5 | Soporte de Pi/HAT, tapa de bahía abierta, tuercas/insertos y acceso a USB/DSI; el placeholder no es un montaje |
 | Sharp GP2Y0A41 ×2 | Dos brackets, taladros del sensor, fijación al panel/cuerpo y largo de tornillo; la ventana IR no es un soporte |
 | Encoder jog | Rosca/tuerca/arandela del casquillo, antirotación, espesor disponible y sujeción de perilla; confirmar piezas incluidas con el EC11 de Juan |
-| Marco impreso M4 | Geometría y espesor ≈3 mm, ubicación de los **4 FH largos fuera de la ventana**, rigidez, apoyo PCB/elastómero; 4 FH y 4 tuercas ya contados, no duplicar. No hay todavía cuatro cortes extra en CAD |
+| Marco impreso M4 | Geometría y espesor ≈3 mm, rigidez, apoyo PCB/elastómero. Los **4 FH largos fuera de la ventana** ya están en el CSV en (77,130), (77,158), (244,94), (244,172); 4 FH y 4 tuercas ya contados, no duplicar. Cotejar el CAD de conjunto |
 | Puntos para bridas | Ubicación, cantidad y sujeción adhesiva o atornillada; radios y alivio de tensión de IDC/JST/DSI/USB |
 | Pots, selector y jacks de pared | Inventariar lo incluido: 3 pots → 3 tuercas + 3 arandelas si no vienen; selector → soporte según pieza. Jacks del pedido: 7×6,35 +3×3,5 → hasta 10 tuercas/arandelas, confirmar cuáles se montan (MIDI sin poblar). No recomprar accesorios incluidos |
 
-No se inventan taladros de pantalla, Pi, jog o M4 a partir de su ventana visible. Tampoco se consideran
+No se inventan taladros de pantalla, Pi o jog a partir de su ventana visible. Los cuatro anclajes M4 proceden del CSV. Tampoco se consideran
 resueltas estas fijaciones por tener un volumen placeholder en FreeCAD.

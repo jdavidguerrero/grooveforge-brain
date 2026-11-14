@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import zipfile
 
+from schgen.sexp import parse, child, children
+
 REPO=Path(__file__).resolve().parents[6]
 OUT=REPO/'apps/hardware/kicad/consola/boards/pcb-p'
 
@@ -22,3 +24,28 @@ def test_pcb_p_fabrication_matches_verified_board():
             assert archive.read(filename)==(OUT/'fab'/filename).read_bytes()
     drill=(OUT/'fab/pcb-p-NPTH.drl').read_text()
     assert 'NonPlated' in drill and drill.count('G85')==6
+
+
+def test_pcb_p_silkscreen_manufacturing_minimums():
+    """Comprobar la entrega real, incluidos los contornos de las huellas."""
+    board=parse((OUT/'pcb-p.kicad_pcb').read_text())
+    items=list(board[1:])
+    for fp in children(board,'footprint'):
+        items.extend(fp[1:])
+    texts=shapes=0
+    for item in items:
+        if not isinstance(item,list) or not children(item,'layer'):
+            continue
+        if child(item,'layer')[1] not in ('F.SilkS','B.SilkS'):
+            continue
+        if item[0] in ('gr_text','fp_text','property'):
+            if children(item,'hide') and child(item,'hide')[1]=='yes':
+                continue
+            font=child(child(item,'effects'),'font')
+            assert float(child(font,'size')[2])>=1.,item
+            assert float(child(font,'thickness')[1])>=.15,item
+            texts+=1
+        elif children(item,'stroke'):
+            assert float(child(child(item,'stroke'),'width')[1])>=.15,item
+            shapes+=1
+    assert texts==14 and shapes>0

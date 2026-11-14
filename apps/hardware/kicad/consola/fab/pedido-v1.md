@@ -15,12 +15,18 @@ combinado; elegir "ship together" al pagar).
 
 | Placa | Tamaño (mm) | USD | Ensamble |
 |---|---|---:|---|
-| PCB-M | 186 × 60 | 9,40 | **Sí**, SMD, 2 unidades |
-| PCB-K izquierda | 102 × 216 | 14,70 | A mano |
+| PCB-M | 186 × 80 | 9,40 | **Sí**, SMD, 2 unidades |
+| PCB-K izquierda | 102,2 × 216 | 14,70 | A mano |
 | PCB-K derecha | 144 × 152 | 14,60 | A mano |
-| PCB-A | ~217 × 70 | ~11 (estimado) | A mano |
+| PCB-A | 217 × 29,6 | ~11 (estimado) | A mano |
 | PCB-F | 81 × 83 | 4,00 | A mano |
 | PCB-P | 223 × 31 | 7,40 | A mano |
+
+**Todos los precios de esta tabla son históricos, pendientes de recotizar** con estos tamaños reales,
+acabado/color y cantidades finales; no constituyen una cotización vigente.
+
+Sustitución de compra v1: **C57112 → C1589**, Samsung CL10B103KB8NNNC, 10 nF, 50 V, X7R, ±10 %,
+0603 para C10–C25 de A. Se registra en BOM/esquema/catálogo y pedido de 50 unidades; anotar el lote físico al recibir.
 
 PCB-A ya diseñada, nunca fabricada. Antes de pedirla: R1/R2 (pull-ups I2C) como **no poblar** (PCB-M las tiene, D14),
 J4 (cable a la vieja PCB-K1) **no poblar**, y verificar encoders en y = 192 y encaje con el cuerpo en FreeCAD.
@@ -37,7 +43,7 @@ J4 (cable a la vieja PCB-K1) **no poblar**, y verificar encoders en y = 192 y en
 | 10 kΩ 0805 1 % | C17414 | 50 | RESET de cada MCP | 0,003 |
 | 33 Ω 0805 1 % | C17634 | 20 | Serie de datos LED a la entrada de cada PCB-K | 0,005 |
 | 100 nF 0603 | C14663 | 10 | PCB-A C1 (1 + repuestos) | sin recotizar |
-| 10 nF 0603 | C57112 | 20 | PCB-A C10–C25 (16 + repuestos) | sin recotizar |
+| 10 nF 0603 X7R | C1589 | 50 | PCB-A C10–C25 (16 + repuestos); sustituye C57112 | sin recotizar |
 | 10 µF 0805 | C15850 | 10 | PCB-A C2 (1 + repuestos) | sin recotizar |
 
 No comprar las pull-ups DNP R1/R2 de PCB-A ni R2/R3 de cada PCB-K. Los 100 nF 0805

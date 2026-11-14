@@ -93,6 +93,17 @@ de 5 V de LEDs de PCB-M, los 5 V de la Teensy y los de LEDs **no se unen**: sepa
 con medidor USB antes de fabricar**; si no alcanza, el plan B es una segunda entrada de 5 V para PCB-M (huella
 prevista, sin poblar).
 
+### Masa del panel — propuesta para Juan (I07)
+
+Pendiente de aprobación de Juan: un único bond del aluminio a **GND**, mediante terminal de ojo bajo
+un separador PEM de la chapa en metal sin anodizar (o raspado local/arandela dentada que asegure contacto),
+y cable corto a un pad GND de PCB-M; sus agujeros M3 tienen pad en esa red. Identificar y comprobar el pad
+antes del montaje. No conectar a AGND ni HP_VGND; D10/NT1 conserva su unión de masas existente.
+Con el equipo apagado y desconectado, compensar las puntas y medir aluminio–terminal–pad GND:
+**<1 Ω**, repetido tras apriete final y movimiento suave del cable. Detalles y partida propuesta en
+[BOM de herrajes](../../design/3d-models/consola/BOM-herrajes.md#propuesta-para-juan--unión-esd-del-panel-a-gnd-i07).
+Es una propuesta, no una decisión ni una prueba ESD.
+
 ## 6. Mecánica
 
 Dimensiones y posición de PCB-M, de las perillas y del jog dependen del panel (`kicad/consola/panel/`,

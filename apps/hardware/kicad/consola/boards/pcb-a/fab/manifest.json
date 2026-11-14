@@ -1,5 +1,5 @@
 {
-  "board_sha256": "1a2971c525090f600e2ca07af35db3cbc0c198da43d7e9e1d6e5096801f2aebd",
+  "board_sha256": "ebf584ac154504effff6725f7f17ab66b1dc944c18495e68761c5aba7f91324e",
   "files": {
     "pcb-a-B_Cu.gbl": "91554f4ba3265ba0132cbf4fa8cb0e9594de623f232198c05fa4d478a727bd5f",
     "pcb-a-B_Mask.gbs": "f39319a153cc9a4fd5a9f74699c8ae13b8fb4ba5f522d098d69638496bece5d1",

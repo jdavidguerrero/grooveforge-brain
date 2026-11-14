@@ -75,7 +75,8 @@ def test_front_power_and_cv_rc_preserve_other_domains(parts):
 
 def test_pullup_pair_is_selectable_without_unsoldering_resistors(parts):
     for signal in ('SDA', 'SCL'):
-        for suffix, value, state in [('22', '2.2k', 'Bridged'), ('47', '4.7k', 'Open')]:
+        # D45: the Audio Shield Rev D already pulls SDA/SCL up with 2.2 k; both PCB-M pairs ship open.
+        for suffix, value, state in [('22', '2.2k', 'Open'), ('47', '4.7k', 'Open')]:
             bridge = parts[f'SJ_PU_{signal}_{suffix}']
             resistor = parts[f'R_{signal}' + ('_47' if suffix == '47' else '')]
             assert resistor.value == value
@@ -83,7 +84,7 @@ def test_pullup_pair_is_selectable_without_unsoldering_resistors(parts):
             assert resistor.pins['2'] == f'I2C_{signal}'
             assert bridge.pins['1'] == '+3.3V'
             assert bridge.lib_id == f'Jumper:SolderJumper_2_{state}'
-        assert f'PU_{signal}_22' in conductive_reach(parts, '+3.3V')
+        assert f'PU_{signal}_22' not in conductive_reach(parts, '+3.3V')
         assert f'PU_{signal}_47' not in conductive_reach(parts, '+3.3V')
 
 

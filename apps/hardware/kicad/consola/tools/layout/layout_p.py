@@ -73,11 +73,20 @@ class Router(base.Router):
         return masks
 
 
-def text(board, value, x, y, layer=p.F_SilkS, size=.85):
+def text(board, value, x, y, layer=p.F_SilkS, size=1.):
+    size=max(1.,size)
     item=p.PCB_TEXT(board);item.SetText(value);item.SetPosition(vec(x,y));item.SetLayer(layer)
-    item.SetTextSize(p.VECTOR2I(p.FromMM(size),p.FromMM(size)));item.SetTextThickness(p.FromMM(.13))
+    item.SetTextSize(p.VECTOR2I(p.FromMM(size),p.FromMM(size)));item.SetTextThickness(p.FromMM(.15))
     if layer==p.B_SilkS: item.SetMirrored(True)
     board.Add(item)
+
+
+def silkscreen_minimums(board):
+    """Conservar geometría y exigir trazos de serigrafía de al menos 0,15 mm."""
+    for fp in board.GetFootprints():
+        for item in fp.GraphicalItems():
+            if item.GetLayer() in (p.F_SilkS,p.B_SilkS) and isinstance(item,p.PCB_SHAPE):
+                item.SetWidth(max(item.GetWidth(),p.FromMM(.15)))
 
 
 def sync_fields(fp, component):
@@ -183,6 +192,7 @@ def build():
             router.route(panel(a.GetPosition()),panel(b.GetPosition()),a.GetNet(),.25,start_layer=1,end_layer=1)
     text(board,'GROOVEFORGE  PCB-P  v1  1.6mm',82,84.5,p.F_SilkS,.8)
     text(board,'SOCKETS / JST ABAJO',82,87,p.F_SilkS,.85)
+    silkscreen_minimums(board)
     # Stable UUIDs preserve reviewable diffs when rebuilding.
     def identify(obj,key): obj.SetUuid(p.KIID(str(uuid.uuid5(uuid.NAMESPACE_URL,'grooveforge-console-pcb-p/'+key))))
     for fp in sorted(board.GetFootprints(),key=lambda f:f.GetReference()):
