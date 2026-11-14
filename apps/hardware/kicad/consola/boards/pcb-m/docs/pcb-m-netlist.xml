@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/Users/juandavidguerrerocastro/GROOVEFORGE/grooveforge-brain/.claude/worktrees/quizzical-cohen-29dbe2/apps/hardware/kicad/consola/boards/pcb-m/pcb-m.kicad_sch</source>
-    <date>2026-11-13T06:57:03</date>
+    <date>2026-11-13T18:57:15</date>
     <tool>Eeschema 10.0.6</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -240,6 +240,98 @@
     </sheet>
   </design>
   <components>
+    <comp ref="J_SHD_L1">
+      <value>AudioShieldRevD-L</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Function">J_SHD_L</field>
+        <field name="LCSC">C22373900</field>
+        <field name="MPN">HC-PM254-8.5H-1x14PZ</field>
+        <field name="Manufacturer">Hong Cheng</field>
+        <field name="Package">THT 1x14 P2.54mm H8.5mm</field>
+        <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Function" value="J_SHD_L"/>
+      <property name="LCSC" value="C22373900"/>
+      <property name="MPN" value="HC-PM254-8.5H-1x14PZ"/>
+      <property name="Manufacturer" value="Hong Cheng"/>
+      <property name="Package" value="THT 1x14 P2.54mm H8.5mm"/>
+      <property name="Sheetname" value="01-teensy"/>
+      <property name="Sheetfile" value="sheets/01-teensy.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/01-teensy/" tstamps="/ccfd5574-841e-55ce-8ba6-76217c08467f/"/>
+      <tstamps>e4a13165-b20b-5f0c-acb7-9bf83dd5e709</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J_SHD_R1">
+      <value>AudioShieldRevD-R</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Function">J_SHD_R</field>
+        <field name="LCSC">C22373900</field>
+        <field name="MPN">HC-PM254-8.5H-1x14PZ</field>
+        <field name="Manufacturer">Hong Cheng</field>
+        <field name="Package">THT 1x14 P2.54mm H8.5mm</field>
+        <field name="Footprint">Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Connector_Generic" part="Conn_01x14" description="Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)"/>
+      <property name="Function" value="J_SHD_R"/>
+      <property name="LCSC" value="C22373900"/>
+      <property name="MPN" value="HC-PM254-8.5H-1x14PZ"/>
+      <property name="Manufacturer" value="Hong Cheng"/>
+      <property name="Package" value="THT 1x14 P2.54mm H8.5mm"/>
+      <property name="Sheetname" value="01-teensy"/>
+      <property name="Sheetfile" value="sheets/01-teensy.kicad_sch"/>
+      <property name="ki_keywords" value="connector"/>
+      <property name="ki_fp_filters" value="Connector*:*_1x??_*"/>
+      <sheetpath names="/01-teensy/" tstamps="/ccfd5574-841e-55ce-8ba6-76217c08467f/"/>
+      <tstamps>59b3d68f-1b3d-5265-aa8f-406f82d566df</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="11"/>
+            <pin num="12"/>
+            <pin num="13"/>
+            <pin num="14"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="J_SHIELD_HP1">
       <value>HP L/R/VGND - NEVER GND</value>
       <footprint>Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical</footprint>
@@ -4409,6 +4501,122 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C_TRIG1">
+      <value>DNP</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">C_TRIG1</field>
+        <field name="LCSC"/>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Function" value="C_TRIG1"/>
+      <property name="LCSC" value=""/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>f6da1547-e5c1-558a-94b3-76714bf0547a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_TRIG2">
+      <value>DNP</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">C_TRIG2</field>
+        <field name="LCSC"/>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Function" value="C_TRIG2"/>
+      <property name="LCSC" value=""/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>c7ec355f-25fd-5582-9cea-0d1502692f3c</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_TRIG3">
+      <value>DNP</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">C_TRIG3</field>
+        <field name="LCSC"/>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Function" value="C_TRIG3"/>
+      <property name="LCSC" value=""/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>91fc5a9e-c4b1-5b88-b27a-11dafe0db16a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C_TRIG4">
+      <value>DNP</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">C_TRIG4</field>
+        <field name="LCSC"/>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="C" description="Unpolarized capacitor"/>
+      <property name="Function" value="C_TRIG4"/>
+      <property name="LCSC" value=""/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="cap capacitor"/>
+      <property name="ki_fp_filters" value="C_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>65b81c44-fefb-5aff-8bf1-cd8f4c3f448f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="D_PEDAL_ESD1">
       <value>PESD3V3U1UL,315</value>
       <footprint>gf_consola:D_SOD-882_K1</footprint>
@@ -4438,6 +4646,150 @@
         <unit name="A">
           <pins>
             <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_TRIG1">
+      <value>BAT54S</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="Function">D_TRIG1</field>
+        <field name="LCSC">C47546</field>
+        <field name="MPN">BAT54S,215</field>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Package">SOT-23</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Diode" part="BAT54S" description="Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"/>
+      <property name="Function" value="D_TRIG1"/>
+      <property name="LCSC" value="C47546"/>
+      <property name="MPN" value="BAT54S,215"/>
+      <property name="Manufacturer" value="Nexperia"/>
+      <property name="Package" value="SOT-23"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="schottky diode"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>5a3429e7-a462-5416-bfc9-e884e5c127b1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_TRIG2">
+      <value>BAT54S</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="Function">D_TRIG2</field>
+        <field name="LCSC">C47546</field>
+        <field name="MPN">BAT54S,215</field>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Package">SOT-23</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Diode" part="BAT54S" description="Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"/>
+      <property name="Function" value="D_TRIG2"/>
+      <property name="LCSC" value="C47546"/>
+      <property name="MPN" value="BAT54S,215"/>
+      <property name="Manufacturer" value="Nexperia"/>
+      <property name="Package" value="SOT-23"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="schottky diode"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>e28083c6-3907-5e26-b575-df4838e10e00</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_TRIG3">
+      <value>BAT54S</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="Function">D_TRIG3</field>
+        <field name="LCSC">C47546</field>
+        <field name="MPN">BAT54S,215</field>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Package">SOT-23</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Diode" part="BAT54S" description="Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"/>
+      <property name="Function" value="D_TRIG3"/>
+      <property name="LCSC" value="C47546"/>
+      <property name="MPN" value="BAT54S,215"/>
+      <property name="Manufacturer" value="Nexperia"/>
+      <property name="Package" value="SOT-23"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="schottky diode"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>d2194b73-b2c1-5643-9634-052b1c78ffa0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D_TRIG4">
+      <value>BAT54S</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="Function">D_TRIG4</field>
+        <field name="LCSC">C47546</field>
+        <field name="MPN">BAT54S,215</field>
+        <field name="Manufacturer">Nexperia</field>
+        <field name="Package">SOT-23</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Diode" part="BAT54S" description="Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"/>
+      <property name="Function" value="D_TRIG4"/>
+      <property name="LCSC" value="C47546"/>
+      <property name="MPN" value="BAT54S,215"/>
+      <property name="Manufacturer" value="Nexperia"/>
+      <property name="Package" value="SOT-23"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="schottky diode"/>
+      <property name="ki_fp_filters" value="SOT?23*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>870ca774-bd63-5417-8291-70b1a1cd4d55</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
             <pin num="2"/>
           </pins>
         </unit>
@@ -4777,6 +5129,286 @@
       <property name="ki_fp_filters" value="R_*"/>
       <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
       <tstamps>53d92a6e-8921-5743-9914-466e5305a538</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG1_LOAD1">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG1_LOAD</field>
+        <field name="LCSC">C26083</field>
+        <field name="MPN">0402WGF1004TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG1_LOAD"/>
+      <property name="LCSC" value="C26083"/>
+      <property name="MPN" value="0402WGF1004TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>7d03e4a3-4110-5fbb-bd64-ee4db2548fcc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG1_SER1">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG1_SER</field>
+        <field name="LCSC">C11702</field>
+        <field name="MPN">0402WGF1001TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG1_SER"/>
+      <property name="LCSC" value="C11702"/>
+      <property name="MPN" value="0402WGF1001TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>b60c3038-c8aa-5606-8886-8dd3ffa5a1f0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG2_LOAD1">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG2_LOAD</field>
+        <field name="LCSC">C26083</field>
+        <field name="MPN">0402WGF1004TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG2_LOAD"/>
+      <property name="LCSC" value="C26083"/>
+      <property name="MPN" value="0402WGF1004TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>81fa9c5f-737d-5f17-93ac-8e63cf66aa11</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG2_SER1">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG2_SER</field>
+        <field name="LCSC">C11702</field>
+        <field name="MPN">0402WGF1001TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG2_SER"/>
+      <property name="LCSC" value="C11702"/>
+      <property name="MPN" value="0402WGF1001TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>fad031ae-2da6-5a43-af1f-da04d6c7eb4a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG3_LOAD1">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG3_LOAD</field>
+        <field name="LCSC">C26083</field>
+        <field name="MPN">0402WGF1004TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG3_LOAD"/>
+      <property name="LCSC" value="C26083"/>
+      <property name="MPN" value="0402WGF1004TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>4d986bdf-bb9a-5779-8a81-a77eb4ab7c32</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG3_SER1">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG3_SER</field>
+        <field name="LCSC">C11702</field>
+        <field name="MPN">0402WGF1001TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG3_SER"/>
+      <property name="LCSC" value="C11702"/>
+      <property name="MPN" value="0402WGF1001TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>d805328c-38ae-5a24-a7e9-512c372a9e6b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG4_LOAD1">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG4_LOAD</field>
+        <field name="LCSC">C26083</field>
+        <field name="MPN">0402WGF1004TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG4_LOAD"/>
+      <property name="LCSC" value="C26083"/>
+      <property name="MPN" value="0402WGF1004TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>94210ba2-9cd8-5877-9ffe-ee60c92409eb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R_TRIG4_SER1">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="Function">R_TRIG4_SER</field>
+        <field name="LCSC">C11702</field>
+        <field name="MPN">0402WGF1001TCE</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="Package">0402</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="Device" part="R" description="Resistor"/>
+      <property name="Function" value="R_TRIG4_SER"/>
+      <property name="LCSC" value="C11702"/>
+      <property name="MPN" value="0402WGF1001TCE"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="Package" value="0402"/>
+      <property name="Sheetname" value="09-connectors-rear"/>
+      <property name="Sheetfile" value="sheets/09-connectors-rear.kicad_sch"/>
+      <property name="dnp"/>
+      <property name="ki_keywords" value="R res resistor"/>
+      <property name="ki_fp_filters" value="R_*"/>
+      <sheetpath names="/09-connectors-rear/" tstamps="/690fcfae-1b99-5c2c-bfab-6430a8445761/"/>
+      <tstamps>f3ff2baf-6d79-54a6-bcfd-ef485efda95c</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -5778,23 +6410,23 @@
     </comp>
     <comp ref="SJ_PU_SCL_22">
       <value>SJ_PU_SCL_22</value>
-      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
       <fields>
         <field name="Function">SJ_PU_SCL_22</field>
         <field name="LCSC"/>
         <field name="Procurement">PCB copper; no purchased component</field>
-        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
       <property name="Function" value="SJ_PU_SCL_22"/>
       <property name="LCSC" value=""/>
       <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="11-diagnostics"/>
       <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
       <property name="ki_keywords" value="solder jumper SPST"/>
-      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
       <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
       <tstamps>ef1e6c1c-6f78-5dd3-b5a0-eaa70940bbaa</tstamps>
       <units>
@@ -5838,23 +6470,23 @@
     </comp>
     <comp ref="SJ_PU_SDA_22">
       <value>SJ_PU_SDA_22</value>
-      <footprint>Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</footprint>
+      <footprint>Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</footprint>
       <fields>
         <field name="Function">SJ_PU_SDA_22</field>
         <field name="LCSC"/>
         <field name="Procurement">PCB copper; no purchased component</field>
-        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm</field>
+        <field name="Footprint">Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="Jumper" part="SolderJumper_2_Bridged" description="Solder Jumper, 2-pole, closed/bridged"/>
+      <libsource lib="Jumper" part="SolderJumper_2_Open" description="Solder Jumper, 2-pole, open"/>
       <property name="Function" value="SJ_PU_SDA_22"/>
       <property name="LCSC" value=""/>
       <property name="Procurement" value="PCB copper; no purchased component"/>
       <property name="Sheetname" value="11-diagnostics"/>
       <property name="Sheetfile" value="sheets/11-diagnostics.kicad_sch"/>
       <property name="ki_keywords" value="solder jumper SPST"/>
-      <property name="ki_fp_filters" value="SolderJumper*Bridged*"/>
+      <property name="ki_fp_filters" value="SolderJumper*Open*"/>
       <sheetpath names="/11-diagnostics/" tstamps="/2254eb97-ccb1-557b-b047-c25ba62a2b25/"/>
       <tstamps>4593ee65-1be9-58c9-ab9f-e8975cc34aea</tstamps>
       <units>
@@ -8174,6 +8806,35 @@
         <pin num="10" name="Pin_10" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="Connector_Generic" part="Conn_01x14">
+      <description>Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
+      <footprints>
+        <fp>Connector*:*_1x??_*</fp>
+      </footprints>
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x14</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description">Generic connector, single row, 01x14, script generated (kicad-library-utils/schlib/autogen/connector/)</field>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+        <pin num="6" name="Pin_6" type="passive"/>
+        <pin num="7" name="Pin_7" type="passive"/>
+        <pin num="8" name="Pin_8" type="passive"/>
+        <pin num="9" name="Pin_9" type="passive"/>
+        <pin num="10" name="Pin_10" type="passive"/>
+        <pin num="11" name="Pin_11" type="passive"/>
+        <pin num="12" name="Pin_12" type="passive"/>
+        <pin num="13" name="Pin_13" type="passive"/>
+        <pin num="14" name="Pin_14" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="Connector_Generic" part="Conn_01x24">
       <description>Generic connector, single row, 01x24, script generated (kicad-library-utils/schlib/autogen/connector/)</description>
       <footprints>
@@ -8656,6 +9317,10 @@
       <node ref="C_I2C_K_B1" pin="1" pintype="passive"/>
       <node ref="D_ESD_I2C_A1" pin="5" pinfunction="VBUS_5" pintype="passive"/>
       <node ref="D_ESD_I2C_K1" pin="5" pinfunction="VBUS_5" pintype="passive"/>
+      <node ref="D_TRIG1" pin="2" pinfunction="K_2" pintype="passive"/>
+      <node ref="D_TRIG2" pin="2" pinfunction="K_2" pintype="passive"/>
+      <node ref="D_TRIG3" pin="2" pinfunction="K_2" pintype="passive"/>
+      <node ref="D_TRIG4" pin="2" pinfunction="K_2" pintype="passive"/>
       <node ref="J1_PCBA1" pin="30" pinfunction="Pin_30_30" pintype="passive"/>
       <node ref="J2_I2C1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J7_EXP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
@@ -8669,6 +9334,7 @@
       <node ref="J_POT_CUE1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_POT_IN1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_POT_MASTER1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J_SHD_R1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_T41L1" pin="15" pinfunction="Pin_15_15" pintype="passive"/>
       <node ref="J_T41R1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="R_EN_A1" pin="1" pintype="passive"/>
@@ -8781,18 +9447,23 @@
       <node ref="U_OPT_MIDI1" pin="8" pinfunction="VCC_8" pintype="passive"/>
     </net>
     <net code="12" name="/01-teensy/I2S_BCLK" class="Default">
+      <node ref="J_SHD_R1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="J_T41R1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
     </net>
     <net code="13" name="/01-teensy/I2S_LRCLK" class="Default">
+      <node ref="J_SHD_R1" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J_T41R1" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
     </net>
     <net code="14" name="/01-teensy/I2S_MCLK" class="Default">
+      <node ref="J_SHD_R1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J_T41R1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
     </net>
     <net code="15" name="/01-teensy/I2S_RX" class="Default">
+      <node ref="J_SHD_L1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="J_T41L1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
     </net>
     <net code="16" name="/01-teensy/I2S_TX" class="Default">
+      <node ref="J_SHD_L1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="J_T41L1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
     </net>
     <net code="17" name="/02-analog-front/AC_L" class="Default">
@@ -8958,69 +9629,89 @@
       <node ref="J_PEDAL1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_PEDAL_SER1" pin="1" pintype="passive"/>
     </net>
-    <net code="54" name="/11-diagnostics/IND_3V3A_A" class="Default">
+    <net code="54" name="/09-connectors-rear/TRIG1_J" class="Default">
+      <node ref="J_EDRUM1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="R_TRIG1_LOAD1" pin="1" pintype="passive"/>
+      <node ref="R_TRIG1_SER1" pin="1" pintype="passive"/>
+    </net>
+    <net code="55" name="/09-connectors-rear/TRIG2_J" class="Default">
+      <node ref="J_EDRUM1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="R_TRIG2_LOAD1" pin="1" pintype="passive"/>
+      <node ref="R_TRIG2_SER1" pin="1" pintype="passive"/>
+    </net>
+    <net code="56" name="/09-connectors-rear/TRIG3_J" class="Default">
+      <node ref="J_EDRUM1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="R_TRIG3_LOAD1" pin="1" pintype="passive"/>
+      <node ref="R_TRIG3_SER1" pin="1" pintype="passive"/>
+    </net>
+    <net code="57" name="/09-connectors-rear/TRIG4_J" class="Default">
+      <node ref="J_EDRUM1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
+      <node ref="R_TRIG4_LOAD1" pin="1" pintype="passive"/>
+      <node ref="R_TRIG4_SER1" pin="1" pintype="passive"/>
+    </net>
+    <net code="58" name="/11-diagnostics/IND_3V3A_A" class="Default">
       <node ref="D_IND_3V3A1" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="R_IND_3V3A1" pin="2" pintype="passive"/>
     </net>
-    <net code="55" name="/11-diagnostics/IND_3V3_A" class="Default">
+    <net code="59" name="/11-diagnostics/IND_3V3_A" class="Default">
       <node ref="D_IND_3V3" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="R_IND_3V3" pin="2" pintype="passive"/>
     </net>
-    <net code="56" name="/11-diagnostics/IND_5V_LED_A" class="Default">
+    <net code="60" name="/11-diagnostics/IND_5V_LED_A" class="Default">
       <node ref="D_IND_5V_LED1" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="R_IND_5V_LED1" pin="2" pintype="passive"/>
     </net>
-    <net code="57" name="/11-diagnostics/PU_SCL_47" class="Default">
+    <net code="61" name="/11-diagnostics/PU_SCL_47" class="Default">
       <node ref="R_SCL_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="58" name="/11-diagnostics/PU_SDA_47" class="Default">
+    <net code="62" name="/11-diagnostics/PU_SDA_47" class="Default">
       <node ref="R_SDA_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="59" name="/12-i2c-branches/EN_A" class="Default">
+    <net code="63" name="/12-i2c-branches/EN_A" class="Default">
       <node ref="R_EN_A1" pin="2" pintype="passive"/>
       <node ref="SJ_EN_A_GPIO1" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="U_I2C_A1" pin="5" pinfunction="EN_5" pintype="passive"/>
     </net>
-    <net code="60" name="/12-i2c-branches/EN_K" class="Default">
+    <net code="64" name="/12-i2c-branches/EN_K" class="Default">
       <node ref="R_EN_K1" pin="2" pintype="passive"/>
       <node ref="SJ_EN_K_GPIO1" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="U_I2C_K1" pin="5" pinfunction="EN_5" pintype="passive"/>
     </net>
-    <net code="61" name="/12-i2c-branches/PU_SCL_A_22" class="Default">
+    <net code="65" name="/12-i2c-branches/PU_SCL_A_22" class="Default">
       <node ref="R_PU_SCL_A_22" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_A_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="62" name="/12-i2c-branches/PU_SCL_A_47" class="Default">
+    <net code="66" name="/12-i2c-branches/PU_SCL_A_47" class="Default">
       <node ref="R_PU_SCL_A_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_A_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="63" name="/12-i2c-branches/PU_SCL_K_22" class="Default">
+    <net code="67" name="/12-i2c-branches/PU_SCL_K_22" class="Default">
       <node ref="R_PU_SCL_K_22" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_K_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="64" name="/12-i2c-branches/PU_SCL_K_47" class="Default">
+    <net code="68" name="/12-i2c-branches/PU_SCL_K_47" class="Default">
       <node ref="R_PU_SCL_K_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_K_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="65" name="/12-i2c-branches/PU_SDA_A_22" class="Default">
+    <net code="69" name="/12-i2c-branches/PU_SDA_A_22" class="Default">
       <node ref="R_PU_SDA_A_22" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_A_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="66" name="/12-i2c-branches/PU_SDA_A_47" class="Default">
+    <net code="70" name="/12-i2c-branches/PU_SDA_A_47" class="Default">
       <node ref="R_PU_SDA_A_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_A_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="67" name="/12-i2c-branches/PU_SDA_K_22" class="Default">
+    <net code="71" name="/12-i2c-branches/PU_SDA_K_22" class="Default">
       <node ref="R_PU_SDA_K_22" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_K_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="68" name="/12-i2c-branches/PU_SDA_K_47" class="Default">
+    <net code="72" name="/12-i2c-branches/PU_SDA_K_47" class="Default">
       <node ref="R_PU_SDA_K_47" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_K_47" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="69" name="AGND" class="Default">
+    <net code="73" name="AGND" class="Default">
       <node ref="C_LDO_IN1" pin="2" pintype="passive"/>
       <node ref="C_LDO_OUT1" pin="2" pintype="passive"/>
       <node ref="C_OA_IN1" pin="2" pintype="passive"/>
@@ -9044,149 +9735,149 @@
       <node ref="U_LDO1" pin="2" pinfunction="GND_2" pintype="power_in"/>
       <node ref="U_OA_IN1" pin="11" pinfunction="V-_11" pintype="power_in"/>
     </net>
-    <net code="70" name="CV1_OUT" class="Default">
+    <net code="74" name="CV1_OUT" class="Default">
       <node ref="R_CV_RF1" pin="1" pintype="passive"/>
       <node ref="R_CV_SER1" pin="1" pintype="passive"/>
       <node ref="TP_CV1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OA_CV1" pin="1" pintype="output"/>
     </net>
-    <net code="71" name="CV1_PROTECTED" class="Default">
+    <net code="75" name="CV1_PROTECTED" class="Default">
       <node ref="D_CV_CLAMP1" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="J_CV1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_CV_SER1" pin="2" pintype="passive"/>
       <node ref="TP_CV1_JACK1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="72" name="CV2_OUT" class="Default">
+    <net code="76" name="CV2_OUT" class="Default">
       <node ref="R_CV_RF2" pin="1" pintype="passive"/>
       <node ref="R_CV_SER2" pin="1" pintype="passive"/>
       <node ref="TP_CV2" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OA_CV1" pin="7" pintype="output"/>
     </net>
-    <net code="73" name="CV2_PROTECTED" class="Default">
+    <net code="77" name="CV2_PROTECTED" class="Default">
       <node ref="D_CV_CLAMP2" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="J_CV2" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_CV_SER2" pin="2" pintype="passive"/>
       <node ref="TP_CV2_JACK1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="74" name="ENC1_A" class="Default">
+    <net code="78" name="ENC1_A" class="Default">
       <node ref="J1_PCBA1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="J_T41L1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
     </net>
-    <net code="75" name="ENC1_B" class="Default">
+    <net code="79" name="ENC1_B" class="Default">
       <node ref="J1_PCBA1" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
       <node ref="J_T41L1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
     </net>
-    <net code="76" name="ENC2_A" class="Default">
+    <net code="80" name="ENC2_A" class="Default">
       <node ref="J1_PCBA1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="J_T41L1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
     </net>
-    <net code="77" name="ENC2_B" class="Default">
+    <net code="81" name="ENC2_B" class="Default">
       <node ref="J1_PCBA1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="J_T41L1" pin="7" pinfunction="Pin_7_7" pintype="passive"/>
     </net>
-    <net code="78" name="ENC3_A" class="Default">
+    <net code="82" name="ENC3_A" class="Default">
       <node ref="J1_PCBA1" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
       <node ref="J_T41L1" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
     </net>
-    <net code="79" name="ENC3_B" class="Default">
+    <net code="83" name="ENC3_B" class="Default">
       <node ref="J1_PCBA1" pin="15" pinfunction="Pin_15_15" pintype="passive"/>
       <node ref="J_T41L1" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
     </net>
-    <net code="80" name="ENC4_A" class="Default">
+    <net code="84" name="ENC4_A" class="Default">
       <node ref="J1_PCBA1" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
       <node ref="J_T41L1" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
     </net>
-    <net code="81" name="ENC4_B" class="Default">
+    <net code="85" name="ENC4_B" class="Default">
       <node ref="J1_PCBA1" pin="19" pinfunction="Pin_19_19" pintype="passive"/>
       <node ref="J_T41L1" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
     </net>
-    <net code="82" name="ENC5_A" class="Default">
+    <net code="86" name="ENC5_A" class="Default">
       <node ref="J1_PCBA1" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="J_T41L1" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
     </net>
-    <net code="83" name="ENC5_B" class="Default">
+    <net code="87" name="ENC5_B" class="Default">
       <node ref="J1_PCBA1" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
       <node ref="J_T41L1" pin="22" pinfunction="Pin_22_22" pintype="passive"/>
     </net>
-    <net code="84" name="ENC6_A" class="Default">
+    <net code="88" name="ENC6_A" class="Default">
       <node ref="J1_PCBA1" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
       <node ref="J_T41L1" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
     </net>
-    <net code="85" name="ENC6_B" class="Default">
+    <net code="89" name="ENC6_B" class="Default">
       <node ref="J1_PCBA1" pin="25" pinfunction="Pin_25_25" pintype="passive"/>
       <node ref="J_T41L1" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
     </net>
-    <net code="86" name="ENC7_A" class="Default">
+    <net code="90" name="ENC7_A" class="Default">
       <node ref="J1_PCBA1" pin="28" pinfunction="Pin_28_28" pintype="passive"/>
       <node ref="J_T41R1" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
     </net>
-    <net code="87" name="ENC7_B" class="Default">
+    <net code="91" name="ENC7_B" class="Default">
       <node ref="J1_PCBA1" pin="29" pinfunction="Pin_29_29" pintype="passive"/>
       <node ref="J_T41R1" pin="23" pinfunction="Pin_23_23" pintype="passive"/>
     </net>
-    <net code="88" name="ENC8_A" class="Default">
+    <net code="92" name="ENC8_A" class="Default">
       <node ref="J1_PCBA1" pin="27" pinfunction="Pin_27_27" pintype="passive"/>
       <node ref="J_T41R1" pin="22" pinfunction="Pin_22_22" pintype="passive"/>
     </net>
-    <net code="89" name="ENC8_B" class="Default">
+    <net code="93" name="ENC8_B" class="Default">
       <node ref="J1_PCBA1" pin="24" pinfunction="Pin_24_24" pintype="passive"/>
       <node ref="J_T41R1" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
     </net>
-    <net code="90" name="EN_A_GPIO" class="Default">
+    <net code="94" name="EN_A_GPIO" class="Default">
       <node ref="J_T41L1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="SJ_EN_A_GPIO1" pin="1" pinfunction="A_1" pintype="passive"/>
     </net>
-    <net code="91" name="EN_K_GPIO" class="Default">
+    <net code="95" name="EN_K_GPIO" class="Default">
       <node ref="J_T41L1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="SJ_EN_K_GPIO1" pin="1" pinfunction="A_1" pintype="passive"/>
     </net>
-    <net code="92" name="EXP1_ADC" class="Default">
+    <net code="96" name="EXP1_ADC" class="Default">
       <node ref="J7_EXP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_EXP1" pin="1" pintype="passive"/>
       <node ref="U_ADS2" pin="4" pinfunction="AIN0_4" pintype="input"/>
     </net>
-    <net code="93" name="EXP2_ADC" class="Default">
+    <net code="97" name="EXP2_ADC" class="Default">
       <node ref="J8_EXP2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_EXP2" pin="1" pintype="passive"/>
       <node ref="U_ADS2" pin="5" pinfunction="AIN1_5" pintype="input"/>
     </net>
-    <net code="94" name="FADER1_SIG" class="Default">
+    <net code="98" name="FADER1_SIG" class="Default">
       <node ref="J1_PCBA1" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="U_ADS1" pin="4" pinfunction="AIN0_4" pintype="input"/>
     </net>
-    <net code="95" name="FADER2_SIG" class="Default">
+    <net code="99" name="FADER2_SIG" class="Default">
       <node ref="J1_PCBA1" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
       <node ref="U_ADS1" pin="5" pinfunction="AIN1_5" pintype="input"/>
     </net>
-    <net code="96" name="FADER3_SIG" class="Default">
+    <net code="100" name="FADER3_SIG" class="Default">
       <node ref="J1_PCBA1" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="U_ADS1" pin="6" pinfunction="AIN2_6" pintype="input"/>
     </net>
-    <net code="97" name="FADER4_SIG" class="Default">
+    <net code="101" name="FADER4_SIG" class="Default">
       <node ref="J1_PCBA1" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="U_ADS1" pin="7" pinfunction="AIN3_7" pintype="input"/>
     </net>
-    <net code="98" name="FSR1_ADC" class="Default">
+    <net code="102" name="FSR1_ADC" class="Default">
       <node ref="J_FSR1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="13" pinfunction="Pin_13_13" pintype="passive"/>
       <node ref="R_FSR1" pin="1" pintype="passive"/>
     </net>
-    <net code="99" name="FSR2_ADC" class="Default">
+    <net code="103" name="FSR2_ADC" class="Default">
       <node ref="J_FSR2" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="12" pinfunction="Pin_12_12" pintype="passive"/>
       <node ref="R_FSR2" pin="1" pintype="passive"/>
     </net>
-    <net code="100" name="FSR3_ADC" class="Default">
+    <net code="104" name="FSR3_ADC" class="Default">
       <node ref="J_FSR3" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="11" pinfunction="Pin_11_11" pintype="passive"/>
       <node ref="R_FSR3" pin="1" pintype="passive"/>
     </net>
-    <net code="101" name="FSR4_ADC" class="Default">
+    <net code="105" name="FSR4_ADC" class="Default">
       <node ref="J_FSR4" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="R_FSR4" pin="1" pintype="passive"/>
     </net>
-    <net code="102" name="GND" class="Default">
+    <net code="106" name="GND" class="Default">
       <node ref="C_ADS1_BULK1" pin="2" pintype="passive"/>
       <node ref="C_ADS1_VCC1" pin="2" pintype="passive"/>
       <node ref="C_ADS2_BULK1" pin="2" pintype="passive"/>
@@ -9212,6 +9903,10 @@
       <node ref="C_POT_MASTER1" pin="2" pintype="passive"/>
       <node ref="C_SHARP1" pin="2" pintype="passive"/>
       <node ref="C_SHARP2" pin="2" pintype="passive"/>
+      <node ref="C_TRIG1" pin="2" pintype="passive"/>
+      <node ref="C_TRIG2" pin="2" pintype="passive"/>
+      <node ref="C_TRIG3" pin="2" pintype="passive"/>
+      <node ref="C_TRIG4" pin="2" pintype="passive"/>
       <node ref="D_CV_CLAMP1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="D_CV_CLAMP2" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="D_ESD_I2C_A1" pin="2" pinfunction="GND_2" pintype="passive"/>
@@ -9220,6 +9915,10 @@
       <node ref="D_IND_5V_LED1" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="D_LED_TVS1" pin="2" pinfunction="A_2" pintype="passive"/>
       <node ref="D_PEDAL_ESD1" pin="2" pinfunction="A_2" pintype="passive"/>
+      <node ref="D_TRIG1" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="D_TRIG2" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="D_TRIG3" pin="1" pinfunction="A_1" pintype="passive"/>
+      <node ref="D_TRIG4" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="J1_PCBA1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J1_PCBA1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J1_PCBA1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
@@ -9229,6 +9928,7 @@
       <node ref="J6_SHARP2" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_5V_BKUP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_5V_LED_IN1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
+      <node ref="J_EDRUM1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="J_JOG1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_MIDI_OUT1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_PAD_SEL1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
@@ -9239,6 +9939,8 @@
       <node ref="J_POT_CUE1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_POT_IN1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_POT_MASTER1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
+      <node ref="J_SHD_L1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
+      <node ref="J_SHD_R1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_SHIELD_IN1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_SHIELD_OUT1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_T41L1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
@@ -9261,6 +9963,10 @@
       <node ref="R_POT_BIAS_IN1" pin="2" pintype="passive"/>
       <node ref="R_POT_BIAS_MASTER1" pin="2" pintype="passive"/>
       <node ref="R_SEL_B1" pin="2" pintype="passive"/>
+      <node ref="R_TRIG1_LOAD1" pin="2" pintype="passive"/>
+      <node ref="R_TRIG2_LOAD1" pin="2" pintype="passive"/>
+      <node ref="R_TRIG3_LOAD1" pin="2" pintype="passive"/>
+      <node ref="R_TRIG4_LOAD1" pin="2" pintype="passive"/>
       <node ref="TP_GND1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_ADS1" pin="1" pinfunction="ADDR_1" pintype="input"/>
       <node ref="U_ADS1" pin="3" pinfunction="GND_3" pintype="power_in"/>
@@ -9277,19 +9983,20 @@
       <node ref="U_OA_CV1" pin="12" pinfunction="+_12" pintype="input"/>
       <node ref="U_OPT_MIDI1" pin="5" pinfunction="GND_5" pintype="passive"/>
     </net>
-    <net code="103" name="HP_L" class="Default">
+    <net code="107" name="HP_L" class="Default">
       <node ref="J_HP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="J_SHIELD_HP1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
     </net>
-    <net code="104" name="HP_R" class="Default">
+    <net code="108" name="HP_R" class="Default">
       <node ref="J_HP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_SHIELD_HP1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
     </net>
-    <net code="105" name="HP_VGND" class="Default">
+    <net code="109" name="HP_VGND" class="Default">
       <node ref="J_HP1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_SHIELD_HP1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
     </net>
-    <net code="106" name="I2C_SCL" class="Default">
+    <net code="110" name="I2C_SCL" class="Default">
+      <node ref="J_SHD_R1" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="J_T41R1" pin="8" pinfunction="Pin_8_8" pintype="passive"/>
       <node ref="R_SCL1" pin="2" pintype="passive"/>
       <node ref="R_SCL_47" pin="2" pintype="passive"/>
@@ -9301,43 +10008,44 @@
       <node ref="U_I2C_A1" pin="2" pinfunction="SCLA_2" pintype="bidirectional"/>
       <node ref="U_I2C_K1" pin="2" pinfunction="SCLA_2" pintype="bidirectional"/>
     </net>
-    <net code="107" name="I2C_SCL_A" class="Default">
+    <net code="111" name="I2C_SCL_A" class="Default">
       <node ref="D_ESD_I2C_A1" pin="3" pinfunction="I/O2_3" pintype="passive"/>
       <node ref="D_ESD_I2C_A1" pin="4" pinfunction="I/O2_4" pintype="passive"/>
       <node ref="J2_I2C1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="R_I2C_SCL_A1" pin="2" pintype="passive"/>
       <node ref="TP_SCL_A1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="108" name="I2C_SCL_A_SER" class="Default">
+    <net code="112" name="I2C_SCL_A_SER" class="Default">
       <node ref="R_I2C_SCL_A1" pin="1" pintype="passive"/>
       <node ref="SJ_SCL_A1" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="109" name="I2C_SCL_B_A" class="Default">
+    <net code="113" name="I2C_SCL_B_A" class="Default">
       <node ref="R_PU_SCL_A_22" pin="2" pintype="passive"/>
       <node ref="R_PU_SCL_A_47" pin="2" pintype="passive"/>
       <node ref="SJ_SCL_A1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="TP_SCL_B_A1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_I2C_A1" pin="7" pinfunction="SCLB_7" pintype="bidirectional"/>
     </net>
-    <net code="110" name="I2C_SCL_B_K" class="Default">
+    <net code="114" name="I2C_SCL_B_K" class="Default">
       <node ref="R_PU_SCL_K_22" pin="2" pintype="passive"/>
       <node ref="R_PU_SCL_K_47" pin="2" pintype="passive"/>
       <node ref="SJ_SCL_K1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="TP_SCL_B_K1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_I2C_K1" pin="7" pinfunction="SCLB_7" pintype="bidirectional"/>
     </net>
-    <net code="111" name="I2C_SCL_K" class="Default">
+    <net code="115" name="I2C_SCL_K" class="Default">
       <node ref="D_ESD_I2C_K1" pin="3" pinfunction="I/O2_3" pintype="passive"/>
       <node ref="D_ESD_I2C_K1" pin="4" pinfunction="I/O2_4" pintype="passive"/>
       <node ref="J_PCB_K1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="R_I2C_SCL_K1" pin="2" pintype="passive"/>
       <node ref="TP_SCL_K1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="112" name="I2C_SCL_K_SER" class="Default">
+    <net code="116" name="I2C_SCL_K_SER" class="Default">
       <node ref="R_I2C_SCL_K1" pin="1" pintype="passive"/>
       <node ref="SJ_SCL_K1" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="113" name="I2C_SDA" class="Default">
+    <net code="117" name="I2C_SDA" class="Default">
+      <node ref="J_SHD_R1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="J_T41R1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
       <node ref="R_SDA1" pin="2" pintype="passive"/>
       <node ref="R_SDA_47" pin="2" pintype="passive"/>
@@ -9349,143 +10057,143 @@
       <node ref="U_I2C_A1" pin="3" pinfunction="SDAA_3" pintype="bidirectional"/>
       <node ref="U_I2C_K1" pin="3" pinfunction="SDAA_3" pintype="bidirectional"/>
     </net>
-    <net code="114" name="I2C_SDA_A" class="Default">
+    <net code="118" name="I2C_SDA_A" class="Default">
       <node ref="D_ESD_I2C_A1" pin="1" pinfunction="I/O1_1" pintype="passive"/>
       <node ref="D_ESD_I2C_A1" pin="6" pinfunction="I/O1_6" pintype="passive"/>
       <node ref="J2_I2C1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="R_I2C_SDA_A1" pin="2" pintype="passive"/>
       <node ref="TP_SDA_A1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="115" name="I2C_SDA_A_SER" class="Default">
+    <net code="119" name="I2C_SDA_A_SER" class="Default">
       <node ref="R_I2C_SDA_A1" pin="1" pintype="passive"/>
       <node ref="SJ_SDA_A1" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="116" name="I2C_SDA_B_A" class="Default">
+    <net code="120" name="I2C_SDA_B_A" class="Default">
       <node ref="R_PU_SDA_A_22" pin="2" pintype="passive"/>
       <node ref="R_PU_SDA_A_47" pin="2" pintype="passive"/>
       <node ref="SJ_SDA_A1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="TP_SDA_B_A1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_I2C_A1" pin="6" pinfunction="SDAB_6" pintype="bidirectional"/>
     </net>
-    <net code="117" name="I2C_SDA_B_K" class="Default">
+    <net code="121" name="I2C_SDA_B_K" class="Default">
       <node ref="R_PU_SDA_K_22" pin="2" pintype="passive"/>
       <node ref="R_PU_SDA_K_47" pin="2" pintype="passive"/>
       <node ref="SJ_SDA_K1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="TP_SDA_B_K1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_I2C_K1" pin="6" pinfunction="SDAB_6" pintype="bidirectional"/>
     </net>
-    <net code="118" name="I2C_SDA_K" class="Default">
+    <net code="122" name="I2C_SDA_K" class="Default">
       <node ref="D_ESD_I2C_K1" pin="1" pinfunction="I/O1_1" pintype="passive"/>
       <node ref="D_ESD_I2C_K1" pin="6" pinfunction="I/O1_6" pintype="passive"/>
       <node ref="J_PCB_K1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_I2C_SDA_K1" pin="2" pintype="passive"/>
       <node ref="TP_SDA_K1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="119" name="I2C_SDA_K_SER" class="Default">
+    <net code="123" name="I2C_SDA_K_SER" class="Default">
       <node ref="R_I2C_SDA_K1" pin="1" pintype="passive"/>
       <node ref="SJ_SDA_K1" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="120" name="JOG_A" class="Default">
+    <net code="124" name="JOG_A" class="Default">
       <node ref="J_JOG1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="20" pinfunction="Pin_20_20" pintype="passive"/>
     </net>
-    <net code="121" name="JOG_B" class="Default">
+    <net code="125" name="JOG_B" class="Default">
       <node ref="J_JOG1" pin="3" pinfunction="Pin_3_3" pintype="passive"/>
       <node ref="J_T41R1" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
     </net>
-    <net code="122" name="JOG_CLICK" class="Default">
+    <net code="126" name="JOG_CLICK" class="Default">
       <node ref="J_JOG1" pin="4" pinfunction="Pin_4_4" pintype="passive"/>
       <node ref="J_PCB_K1" pin="9" pinfunction="Pin_9_9" pintype="passive"/>
     </net>
-    <net code="123" name="LED_BUF_OUT" class="Default">
+    <net code="127" name="LED_BUF_OUT" class="Default">
       <node ref="SJ_LED_DATA1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="U_LED_BUF1" pin="4" pintype="tri_state"/>
     </net>
-    <net code="124" name="LED_DATA" class="Default">
+    <net code="128" name="LED_DATA" class="Default">
       <node ref="J_T41R1" pin="14" pinfunction="Pin_14_14" pintype="passive"/>
       <node ref="R_LED_BIAS1" pin="1" pintype="passive"/>
       <node ref="U_LED_BUF1" pin="2" pintype="input"/>
     </net>
-    <net code="125" name="LED_DIN_5V" class="Default">
+    <net code="129" name="LED_DIN_5V" class="Default">
       <node ref="J_PCB_K1" pin="6" pinfunction="Pin_6_6" pintype="passive"/>
       <node ref="SJ_LED_DATA1" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="TP_LED_DIN1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="126" name="LINE_IN_L_T" class="Default">
+    <net code="130" name="LINE_IN_L_T" class="Default">
       <node ref="J_LINE_IN_L1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_PAD_L1" pin="1" pintype="passive"/>
       <node ref="SW_PAD1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="127" name="LINE_IN_R_T" class="Default">
+    <net code="131" name="LINE_IN_R_T" class="Default">
       <node ref="J_LINE_IN_R1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_PAD_R1" pin="1" pintype="passive"/>
       <node ref="SW_PAD1" pin="5" pinfunction="5_5" pintype="passive"/>
     </net>
-    <net code="128" name="LINE_OUT_L_T" class="Default">
+    <net code="132" name="LINE_OUT_L_T" class="Default">
       <node ref="C_LOUT_L1" pin="2" pintype="passive"/>
       <node ref="J_LINE_OUT_L1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_LOUT_L1" pin="1" pintype="passive"/>
     </net>
-    <net code="129" name="LINE_OUT_R_T" class="Default">
+    <net code="133" name="LINE_OUT_R_T" class="Default">
       <node ref="C_LOUT_R1" pin="2" pintype="passive"/>
       <node ref="J_LINE_OUT_R1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_LOUT_R1" pin="1" pintype="passive"/>
     </net>
-    <net code="130" name="M4_RX7" class="Default">
+    <net code="134" name="M4_RX7" class="Default">
       <node ref="J_T41L1" pin="20" pinfunction="Pin_20_20" pintype="passive"/>
       <node ref="R_M4_RX1" pin="1" pintype="passive"/>
     </net>
-    <net code="131" name="M4_TX7" class="Default">
+    <net code="135" name="M4_TX7" class="Default">
       <node ref="J_T41L1" pin="21" pinfunction="Pin_21_21" pintype="passive"/>
       <node ref="R_M4_TX1" pin="1" pintype="passive"/>
     </net>
-    <net code="132" name="MIDI_OPTO_BASE" class="Default">
+    <net code="136" name="MIDI_OPTO_BASE" class="Default">
       <node ref="R_MIDI_BASE1" pin="1" pintype="passive"/>
       <node ref="R_OPT_MIDI_BASE1" pin="1" pintype="passive"/>
       <node ref="U_OPT_MIDI1" pin="7" pinfunction="VO1_7" pintype="passive"/>
     </net>
-    <net code="133" name="MIDI_RX" class="Default">
+    <net code="137" name="MIDI_RX" class="Default">
       <node ref="R_MIDI_RX1" pin="2" pintype="passive"/>
       <node ref="R_OPT_MIDI_RX1" pin="2" pintype="passive"/>
       <node ref="TP_MIDI_RX1" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U_OPT_MIDI1" pin="6" pinfunction="VO2_6" pintype="passive"/>
     </net>
-    <net code="134" name="MIDI_TX" class="Default">
+    <net code="138" name="MIDI_TX" class="Default">
       <node ref="R_MIDI_T1" pin="1" pintype="passive"/>
       <node ref="TP_MIDI_TX1" pin="1" pinfunction="1_1" pintype="passive"/>
     </net>
-    <net code="135" name="PAD_SEL_ADC" class="Default">
+    <net code="139" name="PAD_SEL_ADC" class="Default">
       <node ref="J_PAD_SEL1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="J_T41R1" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="R_SEL_B1" pin="1" pintype="passive"/>
       <node ref="R_SEL_T1" pin="2" pintype="passive"/>
     </net>
-    <net code="136" name="PEDAL_BTN" class="Default">
+    <net code="140" name="PEDAL_BTN" class="Default">
       <node ref="C_PEDAL1" pin="1" pintype="passive"/>
       <node ref="D_PEDAL_ESD1" pin="1" pinfunction="K_1" pintype="passive"/>
       <node ref="J_PCB_K1" pin="10" pinfunction="Pin_10_10" pintype="passive"/>
       <node ref="R_PEDAL_PU1" pin="2" pintype="passive"/>
       <node ref="R_PEDAL_SER1" pin="2" pintype="passive"/>
     </net>
-    <net code="137" name="POT_CUE" class="Default">
+    <net code="141" name="POT_CUE" class="Default">
       <node ref="C_POT_CUE1" pin="1" pintype="passive"/>
       <node ref="J_T41L1" pin="16" pinfunction="Pin_16_16" pintype="passive"/>
       <node ref="R_POT_BIAS_CUE1" pin="1" pintype="passive"/>
       <node ref="R_POT_CUE1" pin="2" pintype="passive"/>
     </net>
-    <net code="138" name="POT_IN" class="Default">
+    <net code="142" name="POT_IN" class="Default">
       <node ref="C_POT_IN1" pin="1" pintype="passive"/>
       <node ref="J_T41L1" pin="18" pinfunction="Pin_18_18" pintype="passive"/>
       <node ref="R_POT_BIAS_IN1" pin="1" pintype="passive"/>
       <node ref="R_POT_IN1" pin="2" pintype="passive"/>
     </net>
-    <net code="139" name="POT_MASTER" class="Default">
+    <net code="143" name="POT_MASTER" class="Default">
       <node ref="C_POT_MASTER1" pin="1" pintype="passive"/>
       <node ref="J_T41R1" pin="5" pinfunction="Pin_5_5" pintype="passive"/>
       <node ref="R_POT_BIAS_MASTER1" pin="1" pintype="passive"/>
       <node ref="R_POT_MASTER1" pin="2" pintype="passive"/>
     </net>
-    <net code="140" name="PROT_L" class="Default">
+    <net code="144" name="PROT_L" class="Default">
       <node ref="D_CLAMP_L1" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="JP_BYP_L1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="R_BIAS_L1" pin="1" pintype="passive"/>
@@ -9493,7 +10201,7 @@
       <node ref="R_SER_L1" pin="2" pintype="passive"/>
       <node ref="U_OA_IN1" pin="3" pinfunction="+_3" pintype="input"/>
     </net>
-    <net code="141" name="PROT_R" class="Default">
+    <net code="145" name="PROT_R" class="Default">
       <node ref="D_CLAMP_R1" pin="3" pinfunction="COM_3" pintype="passive"/>
       <node ref="JP_BYP_R1" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="R_BIAS_R1" pin="1" pintype="passive"/>
@@ -9501,39 +10209,63 @@
       <node ref="R_SER_R1" pin="2" pintype="passive"/>
       <node ref="U_OA_IN1" pin="5" pinfunction="+_5" pintype="input"/>
     </net>
-    <net code="142" name="PU_SCL_22" class="Default">
+    <net code="146" name="PU_SCL_22" class="Default">
       <node ref="R_SCL1" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SCL_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="143" name="PU_SDA_22" class="Default">
+    <net code="147" name="PU_SDA_22" class="Default">
       <node ref="R_SDA1" pin="1" pintype="passive"/>
       <node ref="SJ_PU_SDA_22" pin="2" pinfunction="B_2" pintype="passive"/>
     </net>
-    <net code="144" name="SHARP1_ADC" class="Default">
+    <net code="148" name="SHARP1_ADC" class="Default">
       <node ref="R_SHARP_LIMIT1" pin="2" pintype="passive"/>
       <node ref="U_ADS2" pin="6" pinfunction="AIN2_6" pintype="input"/>
     </net>
-    <net code="145" name="SHARP2_ADC" class="Default">
+    <net code="149" name="SHARP2_ADC" class="Default">
       <node ref="R_SHARP_LIMIT2" pin="2" pintype="passive"/>
       <node ref="U_ADS2" pin="7" pinfunction="AIN3_7" pintype="input"/>
     </net>
-    <net code="146" name="SHIELD_LINE_IN_L" class="Default">
+    <net code="150" name="SHIELD_LINE_IN_L" class="Default">
       <node ref="J_SHIELD_IN1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
       <node ref="R_ISO_IN_L1" pin="2" pintype="passive"/>
     </net>
-    <net code="147" name="SHIELD_LINE_IN_R" class="Default">
+    <net code="151" name="SHIELD_LINE_IN_R" class="Default">
       <node ref="J_SHIELD_IN1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
       <node ref="R_ISO_IN_R1" pin="2" pintype="passive"/>
     </net>
-    <net code="148" name="SHIELD_LINE_OUT_L" class="Default">
+    <net code="152" name="SHIELD_LINE_OUT_L" class="Default">
       <node ref="C_LOUT_L1" pin="1" pintype="passive"/>
       <node ref="J_SHIELD_OUT1" pin="1" pinfunction="Pin_1_1" pintype="passive"/>
     </net>
-    <net code="149" name="SHIELD_LINE_OUT_R" class="Default">
+    <net code="153" name="SHIELD_LINE_OUT_R" class="Default">
       <node ref="C_LOUT_R1" pin="1" pintype="passive"/>
       <node ref="J_SHIELD_OUT1" pin="2" pinfunction="Pin_2_2" pintype="passive"/>
     </net>
-    <net code="150" name="VREF" class="Default">
+    <net code="154" name="TRIG1" class="Default">
+      <node ref="C_TRIG1" pin="1" pintype="passive"/>
+      <node ref="D_TRIG1" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="J_T41L1" pin="17" pinfunction="Pin_17_17" pintype="passive"/>
+      <node ref="R_TRIG1_SER1" pin="2" pintype="passive"/>
+    </net>
+    <net code="155" name="TRIG2" class="Default">
+      <node ref="C_TRIG2" pin="1" pintype="passive"/>
+      <node ref="D_TRIG2" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="J_T41L1" pin="19" pinfunction="Pin_19_19" pintype="passive"/>
+      <node ref="R_TRIG2_SER1" pin="2" pintype="passive"/>
+    </net>
+    <net code="156" name="TRIG3" class="Default">
+      <node ref="C_TRIG3" pin="1" pintype="passive"/>
+      <node ref="D_TRIG3" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="J_T41R1" pin="19" pinfunction="Pin_19_19" pintype="passive"/>
+      <node ref="R_TRIG3_SER1" pin="2" pintype="passive"/>
+    </net>
+    <net code="157" name="TRIG4" class="Default">
+      <node ref="C_TRIG4" pin="1" pintype="passive"/>
+      <node ref="D_TRIG4" pin="3" pinfunction="COM_3" pintype="passive"/>
+      <node ref="J_T41R1" pin="18" pinfunction="Pin_18_18" pintype="passive"/>
+      <node ref="R_TRIG4_SER1" pin="2" pintype="passive"/>
+    </net>
+    <net code="158" name="VREF" class="Default">
       <node ref="JP_BYP_VREF1" pin="2" pinfunction="B_2" pintype="passive"/>
       <node ref="R_BIAS_L1" pin="2" pintype="passive"/>
       <node ref="R_BIAS_R1" pin="2" pintype="passive"/>
@@ -9544,73 +10276,100 @@
       <node ref="U_OA_IN1" pin="8" pintype="output"/>
       <node ref="U_OA_IN1" pin="9" pinfunction="-_9" pintype="input"/>
     </net>
-    <net code="151" name="unconnected-(J1_PCBA1-Pin_18-Pad18)" class="Default">
+    <net code="159" name="unconnected-(J1_PCBA1-Pin_18-Pad18)" class="Default">
       <node ref="J1_PCBA1" pin="18" pinfunction="Pin_18_18" pintype="passive+no_connect"/>
     </net>
-    <net code="152" name="unconnected-(J1_PCBA1-Pin_20-Pad20)" class="Default">
+    <net code="160" name="unconnected-(J1_PCBA1-Pin_20-Pad20)" class="Default">
       <node ref="J1_PCBA1" pin="20" pinfunction="Pin_20_20" pintype="passive+no_connect"/>
     </net>
-    <net code="153" name="unconnected-(J1_PCBA1-Pin_22-Pad22)" class="Default">
+    <net code="161" name="unconnected-(J1_PCBA1-Pin_22-Pad22)" class="Default">
       <node ref="J1_PCBA1" pin="22" pinfunction="Pin_22_22" pintype="passive+no_connect"/>
     </net>
-    <net code="154" name="unconnected-(J1_PCBA1-Pin_26-Pad26)" class="Default">
+    <net code="162" name="unconnected-(J1_PCBA1-Pin_26-Pad26)" class="Default">
       <node ref="J1_PCBA1" pin="26" pinfunction="Pin_26_26" pintype="passive+no_connect"/>
     </net>
-    <net code="155" name="unconnected-(J3_M4-Pin_2-Pad2)" class="Default">
+    <net code="163" name="unconnected-(J3_M4-Pin_2-Pad2)" class="Default">
       <node ref="J3_M4" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="156" name="unconnected-(J_EDRUM1-Pin_1-Pad1)" class="Default">
-      <node ref="J_EDRUM1" pin="1" pinfunction="Pin_1_1" pintype="passive+no_connect"/>
-    </net>
-    <net code="157" name="unconnected-(J_EDRUM1-Pin_2-Pad2)" class="Default">
-      <node ref="J_EDRUM1" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
-    </net>
-    <net code="158" name="unconnected-(J_EDRUM1-Pin_3-Pad3)" class="Default">
-      <node ref="J_EDRUM1" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
-    </net>
-    <net code="159" name="unconnected-(J_EDRUM1-Pin_4-Pad4)" class="Default">
-      <node ref="J_EDRUM1" pin="4" pinfunction="Pin_4_4" pintype="passive+no_connect"/>
-    </net>
-    <net code="160" name="unconnected-(J_EDRUM1-Pin_5-Pad5)" class="Default">
-      <node ref="J_EDRUM1" pin="5" pinfunction="Pin_5_5" pintype="passive+no_connect"/>
-    </net>
-    <net code="161" name="unconnected-(J_LINE_OUT_L1-Pin_2-Pad2)" class="Default">
+    <net code="164" name="unconnected-(J_LINE_OUT_L1-Pin_2-Pad2)" class="Default">
       <node ref="J_LINE_OUT_L1" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="162" name="unconnected-(J_LINE_OUT_R1-Pin_2-Pad2)" class="Default">
+    <net code="165" name="unconnected-(J_LINE_OUT_R1-Pin_2-Pad2)" class="Default">
       <node ref="J_LINE_OUT_R1" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="163" name="unconnected-(J_MIDI_IN1-Pin_3-Pad3)" class="Default">
+    <net code="166" name="unconnected-(J_MIDI_IN1-Pin_3-Pad3)" class="Default">
       <node ref="J_MIDI_IN1" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
     </net>
-    <net code="164" name="unconnected-(J_PEDAL1-Pin_2-Pad2)" class="Default">
+    <net code="167" name="unconnected-(J_PEDAL1-Pin_2-Pad2)" class="Default">
       <node ref="J_PEDAL1" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="165" name="unconnected-(J_T41L1-Pin_17-Pad17)" class="Default">
-      <node ref="J_T41L1" pin="17" pinfunction="Pin_17_17" pintype="passive+no_connect"/>
+    <net code="168" name="unconnected-(J_SHD_L1-Pin_2-Pad2)" class="Default">
+      <node ref="J_SHD_L1" pin="2" pinfunction="Pin_2_2" pintype="passive+no_connect"/>
     </net>
-    <net code="166" name="unconnected-(J_T41L1-Pin_19-Pad19)" class="Default">
-      <node ref="J_T41L1" pin="19" pinfunction="Pin_19_19" pintype="passive+no_connect"/>
+    <net code="169" name="unconnected-(J_SHD_L1-Pin_3-Pad3)" class="Default">
+      <node ref="J_SHD_L1" pin="3" pinfunction="Pin_3_3" pintype="passive+no_connect"/>
     </net>
-    <net code="167" name="unconnected-(J_T41R1-Pin_18-Pad18)" class="Default">
-      <node ref="J_T41R1" pin="18" pinfunction="Pin_18_18" pintype="passive+no_connect"/>
+    <net code="170" name="unconnected-(J_SHD_L1-Pin_4-Pad4)" class="Default">
+      <node ref="J_SHD_L1" pin="4" pinfunction="Pin_4_4" pintype="passive+no_connect"/>
     </net>
-    <net code="168" name="unconnected-(J_T41R1-Pin_19-Pad19)" class="Default">
-      <node ref="J_T41R1" pin="19" pinfunction="Pin_19_19" pintype="passive+no_connect"/>
+    <net code="171" name="unconnected-(J_SHD_L1-Pin_5-Pad5)" class="Default">
+      <node ref="J_SHD_L1" pin="5" pinfunction="Pin_5_5" pintype="passive+no_connect"/>
     </net>
-    <net code="169" name="unconnected-(U_ADS1-ALERT/RDY-Pad2)" class="Default">
+    <net code="172" name="unconnected-(J_SHD_L1-Pin_6-Pad6)" class="Default">
+      <node ref="J_SHD_L1" pin="6" pinfunction="Pin_6_6" pintype="passive+no_connect"/>
+    </net>
+    <net code="173" name="unconnected-(J_SHD_L1-Pin_7-Pad7)" class="Default">
+      <node ref="J_SHD_L1" pin="7" pinfunction="Pin_7_7" pintype="passive+no_connect"/>
+    </net>
+    <net code="174" name="unconnected-(J_SHD_L1-Pin_8-Pad8)" class="Default">
+      <node ref="J_SHD_L1" pin="8" pinfunction="Pin_8_8" pintype="passive+no_connect"/>
+    </net>
+    <net code="175" name="unconnected-(J_SHD_L1-Pin_11-Pad11)" class="Default">
+      <node ref="J_SHD_L1" pin="11" pinfunction="Pin_11_11" pintype="passive+no_connect"/>
+    </net>
+    <net code="176" name="unconnected-(J_SHD_L1-Pin_12-Pad12)" class="Default">
+      <node ref="J_SHD_L1" pin="12" pinfunction="Pin_12_12" pintype="passive+no_connect"/>
+    </net>
+    <net code="177" name="unconnected-(J_SHD_L1-Pin_13-Pad13)" class="Default">
+      <node ref="J_SHD_L1" pin="13" pinfunction="Pin_13_13" pintype="passive+no_connect"/>
+    </net>
+    <net code="178" name="unconnected-(J_SHD_L1-Pin_14-Pad14)" class="Default">
+      <node ref="J_SHD_L1" pin="14" pinfunction="Pin_14_14" pintype="passive+no_connect"/>
+    </net>
+    <net code="179" name="unconnected-(J_SHD_R1-Pin_1-Pad1)" class="Default">
+      <node ref="J_SHD_R1" pin="1" pinfunction="Pin_1_1" pintype="passive+no_connect"/>
+    </net>
+    <net code="180" name="unconnected-(J_SHD_R1-Pin_5-Pad5)" class="Default">
+      <node ref="J_SHD_R1" pin="5" pinfunction="Pin_5_5" pintype="passive+no_connect"/>
+    </net>
+    <net code="181" name="unconnected-(J_SHD_R1-Pin_10-Pad10)" class="Default">
+      <node ref="J_SHD_R1" pin="10" pinfunction="Pin_10_10" pintype="passive+no_connect"/>
+    </net>
+    <net code="182" name="unconnected-(J_SHD_R1-Pin_11-Pad11)" class="Default">
+      <node ref="J_SHD_R1" pin="11" pinfunction="Pin_11_11" pintype="passive+no_connect"/>
+    </net>
+    <net code="183" name="unconnected-(J_SHD_R1-Pin_12-Pad12)" class="Default">
+      <node ref="J_SHD_R1" pin="12" pinfunction="Pin_12_12" pintype="passive+no_connect"/>
+    </net>
+    <net code="184" name="unconnected-(J_SHD_R1-Pin_13-Pad13)" class="Default">
+      <node ref="J_SHD_R1" pin="13" pinfunction="Pin_13_13" pintype="passive+no_connect"/>
+    </net>
+    <net code="185" name="unconnected-(J_SHD_R1-Pin_14-Pad14)" class="Default">
+      <node ref="J_SHD_R1" pin="14" pinfunction="Pin_14_14" pintype="passive+no_connect"/>
+    </net>
+    <net code="186" name="unconnected-(U_ADS1-ALERT/RDY-Pad2)" class="Default">
       <node ref="U_ADS1" pin="2" pinfunction="ALERT/RDY_2" pintype="output+no_connect"/>
     </net>
-    <net code="170" name="unconnected-(U_ADS2-ALERT/RDY-Pad2)" class="Default">
+    <net code="187" name="unconnected-(U_ADS2-ALERT/RDY-Pad2)" class="Default">
       <node ref="U_ADS2" pin="2" pinfunction="ALERT/RDY_2" pintype="output+no_connect"/>
     </net>
-    <net code="171" name="unconnected-(U_LDO1-NC-Pad4)" class="Default">
+    <net code="188" name="unconnected-(U_LDO1-NC-Pad4)" class="Default">
       <node ref="U_LDO1" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
-    <net code="172" name="unconnected-(U_OPT_MIDI1-NC-Pad1)" class="Default">
+    <net code="189" name="unconnected-(U_OPT_MIDI1-NC-Pad1)" class="Default">
       <node ref="U_OPT_MIDI1" pin="1" pinfunction="NC_1" pintype="no_connect"/>
     </net>
-    <net code="173" name="unconnected-(U_OPT_MIDI1-NC-Pad4)" class="Default">
+    <net code="190" name="unconnected-(U_OPT_MIDI1-NC-Pad4)" class="Default">
       <node ref="U_OPT_MIDI1" pin="4" pinfunction="NC_4" pintype="no_connect"/>
     </net>
   </nets>

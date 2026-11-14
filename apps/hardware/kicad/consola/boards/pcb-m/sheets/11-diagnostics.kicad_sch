@@ -1586,7 +1586,7 @@
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Jumper:SolderJumper_2_Bridged")
+    (lib_id "Jumper:SolderJumper_2_Open")
     (at 330.2 127 0)
     (unit 1)
     (in_bom yes)
@@ -1603,7 +1603,7 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
       (at 330.2 127 0)
       (effects
         (font
@@ -1869,7 +1869,7 @@
           (size 1.0 1.0))
         (hide yes))))
   (symbol
-    (lib_id "Jumper:SolderJumper_2_Bridged")
+    (lib_id "Jumper:SolderJumper_2_Open")
     (at 63.5 190.5 0)
     (unit 1)
     (in_bom yes)
@@ -1886,7 +1886,7 @@
       (effects
         (font
           (size 1.0 1.0))))
-    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm"
+    (property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
       (at 63.5 190.5 0)
       (effects
         (font

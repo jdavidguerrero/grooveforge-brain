@@ -892,6 +892,21 @@
       "stock_verificado": 10481,
       "stock_source": "JLCPCB component_search C2897365 in_stock=true; 2026-11-13",
       "nota": "P2.54, 1x2, vertical; taladro 1mm para terminal cuadrado nominal 0.64mm; cuerpo 8.5mm."
+    },
+    {
+      "lcsc": "C22373900",
+      "mpn": "HC-PM254-8.5H-1x14PZ",
+      "fabricante": "Hong Cheng",
+      "encapsulado": "THT 1x14 P2.54mm H8.5mm",
+      "fecha_verificacion": "2026-11-13",
+      "source": "https://www.lcsc.com/product-detail/C22373900.html",
+      "footprints": [
+        "Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical"
+      ],
+      "values": [
+        "AudioShieldRevD-L",
+        "AudioShieldRevD-R"
+      ]
     }
   ],
   "external_supplies": [

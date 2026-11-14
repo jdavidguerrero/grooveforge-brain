@@ -1,22 +1,7 @@
-ERC report (2026-11-13T06:57:08, Encoding UTF8)
+ERC report (2026-11-13T18:57:18, Encoding UTF8)
 Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /
-[isolated_pin_label]: Label connected to only one pin
-    ; warning
-    @(55.88 mm, 119.38 mm): Label 'I2S_TX'
-[isolated_pin_label]: Label connected to only one pin
-    ; warning
-    @(55.88 mm, 121.92 mm): Label 'I2S_RX'
-[isolated_pin_label]: Label connected to only one pin
-    ; warning
-    @(233.68 mm, 106.68 mm): Label 'I2S_MCLK'
-[isolated_pin_label]: Label connected to only one pin
-    ; warning
-    @(233.68 mm, 111.76 mm): Label 'I2S_BCLK'
-[isolated_pin_label]: Label connected to only one pin
-    ; warning
-    @(233.68 mm, 114.30 mm): Label 'I2S_LRCLK'
 [isolated_pin_label]: Label connected to only one pin
     ; warning
     @(55.88 mm, 63.50 mm): Label 'LINE_IN_L_R'
@@ -48,7 +33,7 @@ Report includes: Errors, Warnings, Exclusions
 
 ***** Sheet /12-i2c-branches/
 
- ** ERC messages: 7  Errors 0  Warnings 7
+ ** ERC messages: 2  Errors 0  Warnings 2
 
  ** Ignored checks:
     - Global label only appears once in the schematic

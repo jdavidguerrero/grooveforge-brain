@@ -390,21 +390,30 @@ def pcb_m():
     connector(s, 'J_T41L', [
         'GND', 'EN_K_GPIO', 'EN_A_GPIO', 'ENC1_A', 'ENC1_B', 'ENC2_A', 'ENC2_B', 'ENC3_A',
         'I2S_TX', 'I2S_RX', 'ENC3_B', 'ENC4_A', 'ENC4_B', 'ENC5_A', '+3.3V', 'POT_CUE',
-        None, 'POT_IN', None, 'M4_RX7', 'M4_TX7', 'ENC5_B', 'ENC6_A', 'ENC6_B'], (0, 1),
+        'TRIG1', 'POT_IN', 'TRIG2', 'M4_RX7', 'M4_TX7', 'ENC5_B', 'ENC6_A', 'ENC6_B'], (0, 1),
         footprint=PARTS['J_T41L']['footprint'])
     connector(s, 'J_T41R', [
         '+5V_TEENSY', 'GND', '+3.3V', 'I2S_MCLK', 'POT_MASTER', 'I2S_BCLK', 'I2S_LRCLK',
         'I2C_SCL', 'I2C_SDA', 'FSR4_ADC', 'FSR3_ADC', 'FSR2_ADC', 'FSR1_ADC', 'LED_DATA',
-        'GND', 'PAD_SEL_ADC', 'JOG_B', None, None, 'JOG_A', 'ENC8_B', 'ENC8_A',
+        'GND', 'PAD_SEL_ADC', 'JOG_B', 'TRIG4', 'TRIG3', 'JOG_A', 'ENC8_B', 'ENC8_A',
         'ENC7_B', 'ENC7_A'], (2, 1), footprint=PARTS['J_T41R']['footprint'])
+    # D45 (Juan, 2026-11-13): Audio Shield Rev D en sus propios rieles, en linea con los de la Teensy (no apilado).
+    # Misma numeracion que una Teensy 4.0: fila L = GND,0..12; fila R = VIN,GND,3.3V,23..13 (PJRC, esquema Rev D).
+    # Solo I2S, I2C y alimentacion: 6/10-13 (flash y microSD del shield) y 15 (pot) quedan NC a proposito.
+    socket14 = 'Connector_PinSocket_2.54mm:PinSocket_1x14_P2.54mm_Vertical'
+    connector(s, 'J_SHD_L', ['GND'] + [None] * 7 + ['I2S_TX', 'I2S_RX'] + [None] * 4, (0, 3),
+              value='AudioShieldRevD-L', footprint=socket14)
+    connector(s, 'J_SHD_R', [None, 'GND', '+3.3V', 'I2S_MCLK', None, 'I2S_BCLK', 'I2S_LRCLK',
+                             'I2C_SCL', 'I2C_SDA'] + [None] * 5, (2, 3),
+              value='AudioShieldRevD-R', footprint=socket14)
     connector(s, 'J_SHIELD_IN', ['SHIELD_LINE_IN_L', 'SHIELD_LINE_IN_R', 'GND'], (0, 2),
               value='SHIELD pads LINE IN L/R/G')
     connector(s, 'J_SHIELD_OUT', ['SHIELD_LINE_OUT_L', 'SHIELD_LINE_OUT_R', 'GND'], (1, 2),
               value='SHIELD pads LINE OUT L/R/G')
     connector(s, 'J_SHIELD_HP', ['HP_L', 'HP_R', 'HP_VGND'], (2, 2),
               value='HP L/R/VGND - NEVER GND')
-    s.notes = ['Teensy + Audio Shield: I2S interno al modulo; no microSD ni pot opcional del shield.',
-               'NC: T25/T27/T38/T39 reservados e-drum. HP_VGND nunca se une a GND/AGND.',
+    s.notes = ['D45: Audio Shield Rev D en rieles propios junto a la Teensy; I2S por pistas cortas. Sin microSD ni pot del shield.',
+               'T25/T27/T38/T39 = TRIG1-4 e-drum (acondicionamiento DNP en 09). HP_VGND nunca se une a GND/AGND.',
                'Filas de sockets conservadas; validar mecanica del montaje antes de fabricar.']
 
     s = sheets[1]
@@ -542,6 +551,7 @@ def pcb_m():
                'I2C hacia PCB-A por J2; J1 no lleva SDA/SCL. Retirar pull-ups PCB-A.']
 
     s = sheets[8]
+    s.paper = 'A1'
     for channel, row in (('L', 0), ('R', 1)):
         connector(s, f'J_LINE_IN_{channel}', [f'LINE_IN_{channel}_T', f'LINE_IN_{channel}_R', 'AGND'],
                   (0, row))
@@ -554,7 +564,15 @@ def pcb_m():
     capacitor(s, 'C_PEDAL', '10nF', 'PEDAL_BTN', 'GND', (2, 3))
     part(s, 'D_PEDAL_ESD', {1: 'PEDAL_BTN', 2: 'GND'}, (3, 3),
          lib_id='Device:D_Zener', value='PESD3V3U1UL,315', footprint='gf_consola:D_SOD-882_K1')
-    connector(s, 'J_EDRUM', [None] * 5, (2, 2), dnp=True)
+    connector(s, 'J_EDRUM', ['TRIG1_J', 'TRIG2_J', 'TRIG3_J', 'TRIG4_J', 'GND'], (2, 2), dnp=True)
+    # E-drum cableado (Juan, 2026-11-13): acondicionamiento por canal sin poblar; conector del chasis pendiente.
+    for n in range(1, 5):
+        resistor(s, f'R_TRIG{n}_LOAD', '1M', f'TRIG{n}_J', 'GND', (4, n - 1), dnp=True)
+        resistor(s, f'R_TRIG{n}_SER', '1k', f'TRIG{n}_J', f'TRIG{n}', (5, n - 1), dnp=True)
+        part(s, f'D_TRIG{n}', {1: 'GND', 2: '+3.3V', 3: f'TRIG{n}'}, (6, n - 1), lib_id='Diode:BAT54S',
+             value='BAT54S', footprint='Package_TO_SOT_SMD:SOT-23', dnp=True)
+        part(s, f'C_TRIG{n}', {1: f'TRIG{n}', 2: 'GND'}, (7, n - 1), lib_id='Device:C', value='DNP',
+             footprint=CAPACITOR, dnp=True)
     s.notes = ['D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack.',
                'TRS: 1=tip/2=ring/3=sleeve; TS CV: 1=tip/2=sleeve. HP solo por J_HP (06).',
                'M1: TVS unidirectional K=1 at PEDAL_BTN / A=2 at GND; cathode K marked on footprint.',
@@ -614,7 +632,8 @@ def pcb_m():
             ('SJ_LED_DATA', 'LED_BUF_OUT', 'LED_DIN_5V')):
         jumper(ref, a, b)
     for signal in ('SDA', 'SCL'):
-        jumper(f'SJ_PU_{signal}_22', '+3.3V', f'PU_{signal}_22')
+        # D45: el Audio Shield ya trae 2,2 k a 3,3 V en SDA/SCL; un solo par activo (doc 17 §2) -> abierto.
+        jumper(f'SJ_PU_{signal}_22', '+3.3V', f'PU_{signal}_22', closed=False)
         jumper(f'SJ_PU_{signal}_47', '+3.3V', f'PU_{signal}_47', closed=False)
         service(f'R_{signal}_47', {1: f'PU_{signal}_47', 2: f'I2C_{signal}'},
                 'Device:R', '4.7k', 'Resistor_SMD:R_0603_1608Metric')

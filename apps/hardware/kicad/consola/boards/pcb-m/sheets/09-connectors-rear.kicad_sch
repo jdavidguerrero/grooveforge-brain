@@ -3,7 +3,7 @@
   (generator "schgen")
   (generator_version "1.0")
   (uuid 8dbe80b0-e0c1-53a9-903c-5798354279d8)
-  (paper "A3")
+  (paper "A1")
   (lib_symbols
     (symbol "Connector_Generic:Conn_01x02"
       (pin_names
@@ -736,6 +736,254 @@
               (font
                 (size 1.27 1.27))))
           (number "2"
+            (effects
+              (font
+                (size 1.27 1.27))))))
+      (embedded_fonts no))
+    (symbol "Diode:BAT54S"
+      (pin_names
+        (offset 0))
+      (exclude_from_sim no)
+      (in_bom yes)
+      (on_board yes)
+      (in_pos_files yes)
+      (duplicate_pin_numbers_are_jumpers no)
+      (property "Reference" "D"
+        (at 2.54 -5.08 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Value" "BAT54S"
+        (at -6.35 3.175 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+        (at 1.905 3.175 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))
+          (justify left)))
+      (property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
+        (at -3.048 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "Description" "Vr 30V, If 200mA, Dual schottky barrier diode, in series, SOT-323"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_keywords" "schottky diode"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (property "ki_fp_filters" "SOT?23*"
+        (at 0 0 0)
+        (show_name no)
+        (do_not_autoplace no)
+        (hide yes)
+        (effects
+          (font
+            (size 1.27 1.27))))
+      (symbol "BAT54S_0_1"
+        (polyline
+          (pts
+            (xy -4.445 1.27)
+            (xy -4.445 -1.27)
+            (xy -2.54 0)
+            (xy -4.445 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.81 0)
+            (xy -1.27 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -3.175 -1.27)
+            (xy -3.175 -1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 1.27)
+            (xy -1.905 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 -1.27)
+            (xy -3.175 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -2.54 -1.27)
+            (xy -2.54 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -1.905 1.27)
+            (xy -1.905 1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy -1.905 0)
+            (xy 1.905 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (circle
+          (center 0 0)
+          (radius 0.254)
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type outline)))
+        (polyline
+          (pts
+            (xy 1.27 0)
+            (xy 3.81 0))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 1.905 1.27)
+            (xy 1.905 -1.27)
+            (xy 3.81 0)
+            (xy 1.905 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.175 -1.27)
+            (xy 3.175 -1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 1.27)
+            (xy 4.445 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 -1.27)
+            (xy 3.175 -1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 3.81 -1.27)
+            (xy 3.81 1.27))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none)))
+        (polyline
+          (pts
+            (xy 4.445 1.27)
+            (xy 4.445 1.016))
+          (stroke
+            (width 0)
+            (type default))
+          (fill
+            (type none))))
+      (symbol "BAT54S_1_1"
+        (pin passive line
+          (at -7.62 0 0)
+          (length 3.81)
+          (name "A"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "1"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 7.62 0 180)
+          (length 3.81)
+          (name "K"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "2"
+            (effects
+              (font
+                (size 1.27 1.27)))))
+        (pin passive line
+          (at 0 -5.08 90)
+          (length 5.08)
+          (name "COM"
+            (effects
+              (font
+                (size 1.27 1.27))))
+          (number "3"
             (effects
               (font
                 (size 1.27 1.27))))))
@@ -1952,21 +2200,88 @@
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
           (reference "D_PEDAL_ESD1")
           (unit 1)))))
-  (no_connect
-    (at 236.22 185.42)
-    (uuid de268eae-8b4b-54ea-bfe2-12411408f40b))
-  (no_connect
-    (at 236.22 187.96)
-    (uuid 003ca436-162b-5d88-95da-9b81f1d9758f))
-  (no_connect
-    (at 236.22 190.5)
-    (uuid 426553e4-518d-5558-b2b9-1d3f810f7792))
-  (no_connect
-    (at 236.22 193.04)
-    (uuid 55316027-93b4-5b43-a8c1-9f5c33ca98e0))
-  (no_connect
-    (at 236.22 195.58)
-    (uuid a211fde1-a85c-5a2c-a23b-e7d4dcf81d7b))
+  (wire
+    (pts
+      (xy 236.22 185.42)
+      (xy 233.68 185.42))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b9c6dbef-33e0-5b74-a6b4-631e27be678e))
+  (label "TRIG1_J"
+    (at 233.68 185.42 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 25923044-383c-5a95-83fc-2a9fa7cb3180))
+  (wire
+    (pts
+      (xy 236.22 187.96)
+      (xy 233.68 187.96))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 92d77a19-404e-5795-b2ab-b72e54b83f0f))
+  (label "TRIG2_J"
+    (at 233.68 187.96 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7cfdf152-a207-5000-ba3c-8ed5c9d1dc19))
+  (wire
+    (pts
+      (xy 236.22 190.5)
+      (xy 233.68 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c6ce9f71-5da3-58cc-8a5f-42ff3a9db917))
+  (label "TRIG3_J"
+    (at 233.68 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 90326cc0-2e71-564d-bb5e-ee23bf2a7270))
+  (wire
+    (pts
+      (xy 236.22 193.04)
+      (xy 233.68 193.04))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 558d2872-5d92-5718-a675-3bbc0861a047))
+  (label "TRIG4_J"
+    (at 233.68 193.04 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 917baab9-4eda-5b13-b5d7-d4983a4706d0))
+  (wire
+    (pts
+      (xy 236.22 195.58)
+      (xy 233.68 195.58))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ba0352e1-ad8b-569d-ac21-58fb826efba9))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 233.68 195.58 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 860cf789-887b-518e-b5f6-225ce41a1ee2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 233.68 195.58 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
   (symbol
     (lib_id "Connector_Generic:Conn_01x05")
     (at 241.3 190.5 0)
@@ -2017,6 +2332,1686 @@
       (project "pcb-m"
         (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
           (reference "J_EDRUM1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 59.69)
+      (xy 419.1 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 8a8c1168-5e4a-5d80-a461-debbfccbd0db))
+  (label "TRIG1_J"
+    (at 419.1 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4c3b885d-0896-5326-ba75-e379ad6a94b4))
+  (wire
+    (pts
+      (xy 419.1 67.31)
+      (xy 419.1 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1c384b20-f819-52da-b2bc-a3375e5b391b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 419.1 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid fa4ec7f5-2081-58b4-a734-43a58a8980b9)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 7d03e4a3-4110-5fbb-bd64-ee4db2548fcc)
+    (property "Reference" "R_TRIG1_LOAD1"
+      (at 419.1 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1M"
+      (at 419.1 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG1_LOAD"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C26083"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1004TCE"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 419.1 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4c0ee0f6-cba4-50ce-8dfd-2da08bde76c7))
+    (pin "2"
+      (uuid f1f345a8-8949-519a-a69d-d9b0b6f00790))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG1_LOAD1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 59.69)
+      (xy 508 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ebcdb111-e17d-5ad1-a7b6-ffbc31aa2975))
+  (label "TRIG1_J"
+    (at 508 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 0f976468-ac38-52b8-9fa1-131cc864df8d))
+  (wire
+    (pts
+      (xy 508 67.31)
+      (xy 508 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e1ef6d5c-a2e9-5442-bf5a-1f12d6aa0b92))
+  (global_label "TRIG1"
+    (shape bidirectional)
+    (at 508 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid b47412ab-d212-5ca5-9043-0a44e705e48c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid b60c3038-c8aa-5606-8886-8dd3ffa5a1f0)
+    (property "Reference" "R_TRIG1_SER1"
+      (at 508 40.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG1_SER"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 508 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 6ecafd4f-0eea-5a27-9f90-d8c13a8e4af5))
+    (pin "2"
+      (uuid 6bf2e221-f6c2-5d50-adc3-85862230d657))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG1_SER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 589.28 63.5)
+      (xy 586.74 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 287957cb-aedf-5577-966d-12c72e1a956c))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 586.74 63.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 31956d5f-85d1-56d7-8f7b-a65169433a1c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 586.74 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 604.52 63.5)
+      (xy 607.06 63.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b1fb4a18-fa67-53d8-b727-1cd46c75b0c4))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 607.06 63.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid a0a03256-ad24-5bc3-ab31-9e382316ef6e)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 607.06 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 596.9 68.58)
+      (xy 596.9 71.12))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 733842cb-28b7-5233-87a3-82ad95b05e31))
+  (global_label "TRIG1"
+    (shape bidirectional)
+    (at 596.9 71.12 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 08281bdc-bc3e-5bcb-8816-e00091790816)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 596.9 71.12 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 596.9 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 5a3429e7-a462-5416-bfc9-e884e5c127b1)
+    (property "Reference" "D_TRIG1"
+      (at 596.9 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 596.9 59.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_TRIG1"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 596.9 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4db64044-90bc-570a-b15d-1b09fd515bcf))
+    (pin "2"
+      (uuid 08ce6166-fa46-5239-b78d-cc11200e4f6a))
+    (pin "3"
+      (uuid c4d9db05-c376-582c-9998-a59cbe8ade40))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "D_TRIG1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 685.8 59.69)
+      (xy 685.8 57.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 49db20f0-0c3b-562f-887a-d6fca8649279))
+  (global_label "TRIG1"
+    (shape bidirectional)
+    (at 685.8 57.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 65a12fc9-8935-5bf2-a7f9-3448ed944ae5)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 57.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 685.8 67.31)
+      (xy 685.8 69.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7d052abc-a5f2-5739-8ed5-e3e646ea378a))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 685.8 69.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c3f1c5f9-8e2b-5636-97a7-bf754e62559c)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 69.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 685.8 63.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid f6da1547-e5c1-558a-94b3-76714bf0547a)
+    (property "Reference" "C_TRIG1"
+      (at 685.8 43.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "DNP"
+      (at 685.8 45.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 685.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_TRIG1"
+      (at 685.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 685.8 63.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 14eb9438-1de7-5a58-92b6-f44565adff09))
+    (pin "2"
+      (uuid fc9d9c17-e0aa-5e3d-a717-bf7324b88088))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "C_TRIG1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 123.19)
+      (xy 419.1 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3d0913d2-3d8b-5196-840f-7951a13da8a8))
+  (label "TRIG2_J"
+    (at 419.1 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 4c1091f9-6c17-5bc8-a3be-531d29a30f5d))
+  (wire
+    (pts
+      (xy 419.1 130.81)
+      (xy 419.1 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 7dc7b48a-6f7b-5204-8102-53b29d385dc0))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 419.1 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 7ebc296f-3487-5f2e-bcfc-6b6775665f32)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 81fa9c5f-737d-5f17-93ac-8e63cf66aa11)
+    (property "Reference" "R_TRIG2_LOAD1"
+      (at 419.1 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1M"
+      (at 419.1 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG2_LOAD"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C26083"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1004TCE"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 419.1 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f5115d8d-0ba4-551d-8eda-86f218d85c89))
+    (pin "2"
+      (uuid 92f68701-091e-53cf-b145-a26808443d2e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG2_LOAD1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 123.19)
+      (xy 508 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5df0515c-6935-5aba-8304-8e07df6351fb))
+  (label "TRIG2_J"
+    (at 508 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid c45f67a6-2f05-5a8d-87a3-40e645a98091))
+  (wire
+    (pts
+      (xy 508 130.81)
+      (xy 508 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 2762edc0-e983-5c4f-a332-c052ec21208b))
+  (global_label "TRIG2"
+    (shape bidirectional)
+    (at 508 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 007b1746-2ecc-5809-87e8-2f847a6de672)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid fad031ae-2da6-5a43-af1f-da04d6c7eb4a)
+    (property "Reference" "R_TRIG2_SER1"
+      (at 508 104.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG2_SER"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 508 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4f5af8e1-6d7e-5ab2-9c07-bc4d542c229b))
+    (pin "2"
+      (uuid 8669c97e-3f48-523f-8167-af4578498962))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG2_SER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 589.28 127)
+      (xy 586.74 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 28522ed2-46c2-5cbe-b788-8633fdeb2208))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 586.74 127 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid f62e1504-12c8-59a2-934c-b5dce06e4e06)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 586.74 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 604.52 127)
+      (xy 607.06 127))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 1401f334-7296-5c1e-9b3a-222cd4bfa06d))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 607.06 127 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 83cf8cff-f52a-561d-a22d-4cbf11767cb8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 607.06 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 596.9 132.08)
+      (xy 596.9 134.62))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 97673de2-f463-5d92-b4f5-ac4ed358c672))
+  (global_label "TRIG2"
+    (shape bidirectional)
+    (at 596.9 134.62 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid c22f792c-e9e8-5f28-8cbd-a4554f06ae9b)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 596.9 134.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 596.9 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid e28083c6-3907-5e26-b575-df4838e10e00)
+    (property "Reference" "D_TRIG2"
+      (at 596.9 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 596.9 123.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_TRIG2"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 596.9 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid feda3504-cd06-5dd2-8863-eec7b80cc4e4))
+    (pin "2"
+      (uuid ed8caa4e-95d0-55e9-8394-6d5778c4e8e9))
+    (pin "3"
+      (uuid 8d17d752-28db-5697-85f6-b57b195be1b9))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "D_TRIG2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 685.8 123.19)
+      (xy 685.8 120.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid c53e12d8-f077-5655-a254-79c9b026d77e))
+  (global_label "TRIG2"
+    (shape bidirectional)
+    (at 685.8 120.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 33149b86-1b6b-55b0-a7ee-0e7bad3d4c6a)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 120.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 685.8 130.81)
+      (xy 685.8 133.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e9f80874-3a73-50c5-a03e-41f2b3d4908b))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 685.8 133.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 707567af-4f6d-5f15-947d-186a893796a0)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 133.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 685.8 127 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid c7ec355f-25fd-5582-9cea-0d1502692f3c)
+    (property "Reference" "C_TRIG2"
+      (at 685.8 106.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "DNP"
+      (at 685.8 109.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 685.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_TRIG2"
+      (at 685.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 685.8 127 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 16e082f5-bc9f-581c-bdba-e57d95239330))
+    (pin "2"
+      (uuid 35e2f578-b2a8-5501-8ab8-f0e97c6353d9))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "C_TRIG2")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 186.69)
+      (xy 419.1 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 35f35334-dcb7-5fd0-97b0-b0e3ba4f98ce))
+  (label "TRIG3_J"
+    (at 419.1 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 6d9f3e5d-43fa-5ace-aea5-e259eb5d8a44))
+  (wire
+    (pts
+      (xy 419.1 194.31)
+      (xy 419.1 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid e51f2755-2797-5b4a-87c7-6aac3c11b4a1))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 419.1 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 09e2f58a-46e3-524f-bb46-8d24976e01f3)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 4d986bdf-bb9a-5779-8a81-a77eb4ab7c32)
+    (property "Reference" "R_TRIG3_LOAD1"
+      (at 419.1 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1M"
+      (at 419.1 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG3_LOAD"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C26083"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1004TCE"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 419.1 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 28357e95-7575-53d6-9485-eba8b7288153))
+    (pin "2"
+      (uuid a29c0062-7aac-5460-ba85-2c26e66d3c24))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG3_LOAD1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 186.69)
+      (xy 508 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f5d8fc00-ce3b-55b2-bf66-680acfb80e20))
+  (label "TRIG3_J"
+    (at 508 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 024b9a9a-a403-5b1f-8565-25dd99e4885c))
+  (wire
+    (pts
+      (xy 508 194.31)
+      (xy 508 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 5b55eef4-b55f-53ed-91de-f686bb3ff98d))
+  (global_label "TRIG3"
+    (shape bidirectional)
+    (at 508 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 09d4bd6f-6d35-55d7-b8b9-824313781491)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid d805328c-38ae-5a24-a7e9-512c372a9e6b)
+    (property "Reference" "R_TRIG3_SER1"
+      (at 508 167.64 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG3_SER"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 508 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 4624bed2-d759-51fc-8dfa-224f0c5dc586))
+    (pin "2"
+      (uuid 8e590388-24c4-5261-a3d9-27cf7713262e))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG3_SER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 589.28 190.5)
+      (xy 586.74 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 96a08536-f41b-5ebb-bcd9-3c9f3cf4e1b7))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 586.74 190.5 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 58e4ee04-2c95-5a8e-8eaf-f395cb616051)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 586.74 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 604.52 190.5)
+      (xy 607.06 190.5))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 47413387-10b9-5180-b3ac-a5eb250bfa91))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 607.06 190.5 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 1a53851b-0fa0-511a-bf8d-b54749fef9c6)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 607.06 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 596.9 195.58)
+      (xy 596.9 198.12))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 092936e6-2f85-52c1-a92f-cebfd9994503))
+  (global_label "TRIG3"
+    (shape bidirectional)
+    (at 596.9 198.12 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 220c532a-ba37-5625-9d17-9378477e2dae)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 596.9 198.12 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 596.9 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid d2194b73-b2c1-5643-9634-052b1c78ffa0)
+    (property "Reference" "D_TRIG3"
+      (at 596.9 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 596.9 186.69 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_TRIG3"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 596.9 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid f52c1224-0244-5540-9784-37e73c5b5ce0))
+    (pin "2"
+      (uuid 549408f1-9bd0-5fcf-84f9-06933c2f7080))
+    (pin "3"
+      (uuid 0e375db0-5e17-5bf6-a749-20c152a21212))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "D_TRIG3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 685.8 186.69)
+      (xy 685.8 184.15))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 146480bc-7714-59b1-b608-5f37cd70601b))
+  (global_label "TRIG3"
+    (shape bidirectional)
+    (at 685.8 184.15 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid cf843ad5-d431-5e26-a274-d390da0d1e0d)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 184.15 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 685.8 194.31)
+      (xy 685.8 196.85))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid f705ba43-7685-5637-a769-d7a59f6f9657))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 685.8 196.85 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 4ee5dc56-64bb-574e-b2e1-8408206577a2)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 196.85 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 685.8 190.5 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 91fc5a9e-c4b1-5b88-b27a-11dafe0db16a)
+    (property "Reference" "C_TRIG3"
+      (at 685.8 170.18 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "DNP"
+      (at 685.8 172.72 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 685.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_TRIG3"
+      (at 685.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 685.8 190.5 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 83f5627b-2012-50e1-a08f-0c6b0b77e60b))
+    (pin "2"
+      (uuid a5d860ce-119e-5794-a336-9536ebf5d11d))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "C_TRIG3")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 419.1 250.19)
+      (xy 419.1 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 3d3a0e1c-db0e-5196-9d80-01a819b0f10d))
+  (label "TRIG4_J"
+    (at 419.1 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 50c802fc-d2e2-5c2e-9ecc-d5a921a80076))
+  (wire
+    (pts
+      (xy 419.1 257.81)
+      (xy 419.1 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid ce7be211-cc84-5f27-8499-fa600c2901e4))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 419.1 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 1530b801-99fd-5700-80f8-8ecbdf2748ef)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 419.1 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 419.1 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 94210ba2-9cd8-5877-9ffe-ee60c92409eb)
+    (property "Reference" "R_TRIG4_LOAD1"
+      (at 419.1 231.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1M"
+      (at 419.1 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG4_LOAD"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C26083"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1004TCE"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 419.1 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid 82dd337c-ec96-593b-8833-9248e10c8dd6))
+    (pin "2"
+      (uuid 9761ec9b-f431-555e-8471-c8a0ebb93573))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG4_LOAD1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 508 250.19)
+      (xy 508 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid cb27e588-5318-5393-99d5-da92905b7315))
+  (label "TRIG4_J"
+    (at 508 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid 40076d81-b55b-5fa8-8c95-0d26ea0a724a))
+  (wire
+    (pts
+      (xy 508 257.81)
+      (xy 508 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 08c1c586-b465-5a03-aa48-795cd7e41287))
+  (global_label "TRIG4"
+    (shape bidirectional)
+    (at 508 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 3b796c0d-fcfd-5fe6-ad70-af3d2fe421ee)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 508 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:R")
+    (at 508 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid f3ff2baf-6d79-54a6-bcfd-ef485efda95c)
+    (property "Reference" "R_TRIG4_SER1"
+      (at 508 231.14 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "1k"
+      (at 508 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "R_TRIG4_SER"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C11702"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "0402WGF1001TCE"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "UNI-ROYAL"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "0402"
+      (at 508 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid da0cac16-88f5-5d34-8081-88ac630b94af))
+    (pin "2"
+      (uuid 12567567-7076-561f-9a97-9b1e451d6b64))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "R_TRIG4_SER1")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 589.28 254)
+      (xy 586.74 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bca0eab9-1a57-5d01-b4e7-5bfa77acf3c8))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 586.74 254 0)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 102ff764-14b3-565d-b55e-194704da7c91)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 586.74 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 604.52 254)
+      (xy 607.06 254))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid fda03ac6-9e66-5fa0-8683-e2498882a7df))
+  (global_label "+3.3V"
+    (shape bidirectional)
+    (at 607.06 254 180)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid d3977497-5df8-579e-9f4c-f32972398455)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 607.06 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 596.9 259.08)
+      (xy 596.9 261.62))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 40499ed0-8116-5a4c-8852-ea5d59530aa4))
+  (global_label "TRIG4"
+    (shape bidirectional)
+    (at 596.9 261.62 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 041af5b0-2679-50d5-94ea-d88740a58c92)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 596.9 261.62 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Diode:BAT54S")
+    (at 596.9 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 870ca774-bd63-5417-8291-70b1a1cd4d55)
+    (property "Reference" "D_TRIG4"
+      (at 596.9 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "BAT54S"
+      (at 596.9 250.19 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "D_TRIG4"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" "C47546"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "MPN" "BAT54S,215"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Manufacturer" "Nexperia"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Package" "SOT-23"
+      (at 596.9 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c7972b9f-fd1d-50ed-a7f4-4cfae0baa791))
+    (pin "2"
+      (uuid d6ea3136-9930-5faf-b3d4-247e536daf6c))
+    (pin "3"
+      (uuid 1664898f-3a3e-59ec-93cd-03f561422b73))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "D_TRIG4")
+          (unit 1)))))
+  (wire
+    (pts
+      (xy 685.8 250.19)
+      (xy 685.8 247.65))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 49ad6f1d-13bd-5857-b254-6360ba9df539))
+  (global_label "TRIG4"
+    (shape bidirectional)
+    (at 685.8 247.65 270)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify left))
+    (uuid e16379c4-7ec8-5b83-9ea2-827bfcf2eb37)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 247.65 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (wire
+    (pts
+      (xy 685.8 257.81)
+      (xy 685.8 260.35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid 9a36d868-2719-515b-b7e8-e0b3c6361098))
+  (global_label "GND"
+    (shape bidirectional)
+    (at 685.8 260.35 90)
+    (effects
+      (font
+        (size 1.0 1.0))
+      (justify right))
+    (uuid 9b5ab9e5-d129-5ec4-8ae0-b9aa7ee076b8)
+    (property "Intersheetrefs" "${INTERSHEET_REFS}"
+      (at 685.8 260.35 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes))))
+  (symbol
+    (lib_id "Device:C")
+    (at 685.8 254 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (dnp yes)
+    (uuid 65b81c44-fefb-5aff-8bf1-cd8f4c3f448f)
+    (property "Reference" "C_TRIG4"
+      (at 685.8 233.68 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Value" "DNP"
+      (at 685.8 236.22 0)
+      (effects
+        (font
+          (size 1.0 1.0))))
+    (property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
+      (at 685.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "Function" "C_TRIG4"
+      (at 685.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (property "LCSC" ""
+      (at 685.8 254 0)
+      (effects
+        (font
+          (size 1.0 1.0))
+        (hide yes)))
+    (pin "1"
+      (uuid c18b9300-37d8-57c2-a6e1-d0038d4f45af))
+    (pin "2"
+      (uuid f1747325-3332-50b8-83f2-58debcafa329))
+    (instances
+      (project "pcb-m"
+        (path "/0766e3a4-c438-57aa-9265-664763d6dd17/690fcfae-1b99-5c2c-bfab-6430a8445761"
+          (reference "C_TRIG4")
           (unit 1)))))
   (text "D15: jacks con tuerca en pared trasera; JST-PH en borde PCB-M, uno por jack."
     (at 15.24 20.32 0)
