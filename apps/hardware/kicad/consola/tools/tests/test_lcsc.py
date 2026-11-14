@@ -1,6 +1,7 @@
 """Procurement closure and mutation checks; rationale/limits in THEORY-lcsc.md."""
 import csv
 import json
+from collections import Counter
 
 import pytest
 
@@ -80,7 +81,34 @@ def test_capacitor_identity_and_positive_pad(catalog):
 
 def test_manual_order_does_not_duplicate_pcb_m_smd():
     with (CONSOLE / 'fab/pedido-lcsc-v1.csv').open() as f:
-        order = {r['LCSC Part Number']: r for r in csv.DictReader(f)}
-    assert order['C41376163']['Quantity'] == '2'
-    assert order['C225519']['Quantity'] == '1'
-    assert 'C7469972' not in order
+        rows = list(csv.DictReader(f))
+    assert all(None not in r and all(r.values()) for r in rows)
+    order = {r['LCSC Part Number']: int(r['Quantity']) for r in rows}
+    assert len(order) == len(rows)
+    manual, assembled = Counter(), set()
+    for board in BOARDS:
+        with (CONSOLE / f'fab/bom-{board}.csv').open() as f:
+            for part in csv.DictReader(f):
+                code = part['LCSC']
+                if not code or part['DNP']:
+                    continue
+                # PCB-M: SMD at JLC, through-hole connectors at the bench.
+                if board == 'pcb-m' and not part['Footprint'].startswith((
+                        'Connector_JST:JST_PH_', 'Connector_PinSocket_',
+                        'Connector_PinHeader_', 'Connector_IDC:')):
+                    assembled.add(code)
+                else:
+                    manual[code] += 1
+        supplement = CONSOLE / f'boards/{board}/assembly-sockets.csv'
+        if supplement.exists():
+            with supplement.open() as f:
+                for part in csv.DictReader(f):
+                    if not part['DNP']:
+                        manual[part['LCSC']] += 1
+    assert all(order.get(code, 0) > quantity for code, quantity in manual.items())
+    # Shared part codes buy only the manual requirement plus its spares.
+    assert not (set(order) & (assembled - set(manual)))
+    assert order['C22373900'] == 3  # two Audio Shield sockets and one spare
+    assert order['C41376163'] == 3  # two Teensy sockets and one spare
+    assert order['C225519'] == 2  # selector header and one spare
+    assert set(order) - set(manual) == {'C309284', 'C49274302'}  # panel jacks

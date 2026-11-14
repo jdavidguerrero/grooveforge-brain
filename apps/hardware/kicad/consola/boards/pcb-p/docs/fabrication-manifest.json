@@ -10,7 +10,7 @@
     "apps/hardware/kicad/consola/boards/pcb-p/assembly-sockets.csv": "59cf7f1d8acb4a66ee65bf22d23475d56b2833cc84f771eadcafda43182f8626",
     "apps/hardware/kicad/consola/boards/pcb-p/gf_consola.pretty/FSR402_DirectSolder_1x02_P2.54mm.kicad_mod": "9dab7facd0debce01cb3b96af2e48e053cae7376a38a84ef3a1624a0cf184d28",
     "apps/hardware/kicad/consola/panel/pcb-outlines-console-v5.csv": "89cdc41ffd930863be8a6a6d23cb6fc3a0ebd699a727b8fa8e9536eefcaca242",
-    "apps/hardware/kicad/consola/fab/pedido-lcsc-v1.csv": "e1dcd677d2ac78def7c1a505c5d36b063af6fd8eb2067b8298cfbcb7386ad80b",
+    "apps/hardware/kicad/consola/fab/pedido-lcsc-v1.csv": "029c0e881f23290c3f29483ba05919fe3e97062aa02a0978704cccaa6f59de1e",
     "apps/hardware/kicad/consola/tools/lcsc_catalog.json": "6dd711f3d9ffcb16910bd80aeb1a4bbd0f98c13c562a1a2196cd86850ab73f03",
     "apps/design/3d-models/consola/pcb-p.step": "692121298ac6b43ea12f6986d518c5ecd77a71fd068b8254c969b21984224e67",
     "apps/hardware/kicad/consola/boards/pcb-p/docs/pcb-p-drc.json": "46c83f6d7a6e65ef2210484c13c37aa61b01f2be5f6b419d3813ded6730988b5",

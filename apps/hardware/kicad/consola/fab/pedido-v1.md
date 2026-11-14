@@ -1,8 +1,11 @@
-# Pedido v1 de la consola — JLC + LCSC (borrador)
+# Pedido v1 de la consola — JLC + LCSC (antecedente actualizado)
+
+**Pedido operativo del 2026-11-14:** [PEDIDO-JLC-2026-11.md](PEDIDO-JLC-2026-11.md).
+Las cantidades manuales de esta nota se sincronizan con el CSV; los precios siguen siendo históricos.
 
 2026-11-12. **Opción B** (decisión de Juan): JLC fabrica las 6 placas y **ensambla solo PCB-M** (SMD). PCB-K izq./der.
 y PCB-A se sueldan a mano con chips sueltos de LCSC, que viajan en el mismo envío que las placas de JLC (carrito
-combinado; elegir "ship together" al pagar).
+combinado; seguir el procedimiento «combine shipping» del pedido operativo, incluida la dirección de consolidación).
 
 > **Borrador de compra, un juego funcional + repuestos indicados.** BOM M/K/A reexportadas
 > de los esquemas el 2026-11-12 con `Supply` y `SupplyDescription`; DNP excluidos del pedido.
@@ -52,20 +55,22 @@ cubren 29 en PCB-K y 5 en PCB-F, más repuestos. La huella de C2 PCB-A es **0805
 ## 3. LCSC — conectores de montaje manual
 
 Códigos y orientación según catálogo/BOM vigentes, sustituyen los códigos del borrador anterior.
-Cantidades para un juego, sin repuestos, salvo lo indicado.
+Cantidades para un juego manual más repuestos; no abastecen dos consolas completas.
 
 | Pieza | LCSC | Cant. | Dónde |
 |---|---|---:|---|
-| JST PH 2 vías vertical B2B-PH-K-S(LF)(SN) | C131337 | 8 | PCB-M: FSR ×4, EXP ×2, CV ×2 |
-| JST PH 2 vías horizontal S2B-PH-K-S(LF)(SN) | C173752 | 7 | PCB-M entrada 5V_LED ×1; PCB-P ×6 |
-| JST PH 3 vías vertical B3B-PH-K-S(LF)(SN) | C131339 | 15 | PCB-M: shield IN/OUT/HP ×3; HP ×1; selector ×1; pots ×3; Sharp ×2; jacks IN/OUT/pedal ×5 |
-| JST PH 4 vías vertical B4B-PH-K-S(LF)(SN) | C131334 | 2 | PCB-M: jog y M4 |
-| JST PH 6 vías vertical B6B-PH-K-S(LF)(SN) | C131342 | 2 | PCB-K izq. ↔ der. |
-| JST PH 10 vías vertical B10B-PH-K-S(LF)(SN) | C158038 | 2 | PCB-M ↔ PCB-K izq. |
-| JST SH 4 vías SMD horizontal SM04B-SRSS-TB(LF)(SN) | C160404 | 1 | Solo PCB-A J2 a mano; el de PCB-M va en ensamble JLC |
-| JST SH 6 vías SMD horizontal SM06B-SRSS-TB(LF)(SN) | C160405 | 2 | PCB-A J3 ↔ PCB-F J1, a mano |
-| Header hembra 1 × 24, 2,54 mm, aislamiento 8,5 mm; Hong Cheng HC-PM254-8.5H-1x24PZ | C41376163 | 2 | PCB-M J_T41L1/J_T41R1, THT a mano |
-| Header macho 2 × 4, 2,54 mm recto; CJT A2541WV-2x4P | C225519 | 1 | PCB-M SW_PAD1, THT a mano; interfaz al selector de panel |
+| JST PH 2 vías vertical B2B-PH-K-S(LF)(SN) | C131337 | 10 | JST PH B2B 2P vertical - PCB-M THT a mano (8 + 2 repuestos; J_5V_BKUP1 DNP no poblar) |
+| JST PH 2 vías horizontal S2B-PH-K-S(LF)(SN) | C173752 | 9 | JST PH S2B 2P horizontal - PCB-M x1 y PCB-P x6 (7 + 2 repuestos; a mano) |
+| JST PH 3 vías vertical B3B-PH-K-S(LF)(SN) | C131339 | 18 | JST PH B3B 3P vertical - PCB-M THT a mano (15 + 3 repuestos) |
+| JST PH 4 vías vertical B4B-PH-K-S(LF)(SN) | C131334 | 3 | JST PH B4B 4P vertical - PCB-M jog y M4 THT a mano (2 + 1 repuesto) |
+| JST PH 6 vías vertical B6B-PH-K-S(LF)(SN) | C131342 | 3 | JST PH B6B 6P vertical - PCB-K (2 + 1 repuesto; a mano) |
+| JST PH 10 vías vertical B10B-PH-K-S(LF)(SN) | C158038 | 3 | JST PH B10B 10P vertical - PCB-M y PCB-K izq. THT a mano (2 + 1 repuesto) |
+| JST SH 4 vías SMD horizontal SM04B-SRSS-TB(LF)(SN) | C160404 | 2 | JST SH SM04B 4P SMD horizontal - solo PCB-A J2 a mano (1 + 1 repuesto; PCB-M lo ensambla JLC) |
+| JST SH 6 vías SMD horizontal SM06B-SRSS-TB(LF)(SN) | C160405 | 3 | JST SH SM06B 6P SMD horizontal - PCB-A J3 y PCB-F J1 a mano (2 + 1 repuesto) |
+| Header hembra 1 × 24, 2,54 mm, aislamiento 8,5 mm; Hong Cheng HC-PM254-8.5H-1x24PZ | C41376163 | 3 | Hong Cheng HC-PM254-8.5H-1x24PZ - sockets Teensy PCB-M THT a mano (2 + 1 repuesto) |
+| Header hembra 1 × 14, 2,54 mm, aislamiento 8,5 mm; Hong Cheng HC-PM254-8.5H-1x14PZ | C22373900 | 3 | PCB-M J_SHD_L1/J_SHD_R1, THT a mano (2 + 1 repuesto) |
+| Header hembra 1 × 2, 2,54 mm, HCTL PM254-1-02-Z-8.5 | C2897365 | 10 | PCB-P XS1–XS6 inferiores (6 + 4 repuestos); ver assembly-sockets.csv |
+| Header macho 2 × 4, 2,54 mm recto; CJT A2541WV-2x4P | C225519 | 2 | CJT A2541WV-2x4P - PCB-M SW_PAD1 THT a mano (1 + 1 repuesto) |
 
 **C_CV_FILTER1:** FOSAN FVH016ADA470M0554, **C7469972**, 47 µF 16 V ±20 %, SMD
 5×5,4 mm. Va en `bom-pcb-m.csv` para ensamble JLC; **no va en pedido-lcsc-v1.csv**.
@@ -100,7 +105,7 @@ Incluye los 4 soportes BSO-M3 de 18 mm de PCB-A y los 4 FH largos del futuro mar
 - Jacks de pared: **en el pedido LCSC** (2026-11-13): 7 × HOOYA PJ-612 6,35 mm C309284 y 3 × CAX PJ-392-AU 3,5 mm C49274302. Verificar en la hoja la rosca del 6,35 contra el agujero Ø9,5 del cuerpo.
   (CV1, CV2; MIDI sin poblar, va por USB) y audífonos 6,35 mm.
 - Juan también tiene el encoder de jog, faders RS6011 ×4, FSR 402 ×6, Teensy 4.1 y Audio Shield.
-  D43: FSR por soldadura directa de pines metálicos, sin sockets. Los sockets hembra 1×2 P2,54 alternativos son compra externa sin LCSC verificado, no poblados ni incluidos en este pedido.
+  PCB-P vigente sustituye D43: seis sockets inferiores HCTL C2897365 (6 + 4 repuestos en LCSC), según `boards/pcb-p/assembly-sockets.csv` y su README. Las colas pasan por ranuras NPTH; no soldar la película.
 
 ## Estimado histórico (opción B, pendiente de recotizar)
 
